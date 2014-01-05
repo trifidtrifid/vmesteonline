@@ -11,6 +11,8 @@ public abstract class JDBCConnector {
 	private Connection conn = null;
 	private Statement stmnt = null; 
 	
+	protected abstract void connect() throws Exception;
+	
 	protected void connect(String drvName, String dbURL, String usr, String pswd) throws Exception {
 		try{
 			Class.forName(drvName);
@@ -32,6 +34,22 @@ public abstract class JDBCConnector {
 	public ResultSet executeQuery( String query ) throws SQLException {
 		return stmnt.executeQuery(query);
 	}
+	
+	public <T> T getResult( ResultCreator<T> rc, JDBCConnector con) throws java.lang.Exception {
+		try {
+			con.connect();
+			return rc.createResult(conn);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(null!=con) con.close();
+		}
+	}
+	
+	public static interface ResultCreator<T> {
+		public T createResult(Connection conn) throws java.lang.Exception ;
+	} 
 	
 	@Override
 	protected void finalize() throws Throwable {
@@ -55,4 +73,7 @@ public abstract class JDBCConnector {
 				e.printStackTrace();
 			}
 	}
+	
+	
+	
 }

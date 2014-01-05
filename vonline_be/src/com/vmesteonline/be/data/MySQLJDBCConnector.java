@@ -12,9 +12,7 @@ public class MySQLJDBCConnector extends JDBCConnector {
 	static final String USER = "vonline";
 	static final String PASS = "";
 
-	public MySQLJDBCConnector() throws Exception {
+	protected void connect() throws Exception {
 		super.connect(JDBC_DRIVER, DB_URL, USER, PASS);
 	}
-	
-
 }
