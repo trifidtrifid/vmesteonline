@@ -21,6 +21,18 @@ struct Session {
 	5: optional string cookie
 }
 
+enum LocationType { FLAT=1, FLOOR=2, HOUSE=3, BLOCK=4, DISTRICT=5, CITY=6, REGION=7, COUNTRY=8, WORLD=9 }
+
+struct Location {
+	1: i32 id,
+  	2: optional i32 parent,
+  	3: string name,
+  	4: LocationType type,
+  	5: double longitude,
+  	6: double attitude,
+  	7: double altitude // 'высота или номер этажа',
+}
+  
 exception InvalidOperation {
   1: i32 what,
   2: string why
