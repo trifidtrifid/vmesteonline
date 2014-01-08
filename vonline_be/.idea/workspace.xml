@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dee6d34e-f0c3-49b6-a86d-d729727d9be2" name="Default" comment="intelij Idea integration">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vonline_be.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../vmesteonline.ru-tests" afterPath="$PROJECT_DIR$/../vmesteonline.ru-tests" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="vonline_be.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -71,7 +70,7 @@
       <file leaf-file-name="AuthServiceImpl.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="19" selection-start="398" selection-end="417" vertical-scroll-proportion="0.11968504" vertical-offset="164" max-vertical-offset="1485">
+            <state line="29" column="58" selection-start="1001" selection-end="1001" vertical-scroll-proportion="0.42677164" vertical-offset="164" max-vertical-offset="1485">
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#462#1451#0" expanded="true" />
@@ -166,6 +165,10 @@
               <option name="myItemId" value="vonline_be" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -224,7 +227,7 @@
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="recentsLimit" value="5" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="dynamic.classpath" value="false" />
@@ -518,16 +521,16 @@
       <updated>1389173765159</updated>
       <workItem from="1389173769739" duration="280000" />
       <workItem from="1389174051223" duration="1398000" />
-      <workItem from="1389175450015" duration="2821000" />
+      <workItem from="1389175450015" duration="3674000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4499000" />
+    <option name="totallyTimeSpent" value="5352000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="-4" width="1922" height="1085" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -551,7 +554,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299595" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -641,7 +644,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="19" selection-start="398" selection-end="417" vertical-scroll-proportion="0.11968504" vertical-offset="164" max-vertical-offset="1485">
+        <state line="29" column="58" selection-start="1001" selection-end="1001" vertical-scroll-proportion="0.42677164" vertical-offset="164" max-vertical-offset="1485">
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#462#1451#0" expanded="true" />

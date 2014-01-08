@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="thrift/gen-java"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/usr/src/mysql-connector-java-5.1.28/mysql-connector-java-5.1.28-bin.jar"/>
 	<classpathentry kind="lib" path="lib/apache-thrift/libthrift-0.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/apache-thrift/lib/commons-codec-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/apache-thrift/lib/commons-lang3-3.1.jar"/>
@@ -16,5 +15,6 @@
 	<classpathentry kind="lib" path="lib/apache-thrift/lib/servlet-api-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/apache-thrift/lib/slf4j-api-1.5.8.jar"/>
 	<classpathentry kind="lib" path="lib/apache-thrift/lib/slf4j-log4j12-1.5.8.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.28-bin.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
