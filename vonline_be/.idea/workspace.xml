@@ -3,6 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="dee6d34e-f0c3-49b6-a86d-d729727d9be2" name="Default" comment="intelij Idea integration">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../vmesteonline.ru-tests" afterPath="$PROJECT_DIR$/../vmesteonline.ru-tests" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/lib.xml" afterPath="$PROJECT_DIR$/.idea/libraries/lib.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="vonline_be.iws" />
@@ -70,14 +73,31 @@
       <file leaf-file-name="AuthServiceImpl.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="58" selection-start="1001" selection-end="1001" vertical-scroll-proportion="0.42677164" vertical-offset="164" max-vertical-offset="1485">
+            <state line="46" column="17" selection-start="1523" selection-end="1523" vertical-scroll-proportion="1.0866141" vertical-offset="0" max-vertical-offset="1575">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#462#1451#0" expanded="true" />
-                <element signature="e#1445#1446#0" expanded="true" />
-                <element signature="e#1745#2249#0" expanded="true" />
-                <element signature="e#2243#2244#0" expanded="true" />
+                <element signature="e#539#1528#0" expanded="true" />
+                <element signature="e#1967#2471#0" expanded="true" />
+                <element signature="e#2465#2466#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ServiceImpl.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="14" column="0" selection-start="320" selection-end="320" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MySQLJDBCConnector.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/data/MySQLJDBCConnector.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="4" column="13" selection-start="106" selection-end="106" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="360">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -96,7 +116,7 @@
       <file leaf-file-name="JDBCConnector.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/data/JDBCConnector.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="50" column="17" selection-start="1277" selection-end="1277" vertical-scroll-proportion="0.0" vertical-offset="539" max-vertical-offset="1275">
+            <state line="22" column="31" selection-start="628" selection-end="637" vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="1275">
               <folding />
             </state>
           </provider>
@@ -120,6 +140,7 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
+        <option value="$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java" />
         <option value="$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java" />
       </list>
     </option>
@@ -144,6 +165,11 @@
   </component>
   <component name="ProjectReloadState">
     <option name="STATE" value="2" />
+  </component>
+  <component name="ProjectStructureProblems">
+    <ignored-problems>
+      <problem id="library-invalid-classes-path(library:project:lib)" />
+    </ignored-problems>
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
@@ -212,6 +238,28 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vonline_be" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vonline_be" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="be" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="data" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
@@ -232,7 +280,7 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="dynamic.classpath" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/war" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/mysql-connector-java-5.1.28-bin.jar!/" />
     <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
@@ -521,12 +569,12 @@
       <updated>1389173765159</updated>
       <workItem from="1389173769739" duration="280000" />
       <workItem from="1389174051223" duration="1398000" />
-      <workItem from="1389175450015" duration="3674000" />
+      <workItem from="1389175450015" duration="6110000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5352000" />
+    <option name="totallyTimeSpent" value="7788000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="-4" width="1922" height="1085" extended-state="6" />
@@ -591,10 +639,9 @@
         <state line="57" column="31" selection-start="1843" selection-end="1843" vertical-scroll-proportion="0.0" vertical-offset="855" max-vertical-offset="1365">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#462#1451#0" expanded="true" />
-            <element signature="e#1445#1446#0" expanded="true" />
-            <element signature="e#1745#2249#0" expanded="true" />
-            <element signature="e#2243#2244#0" expanded="true" />
+            <element signature="e#539#1528#0" expanded="true" />
+            <element signature="e#1967#2471#0" expanded="true" />
+            <element signature="e#2465#2466#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -611,10 +658,9 @@
         <state line="13" column="71" selection-start="353" selection-end="353" vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="1290">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#462#1451#0" expanded="true" />
-            <element signature="e#1445#1446#0" expanded="true" />
-            <element signature="e#1745#2249#0" expanded="true" />
-            <element signature="e#2243#2244#0" expanded="true" />
+            <element signature="e#539#1528#0" expanded="true" />
+            <element signature="e#1967#2471#0" expanded="true" />
+            <element signature="e#2465#2466#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -637,20 +683,33 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/data/JDBCConnector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="17" selection-start="1277" selection-end="1277" vertical-scroll-proportion="0.0" vertical-offset="539" max-vertical-offset="1275">
+        <state line="22" column="31" selection-start="628" selection-end="637" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1275">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/data/MySQLJDBCConnector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="13" selection-start="106" selection-end="106" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="360">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="0" selection-start="320" selection-end="320" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="58" selection-start="1001" selection-end="1001" vertical-scroll-proportion="0.42677164" vertical-offset="164" max-vertical-offset="1485">
+        <state line="46" column="17" selection-start="1523" selection-end="1523" vertical-scroll-proportion="1.0866141" vertical-offset="0" max-vertical-offset="1575">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#462#1451#0" expanded="true" />
-            <element signature="e#1445#1446#0" expanded="true" />
-            <element signature="e#1745#2249#0" expanded="true" />
-            <element signature="e#2243#2244#0" expanded="true" />
+            <element signature="e#539#1528#0" expanded="true" />
+            <element signature="e#1967#2471#0" expanded="true" />
+            <element signature="e#2465#2466#0" expanded="true" />
           </folding>
         </state>
       </provider>

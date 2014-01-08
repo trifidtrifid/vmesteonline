@@ -1,19 +1,21 @@
 package com.vmesteonline.be;
 
+import com.vmesteonline.be.data.JDBCConnector;
+import org.apache.thrift.TException;
+
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 
-import org.apache.thrift.TException;
-
-import java.sql.ResultSet;
-
-import com.vmesteonline.be.data.JDBCConnector;
-
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
-	
-	@Override
-	public Session login(final String uname, final String password)
+
+    public AuthServiceImpl(JDBCConnector con) {
+        super(con);
+    }
+
+    @Override
+    public Session login(final String uname, final String password)
 			throws InvalidOperation, TException {
 		try {
 			return con.getResult( new JDBCConnector.ResultCreator<Session>() {
@@ -46,8 +48,11 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			
 		} catch (java.lang.Exception e) {
 			if( e instanceof InvalidOperation ) throw (InvalidOperation)e;
-			throw new TException( e.getMessage() );
-		}
+            if (e instanceof JDBCConnector.Exception)
+                throw new InvalidOperation(500, "Database connection error. " + e.getMessage());
+
+            throw new TException(e.getMessage());
+        }
 	}
 
 	@Override
@@ -69,7 +74,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			
 		} catch (java.lang.Exception e) {
 			if( e instanceof InvalidOperation ) throw (InvalidOperation)e;
-			throw new TException( e.getMessage() );
+            if (e instanceof JDBCConnector.Exception)
+                throw new InvalidOperation(500, "Database connection error. " + e.getMessage());
+            throw new TException( e.getMessage() );
 		}
 	}
 	
