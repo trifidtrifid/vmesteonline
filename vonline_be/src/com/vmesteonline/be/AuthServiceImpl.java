@@ -9,7 +9,6 @@ import org.apache.thrift.TException;
 import java.sql.ResultSet;
 
 import com.vmesteonline.be.data.JDBCConnector;
-import com.vmesteonline.be.data.MySQLJDBCConnector;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	
@@ -17,7 +16,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public Session login(final String uname, final String password)
 			throws InvalidOperation, TException {
 		try {
-			return con.getResult( new JDBCConnector.ResultCreator() {
+			return con.getResult( new JDBCConnector.ResultCreator<Session>() {
 				
 				public Session createResult(Connection conn) throws java.lang.Exception {
 					ResultSet rs = con.executeQuery("SELECT id from user where login='"+uname+"' AND password='"+password+"'");
@@ -54,7 +53,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	@Override
 	public Session getSession(final String salt) throws InvalidOperation, TException {
 		try {
-			return con.getResult( new JDBCConnector.ResultCreator() {
+			return con.getResult( new JDBCConnector.ResultCreator<Session>() {
 				public Session createResult(Connection conn) throws java.lang.Exception {
 					ResultSet rs = con.executeQuery("SELECT uid,created,cookie,userAgent from session where salt="+salt);
 					if( rs.next() ){ //session exists
