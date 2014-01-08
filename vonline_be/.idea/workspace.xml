@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="dee6d34e-f0c3-49b6-a86d-d729727d9be2" name="Default" comment="intelij Idea integration">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../vmesteonline.ru-tests" afterPath="$PROJECT_DIR$/../vmesteonline.ru-tests" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="vonline_be.iws" />
@@ -70,13 +71,23 @@
       <file leaf-file-name="AuthServiceImpl.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="17" selection-start="1524" selection-end="1524" vertical-scroll-proportion="1.0393701" vertical-offset="15" max-vertical-offset="1590">
+            <state line="16" column="0" selection-start="414" selection-end="414" vertical-scroll-proportion="0.42402828" vertical-offset="0" max-vertical-offset="1605">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#540#1529#0" expanded="true" />
-                <element signature="e#1988#2492#0" expanded="true" />
-                <element signature="e#2486#2487#0" expanded="true" />
+                <element signature="e#571#1560#0" expanded="true" />
+                <element signature="e#1554#1555#0" expanded="true" />
+                <element signature="e#2019#2523#0" expanded="true" />
+                <element signature="e#2517#2518#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AuthSericeServlet.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthSericeServlet.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="9" column="37" selection-start="250" selection-end="267" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -84,7 +95,7 @@
       <file leaf-file-name="ServiceImpl.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="0" selection-start="327" selection-end="327" vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="315">
+            <state line="16" column="0" selection-start="327" selection-end="327" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
               <folding />
             </state>
           </provider>
@@ -566,7 +577,7 @@
       <updated>1389173765159</updated>
       <workItem from="1389173769739" duration="280000" />
       <workItem from="1389174051223" duration="1398000" />
-      <workItem from="1389175450015" duration="6181000" />
+      <workItem from="1389175450015" duration="6322000" />
     </task>
     <task id="LOCAL-00001" summary="some fixes">
       <created>1389183107036</created>
@@ -576,11 +587,15 @@
       <created>1389183126336</created>
       <updated>1389183126336</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="intelij Idea integration">
+      <created>1389183151422</created>
+      <updated>1389183151422</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7859000" />
+    <option name="totallyTimeSpent" value="8000000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="-4" width="1922" height="1085" extended-state="6" />
@@ -595,13 +610,13 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39979756" sideWeight="0.903125" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39979756" sideWeight="0.903125" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3299595" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39979756" sideWeight="0.096875" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3299595" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299595" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -648,9 +663,10 @@
         <state line="57" column="31" selection-start="1843" selection-end="1843" vertical-scroll-proportion="0.0" vertical-offset="855" max-vertical-offset="1365">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#540#1529#0" expanded="true" />
-            <element signature="e#1988#2492#0" expanded="true" />
-            <element signature="e#2486#2487#0" expanded="true" />
+            <element signature="e#571#1560#0" expanded="true" />
+            <element signature="e#1554#1555#0" expanded="true" />
+            <element signature="e#2019#2523#0" expanded="true" />
+            <element signature="e#2517#2518#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -667,9 +683,10 @@
         <state line="13" column="71" selection-start="353" selection-end="353" vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="1290">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#540#1529#0" expanded="true" />
-            <element signature="e#1988#2492#0" expanded="true" />
-            <element signature="e#2486#2487#0" expanded="true" />
+            <element signature="e#571#1560#0" expanded="true" />
+            <element signature="e#1554#1555#0" expanded="true" />
+            <element signature="e#2019#2523#0" expanded="true" />
+            <element signature="e#2517#2518#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -711,14 +728,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthSericeServlet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="37" selection-start="250" selection-end="267" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="17" selection-start="1524" selection-end="1524" vertical-scroll-proportion="1.0393701" vertical-offset="15" max-vertical-offset="1590">
+        <state line="16" column="0" selection-start="414" selection-end="414" vertical-scroll-proportion="0.42402828" vertical-offset="0" max-vertical-offset="1605">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#540#1529#0" expanded="true" />
-            <element signature="e#1988#2492#0" expanded="true" />
-            <element signature="e#2486#2487#0" expanded="true" />
+            <element signature="e#571#1560#0" expanded="true" />
+            <element signature="e#1554#1555#0" expanded="true" />
+            <element signature="e#2019#2523#0" expanded="true" />
+            <element signature="e#2517#2518#0" expanded="true" />
           </folding>
         </state>
       </provider>

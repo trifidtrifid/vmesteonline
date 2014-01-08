@@ -14,6 +14,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
         super(con);
     }
 
+    public AuthServiceImpl() {
+    }
+
     @Override
     public Session login(final String uname, final String password)
 			throws InvalidOperation, TException {
