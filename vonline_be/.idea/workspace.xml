@@ -566,17 +566,21 @@
       <updated>1389173765159</updated>
       <workItem from="1389173769739" duration="280000" />
       <workItem from="1389174051223" duration="1398000" />
-      <workItem from="1389175450015" duration="6170000" />
+      <workItem from="1389175450015" duration="6181000" />
     </task>
     <task id="LOCAL-00001" summary="some fixes">
       <created>1389183107036</created>
       <updated>1389183107036</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="intelij Idea integration">
+      <created>1389183126336</created>
+      <updated>1389183126336</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7848000" />
+    <option name="totallyTimeSpent" value="7859000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="-4" width="1922" height="1085" extended-state="6" />
@@ -625,9 +629,9 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="intelij Idea integration" />
     <MESSAGE value="some fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="some fixes" />
+    <MESSAGE value="intelij Idea integration" />
+    <option name="LAST_COMMIT_MESSAGE" value="intelij Idea integration" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
