@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="dee6d34e-f0c3-49b6-a86d-d729727d9be2" name="Default" comment="intelij Idea integration">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../vmesteonline.ru-tests" afterPath="$PROJECT_DIR$/../vmesteonline.ru-tests" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/lib.xml" afterPath="$PROJECT_DIR$/.idea/libraries/lib.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="vonline_be.iws" />
@@ -73,12 +70,12 @@
       <file leaf-file-name="AuthServiceImpl.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="46" column="17" selection-start="1523" selection-end="1523" vertical-scroll-proportion="1.0866141" vertical-offset="0" max-vertical-offset="1575">
+            <state line="45" column="17" selection-start="1524" selection-end="1524" vertical-scroll-proportion="1.0393701" vertical-offset="15" max-vertical-offset="1590">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#539#1528#0" expanded="true" />
-                <element signature="e#1967#2471#0" expanded="true" />
-                <element signature="e#2465#2466#0" expanded="true" />
+                <element signature="e#540#1529#0" expanded="true" />
+                <element signature="e#1988#2492#0" expanded="true" />
+                <element signature="e#2486#2487#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -87,7 +84,7 @@
       <file leaf-file-name="ServiceImpl.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="0" selection-start="320" selection-end="320" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285">
+            <state line="16" column="0" selection-start="327" selection-end="327" vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="315">
               <folding />
             </state>
           </provider>
@@ -569,12 +566,17 @@
       <updated>1389173765159</updated>
       <workItem from="1389173769739" duration="280000" />
       <workItem from="1389174051223" duration="1398000" />
-      <workItem from="1389175450015" duration="6110000" />
+      <workItem from="1389175450015" duration="6170000" />
     </task>
+    <task id="LOCAL-00001" summary="some fixes">
+      <created>1389183107036</created>
+      <updated>1389183107036</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7788000" />
+    <option name="totallyTimeSpent" value="7848000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="-4" width="1922" height="1085" extended-state="6" />
@@ -624,7 +626,10 @@
       <TodoPanelSettings />
     </option>
     <MESSAGE value="intelij Idea integration" />
-    <option name="LAST_COMMIT_MESSAGE" value="intelij Idea integration" />
+    <MESSAGE value="some fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="some fixes" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -639,9 +644,9 @@
         <state line="57" column="31" selection-start="1843" selection-end="1843" vertical-scroll-proportion="0.0" vertical-offset="855" max-vertical-offset="1365">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#539#1528#0" expanded="true" />
-            <element signature="e#1967#2471#0" expanded="true" />
-            <element signature="e#2465#2466#0" expanded="true" />
+            <element signature="e#540#1529#0" expanded="true" />
+            <element signature="e#1988#2492#0" expanded="true" />
+            <element signature="e#2486#2487#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -658,9 +663,9 @@
         <state line="13" column="71" selection-start="353" selection-end="353" vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="1290">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#539#1528#0" expanded="true" />
-            <element signature="e#1967#2471#0" expanded="true" />
-            <element signature="e#2465#2466#0" expanded="true" />
+            <element signature="e#540#1529#0" expanded="true" />
+            <element signature="e#1988#2492#0" expanded="true" />
+            <element signature="e#2486#2487#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -697,19 +702,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="0" selection-start="320" selection-end="320" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285">
+        <state line="16" column="0" selection-start="327" selection-end="327" vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="315">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="17" selection-start="1523" selection-end="1523" vertical-scroll-proportion="1.0866141" vertical-offset="0" max-vertical-offset="1575">
+        <state line="45" column="17" selection-start="1524" selection-end="1524" vertical-scroll-proportion="1.0393701" vertical-offset="15" max-vertical-offset="1590">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#539#1528#0" expanded="true" />
-            <element signature="e#1967#2471#0" expanded="true" />
-            <element signature="e#2465#2466#0" expanded="true" />
+            <element signature="e#540#1529#0" expanded="true" />
+            <element signature="e#1988#2492#0" expanded="true" />
+            <element signature="e#2486#2487#0" expanded="true" />
           </folding>
         </state>
       </provider>
