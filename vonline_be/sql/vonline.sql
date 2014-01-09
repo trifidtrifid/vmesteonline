@@ -57,6 +57,8 @@ CREATE TABLE `group` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `location` INT NULL DEFAULT NULL,
   `comment` VARCHAR(255) NULL DEFAULT NULL COMMENT 'расширенное описание или коммент',
+  `shortName` VARCHAR(16) NOT NULL,
+  `name` VARCHAR(200) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
 KEY (`location`)
 );
@@ -102,6 +104,11 @@ CREATE TABLE `message` (
   `content` MEDIUMTEXT NOT NULL COMMENT 'содержание сообщения',
   `likes` INT NOT NULL DEFAULT 0,
   `unlikes` INT NOT NULL DEFAULT 0,
+  `group` INT NOT NULL,
+  `idForum` INT NULL DEFAULT NULL,
+  `idShop` INT NULL DEFAULT NULL,
+  `idDialog` INT NULL DEFAULT NULL,
+  `idNews` INT NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) COMMENT 'сообщение';
 
@@ -172,22 +179,6 @@ KEY (`friend`)
 ) COMMENT 'список друзей';
 
 -- ---
--- Table 'message_group'
--- отношение сообщений к группам
--- ---
-
-DROP TABLE IF EXISTS `message_group`;
-		
-CREATE TABLE `message_group` (
-  `message` INT NOT NULL,
-  `group` INT NOT NULL,
-  `cansee` bit NOT NULL DEFAULT 0 COMMENT 'видно в группе',
-  `canresponse` bit NOT NULL DEFAULT 0 COMMENT 'члены группы могут отвечать',
-  PRIMARY KEY (`message`, `group`),
-KEY (`group`, `cansee`)
-) COMMENT 'отношение сообщений к группам';
-
--- ---
 -- Table 'session'
 -- таблица активных сессий
 -- ---
@@ -200,6 +191,7 @@ CREATE TABLE `session` (
   `created` DATETIME NOT NULL,
   `userAgent` VARCHAR(64) NULL DEFAULT NULL,
   `cookie` VARCHAR(32) NULL DEFAULT NULL,
+  `lastUpdate` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`salt`),
 KEY (`user`)
 ) COMMENT 'таблица активных сессий';
@@ -216,10 +208,25 @@ CREATE TABLE `user_topic` (
   `topic` INT NOT NULL,
   `archived` bit NOT NULL DEFAULT false,
   `messages` INT NOT NULL DEFAULT 0 COMMENT 'число сообщкний пользоваткля в топике',
-  `lastActivity` TIMESTAMP NOT NULL,
+  `lastActivity` INT NOT NULL,
   `dolike` TINYINT NOT NULL DEFAULT 0,
+  `readMessageNum` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`user`, `topic`)
 ) COMMENT 'активность пользователя в теме';
+
+-- ---
+-- Table 'curtom_user_group'
+-- Таблица пользовательских групп
+-- ---
+
+DROP TABLE IF EXISTS `curtom_user_group`;
+		
+CREATE TABLE `curtom_user_group` (
+  `user` INT NOT NULL AUTO_INCREMENT,
+  `grp` INT NOT NULL COMMENT 'идентификатор группы но при автогенерации sql из sqld group ',
+  `location` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`user`)
+) COMMENT 'Таблица пользовательских групп';
 
 -- ---
 -- Foreign Keys 
@@ -227,25 +234,30 @@ CREATE TABLE `user_topic` (
 
 ALTER TABLE `location` ADD FOREIGN KEY (parent) REFERENCES `location` (`id`);
 ALTER TABLE `user` ADD FOREIGN KEY (location) REFERENCES `location` (`id`);
-ALTER TABLE `group` ADD FOREIGN KEY (id) REFERENCES `message_group` (`group`);
-ALTER TABLE `group` ADD FOREIGN KEY (location) REFERENCES `location` (`id`);
+ALTER TABLE `group` ADD FOREIGN KEY (id) REFERENCES `location` (`id`);
 ALTER TABLE `topic` ADD FOREIGN KEY (message) REFERENCES `message` (`id`);
 ALTER TABLE `topic` ADD FOREIGN KEY (rubric) REFERENCES `rubric` (`id`);
-ALTER TABLE `message` ADD FOREIGN KEY (id) REFERENCES `message_group` (`message`);
 ALTER TABLE `message` ADD FOREIGN KEY (parent) REFERENCES `message` (`id`);
 ALTER TABLE `message` ADD FOREIGN KEY (topic) REFERENCES `topic` (`id`);
 ALTER TABLE `message` ADD FOREIGN KEY (author) REFERENCES `user` (`id`);
 ALTER TABLE `message` ADD FOREIGN KEY (recipient) REFERENCES `user` (`id`);
 ALTER TABLE `message` ADD FOREIGN KEY (approved) REFERENCES `user` (`id`);
+ALTER TABLE `message` ADD FOREIGN KEY (idForum) REFERENCES `message` (`id`);
+ALTER TABLE `message` ADD FOREIGN KEY (idShop) REFERENCES `message` (`id`);
+ALTER TABLE `message` ADD FOREIGN KEY (idDialog) REFERENCES `message` (`id`);
+ALTER TABLE `message` ADD FOREIGN KEY (idNews) REFERENCES `message` (`id`);
 ALTER TABLE `user_message` ADD FOREIGN KEY (user) REFERENCES `user` (`id`);
 ALTER TABLE `user_message` ADD FOREIGN KEY (message) REFERENCES `message` (`id`);
 ALTER TABLE `user_rubric` ADD FOREIGN KEY (user) REFERENCES `user` (`id`);
 ALTER TABLE `user_rubric` ADD FOREIGN KEY (rubric) REFERENCES `rubric` (`id`);
-ALTER TABLE `user_rubric` ADD FOREIGN KEY (grp) REFERENCES `group` (`id`);
 ALTER TABLE `friendship` ADD FOREIGN KEY (user) REFERENCES `user` (`id`);
 ALTER TABLE `friendship` ADD FOREIGN KEY (friend) REFERENCES `user` (`id`);
 ALTER TABLE `session` ADD FOREIGN KEY (user) REFERENCES `user` (`id`);
+ALTER TABLE `user_topic` ADD FOREIGN KEY (user) REFERENCES `user` (`id`);
 ALTER TABLE `user_topic` ADD FOREIGN KEY (topic) REFERENCES `topic` (`id`);
+ALTER TABLE `curtom_user_group` ADD FOREIGN KEY (user) REFERENCES `user` (`id`);
+ALTER TABLE `curtom_user_group` ADD FOREIGN KEY (grp) REFERENCES `group` (`id`);
+ALTER TABLE `curtom_user_group` ADD FOREIGN KEY (location) REFERENCES `location` (`id`);
 
 -- ---
 -- Table Properties
@@ -260,9 +272,9 @@ ALTER TABLE `user_topic` ADD FOREIGN KEY (topic) REFERENCES `topic` (`id`);
 -- ALTER TABLE `user_rubric` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `rubric` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `friendship` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `message_group` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `session` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `user_topic` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `curtom_user_group` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ---
 -- Test Data
@@ -272,12 +284,12 @@ ALTER TABLE `user_topic` ADD FOREIGN KEY (topic) REFERENCES `topic` (`id`);
 -- ('','','','','','','');
 -- INSERT INTO `user` (`id`,`location`,`login`,`password`,`firstName`,`secondName`,`DOB`,`sex`,`intrests`) VALUES
 -- ('','','','','','','','','');
--- INSERT INTO `group` (`id`,`location`,`comment`) VALUES
--- ('','','');
+-- INSERT INTO `group` (`id`,`location`,`comment`,`shortName`,`name`) VALUES
+-- ('','','','','');
 -- INSERT INTO `topic` (`id`,`message`,`messageNum`,`viewers`,`usersNum`,`lastUpdate`,`likes`,`unlikes`,`rubric`) VALUES
 -- ('','','','','','','','','');
--- INSERT INTO `message` (`id`,`parent`,`type`,`topic`,`author`,`recipient`,`created`,`edited`,`approved`,`content`,`likes`,`unlikes`) VALUES
--- ('','','','','','','','','','','','');
+-- INSERT INTO `message` (`id`,`parent`,`type`,`topic`,`author`,`recipient`,`created`,`edited`,`approved`,`content`,`likes`,`unlikes`,`group`,`idForum`,`idShop`,`idDialog`,`idNews`) VALUES
+-- ('','','','','','','','','','','','','','','','','');
 -- INSERT INTO `user_message` (`user`,`message`,`read`,`unintrested`,`like`,`unlike`) VALUES
 -- ('','','','','','');
 -- INSERT INTO `user_rubric` (`user`,`rubric`,`grp`,`subscribed`,`topics`,`messages`) VALUES
@@ -286,10 +298,10 @@ ALTER TABLE `user_topic` ADD FOREIGN KEY (topic) REFERENCES `topic` (`id`);
 -- ('','','','','');
 -- INSERT INTO `friendship` (`user`,`friend`,`state`) VALUES
 -- ('','','');
--- INSERT INTO `message_group` (`message`,`group`,`cansee`,`canresponse`) VALUES
--- ('','','','');
--- INSERT INTO `session` (`salt`,`user`,`created`,`userAgent`,`cookie`) VALUES
--- ('','','','','');
--- INSERT INTO `user_topic` (`user`,`topic`,`archived`,`messages`,`lastActivity`,`dolike`) VALUES
+-- INSERT INTO `session` (`salt`,`user`,`created`,`userAgent`,`cookie`,`lastUpdate`) VALUES
 -- ('','','','','','');
+-- INSERT INTO `user_topic` (`user`,`topic`,`archived`,`messages`,`lastActivity`,`dolike`,`readMessageNum`) VALUES
+-- ('','','','','','','');
+-- INSERT INTO `curtom_user_group` (`user`,`grp`,`location`) VALUES
+-- ('','','');
 
