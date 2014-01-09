@@ -6,11 +6,11 @@ import com.vmesteonline.be.data.MySQLJDBCConnector;
 public class ServiceImpl {
     protected JDBCConnector con;
 
-    ServiceImpl(JDBCConnector con) {
+    protected ServiceImpl(JDBCConnector con) {
         this.con = con;
     }
 
-    ServiceImpl() {
+    protected ServiceImpl() {
         con = new MySQLJDBCConnector();
     }
 }
