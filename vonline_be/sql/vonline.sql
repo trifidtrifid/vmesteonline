@@ -225,6 +225,7 @@ CREATE TABLE `curtom_user_group` (
   `user` INT NOT NULL AUTO_INCREMENT,
   `grp` INT NOT NULL COMMENT 'идентификатор группы но при автогенерации sql из sqld group ',
   `location` INT NULL DEFAULT NULL,
+  `creator` INT NULL DEFAULT NULL,
   PRIMARY KEY (`user`)
 ) COMMENT 'Таблица пользовательских групп';
 
@@ -258,6 +259,7 @@ ALTER TABLE `user_topic` ADD FOREIGN KEY (topic) REFERENCES `topic` (`id`);
 ALTER TABLE `curtom_user_group` ADD FOREIGN KEY (user) REFERENCES `user` (`id`);
 ALTER TABLE `curtom_user_group` ADD FOREIGN KEY (grp) REFERENCES `group` (`id`);
 ALTER TABLE `curtom_user_group` ADD FOREIGN KEY (location) REFERENCES `location` (`id`);
+ALTER TABLE `curtom_user_group` ADD FOREIGN KEY (creator) REFERENCES `user` (`id`);
 
 -- ---
 -- Table Properties
@@ -302,6 +304,6 @@ ALTER TABLE `curtom_user_group` ADD FOREIGN KEY (location) REFERENCES `location`
 -- ('','','','','','');
 -- INSERT INTO `user_topic` (`user`,`topic`,`archived`,`messages`,`lastActivity`,`dolike`,`readMessageNum`) VALUES
 -- ('','','','','','','');
--- INSERT INTO `curtom_user_group` (`user`,`grp`,`location`) VALUES
--- ('','','');
+-- INSERT INTO `curtom_user_group` (`user`,`grp`,`location`,`creator`) VALUES
+-- ('','','','');
 

@@ -4,7 +4,10 @@ namespace * com.vmesteonline.be
 struct Group {
 	1: i32 id,
 	2: i32 location,
-	3: string comment //'расширенное описание группы или коммент'
+	3: i32 creator, //идентификатор создателя шруппы для пользовательских групп
+	4: optional string comment, //'расширенное описание группы или коммент'
+	5: string shortName, // размер не более 16 символов
+    6: optional string name //до 200 символов
 }
 
 		
@@ -20,7 +23,7 @@ struct Topic {
 	9: optional i32 rubric, //ссылка на рубрику
 }
 
-enum MessageType { base=1, dialogue=2 }
+enum MessageType { BASE=1, DIALOG=2, SHOP=3, NEWS=4 }
 
 struct Message {
 	1: i32 id,
@@ -35,6 +38,11 @@ struct Message {
 	10: string content, // 'содержание сообщения',
 	11: i32 likes,
 	12: i32 unlikes,
+	13: i32 group,
+	14: optional i32 idForum,
+	15: optional i32 idShop	
+	16: optional i32 idDialog,
+	17: optional i32 idNews,
  } // 'сообщение';
 
 struct UserMessage {
@@ -71,12 +79,6 @@ struct Friendship {
 	3: FriendshipType state // 'состояние - запрос, подтверждено, отклонено ',
 } // 'список друзей';
 
-struct MessageGroup {
-	1: i32 message,
-	2: i32 group,
-	3: bool cansee, // 'видно в группе',
-	4: bool canresponse, // 'члены группы могут отвечать',
-} // 'отношение сообщений к группам';
 
 struct UserTopic {
 	1: i32 user,
@@ -84,7 +86,8 @@ struct UserTopic {
 	3: bool archived,
 	4: i32 messages, // 'число сообщкний пользоваткля в топике',
 	5: i32 lastActivity, //TIMESTAMP,
-	6: byte dolike
+	6: byte dolike,
+	7: i32 `readMessageNum,
 } // 'активность пользователя в теме';
 
 
