@@ -35,12 +35,13 @@ import org.slf4j.LoggerFactory;
 public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._Fields>, java.io.Serializable, Cloneable, Comparable<UserTopic> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("UserTopic");
 
-  private static final org.apache.thrift.protocol.TField USER_FIELD_DESC = new org.apache.thrift.protocol.TField("user", org.apache.thrift.protocol.TType.I32, (short)1);
-  private static final org.apache.thrift.protocol.TField TOPIC_FIELD_DESC = new org.apache.thrift.protocol.TField("topic", org.apache.thrift.protocol.TType.I32, (short)2);
+  private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I32, (short)1);
+  private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I32, (short)2);
   private static final org.apache.thrift.protocol.TField ARCHIVED_FIELD_DESC = new org.apache.thrift.protocol.TField("archived", org.apache.thrift.protocol.TType.BOOL, (short)3);
-  private static final org.apache.thrift.protocol.TField MESSAGES_FIELD_DESC = new org.apache.thrift.protocol.TField("messages", org.apache.thrift.protocol.TType.I32, (short)4);
+  private static final org.apache.thrift.protocol.TField MESSAGES_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("messagesNum", org.apache.thrift.protocol.TType.I32, (short)4);
   private static final org.apache.thrift.protocol.TField LAST_ACTIVITY_FIELD_DESC = new org.apache.thrift.protocol.TField("lastActivity", org.apache.thrift.protocol.TType.I32, (short)5);
   private static final org.apache.thrift.protocol.TField DOLIKE_FIELD_DESC = new org.apache.thrift.protocol.TField("dolike", org.apache.thrift.protocol.TType.BYTE, (short)6);
+  private static final org.apache.thrift.protocol.TField READ_MESSAGE_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("readMessageNum", org.apache.thrift.protocol.TType.I32, (short)7);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -48,21 +49,23 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     schemes.put(TupleScheme.class, new UserTopicTupleSchemeFactory());
   }
 
-  public int user; // required
-  public int topic; // required
+  public int userId; // required
+  public int topicId; // required
   public boolean archived; // required
-  public int messages; // required
+  public int messagesNum; // required
   public int lastActivity; // required
   public byte dolike; // required
+  public int readMessageNum; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    USER((short)1, "user"),
-    TOPIC((short)2, "topic"),
+    USER_ID((short)1, "userId"),
+    TOPIC_ID((short)2, "topicId"),
     ARCHIVED((short)3, "archived"),
-    MESSAGES((short)4, "messages"),
+    MESSAGES_NUM((short)4, "messagesNum"),
     LAST_ACTIVITY((short)5, "lastActivity"),
-    DOLIKE((short)6, "dolike");
+    DOLIKE((short)6, "dolike"),
+    READ_MESSAGE_NUM((short)7, "readMessageNum");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -77,18 +80,20 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // USER
-          return USER;
-        case 2: // TOPIC
-          return TOPIC;
+        case 1: // USER_ID
+          return USER_ID;
+        case 2: // TOPIC_ID
+          return TOPIC_ID;
         case 3: // ARCHIVED
           return ARCHIVED;
-        case 4: // MESSAGES
-          return MESSAGES;
+        case 4: // MESSAGES_NUM
+          return MESSAGES_NUM;
         case 5: // LAST_ACTIVITY
           return LAST_ACTIVITY;
         case 6: // DOLIKE
           return DOLIKE;
+        case 7: // READ_MESSAGE_NUM
+          return READ_MESSAGE_NUM;
         default:
           return null;
       }
@@ -129,28 +134,31 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
   }
 
   // isset id assignments
-  private static final int __USER_ISSET_ID = 0;
-  private static final int __TOPIC_ISSET_ID = 1;
+  private static final int __USERID_ISSET_ID = 0;
+  private static final int __TOPICID_ISSET_ID = 1;
   private static final int __ARCHIVED_ISSET_ID = 2;
-  private static final int __MESSAGES_ISSET_ID = 3;
+  private static final int __MESSAGESNUM_ISSET_ID = 3;
   private static final int __LASTACTIVITY_ISSET_ID = 4;
   private static final int __DOLIKE_ISSET_ID = 5;
+  private static final int __READMESSAGENUM_ISSET_ID = 6;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.USER, new org.apache.thrift.meta_data.FieldMetaData("user", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.TOPIC, new org.apache.thrift.meta_data.FieldMetaData("topic", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.TOPIC_ID, new org.apache.thrift.meta_data.FieldMetaData("topicId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.ARCHIVED, new org.apache.thrift.meta_data.FieldMetaData("archived", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-    tmpMap.put(_Fields.MESSAGES, new org.apache.thrift.meta_data.FieldMetaData("messages", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.MESSAGES_NUM, new org.apache.thrift.meta_data.FieldMetaData("messagesNum", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.LAST_ACTIVITY, new org.apache.thrift.meta_data.FieldMetaData("lastActivity", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.DOLIKE, new org.apache.thrift.meta_data.FieldMetaData("dolike", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BYTE)));
+    tmpMap.put(_Fields.READ_MESSAGE_NUM, new org.apache.thrift.meta_data.FieldMetaData("readMessageNum", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(UserTopic.class, metaDataMap);
   }
@@ -159,26 +167,29 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
   }
 
   public UserTopic(
-    int user,
-    int topic,
+    int userId,
+    int topicId,
     boolean archived,
-    int messages,
+    int messagesNum,
     int lastActivity,
-    byte dolike)
+    byte dolike,
+    int readMessageNum)
   {
     this();
-    this.user = user;
-    setUserIsSet(true);
-    this.topic = topic;
-    setTopicIsSet(true);
+    this.userId = userId;
+    setUserIdIsSet(true);
+    this.topicId = topicId;
+    setTopicIdIsSet(true);
     this.archived = archived;
     setArchivedIsSet(true);
-    this.messages = messages;
-    setMessagesIsSet(true);
+    this.messagesNum = messagesNum;
+    setMessagesNumIsSet(true);
     this.lastActivity = lastActivity;
     setLastActivityIsSet(true);
     this.dolike = dolike;
     setDolikeIsSet(true);
+    this.readMessageNum = readMessageNum;
+    setReadMessageNumIsSet(true);
   }
 
   /**
@@ -186,12 +197,13 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
    */
   public UserTopic(UserTopic other) {
     __isset_bitfield = other.__isset_bitfield;
-    this.user = other.user;
-    this.topic = other.topic;
+    this.userId = other.userId;
+    this.topicId = other.topicId;
     this.archived = other.archived;
-    this.messages = other.messages;
+    this.messagesNum = other.messagesNum;
     this.lastActivity = other.lastActivity;
     this.dolike = other.dolike;
+    this.readMessageNum = other.readMessageNum;
   }
 
   public UserTopic deepCopy() {
@@ -200,64 +212,66 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
 
   @Override
   public void clear() {
-    setUserIsSet(false);
-    this.user = 0;
-    setTopicIsSet(false);
-    this.topic = 0;
+    setUserIdIsSet(false);
+    this.userId = 0;
+    setTopicIdIsSet(false);
+    this.topicId = 0;
     setArchivedIsSet(false);
     this.archived = false;
-    setMessagesIsSet(false);
-    this.messages = 0;
+    setMessagesNumIsSet(false);
+    this.messagesNum = 0;
     setLastActivityIsSet(false);
     this.lastActivity = 0;
     setDolikeIsSet(false);
     this.dolike = 0;
+    setReadMessageNumIsSet(false);
+    this.readMessageNum = 0;
   }
 
-  public int getUser() {
-    return this.user;
+  public int getUserId() {
+    return this.userId;
   }
 
-  public UserTopic setUser(int user) {
-    this.user = user;
-    setUserIsSet(true);
+  public UserTopic setUserId(int userId) {
+    this.userId = userId;
+    setUserIdIsSet(true);
     return this;
   }
 
-  public void unsetUser() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __USER_ISSET_ID);
+  public void unsetUserId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __USERID_ISSET_ID);
   }
 
-  /** Returns true if field user is set (has been assigned a value) and false otherwise */
-  public boolean isSetUser() {
-    return EncodingUtils.testBit(__isset_bitfield, __USER_ISSET_ID);
+  /** Returns true if field userId is set (has been assigned a value) and false otherwise */
+  public boolean isSetUserId() {
+    return EncodingUtils.testBit(__isset_bitfield, __USERID_ISSET_ID);
   }
 
-  public void setUserIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __USER_ISSET_ID, value);
+  public void setUserIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __USERID_ISSET_ID, value);
   }
 
-  public int getTopic() {
-    return this.topic;
+  public int getTopicId() {
+    return this.topicId;
   }
 
-  public UserTopic setTopic(int topic) {
-    this.topic = topic;
-    setTopicIsSet(true);
+  public UserTopic setTopicId(int topicId) {
+    this.topicId = topicId;
+    setTopicIdIsSet(true);
     return this;
   }
 
-  public void unsetTopic() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPIC_ISSET_ID);
+  public void unsetTopicId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPICID_ISSET_ID);
   }
 
-  /** Returns true if field topic is set (has been assigned a value) and false otherwise */
-  public boolean isSetTopic() {
-    return EncodingUtils.testBit(__isset_bitfield, __TOPIC_ISSET_ID);
+  /** Returns true if field topicId is set (has been assigned a value) and false otherwise */
+  public boolean isSetTopicId() {
+    return EncodingUtils.testBit(__isset_bitfield, __TOPICID_ISSET_ID);
   }
 
-  public void setTopicIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPIC_ISSET_ID, value);
+  public void setTopicIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICID_ISSET_ID, value);
   }
 
   public boolean isArchived() {
@@ -283,27 +297,27 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ARCHIVED_ISSET_ID, value);
   }
 
-  public int getMessages() {
-    return this.messages;
+  public int getMessagesNum() {
+    return this.messagesNum;
   }
 
-  public UserTopic setMessages(int messages) {
-    this.messages = messages;
-    setMessagesIsSet(true);
+  public UserTopic setMessagesNum(int messagesNum) {
+    this.messagesNum = messagesNum;
+    setMessagesNumIsSet(true);
     return this;
   }
 
-  public void unsetMessages() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __MESSAGES_ISSET_ID);
+  public void unsetMessagesNum() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __MESSAGESNUM_ISSET_ID);
   }
 
-  /** Returns true if field messages is set (has been assigned a value) and false otherwise */
-  public boolean isSetMessages() {
-    return EncodingUtils.testBit(__isset_bitfield, __MESSAGES_ISSET_ID);
+  /** Returns true if field messagesNum is set (has been assigned a value) and false otherwise */
+  public boolean isSetMessagesNum() {
+    return EncodingUtils.testBit(__isset_bitfield, __MESSAGESNUM_ISSET_ID);
   }
 
-  public void setMessagesIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MESSAGES_ISSET_ID, value);
+  public void setMessagesNumIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MESSAGESNUM_ISSET_ID, value);
   }
 
   public int getLastActivity() {
@@ -352,21 +366,44 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __DOLIKE_ISSET_ID, value);
   }
 
+  public int getReadMessageNum() {
+    return this.readMessageNum;
+  }
+
+  public UserTopic setReadMessageNum(int readMessageNum) {
+    this.readMessageNum = readMessageNum;
+    setReadMessageNumIsSet(true);
+    return this;
+  }
+
+  public void unsetReadMessageNum() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __READMESSAGENUM_ISSET_ID);
+  }
+
+  /** Returns true if field readMessageNum is set (has been assigned a value) and false otherwise */
+  public boolean isSetReadMessageNum() {
+    return EncodingUtils.testBit(__isset_bitfield, __READMESSAGENUM_ISSET_ID);
+  }
+
+  public void setReadMessageNumIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __READMESSAGENUM_ISSET_ID, value);
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
-    case USER:
+    case USER_ID:
       if (value == null) {
-        unsetUser();
+        unsetUserId();
       } else {
-        setUser((Integer)value);
+        setUserId((Integer)value);
       }
       break;
 
-    case TOPIC:
+    case TOPIC_ID:
       if (value == null) {
-        unsetTopic();
+        unsetTopicId();
       } else {
-        setTopic((Integer)value);
+        setTopicId((Integer)value);
       }
       break;
 
@@ -378,11 +415,11 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
       }
       break;
 
-    case MESSAGES:
+    case MESSAGES_NUM:
       if (value == null) {
-        unsetMessages();
+        unsetMessagesNum();
       } else {
-        setMessages((Integer)value);
+        setMessagesNum((Integer)value);
       }
       break;
 
@@ -402,28 +439,39 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
       }
       break;
 
+    case READ_MESSAGE_NUM:
+      if (value == null) {
+        unsetReadMessageNum();
+      } else {
+        setReadMessageNum((Integer)value);
+      }
+      break;
+
     }
   }
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
-    case USER:
-      return Integer.valueOf(getUser());
+    case USER_ID:
+      return Integer.valueOf(getUserId());
 
-    case TOPIC:
-      return Integer.valueOf(getTopic());
+    case TOPIC_ID:
+      return Integer.valueOf(getTopicId());
 
     case ARCHIVED:
       return Boolean.valueOf(isArchived());
 
-    case MESSAGES:
-      return Integer.valueOf(getMessages());
+    case MESSAGES_NUM:
+      return Integer.valueOf(getMessagesNum());
 
     case LAST_ACTIVITY:
       return Integer.valueOf(getLastActivity());
 
     case DOLIKE:
       return Byte.valueOf(getDolike());
+
+    case READ_MESSAGE_NUM:
+      return Integer.valueOf(getReadMessageNum());
 
     }
     throw new IllegalStateException();
@@ -436,18 +484,20 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     }
 
     switch (field) {
-    case USER:
-      return isSetUser();
-    case TOPIC:
-      return isSetTopic();
+    case USER_ID:
+      return isSetUserId();
+    case TOPIC_ID:
+      return isSetTopicId();
     case ARCHIVED:
       return isSetArchived();
-    case MESSAGES:
-      return isSetMessages();
+    case MESSAGES_NUM:
+      return isSetMessagesNum();
     case LAST_ACTIVITY:
       return isSetLastActivity();
     case DOLIKE:
       return isSetDolike();
+    case READ_MESSAGE_NUM:
+      return isSetReadMessageNum();
     }
     throw new IllegalStateException();
   }
@@ -465,21 +515,21 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     if (that == null)
       return false;
 
-    boolean this_present_user = true;
-    boolean that_present_user = true;
-    if (this_present_user || that_present_user) {
-      if (!(this_present_user && that_present_user))
+    boolean this_present_userId = true;
+    boolean that_present_userId = true;
+    if (this_present_userId || that_present_userId) {
+      if (!(this_present_userId && that_present_userId))
         return false;
-      if (this.user != that.user)
+      if (this.userId != that.userId)
         return false;
     }
 
-    boolean this_present_topic = true;
-    boolean that_present_topic = true;
-    if (this_present_topic || that_present_topic) {
-      if (!(this_present_topic && that_present_topic))
+    boolean this_present_topicId = true;
+    boolean that_present_topicId = true;
+    if (this_present_topicId || that_present_topicId) {
+      if (!(this_present_topicId && that_present_topicId))
         return false;
-      if (this.topic != that.topic)
+      if (this.topicId != that.topicId)
         return false;
     }
 
@@ -492,12 +542,12 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
         return false;
     }
 
-    boolean this_present_messages = true;
-    boolean that_present_messages = true;
-    if (this_present_messages || that_present_messages) {
-      if (!(this_present_messages && that_present_messages))
+    boolean this_present_messagesNum = true;
+    boolean that_present_messagesNum = true;
+    if (this_present_messagesNum || that_present_messagesNum) {
+      if (!(this_present_messagesNum && that_present_messagesNum))
         return false;
-      if (this.messages != that.messages)
+      if (this.messagesNum != that.messagesNum)
         return false;
     }
 
@@ -519,6 +569,15 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
         return false;
     }
 
+    boolean this_present_readMessageNum = true;
+    boolean that_present_readMessageNum = true;
+    if (this_present_readMessageNum || that_present_readMessageNum) {
+      if (!(this_present_readMessageNum && that_present_readMessageNum))
+        return false;
+      if (this.readMessageNum != that.readMessageNum)
+        return false;
+    }
+
     return true;
   }
 
@@ -535,22 +594,22 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
 
     int lastComparison = 0;
 
-    lastComparison = Boolean.valueOf(isSetUser()).compareTo(other.isSetUser());
+    lastComparison = Boolean.valueOf(isSetUserId()).compareTo(other.isSetUserId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetUser()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.user, other.user);
+    if (isSetUserId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userId, other.userId);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetTopic()).compareTo(other.isSetTopic());
+    lastComparison = Boolean.valueOf(isSetTopicId()).compareTo(other.isSetTopicId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetTopic()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topic, other.topic);
+    if (isSetTopicId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topicId, other.topicId);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -565,12 +624,12 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetMessages()).compareTo(other.isSetMessages());
+    lastComparison = Boolean.valueOf(isSetMessagesNum()).compareTo(other.isSetMessagesNum());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetMessages()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.messages, other.messages);
+    if (isSetMessagesNum()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.messagesNum, other.messagesNum);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -595,6 +654,16 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetReadMessageNum()).compareTo(other.isSetReadMessageNum());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetReadMessageNum()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.readMessageNum, other.readMessageNum);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -615,20 +684,20 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     StringBuilder sb = new StringBuilder("UserTopic(");
     boolean first = true;
 
-    sb.append("user:");
-    sb.append(this.user);
+    sb.append("userId:");
+    sb.append(this.userId);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("topic:");
-    sb.append(this.topic);
+    sb.append("topicId:");
+    sb.append(this.topicId);
     first = false;
     if (!first) sb.append(", ");
     sb.append("archived:");
     sb.append(this.archived);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("messages:");
-    sb.append(this.messages);
+    sb.append("messagesNum:");
+    sb.append(this.messagesNum);
     first = false;
     if (!first) sb.append(", ");
     sb.append("lastActivity:");
@@ -637,6 +706,10 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     if (!first) sb.append(", ");
     sb.append("dolike:");
     sb.append(this.dolike);
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("readMessageNum:");
+    sb.append(this.readMessageNum);
     first = false;
     sb.append(")");
     return sb.toString();
@@ -683,18 +756,18 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
           break;
         }
         switch (schemeField.id) {
-          case 1: // USER
+          case 1: // USER_ID
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.user = iprot.readI32();
-              struct.setUserIsSet(true);
+              struct.userId = iprot.readI32();
+              struct.setUserIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // TOPIC
+          case 2: // TOPIC_ID
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.topic = iprot.readI32();
-              struct.setTopicIsSet(true);
+              struct.topicId = iprot.readI32();
+              struct.setTopicIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -707,10 +780,10 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 4: // MESSAGES
+          case 4: // MESSAGES_NUM
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.messages = iprot.readI32();
-              struct.setMessagesIsSet(true);
+              struct.messagesNum = iprot.readI32();
+              struct.setMessagesNumIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -731,6 +804,14 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 7: // READ_MESSAGE_NUM
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.readMessageNum = iprot.readI32();
+              struct.setReadMessageNumIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -746,23 +827,26 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      oprot.writeFieldBegin(USER_FIELD_DESC);
-      oprot.writeI32(struct.user);
+      oprot.writeFieldBegin(USER_ID_FIELD_DESC);
+      oprot.writeI32(struct.userId);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(TOPIC_FIELD_DESC);
-      oprot.writeI32(struct.topic);
+      oprot.writeFieldBegin(TOPIC_ID_FIELD_DESC);
+      oprot.writeI32(struct.topicId);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(ARCHIVED_FIELD_DESC);
       oprot.writeBool(struct.archived);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(MESSAGES_FIELD_DESC);
-      oprot.writeI32(struct.messages);
+      oprot.writeFieldBegin(MESSAGES_NUM_FIELD_DESC);
+      oprot.writeI32(struct.messagesNum);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(LAST_ACTIVITY_FIELD_DESC);
       oprot.writeI32(struct.lastActivity);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(DOLIKE_FIELD_DESC);
       oprot.writeByte(struct.dolike);
+      oprot.writeFieldEnd();
+      oprot.writeFieldBegin(READ_MESSAGE_NUM_FIELD_DESC);
+      oprot.writeI32(struct.readMessageNum);
       oprot.writeFieldEnd();
       oprot.writeFieldStop();
       oprot.writeStructEnd();
@@ -782,16 +866,16 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     public void write(org.apache.thrift.protocol.TProtocol prot, UserTopic struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetUser()) {
+      if (struct.isSetUserId()) {
         optionals.set(0);
       }
-      if (struct.isSetTopic()) {
+      if (struct.isSetTopicId()) {
         optionals.set(1);
       }
       if (struct.isSetArchived()) {
         optionals.set(2);
       }
-      if (struct.isSetMessages()) {
+      if (struct.isSetMessagesNum()) {
         optionals.set(3);
       }
       if (struct.isSetLastActivity()) {
@@ -800,18 +884,21 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
       if (struct.isSetDolike()) {
         optionals.set(5);
       }
-      oprot.writeBitSet(optionals, 6);
-      if (struct.isSetUser()) {
-        oprot.writeI32(struct.user);
+      if (struct.isSetReadMessageNum()) {
+        optionals.set(6);
       }
-      if (struct.isSetTopic()) {
-        oprot.writeI32(struct.topic);
+      oprot.writeBitSet(optionals, 7);
+      if (struct.isSetUserId()) {
+        oprot.writeI32(struct.userId);
+      }
+      if (struct.isSetTopicId()) {
+        oprot.writeI32(struct.topicId);
       }
       if (struct.isSetArchived()) {
         oprot.writeBool(struct.archived);
       }
-      if (struct.isSetMessages()) {
-        oprot.writeI32(struct.messages);
+      if (struct.isSetMessagesNum()) {
+        oprot.writeI32(struct.messagesNum);
       }
       if (struct.isSetLastActivity()) {
         oprot.writeI32(struct.lastActivity);
@@ -819,27 +906,30 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
       if (struct.isSetDolike()) {
         oprot.writeByte(struct.dolike);
       }
+      if (struct.isSetReadMessageNum()) {
+        oprot.writeI32(struct.readMessageNum);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, UserTopic struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(6);
+      BitSet incoming = iprot.readBitSet(7);
       if (incoming.get(0)) {
-        struct.user = iprot.readI32();
-        struct.setUserIsSet(true);
+        struct.userId = iprot.readI32();
+        struct.setUserIdIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.topic = iprot.readI32();
-        struct.setTopicIsSet(true);
+        struct.topicId = iprot.readI32();
+        struct.setTopicIdIsSet(true);
       }
       if (incoming.get(2)) {
         struct.archived = iprot.readBool();
         struct.setArchivedIsSet(true);
       }
       if (incoming.get(3)) {
-        struct.messages = iprot.readI32();
-        struct.setMessagesIsSet(true);
+        struct.messagesNum = iprot.readI32();
+        struct.setMessagesNumIsSet(true);
       }
       if (incoming.get(4)) {
         struct.lastActivity = iprot.readI32();
@@ -848,6 +938,10 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
       if (incoming.get(5)) {
         struct.dolike = iprot.readByte();
         struct.setDolikeIsSet(true);
+      }
+      if (incoming.get(6)) {
+        struct.readMessageNum = iprot.readI32();
+        struct.setReadMessageNumIsSet(true);
       }
     }
   }

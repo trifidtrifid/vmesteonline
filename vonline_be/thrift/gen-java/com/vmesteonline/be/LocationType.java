@@ -11,15 +11,20 @@ import java.util.Map;
 import java.util.HashMap;
 import org.apache.thrift.TEnum;
 
-public enum MessageType implements org.apache.thrift.TEnum {
-  BASE(1),
-  DIALOG(2),
-  SHOP(3),
-  NEWS(4);
+public enum LocationType implements org.apache.thrift.TEnum {
+  FLAT(1),
+  FLOOR(2),
+  HOUSE(3),
+  BLOCK(4),
+  DISTRICT(5),
+  CITY(6),
+  REGION(7),
+  COUNTRY(8),
+  WORLD(9);
 
   private final int value;
 
-  private MessageType(int value) {
+  private LocationType(int value) {
     this.value = value;
   }
 
@@ -34,16 +39,26 @@ public enum MessageType implements org.apache.thrift.TEnum {
    * Find a the enum type by its integer value, as defined in the Thrift IDL.
    * @return null if the value is not found.
    */
-  public static MessageType findByValue(int value) { 
+  public static LocationType findByValue(int value) { 
     switch (value) {
       case 1:
-        return BASE;
+        return FLAT;
       case 2:
-        return DIALOG;
+        return FLOOR;
       case 3:
-        return SHOP;
+        return HOUSE;
       case 4:
-        return NEWS;
+        return BLOCK;
+      case 5:
+        return DISTRICT;
+      case 6:
+        return CITY;
+      case 7:
+        return REGION;
+      case 8:
+        return COUNTRY;
+      case 9:
+        return WORLD;
       default:
         return null;
     }

@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
 public class Friendship implements org.apache.thrift.TBase<Friendship, Friendship._Fields>, java.io.Serializable, Cloneable, Comparable<Friendship> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Friendship");
 
-  private static final org.apache.thrift.protocol.TField USER_FIELD_DESC = new org.apache.thrift.protocol.TField("user", org.apache.thrift.protocol.TType.I32, (short)1);
-  private static final org.apache.thrift.protocol.TField FRIEND_FIELD_DESC = new org.apache.thrift.protocol.TField("friend", org.apache.thrift.protocol.TType.I32, (short)2);
+  private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I32, (short)1);
+  private static final org.apache.thrift.protocol.TField FRIEND_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("friendId", org.apache.thrift.protocol.TType.I32, (short)2);
   private static final org.apache.thrift.protocol.TField STATE_FIELD_DESC = new org.apache.thrift.protocol.TField("state", org.apache.thrift.protocol.TType.I32, (short)3);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -45,8 +45,8 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
     schemes.put(TupleScheme.class, new FriendshipTupleSchemeFactory());
   }
 
-  public int user; // required
-  public int friend; // required
+  public int userId; // required
+  public int friendId; // required
   /**
    * 
    * @see FriendshipType
@@ -55,8 +55,8 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    USER((short)1, "user"),
-    FRIEND((short)2, "friend"),
+    USER_ID((short)1, "userId"),
+    FRIEND_ID((short)2, "friendId"),
     /**
      * 
      * @see FriendshipType
@@ -76,10 +76,10 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // USER
-          return USER;
-        case 2: // FRIEND
-          return FRIEND;
+        case 1: // USER_ID
+          return USER_ID;
+        case 2: // FRIEND_ID
+          return FRIEND_ID;
         case 3: // STATE
           return STATE;
         default:
@@ -122,15 +122,15 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
   }
 
   // isset id assignments
-  private static final int __USER_ISSET_ID = 0;
-  private static final int __FRIEND_ISSET_ID = 1;
+  private static final int __USERID_ISSET_ID = 0;
+  private static final int __FRIENDID_ISSET_ID = 1;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.USER, new org.apache.thrift.meta_data.FieldMetaData("user", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.FRIEND, new org.apache.thrift.meta_data.FieldMetaData("friend", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.FRIEND_ID, new org.apache.thrift.meta_data.FieldMetaData("friendId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.STATE, new org.apache.thrift.meta_data.FieldMetaData("state", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, FriendshipType.class)));
@@ -142,15 +142,15 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
   }
 
   public Friendship(
-    int user,
-    int friend,
+    int userId,
+    int friendId,
     FriendshipType state)
   {
     this();
-    this.user = user;
-    setUserIsSet(true);
-    this.friend = friend;
-    setFriendIsSet(true);
+    this.userId = userId;
+    setUserIdIsSet(true);
+    this.friendId = friendId;
+    setFriendIdIsSet(true);
     this.state = state;
   }
 
@@ -159,8 +159,8 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
    */
   public Friendship(Friendship other) {
     __isset_bitfield = other.__isset_bitfield;
-    this.user = other.user;
-    this.friend = other.friend;
+    this.userId = other.userId;
+    this.friendId = other.friendId;
     if (other.isSetState()) {
       this.state = other.state;
     }
@@ -172,57 +172,57 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
 
   @Override
   public void clear() {
-    setUserIsSet(false);
-    this.user = 0;
-    setFriendIsSet(false);
-    this.friend = 0;
+    setUserIdIsSet(false);
+    this.userId = 0;
+    setFriendIdIsSet(false);
+    this.friendId = 0;
     this.state = null;
   }
 
-  public int getUser() {
-    return this.user;
+  public int getUserId() {
+    return this.userId;
   }
 
-  public Friendship setUser(int user) {
-    this.user = user;
-    setUserIsSet(true);
+  public Friendship setUserId(int userId) {
+    this.userId = userId;
+    setUserIdIsSet(true);
     return this;
   }
 
-  public void unsetUser() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __USER_ISSET_ID);
+  public void unsetUserId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __USERID_ISSET_ID);
   }
 
-  /** Returns true if field user is set (has been assigned a value) and false otherwise */
-  public boolean isSetUser() {
-    return EncodingUtils.testBit(__isset_bitfield, __USER_ISSET_ID);
+  /** Returns true if field userId is set (has been assigned a value) and false otherwise */
+  public boolean isSetUserId() {
+    return EncodingUtils.testBit(__isset_bitfield, __USERID_ISSET_ID);
   }
 
-  public void setUserIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __USER_ISSET_ID, value);
+  public void setUserIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __USERID_ISSET_ID, value);
   }
 
-  public int getFriend() {
-    return this.friend;
+  public int getFriendId() {
+    return this.friendId;
   }
 
-  public Friendship setFriend(int friend) {
-    this.friend = friend;
-    setFriendIsSet(true);
+  public Friendship setFriendId(int friendId) {
+    this.friendId = friendId;
+    setFriendIdIsSet(true);
     return this;
   }
 
-  public void unsetFriend() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __FRIEND_ISSET_ID);
+  public void unsetFriendId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __FRIENDID_ISSET_ID);
   }
 
-  /** Returns true if field friend is set (has been assigned a value) and false otherwise */
-  public boolean isSetFriend() {
-    return EncodingUtils.testBit(__isset_bitfield, __FRIEND_ISSET_ID);
+  /** Returns true if field friendId is set (has been assigned a value) and false otherwise */
+  public boolean isSetFriendId() {
+    return EncodingUtils.testBit(__isset_bitfield, __FRIENDID_ISSET_ID);
   }
 
-  public void setFriendIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __FRIEND_ISSET_ID, value);
+  public void setFriendIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __FRIENDID_ISSET_ID, value);
   }
 
   /**
@@ -259,19 +259,19 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
 
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
-    case USER:
+    case USER_ID:
       if (value == null) {
-        unsetUser();
+        unsetUserId();
       } else {
-        setUser((Integer)value);
+        setUserId((Integer)value);
       }
       break;
 
-    case FRIEND:
+    case FRIEND_ID:
       if (value == null) {
-        unsetFriend();
+        unsetFriendId();
       } else {
-        setFriend((Integer)value);
+        setFriendId((Integer)value);
       }
       break;
 
@@ -288,11 +288,11 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
-    case USER:
-      return Integer.valueOf(getUser());
+    case USER_ID:
+      return Integer.valueOf(getUserId());
 
-    case FRIEND:
-      return Integer.valueOf(getFriend());
+    case FRIEND_ID:
+      return Integer.valueOf(getFriendId());
 
     case STATE:
       return getState();
@@ -308,10 +308,10 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
     }
 
     switch (field) {
-    case USER:
-      return isSetUser();
-    case FRIEND:
-      return isSetFriend();
+    case USER_ID:
+      return isSetUserId();
+    case FRIEND_ID:
+      return isSetFriendId();
     case STATE:
       return isSetState();
     }
@@ -331,21 +331,21 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
     if (that == null)
       return false;
 
-    boolean this_present_user = true;
-    boolean that_present_user = true;
-    if (this_present_user || that_present_user) {
-      if (!(this_present_user && that_present_user))
+    boolean this_present_userId = true;
+    boolean that_present_userId = true;
+    if (this_present_userId || that_present_userId) {
+      if (!(this_present_userId && that_present_userId))
         return false;
-      if (this.user != that.user)
+      if (this.userId != that.userId)
         return false;
     }
 
-    boolean this_present_friend = true;
-    boolean that_present_friend = true;
-    if (this_present_friend || that_present_friend) {
-      if (!(this_present_friend && that_present_friend))
+    boolean this_present_friendId = true;
+    boolean that_present_friendId = true;
+    if (this_present_friendId || that_present_friendId) {
+      if (!(this_present_friendId && that_present_friendId))
         return false;
-      if (this.friend != that.friend)
+      if (this.friendId != that.friendId)
         return false;
     }
 
@@ -374,22 +374,22 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
 
     int lastComparison = 0;
 
-    lastComparison = Boolean.valueOf(isSetUser()).compareTo(other.isSetUser());
+    lastComparison = Boolean.valueOf(isSetUserId()).compareTo(other.isSetUserId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetUser()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.user, other.user);
+    if (isSetUserId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userId, other.userId);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetFriend()).compareTo(other.isSetFriend());
+    lastComparison = Boolean.valueOf(isSetFriendId()).compareTo(other.isSetFriendId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetFriend()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.friend, other.friend);
+    if (isSetFriendId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.friendId, other.friendId);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -424,12 +424,12 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
     StringBuilder sb = new StringBuilder("Friendship(");
     boolean first = true;
 
-    sb.append("user:");
-    sb.append(this.user);
+    sb.append("userId:");
+    sb.append(this.userId);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("friend:");
-    sb.append(this.friend);
+    sb.append("friendId:");
+    sb.append(this.friendId);
     first = false;
     if (!first) sb.append(", ");
     sb.append("state:");
@@ -484,18 +484,18 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
           break;
         }
         switch (schemeField.id) {
-          case 1: // USER
+          case 1: // USER_ID
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.user = iprot.readI32();
-              struct.setUserIsSet(true);
+              struct.userId = iprot.readI32();
+              struct.setUserIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // FRIEND
+          case 2: // FRIEND_ID
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.friend = iprot.readI32();
-              struct.setFriendIsSet(true);
+              struct.friendId = iprot.readI32();
+              struct.setFriendIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -523,11 +523,11 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      oprot.writeFieldBegin(USER_FIELD_DESC);
-      oprot.writeI32(struct.user);
+      oprot.writeFieldBegin(USER_ID_FIELD_DESC);
+      oprot.writeI32(struct.userId);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(FRIEND_FIELD_DESC);
-      oprot.writeI32(struct.friend);
+      oprot.writeFieldBegin(FRIEND_ID_FIELD_DESC);
+      oprot.writeI32(struct.friendId);
       oprot.writeFieldEnd();
       if (struct.state != null) {
         oprot.writeFieldBegin(STATE_FIELD_DESC);
@@ -552,21 +552,21 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
     public void write(org.apache.thrift.protocol.TProtocol prot, Friendship struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetUser()) {
+      if (struct.isSetUserId()) {
         optionals.set(0);
       }
-      if (struct.isSetFriend()) {
+      if (struct.isSetFriendId()) {
         optionals.set(1);
       }
       if (struct.isSetState()) {
         optionals.set(2);
       }
       oprot.writeBitSet(optionals, 3);
-      if (struct.isSetUser()) {
-        oprot.writeI32(struct.user);
+      if (struct.isSetUserId()) {
+        oprot.writeI32(struct.userId);
       }
-      if (struct.isSetFriend()) {
-        oprot.writeI32(struct.friend);
+      if (struct.isSetFriendId()) {
+        oprot.writeI32(struct.friendId);
       }
       if (struct.isSetState()) {
         oprot.writeI32(struct.state.getValue());
@@ -578,12 +578,12 @@ public class Friendship implements org.apache.thrift.TBase<Friendship, Friendshi
       TTupleProtocol iprot = (TTupleProtocol) prot;
       BitSet incoming = iprot.readBitSet(3);
       if (incoming.get(0)) {
-        struct.user = iprot.readI32();
-        struct.setUserIsSet(true);
+        struct.userId = iprot.readI32();
+        struct.setUserIdIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.friend = iprot.readI32();
-        struct.setFriendIsSet(true);
+        struct.friendId = iprot.readI32();
+        struct.setFriendIdIsSet(true);
       }
       if (incoming.get(2)) {
         struct.state = FriendshipType.findByValue(iprot.readI32());

@@ -36,17 +36,22 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Message");
 
   private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I32, (short)1);
-  private static final org.apache.thrift.protocol.TField PARENT_FIELD_DESC = new org.apache.thrift.protocol.TField("parent", org.apache.thrift.protocol.TType.I32, (short)2);
+  private static final org.apache.thrift.protocol.TField PARENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("parentId", org.apache.thrift.protocol.TType.I32, (short)2);
   private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.I32, (short)3);
-  private static final org.apache.thrift.protocol.TField TOPIC_FIELD_DESC = new org.apache.thrift.protocol.TField("topic", org.apache.thrift.protocol.TType.I32, (short)4);
-  private static final org.apache.thrift.protocol.TField AUTHOR_FIELD_DESC = new org.apache.thrift.protocol.TField("author", org.apache.thrift.protocol.TType.I32, (short)5);
-  private static final org.apache.thrift.protocol.TField RECIPIENT_FIELD_DESC = new org.apache.thrift.protocol.TField("recipient", org.apache.thrift.protocol.TType.I32, (short)6);
+  private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I32, (short)4);
+  private static final org.apache.thrift.protocol.TField AUTHOR_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("authorId", org.apache.thrift.protocol.TType.I32, (short)5);
+  private static final org.apache.thrift.protocol.TField RECIPIENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("recipientId", org.apache.thrift.protocol.TType.I32, (short)6);
   private static final org.apache.thrift.protocol.TField CREATED_FIELD_DESC = new org.apache.thrift.protocol.TField("created", org.apache.thrift.protocol.TType.I32, (short)7);
   private static final org.apache.thrift.protocol.TField EDITED_FIELD_DESC = new org.apache.thrift.protocol.TField("edited", org.apache.thrift.protocol.TType.I32, (short)8);
   private static final org.apache.thrift.protocol.TField APPROVED_FIELD_DESC = new org.apache.thrift.protocol.TField("approved", org.apache.thrift.protocol.TType.I32, (short)9);
   private static final org.apache.thrift.protocol.TField CONTENT_FIELD_DESC = new org.apache.thrift.protocol.TField("content", org.apache.thrift.protocol.TType.STRING, (short)10);
   private static final org.apache.thrift.protocol.TField LIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("likes", org.apache.thrift.protocol.TType.I32, (short)11);
   private static final org.apache.thrift.protocol.TField UNLIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("unlikes", org.apache.thrift.protocol.TType.I32, (short)12);
+  private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I32, (short)13);
+  private static final org.apache.thrift.protocol.TField ID_FORUM_FIELD_DESC = new org.apache.thrift.protocol.TField("idForum", org.apache.thrift.protocol.TType.I32, (short)14);
+  private static final org.apache.thrift.protocol.TField ID_SHOP_FIELD_DESC = new org.apache.thrift.protocol.TField("idShop", org.apache.thrift.protocol.TType.I32, (short)15);
+  private static final org.apache.thrift.protocol.TField ID_DIALOG_FIELD_DESC = new org.apache.thrift.protocol.TField("idDialog", org.apache.thrift.protocol.TType.I32, (short)16);
+  private static final org.apache.thrift.protocol.TField ID_NEWS_FIELD_DESC = new org.apache.thrift.protocol.TField("idNews", org.apache.thrift.protocol.TType.I32, (short)17);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -55,40 +60,50 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   }
 
   public int id; // required
-  public int parent; // required
+  public int parentId; // required
   /**
    * 
    * @see MessageType
    */
   public MessageType type; // required
-  public int topic; // required
-  public int author; // required
-  public int recipient; // optional
+  public int topicId; // required
+  public int authorId; // required
+  public int recipientId; // optional
   public int created; // required
   public int edited; // required
   public int approved; // optional
   public String content; // required
   public int likes; // required
   public int unlikes; // required
+  public int groupId; // required
+  public int idForum; // optional
+  public int idShop; // optional
+  public int idDialog; // optional
+  public int idNews; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ID((short)1, "id"),
-    PARENT((short)2, "parent"),
+    PARENT_ID((short)2, "parentId"),
     /**
      * 
      * @see MessageType
      */
     TYPE((short)3, "type"),
-    TOPIC((short)4, "topic"),
-    AUTHOR((short)5, "author"),
-    RECIPIENT((short)6, "recipient"),
+    TOPIC_ID((short)4, "topicId"),
+    AUTHOR_ID((short)5, "authorId"),
+    RECIPIENT_ID((short)6, "recipientId"),
     CREATED((short)7, "created"),
     EDITED((short)8, "edited"),
     APPROVED((short)9, "approved"),
     CONTENT((short)10, "content"),
     LIKES((short)11, "likes"),
-    UNLIKES((short)12, "unlikes");
+    UNLIKES((short)12, "unlikes"),
+    GROUP_ID((short)13, "groupId"),
+    ID_FORUM((short)14, "idForum"),
+    ID_SHOP((short)15, "idShop"),
+    ID_DIALOG((short)16, "idDialog"),
+    ID_NEWS((short)17, "idNews");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -105,16 +120,16 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       switch(fieldId) {
         case 1: // ID
           return ID;
-        case 2: // PARENT
-          return PARENT;
+        case 2: // PARENT_ID
+          return PARENT_ID;
         case 3: // TYPE
           return TYPE;
-        case 4: // TOPIC
-          return TOPIC;
-        case 5: // AUTHOR
-          return AUTHOR;
-        case 6: // RECIPIENT
-          return RECIPIENT;
+        case 4: // TOPIC_ID
+          return TOPIC_ID;
+        case 5: // AUTHOR_ID
+          return AUTHOR_ID;
+        case 6: // RECIPIENT_ID
+          return RECIPIENT_ID;
         case 7: // CREATED
           return CREATED;
         case 8: // EDITED
@@ -127,6 +142,16 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
           return LIKES;
         case 12: // UNLIKES
           return UNLIKES;
+        case 13: // GROUP_ID
+          return GROUP_ID;
+        case 14: // ID_FORUM
+          return ID_FORUM;
+        case 15: // ID_SHOP
+          return ID_SHOP;
+        case 16: // ID_DIALOG
+          return ID_DIALOG;
+        case 17: // ID_NEWS
+          return ID_NEWS;
         default:
           return null;
       }
@@ -168,31 +193,36 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
 
   // isset id assignments
   private static final int __ID_ISSET_ID = 0;
-  private static final int __PARENT_ISSET_ID = 1;
-  private static final int __TOPIC_ISSET_ID = 2;
-  private static final int __AUTHOR_ISSET_ID = 3;
-  private static final int __RECIPIENT_ISSET_ID = 4;
+  private static final int __PARENTID_ISSET_ID = 1;
+  private static final int __TOPICID_ISSET_ID = 2;
+  private static final int __AUTHORID_ISSET_ID = 3;
+  private static final int __RECIPIENTID_ISSET_ID = 4;
   private static final int __CREATED_ISSET_ID = 5;
   private static final int __EDITED_ISSET_ID = 6;
   private static final int __APPROVED_ISSET_ID = 7;
   private static final int __LIKES_ISSET_ID = 8;
   private static final int __UNLIKES_ISSET_ID = 9;
+  private static final int __GROUPID_ISSET_ID = 10;
+  private static final int __IDFORUM_ISSET_ID = 11;
+  private static final int __IDSHOP_ISSET_ID = 12;
+  private static final int __IDDIALOG_ISSET_ID = 13;
+  private static final int __IDNEWS_ISSET_ID = 14;
   private short __isset_bitfield = 0;
-  private _Fields optionals[] = {_Fields.RECIPIENT,_Fields.APPROVED};
+  private _Fields optionals[] = {_Fields.RECIPIENT_ID,_Fields.APPROVED,_Fields.ID_FORUM,_Fields.ID_SHOP,_Fields.ID_DIALOG,_Fields.ID_NEWS};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.PARENT, new org.apache.thrift.meta_data.FieldMetaData("parent", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.PARENT_ID, new org.apache.thrift.meta_data.FieldMetaData("parentId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.TYPE, new org.apache.thrift.meta_data.FieldMetaData("type", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, MessageType.class)));
-    tmpMap.put(_Fields.TOPIC, new org.apache.thrift.meta_data.FieldMetaData("topic", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.TOPIC_ID, new org.apache.thrift.meta_data.FieldMetaData("topicId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.AUTHOR, new org.apache.thrift.meta_data.FieldMetaData("author", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.AUTHOR_ID, new org.apache.thrift.meta_data.FieldMetaData("authorId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.RECIPIENT, new org.apache.thrift.meta_data.FieldMetaData("recipient", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.RECIPIENT_ID, new org.apache.thrift.meta_data.FieldMetaData("recipientId", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.CREATED, new org.apache.thrift.meta_data.FieldMetaData("created", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
@@ -206,6 +236,16 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.UNLIKES, new org.apache.thrift.meta_data.FieldMetaData("unlikes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.ID_FORUM, new org.apache.thrift.meta_data.FieldMetaData("idForum", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.ID_SHOP, new org.apache.thrift.meta_data.FieldMetaData("idShop", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.ID_DIALOG, new org.apache.thrift.meta_data.FieldMetaData("idDialog", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.ID_NEWS, new org.apache.thrift.meta_data.FieldMetaData("idNews", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Message.class, metaDataMap);
   }
@@ -215,26 +255,27 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
 
   public Message(
     int id,
-    int parent,
+    int parentId,
     MessageType type,
-    int topic,
-    int author,
+    int topicId,
+    int authorId,
     int created,
     int edited,
     String content,
     int likes,
-    int unlikes)
+    int unlikes,
+    int groupId)
   {
     this();
     this.id = id;
     setIdIsSet(true);
-    this.parent = parent;
-    setParentIsSet(true);
+    this.parentId = parentId;
+    setParentIdIsSet(true);
     this.type = type;
-    this.topic = topic;
-    setTopicIsSet(true);
-    this.author = author;
-    setAuthorIsSet(true);
+    this.topicId = topicId;
+    setTopicIdIsSet(true);
+    this.authorId = authorId;
+    setAuthorIdIsSet(true);
     this.created = created;
     setCreatedIsSet(true);
     this.edited = edited;
@@ -244,6 +285,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     setLikesIsSet(true);
     this.unlikes = unlikes;
     setUnlikesIsSet(true);
+    this.groupId = groupId;
+    setGroupIdIsSet(true);
   }
 
   /**
@@ -252,13 +295,13 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   public Message(Message other) {
     __isset_bitfield = other.__isset_bitfield;
     this.id = other.id;
-    this.parent = other.parent;
+    this.parentId = other.parentId;
     if (other.isSetType()) {
       this.type = other.type;
     }
-    this.topic = other.topic;
-    this.author = other.author;
-    this.recipient = other.recipient;
+    this.topicId = other.topicId;
+    this.authorId = other.authorId;
+    this.recipientId = other.recipientId;
     this.created = other.created;
     this.edited = other.edited;
     this.approved = other.approved;
@@ -267,6 +310,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
     this.likes = other.likes;
     this.unlikes = other.unlikes;
+    this.groupId = other.groupId;
+    this.idForum = other.idForum;
+    this.idShop = other.idShop;
+    this.idDialog = other.idDialog;
+    this.idNews = other.idNews;
   }
 
   public Message deepCopy() {
@@ -277,15 +325,15 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   public void clear() {
     setIdIsSet(false);
     this.id = 0;
-    setParentIsSet(false);
-    this.parent = 0;
+    setParentIdIsSet(false);
+    this.parentId = 0;
     this.type = null;
-    setTopicIsSet(false);
-    this.topic = 0;
-    setAuthorIsSet(false);
-    this.author = 0;
-    setRecipientIsSet(false);
-    this.recipient = 0;
+    setTopicIdIsSet(false);
+    this.topicId = 0;
+    setAuthorIdIsSet(false);
+    this.authorId = 0;
+    setRecipientIdIsSet(false);
+    this.recipientId = 0;
     setCreatedIsSet(false);
     this.created = 0;
     setEditedIsSet(false);
@@ -297,6 +345,16 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.likes = 0;
     setUnlikesIsSet(false);
     this.unlikes = 0;
+    setGroupIdIsSet(false);
+    this.groupId = 0;
+    setIdForumIsSet(false);
+    this.idForum = 0;
+    setIdShopIsSet(false);
+    this.idShop = 0;
+    setIdDialogIsSet(false);
+    this.idDialog = 0;
+    setIdNewsIsSet(false);
+    this.idNews = 0;
   }
 
   public int getId() {
@@ -322,27 +380,27 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ID_ISSET_ID, value);
   }
 
-  public int getParent() {
-    return this.parent;
+  public int getParentId() {
+    return this.parentId;
   }
 
-  public Message setParent(int parent) {
-    this.parent = parent;
-    setParentIsSet(true);
+  public Message setParentId(int parentId) {
+    this.parentId = parentId;
+    setParentIdIsSet(true);
     return this;
   }
 
-  public void unsetParent() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __PARENT_ISSET_ID);
+  public void unsetParentId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __PARENTID_ISSET_ID);
   }
 
-  /** Returns true if field parent is set (has been assigned a value) and false otherwise */
-  public boolean isSetParent() {
-    return EncodingUtils.testBit(__isset_bitfield, __PARENT_ISSET_ID);
+  /** Returns true if field parentId is set (has been assigned a value) and false otherwise */
+  public boolean isSetParentId() {
+    return EncodingUtils.testBit(__isset_bitfield, __PARENTID_ISSET_ID);
   }
 
-  public void setParentIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PARENT_ISSET_ID, value);
+  public void setParentIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PARENTID_ISSET_ID, value);
   }
 
   /**
@@ -377,73 +435,73 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
   }
 
-  public int getTopic() {
-    return this.topic;
+  public int getTopicId() {
+    return this.topicId;
   }
 
-  public Message setTopic(int topic) {
-    this.topic = topic;
-    setTopicIsSet(true);
+  public Message setTopicId(int topicId) {
+    this.topicId = topicId;
+    setTopicIdIsSet(true);
     return this;
   }
 
-  public void unsetTopic() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPIC_ISSET_ID);
+  public void unsetTopicId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPICID_ISSET_ID);
   }
 
-  /** Returns true if field topic is set (has been assigned a value) and false otherwise */
-  public boolean isSetTopic() {
-    return EncodingUtils.testBit(__isset_bitfield, __TOPIC_ISSET_ID);
+  /** Returns true if field topicId is set (has been assigned a value) and false otherwise */
+  public boolean isSetTopicId() {
+    return EncodingUtils.testBit(__isset_bitfield, __TOPICID_ISSET_ID);
   }
 
-  public void setTopicIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPIC_ISSET_ID, value);
+  public void setTopicIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICID_ISSET_ID, value);
   }
 
-  public int getAuthor() {
-    return this.author;
+  public int getAuthorId() {
+    return this.authorId;
   }
 
-  public Message setAuthor(int author) {
-    this.author = author;
-    setAuthorIsSet(true);
+  public Message setAuthorId(int authorId) {
+    this.authorId = authorId;
+    setAuthorIdIsSet(true);
     return this;
   }
 
-  public void unsetAuthor() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __AUTHOR_ISSET_ID);
+  public void unsetAuthorId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __AUTHORID_ISSET_ID);
   }
 
-  /** Returns true if field author is set (has been assigned a value) and false otherwise */
-  public boolean isSetAuthor() {
-    return EncodingUtils.testBit(__isset_bitfield, __AUTHOR_ISSET_ID);
+  /** Returns true if field authorId is set (has been assigned a value) and false otherwise */
+  public boolean isSetAuthorId() {
+    return EncodingUtils.testBit(__isset_bitfield, __AUTHORID_ISSET_ID);
   }
 
-  public void setAuthorIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __AUTHOR_ISSET_ID, value);
+  public void setAuthorIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __AUTHORID_ISSET_ID, value);
   }
 
-  public int getRecipient() {
-    return this.recipient;
+  public int getRecipientId() {
+    return this.recipientId;
   }
 
-  public Message setRecipient(int recipient) {
-    this.recipient = recipient;
-    setRecipientIsSet(true);
+  public Message setRecipientId(int recipientId) {
+    this.recipientId = recipientId;
+    setRecipientIdIsSet(true);
     return this;
   }
 
-  public void unsetRecipient() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __RECIPIENT_ISSET_ID);
+  public void unsetRecipientId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __RECIPIENTID_ISSET_ID);
   }
 
-  /** Returns true if field recipient is set (has been assigned a value) and false otherwise */
-  public boolean isSetRecipient() {
-    return EncodingUtils.testBit(__isset_bitfield, __RECIPIENT_ISSET_ID);
+  /** Returns true if field recipientId is set (has been assigned a value) and false otherwise */
+  public boolean isSetRecipientId() {
+    return EncodingUtils.testBit(__isset_bitfield, __RECIPIENTID_ISSET_ID);
   }
 
-  public void setRecipientIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __RECIPIENT_ISSET_ID, value);
+  public void setRecipientIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __RECIPIENTID_ISSET_ID, value);
   }
 
   public int getCreated() {
@@ -585,6 +643,121 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __UNLIKES_ISSET_ID, value);
   }
 
+  public int getGroupId() {
+    return this.groupId;
+  }
+
+  public Message setGroupId(int groupId) {
+    this.groupId = groupId;
+    setGroupIdIsSet(true);
+    return this;
+  }
+
+  public void unsetGroupId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __GROUPID_ISSET_ID);
+  }
+
+  /** Returns true if field groupId is set (has been assigned a value) and false otherwise */
+  public boolean isSetGroupId() {
+    return EncodingUtils.testBit(__isset_bitfield, __GROUPID_ISSET_ID);
+  }
+
+  public void setGroupIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __GROUPID_ISSET_ID, value);
+  }
+
+  public int getIdForum() {
+    return this.idForum;
+  }
+
+  public Message setIdForum(int idForum) {
+    this.idForum = idForum;
+    setIdForumIsSet(true);
+    return this;
+  }
+
+  public void unsetIdForum() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __IDFORUM_ISSET_ID);
+  }
+
+  /** Returns true if field idForum is set (has been assigned a value) and false otherwise */
+  public boolean isSetIdForum() {
+    return EncodingUtils.testBit(__isset_bitfield, __IDFORUM_ISSET_ID);
+  }
+
+  public void setIdForumIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IDFORUM_ISSET_ID, value);
+  }
+
+  public int getIdShop() {
+    return this.idShop;
+  }
+
+  public Message setIdShop(int idShop) {
+    this.idShop = idShop;
+    setIdShopIsSet(true);
+    return this;
+  }
+
+  public void unsetIdShop() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __IDSHOP_ISSET_ID);
+  }
+
+  /** Returns true if field idShop is set (has been assigned a value) and false otherwise */
+  public boolean isSetIdShop() {
+    return EncodingUtils.testBit(__isset_bitfield, __IDSHOP_ISSET_ID);
+  }
+
+  public void setIdShopIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IDSHOP_ISSET_ID, value);
+  }
+
+  public int getIdDialog() {
+    return this.idDialog;
+  }
+
+  public Message setIdDialog(int idDialog) {
+    this.idDialog = idDialog;
+    setIdDialogIsSet(true);
+    return this;
+  }
+
+  public void unsetIdDialog() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __IDDIALOG_ISSET_ID);
+  }
+
+  /** Returns true if field idDialog is set (has been assigned a value) and false otherwise */
+  public boolean isSetIdDialog() {
+    return EncodingUtils.testBit(__isset_bitfield, __IDDIALOG_ISSET_ID);
+  }
+
+  public void setIdDialogIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IDDIALOG_ISSET_ID, value);
+  }
+
+  public int getIdNews() {
+    return this.idNews;
+  }
+
+  public Message setIdNews(int idNews) {
+    this.idNews = idNews;
+    setIdNewsIsSet(true);
+    return this;
+  }
+
+  public void unsetIdNews() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __IDNEWS_ISSET_ID);
+  }
+
+  /** Returns true if field idNews is set (has been assigned a value) and false otherwise */
+  public boolean isSetIdNews() {
+    return EncodingUtils.testBit(__isset_bitfield, __IDNEWS_ISSET_ID);
+  }
+
+  public void setIdNewsIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IDNEWS_ISSET_ID, value);
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case ID:
@@ -595,11 +768,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       }
       break;
 
-    case PARENT:
+    case PARENT_ID:
       if (value == null) {
-        unsetParent();
+        unsetParentId();
       } else {
-        setParent((Integer)value);
+        setParentId((Integer)value);
       }
       break;
 
@@ -611,27 +784,27 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       }
       break;
 
-    case TOPIC:
+    case TOPIC_ID:
       if (value == null) {
-        unsetTopic();
+        unsetTopicId();
       } else {
-        setTopic((Integer)value);
+        setTopicId((Integer)value);
       }
       break;
 
-    case AUTHOR:
+    case AUTHOR_ID:
       if (value == null) {
-        unsetAuthor();
+        unsetAuthorId();
       } else {
-        setAuthor((Integer)value);
+        setAuthorId((Integer)value);
       }
       break;
 
-    case RECIPIENT:
+    case RECIPIENT_ID:
       if (value == null) {
-        unsetRecipient();
+        unsetRecipientId();
       } else {
-        setRecipient((Integer)value);
+        setRecipientId((Integer)value);
       }
       break;
 
@@ -683,6 +856,46 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       }
       break;
 
+    case GROUP_ID:
+      if (value == null) {
+        unsetGroupId();
+      } else {
+        setGroupId((Integer)value);
+      }
+      break;
+
+    case ID_FORUM:
+      if (value == null) {
+        unsetIdForum();
+      } else {
+        setIdForum((Integer)value);
+      }
+      break;
+
+    case ID_SHOP:
+      if (value == null) {
+        unsetIdShop();
+      } else {
+        setIdShop((Integer)value);
+      }
+      break;
+
+    case ID_DIALOG:
+      if (value == null) {
+        unsetIdDialog();
+      } else {
+        setIdDialog((Integer)value);
+      }
+      break;
+
+    case ID_NEWS:
+      if (value == null) {
+        unsetIdNews();
+      } else {
+        setIdNews((Integer)value);
+      }
+      break;
+
     }
   }
 
@@ -691,20 +904,20 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     case ID:
       return Integer.valueOf(getId());
 
-    case PARENT:
-      return Integer.valueOf(getParent());
+    case PARENT_ID:
+      return Integer.valueOf(getParentId());
 
     case TYPE:
       return getType();
 
-    case TOPIC:
-      return Integer.valueOf(getTopic());
+    case TOPIC_ID:
+      return Integer.valueOf(getTopicId());
 
-    case AUTHOR:
-      return Integer.valueOf(getAuthor());
+    case AUTHOR_ID:
+      return Integer.valueOf(getAuthorId());
 
-    case RECIPIENT:
-      return Integer.valueOf(getRecipient());
+    case RECIPIENT_ID:
+      return Integer.valueOf(getRecipientId());
 
     case CREATED:
       return Integer.valueOf(getCreated());
@@ -724,6 +937,21 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     case UNLIKES:
       return Integer.valueOf(getUnlikes());
 
+    case GROUP_ID:
+      return Integer.valueOf(getGroupId());
+
+    case ID_FORUM:
+      return Integer.valueOf(getIdForum());
+
+    case ID_SHOP:
+      return Integer.valueOf(getIdShop());
+
+    case ID_DIALOG:
+      return Integer.valueOf(getIdDialog());
+
+    case ID_NEWS:
+      return Integer.valueOf(getIdNews());
+
     }
     throw new IllegalStateException();
   }
@@ -737,16 +965,16 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     switch (field) {
     case ID:
       return isSetId();
-    case PARENT:
-      return isSetParent();
+    case PARENT_ID:
+      return isSetParentId();
     case TYPE:
       return isSetType();
-    case TOPIC:
-      return isSetTopic();
-    case AUTHOR:
-      return isSetAuthor();
-    case RECIPIENT:
-      return isSetRecipient();
+    case TOPIC_ID:
+      return isSetTopicId();
+    case AUTHOR_ID:
+      return isSetAuthorId();
+    case RECIPIENT_ID:
+      return isSetRecipientId();
     case CREATED:
       return isSetCreated();
     case EDITED:
@@ -759,6 +987,16 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       return isSetLikes();
     case UNLIKES:
       return isSetUnlikes();
+    case GROUP_ID:
+      return isSetGroupId();
+    case ID_FORUM:
+      return isSetIdForum();
+    case ID_SHOP:
+      return isSetIdShop();
+    case ID_DIALOG:
+      return isSetIdDialog();
+    case ID_NEWS:
+      return isSetIdNews();
     }
     throw new IllegalStateException();
   }
@@ -785,12 +1023,12 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return false;
     }
 
-    boolean this_present_parent = true;
-    boolean that_present_parent = true;
-    if (this_present_parent || that_present_parent) {
-      if (!(this_present_parent && that_present_parent))
+    boolean this_present_parentId = true;
+    boolean that_present_parentId = true;
+    if (this_present_parentId || that_present_parentId) {
+      if (!(this_present_parentId && that_present_parentId))
         return false;
-      if (this.parent != that.parent)
+      if (this.parentId != that.parentId)
         return false;
     }
 
@@ -803,30 +1041,30 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return false;
     }
 
-    boolean this_present_topic = true;
-    boolean that_present_topic = true;
-    if (this_present_topic || that_present_topic) {
-      if (!(this_present_topic && that_present_topic))
+    boolean this_present_topicId = true;
+    boolean that_present_topicId = true;
+    if (this_present_topicId || that_present_topicId) {
+      if (!(this_present_topicId && that_present_topicId))
         return false;
-      if (this.topic != that.topic)
-        return false;
-    }
-
-    boolean this_present_author = true;
-    boolean that_present_author = true;
-    if (this_present_author || that_present_author) {
-      if (!(this_present_author && that_present_author))
-        return false;
-      if (this.author != that.author)
+      if (this.topicId != that.topicId)
         return false;
     }
 
-    boolean this_present_recipient = true && this.isSetRecipient();
-    boolean that_present_recipient = true && that.isSetRecipient();
-    if (this_present_recipient || that_present_recipient) {
-      if (!(this_present_recipient && that_present_recipient))
+    boolean this_present_authorId = true;
+    boolean that_present_authorId = true;
+    if (this_present_authorId || that_present_authorId) {
+      if (!(this_present_authorId && that_present_authorId))
         return false;
-      if (this.recipient != that.recipient)
+      if (this.authorId != that.authorId)
+        return false;
+    }
+
+    boolean this_present_recipientId = true && this.isSetRecipientId();
+    boolean that_present_recipientId = true && that.isSetRecipientId();
+    if (this_present_recipientId || that_present_recipientId) {
+      if (!(this_present_recipientId && that_present_recipientId))
+        return false;
+      if (this.recipientId != that.recipientId)
         return false;
     }
 
@@ -884,6 +1122,51 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return false;
     }
 
+    boolean this_present_groupId = true;
+    boolean that_present_groupId = true;
+    if (this_present_groupId || that_present_groupId) {
+      if (!(this_present_groupId && that_present_groupId))
+        return false;
+      if (this.groupId != that.groupId)
+        return false;
+    }
+
+    boolean this_present_idForum = true && this.isSetIdForum();
+    boolean that_present_idForum = true && that.isSetIdForum();
+    if (this_present_idForum || that_present_idForum) {
+      if (!(this_present_idForum && that_present_idForum))
+        return false;
+      if (this.idForum != that.idForum)
+        return false;
+    }
+
+    boolean this_present_idShop = true && this.isSetIdShop();
+    boolean that_present_idShop = true && that.isSetIdShop();
+    if (this_present_idShop || that_present_idShop) {
+      if (!(this_present_idShop && that_present_idShop))
+        return false;
+      if (this.idShop != that.idShop)
+        return false;
+    }
+
+    boolean this_present_idDialog = true && this.isSetIdDialog();
+    boolean that_present_idDialog = true && that.isSetIdDialog();
+    if (this_present_idDialog || that_present_idDialog) {
+      if (!(this_present_idDialog && that_present_idDialog))
+        return false;
+      if (this.idDialog != that.idDialog)
+        return false;
+    }
+
+    boolean this_present_idNews = true && this.isSetIdNews();
+    boolean that_present_idNews = true && that.isSetIdNews();
+    if (this_present_idNews || that_present_idNews) {
+      if (!(this_present_idNews && that_present_idNews))
+        return false;
+      if (this.idNews != that.idNews)
+        return false;
+    }
+
     return true;
   }
 
@@ -910,12 +1193,12 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetParent()).compareTo(other.isSetParent());
+    lastComparison = Boolean.valueOf(isSetParentId()).compareTo(other.isSetParentId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetParent()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.parent, other.parent);
+    if (isSetParentId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.parentId, other.parentId);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -930,32 +1213,32 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetTopic()).compareTo(other.isSetTopic());
+    lastComparison = Boolean.valueOf(isSetTopicId()).compareTo(other.isSetTopicId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetTopic()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topic, other.topic);
+    if (isSetTopicId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topicId, other.topicId);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetAuthor()).compareTo(other.isSetAuthor());
+    lastComparison = Boolean.valueOf(isSetAuthorId()).compareTo(other.isSetAuthorId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetAuthor()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.author, other.author);
+    if (isSetAuthorId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.authorId, other.authorId);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetRecipient()).compareTo(other.isSetRecipient());
+    lastComparison = Boolean.valueOf(isSetRecipientId()).compareTo(other.isSetRecipientId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetRecipient()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.recipient, other.recipient);
+    if (isSetRecipientId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.recipientId, other.recipientId);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -1020,6 +1303,56 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetGroupId()).compareTo(other.isSetGroupId());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetGroupId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.groupId, other.groupId);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetIdForum()).compareTo(other.isSetIdForum());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetIdForum()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.idForum, other.idForum);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetIdShop()).compareTo(other.isSetIdShop());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetIdShop()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.idShop, other.idShop);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetIdDialog()).compareTo(other.isSetIdDialog());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetIdDialog()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.idDialog, other.idDialog);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetIdNews()).compareTo(other.isSetIdNews());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetIdNews()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.idNews, other.idNews);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -1044,8 +1377,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     sb.append(this.id);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("parent:");
-    sb.append(this.parent);
+    sb.append("parentId:");
+    sb.append(this.parentId);
     first = false;
     if (!first) sb.append(", ");
     sb.append("type:");
@@ -1056,17 +1389,17 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("topic:");
-    sb.append(this.topic);
+    sb.append("topicId:");
+    sb.append(this.topicId);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("author:");
-    sb.append(this.author);
+    sb.append("authorId:");
+    sb.append(this.authorId);
     first = false;
-    if (isSetRecipient()) {
+    if (isSetRecipientId()) {
       if (!first) sb.append(", ");
-      sb.append("recipient:");
-      sb.append(this.recipient);
+      sb.append("recipientId:");
+      sb.append(this.recipientId);
       first = false;
     }
     if (!first) sb.append(", ");
@@ -1099,6 +1432,34 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     sb.append("unlikes:");
     sb.append(this.unlikes);
     first = false;
+    if (!first) sb.append(", ");
+    sb.append("groupId:");
+    sb.append(this.groupId);
+    first = false;
+    if (isSetIdForum()) {
+      if (!first) sb.append(", ");
+      sb.append("idForum:");
+      sb.append(this.idForum);
+      first = false;
+    }
+    if (isSetIdShop()) {
+      if (!first) sb.append(", ");
+      sb.append("idShop:");
+      sb.append(this.idShop);
+      first = false;
+    }
+    if (isSetIdDialog()) {
+      if (!first) sb.append(", ");
+      sb.append("idDialog:");
+      sb.append(this.idDialog);
+      first = false;
+    }
+    if (isSetIdNews()) {
+      if (!first) sb.append(", ");
+      sb.append("idNews:");
+      sb.append(this.idNews);
+      first = false;
+    }
     sb.append(")");
     return sb.toString();
   }
@@ -1152,10 +1513,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // PARENT
+          case 2: // PARENT_ID
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.parent = iprot.readI32();
-              struct.setParentIsSet(true);
+              struct.parentId = iprot.readI32();
+              struct.setParentIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -1168,26 +1529,26 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 4: // TOPIC
+          case 4: // TOPIC_ID
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.topic = iprot.readI32();
-              struct.setTopicIsSet(true);
+              struct.topicId = iprot.readI32();
+              struct.setTopicIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 5: // AUTHOR
+          case 5: // AUTHOR_ID
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.author = iprot.readI32();
-              struct.setAuthorIsSet(true);
+              struct.authorId = iprot.readI32();
+              struct.setAuthorIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 6: // RECIPIENT
+          case 6: // RECIPIENT_ID
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.recipient = iprot.readI32();
-              struct.setRecipientIsSet(true);
+              struct.recipientId = iprot.readI32();
+              struct.setRecipientIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -1240,6 +1601,46 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 13: // GROUP_ID
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.groupId = iprot.readI32();
+              struct.setGroupIdIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 14: // ID_FORUM
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.idForum = iprot.readI32();
+              struct.setIdForumIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 15: // ID_SHOP
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.idShop = iprot.readI32();
+              struct.setIdShopIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 16: // ID_DIALOG
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.idDialog = iprot.readI32();
+              struct.setIdDialogIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 17: // ID_NEWS
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.idNews = iprot.readI32();
+              struct.setIdNewsIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -1258,23 +1659,23 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       oprot.writeFieldBegin(ID_FIELD_DESC);
       oprot.writeI32(struct.id);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(PARENT_FIELD_DESC);
-      oprot.writeI32(struct.parent);
+      oprot.writeFieldBegin(PARENT_ID_FIELD_DESC);
+      oprot.writeI32(struct.parentId);
       oprot.writeFieldEnd();
       if (struct.type != null) {
         oprot.writeFieldBegin(TYPE_FIELD_DESC);
         oprot.writeI32(struct.type.getValue());
         oprot.writeFieldEnd();
       }
-      oprot.writeFieldBegin(TOPIC_FIELD_DESC);
-      oprot.writeI32(struct.topic);
+      oprot.writeFieldBegin(TOPIC_ID_FIELD_DESC);
+      oprot.writeI32(struct.topicId);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(AUTHOR_FIELD_DESC);
-      oprot.writeI32(struct.author);
+      oprot.writeFieldBegin(AUTHOR_ID_FIELD_DESC);
+      oprot.writeI32(struct.authorId);
       oprot.writeFieldEnd();
-      if (struct.isSetRecipient()) {
-        oprot.writeFieldBegin(RECIPIENT_FIELD_DESC);
-        oprot.writeI32(struct.recipient);
+      if (struct.isSetRecipientId()) {
+        oprot.writeFieldBegin(RECIPIENT_ID_FIELD_DESC);
+        oprot.writeI32(struct.recipientId);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldBegin(CREATED_FIELD_DESC);
@@ -1299,6 +1700,29 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       oprot.writeFieldBegin(UNLIKES_FIELD_DESC);
       oprot.writeI32(struct.unlikes);
       oprot.writeFieldEnd();
+      oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
+      oprot.writeI32(struct.groupId);
+      oprot.writeFieldEnd();
+      if (struct.isSetIdForum()) {
+        oprot.writeFieldBegin(ID_FORUM_FIELD_DESC);
+        oprot.writeI32(struct.idForum);
+        oprot.writeFieldEnd();
+      }
+      if (struct.isSetIdShop()) {
+        oprot.writeFieldBegin(ID_SHOP_FIELD_DESC);
+        oprot.writeI32(struct.idShop);
+        oprot.writeFieldEnd();
+      }
+      if (struct.isSetIdDialog()) {
+        oprot.writeFieldBegin(ID_DIALOG_FIELD_DESC);
+        oprot.writeI32(struct.idDialog);
+        oprot.writeFieldEnd();
+      }
+      if (struct.isSetIdNews()) {
+        oprot.writeFieldBegin(ID_NEWS_FIELD_DESC);
+        oprot.writeI32(struct.idNews);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -1320,19 +1744,19 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetId()) {
         optionals.set(0);
       }
-      if (struct.isSetParent()) {
+      if (struct.isSetParentId()) {
         optionals.set(1);
       }
       if (struct.isSetType()) {
         optionals.set(2);
       }
-      if (struct.isSetTopic()) {
+      if (struct.isSetTopicId()) {
         optionals.set(3);
       }
-      if (struct.isSetAuthor()) {
+      if (struct.isSetAuthorId()) {
         optionals.set(4);
       }
-      if (struct.isSetRecipient()) {
+      if (struct.isSetRecipientId()) {
         optionals.set(5);
       }
       if (struct.isSetCreated()) {
@@ -1353,24 +1777,39 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetUnlikes()) {
         optionals.set(11);
       }
-      oprot.writeBitSet(optionals, 12);
+      if (struct.isSetGroupId()) {
+        optionals.set(12);
+      }
+      if (struct.isSetIdForum()) {
+        optionals.set(13);
+      }
+      if (struct.isSetIdShop()) {
+        optionals.set(14);
+      }
+      if (struct.isSetIdDialog()) {
+        optionals.set(15);
+      }
+      if (struct.isSetIdNews()) {
+        optionals.set(16);
+      }
+      oprot.writeBitSet(optionals, 17);
       if (struct.isSetId()) {
         oprot.writeI32(struct.id);
       }
-      if (struct.isSetParent()) {
-        oprot.writeI32(struct.parent);
+      if (struct.isSetParentId()) {
+        oprot.writeI32(struct.parentId);
       }
       if (struct.isSetType()) {
         oprot.writeI32(struct.type.getValue());
       }
-      if (struct.isSetTopic()) {
-        oprot.writeI32(struct.topic);
+      if (struct.isSetTopicId()) {
+        oprot.writeI32(struct.topicId);
       }
-      if (struct.isSetAuthor()) {
-        oprot.writeI32(struct.author);
+      if (struct.isSetAuthorId()) {
+        oprot.writeI32(struct.authorId);
       }
-      if (struct.isSetRecipient()) {
-        oprot.writeI32(struct.recipient);
+      if (struct.isSetRecipientId()) {
+        oprot.writeI32(struct.recipientId);
       }
       if (struct.isSetCreated()) {
         oprot.writeI32(struct.created);
@@ -1390,35 +1829,50 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetUnlikes()) {
         oprot.writeI32(struct.unlikes);
       }
+      if (struct.isSetGroupId()) {
+        oprot.writeI32(struct.groupId);
+      }
+      if (struct.isSetIdForum()) {
+        oprot.writeI32(struct.idForum);
+      }
+      if (struct.isSetIdShop()) {
+        oprot.writeI32(struct.idShop);
+      }
+      if (struct.isSetIdDialog()) {
+        oprot.writeI32(struct.idDialog);
+      }
+      if (struct.isSetIdNews()) {
+        oprot.writeI32(struct.idNews);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Message struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(12);
+      BitSet incoming = iprot.readBitSet(17);
       if (incoming.get(0)) {
         struct.id = iprot.readI32();
         struct.setIdIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.parent = iprot.readI32();
-        struct.setParentIsSet(true);
+        struct.parentId = iprot.readI32();
+        struct.setParentIdIsSet(true);
       }
       if (incoming.get(2)) {
         struct.type = MessageType.findByValue(iprot.readI32());
         struct.setTypeIsSet(true);
       }
       if (incoming.get(3)) {
-        struct.topic = iprot.readI32();
-        struct.setTopicIsSet(true);
+        struct.topicId = iprot.readI32();
+        struct.setTopicIdIsSet(true);
       }
       if (incoming.get(4)) {
-        struct.author = iprot.readI32();
-        struct.setAuthorIsSet(true);
+        struct.authorId = iprot.readI32();
+        struct.setAuthorIdIsSet(true);
       }
       if (incoming.get(5)) {
-        struct.recipient = iprot.readI32();
-        struct.setRecipientIsSet(true);
+        struct.recipientId = iprot.readI32();
+        struct.setRecipientIdIsSet(true);
       }
       if (incoming.get(6)) {
         struct.created = iprot.readI32();
@@ -1443,6 +1897,26 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (incoming.get(11)) {
         struct.unlikes = iprot.readI32();
         struct.setUnlikesIsSet(true);
+      }
+      if (incoming.get(12)) {
+        struct.groupId = iprot.readI32();
+        struct.setGroupIdIsSet(true);
+      }
+      if (incoming.get(13)) {
+        struct.idForum = iprot.readI32();
+        struct.setIdForumIsSet(true);
+      }
+      if (incoming.get(14)) {
+        struct.idShop = iprot.readI32();
+        struct.setIdShopIsSet(true);
+      }
+      if (incoming.get(15)) {
+        struct.idDialog = iprot.readI32();
+        struct.setIdDialogIsSet(true);
+      }
+      if (incoming.get(16)) {
+        struct.idNews = iprot.readI32();
+        struct.setIdNewsIsSet(true);
       }
     }
   }

@@ -36,8 +36,11 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Group");
 
   private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I32, (short)1);
-  private static final org.apache.thrift.protocol.TField LOCATION_FIELD_DESC = new org.apache.thrift.protocol.TField("location", org.apache.thrift.protocol.TType.I32, (short)2);
-  private static final org.apache.thrift.protocol.TField COMMENT_FIELD_DESC = new org.apache.thrift.protocol.TField("comment", org.apache.thrift.protocol.TType.STRING, (short)3);
+  private static final org.apache.thrift.protocol.TField LOCATION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("locationId", org.apache.thrift.protocol.TType.I32, (short)2);
+  private static final org.apache.thrift.protocol.TField CREATOR_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("creatorId", org.apache.thrift.protocol.TType.I32, (short)3);
+  private static final org.apache.thrift.protocol.TField COMMENT_FIELD_DESC = new org.apache.thrift.protocol.TField("comment", org.apache.thrift.protocol.TType.STRING, (short)4);
+  private static final org.apache.thrift.protocol.TField SHORT_NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("shortName", org.apache.thrift.protocol.TType.STRING, (short)5);
+  private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)6);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -46,14 +49,20 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
   }
 
   public int id; // required
-  public int location; // required
-  public String comment; // required
+  public int locationId; // required
+  public int creatorId; // required
+  public String comment; // optional
+  public String shortName; // required
+  public String name; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ID((short)1, "id"),
-    LOCATION((short)2, "location"),
-    COMMENT((short)3, "comment");
+    LOCATION_ID((short)2, "locationId"),
+    CREATOR_ID((short)3, "creatorId"),
+    COMMENT((short)4, "comment"),
+    SHORT_NAME((short)5, "shortName"),
+    NAME((short)6, "name");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -70,10 +79,16 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       switch(fieldId) {
         case 1: // ID
           return ID;
-        case 2: // LOCATION
-          return LOCATION;
-        case 3: // COMMENT
+        case 2: // LOCATION_ID
+          return LOCATION_ID;
+        case 3: // CREATOR_ID
+          return CREATOR_ID;
+        case 4: // COMMENT
           return COMMENT;
+        case 5: // SHORT_NAME
+          return SHORT_NAME;
+        case 6: // NAME
+          return NAME;
         default:
           return null;
       }
@@ -115,16 +130,24 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
 
   // isset id assignments
   private static final int __ID_ISSET_ID = 0;
-  private static final int __LOCATION_ISSET_ID = 1;
+  private static final int __LOCATIONID_ISSET_ID = 1;
+  private static final int __CREATORID_ISSET_ID = 2;
   private byte __isset_bitfield = 0;
+  private _Fields optionals[] = {_Fields.COMMENT,_Fields.NAME};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.LOCATION, new org.apache.thrift.meta_data.FieldMetaData("location", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.LOCATION_ID, new org.apache.thrift.meta_data.FieldMetaData("locationId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.COMMENT, new org.apache.thrift.meta_data.FieldMetaData("comment", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.CREATOR_ID, new org.apache.thrift.meta_data.FieldMetaData("creatorId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.COMMENT, new org.apache.thrift.meta_data.FieldMetaData("comment", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+    tmpMap.put(_Fields.SHORT_NAME, new org.apache.thrift.meta_data.FieldMetaData("shortName", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+    tmpMap.put(_Fields.NAME, new org.apache.thrift.meta_data.FieldMetaData("name", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Group.class, metaDataMap);
@@ -135,15 +158,18 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
 
   public Group(
     int id,
-    int location,
-    String comment)
+    int locationId,
+    int creatorId,
+    String shortName)
   {
     this();
     this.id = id;
     setIdIsSet(true);
-    this.location = location;
-    setLocationIsSet(true);
-    this.comment = comment;
+    this.locationId = locationId;
+    setLocationIdIsSet(true);
+    this.creatorId = creatorId;
+    setCreatorIdIsSet(true);
+    this.shortName = shortName;
   }
 
   /**
@@ -152,9 +178,16 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
   public Group(Group other) {
     __isset_bitfield = other.__isset_bitfield;
     this.id = other.id;
-    this.location = other.location;
+    this.locationId = other.locationId;
+    this.creatorId = other.creatorId;
     if (other.isSetComment()) {
       this.comment = other.comment;
+    }
+    if (other.isSetShortName()) {
+      this.shortName = other.shortName;
+    }
+    if (other.isSetName()) {
+      this.name = other.name;
     }
   }
 
@@ -166,9 +199,13 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
   public void clear() {
     setIdIsSet(false);
     this.id = 0;
-    setLocationIsSet(false);
-    this.location = 0;
+    setLocationIdIsSet(false);
+    this.locationId = 0;
+    setCreatorIdIsSet(false);
+    this.creatorId = 0;
     this.comment = null;
+    this.shortName = null;
+    this.name = null;
   }
 
   public int getId() {
@@ -194,27 +231,50 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ID_ISSET_ID, value);
   }
 
-  public int getLocation() {
-    return this.location;
+  public int getLocationId() {
+    return this.locationId;
   }
 
-  public Group setLocation(int location) {
-    this.location = location;
-    setLocationIsSet(true);
+  public Group setLocationId(int locationId) {
+    this.locationId = locationId;
+    setLocationIdIsSet(true);
     return this;
   }
 
-  public void unsetLocation() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LOCATION_ISSET_ID);
+  public void unsetLocationId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LOCATIONID_ISSET_ID);
   }
 
-  /** Returns true if field location is set (has been assigned a value) and false otherwise */
-  public boolean isSetLocation() {
-    return EncodingUtils.testBit(__isset_bitfield, __LOCATION_ISSET_ID);
+  /** Returns true if field locationId is set (has been assigned a value) and false otherwise */
+  public boolean isSetLocationId() {
+    return EncodingUtils.testBit(__isset_bitfield, __LOCATIONID_ISSET_ID);
   }
 
-  public void setLocationIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LOCATION_ISSET_ID, value);
+  public void setLocationIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LOCATIONID_ISSET_ID, value);
+  }
+
+  public int getCreatorId() {
+    return this.creatorId;
+  }
+
+  public Group setCreatorId(int creatorId) {
+    this.creatorId = creatorId;
+    setCreatorIdIsSet(true);
+    return this;
+  }
+
+  public void unsetCreatorId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CREATORID_ISSET_ID);
+  }
+
+  /** Returns true if field creatorId is set (has been assigned a value) and false otherwise */
+  public boolean isSetCreatorId() {
+    return EncodingUtils.testBit(__isset_bitfield, __CREATORID_ISSET_ID);
+  }
+
+  public void setCreatorIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CREATORID_ISSET_ID, value);
   }
 
   public String getComment() {
@@ -241,6 +301,54 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     }
   }
 
+  public String getShortName() {
+    return this.shortName;
+  }
+
+  public Group setShortName(String shortName) {
+    this.shortName = shortName;
+    return this;
+  }
+
+  public void unsetShortName() {
+    this.shortName = null;
+  }
+
+  /** Returns true if field shortName is set (has been assigned a value) and false otherwise */
+  public boolean isSetShortName() {
+    return this.shortName != null;
+  }
+
+  public void setShortNameIsSet(boolean value) {
+    if (!value) {
+      this.shortName = null;
+    }
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public Group setName(String name) {
+    this.name = name;
+    return this;
+  }
+
+  public void unsetName() {
+    this.name = null;
+  }
+
+  /** Returns true if field name is set (has been assigned a value) and false otherwise */
+  public boolean isSetName() {
+    return this.name != null;
+  }
+
+  public void setNameIsSet(boolean value) {
+    if (!value) {
+      this.name = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case ID:
@@ -251,11 +359,19 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       }
       break;
 
-    case LOCATION:
+    case LOCATION_ID:
       if (value == null) {
-        unsetLocation();
+        unsetLocationId();
       } else {
-        setLocation((Integer)value);
+        setLocationId((Integer)value);
+      }
+      break;
+
+    case CREATOR_ID:
+      if (value == null) {
+        unsetCreatorId();
+      } else {
+        setCreatorId((Integer)value);
       }
       break;
 
@@ -267,6 +383,22 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       }
       break;
 
+    case SHORT_NAME:
+      if (value == null) {
+        unsetShortName();
+      } else {
+        setShortName((String)value);
+      }
+      break;
+
+    case NAME:
+      if (value == null) {
+        unsetName();
+      } else {
+        setName((String)value);
+      }
+      break;
+
     }
   }
 
@@ -275,11 +407,20 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     case ID:
       return Integer.valueOf(getId());
 
-    case LOCATION:
-      return Integer.valueOf(getLocation());
+    case LOCATION_ID:
+      return Integer.valueOf(getLocationId());
+
+    case CREATOR_ID:
+      return Integer.valueOf(getCreatorId());
 
     case COMMENT:
       return getComment();
+
+    case SHORT_NAME:
+      return getShortName();
+
+    case NAME:
+      return getName();
 
     }
     throw new IllegalStateException();
@@ -294,10 +435,16 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     switch (field) {
     case ID:
       return isSetId();
-    case LOCATION:
-      return isSetLocation();
+    case LOCATION_ID:
+      return isSetLocationId();
+    case CREATOR_ID:
+      return isSetCreatorId();
     case COMMENT:
       return isSetComment();
+    case SHORT_NAME:
+      return isSetShortName();
+    case NAME:
+      return isSetName();
     }
     throw new IllegalStateException();
   }
@@ -324,12 +471,21 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
         return false;
     }
 
-    boolean this_present_location = true;
-    boolean that_present_location = true;
-    if (this_present_location || that_present_location) {
-      if (!(this_present_location && that_present_location))
+    boolean this_present_locationId = true;
+    boolean that_present_locationId = true;
+    if (this_present_locationId || that_present_locationId) {
+      if (!(this_present_locationId && that_present_locationId))
         return false;
-      if (this.location != that.location)
+      if (this.locationId != that.locationId)
+        return false;
+    }
+
+    boolean this_present_creatorId = true;
+    boolean that_present_creatorId = true;
+    if (this_present_creatorId || that_present_creatorId) {
+      if (!(this_present_creatorId && that_present_creatorId))
+        return false;
+      if (this.creatorId != that.creatorId)
         return false;
     }
 
@@ -339,6 +495,24 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       if (!(this_present_comment && that_present_comment))
         return false;
       if (!this.comment.equals(that.comment))
+        return false;
+    }
+
+    boolean this_present_shortName = true && this.isSetShortName();
+    boolean that_present_shortName = true && that.isSetShortName();
+    if (this_present_shortName || that_present_shortName) {
+      if (!(this_present_shortName && that_present_shortName))
+        return false;
+      if (!this.shortName.equals(that.shortName))
+        return false;
+    }
+
+    boolean this_present_name = true && this.isSetName();
+    boolean that_present_name = true && that.isSetName();
+    if (this_present_name || that_present_name) {
+      if (!(this_present_name && that_present_name))
+        return false;
+      if (!this.name.equals(that.name))
         return false;
     }
 
@@ -368,12 +542,22 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetLocation()).compareTo(other.isSetLocation());
+    lastComparison = Boolean.valueOf(isSetLocationId()).compareTo(other.isSetLocationId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetLocation()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.location, other.location);
+    if (isSetLocationId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.locationId, other.locationId);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetCreatorId()).compareTo(other.isSetCreatorId());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetCreatorId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.creatorId, other.creatorId);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -384,6 +568,26 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     }
     if (isSetComment()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.comment, other.comment);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetShortName()).compareTo(other.isSetShortName());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetShortName()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.shortName, other.shortName);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetName()).compareTo(other.isSetName());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetName()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.name, other.name);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -412,17 +616,41 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     sb.append(this.id);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("location:");
-    sb.append(this.location);
+    sb.append("locationId:");
+    sb.append(this.locationId);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("comment:");
-    if (this.comment == null) {
+    sb.append("creatorId:");
+    sb.append(this.creatorId);
+    first = false;
+    if (isSetComment()) {
+      if (!first) sb.append(", ");
+      sb.append("comment:");
+      if (this.comment == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.comment);
+      }
+      first = false;
+    }
+    if (!first) sb.append(", ");
+    sb.append("shortName:");
+    if (this.shortName == null) {
       sb.append("null");
     } else {
-      sb.append(this.comment);
+      sb.append(this.shortName);
     }
     first = false;
+    if (isSetName()) {
+      if (!first) sb.append(", ");
+      sb.append("name:");
+      if (this.name == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.name);
+      }
+      first = false;
+    }
     sb.append(")");
     return sb.toString();
   }
@@ -476,18 +704,42 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // LOCATION
+          case 2: // LOCATION_ID
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.location = iprot.readI32();
-              struct.setLocationIsSet(true);
+              struct.locationId = iprot.readI32();
+              struct.setLocationIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 3: // COMMENT
+          case 3: // CREATOR_ID
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.creatorId = iprot.readI32();
+              struct.setCreatorIdIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 4: // COMMENT
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.comment = iprot.readString();
               struct.setCommentIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 5: // SHORT_NAME
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.shortName = iprot.readString();
+              struct.setShortNameIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 6: // NAME
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.name = iprot.readString();
+              struct.setNameIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -510,13 +762,30 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       oprot.writeFieldBegin(ID_FIELD_DESC);
       oprot.writeI32(struct.id);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(LOCATION_FIELD_DESC);
-      oprot.writeI32(struct.location);
+      oprot.writeFieldBegin(LOCATION_ID_FIELD_DESC);
+      oprot.writeI32(struct.locationId);
+      oprot.writeFieldEnd();
+      oprot.writeFieldBegin(CREATOR_ID_FIELD_DESC);
+      oprot.writeI32(struct.creatorId);
       oprot.writeFieldEnd();
       if (struct.comment != null) {
-        oprot.writeFieldBegin(COMMENT_FIELD_DESC);
-        oprot.writeString(struct.comment);
+        if (struct.isSetComment()) {
+          oprot.writeFieldBegin(COMMENT_FIELD_DESC);
+          oprot.writeString(struct.comment);
+          oprot.writeFieldEnd();
+        }
+      }
+      if (struct.shortName != null) {
+        oprot.writeFieldBegin(SHORT_NAME_FIELD_DESC);
+        oprot.writeString(struct.shortName);
         oprot.writeFieldEnd();
+      }
+      if (struct.name != null) {
+        if (struct.isSetName()) {
+          oprot.writeFieldBegin(NAME_FIELD_DESC);
+          oprot.writeString(struct.name);
+          oprot.writeFieldEnd();
+        }
       }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
@@ -539,39 +808,69 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       if (struct.isSetId()) {
         optionals.set(0);
       }
-      if (struct.isSetLocation()) {
+      if (struct.isSetLocationId()) {
         optionals.set(1);
       }
-      if (struct.isSetComment()) {
+      if (struct.isSetCreatorId()) {
         optionals.set(2);
       }
-      oprot.writeBitSet(optionals, 3);
+      if (struct.isSetComment()) {
+        optionals.set(3);
+      }
+      if (struct.isSetShortName()) {
+        optionals.set(4);
+      }
+      if (struct.isSetName()) {
+        optionals.set(5);
+      }
+      oprot.writeBitSet(optionals, 6);
       if (struct.isSetId()) {
         oprot.writeI32(struct.id);
       }
-      if (struct.isSetLocation()) {
-        oprot.writeI32(struct.location);
+      if (struct.isSetLocationId()) {
+        oprot.writeI32(struct.locationId);
+      }
+      if (struct.isSetCreatorId()) {
+        oprot.writeI32(struct.creatorId);
       }
       if (struct.isSetComment()) {
         oprot.writeString(struct.comment);
+      }
+      if (struct.isSetShortName()) {
+        oprot.writeString(struct.shortName);
+      }
+      if (struct.isSetName()) {
+        oprot.writeString(struct.name);
       }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Group struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(3);
+      BitSet incoming = iprot.readBitSet(6);
       if (incoming.get(0)) {
         struct.id = iprot.readI32();
         struct.setIdIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.location = iprot.readI32();
-        struct.setLocationIsSet(true);
+        struct.locationId = iprot.readI32();
+        struct.setLocationIdIsSet(true);
       }
       if (incoming.get(2)) {
+        struct.creatorId = iprot.readI32();
+        struct.setCreatorIdIsSet(true);
+      }
+      if (incoming.get(3)) {
         struct.comment = iprot.readString();
         struct.setCommentIsSet(true);
+      }
+      if (incoming.get(4)) {
+        struct.shortName = iprot.readString();
+        struct.setShortNameIsSet(true);
+      }
+      if (incoming.get(5)) {
+        struct.name = iprot.readString();
+        struct.setNameIsSet(true);
       }
     }
   }

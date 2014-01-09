@@ -38,8 +38,8 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
   private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I32, (short)1);
   private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)2);
   private static final org.apache.thrift.protocol.TField DESCRIPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("description", org.apache.thrift.protocol.TType.STRING, (short)3);
-  private static final org.apache.thrift.protocol.TField TOPICS_FIELD_DESC = new org.apache.thrift.protocol.TField("topics", org.apache.thrift.protocol.TType.I32, (short)4);
-  private static final org.apache.thrift.protocol.TField MESSAGES_FIELD_DESC = new org.apache.thrift.protocol.TField("messages", org.apache.thrift.protocol.TType.I32, (short)5);
+  private static final org.apache.thrift.protocol.TField TOPICS_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("topicsNum", org.apache.thrift.protocol.TType.I32, (short)4);
+  private static final org.apache.thrift.protocol.TField MESSAGES_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("messagesNum", org.apache.thrift.protocol.TType.I32, (short)5);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -50,16 +50,16 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
   public int id; // required
   public String name; // required
   public String description; // required
-  public int topics; // required
-  public int messages; // required
+  public int topicsNum; // required
+  public int messagesNum; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ID((short)1, "id"),
     NAME((short)2, "name"),
     DESCRIPTION((short)3, "description"),
-    TOPICS((short)4, "topics"),
-    MESSAGES((short)5, "messages");
+    TOPICS_NUM((short)4, "topicsNum"),
+    MESSAGES_NUM((short)5, "messagesNum");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -80,10 +80,10 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
           return NAME;
         case 3: // DESCRIPTION
           return DESCRIPTION;
-        case 4: // TOPICS
-          return TOPICS;
-        case 5: // MESSAGES
-          return MESSAGES;
+        case 4: // TOPICS_NUM
+          return TOPICS_NUM;
+        case 5: // MESSAGES_NUM
+          return MESSAGES_NUM;
         default:
           return null;
       }
@@ -125,8 +125,8 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
 
   // isset id assignments
   private static final int __ID_ISSET_ID = 0;
-  private static final int __TOPICS_ISSET_ID = 1;
-  private static final int __MESSAGES_ISSET_ID = 2;
+  private static final int __TOPICSNUM_ISSET_ID = 1;
+  private static final int __MESSAGESNUM_ISSET_ID = 2;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
@@ -137,9 +137,9 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.DESCRIPTION, new org.apache.thrift.meta_data.FieldMetaData("description", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-    tmpMap.put(_Fields.TOPICS, new org.apache.thrift.meta_data.FieldMetaData("topics", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.TOPICS_NUM, new org.apache.thrift.meta_data.FieldMetaData("topicsNum", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.MESSAGES, new org.apache.thrift.meta_data.FieldMetaData("messages", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.MESSAGES_NUM, new org.apache.thrift.meta_data.FieldMetaData("messagesNum", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Rubric.class, metaDataMap);
@@ -152,18 +152,18 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     int id,
     String name,
     String description,
-    int topics,
-    int messages)
+    int topicsNum,
+    int messagesNum)
   {
     this();
     this.id = id;
     setIdIsSet(true);
     this.name = name;
     this.description = description;
-    this.topics = topics;
-    setTopicsIsSet(true);
-    this.messages = messages;
-    setMessagesIsSet(true);
+    this.topicsNum = topicsNum;
+    setTopicsNumIsSet(true);
+    this.messagesNum = messagesNum;
+    setMessagesNumIsSet(true);
   }
 
   /**
@@ -178,8 +178,8 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     if (other.isSetDescription()) {
       this.description = other.description;
     }
-    this.topics = other.topics;
-    this.messages = other.messages;
+    this.topicsNum = other.topicsNum;
+    this.messagesNum = other.messagesNum;
   }
 
   public Rubric deepCopy() {
@@ -192,10 +192,10 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     this.id = 0;
     this.name = null;
     this.description = null;
-    setTopicsIsSet(false);
-    this.topics = 0;
-    setMessagesIsSet(false);
-    this.messages = 0;
+    setTopicsNumIsSet(false);
+    this.topicsNum = 0;
+    setMessagesNumIsSet(false);
+    this.messagesNum = 0;
   }
 
   public int getId() {
@@ -269,50 +269,50 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     }
   }
 
-  public int getTopics() {
-    return this.topics;
+  public int getTopicsNum() {
+    return this.topicsNum;
   }
 
-  public Rubric setTopics(int topics) {
-    this.topics = topics;
-    setTopicsIsSet(true);
+  public Rubric setTopicsNum(int topicsNum) {
+    this.topicsNum = topicsNum;
+    setTopicsNumIsSet(true);
     return this;
   }
 
-  public void unsetTopics() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPICS_ISSET_ID);
+  public void unsetTopicsNum() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPICSNUM_ISSET_ID);
   }
 
-  /** Returns true if field topics is set (has been assigned a value) and false otherwise */
-  public boolean isSetTopics() {
-    return EncodingUtils.testBit(__isset_bitfield, __TOPICS_ISSET_ID);
+  /** Returns true if field topicsNum is set (has been assigned a value) and false otherwise */
+  public boolean isSetTopicsNum() {
+    return EncodingUtils.testBit(__isset_bitfield, __TOPICSNUM_ISSET_ID);
   }
 
-  public void setTopicsIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICS_ISSET_ID, value);
+  public void setTopicsNumIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICSNUM_ISSET_ID, value);
   }
 
-  public int getMessages() {
-    return this.messages;
+  public int getMessagesNum() {
+    return this.messagesNum;
   }
 
-  public Rubric setMessages(int messages) {
-    this.messages = messages;
-    setMessagesIsSet(true);
+  public Rubric setMessagesNum(int messagesNum) {
+    this.messagesNum = messagesNum;
+    setMessagesNumIsSet(true);
     return this;
   }
 
-  public void unsetMessages() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __MESSAGES_ISSET_ID);
+  public void unsetMessagesNum() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __MESSAGESNUM_ISSET_ID);
   }
 
-  /** Returns true if field messages is set (has been assigned a value) and false otherwise */
-  public boolean isSetMessages() {
-    return EncodingUtils.testBit(__isset_bitfield, __MESSAGES_ISSET_ID);
+  /** Returns true if field messagesNum is set (has been assigned a value) and false otherwise */
+  public boolean isSetMessagesNum() {
+    return EncodingUtils.testBit(__isset_bitfield, __MESSAGESNUM_ISSET_ID);
   }
 
-  public void setMessagesIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MESSAGES_ISSET_ID, value);
+  public void setMessagesNumIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MESSAGESNUM_ISSET_ID, value);
   }
 
   public void setFieldValue(_Fields field, Object value) {
@@ -341,19 +341,19 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
       }
       break;
 
-    case TOPICS:
+    case TOPICS_NUM:
       if (value == null) {
-        unsetTopics();
+        unsetTopicsNum();
       } else {
-        setTopics((Integer)value);
+        setTopicsNum((Integer)value);
       }
       break;
 
-    case MESSAGES:
+    case MESSAGES_NUM:
       if (value == null) {
-        unsetMessages();
+        unsetMessagesNum();
       } else {
-        setMessages((Integer)value);
+        setMessagesNum((Integer)value);
       }
       break;
 
@@ -371,11 +371,11 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     case DESCRIPTION:
       return getDescription();
 
-    case TOPICS:
-      return Integer.valueOf(getTopics());
+    case TOPICS_NUM:
+      return Integer.valueOf(getTopicsNum());
 
-    case MESSAGES:
-      return Integer.valueOf(getMessages());
+    case MESSAGES_NUM:
+      return Integer.valueOf(getMessagesNum());
 
     }
     throw new IllegalStateException();
@@ -394,10 +394,10 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
       return isSetName();
     case DESCRIPTION:
       return isSetDescription();
-    case TOPICS:
-      return isSetTopics();
-    case MESSAGES:
-      return isSetMessages();
+    case TOPICS_NUM:
+      return isSetTopicsNum();
+    case MESSAGES_NUM:
+      return isSetMessagesNum();
     }
     throw new IllegalStateException();
   }
@@ -442,21 +442,21 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
         return false;
     }
 
-    boolean this_present_topics = true;
-    boolean that_present_topics = true;
-    if (this_present_topics || that_present_topics) {
-      if (!(this_present_topics && that_present_topics))
+    boolean this_present_topicsNum = true;
+    boolean that_present_topicsNum = true;
+    if (this_present_topicsNum || that_present_topicsNum) {
+      if (!(this_present_topicsNum && that_present_topicsNum))
         return false;
-      if (this.topics != that.topics)
+      if (this.topicsNum != that.topicsNum)
         return false;
     }
 
-    boolean this_present_messages = true;
-    boolean that_present_messages = true;
-    if (this_present_messages || that_present_messages) {
-      if (!(this_present_messages && that_present_messages))
+    boolean this_present_messagesNum = true;
+    boolean that_present_messagesNum = true;
+    if (this_present_messagesNum || that_present_messagesNum) {
+      if (!(this_present_messagesNum && that_present_messagesNum))
         return false;
-      if (this.messages != that.messages)
+      if (this.messagesNum != that.messagesNum)
         return false;
     }
 
@@ -506,22 +506,22 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetTopics()).compareTo(other.isSetTopics());
+    lastComparison = Boolean.valueOf(isSetTopicsNum()).compareTo(other.isSetTopicsNum());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetTopics()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topics, other.topics);
+    if (isSetTopicsNum()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topicsNum, other.topicsNum);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetMessages()).compareTo(other.isSetMessages());
+    lastComparison = Boolean.valueOf(isSetMessagesNum()).compareTo(other.isSetMessagesNum());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetMessages()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.messages, other.messages);
+    if (isSetMessagesNum()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.messagesNum, other.messagesNum);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -566,12 +566,12 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("topics:");
-    sb.append(this.topics);
+    sb.append("topicsNum:");
+    sb.append(this.topicsNum);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("messages:");
-    sb.append(this.messages);
+    sb.append("messagesNum:");
+    sb.append(this.messagesNum);
     first = false;
     sb.append(")");
     return sb.toString();
@@ -642,18 +642,18 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 4: // TOPICS
+          case 4: // TOPICS_NUM
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.topics = iprot.readI32();
-              struct.setTopicsIsSet(true);
+              struct.topicsNum = iprot.readI32();
+              struct.setTopicsNumIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 5: // MESSAGES
+          case 5: // MESSAGES_NUM
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.messages = iprot.readI32();
-              struct.setMessagesIsSet(true);
+              struct.messagesNum = iprot.readI32();
+              struct.setMessagesNumIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -686,11 +686,11 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
         oprot.writeString(struct.description);
         oprot.writeFieldEnd();
       }
-      oprot.writeFieldBegin(TOPICS_FIELD_DESC);
-      oprot.writeI32(struct.topics);
+      oprot.writeFieldBegin(TOPICS_NUM_FIELD_DESC);
+      oprot.writeI32(struct.topicsNum);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(MESSAGES_FIELD_DESC);
-      oprot.writeI32(struct.messages);
+      oprot.writeFieldBegin(MESSAGES_NUM_FIELD_DESC);
+      oprot.writeI32(struct.messagesNum);
       oprot.writeFieldEnd();
       oprot.writeFieldStop();
       oprot.writeStructEnd();
@@ -719,10 +719,10 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
       if (struct.isSetDescription()) {
         optionals.set(2);
       }
-      if (struct.isSetTopics()) {
+      if (struct.isSetTopicsNum()) {
         optionals.set(3);
       }
-      if (struct.isSetMessages()) {
+      if (struct.isSetMessagesNum()) {
         optionals.set(4);
       }
       oprot.writeBitSet(optionals, 5);
@@ -735,11 +735,11 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
       if (struct.isSetDescription()) {
         oprot.writeString(struct.description);
       }
-      if (struct.isSetTopics()) {
-        oprot.writeI32(struct.topics);
+      if (struct.isSetTopicsNum()) {
+        oprot.writeI32(struct.topicsNum);
       }
-      if (struct.isSetMessages()) {
-        oprot.writeI32(struct.messages);
+      if (struct.isSetMessagesNum()) {
+        oprot.writeI32(struct.messagesNum);
       }
     }
 
@@ -760,12 +760,12 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
         struct.setDescriptionIsSet(true);
       }
       if (incoming.get(3)) {
-        struct.topics = iprot.readI32();
-        struct.setTopicsIsSet(true);
+        struct.topicsNum = iprot.readI32();
+        struct.setTopicsNumIsSet(true);
       }
       if (incoming.get(4)) {
-        struct.messages = iprot.readI32();
-        struct.setMessagesIsSet(true);
+        struct.messagesNum = iprot.readI32();
+        struct.setMessagesNumIsSet(true);
       }
     }
   }
