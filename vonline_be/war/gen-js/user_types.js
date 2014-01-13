@@ -14,6 +14,17 @@ if (typeof com.vmesteonline === 'undefined') {
 if (typeof com.vmesteonline.be === 'undefined') {
   com.vmesteonline.be = {};
 }
+com.vmesteonline.be.LocationType = {
+'FLAT' : 1,
+'FLOOR' : 2,
+'HOUSE' : 3,
+'BLOCK' : 4,
+'DISTRICT' : 5,
+'CITY' : 6,
+'REGION' : 7,
+'COUNTRY' : 8,
+'WORLD' : 9
+};
 com.vmesteonline.be.UserInfo = function(args) {
   this.name = null;
   this.secondName = null;
@@ -217,6 +228,8 @@ com.vmesteonline.be.Session = function(args) {
   this.created = null;
   this.userAgent = null;
   this.cookie = null;
+  this.accessGranted = null;
+  this.error = null;
   if (args) {
     if (args.salt !== undefined) {
       this.salt = args.salt;
@@ -232,6 +245,12 @@ com.vmesteonline.be.Session = function(args) {
     }
     if (args.cookie !== undefined) {
       this.cookie = args.cookie;
+    }
+    if (args.accessGranted !== undefined) {
+      this.accessGranted = args.accessGranted;
+    }
+    if (args.error !== undefined) {
+      this.error = args.error;
     }
   }
 };
@@ -285,6 +304,20 @@ com.vmesteonline.be.Session.prototype.read = function(input) {
         input.skip(ftype);
       }
       break;
+      case 6:
+      if (ftype == Thrift.Type.BOOL) {
+        this.accessGranted = input.readBool().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 7:
+      if (ftype == Thrift.Type.STRING) {
+        this.error = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -319,6 +352,162 @@ com.vmesteonline.be.Session.prototype.write = function(output) {
   if (this.cookie !== null && this.cookie !== undefined) {
     output.writeFieldBegin('cookie', Thrift.Type.STRING, 5);
     output.writeString(this.cookie);
+    output.writeFieldEnd();
+  }
+  if (this.accessGranted !== null && this.accessGranted !== undefined) {
+    output.writeFieldBegin('accessGranted', Thrift.Type.BOOL, 6);
+    output.writeBool(this.accessGranted);
+    output.writeFieldEnd();
+  }
+  if (this.error !== null && this.error !== undefined) {
+    output.writeFieldBegin('error', Thrift.Type.STRING, 7);
+    output.writeString(this.error);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.Location = function(args) {
+  this.id = null;
+  this.parent = null;
+  this.name = null;
+  this.type = null;
+  this.longitude = null;
+  this.attitude = null;
+  this.altitude = null;
+  if (args) {
+    if (args.id !== undefined) {
+      this.id = args.id;
+    }
+    if (args.parent !== undefined) {
+      this.parent = args.parent;
+    }
+    if (args.name !== undefined) {
+      this.name = args.name;
+    }
+    if (args.type !== undefined) {
+      this.type = args.type;
+    }
+    if (args.longitude !== undefined) {
+      this.longitude = args.longitude;
+    }
+    if (args.attitude !== undefined) {
+      this.attitude = args.attitude;
+    }
+    if (args.altitude !== undefined) {
+      this.altitude = args.altitude;
+    }
+  }
+};
+com.vmesteonline.be.Location.prototype = {};
+com.vmesteonline.be.Location.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I32) {
+        this.id = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.I32) {
+        this.parent = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.STRING) {
+        this.name = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.I32) {
+        this.type = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 5:
+      if (ftype == Thrift.Type.DOUBLE) {
+        this.longitude = input.readDouble().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 6:
+      if (ftype == Thrift.Type.DOUBLE) {
+        this.attitude = input.readDouble().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 7:
+      if (ftype == Thrift.Type.DOUBLE) {
+        this.altitude = input.readDouble().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.Location.prototype.write = function(output) {
+  output.writeStructBegin('Location');
+  if (this.id !== null && this.id !== undefined) {
+    output.writeFieldBegin('id', Thrift.Type.I32, 1);
+    output.writeI32(this.id);
+    output.writeFieldEnd();
+  }
+  if (this.parent !== null && this.parent !== undefined) {
+    output.writeFieldBegin('parent', Thrift.Type.I32, 2);
+    output.writeI32(this.parent);
+    output.writeFieldEnd();
+  }
+  if (this.name !== null && this.name !== undefined) {
+    output.writeFieldBegin('name', Thrift.Type.STRING, 3);
+    output.writeString(this.name);
+    output.writeFieldEnd();
+  }
+  if (this.type !== null && this.type !== undefined) {
+    output.writeFieldBegin('type', Thrift.Type.I32, 4);
+    output.writeI32(this.type);
+    output.writeFieldEnd();
+  }
+  if (this.longitude !== null && this.longitude !== undefined) {
+    output.writeFieldBegin('longitude', Thrift.Type.DOUBLE, 5);
+    output.writeDouble(this.longitude);
+    output.writeFieldEnd();
+  }
+  if (this.attitude !== null && this.attitude !== undefined) {
+    output.writeFieldBegin('attitude', Thrift.Type.DOUBLE, 6);
+    output.writeDouble(this.attitude);
+    output.writeFieldEnd();
+  }
+  if (this.altitude !== null && this.altitude !== undefined) {
+    output.writeFieldBegin('altitude', Thrift.Type.DOUBLE, 7);
+    output.writeDouble(this.altitude);
     output.writeFieldEnd();
   }
   output.writeFieldStop();

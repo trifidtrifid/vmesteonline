@@ -1,6 +1,11 @@
 package com.vmesteonline.be;
 
 import com.google.appengine.api.datastore.DatastoreService;
+
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
+
 import com.vmesteonline.be.data.JDBCConnector;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -29,19 +34,23 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		DatastoreService dataSrvc = DatastoreServiceFactory
 				.getDatastoreService();
 
-		System.out.print("try auten user " + uname + " pass " + password + "\n");
+		System.out
+				.print("try auten user " + uname + " pass " + password + "\n");
 
 		try {
-			Entity user = dataSrvc.get(KeyFactory.createKey("User", uname));
+			Entity user = dataSrvc.get(KeyFactory.createKey("VoUser", uname));
 
-			System.out.print("try to compare pwd '" + password + "' pwd on store '" + user.getProperty("password")  +"'\n");
+			System.out
+					.print("try to compare pwd '" + password
+							+ "' pwd on store '" + user.getProperty("password")
+							+ "'\n");
 
 			if (user.getProperty("password").equals(password)) {
 				user.setProperty("active", true);
 				dataSrvc.put(user);
 				sess.salt = generateSalt();
 				sess.accessGranted = true;
-				
+
 			} else {
 				sess.accessGranted = false;
 				sess.error = "incorrect user or password";
@@ -49,7 +58,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 		} catch (EntityNotFoundException e) {
 			sess.error = "incorrect user or password";
-			System.out.print("can't find " + uname + " pass " + password + "\n");
+			System.out
+					.print("can't find " + uname + " pass " + password + "\n");
 
 		}
 
@@ -67,19 +77,15 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	@Override
 	public int registerNewUser(String uname, String password, String groupId,
 			String email) throws InvalidOperation {
-		DatastoreService dataSrvc = DatastoreServiceFactory
-				.getDatastoreService();
-		Entity user = new Entity("User", email);
-		user.setUnindexedProperty("password", password);
-		user.setUnindexedProperty("nick", uname);
-		user.setUnindexedProperty("home", groupId);
-		user.setProperty("active", false);
-		dataSrvc.put(user);
+
+		PersistenceManagerFactory pmfInstance = JDOHelper
+				.getPersistenceManagerFactory("transactions-optional");
+		PersistenceManager pm = pmfInstance.getPersistenceManager();
+		VoUser user = new VoUser(uname, "", email, password);
+		pm.makePersistent(user);
+
 		System.out.print("user " + email + " pass " + password + "\n");
-		
-		List<Rubric> rubric = getDeafultRubrics();
-		
-		
+
 		return 0;
 	}
 
@@ -89,15 +95,15 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		return (str + "fgthstnthrewqntf").substring(0, 16);
 	}
 
-	
-	private List<Rubric> getDeafultRubrics(){
+	private List<Rubric> getDeafultRubrics() {
 		List<Rubric> rubrics = new ArrayList<Rubric>();
 		return rubrics;
 	}
-	
-	private Rubric createRubric(String name){
+
+	private Rubric createRubric(String name) {
 		Rubric r = new Rubric();
-		r.id 
+		r.name = name;
+		return r;
 	}
 
 }

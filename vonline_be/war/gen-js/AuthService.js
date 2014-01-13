@@ -270,6 +270,175 @@ com.vmesteonline.be.AuthService_getSession_result.prototype.write = function(out
   return;
 };
 
+com.vmesteonline.be.AuthService_registerNewUser_args = function(args) {
+  this.uname = null;
+  this.password = null;
+  this.groupId = null;
+  this.email = null;
+  if (args) {
+    if (args.uname !== undefined) {
+      this.uname = args.uname;
+    }
+    if (args.password !== undefined) {
+      this.password = args.password;
+    }
+    if (args.groupId !== undefined) {
+      this.groupId = args.groupId;
+    }
+    if (args.email !== undefined) {
+      this.email = args.email;
+    }
+  }
+};
+com.vmesteonline.be.AuthService_registerNewUser_args.prototype = {};
+com.vmesteonline.be.AuthService_registerNewUser_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRING) {
+        this.uname = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRING) {
+        this.password = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.STRING) {
+        this.groupId = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.STRING) {
+        this.email = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.AuthService_registerNewUser_args.prototype.write = function(output) {
+  output.writeStructBegin('AuthService_registerNewUser_args');
+  if (this.uname !== null && this.uname !== undefined) {
+    output.writeFieldBegin('uname', Thrift.Type.STRING, 1);
+    output.writeString(this.uname);
+    output.writeFieldEnd();
+  }
+  if (this.password !== null && this.password !== undefined) {
+    output.writeFieldBegin('password', Thrift.Type.STRING, 2);
+    output.writeString(this.password);
+    output.writeFieldEnd();
+  }
+  if (this.groupId !== null && this.groupId !== undefined) {
+    output.writeFieldBegin('groupId', Thrift.Type.STRING, 3);
+    output.writeString(this.groupId);
+    output.writeFieldEnd();
+  }
+  if (this.email !== null && this.email !== undefined) {
+    output.writeFieldBegin('email', Thrift.Type.STRING, 4);
+    output.writeString(this.email);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.AuthService_registerNewUser_result = function(args) {
+  this.success = null;
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined) {
+      this.success = args.success;
+    }
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
+  }
+};
+com.vmesteonline.be.AuthService_registerNewUser_result.prototype = {};
+com.vmesteonline.be.AuthService_registerNewUser_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.I32) {
+        this.success = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.AuthService_registerNewUser_result.prototype.write = function(output) {
+  output.writeStructBegin('AuthService_registerNewUser_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.I32, 0);
+    output.writeI32(this.success);
+    output.writeFieldEnd();
+  }
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 com.vmesteonline.be.AuthServiceClient = function(input, output) {
     this.input = input;
     this.output = (!output) ? input : output;
@@ -350,4 +519,44 @@ com.vmesteonline.be.AuthServiceClient.prototype.recv_getSession = function() {
     return result.success;
   }
   throw 'getSession failed: unknown result';
+};
+com.vmesteonline.be.AuthServiceClient.prototype.registerNewUser = function(uname, password, groupId, email) {
+  this.send_registerNewUser(uname, password, groupId, email);
+  return this.recv_registerNewUser();
+};
+
+com.vmesteonline.be.AuthServiceClient.prototype.send_registerNewUser = function(uname, password, groupId, email) {
+  this.output.writeMessageBegin('registerNewUser', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.AuthService_registerNewUser_args();
+  args.uname = uname;
+  args.password = password;
+  args.groupId = groupId;
+  args.email = email;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.AuthServiceClient.prototype.recv_registerNewUser = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.AuthService_registerNewUser_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.exc) {
+    throw result.exc;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'registerNewUser failed: unknown result';
 };
