@@ -1,4 +1,5 @@
 namespace * com.vmesteonline.be
+include "bedata.thrift"
 
 struct UserInfo {
 	1: string name,
@@ -18,7 +19,10 @@ struct Session {
 	2: User user,
 	3: i32 created,
 	4: optional string userAgent,
-	5: optional string cookie
+	5: optional string cookie,
+	6: bool accessGranted,
+	7: string error,
+
 }
 
 enum LocationType { FLAT=1, FLOOR=2, HOUSE=3, BLOCK=4, DISTRICT=5, CITY=6, REGION=7, COUNTRY=8, WORLD=9 }
@@ -41,4 +45,5 @@ exception InvalidOperation {
 service AuthService {
 	Session login( 1:string uname, 2:string password ) throws (1:InvalidOperation exc),
 	Session getSession(1:string salt) throws (1:InvalidOperation exc),
+	i32 registerNewUser(1:string uname, 2:string password, 3:string groupId, 4:string email) throws (1:InvalidOperation exc)
 }

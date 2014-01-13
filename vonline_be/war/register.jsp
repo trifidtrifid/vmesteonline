@@ -8,17 +8,63 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <html>
 
+
+<script src="js/thrift.js" type="text/javascript"></script>
+<script src="gen-js/user_types.js" type="text/javascript"></script>
+<script src="gen-js/AuthService.js" type="text/javascript"></script>
+
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+	function reg() {
+		var transport = new Thrift.Transport("/thrift/AuthService");
+		var protocol = new Thrift.Protocol(transport);
+		var client = new com.vmesteonline.be.AuthServiceClient(protocol);
+
+		var groupSelect = document.getElementById("selectGroup");
+		var groupId = groupSelect.options[groupSelect.selectedIndex].value;
+		client.registerNewUser($("#uname").val(), $("#password").val(),
+				groupId, $("#email").val());
+	}
+</script>
+
 <body>
-	<select name="selectYear" id="selectGroup">
-		<%
-			GroupServiceImpl groupService = new GroupServiceImpl();
-			List<Group> groups = groupService.getGroupsForRegistration();
-			for (Group g : groups) {
-				out.print("<option value=\"" + g.shortName + "\">" + g.shortName + "</option>" );
-			}
-		%>
 
-	</select>
+	<h2>Register page</h2>
+	<form action="">
+		<table class="login">
+			<tr>
+				<td>login</td>
+				<td><input type="text" id="uname" value="" /></td>
+			</tr>
+			<tr>
+				<td>password</td>
+				<td><input type="text" id="password" value="" /></td>
+			</tr>
+			<tr>
+				<td>email</td>
+				<td><input type="text" id="email" value="" /></td>
+			</tr>
+			<tr>
+				<td>group</td>
+				<td><select id="selectGroup">
+						<%
+							GroupServiceImpl groupService = new GroupServiceImpl();
+							List<Group> groups = groupService.getGroupsForRegistration();
+							for (Group g : groups) {
+								out.print("<option value=\"" + g.id + "\">" + g.shortName
+										+ "</option>");
+							}
+						%>
 
+				</select></td>
+			</tr>
+			<tr>
+				<td><input type="button" id="register" value="register"
+					onclick="javascript:reg();" /></td>
+			</tr>
+		</table>
+	</form>
 </body>
 </html>

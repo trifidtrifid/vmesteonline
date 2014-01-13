@@ -40,6 +40,8 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
   private static final org.apache.thrift.protocol.TField CREATED_FIELD_DESC = new org.apache.thrift.protocol.TField("created", org.apache.thrift.protocol.TType.I32, (short)3);
   private static final org.apache.thrift.protocol.TField USER_AGENT_FIELD_DESC = new org.apache.thrift.protocol.TField("userAgent", org.apache.thrift.protocol.TType.STRING, (short)4);
   private static final org.apache.thrift.protocol.TField COOKIE_FIELD_DESC = new org.apache.thrift.protocol.TField("cookie", org.apache.thrift.protocol.TType.STRING, (short)5);
+  private static final org.apache.thrift.protocol.TField ACCESS_GRANTED_FIELD_DESC = new org.apache.thrift.protocol.TField("accessGranted", org.apache.thrift.protocol.TType.BOOL, (short)6);
+  private static final org.apache.thrift.protocol.TField ERROR_FIELD_DESC = new org.apache.thrift.protocol.TField("error", org.apache.thrift.protocol.TType.STRING, (short)7);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -52,6 +54,8 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
   public int created; // required
   public String userAgent; // optional
   public String cookie; // optional
+  public boolean accessGranted; // required
+  public String error; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -59,7 +63,9 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
     USER((short)2, "user"),
     CREATED((short)3, "created"),
     USER_AGENT((short)4, "userAgent"),
-    COOKIE((short)5, "cookie");
+    COOKIE((short)5, "cookie"),
+    ACCESS_GRANTED((short)6, "accessGranted"),
+    ERROR((short)7, "error");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -84,6 +90,10 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
           return USER_AGENT;
         case 5: // COOKIE
           return COOKIE;
+        case 6: // ACCESS_GRANTED
+          return ACCESS_GRANTED;
+        case 7: // ERROR
+          return ERROR;
         default:
           return null;
       }
@@ -125,6 +135,7 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
 
   // isset id assignments
   private static final int __CREATED_ISSET_ID = 0;
+  private static final int __ACCESSGRANTED_ISSET_ID = 1;
   private byte __isset_bitfield = 0;
   private _Fields optionals[] = {_Fields.USER_AGENT,_Fields.COOKIE};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
@@ -140,6 +151,10 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.COOKIE, new org.apache.thrift.meta_data.FieldMetaData("cookie", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+    tmpMap.put(_Fields.ACCESS_GRANTED, new org.apache.thrift.meta_data.FieldMetaData("accessGranted", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+    tmpMap.put(_Fields.ERROR, new org.apache.thrift.meta_data.FieldMetaData("error", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Session.class, metaDataMap);
   }
@@ -150,13 +165,18 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
   public Session(
     String salt,
     User user,
-    int created)
+    int created,
+    boolean accessGranted,
+    String error)
   {
     this();
     this.salt = salt;
     this.user = user;
     this.created = created;
     setCreatedIsSet(true);
+    this.accessGranted = accessGranted;
+    setAccessGrantedIsSet(true);
+    this.error = error;
   }
 
   /**
@@ -177,6 +197,10 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
     if (other.isSetCookie()) {
       this.cookie = other.cookie;
     }
+    this.accessGranted = other.accessGranted;
+    if (other.isSetError()) {
+      this.error = other.error;
+    }
   }
 
   public Session deepCopy() {
@@ -191,6 +215,9 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
     this.created = 0;
     this.userAgent = null;
     this.cookie = null;
+    setAccessGrantedIsSet(false);
+    this.accessGranted = false;
+    this.error = null;
   }
 
   public String getSalt() {
@@ -312,6 +339,53 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
     }
   }
 
+  public boolean isAccessGranted() {
+    return this.accessGranted;
+  }
+
+  public Session setAccessGranted(boolean accessGranted) {
+    this.accessGranted = accessGranted;
+    setAccessGrantedIsSet(true);
+    return this;
+  }
+
+  public void unsetAccessGranted() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __ACCESSGRANTED_ISSET_ID);
+  }
+
+  /** Returns true if field accessGranted is set (has been assigned a value) and false otherwise */
+  public boolean isSetAccessGranted() {
+    return EncodingUtils.testBit(__isset_bitfield, __ACCESSGRANTED_ISSET_ID);
+  }
+
+  public void setAccessGrantedIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ACCESSGRANTED_ISSET_ID, value);
+  }
+
+  public String getError() {
+    return this.error;
+  }
+
+  public Session setError(String error) {
+    this.error = error;
+    return this;
+  }
+
+  public void unsetError() {
+    this.error = null;
+  }
+
+  /** Returns true if field error is set (has been assigned a value) and false otherwise */
+  public boolean isSetError() {
+    return this.error != null;
+  }
+
+  public void setErrorIsSet(boolean value) {
+    if (!value) {
+      this.error = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case SALT:
@@ -354,6 +428,22 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
       }
       break;
 
+    case ACCESS_GRANTED:
+      if (value == null) {
+        unsetAccessGranted();
+      } else {
+        setAccessGranted((Boolean)value);
+      }
+      break;
+
+    case ERROR:
+      if (value == null) {
+        unsetError();
+      } else {
+        setError((String)value);
+      }
+      break;
+
     }
   }
 
@@ -373,6 +463,12 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
 
     case COOKIE:
       return getCookie();
+
+    case ACCESS_GRANTED:
+      return Boolean.valueOf(isAccessGranted());
+
+    case ERROR:
+      return getError();
 
     }
     throw new IllegalStateException();
@@ -395,6 +491,10 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
       return isSetUserAgent();
     case COOKIE:
       return isSetCookie();
+    case ACCESS_GRANTED:
+      return isSetAccessGranted();
+    case ERROR:
+      return isSetError();
     }
     throw new IllegalStateException();
   }
@@ -454,6 +554,24 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
       if (!(this_present_cookie && that_present_cookie))
         return false;
       if (!this.cookie.equals(that.cookie))
+        return false;
+    }
+
+    boolean this_present_accessGranted = true;
+    boolean that_present_accessGranted = true;
+    if (this_present_accessGranted || that_present_accessGranted) {
+      if (!(this_present_accessGranted && that_present_accessGranted))
+        return false;
+      if (this.accessGranted != that.accessGranted)
+        return false;
+    }
+
+    boolean this_present_error = true && this.isSetError();
+    boolean that_present_error = true && that.isSetError();
+    if (this_present_error || that_present_error) {
+      if (!(this_present_error && that_present_error))
+        return false;
+      if (!this.error.equals(that.error))
         return false;
     }
 
@@ -523,6 +641,26 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetAccessGranted()).compareTo(other.isSetAccessGranted());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetAccessGranted()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.accessGranted, other.accessGranted);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetError()).compareTo(other.isSetError());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetError()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.error, other.error);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -582,6 +720,18 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
       }
       first = false;
     }
+    if (!first) sb.append(", ");
+    sb.append("accessGranted:");
+    sb.append(this.accessGranted);
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("error:");
+    if (this.error == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.error);
+    }
+    first = false;
     sb.append(")");
     return sb.toString();
   }
@@ -671,6 +821,22 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 6: // ACCESS_GRANTED
+            if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+              struct.accessGranted = iprot.readBool();
+              struct.setAccessGrantedIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 7: // ERROR
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.error = iprot.readString();
+              struct.setErrorIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -713,6 +879,14 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
           oprot.writeFieldEnd();
         }
       }
+      oprot.writeFieldBegin(ACCESS_GRANTED_FIELD_DESC);
+      oprot.writeBool(struct.accessGranted);
+      oprot.writeFieldEnd();
+      if (struct.error != null) {
+        oprot.writeFieldBegin(ERROR_FIELD_DESC);
+        oprot.writeString(struct.error);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -746,7 +920,13 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
       if (struct.isSetCookie()) {
         optionals.set(4);
       }
-      oprot.writeBitSet(optionals, 5);
+      if (struct.isSetAccessGranted()) {
+        optionals.set(5);
+      }
+      if (struct.isSetError()) {
+        optionals.set(6);
+      }
+      oprot.writeBitSet(optionals, 7);
       if (struct.isSetSalt()) {
         oprot.writeString(struct.salt);
       }
@@ -762,12 +942,18 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
       if (struct.isSetCookie()) {
         oprot.writeString(struct.cookie);
       }
+      if (struct.isSetAccessGranted()) {
+        oprot.writeBool(struct.accessGranted);
+      }
+      if (struct.isSetError()) {
+        oprot.writeString(struct.error);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Session struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(5);
+      BitSet incoming = iprot.readBitSet(7);
       if (incoming.get(0)) {
         struct.salt = iprot.readString();
         struct.setSaltIsSet(true);
@@ -788,6 +974,14 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
       if (incoming.get(4)) {
         struct.cookie = iprot.readString();
         struct.setCookieIsSet(true);
+      }
+      if (incoming.get(5)) {
+        struct.accessGranted = iprot.readBool();
+        struct.setAccessGrantedIsSet(true);
+      }
+      if (incoming.get(6)) {
+        struct.error = iprot.readString();
+        struct.setErrorIsSet(true);
       }
     }
   }

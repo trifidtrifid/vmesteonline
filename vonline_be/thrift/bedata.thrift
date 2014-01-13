@@ -1,4 +1,3 @@
-include "user.thrift"
 namespace * com.vmesteonline.be
 
 struct Group {

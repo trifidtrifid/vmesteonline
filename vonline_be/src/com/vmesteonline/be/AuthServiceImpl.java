@@ -1,103 +1,103 @@
 package com.vmesteonline.be;
 
+import com.google.appengine.api.datastore.DatastoreService;
 import com.vmesteonline.be.data.JDBCConnector;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.KeyFactory;
+
 import org.apache.thrift.TException;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
-    public AuthServiceImpl(JDBCConnector con) {
-        super(con);
-    }
+	public AuthServiceImpl(JDBCConnector con) {
+		super(con);
+	}
 
-    public AuthServiceImpl() {
-    }
-
-    @Override
-    public Session login(final String uname, final String password)
-			throws InvalidOperation, TException {
-		try {
-			return con.getResult( new JDBCConnector.ResultCreator<Session>() {
-				
-				public Session createResult(Connection conn) throws java.lang.Exception {
-					ResultSet rs = con.executeQuery("SELECT id from user where login='"+uname+"' AND password='"+password+"'");
-					if( rs.next() ){
-						int uid = rs.getInt(1);
-						rs = con.executeQuery("SELECT salt,created,cookie,userAgent from session where user="+uid);
-						Session sess = new Session();
-						User usr = new User();
-						usr.id = uid;
-						sess.user = usr;
-						if( !rs.next() ){ //session exists
-							sess.salt = generateSalt();
-							con.execute("INSERT INTO session(salt,user,created,userAgent) "
-									+ "values('"+sess.salt+"', "+uid+", NOW(),'Unknown')");
-							sess.created = 0;
-						} else { //create new session
-							sess.salt = rs.getString(1);
-						}
-						rs.close();
-						loadUserInfo(con, usr);
-						return sess;
-					} else {
-						throw new InvalidOperation(1,"No user found by login and password");
-					}
-				}
-			}, con );
-			
-		} catch (java.lang.Exception e) {
-			if( e instanceof InvalidOperation ) throw (InvalidOperation)e;
-            if (e instanceof JDBCConnector.Exception)
-                throw new InvalidOperation(500, "Database connection error. " + e.getMessage());
-
-            throw new TException(e.getMessage());
-        }
+	public AuthServiceImpl() {
 	}
 
 	@Override
-	public Session getSession(final String salt) throws InvalidOperation, TException {
+	public Session login(final String uname, final String password)
+			throws InvalidOperation, TException {
+		Session sess = new Session();
+		DatastoreService dataSrvc = DatastoreServiceFactory
+				.getDatastoreService();
+
+		System.out.print("try auten user " + uname + " pass " + password + "\n");
+
 		try {
-			return con.getResult( new JDBCConnector.ResultCreator<Session>() {
-				public Session createResult(Connection conn) throws java.lang.Exception {
-					ResultSet rs = con.executeQuery("SELECT uid,created,cookie,userAgent from session where salt="+salt);
-					if( rs.next() ){ //session exists
-						User usr = new User(rs.getInt(1),0);
-						rs.close();
-						loadUserInfo(con, usr);
-						return new Session(salt, usr, 0);
-					}
-					rs.close();
-					throw new InvalidOperation(2,"Session not found by salt "+salt);
-				}
-			}, con );
-			
-		} catch (java.lang.Exception e) {
-			if( e instanceof InvalidOperation ) throw (InvalidOperation)e;
-            if (e instanceof JDBCConnector.Exception)
-                throw new InvalidOperation(500, "Database connection error. " + e.getMessage());
-            throw new TException( e.getMessage() );
+			Entity user = dataSrvc.get(KeyFactory.createKey("User", uname));
+
+			System.out.print("try to compare pwd '" + password + "' pwd on store '" + user.getProperty("password")  +"'\n");
+
+			if (user.getProperty("password").equals(password)) {
+				user.setProperty("active", true);
+				dataSrvc.put(user);
+				sess.salt = generateSalt();
+				sess.accessGranted = true;
+				
+			} else {
+				sess.accessGranted = false;
+				sess.error = "incorrect user or password";
+			}
+
+		} catch (EntityNotFoundException e) {
+			sess.error = "incorrect user or password";
+			System.out.print("can't find " + uname + " pass " + password + "\n");
+
 		}
+
+		return sess;
+	}
+
+	@Override
+	public Session getSession(final String salt) throws InvalidOperation,
+			TException {
+		Session sess = new Session();
+
+		return sess;
+	}
+
+	@Override
+	public int registerNewUser(String uname, String password, String groupId,
+			String email) throws InvalidOperation {
+		DatastoreService dataSrvc = DatastoreServiceFactory
+				.getDatastoreService();
+		Entity user = new Entity("User", email);
+		user.setUnindexedProperty("password", password);
+		user.setUnindexedProperty("nick", uname);
+		user.setUnindexedProperty("home", groupId);
+		user.setProperty("active", false);
+		dataSrvc.put(user);
+		System.out.print("user " + email + " pass " + password + "\n");
+		
+		List<Rubric> rubric = getDeafultRubrics();
+		
+		
+		return 0;
+	}
+
+	private static String generateSalt() {
+		String str = ("" + Math.random()
+				* (Calendar.getInstance().getTimeInMillis()) * 1000000000.0);
+		return (str + "fgthstnthrewqntf").substring(0, 16);
+	}
+
+	
+	private List<Rubric> getDeafultRubrics(){
+		List<Rubric> rubrics = new ArrayList<Rubric>();
+		return rubrics;
 	}
 	
-	private boolean loadUserInfo( JDBCConnector con, User usr) throws SQLException {
-		ResultSet  rs = con.executeQuery("SELECT location,firstName,secondName,DOB,sex,intrests FROM user WHERE id="+usr.id);
-		if (rs.next()){
-			usr.locationId = rs.getInt(1);
-			usr.userInfo = new UserInfo( rs.getString(2), rs.getString(3),rs.getInt(4));
-			rs.close();
-			return true;
-		}
-		rs.close();
-		return false;
+	private Rubric createRubric(String name){
+		Rubric r = new Rubric();
+		r.id 
 	}
-	
-	private static String generateSalt(){
-		String str = (""+Math.random()*( Calendar.getInstance().getTimeInMillis() ) * 1000000000.0);
-		return (str + "fgthstnthrewqntf").substring(0, 16); 
-	} 
 
 }
