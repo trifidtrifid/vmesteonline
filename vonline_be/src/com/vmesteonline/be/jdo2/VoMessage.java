@@ -45,9 +45,9 @@ public class VoMessage extends com.vmesteonline.be.Message {
     private String streetAddress;
 
     @Persistent
-    private Key parentId; // 'идентификатор родительского сообщения, NULL для корневого со',
+    private long parentId; // 'идентификатор родительского сообщения, NULL для корневого со',
     @Persistent
-    private Key topicId;
+    private long topicId;
 
     @Persistent
     private VoUser author; //'автор сообщения или темы',
@@ -67,13 +67,13 @@ public class VoMessage extends com.vmesteonline.be.Message {
     @Persistent
     private int unlikes;
     @Persistent
-    private Key idForum;
+    private long idForum;
     @Persistent
-    private Key idShop;
+    private long idShop;
     @Persistent
-    private Key idDialog;
+    private long idDialog;
     @Persistent
-    private Key idNews;
+    private long idNews;
 
     @Persistent
     private RubricLocation location;

@@ -49,8 +49,8 @@ com.vmesteonline.be.RubricCounter.prototype.read = function(input) {
     switch (fid)
     {
       case 1:
-      if (ftype == Thrift.Type.I32) {
-        this.rubric = input.readI32().value;
+      if (ftype == Thrift.Type.I64) {
+        this.rubric = input.readI64().value;
       } else {
         input.skip(ftype);
       }
@@ -88,8 +88,8 @@ com.vmesteonline.be.RubricCounter.prototype.read = function(input) {
 com.vmesteonline.be.RubricCounter.prototype.write = function(output) {
   output.writeStructBegin('RubricCounter');
   if (this.rubric !== null && this.rubric !== undefined) {
-    output.writeFieldBegin('rubric', Thrift.Type.I32, 1);
-    output.writeI32(this.rubric);
+    output.writeFieldBegin('rubric', Thrift.Type.I64, 1);
+    output.writeI64(this.rubric);
     output.writeFieldEnd();
   }
   if (this.messageType !== null && this.messageType !== undefined) {
@@ -154,7 +154,7 @@ com.vmesteonline.be.GroupUpdates.prototype.read = function(input) {
           }
           var key6 = null;
           var val7 = null;
-          key6 = input.readI32().value;
+          key6 = input.readI64().value;
           val7 = new com.vmesteonline.be.RubricCounter();
           val7.read(input);
           this.groupCounters[key6] = val7;
@@ -180,13 +180,13 @@ com.vmesteonline.be.GroupUpdates.prototype.write = function(output) {
   output.writeStructBegin('GroupUpdates');
   if (this.groupCounters !== null && this.groupCounters !== undefined) {
     output.writeFieldBegin('groupCounters', Thrift.Type.MAP, 1);
-    output.writeMapBegin(Thrift.Type.I32, Thrift.Type.STRUCT, Thrift.objectLength(this.groupCounters));
+    output.writeMapBegin(Thrift.Type.I64, Thrift.Type.STRUCT, Thrift.objectLength(this.groupCounters));
     for (var kiter8 in this.groupCounters)
     {
       if (this.groupCounters.hasOwnProperty(kiter8))
       {
         var viter9 = this.groupCounters[kiter8];
-        output.writeI32(kiter8);
+        output.writeI64(kiter8);
         viter9.write(output);
       }
     }

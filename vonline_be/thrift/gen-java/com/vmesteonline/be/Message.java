@@ -35,23 +35,23 @@ import org.slf4j.LoggerFactory;
 public class Message implements org.apache.thrift.TBase<Message, Message._Fields>, java.io.Serializable, Cloneable, Comparable<Message> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Message");
 
-  private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I32, (short)1);
-  private static final org.apache.thrift.protocol.TField PARENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("parentId", org.apache.thrift.protocol.TType.I32, (short)2);
+  private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I64, (short)1);
+  private static final org.apache.thrift.protocol.TField PARENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("parentId", org.apache.thrift.protocol.TType.I64, (short)2);
   private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.I32, (short)3);
-  private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I32, (short)4);
-  private static final org.apache.thrift.protocol.TField AUTHOR_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("authorId", org.apache.thrift.protocol.TType.I32, (short)5);
-  private static final org.apache.thrift.protocol.TField RECIPIENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("recipientId", org.apache.thrift.protocol.TType.I32, (short)6);
+  private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I64, (short)4);
+  private static final org.apache.thrift.protocol.TField AUTHOR_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("authorId", org.apache.thrift.protocol.TType.I64, (short)5);
+  private static final org.apache.thrift.protocol.TField RECIPIENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("recipientId", org.apache.thrift.protocol.TType.I64, (short)6);
   private static final org.apache.thrift.protocol.TField CREATED_FIELD_DESC = new org.apache.thrift.protocol.TField("created", org.apache.thrift.protocol.TType.I32, (short)7);
   private static final org.apache.thrift.protocol.TField EDITED_FIELD_DESC = new org.apache.thrift.protocol.TField("edited", org.apache.thrift.protocol.TType.I32, (short)8);
-  private static final org.apache.thrift.protocol.TField APPROVED_FIELD_DESC = new org.apache.thrift.protocol.TField("approved", org.apache.thrift.protocol.TType.I32, (short)9);
+  private static final org.apache.thrift.protocol.TField APPROVED_FIELD_DESC = new org.apache.thrift.protocol.TField("approved", org.apache.thrift.protocol.TType.I64, (short)9);
   private static final org.apache.thrift.protocol.TField CONTENT_FIELD_DESC = new org.apache.thrift.protocol.TField("content", org.apache.thrift.protocol.TType.STRING, (short)10);
   private static final org.apache.thrift.protocol.TField LIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("likes", org.apache.thrift.protocol.TType.I32, (short)11);
   private static final org.apache.thrift.protocol.TField UNLIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("unlikes", org.apache.thrift.protocol.TType.I32, (short)12);
-  private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I32, (short)13);
-  private static final org.apache.thrift.protocol.TField ID_FORUM_FIELD_DESC = new org.apache.thrift.protocol.TField("idForum", org.apache.thrift.protocol.TType.I32, (short)14);
-  private static final org.apache.thrift.protocol.TField ID_SHOP_FIELD_DESC = new org.apache.thrift.protocol.TField("idShop", org.apache.thrift.protocol.TType.I32, (short)15);
-  private static final org.apache.thrift.protocol.TField ID_DIALOG_FIELD_DESC = new org.apache.thrift.protocol.TField("idDialog", org.apache.thrift.protocol.TType.I32, (short)16);
-  private static final org.apache.thrift.protocol.TField ID_NEWS_FIELD_DESC = new org.apache.thrift.protocol.TField("idNews", org.apache.thrift.protocol.TType.I32, (short)17);
+  private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)13);
+  private static final org.apache.thrift.protocol.TField ID_FORUM_FIELD_DESC = new org.apache.thrift.protocol.TField("idForum", org.apache.thrift.protocol.TType.I64, (short)14);
+  private static final org.apache.thrift.protocol.TField ID_SHOP_FIELD_DESC = new org.apache.thrift.protocol.TField("idShop", org.apache.thrift.protocol.TType.I64, (short)15);
+  private static final org.apache.thrift.protocol.TField ID_DIALOG_FIELD_DESC = new org.apache.thrift.protocol.TField("idDialog", org.apache.thrift.protocol.TType.I64, (short)16);
+  private static final org.apache.thrift.protocol.TField ID_NEWS_FIELD_DESC = new org.apache.thrift.protocol.TField("idNews", org.apache.thrift.protocol.TType.I64, (short)17);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -59,27 +59,27 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     schemes.put(TupleScheme.class, new MessageTupleSchemeFactory());
   }
 
-  public int id; // required
-  public int parentId; // required
+  public long id; // required
+  public long parentId; // required
   /**
    * 
    * @see MessageType
    */
   public MessageType type; // required
-  public int topicId; // required
-  public int authorId; // required
-  public int recipientId; // optional
+  public long topicId; // required
+  public long authorId; // required
+  public long recipientId; // optional
   public int created; // required
   public int edited; // required
-  public int approved; // optional
+  public long approved; // optional
   public String content; // required
   public int likes; // required
   public int unlikes; // required
-  public int groupId; // required
-  public int idForum; // optional
-  public int idShop; // optional
-  public int idDialog; // optional
-  public int idNews; // optional
+  public long groupId; // required
+  public long idForum; // optional
+  public long idShop; // optional
+  public long idDialog; // optional
+  public long idNews; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -213,23 +213,23 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.PARENT_ID, new org.apache.thrift.meta_data.FieldMetaData("parentId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.TYPE, new org.apache.thrift.meta_data.FieldMetaData("type", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, MessageType.class)));
     tmpMap.put(_Fields.TOPIC_ID, new org.apache.thrift.meta_data.FieldMetaData("topicId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.AUTHOR_ID, new org.apache.thrift.meta_data.FieldMetaData("authorId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.RECIPIENT_ID, new org.apache.thrift.meta_data.FieldMetaData("recipientId", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.CREATED, new org.apache.thrift.meta_data.FieldMetaData("created", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.EDITED, new org.apache.thrift.meta_data.FieldMetaData("edited", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.APPROVED, new org.apache.thrift.meta_data.FieldMetaData("approved", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.CONTENT, new org.apache.thrift.meta_data.FieldMetaData("content", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.LIKES, new org.apache.thrift.meta_data.FieldMetaData("likes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -237,15 +237,15 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     tmpMap.put(_Fields.UNLIKES, new org.apache.thrift.meta_data.FieldMetaData("unlikes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.ID_FORUM, new org.apache.thrift.meta_data.FieldMetaData("idForum", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.ID_SHOP, new org.apache.thrift.meta_data.FieldMetaData("idShop", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.ID_DIALOG, new org.apache.thrift.meta_data.FieldMetaData("idDialog", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.ID_NEWS, new org.apache.thrift.meta_data.FieldMetaData("idNews", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Message.class, metaDataMap);
   }
@@ -254,17 +254,17 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   }
 
   public Message(
-    int id,
-    int parentId,
+    long id,
+    long parentId,
     MessageType type,
-    int topicId,
-    int authorId,
+    long topicId,
+    long authorId,
     int created,
     int edited,
     String content,
     int likes,
     int unlikes,
-    int groupId)
+    long groupId)
   {
     this();
     this.id = id;
@@ -357,11 +357,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.idNews = 0;
   }
 
-  public int getId() {
+  public long getId() {
     return this.id;
   }
 
-  public Message setId(int id) {
+  public Message setId(long id) {
     this.id = id;
     setIdIsSet(true);
     return this;
@@ -380,11 +380,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ID_ISSET_ID, value);
   }
 
-  public int getParentId() {
+  public long getParentId() {
     return this.parentId;
   }
 
-  public Message setParentId(int parentId) {
+  public Message setParentId(long parentId) {
     this.parentId = parentId;
     setParentIdIsSet(true);
     return this;
@@ -435,11 +435,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
   }
 
-  public int getTopicId() {
+  public long getTopicId() {
     return this.topicId;
   }
 
-  public Message setTopicId(int topicId) {
+  public Message setTopicId(long topicId) {
     this.topicId = topicId;
     setTopicIdIsSet(true);
     return this;
@@ -458,11 +458,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICID_ISSET_ID, value);
   }
 
-  public int getAuthorId() {
+  public long getAuthorId() {
     return this.authorId;
   }
 
-  public Message setAuthorId(int authorId) {
+  public Message setAuthorId(long authorId) {
     this.authorId = authorId;
     setAuthorIdIsSet(true);
     return this;
@@ -481,11 +481,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __AUTHORID_ISSET_ID, value);
   }
 
-  public int getRecipientId() {
+  public long getRecipientId() {
     return this.recipientId;
   }
 
-  public Message setRecipientId(int recipientId) {
+  public Message setRecipientId(long recipientId) {
     this.recipientId = recipientId;
     setRecipientIdIsSet(true);
     return this;
@@ -550,11 +550,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __EDITED_ISSET_ID, value);
   }
 
-  public int getApproved() {
+  public long getApproved() {
     return this.approved;
   }
 
-  public Message setApproved(int approved) {
+  public Message setApproved(long approved) {
     this.approved = approved;
     setApprovedIsSet(true);
     return this;
@@ -643,11 +643,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __UNLIKES_ISSET_ID, value);
   }
 
-  public int getGroupId() {
+  public long getGroupId() {
     return this.groupId;
   }
 
-  public Message setGroupId(int groupId) {
+  public Message setGroupId(long groupId) {
     this.groupId = groupId;
     setGroupIdIsSet(true);
     return this;
@@ -666,11 +666,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __GROUPID_ISSET_ID, value);
   }
 
-  public int getIdForum() {
+  public long getIdForum() {
     return this.idForum;
   }
 
-  public Message setIdForum(int idForum) {
+  public Message setIdForum(long idForum) {
     this.idForum = idForum;
     setIdForumIsSet(true);
     return this;
@@ -689,11 +689,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IDFORUM_ISSET_ID, value);
   }
 
-  public int getIdShop() {
+  public long getIdShop() {
     return this.idShop;
   }
 
-  public Message setIdShop(int idShop) {
+  public Message setIdShop(long idShop) {
     this.idShop = idShop;
     setIdShopIsSet(true);
     return this;
@@ -712,11 +712,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IDSHOP_ISSET_ID, value);
   }
 
-  public int getIdDialog() {
+  public long getIdDialog() {
     return this.idDialog;
   }
 
-  public Message setIdDialog(int idDialog) {
+  public Message setIdDialog(long idDialog) {
     this.idDialog = idDialog;
     setIdDialogIsSet(true);
     return this;
@@ -735,11 +735,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IDDIALOG_ISSET_ID, value);
   }
 
-  public int getIdNews() {
+  public long getIdNews() {
     return this.idNews;
   }
 
-  public Message setIdNews(int idNews) {
+  public Message setIdNews(long idNews) {
     this.idNews = idNews;
     setIdNewsIsSet(true);
     return this;
@@ -764,7 +764,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetId();
       } else {
-        setId((Integer)value);
+        setId((Long)value);
       }
       break;
 
@@ -772,7 +772,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetParentId();
       } else {
-        setParentId((Integer)value);
+        setParentId((Long)value);
       }
       break;
 
@@ -788,7 +788,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetTopicId();
       } else {
-        setTopicId((Integer)value);
+        setTopicId((Long)value);
       }
       break;
 
@@ -796,7 +796,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetAuthorId();
       } else {
-        setAuthorId((Integer)value);
+        setAuthorId((Long)value);
       }
       break;
 
@@ -804,7 +804,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetRecipientId();
       } else {
-        setRecipientId((Integer)value);
+        setRecipientId((Long)value);
       }
       break;
 
@@ -828,7 +828,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetApproved();
       } else {
-        setApproved((Integer)value);
+        setApproved((Long)value);
       }
       break;
 
@@ -860,7 +860,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetGroupId();
       } else {
-        setGroupId((Integer)value);
+        setGroupId((Long)value);
       }
       break;
 
@@ -868,7 +868,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetIdForum();
       } else {
-        setIdForum((Integer)value);
+        setIdForum((Long)value);
       }
       break;
 
@@ -876,7 +876,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetIdShop();
       } else {
-        setIdShop((Integer)value);
+        setIdShop((Long)value);
       }
       break;
 
@@ -884,7 +884,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetIdDialog();
       } else {
-        setIdDialog((Integer)value);
+        setIdDialog((Long)value);
       }
       break;
 
@@ -892,7 +892,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetIdNews();
       } else {
-        setIdNews((Integer)value);
+        setIdNews((Long)value);
       }
       break;
 
@@ -902,22 +902,22 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   public Object getFieldValue(_Fields field) {
     switch (field) {
     case ID:
-      return Integer.valueOf(getId());
+      return Long.valueOf(getId());
 
     case PARENT_ID:
-      return Integer.valueOf(getParentId());
+      return Long.valueOf(getParentId());
 
     case TYPE:
       return getType();
 
     case TOPIC_ID:
-      return Integer.valueOf(getTopicId());
+      return Long.valueOf(getTopicId());
 
     case AUTHOR_ID:
-      return Integer.valueOf(getAuthorId());
+      return Long.valueOf(getAuthorId());
 
     case RECIPIENT_ID:
-      return Integer.valueOf(getRecipientId());
+      return Long.valueOf(getRecipientId());
 
     case CREATED:
       return Integer.valueOf(getCreated());
@@ -926,7 +926,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       return Integer.valueOf(getEdited());
 
     case APPROVED:
-      return Integer.valueOf(getApproved());
+      return Long.valueOf(getApproved());
 
     case CONTENT:
       return getContent();
@@ -938,19 +938,19 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       return Integer.valueOf(getUnlikes());
 
     case GROUP_ID:
-      return Integer.valueOf(getGroupId());
+      return Long.valueOf(getGroupId());
 
     case ID_FORUM:
-      return Integer.valueOf(getIdForum());
+      return Long.valueOf(getIdForum());
 
     case ID_SHOP:
-      return Integer.valueOf(getIdShop());
+      return Long.valueOf(getIdShop());
 
     case ID_DIALOG:
-      return Integer.valueOf(getIdDialog());
+      return Long.valueOf(getIdDialog());
 
     case ID_NEWS:
-      return Integer.valueOf(getIdNews());
+      return Long.valueOf(getIdNews());
 
     }
     throw new IllegalStateException();
@@ -1506,16 +1506,16 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         }
         switch (schemeField.id) {
           case 1: // ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.id = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.id = iprot.readI64();
               struct.setIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 2: // PARENT_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.parentId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.parentId = iprot.readI64();
               struct.setParentIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -1530,24 +1530,24 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
             }
             break;
           case 4: // TOPIC_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.topicId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.topicId = iprot.readI64();
               struct.setTopicIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 5: // AUTHOR_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.authorId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.authorId = iprot.readI64();
               struct.setAuthorIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 6: // RECIPIENT_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.recipientId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.recipientId = iprot.readI64();
               struct.setRecipientIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -1570,8 +1570,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
             }
             break;
           case 9: // APPROVED
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.approved = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.approved = iprot.readI64();
               struct.setApprovedIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -1602,40 +1602,40 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
             }
             break;
           case 13: // GROUP_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.groupId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.groupId = iprot.readI64();
               struct.setGroupIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 14: // ID_FORUM
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.idForum = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.idForum = iprot.readI64();
               struct.setIdForumIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 15: // ID_SHOP
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.idShop = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.idShop = iprot.readI64();
               struct.setIdShopIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 16: // ID_DIALOG
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.idDialog = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.idDialog = iprot.readI64();
               struct.setIdDialogIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 17: // ID_NEWS
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.idNews = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.idNews = iprot.readI64();
               struct.setIdNewsIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -1657,10 +1657,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
 
       oprot.writeStructBegin(STRUCT_DESC);
       oprot.writeFieldBegin(ID_FIELD_DESC);
-      oprot.writeI32(struct.id);
+      oprot.writeI64(struct.id);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(PARENT_ID_FIELD_DESC);
-      oprot.writeI32(struct.parentId);
+      oprot.writeI64(struct.parentId);
       oprot.writeFieldEnd();
       if (struct.type != null) {
         oprot.writeFieldBegin(TYPE_FIELD_DESC);
@@ -1668,14 +1668,14 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         oprot.writeFieldEnd();
       }
       oprot.writeFieldBegin(TOPIC_ID_FIELD_DESC);
-      oprot.writeI32(struct.topicId);
+      oprot.writeI64(struct.topicId);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(AUTHOR_ID_FIELD_DESC);
-      oprot.writeI32(struct.authorId);
+      oprot.writeI64(struct.authorId);
       oprot.writeFieldEnd();
       if (struct.isSetRecipientId()) {
         oprot.writeFieldBegin(RECIPIENT_ID_FIELD_DESC);
-        oprot.writeI32(struct.recipientId);
+        oprot.writeI64(struct.recipientId);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldBegin(CREATED_FIELD_DESC);
@@ -1686,7 +1686,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       oprot.writeFieldEnd();
       if (struct.isSetApproved()) {
         oprot.writeFieldBegin(APPROVED_FIELD_DESC);
-        oprot.writeI32(struct.approved);
+        oprot.writeI64(struct.approved);
         oprot.writeFieldEnd();
       }
       if (struct.content != null) {
@@ -1701,26 +1701,26 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       oprot.writeI32(struct.unlikes);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
-      oprot.writeI32(struct.groupId);
+      oprot.writeI64(struct.groupId);
       oprot.writeFieldEnd();
       if (struct.isSetIdForum()) {
         oprot.writeFieldBegin(ID_FORUM_FIELD_DESC);
-        oprot.writeI32(struct.idForum);
+        oprot.writeI64(struct.idForum);
         oprot.writeFieldEnd();
       }
       if (struct.isSetIdShop()) {
         oprot.writeFieldBegin(ID_SHOP_FIELD_DESC);
-        oprot.writeI32(struct.idShop);
+        oprot.writeI64(struct.idShop);
         oprot.writeFieldEnd();
       }
       if (struct.isSetIdDialog()) {
         oprot.writeFieldBegin(ID_DIALOG_FIELD_DESC);
-        oprot.writeI32(struct.idDialog);
+        oprot.writeI64(struct.idDialog);
         oprot.writeFieldEnd();
       }
       if (struct.isSetIdNews()) {
         oprot.writeFieldBegin(ID_NEWS_FIELD_DESC);
-        oprot.writeI32(struct.idNews);
+        oprot.writeI64(struct.idNews);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldStop();
@@ -1794,22 +1794,22 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       }
       oprot.writeBitSet(optionals, 17);
       if (struct.isSetId()) {
-        oprot.writeI32(struct.id);
+        oprot.writeI64(struct.id);
       }
       if (struct.isSetParentId()) {
-        oprot.writeI32(struct.parentId);
+        oprot.writeI64(struct.parentId);
       }
       if (struct.isSetType()) {
         oprot.writeI32(struct.type.getValue());
       }
       if (struct.isSetTopicId()) {
-        oprot.writeI32(struct.topicId);
+        oprot.writeI64(struct.topicId);
       }
       if (struct.isSetAuthorId()) {
-        oprot.writeI32(struct.authorId);
+        oprot.writeI64(struct.authorId);
       }
       if (struct.isSetRecipientId()) {
-        oprot.writeI32(struct.recipientId);
+        oprot.writeI64(struct.recipientId);
       }
       if (struct.isSetCreated()) {
         oprot.writeI32(struct.created);
@@ -1818,7 +1818,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         oprot.writeI32(struct.edited);
       }
       if (struct.isSetApproved()) {
-        oprot.writeI32(struct.approved);
+        oprot.writeI64(struct.approved);
       }
       if (struct.isSetContent()) {
         oprot.writeString(struct.content);
@@ -1830,19 +1830,19 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         oprot.writeI32(struct.unlikes);
       }
       if (struct.isSetGroupId()) {
-        oprot.writeI32(struct.groupId);
+        oprot.writeI64(struct.groupId);
       }
       if (struct.isSetIdForum()) {
-        oprot.writeI32(struct.idForum);
+        oprot.writeI64(struct.idForum);
       }
       if (struct.isSetIdShop()) {
-        oprot.writeI32(struct.idShop);
+        oprot.writeI64(struct.idShop);
       }
       if (struct.isSetIdDialog()) {
-        oprot.writeI32(struct.idDialog);
+        oprot.writeI64(struct.idDialog);
       }
       if (struct.isSetIdNews()) {
-        oprot.writeI32(struct.idNews);
+        oprot.writeI64(struct.idNews);
       }
     }
 
@@ -1851,11 +1851,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       TTupleProtocol iprot = (TTupleProtocol) prot;
       BitSet incoming = iprot.readBitSet(17);
       if (incoming.get(0)) {
-        struct.id = iprot.readI32();
+        struct.id = iprot.readI64();
         struct.setIdIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.parentId = iprot.readI32();
+        struct.parentId = iprot.readI64();
         struct.setParentIdIsSet(true);
       }
       if (incoming.get(2)) {
@@ -1863,15 +1863,15 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         struct.setTypeIsSet(true);
       }
       if (incoming.get(3)) {
-        struct.topicId = iprot.readI32();
+        struct.topicId = iprot.readI64();
         struct.setTopicIdIsSet(true);
       }
       if (incoming.get(4)) {
-        struct.authorId = iprot.readI32();
+        struct.authorId = iprot.readI64();
         struct.setAuthorIdIsSet(true);
       }
       if (incoming.get(5)) {
-        struct.recipientId = iprot.readI32();
+        struct.recipientId = iprot.readI64();
         struct.setRecipientIdIsSet(true);
       }
       if (incoming.get(6)) {
@@ -1883,7 +1883,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         struct.setEditedIsSet(true);
       }
       if (incoming.get(8)) {
-        struct.approved = iprot.readI32();
+        struct.approved = iprot.readI64();
         struct.setApprovedIsSet(true);
       }
       if (incoming.get(9)) {
@@ -1899,23 +1899,23 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         struct.setUnlikesIsSet(true);
       }
       if (incoming.get(12)) {
-        struct.groupId = iprot.readI32();
+        struct.groupId = iprot.readI64();
         struct.setGroupIdIsSet(true);
       }
       if (incoming.get(13)) {
-        struct.idForum = iprot.readI32();
+        struct.idForum = iprot.readI64();
         struct.setIdForumIsSet(true);
       }
       if (incoming.get(14)) {
-        struct.idShop = iprot.readI32();
+        struct.idShop = iprot.readI64();
         struct.setIdShopIsSet(true);
       }
       if (incoming.get(15)) {
-        struct.idDialog = iprot.readI32();
+        struct.idDialog = iprot.readI64();
         struct.setIdDialogIsSet(true);
       }
       if (incoming.get(16)) {
-        struct.idNews = iprot.readI32();
+        struct.idNews = iprot.readI64();
         struct.setIdNewsIsSet(true);
       }
     }

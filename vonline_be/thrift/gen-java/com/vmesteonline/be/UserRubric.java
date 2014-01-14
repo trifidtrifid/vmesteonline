@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
 public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubric._Fields>, java.io.Serializable, Cloneable, Comparable<UserRubric> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("UserRubric");
 
-  private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I32, (short)1);
-  private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I32, (short)2);
-  private static final org.apache.thrift.protocol.TField GROU_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("grouId", org.apache.thrift.protocol.TType.I32, (short)3);
+  private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short)1);
+  private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I64, (short)2);
+  private static final org.apache.thrift.protocol.TField GROU_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("grouId", org.apache.thrift.protocol.TType.I64, (short)3);
   private static final org.apache.thrift.protocol.TField SUBSCRIBED_FIELD_DESC = new org.apache.thrift.protocol.TField("subscribed", org.apache.thrift.protocol.TType.I32, (short)4);
   private static final org.apache.thrift.protocol.TField TOPICS_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("topicsNum", org.apache.thrift.protocol.TType.I32, (short)5);
   private static final org.apache.thrift.protocol.TField MESSAGES_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("messagesNum", org.apache.thrift.protocol.TType.I32, (short)6);
@@ -48,9 +48,9 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
     schemes.put(TupleScheme.class, new UserRubricTupleSchemeFactory());
   }
 
-  public int userId; // required
-  public int rubricId; // required
-  public int grouId; // optional
+  public long userId; // required
+  public long rubricId; // required
+  public long grouId; // optional
   public int subscribed; // required
   public int topicsNum; // required
   public int messagesNum; // required
@@ -141,11 +141,11 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.RUBRIC_ID, new org.apache.thrift.meta_data.FieldMetaData("rubricId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.GROU_ID, new org.apache.thrift.meta_data.FieldMetaData("grouId", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.SUBSCRIBED, new org.apache.thrift.meta_data.FieldMetaData("subscribed", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.TOPICS_NUM, new org.apache.thrift.meta_data.FieldMetaData("topicsNum", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -160,8 +160,8 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
   }
 
   public UserRubric(
-    int userId,
-    int rubricId,
+    long userId,
+    long rubricId,
     int subscribed,
     int topicsNum,
     int messagesNum)
@@ -212,11 +212,11 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
     this.messagesNum = 0;
   }
 
-  public int getUserId() {
+  public long getUserId() {
     return this.userId;
   }
 
-  public UserRubric setUserId(int userId) {
+  public UserRubric setUserId(long userId) {
     this.userId = userId;
     setUserIdIsSet(true);
     return this;
@@ -235,11 +235,11 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __USERID_ISSET_ID, value);
   }
 
-  public int getRubricId() {
+  public long getRubricId() {
     return this.rubricId;
   }
 
-  public UserRubric setRubricId(int rubricId) {
+  public UserRubric setRubricId(long rubricId) {
     this.rubricId = rubricId;
     setRubricIdIsSet(true);
     return this;
@@ -258,11 +258,11 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __RUBRICID_ISSET_ID, value);
   }
 
-  public int getGrouId() {
+  public long getGrouId() {
     return this.grouId;
   }
 
-  public UserRubric setGrouId(int grouId) {
+  public UserRubric setGrouId(long grouId) {
     this.grouId = grouId;
     setGrouIdIsSet(true);
     return this;
@@ -356,7 +356,7 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
       if (value == null) {
         unsetUserId();
       } else {
-        setUserId((Integer)value);
+        setUserId((Long)value);
       }
       break;
 
@@ -364,7 +364,7 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
       if (value == null) {
         unsetRubricId();
       } else {
-        setRubricId((Integer)value);
+        setRubricId((Long)value);
       }
       break;
 
@@ -372,7 +372,7 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
       if (value == null) {
         unsetGrouId();
       } else {
-        setGrouId((Integer)value);
+        setGrouId((Long)value);
       }
       break;
 
@@ -406,13 +406,13 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
   public Object getFieldValue(_Fields field) {
     switch (field) {
     case USER_ID:
-      return Integer.valueOf(getUserId());
+      return Long.valueOf(getUserId());
 
     case RUBRIC_ID:
-      return Integer.valueOf(getRubricId());
+      return Long.valueOf(getRubricId());
 
     case GROU_ID:
-      return Integer.valueOf(getGrouId());
+      return Long.valueOf(getGrouId());
 
     case SUBSCRIBED:
       return Integer.valueOf(getSubscribed());
@@ -684,24 +684,24 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
         }
         switch (schemeField.id) {
           case 1: // USER_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.userId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.userId = iprot.readI64();
               struct.setUserIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 2: // RUBRIC_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.rubricId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.rubricId = iprot.readI64();
               struct.setRubricIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 3: // GROU_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.grouId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.grouId = iprot.readI64();
               struct.setGrouIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -747,14 +747,14 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
 
       oprot.writeStructBegin(STRUCT_DESC);
       oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-      oprot.writeI32(struct.userId);
+      oprot.writeI64(struct.userId);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(RUBRIC_ID_FIELD_DESC);
-      oprot.writeI32(struct.rubricId);
+      oprot.writeI64(struct.rubricId);
       oprot.writeFieldEnd();
       if (struct.isSetGrouId()) {
         oprot.writeFieldBegin(GROU_ID_FIELD_DESC);
-        oprot.writeI32(struct.grouId);
+        oprot.writeI64(struct.grouId);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldBegin(SUBSCRIBED_FIELD_DESC);
@@ -804,13 +804,13 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
       }
       oprot.writeBitSet(optionals, 6);
       if (struct.isSetUserId()) {
-        oprot.writeI32(struct.userId);
+        oprot.writeI64(struct.userId);
       }
       if (struct.isSetRubricId()) {
-        oprot.writeI32(struct.rubricId);
+        oprot.writeI64(struct.rubricId);
       }
       if (struct.isSetGrouId()) {
-        oprot.writeI32(struct.grouId);
+        oprot.writeI64(struct.grouId);
       }
       if (struct.isSetSubscribed()) {
         oprot.writeI32(struct.subscribed);
@@ -828,15 +828,15 @@ public class UserRubric implements org.apache.thrift.TBase<UserRubric, UserRubri
       TTupleProtocol iprot = (TTupleProtocol) prot;
       BitSet incoming = iprot.readBitSet(6);
       if (incoming.get(0)) {
-        struct.userId = iprot.readI32();
+        struct.userId = iprot.readI64();
         struct.setUserIdIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.rubricId = iprot.readI32();
+        struct.rubricId = iprot.readI64();
         struct.setRubricIdIsSet(true);
       }
       if (incoming.get(2)) {
-        struct.grouId = iprot.readI32();
+        struct.grouId = iprot.readI64();
         struct.setGrouIdIsSet(true);
       }
       if (incoming.get(3)) {

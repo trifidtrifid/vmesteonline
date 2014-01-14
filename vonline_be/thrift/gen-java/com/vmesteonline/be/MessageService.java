@@ -36,49 +36,49 @@ public class MessageService {
 
   public interface Iface {
 
-    public com.vmesteonline.be.Message createMessage(int topicId, int parentId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public com.vmesteonline.be.Message createMessage(long topicId, long parentId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public int postMessage(com.vmesteonline.be.Message msg) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public long postMessage(com.vmesteonline.be.Message msg) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public com.vmesteonline.be.Topic createTopic(int rubricId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public com.vmesteonline.be.Topic createTopic(long rubricId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public int postTopic(int rubricId, com.vmesteonline.be.Message msg) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public long postTopic(long rubricId, com.vmesteonline.be.Message msg) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public boolean checkUpdates(int userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public boolean checkUpdates(long userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public GroupUpdates getUpdates(int userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public GroupUpdates getUpdates(long userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public TopicListPart getTopics(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public TopicListPart getTopics(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public MessageListPart getMessages(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public MessageListPart getMessages(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public int like(int messageId, int userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public long like(long messageId, long userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public int dislike(int messageId, int userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public long dislike(long messageId, long userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
   }
 
   public interface AsyncIface {
 
-    public void createMessage(int topicId, int parentId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void createMessage(long topicId, long parentId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void postMessage(com.vmesteonline.be.Message msg, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void createTopic(int rubricId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void createTopic(long rubricId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void postTopic(int rubricId, com.vmesteonline.be.Message msg, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void postTopic(long rubricId, com.vmesteonline.be.Message msg, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void checkUpdates(int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void checkUpdates(long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void getUpdates(int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void getUpdates(long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void getTopics(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void getTopics(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void getMessages(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void getMessages(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void like(int messageId, int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void like(long messageId, long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void dislike(int messageId, int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void dislike(long messageId, long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -102,13 +102,13 @@ public class MessageService {
       super(iprot, oprot);
     }
 
-    public com.vmesteonline.be.Message createMessage(int topicId, int parentId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public com.vmesteonline.be.Message createMessage(long topicId, long parentId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_createMessage(topicId, parentId, subject, groupId, authorId, type, content, recipientId);
       return recv_createMessage();
     }
 
-    public void send_createMessage(int topicId, int parentId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId) throws org.apache.thrift.TException
+    public void send_createMessage(long topicId, long parentId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId) throws org.apache.thrift.TException
     {
       createMessage_args args = new createMessage_args();
       args.setTopicId(topicId);
@@ -135,7 +135,7 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "createMessage failed: unknown result");
     }
 
-    public int postMessage(com.vmesteonline.be.Message msg) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public long postMessage(com.vmesteonline.be.Message msg) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_postMessage(msg);
       return recv_postMessage();
@@ -148,7 +148,7 @@ public class MessageService {
       sendBase("postMessage", args);
     }
 
-    public int recv_postMessage() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public long recv_postMessage() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       postMessage_result result = new postMessage_result();
       receiveBase(result, "postMessage");
@@ -161,13 +161,13 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "postMessage failed: unknown result");
     }
 
-    public com.vmesteonline.be.Topic createTopic(int rubricId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public com.vmesteonline.be.Topic createTopic(long rubricId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_createTopic(rubricId, subject, groupId, authorId, type, content, recipientId);
       return recv_createTopic();
     }
 
-    public void send_createTopic(int rubricId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId) throws org.apache.thrift.TException
+    public void send_createTopic(long rubricId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId) throws org.apache.thrift.TException
     {
       createTopic_args args = new createTopic_args();
       args.setRubricId(rubricId);
@@ -193,13 +193,13 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "createTopic failed: unknown result");
     }
 
-    public int postTopic(int rubricId, com.vmesteonline.be.Message msg) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public long postTopic(long rubricId, com.vmesteonline.be.Message msg) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_postTopic(rubricId, msg);
       return recv_postTopic();
     }
 
-    public void send_postTopic(int rubricId, com.vmesteonline.be.Message msg) throws org.apache.thrift.TException
+    public void send_postTopic(long rubricId, com.vmesteonline.be.Message msg) throws org.apache.thrift.TException
     {
       postTopic_args args = new postTopic_args();
       args.setRubricId(rubricId);
@@ -207,7 +207,7 @@ public class MessageService {
       sendBase("postTopic", args);
     }
 
-    public int recv_postTopic() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public long recv_postTopic() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       postTopic_result result = new postTopic_result();
       receiveBase(result, "postTopic");
@@ -220,13 +220,13 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "postTopic failed: unknown result");
     }
 
-    public boolean checkUpdates(int userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public boolean checkUpdates(long userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_checkUpdates(userId);
       return recv_checkUpdates();
     }
 
-    public void send_checkUpdates(int userId) throws org.apache.thrift.TException
+    public void send_checkUpdates(long userId) throws org.apache.thrift.TException
     {
       checkUpdates_args args = new checkUpdates_args();
       args.setUserId(userId);
@@ -246,13 +246,13 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "checkUpdates failed: unknown result");
     }
 
-    public GroupUpdates getUpdates(int userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public GroupUpdates getUpdates(long userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_getUpdates(userId);
       return recv_getUpdates();
     }
 
-    public void send_getUpdates(int userId) throws org.apache.thrift.TException
+    public void send_getUpdates(long userId) throws org.apache.thrift.TException
     {
       getUpdates_args args = new getUpdates_args();
       args.setUserId(userId);
@@ -272,13 +272,13 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUpdates failed: unknown result");
     }
 
-    public TopicListPart getTopics(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public TopicListPart getTopics(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_getTopics(groupId, rubricId, userId, messageType, offset, length);
       return recv_getTopics();
     }
 
-    public void send_getTopics(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws org.apache.thrift.TException
+    public void send_getTopics(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws org.apache.thrift.TException
     {
       getTopics_args args = new getTopics_args();
       args.setGroupId(groupId);
@@ -303,13 +303,13 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getTopics failed: unknown result");
     }
 
-    public MessageListPart getMessages(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public MessageListPart getMessages(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_getMessages(groupId, rubricId, userId, messageType, offset, length);
       return recv_getMessages();
     }
 
-    public void send_getMessages(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws org.apache.thrift.TException
+    public void send_getMessages(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length) throws org.apache.thrift.TException
     {
       getMessages_args args = new getMessages_args();
       args.setGroupId(groupId);
@@ -334,13 +334,13 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getMessages failed: unknown result");
     }
 
-    public int like(int messageId, int userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public long like(long messageId, long userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_like(messageId, userId);
       return recv_like();
     }
 
-    public void send_like(int messageId, int userId) throws org.apache.thrift.TException
+    public void send_like(long messageId, long userId) throws org.apache.thrift.TException
     {
       like_args args = new like_args();
       args.setMessageId(messageId);
@@ -348,7 +348,7 @@ public class MessageService {
       sendBase("like", args);
     }
 
-    public int recv_like() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public long recv_like() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       like_result result = new like_result();
       receiveBase(result, "like");
@@ -361,13 +361,13 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "like failed: unknown result");
     }
 
-    public int dislike(int messageId, int userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public long dislike(long messageId, long userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_dislike(messageId, userId);
       return recv_dislike();
     }
 
-    public void send_dislike(int messageId, int userId) throws org.apache.thrift.TException
+    public void send_dislike(long messageId, long userId) throws org.apache.thrift.TException
     {
       dislike_args args = new dislike_args();
       args.setMessageId(messageId);
@@ -375,7 +375,7 @@ public class MessageService {
       sendBase("dislike", args);
     }
 
-    public int recv_dislike() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public long recv_dislike() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       dislike_result result = new dislike_result();
       receiveBase(result, "dislike");
@@ -406,7 +406,7 @@ public class MessageService {
       super(protocolFactory, clientManager, transport);
     }
 
-    public void createMessage(int topicId, int parentId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void createMessage(long topicId, long parentId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       createMessage_call method_call = new createMessage_call(topicId, parentId, subject, groupId, authorId, type, content, recipientId, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -414,15 +414,15 @@ public class MessageService {
     }
 
     public static class createMessage_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private int topicId;
-      private int parentId;
+      private long topicId;
+      private long parentId;
       private String subject;
-      private int groupId;
-      private int authorId;
+      private long groupId;
+      private long authorId;
       private com.vmesteonline.be.MessageType type;
       private ByteBuffer content;
-      private int recipientId;
-      public createMessage_call(int topicId, int parentId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private long recipientId;
+      public createMessage_call(long topicId, long parentId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.topicId = topicId;
         this.parentId = parentId;
@@ -481,7 +481,7 @@ public class MessageService {
         prot.writeMessageEnd();
       }
 
-      public int getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+      public long getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -491,7 +491,7 @@ public class MessageService {
       }
     }
 
-    public void createTopic(int rubricId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void createTopic(long rubricId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       createTopic_call method_call = new createTopic_call(rubricId, subject, groupId, authorId, type, content, recipientId, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -499,14 +499,14 @@ public class MessageService {
     }
 
     public static class createTopic_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private int rubricId;
+      private long rubricId;
       private String subject;
-      private int groupId;
-      private int authorId;
+      private long groupId;
+      private long authorId;
       private com.vmesteonline.be.MessageType type;
       private ByteBuffer content;
-      private int recipientId;
-      public createTopic_call(int rubricId, String subject, int groupId, int authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, int recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private long recipientId;
+      public createTopic_call(long rubricId, String subject, long groupId, long authorId, com.vmesteonline.be.MessageType type, ByteBuffer content, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.rubricId = rubricId;
         this.subject = subject;
@@ -541,7 +541,7 @@ public class MessageService {
       }
     }
 
-    public void postTopic(int rubricId, com.vmesteonline.be.Message msg, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void postTopic(long rubricId, com.vmesteonline.be.Message msg, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       postTopic_call method_call = new postTopic_call(rubricId, msg, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -549,9 +549,9 @@ public class MessageService {
     }
 
     public static class postTopic_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private int rubricId;
+      private long rubricId;
       private com.vmesteonline.be.Message msg;
-      public postTopic_call(int rubricId, com.vmesteonline.be.Message msg, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public postTopic_call(long rubricId, com.vmesteonline.be.Message msg, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.rubricId = rubricId;
         this.msg = msg;
@@ -566,7 +566,7 @@ public class MessageService {
         prot.writeMessageEnd();
       }
 
-      public int getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+      public long getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -576,7 +576,7 @@ public class MessageService {
       }
     }
 
-    public void checkUpdates(int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void checkUpdates(long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       checkUpdates_call method_call = new checkUpdates_call(userId, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -584,8 +584,8 @@ public class MessageService {
     }
 
     public static class checkUpdates_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private int userId;
-      public checkUpdates_call(int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private long userId;
+      public checkUpdates_call(long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.userId = userId;
       }
@@ -608,7 +608,7 @@ public class MessageService {
       }
     }
 
-    public void getUpdates(int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void getUpdates(long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       getUpdates_call method_call = new getUpdates_call(userId, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -616,8 +616,8 @@ public class MessageService {
     }
 
     public static class getUpdates_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private int userId;
-      public getUpdates_call(int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private long userId;
+      public getUpdates_call(long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.userId = userId;
       }
@@ -640,7 +640,7 @@ public class MessageService {
       }
     }
 
-    public void getTopics(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void getTopics(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       getTopics_call method_call = new getTopics_call(groupId, rubricId, userId, messageType, offset, length, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -648,13 +648,13 @@ public class MessageService {
     }
 
     public static class getTopics_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private int groupId;
-      private int rubricId;
-      private int userId;
+      private long groupId;
+      private long rubricId;
+      private long userId;
       private com.vmesteonline.be.MessageType messageType;
       private int offset;
       private int length;
-      public getTopics_call(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public getTopics_call(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.groupId = groupId;
         this.rubricId = rubricId;
@@ -687,7 +687,7 @@ public class MessageService {
       }
     }
 
-    public void getMessages(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void getMessages(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       getMessages_call method_call = new getMessages_call(groupId, rubricId, userId, messageType, offset, length, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -695,13 +695,13 @@ public class MessageService {
     }
 
     public static class getMessages_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private int groupId;
-      private int rubricId;
-      private int userId;
+      private long groupId;
+      private long rubricId;
+      private long userId;
       private com.vmesteonline.be.MessageType messageType;
       private int offset;
       private int length;
-      public getMessages_call(int groupId, int rubricId, int userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public getMessages_call(long groupId, long rubricId, long userId, com.vmesteonline.be.MessageType messageType, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.groupId = groupId;
         this.rubricId = rubricId;
@@ -734,7 +734,7 @@ public class MessageService {
       }
     }
 
-    public void like(int messageId, int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void like(long messageId, long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       like_call method_call = new like_call(messageId, userId, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -742,9 +742,9 @@ public class MessageService {
     }
 
     public static class like_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private int messageId;
-      private int userId;
-      public like_call(int messageId, int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private long messageId;
+      private long userId;
+      public like_call(long messageId, long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.messageId = messageId;
         this.userId = userId;
@@ -759,7 +759,7 @@ public class MessageService {
         prot.writeMessageEnd();
       }
 
-      public int getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+      public long getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -769,7 +769,7 @@ public class MessageService {
       }
     }
 
-    public void dislike(int messageId, int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void dislike(long messageId, long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       dislike_call method_call = new dislike_call(messageId, userId, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -777,9 +777,9 @@ public class MessageService {
     }
 
     public static class dislike_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private int messageId;
-      private int userId;
-      public dislike_call(int messageId, int userId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private long messageId;
+      private long userId;
+      public dislike_call(long messageId, long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.messageId = messageId;
         this.userId = userId;
@@ -794,7 +794,7 @@ public class MessageService {
         prot.writeMessageEnd();
       }
 
-      public int getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+      public long getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -1158,7 +1158,7 @@ public class MessageService {
       }
     }
 
-    public static class postMessage<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, postMessage_args, Integer> {
+    public static class postMessage<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, postMessage_args, Long> {
       public postMessage() {
         super("postMessage");
       }
@@ -1167,10 +1167,10 @@ public class MessageService {
         return new postMessage_args();
       }
 
-      public AsyncMethodCallback<Integer> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<Long> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Integer>() { 
-          public void onComplete(Integer o) {
+        return new AsyncMethodCallback<Long>() { 
+          public void onComplete(Long o) {
             postMessage_result result = new postMessage_result();
             result.success = o;
             result.setSuccessIsSet(true);
@@ -1211,7 +1211,7 @@ public class MessageService {
         return false;
       }
 
-      public void start(I iface, postMessage_args args, org.apache.thrift.async.AsyncMethodCallback<Integer> resultHandler) throws TException {
+      public void start(I iface, postMessage_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
         iface.postMessage(args.msg,resultHandler);
       }
     }
@@ -1273,7 +1273,7 @@ public class MessageService {
       }
     }
 
-    public static class postTopic<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, postTopic_args, Integer> {
+    public static class postTopic<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, postTopic_args, Long> {
       public postTopic() {
         super("postTopic");
       }
@@ -1282,10 +1282,10 @@ public class MessageService {
         return new postTopic_args();
       }
 
-      public AsyncMethodCallback<Integer> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<Long> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Integer>() { 
-          public void onComplete(Integer o) {
+        return new AsyncMethodCallback<Long>() { 
+          public void onComplete(Long o) {
             postTopic_result result = new postTopic_result();
             result.success = o;
             result.setSuccessIsSet(true);
@@ -1326,7 +1326,7 @@ public class MessageService {
         return false;
       }
 
-      public void start(I iface, postTopic_args args, org.apache.thrift.async.AsyncMethodCallback<Integer> resultHandler) throws TException {
+      public void start(I iface, postTopic_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
         iface.postTopic(args.rubricId, args.msg,resultHandler);
       }
     }
@@ -1560,7 +1560,7 @@ public class MessageService {
       }
     }
 
-    public static class like<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, like_args, Integer> {
+    public static class like<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, like_args, Long> {
       public like() {
         super("like");
       }
@@ -1569,10 +1569,10 @@ public class MessageService {
         return new like_args();
       }
 
-      public AsyncMethodCallback<Integer> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<Long> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Integer>() { 
-          public void onComplete(Integer o) {
+        return new AsyncMethodCallback<Long>() { 
+          public void onComplete(Long o) {
             like_result result = new like_result();
             result.success = o;
             result.setSuccessIsSet(true);
@@ -1613,12 +1613,12 @@ public class MessageService {
         return false;
       }
 
-      public void start(I iface, like_args args, org.apache.thrift.async.AsyncMethodCallback<Integer> resultHandler) throws TException {
+      public void start(I iface, like_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
         iface.like(args.messageId, args.userId,resultHandler);
       }
     }
 
-    public static class dislike<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, dislike_args, Integer> {
+    public static class dislike<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, dislike_args, Long> {
       public dislike() {
         super("dislike");
       }
@@ -1627,10 +1627,10 @@ public class MessageService {
         return new dislike_args();
       }
 
-      public AsyncMethodCallback<Integer> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<Long> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Integer>() { 
-          public void onComplete(Integer o) {
+        return new AsyncMethodCallback<Long>() { 
+          public void onComplete(Long o) {
             dislike_result result = new dislike_result();
             result.success = o;
             result.setSuccessIsSet(true);
@@ -1671,7 +1671,7 @@ public class MessageService {
         return false;
       }
 
-      public void start(I iface, dislike_args args, org.apache.thrift.async.AsyncMethodCallback<Integer> resultHandler) throws TException {
+      public void start(I iface, dislike_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
         iface.dislike(args.messageId, args.userId,resultHandler);
       }
     }
@@ -1681,14 +1681,14 @@ public class MessageService {
   public static class createMessage_args implements org.apache.thrift.TBase<createMessage_args, createMessage_args._Fields>, java.io.Serializable, Cloneable, Comparable<createMessage_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("createMessage_args");
 
-    private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I32, (short)1);
-    private static final org.apache.thrift.protocol.TField PARENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("parentId", org.apache.thrift.protocol.TType.I32, (short)2);
+    private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField PARENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("parentId", org.apache.thrift.protocol.TType.I64, (short)2);
     private static final org.apache.thrift.protocol.TField SUBJECT_FIELD_DESC = new org.apache.thrift.protocol.TField("subject", org.apache.thrift.protocol.TType.STRING, (short)3);
-    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I32, (short)4);
-    private static final org.apache.thrift.protocol.TField AUTHOR_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("authorId", org.apache.thrift.protocol.TType.I32, (short)5);
+    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)4);
+    private static final org.apache.thrift.protocol.TField AUTHOR_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("authorId", org.apache.thrift.protocol.TType.I64, (short)5);
     private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.I32, (short)6);
     private static final org.apache.thrift.protocol.TField CONTENT_FIELD_DESC = new org.apache.thrift.protocol.TField("content", org.apache.thrift.protocol.TType.STRING, (short)7);
-    private static final org.apache.thrift.protocol.TField RECIPIENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("recipientId", org.apache.thrift.protocol.TType.I32, (short)8);
+    private static final org.apache.thrift.protocol.TField RECIPIENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("recipientId", org.apache.thrift.protocol.TType.I64, (short)8);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -1696,18 +1696,18 @@ public class MessageService {
       schemes.put(TupleScheme.class, new createMessage_argsTupleSchemeFactory());
     }
 
-    public int topicId; // required
-    public int parentId; // required
+    public long topicId; // required
+    public long parentId; // required
     public String subject; // required
-    public int groupId; // required
-    public int authorId; // required
+    public long groupId; // required
+    public long authorId; // required
     /**
      * 
      * @see com.vmesteonline.be.MessageType
      */
     public com.vmesteonline.be.MessageType type; // required
     public ByteBuffer content; // required
-    public int recipientId; // required
+    public long recipientId; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -1803,21 +1803,21 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.TOPIC_ID, new org.apache.thrift.meta_data.FieldMetaData("topicId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.PARENT_ID, new org.apache.thrift.meta_data.FieldMetaData("parentId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.SUBJECT, new org.apache.thrift.meta_data.FieldMetaData("subject", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.AUTHOR_ID, new org.apache.thrift.meta_data.FieldMetaData("authorId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.TYPE, new org.apache.thrift.meta_data.FieldMetaData("type", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, com.vmesteonline.be.MessageType.class)));
       tmpMap.put(_Fields.CONTENT, new org.apache.thrift.meta_data.FieldMetaData("content", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , true)));
       tmpMap.put(_Fields.RECIPIENT_ID, new org.apache.thrift.meta_data.FieldMetaData("recipientId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(createMessage_args.class, metaDataMap);
     }
@@ -1826,14 +1826,14 @@ public class MessageService {
     }
 
     public createMessage_args(
-      int topicId,
-      int parentId,
+      long topicId,
+      long parentId,
       String subject,
-      int groupId,
-      int authorId,
+      long groupId,
+      long authorId,
       com.vmesteonline.be.MessageType type,
       ByteBuffer content,
-      int recipientId)
+      long recipientId)
     {
       this();
       this.topicId = topicId;
@@ -1894,11 +1894,11 @@ public class MessageService {
       this.recipientId = 0;
     }
 
-    public int getTopicId() {
+    public long getTopicId() {
       return this.topicId;
     }
 
-    public createMessage_args setTopicId(int topicId) {
+    public createMessage_args setTopicId(long topicId) {
       this.topicId = topicId;
       setTopicIdIsSet(true);
       return this;
@@ -1917,11 +1917,11 @@ public class MessageService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICID_ISSET_ID, value);
     }
 
-    public int getParentId() {
+    public long getParentId() {
       return this.parentId;
     }
 
-    public createMessage_args setParentId(int parentId) {
+    public createMessage_args setParentId(long parentId) {
       this.parentId = parentId;
       setParentIdIsSet(true);
       return this;
@@ -1964,11 +1964,11 @@ public class MessageService {
       }
     }
 
-    public int getGroupId() {
+    public long getGroupId() {
       return this.groupId;
     }
 
-    public createMessage_args setGroupId(int groupId) {
+    public createMessage_args setGroupId(long groupId) {
       this.groupId = groupId;
       setGroupIdIsSet(true);
       return this;
@@ -1987,11 +1987,11 @@ public class MessageService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __GROUPID_ISSET_ID, value);
     }
 
-    public int getAuthorId() {
+    public long getAuthorId() {
       return this.authorId;
     }
 
-    public createMessage_args setAuthorId(int authorId) {
+    public createMessage_args setAuthorId(long authorId) {
       this.authorId = authorId;
       setAuthorIdIsSet(true);
       return this;
@@ -2076,11 +2076,11 @@ public class MessageService {
       }
     }
 
-    public int getRecipientId() {
+    public long getRecipientId() {
       return this.recipientId;
     }
 
-    public createMessage_args setRecipientId(int recipientId) {
+    public createMessage_args setRecipientId(long recipientId) {
       this.recipientId = recipientId;
       setRecipientIdIsSet(true);
       return this;
@@ -2105,7 +2105,7 @@ public class MessageService {
         if (value == null) {
           unsetTopicId();
         } else {
-          setTopicId((Integer)value);
+          setTopicId((Long)value);
         }
         break;
 
@@ -2113,7 +2113,7 @@ public class MessageService {
         if (value == null) {
           unsetParentId();
         } else {
-          setParentId((Integer)value);
+          setParentId((Long)value);
         }
         break;
 
@@ -2129,7 +2129,7 @@ public class MessageService {
         if (value == null) {
           unsetGroupId();
         } else {
-          setGroupId((Integer)value);
+          setGroupId((Long)value);
         }
         break;
 
@@ -2137,7 +2137,7 @@ public class MessageService {
         if (value == null) {
           unsetAuthorId();
         } else {
-          setAuthorId((Integer)value);
+          setAuthorId((Long)value);
         }
         break;
 
@@ -2161,7 +2161,7 @@ public class MessageService {
         if (value == null) {
           unsetRecipientId();
         } else {
-          setRecipientId((Integer)value);
+          setRecipientId((Long)value);
         }
         break;
 
@@ -2171,19 +2171,19 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case TOPIC_ID:
-        return Integer.valueOf(getTopicId());
+        return Long.valueOf(getTopicId());
 
       case PARENT_ID:
-        return Integer.valueOf(getParentId());
+        return Long.valueOf(getParentId());
 
       case SUBJECT:
         return getSubject();
 
       case GROUP_ID:
-        return Integer.valueOf(getGroupId());
+        return Long.valueOf(getGroupId());
 
       case AUTHOR_ID:
-        return Integer.valueOf(getAuthorId());
+        return Long.valueOf(getAuthorId());
 
       case TYPE:
         return getType();
@@ -2192,7 +2192,7 @@ public class MessageService {
         return getContent();
 
       case RECIPIENT_ID:
-        return Integer.valueOf(getRecipientId());
+        return Long.valueOf(getRecipientId());
 
       }
       throw new IllegalStateException();
@@ -2515,16 +2515,16 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 1: // TOPIC_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.topicId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.topicId = iprot.readI64();
                 struct.setTopicIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
             case 2: // PARENT_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.parentId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.parentId = iprot.readI64();
                 struct.setParentIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -2539,16 +2539,16 @@ public class MessageService {
               }
               break;
             case 4: // GROUP_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.groupId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.groupId = iprot.readI64();
                 struct.setGroupIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
             case 5: // AUTHOR_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.authorId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.authorId = iprot.readI64();
                 struct.setAuthorIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -2571,8 +2571,8 @@ public class MessageService {
               }
               break;
             case 8: // RECIPIENT_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.recipientId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.recipientId = iprot.readI64();
                 struct.setRecipientIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -2594,10 +2594,10 @@ public class MessageService {
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(TOPIC_ID_FIELD_DESC);
-        oprot.writeI32(struct.topicId);
+        oprot.writeI64(struct.topicId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(PARENT_ID_FIELD_DESC);
-        oprot.writeI32(struct.parentId);
+        oprot.writeI64(struct.parentId);
         oprot.writeFieldEnd();
         if (struct.subject != null) {
           oprot.writeFieldBegin(SUBJECT_FIELD_DESC);
@@ -2605,10 +2605,10 @@ public class MessageService {
           oprot.writeFieldEnd();
         }
         oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
-        oprot.writeI32(struct.groupId);
+        oprot.writeI64(struct.groupId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(AUTHOR_ID_FIELD_DESC);
-        oprot.writeI32(struct.authorId);
+        oprot.writeI64(struct.authorId);
         oprot.writeFieldEnd();
         if (struct.type != null) {
           oprot.writeFieldBegin(TYPE_FIELD_DESC);
@@ -2621,7 +2621,7 @@ public class MessageService {
           oprot.writeFieldEnd();
         }
         oprot.writeFieldBegin(RECIPIENT_ID_FIELD_DESC);
-        oprot.writeI32(struct.recipientId);
+        oprot.writeI64(struct.recipientId);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -2667,19 +2667,19 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 8);
         if (struct.isSetTopicId()) {
-          oprot.writeI32(struct.topicId);
+          oprot.writeI64(struct.topicId);
         }
         if (struct.isSetParentId()) {
-          oprot.writeI32(struct.parentId);
+          oprot.writeI64(struct.parentId);
         }
         if (struct.isSetSubject()) {
           oprot.writeString(struct.subject);
         }
         if (struct.isSetGroupId()) {
-          oprot.writeI32(struct.groupId);
+          oprot.writeI64(struct.groupId);
         }
         if (struct.isSetAuthorId()) {
-          oprot.writeI32(struct.authorId);
+          oprot.writeI64(struct.authorId);
         }
         if (struct.isSetType()) {
           oprot.writeI32(struct.type.getValue());
@@ -2688,7 +2688,7 @@ public class MessageService {
           oprot.writeBinary(struct.content);
         }
         if (struct.isSetRecipientId()) {
-          oprot.writeI32(struct.recipientId);
+          oprot.writeI64(struct.recipientId);
         }
       }
 
@@ -2697,11 +2697,11 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(8);
         if (incoming.get(0)) {
-          struct.topicId = iprot.readI32();
+          struct.topicId = iprot.readI64();
           struct.setTopicIdIsSet(true);
         }
         if (incoming.get(1)) {
-          struct.parentId = iprot.readI32();
+          struct.parentId = iprot.readI64();
           struct.setParentIdIsSet(true);
         }
         if (incoming.get(2)) {
@@ -2709,11 +2709,11 @@ public class MessageService {
           struct.setSubjectIsSet(true);
         }
         if (incoming.get(3)) {
-          struct.groupId = iprot.readI32();
+          struct.groupId = iprot.readI64();
           struct.setGroupIdIsSet(true);
         }
         if (incoming.get(4)) {
-          struct.authorId = iprot.readI32();
+          struct.authorId = iprot.readI64();
           struct.setAuthorIdIsSet(true);
         }
         if (incoming.get(5)) {
@@ -2725,7 +2725,7 @@ public class MessageService {
           struct.setContentIsSet(true);
         }
         if (incoming.get(7)) {
-          struct.recipientId = iprot.readI32();
+          struct.recipientId = iprot.readI64();
           struct.setRecipientIdIsSet(true);
         }
       }
@@ -3556,7 +3556,7 @@ public class MessageService {
   public static class postMessage_result implements org.apache.thrift.TBase<postMessage_result, postMessage_result._Fields>, java.io.Serializable, Cloneable, Comparable<postMessage_result>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("postMessage_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I32, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I64, (short)0);
     private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -3565,7 +3565,7 @@ public class MessageService {
       schemes.put(TupleScheme.class, new postMessage_resultTupleSchemeFactory());
     }
 
-    public int success; // required
+    public long success; // required
     public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -3636,7 +3636,7 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -3647,7 +3647,7 @@ public class MessageService {
     }
 
     public postMessage_result(
-      int success,
+      long success,
       com.vmesteonline.be.InvalidOperation exc)
     {
       this();
@@ -3678,11 +3678,11 @@ public class MessageService {
       this.exc = null;
     }
 
-    public int getSuccess() {
+    public long getSuccess() {
       return this.success;
     }
 
-    public postMessage_result setSuccess(int success) {
+    public postMessage_result setSuccess(long success) {
       this.success = success;
       setSuccessIsSet(true);
       return this;
@@ -3731,7 +3731,7 @@ public class MessageService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((Integer)value);
+          setSuccess((Long)value);
         }
         break;
 
@@ -3749,7 +3749,7 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case SUCCESS:
-        return Integer.valueOf(getSuccess());
+        return Long.valueOf(getSuccess());
 
       case EXC:
         return getExc();
@@ -3917,8 +3917,8 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.success = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.success = iprot.readI64();
                 struct.setSuccessIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -3950,7 +3950,7 @@ public class MessageService {
         oprot.writeStructBegin(STRUCT_DESC);
         if (struct.isSetSuccess()) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          oprot.writeI32(struct.success);
+          oprot.writeI64(struct.success);
           oprot.writeFieldEnd();
         }
         if (struct.exc != null) {
@@ -3984,7 +3984,7 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
-          oprot.writeI32(struct.success);
+          oprot.writeI64(struct.success);
         }
         if (struct.isSetExc()) {
           struct.exc.write(oprot);
@@ -3996,7 +3996,7 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.success = iprot.readI32();
+          struct.success = iprot.readI64();
           struct.setSuccessIsSet(true);
         }
         if (incoming.get(1)) {
@@ -4012,13 +4012,13 @@ public class MessageService {
   public static class createTopic_args implements org.apache.thrift.TBase<createTopic_args, createTopic_args._Fields>, java.io.Serializable, Cloneable, Comparable<createTopic_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("createTopic_args");
 
-    private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I32, (short)1);
+    private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I64, (short)1);
     private static final org.apache.thrift.protocol.TField SUBJECT_FIELD_DESC = new org.apache.thrift.protocol.TField("subject", org.apache.thrift.protocol.TType.STRING, (short)3);
-    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I32, (short)4);
-    private static final org.apache.thrift.protocol.TField AUTHOR_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("authorId", org.apache.thrift.protocol.TType.I32, (short)5);
+    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)4);
+    private static final org.apache.thrift.protocol.TField AUTHOR_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("authorId", org.apache.thrift.protocol.TType.I64, (short)5);
     private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.I32, (short)6);
     private static final org.apache.thrift.protocol.TField CONTENT_FIELD_DESC = new org.apache.thrift.protocol.TField("content", org.apache.thrift.protocol.TType.STRING, (short)7);
-    private static final org.apache.thrift.protocol.TField RECIPIENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("recipientId", org.apache.thrift.protocol.TType.I32, (short)8);
+    private static final org.apache.thrift.protocol.TField RECIPIENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("recipientId", org.apache.thrift.protocol.TType.I64, (short)8);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -4026,17 +4026,17 @@ public class MessageService {
       schemes.put(TupleScheme.class, new createTopic_argsTupleSchemeFactory());
     }
 
-    public int rubricId; // required
+    public long rubricId; // required
     public String subject; // required
-    public int groupId; // required
-    public int authorId; // required
+    public long groupId; // required
+    public long authorId; // required
     /**
      * 
      * @see com.vmesteonline.be.MessageType
      */
     public com.vmesteonline.be.MessageType type; // required
     public ByteBuffer content; // required
-    public int recipientId; // required
+    public long recipientId; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -4128,19 +4128,19 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.RUBRIC_ID, new org.apache.thrift.meta_data.FieldMetaData("rubricId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.SUBJECT, new org.apache.thrift.meta_data.FieldMetaData("subject", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.AUTHOR_ID, new org.apache.thrift.meta_data.FieldMetaData("authorId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.TYPE, new org.apache.thrift.meta_data.FieldMetaData("type", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, com.vmesteonline.be.MessageType.class)));
       tmpMap.put(_Fields.CONTENT, new org.apache.thrift.meta_data.FieldMetaData("content", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , true)));
       tmpMap.put(_Fields.RECIPIENT_ID, new org.apache.thrift.meta_data.FieldMetaData("recipientId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(createTopic_args.class, metaDataMap);
     }
@@ -4149,13 +4149,13 @@ public class MessageService {
     }
 
     public createTopic_args(
-      int rubricId,
+      long rubricId,
       String subject,
-      int groupId,
-      int authorId,
+      long groupId,
+      long authorId,
       com.vmesteonline.be.MessageType type,
       ByteBuffer content,
-      int recipientId)
+      long recipientId)
     {
       this();
       this.rubricId = rubricId;
@@ -4211,11 +4211,11 @@ public class MessageService {
       this.recipientId = 0;
     }
 
-    public int getRubricId() {
+    public long getRubricId() {
       return this.rubricId;
     }
 
-    public createTopic_args setRubricId(int rubricId) {
+    public createTopic_args setRubricId(long rubricId) {
       this.rubricId = rubricId;
       setRubricIdIsSet(true);
       return this;
@@ -4258,11 +4258,11 @@ public class MessageService {
       }
     }
 
-    public int getGroupId() {
+    public long getGroupId() {
       return this.groupId;
     }
 
-    public createTopic_args setGroupId(int groupId) {
+    public createTopic_args setGroupId(long groupId) {
       this.groupId = groupId;
       setGroupIdIsSet(true);
       return this;
@@ -4281,11 +4281,11 @@ public class MessageService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __GROUPID_ISSET_ID, value);
     }
 
-    public int getAuthorId() {
+    public long getAuthorId() {
       return this.authorId;
     }
 
-    public createTopic_args setAuthorId(int authorId) {
+    public createTopic_args setAuthorId(long authorId) {
       this.authorId = authorId;
       setAuthorIdIsSet(true);
       return this;
@@ -4370,11 +4370,11 @@ public class MessageService {
       }
     }
 
-    public int getRecipientId() {
+    public long getRecipientId() {
       return this.recipientId;
     }
 
-    public createTopic_args setRecipientId(int recipientId) {
+    public createTopic_args setRecipientId(long recipientId) {
       this.recipientId = recipientId;
       setRecipientIdIsSet(true);
       return this;
@@ -4399,7 +4399,7 @@ public class MessageService {
         if (value == null) {
           unsetRubricId();
         } else {
-          setRubricId((Integer)value);
+          setRubricId((Long)value);
         }
         break;
 
@@ -4415,7 +4415,7 @@ public class MessageService {
         if (value == null) {
           unsetGroupId();
         } else {
-          setGroupId((Integer)value);
+          setGroupId((Long)value);
         }
         break;
 
@@ -4423,7 +4423,7 @@ public class MessageService {
         if (value == null) {
           unsetAuthorId();
         } else {
-          setAuthorId((Integer)value);
+          setAuthorId((Long)value);
         }
         break;
 
@@ -4447,7 +4447,7 @@ public class MessageService {
         if (value == null) {
           unsetRecipientId();
         } else {
-          setRecipientId((Integer)value);
+          setRecipientId((Long)value);
         }
         break;
 
@@ -4457,16 +4457,16 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case RUBRIC_ID:
-        return Integer.valueOf(getRubricId());
+        return Long.valueOf(getRubricId());
 
       case SUBJECT:
         return getSubject();
 
       case GROUP_ID:
-        return Integer.valueOf(getGroupId());
+        return Long.valueOf(getGroupId());
 
       case AUTHOR_ID:
-        return Integer.valueOf(getAuthorId());
+        return Long.valueOf(getAuthorId());
 
       case TYPE:
         return getType();
@@ -4475,7 +4475,7 @@ public class MessageService {
         return getContent();
 
       case RECIPIENT_ID:
-        return Integer.valueOf(getRecipientId());
+        return Long.valueOf(getRecipientId());
 
       }
       throw new IllegalStateException();
@@ -4773,8 +4773,8 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 1: // RUBRIC_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.rubricId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.rubricId = iprot.readI64();
                 struct.setRubricIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -4789,16 +4789,16 @@ public class MessageService {
               }
               break;
             case 4: // GROUP_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.groupId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.groupId = iprot.readI64();
                 struct.setGroupIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
             case 5: // AUTHOR_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.authorId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.authorId = iprot.readI64();
                 struct.setAuthorIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -4821,8 +4821,8 @@ public class MessageService {
               }
               break;
             case 8: // RECIPIENT_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.recipientId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.recipientId = iprot.readI64();
                 struct.setRecipientIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -4844,7 +4844,7 @@ public class MessageService {
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(RUBRIC_ID_FIELD_DESC);
-        oprot.writeI32(struct.rubricId);
+        oprot.writeI64(struct.rubricId);
         oprot.writeFieldEnd();
         if (struct.subject != null) {
           oprot.writeFieldBegin(SUBJECT_FIELD_DESC);
@@ -4852,10 +4852,10 @@ public class MessageService {
           oprot.writeFieldEnd();
         }
         oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
-        oprot.writeI32(struct.groupId);
+        oprot.writeI64(struct.groupId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(AUTHOR_ID_FIELD_DESC);
-        oprot.writeI32(struct.authorId);
+        oprot.writeI64(struct.authorId);
         oprot.writeFieldEnd();
         if (struct.type != null) {
           oprot.writeFieldBegin(TYPE_FIELD_DESC);
@@ -4868,7 +4868,7 @@ public class MessageService {
           oprot.writeFieldEnd();
         }
         oprot.writeFieldBegin(RECIPIENT_ID_FIELD_DESC);
-        oprot.writeI32(struct.recipientId);
+        oprot.writeI64(struct.recipientId);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -4911,16 +4911,16 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 7);
         if (struct.isSetRubricId()) {
-          oprot.writeI32(struct.rubricId);
+          oprot.writeI64(struct.rubricId);
         }
         if (struct.isSetSubject()) {
           oprot.writeString(struct.subject);
         }
         if (struct.isSetGroupId()) {
-          oprot.writeI32(struct.groupId);
+          oprot.writeI64(struct.groupId);
         }
         if (struct.isSetAuthorId()) {
-          oprot.writeI32(struct.authorId);
+          oprot.writeI64(struct.authorId);
         }
         if (struct.isSetType()) {
           oprot.writeI32(struct.type.getValue());
@@ -4929,7 +4929,7 @@ public class MessageService {
           oprot.writeBinary(struct.content);
         }
         if (struct.isSetRecipientId()) {
-          oprot.writeI32(struct.recipientId);
+          oprot.writeI64(struct.recipientId);
         }
       }
 
@@ -4938,7 +4938,7 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(7);
         if (incoming.get(0)) {
-          struct.rubricId = iprot.readI32();
+          struct.rubricId = iprot.readI64();
           struct.setRubricIdIsSet(true);
         }
         if (incoming.get(1)) {
@@ -4946,11 +4946,11 @@ public class MessageService {
           struct.setSubjectIsSet(true);
         }
         if (incoming.get(2)) {
-          struct.groupId = iprot.readI32();
+          struct.groupId = iprot.readI64();
           struct.setGroupIdIsSet(true);
         }
         if (incoming.get(3)) {
-          struct.authorId = iprot.readI32();
+          struct.authorId = iprot.readI64();
           struct.setAuthorIdIsSet(true);
         }
         if (incoming.get(4)) {
@@ -4962,7 +4962,7 @@ public class MessageService {
           struct.setContentIsSet(true);
         }
         if (incoming.get(6)) {
-          struct.recipientId = iprot.readI32();
+          struct.recipientId = iprot.readI64();
           struct.setRecipientIdIsSet(true);
         }
       }
@@ -5434,7 +5434,7 @@ public class MessageService {
   public static class postTopic_args implements org.apache.thrift.TBase<postTopic_args, postTopic_args._Fields>, java.io.Serializable, Cloneable, Comparable<postTopic_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("postTopic_args");
 
-    private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I32, (short)1);
+    private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I64, (short)1);
     private static final org.apache.thrift.protocol.TField MSG_FIELD_DESC = new org.apache.thrift.protocol.TField("msg", org.apache.thrift.protocol.TType.STRUCT, (short)2);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -5443,7 +5443,7 @@ public class MessageService {
       schemes.put(TupleScheme.class, new postTopic_argsTupleSchemeFactory());
     }
 
-    public int rubricId; // required
+    public long rubricId; // required
     public com.vmesteonline.be.Message msg; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -5514,7 +5514,7 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.RUBRIC_ID, new org.apache.thrift.meta_data.FieldMetaData("rubricId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.MSG, new org.apache.thrift.meta_data.FieldMetaData("msg", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.vmesteonline.be.Message.class)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -5525,7 +5525,7 @@ public class MessageService {
     }
 
     public postTopic_args(
-      int rubricId,
+      long rubricId,
       com.vmesteonline.be.Message msg)
     {
       this();
@@ -5556,11 +5556,11 @@ public class MessageService {
       this.msg = null;
     }
 
-    public int getRubricId() {
+    public long getRubricId() {
       return this.rubricId;
     }
 
-    public postTopic_args setRubricId(int rubricId) {
+    public postTopic_args setRubricId(long rubricId) {
       this.rubricId = rubricId;
       setRubricIdIsSet(true);
       return this;
@@ -5609,7 +5609,7 @@ public class MessageService {
         if (value == null) {
           unsetRubricId();
         } else {
-          setRubricId((Integer)value);
+          setRubricId((Long)value);
         }
         break;
 
@@ -5627,7 +5627,7 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case RUBRIC_ID:
-        return Integer.valueOf(getRubricId());
+        return Long.valueOf(getRubricId());
 
       case MSG:
         return getMsg();
@@ -5798,8 +5798,8 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 1: // RUBRIC_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.rubricId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.rubricId = iprot.readI64();
                 struct.setRubricIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -5830,7 +5830,7 @@ public class MessageService {
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(RUBRIC_ID_FIELD_DESC);
-        oprot.writeI32(struct.rubricId);
+        oprot.writeI64(struct.rubricId);
         oprot.writeFieldEnd();
         if (struct.msg != null) {
           oprot.writeFieldBegin(MSG_FIELD_DESC);
@@ -5863,7 +5863,7 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 2);
         if (struct.isSetRubricId()) {
-          oprot.writeI32(struct.rubricId);
+          oprot.writeI64(struct.rubricId);
         }
         if (struct.isSetMsg()) {
           struct.msg.write(oprot);
@@ -5875,7 +5875,7 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.rubricId = iprot.readI32();
+          struct.rubricId = iprot.readI64();
           struct.setRubricIdIsSet(true);
         }
         if (incoming.get(1)) {
@@ -5891,7 +5891,7 @@ public class MessageService {
   public static class postTopic_result implements org.apache.thrift.TBase<postTopic_result, postTopic_result._Fields>, java.io.Serializable, Cloneable, Comparable<postTopic_result>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("postTopic_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I32, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I64, (short)0);
     private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -5900,7 +5900,7 @@ public class MessageService {
       schemes.put(TupleScheme.class, new postTopic_resultTupleSchemeFactory());
     }
 
-    public int success; // required
+    public long success; // required
     public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -5971,7 +5971,7 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -5982,7 +5982,7 @@ public class MessageService {
     }
 
     public postTopic_result(
-      int success,
+      long success,
       com.vmesteonline.be.InvalidOperation exc)
     {
       this();
@@ -6013,11 +6013,11 @@ public class MessageService {
       this.exc = null;
     }
 
-    public int getSuccess() {
+    public long getSuccess() {
       return this.success;
     }
 
-    public postTopic_result setSuccess(int success) {
+    public postTopic_result setSuccess(long success) {
       this.success = success;
       setSuccessIsSet(true);
       return this;
@@ -6066,7 +6066,7 @@ public class MessageService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((Integer)value);
+          setSuccess((Long)value);
         }
         break;
 
@@ -6084,7 +6084,7 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case SUCCESS:
-        return Integer.valueOf(getSuccess());
+        return Long.valueOf(getSuccess());
 
       case EXC:
         return getExc();
@@ -6252,8 +6252,8 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.success = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.success = iprot.readI64();
                 struct.setSuccessIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -6285,7 +6285,7 @@ public class MessageService {
         oprot.writeStructBegin(STRUCT_DESC);
         if (struct.isSetSuccess()) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          oprot.writeI32(struct.success);
+          oprot.writeI64(struct.success);
           oprot.writeFieldEnd();
         }
         if (struct.exc != null) {
@@ -6319,7 +6319,7 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
-          oprot.writeI32(struct.success);
+          oprot.writeI64(struct.success);
         }
         if (struct.isSetExc()) {
           struct.exc.write(oprot);
@@ -6331,7 +6331,7 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.success = iprot.readI32();
+          struct.success = iprot.readI64();
           struct.setSuccessIsSet(true);
         }
         if (incoming.get(1)) {
@@ -6347,7 +6347,7 @@ public class MessageService {
   public static class checkUpdates_args implements org.apache.thrift.TBase<checkUpdates_args, checkUpdates_args._Fields>, java.io.Serializable, Cloneable, Comparable<checkUpdates_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("checkUpdates_args");
 
-    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I32, (short)1);
+    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -6355,7 +6355,7 @@ public class MessageService {
       schemes.put(TupleScheme.class, new checkUpdates_argsTupleSchemeFactory());
     }
 
-    public int userId; // required
+    public long userId; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -6422,7 +6422,7 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(checkUpdates_args.class, metaDataMap);
     }
@@ -6431,7 +6431,7 @@ public class MessageService {
     }
 
     public checkUpdates_args(
-      int userId)
+      long userId)
     {
       this();
       this.userId = userId;
@@ -6456,11 +6456,11 @@ public class MessageService {
       this.userId = 0;
     }
 
-    public int getUserId() {
+    public long getUserId() {
       return this.userId;
     }
 
-    public checkUpdates_args setUserId(int userId) {
+    public checkUpdates_args setUserId(long userId) {
       this.userId = userId;
       setUserIdIsSet(true);
       return this;
@@ -6485,7 +6485,7 @@ public class MessageService {
         if (value == null) {
           unsetUserId();
         } else {
-          setUserId((Integer)value);
+          setUserId((Long)value);
         }
         break;
 
@@ -6495,7 +6495,7 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case USER_ID:
-        return Integer.valueOf(getUserId());
+        return Long.valueOf(getUserId());
 
       }
       throw new IllegalStateException();
@@ -6631,8 +6631,8 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 1: // USER_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.userId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.userId = iprot.readI64();
                 struct.setUserIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -6654,7 +6654,7 @@ public class MessageService {
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-        oprot.writeI32(struct.userId);
+        oprot.writeI64(struct.userId);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -6679,7 +6679,7 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 1);
         if (struct.isSetUserId()) {
-          oprot.writeI32(struct.userId);
+          oprot.writeI64(struct.userId);
         }
       }
 
@@ -6688,7 +6688,7 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
-          struct.userId = iprot.readI32();
+          struct.userId = iprot.readI64();
           struct.setUserIdIsSet(true);
         }
       }
@@ -7155,7 +7155,7 @@ public class MessageService {
   public static class getUpdates_args implements org.apache.thrift.TBase<getUpdates_args, getUpdates_args._Fields>, java.io.Serializable, Cloneable, Comparable<getUpdates_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUpdates_args");
 
-    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I32, (short)1);
+    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -7163,7 +7163,7 @@ public class MessageService {
       schemes.put(TupleScheme.class, new getUpdates_argsTupleSchemeFactory());
     }
 
-    public int userId; // required
+    public long userId; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -7230,7 +7230,7 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUpdates_args.class, metaDataMap);
     }
@@ -7239,7 +7239,7 @@ public class MessageService {
     }
 
     public getUpdates_args(
-      int userId)
+      long userId)
     {
       this();
       this.userId = userId;
@@ -7264,11 +7264,11 @@ public class MessageService {
       this.userId = 0;
     }
 
-    public int getUserId() {
+    public long getUserId() {
       return this.userId;
     }
 
-    public getUpdates_args setUserId(int userId) {
+    public getUpdates_args setUserId(long userId) {
       this.userId = userId;
       setUserIdIsSet(true);
       return this;
@@ -7293,7 +7293,7 @@ public class MessageService {
         if (value == null) {
           unsetUserId();
         } else {
-          setUserId((Integer)value);
+          setUserId((Long)value);
         }
         break;
 
@@ -7303,7 +7303,7 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case USER_ID:
-        return Integer.valueOf(getUserId());
+        return Long.valueOf(getUserId());
 
       }
       throw new IllegalStateException();
@@ -7439,8 +7439,8 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 1: // USER_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.userId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.userId = iprot.readI64();
                 struct.setUserIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -7462,7 +7462,7 @@ public class MessageService {
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-        oprot.writeI32(struct.userId);
+        oprot.writeI64(struct.userId);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -7487,7 +7487,7 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 1);
         if (struct.isSetUserId()) {
-          oprot.writeI32(struct.userId);
+          oprot.writeI64(struct.userId);
         }
       }
 
@@ -7496,7 +7496,7 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
-          struct.userId = iprot.readI32();
+          struct.userId = iprot.readI64();
           struct.setUserIdIsSet(true);
         }
       }
@@ -7968,9 +7968,9 @@ public class MessageService {
   public static class getTopics_args implements org.apache.thrift.TBase<getTopics_args, getTopics_args._Fields>, java.io.Serializable, Cloneable, Comparable<getTopics_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getTopics_args");
 
-    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I32, (short)1);
-    private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I32, (short)2);
-    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I32, (short)3);
+    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I64, (short)2);
+    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short)3);
     private static final org.apache.thrift.protocol.TField MESSAGE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("messageType", org.apache.thrift.protocol.TType.I32, (short)4);
     private static final org.apache.thrift.protocol.TField OFFSET_FIELD_DESC = new org.apache.thrift.protocol.TField("offset", org.apache.thrift.protocol.TType.I32, (short)5);
     private static final org.apache.thrift.protocol.TField LENGTH_FIELD_DESC = new org.apache.thrift.protocol.TField("length", org.apache.thrift.protocol.TType.I32, (short)6);
@@ -7981,9 +7981,9 @@ public class MessageService {
       schemes.put(TupleScheme.class, new getTopics_argsTupleSchemeFactory());
     }
 
-    public int groupId; // required
-    public int rubricId; // required
-    public int userId; // required
+    public long groupId; // required
+    public long rubricId; // required
+    public long userId; // required
     /**
      * 
      * @see com.vmesteonline.be.MessageType
@@ -8080,11 +8080,11 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.RUBRIC_ID, new org.apache.thrift.meta_data.FieldMetaData("rubricId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.MESSAGE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("messageType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, com.vmesteonline.be.MessageType.class)));
       tmpMap.put(_Fields.OFFSET, new org.apache.thrift.meta_data.FieldMetaData("offset", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -8099,9 +8099,9 @@ public class MessageService {
     }
 
     public getTopics_args(
-      int groupId,
-      int rubricId,
-      int userId,
+      long groupId,
+      long rubricId,
+      long userId,
       com.vmesteonline.be.MessageType messageType,
       int offset,
       int length)
@@ -8154,11 +8154,11 @@ public class MessageService {
       this.length = 0;
     }
 
-    public int getGroupId() {
+    public long getGroupId() {
       return this.groupId;
     }
 
-    public getTopics_args setGroupId(int groupId) {
+    public getTopics_args setGroupId(long groupId) {
       this.groupId = groupId;
       setGroupIdIsSet(true);
       return this;
@@ -8177,11 +8177,11 @@ public class MessageService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __GROUPID_ISSET_ID, value);
     }
 
-    public int getRubricId() {
+    public long getRubricId() {
       return this.rubricId;
     }
 
-    public getTopics_args setRubricId(int rubricId) {
+    public getTopics_args setRubricId(long rubricId) {
       this.rubricId = rubricId;
       setRubricIdIsSet(true);
       return this;
@@ -8200,11 +8200,11 @@ public class MessageService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __RUBRICID_ISSET_ID, value);
     }
 
-    public int getUserId() {
+    public long getUserId() {
       return this.userId;
     }
 
-    public getTopics_args setUserId(int userId) {
+    public getTopics_args setUserId(long userId) {
       this.userId = userId;
       setUserIdIsSet(true);
       return this;
@@ -8307,7 +8307,7 @@ public class MessageService {
         if (value == null) {
           unsetGroupId();
         } else {
-          setGroupId((Integer)value);
+          setGroupId((Long)value);
         }
         break;
 
@@ -8315,7 +8315,7 @@ public class MessageService {
         if (value == null) {
           unsetRubricId();
         } else {
-          setRubricId((Integer)value);
+          setRubricId((Long)value);
         }
         break;
 
@@ -8323,7 +8323,7 @@ public class MessageService {
         if (value == null) {
           unsetUserId();
         } else {
-          setUserId((Integer)value);
+          setUserId((Long)value);
         }
         break;
 
@@ -8357,13 +8357,13 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case GROUP_ID:
-        return Integer.valueOf(getGroupId());
+        return Long.valueOf(getGroupId());
 
       case RUBRIC_ID:
-        return Integer.valueOf(getRubricId());
+        return Long.valueOf(getRubricId());
 
       case USER_ID:
-        return Integer.valueOf(getUserId());
+        return Long.valueOf(getUserId());
 
       case MESSAGE_TYPE:
         return getMessageType();
@@ -8637,24 +8637,24 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 1: // GROUP_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.groupId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.groupId = iprot.readI64();
                 struct.setGroupIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
             case 2: // RUBRIC_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.rubricId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.rubricId = iprot.readI64();
                 struct.setRubricIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
             case 3: // USER_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.userId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.userId = iprot.readI64();
                 struct.setUserIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -8700,13 +8700,13 @@ public class MessageService {
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
-        oprot.writeI32(struct.groupId);
+        oprot.writeI64(struct.groupId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(RUBRIC_ID_FIELD_DESC);
-        oprot.writeI32(struct.rubricId);
+        oprot.writeI64(struct.rubricId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-        oprot.writeI32(struct.userId);
+        oprot.writeI64(struct.userId);
         oprot.writeFieldEnd();
         if (struct.messageType != null) {
           oprot.writeFieldBegin(MESSAGE_TYPE_FIELD_DESC);
@@ -8757,13 +8757,13 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 6);
         if (struct.isSetGroupId()) {
-          oprot.writeI32(struct.groupId);
+          oprot.writeI64(struct.groupId);
         }
         if (struct.isSetRubricId()) {
-          oprot.writeI32(struct.rubricId);
+          oprot.writeI64(struct.rubricId);
         }
         if (struct.isSetUserId()) {
-          oprot.writeI32(struct.userId);
+          oprot.writeI64(struct.userId);
         }
         if (struct.isSetMessageType()) {
           oprot.writeI32(struct.messageType.getValue());
@@ -8781,15 +8781,15 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(6);
         if (incoming.get(0)) {
-          struct.groupId = iprot.readI32();
+          struct.groupId = iprot.readI64();
           struct.setGroupIdIsSet(true);
         }
         if (incoming.get(1)) {
-          struct.rubricId = iprot.readI32();
+          struct.rubricId = iprot.readI64();
           struct.setRubricIdIsSet(true);
         }
         if (incoming.get(2)) {
-          struct.userId = iprot.readI32();
+          struct.userId = iprot.readI64();
           struct.setUserIdIsSet(true);
         }
         if (incoming.get(3)) {
@@ -9273,9 +9273,9 @@ public class MessageService {
   public static class getMessages_args implements org.apache.thrift.TBase<getMessages_args, getMessages_args._Fields>, java.io.Serializable, Cloneable, Comparable<getMessages_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getMessages_args");
 
-    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I32, (short)1);
-    private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I32, (short)2);
-    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I32, (short)3);
+    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I64, (short)2);
+    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short)3);
     private static final org.apache.thrift.protocol.TField MESSAGE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("messageType", org.apache.thrift.protocol.TType.I32, (short)4);
     private static final org.apache.thrift.protocol.TField OFFSET_FIELD_DESC = new org.apache.thrift.protocol.TField("offset", org.apache.thrift.protocol.TType.I32, (short)5);
     private static final org.apache.thrift.protocol.TField LENGTH_FIELD_DESC = new org.apache.thrift.protocol.TField("length", org.apache.thrift.protocol.TType.I32, (short)6);
@@ -9286,9 +9286,9 @@ public class MessageService {
       schemes.put(TupleScheme.class, new getMessages_argsTupleSchemeFactory());
     }
 
-    public int groupId; // required
-    public int rubricId; // required
-    public int userId; // required
+    public long groupId; // required
+    public long rubricId; // required
+    public long userId; // required
     /**
      * 
      * @see com.vmesteonline.be.MessageType
@@ -9385,11 +9385,11 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.RUBRIC_ID, new org.apache.thrift.meta_data.FieldMetaData("rubricId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.MESSAGE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("messageType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, com.vmesteonline.be.MessageType.class)));
       tmpMap.put(_Fields.OFFSET, new org.apache.thrift.meta_data.FieldMetaData("offset", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -9404,9 +9404,9 @@ public class MessageService {
     }
 
     public getMessages_args(
-      int groupId,
-      int rubricId,
-      int userId,
+      long groupId,
+      long rubricId,
+      long userId,
       com.vmesteonline.be.MessageType messageType,
       int offset,
       int length)
@@ -9459,11 +9459,11 @@ public class MessageService {
       this.length = 0;
     }
 
-    public int getGroupId() {
+    public long getGroupId() {
       return this.groupId;
     }
 
-    public getMessages_args setGroupId(int groupId) {
+    public getMessages_args setGroupId(long groupId) {
       this.groupId = groupId;
       setGroupIdIsSet(true);
       return this;
@@ -9482,11 +9482,11 @@ public class MessageService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __GROUPID_ISSET_ID, value);
     }
 
-    public int getRubricId() {
+    public long getRubricId() {
       return this.rubricId;
     }
 
-    public getMessages_args setRubricId(int rubricId) {
+    public getMessages_args setRubricId(long rubricId) {
       this.rubricId = rubricId;
       setRubricIdIsSet(true);
       return this;
@@ -9505,11 +9505,11 @@ public class MessageService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __RUBRICID_ISSET_ID, value);
     }
 
-    public int getUserId() {
+    public long getUserId() {
       return this.userId;
     }
 
-    public getMessages_args setUserId(int userId) {
+    public getMessages_args setUserId(long userId) {
       this.userId = userId;
       setUserIdIsSet(true);
       return this;
@@ -9612,7 +9612,7 @@ public class MessageService {
         if (value == null) {
           unsetGroupId();
         } else {
-          setGroupId((Integer)value);
+          setGroupId((Long)value);
         }
         break;
 
@@ -9620,7 +9620,7 @@ public class MessageService {
         if (value == null) {
           unsetRubricId();
         } else {
-          setRubricId((Integer)value);
+          setRubricId((Long)value);
         }
         break;
 
@@ -9628,7 +9628,7 @@ public class MessageService {
         if (value == null) {
           unsetUserId();
         } else {
-          setUserId((Integer)value);
+          setUserId((Long)value);
         }
         break;
 
@@ -9662,13 +9662,13 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case GROUP_ID:
-        return Integer.valueOf(getGroupId());
+        return Long.valueOf(getGroupId());
 
       case RUBRIC_ID:
-        return Integer.valueOf(getRubricId());
+        return Long.valueOf(getRubricId());
 
       case USER_ID:
-        return Integer.valueOf(getUserId());
+        return Long.valueOf(getUserId());
 
       case MESSAGE_TYPE:
         return getMessageType();
@@ -9942,24 +9942,24 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 1: // GROUP_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.groupId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.groupId = iprot.readI64();
                 struct.setGroupIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
             case 2: // RUBRIC_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.rubricId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.rubricId = iprot.readI64();
                 struct.setRubricIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
             case 3: // USER_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.userId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.userId = iprot.readI64();
                 struct.setUserIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -10005,13 +10005,13 @@ public class MessageService {
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
-        oprot.writeI32(struct.groupId);
+        oprot.writeI64(struct.groupId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(RUBRIC_ID_FIELD_DESC);
-        oprot.writeI32(struct.rubricId);
+        oprot.writeI64(struct.rubricId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-        oprot.writeI32(struct.userId);
+        oprot.writeI64(struct.userId);
         oprot.writeFieldEnd();
         if (struct.messageType != null) {
           oprot.writeFieldBegin(MESSAGE_TYPE_FIELD_DESC);
@@ -10062,13 +10062,13 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 6);
         if (struct.isSetGroupId()) {
-          oprot.writeI32(struct.groupId);
+          oprot.writeI64(struct.groupId);
         }
         if (struct.isSetRubricId()) {
-          oprot.writeI32(struct.rubricId);
+          oprot.writeI64(struct.rubricId);
         }
         if (struct.isSetUserId()) {
-          oprot.writeI32(struct.userId);
+          oprot.writeI64(struct.userId);
         }
         if (struct.isSetMessageType()) {
           oprot.writeI32(struct.messageType.getValue());
@@ -10086,15 +10086,15 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(6);
         if (incoming.get(0)) {
-          struct.groupId = iprot.readI32();
+          struct.groupId = iprot.readI64();
           struct.setGroupIdIsSet(true);
         }
         if (incoming.get(1)) {
-          struct.rubricId = iprot.readI32();
+          struct.rubricId = iprot.readI64();
           struct.setRubricIdIsSet(true);
         }
         if (incoming.get(2)) {
-          struct.userId = iprot.readI32();
+          struct.userId = iprot.readI64();
           struct.setUserIdIsSet(true);
         }
         if (incoming.get(3)) {
@@ -10578,8 +10578,8 @@ public class MessageService {
   public static class like_args implements org.apache.thrift.TBase<like_args, like_args._Fields>, java.io.Serializable, Cloneable, Comparable<like_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("like_args");
 
-    private static final org.apache.thrift.protocol.TField MESSAGE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("messageId", org.apache.thrift.protocol.TType.I32, (short)1);
-    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I32, (short)2);
+    private static final org.apache.thrift.protocol.TField MESSAGE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("messageId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short)2);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -10587,8 +10587,8 @@ public class MessageService {
       schemes.put(TupleScheme.class, new like_argsTupleSchemeFactory());
     }
 
-    public int messageId; // required
-    public int userId; // required
+    public long messageId; // required
+    public long userId; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -10659,9 +10659,9 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.MESSAGE_ID, new org.apache.thrift.meta_data.FieldMetaData("messageId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(like_args.class, metaDataMap);
     }
@@ -10670,8 +10670,8 @@ public class MessageService {
     }
 
     public like_args(
-      int messageId,
-      int userId)
+      long messageId,
+      long userId)
     {
       this();
       this.messageId = messageId;
@@ -10701,11 +10701,11 @@ public class MessageService {
       this.userId = 0;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
       return this.messageId;
     }
 
-    public like_args setMessageId(int messageId) {
+    public like_args setMessageId(long messageId) {
       this.messageId = messageId;
       setMessageIdIsSet(true);
       return this;
@@ -10724,11 +10724,11 @@ public class MessageService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MESSAGEID_ISSET_ID, value);
     }
 
-    public int getUserId() {
+    public long getUserId() {
       return this.userId;
     }
 
-    public like_args setUserId(int userId) {
+    public like_args setUserId(long userId) {
       this.userId = userId;
       setUserIdIsSet(true);
       return this;
@@ -10753,7 +10753,7 @@ public class MessageService {
         if (value == null) {
           unsetMessageId();
         } else {
-          setMessageId((Integer)value);
+          setMessageId((Long)value);
         }
         break;
 
@@ -10761,7 +10761,7 @@ public class MessageService {
         if (value == null) {
           unsetUserId();
         } else {
-          setUserId((Integer)value);
+          setUserId((Long)value);
         }
         break;
 
@@ -10771,10 +10771,10 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case MESSAGE_ID:
-        return Integer.valueOf(getMessageId());
+        return Long.valueOf(getMessageId());
 
       case USER_ID:
-        return Integer.valueOf(getUserId());
+        return Long.valueOf(getUserId());
 
       }
       throw new IllegalStateException();
@@ -10935,16 +10935,16 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 1: // MESSAGE_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.messageId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.messageId = iprot.readI64();
                 struct.setMessageIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
             case 2: // USER_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.userId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.userId = iprot.readI64();
                 struct.setUserIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -10966,10 +10966,10 @@ public class MessageService {
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(MESSAGE_ID_FIELD_DESC);
-        oprot.writeI32(struct.messageId);
+        oprot.writeI64(struct.messageId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-        oprot.writeI32(struct.userId);
+        oprot.writeI64(struct.userId);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -10997,10 +10997,10 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 2);
         if (struct.isSetMessageId()) {
-          oprot.writeI32(struct.messageId);
+          oprot.writeI64(struct.messageId);
         }
         if (struct.isSetUserId()) {
-          oprot.writeI32(struct.userId);
+          oprot.writeI64(struct.userId);
         }
       }
 
@@ -11009,11 +11009,11 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.messageId = iprot.readI32();
+          struct.messageId = iprot.readI64();
           struct.setMessageIdIsSet(true);
         }
         if (incoming.get(1)) {
-          struct.userId = iprot.readI32();
+          struct.userId = iprot.readI64();
           struct.setUserIdIsSet(true);
         }
       }
@@ -11024,7 +11024,7 @@ public class MessageService {
   public static class like_result implements org.apache.thrift.TBase<like_result, like_result._Fields>, java.io.Serializable, Cloneable, Comparable<like_result>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("like_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I32, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I64, (short)0);
     private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -11033,7 +11033,7 @@ public class MessageService {
       schemes.put(TupleScheme.class, new like_resultTupleSchemeFactory());
     }
 
-    public int success; // required
+    public long success; // required
     public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -11104,7 +11104,7 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -11115,7 +11115,7 @@ public class MessageService {
     }
 
     public like_result(
-      int success,
+      long success,
       com.vmesteonline.be.InvalidOperation exc)
     {
       this();
@@ -11146,11 +11146,11 @@ public class MessageService {
       this.exc = null;
     }
 
-    public int getSuccess() {
+    public long getSuccess() {
       return this.success;
     }
 
-    public like_result setSuccess(int success) {
+    public like_result setSuccess(long success) {
       this.success = success;
       setSuccessIsSet(true);
       return this;
@@ -11199,7 +11199,7 @@ public class MessageService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((Integer)value);
+          setSuccess((Long)value);
         }
         break;
 
@@ -11217,7 +11217,7 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case SUCCESS:
-        return Integer.valueOf(getSuccess());
+        return Long.valueOf(getSuccess());
 
       case EXC:
         return getExc();
@@ -11385,8 +11385,8 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.success = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.success = iprot.readI64();
                 struct.setSuccessIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -11418,7 +11418,7 @@ public class MessageService {
         oprot.writeStructBegin(STRUCT_DESC);
         if (struct.isSetSuccess()) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          oprot.writeI32(struct.success);
+          oprot.writeI64(struct.success);
           oprot.writeFieldEnd();
         }
         if (struct.exc != null) {
@@ -11452,7 +11452,7 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
-          oprot.writeI32(struct.success);
+          oprot.writeI64(struct.success);
         }
         if (struct.isSetExc()) {
           struct.exc.write(oprot);
@@ -11464,7 +11464,7 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.success = iprot.readI32();
+          struct.success = iprot.readI64();
           struct.setSuccessIsSet(true);
         }
         if (incoming.get(1)) {
@@ -11480,8 +11480,8 @@ public class MessageService {
   public static class dislike_args implements org.apache.thrift.TBase<dislike_args, dislike_args._Fields>, java.io.Serializable, Cloneable, Comparable<dislike_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("dislike_args");
 
-    private static final org.apache.thrift.protocol.TField MESSAGE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("messageId", org.apache.thrift.protocol.TType.I32, (short)1);
-    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I32, (short)2);
+    private static final org.apache.thrift.protocol.TField MESSAGE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("messageId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short)2);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -11489,8 +11489,8 @@ public class MessageService {
       schemes.put(TupleScheme.class, new dislike_argsTupleSchemeFactory());
     }
 
-    public int messageId; // required
-    public int userId; // required
+    public long messageId; // required
+    public long userId; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -11561,9 +11561,9 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.MESSAGE_ID, new org.apache.thrift.meta_data.FieldMetaData("messageId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(dislike_args.class, metaDataMap);
     }
@@ -11572,8 +11572,8 @@ public class MessageService {
     }
 
     public dislike_args(
-      int messageId,
-      int userId)
+      long messageId,
+      long userId)
     {
       this();
       this.messageId = messageId;
@@ -11603,11 +11603,11 @@ public class MessageService {
       this.userId = 0;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
       return this.messageId;
     }
 
-    public dislike_args setMessageId(int messageId) {
+    public dislike_args setMessageId(long messageId) {
       this.messageId = messageId;
       setMessageIdIsSet(true);
       return this;
@@ -11626,11 +11626,11 @@ public class MessageService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MESSAGEID_ISSET_ID, value);
     }
 
-    public int getUserId() {
+    public long getUserId() {
       return this.userId;
     }
 
-    public dislike_args setUserId(int userId) {
+    public dislike_args setUserId(long userId) {
       this.userId = userId;
       setUserIdIsSet(true);
       return this;
@@ -11655,7 +11655,7 @@ public class MessageService {
         if (value == null) {
           unsetMessageId();
         } else {
-          setMessageId((Integer)value);
+          setMessageId((Long)value);
         }
         break;
 
@@ -11663,7 +11663,7 @@ public class MessageService {
         if (value == null) {
           unsetUserId();
         } else {
-          setUserId((Integer)value);
+          setUserId((Long)value);
         }
         break;
 
@@ -11673,10 +11673,10 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case MESSAGE_ID:
-        return Integer.valueOf(getMessageId());
+        return Long.valueOf(getMessageId());
 
       case USER_ID:
-        return Integer.valueOf(getUserId());
+        return Long.valueOf(getUserId());
 
       }
       throw new IllegalStateException();
@@ -11837,16 +11837,16 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 1: // MESSAGE_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.messageId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.messageId = iprot.readI64();
                 struct.setMessageIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
             case 2: // USER_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.userId = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.userId = iprot.readI64();
                 struct.setUserIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -11868,10 +11868,10 @@ public class MessageService {
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(MESSAGE_ID_FIELD_DESC);
-        oprot.writeI32(struct.messageId);
+        oprot.writeI64(struct.messageId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-        oprot.writeI32(struct.userId);
+        oprot.writeI64(struct.userId);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -11899,10 +11899,10 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 2);
         if (struct.isSetMessageId()) {
-          oprot.writeI32(struct.messageId);
+          oprot.writeI64(struct.messageId);
         }
         if (struct.isSetUserId()) {
-          oprot.writeI32(struct.userId);
+          oprot.writeI64(struct.userId);
         }
       }
 
@@ -11911,11 +11911,11 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.messageId = iprot.readI32();
+          struct.messageId = iprot.readI64();
           struct.setMessageIdIsSet(true);
         }
         if (incoming.get(1)) {
-          struct.userId = iprot.readI32();
+          struct.userId = iprot.readI64();
           struct.setUserIdIsSet(true);
         }
       }
@@ -11926,7 +11926,7 @@ public class MessageService {
   public static class dislike_result implements org.apache.thrift.TBase<dislike_result, dislike_result._Fields>, java.io.Serializable, Cloneable, Comparable<dislike_result>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("dislike_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I32, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I64, (short)0);
     private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -11935,7 +11935,7 @@ public class MessageService {
       schemes.put(TupleScheme.class, new dislike_resultTupleSchemeFactory());
     }
 
-    public int success; // required
+    public long success; // required
     public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -12006,7 +12006,7 @@ public class MessageService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -12017,7 +12017,7 @@ public class MessageService {
     }
 
     public dislike_result(
-      int success,
+      long success,
       com.vmesteonline.be.InvalidOperation exc)
     {
       this();
@@ -12048,11 +12048,11 @@ public class MessageService {
       this.exc = null;
     }
 
-    public int getSuccess() {
+    public long getSuccess() {
       return this.success;
     }
 
-    public dislike_result setSuccess(int success) {
+    public dislike_result setSuccess(long success) {
       this.success = success;
       setSuccessIsSet(true);
       return this;
@@ -12101,7 +12101,7 @@ public class MessageService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((Integer)value);
+          setSuccess((Long)value);
         }
         break;
 
@@ -12119,7 +12119,7 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case SUCCESS:
-        return Integer.valueOf(getSuccess());
+        return Long.valueOf(getSuccess());
 
       case EXC:
         return getExc();
@@ -12287,8 +12287,8 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.success = iprot.readI32();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.success = iprot.readI64();
                 struct.setSuccessIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -12320,7 +12320,7 @@ public class MessageService {
         oprot.writeStructBegin(STRUCT_DESC);
         if (struct.isSetSuccess()) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          oprot.writeI32(struct.success);
+          oprot.writeI64(struct.success);
           oprot.writeFieldEnd();
         }
         if (struct.exc != null) {
@@ -12354,7 +12354,7 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
-          oprot.writeI32(struct.success);
+          oprot.writeI64(struct.success);
         }
         if (struct.isSetExc()) {
           struct.exc.write(oprot);
@@ -12366,7 +12366,7 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.success = iprot.readI32();
+          struct.success = iprot.readI64();
           struct.setSuccessIsSet(true);
         }
         if (incoming.get(1)) {
