@@ -5,6 +5,8 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+
 @PersistenceCapable
 public class VoUser {
 
@@ -15,13 +17,9 @@ public class VoUser {
 		this.password = password;
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.INCREMENT)
+	private Key key;
 
 	public String getName() {
 		return name;
@@ -56,16 +54,12 @@ public class VoUser {
 	}
 
 	@Persistent
-	private int id;
-
-	@Persistent
 	private String name;
 
 	@Persistent
 	private String lastName;
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	@Persistent
 	private String email;
 
 	@Persistent

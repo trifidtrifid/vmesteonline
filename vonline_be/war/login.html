@@ -25,8 +25,7 @@
 			session = client.login($("#uname").val(), $("#password").val());
 
 			if (session.accessGranted) {
-				$('#result').val("acess granted");
-				$('#result').css('color', 'black');
+				this.document.location.href = "main.jsp";
 			} else {
 				$('#result').val(session.error);
 				$('#result').css('color', 'black');
