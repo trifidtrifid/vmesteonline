@@ -7,6 +7,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
 import com.vmesteonline.be.data.JDBCConnector;
+import com.vmesteonline.be.jdo2.VoUser;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
@@ -50,6 +51,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				dataSrvc.put(user);
 				sess.salt = generateSalt();
 				sess.accessGranted = true;
+				
 
 			} else {
 				sess.accessGranted = false;
