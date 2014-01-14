@@ -1,23 +1,23 @@
 package com.vmesteonline.be;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import com.google.appengine.api.datastore.DatastoreService;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
-import org.apache.thrift.TException;
-
-import com.google.appengine.api.datastore.DatastoreService;
+import com.vmesteonline.be.data.JDBCConnector;
+import com.vmesteonline.be.jdo2.VoUser;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.datastore.Query;
-import com.vmesteonline.be.data.JDBCConnector;
-import com.vmesteonline.be.jdo2.VoUser;
+
+import org.apache.thrift.TException;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
@@ -32,15 +32,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public Session login(final String uname, final String password)
 			throws InvalidOperation, TException {
 		Session sess = new Session();
-		
+		DatastoreService dataSrvc = DatastoreServiceFactory
+				.getDatastoreService();
+
 		System.out
 				.print("try auten user " + uname + " pass " + password + "\n");
 
-		
-		Query q = pm.newQuery(VoUser.class);
-		q.setFilter("lastName == lastNameParam");
-		
-		
 		try {
 			Entity user = dataSrvc.get(KeyFactory.createKey("VoUser", uname));
 
@@ -54,7 +51,6 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				dataSrvc.put(user);
 				sess.salt = generateSalt();
 				sess.accessGranted = true;
-				
 
 			} else {
 				sess.accessGranted = false;
@@ -82,13 +78,10 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	@Override
 	public int registerNewUser(String uname, String password, String groupId,
 			String email) throws InvalidOperation {
-		
-		
+
 		PersistenceManagerFactory pmfInstance = JDOHelper
 				.getPersistenceManagerFactory("transactions-optional");
 		PersistenceManager pm = pmfInstance.getPersistenceManager();
-		
-		
 		VoUser user = new VoUser(uname, "", email, password);
 		pm.makePersistent(user);
 
