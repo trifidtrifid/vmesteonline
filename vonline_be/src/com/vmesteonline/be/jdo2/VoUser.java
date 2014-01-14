@@ -1,4 +1,4 @@
-package com.vmesteonline.be;
+package com.vmesteonline.be.jdo2;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -8,7 +8,7 @@ import javax.jdo.annotations.PrimaryKey;
 @PersistenceCapable
 public class VoUser {
 
-	VoUser(String name, String lastName, String email, String password) {
+	public VoUser(String name, String lastName, String email, String password) {
 		this.name = name;
 		this.lastName = lastName;
 		this.email = email;
