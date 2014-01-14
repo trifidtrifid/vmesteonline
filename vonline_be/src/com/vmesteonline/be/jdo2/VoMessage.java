@@ -4,11 +4,14 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.vmesteonline.be.data.PMF;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -17,11 +20,19 @@ import javax.jdo.annotations.PrimaryKey;
 @PersistenceCapable
 public class VoMessage extends com.vmesteonline.be.Message {
 
+	private static Logger logger = Logger.getLogger("com.vmesteonline.be.jdo2.VoMessage");
+	
 	public VoMessage(com.vmesteonline.be.Message msg ){
 		if( 0!=msg.getParentId() ){
-			PersistenceManagerFactory pm = PMF.get();
-			//Key parentKey = KeyFactory.createKey(VoMessage.class.getSimpleName(), msg.getParentId());
-			//VoMessage parentMsg = ((VoMessage) pm).getObjectById(VoMessage.class, msg.getParentId());
+			PersistenceManagerFactory pmf = PMF.get();
+			PersistenceManager pm = pmf.getPersistenceManager();
+			try {
+				//Key parentKey = KeyFactory.createKey(VoMessage.class.getSimpleName(), msg.getParentId());
+				VoMessage parentMsg = pm.getObjectById(VoMessage.class,	msg.getParentId());
+			} catch (Exception e) {
+				//throw new 
+			}
+			
 			
 		}
 	}
