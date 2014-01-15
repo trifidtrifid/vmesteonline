@@ -10,52 +10,52 @@ import com.vmesteonline.be.MessageService.Iface;
 public class MessageServiceImpl implements Iface {
 	
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.MessageServceImpl");
-	
-	
+
 	@Override
-	public Message createMessage(int topicId, int parentId, String subject,
-			int groupId, int authorId, MessageType type, ByteBuffer content,
-			int recipientId) throws InvalidOperation, TException {
-		
+	public Message createMessage(long topicId, long parentId, String subject,
+			long groupId, long authorId, MessageType type, ByteBuffer content,
+			long recipientId) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int postMessage(Message msg) throws InvalidOperation, TException {
+	public long postMessage(Message msg) throws InvalidOperation, TException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public Topic createTopic(int rubricId, String subject, int groupId,
-			int authorId, MessageType type, ByteBuffer content, int recipientId)
-			throws InvalidOperation, TException {
+	public Topic createTopic(long rubricId, String subject, long groupId,
+			long authorId, MessageType type, ByteBuffer content,
+			long recipientId) throws InvalidOperation, TException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int postTopic(int rubricId, Message msg) throws InvalidOperation,
+	public long postTopic(long rubricId, Message msg) throws InvalidOperation,
 			TException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public boolean checkUpdates(int userId) throws InvalidOperation, TException {
+	public boolean checkUpdates(long userId) throws InvalidOperation,
+			TException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public GroupUpdates getUpdates(int userId) throws InvalidOperation,
+	public GroupUpdates getUpdates(long userId) throws InvalidOperation,
 			TException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TopicListPart getTopics(int groupId, int rubricId, int userId,
+	public TopicListPart getTopics(long groupId, long rubricId, long userId,
 			MessageType messageType, int offset, int length)
 			throws InvalidOperation, TException {
 		// TODO Auto-generated method stub
@@ -63,25 +63,27 @@ public class MessageServiceImpl implements Iface {
 	}
 
 	@Override
-	public MessageListPart getMessages(int groupId, int rubricId, int userId,
-			MessageType messageType, int offset, int length)
+	public MessageListPart getMessages(long groupId, long rubricId,
+			long userId, MessageType messageType, int offset, int length)
 			throws InvalidOperation, TException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int like(int messageId, int userId) throws InvalidOperation,
+	public long like(long messageId, long userId) throws InvalidOperation,
 			TException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int dislike(int messageId, int userId) throws InvalidOperation,
+	public long dislike(long messageId, long userId) throws InvalidOperation,
 			TException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
+	
+	
+	
 }

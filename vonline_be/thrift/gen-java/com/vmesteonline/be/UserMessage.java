@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
 public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMessage._Fields>, java.io.Serializable, Cloneable, Comparable<UserMessage> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("UserMessage");
 
-  private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I32, (short)1);
-  private static final org.apache.thrift.protocol.TField MESSAGE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("messageId", org.apache.thrift.protocol.TType.I32, (short)2);
+  private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short)1);
+  private static final org.apache.thrift.protocol.TField MESSAGE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("messageId", org.apache.thrift.protocol.TType.I64, (short)2);
   private static final org.apache.thrift.protocol.TField READ_FIELD_DESC = new org.apache.thrift.protocol.TField("read", org.apache.thrift.protocol.TType.BOOL, (short)3);
   private static final org.apache.thrift.protocol.TField UNINTRESTED_FIELD_DESC = new org.apache.thrift.protocol.TField("unintrested", org.apache.thrift.protocol.TType.BOOL, (short)4);
   private static final org.apache.thrift.protocol.TField LIKE_FIELD_DESC = new org.apache.thrift.protocol.TField("like", org.apache.thrift.protocol.TType.BOOL, (short)5);
@@ -48,8 +48,8 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
     schemes.put(TupleScheme.class, new UserMessageTupleSchemeFactory());
   }
 
-  public int userId; // required
-  public int messageId; // required
+  public long userId; // required
+  public long messageId; // required
   public boolean read; // required
   public boolean unintrested; // required
   public boolean like; // required
@@ -140,9 +140,9 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.MESSAGE_ID, new org.apache.thrift.meta_data.FieldMetaData("messageId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.READ, new org.apache.thrift.meta_data.FieldMetaData("read", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
     tmpMap.put(_Fields.UNINTRESTED, new org.apache.thrift.meta_data.FieldMetaData("unintrested", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -159,8 +159,8 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
   }
 
   public UserMessage(
-    int userId,
-    int messageId,
+    long userId,
+    long messageId,
     boolean read,
     boolean unintrested,
     boolean like,
@@ -214,11 +214,11 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
     this.unlike = false;
   }
 
-  public int getUserId() {
+  public long getUserId() {
     return this.userId;
   }
 
-  public UserMessage setUserId(int userId) {
+  public UserMessage setUserId(long userId) {
     this.userId = userId;
     setUserIdIsSet(true);
     return this;
@@ -237,11 +237,11 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __USERID_ISSET_ID, value);
   }
 
-  public int getMessageId() {
+  public long getMessageId() {
     return this.messageId;
   }
 
-  public UserMessage setMessageId(int messageId) {
+  public UserMessage setMessageId(long messageId) {
     this.messageId = messageId;
     setMessageIdIsSet(true);
     return this;
@@ -358,7 +358,7 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
       if (value == null) {
         unsetUserId();
       } else {
-        setUserId((Integer)value);
+        setUserId((Long)value);
       }
       break;
 
@@ -366,7 +366,7 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
       if (value == null) {
         unsetMessageId();
       } else {
-        setMessageId((Integer)value);
+        setMessageId((Long)value);
       }
       break;
 
@@ -408,10 +408,10 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
   public Object getFieldValue(_Fields field) {
     switch (field) {
     case USER_ID:
-      return Integer.valueOf(getUserId());
+      return Long.valueOf(getUserId());
 
     case MESSAGE_ID:
-      return Integer.valueOf(getMessageId());
+      return Long.valueOf(getMessageId());
 
     case READ:
       return Boolean.valueOf(isRead());
@@ -684,16 +684,16 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
         }
         switch (schemeField.id) {
           case 1: // USER_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.userId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.userId = iprot.readI64();
               struct.setUserIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 2: // MESSAGE_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.messageId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.messageId = iprot.readI64();
               struct.setMessageIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -747,10 +747,10 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
 
       oprot.writeStructBegin(STRUCT_DESC);
       oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-      oprot.writeI32(struct.userId);
+      oprot.writeI64(struct.userId);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(MESSAGE_ID_FIELD_DESC);
-      oprot.writeI32(struct.messageId);
+      oprot.writeI64(struct.messageId);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(READ_FIELD_DESC);
       oprot.writeBool(struct.read);
@@ -802,10 +802,10 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
       }
       oprot.writeBitSet(optionals, 6);
       if (struct.isSetUserId()) {
-        oprot.writeI32(struct.userId);
+        oprot.writeI64(struct.userId);
       }
       if (struct.isSetMessageId()) {
-        oprot.writeI32(struct.messageId);
+        oprot.writeI64(struct.messageId);
       }
       if (struct.isSetRead()) {
         oprot.writeBool(struct.read);
@@ -826,11 +826,11 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
       TTupleProtocol iprot = (TTupleProtocol) prot;
       BitSet incoming = iprot.readBitSet(6);
       if (incoming.get(0)) {
-        struct.userId = iprot.readI32();
+        struct.userId = iprot.readI64();
         struct.setUserIdIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.messageId = iprot.readI32();
+        struct.messageId = iprot.readI64();
         struct.setMessageIdIsSet(true);
       }
       if (incoming.get(2)) {

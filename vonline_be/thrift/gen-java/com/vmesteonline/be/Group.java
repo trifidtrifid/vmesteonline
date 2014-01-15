@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
 public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, java.io.Serializable, Cloneable, Comparable<Group> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Group");
 
-  private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I32, (short)1);
-  private static final org.apache.thrift.protocol.TField LOCATION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("locationId", org.apache.thrift.protocol.TType.I32, (short)2);
-  private static final org.apache.thrift.protocol.TField CREATOR_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("creatorId", org.apache.thrift.protocol.TType.I32, (short)3);
+  private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I64, (short)1);
+  private static final org.apache.thrift.protocol.TField LOCATION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("locationId", org.apache.thrift.protocol.TType.I64, (short)2);
+  private static final org.apache.thrift.protocol.TField CREATOR_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("creatorId", org.apache.thrift.protocol.TType.I64, (short)3);
   private static final org.apache.thrift.protocol.TField COMMENT_FIELD_DESC = new org.apache.thrift.protocol.TField("comment", org.apache.thrift.protocol.TType.STRING, (short)4);
   private static final org.apache.thrift.protocol.TField SHORT_NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("shortName", org.apache.thrift.protocol.TType.STRING, (short)5);
   private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)6);
@@ -48,9 +48,9 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     schemes.put(TupleScheme.class, new GroupTupleSchemeFactory());
   }
 
-  public int id; // required
-  public int locationId; // required
-  public int creatorId; // required
+  public long id; // required
+  public long locationId; // required
+  public long creatorId; // required
   public String comment; // optional
   public String shortName; // required
   public String name; // optional
@@ -138,11 +138,11 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.LOCATION_ID, new org.apache.thrift.meta_data.FieldMetaData("locationId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.CREATOR_ID, new org.apache.thrift.meta_data.FieldMetaData("creatorId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.COMMENT, new org.apache.thrift.meta_data.FieldMetaData("comment", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.SHORT_NAME, new org.apache.thrift.meta_data.FieldMetaData("shortName", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -157,9 +157,9 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
   }
 
   public Group(
-    int id,
-    int locationId,
-    int creatorId,
+    long id,
+    long locationId,
+    long creatorId,
     String shortName)
   {
     this();
@@ -208,11 +208,11 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     this.name = null;
   }
 
-  public int getId() {
+  public long getId() {
     return this.id;
   }
 
-  public Group setId(int id) {
+  public Group setId(long id) {
     this.id = id;
     setIdIsSet(true);
     return this;
@@ -231,11 +231,11 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ID_ISSET_ID, value);
   }
 
-  public int getLocationId() {
+  public long getLocationId() {
     return this.locationId;
   }
 
-  public Group setLocationId(int locationId) {
+  public Group setLocationId(long locationId) {
     this.locationId = locationId;
     setLocationIdIsSet(true);
     return this;
@@ -254,11 +254,11 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LOCATIONID_ISSET_ID, value);
   }
 
-  public int getCreatorId() {
+  public long getCreatorId() {
     return this.creatorId;
   }
 
-  public Group setCreatorId(int creatorId) {
+  public Group setCreatorId(long creatorId) {
     this.creatorId = creatorId;
     setCreatorIdIsSet(true);
     return this;
@@ -355,7 +355,7 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       if (value == null) {
         unsetId();
       } else {
-        setId((Integer)value);
+        setId((Long)value);
       }
       break;
 
@@ -363,7 +363,7 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       if (value == null) {
         unsetLocationId();
       } else {
-        setLocationId((Integer)value);
+        setLocationId((Long)value);
       }
       break;
 
@@ -371,7 +371,7 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       if (value == null) {
         unsetCreatorId();
       } else {
-        setCreatorId((Integer)value);
+        setCreatorId((Long)value);
       }
       break;
 
@@ -405,13 +405,13 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
   public Object getFieldValue(_Fields field) {
     switch (field) {
     case ID:
-      return Integer.valueOf(getId());
+      return Long.valueOf(getId());
 
     case LOCATION_ID:
-      return Integer.valueOf(getLocationId());
+      return Long.valueOf(getLocationId());
 
     case CREATOR_ID:
-      return Integer.valueOf(getCreatorId());
+      return Long.valueOf(getCreatorId());
 
     case COMMENT:
       return getComment();
@@ -697,24 +697,24 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
         }
         switch (schemeField.id) {
           case 1: // ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.id = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.id = iprot.readI64();
               struct.setIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 2: // LOCATION_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.locationId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.locationId = iprot.readI64();
               struct.setLocationIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
           case 3: // CREATOR_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.creatorId = iprot.readI32();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.creatorId = iprot.readI64();
               struct.setCreatorIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -760,13 +760,13 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
 
       oprot.writeStructBegin(STRUCT_DESC);
       oprot.writeFieldBegin(ID_FIELD_DESC);
-      oprot.writeI32(struct.id);
+      oprot.writeI64(struct.id);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(LOCATION_ID_FIELD_DESC);
-      oprot.writeI32(struct.locationId);
+      oprot.writeI64(struct.locationId);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(CREATOR_ID_FIELD_DESC);
-      oprot.writeI32(struct.creatorId);
+      oprot.writeI64(struct.creatorId);
       oprot.writeFieldEnd();
       if (struct.comment != null) {
         if (struct.isSetComment()) {
@@ -825,13 +825,13 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       }
       oprot.writeBitSet(optionals, 6);
       if (struct.isSetId()) {
-        oprot.writeI32(struct.id);
+        oprot.writeI64(struct.id);
       }
       if (struct.isSetLocationId()) {
-        oprot.writeI32(struct.locationId);
+        oprot.writeI64(struct.locationId);
       }
       if (struct.isSetCreatorId()) {
-        oprot.writeI32(struct.creatorId);
+        oprot.writeI64(struct.creatorId);
       }
       if (struct.isSetComment()) {
         oprot.writeString(struct.comment);
@@ -849,15 +849,15 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       TTupleProtocol iprot = (TTupleProtocol) prot;
       BitSet incoming = iprot.readBitSet(6);
       if (incoming.get(0)) {
-        struct.id = iprot.readI32();
+        struct.id = iprot.readI64();
         struct.setIdIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.locationId = iprot.readI32();
+        struct.locationId = iprot.readI64();
         struct.setLocationIdIsSet(true);
       }
       if (incoming.get(2)) {
-        struct.creatorId = iprot.readI32();
+        struct.creatorId = iprot.readI64();
         struct.setCreatorIdIsSet(true);
       }
       if (incoming.get(3)) {

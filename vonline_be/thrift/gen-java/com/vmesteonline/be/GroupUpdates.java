@@ -43,7 +43,7 @@ public class GroupUpdates implements org.apache.thrift.TBase<GroupUpdates, Group
     schemes.put(TupleScheme.class, new GroupUpdatesTupleSchemeFactory());
   }
 
-  public Map<Integer,RubricCounter> groupCounters; // required
+  public Map<Long,RubricCounter> groupCounters; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -109,7 +109,7 @@ public class GroupUpdates implements org.apache.thrift.TBase<GroupUpdates, Group
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.GROUP_COUNTERS, new org.apache.thrift.meta_data.FieldMetaData("groupCounters", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32), 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64), 
             new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, RubricCounter.class))));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(GroupUpdates.class, metaDataMap);
@@ -119,7 +119,7 @@ public class GroupUpdates implements org.apache.thrift.TBase<GroupUpdates, Group
   }
 
   public GroupUpdates(
-    Map<Integer,RubricCounter> groupCounters)
+    Map<Long,RubricCounter> groupCounters)
   {
     this();
     this.groupCounters = groupCounters;
@@ -130,13 +130,13 @@ public class GroupUpdates implements org.apache.thrift.TBase<GroupUpdates, Group
    */
   public GroupUpdates(GroupUpdates other) {
     if (other.isSetGroupCounters()) {
-      Map<Integer,RubricCounter> __this__groupCounters = new HashMap<Integer,RubricCounter>(other.groupCounters.size());
-      for (Map.Entry<Integer, RubricCounter> other_element : other.groupCounters.entrySet()) {
+      Map<Long,RubricCounter> __this__groupCounters = new HashMap<Long,RubricCounter>(other.groupCounters.size());
+      for (Map.Entry<Long, RubricCounter> other_element : other.groupCounters.entrySet()) {
 
-        Integer other_element_key = other_element.getKey();
+        Long other_element_key = other_element.getKey();
         RubricCounter other_element_value = other_element.getValue();
 
-        Integer __this__groupCounters_copy_key = other_element_key;
+        Long __this__groupCounters_copy_key = other_element_key;
 
         RubricCounter __this__groupCounters_copy_value = new RubricCounter(other_element_value);
 
@@ -159,18 +159,18 @@ public class GroupUpdates implements org.apache.thrift.TBase<GroupUpdates, Group
     return (this.groupCounters == null) ? 0 : this.groupCounters.size();
   }
 
-  public void putToGroupCounters(int key, RubricCounter val) {
+  public void putToGroupCounters(long key, RubricCounter val) {
     if (this.groupCounters == null) {
-      this.groupCounters = new HashMap<Integer,RubricCounter>();
+      this.groupCounters = new HashMap<Long,RubricCounter>();
     }
     this.groupCounters.put(key, val);
   }
 
-  public Map<Integer,RubricCounter> getGroupCounters() {
+  public Map<Long,RubricCounter> getGroupCounters() {
     return this.groupCounters;
   }
 
-  public GroupUpdates setGroupCounters(Map<Integer,RubricCounter> groupCounters) {
+  public GroupUpdates setGroupCounters(Map<Long,RubricCounter> groupCounters) {
     this.groupCounters = groupCounters;
     return this;
   }
@@ -196,7 +196,7 @@ public class GroupUpdates implements org.apache.thrift.TBase<GroupUpdates, Group
       if (value == null) {
         unsetGroupCounters();
       } else {
-        setGroupCounters((Map<Integer,RubricCounter>)value);
+        setGroupCounters((Map<Long,RubricCounter>)value);
       }
       break;
 
@@ -347,12 +347,12 @@ public class GroupUpdates implements org.apache.thrift.TBase<GroupUpdates, Group
             if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
               {
                 org.apache.thrift.protocol.TMap _map0 = iprot.readMapBegin();
-                struct.groupCounters = new HashMap<Integer,RubricCounter>(2*_map0.size);
+                struct.groupCounters = new HashMap<Long,RubricCounter>(2*_map0.size);
                 for (int _i1 = 0; _i1 < _map0.size; ++_i1)
                 {
-                  int _key2;
+                  long _key2;
                   RubricCounter _val3;
-                  _key2 = iprot.readI32();
+                  _key2 = iprot.readI64();
                   _val3 = new RubricCounter();
                   _val3.read(iprot);
                   struct.groupCounters.put(_key2, _val3);
@@ -382,10 +382,10 @@ public class GroupUpdates implements org.apache.thrift.TBase<GroupUpdates, Group
       if (struct.groupCounters != null) {
         oprot.writeFieldBegin(GROUP_COUNTERS_FIELD_DESC);
         {
-          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.STRUCT, struct.groupCounters.size()));
-          for (Map.Entry<Integer, RubricCounter> _iter4 : struct.groupCounters.entrySet())
+          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I64, org.apache.thrift.protocol.TType.STRUCT, struct.groupCounters.size()));
+          for (Map.Entry<Long, RubricCounter> _iter4 : struct.groupCounters.entrySet())
           {
-            oprot.writeI32(_iter4.getKey());
+            oprot.writeI64(_iter4.getKey());
             _iter4.getValue().write(oprot);
           }
           oprot.writeMapEnd();
@@ -417,9 +417,9 @@ public class GroupUpdates implements org.apache.thrift.TBase<GroupUpdates, Group
       if (struct.isSetGroupCounters()) {
         {
           oprot.writeI32(struct.groupCounters.size());
-          for (Map.Entry<Integer, RubricCounter> _iter5 : struct.groupCounters.entrySet())
+          for (Map.Entry<Long, RubricCounter> _iter5 : struct.groupCounters.entrySet())
           {
-            oprot.writeI32(_iter5.getKey());
+            oprot.writeI64(_iter5.getKey());
             _iter5.getValue().write(oprot);
           }
         }
@@ -432,13 +432,13 @@ public class GroupUpdates implements org.apache.thrift.TBase<GroupUpdates, Group
       BitSet incoming = iprot.readBitSet(1);
       if (incoming.get(0)) {
         {
-          org.apache.thrift.protocol.TMap _map6 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.groupCounters = new HashMap<Integer,RubricCounter>(2*_map6.size);
+          org.apache.thrift.protocol.TMap _map6 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I64, org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.groupCounters = new HashMap<Long,RubricCounter>(2*_map6.size);
           for (int _i7 = 0; _i7 < _map6.size; ++_i7)
           {
-            int _key8;
+            long _key8;
             RubricCounter _val9;
-            _key8 = iprot.readI32();
+            _key8 = iprot.readI64();
             _val9 = new RubricCounter();
             _val9.read(iprot);
             struct.groupCounters.put(_key8, _val9);
