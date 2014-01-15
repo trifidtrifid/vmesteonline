@@ -27,7 +27,18 @@ public class TestAuthServiceImpl {
 
 	@Test
 	public void testLogin() {
-		fail("Not yet implemented");
+		AuthServiceImpl auth = new AuthServiceImpl();
+		try {
+			Session sess = auth.login("test", "ppp");
+			assertEquals(false, sess.accessGranted);
+		} catch (InvalidOperation e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	@Test

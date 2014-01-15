@@ -1,26 +1,35 @@
 package com.vmesteonline.be.jdo2;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.vmesteonline.be.Session;
 
 @PersistenceCapable
-public class VoUser {
+public class VoSession {
 
-	public VoUser(String name, String lastName, String email, String password) {
-		this.name = name;
-		this.lastName = lastName;
-		this.email = email;
-		this.password = password;
+	public VoSession(VoUser user) {
+		this.name = user.getName();
+		this.lastName = user.getLastName();
 	}
 
-	
+	public Session feSession() {
+		Session sess = new Session();
+		sess.setAccessGranted(true);
+		sess.setError("access granted");
+		return sess;
+	}
+
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
+
+	Long getId() {
+		return id;
+	}
 
 	public String getName() {
 		return name;
@@ -38,32 +47,10 @@ public class VoUser {
 		this.lastName = lastName;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	@Persistent
 	private String name;
 
 	@Persistent
 	private String lastName;
-
-	@Persistent
-	private String email;
-
-	@Persistent
-	private String password;
 
 }

@@ -1,9 +1,5 @@
 package com.vmesteonline.be.jdo2;
 
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
-import com.vmesteonline.be.data.PMF;
-
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -13,6 +9,8 @@ import javax.jdo.annotations.PrimaryKey;
 
 import org.apache.log4j.Logger;
 
+import com.google.appengine.api.datastore.Key;
+import com.vmesteonline.be.data.PMF;
 
 /**
  * Created by brozer on 1/12/14.
