@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
+import javax.servlet.http.HttpSession;
+
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.data.JDBCConnector;
@@ -13,6 +15,13 @@ import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
+
+	private HttpSession httpSess;
+	
+	
+	public void setHttpSess(HttpSession httpSess) {
+		this.httpSess = httpSess;
+	}
 
 	public AuthServiceImpl(JDBCConnector con) {
 		super(con);
@@ -27,6 +36,11 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		System.out.print("tttry auten user " + email + " pass " + password
 				+ "\n");
 
+		if (httpSess != null) {
+			System.out.print("session id is" + httpSess.getId() + "\n");
+		}
+		
+		
 		PersistenceManager pm = PMF.getPm();
 		javax.jdo.Query q = pm.newQuery(VoUser.class);
 		q.setFilter("email == emlParam");

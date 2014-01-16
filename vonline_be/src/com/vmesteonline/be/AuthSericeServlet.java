@@ -5,10 +5,16 @@ import javax.servlet.http.HttpSession;
 import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.server.TServlet;
 
-public class AuthSericeServlet extends TServlet {
+import com.vmesteonline.be.AuthService.Processor;
+
+public class AuthSericeServlet extends VoServlet {
+	protected AuthServiceImpl authServiceImpl;
+
 	public AuthSericeServlet() {
-		super(new AuthService.Processor(new AuthServiceImpl()),
-				new TJSONProtocol.Factory());
+		super(new TJSONProtocol.Factory());
+		authServiceImpl = new AuthServiceImpl();
+		super.setProcessor(new AuthService.Processor<AuthServiceImpl>(
+				authServiceImpl));
 	}
 
 	@Override
@@ -18,9 +24,10 @@ public class AuthSericeServlet extends TServlet {
 
 		HttpSession ssn = request.getSession();
 		if (ssn != null) {
-			System.out.print(ssn.getId());
+			System.out.print(ssn.getId() + "\n");
 		}
-		
+
+		authServiceImpl.setHttpSess(ssn);
 		super.doPost(request, response);
 	}
 }
