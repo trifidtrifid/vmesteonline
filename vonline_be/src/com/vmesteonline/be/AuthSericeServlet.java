@@ -1,15 +1,14 @@
 package com.vmesteonline.be;
 
 import org.apache.thrift.protocol.TJSONProtocol;
-import org.apache.thrift.server.TServlet;
 
-public class AuthSericeServlet extends TServlet {
+public class AuthSericeServlet extends VOTServlet {
+	ServiceImpl si;
 	public AuthSericeServlet() {
-		super(
-				new AuthService.Processor(
-				new AuthServiceImpl()),
-				new TJSONProtocol.Factory()
-		);
+		super(new TJSONProtocol.Factory());
+		AuthServiceImpl asi = new AuthServiceImpl();
+		super.setProc(new AuthService.Processor(asi));
+		si = asi;
 	}
 }
 
