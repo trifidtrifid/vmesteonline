@@ -24,12 +24,13 @@ import org.apache.thrift.transport.TTransport;
  */
 public class VoServlet extends HttpServlet {
 
+	private static final long serialVersionUID = 6849485191443776061L;
+
 	protected TProcessor processor;
 
 	private final TProtocolFactory inProtocolFactory;
-
 	private final TProtocolFactory outProtocolFactory;
-
+	ServiceImpl serviceImpl;
 	private final Collection<Map.Entry<String, String>> customHeaders;
 
 	public void setProcessor(TProcessor processor) {
@@ -74,10 +75,9 @@ public class VoServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-
+		serviceImpl.setHttpSession(request.getSession());
 		TTransport inTransport = null;
 		TTransport outTransport = null;
-
 		try {
 			response.setContentType("application/x-thrift");
 

@@ -17,7 +17,6 @@ public class VoUser {
 		this.password = password;
 	}
 
-	
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
