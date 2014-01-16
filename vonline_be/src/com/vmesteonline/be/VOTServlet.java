@@ -24,6 +24,8 @@ import org.apache.thrift.transport.TTransport;
  */
 public class VOTServlet extends HttpServlet {
 
+	protected ServiceImpl si;
+	
   private TProcessor processor;
 
   private final TProtocolFactory inProtocolFactory;

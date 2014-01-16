@@ -1,25 +1,27 @@
 package com.vmesteonline.be;
 
-import com.google.appengine.api.datastore.DatastoreService;
-
-import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
-
-import com.vmesteonline.be.data.JDBCConnector;
-import com.vmesteonline.be.jdo2.VoUser;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.KeyFactory;
-
-import org.apache.thrift.TException;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
+import javax.servlet.http.HttpSession;
+
+import org.apache.thrift.TException;
+
+import com.vmesteonline.be.data.JDBCConnector;
+import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoSession;
+import com.vmesteonline.be.jdo2.VoUser;
+
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
+
+	private HttpSession httpSess;
+	
+	
+	public void setHttpSess(HttpSession httpSess) {
+		this.httpSess = httpSess;
+	}
 
 	public AuthServiceImpl(JDBCConnector con) {
 		super(con);
@@ -29,42 +31,46 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public Session login(final String uname, final String password)
+	public Session login(final String email, final String password)
 			throws InvalidOperation, TException {
-		Session sess = new Session();
-		DatastoreService dataSrvc = DatastoreServiceFactory
-				.getDatastoreService();
+		System.out.print("tttry auten user " + email + " pass " + password
+				+ "\n");
 
-		System.out
-				.print("try auten user " + uname + " pass " + password + "\n");
+		if (httpSess != null) {
+			System.out.print("session id is" + httpSess.getId() + "\n");
+		}
+		
+		
+		PersistenceManager pm = PMF.getPm();
+		javax.jdo.Query q = pm.newQuery(VoUser.class);
+		q.setFilter("email == emlParam");
+		q.declareParameters("String emlParam");
 
 		try {
-			Entity user = dataSrvc.get(KeyFactory.createKey("VoUser", uname));
+			List<VoUser> users = (List<VoUser>) q.execute(email);
+			if (!users.isEmpty()) {
+				for (VoUser u : users) {
+					System.out.print("try to compare pwd '" + password
+							+ "' pwd on store '" + u.getPassword() + "'\n");
 
-			System.out
-					.print("try to compare pwd '" + password
-							+ "' pwd on store '" + user.getProperty("password")
-							+ "'\n");
-
-			if (user.getProperty("password").equals(password)) {
-				user.setProperty("active", true);
-				dataSrvc.put(user);
-				sess.salt = generateSalt();
-				sess.accessGranted = true;
-
-			} else {
-				sess.accessGranted = false;
-				sess.error = "incorrect user or password";
+					if (u.getPassword().equals(password)) {
+						VoSession sess = new VoSession(u);
+						pm.makePersistent(sess);
+						return sess.feSession();
+					}
+				}
 			}
 
-		} catch (EntityNotFoundException e) {
-			sess.error = "incorrect user or password";
+		} finally {
 			System.out
-					.print("can't find " + uname + " pass " + password + "\n");
+					.print("can't find " + email + " pass " + password + "\n");
 
 		}
 
-		return sess;
+		Session errSess = new Session();
+		errSess.accessGranted = false;
+		errSess.error = "can't find user or incorrect password";
+		return errSess;
 	}
 
 	@Override
@@ -79,10 +85,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public int registerNewUser(String uname, String password, String groupId,
 			String email) throws InvalidOperation {
 
-		PersistenceManagerFactory pmfInstance = JDOHelper
-				.getPersistenceManagerFactory("transactions-optional");
-		PersistenceManager pm = pmfInstance.getPersistenceManager();
-		VoUser user = new VoUser(uname, "", email, password);
+		PersistenceManager pm = PMF.getPm();
+		VoUser user = new VoUser(uname, "tt", email, password);
 		pm.makePersistent(user);
 
 		System.out.print("user " + email + " pass " + password + "\n");
