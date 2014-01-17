@@ -1,11 +1,12 @@
 package com.vmesteonline.be.jdo2;
 
+import java.util.List;
+
+import javax.jdo.annotations.EmbeddedOnly;
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PrimaryKey;
-
-import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
 public class VoUser {
@@ -56,6 +57,20 @@ public class VoUser {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	@PersistenceCapable
+	@EmbeddedOnly
+	public static class GroupShort {
+		@Persistent
+		private String visibleName;
+
+		@Persistent
+		private Long groupId;
+
+	}
+
+	@Persistent
+	private List<GroupShort> groups;
 
 	@Persistent
 	private String name;

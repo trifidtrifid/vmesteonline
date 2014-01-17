@@ -130,12 +130,6 @@ com.vmesteonline.be.GroupService_getGroupsForRegistration_result.prototype.write
 };
 
 com.vmesteonline.be.GroupService_getUserGroups_args = function(args) {
-  this.userId = null;
-  if (args) {
-    if (args.userId !== undefined) {
-      this.userId = args.userId;
-    }
-  }
 };
 com.vmesteonline.be.GroupService_getUserGroups_args.prototype = {};
 com.vmesteonline.be.GroupService_getUserGroups_args.prototype.read = function(input) {
@@ -149,21 +143,7 @@ com.vmesteonline.be.GroupService_getUserGroups_args.prototype.read = function(in
     if (ftype == Thrift.Type.STOP) {
       break;
     }
-    switch (fid)
-    {
-      case 1:
-      if (ftype == Thrift.Type.I32) {
-        this.userId = input.readI32().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 0:
-        input.skip(ftype);
-        break;
-      default:
-        input.skip(ftype);
-    }
+    input.skip(ftype);
     input.readFieldEnd();
   }
   input.readStructEnd();
@@ -172,11 +152,6 @@ com.vmesteonline.be.GroupService_getUserGroups_args.prototype.read = function(in
 
 com.vmesteonline.be.GroupService_getUserGroups_args.prototype.write = function(output) {
   output.writeStructBegin('GroupService_getUserGroups_args');
-  if (this.userId !== null && this.userId !== undefined) {
-    output.writeFieldBegin('userId', Thrift.Type.I32, 1);
-    output.writeI32(this.userId);
-    output.writeFieldEnd();
-  }
   output.writeFieldStop();
   output.writeStructEnd();
   return;
@@ -318,15 +293,14 @@ com.vmesteonline.be.GroupServiceClient.prototype.recv_getGroupsForRegistration =
   }
   throw 'getGroupsForRegistration failed: unknown result';
 };
-com.vmesteonline.be.GroupServiceClient.prototype.getUserGroups = function(userId) {
-  this.send_getUserGroups(userId);
+com.vmesteonline.be.GroupServiceClient.prototype.getUserGroups = function() {
+  this.send_getUserGroups();
   return this.recv_getUserGroups();
 };
 
-com.vmesteonline.be.GroupServiceClient.prototype.send_getUserGroups = function(userId) {
+com.vmesteonline.be.GroupServiceClient.prototype.send_getUserGroups = function() {
   this.output.writeMessageBegin('getUserGroups', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.GroupService_getUserGroups_args();
-  args.userId = userId;
   args.write(this.output);
   this.output.writeMessageEnd();
   return this.output.getTransport().flush();

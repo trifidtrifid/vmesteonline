@@ -1,7 +1,7 @@
 
 <!-- Временная страница. должна быть заменена главной страницей проекта. создана для теста логина  -->
 
-<%@page import="utils.SessionHelper"%>
+<%@page import="com.vmetsteonline.be.utils.SessionHelper"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
@@ -20,8 +20,8 @@
 			+ Long.toString(SessionHelper.getUserId(request
 					.getSession().getId())) + "<br>");
 
-	GroupServiceImpl groupService = new GroupServiceImpl();
-	List<Group> groups = groupService.getGroupsForRegistration();
+	GroupServiceImpl groupService = new GroupServiceImpl(request.getSession());
+	List<Group> groups = groupService.getUserGroups();
 	for (Group g : groups) {
 		out.print("group id: " + g.id + " group name: " + g.shortName
 				+ "<br>");
