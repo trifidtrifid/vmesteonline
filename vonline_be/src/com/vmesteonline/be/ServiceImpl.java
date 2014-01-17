@@ -1,29 +1,24 @@
 package com.vmesteonline.be;
 
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 
-public abstract class ServiceImpl {
-	
-	protected ServletContext cntx;
-	
+public class ServiceImpl {
     protected JDBCConnector con;
+    protected HttpSession httpSession;
 
-    protected ServiceImpl(JDBCConnector con) {
+    
+    public void setHttpSession(HttpSession session) {
+		this.httpSession = session;
+	}
+
+	protected ServiceImpl(JDBCConnector con) {
         this.con = con;
     }
 
     protected ServiceImpl() {
         con = new MySQLJDBCConnector();
     }
-
-	public ServletContext getCntx() {
-		return cntx;
-	}
-
-	public void setCntx(ServletContext cntx) {
-		this.cntx = cntx;
-	}
 }

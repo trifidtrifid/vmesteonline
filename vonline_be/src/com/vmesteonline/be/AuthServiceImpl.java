@@ -7,6 +7,7 @@ import java.util.List;
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.data.JDBCConnector;
@@ -16,12 +17,9 @@ import com.vmesteonline.be.jdo2.VoUser;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
-	private HttpSession httpSess;
-	
-	
-	public void setHttpSess(HttpSession httpSess) {
-		this.httpSess = httpSess;
-	}
+	private static Logger logger = Logger
+			.getLogger("com.vmesteonline.be.AuthServiceImpl");
+
 
 	public AuthServiceImpl(JDBCConnector con) {
 		super(con);
@@ -33,15 +31,14 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	@Override
 	public Session login(final String email, final String password)
 			throws InvalidOperation, TException {
-		System.out.print("tttry auten user " + email + " pass " + password
-				+ "\n");
-
-		if (httpSess != null) {
-			System.out.print("session id is" + httpSess.getId() + "\n");
+		if (httpSession == null) {
+			logger.error("http session is null");
+			throw new InvalidOperation(0, "incorrect params");
 		}
-		
-		
-		PersistenceManager pm = PMF.getPm();
+
+		logger.info("try authentificate user " + email + " pass " + password);
+
+		PersistenceManager pm = PMF.get().getPersistenceManager();
 		javax.jdo.Query q = pm.newQuery(VoUser.class);
 		q.setFilter("email == emlParam");
 		q.declareParameters("String emlParam");
@@ -50,21 +47,15 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			List<VoUser> users = (List<VoUser>) q.execute(email);
 			if (!users.isEmpty()) {
 				for (VoUser u : users) {
-					System.out.print("try to compare pwd '" + password
-							+ "' pwd on store '" + u.getPassword() + "'\n");
-
 					if (u.getPassword().equals(password)) {
-						VoSession sess = new VoSession(u);
+						VoSession sess = new VoSession(httpSession.getId(), u);
 						pm.makePersistent(sess);
 						return sess.feSession();
 					}
 				}
 			}
-
 		} finally {
-			System.out
-					.print("can't find " + email + " pass " + password + "\n");
-
+			logger.info("can't find " + email + " pass " + password);
 		}
 
 		Session errSess = new Session();

@@ -11,7 +11,8 @@ import com.vmesteonline.be.Session;
 @PersistenceCapable
 public class VoSession {
 
-	public VoSession(VoUser user) {
+	public VoSession(String sessId, VoUser user) {
+		this.id = sessId;
 		this.name = user.getName();
 		this.lastName = user.getLastName();
 	}
@@ -25,9 +26,13 @@ public class VoSession {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
+	private String id;
 
-	Long getId() {
+	public void setId(String s) {
+		id = s;
+	}
+
+	public String getId() {
 		return id;
 	}
 
