@@ -1,4 +1,4 @@
-package utils;
+package com.vmetsteonline.be.utils;
 
 import javax.jdo.PersistenceManager;
 

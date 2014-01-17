@@ -36,8 +36,7 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Session");
 
   private static final org.apache.thrift.protocol.TField SALT_FIELD_DESC = new org.apache.thrift.protocol.TField("salt", org.apache.thrift.protocol.TType.STRING, (short)1);
-  private static final org.apache.thrift.protocol.TField USER_FIELD_DESC = new org.apache.thrift.protocol.TField("user", org.apache.thrift.protocol.TType.STRUCT, (short)2);
-  private static final org.apache.thrift.protocol.TField CREATED_FIELD_DESC = new org.apache.thrift.protocol.TField("created", org.apache.thrift.protocol.TType.I32, (short)3);
+  private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.STRING, (short)2);
   private static final org.apache.thrift.protocol.TField USER_AGENT_FIELD_DESC = new org.apache.thrift.protocol.TField("userAgent", org.apache.thrift.protocol.TType.STRING, (short)4);
   private static final org.apache.thrift.protocol.TField COOKIE_FIELD_DESC = new org.apache.thrift.protocol.TField("cookie", org.apache.thrift.protocol.TType.STRING, (short)5);
   private static final org.apache.thrift.protocol.TField ACCESS_GRANTED_FIELD_DESC = new org.apache.thrift.protocol.TField("accessGranted", org.apache.thrift.protocol.TType.BOOL, (short)6);
@@ -50,8 +49,7 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
   }
 
   public String salt; // required
-  public User user; // required
-  public int created; // required
+  public String userId; // required
   public String userAgent; // optional
   public String cookie; // optional
   public boolean accessGranted; // required
@@ -60,8 +58,7 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     SALT((short)1, "salt"),
-    USER((short)2, "user"),
-    CREATED((short)3, "created"),
+    USER_ID((short)2, "userId"),
     USER_AGENT((short)4, "userAgent"),
     COOKIE((short)5, "cookie"),
     ACCESS_GRANTED((short)6, "accessGranted"),
@@ -82,10 +79,8 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
       switch(fieldId) {
         case 1: // SALT
           return SALT;
-        case 2: // USER
-          return USER;
-        case 3: // CREATED
-          return CREATED;
+        case 2: // USER_ID
+          return USER_ID;
         case 4: // USER_AGENT
           return USER_AGENT;
         case 5: // COOKIE
@@ -134,8 +129,7 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
   }
 
   // isset id assignments
-  private static final int __CREATED_ISSET_ID = 0;
-  private static final int __ACCESSGRANTED_ISSET_ID = 1;
+  private static final int __ACCESSGRANTED_ISSET_ID = 0;
   private byte __isset_bitfield = 0;
   private _Fields optionals[] = {_Fields.USER_AGENT,_Fields.COOKIE};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
@@ -143,10 +137,8 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.SALT, new org.apache.thrift.meta_data.FieldMetaData("salt", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-    tmpMap.put(_Fields.USER, new org.apache.thrift.meta_data.FieldMetaData("user", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, User.class)));
-    tmpMap.put(_Fields.CREATED, new org.apache.thrift.meta_data.FieldMetaData("created", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.USER_AGENT, new org.apache.thrift.meta_data.FieldMetaData("userAgent", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.COOKIE, new org.apache.thrift.meta_data.FieldMetaData("cookie", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
@@ -164,16 +156,13 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
 
   public Session(
     String salt,
-    User user,
-    int created,
+    String userId,
     boolean accessGranted,
     String error)
   {
     this();
     this.salt = salt;
-    this.user = user;
-    this.created = created;
-    setCreatedIsSet(true);
+    this.userId = userId;
     this.accessGranted = accessGranted;
     setAccessGrantedIsSet(true);
     this.error = error;
@@ -187,10 +176,9 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
     if (other.isSetSalt()) {
       this.salt = other.salt;
     }
-    if (other.isSetUser()) {
-      this.user = new User(other.user);
+    if (other.isSetUserId()) {
+      this.userId = other.userId;
     }
-    this.created = other.created;
     if (other.isSetUserAgent()) {
       this.userAgent = other.userAgent;
     }
@@ -210,9 +198,7 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
   @Override
   public void clear() {
     this.salt = null;
-    this.user = null;
-    setCreatedIsSet(false);
-    this.created = 0;
+    this.userId = null;
     this.userAgent = null;
     this.cookie = null;
     setAccessGrantedIsSet(false);
@@ -244,51 +230,28 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
     }
   }
 
-  public User getUser() {
-    return this.user;
+  public String getUserId() {
+    return this.userId;
   }
 
-  public Session setUser(User user) {
-    this.user = user;
+  public Session setUserId(String userId) {
+    this.userId = userId;
     return this;
   }
 
-  public void unsetUser() {
-    this.user = null;
+  public void unsetUserId() {
+    this.userId = null;
   }
 
-  /** Returns true if field user is set (has been assigned a value) and false otherwise */
-  public boolean isSetUser() {
-    return this.user != null;
+  /** Returns true if field userId is set (has been assigned a value) and false otherwise */
+  public boolean isSetUserId() {
+    return this.userId != null;
   }
 
-  public void setUserIsSet(boolean value) {
+  public void setUserIdIsSet(boolean value) {
     if (!value) {
-      this.user = null;
+      this.userId = null;
     }
-  }
-
-  public int getCreated() {
-    return this.created;
-  }
-
-  public Session setCreated(int created) {
-    this.created = created;
-    setCreatedIsSet(true);
-    return this;
-  }
-
-  public void unsetCreated() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CREATED_ISSET_ID);
-  }
-
-  /** Returns true if field created is set (has been assigned a value) and false otherwise */
-  public boolean isSetCreated() {
-    return EncodingUtils.testBit(__isset_bitfield, __CREATED_ISSET_ID);
-  }
-
-  public void setCreatedIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CREATED_ISSET_ID, value);
   }
 
   public String getUserAgent() {
@@ -396,19 +359,11 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
       }
       break;
 
-    case USER:
+    case USER_ID:
       if (value == null) {
-        unsetUser();
+        unsetUserId();
       } else {
-        setUser((User)value);
-      }
-      break;
-
-    case CREATED:
-      if (value == null) {
-        unsetCreated();
-      } else {
-        setCreated((Integer)value);
+        setUserId((String)value);
       }
       break;
 
@@ -452,11 +407,8 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
     case SALT:
       return getSalt();
 
-    case USER:
-      return getUser();
-
-    case CREATED:
-      return Integer.valueOf(getCreated());
+    case USER_ID:
+      return getUserId();
 
     case USER_AGENT:
       return getUserAgent();
@@ -483,10 +435,8 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
     switch (field) {
     case SALT:
       return isSetSalt();
-    case USER:
-      return isSetUser();
-    case CREATED:
-      return isSetCreated();
+    case USER_ID:
+      return isSetUserId();
     case USER_AGENT:
       return isSetUserAgent();
     case COOKIE:
@@ -521,21 +471,12 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
         return false;
     }
 
-    boolean this_present_user = true && this.isSetUser();
-    boolean that_present_user = true && that.isSetUser();
-    if (this_present_user || that_present_user) {
-      if (!(this_present_user && that_present_user))
+    boolean this_present_userId = true && this.isSetUserId();
+    boolean that_present_userId = true && that.isSetUserId();
+    if (this_present_userId || that_present_userId) {
+      if (!(this_present_userId && that_present_userId))
         return false;
-      if (!this.user.equals(that.user))
-        return false;
-    }
-
-    boolean this_present_created = true;
-    boolean that_present_created = true;
-    if (this_present_created || that_present_created) {
-      if (!(this_present_created && that_present_created))
-        return false;
-      if (this.created != that.created)
+      if (!this.userId.equals(that.userId))
         return false;
     }
 
@@ -601,22 +542,12 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetUser()).compareTo(other.isSetUser());
+    lastComparison = Boolean.valueOf(isSetUserId()).compareTo(other.isSetUserId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetUser()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.user, other.user);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetCreated()).compareTo(other.isSetCreated());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetCreated()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.created, other.created);
+    if (isSetUserId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userId, other.userId);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -689,16 +620,12 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("user:");
-    if (this.user == null) {
+    sb.append("userId:");
+    if (this.userId == null) {
       sb.append("null");
     } else {
-      sb.append(this.user);
+      sb.append(this.userId);
     }
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("created:");
-    sb.append(this.created);
     first = false;
     if (isSetUserAgent()) {
       if (!first) sb.append(", ");
@@ -739,9 +666,6 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
   public void validate() throws org.apache.thrift.TException {
     // check for required fields
     // check for sub-struct validity
-    if (user != null) {
-      user.validate();
-    }
   }
 
   private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -788,19 +712,10 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // USER
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.user = new User();
-              struct.user.read(iprot);
-              struct.setUserIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 3: // CREATED
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.created = iprot.readI32();
-              struct.setCreatedIsSet(true);
+          case 2: // USER_ID
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.userId = iprot.readString();
+              struct.setUserIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -857,14 +772,11 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
         oprot.writeString(struct.salt);
         oprot.writeFieldEnd();
       }
-      if (struct.user != null) {
-        oprot.writeFieldBegin(USER_FIELD_DESC);
-        struct.user.write(oprot);
+      if (struct.userId != null) {
+        oprot.writeFieldBegin(USER_ID_FIELD_DESC);
+        oprot.writeString(struct.userId);
         oprot.writeFieldEnd();
       }
-      oprot.writeFieldBegin(CREATED_FIELD_DESC);
-      oprot.writeI32(struct.created);
-      oprot.writeFieldEnd();
       if (struct.userAgent != null) {
         if (struct.isSetUserAgent()) {
           oprot.writeFieldBegin(USER_AGENT_FIELD_DESC);
@@ -908,33 +820,27 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
       if (struct.isSetSalt()) {
         optionals.set(0);
       }
-      if (struct.isSetUser()) {
+      if (struct.isSetUserId()) {
         optionals.set(1);
       }
-      if (struct.isSetCreated()) {
+      if (struct.isSetUserAgent()) {
         optionals.set(2);
       }
-      if (struct.isSetUserAgent()) {
+      if (struct.isSetCookie()) {
         optionals.set(3);
       }
-      if (struct.isSetCookie()) {
+      if (struct.isSetAccessGranted()) {
         optionals.set(4);
       }
-      if (struct.isSetAccessGranted()) {
+      if (struct.isSetError()) {
         optionals.set(5);
       }
-      if (struct.isSetError()) {
-        optionals.set(6);
-      }
-      oprot.writeBitSet(optionals, 7);
+      oprot.writeBitSet(optionals, 6);
       if (struct.isSetSalt()) {
         oprot.writeString(struct.salt);
       }
-      if (struct.isSetUser()) {
-        struct.user.write(oprot);
-      }
-      if (struct.isSetCreated()) {
-        oprot.writeI32(struct.created);
+      if (struct.isSetUserId()) {
+        oprot.writeString(struct.userId);
       }
       if (struct.isSetUserAgent()) {
         oprot.writeString(struct.userAgent);
@@ -953,33 +859,28 @@ public class Session implements org.apache.thrift.TBase<Session, Session._Fields
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Session struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(7);
+      BitSet incoming = iprot.readBitSet(6);
       if (incoming.get(0)) {
         struct.salt = iprot.readString();
         struct.setSaltIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.user = new User();
-        struct.user.read(iprot);
-        struct.setUserIsSet(true);
+        struct.userId = iprot.readString();
+        struct.setUserIdIsSet(true);
       }
       if (incoming.get(2)) {
-        struct.created = iprot.readI32();
-        struct.setCreatedIsSet(true);
-      }
-      if (incoming.get(3)) {
         struct.userAgent = iprot.readString();
         struct.setUserAgentIsSet(true);
       }
-      if (incoming.get(4)) {
+      if (incoming.get(3)) {
         struct.cookie = iprot.readString();
         struct.setCookieIsSet(true);
       }
-      if (incoming.get(5)) {
+      if (incoming.get(4)) {
         struct.accessGranted = iprot.readBool();
         struct.setAccessGrantedIsSet(true);
       }
-      if (incoming.get(6)) {
+      if (incoming.get(5)) {
         struct.error = iprot.readString();
         struct.setErrorIsSet(true);
       }

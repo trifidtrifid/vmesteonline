@@ -55,6 +55,20 @@ public class VoUser {
 		this.password = password;
 	}
 
+	@PersistenceCapable
+	@EmbeddedOnly
+	public static class GroupShort {
+		@Persistent
+		private String visibleName;
+
+		@Persistent
+		private Long groupId;
+
+	}
+
+	@Persistent
+	private List<GroupShort> groups;
+
 	@Persistent
 	private String name;
 

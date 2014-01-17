@@ -17,6 +17,7 @@ public class VoSession {
 		this.lastName = user.getLastName();
 		this.userId = user.getId();
 	}
+	
 
 	public Session feSession() {
 		Session sess = new Session();

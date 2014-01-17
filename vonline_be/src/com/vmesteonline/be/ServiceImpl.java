@@ -6,19 +6,17 @@ import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 
 public class ServiceImpl {
-    protected JDBCConnector con;
-    protected HttpSession httpSession;
+	protected HttpSession httpSession;
 
-    
-    public void setHttpSession(HttpSession session) {
+	public void setHttpSession(HttpSession session) {
 		this.httpSession = session;
 	}
 
-	protected ServiceImpl(JDBCConnector con) {
-        this.con = con;
-    }
+	protected ServiceImpl() {
+	}
 
-    protected ServiceImpl() {
-        con = new MySQLJDBCConnector();
-    }
+	protected ServiceImpl(HttpSession session) {
+		this.httpSession = session;
+	}
+
 }
