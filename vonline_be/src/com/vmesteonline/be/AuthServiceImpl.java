@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
@@ -79,8 +78,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		VoUser user = new VoUser(uname, "tt", email, password);
 		pm.makePersistent(user);
-
-		System.out.print("user " + email + " pass " + password + "\n");
+		logger.info("register " + email + " pass " + password + " id " + user.getId());
 
 		return 0;
 	}

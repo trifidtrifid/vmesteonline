@@ -21,6 +21,10 @@ public class VoUser {
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
 
+	public Long getId() {
+		return id;
+	}
+
 	public String getName() {
 		return name;
 	}

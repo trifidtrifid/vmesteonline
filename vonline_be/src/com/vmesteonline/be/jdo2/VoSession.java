@@ -15,6 +15,7 @@ public class VoSession {
 		this.id = sessId;
 		this.name = user.getName();
 		this.lastName = user.getLastName();
+		this.userId = user.getId();
 	}
 
 	public Session feSession() {
@@ -24,9 +25,6 @@ public class VoSession {
 		return sess;
 	}
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private String id;
 
 	public void setId(String s) {
 		id = s;
@@ -52,10 +50,27 @@ public class VoSession {
 		this.lastName = lastName;
 	}
 
+	
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private String id;
+
+	
 	@Persistent
 	private String name;
 
 	@Persistent
 	private String lastName;
+
+	@Persistent
+	private Long userId;
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 
 }
