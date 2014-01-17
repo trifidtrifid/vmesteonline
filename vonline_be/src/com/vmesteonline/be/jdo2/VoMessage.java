@@ -18,7 +18,7 @@ import com.vmesteonline.be.data.PMF;
 @PersistenceCapable
 public class VoMessage extends com.vmesteonline.be.Message {
 
-	private static Logger logger = Logger.getLogger("com.vmesteonline.be.jdo2.VoMessage");
+	//private static Logger logger = Logger.getLogger("com.vmesteonline.be.jdo2.VoMessage");
 	
 	public VoMessage(com.vmesteonline.be.Message msg ){
 		if( 0!=msg.getParentId() ){
@@ -30,8 +30,6 @@ public class VoMessage extends com.vmesteonline.be.Message {
 			} catch (Exception e) {
 				//throw new 
 			}
-			
-			
 		}
 	}
 	

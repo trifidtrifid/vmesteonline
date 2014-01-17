@@ -10,7 +10,7 @@ import com.vmesteonline.be.Session;
 
 @PersistenceCapable
 public class VoSession {
-
+ 
 	public VoSession(String sessId, VoUser user) {
 		this.id = sessId;
 		this.name = user.getName();
