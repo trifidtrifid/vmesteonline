@@ -14,20 +14,6 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 
 public class Defaults {
 
-	public static void setRubrics() {
-
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		for (VoRubric r : defaultRubrics) {
-			javax.jdo.Query q = pm.newQuery(VoRubric.class);
-			q.setFilter("visibleName == param");
-			q.declareParameters("String param");
-			List<VoRubric> rbcs = (List<VoRubric>) q.execute(r.getVisibleName());
-			if (rbcs.isEmpty()) {
-				pm.makePersistent(r);
-			}
-		}
-	}
-
 	public static void setGroups() {
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -42,7 +28,7 @@ public class Defaults {
 		}
 	}
 
-	private static List<VoRubric> defaultRubrics;
+	public static List<VoRubric> defaultRubrics;
 	private static List<VoGroup> defaultGroups;
 	public static List<VoUserGroup> defaultUserGroups;
 

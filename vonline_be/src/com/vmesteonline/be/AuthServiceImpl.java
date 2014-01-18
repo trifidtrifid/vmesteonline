@@ -66,15 +66,20 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		if (home == null)
 			throw new InvalidOperation(1, "unknown user home group");
 
+		// find all defaults groups for user
 		VoUserGroup gs = new VoUserGroup(home);
 		user.getGroups().add(gs);
-
-		// find all defaults groups by default radius
 		for (VoUserGroup r : Defaults.defaultUserGroups) {
 			gs = r.clone();
 			gs.setLatitude(home.getLatitude());
 			gs.setLongitude(home.getLongitude());
 			user.getGroups().add(gs);
+		}
+
+		// find all defaults rubrics for user
+		for (VoRubric r : Defaults.defaultRubrics) {
+			VoRubric ur = r.clone();
+			user.getRubrics().add(ur);
 		}
 
 		pm.makePersistent(user);

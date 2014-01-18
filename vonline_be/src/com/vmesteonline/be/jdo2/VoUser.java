@@ -8,8 +8,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.datanucleus.annotations.Unindexed;
-
 @PersistenceCapable
 public class VoUser {
 
@@ -19,6 +17,16 @@ public class VoUser {
 		this.email = email;
 		this.password = password;
 		groups = new ArrayList<VoUserGroup>();
+		rubrics = new ArrayList<VoRubric>();
+
+	}
+
+	public List<VoRubric> getRubrics() {
+		return rubrics;
+	}
+
+	public void setRubrics(List<VoRubric> rubrics) {
+		this.rubrics = rubrics;
 	}
 
 	@PrimaryKey
@@ -60,8 +68,7 @@ public class VoUser {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
+
 	public List<VoUserGroup> getGroups() {
 		return groups;
 	}
@@ -69,10 +76,12 @@ public class VoUser {
 	public void setGroups(List<VoUserGroup> groups) {
 		this.groups = groups;
 	}
-	
 
 	@Persistent
 	private List<VoUserGroup> groups;
+
+	@Persistent
+	private List<VoRubric> rubrics;
 
 	@Persistent
 	private String name;

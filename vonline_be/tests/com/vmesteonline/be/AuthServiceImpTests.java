@@ -62,6 +62,8 @@ public class AuthServiceImpTests extends DataStoreTestsHelper {
 			assertEquals(groupALong, user.getGroups().get(1).getLongitude(), 0F);
 			assertEquals(groupALat, user.getGroups().get(1).getLatitude(), 0F);
 
+			assertEquals(4, user.getRubrics().size());
+
 		} catch (InvalidOperation e) {
 			fail(e.why);
 		}

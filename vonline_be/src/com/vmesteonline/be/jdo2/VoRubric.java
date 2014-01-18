@@ -5,21 +5,20 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+
 @PersistenceCapable
 public class VoRubric {
 
-	public VoRubric(String visibleName, String name, String description){
+	public VoRubric(String visibleName, String name, String description) {
 		this.name = name;
 		this.visibleName = visibleName;
 		this.description = description;
 	}
-	
-	public Long getId() {
-		return id;
-	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public VoRubric clone() {
+		VoRubric r = new VoRubric(visibleName, name, description);
+		return r;
 	}
 
 	public String getVisibleName() {
@@ -48,14 +47,14 @@ public class VoRubric {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
+	private Key id;
 
 	@Persistent
 	String visibleName;
-	
+
 	@Persistent
 	String description;
-	
+
 	@Persistent
 	String name;
 
