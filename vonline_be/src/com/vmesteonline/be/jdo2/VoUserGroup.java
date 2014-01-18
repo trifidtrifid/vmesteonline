@@ -8,20 +8,22 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
-public class VoGroup {
+public class VoUserGroup {
 
-	public VoGroup(String visibleName, String name, String descriprion, float longitude, float latitude, int radius) {
+	public VoUserGroup(String visibleName, int radius) {
 		this.visibleName = visibleName;
-		this.name = name;
-		this.description = descriprion;
-		this.longitude = longitude;
-		this.latitude = latitude;
 		this.radius = radius;
 	}
 
-	public VoGroup clone() {
-		VoGroup gr = new VoGroup(visibleName, name, description, longitude, latitude, radius);
-		return gr;
+	public VoUserGroup(VoGroup g) {
+		this.visibleName = g.getVisibleName();
+		this.latitude = g.getLatitude();
+		this.longitude = g.getLongitude();
+	}
+
+	public VoUserGroup clone() {
+		VoUserGroup g = new VoUserGroup(visibleName, radius);
+		return g;
 	}
 
 	public Key getId() {
@@ -40,20 +42,12 @@ public class VoGroup {
 		this.visibleName = visibleName;
 	}
 
-	public String getName() {
-		return name;
+	public int getRadius() {
+		return radius;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
+	public void setRadius(int radius) {
+		this.radius = radius;
 	}
 
 	public float getLongitude() {
@@ -72,14 +66,6 @@ public class VoGroup {
 		this.latitude = latitude;
 	}
 
-	public int getRadius() {
-		return radius;
-	}
-
-	public void setRadius(int radius) {
-		this.radius = radius;
-	}
-
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key id;
@@ -88,18 +74,11 @@ public class VoGroup {
 	private String visibleName;
 
 	@Persistent
-	private String name;
-
-	@Persistent
-	private String description;
-
+	private int radius;
 	@Persistent
 	private float longitude;
 
 	@Persistent
 	private float latitude;
-
-	@Persistent
-	private int radius;
 
 }

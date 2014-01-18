@@ -8,11 +8,11 @@
 //HELPER FUNCTIONS AND STRUCTURES
 
 com.vmesteonline.be.AuthService_login_args = function(args) {
-  this.uname = null;
+  this.email = null;
   this.password = null;
   if (args) {
-    if (args.uname !== undefined) {
-      this.uname = args.uname;
+    if (args.email !== undefined) {
+      this.email = args.email;
     }
     if (args.password !== undefined) {
       this.password = args.password;
@@ -35,7 +35,7 @@ com.vmesteonline.be.AuthService_login_args.prototype.read = function(input) {
     {
       case 1:
       if (ftype == Thrift.Type.STRING) {
-        this.uname = input.readString().value;
+        this.email = input.readString().value;
       } else {
         input.skip(ftype);
       }
@@ -58,9 +58,9 @@ com.vmesteonline.be.AuthService_login_args.prototype.read = function(input) {
 
 com.vmesteonline.be.AuthService_login_args.prototype.write = function(output) {
   output.writeStructBegin('AuthService_login_args');
-  if (this.uname !== null && this.uname !== undefined) {
-    output.writeFieldBegin('uname', Thrift.Type.STRING, 1);
-    output.writeString(this.uname);
+  if (this.email !== null && this.email !== undefined) {
+    output.writeFieldBegin('email', Thrift.Type.STRING, 1);
+    output.writeString(this.email);
     output.writeFieldEnd();
   }
   if (this.password !== null && this.password !== undefined) {
@@ -319,8 +319,8 @@ com.vmesteonline.be.AuthService_registerNewUser_args.prototype.read = function(i
       }
       break;
       case 3:
-      if (ftype == Thrift.Type.STRING) {
-        this.groupId = input.readString().value;
+      if (ftype == Thrift.Type.I64) {
+        this.groupId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
@@ -354,8 +354,8 @@ com.vmesteonline.be.AuthService_registerNewUser_args.prototype.write = function(
     output.writeFieldEnd();
   }
   if (this.groupId !== null && this.groupId !== undefined) {
-    output.writeFieldBegin('groupId', Thrift.Type.STRING, 3);
-    output.writeString(this.groupId);
+    output.writeFieldBegin('groupId', Thrift.Type.I64, 3);
+    output.writeI64(this.groupId);
     output.writeFieldEnd();
   }
   if (this.email !== null && this.email !== undefined) {
@@ -445,15 +445,15 @@ com.vmesteonline.be.AuthServiceClient = function(input, output) {
     this.seqid = 0;
 };
 com.vmesteonline.be.AuthServiceClient.prototype = {};
-com.vmesteonline.be.AuthServiceClient.prototype.login = function(uname, password) {
-  this.send_login(uname, password);
+com.vmesteonline.be.AuthServiceClient.prototype.login = function(email, password) {
+  this.send_login(email, password);
   return this.recv_login();
 };
 
-com.vmesteonline.be.AuthServiceClient.prototype.send_login = function(uname, password) {
+com.vmesteonline.be.AuthServiceClient.prototype.send_login = function(email, password) {
   this.output.writeMessageBegin('login', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.AuthService_login_args();
-  args.uname = uname;
+  args.email = email;
   args.password = password;
   args.write(this.output);
   this.output.writeMessageEnd();

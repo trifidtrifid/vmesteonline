@@ -6,10 +6,10 @@ package com.vmesteonline.be.data;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Query;
 
 public final class PMF {
-	private static final PersistenceManagerFactory pmfInstance = JDOHelper
-			.getPersistenceManagerFactory("transactions-optional");
+	private static final PersistenceManagerFactory pmfInstance = JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 	private PMF() {
 	}
@@ -20,5 +20,9 @@ public final class PMF {
 
 	public static PersistenceManager getPm() {
 		return pmfInstance.getPersistenceManager();
+	}
+
+	public static <T> Query getQuery(Class<T> type) {
+		return pmfInstance.getPersistenceManager().newQuery(type);
 	}
 }

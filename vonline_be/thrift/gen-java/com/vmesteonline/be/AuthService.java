@@ -40,7 +40,7 @@ public class AuthService {
 
     public Session getSession(String salt) throws InvalidOperation, org.apache.thrift.TException;
 
-    public int registerNewUser(String uname, String password, String groupId, String email) throws InvalidOperation, org.apache.thrift.TException;
+    public int registerNewUser(String uname, String password, long groupId, String email) throws InvalidOperation, org.apache.thrift.TException;
 
   }
 
@@ -50,7 +50,7 @@ public class AuthService {
 
     public void getSession(String salt, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void registerNewUser(String uname, String password, String groupId, String email, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void registerNewUser(String uname, String password, long groupId, String email, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -127,13 +127,13 @@ public class AuthService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getSession failed: unknown result");
     }
 
-    public int registerNewUser(String uname, String password, String groupId, String email) throws InvalidOperation, org.apache.thrift.TException
+    public int registerNewUser(String uname, String password, long groupId, String email) throws InvalidOperation, org.apache.thrift.TException
     {
       send_registerNewUser(uname, password, groupId, email);
       return recv_registerNewUser();
     }
 
-    public void send_registerNewUser(String uname, String password, String groupId, String email) throws org.apache.thrift.TException
+    public void send_registerNewUser(String uname, String password, long groupId, String email) throws org.apache.thrift.TException
     {
       registerNewUser_args args = new registerNewUser_args();
       args.setUname(uname);
@@ -241,7 +241,7 @@ public class AuthService {
       }
     }
 
-    public void registerNewUser(String uname, String password, String groupId, String email, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void registerNewUser(String uname, String password, long groupId, String email, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       registerNewUser_call method_call = new registerNewUser_call(uname, password, groupId, email, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -251,9 +251,9 @@ public class AuthService {
     public static class registerNewUser_call extends org.apache.thrift.async.TAsyncMethodCall {
       private String uname;
       private String password;
-      private String groupId;
+      private long groupId;
       private String email;
-      public registerNewUser_call(String uname, String password, String groupId, String email, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public registerNewUser_call(String uname, String password, long groupId, String email, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.uname = uname;
         this.password = password;
@@ -2302,7 +2302,7 @@ public class AuthService {
 
     private static final org.apache.thrift.protocol.TField UNAME_FIELD_DESC = new org.apache.thrift.protocol.TField("uname", org.apache.thrift.protocol.TType.STRING, (short)1);
     private static final org.apache.thrift.protocol.TField PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("password", org.apache.thrift.protocol.TType.STRING, (short)2);
-    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.STRING, (short)3);
+    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)3);
     private static final org.apache.thrift.protocol.TField EMAIL_FIELD_DESC = new org.apache.thrift.protocol.TField("email", org.apache.thrift.protocol.TType.STRING, (short)4);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -2313,7 +2313,7 @@ public class AuthService {
 
     public String uname; // required
     public String password; // required
-    public String groupId; // required
+    public long groupId; // required
     public String email; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -2384,6 +2384,8 @@ public class AuthService {
     }
 
     // isset id assignments
+    private static final int __GROUPID_ISSET_ID = 0;
+    private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -2392,7 +2394,7 @@ public class AuthService {
       tmpMap.put(_Fields.PASSWORD, new org.apache.thrift.meta_data.FieldMetaData("password", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.EMAIL, new org.apache.thrift.meta_data.FieldMetaData("email", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -2405,13 +2407,14 @@ public class AuthService {
     public registerNewUser_args(
       String uname,
       String password,
-      String groupId,
+      long groupId,
       String email)
     {
       this();
       this.uname = uname;
       this.password = password;
       this.groupId = groupId;
+      setGroupIdIsSet(true);
       this.email = email;
     }
 
@@ -2419,15 +2422,14 @@ public class AuthService {
      * Performs a deep copy on <i>other</i>.
      */
     public registerNewUser_args(registerNewUser_args other) {
+      __isset_bitfield = other.__isset_bitfield;
       if (other.isSetUname()) {
         this.uname = other.uname;
       }
       if (other.isSetPassword()) {
         this.password = other.password;
       }
-      if (other.isSetGroupId()) {
-        this.groupId = other.groupId;
-      }
+      this.groupId = other.groupId;
       if (other.isSetEmail()) {
         this.email = other.email;
       }
@@ -2441,7 +2443,8 @@ public class AuthService {
     public void clear() {
       this.uname = null;
       this.password = null;
-      this.groupId = null;
+      setGroupIdIsSet(false);
+      this.groupId = 0;
       this.email = null;
     }
 
@@ -2493,28 +2496,27 @@ public class AuthService {
       }
     }
 
-    public String getGroupId() {
+    public long getGroupId() {
       return this.groupId;
     }
 
-    public registerNewUser_args setGroupId(String groupId) {
+    public registerNewUser_args setGroupId(long groupId) {
       this.groupId = groupId;
+      setGroupIdIsSet(true);
       return this;
     }
 
     public void unsetGroupId() {
-      this.groupId = null;
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __GROUPID_ISSET_ID);
     }
 
     /** Returns true if field groupId is set (has been assigned a value) and false otherwise */
     public boolean isSetGroupId() {
-      return this.groupId != null;
+      return EncodingUtils.testBit(__isset_bitfield, __GROUPID_ISSET_ID);
     }
 
     public void setGroupIdIsSet(boolean value) {
-      if (!value) {
-        this.groupId = null;
-      }
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __GROUPID_ISSET_ID, value);
     }
 
     public String getEmail() {
@@ -2563,7 +2565,7 @@ public class AuthService {
         if (value == null) {
           unsetGroupId();
         } else {
-          setGroupId((String)value);
+          setGroupId((Long)value);
         }
         break;
 
@@ -2587,7 +2589,7 @@ public class AuthService {
         return getPassword();
 
       case GROUP_ID:
-        return getGroupId();
+        return Long.valueOf(getGroupId());
 
       case EMAIL:
         return getEmail();
@@ -2646,12 +2648,12 @@ public class AuthService {
           return false;
       }
 
-      boolean this_present_groupId = true && this.isSetGroupId();
-      boolean that_present_groupId = true && that.isSetGroupId();
+      boolean this_present_groupId = true;
+      boolean that_present_groupId = true;
       if (this_present_groupId || that_present_groupId) {
         if (!(this_present_groupId && that_present_groupId))
           return false;
-        if (!this.groupId.equals(that.groupId))
+        if (this.groupId != that.groupId)
           return false;
       }
 
@@ -2757,11 +2759,7 @@ public class AuthService {
       first = false;
       if (!first) sb.append(", ");
       sb.append("groupId:");
-      if (this.groupId == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.groupId);
-      }
+      sb.append(this.groupId);
       first = false;
       if (!first) sb.append(", ");
       sb.append("email:");
@@ -2790,6 +2788,8 @@ public class AuthService {
 
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
       try {
+        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+        __isset_bitfield = 0;
         read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
       } catch (org.apache.thrift.TException te) {
         throw new java.io.IOException(te);
@@ -2831,8 +2831,8 @@ public class AuthService {
               }
               break;
             case 3: // GROUP_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                struct.groupId = iprot.readString();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.groupId = iprot.readI64();
                 struct.setGroupIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -2871,11 +2871,9 @@ public class AuthService {
           oprot.writeString(struct.password);
           oprot.writeFieldEnd();
         }
-        if (struct.groupId != null) {
-          oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
-          oprot.writeString(struct.groupId);
-          oprot.writeFieldEnd();
-        }
+        oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
+        oprot.writeI64(struct.groupId);
+        oprot.writeFieldEnd();
         if (struct.email != null) {
           oprot.writeFieldBegin(EMAIL_FIELD_DESC);
           oprot.writeString(struct.email);
@@ -2919,7 +2917,7 @@ public class AuthService {
           oprot.writeString(struct.password);
         }
         if (struct.isSetGroupId()) {
-          oprot.writeString(struct.groupId);
+          oprot.writeI64(struct.groupId);
         }
         if (struct.isSetEmail()) {
           oprot.writeString(struct.email);
@@ -2939,7 +2937,7 @@ public class AuthService {
           struct.setPasswordIsSet(true);
         }
         if (incoming.get(2)) {
-          struct.groupId = iprot.readString();
+          struct.groupId = iprot.readI64();
           struct.setGroupIdIsSet(true);
         }
         if (incoming.get(3)) {

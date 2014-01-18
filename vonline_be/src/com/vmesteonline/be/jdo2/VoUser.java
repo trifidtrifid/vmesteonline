@@ -1,9 +1,14 @@
 package com.vmesteonline.be.jdo2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
+import com.google.appengine.datanucleus.annotations.Unindexed;
 
 @PersistenceCapable
 public class VoUser {
@@ -13,6 +18,7 @@ public class VoUser {
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
+		groups = new ArrayList<VoUserGroup>();
 	}
 
 	@PrimaryKey
@@ -54,20 +60,19 @@ public class VoUser {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	@PersistenceCapable
-	@EmbeddedOnly
-	public static class GroupShort {
-		@Persistent
-		private String visibleName;
-
-		@Persistent
-		private Long groupId;
-
+	
+	
+	public List<VoUserGroup> getGroups() {
+		return groups;
 	}
 
+	public void setGroups(List<VoUserGroup> groups) {
+		this.groups = groups;
+	}
+	
+
 	@Persistent
-	private List<GroupShort> groups;
+	private List<VoUserGroup> groups;
 
 	@Persistent
 	private String name;

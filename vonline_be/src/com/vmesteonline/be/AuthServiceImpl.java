@@ -3,6 +3,7 @@ package com.vmesteonline.be;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
@@ -12,6 +13,9 @@ import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmetsteonline.be.utils.Defaults;
+import com.vmetsteonline.be.utils.GroupHelper;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
@@ -30,30 +34,17 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 		logger.info("try authentificate user " + email + " pass " + password);
 
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		javax.jdo.Query q = pm.newQuery(VoUser.class);
-		q.setFilter("email == emlParam");
-		q.declareParameters("String emlParam");
+		VoUser u = getUserByEmail(email);
+		if (u != null) {
+			if (u.getPassword().equals(password)) {
+				VoSession sess = new VoSession(httpSession.getId(), u);
+				PMF.getPm().makePersistent(sess);
+				return sess.feSession();
+			} else
+				logger.info("incorrect password " + email + " pass " + password);
 
-		try {
-			List<VoUser> users = (List<VoUser>) q.execute(email);
-			if (!users.isEmpty()) {
-				for (VoUser u : users) {
-					if (u.getPassword().equals(password)) {
-						VoSession sess = new VoSession(httpSession.getId(), u);
-						pm.makePersistent(sess);
-						return sess.feSession();
-					}
-				}
-			}
-		} finally {
-			logger.info("can't find " + email + " pass " + password);
 		}
-
-		Session errSess = new Session();
-		errSess.accessGranted = false;
-		errSess.error = "can't find user or incorrect password";
-		return errSess;
+		throw new InvalidOperation(1, "incorrect login or password");
 	}
 
 	@Override
@@ -64,14 +55,42 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public int registerNewUser(String uname, String password, String groupId, String email) throws InvalidOperation {
+	public int registerNewUser(String uname, String password, long groupId, String email) throws InvalidOperation {
 
+		if (getUserByEmail(email) != null) {
+			throw new InvalidOperation(1, "unknown user home group");
+		}
 		PersistenceManager pm = PMF.getPm();
 		VoUser user = new VoUser(uname, "tt", email, password);
+		VoGroup home = GroupHelper.getGroupById(groupId);
+		if (home == null)
+			throw new InvalidOperation(1, "unknown user home group");
+
+		VoUserGroup gs = new VoUserGroup(home);
+		user.getGroups().add(gs);
+
+		// find all defaults groups by default radius
+		for (VoUserGroup r : Defaults.defaultUserGroups) {
+			gs = r.clone();
+			gs.setLatitude(home.getLatitude());
+			gs.setLongitude(home.getLongitude());
+			user.getGroups().add(gs);
+		}
+
 		pm.makePersistent(user);
 		logger.info("register " + email + " pass " + password + " id " + user.getId());
 
 		return 0;
+	}
+
+	public VoUser getUserByEmail(String email) {
+		Query q = PMF.getPm().newQuery(VoUser.class);
+		List<VoUser> users = (List<VoUser>) q.execute(email);
+		if (users.isEmpty())
+			return null;
+		if (users.size() != 1)
+			logger.error("has more than one user with email " + email);
+		return users.get(0);
 	}
 
 	private List<VoRubric> getDeafultRubrics() {
@@ -82,13 +101,5 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			logger.error("can't load default rubrics");
 		return rbcs;
 	}
-	
-	private List<VoGroup> getDeafultGroups(VoGroup home) {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		javax.jdo.Query q = pm.newQuery(VoRubric.class);
-		List<VoRubric> rbcs = (List<VoRubric>) q.execute();
-		if (rbcs.isEmpty())
-			logger.error("can't load default rubrics");
-		return rbcs;
-	}
+
 }

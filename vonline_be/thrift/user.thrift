@@ -18,5 +18,5 @@ exception InvalidOperation {
 service AuthService {
 	Session login( 1:string email, 2:string password ) throws (1:InvalidOperation exc),
 	Session getSession(1:string salt) throws (1:InvalidOperation exc),
-	i32 registerNewUser(1:string uname, 2:string password, 3:string groupId, 4:string email) throws (1:InvalidOperation exc)
+	i32 registerNewUser(1:string uname, 2:string password, 3:i64 groupId, 4:string email) throws (1:InvalidOperation exc)
 }

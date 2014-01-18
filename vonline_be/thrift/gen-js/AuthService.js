@@ -319,8 +319,8 @@ com.vmesteonline.be.AuthService_registerNewUser_args.prototype.read = function(i
       }
       break;
       case 3:
-      if (ftype == Thrift.Type.STRING) {
-        this.groupId = input.readString().value;
+      if (ftype == Thrift.Type.I64) {
+        this.groupId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
@@ -354,8 +354,8 @@ com.vmesteonline.be.AuthService_registerNewUser_args.prototype.write = function(
     output.writeFieldEnd();
   }
   if (this.groupId !== null && this.groupId !== undefined) {
-    output.writeFieldBegin('groupId', Thrift.Type.STRING, 3);
-    output.writeString(this.groupId);
+    output.writeFieldBegin('groupId', Thrift.Type.I64, 3);
+    output.writeI64(this.groupId);
     output.writeFieldEnd();
   }
   if (this.email !== null && this.email !== undefined) {

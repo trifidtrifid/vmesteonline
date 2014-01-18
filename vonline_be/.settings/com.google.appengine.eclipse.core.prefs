@@ -5,3 +5,4 @@ gaeHrdEnabled=true
 googleCloudSqlEnabled=false
 localDevMySqlEnabled=true
 ormEnhancementInclusions=src/com/vmesteonline/be/jdo2/|tests/tagcloud/
+validationExclusions=src/com/vmesteonline/be/jdo2/VoUser.java
