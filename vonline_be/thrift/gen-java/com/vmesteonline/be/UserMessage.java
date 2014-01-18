@@ -35,12 +35,9 @@ import org.slf4j.LoggerFactory;
 public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMessage._Fields>, java.io.Serializable, Cloneable, Comparable<UserMessage> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("UserMessage");
 
-  private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short)1);
-  private static final org.apache.thrift.protocol.TField MESSAGE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("messageId", org.apache.thrift.protocol.TType.I64, (short)2);
-  private static final org.apache.thrift.protocol.TField READ_FIELD_DESC = new org.apache.thrift.protocol.TField("read", org.apache.thrift.protocol.TType.BOOL, (short)3);
-  private static final org.apache.thrift.protocol.TField UNINTRESTED_FIELD_DESC = new org.apache.thrift.protocol.TField("unintrested", org.apache.thrift.protocol.TType.BOOL, (short)4);
-  private static final org.apache.thrift.protocol.TField LIKE_FIELD_DESC = new org.apache.thrift.protocol.TField("like", org.apache.thrift.protocol.TType.BOOL, (short)5);
-  private static final org.apache.thrift.protocol.TField UNLIKE_FIELD_DESC = new org.apache.thrift.protocol.TField("unlike", org.apache.thrift.protocol.TType.BOOL, (short)6);
+  private static final org.apache.thrift.protocol.TField READ_FIELD_DESC = new org.apache.thrift.protocol.TField("read", org.apache.thrift.protocol.TType.BOOL, (short)17);
+  private static final org.apache.thrift.protocol.TField LIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("likes", org.apache.thrift.protocol.TType.BOOL, (short)18);
+  private static final org.apache.thrift.protocol.TField UNLIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("unlikes", org.apache.thrift.protocol.TType.BOOL, (short)19);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -48,21 +45,15 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
     schemes.put(TupleScheme.class, new UserMessageTupleSchemeFactory());
   }
 
-  public long userId; // required
-  public long messageId; // required
   public boolean read; // required
-  public boolean unintrested; // required
-  public boolean like; // required
-  public boolean unlike; // required
+  public boolean likes; // required
+  public boolean unlikes; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    USER_ID((short)1, "userId"),
-    MESSAGE_ID((short)2, "messageId"),
-    READ((short)3, "read"),
-    UNINTRESTED((short)4, "unintrested"),
-    LIKE((short)5, "like"),
-    UNLIKE((short)6, "unlike");
+    READ((short)17, "read"),
+    LIKES((short)18, "likes"),
+    UNLIKES((short)19, "unlikes");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -77,18 +68,12 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // USER_ID
-          return USER_ID;
-        case 2: // MESSAGE_ID
-          return MESSAGE_ID;
-        case 3: // READ
+        case 17: // READ
           return READ;
-        case 4: // UNINTRESTED
-          return UNINTRESTED;
-        case 5: // LIKE
-          return LIKE;
-        case 6: // UNLIKE
-          return UNLIKE;
+        case 18: // LIKES
+          return LIKES;
+        case 19: // UNLIKES
+          return UNLIKES;
         default:
           return null;
       }
@@ -129,27 +114,18 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
   }
 
   // isset id assignments
-  private static final int __USERID_ISSET_ID = 0;
-  private static final int __MESSAGEID_ISSET_ID = 1;
-  private static final int __READ_ISSET_ID = 2;
-  private static final int __UNINTRESTED_ISSET_ID = 3;
-  private static final int __LIKE_ISSET_ID = 4;
-  private static final int __UNLIKE_ISSET_ID = 5;
+  private static final int __READ_ISSET_ID = 0;
+  private static final int __LIKES_ISSET_ID = 1;
+  private static final int __UNLIKES_ISSET_ID = 2;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.MESSAGE_ID, new org.apache.thrift.meta_data.FieldMetaData("messageId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.READ, new org.apache.thrift.meta_data.FieldMetaData("read", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-    tmpMap.put(_Fields.UNINTRESTED, new org.apache.thrift.meta_data.FieldMetaData("unintrested", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.LIKES, new org.apache.thrift.meta_data.FieldMetaData("likes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-    tmpMap.put(_Fields.LIKE, new org.apache.thrift.meta_data.FieldMetaData("like", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-    tmpMap.put(_Fields.UNLIKE, new org.apache.thrift.meta_data.FieldMetaData("unlike", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.UNLIKES, new org.apache.thrift.meta_data.FieldMetaData("unlikes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(UserMessage.class, metaDataMap);
@@ -159,26 +135,17 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
   }
 
   public UserMessage(
-    long userId,
-    long messageId,
     boolean read,
-    boolean unintrested,
-    boolean like,
-    boolean unlike)
+    boolean likes,
+    boolean unlikes)
   {
     this();
-    this.userId = userId;
-    setUserIdIsSet(true);
-    this.messageId = messageId;
-    setMessageIdIsSet(true);
     this.read = read;
     setReadIsSet(true);
-    this.unintrested = unintrested;
-    setUnintrestedIsSet(true);
-    this.like = like;
-    setLikeIsSet(true);
-    this.unlike = unlike;
-    setUnlikeIsSet(true);
+    this.likes = likes;
+    setLikesIsSet(true);
+    this.unlikes = unlikes;
+    setUnlikesIsSet(true);
   }
 
   /**
@@ -186,12 +153,9 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
    */
   public UserMessage(UserMessage other) {
     __isset_bitfield = other.__isset_bitfield;
-    this.userId = other.userId;
-    this.messageId = other.messageId;
     this.read = other.read;
-    this.unintrested = other.unintrested;
-    this.like = other.like;
-    this.unlike = other.unlike;
+    this.likes = other.likes;
+    this.unlikes = other.unlikes;
   }
 
   public UserMessage deepCopy() {
@@ -200,64 +164,12 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
 
   @Override
   public void clear() {
-    setUserIdIsSet(false);
-    this.userId = 0;
-    setMessageIdIsSet(false);
-    this.messageId = 0;
     setReadIsSet(false);
     this.read = false;
-    setUnintrestedIsSet(false);
-    this.unintrested = false;
-    setLikeIsSet(false);
-    this.like = false;
-    setUnlikeIsSet(false);
-    this.unlike = false;
-  }
-
-  public long getUserId() {
-    return this.userId;
-  }
-
-  public UserMessage setUserId(long userId) {
-    this.userId = userId;
-    setUserIdIsSet(true);
-    return this;
-  }
-
-  public void unsetUserId() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __USERID_ISSET_ID);
-  }
-
-  /** Returns true if field userId is set (has been assigned a value) and false otherwise */
-  public boolean isSetUserId() {
-    return EncodingUtils.testBit(__isset_bitfield, __USERID_ISSET_ID);
-  }
-
-  public void setUserIdIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __USERID_ISSET_ID, value);
-  }
-
-  public long getMessageId() {
-    return this.messageId;
-  }
-
-  public UserMessage setMessageId(long messageId) {
-    this.messageId = messageId;
-    setMessageIdIsSet(true);
-    return this;
-  }
-
-  public void unsetMessageId() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __MESSAGEID_ISSET_ID);
-  }
-
-  /** Returns true if field messageId is set (has been assigned a value) and false otherwise */
-  public boolean isSetMessageId() {
-    return EncodingUtils.testBit(__isset_bitfield, __MESSAGEID_ISSET_ID);
-  }
-
-  public void setMessageIdIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MESSAGEID_ISSET_ID, value);
+    setLikesIsSet(false);
+    this.likes = false;
+    setUnlikesIsSet(false);
+    this.unlikes = false;
   }
 
   public boolean isRead() {
@@ -283,93 +195,54 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __READ_ISSET_ID, value);
   }
 
-  public boolean isUnintrested() {
-    return this.unintrested;
+  public boolean isLikes() {
+    return this.likes;
   }
 
-  public UserMessage setUnintrested(boolean unintrested) {
-    this.unintrested = unintrested;
-    setUnintrestedIsSet(true);
+  public UserMessage setLikes(boolean likes) {
+    this.likes = likes;
+    setLikesIsSet(true);
     return this;
   }
 
-  public void unsetUnintrested() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __UNINTRESTED_ISSET_ID);
+  public void unsetLikes() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LIKES_ISSET_ID);
   }
 
-  /** Returns true if field unintrested is set (has been assigned a value) and false otherwise */
-  public boolean isSetUnintrested() {
-    return EncodingUtils.testBit(__isset_bitfield, __UNINTRESTED_ISSET_ID);
+  /** Returns true if field likes is set (has been assigned a value) and false otherwise */
+  public boolean isSetLikes() {
+    return EncodingUtils.testBit(__isset_bitfield, __LIKES_ISSET_ID);
   }
 
-  public void setUnintrestedIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __UNINTRESTED_ISSET_ID, value);
+  public void setLikesIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LIKES_ISSET_ID, value);
   }
 
-  public boolean isLike() {
-    return this.like;
+  public boolean isUnlikes() {
+    return this.unlikes;
   }
 
-  public UserMessage setLike(boolean like) {
-    this.like = like;
-    setLikeIsSet(true);
+  public UserMessage setUnlikes(boolean unlikes) {
+    this.unlikes = unlikes;
+    setUnlikesIsSet(true);
     return this;
   }
 
-  public void unsetLike() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LIKE_ISSET_ID);
+  public void unsetUnlikes() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __UNLIKES_ISSET_ID);
   }
 
-  /** Returns true if field like is set (has been assigned a value) and false otherwise */
-  public boolean isSetLike() {
-    return EncodingUtils.testBit(__isset_bitfield, __LIKE_ISSET_ID);
+  /** Returns true if field unlikes is set (has been assigned a value) and false otherwise */
+  public boolean isSetUnlikes() {
+    return EncodingUtils.testBit(__isset_bitfield, __UNLIKES_ISSET_ID);
   }
 
-  public void setLikeIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LIKE_ISSET_ID, value);
-  }
-
-  public boolean isUnlike() {
-    return this.unlike;
-  }
-
-  public UserMessage setUnlike(boolean unlike) {
-    this.unlike = unlike;
-    setUnlikeIsSet(true);
-    return this;
-  }
-
-  public void unsetUnlike() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __UNLIKE_ISSET_ID);
-  }
-
-  /** Returns true if field unlike is set (has been assigned a value) and false otherwise */
-  public boolean isSetUnlike() {
-    return EncodingUtils.testBit(__isset_bitfield, __UNLIKE_ISSET_ID);
-  }
-
-  public void setUnlikeIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __UNLIKE_ISSET_ID, value);
+  public void setUnlikesIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __UNLIKES_ISSET_ID, value);
   }
 
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
-    case USER_ID:
-      if (value == null) {
-        unsetUserId();
-      } else {
-        setUserId((Long)value);
-      }
-      break;
-
-    case MESSAGE_ID:
-      if (value == null) {
-        unsetMessageId();
-      } else {
-        setMessageId((Long)value);
-      }
-      break;
-
     case READ:
       if (value == null) {
         unsetRead();
@@ -378,27 +251,19 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
       }
       break;
 
-    case UNINTRESTED:
+    case LIKES:
       if (value == null) {
-        unsetUnintrested();
+        unsetLikes();
       } else {
-        setUnintrested((Boolean)value);
+        setLikes((Boolean)value);
       }
       break;
 
-    case LIKE:
+    case UNLIKES:
       if (value == null) {
-        unsetLike();
+        unsetUnlikes();
       } else {
-        setLike((Boolean)value);
-      }
-      break;
-
-    case UNLIKE:
-      if (value == null) {
-        unsetUnlike();
-      } else {
-        setUnlike((Boolean)value);
+        setUnlikes((Boolean)value);
       }
       break;
 
@@ -407,23 +272,14 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
-    case USER_ID:
-      return Long.valueOf(getUserId());
-
-    case MESSAGE_ID:
-      return Long.valueOf(getMessageId());
-
     case READ:
       return Boolean.valueOf(isRead());
 
-    case UNINTRESTED:
-      return Boolean.valueOf(isUnintrested());
+    case LIKES:
+      return Boolean.valueOf(isLikes());
 
-    case LIKE:
-      return Boolean.valueOf(isLike());
-
-    case UNLIKE:
-      return Boolean.valueOf(isUnlike());
+    case UNLIKES:
+      return Boolean.valueOf(isUnlikes());
 
     }
     throw new IllegalStateException();
@@ -436,18 +292,12 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
     }
 
     switch (field) {
-    case USER_ID:
-      return isSetUserId();
-    case MESSAGE_ID:
-      return isSetMessageId();
     case READ:
       return isSetRead();
-    case UNINTRESTED:
-      return isSetUnintrested();
-    case LIKE:
-      return isSetLike();
-    case UNLIKE:
-      return isSetUnlike();
+    case LIKES:
+      return isSetLikes();
+    case UNLIKES:
+      return isSetUnlikes();
     }
     throw new IllegalStateException();
   }
@@ -465,24 +315,6 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
     if (that == null)
       return false;
 
-    boolean this_present_userId = true;
-    boolean that_present_userId = true;
-    if (this_present_userId || that_present_userId) {
-      if (!(this_present_userId && that_present_userId))
-        return false;
-      if (this.userId != that.userId)
-        return false;
-    }
-
-    boolean this_present_messageId = true;
-    boolean that_present_messageId = true;
-    if (this_present_messageId || that_present_messageId) {
-      if (!(this_present_messageId && that_present_messageId))
-        return false;
-      if (this.messageId != that.messageId)
-        return false;
-    }
-
     boolean this_present_read = true;
     boolean that_present_read = true;
     if (this_present_read || that_present_read) {
@@ -492,30 +324,21 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
         return false;
     }
 
-    boolean this_present_unintrested = true;
-    boolean that_present_unintrested = true;
-    if (this_present_unintrested || that_present_unintrested) {
-      if (!(this_present_unintrested && that_present_unintrested))
+    boolean this_present_likes = true;
+    boolean that_present_likes = true;
+    if (this_present_likes || that_present_likes) {
+      if (!(this_present_likes && that_present_likes))
         return false;
-      if (this.unintrested != that.unintrested)
-        return false;
-    }
-
-    boolean this_present_like = true;
-    boolean that_present_like = true;
-    if (this_present_like || that_present_like) {
-      if (!(this_present_like && that_present_like))
-        return false;
-      if (this.like != that.like)
+      if (this.likes != that.likes)
         return false;
     }
 
-    boolean this_present_unlike = true;
-    boolean that_present_unlike = true;
-    if (this_present_unlike || that_present_unlike) {
-      if (!(this_present_unlike && that_present_unlike))
+    boolean this_present_unlikes = true;
+    boolean that_present_unlikes = true;
+    if (this_present_unlikes || that_present_unlikes) {
+      if (!(this_present_unlikes && that_present_unlikes))
         return false;
-      if (this.unlike != that.unlike)
+      if (this.unlikes != that.unlikes)
         return false;
     }
 
@@ -535,26 +358,6 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
 
     int lastComparison = 0;
 
-    lastComparison = Boolean.valueOf(isSetUserId()).compareTo(other.isSetUserId());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetUserId()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userId, other.userId);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetMessageId()).compareTo(other.isSetMessageId());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetMessageId()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.messageId, other.messageId);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
     lastComparison = Boolean.valueOf(isSetRead()).compareTo(other.isSetRead());
     if (lastComparison != 0) {
       return lastComparison;
@@ -565,32 +368,22 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetUnintrested()).compareTo(other.isSetUnintrested());
+    lastComparison = Boolean.valueOf(isSetLikes()).compareTo(other.isSetLikes());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetUnintrested()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.unintrested, other.unintrested);
+    if (isSetLikes()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.likes, other.likes);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetLike()).compareTo(other.isSetLike());
+    lastComparison = Boolean.valueOf(isSetUnlikes()).compareTo(other.isSetUnlikes());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetLike()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.like, other.like);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetUnlike()).compareTo(other.isSetUnlike());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetUnlike()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.unlike, other.unlike);
+    if (isSetUnlikes()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.unlikes, other.unlikes);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -615,28 +408,16 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
     StringBuilder sb = new StringBuilder("UserMessage(");
     boolean first = true;
 
-    sb.append("userId:");
-    sb.append(this.userId);
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("messageId:");
-    sb.append(this.messageId);
-    first = false;
-    if (!first) sb.append(", ");
     sb.append("read:");
     sb.append(this.read);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("unintrested:");
-    sb.append(this.unintrested);
+    sb.append("likes:");
+    sb.append(this.likes);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("like:");
-    sb.append(this.like);
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("unlike:");
-    sb.append(this.unlike);
+    sb.append("unlikes:");
+    sb.append(this.unlikes);
     first = false;
     sb.append(")");
     return sb.toString();
@@ -683,23 +464,7 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
           break;
         }
         switch (schemeField.id) {
-          case 1: // USER_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-              struct.userId = iprot.readI64();
-              struct.setUserIdIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 2: // MESSAGE_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-              struct.messageId = iprot.readI64();
-              struct.setMessageIdIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 3: // READ
+          case 17: // READ
             if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
               struct.read = iprot.readBool();
               struct.setReadIsSet(true);
@@ -707,26 +472,18 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 4: // UNINTRESTED
+          case 18: // LIKES
             if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
-              struct.unintrested = iprot.readBool();
-              struct.setUnintrestedIsSet(true);
+              struct.likes = iprot.readBool();
+              struct.setLikesIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 5: // LIKE
+          case 19: // UNLIKES
             if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
-              struct.like = iprot.readBool();
-              struct.setLikeIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 6: // UNLIKE
-            if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
-              struct.unlike = iprot.readBool();
-              struct.setUnlikeIsSet(true);
+              struct.unlikes = iprot.readBool();
+              struct.setUnlikesIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -746,23 +503,14 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-      oprot.writeI64(struct.userId);
-      oprot.writeFieldEnd();
-      oprot.writeFieldBegin(MESSAGE_ID_FIELD_DESC);
-      oprot.writeI64(struct.messageId);
-      oprot.writeFieldEnd();
       oprot.writeFieldBegin(READ_FIELD_DESC);
       oprot.writeBool(struct.read);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(UNINTRESTED_FIELD_DESC);
-      oprot.writeBool(struct.unintrested);
+      oprot.writeFieldBegin(LIKES_FIELD_DESC);
+      oprot.writeBool(struct.likes);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(LIKE_FIELD_DESC);
-      oprot.writeBool(struct.like);
-      oprot.writeFieldEnd();
-      oprot.writeFieldBegin(UNLIKE_FIELD_DESC);
-      oprot.writeBool(struct.unlike);
+      oprot.writeFieldBegin(UNLIKES_FIELD_DESC);
+      oprot.writeBool(struct.unlikes);
       oprot.writeFieldEnd();
       oprot.writeFieldStop();
       oprot.writeStructEnd();
@@ -782,72 +530,42 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
     public void write(org.apache.thrift.protocol.TProtocol prot, UserMessage struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetUserId()) {
+      if (struct.isSetRead()) {
         optionals.set(0);
       }
-      if (struct.isSetMessageId()) {
+      if (struct.isSetLikes()) {
         optionals.set(1);
       }
-      if (struct.isSetRead()) {
+      if (struct.isSetUnlikes()) {
         optionals.set(2);
       }
-      if (struct.isSetUnintrested()) {
-        optionals.set(3);
-      }
-      if (struct.isSetLike()) {
-        optionals.set(4);
-      }
-      if (struct.isSetUnlike()) {
-        optionals.set(5);
-      }
-      oprot.writeBitSet(optionals, 6);
-      if (struct.isSetUserId()) {
-        oprot.writeI64(struct.userId);
-      }
-      if (struct.isSetMessageId()) {
-        oprot.writeI64(struct.messageId);
-      }
+      oprot.writeBitSet(optionals, 3);
       if (struct.isSetRead()) {
         oprot.writeBool(struct.read);
       }
-      if (struct.isSetUnintrested()) {
-        oprot.writeBool(struct.unintrested);
+      if (struct.isSetLikes()) {
+        oprot.writeBool(struct.likes);
       }
-      if (struct.isSetLike()) {
-        oprot.writeBool(struct.like);
-      }
-      if (struct.isSetUnlike()) {
-        oprot.writeBool(struct.unlike);
+      if (struct.isSetUnlikes()) {
+        oprot.writeBool(struct.unlikes);
       }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, UserMessage struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(6);
+      BitSet incoming = iprot.readBitSet(3);
       if (incoming.get(0)) {
-        struct.userId = iprot.readI64();
-        struct.setUserIdIsSet(true);
-      }
-      if (incoming.get(1)) {
-        struct.messageId = iprot.readI64();
-        struct.setMessageIdIsSet(true);
-      }
-      if (incoming.get(2)) {
         struct.read = iprot.readBool();
         struct.setReadIsSet(true);
       }
-      if (incoming.get(3)) {
-        struct.unintrested = iprot.readBool();
-        struct.setUnintrestedIsSet(true);
+      if (incoming.get(1)) {
+        struct.likes = iprot.readBool();
+        struct.setLikesIsSet(true);
       }
-      if (incoming.get(4)) {
-        struct.like = iprot.readBool();
-        struct.setLikeIsSet(true);
-      }
-      if (incoming.get(5)) {
-        struct.unlike = iprot.readBool();
-        struct.setUnlikeIsSet(true);
+      if (incoming.get(2)) {
+        struct.unlikes = iprot.readBool();
+        struct.setUnlikesIsSet(true);
       }
     }
   }

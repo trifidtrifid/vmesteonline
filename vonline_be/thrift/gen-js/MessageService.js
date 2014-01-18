@@ -8,35 +8,31 @@
 //HELPER FUNCTIONS AND STRUCTURES
 
 com.vmesteonline.be.MessageService_createMessage_args = function(args) {
-  this.topicId = null;
   this.parentId = null;
-  this.subject = null;
-  this.groupId = null;
-  this.authorId = null;
   this.type = null;
+  this.topicId = null;
   this.content = null;
+  this.linkedMessages = null;
+  this.tags = null;
   this.recipientId = null;
   if (args) {
-    if (args.topicId !== undefined) {
-      this.topicId = args.topicId;
-    }
     if (args.parentId !== undefined) {
       this.parentId = args.parentId;
-    }
-    if (args.subject !== undefined) {
-      this.subject = args.subject;
-    }
-    if (args.groupId !== undefined) {
-      this.groupId = args.groupId;
-    }
-    if (args.authorId !== undefined) {
-      this.authorId = args.authorId;
     }
     if (args.type !== undefined) {
       this.type = args.type;
     }
+    if (args.topicId !== undefined) {
+      this.topicId = args.topicId;
+    }
     if (args.content !== undefined) {
       this.content = args.content;
+    }
+    if (args.linkedMessages !== undefined) {
+      this.linkedMessages = args.linkedMessages;
+    }
+    if (args.tags !== undefined) {
+      this.tags = args.tags;
     }
     if (args.recipientId !== undefined) {
       this.recipientId = args.recipientId;
@@ -59,54 +55,91 @@ com.vmesteonline.be.MessageService_createMessage_args.prototype.read = function(
     {
       case 1:
       if (ftype == Thrift.Type.I64) {
-        this.topicId = input.readI64().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 2:
-      if (ftype == Thrift.Type.I64) {
         this.parentId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 3:
-      if (ftype == Thrift.Type.STRING) {
-        this.subject = input.readString().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 4:
-      if (ftype == Thrift.Type.I64) {
-        this.groupId = input.readI64().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 5:
-      if (ftype == Thrift.Type.I64) {
-        this.authorId = input.readI64().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 6:
+      case 2:
       if (ftype == Thrift.Type.I32) {
         this.type = input.readI32().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 7:
+      case 3:
+      if (ftype == Thrift.Type.I64) {
+        this.topicId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
       if (ftype == Thrift.Type.STRING) {
         this.content = input.readString().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 8:
+      case 5:
+      if (ftype == Thrift.Type.MAP) {
+        var _size46 = 0;
+        var _rtmp350;
+        this.linkedMessages = {};
+        var _ktype47 = 0;
+        var _vtype48 = 0;
+        _rtmp350 = input.readMapBegin();
+        _ktype47 = _rtmp350.ktype;
+        _vtype48 = _rtmp350.vtype;
+        _size46 = _rtmp350.size;
+        for (var _i51 = 0; _i51 < _size46; ++_i51)
+        {
+          if (_i51 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key52 = null;
+          var val53 = null;
+          key52 = input.readI32().value;
+          val53 = input.readI64().value;
+          this.linkedMessages[key52] = val53;
+        }
+        input.readMapEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 6:
+      if (ftype == Thrift.Type.MAP) {
+        var _size54 = 0;
+        var _rtmp358;
+        this.tags = {};
+        var _ktype55 = 0;
+        var _vtype56 = 0;
+        _rtmp358 = input.readMapBegin();
+        _ktype55 = _rtmp358.ktype;
+        _vtype56 = _rtmp358.vtype;
+        _size54 = _rtmp358.size;
+        for (var _i59 = 0; _i59 < _size54; ++_i59)
+        {
+          if (_i59 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key60 = null;
+          var val61 = null;
+          key60 = input.readI64().value;
+          val61 = input.readString().value;
+          this.tags[key60] = val61;
+        }
+        input.readMapEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 7:
       if (ftype == Thrift.Type.I64) {
         this.recipientId = input.readI64().value;
       } else {
@@ -124,43 +157,58 @@ com.vmesteonline.be.MessageService_createMessage_args.prototype.read = function(
 
 com.vmesteonline.be.MessageService_createMessage_args.prototype.write = function(output) {
   output.writeStructBegin('MessageService_createMessage_args');
-  if (this.topicId !== null && this.topicId !== undefined) {
-    output.writeFieldBegin('topicId', Thrift.Type.I64, 1);
-    output.writeI64(this.topicId);
-    output.writeFieldEnd();
-  }
   if (this.parentId !== null && this.parentId !== undefined) {
-    output.writeFieldBegin('parentId', Thrift.Type.I64, 2);
+    output.writeFieldBegin('parentId', Thrift.Type.I64, 1);
     output.writeI64(this.parentId);
     output.writeFieldEnd();
   }
-  if (this.subject !== null && this.subject !== undefined) {
-    output.writeFieldBegin('subject', Thrift.Type.STRING, 3);
-    output.writeString(this.subject);
-    output.writeFieldEnd();
-  }
-  if (this.groupId !== null && this.groupId !== undefined) {
-    output.writeFieldBegin('groupId', Thrift.Type.I64, 4);
-    output.writeI64(this.groupId);
-    output.writeFieldEnd();
-  }
-  if (this.authorId !== null && this.authorId !== undefined) {
-    output.writeFieldBegin('authorId', Thrift.Type.I64, 5);
-    output.writeI64(this.authorId);
-    output.writeFieldEnd();
-  }
   if (this.type !== null && this.type !== undefined) {
-    output.writeFieldBegin('type', Thrift.Type.I32, 6);
+    output.writeFieldBegin('type', Thrift.Type.I32, 2);
     output.writeI32(this.type);
     output.writeFieldEnd();
   }
+  if (this.topicId !== null && this.topicId !== undefined) {
+    output.writeFieldBegin('topicId', Thrift.Type.I64, 3);
+    output.writeI64(this.topicId);
+    output.writeFieldEnd();
+  }
   if (this.content !== null && this.content !== undefined) {
-    output.writeFieldBegin('content', Thrift.Type.STRING, 7);
+    output.writeFieldBegin('content', Thrift.Type.STRING, 4);
     output.writeString(this.content);
     output.writeFieldEnd();
   }
+  if (this.linkedMessages !== null && this.linkedMessages !== undefined) {
+    output.writeFieldBegin('linkedMessages', Thrift.Type.MAP, 5);
+    output.writeMapBegin(Thrift.Type.I32, Thrift.Type.I64, Thrift.objectLength(this.linkedMessages));
+    for (var kiter62 in this.linkedMessages)
+    {
+      if (this.linkedMessages.hasOwnProperty(kiter62))
+      {
+        var viter63 = this.linkedMessages[kiter62];
+        output.writeI32(kiter62);
+        output.writeI64(viter63);
+      }
+    }
+    output.writeMapEnd();
+    output.writeFieldEnd();
+  }
+  if (this.tags !== null && this.tags !== undefined) {
+    output.writeFieldBegin('tags', Thrift.Type.MAP, 6);
+    output.writeMapBegin(Thrift.Type.I64, Thrift.Type.STRING, Thrift.objectLength(this.tags));
+    for (var kiter64 in this.tags)
+    {
+      if (this.tags.hasOwnProperty(kiter64))
+      {
+        var viter65 = this.tags[kiter64];
+        output.writeI64(kiter64);
+        output.writeString(viter65);
+      }
+    }
+    output.writeMapEnd();
+    output.writeFieldEnd();
+  }
   if (this.recipientId !== null && this.recipientId !== undefined) {
-    output.writeFieldBegin('recipientId', Thrift.Type.I64, 8);
+    output.writeFieldBegin('recipientId', Thrift.Type.I64, 7);
     output.writeI64(this.recipientId);
     output.writeFieldEnd();
   }
@@ -367,34 +415,22 @@ com.vmesteonline.be.MessageService_postMessage_result.prototype.write = function
 };
 
 com.vmesteonline.be.MessageService_createTopic_args = function(args) {
-  this.rubricId = null;
   this.subject = null;
-  this.groupId = null;
-  this.authorId = null;
-  this.type = null;
-  this.content = null;
-  this.recipientId = null;
+  this.messageId = null;
+  this.rubricId = null;
+  this.communityId = null;
   if (args) {
-    if (args.rubricId !== undefined) {
-      this.rubricId = args.rubricId;
-    }
     if (args.subject !== undefined) {
       this.subject = args.subject;
     }
-    if (args.groupId !== undefined) {
-      this.groupId = args.groupId;
+    if (args.messageId !== undefined) {
+      this.messageId = args.messageId;
     }
-    if (args.authorId !== undefined) {
-      this.authorId = args.authorId;
+    if (args.rubricId !== undefined) {
+      this.rubricId = args.rubricId;
     }
-    if (args.type !== undefined) {
-      this.type = args.type;
-    }
-    if (args.content !== undefined) {
-      this.content = args.content;
-    }
-    if (args.recipientId !== undefined) {
-      this.recipientId = args.recipientId;
+    if (args.communityId !== undefined) {
+      this.communityId = args.communityId;
     }
   }
 };
@@ -413,50 +449,29 @@ com.vmesteonline.be.MessageService_createTopic_args.prototype.read = function(in
     switch (fid)
     {
       case 1:
-      if (ftype == Thrift.Type.I64) {
-        this.rubricId = input.readI64().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 3:
       if (ftype == Thrift.Type.STRING) {
         this.subject = input.readString().value;
       } else {
         input.skip(ftype);
       }
       break;
+      case 2:
+      if (ftype == Thrift.Type.I64) {
+        this.messageId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.I64) {
+        this.rubricId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
       case 4:
       if (ftype == Thrift.Type.I64) {
-        this.groupId = input.readI64().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 5:
-      if (ftype == Thrift.Type.I64) {
-        this.authorId = input.readI64().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 6:
-      if (ftype == Thrift.Type.I32) {
-        this.type = input.readI32().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 7:
-      if (ftype == Thrift.Type.STRING) {
-        this.content = input.readString().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 8:
-      if (ftype == Thrift.Type.I64) {
-        this.recipientId = input.readI64().value;
+        this.communityId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
@@ -472,39 +487,24 @@ com.vmesteonline.be.MessageService_createTopic_args.prototype.read = function(in
 
 com.vmesteonline.be.MessageService_createTopic_args.prototype.write = function(output) {
   output.writeStructBegin('MessageService_createTopic_args');
-  if (this.rubricId !== null && this.rubricId !== undefined) {
-    output.writeFieldBegin('rubricId', Thrift.Type.I64, 1);
-    output.writeI64(this.rubricId);
-    output.writeFieldEnd();
-  }
   if (this.subject !== null && this.subject !== undefined) {
-    output.writeFieldBegin('subject', Thrift.Type.STRING, 3);
+    output.writeFieldBegin('subject', Thrift.Type.STRING, 1);
     output.writeString(this.subject);
     output.writeFieldEnd();
   }
-  if (this.groupId !== null && this.groupId !== undefined) {
-    output.writeFieldBegin('groupId', Thrift.Type.I64, 4);
-    output.writeI64(this.groupId);
+  if (this.messageId !== null && this.messageId !== undefined) {
+    output.writeFieldBegin('messageId', Thrift.Type.I64, 2);
+    output.writeI64(this.messageId);
     output.writeFieldEnd();
   }
-  if (this.authorId !== null && this.authorId !== undefined) {
-    output.writeFieldBegin('authorId', Thrift.Type.I64, 5);
-    output.writeI64(this.authorId);
+  if (this.rubricId !== null && this.rubricId !== undefined) {
+    output.writeFieldBegin('rubricId', Thrift.Type.I64, 3);
+    output.writeI64(this.rubricId);
     output.writeFieldEnd();
   }
-  if (this.type !== null && this.type !== undefined) {
-    output.writeFieldBegin('type', Thrift.Type.I32, 6);
-    output.writeI32(this.type);
-    output.writeFieldEnd();
-  }
-  if (this.content !== null && this.content !== undefined) {
-    output.writeFieldBegin('content', Thrift.Type.STRING, 7);
-    output.writeString(this.content);
-    output.writeFieldEnd();
-  }
-  if (this.recipientId !== null && this.recipientId !== undefined) {
-    output.writeFieldBegin('recipientId', Thrift.Type.I64, 8);
-    output.writeI64(this.recipientId);
+  if (this.communityId !== null && this.communityId !== undefined) {
+    output.writeFieldBegin('communityId', Thrift.Type.I64, 4);
+    output.writeI64(this.communityId);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -514,17 +514,9 @@ com.vmesteonline.be.MessageService_createTopic_args.prototype.write = function(o
 
 com.vmesteonline.be.MessageService_createTopic_result = function(args) {
   this.success = null;
-  this.exc = null;
-  if (args instanceof com.vmesteonline.be.InvalidOperation) {
-    this.exc = args;
-    return;
-  }
   if (args) {
     if (args.success !== undefined) {
       this.success = args.success;
-    }
-    if (args.exc !== undefined) {
-      this.exc = args.exc;
     }
   }
 };
@@ -550,14 +542,9 @@ com.vmesteonline.be.MessageService_createTopic_result.prototype.read = function(
         input.skip(ftype);
       }
       break;
-      case 1:
-      if (ftype == Thrift.Type.STRUCT) {
-        this.exc = new com.vmesteonline.be.InvalidOperation();
-        this.exc.read(input);
-      } else {
+      case 0:
         input.skip(ftype);
-      }
-      break;
+        break;
       default:
         input.skip(ftype);
     }
@@ -574,25 +561,16 @@ com.vmesteonline.be.MessageService_createTopic_result.prototype.write = function
     this.success.write(output);
     output.writeFieldEnd();
   }
-  if (this.exc !== null && this.exc !== undefined) {
-    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
-    this.exc.write(output);
-    output.writeFieldEnd();
-  }
   output.writeFieldStop();
   output.writeStructEnd();
   return;
 };
 
 com.vmesteonline.be.MessageService_postTopic_args = function(args) {
-  this.rubricId = null;
-  this.msg = null;
+  this.topic = null;
   if (args) {
-    if (args.rubricId !== undefined) {
-      this.rubricId = args.rubricId;
-    }
-    if (args.msg !== undefined) {
-      this.msg = args.msg;
+    if (args.topic !== undefined) {
+      this.topic = args.topic;
     }
   }
 };
@@ -611,20 +589,16 @@ com.vmesteonline.be.MessageService_postTopic_args.prototype.read = function(inpu
     switch (fid)
     {
       case 1:
-      if (ftype == Thrift.Type.I64) {
-        this.rubricId = input.readI64().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 2:
       if (ftype == Thrift.Type.STRUCT) {
-        this.msg = new com.vmesteonline.be.Message();
-        this.msg.read(input);
+        this.topic = new com.vmesteonline.be.Topic();
+        this.topic.read(input);
       } else {
         input.skip(ftype);
       }
       break;
+      case 0:
+        input.skip(ftype);
+        break;
       default:
         input.skip(ftype);
     }
@@ -636,14 +610,9 @@ com.vmesteonline.be.MessageService_postTopic_args.prototype.read = function(inpu
 
 com.vmesteonline.be.MessageService_postTopic_args.prototype.write = function(output) {
   output.writeStructBegin('MessageService_postTopic_args');
-  if (this.rubricId !== null && this.rubricId !== undefined) {
-    output.writeFieldBegin('rubricId', Thrift.Type.I64, 1);
-    output.writeI64(this.rubricId);
-    output.writeFieldEnd();
-  }
-  if (this.msg !== null && this.msg !== undefined) {
-    output.writeFieldBegin('msg', Thrift.Type.STRUCT, 2);
-    this.msg.write(output);
+  if (this.topic !== null && this.topic !== undefined) {
+    output.writeFieldBegin('topic', Thrift.Type.STRUCT, 1);
+    this.topic.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -723,12 +692,6 @@ com.vmesteonline.be.MessageService_postTopic_result.prototype.write = function(o
 };
 
 com.vmesteonline.be.MessageService_checkUpdates_args = function(args) {
-  this.userId = null;
-  if (args) {
-    if (args.userId !== undefined) {
-      this.userId = args.userId;
-    }
-  }
 };
 com.vmesteonline.be.MessageService_checkUpdates_args.prototype = {};
 com.vmesteonline.be.MessageService_checkUpdates_args.prototype.read = function(input) {
@@ -742,21 +705,7 @@ com.vmesteonline.be.MessageService_checkUpdates_args.prototype.read = function(i
     if (ftype == Thrift.Type.STOP) {
       break;
     }
-    switch (fid)
-    {
-      case 1:
-      if (ftype == Thrift.Type.I64) {
-        this.userId = input.readI64().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 0:
-        input.skip(ftype);
-        break;
-      default:
-        input.skip(ftype);
-    }
+    input.skip(ftype);
     input.readFieldEnd();
   }
   input.readStructEnd();
@@ -765,11 +714,6 @@ com.vmesteonline.be.MessageService_checkUpdates_args.prototype.read = function(i
 
 com.vmesteonline.be.MessageService_checkUpdates_args.prototype.write = function(output) {
   output.writeStructBegin('MessageService_checkUpdates_args');
-  if (this.userId !== null && this.userId !== undefined) {
-    output.writeFieldBegin('userId', Thrift.Type.I64, 1);
-    output.writeI64(this.userId);
-    output.writeFieldEnd();
-  }
   output.writeFieldStop();
   output.writeStructEnd();
   return;
@@ -847,12 +791,6 @@ com.vmesteonline.be.MessageService_checkUpdates_result.prototype.write = functio
 };
 
 com.vmesteonline.be.MessageService_getUpdates_args = function(args) {
-  this.userId = null;
-  if (args) {
-    if (args.userId !== undefined) {
-      this.userId = args.userId;
-    }
-  }
 };
 com.vmesteonline.be.MessageService_getUpdates_args.prototype = {};
 com.vmesteonline.be.MessageService_getUpdates_args.prototype.read = function(input) {
@@ -866,21 +804,7 @@ com.vmesteonline.be.MessageService_getUpdates_args.prototype.read = function(inp
     if (ftype == Thrift.Type.STOP) {
       break;
     }
-    switch (fid)
-    {
-      case 1:
-      if (ftype == Thrift.Type.I64) {
-        this.userId = input.readI64().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 0:
-        input.skip(ftype);
-        break;
-      default:
-        input.skip(ftype);
-    }
+    input.skip(ftype);
     input.readFieldEnd();
   }
   input.readStructEnd();
@@ -889,11 +813,6 @@ com.vmesteonline.be.MessageService_getUpdates_args.prototype.read = function(inp
 
 com.vmesteonline.be.MessageService_getUpdates_args.prototype.write = function(output) {
   output.writeStructBegin('MessageService_getUpdates_args');
-  if (this.userId !== null && this.userId !== undefined) {
-    output.writeFieldBegin('userId', Thrift.Type.I64, 1);
-    output.writeI64(this.userId);
-    output.writeFieldEnd();
-  }
   output.writeFieldStop();
   output.writeStructEnd();
   return;
@@ -974,8 +893,8 @@ com.vmesteonline.be.MessageService_getUpdates_result.prototype.write = function(
 com.vmesteonline.be.MessageService_getTopics_args = function(args) {
   this.groupId = null;
   this.rubricId = null;
-  this.userId = null;
   this.messageType = null;
+  this.commmunityId = null;
   this.offset = null;
   this.length = null;
   if (args) {
@@ -985,11 +904,11 @@ com.vmesteonline.be.MessageService_getTopics_args = function(args) {
     if (args.rubricId !== undefined) {
       this.rubricId = args.rubricId;
     }
-    if (args.userId !== undefined) {
-      this.userId = args.userId;
-    }
     if (args.messageType !== undefined) {
       this.messageType = args.messageType;
+    }
+    if (args.commmunityId !== undefined) {
+      this.commmunityId = args.commmunityId;
     }
     if (args.offset !== undefined) {
       this.offset = args.offset;
@@ -1028,15 +947,15 @@ com.vmesteonline.be.MessageService_getTopics_args.prototype.read = function(inpu
       }
       break;
       case 3:
-      if (ftype == Thrift.Type.I64) {
-        this.userId = input.readI64().value;
+      if (ftype == Thrift.Type.I32) {
+        this.messageType = input.readI32().value;
       } else {
         input.skip(ftype);
       }
       break;
       case 4:
       if (ftype == Thrift.Type.I32) {
-        this.messageType = input.readI32().value;
+        this.commmunityId = input.readI32().value;
       } else {
         input.skip(ftype);
       }
@@ -1076,14 +995,14 @@ com.vmesteonline.be.MessageService_getTopics_args.prototype.write = function(out
     output.writeI64(this.rubricId);
     output.writeFieldEnd();
   }
-  if (this.userId !== null && this.userId !== undefined) {
-    output.writeFieldBegin('userId', Thrift.Type.I64, 3);
-    output.writeI64(this.userId);
+  if (this.messageType !== null && this.messageType !== undefined) {
+    output.writeFieldBegin('messageType', Thrift.Type.I32, 3);
+    output.writeI32(this.messageType);
     output.writeFieldEnd();
   }
-  if (this.messageType !== null && this.messageType !== undefined) {
-    output.writeFieldBegin('messageType', Thrift.Type.I32, 4);
-    output.writeI32(this.messageType);
+  if (this.commmunityId !== null && this.commmunityId !== undefined) {
+    output.writeFieldBegin('commmunityId', Thrift.Type.I32, 4);
+    output.writeI32(this.commmunityId);
     output.writeFieldEnd();
   }
   if (this.offset !== null && this.offset !== undefined) {
@@ -1176,8 +1095,8 @@ com.vmesteonline.be.MessageService_getTopics_result.prototype.write = function(o
 com.vmesteonline.be.MessageService_getMessages_args = function(args) {
   this.groupId = null;
   this.rubricId = null;
-  this.userId = null;
   this.messageType = null;
+  this.commmunityId = null;
   this.offset = null;
   this.length = null;
   if (args) {
@@ -1187,11 +1106,11 @@ com.vmesteonline.be.MessageService_getMessages_args = function(args) {
     if (args.rubricId !== undefined) {
       this.rubricId = args.rubricId;
     }
-    if (args.userId !== undefined) {
-      this.userId = args.userId;
-    }
     if (args.messageType !== undefined) {
       this.messageType = args.messageType;
+    }
+    if (args.commmunityId !== undefined) {
+      this.commmunityId = args.commmunityId;
     }
     if (args.offset !== undefined) {
       this.offset = args.offset;
@@ -1230,15 +1149,15 @@ com.vmesteonline.be.MessageService_getMessages_args.prototype.read = function(in
       }
       break;
       case 3:
-      if (ftype == Thrift.Type.I64) {
-        this.userId = input.readI64().value;
+      if (ftype == Thrift.Type.I32) {
+        this.messageType = input.readI32().value;
       } else {
         input.skip(ftype);
       }
       break;
       case 4:
       if (ftype == Thrift.Type.I32) {
-        this.messageType = input.readI32().value;
+        this.commmunityId = input.readI32().value;
       } else {
         input.skip(ftype);
       }
@@ -1278,14 +1197,14 @@ com.vmesteonline.be.MessageService_getMessages_args.prototype.write = function(o
     output.writeI64(this.rubricId);
     output.writeFieldEnd();
   }
-  if (this.userId !== null && this.userId !== undefined) {
-    output.writeFieldBegin('userId', Thrift.Type.I64, 3);
-    output.writeI64(this.userId);
+  if (this.messageType !== null && this.messageType !== undefined) {
+    output.writeFieldBegin('messageType', Thrift.Type.I32, 3);
+    output.writeI32(this.messageType);
     output.writeFieldEnd();
   }
-  if (this.messageType !== null && this.messageType !== undefined) {
-    output.writeFieldBegin('messageType', Thrift.Type.I32, 4);
-    output.writeI32(this.messageType);
+  if (this.commmunityId !== null && this.commmunityId !== undefined) {
+    output.writeFieldBegin('commmunityId', Thrift.Type.I32, 4);
+    output.writeI32(this.commmunityId);
     output.writeFieldEnd();
   }
   if (this.offset !== null && this.offset !== undefined) {
@@ -1655,21 +1574,20 @@ com.vmesteonline.be.MessageServiceClient = function(input, output) {
     this.seqid = 0;
 };
 com.vmesteonline.be.MessageServiceClient.prototype = {};
-com.vmesteonline.be.MessageServiceClient.prototype.createMessage = function(topicId, parentId, subject, groupId, authorId, type, content, recipientId) {
-  this.send_createMessage(topicId, parentId, subject, groupId, authorId, type, content, recipientId);
+com.vmesteonline.be.MessageServiceClient.prototype.createMessage = function(parentId, type, topicId, content, linkedMessages, tags, recipientId) {
+  this.send_createMessage(parentId, type, topicId, content, linkedMessages, tags, recipientId);
   return this.recv_createMessage();
 };
 
-com.vmesteonline.be.MessageServiceClient.prototype.send_createMessage = function(topicId, parentId, subject, groupId, authorId, type, content, recipientId) {
+com.vmesteonline.be.MessageServiceClient.prototype.send_createMessage = function(parentId, type, topicId, content, linkedMessages, tags, recipientId) {
   this.output.writeMessageBegin('createMessage', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.MessageService_createMessage_args();
-  args.topicId = topicId;
   args.parentId = parentId;
-  args.subject = subject;
-  args.groupId = groupId;
-  args.authorId = authorId;
   args.type = type;
+  args.topicId = topicId;
   args.content = content;
+  args.linkedMessages = linkedMessages;
+  args.tags = tags;
   args.recipientId = recipientId;
   args.write(this.output);
   this.output.writeMessageEnd();
@@ -1736,21 +1654,18 @@ com.vmesteonline.be.MessageServiceClient.prototype.recv_postMessage = function()
   }
   throw 'postMessage failed: unknown result';
 };
-com.vmesteonline.be.MessageServiceClient.prototype.createTopic = function(rubricId, subject, groupId, authorId, type, content, recipientId) {
-  this.send_createTopic(rubricId, subject, groupId, authorId, type, content, recipientId);
+com.vmesteonline.be.MessageServiceClient.prototype.createTopic = function(subject, messageId, rubricId, communityId) {
+  this.send_createTopic(subject, messageId, rubricId, communityId);
   return this.recv_createTopic();
 };
 
-com.vmesteonline.be.MessageServiceClient.prototype.send_createTopic = function(rubricId, subject, groupId, authorId, type, content, recipientId) {
+com.vmesteonline.be.MessageServiceClient.prototype.send_createTopic = function(subject, messageId, rubricId, communityId) {
   this.output.writeMessageBegin('createTopic', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.MessageService_createTopic_args();
-  args.rubricId = rubricId;
   args.subject = subject;
-  args.groupId = groupId;
-  args.authorId = authorId;
-  args.type = type;
-  args.content = content;
-  args.recipientId = recipientId;
+  args.messageId = messageId;
+  args.rubricId = rubricId;
+  args.communityId = communityId;
   args.write(this.output);
   this.output.writeMessageEnd();
   return this.output.getTransport().flush();
@@ -1771,24 +1686,20 @@ com.vmesteonline.be.MessageServiceClient.prototype.recv_createTopic = function()
   result.read(this.input);
   this.input.readMessageEnd();
 
-  if (null !== result.exc) {
-    throw result.exc;
-  }
   if (null !== result.success) {
     return result.success;
   }
   throw 'createTopic failed: unknown result';
 };
-com.vmesteonline.be.MessageServiceClient.prototype.postTopic = function(rubricId, msg) {
-  this.send_postTopic(rubricId, msg);
+com.vmesteonline.be.MessageServiceClient.prototype.postTopic = function(topic) {
+  this.send_postTopic(topic);
   return this.recv_postTopic();
 };
 
-com.vmesteonline.be.MessageServiceClient.prototype.send_postTopic = function(rubricId, msg) {
+com.vmesteonline.be.MessageServiceClient.prototype.send_postTopic = function(topic) {
   this.output.writeMessageBegin('postTopic', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.MessageService_postTopic_args();
-  args.rubricId = rubricId;
-  args.msg = msg;
+  args.topic = topic;
   args.write(this.output);
   this.output.writeMessageEnd();
   return this.output.getTransport().flush();
@@ -1817,15 +1728,14 @@ com.vmesteonline.be.MessageServiceClient.prototype.recv_postTopic = function() {
   }
   throw 'postTopic failed: unknown result';
 };
-com.vmesteonline.be.MessageServiceClient.prototype.checkUpdates = function(userId) {
-  this.send_checkUpdates(userId);
+com.vmesteonline.be.MessageServiceClient.prototype.checkUpdates = function() {
+  this.send_checkUpdates();
   return this.recv_checkUpdates();
 };
 
-com.vmesteonline.be.MessageServiceClient.prototype.send_checkUpdates = function(userId) {
+com.vmesteonline.be.MessageServiceClient.prototype.send_checkUpdates = function() {
   this.output.writeMessageBegin('checkUpdates', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.MessageService_checkUpdates_args();
-  args.userId = userId;
   args.write(this.output);
   this.output.writeMessageEnd();
   return this.output.getTransport().flush();
@@ -1854,15 +1764,14 @@ com.vmesteonline.be.MessageServiceClient.prototype.recv_checkUpdates = function(
   }
   throw 'checkUpdates failed: unknown result';
 };
-com.vmesteonline.be.MessageServiceClient.prototype.getUpdates = function(userId) {
-  this.send_getUpdates(userId);
+com.vmesteonline.be.MessageServiceClient.prototype.getUpdates = function() {
+  this.send_getUpdates();
   return this.recv_getUpdates();
 };
 
-com.vmesteonline.be.MessageServiceClient.prototype.send_getUpdates = function(userId) {
+com.vmesteonline.be.MessageServiceClient.prototype.send_getUpdates = function() {
   this.output.writeMessageBegin('getUpdates', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.MessageService_getUpdates_args();
-  args.userId = userId;
   args.write(this.output);
   this.output.writeMessageEnd();
   return this.output.getTransport().flush();
@@ -1891,18 +1800,18 @@ com.vmesteonline.be.MessageServiceClient.prototype.recv_getUpdates = function() 
   }
   throw 'getUpdates failed: unknown result';
 };
-com.vmesteonline.be.MessageServiceClient.prototype.getTopics = function(groupId, rubricId, userId, messageType, offset, length) {
-  this.send_getTopics(groupId, rubricId, userId, messageType, offset, length);
+com.vmesteonline.be.MessageServiceClient.prototype.getTopics = function(groupId, rubricId, messageType, commmunityId, offset, length) {
+  this.send_getTopics(groupId, rubricId, messageType, commmunityId, offset, length);
   return this.recv_getTopics();
 };
 
-com.vmesteonline.be.MessageServiceClient.prototype.send_getTopics = function(groupId, rubricId, userId, messageType, offset, length) {
+com.vmesteonline.be.MessageServiceClient.prototype.send_getTopics = function(groupId, rubricId, messageType, commmunityId, offset, length) {
   this.output.writeMessageBegin('getTopics', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.MessageService_getTopics_args();
   args.groupId = groupId;
   args.rubricId = rubricId;
-  args.userId = userId;
   args.messageType = messageType;
+  args.commmunityId = commmunityId;
   args.offset = offset;
   args.length = length;
   args.write(this.output);
@@ -1933,18 +1842,18 @@ com.vmesteonline.be.MessageServiceClient.prototype.recv_getTopics = function() {
   }
   throw 'getTopics failed: unknown result';
 };
-com.vmesteonline.be.MessageServiceClient.prototype.getMessages = function(groupId, rubricId, userId, messageType, offset, length) {
-  this.send_getMessages(groupId, rubricId, userId, messageType, offset, length);
+com.vmesteonline.be.MessageServiceClient.prototype.getMessages = function(groupId, rubricId, messageType, commmunityId, offset, length) {
+  this.send_getMessages(groupId, rubricId, messageType, commmunityId, offset, length);
   return this.recv_getMessages();
 };
 
-com.vmesteonline.be.MessageServiceClient.prototype.send_getMessages = function(groupId, rubricId, userId, messageType, offset, length) {
+com.vmesteonline.be.MessageServiceClient.prototype.send_getMessages = function(groupId, rubricId, messageType, commmunityId, offset, length) {
   this.output.writeMessageBegin('getMessages', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.MessageService_getMessages_args();
   args.groupId = groupId;
   args.rubricId = rubricId;
-  args.userId = userId;
   args.messageType = messageType;
+  args.commmunityId = commmunityId;
   args.offset = offset;
   args.length = length;
   args.write(this.output);

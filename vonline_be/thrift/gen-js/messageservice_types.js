@@ -14,6 +14,953 @@ if (typeof com.vmesteonline === 'undefined') {
 if (typeof com.vmesteonline.be === 'undefined') {
   com.vmesteonline.be = {};
 }
+com.vmesteonline.be.MessageType = {
+'BASE' : 1,
+'DIALOG' : 2,
+'SHOP' : 3,
+'NEWS' : 4
+};
+com.vmesteonline.be.MessageLink = function(args) {
+  this.linkType = null;
+  this.linkedId = null;
+  if (args) {
+    if (args.linkType !== undefined) {
+      this.linkType = args.linkType;
+    }
+    if (args.linkedId !== undefined) {
+      this.linkedId = args.linkedId;
+    }
+  }
+};
+com.vmesteonline.be.MessageLink.prototype = {};
+com.vmesteonline.be.MessageLink.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I32) {
+        this.linkType = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.I64) {
+        this.linkedId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.MessageLink.prototype.write = function(output) {
+  output.writeStructBegin('MessageLink');
+  if (this.linkType !== null && this.linkType !== undefined) {
+    output.writeFieldBegin('linkType', Thrift.Type.I32, 1);
+    output.writeI32(this.linkType);
+    output.writeFieldEnd();
+  }
+  if (this.linkedId !== null && this.linkedId !== undefined) {
+    output.writeFieldBegin('linkedId', Thrift.Type.I64, 2);
+    output.writeI64(this.linkedId);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.UserMessage = function(args) {
+  this.read = null;
+  this.likes = null;
+  this.unlikes = null;
+  if (args) {
+    if (args.read !== undefined) {
+      this.read = args.read;
+    }
+    if (args.likes !== undefined) {
+      this.likes = args.likes;
+    }
+    if (args.unlikes !== undefined) {
+      this.unlikes = args.unlikes;
+    }
+  }
+};
+com.vmesteonline.be.UserMessage.prototype = {};
+com.vmesteonline.be.UserMessage.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 17:
+      if (ftype == Thrift.Type.BOOL) {
+        this.read = input.readBool().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 18:
+      if (ftype == Thrift.Type.BOOL) {
+        this.likes = input.readBool().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 19:
+      if (ftype == Thrift.Type.BOOL) {
+        this.unlikes = input.readBool().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.UserMessage.prototype.write = function(output) {
+  output.writeStructBegin('UserMessage');
+  if (this.read !== null && this.read !== undefined) {
+    output.writeFieldBegin('read', Thrift.Type.BOOL, 17);
+    output.writeBool(this.read);
+    output.writeFieldEnd();
+  }
+  if (this.likes !== null && this.likes !== undefined) {
+    output.writeFieldBegin('likes', Thrift.Type.BOOL, 18);
+    output.writeBool(this.likes);
+    output.writeFieldEnd();
+  }
+  if (this.unlikes !== null && this.unlikes !== undefined) {
+    output.writeFieldBegin('unlikes', Thrift.Type.BOOL, 19);
+    output.writeBool(this.unlikes);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.Message = function(args) {
+  this.id = null;
+  this.parentId = null;
+  this.type = null;
+  this.topicId = null;
+  this.authorId = null;
+  this.recipientId = null;
+  this.created = null;
+  this.edited = null;
+  this.approvedBy = null;
+  this.content = null;
+  this.likesNum = null;
+  this.unlikesNum = null;
+  this.linkedMessages = null;
+  this.tags = null;
+  if (args) {
+    if (args.id !== undefined) {
+      this.id = args.id;
+    }
+    if (args.parentId !== undefined) {
+      this.parentId = args.parentId;
+    }
+    if (args.type !== undefined) {
+      this.type = args.type;
+    }
+    if (args.topicId !== undefined) {
+      this.topicId = args.topicId;
+    }
+    if (args.authorId !== undefined) {
+      this.authorId = args.authorId;
+    }
+    if (args.recipientId !== undefined) {
+      this.recipientId = args.recipientId;
+    }
+    if (args.created !== undefined) {
+      this.created = args.created;
+    }
+    if (args.edited !== undefined) {
+      this.edited = args.edited;
+    }
+    if (args.approvedBy !== undefined) {
+      this.approvedBy = args.approvedBy;
+    }
+    if (args.content !== undefined) {
+      this.content = args.content;
+    }
+    if (args.likesNum !== undefined) {
+      this.likesNum = args.likesNum;
+    }
+    if (args.unlikesNum !== undefined) {
+      this.unlikesNum = args.unlikesNum;
+    }
+    if (args.linkedMessages !== undefined) {
+      this.linkedMessages = args.linkedMessages;
+    }
+    if (args.tags !== undefined) {
+      this.tags = args.tags;
+    }
+  }
+};
+com.vmesteonline.be.Message.prototype = {};
+com.vmesteonline.be.Message.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I64) {
+        this.id = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.I64) {
+        this.parentId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.I32) {
+        this.type = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.I64) {
+        this.topicId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 5:
+      if (ftype == Thrift.Type.I64) {
+        this.authorId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 6:
+      if (ftype == Thrift.Type.I64) {
+        this.recipientId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 7:
+      if (ftype == Thrift.Type.I32) {
+        this.created = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 8:
+      if (ftype == Thrift.Type.I32) {
+        this.edited = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 9:
+      if (ftype == Thrift.Type.I64) {
+        this.approvedBy = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 10:
+      if (ftype == Thrift.Type.STRING) {
+        this.content = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 11:
+      if (ftype == Thrift.Type.I32) {
+        this.likesNum = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 12:
+      if (ftype == Thrift.Type.I32) {
+        this.unlikesNum = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 13:
+      if (ftype == Thrift.Type.MAP) {
+        var _size0 = 0;
+        var _rtmp34;
+        this.linkedMessages = {};
+        var _ktype1 = 0;
+        var _vtype2 = 0;
+        _rtmp34 = input.readMapBegin();
+        _ktype1 = _rtmp34.ktype;
+        _vtype2 = _rtmp34.vtype;
+        _size0 = _rtmp34.size;
+        for (var _i5 = 0; _i5 < _size0; ++_i5)
+        {
+          if (_i5 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key6 = null;
+          var val7 = null;
+          key6 = input.readI32().value;
+          val7 = input.readI64().value;
+          this.linkedMessages[key6] = val7;
+        }
+        input.readMapEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 14:
+      if (ftype == Thrift.Type.MAP) {
+        var _size8 = 0;
+        var _rtmp312;
+        this.tags = {};
+        var _ktype9 = 0;
+        var _vtype10 = 0;
+        _rtmp312 = input.readMapBegin();
+        _ktype9 = _rtmp312.ktype;
+        _vtype10 = _rtmp312.vtype;
+        _size8 = _rtmp312.size;
+        for (var _i13 = 0; _i13 < _size8; ++_i13)
+        {
+          if (_i13 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key14 = null;
+          var val15 = null;
+          key14 = input.readI64().value;
+          val15 = input.readString().value;
+          this.tags[key14] = val15;
+        }
+        input.readMapEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.Message.prototype.write = function(output) {
+  output.writeStructBegin('Message');
+  if (this.id !== null && this.id !== undefined) {
+    output.writeFieldBegin('id', Thrift.Type.I64, 1);
+    output.writeI64(this.id);
+    output.writeFieldEnd();
+  }
+  if (this.parentId !== null && this.parentId !== undefined) {
+    output.writeFieldBegin('parentId', Thrift.Type.I64, 2);
+    output.writeI64(this.parentId);
+    output.writeFieldEnd();
+  }
+  if (this.type !== null && this.type !== undefined) {
+    output.writeFieldBegin('type', Thrift.Type.I32, 3);
+    output.writeI32(this.type);
+    output.writeFieldEnd();
+  }
+  if (this.topicId !== null && this.topicId !== undefined) {
+    output.writeFieldBegin('topicId', Thrift.Type.I64, 4);
+    output.writeI64(this.topicId);
+    output.writeFieldEnd();
+  }
+  if (this.authorId !== null && this.authorId !== undefined) {
+    output.writeFieldBegin('authorId', Thrift.Type.I64, 5);
+    output.writeI64(this.authorId);
+    output.writeFieldEnd();
+  }
+  if (this.recipientId !== null && this.recipientId !== undefined) {
+    output.writeFieldBegin('recipientId', Thrift.Type.I64, 6);
+    output.writeI64(this.recipientId);
+    output.writeFieldEnd();
+  }
+  if (this.created !== null && this.created !== undefined) {
+    output.writeFieldBegin('created', Thrift.Type.I32, 7);
+    output.writeI32(this.created);
+    output.writeFieldEnd();
+  }
+  if (this.edited !== null && this.edited !== undefined) {
+    output.writeFieldBegin('edited', Thrift.Type.I32, 8);
+    output.writeI32(this.edited);
+    output.writeFieldEnd();
+  }
+  if (this.approvedBy !== null && this.approvedBy !== undefined) {
+    output.writeFieldBegin('approvedBy', Thrift.Type.I64, 9);
+    output.writeI64(this.approvedBy);
+    output.writeFieldEnd();
+  }
+  if (this.content !== null && this.content !== undefined) {
+    output.writeFieldBegin('content', Thrift.Type.STRING, 10);
+    output.writeString(this.content);
+    output.writeFieldEnd();
+  }
+  if (this.likesNum !== null && this.likesNum !== undefined) {
+    output.writeFieldBegin('likesNum', Thrift.Type.I32, 11);
+    output.writeI32(this.likesNum);
+    output.writeFieldEnd();
+  }
+  if (this.unlikesNum !== null && this.unlikesNum !== undefined) {
+    output.writeFieldBegin('unlikesNum', Thrift.Type.I32, 12);
+    output.writeI32(this.unlikesNum);
+    output.writeFieldEnd();
+  }
+  if (this.linkedMessages !== null && this.linkedMessages !== undefined) {
+    output.writeFieldBegin('linkedMessages', Thrift.Type.MAP, 13);
+    output.writeMapBegin(Thrift.Type.I32, Thrift.Type.I64, Thrift.objectLength(this.linkedMessages));
+    for (var kiter16 in this.linkedMessages)
+    {
+      if (this.linkedMessages.hasOwnProperty(kiter16))
+      {
+        var viter17 = this.linkedMessages[kiter16];
+        output.writeI32(kiter16);
+        output.writeI64(viter17);
+      }
+    }
+    output.writeMapEnd();
+    output.writeFieldEnd();
+  }
+  if (this.tags !== null && this.tags !== undefined) {
+    output.writeFieldBegin('tags', Thrift.Type.MAP, 14);
+    output.writeMapBegin(Thrift.Type.I64, Thrift.Type.STRING, Thrift.objectLength(this.tags));
+    for (var kiter18 in this.tags)
+    {
+      if (this.tags.hasOwnProperty(kiter18))
+      {
+        var viter19 = this.tags[kiter18];
+        output.writeI64(kiter18);
+        output.writeString(viter19);
+      }
+    }
+    output.writeMapEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.UserTopic = function(args) {
+  this.archieved = null;
+  this.unlikes = null;
+  this.likes = null;
+  this.notIntrested = null;
+  this.lastReadMessageId = null;
+  this.lastWroteMeessgeId = null;
+  if (args) {
+    if (args.archieved !== undefined) {
+      this.archieved = args.archieved;
+    }
+    if (args.unlikes !== undefined) {
+      this.unlikes = args.unlikes;
+    }
+    if (args.likes !== undefined) {
+      this.likes = args.likes;
+    }
+    if (args.notIntrested !== undefined) {
+      this.notIntrested = args.notIntrested;
+    }
+    if (args.lastReadMessageId !== undefined) {
+      this.lastReadMessageId = args.lastReadMessageId;
+    }
+    if (args.lastWroteMeessgeId !== undefined) {
+      this.lastWroteMeessgeId = args.lastWroteMeessgeId;
+    }
+  }
+};
+com.vmesteonline.be.UserTopic.prototype = {};
+com.vmesteonline.be.UserTopic.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.BOOL) {
+        this.archieved = input.readBool().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.BOOL) {
+        this.unlikes = input.readBool().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.BOOL) {
+        this.likes = input.readBool().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.BOOL) {
+        this.notIntrested = input.readBool().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 5:
+      if (ftype == Thrift.Type.I64) {
+        this.lastReadMessageId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 6:
+      if (ftype == Thrift.Type.I64) {
+        this.lastWroteMeessgeId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.UserTopic.prototype.write = function(output) {
+  output.writeStructBegin('UserTopic');
+  if (this.archieved !== null && this.archieved !== undefined) {
+    output.writeFieldBegin('archieved', Thrift.Type.BOOL, 1);
+    output.writeBool(this.archieved);
+    output.writeFieldEnd();
+  }
+  if (this.unlikes !== null && this.unlikes !== undefined) {
+    output.writeFieldBegin('unlikes', Thrift.Type.BOOL, 2);
+    output.writeBool(this.unlikes);
+    output.writeFieldEnd();
+  }
+  if (this.likes !== null && this.likes !== undefined) {
+    output.writeFieldBegin('likes', Thrift.Type.BOOL, 3);
+    output.writeBool(this.likes);
+    output.writeFieldEnd();
+  }
+  if (this.notIntrested !== null && this.notIntrested !== undefined) {
+    output.writeFieldBegin('notIntrested', Thrift.Type.BOOL, 4);
+    output.writeBool(this.notIntrested);
+    output.writeFieldEnd();
+  }
+  if (this.lastReadMessageId !== null && this.lastReadMessageId !== undefined) {
+    output.writeFieldBegin('lastReadMessageId', Thrift.Type.I64, 5);
+    output.writeI64(this.lastReadMessageId);
+    output.writeFieldEnd();
+  }
+  if (this.lastWroteMeessgeId !== null && this.lastWroteMeessgeId !== undefined) {
+    output.writeFieldBegin('lastWroteMeessgeId', Thrift.Type.I64, 6);
+    output.writeI64(this.lastWroteMeessgeId);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.Topic = function(args) {
+  this.id = null;
+  this.subject = null;
+  this.messageId = null;
+  this.messageNum = null;
+  this.viewers = null;
+  this.usersNum = null;
+  this.lastUpdate = null;
+  this.likesNum = null;
+  this.unlikesNum = null;
+  this.rubricId = null;
+  this.communityId = null;
+  this.usertTopic = null;
+  if (args) {
+    if (args.id !== undefined) {
+      this.id = args.id;
+    }
+    if (args.subject !== undefined) {
+      this.subject = args.subject;
+    }
+    if (args.messageId !== undefined) {
+      this.messageId = args.messageId;
+    }
+    if (args.messageNum !== undefined) {
+      this.messageNum = args.messageNum;
+    }
+    if (args.viewers !== undefined) {
+      this.viewers = args.viewers;
+    }
+    if (args.usersNum !== undefined) {
+      this.usersNum = args.usersNum;
+    }
+    if (args.lastUpdate !== undefined) {
+      this.lastUpdate = args.lastUpdate;
+    }
+    if (args.likesNum !== undefined) {
+      this.likesNum = args.likesNum;
+    }
+    if (args.unlikesNum !== undefined) {
+      this.unlikesNum = args.unlikesNum;
+    }
+    if (args.rubricId !== undefined) {
+      this.rubricId = args.rubricId;
+    }
+    if (args.communityId !== undefined) {
+      this.communityId = args.communityId;
+    }
+    if (args.usertTopic !== undefined) {
+      this.usertTopic = args.usertTopic;
+    }
+  }
+};
+com.vmesteonline.be.Topic.prototype = {};
+com.vmesteonline.be.Topic.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I64) {
+        this.id = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRING) {
+        this.subject = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.I64) {
+        this.messageId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.I32) {
+        this.messageNum = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 5:
+      if (ftype == Thrift.Type.I32) {
+        this.viewers = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 6:
+      if (ftype == Thrift.Type.I32) {
+        this.usersNum = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 7:
+      if (ftype == Thrift.Type.I32) {
+        this.lastUpdate = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 8:
+      if (ftype == Thrift.Type.I32) {
+        this.likesNum = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 9:
+      if (ftype == Thrift.Type.I32) {
+        this.unlikesNum = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 10:
+      if (ftype == Thrift.Type.I64) {
+        this.rubricId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 11:
+      if (ftype == Thrift.Type.I64) {
+        this.communityId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 12:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.usertTopic = new com.vmesteonline.be.UserTopic();
+        this.usertTopic.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.Topic.prototype.write = function(output) {
+  output.writeStructBegin('Topic');
+  if (this.id !== null && this.id !== undefined) {
+    output.writeFieldBegin('id', Thrift.Type.I64, 1);
+    output.writeI64(this.id);
+    output.writeFieldEnd();
+  }
+  if (this.subject !== null && this.subject !== undefined) {
+    output.writeFieldBegin('subject', Thrift.Type.STRING, 2);
+    output.writeString(this.subject);
+    output.writeFieldEnd();
+  }
+  if (this.messageId !== null && this.messageId !== undefined) {
+    output.writeFieldBegin('messageId', Thrift.Type.I64, 3);
+    output.writeI64(this.messageId);
+    output.writeFieldEnd();
+  }
+  if (this.messageNum !== null && this.messageNum !== undefined) {
+    output.writeFieldBegin('messageNum', Thrift.Type.I32, 4);
+    output.writeI32(this.messageNum);
+    output.writeFieldEnd();
+  }
+  if (this.viewers !== null && this.viewers !== undefined) {
+    output.writeFieldBegin('viewers', Thrift.Type.I32, 5);
+    output.writeI32(this.viewers);
+    output.writeFieldEnd();
+  }
+  if (this.usersNum !== null && this.usersNum !== undefined) {
+    output.writeFieldBegin('usersNum', Thrift.Type.I32, 6);
+    output.writeI32(this.usersNum);
+    output.writeFieldEnd();
+  }
+  if (this.lastUpdate !== null && this.lastUpdate !== undefined) {
+    output.writeFieldBegin('lastUpdate', Thrift.Type.I32, 7);
+    output.writeI32(this.lastUpdate);
+    output.writeFieldEnd();
+  }
+  if (this.likesNum !== null && this.likesNum !== undefined) {
+    output.writeFieldBegin('likesNum', Thrift.Type.I32, 8);
+    output.writeI32(this.likesNum);
+    output.writeFieldEnd();
+  }
+  if (this.unlikesNum !== null && this.unlikesNum !== undefined) {
+    output.writeFieldBegin('unlikesNum', Thrift.Type.I32, 9);
+    output.writeI32(this.unlikesNum);
+    output.writeFieldEnd();
+  }
+  if (this.rubricId !== null && this.rubricId !== undefined) {
+    output.writeFieldBegin('rubricId', Thrift.Type.I64, 10);
+    output.writeI64(this.rubricId);
+    output.writeFieldEnd();
+  }
+  if (this.communityId !== null && this.communityId !== undefined) {
+    output.writeFieldBegin('communityId', Thrift.Type.I64, 11);
+    output.writeI64(this.communityId);
+    output.writeFieldEnd();
+  }
+  if (this.usertTopic !== null && this.usertTopic !== undefined) {
+    output.writeFieldBegin('usertTopic', Thrift.Type.STRUCT, 12);
+    this.usertTopic.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.Rubric = function(args) {
+  this.id = null;
+  this.name = null;
+  this.description = null;
+  this.topicsNum = null;
+  this.messagesNum = null;
+  if (args) {
+    if (args.id !== undefined) {
+      this.id = args.id;
+    }
+    if (args.name !== undefined) {
+      this.name = args.name;
+    }
+    if (args.description !== undefined) {
+      this.description = args.description;
+    }
+    if (args.topicsNum !== undefined) {
+      this.topicsNum = args.topicsNum;
+    }
+    if (args.messagesNum !== undefined) {
+      this.messagesNum = args.messagesNum;
+    }
+  }
+};
+com.vmesteonline.be.Rubric.prototype = {};
+com.vmesteonline.be.Rubric.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I64) {
+        this.id = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRING) {
+        this.name = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.STRING) {
+        this.description = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.I32) {
+        this.topicsNum = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 5:
+      if (ftype == Thrift.Type.I32) {
+        this.messagesNum = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.Rubric.prototype.write = function(output) {
+  output.writeStructBegin('Rubric');
+  if (this.id !== null && this.id !== undefined) {
+    output.writeFieldBegin('id', Thrift.Type.I64, 1);
+    output.writeI64(this.id);
+    output.writeFieldEnd();
+  }
+  if (this.name !== null && this.name !== undefined) {
+    output.writeFieldBegin('name', Thrift.Type.STRING, 2);
+    output.writeString(this.name);
+    output.writeFieldEnd();
+  }
+  if (this.description !== null && this.description !== undefined) {
+    output.writeFieldBegin('description', Thrift.Type.STRING, 3);
+    output.writeString(this.description);
+    output.writeFieldEnd();
+  }
+  if (this.topicsNum !== null && this.topicsNum !== undefined) {
+    output.writeFieldBegin('topicsNum', Thrift.Type.I32, 4);
+    output.writeI32(this.topicsNum);
+    output.writeFieldEnd();
+  }
+  if (this.messagesNum !== null && this.messagesNum !== undefined) {
+    output.writeFieldBegin('messagesNum', Thrift.Type.I32, 5);
+    output.writeI32(this.messagesNum);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 com.vmesteonline.be.RubricCounter = function(args) {
   this.rubric = null;
   this.messageType = null;
@@ -136,28 +1083,28 @@ com.vmesteonline.be.GroupUpdates.prototype.read = function(input) {
     {
       case 1:
       if (ftype == Thrift.Type.MAP) {
-        var _size0 = 0;
-        var _rtmp34;
+        var _size20 = 0;
+        var _rtmp324;
         this.groupCounters = {};
-        var _ktype1 = 0;
-        var _vtype2 = 0;
-        _rtmp34 = input.readMapBegin();
-        _ktype1 = _rtmp34.ktype;
-        _vtype2 = _rtmp34.vtype;
-        _size0 = _rtmp34.size;
-        for (var _i5 = 0; _i5 < _size0; ++_i5)
+        var _ktype21 = 0;
+        var _vtype22 = 0;
+        _rtmp324 = input.readMapBegin();
+        _ktype21 = _rtmp324.ktype;
+        _vtype22 = _rtmp324.vtype;
+        _size20 = _rtmp324.size;
+        for (var _i25 = 0; _i25 < _size20; ++_i25)
         {
-          if (_i5 > 0 ) {
+          if (_i25 > 0 ) {
             if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
               input.rstack.pop();
             }
           }
-          var key6 = null;
-          var val7 = null;
-          key6 = input.readI64().value;
-          val7 = new com.vmesteonline.be.RubricCounter();
-          val7.read(input);
-          this.groupCounters[key6] = val7;
+          var key26 = null;
+          var val27 = null;
+          key26 = input.readI64().value;
+          val27 = new com.vmesteonline.be.RubricCounter();
+          val27.read(input);
+          this.groupCounters[key26] = val27;
         }
         input.readMapEnd();
       } else {
@@ -181,13 +1128,13 @@ com.vmesteonline.be.GroupUpdates.prototype.write = function(output) {
   if (this.groupCounters !== null && this.groupCounters !== undefined) {
     output.writeFieldBegin('groupCounters', Thrift.Type.MAP, 1);
     output.writeMapBegin(Thrift.Type.I64, Thrift.Type.STRUCT, Thrift.objectLength(this.groupCounters));
-    for (var kiter8 in this.groupCounters)
+    for (var kiter28 in this.groupCounters)
     {
-      if (this.groupCounters.hasOwnProperty(kiter8))
+      if (this.groupCounters.hasOwnProperty(kiter28))
       {
-        var viter9 = this.groupCounters[kiter8];
-        output.writeI64(kiter8);
-        viter9.write(output);
+        var viter29 = this.groupCounters[kiter28];
+        output.writeI64(kiter28);
+        viter29.write(output);
       }
     }
     output.writeMapEnd();
@@ -226,19 +1173,19 @@ com.vmesteonline.be.TopicListPart.prototype.read = function(input) {
     {
       case 1:
       if (ftype == Thrift.Type.SET) {
-        var _size10 = 0;
-        var _rtmp314;
+        var _size30 = 0;
+        var _rtmp334;
         this.topics = [];
-        var _etype13 = 0;
-        _rtmp314 = input.readSetBegin();
-        _etype13 = _rtmp314.etype;
-        _size10 = _rtmp314.size;
-        for (var _i15 = 0; _i15 < _size10; ++_i15)
+        var _etype33 = 0;
+        _rtmp334 = input.readSetBegin();
+        _etype33 = _rtmp334.etype;
+        _size30 = _rtmp334.size;
+        for (var _i35 = 0; _i35 < _size30; ++_i35)
         {
-          var elem16 = null;
-          elem16 = new com.vmesteonline.be.Topic();
-          elem16.read(input);
-          this.topics.push(elem16);
+          var elem36 = null;
+          elem36 = new com.vmesteonline.be.Topic();
+          elem36.read(input);
+          this.topics.push(elem36);
         }
         input.readSetEnd();
       } else {
@@ -266,12 +1213,12 @@ com.vmesteonline.be.TopicListPart.prototype.write = function(output) {
   if (this.topics !== null && this.topics !== undefined) {
     output.writeFieldBegin('topics', Thrift.Type.SET, 1);
     output.writeSetBegin(Thrift.Type.STRUCT, this.topics.length);
-    for (var iter17 in this.topics)
+    for (var iter37 in this.topics)
     {
-      if (this.topics.hasOwnProperty(iter17))
+      if (this.topics.hasOwnProperty(iter37))
       {
-        iter17 = this.topics[iter17];
-        iter17.write(output);
+        iter37 = this.topics[iter37];
+        iter37.write(output);
       }
     }
     output.writeSetEnd();
@@ -315,19 +1262,19 @@ com.vmesteonline.be.MessageListPart.prototype.read = function(input) {
     {
       case 1:
       if (ftype == Thrift.Type.SET) {
-        var _size18 = 0;
-        var _rtmp322;
+        var _size38 = 0;
+        var _rtmp342;
         this.topics = [];
-        var _etype21 = 0;
-        _rtmp322 = input.readSetBegin();
-        _etype21 = _rtmp322.etype;
-        _size18 = _rtmp322.size;
-        for (var _i23 = 0; _i23 < _size18; ++_i23)
+        var _etype41 = 0;
+        _rtmp342 = input.readSetBegin();
+        _etype41 = _rtmp342.etype;
+        _size38 = _rtmp342.size;
+        for (var _i43 = 0; _i43 < _size38; ++_i43)
         {
-          var elem24 = null;
-          elem24 = new com.vmesteonline.be.Message();
-          elem24.read(input);
-          this.topics.push(elem24);
+          var elem44 = null;
+          elem44 = new com.vmesteonline.be.Message();
+          elem44.read(input);
+          this.topics.push(elem44);
         }
         input.readSetEnd();
       } else {
@@ -355,12 +1302,12 @@ com.vmesteonline.be.MessageListPart.prototype.write = function(output) {
   if (this.topics !== null && this.topics !== undefined) {
     output.writeFieldBegin('topics', Thrift.Type.SET, 1);
     output.writeSetBegin(Thrift.Type.STRUCT, this.topics.length);
-    for (var iter25 in this.topics)
+    for (var iter45 in this.topics)
     {
-      if (this.topics.hasOwnProperty(iter25))
+      if (this.topics.hasOwnProperty(iter45))
       {
-        iter25 = this.topics[iter25];
-        iter25.write(output);
+        iter45 = this.topics[iter45];
+        iter45.write(output);
       }
     }
     output.writeSetEnd();

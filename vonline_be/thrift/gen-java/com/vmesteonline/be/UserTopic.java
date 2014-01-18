@@ -35,13 +35,12 @@ import org.slf4j.LoggerFactory;
 public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._Fields>, java.io.Serializable, Cloneable, Comparable<UserTopic> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("UserTopic");
 
-  private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short)1);
-  private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I64, (short)2);
-  private static final org.apache.thrift.protocol.TField ARCHIVED_FIELD_DESC = new org.apache.thrift.protocol.TField("archived", org.apache.thrift.protocol.TType.BOOL, (short)3);
-  private static final org.apache.thrift.protocol.TField MESSAGES_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("messagesNum", org.apache.thrift.protocol.TType.I32, (short)4);
-  private static final org.apache.thrift.protocol.TField LAST_ACTIVITY_FIELD_DESC = new org.apache.thrift.protocol.TField("lastActivity", org.apache.thrift.protocol.TType.I32, (short)5);
-  private static final org.apache.thrift.protocol.TField DOLIKE_FIELD_DESC = new org.apache.thrift.protocol.TField("dolike", org.apache.thrift.protocol.TType.BYTE, (short)6);
-  private static final org.apache.thrift.protocol.TField READ_MESSAGE_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("readMessageNum", org.apache.thrift.protocol.TType.I32, (short)7);
+  private static final org.apache.thrift.protocol.TField ARCHIEVED_FIELD_DESC = new org.apache.thrift.protocol.TField("archieved", org.apache.thrift.protocol.TType.BOOL, (short)1);
+  private static final org.apache.thrift.protocol.TField UNLIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("unlikes", org.apache.thrift.protocol.TType.BOOL, (short)2);
+  private static final org.apache.thrift.protocol.TField LIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("likes", org.apache.thrift.protocol.TType.BOOL, (short)3);
+  private static final org.apache.thrift.protocol.TField NOT_INTRESTED_FIELD_DESC = new org.apache.thrift.protocol.TField("notIntrested", org.apache.thrift.protocol.TType.BOOL, (short)4);
+  private static final org.apache.thrift.protocol.TField LAST_READ_MESSAGE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("lastReadMessageId", org.apache.thrift.protocol.TType.I64, (short)5);
+  private static final org.apache.thrift.protocol.TField LAST_WROTE_MEESSGE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("lastWroteMeessgeId", org.apache.thrift.protocol.TType.I64, (short)6);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -49,23 +48,21 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     schemes.put(TupleScheme.class, new UserTopicTupleSchemeFactory());
   }
 
-  public long userId; // required
-  public long topicId; // required
-  public boolean archived; // required
-  public int messagesNum; // required
-  public int lastActivity; // required
-  public byte dolike; // required
-  public int readMessageNum; // required
+  public boolean archieved; // required
+  public boolean unlikes; // required
+  public boolean likes; // required
+  public boolean notIntrested; // required
+  public long lastReadMessageId; // required
+  public long lastWroteMeessgeId; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    USER_ID((short)1, "userId"),
-    TOPIC_ID((short)2, "topicId"),
-    ARCHIVED((short)3, "archived"),
-    MESSAGES_NUM((short)4, "messagesNum"),
-    LAST_ACTIVITY((short)5, "lastActivity"),
-    DOLIKE((short)6, "dolike"),
-    READ_MESSAGE_NUM((short)7, "readMessageNum");
+    ARCHIEVED((short)1, "archieved"),
+    UNLIKES((short)2, "unlikes"),
+    LIKES((short)3, "likes"),
+    NOT_INTRESTED((short)4, "notIntrested"),
+    LAST_READ_MESSAGE_ID((short)5, "lastReadMessageId"),
+    LAST_WROTE_MEESSGE_ID((short)6, "lastWroteMeessgeId");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -80,20 +77,18 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // USER_ID
-          return USER_ID;
-        case 2: // TOPIC_ID
-          return TOPIC_ID;
-        case 3: // ARCHIVED
-          return ARCHIVED;
-        case 4: // MESSAGES_NUM
-          return MESSAGES_NUM;
-        case 5: // LAST_ACTIVITY
-          return LAST_ACTIVITY;
-        case 6: // DOLIKE
-          return DOLIKE;
-        case 7: // READ_MESSAGE_NUM
-          return READ_MESSAGE_NUM;
+        case 1: // ARCHIEVED
+          return ARCHIEVED;
+        case 2: // UNLIKES
+          return UNLIKES;
+        case 3: // LIKES
+          return LIKES;
+        case 4: // NOT_INTRESTED
+          return NOT_INTRESTED;
+        case 5: // LAST_READ_MESSAGE_ID
+          return LAST_READ_MESSAGE_ID;
+        case 6: // LAST_WROTE_MEESSGE_ID
+          return LAST_WROTE_MEESSGE_ID;
         default:
           return null;
       }
@@ -134,31 +129,28 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
   }
 
   // isset id assignments
-  private static final int __USERID_ISSET_ID = 0;
-  private static final int __TOPICID_ISSET_ID = 1;
-  private static final int __ARCHIVED_ISSET_ID = 2;
-  private static final int __MESSAGESNUM_ISSET_ID = 3;
-  private static final int __LASTACTIVITY_ISSET_ID = 4;
-  private static final int __DOLIKE_ISSET_ID = 5;
-  private static final int __READMESSAGENUM_ISSET_ID = 6;
+  private static final int __ARCHIEVED_ISSET_ID = 0;
+  private static final int __UNLIKES_ISSET_ID = 1;
+  private static final int __LIKES_ISSET_ID = 2;
+  private static final int __NOTINTRESTED_ISSET_ID = 3;
+  private static final int __LASTREADMESSAGEID_ISSET_ID = 4;
+  private static final int __LASTWROTEMEESSGEID_ISSET_ID = 5;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.TOPIC_ID, new org.apache.thrift.meta_data.FieldMetaData("topicId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.ARCHIVED, new org.apache.thrift.meta_data.FieldMetaData("archived", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.ARCHIEVED, new org.apache.thrift.meta_data.FieldMetaData("archieved", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-    tmpMap.put(_Fields.MESSAGES_NUM, new org.apache.thrift.meta_data.FieldMetaData("messagesNum", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.LAST_ACTIVITY, new org.apache.thrift.meta_data.FieldMetaData("lastActivity", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.DOLIKE, new org.apache.thrift.meta_data.FieldMetaData("dolike", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BYTE)));
-    tmpMap.put(_Fields.READ_MESSAGE_NUM, new org.apache.thrift.meta_data.FieldMetaData("readMessageNum", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.UNLIKES, new org.apache.thrift.meta_data.FieldMetaData("unlikes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+    tmpMap.put(_Fields.LIKES, new org.apache.thrift.meta_data.FieldMetaData("likes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+    tmpMap.put(_Fields.NOT_INTRESTED, new org.apache.thrift.meta_data.FieldMetaData("notIntrested", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+    tmpMap.put(_Fields.LAST_READ_MESSAGE_ID, new org.apache.thrift.meta_data.FieldMetaData("lastReadMessageId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+    tmpMap.put(_Fields.LAST_WROTE_MEESSGE_ID, new org.apache.thrift.meta_data.FieldMetaData("lastWroteMeessgeId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(UserTopic.class, metaDataMap);
   }
@@ -167,29 +159,26 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
   }
 
   public UserTopic(
-    long userId,
-    long topicId,
-    boolean archived,
-    int messagesNum,
-    int lastActivity,
-    byte dolike,
-    int readMessageNum)
+    boolean archieved,
+    boolean unlikes,
+    boolean likes,
+    boolean notIntrested,
+    long lastReadMessageId,
+    long lastWroteMeessgeId)
   {
     this();
-    this.userId = userId;
-    setUserIdIsSet(true);
-    this.topicId = topicId;
-    setTopicIdIsSet(true);
-    this.archived = archived;
-    setArchivedIsSet(true);
-    this.messagesNum = messagesNum;
-    setMessagesNumIsSet(true);
-    this.lastActivity = lastActivity;
-    setLastActivityIsSet(true);
-    this.dolike = dolike;
-    setDolikeIsSet(true);
-    this.readMessageNum = readMessageNum;
-    setReadMessageNumIsSet(true);
+    this.archieved = archieved;
+    setArchievedIsSet(true);
+    this.unlikes = unlikes;
+    setUnlikesIsSet(true);
+    this.likes = likes;
+    setLikesIsSet(true);
+    this.notIntrested = notIntrested;
+    setNotIntrestedIsSet(true);
+    this.lastReadMessageId = lastReadMessageId;
+    setLastReadMessageIdIsSet(true);
+    this.lastWroteMeessgeId = lastWroteMeessgeId;
+    setLastWroteMeessgeIdIsSet(true);
   }
 
   /**
@@ -197,13 +186,12 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
    */
   public UserTopic(UserTopic other) {
     __isset_bitfield = other.__isset_bitfield;
-    this.userId = other.userId;
-    this.topicId = other.topicId;
-    this.archived = other.archived;
-    this.messagesNum = other.messagesNum;
-    this.lastActivity = other.lastActivity;
-    this.dolike = other.dolike;
-    this.readMessageNum = other.readMessageNum;
+    this.archieved = other.archieved;
+    this.unlikes = other.unlikes;
+    this.likes = other.likes;
+    this.notIntrested = other.notIntrested;
+    this.lastReadMessageId = other.lastReadMessageId;
+    this.lastWroteMeessgeId = other.lastWroteMeessgeId;
   }
 
   public UserTopic deepCopy() {
@@ -212,238 +200,205 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
 
   @Override
   public void clear() {
-    setUserIdIsSet(false);
-    this.userId = 0;
-    setTopicIdIsSet(false);
-    this.topicId = 0;
-    setArchivedIsSet(false);
-    this.archived = false;
-    setMessagesNumIsSet(false);
-    this.messagesNum = 0;
-    setLastActivityIsSet(false);
-    this.lastActivity = 0;
-    setDolikeIsSet(false);
-    this.dolike = 0;
-    setReadMessageNumIsSet(false);
-    this.readMessageNum = 0;
+    setArchievedIsSet(false);
+    this.archieved = false;
+    setUnlikesIsSet(false);
+    this.unlikes = false;
+    setLikesIsSet(false);
+    this.likes = false;
+    setNotIntrestedIsSet(false);
+    this.notIntrested = false;
+    setLastReadMessageIdIsSet(false);
+    this.lastReadMessageId = 0;
+    setLastWroteMeessgeIdIsSet(false);
+    this.lastWroteMeessgeId = 0;
   }
 
-  public long getUserId() {
-    return this.userId;
+  public boolean isArchieved() {
+    return this.archieved;
   }
 
-  public UserTopic setUserId(long userId) {
-    this.userId = userId;
-    setUserIdIsSet(true);
+  public UserTopic setArchieved(boolean archieved) {
+    this.archieved = archieved;
+    setArchievedIsSet(true);
     return this;
   }
 
-  public void unsetUserId() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __USERID_ISSET_ID);
+  public void unsetArchieved() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __ARCHIEVED_ISSET_ID);
   }
 
-  /** Returns true if field userId is set (has been assigned a value) and false otherwise */
-  public boolean isSetUserId() {
-    return EncodingUtils.testBit(__isset_bitfield, __USERID_ISSET_ID);
+  /** Returns true if field archieved is set (has been assigned a value) and false otherwise */
+  public boolean isSetArchieved() {
+    return EncodingUtils.testBit(__isset_bitfield, __ARCHIEVED_ISSET_ID);
   }
 
-  public void setUserIdIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __USERID_ISSET_ID, value);
+  public void setArchievedIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ARCHIEVED_ISSET_ID, value);
   }
 
-  public long getTopicId() {
-    return this.topicId;
+  public boolean isUnlikes() {
+    return this.unlikes;
   }
 
-  public UserTopic setTopicId(long topicId) {
-    this.topicId = topicId;
-    setTopicIdIsSet(true);
+  public UserTopic setUnlikes(boolean unlikes) {
+    this.unlikes = unlikes;
+    setUnlikesIsSet(true);
     return this;
   }
 
-  public void unsetTopicId() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPICID_ISSET_ID);
+  public void unsetUnlikes() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __UNLIKES_ISSET_ID);
   }
 
-  /** Returns true if field topicId is set (has been assigned a value) and false otherwise */
-  public boolean isSetTopicId() {
-    return EncodingUtils.testBit(__isset_bitfield, __TOPICID_ISSET_ID);
+  /** Returns true if field unlikes is set (has been assigned a value) and false otherwise */
+  public boolean isSetUnlikes() {
+    return EncodingUtils.testBit(__isset_bitfield, __UNLIKES_ISSET_ID);
   }
 
-  public void setTopicIdIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICID_ISSET_ID, value);
+  public void setUnlikesIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __UNLIKES_ISSET_ID, value);
   }
 
-  public boolean isArchived() {
-    return this.archived;
+  public boolean isLikes() {
+    return this.likes;
   }
 
-  public UserTopic setArchived(boolean archived) {
-    this.archived = archived;
-    setArchivedIsSet(true);
+  public UserTopic setLikes(boolean likes) {
+    this.likes = likes;
+    setLikesIsSet(true);
     return this;
   }
 
-  public void unsetArchived() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __ARCHIVED_ISSET_ID);
+  public void unsetLikes() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LIKES_ISSET_ID);
   }
 
-  /** Returns true if field archived is set (has been assigned a value) and false otherwise */
-  public boolean isSetArchived() {
-    return EncodingUtils.testBit(__isset_bitfield, __ARCHIVED_ISSET_ID);
+  /** Returns true if field likes is set (has been assigned a value) and false otherwise */
+  public boolean isSetLikes() {
+    return EncodingUtils.testBit(__isset_bitfield, __LIKES_ISSET_ID);
   }
 
-  public void setArchivedIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ARCHIVED_ISSET_ID, value);
+  public void setLikesIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LIKES_ISSET_ID, value);
   }
 
-  public int getMessagesNum() {
-    return this.messagesNum;
+  public boolean isNotIntrested() {
+    return this.notIntrested;
   }
 
-  public UserTopic setMessagesNum(int messagesNum) {
-    this.messagesNum = messagesNum;
-    setMessagesNumIsSet(true);
+  public UserTopic setNotIntrested(boolean notIntrested) {
+    this.notIntrested = notIntrested;
+    setNotIntrestedIsSet(true);
     return this;
   }
 
-  public void unsetMessagesNum() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __MESSAGESNUM_ISSET_ID);
+  public void unsetNotIntrested() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __NOTINTRESTED_ISSET_ID);
   }
 
-  /** Returns true if field messagesNum is set (has been assigned a value) and false otherwise */
-  public boolean isSetMessagesNum() {
-    return EncodingUtils.testBit(__isset_bitfield, __MESSAGESNUM_ISSET_ID);
+  /** Returns true if field notIntrested is set (has been assigned a value) and false otherwise */
+  public boolean isSetNotIntrested() {
+    return EncodingUtils.testBit(__isset_bitfield, __NOTINTRESTED_ISSET_ID);
   }
 
-  public void setMessagesNumIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MESSAGESNUM_ISSET_ID, value);
+  public void setNotIntrestedIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __NOTINTRESTED_ISSET_ID, value);
   }
 
-  public int getLastActivity() {
-    return this.lastActivity;
+  public long getLastReadMessageId() {
+    return this.lastReadMessageId;
   }
 
-  public UserTopic setLastActivity(int lastActivity) {
-    this.lastActivity = lastActivity;
-    setLastActivityIsSet(true);
+  public UserTopic setLastReadMessageId(long lastReadMessageId) {
+    this.lastReadMessageId = lastReadMessageId;
+    setLastReadMessageIdIsSet(true);
     return this;
   }
 
-  public void unsetLastActivity() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LASTACTIVITY_ISSET_ID);
+  public void unsetLastReadMessageId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LASTREADMESSAGEID_ISSET_ID);
   }
 
-  /** Returns true if field lastActivity is set (has been assigned a value) and false otherwise */
-  public boolean isSetLastActivity() {
-    return EncodingUtils.testBit(__isset_bitfield, __LASTACTIVITY_ISSET_ID);
+  /** Returns true if field lastReadMessageId is set (has been assigned a value) and false otherwise */
+  public boolean isSetLastReadMessageId() {
+    return EncodingUtils.testBit(__isset_bitfield, __LASTREADMESSAGEID_ISSET_ID);
   }
 
-  public void setLastActivityIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LASTACTIVITY_ISSET_ID, value);
+  public void setLastReadMessageIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LASTREADMESSAGEID_ISSET_ID, value);
   }
 
-  public byte getDolike() {
-    return this.dolike;
+  public long getLastWroteMeessgeId() {
+    return this.lastWroteMeessgeId;
   }
 
-  public UserTopic setDolike(byte dolike) {
-    this.dolike = dolike;
-    setDolikeIsSet(true);
+  public UserTopic setLastWroteMeessgeId(long lastWroteMeessgeId) {
+    this.lastWroteMeessgeId = lastWroteMeessgeId;
+    setLastWroteMeessgeIdIsSet(true);
     return this;
   }
 
-  public void unsetDolike() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __DOLIKE_ISSET_ID);
+  public void unsetLastWroteMeessgeId() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LASTWROTEMEESSGEID_ISSET_ID);
   }
 
-  /** Returns true if field dolike is set (has been assigned a value) and false otherwise */
-  public boolean isSetDolike() {
-    return EncodingUtils.testBit(__isset_bitfield, __DOLIKE_ISSET_ID);
+  /** Returns true if field lastWroteMeessgeId is set (has been assigned a value) and false otherwise */
+  public boolean isSetLastWroteMeessgeId() {
+    return EncodingUtils.testBit(__isset_bitfield, __LASTWROTEMEESSGEID_ISSET_ID);
   }
 
-  public void setDolikeIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __DOLIKE_ISSET_ID, value);
-  }
-
-  public int getReadMessageNum() {
-    return this.readMessageNum;
-  }
-
-  public UserTopic setReadMessageNum(int readMessageNum) {
-    this.readMessageNum = readMessageNum;
-    setReadMessageNumIsSet(true);
-    return this;
-  }
-
-  public void unsetReadMessageNum() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __READMESSAGENUM_ISSET_ID);
-  }
-
-  /** Returns true if field readMessageNum is set (has been assigned a value) and false otherwise */
-  public boolean isSetReadMessageNum() {
-    return EncodingUtils.testBit(__isset_bitfield, __READMESSAGENUM_ISSET_ID);
-  }
-
-  public void setReadMessageNumIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __READMESSAGENUM_ISSET_ID, value);
+  public void setLastWroteMeessgeIdIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LASTWROTEMEESSGEID_ISSET_ID, value);
   }
 
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
-    case USER_ID:
+    case ARCHIEVED:
       if (value == null) {
-        unsetUserId();
+        unsetArchieved();
       } else {
-        setUserId((Long)value);
+        setArchieved((Boolean)value);
       }
       break;
 
-    case TOPIC_ID:
+    case UNLIKES:
       if (value == null) {
-        unsetTopicId();
+        unsetUnlikes();
       } else {
-        setTopicId((Long)value);
+        setUnlikes((Boolean)value);
       }
       break;
 
-    case ARCHIVED:
+    case LIKES:
       if (value == null) {
-        unsetArchived();
+        unsetLikes();
       } else {
-        setArchived((Boolean)value);
+        setLikes((Boolean)value);
       }
       break;
 
-    case MESSAGES_NUM:
+    case NOT_INTRESTED:
       if (value == null) {
-        unsetMessagesNum();
+        unsetNotIntrested();
       } else {
-        setMessagesNum((Integer)value);
+        setNotIntrested((Boolean)value);
       }
       break;
 
-    case LAST_ACTIVITY:
+    case LAST_READ_MESSAGE_ID:
       if (value == null) {
-        unsetLastActivity();
+        unsetLastReadMessageId();
       } else {
-        setLastActivity((Integer)value);
+        setLastReadMessageId((Long)value);
       }
       break;
 
-    case DOLIKE:
+    case LAST_WROTE_MEESSGE_ID:
       if (value == null) {
-        unsetDolike();
+        unsetLastWroteMeessgeId();
       } else {
-        setDolike((Byte)value);
-      }
-      break;
-
-    case READ_MESSAGE_NUM:
-      if (value == null) {
-        unsetReadMessageNum();
-      } else {
-        setReadMessageNum((Integer)value);
+        setLastWroteMeessgeId((Long)value);
       }
       break;
 
@@ -452,26 +407,23 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
-    case USER_ID:
-      return Long.valueOf(getUserId());
+    case ARCHIEVED:
+      return Boolean.valueOf(isArchieved());
 
-    case TOPIC_ID:
-      return Long.valueOf(getTopicId());
+    case UNLIKES:
+      return Boolean.valueOf(isUnlikes());
 
-    case ARCHIVED:
-      return Boolean.valueOf(isArchived());
+    case LIKES:
+      return Boolean.valueOf(isLikes());
 
-    case MESSAGES_NUM:
-      return Integer.valueOf(getMessagesNum());
+    case NOT_INTRESTED:
+      return Boolean.valueOf(isNotIntrested());
 
-    case LAST_ACTIVITY:
-      return Integer.valueOf(getLastActivity());
+    case LAST_READ_MESSAGE_ID:
+      return Long.valueOf(getLastReadMessageId());
 
-    case DOLIKE:
-      return Byte.valueOf(getDolike());
-
-    case READ_MESSAGE_NUM:
-      return Integer.valueOf(getReadMessageNum());
+    case LAST_WROTE_MEESSGE_ID:
+      return Long.valueOf(getLastWroteMeessgeId());
 
     }
     throw new IllegalStateException();
@@ -484,20 +436,18 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     }
 
     switch (field) {
-    case USER_ID:
-      return isSetUserId();
-    case TOPIC_ID:
-      return isSetTopicId();
-    case ARCHIVED:
-      return isSetArchived();
-    case MESSAGES_NUM:
-      return isSetMessagesNum();
-    case LAST_ACTIVITY:
-      return isSetLastActivity();
-    case DOLIKE:
-      return isSetDolike();
-    case READ_MESSAGE_NUM:
-      return isSetReadMessageNum();
+    case ARCHIEVED:
+      return isSetArchieved();
+    case UNLIKES:
+      return isSetUnlikes();
+    case LIKES:
+      return isSetLikes();
+    case NOT_INTRESTED:
+      return isSetNotIntrested();
+    case LAST_READ_MESSAGE_ID:
+      return isSetLastReadMessageId();
+    case LAST_WROTE_MEESSGE_ID:
+      return isSetLastWroteMeessgeId();
     }
     throw new IllegalStateException();
   }
@@ -515,66 +465,57 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     if (that == null)
       return false;
 
-    boolean this_present_userId = true;
-    boolean that_present_userId = true;
-    if (this_present_userId || that_present_userId) {
-      if (!(this_present_userId && that_present_userId))
+    boolean this_present_archieved = true;
+    boolean that_present_archieved = true;
+    if (this_present_archieved || that_present_archieved) {
+      if (!(this_present_archieved && that_present_archieved))
         return false;
-      if (this.userId != that.userId)
-        return false;
-    }
-
-    boolean this_present_topicId = true;
-    boolean that_present_topicId = true;
-    if (this_present_topicId || that_present_topicId) {
-      if (!(this_present_topicId && that_present_topicId))
-        return false;
-      if (this.topicId != that.topicId)
+      if (this.archieved != that.archieved)
         return false;
     }
 
-    boolean this_present_archived = true;
-    boolean that_present_archived = true;
-    if (this_present_archived || that_present_archived) {
-      if (!(this_present_archived && that_present_archived))
+    boolean this_present_unlikes = true;
+    boolean that_present_unlikes = true;
+    if (this_present_unlikes || that_present_unlikes) {
+      if (!(this_present_unlikes && that_present_unlikes))
         return false;
-      if (this.archived != that.archived)
-        return false;
-    }
-
-    boolean this_present_messagesNum = true;
-    boolean that_present_messagesNum = true;
-    if (this_present_messagesNum || that_present_messagesNum) {
-      if (!(this_present_messagesNum && that_present_messagesNum))
-        return false;
-      if (this.messagesNum != that.messagesNum)
+      if (this.unlikes != that.unlikes)
         return false;
     }
 
-    boolean this_present_lastActivity = true;
-    boolean that_present_lastActivity = true;
-    if (this_present_lastActivity || that_present_lastActivity) {
-      if (!(this_present_lastActivity && that_present_lastActivity))
+    boolean this_present_likes = true;
+    boolean that_present_likes = true;
+    if (this_present_likes || that_present_likes) {
+      if (!(this_present_likes && that_present_likes))
         return false;
-      if (this.lastActivity != that.lastActivity)
-        return false;
-    }
-
-    boolean this_present_dolike = true;
-    boolean that_present_dolike = true;
-    if (this_present_dolike || that_present_dolike) {
-      if (!(this_present_dolike && that_present_dolike))
-        return false;
-      if (this.dolike != that.dolike)
+      if (this.likes != that.likes)
         return false;
     }
 
-    boolean this_present_readMessageNum = true;
-    boolean that_present_readMessageNum = true;
-    if (this_present_readMessageNum || that_present_readMessageNum) {
-      if (!(this_present_readMessageNum && that_present_readMessageNum))
+    boolean this_present_notIntrested = true;
+    boolean that_present_notIntrested = true;
+    if (this_present_notIntrested || that_present_notIntrested) {
+      if (!(this_present_notIntrested && that_present_notIntrested))
         return false;
-      if (this.readMessageNum != that.readMessageNum)
+      if (this.notIntrested != that.notIntrested)
+        return false;
+    }
+
+    boolean this_present_lastReadMessageId = true;
+    boolean that_present_lastReadMessageId = true;
+    if (this_present_lastReadMessageId || that_present_lastReadMessageId) {
+      if (!(this_present_lastReadMessageId && that_present_lastReadMessageId))
+        return false;
+      if (this.lastReadMessageId != that.lastReadMessageId)
+        return false;
+    }
+
+    boolean this_present_lastWroteMeessgeId = true;
+    boolean that_present_lastWroteMeessgeId = true;
+    if (this_present_lastWroteMeessgeId || that_present_lastWroteMeessgeId) {
+      if (!(this_present_lastWroteMeessgeId && that_present_lastWroteMeessgeId))
+        return false;
+      if (this.lastWroteMeessgeId != that.lastWroteMeessgeId)
         return false;
     }
 
@@ -594,72 +535,62 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
 
     int lastComparison = 0;
 
-    lastComparison = Boolean.valueOf(isSetUserId()).compareTo(other.isSetUserId());
+    lastComparison = Boolean.valueOf(isSetArchieved()).compareTo(other.isSetArchieved());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetUserId()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userId, other.userId);
+    if (isSetArchieved()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.archieved, other.archieved);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetTopicId()).compareTo(other.isSetTopicId());
+    lastComparison = Boolean.valueOf(isSetUnlikes()).compareTo(other.isSetUnlikes());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetTopicId()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topicId, other.topicId);
+    if (isSetUnlikes()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.unlikes, other.unlikes);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetArchived()).compareTo(other.isSetArchived());
+    lastComparison = Boolean.valueOf(isSetLikes()).compareTo(other.isSetLikes());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetArchived()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.archived, other.archived);
+    if (isSetLikes()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.likes, other.likes);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetMessagesNum()).compareTo(other.isSetMessagesNum());
+    lastComparison = Boolean.valueOf(isSetNotIntrested()).compareTo(other.isSetNotIntrested());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetMessagesNum()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.messagesNum, other.messagesNum);
+    if (isSetNotIntrested()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.notIntrested, other.notIntrested);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetLastActivity()).compareTo(other.isSetLastActivity());
+    lastComparison = Boolean.valueOf(isSetLastReadMessageId()).compareTo(other.isSetLastReadMessageId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetLastActivity()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.lastActivity, other.lastActivity);
+    if (isSetLastReadMessageId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.lastReadMessageId, other.lastReadMessageId);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetDolike()).compareTo(other.isSetDolike());
+    lastComparison = Boolean.valueOf(isSetLastWroteMeessgeId()).compareTo(other.isSetLastWroteMeessgeId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetDolike()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.dolike, other.dolike);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetReadMessageNum()).compareTo(other.isSetReadMessageNum());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetReadMessageNum()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.readMessageNum, other.readMessageNum);
+    if (isSetLastWroteMeessgeId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.lastWroteMeessgeId, other.lastWroteMeessgeId);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -684,32 +615,28 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     StringBuilder sb = new StringBuilder("UserTopic(");
     boolean first = true;
 
-    sb.append("userId:");
-    sb.append(this.userId);
+    sb.append("archieved:");
+    sb.append(this.archieved);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("topicId:");
-    sb.append(this.topicId);
+    sb.append("unlikes:");
+    sb.append(this.unlikes);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("archived:");
-    sb.append(this.archived);
+    sb.append("likes:");
+    sb.append(this.likes);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("messagesNum:");
-    sb.append(this.messagesNum);
+    sb.append("notIntrested:");
+    sb.append(this.notIntrested);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("lastActivity:");
-    sb.append(this.lastActivity);
+    sb.append("lastReadMessageId:");
+    sb.append(this.lastReadMessageId);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("dolike:");
-    sb.append(this.dolike);
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("readMessageNum:");
-    sb.append(this.readMessageNum);
+    sb.append("lastWroteMeessgeId:");
+    sb.append(this.lastWroteMeessgeId);
     first = false;
     sb.append(")");
     return sb.toString();
@@ -756,58 +683,50 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
           break;
         }
         switch (schemeField.id) {
-          case 1: // USER_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-              struct.userId = iprot.readI64();
-              struct.setUserIdIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 2: // TOPIC_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-              struct.topicId = iprot.readI64();
-              struct.setTopicIdIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 3: // ARCHIVED
+          case 1: // ARCHIEVED
             if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
-              struct.archived = iprot.readBool();
-              struct.setArchivedIsSet(true);
+              struct.archieved = iprot.readBool();
+              struct.setArchievedIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 4: // MESSAGES_NUM
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.messagesNum = iprot.readI32();
-              struct.setMessagesNumIsSet(true);
+          case 2: // UNLIKES
+            if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+              struct.unlikes = iprot.readBool();
+              struct.setUnlikesIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 5: // LAST_ACTIVITY
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.lastActivity = iprot.readI32();
-              struct.setLastActivityIsSet(true);
+          case 3: // LIKES
+            if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+              struct.likes = iprot.readBool();
+              struct.setLikesIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 6: // DOLIKE
-            if (schemeField.type == org.apache.thrift.protocol.TType.BYTE) {
-              struct.dolike = iprot.readByte();
-              struct.setDolikeIsSet(true);
+          case 4: // NOT_INTRESTED
+            if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+              struct.notIntrested = iprot.readBool();
+              struct.setNotIntrestedIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 7: // READ_MESSAGE_NUM
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.readMessageNum = iprot.readI32();
-              struct.setReadMessageNumIsSet(true);
+          case 5: // LAST_READ_MESSAGE_ID
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.lastReadMessageId = iprot.readI64();
+              struct.setLastReadMessageIdIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 6: // LAST_WROTE_MEESSGE_ID
+            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+              struct.lastWroteMeessgeId = iprot.readI64();
+              struct.setLastWroteMeessgeIdIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -827,26 +746,23 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-      oprot.writeI64(struct.userId);
+      oprot.writeFieldBegin(ARCHIEVED_FIELD_DESC);
+      oprot.writeBool(struct.archieved);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(TOPIC_ID_FIELD_DESC);
-      oprot.writeI64(struct.topicId);
+      oprot.writeFieldBegin(UNLIKES_FIELD_DESC);
+      oprot.writeBool(struct.unlikes);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(ARCHIVED_FIELD_DESC);
-      oprot.writeBool(struct.archived);
+      oprot.writeFieldBegin(LIKES_FIELD_DESC);
+      oprot.writeBool(struct.likes);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(MESSAGES_NUM_FIELD_DESC);
-      oprot.writeI32(struct.messagesNum);
+      oprot.writeFieldBegin(NOT_INTRESTED_FIELD_DESC);
+      oprot.writeBool(struct.notIntrested);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(LAST_ACTIVITY_FIELD_DESC);
-      oprot.writeI32(struct.lastActivity);
+      oprot.writeFieldBegin(LAST_READ_MESSAGE_ID_FIELD_DESC);
+      oprot.writeI64(struct.lastReadMessageId);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(DOLIKE_FIELD_DESC);
-      oprot.writeByte(struct.dolike);
-      oprot.writeFieldEnd();
-      oprot.writeFieldBegin(READ_MESSAGE_NUM_FIELD_DESC);
-      oprot.writeI32(struct.readMessageNum);
+      oprot.writeFieldBegin(LAST_WROTE_MEESSGE_ID_FIELD_DESC);
+      oprot.writeI64(struct.lastWroteMeessgeId);
       oprot.writeFieldEnd();
       oprot.writeFieldStop();
       oprot.writeStructEnd();
@@ -866,82 +782,72 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
     public void write(org.apache.thrift.protocol.TProtocol prot, UserTopic struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetUserId()) {
+      if (struct.isSetArchieved()) {
         optionals.set(0);
       }
-      if (struct.isSetTopicId()) {
+      if (struct.isSetUnlikes()) {
         optionals.set(1);
       }
-      if (struct.isSetArchived()) {
+      if (struct.isSetLikes()) {
         optionals.set(2);
       }
-      if (struct.isSetMessagesNum()) {
+      if (struct.isSetNotIntrested()) {
         optionals.set(3);
       }
-      if (struct.isSetLastActivity()) {
+      if (struct.isSetLastReadMessageId()) {
         optionals.set(4);
       }
-      if (struct.isSetDolike()) {
+      if (struct.isSetLastWroteMeessgeId()) {
         optionals.set(5);
       }
-      if (struct.isSetReadMessageNum()) {
-        optionals.set(6);
+      oprot.writeBitSet(optionals, 6);
+      if (struct.isSetArchieved()) {
+        oprot.writeBool(struct.archieved);
       }
-      oprot.writeBitSet(optionals, 7);
-      if (struct.isSetUserId()) {
-        oprot.writeI64(struct.userId);
+      if (struct.isSetUnlikes()) {
+        oprot.writeBool(struct.unlikes);
       }
-      if (struct.isSetTopicId()) {
-        oprot.writeI64(struct.topicId);
+      if (struct.isSetLikes()) {
+        oprot.writeBool(struct.likes);
       }
-      if (struct.isSetArchived()) {
-        oprot.writeBool(struct.archived);
+      if (struct.isSetNotIntrested()) {
+        oprot.writeBool(struct.notIntrested);
       }
-      if (struct.isSetMessagesNum()) {
-        oprot.writeI32(struct.messagesNum);
+      if (struct.isSetLastReadMessageId()) {
+        oprot.writeI64(struct.lastReadMessageId);
       }
-      if (struct.isSetLastActivity()) {
-        oprot.writeI32(struct.lastActivity);
-      }
-      if (struct.isSetDolike()) {
-        oprot.writeByte(struct.dolike);
-      }
-      if (struct.isSetReadMessageNum()) {
-        oprot.writeI32(struct.readMessageNum);
+      if (struct.isSetLastWroteMeessgeId()) {
+        oprot.writeI64(struct.lastWroteMeessgeId);
       }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, UserTopic struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(7);
+      BitSet incoming = iprot.readBitSet(6);
       if (incoming.get(0)) {
-        struct.userId = iprot.readI64();
-        struct.setUserIdIsSet(true);
+        struct.archieved = iprot.readBool();
+        struct.setArchievedIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.topicId = iprot.readI64();
-        struct.setTopicIdIsSet(true);
+        struct.unlikes = iprot.readBool();
+        struct.setUnlikesIsSet(true);
       }
       if (incoming.get(2)) {
-        struct.archived = iprot.readBool();
-        struct.setArchivedIsSet(true);
+        struct.likes = iprot.readBool();
+        struct.setLikesIsSet(true);
       }
       if (incoming.get(3)) {
-        struct.messagesNum = iprot.readI32();
-        struct.setMessagesNumIsSet(true);
+        struct.notIntrested = iprot.readBool();
+        struct.setNotIntrestedIsSet(true);
       }
       if (incoming.get(4)) {
-        struct.lastActivity = iprot.readI32();
-        struct.setLastActivityIsSet(true);
+        struct.lastReadMessageId = iprot.readI64();
+        struct.setLastReadMessageIdIsSet(true);
       }
       if (incoming.get(5)) {
-        struct.dolike = iprot.readByte();
-        struct.setDolikeIsSet(true);
-      }
-      if (incoming.get(6)) {
-        struct.readMessageNum = iprot.readI32();
-        struct.setReadMessageNumIsSet(true);
+        struct.lastWroteMeessgeId = iprot.readI64();
+        struct.setLastWroteMeessgeIdIsSet(true);
       }
     }
   }

@@ -14,3 +14,109 @@ if (typeof com.vmesteonline === 'undefined') {
 if (typeof com.vmesteonline.be === 'undefined') {
   com.vmesteonline.be = {};
 }
+com.vmesteonline.be.GroupType = {
+'ENTER' : 0,
+'HOME' : 1,
+'BLOCK' : 2,
+'DISTRICT' : 3,
+'CITY' : 4,
+'CUSTOM' : 5
+};
+com.vmesteonline.be.Group = function(args) {
+  this.id = null;
+  this.shortName = null;
+  this.description = null;
+  this.type = null;
+  if (args) {
+    if (args.id !== undefined) {
+      this.id = args.id;
+    }
+    if (args.shortName !== undefined) {
+      this.shortName = args.shortName;
+    }
+    if (args.description !== undefined) {
+      this.description = args.description;
+    }
+    if (args.type !== undefined) {
+      this.type = args.type;
+    }
+  }
+};
+com.vmesteonline.be.Group.prototype = {};
+com.vmesteonline.be.Group.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I64) {
+        this.id = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRING) {
+        this.shortName = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.STRING) {
+        this.description = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.I32) {
+        this.type = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.Group.prototype.write = function(output) {
+  output.writeStructBegin('Group');
+  if (this.id !== null && this.id !== undefined) {
+    output.writeFieldBegin('id', Thrift.Type.I64, 1);
+    output.writeI64(this.id);
+    output.writeFieldEnd();
+  }
+  if (this.shortName !== null && this.shortName !== undefined) {
+    output.writeFieldBegin('shortName', Thrift.Type.STRING, 2);
+    output.writeString(this.shortName);
+    output.writeFieldEnd();
+  }
+  if (this.description !== null && this.description !== undefined) {
+    output.writeFieldBegin('description', Thrift.Type.STRING, 3);
+    output.writeString(this.description);
+    output.writeFieldEnd();
+  }
+  if (this.type !== null && this.type !== undefined) {
+    output.writeFieldBegin('type', Thrift.Type.I32, 4);
+    output.writeI32(this.type);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+

@@ -49,9 +49,9 @@ public class RubricCounter implements org.apache.thrift.TBase<RubricCounter, Rub
   public long rubric; // required
   /**
    * 
-   * @see com.vmesteonline.be.MessageType
+   * @see MessageType
    */
-  public com.vmesteonline.be.MessageType messageType; // required
+  public MessageType messageType; // required
   public int newTopicNum; // required
   public int newMessageNum; // required
 
@@ -60,7 +60,7 @@ public class RubricCounter implements org.apache.thrift.TBase<RubricCounter, Rub
     RUBRIC((short)1, "rubric"),
     /**
      * 
-     * @see com.vmesteonline.be.MessageType
+     * @see MessageType
      */
     MESSAGE_TYPE((short)2, "messageType"),
     NEW_TOPIC_NUM((short)3, "newTopicNum"),
@@ -137,7 +137,7 @@ public class RubricCounter implements org.apache.thrift.TBase<RubricCounter, Rub
     tmpMap.put(_Fields.RUBRIC, new org.apache.thrift.meta_data.FieldMetaData("rubric", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.MESSAGE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("messageType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, com.vmesteonline.be.MessageType.class)));
+        new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, MessageType.class)));
     tmpMap.put(_Fields.NEW_TOPIC_NUM, new org.apache.thrift.meta_data.FieldMetaData("newTopicNum", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.NEW_MESSAGE_NUM, new org.apache.thrift.meta_data.FieldMetaData("newMessageNum", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -151,7 +151,7 @@ public class RubricCounter implements org.apache.thrift.TBase<RubricCounter, Rub
 
   public RubricCounter(
     long rubric,
-    com.vmesteonline.be.MessageType messageType,
+    MessageType messageType,
     int newTopicNum,
     int newMessageNum)
   {
@@ -218,17 +218,17 @@ public class RubricCounter implements org.apache.thrift.TBase<RubricCounter, Rub
 
   /**
    * 
-   * @see com.vmesteonline.be.MessageType
+   * @see MessageType
    */
-  public com.vmesteonline.be.MessageType getMessageType() {
+  public MessageType getMessageType() {
     return this.messageType;
   }
 
   /**
    * 
-   * @see com.vmesteonline.be.MessageType
+   * @see MessageType
    */
-  public RubricCounter setMessageType(com.vmesteonline.be.MessageType messageType) {
+  public RubricCounter setMessageType(MessageType messageType) {
     this.messageType = messageType;
     return this;
   }
@@ -308,7 +308,7 @@ public class RubricCounter implements org.apache.thrift.TBase<RubricCounter, Rub
       if (value == null) {
         unsetMessageType();
       } else {
-        setMessageType((com.vmesteonline.be.MessageType)value);
+        setMessageType((MessageType)value);
       }
       break;
 
@@ -567,7 +567,7 @@ public class RubricCounter implements org.apache.thrift.TBase<RubricCounter, Rub
             break;
           case 2: // MESSAGE_TYPE
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.messageType = com.vmesteonline.be.MessageType.findByValue(iprot.readI32());
+              struct.messageType = MessageType.findByValue(iprot.readI32());
               struct.setMessageTypeIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -672,7 +672,7 @@ public class RubricCounter implements org.apache.thrift.TBase<RubricCounter, Rub
         struct.setRubricIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.messageType = com.vmesteonline.be.MessageType.findByValue(iprot.readI32());
+        struct.messageType = MessageType.findByValue(iprot.readI32());
         struct.setMessageTypeIsSet(true);
       }
       if (incoming.get(2)) {

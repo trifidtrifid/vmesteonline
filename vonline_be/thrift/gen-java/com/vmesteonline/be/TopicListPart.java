@@ -44,7 +44,7 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
     schemes.put(TupleScheme.class, new TopicListPartTupleSchemeFactory());
   }
 
-  public Set<com.vmesteonline.be.Topic> topics; // required
+  public Set<Topic> topics; // required
   public int totalSize; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -116,7 +116,7 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.TOPICS, new org.apache.thrift.meta_data.FieldMetaData("topics", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
-            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.vmesteonline.be.Topic.class))));
+            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Topic.class))));
     tmpMap.put(_Fields.TOTAL_SIZE, new org.apache.thrift.meta_data.FieldMetaData("totalSize", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -127,7 +127,7 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
   }
 
   public TopicListPart(
-    Set<com.vmesteonline.be.Topic> topics,
+    Set<Topic> topics,
     int totalSize)
   {
     this();
@@ -142,9 +142,9 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
   public TopicListPart(TopicListPart other) {
     __isset_bitfield = other.__isset_bitfield;
     if (other.isSetTopics()) {
-      Set<com.vmesteonline.be.Topic> __this__topics = new HashSet<com.vmesteonline.be.Topic>(other.topics.size());
-      for (com.vmesteonline.be.Topic other_element : other.topics) {
-        __this__topics.add(new com.vmesteonline.be.Topic(other_element));
+      Set<Topic> __this__topics = new HashSet<Topic>(other.topics.size());
+      for (Topic other_element : other.topics) {
+        __this__topics.add(new Topic(other_element));
       }
       this.topics = __this__topics;
     }
@@ -166,22 +166,22 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
     return (this.topics == null) ? 0 : this.topics.size();
   }
 
-  public java.util.Iterator<com.vmesteonline.be.Topic> getTopicsIterator() {
+  public java.util.Iterator<Topic> getTopicsIterator() {
     return (this.topics == null) ? null : this.topics.iterator();
   }
 
-  public void addToTopics(com.vmesteonline.be.Topic elem) {
+  public void addToTopics(Topic elem) {
     if (this.topics == null) {
-      this.topics = new HashSet<com.vmesteonline.be.Topic>();
+      this.topics = new HashSet<Topic>();
     }
     this.topics.add(elem);
   }
 
-  public Set<com.vmesteonline.be.Topic> getTopics() {
+  public Set<Topic> getTopics() {
     return this.topics;
   }
 
-  public TopicListPart setTopics(Set<com.vmesteonline.be.Topic> topics) {
+  public TopicListPart setTopics(Set<Topic> topics) {
     this.topics = topics;
     return this;
   }
@@ -230,7 +230,7 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
       if (value == null) {
         unsetTopics();
       } else {
-        setTopics((Set<com.vmesteonline.be.Topic>)value);
+        setTopics((Set<Topic>)value);
       }
       break;
 
@@ -418,14 +418,14 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
           case 1: // TOPICS
             if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
               {
-                org.apache.thrift.protocol.TSet _set10 = iprot.readSetBegin();
-                struct.topics = new HashSet<com.vmesteonline.be.Topic>(2*_set10.size);
-                for (int _i11 = 0; _i11 < _set10.size; ++_i11)
+                org.apache.thrift.protocol.TSet _set30 = iprot.readSetBegin();
+                struct.topics = new HashSet<Topic>(2*_set30.size);
+                for (int _i31 = 0; _i31 < _set30.size; ++_i31)
                 {
-                  com.vmesteonline.be.Topic _elem12;
-                  _elem12 = new com.vmesteonline.be.Topic();
-                  _elem12.read(iprot);
-                  struct.topics.add(_elem12);
+                  Topic _elem32;
+                  _elem32 = new Topic();
+                  _elem32.read(iprot);
+                  struct.topics.add(_elem32);
                 }
                 iprot.readSetEnd();
               }
@@ -461,9 +461,9 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
         oprot.writeFieldBegin(TOPICS_FIELD_DESC);
         {
           oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, struct.topics.size()));
-          for (com.vmesteonline.be.Topic _iter13 : struct.topics)
+          for (Topic _iter33 : struct.topics)
           {
-            _iter13.write(oprot);
+            _iter33.write(oprot);
           }
           oprot.writeSetEnd();
         }
@@ -500,9 +500,9 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
       if (struct.isSetTopics()) {
         {
           oprot.writeI32(struct.topics.size());
-          for (com.vmesteonline.be.Topic _iter14 : struct.topics)
+          for (Topic _iter34 : struct.topics)
           {
-            _iter14.write(oprot);
+            _iter34.write(oprot);
           }
         }
       }
@@ -517,14 +517,14 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
       BitSet incoming = iprot.readBitSet(2);
       if (incoming.get(0)) {
         {
-          org.apache.thrift.protocol.TSet _set15 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.topics = new HashSet<com.vmesteonline.be.Topic>(2*_set15.size);
-          for (int _i16 = 0; _i16 < _set15.size; ++_i16)
+          org.apache.thrift.protocol.TSet _set35 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.topics = new HashSet<Topic>(2*_set35.size);
+          for (int _i36 = 0; _i36 < _set35.size; ++_i36)
           {
-            com.vmesteonline.be.Topic _elem17;
-            _elem17 = new com.vmesteonline.be.Topic();
-            _elem17.read(iprot);
-            struct.topics.add(_elem17);
+            Topic _elem37;
+            _elem37 = new Topic();
+            _elem37.read(iprot);
+            struct.topics.add(_elem37);
           }
         }
         struct.setTopicsIsSet(true);

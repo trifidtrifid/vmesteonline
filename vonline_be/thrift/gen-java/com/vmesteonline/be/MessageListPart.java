@@ -44,7 +44,7 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
     schemes.put(TupleScheme.class, new MessageListPartTupleSchemeFactory());
   }
 
-  public Set<com.vmesteonline.be.Message> topics; // required
+  public Set<Message> topics; // required
   public int totalSize; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -116,7 +116,7 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.TOPICS, new org.apache.thrift.meta_data.FieldMetaData("topics", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
-            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.vmesteonline.be.Message.class))));
+            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Message.class))));
     tmpMap.put(_Fields.TOTAL_SIZE, new org.apache.thrift.meta_data.FieldMetaData("totalSize", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -127,7 +127,7 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
   }
 
   public MessageListPart(
-    Set<com.vmesteonline.be.Message> topics,
+    Set<Message> topics,
     int totalSize)
   {
     this();
@@ -142,9 +142,9 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
   public MessageListPart(MessageListPart other) {
     __isset_bitfield = other.__isset_bitfield;
     if (other.isSetTopics()) {
-      Set<com.vmesteonline.be.Message> __this__topics = new HashSet<com.vmesteonline.be.Message>(other.topics.size());
-      for (com.vmesteonline.be.Message other_element : other.topics) {
-        __this__topics.add(new com.vmesteonline.be.Message(other_element));
+      Set<Message> __this__topics = new HashSet<Message>(other.topics.size());
+      for (Message other_element : other.topics) {
+        __this__topics.add(new Message(other_element));
       }
       this.topics = __this__topics;
     }
@@ -166,22 +166,22 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
     return (this.topics == null) ? 0 : this.topics.size();
   }
 
-  public java.util.Iterator<com.vmesteonline.be.Message> getTopicsIterator() {
+  public java.util.Iterator<Message> getTopicsIterator() {
     return (this.topics == null) ? null : this.topics.iterator();
   }
 
-  public void addToTopics(com.vmesteonline.be.Message elem) {
+  public void addToTopics(Message elem) {
     if (this.topics == null) {
-      this.topics = new HashSet<com.vmesteonline.be.Message>();
+      this.topics = new HashSet<Message>();
     }
     this.topics.add(elem);
   }
 
-  public Set<com.vmesteonline.be.Message> getTopics() {
+  public Set<Message> getTopics() {
     return this.topics;
   }
 
-  public MessageListPart setTopics(Set<com.vmesteonline.be.Message> topics) {
+  public MessageListPart setTopics(Set<Message> topics) {
     this.topics = topics;
     return this;
   }
@@ -230,7 +230,7 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
       if (value == null) {
         unsetTopics();
       } else {
-        setTopics((Set<com.vmesteonline.be.Message>)value);
+        setTopics((Set<Message>)value);
       }
       break;
 
@@ -418,14 +418,14 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
           case 1: // TOPICS
             if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
               {
-                org.apache.thrift.protocol.TSet _set18 = iprot.readSetBegin();
-                struct.topics = new HashSet<com.vmesteonline.be.Message>(2*_set18.size);
-                for (int _i19 = 0; _i19 < _set18.size; ++_i19)
+                org.apache.thrift.protocol.TSet _set38 = iprot.readSetBegin();
+                struct.topics = new HashSet<Message>(2*_set38.size);
+                for (int _i39 = 0; _i39 < _set38.size; ++_i39)
                 {
-                  com.vmesteonline.be.Message _elem20;
-                  _elem20 = new com.vmesteonline.be.Message();
-                  _elem20.read(iprot);
-                  struct.topics.add(_elem20);
+                  Message _elem40;
+                  _elem40 = new Message();
+                  _elem40.read(iprot);
+                  struct.topics.add(_elem40);
                 }
                 iprot.readSetEnd();
               }
@@ -461,9 +461,9 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
         oprot.writeFieldBegin(TOPICS_FIELD_DESC);
         {
           oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, struct.topics.size()));
-          for (com.vmesteonline.be.Message _iter21 : struct.topics)
+          for (Message _iter41 : struct.topics)
           {
-            _iter21.write(oprot);
+            _iter41.write(oprot);
           }
           oprot.writeSetEnd();
         }
@@ -500,9 +500,9 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
       if (struct.isSetTopics()) {
         {
           oprot.writeI32(struct.topics.size());
-          for (com.vmesteonline.be.Message _iter22 : struct.topics)
+          for (Message _iter42 : struct.topics)
           {
-            _iter22.write(oprot);
+            _iter42.write(oprot);
           }
         }
       }
@@ -517,14 +517,14 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
       BitSet incoming = iprot.readBitSet(2);
       if (incoming.get(0)) {
         {
-          org.apache.thrift.protocol.TSet _set23 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.topics = new HashSet<com.vmesteonline.be.Message>(2*_set23.size);
-          for (int _i24 = 0; _i24 < _set23.size; ++_i24)
+          org.apache.thrift.protocol.TSet _set43 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.topics = new HashSet<Message>(2*_set43.size);
+          for (int _i44 = 0; _i44 < _set43.size; ++_i44)
           {
-            com.vmesteonline.be.Message _elem25;
-            _elem25 = new com.vmesteonline.be.Message();
-            _elem25.read(iprot);
-            struct.topics.add(_elem25);
+            Message _elem45;
+            _elem45 = new Message();
+            _elem45.read(iprot);
+            struct.topics.add(_elem45);
           }
         }
         struct.setTopicsIsSet(true);

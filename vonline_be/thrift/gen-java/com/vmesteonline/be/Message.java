@@ -43,15 +43,12 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   private static final org.apache.thrift.protocol.TField RECIPIENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("recipientId", org.apache.thrift.protocol.TType.I64, (short)6);
   private static final org.apache.thrift.protocol.TField CREATED_FIELD_DESC = new org.apache.thrift.protocol.TField("created", org.apache.thrift.protocol.TType.I32, (short)7);
   private static final org.apache.thrift.protocol.TField EDITED_FIELD_DESC = new org.apache.thrift.protocol.TField("edited", org.apache.thrift.protocol.TType.I32, (short)8);
-  private static final org.apache.thrift.protocol.TField APPROVED_FIELD_DESC = new org.apache.thrift.protocol.TField("approved", org.apache.thrift.protocol.TType.I64, (short)9);
+  private static final org.apache.thrift.protocol.TField APPROVED_BY_FIELD_DESC = new org.apache.thrift.protocol.TField("approvedBy", org.apache.thrift.protocol.TType.I64, (short)9);
   private static final org.apache.thrift.protocol.TField CONTENT_FIELD_DESC = new org.apache.thrift.protocol.TField("content", org.apache.thrift.protocol.TType.STRING, (short)10);
-  private static final org.apache.thrift.protocol.TField LIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("likes", org.apache.thrift.protocol.TType.I32, (short)11);
-  private static final org.apache.thrift.protocol.TField UNLIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("unlikes", org.apache.thrift.protocol.TType.I32, (short)12);
-  private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)13);
-  private static final org.apache.thrift.protocol.TField ID_FORUM_FIELD_DESC = new org.apache.thrift.protocol.TField("idForum", org.apache.thrift.protocol.TType.I64, (short)14);
-  private static final org.apache.thrift.protocol.TField ID_SHOP_FIELD_DESC = new org.apache.thrift.protocol.TField("idShop", org.apache.thrift.protocol.TType.I64, (short)15);
-  private static final org.apache.thrift.protocol.TField ID_DIALOG_FIELD_DESC = new org.apache.thrift.protocol.TField("idDialog", org.apache.thrift.protocol.TType.I64, (short)16);
-  private static final org.apache.thrift.protocol.TField ID_NEWS_FIELD_DESC = new org.apache.thrift.protocol.TField("idNews", org.apache.thrift.protocol.TType.I64, (short)17);
+  private static final org.apache.thrift.protocol.TField LIKES_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("likesNum", org.apache.thrift.protocol.TType.I32, (short)11);
+  private static final org.apache.thrift.protocol.TField UNLIKES_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("unlikesNum", org.apache.thrift.protocol.TType.I32, (short)12);
+  private static final org.apache.thrift.protocol.TField LINKED_MESSAGES_FIELD_DESC = new org.apache.thrift.protocol.TField("linkedMessages", org.apache.thrift.protocol.TType.MAP, (short)13);
+  private static final org.apache.thrift.protocol.TField TAGS_FIELD_DESC = new org.apache.thrift.protocol.TField("tags", org.apache.thrift.protocol.TType.MAP, (short)14);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -71,15 +68,12 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   public long recipientId; // optional
   public int created; // required
   public int edited; // required
-  public long approved; // optional
+  public long approvedBy; // optional
   public String content; // required
-  public int likes; // required
-  public int unlikes; // required
-  public long groupId; // required
-  public long idForum; // optional
-  public long idShop; // optional
-  public long idDialog; // optional
-  public long idNews; // optional
+  public int likesNum; // required
+  public int unlikesNum; // required
+  public Map<MessageType,Long> linkedMessages; // required
+  public Map<Long,String> tags; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -95,15 +89,12 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     RECIPIENT_ID((short)6, "recipientId"),
     CREATED((short)7, "created"),
     EDITED((short)8, "edited"),
-    APPROVED((short)9, "approved"),
+    APPROVED_BY((short)9, "approvedBy"),
     CONTENT((short)10, "content"),
-    LIKES((short)11, "likes"),
-    UNLIKES((short)12, "unlikes"),
-    GROUP_ID((short)13, "groupId"),
-    ID_FORUM((short)14, "idForum"),
-    ID_SHOP((short)15, "idShop"),
-    ID_DIALOG((short)16, "idDialog"),
-    ID_NEWS((short)17, "idNews");
+    LIKES_NUM((short)11, "likesNum"),
+    UNLIKES_NUM((short)12, "unlikesNum"),
+    LINKED_MESSAGES((short)13, "linkedMessages"),
+    TAGS((short)14, "tags");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -134,24 +125,18 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
           return CREATED;
         case 8: // EDITED
           return EDITED;
-        case 9: // APPROVED
-          return APPROVED;
+        case 9: // APPROVED_BY
+          return APPROVED_BY;
         case 10: // CONTENT
           return CONTENT;
-        case 11: // LIKES
-          return LIKES;
-        case 12: // UNLIKES
-          return UNLIKES;
-        case 13: // GROUP_ID
-          return GROUP_ID;
-        case 14: // ID_FORUM
-          return ID_FORUM;
-        case 15: // ID_SHOP
-          return ID_SHOP;
-        case 16: // ID_DIALOG
-          return ID_DIALOG;
-        case 17: // ID_NEWS
-          return ID_NEWS;
+        case 11: // LIKES_NUM
+          return LIKES_NUM;
+        case 12: // UNLIKES_NUM
+          return UNLIKES_NUM;
+        case 13: // LINKED_MESSAGES
+          return LINKED_MESSAGES;
+        case 14: // TAGS
+          return TAGS;
         default:
           return null;
       }
@@ -199,16 +184,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   private static final int __RECIPIENTID_ISSET_ID = 4;
   private static final int __CREATED_ISSET_ID = 5;
   private static final int __EDITED_ISSET_ID = 6;
-  private static final int __APPROVED_ISSET_ID = 7;
-  private static final int __LIKES_ISSET_ID = 8;
-  private static final int __UNLIKES_ISSET_ID = 9;
-  private static final int __GROUPID_ISSET_ID = 10;
-  private static final int __IDFORUM_ISSET_ID = 11;
-  private static final int __IDSHOP_ISSET_ID = 12;
-  private static final int __IDDIALOG_ISSET_ID = 13;
-  private static final int __IDNEWS_ISSET_ID = 14;
+  private static final int __APPROVEDBY_ISSET_ID = 7;
+  private static final int __LIKESNUM_ISSET_ID = 8;
+  private static final int __UNLIKESNUM_ISSET_ID = 9;
   private short __isset_bitfield = 0;
-  private _Fields optionals[] = {_Fields.RECIPIENT_ID,_Fields.APPROVED,_Fields.ID_FORUM,_Fields.ID_SHOP,_Fields.ID_DIALOG,_Fields.ID_NEWS};
+  private _Fields optionals[] = {_Fields.RECIPIENT_ID,_Fields.APPROVED_BY};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -228,24 +208,22 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.EDITED, new org.apache.thrift.meta_data.FieldMetaData("edited", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.APPROVED, new org.apache.thrift.meta_data.FieldMetaData("approved", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.APPROVED_BY, new org.apache.thrift.meta_data.FieldMetaData("approvedBy", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.CONTENT, new org.apache.thrift.meta_data.FieldMetaData("content", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-    tmpMap.put(_Fields.LIKES, new org.apache.thrift.meta_data.FieldMetaData("likes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.LIKES_NUM, new org.apache.thrift.meta_data.FieldMetaData("likesNum", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.UNLIKES, new org.apache.thrift.meta_data.FieldMetaData("unlikes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.UNLIKES_NUM, new org.apache.thrift.meta_data.FieldMetaData("unlikesNum", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.ID_FORUM, new org.apache.thrift.meta_data.FieldMetaData("idForum", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.ID_SHOP, new org.apache.thrift.meta_data.FieldMetaData("idShop", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.ID_DIALOG, new org.apache.thrift.meta_data.FieldMetaData("idDialog", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.ID_NEWS, new org.apache.thrift.meta_data.FieldMetaData("idNews", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+    tmpMap.put(_Fields.LINKED_MESSAGES, new org.apache.thrift.meta_data.FieldMetaData("linkedMessages", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
+            new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, MessageType.class), 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64))));
+    tmpMap.put(_Fields.TAGS, new org.apache.thrift.meta_data.FieldMetaData("tags", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64), 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Message.class, metaDataMap);
   }
@@ -262,9 +240,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     int created,
     int edited,
     String content,
-    int likes,
-    int unlikes,
-    long groupId)
+    int likesNum,
+    int unlikesNum,
+    Map<MessageType,Long> linkedMessages,
+    Map<Long,String> tags)
   {
     this();
     this.id = id;
@@ -281,12 +260,12 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.edited = edited;
     setEditedIsSet(true);
     this.content = content;
-    this.likes = likes;
-    setLikesIsSet(true);
-    this.unlikes = unlikes;
-    setUnlikesIsSet(true);
-    this.groupId = groupId;
-    setGroupIdIsSet(true);
+    this.likesNum = likesNum;
+    setLikesNumIsSet(true);
+    this.unlikesNum = unlikesNum;
+    setUnlikesNumIsSet(true);
+    this.linkedMessages = linkedMessages;
+    this.tags = tags;
   }
 
   /**
@@ -304,17 +283,31 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.recipientId = other.recipientId;
     this.created = other.created;
     this.edited = other.edited;
-    this.approved = other.approved;
+    this.approvedBy = other.approvedBy;
     if (other.isSetContent()) {
       this.content = other.content;
     }
-    this.likes = other.likes;
-    this.unlikes = other.unlikes;
-    this.groupId = other.groupId;
-    this.idForum = other.idForum;
-    this.idShop = other.idShop;
-    this.idDialog = other.idDialog;
-    this.idNews = other.idNews;
+    this.likesNum = other.likesNum;
+    this.unlikesNum = other.unlikesNum;
+    if (other.isSetLinkedMessages()) {
+      Map<MessageType,Long> __this__linkedMessages = new HashMap<MessageType,Long>(other.linkedMessages.size());
+      for (Map.Entry<MessageType, Long> other_element : other.linkedMessages.entrySet()) {
+
+        MessageType other_element_key = other_element.getKey();
+        Long other_element_value = other_element.getValue();
+
+        MessageType __this__linkedMessages_copy_key = other_element_key;
+
+        Long __this__linkedMessages_copy_value = other_element_value;
+
+        __this__linkedMessages.put(__this__linkedMessages_copy_key, __this__linkedMessages_copy_value);
+      }
+      this.linkedMessages = __this__linkedMessages;
+    }
+    if (other.isSetTags()) {
+      Map<Long,String> __this__tags = new HashMap<Long,String>(other.tags);
+      this.tags = __this__tags;
+    }
   }
 
   public Message deepCopy() {
@@ -338,23 +331,15 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.created = 0;
     setEditedIsSet(false);
     this.edited = 0;
-    setApprovedIsSet(false);
-    this.approved = 0;
+    setApprovedByIsSet(false);
+    this.approvedBy = 0;
     this.content = null;
-    setLikesIsSet(false);
-    this.likes = 0;
-    setUnlikesIsSet(false);
-    this.unlikes = 0;
-    setGroupIdIsSet(false);
-    this.groupId = 0;
-    setIdForumIsSet(false);
-    this.idForum = 0;
-    setIdShopIsSet(false);
-    this.idShop = 0;
-    setIdDialogIsSet(false);
-    this.idDialog = 0;
-    setIdNewsIsSet(false);
-    this.idNews = 0;
+    setLikesNumIsSet(false);
+    this.likesNum = 0;
+    setUnlikesNumIsSet(false);
+    this.unlikesNum = 0;
+    this.linkedMessages = null;
+    this.tags = null;
   }
 
   public long getId() {
@@ -550,27 +535,27 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __EDITED_ISSET_ID, value);
   }
 
-  public long getApproved() {
-    return this.approved;
+  public long getApprovedBy() {
+    return this.approvedBy;
   }
 
-  public Message setApproved(long approved) {
-    this.approved = approved;
-    setApprovedIsSet(true);
+  public Message setApprovedBy(long approvedBy) {
+    this.approvedBy = approvedBy;
+    setApprovedByIsSet(true);
     return this;
   }
 
-  public void unsetApproved() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __APPROVED_ISSET_ID);
+  public void unsetApprovedBy() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __APPROVEDBY_ISSET_ID);
   }
 
-  /** Returns true if field approved is set (has been assigned a value) and false otherwise */
-  public boolean isSetApproved() {
-    return EncodingUtils.testBit(__isset_bitfield, __APPROVED_ISSET_ID);
+  /** Returns true if field approvedBy is set (has been assigned a value) and false otherwise */
+  public boolean isSetApprovedBy() {
+    return EncodingUtils.testBit(__isset_bitfield, __APPROVEDBY_ISSET_ID);
   }
 
-  public void setApprovedIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __APPROVED_ISSET_ID, value);
+  public void setApprovedByIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __APPROVEDBY_ISSET_ID, value);
   }
 
   public String getContent() {
@@ -597,165 +582,120 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
   }
 
-  public int getLikes() {
-    return this.likes;
+  public int getLikesNum() {
+    return this.likesNum;
   }
 
-  public Message setLikes(int likes) {
-    this.likes = likes;
-    setLikesIsSet(true);
+  public Message setLikesNum(int likesNum) {
+    this.likesNum = likesNum;
+    setLikesNumIsSet(true);
     return this;
   }
 
-  public void unsetLikes() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LIKES_ISSET_ID);
+  public void unsetLikesNum() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LIKESNUM_ISSET_ID);
   }
 
-  /** Returns true if field likes is set (has been assigned a value) and false otherwise */
-  public boolean isSetLikes() {
-    return EncodingUtils.testBit(__isset_bitfield, __LIKES_ISSET_ID);
+  /** Returns true if field likesNum is set (has been assigned a value) and false otherwise */
+  public boolean isSetLikesNum() {
+    return EncodingUtils.testBit(__isset_bitfield, __LIKESNUM_ISSET_ID);
   }
 
-  public void setLikesIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LIKES_ISSET_ID, value);
+  public void setLikesNumIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LIKESNUM_ISSET_ID, value);
   }
 
-  public int getUnlikes() {
-    return this.unlikes;
+  public int getUnlikesNum() {
+    return this.unlikesNum;
   }
 
-  public Message setUnlikes(int unlikes) {
-    this.unlikes = unlikes;
-    setUnlikesIsSet(true);
+  public Message setUnlikesNum(int unlikesNum) {
+    this.unlikesNum = unlikesNum;
+    setUnlikesNumIsSet(true);
     return this;
   }
 
-  public void unsetUnlikes() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __UNLIKES_ISSET_ID);
+  public void unsetUnlikesNum() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __UNLIKESNUM_ISSET_ID);
   }
 
-  /** Returns true if field unlikes is set (has been assigned a value) and false otherwise */
-  public boolean isSetUnlikes() {
-    return EncodingUtils.testBit(__isset_bitfield, __UNLIKES_ISSET_ID);
+  /** Returns true if field unlikesNum is set (has been assigned a value) and false otherwise */
+  public boolean isSetUnlikesNum() {
+    return EncodingUtils.testBit(__isset_bitfield, __UNLIKESNUM_ISSET_ID);
   }
 
-  public void setUnlikesIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __UNLIKES_ISSET_ID, value);
+  public void setUnlikesNumIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __UNLIKESNUM_ISSET_ID, value);
   }
 
-  public long getGroupId() {
-    return this.groupId;
+  public int getLinkedMessagesSize() {
+    return (this.linkedMessages == null) ? 0 : this.linkedMessages.size();
   }
 
-  public Message setGroupId(long groupId) {
-    this.groupId = groupId;
-    setGroupIdIsSet(true);
+  public void putToLinkedMessages(MessageType key, long val) {
+    if (this.linkedMessages == null) {
+      this.linkedMessages = new HashMap<MessageType,Long>();
+    }
+    this.linkedMessages.put(key, val);
+  }
+
+  public Map<MessageType,Long> getLinkedMessages() {
+    return this.linkedMessages;
+  }
+
+  public Message setLinkedMessages(Map<MessageType,Long> linkedMessages) {
+    this.linkedMessages = linkedMessages;
     return this;
   }
 
-  public void unsetGroupId() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __GROUPID_ISSET_ID);
+  public void unsetLinkedMessages() {
+    this.linkedMessages = null;
   }
 
-  /** Returns true if field groupId is set (has been assigned a value) and false otherwise */
-  public boolean isSetGroupId() {
-    return EncodingUtils.testBit(__isset_bitfield, __GROUPID_ISSET_ID);
+  /** Returns true if field linkedMessages is set (has been assigned a value) and false otherwise */
+  public boolean isSetLinkedMessages() {
+    return this.linkedMessages != null;
   }
 
-  public void setGroupIdIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __GROUPID_ISSET_ID, value);
+  public void setLinkedMessagesIsSet(boolean value) {
+    if (!value) {
+      this.linkedMessages = null;
+    }
   }
 
-  public long getIdForum() {
-    return this.idForum;
+  public int getTagsSize() {
+    return (this.tags == null) ? 0 : this.tags.size();
   }
 
-  public Message setIdForum(long idForum) {
-    this.idForum = idForum;
-    setIdForumIsSet(true);
+  public void putToTags(long key, String val) {
+    if (this.tags == null) {
+      this.tags = new HashMap<Long,String>();
+    }
+    this.tags.put(key, val);
+  }
+
+  public Map<Long,String> getTags() {
+    return this.tags;
+  }
+
+  public Message setTags(Map<Long,String> tags) {
+    this.tags = tags;
     return this;
   }
 
-  public void unsetIdForum() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __IDFORUM_ISSET_ID);
+  public void unsetTags() {
+    this.tags = null;
   }
 
-  /** Returns true if field idForum is set (has been assigned a value) and false otherwise */
-  public boolean isSetIdForum() {
-    return EncodingUtils.testBit(__isset_bitfield, __IDFORUM_ISSET_ID);
+  /** Returns true if field tags is set (has been assigned a value) and false otherwise */
+  public boolean isSetTags() {
+    return this.tags != null;
   }
 
-  public void setIdForumIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IDFORUM_ISSET_ID, value);
-  }
-
-  public long getIdShop() {
-    return this.idShop;
-  }
-
-  public Message setIdShop(long idShop) {
-    this.idShop = idShop;
-    setIdShopIsSet(true);
-    return this;
-  }
-
-  public void unsetIdShop() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __IDSHOP_ISSET_ID);
-  }
-
-  /** Returns true if field idShop is set (has been assigned a value) and false otherwise */
-  public boolean isSetIdShop() {
-    return EncodingUtils.testBit(__isset_bitfield, __IDSHOP_ISSET_ID);
-  }
-
-  public void setIdShopIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IDSHOP_ISSET_ID, value);
-  }
-
-  public long getIdDialog() {
-    return this.idDialog;
-  }
-
-  public Message setIdDialog(long idDialog) {
-    this.idDialog = idDialog;
-    setIdDialogIsSet(true);
-    return this;
-  }
-
-  public void unsetIdDialog() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __IDDIALOG_ISSET_ID);
-  }
-
-  /** Returns true if field idDialog is set (has been assigned a value) and false otherwise */
-  public boolean isSetIdDialog() {
-    return EncodingUtils.testBit(__isset_bitfield, __IDDIALOG_ISSET_ID);
-  }
-
-  public void setIdDialogIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IDDIALOG_ISSET_ID, value);
-  }
-
-  public long getIdNews() {
-    return this.idNews;
-  }
-
-  public Message setIdNews(long idNews) {
-    this.idNews = idNews;
-    setIdNewsIsSet(true);
-    return this;
-  }
-
-  public void unsetIdNews() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __IDNEWS_ISSET_ID);
-  }
-
-  /** Returns true if field idNews is set (has been assigned a value) and false otherwise */
-  public boolean isSetIdNews() {
-    return EncodingUtils.testBit(__isset_bitfield, __IDNEWS_ISSET_ID);
-  }
-
-  public void setIdNewsIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IDNEWS_ISSET_ID, value);
+  public void setTagsIsSet(boolean value) {
+    if (!value) {
+      this.tags = null;
+    }
   }
 
   public void setFieldValue(_Fields field, Object value) {
@@ -824,11 +764,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       }
       break;
 
-    case APPROVED:
+    case APPROVED_BY:
       if (value == null) {
-        unsetApproved();
+        unsetApprovedBy();
       } else {
-        setApproved((Long)value);
+        setApprovedBy((Long)value);
       }
       break;
 
@@ -840,59 +780,35 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       }
       break;
 
-    case LIKES:
+    case LIKES_NUM:
       if (value == null) {
-        unsetLikes();
+        unsetLikesNum();
       } else {
-        setLikes((Integer)value);
+        setLikesNum((Integer)value);
       }
       break;
 
-    case UNLIKES:
+    case UNLIKES_NUM:
       if (value == null) {
-        unsetUnlikes();
+        unsetUnlikesNum();
       } else {
-        setUnlikes((Integer)value);
+        setUnlikesNum((Integer)value);
       }
       break;
 
-    case GROUP_ID:
+    case LINKED_MESSAGES:
       if (value == null) {
-        unsetGroupId();
+        unsetLinkedMessages();
       } else {
-        setGroupId((Long)value);
+        setLinkedMessages((Map<MessageType,Long>)value);
       }
       break;
 
-    case ID_FORUM:
+    case TAGS:
       if (value == null) {
-        unsetIdForum();
+        unsetTags();
       } else {
-        setIdForum((Long)value);
-      }
-      break;
-
-    case ID_SHOP:
-      if (value == null) {
-        unsetIdShop();
-      } else {
-        setIdShop((Long)value);
-      }
-      break;
-
-    case ID_DIALOG:
-      if (value == null) {
-        unsetIdDialog();
-      } else {
-        setIdDialog((Long)value);
-      }
-      break;
-
-    case ID_NEWS:
-      if (value == null) {
-        unsetIdNews();
-      } else {
-        setIdNews((Long)value);
+        setTags((Map<Long,String>)value);
       }
       break;
 
@@ -925,32 +841,23 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     case EDITED:
       return Integer.valueOf(getEdited());
 
-    case APPROVED:
-      return Long.valueOf(getApproved());
+    case APPROVED_BY:
+      return Long.valueOf(getApprovedBy());
 
     case CONTENT:
       return getContent();
 
-    case LIKES:
-      return Integer.valueOf(getLikes());
+    case LIKES_NUM:
+      return Integer.valueOf(getLikesNum());
 
-    case UNLIKES:
-      return Integer.valueOf(getUnlikes());
+    case UNLIKES_NUM:
+      return Integer.valueOf(getUnlikesNum());
 
-    case GROUP_ID:
-      return Long.valueOf(getGroupId());
+    case LINKED_MESSAGES:
+      return getLinkedMessages();
 
-    case ID_FORUM:
-      return Long.valueOf(getIdForum());
-
-    case ID_SHOP:
-      return Long.valueOf(getIdShop());
-
-    case ID_DIALOG:
-      return Long.valueOf(getIdDialog());
-
-    case ID_NEWS:
-      return Long.valueOf(getIdNews());
+    case TAGS:
+      return getTags();
 
     }
     throw new IllegalStateException();
@@ -979,24 +886,18 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       return isSetCreated();
     case EDITED:
       return isSetEdited();
-    case APPROVED:
-      return isSetApproved();
+    case APPROVED_BY:
+      return isSetApprovedBy();
     case CONTENT:
       return isSetContent();
-    case LIKES:
-      return isSetLikes();
-    case UNLIKES:
-      return isSetUnlikes();
-    case GROUP_ID:
-      return isSetGroupId();
-    case ID_FORUM:
-      return isSetIdForum();
-    case ID_SHOP:
-      return isSetIdShop();
-    case ID_DIALOG:
-      return isSetIdDialog();
-    case ID_NEWS:
-      return isSetIdNews();
+    case LIKES_NUM:
+      return isSetLikesNum();
+    case UNLIKES_NUM:
+      return isSetUnlikesNum();
+    case LINKED_MESSAGES:
+      return isSetLinkedMessages();
+    case TAGS:
+      return isSetTags();
     }
     throw new IllegalStateException();
   }
@@ -1086,12 +987,12 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return false;
     }
 
-    boolean this_present_approved = true && this.isSetApproved();
-    boolean that_present_approved = true && that.isSetApproved();
-    if (this_present_approved || that_present_approved) {
-      if (!(this_present_approved && that_present_approved))
+    boolean this_present_approvedBy = true && this.isSetApprovedBy();
+    boolean that_present_approvedBy = true && that.isSetApprovedBy();
+    if (this_present_approvedBy || that_present_approvedBy) {
+      if (!(this_present_approvedBy && that_present_approvedBy))
         return false;
-      if (this.approved != that.approved)
+      if (this.approvedBy != that.approvedBy)
         return false;
     }
 
@@ -1104,66 +1005,39 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return false;
     }
 
-    boolean this_present_likes = true;
-    boolean that_present_likes = true;
-    if (this_present_likes || that_present_likes) {
-      if (!(this_present_likes && that_present_likes))
+    boolean this_present_likesNum = true;
+    boolean that_present_likesNum = true;
+    if (this_present_likesNum || that_present_likesNum) {
+      if (!(this_present_likesNum && that_present_likesNum))
         return false;
-      if (this.likes != that.likes)
-        return false;
-    }
-
-    boolean this_present_unlikes = true;
-    boolean that_present_unlikes = true;
-    if (this_present_unlikes || that_present_unlikes) {
-      if (!(this_present_unlikes && that_present_unlikes))
-        return false;
-      if (this.unlikes != that.unlikes)
+      if (this.likesNum != that.likesNum)
         return false;
     }
 
-    boolean this_present_groupId = true;
-    boolean that_present_groupId = true;
-    if (this_present_groupId || that_present_groupId) {
-      if (!(this_present_groupId && that_present_groupId))
+    boolean this_present_unlikesNum = true;
+    boolean that_present_unlikesNum = true;
+    if (this_present_unlikesNum || that_present_unlikesNum) {
+      if (!(this_present_unlikesNum && that_present_unlikesNum))
         return false;
-      if (this.groupId != that.groupId)
-        return false;
-    }
-
-    boolean this_present_idForum = true && this.isSetIdForum();
-    boolean that_present_idForum = true && that.isSetIdForum();
-    if (this_present_idForum || that_present_idForum) {
-      if (!(this_present_idForum && that_present_idForum))
-        return false;
-      if (this.idForum != that.idForum)
+      if (this.unlikesNum != that.unlikesNum)
         return false;
     }
 
-    boolean this_present_idShop = true && this.isSetIdShop();
-    boolean that_present_idShop = true && that.isSetIdShop();
-    if (this_present_idShop || that_present_idShop) {
-      if (!(this_present_idShop && that_present_idShop))
+    boolean this_present_linkedMessages = true && this.isSetLinkedMessages();
+    boolean that_present_linkedMessages = true && that.isSetLinkedMessages();
+    if (this_present_linkedMessages || that_present_linkedMessages) {
+      if (!(this_present_linkedMessages && that_present_linkedMessages))
         return false;
-      if (this.idShop != that.idShop)
-        return false;
-    }
-
-    boolean this_present_idDialog = true && this.isSetIdDialog();
-    boolean that_present_idDialog = true && that.isSetIdDialog();
-    if (this_present_idDialog || that_present_idDialog) {
-      if (!(this_present_idDialog && that_present_idDialog))
-        return false;
-      if (this.idDialog != that.idDialog)
+      if (!this.linkedMessages.equals(that.linkedMessages))
         return false;
     }
 
-    boolean this_present_idNews = true && this.isSetIdNews();
-    boolean that_present_idNews = true && that.isSetIdNews();
-    if (this_present_idNews || that_present_idNews) {
-      if (!(this_present_idNews && that_present_idNews))
+    boolean this_present_tags = true && this.isSetTags();
+    boolean that_present_tags = true && that.isSetTags();
+    if (this_present_tags || that_present_tags) {
+      if (!(this_present_tags && that_present_tags))
         return false;
-      if (this.idNews != that.idNews)
+      if (!this.tags.equals(that.tags))
         return false;
     }
 
@@ -1263,12 +1137,12 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetApproved()).compareTo(other.isSetApproved());
+    lastComparison = Boolean.valueOf(isSetApprovedBy()).compareTo(other.isSetApprovedBy());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetApproved()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.approved, other.approved);
+    if (isSetApprovedBy()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.approvedBy, other.approvedBy);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -1283,72 +1157,42 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetLikes()).compareTo(other.isSetLikes());
+    lastComparison = Boolean.valueOf(isSetLikesNum()).compareTo(other.isSetLikesNum());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetLikes()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.likes, other.likes);
+    if (isSetLikesNum()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.likesNum, other.likesNum);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetUnlikes()).compareTo(other.isSetUnlikes());
+    lastComparison = Boolean.valueOf(isSetUnlikesNum()).compareTo(other.isSetUnlikesNum());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetUnlikes()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.unlikes, other.unlikes);
+    if (isSetUnlikesNum()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.unlikesNum, other.unlikesNum);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetGroupId()).compareTo(other.isSetGroupId());
+    lastComparison = Boolean.valueOf(isSetLinkedMessages()).compareTo(other.isSetLinkedMessages());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetGroupId()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.groupId, other.groupId);
+    if (isSetLinkedMessages()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.linkedMessages, other.linkedMessages);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetIdForum()).compareTo(other.isSetIdForum());
+    lastComparison = Boolean.valueOf(isSetTags()).compareTo(other.isSetTags());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetIdForum()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.idForum, other.idForum);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetIdShop()).compareTo(other.isSetIdShop());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetIdShop()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.idShop, other.idShop);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetIdDialog()).compareTo(other.isSetIdDialog());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetIdDialog()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.idDialog, other.idDialog);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetIdNews()).compareTo(other.isSetIdNews());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetIdNews()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.idNews, other.idNews);
+    if (isSetTags()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.tags, other.tags);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -1410,10 +1254,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     sb.append("edited:");
     sb.append(this.edited);
     first = false;
-    if (isSetApproved()) {
+    if (isSetApprovedBy()) {
       if (!first) sb.append(", ");
-      sb.append("approved:");
-      sb.append(this.approved);
+      sb.append("approvedBy:");
+      sb.append(this.approvedBy);
       first = false;
     }
     if (!first) sb.append(", ");
@@ -1425,41 +1269,29 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("likes:");
-    sb.append(this.likes);
+    sb.append("likesNum:");
+    sb.append(this.likesNum);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("unlikes:");
-    sb.append(this.unlikes);
+    sb.append("unlikesNum:");
+    sb.append(this.unlikesNum);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("groupId:");
-    sb.append(this.groupId);
+    sb.append("linkedMessages:");
+    if (this.linkedMessages == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.linkedMessages);
+    }
     first = false;
-    if (isSetIdForum()) {
-      if (!first) sb.append(", ");
-      sb.append("idForum:");
-      sb.append(this.idForum);
-      first = false;
+    if (!first) sb.append(", ");
+    sb.append("tags:");
+    if (this.tags == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.tags);
     }
-    if (isSetIdShop()) {
-      if (!first) sb.append(", ");
-      sb.append("idShop:");
-      sb.append(this.idShop);
-      first = false;
-    }
-    if (isSetIdDialog()) {
-      if (!first) sb.append(", ");
-      sb.append("idDialog:");
-      sb.append(this.idDialog);
-      first = false;
-    }
-    if (isSetIdNews()) {
-      if (!first) sb.append(", ");
-      sb.append("idNews:");
-      sb.append(this.idNews);
-      first = false;
-    }
+    first = false;
     sb.append(")");
     return sb.toString();
   }
@@ -1569,10 +1401,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 9: // APPROVED
+          case 9: // APPROVED_BY
             if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-              struct.approved = iprot.readI64();
-              struct.setApprovedIsSet(true);
+              struct.approvedBy = iprot.readI64();
+              struct.setApprovedByIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -1585,58 +1417,58 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 11: // LIKES
+          case 11: // LIKES_NUM
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.likes = iprot.readI32();
-              struct.setLikesIsSet(true);
+              struct.likesNum = iprot.readI32();
+              struct.setLikesNumIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 12: // UNLIKES
+          case 12: // UNLIKES_NUM
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.unlikes = iprot.readI32();
-              struct.setUnlikesIsSet(true);
+              struct.unlikesNum = iprot.readI32();
+              struct.setUnlikesNumIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 13: // GROUP_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-              struct.groupId = iprot.readI64();
-              struct.setGroupIdIsSet(true);
+          case 13: // LINKED_MESSAGES
+            if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
+              {
+                org.apache.thrift.protocol.TMap _map0 = iprot.readMapBegin();
+                struct.linkedMessages = new HashMap<MessageType,Long>(2*_map0.size);
+                for (int _i1 = 0; _i1 < _map0.size; ++_i1)
+                {
+                  MessageType _key2;
+                  long _val3;
+                  _key2 = MessageType.findByValue(iprot.readI32());
+                  _val3 = iprot.readI64();
+                  struct.linkedMessages.put(_key2, _val3);
+                }
+                iprot.readMapEnd();
+              }
+              struct.setLinkedMessagesIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 14: // ID_FORUM
-            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-              struct.idForum = iprot.readI64();
-              struct.setIdForumIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 15: // ID_SHOP
-            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-              struct.idShop = iprot.readI64();
-              struct.setIdShopIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 16: // ID_DIALOG
-            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-              struct.idDialog = iprot.readI64();
-              struct.setIdDialogIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 17: // ID_NEWS
-            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-              struct.idNews = iprot.readI64();
-              struct.setIdNewsIsSet(true);
+          case 14: // TAGS
+            if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
+              {
+                org.apache.thrift.protocol.TMap _map4 = iprot.readMapBegin();
+                struct.tags = new HashMap<Long,String>(2*_map4.size);
+                for (int _i5 = 0; _i5 < _map4.size; ++_i5)
+                {
+                  long _key6;
+                  String _val7;
+                  _key6 = iprot.readI64();
+                  _val7 = iprot.readString();
+                  struct.tags.put(_key6, _val7);
+                }
+                iprot.readMapEnd();
+              }
+              struct.setTagsIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -1684,9 +1516,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       oprot.writeFieldBegin(EDITED_FIELD_DESC);
       oprot.writeI32(struct.edited);
       oprot.writeFieldEnd();
-      if (struct.isSetApproved()) {
-        oprot.writeFieldBegin(APPROVED_FIELD_DESC);
-        oprot.writeI64(struct.approved);
+      if (struct.isSetApprovedBy()) {
+        oprot.writeFieldBegin(APPROVED_BY_FIELD_DESC);
+        oprot.writeI64(struct.approvedBy);
         oprot.writeFieldEnd();
       }
       if (struct.content != null) {
@@ -1694,33 +1526,36 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         oprot.writeString(struct.content);
         oprot.writeFieldEnd();
       }
-      oprot.writeFieldBegin(LIKES_FIELD_DESC);
-      oprot.writeI32(struct.likes);
+      oprot.writeFieldBegin(LIKES_NUM_FIELD_DESC);
+      oprot.writeI32(struct.likesNum);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(UNLIKES_FIELD_DESC);
-      oprot.writeI32(struct.unlikes);
+      oprot.writeFieldBegin(UNLIKES_NUM_FIELD_DESC);
+      oprot.writeI32(struct.unlikesNum);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
-      oprot.writeI64(struct.groupId);
-      oprot.writeFieldEnd();
-      if (struct.isSetIdForum()) {
-        oprot.writeFieldBegin(ID_FORUM_FIELD_DESC);
-        oprot.writeI64(struct.idForum);
+      if (struct.linkedMessages != null) {
+        oprot.writeFieldBegin(LINKED_MESSAGES_FIELD_DESC);
+        {
+          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.I64, struct.linkedMessages.size()));
+          for (Map.Entry<MessageType, Long> _iter8 : struct.linkedMessages.entrySet())
+          {
+            oprot.writeI32(_iter8.getKey().getValue());
+            oprot.writeI64(_iter8.getValue());
+          }
+          oprot.writeMapEnd();
+        }
         oprot.writeFieldEnd();
       }
-      if (struct.isSetIdShop()) {
-        oprot.writeFieldBegin(ID_SHOP_FIELD_DESC);
-        oprot.writeI64(struct.idShop);
-        oprot.writeFieldEnd();
-      }
-      if (struct.isSetIdDialog()) {
-        oprot.writeFieldBegin(ID_DIALOG_FIELD_DESC);
-        oprot.writeI64(struct.idDialog);
-        oprot.writeFieldEnd();
-      }
-      if (struct.isSetIdNews()) {
-        oprot.writeFieldBegin(ID_NEWS_FIELD_DESC);
-        oprot.writeI64(struct.idNews);
+      if (struct.tags != null) {
+        oprot.writeFieldBegin(TAGS_FIELD_DESC);
+        {
+          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I64, org.apache.thrift.protocol.TType.STRING, struct.tags.size()));
+          for (Map.Entry<Long, String> _iter9 : struct.tags.entrySet())
+          {
+            oprot.writeI64(_iter9.getKey());
+            oprot.writeString(_iter9.getValue());
+          }
+          oprot.writeMapEnd();
+        }
         oprot.writeFieldEnd();
       }
       oprot.writeFieldStop();
@@ -1765,34 +1600,25 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetEdited()) {
         optionals.set(7);
       }
-      if (struct.isSetApproved()) {
+      if (struct.isSetApprovedBy()) {
         optionals.set(8);
       }
       if (struct.isSetContent()) {
         optionals.set(9);
       }
-      if (struct.isSetLikes()) {
+      if (struct.isSetLikesNum()) {
         optionals.set(10);
       }
-      if (struct.isSetUnlikes()) {
+      if (struct.isSetUnlikesNum()) {
         optionals.set(11);
       }
-      if (struct.isSetGroupId()) {
+      if (struct.isSetLinkedMessages()) {
         optionals.set(12);
       }
-      if (struct.isSetIdForum()) {
+      if (struct.isSetTags()) {
         optionals.set(13);
       }
-      if (struct.isSetIdShop()) {
-        optionals.set(14);
-      }
-      if (struct.isSetIdDialog()) {
-        optionals.set(15);
-      }
-      if (struct.isSetIdNews()) {
-        optionals.set(16);
-      }
-      oprot.writeBitSet(optionals, 17);
+      oprot.writeBitSet(optionals, 14);
       if (struct.isSetId()) {
         oprot.writeI64(struct.id);
       }
@@ -1817,39 +1643,44 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetEdited()) {
         oprot.writeI32(struct.edited);
       }
-      if (struct.isSetApproved()) {
-        oprot.writeI64(struct.approved);
+      if (struct.isSetApprovedBy()) {
+        oprot.writeI64(struct.approvedBy);
       }
       if (struct.isSetContent()) {
         oprot.writeString(struct.content);
       }
-      if (struct.isSetLikes()) {
-        oprot.writeI32(struct.likes);
+      if (struct.isSetLikesNum()) {
+        oprot.writeI32(struct.likesNum);
       }
-      if (struct.isSetUnlikes()) {
-        oprot.writeI32(struct.unlikes);
+      if (struct.isSetUnlikesNum()) {
+        oprot.writeI32(struct.unlikesNum);
       }
-      if (struct.isSetGroupId()) {
-        oprot.writeI64(struct.groupId);
+      if (struct.isSetLinkedMessages()) {
+        {
+          oprot.writeI32(struct.linkedMessages.size());
+          for (Map.Entry<MessageType, Long> _iter10 : struct.linkedMessages.entrySet())
+          {
+            oprot.writeI32(_iter10.getKey().getValue());
+            oprot.writeI64(_iter10.getValue());
+          }
+        }
       }
-      if (struct.isSetIdForum()) {
-        oprot.writeI64(struct.idForum);
-      }
-      if (struct.isSetIdShop()) {
-        oprot.writeI64(struct.idShop);
-      }
-      if (struct.isSetIdDialog()) {
-        oprot.writeI64(struct.idDialog);
-      }
-      if (struct.isSetIdNews()) {
-        oprot.writeI64(struct.idNews);
+      if (struct.isSetTags()) {
+        {
+          oprot.writeI32(struct.tags.size());
+          for (Map.Entry<Long, String> _iter11 : struct.tags.entrySet())
+          {
+            oprot.writeI64(_iter11.getKey());
+            oprot.writeString(_iter11.getValue());
+          }
+        }
       }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Message struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(17);
+      BitSet incoming = iprot.readBitSet(14);
       if (incoming.get(0)) {
         struct.id = iprot.readI64();
         struct.setIdIsSet(true);
@@ -1883,40 +1714,50 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         struct.setEditedIsSet(true);
       }
       if (incoming.get(8)) {
-        struct.approved = iprot.readI64();
-        struct.setApprovedIsSet(true);
+        struct.approvedBy = iprot.readI64();
+        struct.setApprovedByIsSet(true);
       }
       if (incoming.get(9)) {
         struct.content = iprot.readString();
         struct.setContentIsSet(true);
       }
       if (incoming.get(10)) {
-        struct.likes = iprot.readI32();
-        struct.setLikesIsSet(true);
+        struct.likesNum = iprot.readI32();
+        struct.setLikesNumIsSet(true);
       }
       if (incoming.get(11)) {
-        struct.unlikes = iprot.readI32();
-        struct.setUnlikesIsSet(true);
+        struct.unlikesNum = iprot.readI32();
+        struct.setUnlikesNumIsSet(true);
       }
       if (incoming.get(12)) {
-        struct.groupId = iprot.readI64();
-        struct.setGroupIdIsSet(true);
+        {
+          org.apache.thrift.protocol.TMap _map12 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.I64, iprot.readI32());
+          struct.linkedMessages = new HashMap<MessageType,Long>(2*_map12.size);
+          for (int _i13 = 0; _i13 < _map12.size; ++_i13)
+          {
+            MessageType _key14;
+            long _val15;
+            _key14 = MessageType.findByValue(iprot.readI32());
+            _val15 = iprot.readI64();
+            struct.linkedMessages.put(_key14, _val15);
+          }
+        }
+        struct.setLinkedMessagesIsSet(true);
       }
       if (incoming.get(13)) {
-        struct.idForum = iprot.readI64();
-        struct.setIdForumIsSet(true);
-      }
-      if (incoming.get(14)) {
-        struct.idShop = iprot.readI64();
-        struct.setIdShopIsSet(true);
-      }
-      if (incoming.get(15)) {
-        struct.idDialog = iprot.readI64();
-        struct.setIdDialogIsSet(true);
-      }
-      if (incoming.get(16)) {
-        struct.idNews = iprot.readI64();
-        struct.setIdNewsIsSet(true);
+        {
+          org.apache.thrift.protocol.TMap _map16 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I64, org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+          struct.tags = new HashMap<Long,String>(2*_map16.size);
+          for (int _i17 = 0; _i17 < _map16.size; ++_i17)
+          {
+            long _key18;
+            String _val19;
+            _key18 = iprot.readI64();
+            _val19 = iprot.readString();
+            struct.tags.put(_key18, _val19);
+          }
+        }
+        struct.setTagsIsSet(true);
       }
     }
   }
