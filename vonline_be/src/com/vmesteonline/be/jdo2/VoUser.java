@@ -11,6 +11,9 @@ import javax.jdo.annotations.PrimaryKey;
 @PersistenceCapable
 public class VoUser {
 
+	public VoUser() {
+	}
+
 	public VoUser(String name, String lastName, String email, String password) {
 		this.name = name;
 		this.lastName = lastName;

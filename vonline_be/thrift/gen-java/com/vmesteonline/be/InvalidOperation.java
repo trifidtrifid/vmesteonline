@@ -44,11 +44,19 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
     schemes.put(TupleScheme.class, new InvalidOperationTupleSchemeFactory());
   }
 
-  public int what; // required
+  /**
+   * 
+   * @see Error
+   */
+  public Error what; // required
   public String why; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+    /**
+     * 
+     * @see Error
+     */
     WHAT((short)1, "what"),
     WHY((short)2, "why");
 
@@ -109,13 +117,11 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
   }
 
   // isset id assignments
-  private static final int __WHAT_ISSET_ID = 0;
-  private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.WHAT, new org.apache.thrift.meta_data.FieldMetaData("what", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, Error.class)));
     tmpMap.put(_Fields.WHY, new org.apache.thrift.meta_data.FieldMetaData("why", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -126,12 +132,11 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
   }
 
   public InvalidOperation(
-    int what,
+    Error what,
     String why)
   {
     this();
     this.what = what;
-    setWhatIsSet(true);
     this.why = why;
   }
 
@@ -139,8 +144,9 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
    * Performs a deep copy on <i>other</i>.
    */
   public InvalidOperation(InvalidOperation other) {
-    __isset_bitfield = other.__isset_bitfield;
-    this.what = other.what;
+    if (other.isSetWhat()) {
+      this.what = other.what;
+    }
     if (other.isSetWhy()) {
       this.why = other.why;
     }
@@ -152,32 +158,40 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
 
   @Override
   public void clear() {
-    setWhatIsSet(false);
-    this.what = 0;
+    this.what = null;
     this.why = null;
   }
 
-  public int getWhat() {
+  /**
+   * 
+   * @see Error
+   */
+  public Error getWhat() {
     return this.what;
   }
 
-  public InvalidOperation setWhat(int what) {
+  /**
+   * 
+   * @see Error
+   */
+  public InvalidOperation setWhat(Error what) {
     this.what = what;
-    setWhatIsSet(true);
     return this;
   }
 
   public void unsetWhat() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __WHAT_ISSET_ID);
+    this.what = null;
   }
 
   /** Returns true if field what is set (has been assigned a value) and false otherwise */
   public boolean isSetWhat() {
-    return EncodingUtils.testBit(__isset_bitfield, __WHAT_ISSET_ID);
+    return this.what != null;
   }
 
   public void setWhatIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __WHAT_ISSET_ID, value);
+    if (!value) {
+      this.what = null;
+    }
   }
 
   public String getWhy() {
@@ -210,7 +224,7 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
       if (value == null) {
         unsetWhat();
       } else {
-        setWhat((Integer)value);
+        setWhat((Error)value);
       }
       break;
 
@@ -228,7 +242,7 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
   public Object getFieldValue(_Fields field) {
     switch (field) {
     case WHAT:
-      return Integer.valueOf(getWhat());
+      return getWhat();
 
     case WHY:
       return getWhy();
@@ -265,12 +279,12 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
     if (that == null)
       return false;
 
-    boolean this_present_what = true;
-    boolean that_present_what = true;
+    boolean this_present_what = true && this.isSetWhat();
+    boolean that_present_what = true && that.isSetWhat();
     if (this_present_what || that_present_what) {
       if (!(this_present_what && that_present_what))
         return false;
-      if (this.what != that.what)
+      if (!this.what.equals(that.what))
         return false;
     }
 
@@ -340,7 +354,11 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
     boolean first = true;
 
     sb.append("what:");
-    sb.append(this.what);
+    if (this.what == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.what);
+    }
     first = false;
     if (!first) sb.append(", ");
     sb.append("why:");
@@ -369,8 +387,6 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
 
   private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
     try {
-      // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-      __isset_bitfield = 0;
       read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
     } catch (org.apache.thrift.TException te) {
       throw new java.io.IOException(te);
@@ -397,7 +413,7 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
         switch (schemeField.id) {
           case 1: // WHAT
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.what = iprot.readI32();
+              struct.what = Error.findByValue(iprot.readI32());
               struct.setWhatIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -426,9 +442,11 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      oprot.writeFieldBegin(WHAT_FIELD_DESC);
-      oprot.writeI32(struct.what);
-      oprot.writeFieldEnd();
+      if (struct.what != null) {
+        oprot.writeFieldBegin(WHAT_FIELD_DESC);
+        oprot.writeI32(struct.what.getValue());
+        oprot.writeFieldEnd();
+      }
       if (struct.why != null) {
         oprot.writeFieldBegin(WHY_FIELD_DESC);
         oprot.writeString(struct.why);
@@ -460,7 +478,7 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
       }
       oprot.writeBitSet(optionals, 2);
       if (struct.isSetWhat()) {
-        oprot.writeI32(struct.what);
+        oprot.writeI32(struct.what.getValue());
       }
       if (struct.isSetWhy()) {
         oprot.writeString(struct.why);
@@ -472,7 +490,7 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
       TTupleProtocol iprot = (TTupleProtocol) prot;
       BitSet incoming = iprot.readBitSet(2);
       if (incoming.get(0)) {
-        struct.what = iprot.readI32();
+        struct.what = Error.findByValue(iprot.readI32());
         struct.setWhatIsSet(true);
       }
       if (incoming.get(1)) {

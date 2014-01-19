@@ -26,10 +26,10 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public Session login(final String email, final String password) throws InvalidOperation, TException {
+	public boolean login(final String email, final String password) throws InvalidOperation, TException {
 		if (httpSession == null) {
 			logger.error("http session is null");
-			throw new InvalidOperation(0, "incorrect params");
+			throw new InvalidOperation(Error.IncorrectParametrs, "http session is null");
 		}
 
 		logger.info("try authentificate user " + email + " pass " + password);
@@ -39,32 +39,30 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			if (u.getPassword().equals(password)) {
 				VoSession sess = new VoSession(httpSession.getId(), u);
 				PMF.getPm().makePersistent(sess);
-				return sess.feSession();
+				return true;
 			} else
 				logger.info("incorrect password " + email + " pass " + password);
 
 		}
-		throw new InvalidOperation(1, "incorrect login or password");
+		throw new InvalidOperation(Error.IncorrectParametrs, "incorrect login or password");
+	}
+
+	public VoUser getSession(String httpSession) {
+
+		return new VoUser();
 	}
 
 	@Override
-	public Session getSession(final String salt) throws InvalidOperation, TException {
-		Session sess = new Session();
+	public boolean registerNewUser(String firstname, String lastname, String password, String groupId, String email) throws InvalidOperation {
 
-		return sess;
-	}
+		if (getUserByEmail(email) != null)
+			throw new InvalidOperation(Error.IncorrectParametrs, "registration exsist");
 
-	@Override
-	public int registerNewUser(String uname, String password, long groupId, String email) throws InvalidOperation {
-
-		if (getUserByEmail(email) != null) {
-			throw new InvalidOperation(1, "unknown user home group");
-		}
 		PersistenceManager pm = PMF.getPm();
-		VoUser user = new VoUser(uname, "tt", email, password);
-		VoGroup home = GroupHelper.getGroupById(groupId);
+		VoUser user = new VoUser(firstname, "tt", email, password);
+		VoGroup home = GroupHelper.getGroupById(Long.decode(groupId));
 		if (home == null)
-			throw new InvalidOperation(1, "unknown user home group");
+			throw new InvalidOperation(Error.RegistrationAlreadyExist, "unknown user home group");
 
 		// find all defaults groups for user
 		VoUserGroup gs = new VoUserGroup(home);
@@ -85,11 +83,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		pm.makePersistent(user);
 		logger.info("register " + email + " pass " + password + " id " + user.getId());
 
-		return 0;
+		return true;
 	}
 
 	public VoUser getUserByEmail(String email) {
 		Query q = PMF.getPm().newQuery(VoUser.class);
+
 		List<VoUser> users = (List<VoUser>) q.execute(email);
 		if (users.isEmpty())
 			return null;
@@ -98,13 +97,10 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		return users.get(0);
 	}
 
-	private List<VoRubric> getDeafultRubrics() {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		javax.jdo.Query q = pm.newQuery(VoRubric.class);
-		List<VoRubric> rbcs = (List<VoRubric>) q.execute();
-		if (rbcs.isEmpty())
-			logger.error("can't load default rubrics");
-		return rbcs;
+	@Override
+	public void logout() throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

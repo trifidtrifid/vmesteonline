@@ -18,15 +18,6 @@ public class VoSession {
 		this.userId = user.getId();
 	}
 	
-
-	public Session feSession() {
-		Session sess = new Session();
-		sess.setAccessGranted(true);
-		sess.setError("access granted");
-		return sess;
-	}
-
-
 	public void setId(String s) {
 		id = s;
 	}
