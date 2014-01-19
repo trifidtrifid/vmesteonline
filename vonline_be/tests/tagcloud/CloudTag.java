@@ -26,8 +26,8 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 @Inheritance(customStrategy = "new-table")
 public abstract class CloudTag {
 	@PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    protected Key key;
+  @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+  protected Key key;
 
 	@Persistent
 	@Unindexed

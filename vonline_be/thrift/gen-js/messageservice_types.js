@@ -1235,11 +1235,11 @@ com.vmesteonline.be.TopicListPart.prototype.write = function(output) {
 };
 
 com.vmesteonline.be.MessageListPart = function(args) {
-  this.topics = null;
+  this.messages = null;
   this.totalSize = null;
   if (args) {
-    if (args.topics !== undefined) {
-      this.topics = args.topics;
+    if (args.messages !== undefined) {
+      this.messages = args.messages;
     }
     if (args.totalSize !== undefined) {
       this.totalSize = args.totalSize;
@@ -1264,7 +1264,7 @@ com.vmesteonline.be.MessageListPart.prototype.read = function(input) {
       if (ftype == Thrift.Type.SET) {
         var _size38 = 0;
         var _rtmp342;
-        this.topics = [];
+        this.messages = [];
         var _etype41 = 0;
         _rtmp342 = input.readSetBegin();
         _etype41 = _rtmp342.etype;
@@ -1274,7 +1274,7 @@ com.vmesteonline.be.MessageListPart.prototype.read = function(input) {
           var elem44 = null;
           elem44 = new com.vmesteonline.be.Message();
           elem44.read(input);
-          this.topics.push(elem44);
+          this.messages.push(elem44);
         }
         input.readSetEnd();
       } else {
@@ -1299,14 +1299,14 @@ com.vmesteonline.be.MessageListPart.prototype.read = function(input) {
 
 com.vmesteonline.be.MessageListPart.prototype.write = function(output) {
   output.writeStructBegin('MessageListPart');
-  if (this.topics !== null && this.topics !== undefined) {
-    output.writeFieldBegin('topics', Thrift.Type.SET, 1);
-    output.writeSetBegin(Thrift.Type.STRUCT, this.topics.length);
-    for (var iter45 in this.topics)
+  if (this.messages !== null && this.messages !== undefined) {
+    output.writeFieldBegin('messages', Thrift.Type.SET, 1);
+    output.writeSetBegin(Thrift.Type.STRUCT, this.messages.length);
+    for (var iter45 in this.messages)
     {
-      if (this.topics.hasOwnProperty(iter45))
+      if (this.messages.hasOwnProperty(iter45))
       {
-        iter45 = this.topics[iter45];
+        iter45 = this.messages[iter45];
         iter45.write(output);
       }
     }

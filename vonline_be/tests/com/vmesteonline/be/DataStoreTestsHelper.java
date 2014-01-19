@@ -48,7 +48,7 @@ public class DataStoreTestsHelper {
 	static protected float groupBLat = 25.25F;
 	static protected int groupBRadius = 0;
 
-	private VoGroup groupA;
-	private VoGroup groupB;
+	protected VoGroup groupA;
+	protected VoGroup groupB;
 
 }

@@ -1093,24 +1093,24 @@ com.vmesteonline.be.MessageService_getTopics_result.prototype.write = function(o
 };
 
 com.vmesteonline.be.MessageService_getMessages_args = function(args) {
+  this.topicId = null;
   this.groupId = null;
-  this.rubricId = null;
   this.messageType = null;
-  this.commmunityId = null;
+  this.parentId = null;
   this.offset = null;
   this.length = null;
   if (args) {
+    if (args.topicId !== undefined) {
+      this.topicId = args.topicId;
+    }
     if (args.groupId !== undefined) {
       this.groupId = args.groupId;
-    }
-    if (args.rubricId !== undefined) {
-      this.rubricId = args.rubricId;
     }
     if (args.messageType !== undefined) {
       this.messageType = args.messageType;
     }
-    if (args.commmunityId !== undefined) {
-      this.commmunityId = args.commmunityId;
+    if (args.parentId !== undefined) {
+      this.parentId = args.parentId;
     }
     if (args.offset !== undefined) {
       this.offset = args.offset;
@@ -1136,14 +1136,14 @@ com.vmesteonline.be.MessageService_getMessages_args.prototype.read = function(in
     {
       case 1:
       if (ftype == Thrift.Type.I64) {
-        this.groupId = input.readI64().value;
+        this.topicId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
       break;
       case 2:
       if (ftype == Thrift.Type.I64) {
-        this.rubricId = input.readI64().value;
+        this.groupId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
@@ -1156,8 +1156,8 @@ com.vmesteonline.be.MessageService_getMessages_args.prototype.read = function(in
       }
       break;
       case 4:
-      if (ftype == Thrift.Type.I32) {
-        this.commmunityId = input.readI32().value;
+      if (ftype == Thrift.Type.I64) {
+        this.parentId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
@@ -1187,14 +1187,14 @@ com.vmesteonline.be.MessageService_getMessages_args.prototype.read = function(in
 
 com.vmesteonline.be.MessageService_getMessages_args.prototype.write = function(output) {
   output.writeStructBegin('MessageService_getMessages_args');
-  if (this.groupId !== null && this.groupId !== undefined) {
-    output.writeFieldBegin('groupId', Thrift.Type.I64, 1);
-    output.writeI64(this.groupId);
+  if (this.topicId !== null && this.topicId !== undefined) {
+    output.writeFieldBegin('topicId', Thrift.Type.I64, 1);
+    output.writeI64(this.topicId);
     output.writeFieldEnd();
   }
-  if (this.rubricId !== null && this.rubricId !== undefined) {
-    output.writeFieldBegin('rubricId', Thrift.Type.I64, 2);
-    output.writeI64(this.rubricId);
+  if (this.groupId !== null && this.groupId !== undefined) {
+    output.writeFieldBegin('groupId', Thrift.Type.I64, 2);
+    output.writeI64(this.groupId);
     output.writeFieldEnd();
   }
   if (this.messageType !== null && this.messageType !== undefined) {
@@ -1202,9 +1202,9 @@ com.vmesteonline.be.MessageService_getMessages_args.prototype.write = function(o
     output.writeI32(this.messageType);
     output.writeFieldEnd();
   }
-  if (this.commmunityId !== null && this.commmunityId !== undefined) {
-    output.writeFieldBegin('commmunityId', Thrift.Type.I32, 4);
-    output.writeI32(this.commmunityId);
+  if (this.parentId !== null && this.parentId !== undefined) {
+    output.writeFieldBegin('parentId', Thrift.Type.I64, 4);
+    output.writeI64(this.parentId);
     output.writeFieldEnd();
   }
   if (this.offset !== null && this.offset !== undefined) {
@@ -1842,18 +1842,18 @@ com.vmesteonline.be.MessageServiceClient.prototype.recv_getTopics = function() {
   }
   throw 'getTopics failed: unknown result';
 };
-com.vmesteonline.be.MessageServiceClient.prototype.getMessages = function(groupId, rubricId, messageType, commmunityId, offset, length) {
-  this.send_getMessages(groupId, rubricId, messageType, commmunityId, offset, length);
+com.vmesteonline.be.MessageServiceClient.prototype.getMessages = function(topicId, groupId, messageType, parentId, offset, length) {
+  this.send_getMessages(topicId, groupId, messageType, parentId, offset, length);
   return this.recv_getMessages();
 };
 
-com.vmesteonline.be.MessageServiceClient.prototype.send_getMessages = function(groupId, rubricId, messageType, commmunityId, offset, length) {
+com.vmesteonline.be.MessageServiceClient.prototype.send_getMessages = function(topicId, groupId, messageType, parentId, offset, length) {
   this.output.writeMessageBegin('getMessages', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.MessageService_getMessages_args();
+  args.topicId = topicId;
   args.groupId = groupId;
-  args.rubricId = rubricId;
   args.messageType = messageType;
-  args.commmunityId = commmunityId;
+  args.parentId = parentId;
   args.offset = offset;
   args.length = length;
   args.write(this.output);

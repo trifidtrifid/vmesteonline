@@ -82,7 +82,7 @@ struct TopicListPart {
 } 
 
 struct MessageListPart {
-	1:set<Message> topics,
+	1:set<Message> messages,
 	2:i32	totalSize //size of full list
 } 
 
@@ -98,7 +98,7 @@ service MessageService {
 		4: string content, // 'содержание сообщения',
 		5: map<MessageType,i64> linkedMessages,
 		6: map<i64,string> tags,
-		7: optional i64 recipientId // 'адресат задан только для личных сообщений, иначе NULL',
+		7: i64 recipientId // 'адресат задан только для личных сообщений, иначе NULL',
 		) throws (1:error.InvalidOperation exc),
 /**
 * Cоздание нового или обновление старого сообщения
@@ -107,8 +107,8 @@ service MessageService {
 	  
 	Topic createTopic( 1: string subject, 
 		2: i64 messageId, // 'сообщение',
-		3: optional i64 rubricId, //ссылка на рубрику
-		4: optional i64 communityId) //ссылка на сообщество
+		3: i64 rubricId, //ссылка на рубрику
+		4: i64 communityId) //ссылка на сообщество
 	
 	i64 postTopic( 1: Topic topic ) throws (1:error.InvalidOperation exc),  
 	 
@@ -116,7 +116,10 @@ service MessageService {
 	GroupUpdates getUpdates() throws (1:error.InvalidOperation exc),
 
 	TopicListPart getTopics( 1:i64 groupId , 2:i64 rubricId, 3:MessageType messageType, 4:i32 commmunityId,  5:i32 offset, 6:i32 length) throws (1:error.InvalidOperation exc),
-	MessageListPart getMessages( 1:i64 groupId , 2:i64 rubricId, 3:MessageType messageType, 4:i32 commmunityId, 5:i32 offset, 6:i32 length) throws (1:error.InvalidOperation exc),
+	/**
+	* Загрузка части преставления дерева сообщений в виде дерева. parentID указывает на сообщение топика или на сообщение первого уровня
+	**/
+	MessageListPart getMessages( 1:i64 topicId , 2:i64 groupId 3:MessageType messageType, 4:i64 parentId, 5:i32 offset, 6:i32 length) throws (1:error.InvalidOperation exc),
 	
 	i64 like(1:i64 messageId, 2:i64 userId ) throws (1:error.InvalidOperation exc),
 	i64 dislike(1:i64 messageId, 2:i64 userId ) throws (1:error.InvalidOperation exc),

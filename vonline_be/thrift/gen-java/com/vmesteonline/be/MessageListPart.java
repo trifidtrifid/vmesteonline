@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class MessageListPart implements org.apache.thrift.TBase<MessageListPart, MessageListPart._Fields>, java.io.Serializable, Cloneable, Comparable<MessageListPart> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("MessageListPart");
 
-  private static final org.apache.thrift.protocol.TField TOPICS_FIELD_DESC = new org.apache.thrift.protocol.TField("topics", org.apache.thrift.protocol.TType.SET, (short)1);
+  private static final org.apache.thrift.protocol.TField MESSAGES_FIELD_DESC = new org.apache.thrift.protocol.TField("messages", org.apache.thrift.protocol.TType.SET, (short)1);
   private static final org.apache.thrift.protocol.TField TOTAL_SIZE_FIELD_DESC = new org.apache.thrift.protocol.TField("totalSize", org.apache.thrift.protocol.TType.I32, (short)2);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -44,12 +44,12 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
     schemes.put(TupleScheme.class, new MessageListPartTupleSchemeFactory());
   }
 
-  public Set<Message> topics; // required
+  public Set<Message> messages; // required
   public int totalSize; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    TOPICS((short)1, "topics"),
+    MESSAGES((short)1, "messages"),
     TOTAL_SIZE((short)2, "totalSize");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
@@ -65,8 +65,8 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // TOPICS
-          return TOPICS;
+        case 1: // MESSAGES
+          return MESSAGES;
         case 2: // TOTAL_SIZE
           return TOTAL_SIZE;
         default:
@@ -114,7 +114,7 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.TOPICS, new org.apache.thrift.meta_data.FieldMetaData("topics", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.MESSAGES, new org.apache.thrift.meta_data.FieldMetaData("messages", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
             new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Message.class))));
     tmpMap.put(_Fields.TOTAL_SIZE, new org.apache.thrift.meta_data.FieldMetaData("totalSize", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -127,11 +127,11 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
   }
 
   public MessageListPart(
-    Set<Message> topics,
+    Set<Message> messages,
     int totalSize)
   {
     this();
-    this.topics = topics;
+    this.messages = messages;
     this.totalSize = totalSize;
     setTotalSizeIsSet(true);
   }
@@ -141,12 +141,12 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
    */
   public MessageListPart(MessageListPart other) {
     __isset_bitfield = other.__isset_bitfield;
-    if (other.isSetTopics()) {
-      Set<Message> __this__topics = new HashSet<Message>(other.topics.size());
-      for (Message other_element : other.topics) {
-        __this__topics.add(new Message(other_element));
+    if (other.isSetMessages()) {
+      Set<Message> __this__messages = new HashSet<Message>(other.messages.size());
+      for (Message other_element : other.messages) {
+        __this__messages.add(new Message(other_element));
       }
-      this.topics = __this__topics;
+      this.messages = __this__messages;
     }
     this.totalSize = other.totalSize;
   }
@@ -157,47 +157,47 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
 
   @Override
   public void clear() {
-    this.topics = null;
+    this.messages = null;
     setTotalSizeIsSet(false);
     this.totalSize = 0;
   }
 
-  public int getTopicsSize() {
-    return (this.topics == null) ? 0 : this.topics.size();
+  public int getMessagesSize() {
+    return (this.messages == null) ? 0 : this.messages.size();
   }
 
-  public java.util.Iterator<Message> getTopicsIterator() {
-    return (this.topics == null) ? null : this.topics.iterator();
+  public java.util.Iterator<Message> getMessagesIterator() {
+    return (this.messages == null) ? null : this.messages.iterator();
   }
 
-  public void addToTopics(Message elem) {
-    if (this.topics == null) {
-      this.topics = new HashSet<Message>();
+  public void addToMessages(Message elem) {
+    if (this.messages == null) {
+      this.messages = new HashSet<Message>();
     }
-    this.topics.add(elem);
+    this.messages.add(elem);
   }
 
-  public Set<Message> getTopics() {
-    return this.topics;
+  public Set<Message> getMessages() {
+    return this.messages;
   }
 
-  public MessageListPart setTopics(Set<Message> topics) {
-    this.topics = topics;
+  public MessageListPart setMessages(Set<Message> messages) {
+    this.messages = messages;
     return this;
   }
 
-  public void unsetTopics() {
-    this.topics = null;
+  public void unsetMessages() {
+    this.messages = null;
   }
 
-  /** Returns true if field topics is set (has been assigned a value) and false otherwise */
-  public boolean isSetTopics() {
-    return this.topics != null;
+  /** Returns true if field messages is set (has been assigned a value) and false otherwise */
+  public boolean isSetMessages() {
+    return this.messages != null;
   }
 
-  public void setTopicsIsSet(boolean value) {
+  public void setMessagesIsSet(boolean value) {
     if (!value) {
-      this.topics = null;
+      this.messages = null;
     }
   }
 
@@ -226,11 +226,11 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
 
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
-    case TOPICS:
+    case MESSAGES:
       if (value == null) {
-        unsetTopics();
+        unsetMessages();
       } else {
-        setTopics((Set<Message>)value);
+        setMessages((Set<Message>)value);
       }
       break;
 
@@ -247,8 +247,8 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
-    case TOPICS:
-      return getTopics();
+    case MESSAGES:
+      return getMessages();
 
     case TOTAL_SIZE:
       return Integer.valueOf(getTotalSize());
@@ -264,8 +264,8 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
     }
 
     switch (field) {
-    case TOPICS:
-      return isSetTopics();
+    case MESSAGES:
+      return isSetMessages();
     case TOTAL_SIZE:
       return isSetTotalSize();
     }
@@ -285,12 +285,12 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
     if (that == null)
       return false;
 
-    boolean this_present_topics = true && this.isSetTopics();
-    boolean that_present_topics = true && that.isSetTopics();
-    if (this_present_topics || that_present_topics) {
-      if (!(this_present_topics && that_present_topics))
+    boolean this_present_messages = true && this.isSetMessages();
+    boolean that_present_messages = true && that.isSetMessages();
+    if (this_present_messages || that_present_messages) {
+      if (!(this_present_messages && that_present_messages))
         return false;
-      if (!this.topics.equals(that.topics))
+      if (!this.messages.equals(that.messages))
         return false;
     }
 
@@ -319,12 +319,12 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
 
     int lastComparison = 0;
 
-    lastComparison = Boolean.valueOf(isSetTopics()).compareTo(other.isSetTopics());
+    lastComparison = Boolean.valueOf(isSetMessages()).compareTo(other.isSetMessages());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetTopics()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topics, other.topics);
+    if (isSetMessages()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.messages, other.messages);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -359,11 +359,11 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
     StringBuilder sb = new StringBuilder("MessageListPart(");
     boolean first = true;
 
-    sb.append("topics:");
-    if (this.topics == null) {
+    sb.append("messages:");
+    if (this.messages == null) {
       sb.append("null");
     } else {
-      sb.append(this.topics);
+      sb.append(this.messages);
     }
     first = false;
     if (!first) sb.append(", ");
@@ -415,21 +415,21 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
           break;
         }
         switch (schemeField.id) {
-          case 1: // TOPICS
+          case 1: // MESSAGES
             if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
               {
                 org.apache.thrift.protocol.TSet _set38 = iprot.readSetBegin();
-                struct.topics = new HashSet<Message>(2*_set38.size);
+                struct.messages = new HashSet<Message>(2*_set38.size);
                 for (int _i39 = 0; _i39 < _set38.size; ++_i39)
                 {
                   Message _elem40;
                   _elem40 = new Message();
                   _elem40.read(iprot);
-                  struct.topics.add(_elem40);
+                  struct.messages.add(_elem40);
                 }
                 iprot.readSetEnd();
               }
-              struct.setTopicsIsSet(true);
+              struct.setMessagesIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -457,11 +457,11 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      if (struct.topics != null) {
-        oprot.writeFieldBegin(TOPICS_FIELD_DESC);
+      if (struct.messages != null) {
+        oprot.writeFieldBegin(MESSAGES_FIELD_DESC);
         {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, struct.topics.size()));
-          for (Message _iter41 : struct.topics)
+          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, struct.messages.size()));
+          for (Message _iter41 : struct.messages)
           {
             _iter41.write(oprot);
           }
@@ -490,17 +490,17 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
     public void write(org.apache.thrift.protocol.TProtocol prot, MessageListPart struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetTopics()) {
+      if (struct.isSetMessages()) {
         optionals.set(0);
       }
       if (struct.isSetTotalSize()) {
         optionals.set(1);
       }
       oprot.writeBitSet(optionals, 2);
-      if (struct.isSetTopics()) {
+      if (struct.isSetMessages()) {
         {
-          oprot.writeI32(struct.topics.size());
-          for (Message _iter42 : struct.topics)
+          oprot.writeI32(struct.messages.size());
+          for (Message _iter42 : struct.messages)
           {
             _iter42.write(oprot);
           }
@@ -518,16 +518,16 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
       if (incoming.get(0)) {
         {
           org.apache.thrift.protocol.TSet _set43 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.topics = new HashSet<Message>(2*_set43.size);
+          struct.messages = new HashSet<Message>(2*_set43.size);
           for (int _i44 = 0; _i44 < _set43.size; ++_i44)
           {
             Message _elem45;
             _elem45 = new Message();
             _elem45.read(iprot);
-            struct.topics.add(_elem45);
+            struct.messages.add(_elem45);
           }
         }
-        struct.setTopicsIsSet(true);
+        struct.setMessagesIsSet(true);
       }
       if (incoming.get(1)) {
         struct.totalSize = iprot.readI32();

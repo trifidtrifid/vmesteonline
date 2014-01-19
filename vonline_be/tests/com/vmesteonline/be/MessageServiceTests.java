@@ -27,28 +27,43 @@ public class MessageServiceTests {
 	}
 
 	@Test
-	public void testLogin() {
-		AuthServiceImpl auth = new AuthServiceImpl();
+	public void testGetTopicsSTUB() {
+		MessageServiceImpl msi = new MessageServiceImpl();
 		try {
-			Session sess = auth.login("test", "ppp");
-			assertEquals(false, sess.accessGranted);
-		} catch (InvalidOperation e) {
-			// TODO Auto-generated catch block
+			int offset=0;
+			do {
+				TopicListPart topics = msi.getTopics( 0, 0, MessageType.BASE, 0, 0, 10);
+				for( Topic top: topics.getTopics() ){
+					System.out.println("TopicID:"+top.getId() + " topic:"+top.getSubject());
+					MessageListPart messages = msi.getMessages(top.getId(), 0, MessageType.BASE, 0, 0, 100000);
+					for( Message msg: messages.getMessages()) {
+						System.out.println("msg ID:"+msg.getId() + " topic:"+msg.getTopicId()+" parent:"+msg.getParentId()+" :"+msg.getContent() );
+					}
+				}
+				offset += topics.getTopicsSize();
+				if(offset>=topics.getTotalSize()) break;
+			} while( true );
+			
+		} catch ( TException e) {
 			e.printStackTrace();
-		} catch (TException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail("Exception: " + e.getMessage());
 		}
-
+		
 	}
 
 	@Test
-	public void testGetSession() {
+	public void testGetTopics() {
 		fail("Not yet implemented");
 	}
+	
+	@Test
+	public void testGetMessagesSTUB() {
+		
+
+	}
 
 	@Test
-	public void testRegisterNewUser() {
+	public void testGetMessages() {
 		fail("Not yet implemented");
 	}
 

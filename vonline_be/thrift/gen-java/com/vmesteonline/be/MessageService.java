@@ -69,7 +69,18 @@ public class MessageService {
 
     public TopicListPart getTopics(long groupId, long rubricId, MessageType messageType, int commmunityId, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public MessageListPart getMessages(long groupId, long rubricId, MessageType messageType, int commmunityId, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    /**
+     * Загрузка части преставления дерева сообщений в виде дерева. parentID указывает на сообщение топика или на сообщение первого уровня
+     * 
+     * 
+     * @param topicId
+     * @param groupId
+     * @param messageType
+     * @param parentId
+     * @param offset
+     * @param length
+     */
+    public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long parentId, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     public long like(long messageId, long userId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
@@ -93,7 +104,7 @@ public class MessageService {
 
     public void getTopics(long groupId, long rubricId, MessageType messageType, int commmunityId, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void getMessages(long groupId, long rubricId, MessageType messageType, int commmunityId, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void getMessages(long topicId, long groupId, MessageType messageType, long parentId, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void like(long messageId, long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -312,19 +323,19 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getTopics failed: unknown result");
     }
 
-    public MessageListPart getMessages(long groupId, long rubricId, MessageType messageType, int commmunityId, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long parentId, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      send_getMessages(groupId, rubricId, messageType, commmunityId, offset, length);
+      send_getMessages(topicId, groupId, messageType, parentId, offset, length);
       return recv_getMessages();
     }
 
-    public void send_getMessages(long groupId, long rubricId, MessageType messageType, int commmunityId, int offset, int length) throws org.apache.thrift.TException
+    public void send_getMessages(long topicId, long groupId, MessageType messageType, long parentId, int offset, int length) throws org.apache.thrift.TException
     {
       getMessages_args args = new getMessages_args();
+      args.setTopicId(topicId);
       args.setGroupId(groupId);
-      args.setRubricId(rubricId);
       args.setMessageType(messageType);
-      args.setCommmunityId(commmunityId);
+      args.setParentId(parentId);
       args.setOffset(offset);
       args.setLength(length);
       sendBase("getMessages", args);
@@ -675,26 +686,26 @@ public class MessageService {
       }
     }
 
-    public void getMessages(long groupId, long rubricId, MessageType messageType, int commmunityId, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void getMessages(long topicId, long groupId, MessageType messageType, long parentId, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      getMessages_call method_call = new getMessages_call(groupId, rubricId, messageType, commmunityId, offset, length, resultHandler, this, ___protocolFactory, ___transport);
+      getMessages_call method_call = new getMessages_call(topicId, groupId, messageType, parentId, offset, length, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
     public static class getMessages_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private long topicId;
       private long groupId;
-      private long rubricId;
       private MessageType messageType;
-      private int commmunityId;
+      private long parentId;
       private int offset;
       private int length;
-      public getMessages_call(long groupId, long rubricId, MessageType messageType, int commmunityId, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public getMessages_call(long topicId, long groupId, MessageType messageType, long parentId, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
+        this.topicId = topicId;
         this.groupId = groupId;
-        this.rubricId = rubricId;
         this.messageType = messageType;
-        this.commmunityId = commmunityId;
+        this.parentId = parentId;
         this.offset = offset;
         this.length = length;
       }
@@ -702,10 +713,10 @@ public class MessageService {
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
         prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("getMessages", org.apache.thrift.protocol.TMessageType.CALL, 0));
         getMessages_args args = new getMessages_args();
+        args.setTopicId(topicId);
         args.setGroupId(groupId);
-        args.setRubricId(rubricId);
         args.setMessageType(messageType);
-        args.setCommmunityId(commmunityId);
+        args.setParentId(parentId);
         args.setOffset(offset);
         args.setLength(length);
         args.write(prot);
@@ -1001,7 +1012,7 @@ public class MessageService {
       public getMessages_result getResult(I iface, getMessages_args args) throws org.apache.thrift.TException {
         getMessages_result result = new getMessages_result();
         try {
-          result.success = iface.getMessages(args.groupId, args.rubricId, args.messageType, args.commmunityId, args.offset, args.length);
+          result.success = iface.getMessages(args.topicId, args.groupId, args.messageType, args.parentId, args.offset, args.length);
         } catch (com.vmesteonline.be.InvalidOperation exc) {
           result.exc = exc;
         }
@@ -1534,7 +1545,7 @@ public class MessageService {
       }
 
       public void start(I iface, getMessages_args args, org.apache.thrift.async.AsyncMethodCallback<MessageListPart> resultHandler) throws TException {
-        iface.getMessages(args.groupId, args.rubricId, args.messageType, args.commmunityId, args.offset, args.length,resultHandler);
+        iface.getMessages(args.topicId, args.groupId, args.messageType, args.parentId, args.offset, args.length,resultHandler);
       }
     }
 
@@ -8534,10 +8545,10 @@ public class MessageService {
   public static class getMessages_args implements org.apache.thrift.TBase<getMessages_args, getMessages_args._Fields>, java.io.Serializable, Cloneable, Comparable<getMessages_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getMessages_args");
 
-    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)1);
-    private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I64, (short)2);
+    private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)2);
     private static final org.apache.thrift.protocol.TField MESSAGE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("messageType", org.apache.thrift.protocol.TType.I32, (short)3);
-    private static final org.apache.thrift.protocol.TField COMMMUNITY_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("commmunityId", org.apache.thrift.protocol.TType.I32, (short)4);
+    private static final org.apache.thrift.protocol.TField PARENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("parentId", org.apache.thrift.protocol.TType.I64, (short)4);
     private static final org.apache.thrift.protocol.TField OFFSET_FIELD_DESC = new org.apache.thrift.protocol.TField("offset", org.apache.thrift.protocol.TType.I32, (short)5);
     private static final org.apache.thrift.protocol.TField LENGTH_FIELD_DESC = new org.apache.thrift.protocol.TField("length", org.apache.thrift.protocol.TType.I32, (short)6);
 
@@ -8547,27 +8558,27 @@ public class MessageService {
       schemes.put(TupleScheme.class, new getMessages_argsTupleSchemeFactory());
     }
 
+    public long topicId; // required
     public long groupId; // required
-    public long rubricId; // required
     /**
      * 
      * @see MessageType
      */
     public MessageType messageType; // required
-    public int commmunityId; // required
+    public long parentId; // required
     public int offset; // required
     public int length; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      GROUP_ID((short)1, "groupId"),
-      RUBRIC_ID((short)2, "rubricId"),
+      TOPIC_ID((short)1, "topicId"),
+      GROUP_ID((short)2, "groupId"),
       /**
        * 
        * @see MessageType
        */
       MESSAGE_TYPE((short)3, "messageType"),
-      COMMMUNITY_ID((short)4, "commmunityId"),
+      PARENT_ID((short)4, "parentId"),
       OFFSET((short)5, "offset"),
       LENGTH((short)6, "length");
 
@@ -8584,14 +8595,14 @@ public class MessageService {
        */
       public static _Fields findByThriftId(int fieldId) {
         switch(fieldId) {
-          case 1: // GROUP_ID
+          case 1: // TOPIC_ID
+            return TOPIC_ID;
+          case 2: // GROUP_ID
             return GROUP_ID;
-          case 2: // RUBRIC_ID
-            return RUBRIC_ID;
           case 3: // MESSAGE_TYPE
             return MESSAGE_TYPE;
-          case 4: // COMMMUNITY_ID
-            return COMMMUNITY_ID;
+          case 4: // PARENT_ID
+            return PARENT_ID;
           case 5: // OFFSET
             return OFFSET;
           case 6: // LENGTH
@@ -8636,23 +8647,23 @@ public class MessageService {
     }
 
     // isset id assignments
-    private static final int __GROUPID_ISSET_ID = 0;
-    private static final int __RUBRICID_ISSET_ID = 1;
-    private static final int __COMMMUNITYID_ISSET_ID = 2;
+    private static final int __TOPICID_ISSET_ID = 0;
+    private static final int __GROUPID_ISSET_ID = 1;
+    private static final int __PARENTID_ISSET_ID = 2;
     private static final int __OFFSET_ISSET_ID = 3;
     private static final int __LENGTH_ISSET_ID = 4;
     private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.TOPIC_ID, new org.apache.thrift.meta_data.FieldMetaData("topicId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-      tmpMap.put(_Fields.RUBRIC_ID, new org.apache.thrift.meta_data.FieldMetaData("rubricId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.MESSAGE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("messageType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, MessageType.class)));
-      tmpMap.put(_Fields.COMMMUNITY_ID, new org.apache.thrift.meta_data.FieldMetaData("commmunityId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+      tmpMap.put(_Fields.PARENT_ID, new org.apache.thrift.meta_data.FieldMetaData("parentId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.OFFSET, new org.apache.thrift.meta_data.FieldMetaData("offset", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       tmpMap.put(_Fields.LENGTH, new org.apache.thrift.meta_data.FieldMetaData("length", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -8665,21 +8676,21 @@ public class MessageService {
     }
 
     public getMessages_args(
+      long topicId,
       long groupId,
-      long rubricId,
       MessageType messageType,
-      int commmunityId,
+      long parentId,
       int offset,
       int length)
     {
       this();
+      this.topicId = topicId;
+      setTopicIdIsSet(true);
       this.groupId = groupId;
       setGroupIdIsSet(true);
-      this.rubricId = rubricId;
-      setRubricIdIsSet(true);
       this.messageType = messageType;
-      this.commmunityId = commmunityId;
-      setCommmunityIdIsSet(true);
+      this.parentId = parentId;
+      setParentIdIsSet(true);
       this.offset = offset;
       setOffsetIsSet(true);
       this.length = length;
@@ -8691,12 +8702,12 @@ public class MessageService {
      */
     public getMessages_args(getMessages_args other) {
       __isset_bitfield = other.__isset_bitfield;
+      this.topicId = other.topicId;
       this.groupId = other.groupId;
-      this.rubricId = other.rubricId;
       if (other.isSetMessageType()) {
         this.messageType = other.messageType;
       }
-      this.commmunityId = other.commmunityId;
+      this.parentId = other.parentId;
       this.offset = other.offset;
       this.length = other.length;
     }
@@ -8707,17 +8718,40 @@ public class MessageService {
 
     @Override
     public void clear() {
+      setTopicIdIsSet(false);
+      this.topicId = 0;
       setGroupIdIsSet(false);
       this.groupId = 0;
-      setRubricIdIsSet(false);
-      this.rubricId = 0;
       this.messageType = null;
-      setCommmunityIdIsSet(false);
-      this.commmunityId = 0;
+      setParentIdIsSet(false);
+      this.parentId = 0;
       setOffsetIsSet(false);
       this.offset = 0;
       setLengthIsSet(false);
       this.length = 0;
+    }
+
+    public long getTopicId() {
+      return this.topicId;
+    }
+
+    public getMessages_args setTopicId(long topicId) {
+      this.topicId = topicId;
+      setTopicIdIsSet(true);
+      return this;
+    }
+
+    public void unsetTopicId() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPICID_ISSET_ID);
+    }
+
+    /** Returns true if field topicId is set (has been assigned a value) and false otherwise */
+    public boolean isSetTopicId() {
+      return EncodingUtils.testBit(__isset_bitfield, __TOPICID_ISSET_ID);
+    }
+
+    public void setTopicIdIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICID_ISSET_ID, value);
     }
 
     public long getGroupId() {
@@ -8741,29 +8775,6 @@ public class MessageService {
 
     public void setGroupIdIsSet(boolean value) {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __GROUPID_ISSET_ID, value);
-    }
-
-    public long getRubricId() {
-      return this.rubricId;
-    }
-
-    public getMessages_args setRubricId(long rubricId) {
-      this.rubricId = rubricId;
-      setRubricIdIsSet(true);
-      return this;
-    }
-
-    public void unsetRubricId() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __RUBRICID_ISSET_ID);
-    }
-
-    /** Returns true if field rubricId is set (has been assigned a value) and false otherwise */
-    public boolean isSetRubricId() {
-      return EncodingUtils.testBit(__isset_bitfield, __RUBRICID_ISSET_ID);
-    }
-
-    public void setRubricIdIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __RUBRICID_ISSET_ID, value);
     }
 
     /**
@@ -8798,27 +8809,27 @@ public class MessageService {
       }
     }
 
-    public int getCommmunityId() {
-      return this.commmunityId;
+    public long getParentId() {
+      return this.parentId;
     }
 
-    public getMessages_args setCommmunityId(int commmunityId) {
-      this.commmunityId = commmunityId;
-      setCommmunityIdIsSet(true);
+    public getMessages_args setParentId(long parentId) {
+      this.parentId = parentId;
+      setParentIdIsSet(true);
       return this;
     }
 
-    public void unsetCommmunityId() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __COMMMUNITYID_ISSET_ID);
+    public void unsetParentId() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __PARENTID_ISSET_ID);
     }
 
-    /** Returns true if field commmunityId is set (has been assigned a value) and false otherwise */
-    public boolean isSetCommmunityId() {
-      return EncodingUtils.testBit(__isset_bitfield, __COMMMUNITYID_ISSET_ID);
+    /** Returns true if field parentId is set (has been assigned a value) and false otherwise */
+    public boolean isSetParentId() {
+      return EncodingUtils.testBit(__isset_bitfield, __PARENTID_ISSET_ID);
     }
 
-    public void setCommmunityIdIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __COMMMUNITYID_ISSET_ID, value);
+    public void setParentIdIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PARENTID_ISSET_ID, value);
     }
 
     public int getOffset() {
@@ -8869,19 +8880,19 @@ public class MessageService {
 
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
+      case TOPIC_ID:
+        if (value == null) {
+          unsetTopicId();
+        } else {
+          setTopicId((Long)value);
+        }
+        break;
+
       case GROUP_ID:
         if (value == null) {
           unsetGroupId();
         } else {
           setGroupId((Long)value);
-        }
-        break;
-
-      case RUBRIC_ID:
-        if (value == null) {
-          unsetRubricId();
-        } else {
-          setRubricId((Long)value);
         }
         break;
 
@@ -8893,11 +8904,11 @@ public class MessageService {
         }
         break;
 
-      case COMMMUNITY_ID:
+      case PARENT_ID:
         if (value == null) {
-          unsetCommmunityId();
+          unsetParentId();
         } else {
-          setCommmunityId((Integer)value);
+          setParentId((Long)value);
         }
         break;
 
@@ -8922,17 +8933,17 @@ public class MessageService {
 
     public Object getFieldValue(_Fields field) {
       switch (field) {
+      case TOPIC_ID:
+        return Long.valueOf(getTopicId());
+
       case GROUP_ID:
         return Long.valueOf(getGroupId());
-
-      case RUBRIC_ID:
-        return Long.valueOf(getRubricId());
 
       case MESSAGE_TYPE:
         return getMessageType();
 
-      case COMMMUNITY_ID:
-        return Integer.valueOf(getCommmunityId());
+      case PARENT_ID:
+        return Long.valueOf(getParentId());
 
       case OFFSET:
         return Integer.valueOf(getOffset());
@@ -8951,14 +8962,14 @@ public class MessageService {
       }
 
       switch (field) {
+      case TOPIC_ID:
+        return isSetTopicId();
       case GROUP_ID:
         return isSetGroupId();
-      case RUBRIC_ID:
-        return isSetRubricId();
       case MESSAGE_TYPE:
         return isSetMessageType();
-      case COMMMUNITY_ID:
-        return isSetCommmunityId();
+      case PARENT_ID:
+        return isSetParentId();
       case OFFSET:
         return isSetOffset();
       case LENGTH:
@@ -8980,21 +8991,21 @@ public class MessageService {
       if (that == null)
         return false;
 
+      boolean this_present_topicId = true;
+      boolean that_present_topicId = true;
+      if (this_present_topicId || that_present_topicId) {
+        if (!(this_present_topicId && that_present_topicId))
+          return false;
+        if (this.topicId != that.topicId)
+          return false;
+      }
+
       boolean this_present_groupId = true;
       boolean that_present_groupId = true;
       if (this_present_groupId || that_present_groupId) {
         if (!(this_present_groupId && that_present_groupId))
           return false;
         if (this.groupId != that.groupId)
-          return false;
-      }
-
-      boolean this_present_rubricId = true;
-      boolean that_present_rubricId = true;
-      if (this_present_rubricId || that_present_rubricId) {
-        if (!(this_present_rubricId && that_present_rubricId))
-          return false;
-        if (this.rubricId != that.rubricId)
           return false;
       }
 
@@ -9007,12 +9018,12 @@ public class MessageService {
           return false;
       }
 
-      boolean this_present_commmunityId = true;
-      boolean that_present_commmunityId = true;
-      if (this_present_commmunityId || that_present_commmunityId) {
-        if (!(this_present_commmunityId && that_present_commmunityId))
+      boolean this_present_parentId = true;
+      boolean that_present_parentId = true;
+      if (this_present_parentId || that_present_parentId) {
+        if (!(this_present_parentId && that_present_parentId))
           return false;
-        if (this.commmunityId != that.commmunityId)
+        if (this.parentId != that.parentId)
           return false;
       }
 
@@ -9050,22 +9061,22 @@ public class MessageService {
 
       int lastComparison = 0;
 
+      lastComparison = Boolean.valueOf(isSetTopicId()).compareTo(other.isSetTopicId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetTopicId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topicId, other.topicId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       lastComparison = Boolean.valueOf(isSetGroupId()).compareTo(other.isSetGroupId());
       if (lastComparison != 0) {
         return lastComparison;
       }
       if (isSetGroupId()) {
         lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.groupId, other.groupId);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetRubricId()).compareTo(other.isSetRubricId());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetRubricId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.rubricId, other.rubricId);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -9080,12 +9091,12 @@ public class MessageService {
           return lastComparison;
         }
       }
-      lastComparison = Boolean.valueOf(isSetCommmunityId()).compareTo(other.isSetCommmunityId());
+      lastComparison = Boolean.valueOf(isSetParentId()).compareTo(other.isSetParentId());
       if (lastComparison != 0) {
         return lastComparison;
       }
-      if (isSetCommmunityId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.commmunityId, other.commmunityId);
+      if (isSetParentId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.parentId, other.parentId);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -9130,12 +9141,12 @@ public class MessageService {
       StringBuilder sb = new StringBuilder("getMessages_args(");
       boolean first = true;
 
-      sb.append("groupId:");
-      sb.append(this.groupId);
+      sb.append("topicId:");
+      sb.append(this.topicId);
       first = false;
       if (!first) sb.append(", ");
-      sb.append("rubricId:");
-      sb.append(this.rubricId);
+      sb.append("groupId:");
+      sb.append(this.groupId);
       first = false;
       if (!first) sb.append(", ");
       sb.append("messageType:");
@@ -9146,8 +9157,8 @@ public class MessageService {
       }
       first = false;
       if (!first) sb.append(", ");
-      sb.append("commmunityId:");
-      sb.append(this.commmunityId);
+      sb.append("parentId:");
+      sb.append(this.parentId);
       first = false;
       if (!first) sb.append(", ");
       sb.append("offset:");
@@ -9202,18 +9213,18 @@ public class MessageService {
             break;
           }
           switch (schemeField.id) {
-            case 1: // GROUP_ID
+            case 1: // TOPIC_ID
               if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.groupId = iprot.readI64();
-                struct.setGroupIdIsSet(true);
+                struct.topicId = iprot.readI64();
+                struct.setTopicIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 2: // RUBRIC_ID
+            case 2: // GROUP_ID
               if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.rubricId = iprot.readI64();
-                struct.setRubricIdIsSet(true);
+                struct.groupId = iprot.readI64();
+                struct.setGroupIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
@@ -9226,10 +9237,10 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 4: // COMMMUNITY_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.commmunityId = iprot.readI32();
-                struct.setCommmunityIdIsSet(true);
+            case 4: // PARENT_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.parentId = iprot.readI64();
+                struct.setParentIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
@@ -9265,19 +9276,19 @@ public class MessageService {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldBegin(TOPIC_ID_FIELD_DESC);
+        oprot.writeI64(struct.topicId);
+        oprot.writeFieldEnd();
         oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
         oprot.writeI64(struct.groupId);
-        oprot.writeFieldEnd();
-        oprot.writeFieldBegin(RUBRIC_ID_FIELD_DESC);
-        oprot.writeI64(struct.rubricId);
         oprot.writeFieldEnd();
         if (struct.messageType != null) {
           oprot.writeFieldBegin(MESSAGE_TYPE_FIELD_DESC);
           oprot.writeI32(struct.messageType.getValue());
           oprot.writeFieldEnd();
         }
-        oprot.writeFieldBegin(COMMMUNITY_ID_FIELD_DESC);
-        oprot.writeI32(struct.commmunityId);
+        oprot.writeFieldBegin(PARENT_ID_FIELD_DESC);
+        oprot.writeI64(struct.parentId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(OFFSET_FIELD_DESC);
         oprot.writeI32(struct.offset);
@@ -9303,16 +9314,16 @@ public class MessageService {
       public void write(org.apache.thrift.protocol.TProtocol prot, getMessages_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
-        if (struct.isSetGroupId()) {
+        if (struct.isSetTopicId()) {
           optionals.set(0);
         }
-        if (struct.isSetRubricId()) {
+        if (struct.isSetGroupId()) {
           optionals.set(1);
         }
         if (struct.isSetMessageType()) {
           optionals.set(2);
         }
-        if (struct.isSetCommmunityId()) {
+        if (struct.isSetParentId()) {
           optionals.set(3);
         }
         if (struct.isSetOffset()) {
@@ -9322,17 +9333,17 @@ public class MessageService {
           optionals.set(5);
         }
         oprot.writeBitSet(optionals, 6);
+        if (struct.isSetTopicId()) {
+          oprot.writeI64(struct.topicId);
+        }
         if (struct.isSetGroupId()) {
           oprot.writeI64(struct.groupId);
-        }
-        if (struct.isSetRubricId()) {
-          oprot.writeI64(struct.rubricId);
         }
         if (struct.isSetMessageType()) {
           oprot.writeI32(struct.messageType.getValue());
         }
-        if (struct.isSetCommmunityId()) {
-          oprot.writeI32(struct.commmunityId);
+        if (struct.isSetParentId()) {
+          oprot.writeI64(struct.parentId);
         }
         if (struct.isSetOffset()) {
           oprot.writeI32(struct.offset);
@@ -9347,20 +9358,20 @@ public class MessageService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(6);
         if (incoming.get(0)) {
-          struct.groupId = iprot.readI64();
-          struct.setGroupIdIsSet(true);
+          struct.topicId = iprot.readI64();
+          struct.setTopicIdIsSet(true);
         }
         if (incoming.get(1)) {
-          struct.rubricId = iprot.readI64();
-          struct.setRubricIdIsSet(true);
+          struct.groupId = iprot.readI64();
+          struct.setGroupIdIsSet(true);
         }
         if (incoming.get(2)) {
           struct.messageType = MessageType.findByValue(iprot.readI32());
           struct.setMessageTypeIsSet(true);
         }
         if (incoming.get(3)) {
-          struct.commmunityId = iprot.readI32();
-          struct.setCommmunityIdIsSet(true);
+          struct.parentId = iprot.readI64();
+          struct.setParentIdIsSet(true);
         }
         if (incoming.get(4)) {
           struct.offset = iprot.readI32();

@@ -14,15 +14,20 @@ import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
-import com.vmetsteonline.be.utils.Defaults;
-import com.vmetsteonline.be.utils.GroupHelper;
+import com.vmesteonline.be.utils.Defaults;
+import com.vmesteonline.be.utils.GroupHelper;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
-	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
-
 	public AuthServiceImpl() {
 
+	}
+
+	public static VoSession getSession(String sessId) throws InvalidOperation {
+		VoSession sess = PMF.get().getPersistenceManager().getObjectById(VoSession.class, sessId);
+		if (sess == null)
+			throw new InvalidOperation(Error.NotAuthorized, "can't find active session for " + sessId);
+		return sess;
 	}
 
 	@Override
@@ -45,11 +50,6 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 		}
 		throw new InvalidOperation(Error.IncorrectParametrs, "incorrect login or password");
-	}
-
-	public VoUser getSession(String httpSession) {
-
-		return new VoUser();
 	}
 
 	@Override
@@ -86,6 +86,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		return true;
 	}
 
+	@Override
+	public void logout() throws InvalidOperation, TException {
+//		VoSession sess = getSession();
+
+	}
+
 	public VoUser getUserByEmail(String email) {
 		Query q = PMF.getPm().newQuery(VoUser.class);
 		q.setFilter("email == emailParam");
@@ -97,5 +103,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			logger.error("has more than one user with email " + email);
 		return users.get(0);
 	}
+
+	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
 
 }
