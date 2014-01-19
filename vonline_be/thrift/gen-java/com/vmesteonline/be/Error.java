@@ -12,8 +12,10 @@ import java.util.HashMap;
 import org.apache.thrift.TEnum;
 
 public enum Error implements org.apache.thrift.TEnum {
+  GeneralError(0),
   IncorrectParametrs(1),
-  RegistrationAlreadyExist(2);
+  RegistrationAlreadyExist(2),
+  NotAuthorized(3);
 
   private final int value;
 
@@ -34,10 +36,14 @@ public enum Error implements org.apache.thrift.TEnum {
    */
   public static Error findByValue(int value) { 
     switch (value) {
+      case 0:
+        return GeneralError;
       case 1:
         return IncorrectParametrs;
       case 2:
         return RegistrationAlreadyExist;
+      case 3:
+        return NotAuthorized;
       default:
         return null;
     }

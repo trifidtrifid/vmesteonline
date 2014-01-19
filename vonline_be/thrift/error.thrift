@@ -1,8 +1,10 @@
 namespace * com.vmesteonline.be
 
 enum Error{
-  IncorrectParametrs = 1,
+  GeneralError,
+  IncorrectParametrs,
   RegistrationAlreadyExist,
+  NotAuthorized,
   
 }
 exception InvalidOperation {

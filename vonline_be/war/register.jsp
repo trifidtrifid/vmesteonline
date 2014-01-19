@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@page import="com.vmesteonline.be.Group"%>
-<%@ page import="com.vmesteonline.be.GroupServiceImpl"%>
+<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.google.appengine.api.users.UserService"%>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -50,10 +50,9 @@
 				<td>group</td>
 				<td><select id="selectGroup">
 						<%
-							GroupServiceImpl groupService = new GroupServiceImpl();
-							List<Group> groups = groupService.getGroupsForRegistration();
+							List<Group> groups = UserServiceImpl.getGroupsForRegistration();
 							for (Group g : groups) {
-								out.print("<option value=\"" + g.id + "\">" + g.shortName + "</option>");
+								out.print("<option value=\"" + g.id + "\">" + g.visibleName + "</option>");
 							}
 						%>
 
