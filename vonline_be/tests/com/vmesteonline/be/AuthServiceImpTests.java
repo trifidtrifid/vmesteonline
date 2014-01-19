@@ -37,7 +37,7 @@ public class AuthServiceImpTests extends DataStoreTestsHelper {
 		try {
 			authSrvc.login("test", "ppp");
 		} catch (InvalidOperation e) {
-			assertEquals(1, e.what);
+			assertEquals(Error.IncorrectParametrs, e.what);
 		} catch (TException e) {
 			e.printStackTrace();
 			fail("unhadled exception");
@@ -48,7 +48,8 @@ public class AuthServiceImpTests extends DataStoreTestsHelper {
 	@Test
 	public void testRegisterNewUser() {
 		try {
-			int i = authSrvc.registerNewUser("testName", "testPassword", groupAId, "test@eml");
+			boolean ret = authSrvc.registerNewUser("testName", "testFamily", "testPassword", "test@eml", Long.toString(groupAId));
+			assertEquals(true, ret);
 			VoUser user = authSrvc.getUserByEmail("test@eml");
 			assertEquals("testName", user.getName());
 			assertEquals("testPassword", user.getPassword());

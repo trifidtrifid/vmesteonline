@@ -14,218 +14,9 @@ if (typeof com.vmesteonline === 'undefined') {
 if (typeof com.vmesteonline.be === 'undefined') {
   com.vmesteonline.be = {};
 }
-com.vmesteonline.be.LocationType = {
-'FLAT' : 1,
-'FLOOR' : 2,
-'HOUSE' : 3,
-'BLOCK' : 4,
-'DISTRICT' : 5,
-'CITY' : 6,
-'REGION' : 7,
-'COUNTRY' : 8,
-'WORLD' : 9
-};
-com.vmesteonline.be.UserInfo = function(args) {
-  this.name = null;
-  this.secondName = null;
-  this.dob = null;
-  this.sex = null;
-  this.intrests = null;
-  if (args) {
-    if (args.name !== undefined) {
-      this.name = args.name;
-    }
-    if (args.secondName !== undefined) {
-      this.secondName = args.secondName;
-    }
-    if (args.dob !== undefined) {
-      this.dob = args.dob;
-    }
-    if (args.sex !== undefined) {
-      this.sex = args.sex;
-    }
-    if (args.intrests !== undefined) {
-      this.intrests = args.intrests;
-    }
-  }
-};
-com.vmesteonline.be.UserInfo.prototype = {};
-com.vmesteonline.be.UserInfo.prototype.read = function(input) {
-  input.readStructBegin();
-  while (true)
-  {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
-    if (ftype == Thrift.Type.STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 1:
-      if (ftype == Thrift.Type.STRING) {
-        this.name = input.readString().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 2:
-      if (ftype == Thrift.Type.STRING) {
-        this.secondName = input.readString().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 3:
-      if (ftype == Thrift.Type.I32) {
-        this.dob = input.readI32().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 4:
-      if (ftype == Thrift.Type.BOOL) {
-        this.sex = input.readBool().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 5:
-      if (ftype == Thrift.Type.STRING) {
-        this.intrests = input.readString().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      default:
-        input.skip(ftype);
-    }
-    input.readFieldEnd();
-  }
-  input.readStructEnd();
-  return;
-};
-
-com.vmesteonline.be.UserInfo.prototype.write = function(output) {
-  output.writeStructBegin('UserInfo');
-  if (this.name !== null && this.name !== undefined) {
-    output.writeFieldBegin('name', Thrift.Type.STRING, 1);
-    output.writeString(this.name);
-    output.writeFieldEnd();
-  }
-  if (this.secondName !== null && this.secondName !== undefined) {
-    output.writeFieldBegin('secondName', Thrift.Type.STRING, 2);
-    output.writeString(this.secondName);
-    output.writeFieldEnd();
-  }
-  if (this.dob !== null && this.dob !== undefined) {
-    output.writeFieldBegin('dob', Thrift.Type.I32, 3);
-    output.writeI32(this.dob);
-    output.writeFieldEnd();
-  }
-  if (this.sex !== null && this.sex !== undefined) {
-    output.writeFieldBegin('sex', Thrift.Type.BOOL, 4);
-    output.writeBool(this.sex);
-    output.writeFieldEnd();
-  }
-  if (this.intrests !== null && this.intrests !== undefined) {
-    output.writeFieldBegin('intrests', Thrift.Type.STRING, 5);
-    output.writeString(this.intrests);
-    output.writeFieldEnd();
-  }
-  output.writeFieldStop();
-  output.writeStructEnd();
-  return;
-};
-
-com.vmesteonline.be.User = function(args) {
-  this.id = null;
-  this.locationId = null;
-  this.userInfo = null;
-  if (args) {
-    if (args.id !== undefined) {
-      this.id = args.id;
-    }
-    if (args.locationId !== undefined) {
-      this.locationId = args.locationId;
-    }
-    if (args.userInfo !== undefined) {
-      this.userInfo = args.userInfo;
-    }
-  }
-};
-com.vmesteonline.be.User.prototype = {};
-com.vmesteonline.be.User.prototype.read = function(input) {
-  input.readStructBegin();
-  while (true)
-  {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
-    if (ftype == Thrift.Type.STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 1:
-      if (ftype == Thrift.Type.I32) {
-        this.id = input.readI32().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 2:
-      if (ftype == Thrift.Type.I32) {
-        this.locationId = input.readI32().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 3:
-      if (ftype == Thrift.Type.STRUCT) {
-        this.userInfo = new com.vmesteonline.be.UserInfo();
-        this.userInfo.read(input);
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      default:
-        input.skip(ftype);
-    }
-    input.readFieldEnd();
-  }
-  input.readStructEnd();
-  return;
-};
-
-com.vmesteonline.be.User.prototype.write = function(output) {
-  output.writeStructBegin('User');
-  if (this.id !== null && this.id !== undefined) {
-    output.writeFieldBegin('id', Thrift.Type.I32, 1);
-    output.writeI32(this.id);
-    output.writeFieldEnd();
-  }
-  if (this.locationId !== null && this.locationId !== undefined) {
-    output.writeFieldBegin('locationId', Thrift.Type.I32, 2);
-    output.writeI32(this.locationId);
-    output.writeFieldEnd();
-  }
-  if (this.userInfo !== null && this.userInfo !== undefined) {
-    output.writeFieldBegin('userInfo', Thrift.Type.STRUCT, 3);
-    this.userInfo.write(output);
-    output.writeFieldEnd();
-  }
-  output.writeFieldStop();
-  output.writeStructEnd();
-  return;
-};
-
 com.vmesteonline.be.Session = function(args) {
   this.salt = null;
-  this.user = null;
-  this.created = null;
+  this.userId = null;
   this.userAgent = null;
   this.cookie = null;
   this.accessGranted = null;
@@ -234,11 +25,8 @@ com.vmesteonline.be.Session = function(args) {
     if (args.salt !== undefined) {
       this.salt = args.salt;
     }
-    if (args.user !== undefined) {
-      this.user = args.user;
-    }
-    if (args.created !== undefined) {
-      this.created = args.created;
+    if (args.userId !== undefined) {
+      this.userId = args.userId;
     }
     if (args.userAgent !== undefined) {
       this.userAgent = args.userAgent;
@@ -276,16 +64,8 @@ com.vmesteonline.be.Session.prototype.read = function(input) {
       }
       break;
       case 2:
-      if (ftype == Thrift.Type.STRUCT) {
-        this.user = new com.vmesteonline.be.User();
-        this.user.read(input);
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 3:
-      if (ftype == Thrift.Type.I32) {
-        this.created = input.readI32().value;
+      if (ftype == Thrift.Type.STRING) {
+        this.userId = input.readString().value;
       } else {
         input.skip(ftype);
       }
@@ -334,14 +114,9 @@ com.vmesteonline.be.Session.prototype.write = function(output) {
     output.writeString(this.salt);
     output.writeFieldEnd();
   }
-  if (this.user !== null && this.user !== undefined) {
-    output.writeFieldBegin('user', Thrift.Type.STRUCT, 2);
-    this.user.write(output);
-    output.writeFieldEnd();
-  }
-  if (this.created !== null && this.created !== undefined) {
-    output.writeFieldBegin('created', Thrift.Type.I32, 3);
-    output.writeI32(this.created);
+  if (this.userId !== null && this.userId !== undefined) {
+    output.writeFieldBegin('userId', Thrift.Type.STRING, 2);
+    output.writeString(this.userId);
     output.writeFieldEnd();
   }
   if (this.userAgent !== null && this.userAgent !== undefined) {
@@ -362,152 +137,6 @@ com.vmesteonline.be.Session.prototype.write = function(output) {
   if (this.error !== null && this.error !== undefined) {
     output.writeFieldBegin('error', Thrift.Type.STRING, 7);
     output.writeString(this.error);
-    output.writeFieldEnd();
-  }
-  output.writeFieldStop();
-  output.writeStructEnd();
-  return;
-};
-
-com.vmesteonline.be.Location = function(args) {
-  this.id = null;
-  this.parent = null;
-  this.name = null;
-  this.type = null;
-  this.longitude = null;
-  this.attitude = null;
-  this.altitude = null;
-  if (args) {
-    if (args.id !== undefined) {
-      this.id = args.id;
-    }
-    if (args.parent !== undefined) {
-      this.parent = args.parent;
-    }
-    if (args.name !== undefined) {
-      this.name = args.name;
-    }
-    if (args.type !== undefined) {
-      this.type = args.type;
-    }
-    if (args.longitude !== undefined) {
-      this.longitude = args.longitude;
-    }
-    if (args.attitude !== undefined) {
-      this.attitude = args.attitude;
-    }
-    if (args.altitude !== undefined) {
-      this.altitude = args.altitude;
-    }
-  }
-};
-com.vmesteonline.be.Location.prototype = {};
-com.vmesteonline.be.Location.prototype.read = function(input) {
-  input.readStructBegin();
-  while (true)
-  {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
-    if (ftype == Thrift.Type.STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 1:
-      if (ftype == Thrift.Type.I32) {
-        this.id = input.readI32().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 2:
-      if (ftype == Thrift.Type.I32) {
-        this.parent = input.readI32().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 3:
-      if (ftype == Thrift.Type.STRING) {
-        this.name = input.readString().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 4:
-      if (ftype == Thrift.Type.I32) {
-        this.type = input.readI32().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 5:
-      if (ftype == Thrift.Type.DOUBLE) {
-        this.longitude = input.readDouble().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 6:
-      if (ftype == Thrift.Type.DOUBLE) {
-        this.attitude = input.readDouble().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 7:
-      if (ftype == Thrift.Type.DOUBLE) {
-        this.altitude = input.readDouble().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      default:
-        input.skip(ftype);
-    }
-    input.readFieldEnd();
-  }
-  input.readStructEnd();
-  return;
-};
-
-com.vmesteonline.be.Location.prototype.write = function(output) {
-  output.writeStructBegin('Location');
-  if (this.id !== null && this.id !== undefined) {
-    output.writeFieldBegin('id', Thrift.Type.I32, 1);
-    output.writeI32(this.id);
-    output.writeFieldEnd();
-  }
-  if (this.parent !== null && this.parent !== undefined) {
-    output.writeFieldBegin('parent', Thrift.Type.I32, 2);
-    output.writeI32(this.parent);
-    output.writeFieldEnd();
-  }
-  if (this.name !== null && this.name !== undefined) {
-    output.writeFieldBegin('name', Thrift.Type.STRING, 3);
-    output.writeString(this.name);
-    output.writeFieldEnd();
-  }
-  if (this.type !== null && this.type !== undefined) {
-    output.writeFieldBegin('type', Thrift.Type.I32, 4);
-    output.writeI32(this.type);
-    output.writeFieldEnd();
-  }
-  if (this.longitude !== null && this.longitude !== undefined) {
-    output.writeFieldBegin('longitude', Thrift.Type.DOUBLE, 5);
-    output.writeDouble(this.longitude);
-    output.writeFieldEnd();
-  }
-  if (this.attitude !== null && this.attitude !== undefined) {
-    output.writeFieldBegin('attitude', Thrift.Type.DOUBLE, 6);
-    output.writeDouble(this.attitude);
-    output.writeFieldEnd();
-  }
-  if (this.altitude !== null && this.altitude !== undefined) {
-    output.writeFieldBegin('altitude', Thrift.Type.DOUBLE, 7);
-    output.writeDouble(this.altitude);
     output.writeFieldEnd();
   }
   output.writeFieldStop();

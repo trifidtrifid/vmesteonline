@@ -24,8 +24,8 @@
 
 		var groupSelect = document.getElementById("selectGroup");
 		var groupId = groupSelect.options[groupSelect.selectedIndex].value;
-		client.registerNewUser($("#uname").val(), $("#password").val(),
-				groupId, $("#email").val());
+		client.registerNewUser($("#uname").val(), "family", $("#password")
+				.val(), $("#email").val(), groupId);
 	}
 </script>
 
@@ -53,8 +53,7 @@
 							GroupServiceImpl groupService = new GroupServiceImpl();
 							List<Group> groups = groupService.getGroupsForRegistration();
 							for (Group g : groups) {
-								out.print("<option value=\"" + g.id + "\">" + g.shortName
-										+ "</option>");
+								out.print("<option value=\"" + g.id + "\">" + g.shortName + "</option>");
 							}
 						%>
 

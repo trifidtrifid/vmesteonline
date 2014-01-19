@@ -19,12 +19,11 @@
 		var protocol = new Thrift.Protocol(transport);
 		var client = new com.vmesteonline.be.AuthServiceClient(protocol);
 
-		var session;
-
 		try {
-			session = client.login($("#uname").val(), $("#password").val());
+			var accessGranted = client.login($("#uname").val(), $("#password")
+					.val());
 
-			if (session.accessGranted) {
+			if (accessGranted) {
 				this.document.location.href = "main.jsp";
 			} else {
 				$('#result').val(session.error);

@@ -17,11 +17,11 @@ public class Defaults {
 	public static void setGroups() {
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		for (VoRubric r : defaultRubrics) {
-			javax.jdo.Query q = pm.newQuery(VoRubric.class);
+		for (VoGroup r : defaultGroups) {
+			javax.jdo.Query q = pm.newQuery(VoGroup.class);
 			q.setFilter("visibleName == param");
 			q.declareParameters("String param");
-			List<VoRubric> rbcs = (List<VoRubric>) q.execute(r.getVisibleName());
+			List<VoGroup> rbcs = (List<VoGroup>) q.execute(r.getVisibleName());
 			if (rbcs.isEmpty()) {
 				pm.makePersistent(r);
 			}

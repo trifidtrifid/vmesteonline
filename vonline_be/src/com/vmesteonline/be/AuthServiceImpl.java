@@ -53,14 +53,14 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public boolean registerNewUser(String firstname, String lastname, String password, String groupId, String email) throws InvalidOperation {
+	public boolean registerNewUser(String firstname, String lastname, String password, String email, String locationId) throws InvalidOperation {
 
 		if (getUserByEmail(email) != null)
 			throw new InvalidOperation(Error.IncorrectParametrs, "registration exsist");
 
 		PersistenceManager pm = PMF.getPm();
-		VoUser user = new VoUser(firstname, "tt", email, password);
-		VoGroup home = GroupHelper.getGroupById(Long.decode(groupId));
+		VoUser user = new VoUser(firstname, lastname, email, password);
+		VoGroup home = GroupHelper.getGroupById(Long.decode(locationId));
 		if (home == null)
 			throw new InvalidOperation(Error.RegistrationAlreadyExist, "unknown user home group");
 
@@ -88,19 +88,14 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	public VoUser getUserByEmail(String email) {
 		Query q = PMF.getPm().newQuery(VoUser.class);
-
+		q.setFilter("email == emailParam");
+		q.declareParameters("float emailParam");
 		List<VoUser> users = (List<VoUser>) q.execute(email);
 		if (users.isEmpty())
 			return null;
 		if (users.size() != 1)
 			logger.error("has more than one user with email " + email);
 		return users.get(0);
-	}
-
-	@Override
-	public void logout() throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
