@@ -7,6 +7,8 @@
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.Group"%>
+<%@ page import="com.vmesteonline.be.Rubric"%>
+
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 
@@ -16,14 +18,14 @@
 	out.print("user id: " + Long.toString(SessionHelper.getUserId(request.getSession().getId())) + "<br>");
 
 	UserServiceImpl userService = new UserServiceImpl(request.getSession());
-	List<Group> groups = userService.getUserGroups();
-	if (groups != null) {
-		for (Group g : groups) {
-			out.print("group id: " + g.id + " group name: " + g.visibleName + "<br>");
-		}
+	out.print("Groups:<br>");
+	for (Group g : userService.getUserGroups()) {
+		out.print("group id: " + g.id + " group name: " + g.visibleName + "<br>");
+	}
 
-	} else {
-		out.print("can't find groups for user<br>");
+	out.print("Rubrics:<br>");
+	for (Rubric r : userService.getUserRubrics()) {
+		out.print("rubric id: " + r.id + " rubric name: " + r.visibleName + "<br>");
 	}
 %>
 

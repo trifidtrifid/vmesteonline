@@ -42,12 +42,11 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 		logger.info("find user name " + user.getEmail());
 
-		List<Group> groups = new ArrayList<Group>();
 		if (user.getGroups() == null) {
 			logger.warn("user with id " + Long.toString(sess.getUserId()) + " has no any groups");
 			throw new InvalidOperation(Error.GeneralError, "can't find user bu id");
 		}
-
+		List<Group> groups = new ArrayList<Group>();
 		for (VoUserGroup g : user.getGroups()) {
 			Group gr = new Group();
 			gr.id = g.getId().getId();
@@ -68,19 +67,19 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 		logger.info("find user name " + user.getEmail());
 
-		List<Group> groups = new ArrayList<Group>();
 		if (user.getGroups() == null) {
 			logger.warn("user with id " + Long.toString(sess.getUserId()) + " has no any groups");
 			throw new InvalidOperation(Error.GeneralError, "can't find user bu id");
 		}
 
-		for (VoUserGroup g : user.getGroups()) {
-			Group gr = new Group();
-			gr.id = g.getId().getId();
-			gr.visibleName = g.getVisibleName();
-			groups.add(gr);
+		List<Rubric> rubrics = new ArrayList<Rubric>();
+		for (VoRubric r : user.getRubrics()) {
+			Rubric ru = new Rubric();
+			ru.id = r.getId().getId();
+			ru.visibleName = r.getVisibleName();
+			rubrics.add(ru);
 		}
-		return groups;
+		return rubrics;
 	}
 
 	public static List<Group> getGroupsForRegistration() {
