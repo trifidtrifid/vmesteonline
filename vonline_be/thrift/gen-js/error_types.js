@@ -15,8 +15,10 @@ if (typeof com.vmesteonline.be === 'undefined') {
   com.vmesteonline.be = {};
 }
 com.vmesteonline.be.Error = {
+'GeneralError' : 0,
 'IncorrectParametrs' : 1,
-'RegistrationAlreadyExist' : 2
+'RegistrationAlreadyExist' : 2,
+'NotAuthorized' : 3
 };
 com.vmesteonline.be.InvalidOperation = function(args) {
   this.what = null;

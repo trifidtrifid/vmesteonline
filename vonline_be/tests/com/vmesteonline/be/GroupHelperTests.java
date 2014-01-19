@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.jdo2.VoGroup;
-import com.vmetsteonline.be.utils.GroupHelper;
+import com.vmesteonline.be.utils.GroupHelper;
 
 public class GroupHelperTests extends DataStoreTestsHelper {
 

@@ -1,4 +1,4 @@
-package com.vmetsteonline.be.utils;
+package com.vmesteonline.be.utils;
 
 import javax.jdo.PersistenceManager;
 

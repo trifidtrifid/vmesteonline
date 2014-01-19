@@ -1,4 +1,4 @@
-package com.vmetsteonline.be.utils;
+package com.vmesteonline.be.utils;
 
 import java.util.ArrayList;
 import java.util.List;

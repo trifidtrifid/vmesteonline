@@ -36,9 +36,10 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Group");
 
   private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I64, (short)1);
-  private static final org.apache.thrift.protocol.TField SHORT_NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("shortName", org.apache.thrift.protocol.TType.STRING, (short)2);
-  private static final org.apache.thrift.protocol.TField DESCRIPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("description", org.apache.thrift.protocol.TType.STRING, (short)3);
-  private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.I32, (short)4);
+  private static final org.apache.thrift.protocol.TField VISIBLE_NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("visibleName", org.apache.thrift.protocol.TType.STRING, (short)2);
+  private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)3);
+  private static final org.apache.thrift.protocol.TField DESCRIPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("description", org.apache.thrift.protocol.TType.STRING, (short)4);
+  private static final org.apache.thrift.protocol.TField RADIUS_FIELD_DESC = new org.apache.thrift.protocol.TField("radius", org.apache.thrift.protocol.TType.I32, (short)5);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -47,24 +48,18 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
   }
 
   public long id; // required
-  public String shortName; // required
+  public String visibleName; // required
+  public String name; // required
   public String description; // required
-  /**
-   * 
-   * @see GroupType
-   */
-  public GroupType type; // required
+  public int radius; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ID((short)1, "id"),
-    SHORT_NAME((short)2, "shortName"),
-    DESCRIPTION((short)3, "description"),
-    /**
-     * 
-     * @see GroupType
-     */
-    TYPE((short)4, "type");
+    VISIBLE_NAME((short)2, "visibleName"),
+    NAME((short)3, "name"),
+    DESCRIPTION((short)4, "description"),
+    RADIUS((short)5, "radius");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -81,12 +76,14 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       switch(fieldId) {
         case 1: // ID
           return ID;
-        case 2: // SHORT_NAME
-          return SHORT_NAME;
-        case 3: // DESCRIPTION
+        case 2: // VISIBLE_NAME
+          return VISIBLE_NAME;
+        case 3: // NAME
+          return NAME;
+        case 4: // DESCRIPTION
           return DESCRIPTION;
-        case 4: // TYPE
-          return TYPE;
+        case 5: // RADIUS
+          return RADIUS;
         default:
           return null;
       }
@@ -128,18 +125,21 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
 
   // isset id assignments
   private static final int __ID_ISSET_ID = 0;
+  private static final int __RADIUS_ISSET_ID = 1;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.SHORT_NAME, new org.apache.thrift.meta_data.FieldMetaData("shortName", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.VISIBLE_NAME, new org.apache.thrift.meta_data.FieldMetaData("visibleName", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+    tmpMap.put(_Fields.NAME, new org.apache.thrift.meta_data.FieldMetaData("name", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.DESCRIPTION, new org.apache.thrift.meta_data.FieldMetaData("description", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-    tmpMap.put(_Fields.TYPE, new org.apache.thrift.meta_data.FieldMetaData("type", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, GroupType.class)));
+    tmpMap.put(_Fields.RADIUS, new org.apache.thrift.meta_data.FieldMetaData("radius", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Group.class, metaDataMap);
   }
@@ -149,16 +149,19 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
 
   public Group(
     long id,
-    String shortName,
+    String visibleName,
+    String name,
     String description,
-    GroupType type)
+    int radius)
   {
     this();
     this.id = id;
     setIdIsSet(true);
-    this.shortName = shortName;
+    this.visibleName = visibleName;
+    this.name = name;
     this.description = description;
-    this.type = type;
+    this.radius = radius;
+    setRadiusIsSet(true);
   }
 
   /**
@@ -167,15 +170,16 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
   public Group(Group other) {
     __isset_bitfield = other.__isset_bitfield;
     this.id = other.id;
-    if (other.isSetShortName()) {
-      this.shortName = other.shortName;
+    if (other.isSetVisibleName()) {
+      this.visibleName = other.visibleName;
+    }
+    if (other.isSetName()) {
+      this.name = other.name;
     }
     if (other.isSetDescription()) {
       this.description = other.description;
     }
-    if (other.isSetType()) {
-      this.type = other.type;
-    }
+    this.radius = other.radius;
   }
 
   public Group deepCopy() {
@@ -186,9 +190,11 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
   public void clear() {
     setIdIsSet(false);
     this.id = 0;
-    this.shortName = null;
+    this.visibleName = null;
+    this.name = null;
     this.description = null;
-    this.type = null;
+    setRadiusIsSet(false);
+    this.radius = 0;
   }
 
   public long getId() {
@@ -214,27 +220,51 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ID_ISSET_ID, value);
   }
 
-  public String getShortName() {
-    return this.shortName;
+  public String getVisibleName() {
+    return this.visibleName;
   }
 
-  public Group setShortName(String shortName) {
-    this.shortName = shortName;
+  public Group setVisibleName(String visibleName) {
+    this.visibleName = visibleName;
     return this;
   }
 
-  public void unsetShortName() {
-    this.shortName = null;
+  public void unsetVisibleName() {
+    this.visibleName = null;
   }
 
-  /** Returns true if field shortName is set (has been assigned a value) and false otherwise */
-  public boolean isSetShortName() {
-    return this.shortName != null;
+  /** Returns true if field visibleName is set (has been assigned a value) and false otherwise */
+  public boolean isSetVisibleName() {
+    return this.visibleName != null;
   }
 
-  public void setShortNameIsSet(boolean value) {
+  public void setVisibleNameIsSet(boolean value) {
     if (!value) {
-      this.shortName = null;
+      this.visibleName = null;
+    }
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public Group setName(String name) {
+    this.name = name;
+    return this;
+  }
+
+  public void unsetName() {
+    this.name = null;
+  }
+
+  /** Returns true if field name is set (has been assigned a value) and false otherwise */
+  public boolean isSetName() {
+    return this.name != null;
+  }
+
+  public void setNameIsSet(boolean value) {
+    if (!value) {
+      this.name = null;
     }
   }
 
@@ -262,36 +292,27 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     }
   }
 
-  /**
-   * 
-   * @see GroupType
-   */
-  public GroupType getType() {
-    return this.type;
+  public int getRadius() {
+    return this.radius;
   }
 
-  /**
-   * 
-   * @see GroupType
-   */
-  public Group setType(GroupType type) {
-    this.type = type;
+  public Group setRadius(int radius) {
+    this.radius = radius;
+    setRadiusIsSet(true);
     return this;
   }
 
-  public void unsetType() {
-    this.type = null;
+  public void unsetRadius() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __RADIUS_ISSET_ID);
   }
 
-  /** Returns true if field type is set (has been assigned a value) and false otherwise */
-  public boolean isSetType() {
-    return this.type != null;
+  /** Returns true if field radius is set (has been assigned a value) and false otherwise */
+  public boolean isSetRadius() {
+    return EncodingUtils.testBit(__isset_bitfield, __RADIUS_ISSET_ID);
   }
 
-  public void setTypeIsSet(boolean value) {
-    if (!value) {
-      this.type = null;
-    }
+  public void setRadiusIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __RADIUS_ISSET_ID, value);
   }
 
   public void setFieldValue(_Fields field, Object value) {
@@ -304,11 +325,19 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       }
       break;
 
-    case SHORT_NAME:
+    case VISIBLE_NAME:
       if (value == null) {
-        unsetShortName();
+        unsetVisibleName();
       } else {
-        setShortName((String)value);
+        setVisibleName((String)value);
+      }
+      break;
+
+    case NAME:
+      if (value == null) {
+        unsetName();
+      } else {
+        setName((String)value);
       }
       break;
 
@@ -320,11 +349,11 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       }
       break;
 
-    case TYPE:
+    case RADIUS:
       if (value == null) {
-        unsetType();
+        unsetRadius();
       } else {
-        setType((GroupType)value);
+        setRadius((Integer)value);
       }
       break;
 
@@ -336,14 +365,17 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     case ID:
       return Long.valueOf(getId());
 
-    case SHORT_NAME:
-      return getShortName();
+    case VISIBLE_NAME:
+      return getVisibleName();
+
+    case NAME:
+      return getName();
 
     case DESCRIPTION:
       return getDescription();
 
-    case TYPE:
-      return getType();
+    case RADIUS:
+      return Integer.valueOf(getRadius());
 
     }
     throw new IllegalStateException();
@@ -358,12 +390,14 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     switch (field) {
     case ID:
       return isSetId();
-    case SHORT_NAME:
-      return isSetShortName();
+    case VISIBLE_NAME:
+      return isSetVisibleName();
+    case NAME:
+      return isSetName();
     case DESCRIPTION:
       return isSetDescription();
-    case TYPE:
-      return isSetType();
+    case RADIUS:
+      return isSetRadius();
     }
     throw new IllegalStateException();
   }
@@ -390,12 +424,21 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
         return false;
     }
 
-    boolean this_present_shortName = true && this.isSetShortName();
-    boolean that_present_shortName = true && that.isSetShortName();
-    if (this_present_shortName || that_present_shortName) {
-      if (!(this_present_shortName && that_present_shortName))
+    boolean this_present_visibleName = true && this.isSetVisibleName();
+    boolean that_present_visibleName = true && that.isSetVisibleName();
+    if (this_present_visibleName || that_present_visibleName) {
+      if (!(this_present_visibleName && that_present_visibleName))
         return false;
-      if (!this.shortName.equals(that.shortName))
+      if (!this.visibleName.equals(that.visibleName))
+        return false;
+    }
+
+    boolean this_present_name = true && this.isSetName();
+    boolean that_present_name = true && that.isSetName();
+    if (this_present_name || that_present_name) {
+      if (!(this_present_name && that_present_name))
+        return false;
+      if (!this.name.equals(that.name))
         return false;
     }
 
@@ -408,12 +451,12 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
         return false;
     }
 
-    boolean this_present_type = true && this.isSetType();
-    boolean that_present_type = true && that.isSetType();
-    if (this_present_type || that_present_type) {
-      if (!(this_present_type && that_present_type))
+    boolean this_present_radius = true;
+    boolean that_present_radius = true;
+    if (this_present_radius || that_present_radius) {
+      if (!(this_present_radius && that_present_radius))
         return false;
-      if (!this.type.equals(that.type))
+      if (this.radius != that.radius)
         return false;
     }
 
@@ -443,12 +486,22 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetShortName()).compareTo(other.isSetShortName());
+    lastComparison = Boolean.valueOf(isSetVisibleName()).compareTo(other.isSetVisibleName());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetShortName()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.shortName, other.shortName);
+    if (isSetVisibleName()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.visibleName, other.visibleName);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetName()).compareTo(other.isSetName());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetName()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.name, other.name);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -463,12 +516,12 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetType()).compareTo(other.isSetType());
+    lastComparison = Boolean.valueOf(isSetRadius()).compareTo(other.isSetRadius());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetType()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.type, other.type);
+    if (isSetRadius()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.radius, other.radius);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -497,11 +550,19 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     sb.append(this.id);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("shortName:");
-    if (this.shortName == null) {
+    sb.append("visibleName:");
+    if (this.visibleName == null) {
       sb.append("null");
     } else {
-      sb.append(this.shortName);
+      sb.append(this.visibleName);
+    }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("name:");
+    if (this.name == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.name);
     }
     first = false;
     if (!first) sb.append(", ");
@@ -513,12 +574,8 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("type:");
-    if (this.type == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.type);
-    }
+    sb.append("radius:");
+    sb.append(this.radius);
     first = false;
     sb.append(")");
     return sb.toString();
@@ -573,15 +630,23 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // SHORT_NAME
+          case 2: // VISIBLE_NAME
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.shortName = iprot.readString();
-              struct.setShortNameIsSet(true);
+              struct.visibleName = iprot.readString();
+              struct.setVisibleNameIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 3: // DESCRIPTION
+          case 3: // NAME
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.name = iprot.readString();
+              struct.setNameIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 4: // DESCRIPTION
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.description = iprot.readString();
               struct.setDescriptionIsSet(true);
@@ -589,10 +654,10 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 4: // TYPE
+          case 5: // RADIUS
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.type = GroupType.findByValue(iprot.readI32());
-              struct.setTypeIsSet(true);
+              struct.radius = iprot.readI32();
+              struct.setRadiusIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -615,9 +680,14 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       oprot.writeFieldBegin(ID_FIELD_DESC);
       oprot.writeI64(struct.id);
       oprot.writeFieldEnd();
-      if (struct.shortName != null) {
-        oprot.writeFieldBegin(SHORT_NAME_FIELD_DESC);
-        oprot.writeString(struct.shortName);
+      if (struct.visibleName != null) {
+        oprot.writeFieldBegin(VISIBLE_NAME_FIELD_DESC);
+        oprot.writeString(struct.visibleName);
+        oprot.writeFieldEnd();
+      }
+      if (struct.name != null) {
+        oprot.writeFieldBegin(NAME_FIELD_DESC);
+        oprot.writeString(struct.name);
         oprot.writeFieldEnd();
       }
       if (struct.description != null) {
@@ -625,11 +695,9 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
         oprot.writeString(struct.description);
         oprot.writeFieldEnd();
       }
-      if (struct.type != null) {
-        oprot.writeFieldBegin(TYPE_FIELD_DESC);
-        oprot.writeI32(struct.type.getValue());
-        oprot.writeFieldEnd();
-      }
+      oprot.writeFieldBegin(RADIUS_FIELD_DESC);
+      oprot.writeI32(struct.radius);
+      oprot.writeFieldEnd();
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -651,49 +719,59 @@ public class Group implements org.apache.thrift.TBase<Group, Group._Fields>, jav
       if (struct.isSetId()) {
         optionals.set(0);
       }
-      if (struct.isSetShortName()) {
+      if (struct.isSetVisibleName()) {
         optionals.set(1);
       }
-      if (struct.isSetDescription()) {
+      if (struct.isSetName()) {
         optionals.set(2);
       }
-      if (struct.isSetType()) {
+      if (struct.isSetDescription()) {
         optionals.set(3);
       }
-      oprot.writeBitSet(optionals, 4);
+      if (struct.isSetRadius()) {
+        optionals.set(4);
+      }
+      oprot.writeBitSet(optionals, 5);
       if (struct.isSetId()) {
         oprot.writeI64(struct.id);
       }
-      if (struct.isSetShortName()) {
-        oprot.writeString(struct.shortName);
+      if (struct.isSetVisibleName()) {
+        oprot.writeString(struct.visibleName);
+      }
+      if (struct.isSetName()) {
+        oprot.writeString(struct.name);
       }
       if (struct.isSetDescription()) {
         oprot.writeString(struct.description);
       }
-      if (struct.isSetType()) {
-        oprot.writeI32(struct.type.getValue());
+      if (struct.isSetRadius()) {
+        oprot.writeI32(struct.radius);
       }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Group struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(4);
+      BitSet incoming = iprot.readBitSet(5);
       if (incoming.get(0)) {
         struct.id = iprot.readI64();
         struct.setIdIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.shortName = iprot.readString();
-        struct.setShortNameIsSet(true);
+        struct.visibleName = iprot.readString();
+        struct.setVisibleNameIsSet(true);
       }
       if (incoming.get(2)) {
+        struct.name = iprot.readString();
+        struct.setNameIsSet(true);
+      }
+      if (incoming.get(3)) {
         struct.description = iprot.readString();
         struct.setDescriptionIsSet(true);
       }
-      if (incoming.get(3)) {
-        struct.type = GroupType.findByValue(iprot.readI32());
-        struct.setTypeIsSet(true);
+      if (incoming.get(4)) {
+        struct.radius = iprot.readI32();
+        struct.setRadiusIsSet(true);
       }
     }
   }
