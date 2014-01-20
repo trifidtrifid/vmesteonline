@@ -56,6 +56,39 @@ public class VoSession {
 	@Persistent
 	private Long userId;
 
+	@Persistent
+	private float longitude;
+	
+	@Persistent
+	private float latitude;
+
+	@Persistent
+	private int lastActivityTs;
+
+	public float getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(float longitude) {
+		this.longitude = longitude;
+	}
+
+	public float getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(float latitude) {
+		this.latitude = latitude;
+	}
+
+	public int getLastActivityTs() {
+		return lastActivityTs;
+	}
+
+	public void setLastActivityTs(int lastActivityTs) {
+		this.lastActivityTs = lastActivityTs;
+	}
+
 	public Long getUserId() {
 		return userId;
 	}

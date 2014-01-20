@@ -51,6 +51,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			Group gr = new Group();
 			gr.id = g.getId().getId();
 			gr.visibleName = g.getVisibleName();
+			gr.radius = g.getRadius();
 			groups.add(gr);
 		}
 		return groups;

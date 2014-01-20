@@ -19,9 +19,14 @@ public class VoUser {
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
-		groups = new ArrayList<VoUserGroup>();
-		rubrics = new ArrayList<VoRubric>();
+	}
 
+	public VoUserGroup getHomeGroup() {
+		for (VoUserGroup r : groups) {
+			if (r.getRadius() == 0)
+				return r;
+		}
+		return null;
 	}
 
 	public List<VoRubric> getRubrics() {
@@ -81,10 +86,10 @@ public class VoUser {
 	}
 
 	@Persistent
-	private List<VoUserGroup> groups;
+	private List<VoUserGroup> groups = new ArrayList<VoUserGroup>();
 
 	@Persistent
-	private List<VoRubric> rubrics;
+	private List<VoRubric> rubrics = new ArrayList<VoRubric>();
 
 	@Persistent
 	private String name;

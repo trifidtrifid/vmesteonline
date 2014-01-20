@@ -3,12 +3,9 @@ package com.vmesteonline.be;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.thrift.TException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.vmesteonline.be.jdo2.VoUser;

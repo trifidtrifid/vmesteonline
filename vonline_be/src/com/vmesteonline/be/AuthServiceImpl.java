@@ -43,6 +43,11 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		if (u != null) {
 			if (u.getPassword().equals(password)) {
 				VoSession sess = new VoSession(httpSession.getId(), u);
+				VoUserGroup homeGroup = u.getHomeGroup();
+				if (homeGroup != null) {
+					sess.setLatitude(homeGroup.getLatitude());
+					sess.setLongitude(homeGroup.getLongitude());
+				}
 				PMF.getPm().makePersistent(sess);
 				return true;
 			} else
@@ -88,7 +93,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	@Override
 	public void logout() throws InvalidOperation, TException {
-//		VoSession sess = getSession();
+		// VoSession sess = getSession();
 
 	}
 

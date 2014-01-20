@@ -20,7 +20,7 @@
 	UserServiceImpl userService = new UserServiceImpl(request.getSession());
 	out.print("Groups:<br>");
 	for (Group g : userService.getUserGroups()) {
-		out.print("group id: " + g.id + " group name: " + g.visibleName + "<br>");
+		out.print("group id: " + g.id + " group name: " + g.visibleName + " radius: " + g.radius + "<br>");
 	}
 
 	out.print("Rubrics:<br>");
