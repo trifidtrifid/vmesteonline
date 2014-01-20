@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.MessageService.Iface;
-import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoMessage;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
@@ -19,7 +18,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public Message createMessage(long parentId, MessageType type, long topicId, String content, Map<MessageType, Long> linkedMessages,
 			Map<Long, String> tags, long recipientId) throws InvalidOperation, TException {
 		int now = (int) (System.currentTimeMillis() / 1000L);
-		Message newMessage = new Message(0, parentId, type, topicId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
+		Message newMessage = new Message(0, parentId, type, topicId, 0, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
 				new HashMap<Long, String>());
 		postMessage(newMessage);
 		return newMessage;
@@ -29,36 +28,16 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public long postMessage(Message msg) throws InvalidOperation, TException {
 		long userId = getUserId();
 		msg.setAuthorId(userId);
-		VoMessage vomsg;
-		if (0 == msg.getId()) { // create a new message
-			vomsg = new VoMessage(msg, true);
-		} else { // update message if found
-			vomsg = PMF.getPm().getObjectById(VoMessage.class, msg.getId());
-			if (null == vomsg) {
-				throw new InvalidOperation(Error.IncorrectParametrs, "No message found by ID=" + msg.getId());
-			}
-		}
-		// update parameters of the message
-		vomsg.setApprovedId(msg.getApprovedBy());
-		vomsg.setContent(msg.getContent().getBytes());
-		vomsg.setEditedAt(msg.getEdited());
-		vomsg.setLikes(msg.getLikesNum());
-		vomsg.setUnlikes(msg.getUnlikesNum());
-		vomsg.setRecipient(msg.getRecipientId());
-		vomsg.setTags(msg.getTags());
-		vomsg.setLinks(msg.getLinkedMessages());
-
-		long msgId;
-		try {
-			vomsg = PMF.getPm().makePersistent(vomsg);
-			msgId = vomsg.getId().getId();
-			msg.setId(msgId);
-		} catch (Exception e) {
-			throw new InvalidOperation(Error.IncorrectParametrs, "Failed to amek updated message persist");
-		}
-		return msgId;
+		boolean newMessage = 0==msg.getId();
+		VoMessage vomsg = new VoMessage(msg,true,true);
+		if( newMessage )
+			newMessageNotify(vomsg);
+		return vomsg.getId().getId();
 	}
 
+	private void newMessageNotify( VoMessage vomsg )  throws InvalidOperation, TException {
+		// TODO notify users about new message POSTED!
+	}
 	@Override
 	public Topic createTopic(String subject, long messageId, long rubricId, long communityId) throws TException {
 		// TODO Auto-generated method stub
@@ -129,7 +108,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				len = (int) (Math.random() * (longText.length() - pos));
 				int likesi = (int) (Math.random() * 100);
 				int unlikesi = (int) (Math.random() * 100);
-				msgsa[0] = new Message(msgNo, 0, MessageType.findByValue(1), topNo, 1,
+				msgsa[0] = new Message(msgNo, 0, MessageType.findByValue(1), topNo, 0, 1,
 						0, 0, "" + msgNo + "# " + longText.substring(pos, pos + len), likesi, unlikesi, new HashMap<MessageType, Long>(),
 						new HashMap<Long, String>());
 				topicsa[topNo].setLikesNum(topicsa[topNo].getLikesNum() + likesi);
@@ -144,7 +123,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					int pos1 = (int) (Math.random() * (longText.length() - 1));
 					int len1 = (int) (Math.random() * (longText.length() - pos1 - 1));
 					int likes1 = (int) (Math.random() * 100), unlikes1 = (int) (Math.random() * 100);
-					msgsa[no] = new Message(msgNo, parent, MessageType.findByValue(1), topNo, 1,
+					msgsa[no] = new Message(msgNo, parent, MessageType.findByValue(1), topNo, 0, 1,
 							0, 0, "" + msgNo + "# " + longText.substring(pos1, pos1 + len1), likes1, unlikes1, new HashMap<MessageType, Long>(),
 							new HashMap<Long, String>());
 					topicsa[topNo].setLikesNum(topicsa[topNo].getLikesNum() + likes1);

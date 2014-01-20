@@ -173,6 +173,7 @@ com.vmesteonline.be.Message = function(args) {
   this.parentId = null;
   this.type = null;
   this.topicId = null;
+  this.groupId = null;
   this.authorId = null;
   this.recipientId = null;
   this.created = null;
@@ -195,6 +196,9 @@ com.vmesteonline.be.Message = function(args) {
     }
     if (args.topicId !== undefined) {
       this.topicId = args.topicId;
+    }
+    if (args.groupId !== undefined) {
+      this.groupId = args.groupId;
     }
     if (args.authorId !== undefined) {
       this.authorId = args.authorId;
@@ -272,61 +276,68 @@ com.vmesteonline.be.Message.prototype.read = function(input) {
       break;
       case 5:
       if (ftype == Thrift.Type.I64) {
-        this.authorId = input.readI64().value;
+        this.groupId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
       break;
       case 6:
       if (ftype == Thrift.Type.I64) {
-        this.recipientId = input.readI64().value;
+        this.authorId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
       break;
       case 7:
-      if (ftype == Thrift.Type.I32) {
-        this.created = input.readI32().value;
+      if (ftype == Thrift.Type.I64) {
+        this.recipientId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
       break;
       case 8:
       if (ftype == Thrift.Type.I32) {
-        this.edited = input.readI32().value;
+        this.created = input.readI32().value;
       } else {
         input.skip(ftype);
       }
       break;
       case 9:
+      if (ftype == Thrift.Type.I32) {
+        this.edited = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 10:
       if (ftype == Thrift.Type.I64) {
         this.approvedBy = input.readI64().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 10:
+      case 11:
       if (ftype == Thrift.Type.STRING) {
         this.content = input.readString().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 11:
+      case 12:
       if (ftype == Thrift.Type.I32) {
         this.likesNum = input.readI32().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 12:
+      case 13:
       if (ftype == Thrift.Type.I32) {
         this.unlikesNum = input.readI32().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 13:
+      case 14:
       if (ftype == Thrift.Type.MAP) {
         var _size0 = 0;
         var _rtmp34;
@@ -355,7 +366,7 @@ com.vmesteonline.be.Message.prototype.read = function(input) {
         input.skip(ftype);
       }
       break;
-      case 14:
+      case 15:
       if (ftype == Thrift.Type.MAP) {
         var _size8 = 0;
         var _rtmp312;
@@ -415,48 +426,53 @@ com.vmesteonline.be.Message.prototype.write = function(output) {
     output.writeI64(this.topicId);
     output.writeFieldEnd();
   }
+  if (this.groupId !== null && this.groupId !== undefined) {
+    output.writeFieldBegin('groupId', Thrift.Type.I64, 5);
+    output.writeI64(this.groupId);
+    output.writeFieldEnd();
+  }
   if (this.authorId !== null && this.authorId !== undefined) {
-    output.writeFieldBegin('authorId', Thrift.Type.I64, 5);
+    output.writeFieldBegin('authorId', Thrift.Type.I64, 6);
     output.writeI64(this.authorId);
     output.writeFieldEnd();
   }
   if (this.recipientId !== null && this.recipientId !== undefined) {
-    output.writeFieldBegin('recipientId', Thrift.Type.I64, 6);
+    output.writeFieldBegin('recipientId', Thrift.Type.I64, 7);
     output.writeI64(this.recipientId);
     output.writeFieldEnd();
   }
   if (this.created !== null && this.created !== undefined) {
-    output.writeFieldBegin('created', Thrift.Type.I32, 7);
+    output.writeFieldBegin('created', Thrift.Type.I32, 8);
     output.writeI32(this.created);
     output.writeFieldEnd();
   }
   if (this.edited !== null && this.edited !== undefined) {
-    output.writeFieldBegin('edited', Thrift.Type.I32, 8);
+    output.writeFieldBegin('edited', Thrift.Type.I32, 9);
     output.writeI32(this.edited);
     output.writeFieldEnd();
   }
   if (this.approvedBy !== null && this.approvedBy !== undefined) {
-    output.writeFieldBegin('approvedBy', Thrift.Type.I64, 9);
+    output.writeFieldBegin('approvedBy', Thrift.Type.I64, 10);
     output.writeI64(this.approvedBy);
     output.writeFieldEnd();
   }
   if (this.content !== null && this.content !== undefined) {
-    output.writeFieldBegin('content', Thrift.Type.STRING, 10);
+    output.writeFieldBegin('content', Thrift.Type.STRING, 11);
     output.writeString(this.content);
     output.writeFieldEnd();
   }
   if (this.likesNum !== null && this.likesNum !== undefined) {
-    output.writeFieldBegin('likesNum', Thrift.Type.I32, 11);
+    output.writeFieldBegin('likesNum', Thrift.Type.I32, 12);
     output.writeI32(this.likesNum);
     output.writeFieldEnd();
   }
   if (this.unlikesNum !== null && this.unlikesNum !== undefined) {
-    output.writeFieldBegin('unlikesNum', Thrift.Type.I32, 12);
+    output.writeFieldBegin('unlikesNum', Thrift.Type.I32, 13);
     output.writeI32(this.unlikesNum);
     output.writeFieldEnd();
   }
   if (this.linkedMessages !== null && this.linkedMessages !== undefined) {
-    output.writeFieldBegin('linkedMessages', Thrift.Type.MAP, 13);
+    output.writeFieldBegin('linkedMessages', Thrift.Type.MAP, 14);
     output.writeMapBegin(Thrift.Type.I32, Thrift.Type.I64, Thrift.objectLength(this.linkedMessages));
     for (var kiter16 in this.linkedMessages)
     {
@@ -471,7 +487,7 @@ com.vmesteonline.be.Message.prototype.write = function(output) {
     output.writeFieldEnd();
   }
   if (this.tags !== null && this.tags !== undefined) {
-    output.writeFieldBegin('tags', Thrift.Type.MAP, 14);
+    output.writeFieldBegin('tags', Thrift.Type.MAP, 15);
     output.writeMapBegin(Thrift.Type.I64, Thrift.Type.STRING, Thrift.objectLength(this.tags));
     for (var kiter18 in this.tags)
     {
