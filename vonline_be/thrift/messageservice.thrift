@@ -18,17 +18,18 @@ struct Message {
 	1: i64 id,
 	2: i64 parentId, // 'идентификатор родительского сообщения, NULL для корневого со',
 	3: MessageType type, // 'тип один из (сообщение, чат)',
-	4: i64 topicId,	
-	5: i64 authorId, //'автор сообщения или темы',
-	6: optional i64 recipientId, // 'адресат задан только для личных сообщений, иначе NULL',
-	7: i32 created, // 'дата создания',
-	8: i32 edited,
-	9: optional i64 approvedBy, // 'идентификатор пользователя промодерировавшего сообщение',
-	10: string content, // 'содержание сообщения',
-	11: i32 likesNum,
-	12: i32 unlikesNum,
-	13: map<MessageType,i64> linkedMessages,
-	14: map<i64,string> tags //идентификаторы тегов с их значениями
+	4: i64 topicId,
+	5: i64 groupId,	
+	6: i64 authorId, //'автор сообщения или темы',
+	7: optional i64 recipientId, // 'адресат задан только для личных сообщений, иначе NULL',
+	8: i32 created, // 'дата создания',
+	9: i32 edited,
+	10: optional i64 approvedBy, // 'идентификатор пользователя промодерировавшего сообщение',
+	11: string content, // 'содержание сообщения',
+	12: i32 likesNum,
+	13: i32 unlikesNum,
+	14: map<MessageType,i64> linkedMessages,
+	15: map<i64,string> tags //идентификаторы тегов с их значениями
 } // 'сообщение';
 		
 
@@ -59,7 +60,7 @@ struct Topic {
 
 struct Rubric {
 	1: i64 id,
-	2: string name,
+	2: string visibleName,
 	3: string description, // COMMENT 'Описание рубрики',
 	4: i32 topicsNum, // 'число тем в рубрике',
 	5: i32 messagesNum// 'число сообщений в рубрике'

@@ -85,6 +85,22 @@ public class VoUser {
 		this.groups = groups;
 	}
 
+	public void updateLikes( int likesDelta ) {
+		likesNum += likesDelta;
+	}
+	public void updateUnlikes( int unlikesDelta ) {
+		unlikesNum += unlikesDelta;
+	}
+	
+	public void incrementMessages( int msgsDelta ) {
+		messagesNum += msgsDelta;
+	}
+	
+	public void incrementTopics( int topicsDelta ) {
+		topicsNum += topicsDelta;
+	}
+	
+	
 	@Persistent
 	private List<VoUserGroup> groups = new ArrayList<VoUserGroup>();
 
@@ -102,5 +118,16 @@ public class VoUser {
 
 	@Persistent
 	private String password;
-
+	
+	@Persistent
+	private int messagesNum;
+	
+	@Persistent
+	private int topicsNum;
+	
+	@Persistent
+	private int likesNum;
+	
+	@Persistent
+	private int unlikesNum;
 }
