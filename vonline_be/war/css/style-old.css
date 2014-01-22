@@ -1,0 +1,107 @@
+*{margin:0; padding:0;}
+html{margin:0; padding:0; width: 100%; height: 100%; min-width: 990px;}
+body {margin:0; padding:0; width: 100%; height: 100%; min-width: 990px; font-family: Arial, sans-serif;
+font-size: 14px;}
+a{outline: none; text-decoration: none;}
+a img{border: none;}
+
+header,footer,section,nav,aside{display: bock;}
+.clear{clear: both;}
+
+/* шапка */
+.container>header{padding-top: 20px;}
+.menu{ margin-left: 0;}
+.menu ul{padding-top: 17px;}
+.menu ul li{display: inline-block;}
+.menu ul a{display: block;}
+.menu ul a:hover{}
+
+.user-header{float: right; height: 50px; padding: 9px; margin-left: 0; border: 1px solid #000; margin-bottom: 20px;}
+    .user-header img{float: left; margin-right: 10px; width: 50px; max-height: 50px;}
+.user-header-descr{font-size: 14px;}
+/*-----*/
+
+.middle{clear: both; height: 100%;}
+
+/* левый сайдбар */
+aside{display: inline-block; float: none !important; margin-left: 0 !important; vertical-align: top; /*width: 156px;*/border: 1px solid #000; height: 100%;}
+    .accordion{margin-bottom: 0;}
+    .accordion-group{ border: 0; border-top: 1px solid #000; border-radius: 0; margin-bottom: 0;}
+    .accordion .accordion-group:first-child{border: 0;}
+    .accordion-heading{ cursor: pointer; font-weight: bold; padding: 4px 10px;}
+    .accordion-toggle{color: #000;}
+    .accordion-toggle:hover{text-decoration: none; color: #000;}
+    .accordion-heading.active{background: #e7e7e7; border-bottom: 1px solid #000;}
+    .accordion-heading:hover{background: #e7e7e7;}
+    .accordion-inner{border: 0; padding: 0;}
+    aside nav{}
+        aside nav ul.nav{border: 1px solid #e7e7e7; margin: 10px;}
+            aside nav ul li{list-style: none;}
+                aside nav ul li:first-child{padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #000;}
+                    aside nav ul li:first-child a{background: #e7e7e7;}
+            aside nav ul li a{display: block; padding: 4px 10px; border: 0 !important; border-radius: 0 !important;}
+            aside nav ul li a:hover{background: #e7e7e7; text-decoration: none;}
+            aside nav ul li a span{float: right; color: #000;}
+    .nav-tabs.nav-stacked{border-bottom: 1px solid #e7e7e7;}
+.btn,.menu ul a,.submenu li a{font-size: 14px; padding: 9px 15px; border-radius: 5px;}
+aside .btn{width: 200px; display: block; text-align: center; padding: 9px 0; margin: 0 0 0 10px;}
+/*-------*/
+
+/* форум */
+.main{ margin-left: 14px; float: none !important; /*width: 1018px;*/ display: inline-block; vertical-align: top; padding-bottom: 50px;}
+.submenu{margin-bottom: 20px}
+.submenu .span6{margin-left: 0;}
+.submenu .span6{width: 440px;}
+.submenu .span3{width: 240px;}
+.navbar{display: inline-block; margin-bottom: 0;}
+.navbar-inner{padding: 0;}
+.submenu ul{display: inline-block; margin-left: 0;}
+    .submenu li{display: inline-block;}
+    .submenu li a{padding: 5px 15px;}
+    .submenu select{display: inline-block; position: relative; top: 5px; width: 100%;}
+
+.options{margin-bottom: 20px;}
+.options span:first-child,.options .span4{margin-left: 0;}
+    .options input{ width: 280px; padding-left: 10px; height: 20px; display: inline-block;}
+    .options select{display: inline-block; width: 150px; margin-left: 10px;}
+.options input,
+.options select{position: relative; top: 5px;}
+
+.forum{border: 1px solid #000; border-bottom: 0;}
+    .breadcrumb{ padding: 5px 15px; border-radius: 0; margin-bottom: 0;}
+    .theme-item{border-bottom: 1px solid #000;}
+    .theme-item.active .breadcrumb{border-bottom: 1px solid #000;}
+    .forum-opt{margin: 15px;}
+        .forum-opt .btn{display: inline-block;}
+        .btn-link{padding-left: 0; padding-top: 0; padding-bottom: 0;}
+        .forum-statistic{float: right; border: 1px solid #000; padding: 5px 20px; position: relative; top: 10px; left: -50px;
+        background: #fff; z-index: 10;}
+            .forum-statistic span{}
+
+.message-item{margin: 0 15px;}
+.message-item .message-item{margin-left: 70px; margin-right: 0;}
+.one-message{border: 1px solid #000; position: relative; margin-bottom: 15px;}
+.left{float: left;}
+    .left img{border: 1px solid #828282; width: 75px; max-height: 75px;}
+    .message-author{padding: 4px 0 4px 10px; width: 100px;}
+.right{float: right;}
+.message-right{ margin-left: 120px;}
+    .message-right p{min-height: 50px;}
+    .like-item{display: inline-block; margin: 10px;}
+        .like-item a{display: block; background: url(../i/likes.png); width: 18px; height: 21px;}
+        .like a{background-position: -3px -2px;}
+        .dislike a{background-position: -25px -2px;}
+        .like-item span{font-size: 14px;}
+    .message-opt{float: right; margin: 0 15px 15px 0;}
+    .message-opt .btn-info{padding: 4px 10px;}
+        .action{display: inline-block;}
+
+.message-top{margin-bottom: 20px; padding-top: 5px;}
+    .message-date{display: inline-block; margin-right: 30px;}
+
+.theme-info{border: 1px solid #000; clear: left; margin-bottom: 15px; padding: 10px;}
+    .theme-info .btn{float: right;}
+
+.forum footer{padding: 4px 10px; cursor: pointer; border-top: 1px solid #000; margin-top: 50px;}
+    .forum footer span{display: inline-block;}
+/*--------*/
