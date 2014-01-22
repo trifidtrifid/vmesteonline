@@ -116,21 +116,21 @@ com.vmesteonline.be.UserMessage.prototype.read = function(input) {
     }
     switch (fid)
     {
-      case 17:
+      case 1:
       if (ftype == Thrift.Type.BOOL) {
         this.read = input.readBool().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 18:
+      case 2:
       if (ftype == Thrift.Type.BOOL) {
         this.likes = input.readBool().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 19:
+      case 3:
       if (ftype == Thrift.Type.BOOL) {
         this.unlikes = input.readBool().value;
       } else {
@@ -149,17 +149,17 @@ com.vmesteonline.be.UserMessage.prototype.read = function(input) {
 com.vmesteonline.be.UserMessage.prototype.write = function(output) {
   output.writeStructBegin('UserMessage');
   if (this.read !== null && this.read !== undefined) {
-    output.writeFieldBegin('read', Thrift.Type.BOOL, 17);
+    output.writeFieldBegin('read', Thrift.Type.BOOL, 1);
     output.writeBool(this.read);
     output.writeFieldEnd();
   }
   if (this.likes !== null && this.likes !== undefined) {
-    output.writeFieldBegin('likes', Thrift.Type.BOOL, 18);
+    output.writeFieldBegin('likes', Thrift.Type.BOOL, 2);
     output.writeBool(this.likes);
     output.writeFieldEnd();
   }
   if (this.unlikes !== null && this.unlikes !== undefined) {
-    output.writeFieldBegin('unlikes', Thrift.Type.BOOL, 19);
+    output.writeFieldBegin('unlikes', Thrift.Type.BOOL, 3);
     output.writeBool(this.unlikes);
     output.writeFieldEnd();
   }
@@ -184,6 +184,7 @@ com.vmesteonline.be.Message = function(args) {
   this.unlikesNum = null;
   this.linkedMessages = null;
   this.tags = null;
+  this.userMessage = null;
   if (args) {
     if (args.id !== undefined) {
       this.id = args.id;
@@ -229,6 +230,9 @@ com.vmesteonline.be.Message = function(args) {
     }
     if (args.tags !== undefined) {
       this.tags = args.tags;
+    }
+    if (args.userMessage !== undefined) {
+      this.userMessage = args.userMessage;
     }
   }
 };
@@ -395,6 +399,14 @@ com.vmesteonline.be.Message.prototype.read = function(input) {
         input.skip(ftype);
       }
       break;
+      case 16:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.userMessage = new com.vmesteonline.be.UserMessage();
+        this.userMessage.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -499,6 +511,11 @@ com.vmesteonline.be.Message.prototype.write = function(output) {
       }
     }
     output.writeMapEnd();
+    output.writeFieldEnd();
+  }
+  if (this.userMessage !== null && this.userMessage !== undefined) {
+    output.writeFieldBegin('userMessage', Thrift.Type.STRUCT, 16);
+    this.userMessage.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -639,7 +656,7 @@ com.vmesteonline.be.UserTopic.prototype.write = function(output) {
 com.vmesteonline.be.Topic = function(args) {
   this.id = null;
   this.subject = null;
-  this.messageId = null;
+  this.message = null;
   this.messageNum = null;
   this.viewers = null;
   this.usersNum = null;
@@ -656,8 +673,8 @@ com.vmesteonline.be.Topic = function(args) {
     if (args.subject !== undefined) {
       this.subject = args.subject;
     }
-    if (args.messageId !== undefined) {
-      this.messageId = args.messageId;
+    if (args.message !== undefined) {
+      this.message = args.message;
     }
     if (args.messageNum !== undefined) {
       this.messageNum = args.messageNum;
@@ -717,8 +734,9 @@ com.vmesteonline.be.Topic.prototype.read = function(input) {
       }
       break;
       case 3:
-      if (ftype == Thrift.Type.I64) {
-        this.messageId = input.readI64().value;
+      if (ftype == Thrift.Type.STRUCT) {
+        this.message = new com.vmesteonline.be.Message();
+        this.message.read(input);
       } else {
         input.skip(ftype);
       }
@@ -808,9 +826,9 @@ com.vmesteonline.be.Topic.prototype.write = function(output) {
     output.writeString(this.subject);
     output.writeFieldEnd();
   }
-  if (this.messageId !== null && this.messageId !== undefined) {
-    output.writeFieldBegin('messageId', Thrift.Type.I64, 3);
-    output.writeI64(this.messageId);
+  if (this.message !== null && this.message !== undefined) {
+    output.writeFieldBegin('message', Thrift.Type.STRUCT, 3);
+    this.message.write(output);
     output.writeFieldEnd();
   }
   if (this.messageNum !== null && this.messageNum !== undefined) {
@@ -865,7 +883,7 @@ com.vmesteonline.be.Topic.prototype.write = function(output) {
 
 com.vmesteonline.be.Rubric = function(args) {
   this.id = null;
-  this.name = null;
+  this.visibleName = null;
   this.description = null;
   this.topicsNum = null;
   this.messagesNum = null;
@@ -873,8 +891,8 @@ com.vmesteonline.be.Rubric = function(args) {
     if (args.id !== undefined) {
       this.id = args.id;
     }
-    if (args.name !== undefined) {
-      this.name = args.name;
+    if (args.visibleName !== undefined) {
+      this.visibleName = args.visibleName;
     }
     if (args.description !== undefined) {
       this.description = args.description;
@@ -910,7 +928,7 @@ com.vmesteonline.be.Rubric.prototype.read = function(input) {
       break;
       case 2:
       if (ftype == Thrift.Type.STRING) {
-        this.name = input.readString().value;
+        this.visibleName = input.readString().value;
       } else {
         input.skip(ftype);
       }
@@ -952,9 +970,9 @@ com.vmesteonline.be.Rubric.prototype.write = function(output) {
     output.writeI64(this.id);
     output.writeFieldEnd();
   }
-  if (this.name !== null && this.name !== undefined) {
-    output.writeFieldBegin('name', Thrift.Type.STRING, 2);
-    output.writeString(this.name);
+  if (this.visibleName !== null && this.visibleName !== undefined) {
+    output.writeFieldBegin('visibleName', Thrift.Type.STRING, 2);
+    output.writeString(this.visibleName);
     output.writeFieldEnd();
   }
   if (this.description !== null && this.description !== undefined) {

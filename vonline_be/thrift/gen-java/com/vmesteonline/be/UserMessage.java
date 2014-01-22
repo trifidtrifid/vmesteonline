@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
 public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMessage._Fields>, java.io.Serializable, Cloneable, Comparable<UserMessage> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("UserMessage");
 
-  private static final org.apache.thrift.protocol.TField READ_FIELD_DESC = new org.apache.thrift.protocol.TField("read", org.apache.thrift.protocol.TType.BOOL, (short)17);
-  private static final org.apache.thrift.protocol.TField LIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("likes", org.apache.thrift.protocol.TType.BOOL, (short)18);
-  private static final org.apache.thrift.protocol.TField UNLIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("unlikes", org.apache.thrift.protocol.TType.BOOL, (short)19);
+  private static final org.apache.thrift.protocol.TField READ_FIELD_DESC = new org.apache.thrift.protocol.TField("read", org.apache.thrift.protocol.TType.BOOL, (short)1);
+  private static final org.apache.thrift.protocol.TField LIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("likes", org.apache.thrift.protocol.TType.BOOL, (short)2);
+  private static final org.apache.thrift.protocol.TField UNLIKES_FIELD_DESC = new org.apache.thrift.protocol.TField("unlikes", org.apache.thrift.protocol.TType.BOOL, (short)3);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -51,9 +51,9 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    READ((short)17, "read"),
-    LIKES((short)18, "likes"),
-    UNLIKES((short)19, "unlikes");
+    READ((short)1, "read"),
+    LIKES((short)2, "likes"),
+    UNLIKES((short)3, "unlikes");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -68,11 +68,11 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 17: // READ
+        case 1: // READ
           return READ;
-        case 18: // LIKES
+        case 2: // LIKES
           return LIKES;
-        case 19: // UNLIKES
+        case 3: // UNLIKES
           return UNLIKES;
         default:
           return null;
@@ -464,7 +464,7 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
           break;
         }
         switch (schemeField.id) {
-          case 17: // READ
+          case 1: // READ
             if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
               struct.read = iprot.readBool();
               struct.setReadIsSet(true);
@@ -472,7 +472,7 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 18: // LIKES
+          case 2: // LIKES
             if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
               struct.likes = iprot.readBool();
               struct.setLikesIsSet(true);
@@ -480,7 +480,7 @@ public class UserMessage implements org.apache.thrift.TBase<UserMessage, UserMes
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 19: // UNLIKES
+          case 3: // UNLIKES
             if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
               struct.unlikes = iprot.readBool();
               struct.setUnlikesIsSet(true);

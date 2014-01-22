@@ -17,9 +17,11 @@
 	<classpathentry kind="lib" path="lib/apache-thrift/lib/slf4j-api-1.5.8.jar"/>
 	<classpathentry kind="lib" path="lib/apache-thrift/lib/slf4j-log4j12-1.5.8.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.28-bin.jar"/>
+
 	<classpathentry kind="lib" path="C:/Users/hp1/Desktop/eclipse-jee-kepler-SR1-win32-x86_64/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.8.8/appengine-java-sdk-1.8.8/lib/testing/appengine-testing.jar"/>
 	<classpathentry kind="lib" path="C:/Users/hp1/Desktop/eclipse-jee-kepler-SR1-win32-x86_64/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.8.8/appengine-java-sdk-1.8.8/lib/impl/appengine-api.jar"/>
 	<classpathentry kind="lib" path="C:/Users/hp1/Desktop/eclipse-jee-kepler-SR1-win32-x86_64/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.8.8/appengine-java-sdk-1.8.8/lib/impl/appengine-api-labs.jar"/>
 	<classpathentry kind="lib" path="C:/Users/hp1/Desktop/eclipse-jee-kepler-SR1-win32-x86_64/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.8.8/appengine-java-sdk-1.8.8/lib/impl/appengine-api-stubs.jar"/>
+
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

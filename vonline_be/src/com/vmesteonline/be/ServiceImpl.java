@@ -22,11 +22,28 @@ public class ServiceImpl {
 		this.httpSession = session;
 	}
 
-	protected long getUserId(){
+	protected long getUserId() throws InvalidOperation {
+		if(null==httpSession) 
+			throw new InvalidOperation(Error.GeneralError, "Failed to process request. No session set.");
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		VoSession sess = pm.getObjectById(VoSession.class, httpSession.getId());
-		if (sess != null)
-			return sess.getUserId();
-		return (long) 0;
+		try {
+			VoSession sess = pm.getObjectById(VoSession.class, httpSession.getId());
+			if (sess != null)
+				return sess.getUserId();
+			return (long) 0;
+		} finally {
+			pm.close();
+		}
+	}
+
+	protected VoSession getCurrentSession() throws InvalidOperation {
+		if(null==httpSession) 
+			throw new InvalidOperation(Error.GeneralError, "Failed to process request. No session set.");
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			return pm.getObjectById(VoSession.class, httpSession.getId());
+		} finally {
+			pm.close();
+		}
 	}
 }
