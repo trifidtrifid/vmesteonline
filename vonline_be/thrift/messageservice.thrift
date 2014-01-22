@@ -10,9 +10,9 @@ struct MessageLink {
 }
 
 struct UserMessage {
-	17: bool read, //флаг прочитанности сообщения пользователем
-	18: bool likes,
-	19: bool unlikes 
+	1: bool read, //флаг прочитанности сообщения пользователем
+	2: bool likes,
+	3: bool unlikes 
 }
 struct Message {
 	1: i64 id,
@@ -29,7 +29,8 @@ struct Message {
 	12: i32 likesNum,
 	13: i32 unlikesNum,
 	14: map<MessageType,i64> linkedMessages,
-	15: map<i64,string> tags //идентификаторы тегов с их значениями
+	15: map<i64,string> tags, //идентификаторы тегов с их значениями
+	16: UserMessage userMessage, //how user treats the message
 } // 'сообщение';
 		
 
@@ -45,7 +46,7 @@ struct UserTopic {
 struct Topic {
 	1: i64 id,
 	2: string subject, 
-	3: i64 messageId, // 'сообщение',
+	3: Message message, // 'сообщение',
 	4: i32 messageNum, // 'число сообщений в теме',
 	5: i32 viewers, // 'число пользоателей, просматривающих сообщение',
 	6: i32 usersNum, // 'число пользователей оставивших сообщения в теме',
@@ -107,21 +108,39 @@ service MessageService {
 	i64 postMessage( 1:Message msg ) throws (1:error.InvalidOperation exc),
 	  
 	Topic createTopic( 1: string subject, 
-		2: i64 messageId, // 'сообщение',
-		3: i64 rubricId, //ссылка на рубрику
-		4: i64 communityId) //ссылка на сообщество
+		2: MessageType type, // 'тип один из (сообщение, чат)',
+		3: string content, // 'содержание сообщения',
+		4: map<MessageType,i64> linkedMessages,
+		5: map<i64,string> tags
+		6: i64 rubricId, //ссылка на рубрику
+		7: i64 communityId) //ссылка на сообщество
 	
 	i64 postTopic( 1: Topic topic ) throws (1:error.InvalidOperation exc),  
 	 
-	bool checkUpdates( ) throws (1:error.InvalidOperation exc),
+	 /**
+	 * checkUpdates запрашивает наличие обновлений с момента предыдущего запроса, который возвращает сервер в ответе
+	 * если обновлений нет - в ответ приходит новое значение таймстампа формирования ответа на сервере. 
+	 * При наличии обновлений возвращается 0 
+	 **/
+	i32 checkUpdates( 1:i32 lastResposeTimestamp ) throws (1:error.InvalidOperation exc),
 	GroupUpdates getUpdates() throws (1:error.InvalidOperation exc),
 
 	TopicListPart getTopics( 1:i64 groupId , 2:i64 rubricId, 3:MessageType messageType, 4:i32 commmunityId,  5:i32 offset, 6:i32 length) throws (1:error.InvalidOperation exc),
 	/**
 	* Загрузка части преставления дерева сообщений в виде дерева. parentID указывает на сообщение топика или на сообщение первого уровня
 	**/
-	MessageListPart getMessages( 1:i64 topicId , 2:i64 groupId 3:MessageType messageType, 4:i64 parentId, 5:i32 offset, 6:i32 length) throws (1:error.InvalidOperation exc),
+	MessageListPart getMessages( 1:i64 topicId , 2:i64 groupId 3:MessageType messageType, 4:i64 parentId, 5:bool archived, 6:i32 offset, 7:i32 length) throws (1:error.InvalidOperation exc),
 	
-	i64 like(1:i64 messageId, 2:i64 userId ) throws (1:error.InvalidOperation exc),
-	i64 dislike(1:i64 messageId, 2:i64 userId ) throws (1:error.InvalidOperation exc),
+	i64 like(1:i64 messageId ) throws (1:error.InvalidOperation exc),
+	i64 dislike(1:i64 messageId ) throws (1:error.InvalidOperation exc),
+	i64 markReadMessage(1:i64 messageId ) throws (1:error.InvalidOperation exc),
+	i64 markReadTopic(1:i64 topicId ) throws (1:error.InvalidOperation exc),
+	i64 moveTopicToArchive(1:i64 topicId ) throws (1:error.InvalidOperation exc),
+	i64 restoreTopicFromArchive(1:i64 topicId) throws (1:error.InvalidOperation exc),
+	i64 markTopicUnintrested(1:i64 topicId, 2:bool interested) throws (1:error.InvalidOperation exc),
+	i64 makeMessageLinked(1:i64 message1Id, 2:i64 message2Id ) throws (1:error.InvalidOperation exc),
+	i64 likeTopic(1:i64 topicId ) throws (1:error.InvalidOperation exc),
+	i64 dislikeTopic(1:i64 topicId ) throws (1:error.InvalidOperation exc),
+	
+	
 }

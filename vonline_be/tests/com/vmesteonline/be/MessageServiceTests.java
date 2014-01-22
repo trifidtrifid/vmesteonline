@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.utils.Pair;
 
@@ -41,7 +40,7 @@ public class MessageServiceTests {
 				TopicListPart topics = msi.getTopics( 0, 0, MessageType.BASE, 0, 0, 10);
 				for( Topic top: topics.getTopics() ){
 					System.out.println("TopicID:"+top.getId() + " topic:"+top.getSubject());
-					MessageListPart messages = msi.getMessages(top.getId(), 0, MessageType.BASE, 0, 0, 100000);
+					MessageListPart messages = msi.getMessages(top.getId(), 0, MessageType.BASE, 0L, false, 0, 100000);
 					for( Message msg: messages.getMessages()) {
 						System.out.println("msg ID:"+msg.getId() + " topic:"+msg.getTopicId()+" parent:"+msg.getParentId()+" :"+msg.getContent() );
 					}

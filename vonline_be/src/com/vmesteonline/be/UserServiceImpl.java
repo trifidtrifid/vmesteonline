@@ -84,6 +84,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	public static List<Group> getGroupsForRegistration() {
+
+		Defaults.setGroups();
 		List<com.vmesteonline.be.Group> groups = new ArrayList<com.vmesteonline.be.Group>();
 
 		Query q = PMF.getPm().newQuery(VoGroup.class);

@@ -3,6 +3,8 @@ package com.vmesteonline.be.jdo2;
 import java.util.List;
 import java.util.Vector;
 
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -10,13 +12,61 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.google.appengine.datanucleus.annotations.Unowned;
+import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Message;
+import com.vmesteonline.be.Topic;
+import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.utils.Pair;
 
 @PersistenceCapable
 public class VoTopic {
-	// id, messageId, messageNum, viewers, usersNum, lastUpdate, likes, unlikes,
+	// id, message, messageNum, viewers, usersNum, lastUpdate, likes, unlikes,
 	// rubricId
+	public VoTopic( Topic topic, boolean checkConsistacy, boolean updateLInkedObjects, boolean makePersistant ) throws InvalidOperation{
+		VoTopic theTopic = this;
+		
+		PersistenceManagerFactory pmf = PMF.get();
+		PersistenceManager pm = pmf.getPersistenceManager();
+		
+		if(checkConsistacy){
+			VoRubric rubric = pm.getObjectById(VoRubric.class, topic.getRubricId());
+			if(null==rubric){
+				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No Rubric0found by id="+topic.getRubricId());
+			}
+		}
+		
+		try {
+				if( topic.getId() <= 0 ){ //create new Topic
+					theTopic.messageNum = 0;
+					
+				} else { //update an existed topic
+					theTopic = pm.getObjectById(VoTopic.class, topic.getId());
+					if( null==theTopic ){
+						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "FAiled to update Topic. No topic found by ID"+topic.getId());
+					}
+					theTopic.messageNum = 0;
+					theTopic.usersNum = 1;
+					theTopic.viewers = 1;
+				}
+				theTopic.lastUpdate =  (int)(System.currentTimeMillis() / 1000);
+				theTopic.likesNum = topic.likesNum;
+				theTopic.message = new VoMessage( topic.getMessage(), false, false, false );
+				theTopic.unlikesNum = topic.unlikesNum;
+				theTopic.usersNum = topic.usersNum;
+				theTopic.viewers = topic.viewers;
+				
+				if(makePersistant){
+					pm.makePersistent(theTopic);
+				}
+				this.id = theTopic.getId();
+				topic.setId(id.getId());
+				this.message = theTopic.message;
+				this.setId(theTopic.id);
+		} finally {
+			pm.close();
+		}
+	}
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -30,12 +80,12 @@ public class VoTopic {
 		this.id = id;
 	}
 
-	public long getMessageId() {
-		return messageId;
+	public VoMessage getMessage() {
+		return message;
 	}
 
-	public void setMessageId(long messageId) {
-		this.messageId = messageId;
+	public void setMessage(VoMessage message) {
+		this.message = message;
 	}
 
 	public int getMessageNum() {
@@ -71,19 +121,19 @@ public class VoTopic {
 	}
 
 	public int getLikes() {
-		return likes;
+		return likesNum;
 	}
 
 	public void setLikes(int likes) {
-		this.likes = likes;
+		this.likesNum = likes;
 	}
 
 	public int getUnlikes() {
-		return unlikes;
+		return unlikesNum;
 	}
 
 	public void setUnlikes(int unlikes) {
-		this.unlikes = unlikes;
+		this.unlikesNum = unlikes;
 	}
 
 	public long getRubricId() {
@@ -95,16 +145,16 @@ public class VoTopic {
 	}
 
 	public void updateLikes(int likesDelta) {
-		likes += likesDelta;
+		likesNum += likesDelta;
 	}
 
 	public void updateUnlikes(int unlikesDelta) {
-		unlikes += unlikesDelta;
+		unlikesNum += unlikesDelta;
 	}
 
-	@Persistent
+	@Persistent(dependent = "true")
 	@Unindexed
-	private long messageId;
+	private VoMessage message;
 
 	@Persistent
 	@Unindexed
@@ -123,16 +173,19 @@ public class VoTopic {
 
 	@Persistent
 	@Unindexed
-	private int likes;
+	private int likesNum;
 
 	@Persistent
 	@Unindexed
-	private int unlikes;
+	private int unlikesNum;
 
 	@Persistent
-	@Unindexed
 	private long rubricId;
 
+	@Persistent
+	@Unowned
+	private VoUserTopic userTopic;
+	
 	@Persistent
 	@Unindexed
 	private long[] listRepresentationOfTree;

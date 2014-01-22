@@ -5,7 +5,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Key;
+import com.google.appengine.datanucleus.annotations.Unindexed;
 
 @PersistenceCapable
 public class VoSession {
@@ -48,9 +48,11 @@ public class VoSession {
 
 	
 	@Persistent
+	@Unindexed
 	private String name;
 
 	@Persistent
+	@Unindexed
 	private String lastName;
 
 	@Persistent
@@ -63,7 +65,20 @@ public class VoSession {
 	private float latitude;
 
 	@Persistent
+	@Unindexed
 	private int lastActivityTs;
+
+	@Persistent
+	@Unindexed
+	private int lastUpdateTs;
+
+	public int getLastUpdateTs() {
+		return lastUpdateTs;
+	}
+
+	public void setLastUpdateTs(int lastUpdateTs) {
+		this.lastUpdateTs = lastUpdateTs;
+	}
 
 	public float getLongitude() {
 		return longitude;

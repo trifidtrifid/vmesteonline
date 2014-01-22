@@ -2,29 +2,31 @@ package com.vmesteonline.be.jdo2;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.annotations.Embedded;
+import javax.jdo.Query;
+import javax.jdo.annotations.Extension;
+import javax.jdo.annotations.Extensions;
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import tagcloud.RubricTag;
+
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.google.appengine.datanucleus.annotations.Unowned;
+import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Message;
 import com.vmesteonline.be.MessageType;
+import com.vmesteonline.be.UserMessage;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.utils.Pair;
-import com.vmesteonline.be.InvalidOperation;
 
 /**
  * Created by brozer on 1/12/14.
@@ -43,7 +45,7 @@ public class VoMessage {
 	 * @param updateLinkedCounters - if set, counter of topic and author would be updated according to the posted message parameters
 	 * @throws InvalidOperation if consistency check fails or other exception happens
 	 */
-	public VoMessage( Message msg, boolean checkConsistency, boolean updateLinkedCounters) throws InvalidOperation {
+	public VoMessage( Message msg, boolean checkConsistency, boolean updateLinkedCounters, boolean makePersistent) throws InvalidOperation {
 
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
@@ -68,13 +70,13 @@ public class VoMessage {
 				}
 				
 				if( updateLinkedCounters ) { 
-					topic = pm.getObjectById( VoTopic.class, storedMsg.getTopicId() );
+					topic = storedMsg.getTopic();
 					if( null!=topic ) {
 						topic.updateLikes( msg.getLikesNum() - storedMsg.getLikes() );
 						topic.updateUnlikes( msg.getUnlikesNum() - storedMsg.getUnlikes() );
 						topic.setLastUpdate(now);
 					} else {
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No topic found by id="+storedMsg.getTopicId()+" that stored in Message ID=" + msg.getId());
+						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No topic found by id="+storedMsg.getTopic().getId()+" that stored in Message ID=" + msg.getId());
 					}
 					author = pm.getObjectById(VoUser.class, storedMsg.getAuthorId());
 					if( null!=author) {
@@ -84,7 +86,7 @@ public class VoMessage {
 						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No AUTHOR found by id="+storedMsg.getAuthorId()+" that stored in Message ID=" + msg.getId());
 					}
 				} 
-				if( storedMsg.topicId.getId() !=  msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId() ||
+				if( storedMsg.getTopic().getId().getId() !=  msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId() ||
 						storedMsg.recipient !=  msg.getRecipientId() || storedMsg.createdAt != msg.getCreated() || storedMsg.type != msg.getType()) 
 					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Parameters: topic, author, recipient, createdAt, type could not be changed!");
 				
@@ -128,7 +130,7 @@ public class VoMessage {
 
 				storedMsg = this;
 				//set parameters that could not be changed in update
-				storedMsg.topicId =  KeyFactory.createKey(VoTopic.class.getSimpleName(), msg.getTopicId());
+				storedMsg.setTopic(topic);
 				storedMsg.recipient =  msg.getRecipientId();
 				storedMsg.createdAt = msg.getCreated();
 				VoUserGroup homeGroup = author.getHomeGroup();
@@ -164,7 +166,8 @@ public class VoMessage {
 			storedMsg.setApprovedId(msg.getApprovedBy());
 			parentMsg.addChildMessage(storedMsg);
 			try {
-				pm.makePersistent(storedMsg);
+				if(makePersistent) 
+					pm.makePersistent(storedMsg);
 				if(updateLinkedCounters){
 					pm.makePersistent(topic);
 					pm.makePersistent(author);
@@ -173,6 +176,12 @@ public class VoMessage {
 			} catch (Exception e) {
 				throw new InvalidOperation(com.vmesteonline.be.Error.GeneralError, "Failed to save the message ID="+msg.getId()+": Exception:" +e.getMessage());
 			}
+			if(this != storedMsg) { //update elements of this object according to results of update
+				this.setTopic(storedMsg.topic);
+				this.setId(storedMsg.id);
+				this.setTags(storedMsg.tags);
+				this.setLinks(storedMsg.links);
+			}
 		} finally {
 			pm.close();
 		} 
@@ -180,8 +189,9 @@ public class VoMessage {
 
 	public Message getMessage() {
 		Key parentKey = id.getParent();
-		return new Message(id.getId(), null==parentKey ? 0L : parentKey.getId(), type, topicId.getId(), 0L, authorId.getId(), createdAt, editedAt, 
-				new String( content ), likes, unlikes, links, tags);
+		return new Message(id.getId(), null==parentKey ? 0L : parentKey.getId(), type,getTopic().getId().getId(), 0L, authorId.getId(), createdAt, editedAt, 
+				new String( content ), likesNum, unlikesNum, links, tags, 
+				new UserMessage(getUserMessage().isRead(), getUserMessage().isLikes(), getUserMessage().isUnlikes()));
 	}
 	/**
 	 * Method returns child messages of one level below the current message. Set is limited by size parameter and shifted by order 
@@ -249,19 +259,19 @@ public class VoMessage {
 	}
 
 	public int getLikes() {
-		return likes;
+		return likesNum;
 	}
 
 	public void setLikes(int likes) {
-		this.likes = likes;
+		this.likesNum = likes;
 	}
 
 	public int getUnlikes() {
-		return unlikes;
+		return unlikesNum;
 	}
 
 	public void setUnlikes(int unlikes) {
-		this.unlikes = unlikes;
+		this.unlikesNum = unlikes;
 	}
 
 	public long getRecipient() {
@@ -291,7 +301,9 @@ public class VoMessage {
 	public Key getId() {
 		return id;
 	}
-
+	public void setId( Key id) {
+		this.id = id;;
+	}
 	public MessageType getType() {
 		return type;
 	}
@@ -300,8 +312,12 @@ public class VoMessage {
 		return createdAt;
 	}
 
-	public Key getTopicId() {
-		return topicId;
+	public void setTopic( VoTopic topic ){
+		this.topic = topic; 
+	}
+	
+	public VoTopic getTopic() {
+		return topic;
 	}
 
 	public Key getAuthorId() {
@@ -319,6 +335,25 @@ public class VoMessage {
 	public float getRadius() {
 		return radius;
 	}
+	
+	
+
+	public VoUserMessage getUserMessage() {
+		if(null==userMessage){
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			Query q = pm.newQuery(VoUserMessage.class);
+			/*q.setFilter(arg0);
+			q.setFilter("tag == tagId");
+			q.declareParameters("long tagId");*/
+		}
+		return userMessage;
+	}
+
+	public void setUserMessage(VoUserMessage userMessage) {
+		this.userMessage = userMessage;
+	}
+
+
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -329,6 +364,9 @@ public class VoMessage {
 	private MessageType type;
 
 	@Persistent
+	@Extensions( {@Extension(vendorName="datanucleus", key="cascade-update", value="false"), 
+		@Extension(vendorName="datanucleus", key="collection", value="dependent-element")})
+	@Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="createdAt asc"))
 	private Set<VoMessage> childMessages;
 
 	@Persistent
@@ -343,8 +381,8 @@ public class VoMessage {
 	@Unindexed
 	private long approvedId;
 
-	@Persistent
-	private Key topicId;
+	@Persistent/*(mappedBy = "message") // if uncomment - topic become parent of message*/
+	private VoTopic topic;
 
 	@Persistent
 	private Key authorId;
@@ -355,11 +393,11 @@ public class VoMessage {
 
 	@Persistent
 	@Unindexed
-	private int likes;
+	private int likesNum;
 
 	@Persistent
 	@Unindexed
-	private int unlikes;
+	private int unlikesNum;
 
 	@Persistent
 	@Unindexed
@@ -378,4 +416,10 @@ public class VoMessage {
 	@Persistent
 	@Unindexed
 	private Map<MessageType, Long> links;
+	
+	@Persistent
+	@Unindexed
+	@Unowned
+	private VoUserMessage userMessage;
+	
 }

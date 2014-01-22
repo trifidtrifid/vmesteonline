@@ -50,6 +50,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   private static final org.apache.thrift.protocol.TField UNLIKES_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("unlikesNum", org.apache.thrift.protocol.TType.I32, (short)13);
   private static final org.apache.thrift.protocol.TField LINKED_MESSAGES_FIELD_DESC = new org.apache.thrift.protocol.TField("linkedMessages", org.apache.thrift.protocol.TType.MAP, (short)14);
   private static final org.apache.thrift.protocol.TField TAGS_FIELD_DESC = new org.apache.thrift.protocol.TField("tags", org.apache.thrift.protocol.TType.MAP, (short)15);
+  private static final org.apache.thrift.protocol.TField USER_MESSAGE_FIELD_DESC = new org.apache.thrift.protocol.TField("userMessage", org.apache.thrift.protocol.TType.STRUCT, (short)16);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -76,6 +77,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   public int unlikesNum; // required
   public Map<MessageType,Long> linkedMessages; // required
   public Map<Long,String> tags; // required
+  public UserMessage userMessage; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -97,7 +99,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     LIKES_NUM((short)12, "likesNum"),
     UNLIKES_NUM((short)13, "unlikesNum"),
     LINKED_MESSAGES((short)14, "linkedMessages"),
-    TAGS((short)15, "tags");
+    TAGS((short)15, "tags"),
+    USER_MESSAGE((short)16, "userMessage");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -142,6 +145,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
           return LINKED_MESSAGES;
         case 15: // TAGS
           return TAGS;
+        case 16: // USER_MESSAGE
+          return USER_MESSAGE;
         default:
           return null;
       }
@@ -232,6 +237,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64), 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
+    tmpMap.put(_Fields.USER_MESSAGE, new org.apache.thrift.meta_data.FieldMetaData("userMessage", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, UserMessage.class)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Message.class, metaDataMap);
   }
@@ -252,7 +259,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     int likesNum,
     int unlikesNum,
     Map<MessageType,Long> linkedMessages,
-    Map<Long,String> tags)
+    Map<Long,String> tags,
+    UserMessage userMessage)
   {
     this();
     this.id = id;
@@ -277,6 +285,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     setUnlikesNumIsSet(true);
     this.linkedMessages = linkedMessages;
     this.tags = tags;
+    this.userMessage = userMessage;
   }
 
   /**
@@ -320,6 +329,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       Map<Long,String> __this__tags = new HashMap<Long,String>(other.tags);
       this.tags = __this__tags;
     }
+    if (other.isSetUserMessage()) {
+      this.userMessage = new UserMessage(other.userMessage);
+    }
   }
 
   public Message deepCopy() {
@@ -354,6 +366,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.unlikesNum = 0;
     this.linkedMessages = null;
     this.tags = null;
+    this.userMessage = null;
   }
 
   public long getId() {
@@ -735,6 +748,30 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
   }
 
+  public UserMessage getUserMessage() {
+    return this.userMessage;
+  }
+
+  public Message setUserMessage(UserMessage userMessage) {
+    this.userMessage = userMessage;
+    return this;
+  }
+
+  public void unsetUserMessage() {
+    this.userMessage = null;
+  }
+
+  /** Returns true if field userMessage is set (has been assigned a value) and false otherwise */
+  public boolean isSetUserMessage() {
+    return this.userMessage != null;
+  }
+
+  public void setUserMessageIsSet(boolean value) {
+    if (!value) {
+      this.userMessage = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case ID:
@@ -857,6 +894,14 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       }
       break;
 
+    case USER_MESSAGE:
+      if (value == null) {
+        unsetUserMessage();
+      } else {
+        setUserMessage((UserMessage)value);
+      }
+      break;
+
     }
   }
 
@@ -907,6 +952,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     case TAGS:
       return getTags();
 
+    case USER_MESSAGE:
+      return getUserMessage();
+
     }
     throw new IllegalStateException();
   }
@@ -948,6 +996,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       return isSetLinkedMessages();
     case TAGS:
       return isSetTags();
+    case USER_MESSAGE:
+      return isSetUserMessage();
     }
     throw new IllegalStateException();
   }
@@ -1097,6 +1147,15 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (!(this_present_tags && that_present_tags))
         return false;
       if (!this.tags.equals(that.tags))
+        return false;
+    }
+
+    boolean this_present_userMessage = true && this.isSetUserMessage();
+    boolean that_present_userMessage = true && that.isSetUserMessage();
+    if (this_present_userMessage || that_present_userMessage) {
+      if (!(this_present_userMessage && that_present_userMessage))
+        return false;
+      if (!this.userMessage.equals(that.userMessage))
         return false;
     }
 
@@ -1266,6 +1325,16 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetUserMessage()).compareTo(other.isSetUserMessage());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetUserMessage()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userMessage, other.userMessage);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -1365,6 +1434,14 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       sb.append(this.tags);
     }
     first = false;
+    if (!first) sb.append(", ");
+    sb.append("userMessage:");
+    if (this.userMessage == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.userMessage);
+    }
+    first = false;
     sb.append(")");
     return sb.toString();
   }
@@ -1372,6 +1449,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   public void validate() throws org.apache.thrift.TException {
     // check for required fields
     // check for sub-struct validity
+    if (userMessage != null) {
+      userMessage.validate();
+    }
   }
 
   private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -1554,6 +1634,15 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 16: // USER_MESSAGE
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+              struct.userMessage = new UserMessage();
+              struct.userMessage.read(iprot);
+              struct.setUserMessageIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -1642,6 +1731,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         }
         oprot.writeFieldEnd();
       }
+      if (struct.userMessage != null) {
+        oprot.writeFieldBegin(USER_MESSAGE_FIELD_DESC);
+        struct.userMessage.write(oprot);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -1705,7 +1799,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetTags()) {
         optionals.set(14);
       }
-      oprot.writeBitSet(optionals, 15);
+      if (struct.isSetUserMessage()) {
+        optionals.set(15);
+      }
+      oprot.writeBitSet(optionals, 16);
       if (struct.isSetId()) {
         oprot.writeI64(struct.id);
       }
@@ -1765,12 +1862,15 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
           }
         }
       }
+      if (struct.isSetUserMessage()) {
+        struct.userMessage.write(oprot);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Message struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(15);
+      BitSet incoming = iprot.readBitSet(16);
       if (incoming.get(0)) {
         struct.id = iprot.readI64();
         struct.setIdIsSet(true);
@@ -1852,6 +1952,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
           }
         }
         struct.setTagsIsSet(true);
+      }
+      if (incoming.get(15)) {
+        struct.userMessage = new UserMessage();
+        struct.userMessage.read(iprot);
+        struct.setUserMessageIsSet(true);
       }
     }
   }
