@@ -170,6 +170,7 @@ a {
 }
 .topic-item .topic-descr header {
   height: 40px;
+  line-height: 37px;
 }
 .topic-item .topic-descr header:after {
   clear: none;
@@ -198,6 +199,8 @@ a {
   margin: 0 0 0 17px;
   vertical-align: middle;
   width: 495px;
+  max-height: 39px;
+  overflow: hidden;
   font-size: 18px;
   font-weight: bold;
 }
@@ -214,12 +217,12 @@ a {
 .topic-item .topic-descr .topic-right .fa-relations {
   float: right;
   font-size: 16px;
-  display: none;
+  opacity: 0;
 }
 .topic-item .topic-descr .topic-right .fa-sitemap {
   float: right;
   margin-right: 10px;
-  display: none;
+  opacity: 0;
 }
 .topic-item .topic-descr .topic-right .likes {
   text-align: right;

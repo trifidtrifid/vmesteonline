@@ -5,23 +5,12 @@ $(document).ready(function(){
         $(this).closest('.btn-group').find('.btn-group-text').text($(this).text());
     });
 
-    $('.plus-minus').click(function(e){
-        e.preventDefault();
-        $(this).closest('.dd2-item').find('>.dd-list').slideToggle(200);
-
-        if ($(this).hasClass('fa-minus')){
-            $(this).removeClass('fa-minus').addClass('fa-plus');
-        }else{
-            $(this).removeClass('fa-plus').addClass('fa-minus');
-        }
-    });
-
     $('.widget-main').hover(function(){
-       $(this).find('.fa-relations').fadeIn(200);
-       $(this).find('.fa-sitemap').fadeIn(200);
+       $(this).find('.fa-relations').animate({opacity:1},200);
+       $(this).find('.fa-sitemap').animate({opacity:1},200);
     },function(){
-        $(this).find('.fa-relations').fadeOut(200);
-        $(this).find('.fa-sitemap').fadeOut(200);
+        $(this).find('.fa-relations').animate({opacity:0},200);
+        $(this).find('.fa-sitemap').animate({opacity:0},200);
     });
 
     $('.ace-nav .btn,.nav-list a').click(function(e){
@@ -39,12 +28,59 @@ $(document).ready(function(){
         $(this).closest('.topic-item').toggleClass('list-view');
     });
 /* --- */
-    $(window).scroll(function(){
+    var allFirstTopic = $('.dd>.dd-list>.topic-item'),
+        //currentTopicIndex = [],
+        prevTopicsHeight = [],
+        count=0;
 
-        var allFirstTopic = $('.dd>.dd-list>.topic-item'),
-            count = 0,
-            currentTopicIndex = [],
-            oldPrevTopicsHeight = 0;
+    function GetTopicsHeight(){
+        /*
+         создаем массив с индексами тех топиков, которые раскрыты
+         т.к только для этих топиков нужен fixed хэдера
+         */
+        count=0;
+        /*allFirstTopic.find('>.dd-list:visible').each(function(){
+            var currentTopic = $(this).parent();
+            currentTopicIndex[count] = allFirstTopic.index(currentTopic);
+            count++;
+        });*/
+        count = allFirstTopic.length;
+
+        for (var i = 0; i < count ; i++){
+            //var curInd = currentTopicIndex[i];
+            var curInd = i;
+            prevTopicsHeight[i] = 0;
+            /*
+             внутренний цикл это обход всех топиков, в том числе и
+             не раскрытых, которые предшествуют этому раскрытому,
+             чтобы определить их суммарную высоту, для сравнения
+             с scrollTop, чтобы понять когда хэдер должен переходить
+             в состояние fixed
+             */
+            for(var j = 0; j < curInd; j++){
+                prevTopicsHeight[i] += allFirstTopic.eq(j).height();
+            }
+          //  prevTopicsHeight[i] += allFirstTopic.eq(curInd).find('>.topic-descr').height()-allFirstTopic.eq(curInd-1).find('>.topic-descr').height();
+            console.log(prevTopicsHeight[i]);
+        }
+    }
+    GetTopicsHeight();
+
+
+    $('.plus-minus').click(function(e){
+        e.preventDefault();
+        $(this).closest('.dd2-item').find('>.dd-list').slideToggle(200,function(){
+            GetTopicsHeight();
+        });
+
+        if ($(this).hasClass('fa-minus')){
+            $(this).removeClass('fa-minus').addClass('fa-plus');
+        }else{
+            $(this).removeClass('fa-plus').addClass('fa-minus');
+        }
+    });
+
+    $(window).scroll(function(){
 
        //убираем сайдбар при прокрутке
         if ($(this).scrollTop() > 270){
@@ -60,51 +96,31 @@ $(document).ready(function(){
     // фиксация хэдера темы, если много сообщений
 
         /*
-        создаем массив с индексами тех топиков, которые раскрыты
-        т.к только для этих топиков нужен fixed хэдера
-       */
-        allFirstTopic.find('>.dd-list:visible').each(function(){
-            var currentTopic = $(this).parent();
-            currentTopicIndex[count] = allFirstTopic.index(currentTopic);
-            count++;
-        });
-
-        /*
             верхний цикл: обход всех раскрытых топиков
          */
         for (var i = 0; i < count ; i++){
-            var curInd = currentTopicIndex[i],
-                prevTopicsHeight = 0;
-            /*
-                внутренний цикл это обход всех топиков, в том числе и
-                не раскрытых, которые предшествуют этому раскрытому,
-                чтобы определить их суммарную высоту, для сравнения
-                с scrollTop, чтобы понять когда хэдер должен переходить
-                в состояние fixed
-             */
-            for(var j = 0; j < curInd; j++){
-                prevTopicsHeight += allFirstTopic.eq(j).height();
-            }
-            prevTopicsHeight += allFirstTopic.eq(curInd).find('.topic-descr').height();
+            var curInd = i;
+            console.log($(this).scrollTop()+'--'+prevTopicsHeight[i]);
 
             /*
                 здесь сравниваем: если прокрутка больше чем высота всех
                 предшествующих топиков, то хэдер этого раскрытого топика
                 становится в состояние fixed
              */
-            //allFirstTopic.find('>.topic-descr>.widget-header').width('auto');
-            if ($(this).scrollTop()>prevTopicsHeight){
+
+            if ($(this).scrollTop()>prevTopicsHeight[i]){
                 allFirstTopic.eq(curInd).find('>.topic-descr>.widget-header').addClass('fixed');
+                //allFirstTopic.eq(curInd).find('>.topic-descr').addClass('passive');
                 allFirstTopic.find('>.topic-descr>.widget-header').width('956');
-                allFirstTopic.eq(curInd).find('>.topic-descr>.widget-body').hide();
+                //allFirstTopic.eq(curInd).find('>.topic-descr>.widget-body').hide();
                 if ($(this).scrollTop()<270){
                     allFirstTopic.find('>.topic-descr>.widget-header').width('765');
                 }
             }else{
                 allFirstTopic.eq(curInd).find('>.topic-descr>.widget-header').removeClass('fixed');
-                allFirstTopic.eq(curInd).find('>.topic-descr>.widget-body').show();
+                //allFirstTopic.eq(curInd).find('>.topic-descr').removeClass('passive');
+                //allFirstTopic.eq(curInd).find('>.topic-descr>.widget-body').show();
             }
-            oldPrevTopicsHeight = prevTopicsHeight;
         }
     });
 
