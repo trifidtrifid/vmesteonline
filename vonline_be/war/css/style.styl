@@ -1,0 +1,325 @@
+@import 'bootstrap.min.css'
+@import 'font-awesome-original.css'
+@import 'font-awesome.min.css'
+@import 'ace-fonts.css'
+@import 'ace.css'
+
+main-radius = 2px
+second-radius = 1px
+
+html
+   height 100%
+
+body
+  background #fff
+  height 101%
+
+a
+  outline none !important
+
+.btn-primary
+.header-color-blue2
+  background-color #438eb9 !important
+
+.container
+  width 990px
+  padding 0
+  max-width none
+  min-height 100%
+
+.ace-nav>li
+    a
+      padding 11px 12px 0 12px
+      line-height 1.428571429
+      font-size 16px
+      border none
+      border-bottom 3px solid rgb(111, 179, 224)
+    &.active
+      a
+        border-bottom-color #2b7dbc
+
+.ace-nav>.user-short a
+  border none
+  padding 3px 8px
+  font-size 14px
+
+.ace-nav>.user-short>a
+  line-height inherit
+  padding 0 8px
+  font-size 16px
+
+.nav-list > li > a
+  padding 8px 10px 10px 16px
+  height auto
+  line-height 20px
+  position relative
+  span
+    display inline-block
+    vertical-align middle
+    width 134px
+  b
+    display inline-block
+    vertical-align middle
+
+.nav-list > li > a,
+.nav-list > li.active > a,
+.nav-list > li.active:hover a
+  font-size 15px
+
+.btn
+  border-radius main-radius !important
+
+.submenu
+  padding 5px 0
+  background #d9edf7
+  >ul
+    display inline-block
+    vertical-align middle
+    margin-bottom 0
+    margin-left 5px
+    li
+      list-style none
+      float left
+      margin-left 5px
+      border-top 3px solid rgb(111, 179, 224)
+      border-radius main-radius
+      a
+        font-size 14px
+        padding-top 1px
+        border-radius 0 0 main-radius main-radius !important
+      &.active
+        border-color #2b7dbc
+      &:hover
+        border-color #4f99c6
+  .btn-group
+    margin-left 5px
+    &.active .btn
+      border-color #2b7dbc
+    .btn
+      font-size 14px
+      border 0
+      border-top 3px solid rgb(111, 179, 224)
+      height 35px
+      padding-bottom 7px
+      &:hover
+        border-color #4f99c6
+
+.btn-group>.btn
+  border-radius main-radius !important
+
+.options
+  padding 8px 0 5px 10px
+  height 44px
+  .form-group
+    width 525px
+    margin 0 0 0 12px
+    display inline-block
+    float left
+    input
+      height 30px
+      border-radius main-radius !important
+    .icon-search
+      padding-top 1px
+      padding-right 5px
+      &:hover
+        text-decoration none
+  .btn-group
+    float right
+    margin-right 14px
+    height 30px
+  .btn-primary
+    font-size 14px
+    float left
+
+.sidebar
+  padding-top 20px
+  vertical-align top
+
+.main-content
+  border-right 10px solid #f2f2f2;
+  min-height 200%
+
+.widget-main
+  overflow auto
+  padding-bottom 5px
+
+.fa:hover{
+  text-decoration none
+}
+
+.topic-item
+  //margin-left 10px
+  margin-bottom 10px
+  .topic-descr
+    border 1px solid rgb(80, 144, 193)
+    border-radius main-radius
+    .topic-header-left
+      display none
+    header
+      height 40px
+      line-height 37px
+      &:after
+        clear none
+      .widget-toolbar
+        float right
+        vertical-align middle
+        padding-left 10px
+        margin-right 8px
+        padding-right 0
+        border-left 1px solid #fff
+        height 100%
+        a
+          display inline-block
+          vertical-align middle
+          margin 0 4px
+          color #fff
+          font-size 1.5em
+          &:hover
+            text-decoration none
+      h2
+        display inline-block
+        margin 0 0 0 17px
+        vertical-align middle
+        width 495px
+        max-height 39px
+        overflow hidden
+        font-size 18px
+        font-weight bold
+        &.small
+          font-size 16px;
+      span
+        display inline-block
+        vertical-align middle
+    .topic-right
+      margin-left 115px
+      .fa-relations
+        float right
+        font-size 16px
+        opacity 0
+      .fa-sitemap
+        float right
+        margin-right 10px
+        opacity 0
+      .likes
+        text-align right
+        a
+          display inline-block
+          &:hover
+            text-decoration none
+        .like-item
+          display inline-block
+          margin 0 5px
+          font-size 18px
+          span
+            display inline-block
+            font-size 14px
+            color #000
+    .topic-left
+      float left
+      text-align center
+      width 95px
+      img
+        width 95px
+      .topic-author
+        font-size 14px
+      .author-rating
+        a
+          display inline-block
+          &:hover
+            text-decoration none
+    footer
+      clear left
+      line-height 30px
+      border-radius 0 0 main-radius main-radius
+      padding 0
+      height 38px
+      .answers-ctrl
+        display inline-block
+        vertical-align middle
+        text-align center
+        width 115px
+        height 37px
+        border-right 1px solid rgb(204, 204, 204)
+        a
+          display inline-block
+          vertical-align top
+          font-size 30px
+          line-height 40px
+          &:hover
+            text-decoration none
+        span
+          display inline-block
+          vertical-align middle
+          line-height 35px
+          margin-left 10px
+          span
+            margin-left 0
+          a
+            font-size 12px
+            display inline-block
+            color #000
+            font-weight bold
+            line-height 35px
+            vertical-align middle
+            &:hover
+              text-decoration underline
+      .ans-btn
+        float right
+        margin 3px 8px 0 0
+      .topic-statistic
+        display inline-block
+        vertical-align middle
+        margin-left 10px
+    &.answer-item
+      margin 10px 0 10px 0
+      .answer-date
+        color #808080
+        float left
+        margin-top 5px
+      .message-author
+        margin-bottom 10px
+        font-size 14px
+
+.alert
+  padding 0
+  margin-bottom 5px
+
+.answer-item
+  border-radius second-radius !important
+
+.wysiwig-box
+  display none
+
+.answer-item+.wysiwig-box
+  border 1px solid #5090c1
+
+.widget-header.fixed
+  position fixed
+  top 0
+  z-index 10
+  margin-left -1px
+  .topic-header-left
+    display inline-block
+    line-height 40px
+    width 101px
+    i
+      cursor pointer
+      font-size 1.5em
+      margin-left 20px
+      vertical-align middle
+      &.fa-minus,
+      &.fa-plus
+        font-size 30px
+  .topic-header-date
+    display none
+
+.dd>.dd-list>.topic-item
+  margin-left 10px
+  &.list-view
+    .dd-list
+      padding-left 0
+
+.dd>.dd-list>.topic-item.list-view>.dd-list
+  padding-left 30px
+
+
