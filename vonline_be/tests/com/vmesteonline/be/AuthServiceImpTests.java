@@ -21,7 +21,7 @@ public class AuthServiceImpTests extends DataStoreTestsHelper {
 		authSrvc = new AuthServiceImpl();
 		HttpSessionStubForTests httpSess = new HttpSessionStubForTests();
 		httpSess.setId("1");
-		authSrvc.setHttpSession(httpSess);
+		authSrvc.setSession(httpSess);
 	}
 
 	@After
@@ -45,18 +45,17 @@ public class AuthServiceImpTests extends DataStoreTestsHelper {
 	@Test
 	public void testRegisterNewUser() {
 		try {
-			boolean ret = authSrvc.registerNewUser("testName", "testFamily", "testPassword", "test@eml", Long.toString(groupAId));
-			assertEquals(true, ret);
+			long ret = authSrvc.registerNewUser("testName", "testFamily", "testPassword", "test@eml", Long.toString(groupAId));
 			VoUser user = authSrvc.getUserByEmail("test@eml");
 			assertEquals("testName", user.getName());
 			assertEquals("testPassword", user.getPassword());
 			assertEquals(4, user.getGroups().size());
 
-			assertEquals(0, user.getGroups().get(0).getRadius());
+			assertEquals(0, user.getHomeGroup().getGroup().getRadius());
 			assertEquals(groupALong, user.getGroups().get(0).getLongitude(), 0F);
 			assertEquals(groupALat, user.getGroups().get(0).getLatitude(), 0F);
 
-			assertEquals(200, user.getGroups().get(1).getRadius());
+			assertEquals(200, user.getGroups().get(1).getGroup().getRadius());
 			assertEquals(groupALong, user.getGroups().get(1).getLongitude(), 0F);
 			assertEquals(groupALat, user.getGroups().get(1).getLatitude(), 0F);
 

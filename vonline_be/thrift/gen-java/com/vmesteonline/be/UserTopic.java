@@ -156,6 +156,12 @@ public class UserTopic implements org.apache.thrift.TBase<UserTopic, UserTopic._
   }
 
   public UserTopic() {
+  	archieved = false; 
+    unlikes = false;
+    likes = false;
+    notIntrested = false;
+    lastReadMessageId = 0;
+    lastWroteMeessgeId = 0;
   }
 
   public UserTopic(

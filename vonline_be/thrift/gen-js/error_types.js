@@ -18,7 +18,8 @@ com.vmesteonline.be.Error = {
 'GeneralError' : 0,
 'IncorrectParametrs' : 1,
 'RegistrationAlreadyExist' : 2,
-'NotAuthorized' : 3
+'NotAuthorized' : 3,
+'IncorectLocationCode' : 4
 };
 com.vmesteonline.be.InvalidOperation = function(args) {
   this.what = null;

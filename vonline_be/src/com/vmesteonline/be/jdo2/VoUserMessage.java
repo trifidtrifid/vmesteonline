@@ -83,7 +83,12 @@ public class VoUserMessage {
 		public long userId;
 		public long messageId;
 
-		public PK() {
+		public PK(){
+			this(0L,0L);
+		}
+		public PK(long userId,long messageId) {
+			this.userId = userId;
+			this.messageId = messageId;
 		}
 
 		public PK(String value) {
@@ -110,5 +115,4 @@ public class VoUserMessage {
 			return this.getClass().getName() + "::" + this.userId + "::" + this.messageId;
 		}
 	}
-
 }

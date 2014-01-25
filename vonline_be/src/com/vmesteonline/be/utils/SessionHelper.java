@@ -10,10 +10,13 @@ public class SessionHelper {
 	public static Long getUserId(String sessionId) {
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		VoSession sess = pm.getObjectById(VoSession.class, sessionId);
-		if (sess != null)
-			return sess.getUserId();
-
-		return (long) 0;
+		try {
+			VoSession sess = pm.getObjectById(VoSession.class, sessionId);
+			if (sess != null)
+				return sess.getUserId();
+			return (long) 0;
+		} finally {
+			pm.close();
+		}
 	}
 }

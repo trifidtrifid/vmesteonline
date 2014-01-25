@@ -11,6 +11,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -23,46 +24,46 @@ import com.vmesteonline.be.utils.Pair;
 public class VoTopic {
 	// id, message, messageNum, viewers, usersNum, lastUpdate, likes, unlikes,
 	// rubricId
-	public VoTopic( Topic topic, boolean checkConsistacy, boolean updateLInkedObjects, boolean makePersistant ) throws InvalidOperation{
+	public VoTopic(Topic topic, boolean checkConsistacy, boolean updateLInkedObjects, boolean makePersistant) throws InvalidOperation {
 		VoTopic theTopic = this;
-		
+
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
-		
-		if(checkConsistacy){
-			VoRubric rubric = pm.getObjectById(VoRubric.class, topic.getRubricId());
-			if(null==rubric){
-				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No Rubric0found by id="+topic.getRubricId());
-			}
-		}
-		
+
 		try {
-				if( topic.getId() <= 0 ){ //create new Topic
-					theTopic.messageNum = 0;
-					
-				} else { //update an existed topic
-					theTopic = pm.getObjectById(VoTopic.class, topic.getId());
-					if( null==theTopic ){
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "FAiled to update Topic. No topic found by ID"+topic.getId());
-					}
-					theTopic.messageNum = 0;
-					theTopic.usersNum = 1;
-					theTopic.viewers = 1;
+			if (checkConsistacy) {
+				VoRubric rubric = pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
+				if (null == rubric) {
+					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No Rubric0found by id=" + topic.getRubricId());
 				}
-				theTopic.lastUpdate =  (int)(System.currentTimeMillis() / 1000);
-				theTopic.likesNum = topic.likesNum;
-				theTopic.message = new VoMessage( topic.getMessage(), false, false, false );
-				theTopic.unlikesNum = topic.unlikesNum;
-				theTopic.usersNum = topic.usersNum;
-				theTopic.viewers = topic.viewers;
-				
-				if(makePersistant){
-					pm.makePersistent(theTopic);
+			}
+
+			if (topic.getId() <= 0) { // create new Topic
+				theTopic.messageNum = 0;
+
+			} else { // update an existed topic
+				theTopic = pm.getObjectById(VoTopic.class, topic.getId());
+				if (null == theTopic) {
+					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
 				}
-				this.id = theTopic.getId();
-				topic.setId(id.getId());
-				this.message = theTopic.message;
-				this.setId(theTopic.id);
+				theTopic.messageNum = 0;
+				theTopic.usersNum = 1;
+				theTopic.viewers = 1;
+			}
+			theTopic.lastUpdate = (int) (System.currentTimeMillis() / 1000);
+			theTopic.likesNum = topic.likesNum;
+			theTopic.message = new VoMessage(topic.getMessage(), false, false, false);
+			theTopic.unlikesNum = topic.unlikesNum;
+			theTopic.usersNum = topic.usersNum;
+			theTopic.viewers = topic.viewers;
+
+			if (makePersistant) {
+				pm.makePersistent(theTopic);
+			}
+			this.id = theTopic.getId();
+			topic.setId(id.getId());
+			this.message = theTopic.message;
+			this.setId(theTopic.id);
 		} finally {
 			pm.close();
 		}
@@ -185,7 +186,7 @@ public class VoTopic {
 	@Persistent
 	@Unowned
 	private VoUserTopic userTopic;
-	
+
 	@Persistent
 	@Unindexed
 	private long[] listRepresentationOfTree;
@@ -226,12 +227,14 @@ public class VoTopic {
 	}
 
 	/**
-	 * Method returns a list representation of tree that should be opened under the 
+	 * Method returns a list representation of tree that should be opened under
+	 * the
+	 * 
 	 * @param msg
 	 * @return list representation of tree
 	 */
-	public List<Pair<Long,Long>> getListRepresentationOfTreeUnder( Message msg ){
-		List<Pair<Long,Long>> outList = new Vector<Pair<Long,Long>>();
+	public List<Pair<Long, Long>> getListRepresentationOfTreeUnder(Message msg) {
+		List<Pair<Long, Long>> outList = new Vector<Pair<Long, Long>>();
 		synchronized (childTreeList) {
 			while (true)
 				try {
@@ -240,16 +243,17 @@ public class VoTopic {
 				} catch (InterruptedException e) {
 					continue;
 				}
-			if( 0==childTreeList.size() ) unpackListRepresentation();
+			if (0 == childTreeList.size())
+				unpackListRepresentation();
 			int pos = 0;
-			for( ; pos < childTreeList.size(); pos++){
-				if( childTreeList.get(pos).getSecond() == msg.id ){
+			for (; pos < childTreeList.size(); pos++) {
+				if (childTreeList.get(pos).getSecond() == msg.id) {
 					pos++;
 					break;
-				} 
+				}
 			}
-			if( pos != childTreeList.size() ){
-				for( ; pos < childTreeList.size() && msg.parentId !=childTreeList.get(pos).getFirst(); pos++){
+			if (pos != childTreeList.size()) {
+				for (; pos < childTreeList.size() && msg.parentId != childTreeList.get(pos).getFirst(); pos++) {
 					outList.add(childTreeList.get(pos));
 				}
 			}

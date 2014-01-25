@@ -23,5 +23,5 @@ service UserService {
 
 	list<Group> getUserGroups() throws (1:error.InvalidOperation exc),
 	list<Rubric> getUserRubrics() throws (1:error.InvalidOperation exc),
-
+	//list<string> getLocationCodesForRegistration() throws (1:error.InvalidOperation exc),
 }

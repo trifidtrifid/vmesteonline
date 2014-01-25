@@ -5,6 +5,7 @@ enum Error{
   IncorrectParametrs,
   RegistrationAlreadyExist,
   NotAuthorized,
+  IncorectLocationCode
   
 }
 exception InvalidOperation {

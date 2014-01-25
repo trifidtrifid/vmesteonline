@@ -6,19 +6,24 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.vmesteonline.be.Rubric;
 
 @PersistenceCapable
 public class VoRubric {
 
-	public VoRubric(String visibleName, String name, String description) {
+	public VoRubric(String visibleName, String name, String description, boolean defSubscribed) {
 		this.name = name;
 		this.visibleName = visibleName;
 		this.description = description;
+		this.subscribedByDefault = defSubscribed;
 	}
-
-	public VoRubric clone() {
-		VoRubric r = new VoRubric(visibleName, name, description);
-		return r;
+	public Rubric createRubric(){
+			return new Rubric(id.getId(),visibleName,description,0,0);
+	}
+	
+	public VoRubric(String visibleName, String name, String description) {
+		this(visibleName, name, description,false);
 	}
 
 	public String getVisibleName() {
@@ -58,12 +63,17 @@ public class VoRubric {
 	private Key id;
 
 	@Persistent
+	private boolean subscribedByDefault;
+	
+	@Persistent
+	@Unindexed
 	String visibleName;
 
 	@Persistent
+	@Unindexed
 	String description;
 
 	@Persistent
+	@Unindexed
 	String name;
-
 }

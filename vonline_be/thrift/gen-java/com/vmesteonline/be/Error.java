@@ -15,7 +15,8 @@ public enum Error implements org.apache.thrift.TEnum {
   GeneralError(0),
   IncorrectParametrs(1),
   RegistrationAlreadyExist(2),
-  NotAuthorized(3);
+  NotAuthorized(3),
+  IncorectLocationCode(4);
 
   private final int value;
 
@@ -44,6 +45,8 @@ public enum Error implements org.apache.thrift.TEnum {
         return RegistrationAlreadyExist;
       case 3:
         return NotAuthorized;
+      case 4:
+        return IncorectLocationCode;
       default:
         return null;
     }

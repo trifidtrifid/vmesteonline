@@ -15,16 +15,25 @@ import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoTopic;
+import com.vmesteonline.be.jdo2.VoUserMessage;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
+
+	public MessageServiceImpl() {
+	}
+
+	public MessageServiceImpl(String sessId) {
+		super(sessId);
+	}
 
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.MessageServceImpl");
 
 	@Override
-	public Message createMessage(long parentId, MessageType type, long topicId, String content, Map<MessageType, Long> linkedMessages,
+	public Message createMessage(long parentId, long groupId, MessageType type, String content, Map<MessageType, Long> linkedMessages,
 			Map<Long, String> tags, long recipientId) throws InvalidOperation, TException {
+
 		int now = (int) (System.currentTimeMillis() / 1000L);
-		Message newMessage = new Message(0, parentId, type, topicId, 0, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
+		Message newMessage = new Message(0, parentId, type, 0, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
 				new HashMap<Long, String>(), new UserMessage(true, false, false));
 		postMessage(newMessage);
 		return newMessage;
@@ -51,10 +60,16 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public Topic createTopic(String subject, MessageType type, String content, Map<MessageType, Long> linkedMessages, Map<Long, String> tags,
-			long rubricId, long communityId) throws TException {
+	public Topic createTopic(long groupId, String subject, MessageType type, String content, Map<MessageType, Long> linkedMessages,
+			Map<Long, String> tags, long rubricId, long communityId) throws TException {
 
-		return null;
+		int now = (int) (System.currentTimeMillis() / 1000L);
+		Message msg = new Message(0, 0, type, 0, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(), new HashMap<Long, String>(),
+				new UserMessage(true, false, false));
+		Topic topic = new Topic(0, subject, msg, 0, 0, 0, now, 0, 0, new UserTopic());
+		topic.setRubricId(rubricId);
+		long topId = postTopic(topic);
+		return topic;
 	}
 
 	@Override
@@ -87,8 +102,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 																								 */
 			sess.setLastActivityTs(now);
 			PersistenceManager pm = PMF.get().getPersistenceManager();
-			pm.makePersistent(sess);
-			pm.close();
+			try {
+				pm.makePersistent(sess);
+			} finally {
+				pm.close();
+			}
 		}
 		return sess.getLastUpdateTs() > lastRequest ? 0 : now;
 	}
@@ -107,6 +125,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		if (!TEST_ON_FAKE_DATA) {
 			PersistenceManager pm = PMF.get().getPersistenceManager();
+			try {
+
+			} finally {
+				pm.close();
+			}
 		} else {
 			int ss = (int) (groupId % 10);
 			mlp = new TopicListPart(new HashSet<Topic>(), topicsaa[ss].length);
@@ -184,11 +207,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length)
 			throws InvalidOperation, TException {
-		
+
 		MessageListPart mlp = null;
-		
+
 		if (!TEST_ON_FAKE_DATA) {
-			
+
 		} else {
 			int ss = (int) (groupId % 10);
 			mlp = new MessageListPart(new HashSet<Message>(), msgsaaa[ss][(int) topicId].length);
@@ -197,12 +220,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			}
 		}
 		return mlp;
-	}
-
-	@Override
-	public long like(long messageId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
@@ -237,14 +254,82 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public long dislike(long messageId) throws InvalidOperation, TException {
+		long unlikesNum = 0;
 		long user = getUserId();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Transaction currentTransaction = pm.currentTransaction();
-		VoMessage msg = pm.getObjectById(VoMessage.class, messageId);
-		/*
-		 * Vo pm.close();
-		 */
-		return 0;
+		try {
+			VoMessage msg = pm.getObjectById(VoMessage.class, messageId);
+			VoUserMessage um = pm.getObjectById(VoUserMessage.class, new VoUserMessage.PK(user, messageId));
+			if (null == um) {
+				um = new VoUserMessage();
+				um.setLikes(false);
+				um.setUnlikes(true);
+				um.setRead(true);
+				um.setUserId(user);
+				um.setMessage(messageId);
+			} else {
+				if (!um.isUnlikes()) { // unlike already set
+					if (um.isLikes()) {
+						msg.decrementLikes();
+					}
+					um.setLikes(false);
+				}
+			}
+			unlikesNum = msg.incrementUnlikes();
+			pm.makePersistent(um);
+			pm.makePersistent(msg);
+			try {
+				currentTransaction.commit();
+			} catch (Exception e) {
+				currentTransaction.rollback();
+				throw new InvalidOperation(Error.GeneralError, "Failed to change dislike. Transaction not commited. Reason is [" + e.getMessage()
+						+ "]. Rollbacked.");
+			}
+			return unlikesNum;
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public long like(long messageId) throws InvalidOperation, TException {
+		long likesNum = 0;
+		long user = getUserId();
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Transaction currentTransaction = pm.currentTransaction();
+		try {
+			VoMessage msg = pm.getObjectById(VoMessage.class, messageId);
+			VoUserMessage um = pm.getObjectById(VoUserMessage.class, new VoUserMessage.PK(user, messageId));
+			if (null == um) {
+				um = new VoUserMessage();
+				um.setLikes(true);
+				um.setUnlikes(false);
+				um.setRead(true);
+				um.setUserId(user);
+				um.setMessage(messageId);
+			} else {
+				if (!um.isLikes()) { // unlike already set
+					if (um.isUnlikes()) {
+						msg.decrementUnlikes();
+					}
+					um.setUnlikes(false);
+				}
+			}
+			likesNum = msg.incrementLikes();
+			pm.makePersistent(um);
+			pm.makePersistent(msg);
+			try {
+				currentTransaction.commit();
+			} catch (Exception e) {
+				currentTransaction.rollback();
+				throw new InvalidOperation(Error.GeneralError, "Failed to change like for message " + messageId + " by user " + user
+						+ ". Transaction not commited. Reason is [" + e.getMessage() + "]. Rollbacked.");
+			}
+			return likesNum;
+		} finally {
+			pm.close();
+		}
 	}
 
 	@Override

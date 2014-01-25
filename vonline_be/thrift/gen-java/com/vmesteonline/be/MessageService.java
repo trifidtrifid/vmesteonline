@@ -42,14 +42,14 @@ public class MessageService {
      * 
      * 
      * @param parentId
+     * @param groupId
      * @param type
-     * @param topicId
      * @param content
      * @param linkedMessages
      * @param tags
      * @param recipientId
      */
-    public Message createMessage(long parentId, MessageType type, long topicId, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public Message createMessage(long parentId, long groupId, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     /**
      * Cоздание нового или обновление старого сообщения
@@ -59,7 +59,7 @@ public class MessageService {
      */
     public long postMessage(Message msg) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public Topic createTopic(String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId) throws org.apache.thrift.TException;
+    public Topic createTopic(long groupId, String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId) throws org.apache.thrift.TException;
 
     public long postTopic(Topic topic) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
@@ -115,11 +115,11 @@ public class MessageService {
 
   public interface AsyncIface {
 
-    public void createMessage(long parentId, MessageType type, long topicId, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void createMessage(long parentId, long groupId, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void postMessage(Message msg, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void createTopic(String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void createTopic(long groupId, String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void postTopic(Topic topic, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -173,18 +173,18 @@ public class MessageService {
       super(iprot, oprot);
     }
 
-    public Message createMessage(long parentId, MessageType type, long topicId, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public Message createMessage(long parentId, long groupId, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      send_createMessage(parentId, type, topicId, content, linkedMessages, tags, recipientId);
+      send_createMessage(parentId, groupId, type, content, linkedMessages, tags, recipientId);
       return recv_createMessage();
     }
 
-    public void send_createMessage(long parentId, MessageType type, long topicId, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId) throws org.apache.thrift.TException
+    public void send_createMessage(long parentId, long groupId, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId) throws org.apache.thrift.TException
     {
       createMessage_args args = new createMessage_args();
       args.setParentId(parentId);
+      args.setGroupId(groupId);
       args.setType(type);
-      args.setTopicId(topicId);
       args.setContent(content);
       args.setLinkedMessages(linkedMessages);
       args.setTags(tags);
@@ -231,15 +231,16 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "postMessage failed: unknown result");
     }
 
-    public Topic createTopic(String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId) throws org.apache.thrift.TException
+    public Topic createTopic(long groupId, String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId) throws org.apache.thrift.TException
     {
-      send_createTopic(subject, type, content, linkedMessages, tags, rubricId, communityId);
+      send_createTopic(groupId, subject, type, content, linkedMessages, tags, rubricId, communityId);
       return recv_createTopic();
     }
 
-    public void send_createTopic(String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId) throws org.apache.thrift.TException
+    public void send_createTopic(long groupId, String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId) throws org.apache.thrift.TException
     {
       createTopic_args args = new createTopic_args();
+      args.setGroupId(groupId);
       args.setSubject(subject);
       args.setType(type);
       args.setContent(content);
@@ -680,26 +681,26 @@ public class MessageService {
       super(protocolFactory, clientManager, transport);
     }
 
-    public void createMessage(long parentId, MessageType type, long topicId, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void createMessage(long parentId, long groupId, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      createMessage_call method_call = new createMessage_call(parentId, type, topicId, content, linkedMessages, tags, recipientId, resultHandler, this, ___protocolFactory, ___transport);
+      createMessage_call method_call = new createMessage_call(parentId, groupId, type, content, linkedMessages, tags, recipientId, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
     public static class createMessage_call extends org.apache.thrift.async.TAsyncMethodCall {
       private long parentId;
+      private long groupId;
       private MessageType type;
-      private long topicId;
       private String content;
       private Map<MessageType,Long> linkedMessages;
       private Map<Long,String> tags;
       private long recipientId;
-      public createMessage_call(long parentId, MessageType type, long topicId, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public createMessage_call(long parentId, long groupId, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long recipientId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.parentId = parentId;
+        this.groupId = groupId;
         this.type = type;
-        this.topicId = topicId;
         this.content = content;
         this.linkedMessages = linkedMessages;
         this.tags = tags;
@@ -710,8 +711,8 @@ public class MessageService {
         prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("createMessage", org.apache.thrift.protocol.TMessageType.CALL, 0));
         createMessage_args args = new createMessage_args();
         args.setParentId(parentId);
+        args.setGroupId(groupId);
         args.setType(type);
-        args.setTopicId(topicId);
         args.setContent(content);
         args.setLinkedMessages(linkedMessages);
         args.setTags(tags);
@@ -762,14 +763,15 @@ public class MessageService {
       }
     }
 
-    public void createTopic(String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void createTopic(long groupId, String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      createTopic_call method_call = new createTopic_call(subject, type, content, linkedMessages, tags, rubricId, communityId, resultHandler, this, ___protocolFactory, ___transport);
+      createTopic_call method_call = new createTopic_call(groupId, subject, type, content, linkedMessages, tags, rubricId, communityId, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
     public static class createTopic_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private long groupId;
       private String subject;
       private MessageType type;
       private String content;
@@ -777,8 +779,9 @@ public class MessageService {
       private Map<Long,String> tags;
       private long rubricId;
       private long communityId;
-      public createTopic_call(String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public createTopic_call(long groupId, String subject, MessageType type, String content, Map<MessageType,Long> linkedMessages, Map<Long,String> tags, long rubricId, long communityId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
+        this.groupId = groupId;
         this.subject = subject;
         this.type = type;
         this.content = content;
@@ -791,6 +794,7 @@ public class MessageService {
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
         prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("createTopic", org.apache.thrift.protocol.TMessageType.CALL, 0));
         createTopic_args args = new createTopic_args();
+        args.setGroupId(groupId);
         args.setSubject(subject);
         args.setType(type);
         args.setContent(content);
@@ -1378,7 +1382,7 @@ public class MessageService {
       public createMessage_result getResult(I iface, createMessage_args args) throws org.apache.thrift.TException {
         createMessage_result result = new createMessage_result();
         try {
-          result.success = iface.createMessage(args.parentId, args.type, args.topicId, args.content, args.linkedMessages, args.tags, args.recipientId);
+          result.success = iface.createMessage(args.parentId, args.groupId, args.type, args.content, args.linkedMessages, args.tags, args.recipientId);
         } catch (com.vmesteonline.be.InvalidOperation exc) {
           result.exc = exc;
         }
@@ -1426,7 +1430,7 @@ public class MessageService {
 
       public createTopic_result getResult(I iface, createTopic_args args) throws org.apache.thrift.TException {
         createTopic_result result = new createTopic_result();
-        result.success = iface.createTopic(args.subject, args.type, args.content, args.linkedMessages, args.tags, args.rubricId, args.communityId);
+        result.success = iface.createTopic(args.groupId, args.subject, args.type, args.content, args.linkedMessages, args.tags, args.rubricId, args.communityId);
         return result;
       }
     }
@@ -1890,7 +1894,7 @@ public class MessageService {
       }
 
       public void start(I iface, createMessage_args args, org.apache.thrift.async.AsyncMethodCallback<Message> resultHandler) throws TException {
-        iface.createMessage(args.parentId, args.type, args.topicId, args.content, args.linkedMessages, args.tags, args.recipientId,resultHandler);
+        iface.createMessage(args.parentId, args.groupId, args.type, args.content, args.linkedMessages, args.tags, args.recipientId,resultHandler);
       }
     }
 
@@ -1999,7 +2003,7 @@ public class MessageService {
       }
 
       public void start(I iface, createTopic_args args, org.apache.thrift.async.AsyncMethodCallback<Topic> resultHandler) throws TException {
-        iface.createTopic(args.subject, args.type, args.content, args.linkedMessages, args.tags, args.rubricId, args.communityId,resultHandler);
+        iface.createTopic(args.groupId, args.subject, args.type, args.content, args.linkedMessages, args.tags, args.rubricId, args.communityId,resultHandler);
       }
     }
 
@@ -2876,8 +2880,8 @@ public class MessageService {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("createMessage_args");
 
     private static final org.apache.thrift.protocol.TField PARENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("parentId", org.apache.thrift.protocol.TType.I64, (short)1);
-    private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.I32, (short)2);
-    private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I64, (short)3);
+    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)2);
+    private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.I32, (short)3);
     private static final org.apache.thrift.protocol.TField CONTENT_FIELD_DESC = new org.apache.thrift.protocol.TField("content", org.apache.thrift.protocol.TType.STRING, (short)4);
     private static final org.apache.thrift.protocol.TField LINKED_MESSAGES_FIELD_DESC = new org.apache.thrift.protocol.TField("linkedMessages", org.apache.thrift.protocol.TType.MAP, (short)5);
     private static final org.apache.thrift.protocol.TField TAGS_FIELD_DESC = new org.apache.thrift.protocol.TField("tags", org.apache.thrift.protocol.TType.MAP, (short)6);
@@ -2890,12 +2894,12 @@ public class MessageService {
     }
 
     public long parentId; // required
+    public long groupId; // required
     /**
      * 
      * @see MessageType
      */
     public MessageType type; // required
-    public long topicId; // required
     public String content; // required
     public Map<MessageType,Long> linkedMessages; // required
     public Map<Long,String> tags; // required
@@ -2904,12 +2908,12 @@ public class MessageService {
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       PARENT_ID((short)1, "parentId"),
+      GROUP_ID((short)2, "groupId"),
       /**
        * 
        * @see MessageType
        */
-      TYPE((short)2, "type"),
-      TOPIC_ID((short)3, "topicId"),
+      TYPE((short)3, "type"),
       CONTENT((short)4, "content"),
       LINKED_MESSAGES((short)5, "linkedMessages"),
       TAGS((short)6, "tags"),
@@ -2930,10 +2934,10 @@ public class MessageService {
         switch(fieldId) {
           case 1: // PARENT_ID
             return PARENT_ID;
-          case 2: // TYPE
+          case 2: // GROUP_ID
+            return GROUP_ID;
+          case 3: // TYPE
             return TYPE;
-          case 3: // TOPIC_ID
-            return TOPIC_ID;
           case 4: // CONTENT
             return CONTENT;
           case 5: // LINKED_MESSAGES
@@ -2983,7 +2987,7 @@ public class MessageService {
 
     // isset id assignments
     private static final int __PARENTID_ISSET_ID = 0;
-    private static final int __TOPICID_ISSET_ID = 1;
+    private static final int __GROUPID_ISSET_ID = 1;
     private static final int __RECIPIENTID_ISSET_ID = 2;
     private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
@@ -2991,10 +2995,10 @@ public class MessageService {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.PARENT_ID, new org.apache.thrift.meta_data.FieldMetaData("parentId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+      tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.TYPE, new org.apache.thrift.meta_data.FieldMetaData("type", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, MessageType.class)));
-      tmpMap.put(_Fields.TOPIC_ID, new org.apache.thrift.meta_data.FieldMetaData("topicId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.CONTENT, new org.apache.thrift.meta_data.FieldMetaData("content", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       tmpMap.put(_Fields.LINKED_MESSAGES, new org.apache.thrift.meta_data.FieldMetaData("linkedMessages", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -3016,8 +3020,8 @@ public class MessageService {
 
     public createMessage_args(
       long parentId,
+      long groupId,
       MessageType type,
-      long topicId,
       String content,
       Map<MessageType,Long> linkedMessages,
       Map<Long,String> tags,
@@ -3026,9 +3030,9 @@ public class MessageService {
       this();
       this.parentId = parentId;
       setParentIdIsSet(true);
+      this.groupId = groupId;
+      setGroupIdIsSet(true);
       this.type = type;
-      this.topicId = topicId;
-      setTopicIdIsSet(true);
       this.content = content;
       this.linkedMessages = linkedMessages;
       this.tags = tags;
@@ -3042,10 +3046,10 @@ public class MessageService {
     public createMessage_args(createMessage_args other) {
       __isset_bitfield = other.__isset_bitfield;
       this.parentId = other.parentId;
+      this.groupId = other.groupId;
       if (other.isSetType()) {
         this.type = other.type;
       }
-      this.topicId = other.topicId;
       if (other.isSetContent()) {
         this.content = other.content;
       }
@@ -3079,9 +3083,9 @@ public class MessageService {
     public void clear() {
       setParentIdIsSet(false);
       this.parentId = 0;
+      setGroupIdIsSet(false);
+      this.groupId = 0;
       this.type = null;
-      setTopicIdIsSet(false);
-      this.topicId = 0;
       this.content = null;
       this.linkedMessages = null;
       this.tags = null;
@@ -3110,6 +3114,29 @@ public class MessageService {
 
     public void setParentIdIsSet(boolean value) {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PARENTID_ISSET_ID, value);
+    }
+
+    public long getGroupId() {
+      return this.groupId;
+    }
+
+    public createMessage_args setGroupId(long groupId) {
+      this.groupId = groupId;
+      setGroupIdIsSet(true);
+      return this;
+    }
+
+    public void unsetGroupId() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __GROUPID_ISSET_ID);
+    }
+
+    /** Returns true if field groupId is set (has been assigned a value) and false otherwise */
+    public boolean isSetGroupId() {
+      return EncodingUtils.testBit(__isset_bitfield, __GROUPID_ISSET_ID);
+    }
+
+    public void setGroupIdIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __GROUPID_ISSET_ID, value);
     }
 
     /**
@@ -3142,29 +3169,6 @@ public class MessageService {
       if (!value) {
         this.type = null;
       }
-    }
-
-    public long getTopicId() {
-      return this.topicId;
-    }
-
-    public createMessage_args setTopicId(long topicId) {
-      this.topicId = topicId;
-      setTopicIdIsSet(true);
-      return this;
-    }
-
-    public void unsetTopicId() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPICID_ISSET_ID);
-    }
-
-    /** Returns true if field topicId is set (has been assigned a value) and false otherwise */
-    public boolean isSetTopicId() {
-      return EncodingUtils.testBit(__isset_bitfield, __TOPICID_ISSET_ID);
-    }
-
-    public void setTopicIdIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICID_ISSET_ID, value);
     }
 
     public String getContent() {
@@ -3294,19 +3298,19 @@ public class MessageService {
         }
         break;
 
+      case GROUP_ID:
+        if (value == null) {
+          unsetGroupId();
+        } else {
+          setGroupId((Long)value);
+        }
+        break;
+
       case TYPE:
         if (value == null) {
           unsetType();
         } else {
           setType((MessageType)value);
-        }
-        break;
-
-      case TOPIC_ID:
-        if (value == null) {
-          unsetTopicId();
-        } else {
-          setTopicId((Long)value);
         }
         break;
 
@@ -3350,11 +3354,11 @@ public class MessageService {
       case PARENT_ID:
         return Long.valueOf(getParentId());
 
+      case GROUP_ID:
+        return Long.valueOf(getGroupId());
+
       case TYPE:
         return getType();
-
-      case TOPIC_ID:
-        return Long.valueOf(getTopicId());
 
       case CONTENT:
         return getContent();
@@ -3381,10 +3385,10 @@ public class MessageService {
       switch (field) {
       case PARENT_ID:
         return isSetParentId();
+      case GROUP_ID:
+        return isSetGroupId();
       case TYPE:
         return isSetType();
-      case TOPIC_ID:
-        return isSetTopicId();
       case CONTENT:
         return isSetContent();
       case LINKED_MESSAGES:
@@ -3419,21 +3423,21 @@ public class MessageService {
           return false;
       }
 
+      boolean this_present_groupId = true;
+      boolean that_present_groupId = true;
+      if (this_present_groupId || that_present_groupId) {
+        if (!(this_present_groupId && that_present_groupId))
+          return false;
+        if (this.groupId != that.groupId)
+          return false;
+      }
+
       boolean this_present_type = true && this.isSetType();
       boolean that_present_type = true && that.isSetType();
       if (this_present_type || that_present_type) {
         if (!(this_present_type && that_present_type))
           return false;
         if (!this.type.equals(that.type))
-          return false;
-      }
-
-      boolean this_present_topicId = true;
-      boolean that_present_topicId = true;
-      if (this_present_topicId || that_present_topicId) {
-        if (!(this_present_topicId && that_present_topicId))
-          return false;
-        if (this.topicId != that.topicId)
           return false;
       }
 
@@ -3499,22 +3503,22 @@ public class MessageService {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetGroupId()).compareTo(other.isSetGroupId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetGroupId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.groupId, other.groupId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       lastComparison = Boolean.valueOf(isSetType()).compareTo(other.isSetType());
       if (lastComparison != 0) {
         return lastComparison;
       }
       if (isSetType()) {
         lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.type, other.type);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetTopicId()).compareTo(other.isSetTopicId());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetTopicId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topicId, other.topicId);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -3583,16 +3587,16 @@ public class MessageService {
       sb.append(this.parentId);
       first = false;
       if (!first) sb.append(", ");
+      sb.append("groupId:");
+      sb.append(this.groupId);
+      first = false;
+      if (!first) sb.append(", ");
       sb.append("type:");
       if (this.type == null) {
         sb.append("null");
       } else {
         sb.append(this.type);
       }
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("topicId:");
-      sb.append(this.topicId);
       first = false;
       if (!first) sb.append(", ");
       sb.append("content:");
@@ -3675,18 +3679,18 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 2: // TYPE
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.type = MessageType.findByValue(iprot.readI32());
-                struct.setTypeIsSet(true);
+            case 2: // GROUP_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.groupId = iprot.readI64();
+                struct.setGroupIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 3: // TOPIC_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.topicId = iprot.readI64();
-                struct.setTopicIdIsSet(true);
+            case 3: // TYPE
+              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                struct.type = MessageType.findByValue(iprot.readI32());
+                struct.setTypeIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
@@ -3765,14 +3769,14 @@ public class MessageService {
         oprot.writeFieldBegin(PARENT_ID_FIELD_DESC);
         oprot.writeI64(struct.parentId);
         oprot.writeFieldEnd();
+        oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
+        oprot.writeI64(struct.groupId);
+        oprot.writeFieldEnd();
         if (struct.type != null) {
           oprot.writeFieldBegin(TYPE_FIELD_DESC);
           oprot.writeI32(struct.type.getValue());
           oprot.writeFieldEnd();
         }
-        oprot.writeFieldBegin(TOPIC_ID_FIELD_DESC);
-        oprot.writeI64(struct.topicId);
-        oprot.writeFieldEnd();
         if (struct.content != null) {
           oprot.writeFieldBegin(CONTENT_FIELD_DESC);
           oprot.writeString(struct.content);
@@ -3828,10 +3832,10 @@ public class MessageService {
         if (struct.isSetParentId()) {
           optionals.set(0);
         }
-        if (struct.isSetType()) {
+        if (struct.isSetGroupId()) {
           optionals.set(1);
         }
-        if (struct.isSetTopicId()) {
+        if (struct.isSetType()) {
           optionals.set(2);
         }
         if (struct.isSetContent()) {
@@ -3850,11 +3854,11 @@ public class MessageService {
         if (struct.isSetParentId()) {
           oprot.writeI64(struct.parentId);
         }
+        if (struct.isSetGroupId()) {
+          oprot.writeI64(struct.groupId);
+        }
         if (struct.isSetType()) {
           oprot.writeI32(struct.type.getValue());
-        }
-        if (struct.isSetTopicId()) {
-          oprot.writeI64(struct.topicId);
         }
         if (struct.isSetContent()) {
           oprot.writeString(struct.content);
@@ -3893,12 +3897,12 @@ public class MessageService {
           struct.setParentIdIsSet(true);
         }
         if (incoming.get(1)) {
-          struct.type = MessageType.findByValue(iprot.readI32());
-          struct.setTypeIsSet(true);
+          struct.groupId = iprot.readI64();
+          struct.setGroupIdIsSet(true);
         }
         if (incoming.get(2)) {
-          struct.topicId = iprot.readI64();
-          struct.setTopicIdIsSet(true);
+          struct.type = MessageType.findByValue(iprot.readI32());
+          struct.setTypeIsSet(true);
         }
         if (incoming.get(3)) {
           struct.content = iprot.readString();
@@ -5222,13 +5226,14 @@ public class MessageService {
   public static class createTopic_args implements org.apache.thrift.TBase<createTopic_args, createTopic_args._Fields>, java.io.Serializable, Cloneable, Comparable<createTopic_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("createTopic_args");
 
-    private static final org.apache.thrift.protocol.TField SUBJECT_FIELD_DESC = new org.apache.thrift.protocol.TField("subject", org.apache.thrift.protocol.TType.STRING, (short)1);
-    private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.I32, (short)2);
-    private static final org.apache.thrift.protocol.TField CONTENT_FIELD_DESC = new org.apache.thrift.protocol.TField("content", org.apache.thrift.protocol.TType.STRING, (short)3);
-    private static final org.apache.thrift.protocol.TField LINKED_MESSAGES_FIELD_DESC = new org.apache.thrift.protocol.TField("linkedMessages", org.apache.thrift.protocol.TType.MAP, (short)4);
-    private static final org.apache.thrift.protocol.TField TAGS_FIELD_DESC = new org.apache.thrift.protocol.TField("tags", org.apache.thrift.protocol.TType.MAP, (short)5);
-    private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I64, (short)6);
-    private static final org.apache.thrift.protocol.TField COMMUNITY_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("communityId", org.apache.thrift.protocol.TType.I64, (short)7);
+    private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField SUBJECT_FIELD_DESC = new org.apache.thrift.protocol.TField("subject", org.apache.thrift.protocol.TType.STRING, (short)2);
+    private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.I32, (short)3);
+    private static final org.apache.thrift.protocol.TField CONTENT_FIELD_DESC = new org.apache.thrift.protocol.TField("content", org.apache.thrift.protocol.TType.STRING, (short)4);
+    private static final org.apache.thrift.protocol.TField LINKED_MESSAGES_FIELD_DESC = new org.apache.thrift.protocol.TField("linkedMessages", org.apache.thrift.protocol.TType.MAP, (short)5);
+    private static final org.apache.thrift.protocol.TField TAGS_FIELD_DESC = new org.apache.thrift.protocol.TField("tags", org.apache.thrift.protocol.TType.MAP, (short)6);
+    private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I64, (short)7);
+    private static final org.apache.thrift.protocol.TField COMMUNITY_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("communityId", org.apache.thrift.protocol.TType.I64, (short)8);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -5236,6 +5241,7 @@ public class MessageService {
       schemes.put(TupleScheme.class, new createTopic_argsTupleSchemeFactory());
     }
 
+    public long groupId; // required
     public String subject; // required
     /**
      * 
@@ -5250,17 +5256,18 @@ public class MessageService {
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SUBJECT((short)1, "subject"),
+      GROUP_ID((short)1, "groupId"),
+      SUBJECT((short)2, "subject"),
       /**
        * 
        * @see MessageType
        */
-      TYPE((short)2, "type"),
-      CONTENT((short)3, "content"),
-      LINKED_MESSAGES((short)4, "linkedMessages"),
-      TAGS((short)5, "tags"),
-      RUBRIC_ID((short)6, "rubricId"),
-      COMMUNITY_ID((short)7, "communityId");
+      TYPE((short)3, "type"),
+      CONTENT((short)4, "content"),
+      LINKED_MESSAGES((short)5, "linkedMessages"),
+      TAGS((short)6, "tags"),
+      RUBRIC_ID((short)7, "rubricId"),
+      COMMUNITY_ID((short)8, "communityId");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -5275,19 +5282,21 @@ public class MessageService {
        */
       public static _Fields findByThriftId(int fieldId) {
         switch(fieldId) {
-          case 1: // SUBJECT
+          case 1: // GROUP_ID
+            return GROUP_ID;
+          case 2: // SUBJECT
             return SUBJECT;
-          case 2: // TYPE
+          case 3: // TYPE
             return TYPE;
-          case 3: // CONTENT
+          case 4: // CONTENT
             return CONTENT;
-          case 4: // LINKED_MESSAGES
+          case 5: // LINKED_MESSAGES
             return LINKED_MESSAGES;
-          case 5: // TAGS
+          case 6: // TAGS
             return TAGS;
-          case 6: // RUBRIC_ID
+          case 7: // RUBRIC_ID
             return RUBRIC_ID;
-          case 7: // COMMUNITY_ID
+          case 8: // COMMUNITY_ID
             return COMMUNITY_ID;
           default:
             return null;
@@ -5329,12 +5338,15 @@ public class MessageService {
     }
 
     // isset id assignments
-    private static final int __RUBRICID_ISSET_ID = 0;
-    private static final int __COMMUNITYID_ISSET_ID = 1;
+    private static final int __GROUPID_ISSET_ID = 0;
+    private static final int __RUBRICID_ISSET_ID = 1;
+    private static final int __COMMUNITYID_ISSET_ID = 2;
     private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.GROUP_ID, new org.apache.thrift.meta_data.FieldMetaData("groupId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.SUBJECT, new org.apache.thrift.meta_data.FieldMetaData("subject", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       tmpMap.put(_Fields.TYPE, new org.apache.thrift.meta_data.FieldMetaData("type", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -5361,6 +5373,7 @@ public class MessageService {
     }
 
     public createTopic_args(
+      long groupId,
       String subject,
       MessageType type,
       String content,
@@ -5370,6 +5383,8 @@ public class MessageService {
       long communityId)
     {
       this();
+      this.groupId = groupId;
+      setGroupIdIsSet(true);
       this.subject = subject;
       this.type = type;
       this.content = content;
@@ -5386,6 +5401,7 @@ public class MessageService {
      */
     public createTopic_args(createTopic_args other) {
       __isset_bitfield = other.__isset_bitfield;
+      this.groupId = other.groupId;
       if (other.isSetSubject()) {
         this.subject = other.subject;
       }
@@ -5424,6 +5440,8 @@ public class MessageService {
 
     @Override
     public void clear() {
+      setGroupIdIsSet(false);
+      this.groupId = 0;
       this.subject = null;
       this.type = null;
       this.content = null;
@@ -5433,6 +5451,29 @@ public class MessageService {
       this.rubricId = 0;
       setCommunityIdIsSet(false);
       this.communityId = 0;
+    }
+
+    public long getGroupId() {
+      return this.groupId;
+    }
+
+    public createTopic_args setGroupId(long groupId) {
+      this.groupId = groupId;
+      setGroupIdIsSet(true);
+      return this;
+    }
+
+    public void unsetGroupId() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __GROUPID_ISSET_ID);
+    }
+
+    /** Returns true if field groupId is set (has been assigned a value) and false otherwise */
+    public boolean isSetGroupId() {
+      return EncodingUtils.testBit(__isset_bitfield, __GROUPID_ISSET_ID);
+    }
+
+    public void setGroupIdIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __GROUPID_ISSET_ID, value);
     }
 
     public String getSubject() {
@@ -5633,6 +5674,14 @@ public class MessageService {
 
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
+      case GROUP_ID:
+        if (value == null) {
+          unsetGroupId();
+        } else {
+          setGroupId((Long)value);
+        }
+        break;
+
       case SUBJECT:
         if (value == null) {
           unsetSubject();
@@ -5694,6 +5743,9 @@ public class MessageService {
 
     public Object getFieldValue(_Fields field) {
       switch (field) {
+      case GROUP_ID:
+        return Long.valueOf(getGroupId());
+
       case SUBJECT:
         return getSubject();
 
@@ -5726,6 +5778,8 @@ public class MessageService {
       }
 
       switch (field) {
+      case GROUP_ID:
+        return isSetGroupId();
       case SUBJECT:
         return isSetSubject();
       case TYPE:
@@ -5756,6 +5810,15 @@ public class MessageService {
     public boolean equals(createTopic_args that) {
       if (that == null)
         return false;
+
+      boolean this_present_groupId = true;
+      boolean that_present_groupId = true;
+      if (this_present_groupId || that_present_groupId) {
+        if (!(this_present_groupId && that_present_groupId))
+          return false;
+        if (this.groupId != that.groupId)
+          return false;
+      }
 
       boolean this_present_subject = true && this.isSetSubject();
       boolean that_present_subject = true && that.isSetSubject();
@@ -5836,6 +5899,16 @@ public class MessageService {
 
       int lastComparison = 0;
 
+      lastComparison = Boolean.valueOf(isSetGroupId()).compareTo(other.isSetGroupId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetGroupId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.groupId, other.groupId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       lastComparison = Boolean.valueOf(isSetSubject()).compareTo(other.isSetSubject());
       if (lastComparison != 0) {
         return lastComparison;
@@ -5926,6 +5999,10 @@ public class MessageService {
       StringBuilder sb = new StringBuilder("createTopic_args(");
       boolean first = true;
 
+      sb.append("groupId:");
+      sb.append(this.groupId);
+      first = false;
+      if (!first) sb.append(", ");
       sb.append("subject:");
       if (this.subject == null) {
         sb.append("null");
@@ -6018,7 +6095,15 @@ public class MessageService {
             break;
           }
           switch (schemeField.id) {
-            case 1: // SUBJECT
+            case 1: // GROUP_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.groupId = iprot.readI64();
+                struct.setGroupIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 2: // SUBJECT
               if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                 struct.subject = iprot.readString();
                 struct.setSubjectIsSet(true);
@@ -6026,7 +6111,7 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 2: // TYPE
+            case 3: // TYPE
               if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
                 struct.type = MessageType.findByValue(iprot.readI32());
                 struct.setTypeIsSet(true);
@@ -6034,7 +6119,7 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 3: // CONTENT
+            case 4: // CONTENT
               if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                 struct.content = iprot.readString();
                 struct.setContentIsSet(true);
@@ -6042,7 +6127,7 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 4: // LINKED_MESSAGES
+            case 5: // LINKED_MESSAGES
               if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
                 {
                   org.apache.thrift.protocol.TMap _map66 = iprot.readMapBegin();
@@ -6062,7 +6147,7 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 5: // TAGS
+            case 6: // TAGS
               if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
                 {
                   org.apache.thrift.protocol.TMap _map70 = iprot.readMapBegin();
@@ -6082,7 +6167,7 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 6: // RUBRIC_ID
+            case 7: // RUBRIC_ID
               if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
                 struct.rubricId = iprot.readI64();
                 struct.setRubricIdIsSet(true);
@@ -6090,7 +6175,7 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 7: // COMMUNITY_ID
+            case 8: // COMMUNITY_ID
               if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
                 struct.communityId = iprot.readI64();
                 struct.setCommunityIdIsSet(true);
@@ -6113,6 +6198,9 @@ public class MessageService {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldBegin(GROUP_ID_FIELD_DESC);
+        oprot.writeI64(struct.groupId);
+        oprot.writeFieldEnd();
         if (struct.subject != null) {
           oprot.writeFieldBegin(SUBJECT_FIELD_DESC);
           oprot.writeString(struct.subject);
@@ -6178,28 +6266,34 @@ public class MessageService {
       public void write(org.apache.thrift.protocol.TProtocol prot, createTopic_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
-        if (struct.isSetSubject()) {
+        if (struct.isSetGroupId()) {
           optionals.set(0);
         }
-        if (struct.isSetType()) {
+        if (struct.isSetSubject()) {
           optionals.set(1);
         }
-        if (struct.isSetContent()) {
+        if (struct.isSetType()) {
           optionals.set(2);
         }
-        if (struct.isSetLinkedMessages()) {
+        if (struct.isSetContent()) {
           optionals.set(3);
         }
-        if (struct.isSetTags()) {
+        if (struct.isSetLinkedMessages()) {
           optionals.set(4);
         }
-        if (struct.isSetRubricId()) {
+        if (struct.isSetTags()) {
           optionals.set(5);
         }
-        if (struct.isSetCommunityId()) {
+        if (struct.isSetRubricId()) {
           optionals.set(6);
         }
-        oprot.writeBitSet(optionals, 7);
+        if (struct.isSetCommunityId()) {
+          optionals.set(7);
+        }
+        oprot.writeBitSet(optionals, 8);
+        if (struct.isSetGroupId()) {
+          oprot.writeI64(struct.groupId);
+        }
         if (struct.isSetSubject()) {
           oprot.writeString(struct.subject);
         }
@@ -6240,20 +6334,24 @@ public class MessageService {
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, createTopic_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(7);
+        BitSet incoming = iprot.readBitSet(8);
         if (incoming.get(0)) {
+          struct.groupId = iprot.readI64();
+          struct.setGroupIdIsSet(true);
+        }
+        if (incoming.get(1)) {
           struct.subject = iprot.readString();
           struct.setSubjectIsSet(true);
         }
-        if (incoming.get(1)) {
+        if (incoming.get(2)) {
           struct.type = MessageType.findByValue(iprot.readI32());
           struct.setTypeIsSet(true);
         }
-        if (incoming.get(2)) {
+        if (incoming.get(3)) {
           struct.content = iprot.readString();
           struct.setContentIsSet(true);
         }
-        if (incoming.get(3)) {
+        if (incoming.get(4)) {
           {
             org.apache.thrift.protocol.TMap _map78 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.I64, iprot.readI32());
             struct.linkedMessages = new HashMap<MessageType,Long>(2*_map78.size);
@@ -6268,7 +6366,7 @@ public class MessageService {
           }
           struct.setLinkedMessagesIsSet(true);
         }
-        if (incoming.get(4)) {
+        if (incoming.get(5)) {
           {
             org.apache.thrift.protocol.TMap _map82 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I64, org.apache.thrift.protocol.TType.STRING, iprot.readI32());
             struct.tags = new HashMap<Long,String>(2*_map82.size);
@@ -6283,11 +6381,11 @@ public class MessageService {
           }
           struct.setTagsIsSet(true);
         }
-        if (incoming.get(5)) {
+        if (incoming.get(6)) {
           struct.rubricId = iprot.readI64();
           struct.setRubricIdIsSet(true);
         }
-        if (incoming.get(6)) {
+        if (incoming.get(7)) {
           struct.communityId = iprot.readI64();
           struct.setCommunityIdIsSet(true);
         }

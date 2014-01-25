@@ -9,25 +9,28 @@ import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
 
 public class ServiceImpl {
-	protected HttpSession httpSession;
-
-	public void setHttpSession(HttpSession session) {
-		this.httpSession = session;
+	protected SessionIdStorage sessionStorage;
+	
+	public void setSession(HttpSession session) {
+		this.sessionStorage = new SessionIdStorage(session.getId());
 	}
-
-	protected ServiceImpl() {
+	
+	public ServiceImpl() {}
+	
+	protected ServiceImpl(String sessId){
+		sessionStorage = new SessionIdStorage(sessId);
 	}
 
 	protected ServiceImpl(HttpSession session) {
-		this.httpSession = session;
+		this.sessionStorage = new SessionIdStorage(session.getId());;
 	}
 
 	protected long getUserId() throws InvalidOperation {
-		if(null==httpSession) 
+		if(null==sessionStorage) 
 			throw new InvalidOperation(Error.GeneralError, "Failed to process request. No session set.");
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			VoSession sess = pm.getObjectById(VoSession.class, httpSession.getId());
+			VoSession sess = pm.getObjectById(VoSession.class, sessionStorage.getId());
 			if (sess != null)
 				return sess.getUserId();
 			return (long) 0;
@@ -37,13 +40,19 @@ public class ServiceImpl {
 	}
 
 	protected VoSession getCurrentSession() throws InvalidOperation {
-		if(null==httpSession) 
+		if(null==sessionStorage) 
 			throw new InvalidOperation(Error.GeneralError, "Failed to process request. No session set.");
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			return pm.getObjectById(VoSession.class, httpSession.getId());
+			return pm.getObjectById(VoSession.class, sessionStorage.getId());
 		} finally {
 			pm.close();
 		}
+	}
+	static class SessionIdStorage {
+		String sessId;
+		SessionIdStorage(String sessId){
+			this.sessId = sessId;}
+		public String getId(){ return sessId;};
 	}
 }

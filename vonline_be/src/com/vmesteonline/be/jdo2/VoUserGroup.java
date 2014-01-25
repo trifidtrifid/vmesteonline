@@ -6,24 +6,30 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.google.appengine.datanucleus.annotations.Unowned;
+import com.vmesteonline.be.Group;
+import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 
 @PersistenceCapable
 public class VoUserGroup {
 
-	public VoUserGroup(String visibleName, int radius) {
-		this.visibleName = visibleName;
-		this.radius = radius;
+	public VoUserGroup(VoUser user, VoGroup grp) {
+		group = grp;
+		longitude = user.getHomeGroup().longitude;
+		latitude = user.getHomeGroup().latitude;
+		name = grp.getVisibleName();
 	}
 
-	public VoUserGroup(VoGroup g) {
-		this.visibleName = g.getVisibleName();
-		this.latitude = g.getLatitude();
-		this.longitude = g.getLongitude();
+	public Group createGroup() {
+		return new Group(id.getId(), getGroup().getVisibleName(), name, description, group.getRadius());
 	}
 
-	public VoUserGroup clone() {
-		VoUserGroup g = new VoUserGroup(visibleName, radius);
-		return g;
+	public VoUserGroup(VoGroup grp, float longitude, float lattitude) {
+		this.group = grp;
+		this.longitude = longitude;
+		this.latitude = lattitude;
+		this.name = grp.getVisibleName();
 	}
 
 	public Key getId() {
@@ -34,20 +40,20 @@ public class VoUserGroup {
 		this.id = id;
 	}
 
-	public String getVisibleName() {
-		return visibleName;
+	public String getName() {
+		return name;
 	}
 
-	public void setVisibleName(String visibleName) {
-		this.visibleName = visibleName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public int getRadius() {
-		return radius;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setRadius(int radius) {
-		this.radius = radius;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public float getLongitude() {
@@ -66,19 +72,35 @@ public class VoUserGroup {
 		this.latitude = latitude;
 	}
 
+	public VoGroup getGroup() {
+		return group;
+	}
+
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key id;
 
 	@Persistent
-	private String visibleName;
+	@Unindexed
+	private String description;
 
 	@Persistent
-	private int radius;
+	@Unindexed
+	private String name;
+
 	@Persistent
+	@Unindexed
 	private float longitude;
 
 	@Persistent
+	@Unindexed
 	private float latitude;
 
+	@Persistent
+	@Unowned
+	@Unindexed
+	private VoGroup group;
+
+	@Persistent
+	private VoBuilding building;
 }

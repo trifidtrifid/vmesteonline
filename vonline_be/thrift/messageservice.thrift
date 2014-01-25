@@ -95,8 +95,8 @@ service MessageService {
 *
 **/
 	Message createMessage( 1: i64 parentId, // 'идентификатор родительского сообщения, NULL для корневого со',
-		2: MessageType type, // 'тип один из (сообщение, чат)',
-		3: i64 topicId,	
+		2: i64 groupId, //идентификатор пользовтельской группы, в которой он размещает сообщение
+		3: MessageType type, // 'тип один из (сообщение, чат)',
 		4: string content, // 'содержание сообщения',
 		5: map<MessageType,i64> linkedMessages,
 		6: map<i64,string> tags,
@@ -107,13 +107,15 @@ service MessageService {
 **/	 
 	i64 postMessage( 1:Message msg ) throws (1:error.InvalidOperation exc),
 	  
-	Topic createTopic( 1: string subject, 
-		2: MessageType type, // 'тип один из (сообщение, чат)',
-		3: string content, // 'содержание сообщения',
-		4: map<MessageType,i64> linkedMessages,
-		5: map<i64,string> tags
-		6: i64 rubricId, //ссылка на рубрику
-		7: i64 communityId) //ссылка на сообщество
+	Topic createTopic(
+		1: i64 groupId, //идентификатор пользовтельской группы, в которой он размещает топик 
+		2: string subject, 
+		3: MessageType type, // 'тип один из (сообщение, чат)',
+		4: string content, // 'содержание сообщения',
+		5: map<MessageType,i64> linkedMessages,
+		6: map<i64,string> tags
+		7: i64 rubricId, //ссылка на рубрику
+		8: i64 communityId) //ссылка на сообщество
 	
 	i64 postTopic( 1: Topic topic ) throws (1:error.InvalidOperation exc),  
 	 
