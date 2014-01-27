@@ -11,6 +11,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.data.PMF;
 
 @PersistenceCapable
@@ -32,6 +33,9 @@ public class VoStreet {
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
 	private Key id;
+	public void setId(Key id){
+		
+	}
 	
 	@Persistent
 	@Unindexed
@@ -45,6 +49,7 @@ public class VoStreet {
 	}
 
 	@Persistent
+	@Unowned
 	Set<VoBuilding> buildings;
 	
 	public void addBuilding(VoBuilding building){

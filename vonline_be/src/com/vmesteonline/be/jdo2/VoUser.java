@@ -121,15 +121,15 @@ public class VoUser {
 			} catch (JDOObjectNotFoundException eonf) {
 				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Location not found by CODE=" + locCode);
 			}
-			/*if(null!=building){ //location already set, so user should be removed first
+			if(null!=building){ //location already set, so user should be removed first
 				building.removeUser(this);
 			}
-			building.addUser(this);*/
 			pm.retrieve(userAddress);
 			building = userAddress.getBuilding();
+			building.addUser(this);
 			pm.retrieve(building);
 			home = building.getUserGroup();
-			if( null!=groups){
+			if( null!=groups && !groups.isEmpty()){
 				for ( VoUserGroup ug: groups){
 					ug.setLatitude(home.getLatitude());
 					ug.setLongitude(home.getLongitude());
@@ -139,7 +139,8 @@ public class VoUser {
 				
 				groups.add(home);
 				for ( VoGroup grp: Defaults.defaultGroups){
-					groups.add(new VoUserGroup(this, grp));
+					if( !grp.isHome() )
+						groups.add(new VoUserGroup(this, grp));
 				}
 			}
 			pm.makePersistent(this);

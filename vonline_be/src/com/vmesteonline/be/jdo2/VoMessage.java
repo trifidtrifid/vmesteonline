@@ -1,11 +1,18 @@
 package com.vmesteonline.be.jdo2;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
+import javax.jdo.Extent;
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
@@ -17,9 +24,12 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import org.apache.log4j.Logger;
+
 import tagcloud.RubricTag;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -34,30 +44,39 @@ import com.vmesteonline.be.data.PMF;
 @PersistenceCapable
 public class VoMessage {
 
+	
+	//private static final Logger logger = Logger.getLogger(VoMessage.class);
 	// id, (parent), type, createdAt, editedAt, approvedId, topicId, createdId,
 	// content, likes, unlikes, recipient, longitude, latitude, radius,
 	// community,TAGS,LINKS
 
 	/**
 	 * Construct VoMessage object from MEssage representation
-	 * @param msg Message. if msg.id > 0, then an update would be processed, new VoMessage would be created otherwise
-	 * @param checkConsistency - if set, all parameters would be checked for consistency  
-	 * @param updateLinkedCounters - if set, counter of topic and author would be updated according to the posted message parameters
-	 * @throws InvalidOperation if consistency check fails or other exception happens
+	 * 
+	 * @param msg
+	 *          Message. if msg.id > 0, then an update would be processed, new
+	 *          VoMessage would be created otherwise
+	 * @param checkConsistency
+	 *          - if set, all parameters would be checked for consistency
+	 * @param updateLinkedCounters
+	 *          - if set, counter of topic and author would be updated according
+	 *          to the posted message parameters
+	 * @throws InvalidOperation
+	 *           if consistency check fails or other exception happens
 	 */
-	public VoMessage( Message msg, boolean checkConsistency, boolean updateLinkedCounters, boolean makePersistent) throws InvalidOperation {
+	public VoMessage(Message msg) throws InvalidOperation {
+		this(msg, null);
+	}
+
+	VoMessage(Message msg, VoTopic ownerTopic) throws InvalidOperation {
+
+		this.childMessages = new TreeSet<VoMessage>();
+		int now = (int) (System.currentTimeMillis() / 1000);
 
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
 		try {
-			VoMessage parentMsg = null;
-			VoUser author = null;
-			VoUser recpt;
-			VoTopic topic = null;
-			VoMessage storedMsg;
-			
-			
-			int now = (int)(System.currentTimeMillis() / 1000);
+
 			/* CHeck the group to post, or move the message to */
 			VoGroup group = pm.getObjectById(VoGroup.class, msg.getGroupId());
 			if (null == group) {
@@ -65,189 +84,190 @@ public class VoMessage {
 			}
 			/* CHeck the recipient */
 			if (0 != msg.getRecipientId()) {
-				recpt = pm.getObjectById(VoUser.class, msg.getRecipientId());
-				if (null == recpt) {
+				if (null == pm.getObjectById(VoUser.class, msg.getRecipientId())) {
 					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Recipient of Message not found by ID=" + msg.getRecipientId());
 				}
+				recipient = msg.getRecipientId();
 			}
-			
-			if( msg.getId() > 0 ) { //update a stored message 
-				
-				storedMsg = pm.getObjectById(VoMessage.class, msg.getId());
-				if( null == storedMsg) 
-					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Message not found by ID=" + msg.getId());
-				
-				/*Check if content changed, then update edit date*/
-				if( !Arrays.equals(storedMsg.getContent(), msg.getContent().getBytes())){
-					storedMsg.setEditedAt( 0==msg.getEdited() ? now : msg.getEdited() );
-				}
-				
-				if( updateLinkedCounters ) { 
-					topic = storedMsg.getTopic();
-					if( null!=topic ) {
-						topic.updateLikes( msg.getLikesNum() - storedMsg.getLikes() );
-						topic.updateUnlikes( msg.getUnlikesNum() - storedMsg.getUnlikes() );
-						topic.setLastUpdate(now);
-					} else {
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No topic found by id="+storedMsg.getTopic().getId()+" that stored in Message ID=" + msg.getId());
+
+			VoMessage parentMsg = null;
+			try {
+				long parentId = msg.getParentId();
+				if (0 != parentId) {
+					Extent<VoMessage> voMsgExt = pm.getExtent(VoMessage.class);
+					for (VoMessage msg1 : voMsgExt) {
+						pm.retrieve(msg1);
+						Key parentMsg1 = msg1.getId().getParent();
+						System.out.println("Msg: " + msg1.getId().getId() + " topic " + msg1.getTopic().getId().getId()
+								+ (null == parentMsg1 ? " No parent." : " parent Key:" + parentMsg1.getId()));
 					}
-					author = pm.getObjectById(VoUser.class, storedMsg.getAuthorId());
-					if( null!=author) {
-						author.updateLikes( msg.getLikesNum() - storedMsg.getLikes() );
-						author.updateUnlikes( msg.getUnlikesNum() - storedMsg.getUnlikes() );
-					} else {
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No AUTHOR found by id="+storedMsg.getAuthorId()+" that stored in Message ID=" + msg.getId());
-					}
-				} 
-				if( storedMsg.getTopic().getId().getId() !=  msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId() ||
-						storedMsg.recipient !=  msg.getRecipientId() || storedMsg.createdAt != msg.getCreated() || storedMsg.type != msg.getType()) 
-					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Parameters: topic, author, recipient, createdAt, type could not be changed!");
-				
-			} else { //create new message
-				
-				try {
-					if (0 != msg.getParentId()) {
-						parentMsg = pm.getObjectById(VoMessage.class, msg.getParentId());
-						if (null == parentMsg) {
-							throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "parent Message not found by ID=" + msg.getParentId());
+//TODO WHAT THE FUCK HPPENS!!!! Why message could not be found by it's ID? 
+					try {
+						parentMsg = pm.getObjectById(VoMessage.class, parentId);
+					} catch (JDOObjectNotFoundException e) {
+						//logger.warn("Failed to find message by ID: "+parentId+" using JDO. Will try to find in by lower level Query");
+						Query query = pm.newQuery(VoMessage.class);
+						query.setFilter("id == :key");
+						List<VoMessage> results = (List<VoMessage>) query.execute( parentId );
+						if (results.iterator().hasNext()) {
+							parentMsg = results.iterator().next();
+							//logger.warn("Yes! message found by ID: "+parentId + " using lower level.");
+						} else {
+							//logger.warn("No message found by message ID: "+parentId);
 						}
 					}
-					author = pm.getObjectById(VoUser.class, msg.getAuthorId());
-					if (null == author) {
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Author of Message not found by ID=" + msg.getAuthorId());
+					if (null == parentMsg) {
+						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "parent Message not found by ID=" + parentId);
 					}
-					
-					if (0 != msg.getRecipientId()) {
-						recpt = pm.getObjectById(VoUser.class, msg.getRecipientId());
-						if (null == recpt) {
-							throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Recipient of Message not found by ID=" + msg.getRecipientId());
-						}
-					}
-					topic = parentMsg.getTopic();
-					if (null == topic) {
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Topic of PArent Message not found");
-					}
-					
-					/*message inserted to the second level, so list representation should be updated*/
-					topic.addChildMessage(msg.getParentId(), msg.getId());
-					
-				} catch (InvalidOperation e) {
-					throw e;
-				} catch (Exception e2) {
-					throw new InvalidOperation(com.vmesteonline.be.Error.GeneralError, "Failed to validate Message parameters:" + e2.getMessage());
+					parentMsg.addChildMessage(this);
+					this.topic = parentMsg.getTopic();
+
+				} else {
+					this.topic = ownerTopic;
 				}
 
-				storedMsg = this;
-				//set parameters that could not be changed in update
-				storedMsg.setTopic(topic);
-				storedMsg.setType(parentMsg.getType());
-				storedMsg.recipient =  msg.getRecipientId();
-				storedMsg.createdAt = msg.getCreated();
+				if (null == this.topic) {
+					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Topic of PArent Message not found");
+				}
+
+				/*
+				 * message inserted to the second level, so list representation should
+				 * be updated
+				 */
+				// this.topic.addChildMessage(msg.getParentId(), msg.getId());
+
+				VoUser author = pm.getObjectById(VoUser.class, msg.getAuthorId());
+				if (null == author) {
+					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Author of Message not found by ID=" + msg.getAuthorId());
+				}
+				this.authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
+				this.type = msg.getType();
+				this.createdAt = msg.getCreated();
+
 				VoUserGroup homeGroup = author.getHomeGroup();
-				if(null!=homeGroup) {
-					storedMsg.latitude = homeGroup.getLatitude();
-					storedMsg.longitude = homeGroup.getLongitude();
-					storedMsg.radius = group.getRadius();
+				if (null != homeGroup) {
+					latitude = homeGroup.getLatitude();
+					longitude = homeGroup.getLongitude();
+					radius = group.getRadius();
 				} else {
 					throw new InvalidOperation(com.vmesteonline.be.Error.GeneralError, "User without HomeGroup must not create a message");
 				}
-				storedMsg.type = msg.getType();
-				if(updateLinkedCounters){
-					topic.setMessageNum( topic.getMessageNum() + 1 );
-					topic.setLastUpdate(now);
-					author.incrementMessages(1);
-				}
-			}  
-			if(checkConsistency) { /*Check that all of linked messages exists and has type that is required*/
-				for( Entry<MessageType, Long> entry:  msg.getLinkedMessages().entrySet()){
+
+				topic.setMessageNum(topic.getMessageNum() + 1);
+				topic.setLastUpdate(now);
+				author.incrementMessages(1);
+
+				/*
+				 * Check that all of linked messages exists and has type that is
+				 * required
+				 */
+				this.tags = new HashMap<Long, String>();
+				this.links = new HashMap<MessageType, Long>();
+
+				for (Entry<MessageType, Long> entry : msg.getLinkedMessages().entrySet()) {
 					VoMessage linkedMsg = pm.getObjectById(VoMessage.class, entry.getValue());
-					if( null == linkedMsg ) 
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Linked message not found by ID:" + entry.getValue());  
-					if(!entry.getKey().equals(linkedMsg.getType()))
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, 
-								"Linked message with ID:" + entry.getValue() + " type missmatch. Stored type:" + linkedMsg.getType().name() + " but linked as:" + entry.getKey().name());
+					if (null == linkedMsg)
+						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Linked message not found by ID:" + entry.getValue());
+					if (!entry.getKey().equals(linkedMsg.getType()))
+						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Linked message with ID:" + entry.getValue()
+								+ " type missmatch. Stored type:" + linkedMsg.getType().name() + " but linked as:" + entry.getKey().name());
+					links.put(entry.getKey(), entry.getValue());
 				}
-			}
-			
-			//now update parameters that could be changed 
-			storedMsg.setContent( msg.getContent().getBytes() );
-			storedMsg.setLikes(msg.getLikesNum());
-			storedMsg.setUnlikes(msg.getUnlikesNum());
-			storedMsg.setApprovedId(msg.getApprovedBy());
-			parentMsg.addChildMessage(storedMsg);
-			try {
-				if(makePersistent) 
-					pm.makePersistent(storedMsg);
-				if(updateLinkedCounters){
-					pm.makePersistent(topic);
-					pm.makePersistent(author);
+				this.tags = msg.getTags();
+				this.content = msg.getContent().getBytes();
+				this.likesNum = 0;
+				this.unlikesNum = 0;
+				this.approvedId = msg.getApprovedBy();
+
+				pm.makePersistent(topic);
+				if (null != parentMsg)
 					pm.makePersistent(parentMsg);
-				}
-			} catch (Exception e) {
-				throw new InvalidOperation(com.vmesteonline.be.Error.GeneralError, "Failed to save the message ID="+msg.getId()+": Exception:" +e.getMessage());
-			}
-			if(this != storedMsg) { //update elements of this object according to results of update
-				this.setTopic(storedMsg.topic);
-				this.setId(storedMsg.id);
-				this.setTags(storedMsg.tags);
-				this.setLinks(storedMsg.links);
+				pm.makePersistent(author);
+				pm.makePersistent(this);
+
+				this.userMessage = new VoUserMessage(author, this, false, false, true);
+				pm.makePersistent(this);
+
+				msg.setId(this.id.getId());
+				msg.setTopicId(topic.getId().getId());
+
+			} catch (InvalidOperation e) {
+				throw e;
+			} catch (Exception e2) {
+				throw new InvalidOperation(com.vmesteonline.be.Error.GeneralError, "Failed to validate Message parameters:" + e2.getMessage());
 			}
 		} finally {
 			pm.close();
-		} 
+		}
 	}
 
 	public Message getMessage() {
 		Key parentKey = id.getParent();
-		return new Message(id.getId(), null==parentKey ? 0L : parentKey.getId(), type,getTopic().getId().getId(), 0L, authorId.getId(), createdAt, editedAt, 
-				new String( content ), likesNum, unlikesNum, links, tags, 
-				new UserMessage(getUserMessage().isRead(), getUserMessage().isLikes(), getUserMessage().isUnlikes()));
+		return new Message(id.getId(), null == parentKey ? 0L : parentKey.getId(), type, getTopic().getId().getId(), 0L, authorId.getId(), createdAt,
+				editedAt, new String(content), likesNum, unlikesNum, links, tags, new UserMessage(getUserMessage().isRead(), getUserMessage().isLikes(),
+						getUserMessage().isUnlikes()));
 	}
+ 
 	/**
-	 * Method returns child messages of one level below the current message. Set is limited by size parameter and shifted by order 
-	 * @param offset how many of childs should be skipped
-	 * @param size how big list should be returned
+	 * Method returns child messages of one level below the current message. Set
+	 * is limited by size parameter and shifted by order
+	 * 
+	 * @param offset
+	 *          how many of childs should be skipped
+	 * @param size
+	 *          how big list should be returned
 	 * @return set of childs
 	 */
-	public Set<Message> getDirectChildMessages( int offset, int size ){
+	public Set<Message> getDirectChildMessages(int offset, int size) {
 		Set<Message> childs = new HashSet<Message>();
 		int count = 0;
-		for( VoMessage child: this.getChildMessages()){
-			if( count >= offset ) {
-				childs.add( child.getMessage());
-				if( --size == 0 ) break;
+		for (VoMessage child : this.getChildMessages()) {
+			if (count >= offset) {
+				childs.add(child.getMessage());
+				if (--size == 0)
+					break;
 			}
 		}
 		return childs;
 	}
+
 	/**
-	 * Method returns a list representation of child tree f messages. The size of the tree limited by size parameter and offset messages are skipped.
-	 * @param setToFill a set to fill list to
-	 * @param offset - skip first of messages
-	 * @param size - maximum size of list to return 
+	 * Method returns a list representation of child tree f messages. The size of
+	 * the tree limited by size parameter and offset messages are skipped.
+	 * 
+	 * @param setToFill
+	 *          a set to fill list to
+	 * @param offset
+	 *          - skip first of messages
+	 * @param size
+	 *          - maximum size of list to return
 	 * @return filled size
 	 */
-	public int getChildMessagesTree( Set<Message> setToFill, int offset, int size ){
+	public int getChildMessagesTree(Set<Message> setToFill, int offset, int size) {
 		int count = 0;
-		for( VoMessage child: this.getChildMessages()){
-			if( --size == 0 ) break;
-			count += child.getChildMessagesTree( setToFill, offset-count, size );
-			if( count > offset ) 
-				setToFill.add( child.getMessage());
+		for (VoMessage child : this.getChildMessages()) {
+			if (--size == 0)
+				break;
+			count += child.getChildMessagesTree(setToFill, offset - count, size);
+			if (count > offset)
+				setToFill.add(child.getMessage());
 			count++;
 		}
 		return count - offset;
 	}
-	
+
 	public int getEditedAt() {
 		return editedAt;
 	}
 
-	public Set<VoMessage> getChildMessages() {return childMessages;}
-	public void addChildMessage( VoMessage childMsg ) {
+	public Set<VoMessage> getChildMessages() {
+		return childMessages;
+	}
+
+	public void addChildMessage(VoMessage childMsg) {
 		childMessages.add(childMsg);
 	}
-	
+
 	public void setEditedAt(int editedAt) {
 		this.editedAt = editedAt;
 	}
@@ -276,18 +296,22 @@ public class VoMessage {
 		this.likesNum = likes;
 	}
 
-	public int decrementLikes(){
+	public int decrementLikes() {
 		return --likesNum;
 	}
-	public int incrementLikes(){
+
+	public int incrementLikes() {
 		return ++likesNum;
 	}
-	public int decrementUnlikes(){
+
+	public int decrementUnlikes() {
 		return --unlikesNum;
 	}
-	public int incrementUnlikes(){
+
+	public int incrementUnlikes() {
 		return ++unlikesNum;
 	}
+
 	public int getUnlikes() {
 		return unlikesNum;
 	}
@@ -323,12 +347,15 @@ public class VoMessage {
 	public Key getId() {
 		return id;
 	}
-	public void setId( Key id) {
+
+	public void setId(Key id) {
 		this.id = id;
 	}
+
 	public MessageType getType() {
 		return type;
 	}
+
 	public void setType(MessageType type) {
 		this.type = type;
 	}
@@ -337,10 +364,10 @@ public class VoMessage {
 		return createdAt;
 	}
 
-	public void setTopic( VoTopic topic ){
-		this.topic = topic; 
+	public void setTopic(VoTopic topic) {
+		this.topic = topic;
 	}
-	
+
 	public VoTopic getTopic() {
 		return topic;
 	}
@@ -360,17 +387,16 @@ public class VoMessage {
 	public float getRadius() {
 		return radius;
 	}
-	
-	
 
 	public VoUserMessage getUserMessage() {
-		if(null==userMessage){
+		if (null == userMessage) {
 			PersistenceManager pm = PMF.get().getPersistenceManager();
 			try {
 				Query q = pm.newQuery(VoUserMessage.class);
-				/*q.setFilter(arg0);
-				q.setFilter("tag == tagId");
-				q.declareParameters("long tagId");*/
+				/*
+				 * q.setFilter(arg0); q.setFilter("tag == tagId");
+				 * q.declareParameters("long tagId");
+				 */
 			} finally {
 				pm.close();
 			}
@@ -382,8 +408,6 @@ public class VoMessage {
 		this.userMessage = userMessage;
 	}
 
-
-
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key id;
@@ -393,9 +417,9 @@ public class VoMessage {
 	private MessageType type;
 
 	@Persistent
-	@Extensions( {@Extension(vendorName="datanucleus", key="cascade-update", value="false"), 
-		@Extension(vendorName="datanucleus", key="collection", value="dependent-element")})
-	@Order(extensions = @Extension(vendorName="datanucleus",key="list-ordering", value="createdAt asc"))
+	/*@Extensions({ @Extension(vendorName = "datanucleus", key = "cascade-update", value = "false"),
+			@Extension(vendorName = "datanucleus", key = "collection", value = "dependent-element") })
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "createdAt asc"))*/
 	private Set<VoMessage> childMessages;
 
 	@Persistent
@@ -410,7 +434,8 @@ public class VoMessage {
 	@Unindexed
 	private long approvedId;
 
-	@Persistent/*(mappedBy = "message") // if uncomment - topic become parent of message*/
+	@Persistent
+	@Unowned
 	private VoTopic topic;
 
 	@Persistent
@@ -445,10 +470,10 @@ public class VoMessage {
 	@Persistent
 	@Unindexed
 	private Map<MessageType, Long> links;
-	
+
 	@Persistent
 	@Unindexed
 	@Unowned
 	private VoUserMessage userMessage;
-	
+
 }

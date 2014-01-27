@@ -75,6 +75,10 @@ public class VoUserGroup {
 	public VoGroup getGroup() {
 		return group;
 	}
+	
+	public boolean isHome(){
+		return group.isHome();
+	}
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -100,7 +104,4 @@ public class VoUserGroup {
 	@Unowned
 	@Unindexed
 	private VoGroup group;
-
-	@Persistent
-	private VoBuilding building;
 }

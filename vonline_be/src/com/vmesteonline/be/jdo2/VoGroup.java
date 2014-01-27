@@ -11,6 +11,8 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 @PersistenceCapable
 public class VoGroup {
 
+	public static final int RADIUS_FOR_UNKNOWNS = 2000000; //whole world
+	
 	public VoGroup(String visibleName, int radius) {
 		this(visibleName,radius,false);
 	}
