@@ -33,7 +33,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public UserServiceImpl() {
 
 	}
-	
+
 	public UserServiceImpl(String sessId) {
 		super(sessId);
 	}
@@ -45,20 +45,21 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public List<Group> getUserGroups() throws InvalidOperation, TException {
 		long userId = getUserId();
-		VoUser user = PMF.getPm().getObjectById(VoUser.class, userId);
+		PersistenceManager pm = PMF.getPm();
+		VoUser user = pm.getObjectById(VoUser.class, userId);
 		if (user == null) {
 			logger.error("can't find user by id " + Long.toString(userId));
 			throw new InvalidOperation(Error.NotAuthorized, "can't find user by id");
 		}
-			logger.info("find user name " + user.getEmail());
-
+		logger.info("find user name " + user.getEmail());
+		pm.retrieve(user);
 		if (user.getGroups() == null) {
 			logger.warn("user with id " + Long.toString(userId) + " has no any groups");
 			throw new InvalidOperation(Error.GeneralError, "can't find user bu id");
 		}
 		List<Group> groups = new ArrayList<Group>();
 		for (VoUserGroup group : user.getGroups()) {
-			groups.add( group.createGroup());
+			groups.add(group.createGroup());
 		}
 		return groups;
 	}
@@ -76,55 +77,53 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 		if (user.getRubrics() == null) {
 			logger.warn("user with id " + Long.toString(userId) + " has no any rubrics");
-			throw new InvalidOperation(Error.GeneralError, "No Rubrics are initialized for user="+userId);
+			throw new InvalidOperation(Error.GeneralError, "No Rubrics are initialized for user=" + userId);
 		}
 
 		List<Rubric> rubrics = new ArrayList<Rubric>();
 		for (VoRubric r : user.getRubrics()) {
-			rubrics.add( r.createRubric());
+			rubrics.add(r.createRubric());
 		}
 		return rubrics;
 	}
 
 	public static List<String> getLocationCodesForRegistration() {
-	
+
 		PersistenceManager pm = PMF.getPm();
 		try {
-			Extent<VoPostalAddress> postalAddresses = pm.getExtent(VoPostalAddress.class,true);
-			if( !postalAddresses.iterator().hasNext() ) {
+			Extent<VoPostalAddress> postalAddresses = pm.getExtent(VoPostalAddress.class, true);
+			if (!postalAddresses.iterator().hasNext()) {
 				return initializeTestLocations();
 			}
-			
+
 			List<String> locations = new ArrayList<String>();
-			for( VoPostalAddress pa: postalAddresses ){
+			for (VoPostalAddress pa : postalAddresses) {
 				pm.retrieve(pa);
-				locations.add(""+pa.getAddressCode());
+				locations.add("" + pa.getAddressCode());
 			}
 			return locations;
 		} finally {
 			pm.close();
 		}
 	}
-	
-	private static List<String> initializeTestLocations(){
+
+	private static List<String> initializeTestLocations() {
 		List<String> locations = new ArrayList<String>();
-		VoStreet street = new VoStreet( new VoCity( new VoCountry("Россия"), "Санкт Петербург"), "Республиканская");
+		VoStreet street = new VoStreet(new VoCity(new VoCountry("Россия"), "Санкт Петербург"), "Республиканская");
 		PMF.getPm().makePersistent(street);
 		VoPostalAddress[] addresses;
 		try {
 			Key streetId = street.getId();
-			addresses = new VoPostalAddress[] {
-					new VoPostalAddress( new VoBuilding( streetId, "32/3", 59.933146F, 30.423117F), 2 ),
-					new VoPostalAddress( new VoBuilding( streetId, "35", 59.932544F, 30.419684F), 1 ),
-					new VoPostalAddress( new VoBuilding( streetId, "6", 59.934177F, 30.404331F), 1 )
-			};
+			addresses = new VoPostalAddress[] { new VoPostalAddress(new VoBuilding(streetId, "32/3", 59.933146F, 30.423117F), 2),
+					new VoPostalAddress(new VoBuilding(streetId, "35", 59.932544F, 30.419684F), 1),
+					new VoPostalAddress(new VoBuilding(streetId, "6", 59.934177F, 30.404331F), 1) };
 		} catch (InvalidOperation e) {
-			logger.error("Failed to create a list of location codes. Street create failed. "+e);
+			logger.error("Failed to create a list of location codes. Street create failed. " + e);
 			return locations;
 		}
-		for( VoPostalAddress pa: addresses){
-			PMF.getPm().makePersistent( pa );
-			locations.add( "" + pa.getAddressCode() );
+		for (VoPostalAddress pa : addresses) {
+			PMF.getPm().makePersistent(pa);
+			locations.add("" + pa.getAddressCode());
 		}
 		return locations;
 	}

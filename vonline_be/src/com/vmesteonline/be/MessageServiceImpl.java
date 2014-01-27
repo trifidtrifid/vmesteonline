@@ -244,7 +244,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				msgsaaa[ss] = new Message[topicsa.length][];
 
 				for (int topNo = 0; topNo < topicsa.length; topNo++) {
-					Message[] msgsa = new Message[(int) (Math.random() * 100)];
+					Message[] msgsa = new Message[(int) (Math.random() * 100)+1];
 					msgsaaa[ss][topNo] = msgsa;
 
 					boolean likes = Math.random() > 0.3, unlikes = !likes & Math.random() > 0.7;
