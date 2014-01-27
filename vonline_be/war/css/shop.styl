@@ -1,0 +1,346 @@
+@import 'bootstrap.min.css'
+@import 'font-awesome-original.css'
+@import 'font-awesome.min.css'
+@import 'ace-fonts.css'
+@import 'ace.css'
+@import 'flexslider.css'
+
+main-radius = 2px
+second-radius = 1px
+
+html
+   height 100%
+
+body
+  background #fff
+  height 101%
+
+a
+  outline none !important
+
+.clear
+  clear:both
+
+transform()
+  -moz-transform rotate(arguments); /* Для Firefox */
+  -ms-transform rotate(arguments); /* Для IE */
+  -webkit-transform rotate(arguments); /* Для Safari, Chrome, iOS */
+  -o-transform rotate(arguments); /* Для Opera */
+  transform rotate(arguments);
+
+.btn-primary
+.header-color-blue2
+  background-color #438eb9 !important
+
+.container
+  width 990px
+  padding 0
+  max-width none
+  min-height 100%
+
+.ace-nav>li
+    a
+      padding 11px 12px 0 12px
+      line-height 1.428571429
+      font-size 16px
+      border none
+      border-bottom 3px solid rgb(111, 179, 224)
+    &.active
+      a
+        border-bottom-color #2b7dbc
+
+.ace-nav>.user-short a
+  border none
+  padding 3px 8px
+  font-size 14px
+
+.ace-nav>.user-short>a
+  line-height inherit
+  padding 0 8px
+  font-size 16px
+
+.nav-list > li > a
+  padding 8px 10px 10px 16px
+  height auto
+  line-height 20px
+  position relative
+  span
+    display inline-block
+    vertical-align middle
+    width 134px
+  b
+    display inline-block
+    vertical-align middle
+
+.nav-list > li > a,
+.nav-list > li.active > a,
+.nav-list > li.active:hover a
+  font-size 15px
+
+.btn
+  border-radius main-radius !important
+
+.sidebar
+  padding-top 20px
+  vertical-align top
+
+.main-content
+  margin-right 190px
+  padding 10px
+
+.shop-right
+  float right
+  width 190px
+  border 0
+  border-left 1px solid #ccc
+  padding-bottom 20px
+  right 0
+  &:before
+    border 0
+    border-left 1px solid #ccc
+  .show-right
+    display none
+  .hide-right
+    display none
+  .sidebar-title
+    font-size 20px
+    border-top 1px solid #ccc
+    padding 4px 0
+    background #f9f9f9
+    text-align center
+    color #2b7dbc
+  nav
+    a
+      display block
+  .catalog-order
+    margin-left 0
+    li
+      padding 8px 0 8px 5px
+      display block
+      background #f9f9f9
+      list-style none
+      font-size 12px
+      border-bottom 1px solid #ccc
+      img
+        float left
+        width 40px
+      .product-right-descr
+        margin-left 45px
+        padding-right 20px
+        line-height 16px
+        span
+          float right
+          margin-right -10px
+          font-weight bold
+  textarea
+    margin 10px
+    width 170px
+    height 80px
+    font-family Tahoma,Arial
+    font-size 14px
+    color rgb(133, 133, 133)
+  .btn-grey
+    margin-left 10px
+    margin-right 4px
+
+.datepicker
+  padding 0 2px
+  .switch
+    text-align center
+  td
+    min-width 22px !important
+    padding 0 !important
+    text-align center
+    cursor pointer
+    &.active
+      color #fff
+
+th.prev
+th.next
+.input-group-addon
+  cursor pointer
+
+.ui-menu-item
+.ui-autocomplete-category
+  list-style none
+.ui-helper-hidden-accessible
+  display none
+.icon-search:hover
+  text-decoration none
+.ui-menu-item a:hover
+  text-decoration none
+
+.breadcrambs
+  margin-bottom 10px
+  a
+    font-weight normal
+  span
+    display inline-block
+    margin 0 2px
+  span
+
+.shop-menu
+  overflow auto
+  margin-bottom 10px
+  ul
+    margin-left 0
+    li
+      list-style none
+      float left
+      margin-left 5px
+      width 80px
+      text-align center
+      line-height 14px
+      font-size 11px
+      &:first-child
+        margin-left 0
+        width 50px
+      &.active
+        a
+          color #2a6496
+      a
+        display block
+        font-size 24px
+        &:hover
+          text-decoration none
+
+.catalog
+  table
+    width 100%
+    thead
+      tr
+        td
+          background #f9f9f9
+          font-style italic
+    tr
+      &:first-child
+        td
+          border-top 1px solid #ccc
+      td
+        vertical-align middle
+        border-bottom 1px solid #ccc
+        padding 5px 0
+        text-align center
+        &:first-child
+          text-align left
+          width 350px
+          padding-left 5px
+        img
+          width 20px
+          float left
+        span
+          display block
+          margin-left 30px
+          margin-right 10px
+        .spinner-down:hover
+        .spinner-up:hover
+          background-color rgb(111, 179, 224) !important
+
+.modal
+  width 560px
+  left 50%
+  margin-left -285px
+  background #fff
+  top 20%
+  max-height 288px
+  overflow-y auto
+  .close
+    outline none
+  .product-slider
+    float left
+    .flexslider
+      width 200px
+      margin-bottom 0
+      box-shadow none
+      overflow hidden
+      .flex-direction-nav a
+        background url(../i/bg_direction_nav.png) no-repeat 0 0
+      .flex-direction-nav .flex-next
+        background-position 100% 0
+    .slider
+      img
+        max-width 192px
+        width auto
+    .carousel
+      img
+        max-width 60px
+      li
+        cursor pointer
+  .product-descr
+     margin-left 210px
+    h3
+      margin-top 0
+    .product-text
+      height 170px
+      overflow auto
+    .modal-body
+      padding 10px
+      position static
+    .modal-footer
+      position absolute
+      bottom 20px
+      right 10px
+      width 330px
+      background #fff
+      text-align left
+      padding 0
+      padding-top 15px
+      span
+      .ace-spinner
+      .btn-primary
+        display inline-block
+        vertical-align middle
+        margin 0 13px
+      span
+        font-size 20px
+.sidebar#sidebar
+  height 100%
+  left 0
+  top 0
+  bottom 0
+  position absolute
+
+@media all and (max-width: 990px)
+  .shop-right
+    position fixed
+    //top 20%
+    height 100%
+    right -190px
+    z-index 100
+    padding 0 0 20px 0
+    border-bottom 1px solid #ccc
+    &:before
+      display none
+    .show-right
+      display block
+      position fixed
+      top: 40%
+      right -32px
+      cursor pointer
+      font-size 24px
+      border 1px solid #ccc
+      background #ccc
+      padding 0 10px
+      transform -90deg;
+    .hide-right
+      display block;
+      position absolute
+      top 10px
+      right 10px
+      cursor pointer
+    .catalog-order
+      max-height 300px
+      overflow-y auto
+  .main-content
+    margin-right 0
+  .catalog table tr td:first-child
+    width 450px
+
+
+@media all and (max-width: 768px)
+  .container
+    width 758px
+  .catalog table tr td:first-child
+    width 350px
+
+
