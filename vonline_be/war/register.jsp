@@ -50,9 +50,9 @@
 				<td>group</td>
 				<td><select id="selectGroup">
 						<%
-							List<Group> groups = UserServiceImpl.getGroupsForRegistration();
-							for (Group g : groups) {
-								out.print("<option value=\"" + g.id + "\">" + g.visibleName + "</option>");
+							List<String> codes = UserServiceImpl.getLocationCodesForRegistration();
+							for (String code : codes) {
+								out.print("<option value=\"" + code + "\">" + code + "</option>");
 							}
 						%>
 

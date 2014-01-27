@@ -54,9 +54,22 @@ public class VoMessage {
 			VoUser author = null;
 			VoUser recpt;
 			VoTopic topic = null;
-			VoGroup group;
 			VoMessage storedMsg;
+			
+			
 			int now = (int)(System.currentTimeMillis() / 1000);
+			/* CHeck the group to post, or move the message to */
+			VoGroup group = pm.getObjectById(VoGroup.class, msg.getGroupId());
+			if (null == group) {
+				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Group of Message not found by ID=" + msg.getGroupId());
+			}
+			/* CHeck the recipient */
+			if (0 != msg.getRecipientId()) {
+				recpt = pm.getObjectById(VoUser.class, msg.getRecipientId());
+				if (null == recpt) {
+					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Recipient of Message not found by ID=" + msg.getRecipientId());
+				}
+			}
 			
 			if( msg.getId() > 0 ) { //update a stored message 
 				
@@ -110,13 +123,9 @@ public class VoMessage {
 							throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Recipient of Message not found by ID=" + msg.getRecipientId());
 						}
 					}
-					topic = pm.getObjectById(VoTopic.class, msg.getTopicId());
+					topic = parentMsg.getTopic();
 					if (null == topic) {
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Topic of Message not found by ID=" + msg.getTopicId());
-					}
-					group = pm.getObjectById(VoGroup.class, msg.getGroupId());
-					if (null == group) {
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Group of Message not found by ID=" + msg.getGroupId());
+						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Topic of PArent Message not found");
 					}
 					
 					/*message inserted to the second level, so list representation should be updated*/
@@ -131,6 +140,7 @@ public class VoMessage {
 				storedMsg = this;
 				//set parameters that could not be changed in update
 				storedMsg.setTopic(topic);
+				storedMsg.setType(parentMsg.getType());
 				storedMsg.recipient =  msg.getRecipientId();
 				storedMsg.createdAt = msg.getCreated();
 				VoUserGroup homeGroup = author.getHomeGroup();
@@ -266,6 +276,18 @@ public class VoMessage {
 		this.likesNum = likes;
 	}
 
+	public int decrementLikes(){
+		return --likesNum;
+	}
+	public int incrementLikes(){
+		return ++likesNum;
+	}
+	public int decrementUnlikes(){
+		return --unlikesNum;
+	}
+	public int incrementUnlikes(){
+		return ++unlikesNum;
+	}
 	public int getUnlikes() {
 		return unlikesNum;
 	}
@@ -302,10 +324,13 @@ public class VoMessage {
 		return id;
 	}
 	public void setId( Key id) {
-		this.id = id;;
+		this.id = id;
 	}
 	public MessageType getType() {
 		return type;
+	}
+	public void setType(MessageType type) {
+		this.type = type;
 	}
 
 	public int getCreatedAt() {
@@ -341,10 +366,14 @@ public class VoMessage {
 	public VoUserMessage getUserMessage() {
 		if(null==userMessage){
 			PersistenceManager pm = PMF.get().getPersistenceManager();
-			Query q = pm.newQuery(VoUserMessage.class);
-			/*q.setFilter(arg0);
-			q.setFilter("tag == tagId");
-			q.declareParameters("long tagId");*/
+			try {
+				Query q = pm.newQuery(VoUserMessage.class);
+				/*q.setFilter(arg0);
+				q.setFilter("tag == tagId");
+				q.declareParameters("long tagId");*/
+			} finally {
+				pm.close();
+			}
 		}
 		return userMessage;
 	}

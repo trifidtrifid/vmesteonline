@@ -289,8 +289,8 @@ com.vmesteonline.be.AuthService_registerNewUser_result.prototype.read = function
     switch (fid)
     {
       case 0:
-      if (ftype == Thrift.Type.BOOL) {
-        this.success = input.readBool().value;
+      if (ftype == Thrift.Type.I64) {
+        this.success = input.readI64().value;
       } else {
         input.skip(ftype);
       }
@@ -315,8 +315,8 @@ com.vmesteonline.be.AuthService_registerNewUser_result.prototype.read = function
 com.vmesteonline.be.AuthService_registerNewUser_result.prototype.write = function(output) {
   output.writeStructBegin('AuthService_registerNewUser_result');
   if (this.success !== null && this.success !== undefined) {
-    output.writeFieldBegin('success', Thrift.Type.BOOL, 0);
-    output.writeBool(this.success);
+    output.writeFieldBegin('success', Thrift.Type.I64, 0);
+    output.writeI64(this.success);
     output.writeFieldEnd();
   }
   if (this.exc !== null && this.exc !== undefined) {

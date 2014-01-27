@@ -8,19 +8,24 @@ import javax.jdo.Query;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
+import com.google.appengine.api.datastore.Key;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.GroupHelper;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	public AuthServiceImpl() {
+	}
 
+	public AuthServiceImpl(String sessId) {
+		super(sessId);
 	}
 
 	public static VoSession getSession(String sessId) throws InvalidOperation {
@@ -32,7 +37,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	@Override
 	public boolean login(final String email, final String password) throws InvalidOperation, TException {
-		if (httpSession == null) {
+		if (sessionStorage == null) {
 			logger.error("http session is null");
 			throw new InvalidOperation(Error.IncorrectParametrs, "http session is null");
 		}
@@ -42,7 +47,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		VoUser u = getUserByEmail(email);
 		if (u != null) {
 			if (u.getPassword().equals(password)) {
-				VoSession sess = new VoSession(httpSession.getId(), u);
+				VoSession sess = new VoSession(sessionStorage.getId(), u);
 				VoUserGroup homeGroup = u.getHomeGroup();
 				if (homeGroup != null) {
 					sess.setLatitude(homeGroup.getLatitude());
@@ -58,43 +63,45 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public boolean registerNewUser(String firstname, String lastname, String password, String email, String locationId) throws InvalidOperation {
+	public long registerNewUser(String firstname, String lastname, String password, String email, String locationId) throws InvalidOperation {
 
 		if (getUserByEmail(email) != null)
-			throw new InvalidOperation(Error.IncorrectParametrs, "registration exsist");
+			throw new InvalidOperation(Error.RegistrationAlreadyExist, "registration exsist");
 
 		PersistenceManager pm = PMF.getPm();
 		VoUser user = new VoUser(firstname, lastname, email, password);
-		VoGroup home = GroupHelper.getGroupById(Long.decode(locationId));
-		if (home == null)
-			throw new InvalidOperation(Error.RegistrationAlreadyExist, "unknown user home group");
-
-		// find all defaults groups for user
-		VoUserGroup gs = new VoUserGroup(home);
-		user.getGroups().add(gs);
-		for (VoUserGroup r : Defaults.defaultUserGroups) {
-			gs = r.clone();
-			gs.setLatitude(home.getLatitude());
-			gs.setLongitude(home.getLongitude());
-			user.getGroups().add(gs);
+		try {
+			// find all defaults rubrics for user
+			Query q = pm.newQuery(VoRubric.class);
+			q.setFilter(" subscribedByDefault == true");
+			List<VoRubric> defRubrics = (List<VoRubric>) q.execute();
+			if( defRubrics.isEmpty() ) defRubrics = Defaults.defaultRubrics;
+			for (VoRubric rubric : defRubrics) {
+				user.addRubric(rubric);
+			}
+		} finally {
+			pm.close();
 		}
 
-		// find all defaults rubrics for user
-		for (VoRubric r : Defaults.defaultRubrics) {
-			VoRubric ur = r.clone();
-			user.getRubrics().add(ur);
+		try {
+			user.setLocation(Long.parseLong(locationId), true);
+		} catch (NumberFormatException | InvalidOperation e) {
+			throw new InvalidOperation(Error.IncorectLocationCode, "Incorrect code." + e);
 		}
 
-		pm.makePersistent(user);
 		logger.info("register " + email + " pass " + password + " id " + user.getId());
+		return user.getId();
 
-		return true;
 	}
 
 	@Override
 	public void logout() throws InvalidOperation, TException {
-		// VoSession sess = getSession();
-
+		PersistenceManager pm = PMF.getPm();
+		try {
+			pm.deletePersistent(getCurrentSession());
+		} finally {
+			pm.close();
+		}
 	}
 
 	public VoUser getUserByEmail(String email) {

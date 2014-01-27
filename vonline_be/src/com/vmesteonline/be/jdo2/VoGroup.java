@@ -6,21 +6,23 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.datanucleus.annotations.Unindexed;
 
 @PersistenceCapable
 public class VoGroup {
 
-	public VoGroup(String visibleName, String name, String descriprion, float longitude, float latitude, int radius) {
+	public VoGroup(String visibleName, int radius) {
+		this(visibleName,radius,false);
+	}
+	
+	public VoGroup(String visibleName, int radius, boolean subscribedByDefault) {
 		this.visibleName = visibleName;
-		this.name = name;
-		this.description = descriprion;
-		this.longitude = longitude;
-		this.latitude = latitude;
 		this.radius = radius;
+		this.subscribedByDefault = subscribedByDefault;
 	}
 
 	public VoGroup clone() {
-		VoGroup gr = new VoGroup(visibleName, name, description, longitude, latitude, radius);
+		VoGroup gr = new VoGroup(visibleName, radius);
 		return gr;
 	}
 
@@ -40,38 +42,6 @@ public class VoGroup {
 		this.visibleName = visibleName;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public float getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(float longitude) {
-		this.longitude = longitude;
-	}
-
-	public float getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(float latitude) {
-		this.latitude = latitude;
-	}
-
 	public int getRadius() {
 		return radius;
 	}
@@ -80,26 +50,20 @@ public class VoGroup {
 		this.radius = radius;
 	}
 
+	public boolean isHome(){
+		return radius==0;}
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key id;
 
 	@Persistent
+	@Unindexed
 	private String visibleName;
 
 	@Persistent
-	private String name;
-
-	@Persistent
-	private String description;
-
-	@Persistent
-	private float longitude;
-
-	@Persistent
-	private float latitude;
-
-	@Persistent
 	private int radius;
+	
+	@Persistent 
+	private boolean subscribedByDefault;
 
 }

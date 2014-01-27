@@ -2,8 +2,15 @@ package com.vmesteonline.be;
 
 import static org.junit.Assert.fail;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
+
+import javax.jdo.Extent;
+import javax.jdo.PersistenceManager;
+import javax.servlet.http.HttpSession;
 
 import org.apache.thrift.TException;
 import org.junit.After;
@@ -13,7 +20,10 @@ import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoTopic;
+import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.utils.Pair;
 
 public class MessageServiceTests {
@@ -33,7 +43,8 @@ public class MessageServiceTests {
 
 	@Test
 	public void testGetTopicsSTUB() {
-		MessageServiceImpl msi = new MessageServiceImpl();
+		String sessionId = "11111111111111111111111";
+		MessageServiceImpl msi = new MessageServiceImpl( sessionId );
 		try {
 			int offset=0;
 			do {
@@ -91,6 +102,65 @@ public class MessageServiceTests {
 		Assert.assertTrue( parentChildPairsList.get(13).right.equals(14L));
 		Assert.assertTrue( parentChildPairsList.get(15).right.equals(17L));
 		Assert.assertTrue( parentChildPairsList.get(17).right.equals(16L));
+	}
+	
+	@Test
+	public void createTopicTest() {
+		String sessionId = "11111111111111111111111";
+		//create locations
+		try{
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+			VoGroup homeGroup = new VoGroup("Home GRP", "", "Descr of Home", 10.0f, 30.0f, 0);
+			VoGroup blockGroup = new VoGroup("Block GRP", "", "Descr of Block", 10.0f, 30.0f, 100);
+			pm.makePersistent(homeGroup);
+			pm.makePersistent(blockGroup);
+			
+			AuthServiceImpl asi = new AuthServiceImpl(sessionId);
+			asi.registerNewUser("Test1", "USer2", "123", "a1@b.com", ""+homeGroup.getId().getId());
+			asi.registerNewUser("Test2", "USer2", "123", "a2@b.com", ""+homeGroup.getId().getId());
+			
+			Assert.assertTrue(asi.login("a1@b.com", "123"));
+			
+			VoUser user1 = asi.getUserByEmail("a1@b.com");
+			VoUser user2 = asi.getUserByEmail("a2@b.com");
+			
+			UserServiceImpl usi = new UserServiceImpl(sessionId);
+			List<Group> userGroups = usi.getUserGroups();
+			List<Rubric> userRubrics = usi.getUserRubrics();
+			Assert.assertTrue(userGroups.size()>0);
+			Assert.assertTrue(userRubrics.size()>0);
+			Assert.assertTrue(userRubrics.get(0)!=null);
+			
+			//start to test that we can create a topic in a group
+			MessageServiceImpl msi = new MessageServiceImpl(sessionId);
+			HashMap<MessageType, Long> noLinkedMessages = new HashMap<MessageType, Long>();
+			TreeMap<Long, String> noTags = new TreeMap<Long, String>();
+			
+			Topic topic = msi.createTopic(blockGroup.getId().getId(),"Test topic", MessageType.BASE, "CCOntent of the first topic is a simple string", 
+					noLinkedMessages, noTags, userRubrics.get(0).getId(), 0L);
+			//create a message inslide the topic
+			Message msg = msi.createMessage(topic.getMessage().getId(), homeGroup.getId().getId(), MessageType.BASE, "COntent of the first message in the topic", 
+					noLinkedMessages, noTags, 0L);
+			
+			Assert.assertEquals(msg.getTopicId(), topic.getId());
+			Assert.assertEquals(msg.getParentId(), topic.getMessage().getId());
+			Assert.assertEquals(msg.getAuthorId(), topic.getMessage().getAuthorId());
+			Assert.assertEquals(msg.getAuthorId(), user1.getId().longValue());
+			Assert.assertEquals(msg.likesNum, 0);
+			Assert.assertEquals(msg.unlikesNum, 0);
+	
+		} catch(Exception e){
+			e.printStackTrace();
+			fail("Exception thrown."+e.getMessage());
+		}			
+		
+	}
+	
+	@Test
+	public void createMessage() {
+		
+		//com.vmesteonline.be.Message msg = new 
 	}
 	
 	@Test

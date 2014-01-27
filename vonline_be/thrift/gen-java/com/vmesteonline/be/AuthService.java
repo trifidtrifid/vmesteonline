@@ -38,7 +38,7 @@ public class AuthService {
 
     public boolean login(String email, String password) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public boolean registerNewUser(String firstname, String lastname, String password, String email, String locationId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public long registerNewUser(String firstname, String lastname, String password, String email, String locationId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     public void logout() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
@@ -101,7 +101,7 @@ public class AuthService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "login failed: unknown result");
     }
 
-    public boolean registerNewUser(String firstname, String lastname, String password, String email, String locationId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public long registerNewUser(String firstname, String lastname, String password, String email, String locationId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_registerNewUser(firstname, lastname, password, email, locationId);
       return recv_registerNewUser();
@@ -118,7 +118,7 @@ public class AuthService {
       sendBase("registerNewUser", args);
     }
 
-    public boolean recv_registerNewUser() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public long recv_registerNewUser() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       registerNewUser_result result = new registerNewUser_result();
       receiveBase(result, "registerNewUser");
@@ -240,7 +240,7 @@ public class AuthService {
         prot.writeMessageEnd();
       }
 
-      public boolean getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+      public long getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -449,7 +449,7 @@ public class AuthService {
       }
     }
 
-    public static class registerNewUser<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, registerNewUser_args, Boolean> {
+    public static class registerNewUser<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, registerNewUser_args, Long> {
       public registerNewUser() {
         super("registerNewUser");
       }
@@ -458,10 +458,10 @@ public class AuthService {
         return new registerNewUser_args();
       }
 
-      public AsyncMethodCallback<Boolean> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<Long> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Boolean>() { 
-          public void onComplete(Boolean o) {
+        return new AsyncMethodCallback<Long>() { 
+          public void onComplete(Long o) {
             registerNewUser_result result = new registerNewUser_result();
             result.success = o;
             result.setSuccessIsSet(true);
@@ -502,7 +502,7 @@ public class AuthService {
         return false;
       }
 
-      public void start(I iface, registerNewUser_args args, org.apache.thrift.async.AsyncMethodCallback<Boolean> resultHandler) throws TException {
+      public void start(I iface, registerNewUser_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
         iface.registerNewUser(args.firstname, args.lastname, args.password, args.email, args.locationId,resultHandler);
       }
     }
@@ -2232,7 +2232,7 @@ public class AuthService {
   public static class registerNewUser_result implements org.apache.thrift.TBase<registerNewUser_result, registerNewUser_result._Fields>, java.io.Serializable, Cloneable, Comparable<registerNewUser_result>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("registerNewUser_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.BOOL, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I64, (short)0);
     private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -2241,7 +2241,7 @@ public class AuthService {
       schemes.put(TupleScheme.class, new registerNewUser_resultTupleSchemeFactory());
     }
 
-    public boolean success; // required
+    public long success; // required
     public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -2312,7 +2312,7 @@ public class AuthService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -2323,7 +2323,7 @@ public class AuthService {
     }
 
     public registerNewUser_result(
-      boolean success,
+      long success,
       com.vmesteonline.be.InvalidOperation exc)
     {
       this();
@@ -2350,15 +2350,15 @@ public class AuthService {
     @Override
     public void clear() {
       setSuccessIsSet(false);
-      this.success = false;
+      this.success = 0;
       this.exc = null;
     }
 
-    public boolean isSuccess() {
+    public long getSuccess() {
       return this.success;
     }
 
-    public registerNewUser_result setSuccess(boolean success) {
+    public registerNewUser_result setSuccess(long success) {
       this.success = success;
       setSuccessIsSet(true);
       return this;
@@ -2407,7 +2407,7 @@ public class AuthService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((Boolean)value);
+          setSuccess((Long)value);
         }
         break;
 
@@ -2425,7 +2425,7 @@ public class AuthService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case SUCCESS:
-        return Boolean.valueOf(isSuccess());
+        return Long.valueOf(getSuccess());
 
       case EXC:
         return getExc();
@@ -2593,8 +2593,8 @@ public class AuthService {
           }
           switch (schemeField.id) {
             case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
-                struct.success = iprot.readBool();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.success = iprot.readI64();
                 struct.setSuccessIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -2626,7 +2626,7 @@ public class AuthService {
         oprot.writeStructBegin(STRUCT_DESC);
         if (struct.isSetSuccess()) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          oprot.writeBool(struct.success);
+          oprot.writeI64(struct.success);
           oprot.writeFieldEnd();
         }
         if (struct.exc != null) {
@@ -2660,7 +2660,7 @@ public class AuthService {
         }
         oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
-          oprot.writeBool(struct.success);
+          oprot.writeI64(struct.success);
         }
         if (struct.isSetExc()) {
           struct.exc.write(oprot);
@@ -2672,7 +2672,7 @@ public class AuthService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.success = iprot.readBool();
+          struct.success = iprot.readI64();
           struct.setSuccessIsSet(true);
         }
         if (incoming.get(1)) {

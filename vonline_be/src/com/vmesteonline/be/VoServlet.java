@@ -75,7 +75,7 @@ public class VoServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		serviceImpl.setHttpSession(request.getSession());
+		serviceImpl.setSession(request.getSession());
 		TTransport inTransport = null;
 		TTransport outTransport = null;
 		try {
