@@ -1,0 +1,390 @@
+@import 'bootstrap.min.css';
+@import 'font-awesome-original.css';
+@import 'font-awesome.min.css';
+@import 'ace-fonts.css';
+@import 'ace.css';
+@import 'flexslider.css';
+html {
+  height: 100%;
+}
+body {
+  background: #fff;
+  height: 101%;
+}
+a {
+  outline: none !important;
+}
+.clear {
+  clear: both;
+}
+.btn-primary,
+.header-color-blue2 {
+  background-color: #438eb9 !important;
+}
+.container {
+  width: 990px;
+  padding: 0;
+  max-width: none;
+  min-height: 100%;
+}
+.ace-nav>li a {
+  padding: 11px 12px 0 12px;
+  line-height: 1.428571429;
+  font-size: 16px;
+  border: none;
+  border-bottom: 3px solid #6fb3e0;
+}
+.ace-nav>li.active a {
+  border-bottom-color: #2b7dbc;
+}
+.ace-nav>.user-short a {
+  border: none;
+  padding: 3px 8px;
+  font-size: 14px;
+}
+.ace-nav>.user-short>a {
+  line-height: inherit;
+  padding: 0 8px;
+  font-size: 16px;
+}
+.nav-list > li > a {
+  padding: 8px 10px 10px 16px;
+  height: auto;
+  line-height: 20px;
+  position: relative;
+}
+.nav-list > li > a span {
+  display: inline-block;
+  vertical-align: middle;
+  width: 134px;
+}
+.nav-list > li > a b {
+  display: inline-block;
+  vertical-align: middle;
+}
+.nav-list > li > a,
+.nav-list > li.active > a,
+.nav-list > li.active:hover a {
+  font-size: 15px;
+}
+.btn {
+  border-radius: 2px !important;
+}
+.sidebar {
+  padding-top: 20px;
+  vertical-align: top;
+}
+.main-content {
+  margin-right: 190px;
+  padding: 10px;
+}
+.shop-right {
+  float: right;
+  width: 190px;
+  border: 0;
+  border-left: 1px solid #ccc;
+  padding-bottom: 20px;
+  right: 0;
+}
+.shop-right:before {
+  border: 0;
+  border-left: 1px solid #ccc;
+}
+.shop-right .show-right {
+  display: none;
+}
+.shop-right .hide-right {
+  display: none;
+}
+.shop-right .sidebar-title {
+  font-size: 20px;
+  border-top: 1px solid #ccc;
+  padding: 4px 0;
+  background: #f9f9f9;
+  text-align: center;
+  color: #2b7dbc;
+}
+.shop-right nav a {
+  display: block;
+}
+.shop-right .catalog-order {
+  margin-left: 0;
+}
+.shop-right .catalog-order li {
+  padding: 8px 0 8px 5px;
+  display: block;
+  background: #f9f9f9;
+  list-style: none;
+  font-size: 12px;
+  border-bottom: 1px solid #ccc;
+}
+.shop-right .catalog-order li img {
+  float: left;
+  width: 40px;
+}
+.shop-right .catalog-order li .product-right-descr {
+  margin-left: 45px;
+  padding-right: 20px;
+  line-height: 16px;
+}
+.shop-right .catalog-order li .product-right-descr span {
+  float: right;
+  margin-right: -10px;
+  font-weight: bold;
+}
+.shop-right textarea {
+  margin: 10px;
+  width: 170px;
+  height: 80px;
+  font-family: Tahoma, Arial;
+  font-size: 14px;
+  color: #858585;
+}
+.shop-right .btn-grey {
+  margin-left: 10px;
+  margin-right: 4px;
+}
+.datepicker {
+  padding: 0 2px;
+}
+.datepicker .switch {
+  text-align: center;
+}
+.datepicker td {
+  min-width: 22px !important;
+  padding: 0 !important;
+  text-align: center;
+  cursor: pointer;
+}
+.datepicker td.active {
+  color: #fff;
+}
+th.prev,
+th.next,
+.input-group-addon {
+  cursor: pointer;
+}
+.ui-menu-item,
+.ui-autocomplete-category {
+  list-style: none;
+}
+.ui-helper-hidden-accessible {
+  display: none;
+}
+.icon-search:hover {
+  text-decoration: none;
+}
+.ui-menu-item a:hover {
+  text-decoration: none;
+}
+.breadcrambs {
+  margin-bottom: 10px;
+span
+}
+.breadcrambs a {
+  font-weight: normal;
+}
+.breadcrambs span {
+  display: inline-block;
+  margin: 0 2px;
+}
+.shop-menu {
+  overflow: auto;
+  margin-bottom: 10px;
+}
+.shop-menu ul {
+  margin-left: 0;
+}
+.shop-menu ul li {
+  list-style: none;
+  float: left;
+  margin-left: 5px;
+  width: 80px;
+  text-align: center;
+  line-height: 14px;
+  font-size: 11px;
+}
+.shop-menu ul li:first-child {
+  margin-left: 0;
+  width: 50px;
+}
+.shop-menu ul li.active a {
+  color: #2a6496;
+}
+.shop-menu ul li a {
+  display: block;
+  font-size: 24px;
+}
+.shop-menu ul li a:hover {
+  text-decoration: none;
+}
+.catalog table {
+  width: 100%;
+}
+.catalog table thead tr td {
+  background: #f9f9f9;
+  font-style: italic;
+}
+.catalog table tr:first-child td {
+  border-top: 1px solid #ccc;
+}
+.catalog table tr td {
+  vertical-align: middle;
+  border-bottom: 1px solid #ccc;
+  padding: 5px 0;
+  text-align: center;
+}
+.catalog table tr td:first-child {
+  text-align: left;
+  width: 350px;
+  padding-left: 5px;
+}
+.catalog table tr td img {
+  width: 20px;
+  float: left;
+}
+.catalog table tr td span {
+  display: block;
+  margin-left: 30px;
+  margin-right: 10px;
+}
+.catalog table tr td .spinner-down:hover,
+.catalog table tr td .spinner-up:hover {
+  background-color: #6fb3e0 !important;
+}
+.modal {
+  width: 560px;
+  left: 50%;
+  margin-left: -285px;
+  background: #fff;
+  top: 20%;
+  max-height: 288px;
+  overflow-y: auto;
+}
+.modal .close {
+  outline: none;
+}
+.modal .product-slider {
+  float: left;
+}
+.modal .product-slider .flexslider {
+  width: 200px;
+  margin-bottom: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+.modal .product-slider .flexslider .flex-direction-nav a {
+  background: url("../i/bg_direction_nav.png") no-repeat 0 0;
+}
+.modal .product-slider .flexslider .flex-direction-nav .flex-next {
+  background-position: 100% 0;
+}
+.modal .product-slider .slider img {
+  max-width: 192px;
+  width: auto;
+}
+.modal .product-slider .carousel img {
+  max-width: 60px;
+}
+.modal .product-slider .carousel li {
+  cursor: pointer;
+}
+.modal .product-descr {
+  margin-left: 210px;
+}
+.modal h3 {
+  margin-top: 0;
+}
+.modal .product-text {
+  height: 170px;
+  overflow: auto;
+}
+.modal .modal-body {
+  padding: 10px;
+  position: static;
+}
+.modal .modal-footer {
+  position: absolute;
+  bottom: 20px;
+  right: 10px;
+  width: 330px;
+  background: #fff;
+  text-align: left;
+  padding: 0;
+  padding-top: 15px;
+}
+.modal .modal-footer span,
+.modal .modal-footer .ace-spinner,
+.modal .modal-footer .btn-primary {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 13px;
+}
+.modal .modal-footer span {
+  font-size: 20px;
+}
+.sidebar#sidebar {
+  height: 100%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+}
+@media all and (max-width: 990px) {
+  .shop-right {
+    position: fixed;
+    height: 100%;
+    right: -190px;
+    z-index: 100;
+    padding: 0 0 20px 0;
+    border-bottom: 1px solid #ccc;
+  }
+  .shop-right:before {
+    display: none;
+  }
+  .shop-right .show-right {
+    display: block;
+    position: fixed;
+    top: 40%;
+    right: -32px;
+    cursor: pointer;
+    font-size: 24px;
+    border: 1px solid #ccc;
+    background: #ccc;
+    padding: 0 10px;
+    -moz-transform: rotate(-90deg);
+/* Для Firefox */
+    -ms-transform: rotate(-90deg);
+/* Для IE */
+    -webkit-transform: rotate(-90deg);
+/* Для Safari, Chrome, iOS */
+    -o-transform: rotate(-90deg);
+/* Для Opera */
+    transform: rotate(-90deg);
+  }
+  .shop-right .hide-right {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+  }
+  .shop-right .catalog-order {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .main-content {
+    margin-right: 0;
+  }
+  .catalog table tr td:first-child {
+    width: 450px;
+  }
+}
+@media all and (max-width: 768px) {
+  .container {
+    width: 758px;
+  }
+  .catalog table tr td:first-child {
+    width: 350px;
+  }
+}

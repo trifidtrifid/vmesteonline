@@ -1859,16 +1859,14 @@ blockquote.pull-right {
 }
 .sidebar {
   width: 190px;
-  float: left;
-  position: relative;
+  /*float: left;
+  position: relative;*/
   border: 1px solid #cccccc;
   border-width: 0 1px 0 0;
   background-color: #f2f2f2;
 }
-.sidebar:before {
-  /* the grey background of sidebar */
-
-  content: "";
+/*.sidebar:before {
+    content: "";
   display: block;
   width: 190px;
   position: fixed;
@@ -1878,7 +1876,7 @@ blockquote.pull-right {
   background-color: #f2f2f2;
   border: 1px solid #cccccc;
   border-width: 0 1px 0 0;
-}
+}*/
 .sidebar.fixed,
 .sidebar.sidebar-fixed {
   position: fixed;
@@ -14019,7 +14017,7 @@ th[aria-selected=true] .ui-jqgrid-sortable {
 }
 .datepicker td,
 .datepicker th {
-  min-width: 32px;
+  /*min-width: 32px;*/
 }
 .datepicker-months .month,
 .datepicker-years .year {
