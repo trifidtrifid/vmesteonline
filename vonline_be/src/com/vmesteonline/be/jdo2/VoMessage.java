@@ -1,10 +1,7 @@
 package com.vmesteonline.be.jdo2;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,19 +12,13 @@ import javax.jdo.Extent;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.Query;
-import javax.jdo.annotations.Extension;
-import javax.jdo.annotations.Extensions;
 import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.Order;
+import javax.jdo.annotations.Index;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-
-import org.apache.log4j.Logger;
-
-import tagcloud.RubricTag;
-
+import javax.jdo.annotations.Queries;
+import javax.jdo.annotations.Query;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
@@ -42,10 +33,12 @@ import com.vmesteonline.be.data.PMF;
  * Created by brozer on 1/12/14.
  */
 @PersistenceCapable
+@Index(name="ID_VALUE_IDX", members={"idValue"})
+@Queries(value={@Query(name="byID_VALUE", language="JDOQL", 
+value="SELECT FROM com.vmesteonline.be.jdo2.VoMessage WHERE idValue == idParam")})
 public class VoMessage {
 
-	
-	//private static final Logger logger = Logger.getLogger(VoMessage.class);
+	// private static final Logger logger = Logger.getLogger(VoMessage.class);
 	// id, (parent), type, createdAt, editedAt, approvedId, topicId, createdId,
 	// content, likes, unlikes, recipient, longitude, latitude, radius,
 	// community,TAGS,LINKS
@@ -98,22 +91,48 @@ public class VoMessage {
 					for (VoMessage msg1 : voMsgExt) {
 						pm.retrieve(msg1);
 						Key parentMsg1 = msg1.getId().getParent();
-						System.out.println("Msg: " + msg1.getId().getId() + " topic " + msg1.getTopic().getId().getId()
-								+ (null == parentMsg1 ? " No parent." : " parent Key:" + parentMsg1.getId()));
+						System.out.println("MsgKey:" + msg1.getId() + "idValue: " + msg1.idValue + " Msg id: " + msg1.getId().getId() + " topic "
+								+ msg1.getTopic().getId().getId() + (null == parentMsg1 ? " No parent." : " parent Key:" + parentMsg1.getId()));
 					}
-//TODO WHAT THE FUCK HPPENS!!!! Why message could not be found by it's ID? 
+					// TODO WHAT THE FUCK HPPENS!!!! Why message could not be found by
+					// it's ID?
 					try {
 						parentMsg = pm.getObjectById(VoMessage.class, parentId);
 					} catch (JDOObjectNotFoundException e) {
-						//logger.warn("Failed to find message by ID: "+parentId+" using JDO. Will try to find in by lower level Query");
-						Query query = pm.newQuery(VoMessage.class);
-						query.setFilter("id == :key");
-						List<VoMessage> results = (List<VoMessage>) query.execute( parentId );
-						if (results.iterator().hasNext()) {
+						// logger.warn("Failed to find message by ID: "+parentId+" using JDO. Will try to find in by lower level Query");
+						javax.jdo.Query query = pm.newNamedQuery(VoMessage.class, "byID_VALUE");// newQuery(VoMessage.class);
+						/*query.setFilter("idValue == parentId");*/
+						query.declareParameters("long idParam");
+						List<VoMessage> results = (List<VoMessage>) query.execute(parentId);
+						if ((results.iterator().hasNext() )) {
 							parentMsg = results.iterator().next();
-							//logger.warn("Yes! message found by ID: "+parentId + " using lower level.");
+							// logger.warn("Yes! message found by ID: "+parentId +
+							// " using lower level.");
 						} else {
-							//logger.warn("No message found by message ID: "+parentId);
+							query = pm.newQuery(VoMessage.class);
+							query.setFilter("id == parentId");
+							query.declareParameters("long parentId");
+							results = (List<VoMessage>) query.execute(parentId);
+							if (results.iterator().hasNext() ) {
+								parentMsg = results.iterator().next();
+								// logger.warn("Yes! message found by ID: "+parentId +
+								// " using lower level.");
+							} else {
+								// logger.warn("No message found by message ID: "+parentId);
+								// OK lets look through all of messages and try to find it by
+								// hand
+								query = pm.newQuery(VoMessage.class);
+								results = (List<VoMessage>) query.execute(parentId);
+								for (VoMessage msg2 : results) {
+									pm.retrieve(msg2);
+									Key parentMsg2 = msg2.getId().getParent();
+									if (msg2.getId().getId() == parentId) {
+										System.out.print("!!!!!! This is it:");
+									}
+									System.out.println("MsgKey:" + msg2.getId() + "idValue: " + msg2.idValue + " Msg id: " + msg2.getId().getId() + " topic "
+											+ msg2.getTopic().getId().getId() + (null == parentMsg2 ? " No parent." : " parent Key:" + parentMsg2.getId()));
+								}
+							}
 						}
 					}
 					if (null == parentMsg) {
@@ -186,6 +205,8 @@ public class VoMessage {
 				pm.makePersistent(this);
 
 				this.userMessage = new VoUserMessage(author, this, false, false, true);
+				this.idValue = this.id.getId();
+				pm.makePersistent(this.userMessage);
 				pm.makePersistent(this);
 
 				msg.setId(this.id.getId());
@@ -207,7 +228,7 @@ public class VoMessage {
 				editedAt, new String(content), likesNum, unlikesNum, links, tags, new UserMessage(getUserMessage().isRead(), getUserMessage().isLikes(),
 						getUserMessage().isUnlikes()));
 	}
- 
+
 	/**
 	 * Method returns child messages of one level below the current message. Set
 	 * is limited by size parameter and shifted by order
@@ -392,7 +413,7 @@ public class VoMessage {
 		if (null == userMessage) {
 			PersistenceManager pm = PMF.get().getPersistenceManager();
 			try {
-				Query q = pm.newQuery(VoUserMessage.class);
+				javax.jdo.Query q = pm.newQuery(VoUserMessage.class);
 				/*
 				 * q.setFilter(arg0); q.setFilter("tag == tagId");
 				 * q.declareParameters("long tagId");
@@ -413,13 +434,24 @@ public class VoMessage {
 	private Key id;
 
 	@Persistent
+	@Index
+	private long idValue;
+
+	@Persistent
 	@Unindexed
 	private MessageType type;
 
 	@Persistent
-	/*@Extensions({ @Extension(vendorName = "datanucleus", key = "cascade-update", value = "false"),
-			@Extension(vendorName = "datanucleus", key = "collection", value = "dependent-element") })
-	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "createdAt asc"))*/
+	/*
+	 * @Extensions({ @Extension(vendorName = "datanucleus", key =
+	 * "cascade-update", value = "false"),
+	 * 
+	 * @Extension(vendorName = "datanucleus", key = "collection", value =
+	 * "dependent-element") })
+	 * 
+	 * @Order(extensions = @Extension(vendorName = "datanucleus", key =
+	 * "list-ordering", value = "createdAt asc"))
+	 */
 	private Set<VoMessage> childMessages;
 
 	@Persistent

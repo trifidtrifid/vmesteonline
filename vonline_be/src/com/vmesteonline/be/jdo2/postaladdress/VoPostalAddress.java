@@ -11,9 +11,12 @@ import com.google.appengine.api.datastore.KeyFactory;
 @PersistenceCapable
 public class VoPostalAddress {
 
-	public VoPostalAddress(VoBuilding building, int staircase) {
+	public VoPostalAddress(VoBuilding building, int staircase, int floor, int flatNo, String comment) {
 		this.building = building;
 		this.staircase = staircase;
+		this.floor = floor;
+		this.flatNo = flatNo;
+		this.comment = comment;
 	}
 
 	private static long valueMask = 26051976L;
@@ -28,7 +31,16 @@ public class VoPostalAddress {
 	@Persistent
 	private int staircase;
 
-		public long getAddressCode() {
+	@Persistent
+	private int floor;
+
+	@Persistent
+	private int flatNo;
+
+	@Persistent
+	private String comment;
+
+	public long getAddressCode() {
 		return id.getId() ^ valueMask;
 	}
 

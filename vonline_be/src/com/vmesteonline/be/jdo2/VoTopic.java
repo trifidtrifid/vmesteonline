@@ -23,6 +23,7 @@ public class VoTopic {
 
 		//childTreeList = new ArrayList<Pair<Long,Long>>();
 		
+		
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
 
@@ -41,6 +42,7 @@ public class VoTopic {
 
 			lastUpdate = (int) (System.currentTimeMillis() / 1000);
 			message = new VoMessage(topic.getMessage(), this);
+
 			//the topic is made persistent in message constructor
 			topic.setId(id.getId());
 			topic.message.setId(message.getId().getId());

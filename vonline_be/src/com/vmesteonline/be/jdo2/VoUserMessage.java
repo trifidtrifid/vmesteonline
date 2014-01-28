@@ -1,8 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
-import java.io.Serializable;
-import java.util.StringTokenizer;
-
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -21,6 +19,7 @@ public class VoUserMessage {
 	 */
 
 	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key userMessageId;
 
 	@Persistent

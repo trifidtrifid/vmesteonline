@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package com.vmesteonline.be;
+package com.vmesteonline.be.shop;
 
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
@@ -32,31 +32,34 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, java.io.Serializable, Cloneable, Comparable<Rubric> {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Rubric");
+public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fields>, java.io.Serializable, Cloneable, Comparable<Producer> {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Producer");
 
   private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I64, (short)1);
-  private static final org.apache.thrift.protocol.TField VISIBLE_NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("visibleName", org.apache.thrift.protocol.TType.STRING, (short)2);
-  private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)3);
-  private static final org.apache.thrift.protocol.TField DESCRIPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("description", org.apache.thrift.protocol.TType.STRING, (short)4);
+  private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)2);
+  private static final org.apache.thrift.protocol.TField DESCR_FIELD_DESC = new org.apache.thrift.protocol.TField("descr", org.apache.thrift.protocol.TType.STRING, (short)3);
+  private static final org.apache.thrift.protocol.TField LOGO_URL_FIELD_DESC = new org.apache.thrift.protocol.TField("logoURL", org.apache.thrift.protocol.TType.STRING, (short)4);
+  private static final org.apache.thrift.protocol.TField HOME_URL_FIELD_DESC = new org.apache.thrift.protocol.TField("homeURL", org.apache.thrift.protocol.TType.STRING, (short)5);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
-    schemes.put(StandardScheme.class, new RubricStandardSchemeFactory());
-    schemes.put(TupleScheme.class, new RubricTupleSchemeFactory());
+    schemes.put(StandardScheme.class, new ProducerStandardSchemeFactory());
+    schemes.put(TupleScheme.class, new ProducerTupleSchemeFactory());
   }
 
   public long id; // required
-  public String visibleName; // required
   public String name; // required
-  public String description; // required
+  public String descr; // required
+  public String logoURL; // required
+  public String homeURL; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ID((short)1, "id"),
-    VISIBLE_NAME((short)2, "visibleName"),
-    NAME((short)3, "name"),
-    DESCRIPTION((short)4, "description");
+    NAME((short)2, "name"),
+    DESCR((short)3, "descr"),
+    LOGO_URL((short)4, "logoURL"),
+    HOME_URL((short)5, "homeURL");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -73,12 +76,14 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
       switch(fieldId) {
         case 1: // ID
           return ID;
-        case 2: // VISIBLE_NAME
-          return VISIBLE_NAME;
-        case 3: // NAME
+        case 2: // NAME
           return NAME;
-        case 4: // DESCRIPTION
-          return DESCRIPTION;
+        case 3: // DESCR
+          return DESCR;
+        case 4: // LOGO_URL
+          return LOGO_URL;
+        case 5: // HOME_URL
+          return HOME_URL;
         default:
           return null;
       }
@@ -126,68 +131,76 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.VISIBLE_NAME, new org.apache.thrift.meta_data.FieldMetaData("visibleName", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.NAME, new org.apache.thrift.meta_data.FieldMetaData("name", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-    tmpMap.put(_Fields.DESCRIPTION, new org.apache.thrift.meta_data.FieldMetaData("description", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.DESCR, new org.apache.thrift.meta_data.FieldMetaData("descr", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+    tmpMap.put(_Fields.LOGO_URL, new org.apache.thrift.meta_data.FieldMetaData("logoURL", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+    tmpMap.put(_Fields.HOME_URL, new org.apache.thrift.meta_data.FieldMetaData("homeURL", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Rubric.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Producer.class, metaDataMap);
   }
 
-  public Rubric() {
+  public Producer() {
   }
 
-  public Rubric(
+  public Producer(
     long id,
-    String visibleName,
     String name,
-    String description)
+    String descr,
+    String logoURL,
+    String homeURL)
   {
     this();
     this.id = id;
     setIdIsSet(true);
-    this.visibleName = visibleName;
     this.name = name;
-    this.description = description;
+    this.descr = descr;
+    this.logoURL = logoURL;
+    this.homeURL = homeURL;
   }
 
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public Rubric(Rubric other) {
+  public Producer(Producer other) {
     __isset_bitfield = other.__isset_bitfield;
     this.id = other.id;
-    if (other.isSetVisibleName()) {
-      this.visibleName = other.visibleName;
-    }
     if (other.isSetName()) {
       this.name = other.name;
     }
-    if (other.isSetDescription()) {
-      this.description = other.description;
+    if (other.isSetDescr()) {
+      this.descr = other.descr;
+    }
+    if (other.isSetLogoURL()) {
+      this.logoURL = other.logoURL;
+    }
+    if (other.isSetHomeURL()) {
+      this.homeURL = other.homeURL;
     }
   }
 
-  public Rubric deepCopy() {
-    return new Rubric(this);
+  public Producer deepCopy() {
+    return new Producer(this);
   }
 
   @Override
   public void clear() {
     setIdIsSet(false);
     this.id = 0;
-    this.visibleName = null;
     this.name = null;
-    this.description = null;
+    this.descr = null;
+    this.logoURL = null;
+    this.homeURL = null;
   }
 
   public long getId() {
     return this.id;
   }
 
-  public Rubric setId(long id) {
+  public Producer setId(long id) {
     this.id = id;
     setIdIsSet(true);
     return this;
@@ -206,35 +219,11 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ID_ISSET_ID, value);
   }
 
-  public String getVisibleName() {
-    return this.visibleName;
-  }
-
-  public Rubric setVisibleName(String visibleName) {
-    this.visibleName = visibleName;
-    return this;
-  }
-
-  public void unsetVisibleName() {
-    this.visibleName = null;
-  }
-
-  /** Returns true if field visibleName is set (has been assigned a value) and false otherwise */
-  public boolean isSetVisibleName() {
-    return this.visibleName != null;
-  }
-
-  public void setVisibleNameIsSet(boolean value) {
-    if (!value) {
-      this.visibleName = null;
-    }
-  }
-
   public String getName() {
     return this.name;
   }
 
-  public Rubric setName(String name) {
+  public Producer setName(String name) {
     this.name = name;
     return this;
   }
@@ -254,27 +243,75 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     }
   }
 
-  public String getDescription() {
-    return this.description;
+  public String getDescr() {
+    return this.descr;
   }
 
-  public Rubric setDescription(String description) {
-    this.description = description;
+  public Producer setDescr(String descr) {
+    this.descr = descr;
     return this;
   }
 
-  public void unsetDescription() {
-    this.description = null;
+  public void unsetDescr() {
+    this.descr = null;
   }
 
-  /** Returns true if field description is set (has been assigned a value) and false otherwise */
-  public boolean isSetDescription() {
-    return this.description != null;
+  /** Returns true if field descr is set (has been assigned a value) and false otherwise */
+  public boolean isSetDescr() {
+    return this.descr != null;
   }
 
-  public void setDescriptionIsSet(boolean value) {
+  public void setDescrIsSet(boolean value) {
     if (!value) {
-      this.description = null;
+      this.descr = null;
+    }
+  }
+
+  public String getLogoURL() {
+    return this.logoURL;
+  }
+
+  public Producer setLogoURL(String logoURL) {
+    this.logoURL = logoURL;
+    return this;
+  }
+
+  public void unsetLogoURL() {
+    this.logoURL = null;
+  }
+
+  /** Returns true if field logoURL is set (has been assigned a value) and false otherwise */
+  public boolean isSetLogoURL() {
+    return this.logoURL != null;
+  }
+
+  public void setLogoURLIsSet(boolean value) {
+    if (!value) {
+      this.logoURL = null;
+    }
+  }
+
+  public String getHomeURL() {
+    return this.homeURL;
+  }
+
+  public Producer setHomeURL(String homeURL) {
+    this.homeURL = homeURL;
+    return this;
+  }
+
+  public void unsetHomeURL() {
+    this.homeURL = null;
+  }
+
+  /** Returns true if field homeURL is set (has been assigned a value) and false otherwise */
+  public boolean isSetHomeURL() {
+    return this.homeURL != null;
+  }
+
+  public void setHomeURLIsSet(boolean value) {
+    if (!value) {
+      this.homeURL = null;
     }
   }
 
@@ -288,14 +325,6 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
       }
       break;
 
-    case VISIBLE_NAME:
-      if (value == null) {
-        unsetVisibleName();
-      } else {
-        setVisibleName((String)value);
-      }
-      break;
-
     case NAME:
       if (value == null) {
         unsetName();
@@ -304,11 +333,27 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
       }
       break;
 
-    case DESCRIPTION:
+    case DESCR:
       if (value == null) {
-        unsetDescription();
+        unsetDescr();
       } else {
-        setDescription((String)value);
+        setDescr((String)value);
+      }
+      break;
+
+    case LOGO_URL:
+      if (value == null) {
+        unsetLogoURL();
+      } else {
+        setLogoURL((String)value);
+      }
+      break;
+
+    case HOME_URL:
+      if (value == null) {
+        unsetHomeURL();
+      } else {
+        setHomeURL((String)value);
       }
       break;
 
@@ -320,14 +365,17 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     case ID:
       return Long.valueOf(getId());
 
-    case VISIBLE_NAME:
-      return getVisibleName();
-
     case NAME:
       return getName();
 
-    case DESCRIPTION:
-      return getDescription();
+    case DESCR:
+      return getDescr();
+
+    case LOGO_URL:
+      return getLogoURL();
+
+    case HOME_URL:
+      return getHomeURL();
 
     }
     throw new IllegalStateException();
@@ -342,12 +390,14 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     switch (field) {
     case ID:
       return isSetId();
-    case VISIBLE_NAME:
-      return isSetVisibleName();
     case NAME:
       return isSetName();
-    case DESCRIPTION:
-      return isSetDescription();
+    case DESCR:
+      return isSetDescr();
+    case LOGO_URL:
+      return isSetLogoURL();
+    case HOME_URL:
+      return isSetHomeURL();
     }
     throw new IllegalStateException();
   }
@@ -356,12 +406,12 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
   public boolean equals(Object that) {
     if (that == null)
       return false;
-    if (that instanceof Rubric)
-      return this.equals((Rubric)that);
+    if (that instanceof Producer)
+      return this.equals((Producer)that);
     return false;
   }
 
-  public boolean equals(Rubric that) {
+  public boolean equals(Producer that) {
     if (that == null)
       return false;
 
@@ -374,15 +424,6 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
         return false;
     }
 
-    boolean this_present_visibleName = true && this.isSetVisibleName();
-    boolean that_present_visibleName = true && that.isSetVisibleName();
-    if (this_present_visibleName || that_present_visibleName) {
-      if (!(this_present_visibleName && that_present_visibleName))
-        return false;
-      if (!this.visibleName.equals(that.visibleName))
-        return false;
-    }
-
     boolean this_present_name = true && this.isSetName();
     boolean that_present_name = true && that.isSetName();
     if (this_present_name || that_present_name) {
@@ -392,12 +433,30 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
         return false;
     }
 
-    boolean this_present_description = true && this.isSetDescription();
-    boolean that_present_description = true && that.isSetDescription();
-    if (this_present_description || that_present_description) {
-      if (!(this_present_description && that_present_description))
+    boolean this_present_descr = true && this.isSetDescr();
+    boolean that_present_descr = true && that.isSetDescr();
+    if (this_present_descr || that_present_descr) {
+      if (!(this_present_descr && that_present_descr))
         return false;
-      if (!this.description.equals(that.description))
+      if (!this.descr.equals(that.descr))
+        return false;
+    }
+
+    boolean this_present_logoURL = true && this.isSetLogoURL();
+    boolean that_present_logoURL = true && that.isSetLogoURL();
+    if (this_present_logoURL || that_present_logoURL) {
+      if (!(this_present_logoURL && that_present_logoURL))
+        return false;
+      if (!this.logoURL.equals(that.logoURL))
+        return false;
+    }
+
+    boolean this_present_homeURL = true && this.isSetHomeURL();
+    boolean that_present_homeURL = true && that.isSetHomeURL();
+    if (this_present_homeURL || that_present_homeURL) {
+      if (!(this_present_homeURL && that_present_homeURL))
+        return false;
+      if (!this.homeURL.equals(that.homeURL))
         return false;
     }
 
@@ -410,7 +469,7 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
   }
 
   @Override
-  public int compareTo(Rubric other) {
+  public int compareTo(Producer other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
@@ -427,16 +486,6 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetVisibleName()).compareTo(other.isSetVisibleName());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetVisibleName()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.visibleName, other.visibleName);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
     lastComparison = Boolean.valueOf(isSetName()).compareTo(other.isSetName());
     if (lastComparison != 0) {
       return lastComparison;
@@ -447,12 +496,32 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetDescription()).compareTo(other.isSetDescription());
+    lastComparison = Boolean.valueOf(isSetDescr()).compareTo(other.isSetDescr());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetDescription()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.description, other.description);
+    if (isSetDescr()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.descr, other.descr);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetLogoURL()).compareTo(other.isSetLogoURL());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetLogoURL()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.logoURL, other.logoURL);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetHomeURL()).compareTo(other.isSetHomeURL());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetHomeURL()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.homeURL, other.homeURL);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -474,19 +543,11 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder("Rubric(");
+    StringBuilder sb = new StringBuilder("Producer(");
     boolean first = true;
 
     sb.append("id:");
     sb.append(this.id);
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("visibleName:");
-    if (this.visibleName == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.visibleName);
-    }
     first = false;
     if (!first) sb.append(", ");
     sb.append("name:");
@@ -497,11 +558,27 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("description:");
-    if (this.description == null) {
+    sb.append("descr:");
+    if (this.descr == null) {
       sb.append("null");
     } else {
-      sb.append(this.description);
+      sb.append(this.descr);
+    }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("logoURL:");
+    if (this.logoURL == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.logoURL);
+    }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("homeURL:");
+    if (this.homeURL == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.homeURL);
     }
     first = false;
     sb.append(")");
@@ -531,15 +608,15 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
     }
   }
 
-  private static class RubricStandardSchemeFactory implements SchemeFactory {
-    public RubricStandardScheme getScheme() {
-      return new RubricStandardScheme();
+  private static class ProducerStandardSchemeFactory implements SchemeFactory {
+    public ProducerStandardScheme getScheme() {
+      return new ProducerStandardScheme();
     }
   }
 
-  private static class RubricStandardScheme extends StandardScheme<Rubric> {
+  private static class ProducerStandardScheme extends StandardScheme<Producer> {
 
-    public void read(org.apache.thrift.protocol.TProtocol iprot, Rubric struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol iprot, Producer struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TField schemeField;
       iprot.readStructBegin();
       while (true)
@@ -557,15 +634,7 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // VISIBLE_NAME
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.visibleName = iprot.readString();
-              struct.setVisibleNameIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 3: // NAME
+          case 2: // NAME
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.name = iprot.readString();
               struct.setNameIsSet(true);
@@ -573,10 +642,26 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 4: // DESCRIPTION
+          case 3: // DESCR
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.description = iprot.readString();
-              struct.setDescriptionIsSet(true);
+              struct.descr = iprot.readString();
+              struct.setDescrIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 4: // LOGO_URL
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.logoURL = iprot.readString();
+              struct.setLogoURLIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 5: // HOME_URL
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.homeURL = iprot.readString();
+              struct.setHomeURLIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -592,26 +677,31 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
       struct.validate();
     }
 
-    public void write(org.apache.thrift.protocol.TProtocol oprot, Rubric struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol oprot, Producer struct) throws org.apache.thrift.TException {
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
       oprot.writeFieldBegin(ID_FIELD_DESC);
       oprot.writeI64(struct.id);
       oprot.writeFieldEnd();
-      if (struct.visibleName != null) {
-        oprot.writeFieldBegin(VISIBLE_NAME_FIELD_DESC);
-        oprot.writeString(struct.visibleName);
-        oprot.writeFieldEnd();
-      }
       if (struct.name != null) {
         oprot.writeFieldBegin(NAME_FIELD_DESC);
         oprot.writeString(struct.name);
         oprot.writeFieldEnd();
       }
-      if (struct.description != null) {
-        oprot.writeFieldBegin(DESCRIPTION_FIELD_DESC);
-        oprot.writeString(struct.description);
+      if (struct.descr != null) {
+        oprot.writeFieldBegin(DESCR_FIELD_DESC);
+        oprot.writeString(struct.descr);
+        oprot.writeFieldEnd();
+      }
+      if (struct.logoURL != null) {
+        oprot.writeFieldBegin(LOGO_URL_FIELD_DESC);
+        oprot.writeString(struct.logoURL);
+        oprot.writeFieldEnd();
+      }
+      if (struct.homeURL != null) {
+        oprot.writeFieldBegin(HOME_URL_FIELD_DESC);
+        oprot.writeString(struct.homeURL);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldStop();
@@ -620,64 +710,74 @@ public class Rubric implements org.apache.thrift.TBase<Rubric, Rubric._Fields>, 
 
   }
 
-  private static class RubricTupleSchemeFactory implements SchemeFactory {
-    public RubricTupleScheme getScheme() {
-      return new RubricTupleScheme();
+  private static class ProducerTupleSchemeFactory implements SchemeFactory {
+    public ProducerTupleScheme getScheme() {
+      return new ProducerTupleScheme();
     }
   }
 
-  private static class RubricTupleScheme extends TupleScheme<Rubric> {
+  private static class ProducerTupleScheme extends TupleScheme<Producer> {
 
     @Override
-    public void write(org.apache.thrift.protocol.TProtocol prot, Rubric struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol prot, Producer struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
       if (struct.isSetId()) {
         optionals.set(0);
       }
-      if (struct.isSetVisibleName()) {
+      if (struct.isSetName()) {
         optionals.set(1);
       }
-      if (struct.isSetName()) {
+      if (struct.isSetDescr()) {
         optionals.set(2);
       }
-      if (struct.isSetDescription()) {
+      if (struct.isSetLogoURL()) {
         optionals.set(3);
       }
-      oprot.writeBitSet(optionals, 4);
+      if (struct.isSetHomeURL()) {
+        optionals.set(4);
+      }
+      oprot.writeBitSet(optionals, 5);
       if (struct.isSetId()) {
         oprot.writeI64(struct.id);
-      }
-      if (struct.isSetVisibleName()) {
-        oprot.writeString(struct.visibleName);
       }
       if (struct.isSetName()) {
         oprot.writeString(struct.name);
       }
-      if (struct.isSetDescription()) {
-        oprot.writeString(struct.description);
+      if (struct.isSetDescr()) {
+        oprot.writeString(struct.descr);
+      }
+      if (struct.isSetLogoURL()) {
+        oprot.writeString(struct.logoURL);
+      }
+      if (struct.isSetHomeURL()) {
+        oprot.writeString(struct.homeURL);
       }
     }
 
     @Override
-    public void read(org.apache.thrift.protocol.TProtocol prot, Rubric struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol prot, Producer struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(4);
+      BitSet incoming = iprot.readBitSet(5);
       if (incoming.get(0)) {
         struct.id = iprot.readI64();
         struct.setIdIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.visibleName = iprot.readString();
-        struct.setVisibleNameIsSet(true);
-      }
-      if (incoming.get(2)) {
         struct.name = iprot.readString();
         struct.setNameIsSet(true);
       }
+      if (incoming.get(2)) {
+        struct.descr = iprot.readString();
+        struct.setDescrIsSet(true);
+      }
       if (incoming.get(3)) {
-        struct.description = iprot.readString();
-        struct.setDescriptionIsSet(true);
+        struct.logoURL = iprot.readString();
+        struct.setLogoURLIsSet(true);
+      }
+      if (incoming.get(4)) {
+        struct.homeURL = iprot.readString();
+        struct.setHomeURLIsSet(true);
       }
     }
   }

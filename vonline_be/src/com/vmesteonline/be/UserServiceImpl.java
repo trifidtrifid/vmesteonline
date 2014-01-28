@@ -114,9 +114,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		VoPostalAddress[] addresses;
 		try {
 			Key streetId = street.getId();
-			addresses = new VoPostalAddress[] { new VoPostalAddress(new VoBuilding(streetId, "32/3", 59.933146F, 30.423117F), 2),
-					new VoPostalAddress(new VoBuilding(streetId, "35", 59.932544F, 30.419684F), 1),
-					new VoPostalAddress(new VoBuilding(streetId, "6", 59.934177F, 30.404331F), 1) };
+			addresses = new VoPostalAddress[] { new VoPostalAddress(new VoBuilding(streetId, "32/3", 59.933146F, 30.423117F), 2, 1, 5, ""),
+					new VoPostalAddress(new VoBuilding(streetId, "35", 59.932544F, 30.419684F), 1, 11, 35, ""),
+					new VoPostalAddress(new VoBuilding(streetId, "6", 59.934177F, 30.404331F), 1, 2, 25, "") };
 		} catch (InvalidOperation e) {
 			logger.error("Failed to create a list of location codes. Street create failed. " + e);
 			return locations;
@@ -126,5 +126,41 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			locations.add("" + pa.getAddressCode());
 		}
 		return locations;
+	}
+
+	@Override
+	public List<Country> getCounties() throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<City> getCities(long countryId) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Street> getStreets(long cityId) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Building> getBuildings(long streetId) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public FullAddressCatalogue getAddressCatalogue() throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean setUserAddress(PostalAddress newAddress) throws TException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
