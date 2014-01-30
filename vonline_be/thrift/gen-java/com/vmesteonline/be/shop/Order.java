@@ -39,7 +39,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
   private static final org.apache.thrift.protocol.TField DATE_FIELD_DESC = new org.apache.thrift.protocol.TField("date", org.apache.thrift.protocol.TType.I32, (short)2);
   private static final org.apache.thrift.protocol.TField STATUS_FIELD_DESC = new org.apache.thrift.protocol.TField("status", org.apache.thrift.protocol.TType.I32, (short)3);
   private static final org.apache.thrift.protocol.TField TOTAL_COST_FIELD_DESC = new org.apache.thrift.protocol.TField("totalCost", org.apache.thrift.protocol.TType.DOUBLE, (short)4);
-  private static final org.apache.thrift.protocol.TField DETAILS_FIELD_DESC = new org.apache.thrift.protocol.TField("details", org.apache.thrift.protocol.TType.STRUCT, (short)5);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -55,7 +54,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
    */
   public OrderStatus status; // required
   public double totalCost; // required
-  public OrderDetails details; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -66,8 +64,7 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
      * @see OrderStatus
      */
     STATUS((short)3, "status"),
-    TOTAL_COST((short)4, "totalCost"),
-    DETAILS((short)5, "details");
+    TOTAL_COST((short)4, "totalCost");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -90,8 +87,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
           return STATUS;
         case 4: // TOTAL_COST
           return TOTAL_COST;
-        case 5: // DETAILS
-          return DETAILS;
         default:
           return null;
       }
@@ -147,8 +142,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, OrderStatus.class)));
     tmpMap.put(_Fields.TOTAL_COST, new org.apache.thrift.meta_data.FieldMetaData("totalCost", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
-    tmpMap.put(_Fields.DETAILS, new org.apache.thrift.meta_data.FieldMetaData("details", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, OrderDetails.class)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Order.class, metaDataMap);
   }
@@ -160,8 +153,7 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     long id,
     int date,
     OrderStatus status,
-    double totalCost,
-    OrderDetails details)
+    double totalCost)
   {
     this();
     this.id = id;
@@ -171,7 +163,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     this.status = status;
     this.totalCost = totalCost;
     setTotalCostIsSet(true);
-    this.details = details;
   }
 
   /**
@@ -185,9 +176,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       this.status = other.status;
     }
     this.totalCost = other.totalCost;
-    if (other.isSetDetails()) {
-      this.details = new OrderDetails(other.details);
-    }
   }
 
   public Order deepCopy() {
@@ -203,7 +191,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     this.status = null;
     setTotalCostIsSet(false);
     this.totalCost = 0.0;
-    this.details = null;
   }
 
   public long getId() {
@@ -307,30 +294,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOTALCOST_ISSET_ID, value);
   }
 
-  public OrderDetails getDetails() {
-    return this.details;
-  }
-
-  public Order setDetails(OrderDetails details) {
-    this.details = details;
-    return this;
-  }
-
-  public void unsetDetails() {
-    this.details = null;
-  }
-
-  /** Returns true if field details is set (has been assigned a value) and false otherwise */
-  public boolean isSetDetails() {
-    return this.details != null;
-  }
-
-  public void setDetailsIsSet(boolean value) {
-    if (!value) {
-      this.details = null;
-    }
-  }
-
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case ID:
@@ -365,14 +328,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       }
       break;
 
-    case DETAILS:
-      if (value == null) {
-        unsetDetails();
-      } else {
-        setDetails((OrderDetails)value);
-      }
-      break;
-
     }
   }
 
@@ -389,9 +344,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
 
     case TOTAL_COST:
       return Double.valueOf(getTotalCost());
-
-    case DETAILS:
-      return getDetails();
 
     }
     throw new IllegalStateException();
@@ -412,8 +364,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       return isSetStatus();
     case TOTAL_COST:
       return isSetTotalCost();
-    case DETAILS:
-      return isSetDetails();
     }
     throw new IllegalStateException();
   }
@@ -464,15 +414,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       if (!(this_present_totalCost && that_present_totalCost))
         return false;
       if (this.totalCost != that.totalCost)
-        return false;
-    }
-
-    boolean this_present_details = true && this.isSetDetails();
-    boolean that_present_details = true && that.isSetDetails();
-    if (this_present_details || that_present_details) {
-      if (!(this_present_details && that_present_details))
-        return false;
-      if (!this.details.equals(that.details))
         return false;
     }
 
@@ -532,16 +473,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetDetails()).compareTo(other.isSetDetails());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetDetails()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.details, other.details);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
     return 0;
   }
 
@@ -581,14 +512,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     sb.append("totalCost:");
     sb.append(this.totalCost);
     first = false;
-    if (!first) sb.append(", ");
-    sb.append("details:");
-    if (this.details == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.details);
-    }
-    first = false;
     sb.append(")");
     return sb.toString();
   }
@@ -596,9 +519,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
   public void validate() throws org.apache.thrift.TException {
     // check for required fields
     // check for sub-struct validity
-    if (details != null) {
-      details.validate();
-    }
   }
 
   private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -669,15 +589,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 5: // DETAILS
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.details = new OrderDetails();
-              struct.details.read(iprot);
-              struct.setDetailsIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -707,11 +618,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       oprot.writeFieldBegin(TOTAL_COST_FIELD_DESC);
       oprot.writeDouble(struct.totalCost);
       oprot.writeFieldEnd();
-      if (struct.details != null) {
-        oprot.writeFieldBegin(DETAILS_FIELD_DESC);
-        struct.details.write(oprot);
-        oprot.writeFieldEnd();
-      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -742,10 +648,7 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       if (struct.isSetTotalCost()) {
         optionals.set(3);
       }
-      if (struct.isSetDetails()) {
-        optionals.set(4);
-      }
-      oprot.writeBitSet(optionals, 5);
+      oprot.writeBitSet(optionals, 4);
       if (struct.isSetId()) {
         oprot.writeI64(struct.id);
       }
@@ -758,15 +661,12 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       if (struct.isSetTotalCost()) {
         oprot.writeDouble(struct.totalCost);
       }
-      if (struct.isSetDetails()) {
-        struct.details.write(oprot);
-      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Order struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(5);
+      BitSet incoming = iprot.readBitSet(4);
       if (incoming.get(0)) {
         struct.id = iprot.readI64();
         struct.setIdIsSet(true);
@@ -782,11 +682,6 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       if (incoming.get(3)) {
         struct.totalCost = iprot.readDouble();
         struct.setTotalCostIsSet(true);
-      }
-      if (incoming.get(4)) {
-        struct.details = new OrderDetails();
-        struct.details.read(iprot);
-        struct.setDetailsIsSet(true);
       }
     }
   }

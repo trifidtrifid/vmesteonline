@@ -36,12 +36,11 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Product");
 
   private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I64, (short)1);
-  private static final org.apache.thrift.protocol.TField SHOP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("shopId", org.apache.thrift.protocol.TType.I64, (short)2);
-  private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)4);
-  private static final org.apache.thrift.protocol.TField SHORT_DESCR_FIELD_DESC = new org.apache.thrift.protocol.TField("shortDescr", org.apache.thrift.protocol.TType.STRING, (short)5);
-  private static final org.apache.thrift.protocol.TField WEIGHT_FIELD_DESC = new org.apache.thrift.protocol.TField("weight", org.apache.thrift.protocol.TType.DOUBLE, (short)6);
-  private static final org.apache.thrift.protocol.TField IMAGE_URL_FIELD_DESC = new org.apache.thrift.protocol.TField("imageURL", org.apache.thrift.protocol.TType.STRING, (short)7);
-  private static final org.apache.thrift.protocol.TField PRICE_FIELD_DESC = new org.apache.thrift.protocol.TField("price", org.apache.thrift.protocol.TType.DOUBLE, (short)8);
+  private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)2);
+  private static final org.apache.thrift.protocol.TField SHORT_DESCR_FIELD_DESC = new org.apache.thrift.protocol.TField("shortDescr", org.apache.thrift.protocol.TType.STRING, (short)3);
+  private static final org.apache.thrift.protocol.TField WEIGHT_FIELD_DESC = new org.apache.thrift.protocol.TField("weight", org.apache.thrift.protocol.TType.DOUBLE, (short)4);
+  private static final org.apache.thrift.protocol.TField IMAGE_URL_FIELD_DESC = new org.apache.thrift.protocol.TField("imageURL", org.apache.thrift.protocol.TType.STRING, (short)5);
+  private static final org.apache.thrift.protocol.TField PRICE_FIELD_DESC = new org.apache.thrift.protocol.TField("price", org.apache.thrift.protocol.TType.DOUBLE, (short)6);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -50,22 +49,20 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
   }
 
   public long id; // required
-  public long shopId; // required
   public String name; // required
   public String shortDescr; // required
   public double weight; // required
-  public String imageURL; // required
+  public ByteBuffer imageURL; // required
   public double price; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     ID((short)1, "id"),
-    SHOP_ID((short)2, "shopId"),
-    NAME((short)4, "name"),
-    SHORT_DESCR((short)5, "shortDescr"),
-    WEIGHT((short)6, "weight"),
-    IMAGE_URL((short)7, "imageURL"),
-    PRICE((short)8, "price");
+    NAME((short)2, "name"),
+    SHORT_DESCR((short)3, "shortDescr"),
+    WEIGHT((short)4, "weight"),
+    IMAGE_URL((short)5, "imageURL"),
+    PRICE((short)6, "price");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -82,17 +79,15 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
       switch(fieldId) {
         case 1: // ID
           return ID;
-        case 2: // SHOP_ID
-          return SHOP_ID;
-        case 4: // NAME
+        case 2: // NAME
           return NAME;
-        case 5: // SHORT_DESCR
+        case 3: // SHORT_DESCR
           return SHORT_DESCR;
-        case 6: // WEIGHT
+        case 4: // WEIGHT
           return WEIGHT;
-        case 7: // IMAGE_URL
+        case 5: // IMAGE_URL
           return IMAGE_URL;
-        case 8: // PRICE
+        case 6: // PRICE
           return PRICE;
         default:
           return null;
@@ -135,16 +130,13 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
 
   // isset id assignments
   private static final int __ID_ISSET_ID = 0;
-  private static final int __SHOPID_ISSET_ID = 1;
-  private static final int __WEIGHT_ISSET_ID = 2;
-  private static final int __PRICE_ISSET_ID = 3;
+  private static final int __WEIGHT_ISSET_ID = 1;
+  private static final int __PRICE_ISSET_ID = 2;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.SHOP_ID, new org.apache.thrift.meta_data.FieldMetaData("shopId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.NAME, new org.apache.thrift.meta_data.FieldMetaData("name", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
@@ -153,7 +145,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     tmpMap.put(_Fields.WEIGHT, new org.apache.thrift.meta_data.FieldMetaData("weight", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
     tmpMap.put(_Fields.IMAGE_URL, new org.apache.thrift.meta_data.FieldMetaData("imageURL", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , true)));
     tmpMap.put(_Fields.PRICE, new org.apache.thrift.meta_data.FieldMetaData("price", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -165,18 +157,15 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
 
   public Product(
     long id,
-    long shopId,
     String name,
     String shortDescr,
     double weight,
-    String imageURL,
+    ByteBuffer imageURL,
     double price)
   {
     this();
     this.id = id;
     setIdIsSet(true);
-    this.shopId = shopId;
-    setShopIdIsSet(true);
     this.name = name;
     this.shortDescr = shortDescr;
     this.weight = weight;
@@ -192,7 +181,6 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
   public Product(Product other) {
     __isset_bitfield = other.__isset_bitfield;
     this.id = other.id;
-    this.shopId = other.shopId;
     if (other.isSetName()) {
       this.name = other.name;
     }
@@ -201,7 +189,8 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     }
     this.weight = other.weight;
     if (other.isSetImageURL()) {
-      this.imageURL = other.imageURL;
+      this.imageURL = org.apache.thrift.TBaseHelper.copyBinary(other.imageURL);
+;
     }
     this.price = other.price;
   }
@@ -214,8 +203,6 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
   public void clear() {
     setIdIsSet(false);
     this.id = 0;
-    setShopIdIsSet(false);
-    this.shopId = 0;
     this.name = null;
     this.shortDescr = null;
     setWeightIsSet(false);
@@ -246,29 +233,6 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
 
   public void setIdIsSet(boolean value) {
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ID_ISSET_ID, value);
-  }
-
-  public long getShopId() {
-    return this.shopId;
-  }
-
-  public Product setShopId(long shopId) {
-    this.shopId = shopId;
-    setShopIdIsSet(true);
-    return this;
-  }
-
-  public void unsetShopId() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SHOPID_ISSET_ID);
-  }
-
-  /** Returns true if field shopId is set (has been assigned a value) and false otherwise */
-  public boolean isSetShopId() {
-    return EncodingUtils.testBit(__isset_bitfield, __SHOPID_ISSET_ID);
-  }
-
-  public void setShopIdIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SHOPID_ISSET_ID, value);
   }
 
   public String getName() {
@@ -342,11 +306,21 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __WEIGHT_ISSET_ID, value);
   }
 
-  public String getImageURL() {
-    return this.imageURL;
+  public byte[] getImageURL() {
+    setImageURL(org.apache.thrift.TBaseHelper.rightSize(imageURL));
+    return imageURL == null ? null : imageURL.array();
   }
 
-  public Product setImageURL(String imageURL) {
+  public ByteBuffer bufferForImageURL() {
+    return imageURL;
+  }
+
+  public Product setImageURL(byte[] imageURL) {
+    setImageURL(imageURL == null ? (ByteBuffer)null : ByteBuffer.wrap(imageURL));
+    return this;
+  }
+
+  public Product setImageURL(ByteBuffer imageURL) {
     this.imageURL = imageURL;
     return this;
   }
@@ -399,14 +373,6 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
       }
       break;
 
-    case SHOP_ID:
-      if (value == null) {
-        unsetShopId();
-      } else {
-        setShopId((Long)value);
-      }
-      break;
-
     case NAME:
       if (value == null) {
         unsetName();
@@ -435,7 +401,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
       if (value == null) {
         unsetImageURL();
       } else {
-        setImageURL((String)value);
+        setImageURL((ByteBuffer)value);
       }
       break;
 
@@ -454,9 +420,6 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     switch (field) {
     case ID:
       return Long.valueOf(getId());
-
-    case SHOP_ID:
-      return Long.valueOf(getShopId());
 
     case NAME:
       return getName();
@@ -486,8 +449,6 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     switch (field) {
     case ID:
       return isSetId();
-    case SHOP_ID:
-      return isSetShopId();
     case NAME:
       return isSetName();
     case SHORT_DESCR:
@@ -521,15 +482,6 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
       if (!(this_present_id && that_present_id))
         return false;
       if (this.id != that.id)
-        return false;
-    }
-
-    boolean this_present_shopId = true;
-    boolean that_present_shopId = true;
-    if (this_present_shopId || that_present_shopId) {
-      if (!(this_present_shopId && that_present_shopId))
-        return false;
-      if (this.shopId != that.shopId)
         return false;
     }
 
@@ -600,16 +552,6 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     }
     if (isSetId()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.id, other.id);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetShopId()).compareTo(other.isSetShopId());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetShopId()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.shopId, other.shopId);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -688,10 +630,6 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     sb.append(this.id);
     first = false;
     if (!first) sb.append(", ");
-    sb.append("shopId:");
-    sb.append(this.shopId);
-    first = false;
-    if (!first) sb.append(", ");
     sb.append("name:");
     if (this.name == null) {
       sb.append("null");
@@ -716,7 +654,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     if (this.imageURL == null) {
       sb.append("null");
     } else {
-      sb.append(this.imageURL);
+      org.apache.thrift.TBaseHelper.toString(this.imageURL, sb);
     }
     first = false;
     if (!first) sb.append(", ");
@@ -776,15 +714,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // SHOP_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-              struct.shopId = iprot.readI64();
-              struct.setShopIdIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 4: // NAME
+          case 2: // NAME
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.name = iprot.readString();
               struct.setNameIsSet(true);
@@ -792,7 +722,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 5: // SHORT_DESCR
+          case 3: // SHORT_DESCR
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.shortDescr = iprot.readString();
               struct.setShortDescrIsSet(true);
@@ -800,7 +730,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 6: // WEIGHT
+          case 4: // WEIGHT
             if (schemeField.type == org.apache.thrift.protocol.TType.DOUBLE) {
               struct.weight = iprot.readDouble();
               struct.setWeightIsSet(true);
@@ -808,15 +738,15 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 7: // IMAGE_URL
+          case 5: // IMAGE_URL
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.imageURL = iprot.readString();
+              struct.imageURL = iprot.readBinary();
               struct.setImageURLIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 8: // PRICE
+          case 6: // PRICE
             if (schemeField.type == org.apache.thrift.protocol.TType.DOUBLE) {
               struct.price = iprot.readDouble();
               struct.setPriceIsSet(true);
@@ -842,9 +772,6 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
       oprot.writeFieldBegin(ID_FIELD_DESC);
       oprot.writeI64(struct.id);
       oprot.writeFieldEnd();
-      oprot.writeFieldBegin(SHOP_ID_FIELD_DESC);
-      oprot.writeI64(struct.shopId);
-      oprot.writeFieldEnd();
       if (struct.name != null) {
         oprot.writeFieldBegin(NAME_FIELD_DESC);
         oprot.writeString(struct.name);
@@ -860,7 +787,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
       oprot.writeFieldEnd();
       if (struct.imageURL != null) {
         oprot.writeFieldBegin(IMAGE_URL_FIELD_DESC);
-        oprot.writeString(struct.imageURL);
+        oprot.writeBinary(struct.imageURL);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldBegin(PRICE_FIELD_DESC);
@@ -887,30 +814,24 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
       if (struct.isSetId()) {
         optionals.set(0);
       }
-      if (struct.isSetShopId()) {
+      if (struct.isSetName()) {
         optionals.set(1);
       }
-      if (struct.isSetName()) {
+      if (struct.isSetShortDescr()) {
         optionals.set(2);
       }
-      if (struct.isSetShortDescr()) {
+      if (struct.isSetWeight()) {
         optionals.set(3);
       }
-      if (struct.isSetWeight()) {
+      if (struct.isSetImageURL()) {
         optionals.set(4);
       }
-      if (struct.isSetImageURL()) {
+      if (struct.isSetPrice()) {
         optionals.set(5);
       }
-      if (struct.isSetPrice()) {
-        optionals.set(6);
-      }
-      oprot.writeBitSet(optionals, 7);
+      oprot.writeBitSet(optionals, 6);
       if (struct.isSetId()) {
         oprot.writeI64(struct.id);
-      }
-      if (struct.isSetShopId()) {
-        oprot.writeI64(struct.shopId);
       }
       if (struct.isSetName()) {
         oprot.writeString(struct.name);
@@ -922,7 +843,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
         oprot.writeDouble(struct.weight);
       }
       if (struct.isSetImageURL()) {
-        oprot.writeString(struct.imageURL);
+        oprot.writeBinary(struct.imageURL);
       }
       if (struct.isSetPrice()) {
         oprot.writeDouble(struct.price);
@@ -932,32 +853,28 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Product struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(7);
+      BitSet incoming = iprot.readBitSet(6);
       if (incoming.get(0)) {
         struct.id = iprot.readI64();
         struct.setIdIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.shopId = iprot.readI64();
-        struct.setShopIdIsSet(true);
-      }
-      if (incoming.get(2)) {
         struct.name = iprot.readString();
         struct.setNameIsSet(true);
       }
-      if (incoming.get(3)) {
+      if (incoming.get(2)) {
         struct.shortDescr = iprot.readString();
         struct.setShortDescrIsSet(true);
       }
-      if (incoming.get(4)) {
+      if (incoming.get(3)) {
         struct.weight = iprot.readDouble();
         struct.setWeightIsSet(true);
       }
-      if (incoming.get(5)) {
-        struct.imageURL = iprot.readString();
+      if (incoming.get(4)) {
+        struct.imageURL = iprot.readBinary();
         struct.setImageURLIsSet(true);
       }
-      if (incoming.get(6)) {
+      if (incoming.get(5)) {
         struct.price = iprot.readDouble();
         struct.setPriceIsSet(true);
       }

@@ -69,14 +69,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		try {
 			VoMessage storedMsg = pm.getObjectById(VoMessage.class, msg.getId());
 			if (null == storedMsg)
-				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Message not found by ID=" + msg.getId());
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Message not found by ID=" + msg.getId());
 
 			VoTopic topic = storedMsg.getTopic();
 			if (null != topic) {
 				topic.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
 				topic.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());
 			} else {
-				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No topic found by id=" + storedMsg.getTopic().getId()
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No topic found by id=" + storedMsg.getTopic().getId()
 						+ " that stored in Message ID=" + msg.getId());
 			}
 
@@ -93,13 +93,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				author.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
 				author.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());
 			} else {
-				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No AUTHOR found by id=" + storedMsg.getAuthorId()
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No AUTHOR found by id=" + storedMsg.getAuthorId()
 						+ " that stored in Message ID=" + msg.getId());
 			}
 
 			if (storedMsg.getTopic().getId().getId() != msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId()
 					|| storedMsg.getRecipient() != msg.getRecipientId() || storedMsg.getCreatedAt() != msg.getCreated() || storedMsg.getType() != msg.getType())
-				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs,
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs,
 						"Parameters: topic, author, recipient, createdAt, type could not be changed!");
 
 			storedMsg.setLikes(msg.getLikesNum());
@@ -155,12 +155,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		try {
 			VoTopic theTopic = pm.getObjectById(VoTopic.class, topic.getId());
 			if (null == theTopic) {
-				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
 			}
 			
 			VoRubric rubric = pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
 			if (null == rubric) {
-				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Failed to move topic No Rubric found by id=" + topic.getRubricId());
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Failed to move topic No Rubric found by id=" + topic.getRubricId());
 			}
 			theTopic.setLikes(topic.likesNum);
 			theTopic.setUnlikes(topic.unlikesNum);
@@ -371,7 +371,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				currentTransaction.commit();
 			} catch (Exception e) {
 				currentTransaction.rollback();
-				throw new InvalidOperation(Error.GeneralError, "Failed to change dislike. Transaction not commited. Reason is [" + e.getMessage()
+				throw new InvalidOperation(VoError.GeneralError, "Failed to change dislike. Transaction not commited. Reason is [" + e.getMessage()
 						+ "]. Rollbacked.");
 			}
 			return unlikesNum;
@@ -411,7 +411,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				currentTransaction.commit();
 			} catch (Exception e) {
 				currentTransaction.rollback();
-				throw new InvalidOperation(Error.GeneralError, "Failed to change like for message " + messageId + " by user " + user
+				throw new InvalidOperation(VoError.GeneralError, "Failed to change like for message " + messageId + " by user " + user
 						+ ". Transaction not commited. Reason is [" + e.getMessage() + "]. Rollbacked.");
 			}
 			return likesNum;

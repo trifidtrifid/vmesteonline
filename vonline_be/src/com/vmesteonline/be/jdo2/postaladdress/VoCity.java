@@ -10,6 +10,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.vmesteonline.be.City;
 import com.vmesteonline.be.data.PMF;
 
 @PersistenceCapable
@@ -46,4 +47,19 @@ public class VoCity {
 	public void addStreet(VoStreet street){
 		streets.add(street);
 	}
+
+	public Key getId() {
+		return id;
+	}
+
+	public City getCity() {
+		return new City(id.getId(), country.getId().getId(), name);
+	}
+
+	@Override
+	public String toString() {
+		return "VoCity [id=" + id + ", name=" + name + ", country=" + country + "]";
+	}
+	
+	
 }

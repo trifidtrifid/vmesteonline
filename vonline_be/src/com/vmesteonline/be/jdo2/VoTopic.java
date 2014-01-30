@@ -30,7 +30,7 @@ public class VoTopic {
 		try {
 			VoRubric rubric = pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
 			if (null == rubric) {
-				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No Rubric found by id=" + topic.getRubricId());
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No Rubric found by id=" + topic.getRubricId());
 			}
 
 			messageNum = 0;
@@ -169,6 +169,11 @@ public class VoTopic {
 	@Unowned
 	private VoUserTopic userTopic;
 
+	@Override
+	public String toString() {
+		return "VoTopic [id=" + id + ", message=" + message + ", messageNum=" + messageNum + "]";
+	}
+
 	/*@Persistent
 	@Unindexed
 	private long[] listRepresentationOfTree = new long[0];
@@ -259,4 +264,6 @@ public class VoTopic {
 		} else
 			return -1;
 	}*/
+	
+	
 }

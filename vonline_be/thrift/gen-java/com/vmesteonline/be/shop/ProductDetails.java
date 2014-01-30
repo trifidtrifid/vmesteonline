@@ -51,7 +51,7 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
 
   public Set<Long> categories; // required
   public String fullDescr; // required
-  public Set<String> imagesURLset; // required
+  public Set<ByteBuffer> imagesURLset; // required
   public Map<PriceType,Double> pricesMap; // required
   public Map<String,String> optionsMap; // required
   public Set<Long> topicSet; // required
@@ -146,7 +146,7 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.IMAGES_URLSET, new org.apache.thrift.meta_data.FieldMetaData("imagesURLset", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING            , true))));
     tmpMap.put(_Fields.PRICES_MAP, new org.apache.thrift.meta_data.FieldMetaData("pricesMap", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
             new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, PriceType.class), 
@@ -170,7 +170,7 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
   public ProductDetails(
     Set<Long> categories,
     String fullDescr,
-    Set<String> imagesURLset,
+    Set<ByteBuffer> imagesURLset,
     Map<PriceType,Double> pricesMap,
     Map<String,String> optionsMap,
     Set<Long> topicSet,
@@ -200,7 +200,7 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       this.fullDescr = other.fullDescr;
     }
     if (other.isSetImagesURLset()) {
-      Set<String> __this__imagesURLset = new HashSet<String>(other.imagesURLset);
+      Set<ByteBuffer> __this__imagesURLset = new HashSet<ByteBuffer>(other.imagesURLset);
       this.imagesURLset = __this__imagesURLset;
     }
     if (other.isSetPricesMap()) {
@@ -312,22 +312,22 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
     return (this.imagesURLset == null) ? 0 : this.imagesURLset.size();
   }
 
-  public java.util.Iterator<String> getImagesURLsetIterator() {
+  public java.util.Iterator<ByteBuffer> getImagesURLsetIterator() {
     return (this.imagesURLset == null) ? null : this.imagesURLset.iterator();
   }
 
-  public void addToImagesURLset(String elem) {
+  public void addToImagesURLset(ByteBuffer elem) {
     if (this.imagesURLset == null) {
-      this.imagesURLset = new HashSet<String>();
+      this.imagesURLset = new HashSet<ByteBuffer>();
     }
     this.imagesURLset.add(elem);
   }
 
-  public Set<String> getImagesURLset() {
+  public Set<ByteBuffer> getImagesURLset() {
     return this.imagesURLset;
   }
 
-  public ProductDetails setImagesURLset(Set<String> imagesURLset) {
+  public ProductDetails setImagesURLset(Set<ByteBuffer> imagesURLset) {
     this.imagesURLset = imagesURLset;
     return this;
   }
@@ -501,7 +501,7 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (value == null) {
         unsetImagesURLset();
       } else {
-        setImagesURLset((Set<String>)value);
+        setImagesURLset((Set<ByteBuffer>)value);
       }
       break;
 
@@ -900,11 +900,11 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
             if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
               {
                 org.apache.thrift.protocol.TSet _set35 = iprot.readSetBegin();
-                struct.imagesURLset = new HashSet<String>(2*_set35.size);
+                struct.imagesURLset = new HashSet<ByteBuffer>(2*_set35.size);
                 for (int _i36 = 0; _i36 < _set35.size; ++_i36)
                 {
-                  String _elem37;
-                  _elem37 = iprot.readString();
+                  ByteBuffer _elem37;
+                  _elem37 = iprot.readBinary();
                   struct.imagesURLset.add(_elem37);
                 }
                 iprot.readSetEnd();
@@ -1016,9 +1016,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(IMAGES_URLSET_FIELD_DESC);
         {
           oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, struct.imagesURLset.size()));
-          for (String _iter50 : struct.imagesURLset)
+          for (ByteBuffer _iter50 : struct.imagesURLset)
           {
-            oprot.writeString(_iter50);
+            oprot.writeBinary(_iter50);
           }
           oprot.writeSetEnd();
         }
@@ -1120,9 +1120,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (struct.isSetImagesURLset()) {
         {
           oprot.writeI32(struct.imagesURLset.size());
-          for (String _iter55 : struct.imagesURLset)
+          for (ByteBuffer _iter55 : struct.imagesURLset)
           {
-            oprot.writeString(_iter55);
+            oprot.writeBinary(_iter55);
           }
         }
       }
@@ -1184,11 +1184,11 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (incoming.get(2)) {
         {
           org.apache.thrift.protocol.TSet _set62 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.imagesURLset = new HashSet<String>(2*_set62.size);
+          struct.imagesURLset = new HashSet<ByteBuffer>(2*_set62.size);
           for (int _i63 = 0; _i63 < _set62.size; ++_i63)
           {
-            String _elem64;
-            _elem64 = iprot.readString();
+            ByteBuffer _elem64;
+            _elem64 = iprot.readBinary();
             struct.imagesURLset.add(_elem64);
           }
         }

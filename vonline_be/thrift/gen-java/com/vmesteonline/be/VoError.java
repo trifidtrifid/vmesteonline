@@ -4,23 +4,23 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package com.vmesteonline.be.shop;
+package com.vmesteonline.be;
 
 
 import java.util.Map;
 import java.util.HashMap;
 import org.apache.thrift.TEnum;
 
-public enum PaymentType implements org.apache.thrift.TEnum {
-  UNKNOWN(0),
-  CASH(1),
-  CREDIT_CARD(2),
-  TRANSFER(3),
-  SHOP_CREDIT(5);
+public enum VoError implements org.apache.thrift.TEnum {
+  GeneralError(0),
+  IncorrectParametrs(1),
+  RegistrationAlreadyExist(2),
+  NotAuthorized(3),
+  IncorectLocationCode(4);
 
   private final int value;
 
-  private PaymentType(int value) {
+  private VoError(int value) {
     this.value = value;
   }
 
@@ -35,18 +35,18 @@ public enum PaymentType implements org.apache.thrift.TEnum {
    * Find a the enum type by its integer value, as defined in the Thrift IDL.
    * @return null if the value is not found.
    */
-  public static PaymentType findByValue(int value) { 
+  public static VoError findByValue(int value) { 
     switch (value) {
       case 0:
-        return UNKNOWN;
+        return GeneralError;
       case 1:
-        return CASH;
+        return IncorrectParametrs;
       case 2:
-        return CREDIT_CARD;
+        return RegistrationAlreadyExist;
       case 3:
-        return TRANSFER;
-      case 5:
-        return SHOP_CREDIT;
+        return NotAuthorized;
+      case 4:
+        return IncorectLocationCode;
       default:
         return null;
     }

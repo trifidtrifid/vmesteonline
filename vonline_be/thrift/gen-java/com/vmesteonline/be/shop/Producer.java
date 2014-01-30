@@ -50,7 +50,7 @@ public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fie
   public long id; // required
   public String name; // required
   public String descr; // required
-  public String logoURL; // required
+  public ByteBuffer logoURL; // required
   public String homeURL; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -136,7 +136,7 @@ public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fie
     tmpMap.put(_Fields.DESCR, new org.apache.thrift.meta_data.FieldMetaData("descr", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.LOGO_URL, new org.apache.thrift.meta_data.FieldMetaData("logoURL", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , true)));
     tmpMap.put(_Fields.HOME_URL, new org.apache.thrift.meta_data.FieldMetaData("homeURL", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -150,7 +150,7 @@ public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fie
     long id,
     String name,
     String descr,
-    String logoURL,
+    ByteBuffer logoURL,
     String homeURL)
   {
     this();
@@ -175,7 +175,8 @@ public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fie
       this.descr = other.descr;
     }
     if (other.isSetLogoURL()) {
-      this.logoURL = other.logoURL;
+      this.logoURL = org.apache.thrift.TBaseHelper.copyBinary(other.logoURL);
+;
     }
     if (other.isSetHomeURL()) {
       this.homeURL = other.homeURL;
@@ -267,11 +268,21 @@ public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fie
     }
   }
 
-  public String getLogoURL() {
-    return this.logoURL;
+  public byte[] getLogoURL() {
+    setLogoURL(org.apache.thrift.TBaseHelper.rightSize(logoURL));
+    return logoURL == null ? null : logoURL.array();
   }
 
-  public Producer setLogoURL(String logoURL) {
+  public ByteBuffer bufferForLogoURL() {
+    return logoURL;
+  }
+
+  public Producer setLogoURL(byte[] logoURL) {
+    setLogoURL(logoURL == null ? (ByteBuffer)null : ByteBuffer.wrap(logoURL));
+    return this;
+  }
+
+  public Producer setLogoURL(ByteBuffer logoURL) {
     this.logoURL = logoURL;
     return this;
   }
@@ -345,7 +356,7 @@ public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fie
       if (value == null) {
         unsetLogoURL();
       } else {
-        setLogoURL((String)value);
+        setLogoURL((ByteBuffer)value);
       }
       break;
 
@@ -570,7 +581,7 @@ public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fie
     if (this.logoURL == null) {
       sb.append("null");
     } else {
-      sb.append(this.logoURL);
+      org.apache.thrift.TBaseHelper.toString(this.logoURL, sb);
     }
     first = false;
     if (!first) sb.append(", ");
@@ -652,7 +663,7 @@ public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fie
             break;
           case 4: // LOGO_URL
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.logoURL = iprot.readString();
+              struct.logoURL = iprot.readBinary();
               struct.setLogoURLIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -696,7 +707,7 @@ public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fie
       }
       if (struct.logoURL != null) {
         oprot.writeFieldBegin(LOGO_URL_FIELD_DESC);
-        oprot.writeString(struct.logoURL);
+        oprot.writeBinary(struct.logoURL);
         oprot.writeFieldEnd();
       }
       if (struct.homeURL != null) {
@@ -748,7 +759,7 @@ public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fie
         oprot.writeString(struct.descr);
       }
       if (struct.isSetLogoURL()) {
-        oprot.writeString(struct.logoURL);
+        oprot.writeBinary(struct.logoURL);
       }
       if (struct.isSetHomeURL()) {
         oprot.writeString(struct.homeURL);
@@ -772,7 +783,7 @@ public class Producer implements org.apache.thrift.TBase<Producer, Producer._Fie
         struct.setDescrIsSet(true);
       }
       if (incoming.get(3)) {
-        struct.logoURL = iprot.readString();
+        struct.logoURL = iprot.readBinary();
         struct.setLogoURLIsSet(true);
       }
       if (incoming.get(4)) {

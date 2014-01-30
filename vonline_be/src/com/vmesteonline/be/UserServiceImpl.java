@@ -49,13 +49,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		VoUser user = pm.getObjectById(VoUser.class, userId);
 		if (user == null) {
 			logger.error("can't find user by id " + Long.toString(userId));
-			throw new InvalidOperation(Error.NotAuthorized, "can't find user by id");
+			throw new InvalidOperation(VoError.NotAuthorized, "can't find user by id");
 		}
 		logger.info("find user name " + user.getEmail());
 		pm.retrieve(user);
 		if (user.getGroups() == null) {
 			logger.warn("user with id " + Long.toString(userId) + " has no any groups");
-			throw new InvalidOperation(Error.GeneralError, "can't find user bu id");
+			throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");
 		}
 		List<Group> groups = new ArrayList<Group>();
 		for (VoUserGroup group : user.getGroups()) {
@@ -70,14 +70,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		VoUser user = PMF.getPm().getObjectById(VoUser.class, userId);
 		if (user == null) {
 			logger.error("can't find user by id " + Long.toString(userId));
-			throw new InvalidOperation(Error.NotAuthorized, "can't find user bu id");
+			throw new InvalidOperation(VoError.NotAuthorized, "can't find user bu id");
 		}
 
 		logger.info("find user name " + user.getEmail());
 
 		if (user.getRubrics() == null) {
 			logger.warn("user with id " + Long.toString(userId) + " has no any rubrics");
-			throw new InvalidOperation(Error.GeneralError, "No Rubrics are initialized for user=" + userId);
+			throw new InvalidOperation(VoError.GeneralError, "No Rubrics are initialized for user=" + userId);
 		}
 
 		List<Rubric> rubrics = new ArrayList<Rubric>();
@@ -114,9 +114,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		VoPostalAddress[] addresses;
 		try {
 			Key streetId = street.getId();
-			addresses = new VoPostalAddress[] { new VoPostalAddress(new VoBuilding(streetId, "32/3", 59.933146F, 30.423117F), 2, 1, 5, ""),
-					new VoPostalAddress(new VoBuilding(streetId, "35", 59.932544F, 30.419684F), 1, 11, 35, ""),
-					new VoPostalAddress(new VoBuilding(streetId, "6", 59.934177F, 30.404331F), 1, 2, 25, "") };
+			addresses = new VoPostalAddress[] { new VoPostalAddress(new VoBuilding(streetId, "32/3", 59.933146F, 30.423117F), (byte)2, (byte)1, (byte)5, ""),
+					new VoPostalAddress(new VoBuilding(streetId, "35", 59.932544F, 30.419684F), (byte)1, (byte)11, (byte)35, ""),
+					new VoPostalAddress(new VoBuilding(streetId, "6", 59.934177F, 30.404331F), (byte)1, (byte)2, (byte)25, "") };
 		} catch (InvalidOperation e) {
 			logger.error("Failed to create a list of location codes. Street create failed. " + e);
 			return locations;

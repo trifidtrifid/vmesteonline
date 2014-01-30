@@ -4,23 +4,22 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package com.vmesteonline.be;
+package com.vmesteonline.be.shop;
 
 
 import java.util.Map;
 import java.util.HashMap;
 import org.apache.thrift.TEnum;
 
-public enum Error implements org.apache.thrift.TEnum {
-  GeneralError(0),
-  IncorrectParametrs(1),
-  RegistrationAlreadyExist(2),
-  NotAuthorized(3),
-  IncorectLocationCode(4);
+public enum DateType implements org.apache.thrift.TEnum {
+  CLEAN(0),
+  NEXT_ORDER(1),
+  SPECIAL_PRICE(2),
+  CLOSED(3);
 
   private final int value;
 
-  private Error(int value) {
+  private DateType(int value) {
     this.value = value;
   }
 
@@ -35,18 +34,16 @@ public enum Error implements org.apache.thrift.TEnum {
    * Find a the enum type by its integer value, as defined in the Thrift IDL.
    * @return null if the value is not found.
    */
-  public static Error findByValue(int value) { 
+  public static DateType findByValue(int value) { 
     switch (value) {
       case 0:
-        return GeneralError;
+        return CLEAN;
       case 1:
-        return IncorrectParametrs;
+        return NEXT_ORDER;
       case 2:
-        return RegistrationAlreadyExist;
+        return SPECIAL_PRICE;
       case 3:
-        return NotAuthorized;
-      case 4:
-        return IncorectLocationCode;
+        return CLOSED;
       default:
         return null;
     }

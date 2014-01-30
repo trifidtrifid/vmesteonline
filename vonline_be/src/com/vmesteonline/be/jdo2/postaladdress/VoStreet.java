@@ -12,6 +12,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
+import com.vmesteonline.be.Street;
 import com.vmesteonline.be.data.PMF;
 
 @PersistenceCapable
@@ -63,4 +64,15 @@ public class VoStreet {
 	public String getName() {
 		return name;
 	}
+
+	public Street getStreet() {
+		return new Street(id.getId(), city.getId().getId(), name);
+	}
+
+	@Override
+	public String toString() {
+		return "VoStreet [id=" + id + ", name=" + name + ", city=" + city + "]";
+	}
+	
+	
 }

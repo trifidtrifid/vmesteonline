@@ -73,12 +73,12 @@ public class VoMessage {
 			/* CHeck the group to post, or move the message to */
 			VoGroup group = pm.getObjectById(VoGroup.class, msg.getGroupId());
 			if (null == group) {
-				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Group of Message not found by ID=" + msg.getGroupId());
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Group of Message not found by ID=" + msg.getGroupId());
 			}
 			/* CHeck the recipient */
 			if (0 != msg.getRecipientId()) {
 				if (null == pm.getObjectById(VoUser.class, msg.getRecipientId())) {
-					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Recipient of Message not found by ID=" + msg.getRecipientId());
+					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Recipient of Message not found by ID=" + msg.getRecipientId());
 				}
 				recipient = msg.getRecipientId();
 			}
@@ -136,7 +136,7 @@ public class VoMessage {
 						}
 					}
 					if (null == parentMsg) {
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "parent Message not found by ID=" + parentId);
+						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "parent Message not found by ID=" + parentId);
 					}
 					parentMsg.addChildMessage(this);
 					this.topic = parentMsg.getTopic();
@@ -146,7 +146,7 @@ public class VoMessage {
 				}
 
 				if (null == this.topic) {
-					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Topic of PArent Message not found");
+					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Topic of PArent Message not found");
 				}
 
 				/*
@@ -157,7 +157,7 @@ public class VoMessage {
 
 				VoUser author = pm.getObjectById(VoUser.class, msg.getAuthorId());
 				if (null == author) {
-					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Author of Message not found by ID=" + msg.getAuthorId());
+					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Author of Message not found by ID=" + msg.getAuthorId());
 				}
 				this.authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
 				this.type = msg.getType();
@@ -169,7 +169,7 @@ public class VoMessage {
 					longitude = homeGroup.getLongitude();
 					radius = group.getRadius();
 				} else {
-					throw new InvalidOperation(com.vmesteonline.be.Error.GeneralError, "User without HomeGroup must not create a message");
+					throw new InvalidOperation(com.vmesteonline.be.VoError.GeneralError, "User without HomeGroup must not create a message");
 				}
 
 				topic.setMessageNum(topic.getMessageNum() + 1);
@@ -186,9 +186,9 @@ public class VoMessage {
 				for (Entry<MessageType, Long> entry : msg.getLinkedMessages().entrySet()) {
 					VoMessage linkedMsg = pm.getObjectById(VoMessage.class, entry.getValue());
 					if (null == linkedMsg)
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Linked message not found by ID:" + entry.getValue());
+						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Linked message not found by ID:" + entry.getValue());
 					if (!entry.getKey().equals(linkedMsg.getType()))
-						throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Linked message with ID:" + entry.getValue()
+						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Linked message with ID:" + entry.getValue()
 								+ " type missmatch. Stored type:" + linkedMsg.getType().name() + " but linked as:" + entry.getKey().name());
 					links.put(entry.getKey(), entry.getValue());
 				}
@@ -215,7 +215,7 @@ public class VoMessage {
 			} catch (InvalidOperation e) {
 				throw e;
 			} catch (Exception e2) {
-				throw new InvalidOperation(com.vmesteonline.be.Error.GeneralError, "Failed to validate Message parameters:" + e2.getMessage());
+				throw new InvalidOperation(com.vmesteonline.be.VoError.GeneralError, "Failed to validate Message parameters:" + e2.getMessage());
 			}
 		} finally {
 			pm.close();
@@ -508,4 +508,11 @@ public class VoMessage {
 	@Unowned
 	private VoUserMessage userMessage;
 
+	@Override
+	public String toString() {
+		return "VoMessage [id=" + id + ", idValue=" + idValue + ", type=" + type + ", authorId=" + authorId + ", recipient=" + recipient + ", longitude="
+				+ longitude + ", latitude=" + latitude + ", radius=" + radius + "]";
+	}
+
+	
 }

@@ -68,4 +68,10 @@ public class VoGroup {
 	@Persistent 
 	private boolean subscribedByDefault;
 
+	@Override
+	public String toString() {
+		return "VoGroup [id=" + id + ", visibleName=" + visibleName + ", radius=" + radius + ", subscribedByDefault=" + subscribedByDefault + "]";
+	}
+
+	
 }

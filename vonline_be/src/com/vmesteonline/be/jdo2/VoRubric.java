@@ -80,4 +80,9 @@ public class VoRubric {
 	@Persistent
 	@Unindexed
 	String name;
+
+	@Override
+	public String toString() {
+		return "VoRubric [id=" + id + ", subscribedByDefault=" + subscribedByDefault + ", visibleName=" + visibleName + ", name=" + name + "]";
+	}
 }

@@ -1,6 +1,7 @@
 package com.vmesteonline.be;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -31,7 +32,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public static VoSession getSession(String sessId) throws InvalidOperation {
 		VoSession sess = PMF.get().getPersistenceManager().getObjectById(VoSession.class, sessId);
 		if (sess == null)
-			throw new InvalidOperation(Error.NotAuthorized, "can't find active session for " + sessId);
+			throw new InvalidOperation(VoError.NotAuthorized, "can't find active session for " + sessId);
 		return sess;
 	}
 
@@ -39,7 +40,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public boolean login(final String email, final String password) throws InvalidOperation, TException {
 		if (sessionStorage == null) {
 			logger.error("http session is null");
-			throw new InvalidOperation(Error.IncorrectParametrs, "http session is null");
+			throw new InvalidOperation(VoError.IncorrectParametrs, "http session is null");
 		}
 
 		logger.info("try authentificate user " + email + " pass " + password);
@@ -59,14 +60,14 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				logger.info("incorrect password " + email + " pass " + password);
 
 		}
-		throw new InvalidOperation(Error.IncorrectParametrs, "incorrect login or password");
+		throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
 	}
 
 	@Override
 	public long registerNewUser(String firstname, String lastname, String password, String email, String locationId) throws InvalidOperation {
 
 		if (getUserByEmail(email) != null)
-			throw new InvalidOperation(Error.RegistrationAlreadyExist, "registration exsist");
+			throw new InvalidOperation(VoError.RegistrationAlreadyExist, "registration exsist");
 
 		PersistenceManager pm = PMF.getPm();
 		VoUser user = new VoUser(firstname, lastname, email, password);
@@ -86,7 +87,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		try {
 			user.setLocation(Long.parseLong(locationId), true);
 		} catch (NumberFormatException | InvalidOperation e) {
-			throw new InvalidOperation(Error.IncorectLocationCode, "Incorrect code." + e);
+			throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 		}
 
 		logger.info("register " + email + " pass " + password + " id " + user.getId());
@@ -117,5 +118,15 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
+
+	@Override
+	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation, TException {
+		super.setCurrentAttribute(typeValueMap);
+	}
+
+	@Override
+	public Map<Integer, Long> getCurrentAttributes() throws InvalidOperation, TException {
+		return super.getCurrentAttributes();
+	}
 
 }

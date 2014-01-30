@@ -46,7 +46,7 @@ public class AuthServiceImpTests  {
 		try {
 			authSrvc.login("test", "ppp");
 		} catch (InvalidOperation e) {
-			assertEquals(Error.IncorrectParametrs, e.what);
+			assertEquals(VoError.IncorrectParametrs, e.what);
 		} catch (TException e) {
 			e.printStackTrace();
 			fail("unhadled exception");

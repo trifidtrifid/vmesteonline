@@ -106,4 +106,10 @@ public class VoUserMessage {
 	public void setRead(boolean read) {
 		this.read = read;
 	}
+
+	@Override
+	public String toString() {
+		return "VoUserMessage [userMessageId=" + userMessageId + ", messageId=" + messageId + ", userId=" + userId + ", likes=" + likes + ", unlikes="
+				+ unlikes + ", read=" + read + "]";
+	}
 }

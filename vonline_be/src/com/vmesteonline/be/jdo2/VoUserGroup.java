@@ -104,4 +104,9 @@ public class VoUserGroup {
 	@Unowned
 	@Unindexed
 	private VoGroup group;
+
+	@Override
+	public String toString() {
+		return "VoUserGroup [id=" + id + ", name=" + name + ", longitude=" + longitude + ", latitude=" + latitude + ", group=" + group + "]";
+	}
 }

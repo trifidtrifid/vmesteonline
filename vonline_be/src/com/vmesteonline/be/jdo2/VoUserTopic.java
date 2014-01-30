@@ -126,4 +126,11 @@ public class VoUserTopic {
 	public void setLastWroteMeessgeId(long lastWroteMeessgeId) {
 		this.lastWroteMeessgeId = lastWroteMeessgeId;
 	}
+	@Override
+	public String toString() {
+		return "VoUserTopic [userTopic=" + userTopic + ", userId=" + userId + ", topicId=" + topicId + ", archieved=" + archieved + ", unlikes="
+				+ unlikes + ", likes=" + likes + ", lastReadMessageId=" + lastReadMessageId + ", lastWroteMeessgeId=" + lastWroteMeessgeId + "]";
+	}
+	
+	
 }

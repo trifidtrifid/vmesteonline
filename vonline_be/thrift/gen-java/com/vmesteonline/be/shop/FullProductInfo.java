@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package com.vmesteonline.be;
+package com.vmesteonline.be.shop;
 
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
@@ -32,33 +32,25 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InvalidOperation extends TException implements org.apache.thrift.TBase<InvalidOperation, InvalidOperation._Fields>, java.io.Serializable, Cloneable, Comparable<InvalidOperation> {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("InvalidOperation");
+public class FullProductInfo implements org.apache.thrift.TBase<FullProductInfo, FullProductInfo._Fields>, java.io.Serializable, Cloneable, Comparable<FullProductInfo> {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("FullProductInfo");
 
-  private static final org.apache.thrift.protocol.TField WHAT_FIELD_DESC = new org.apache.thrift.protocol.TField("what", org.apache.thrift.protocol.TType.I32, (short)1);
-  private static final org.apache.thrift.protocol.TField WHY_FIELD_DESC = new org.apache.thrift.protocol.TField("why", org.apache.thrift.protocol.TType.STRING, (short)2);
+  private static final org.apache.thrift.protocol.TField PRODUCT_FIELD_DESC = new org.apache.thrift.protocol.TField("product", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+  private static final org.apache.thrift.protocol.TField DETAILS_FIELD_DESC = new org.apache.thrift.protocol.TField("details", org.apache.thrift.protocol.TType.STRUCT, (short)2);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
-    schemes.put(StandardScheme.class, new InvalidOperationStandardSchemeFactory());
-    schemes.put(TupleScheme.class, new InvalidOperationTupleSchemeFactory());
+    schemes.put(StandardScheme.class, new FullProductInfoStandardSchemeFactory());
+    schemes.put(TupleScheme.class, new FullProductInfoTupleSchemeFactory());
   }
 
-  /**
-   * 
-   * @see VoError
-   */
-  public VoError what; // required
-  public String why; // required
+  public Product product; // required
+  public ProductDetails details; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    /**
-     * 
-     * @see VoError
-     */
-    WHAT((short)1, "what"),
-    WHY((short)2, "why");
+    PRODUCT((short)1, "product"),
+    DETAILS((short)2, "details");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -73,10 +65,10 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // WHAT
-          return WHAT;
-        case 2: // WHY
-          return WHY;
+        case 1: // PRODUCT
+          return PRODUCT;
+        case 2: // DETAILS
+          return DETAILS;
         default:
           return null;
       }
@@ -120,119 +112,111 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.WHAT, new org.apache.thrift.meta_data.FieldMetaData("what", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, VoError.class)));
-    tmpMap.put(_Fields.WHY, new org.apache.thrift.meta_data.FieldMetaData("why", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+    tmpMap.put(_Fields.PRODUCT, new org.apache.thrift.meta_data.FieldMetaData("product", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Product.class)));
+    tmpMap.put(_Fields.DETAILS, new org.apache.thrift.meta_data.FieldMetaData("details", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, ProductDetails.class)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(InvalidOperation.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(FullProductInfo.class, metaDataMap);
   }
 
-  public InvalidOperation() {
+  public FullProductInfo() {
   }
 
-  public InvalidOperation(
-    VoError what,
-    String why)
+  public FullProductInfo(
+    Product product,
+    ProductDetails details)
   {
     this();
-    this.what = what;
-    this.why = why;
+    this.product = product;
+    this.details = details;
   }
 
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public InvalidOperation(InvalidOperation other) {
-    if (other.isSetWhat()) {
-      this.what = other.what;
+  public FullProductInfo(FullProductInfo other) {
+    if (other.isSetProduct()) {
+      this.product = new Product(other.product);
     }
-    if (other.isSetWhy()) {
-      this.why = other.why;
+    if (other.isSetDetails()) {
+      this.details = new ProductDetails(other.details);
     }
   }
 
-  public InvalidOperation deepCopy() {
-    return new InvalidOperation(this);
+  public FullProductInfo deepCopy() {
+    return new FullProductInfo(this);
   }
 
   @Override
   public void clear() {
-    this.what = null;
-    this.why = null;
+    this.product = null;
+    this.details = null;
   }
 
-  /**
-   * 
-   * @see VoError
-   */
-  public VoError getWhat() {
-    return this.what;
+  public Product getProduct() {
+    return this.product;
   }
 
-  /**
-   * 
-   * @see VoError
-   */
-  public InvalidOperation setWhat(VoError what) {
-    this.what = what;
+  public FullProductInfo setProduct(Product product) {
+    this.product = product;
     return this;
   }
 
-  public void unsetWhat() {
-    this.what = null;
+  public void unsetProduct() {
+    this.product = null;
   }
 
-  /** Returns true if field what is set (has been assigned a value) and false otherwise */
-  public boolean isSetWhat() {
-    return this.what != null;
+  /** Returns true if field product is set (has been assigned a value) and false otherwise */
+  public boolean isSetProduct() {
+    return this.product != null;
   }
 
-  public void setWhatIsSet(boolean value) {
+  public void setProductIsSet(boolean value) {
     if (!value) {
-      this.what = null;
+      this.product = null;
     }
   }
 
-  public String getWhy() {
-    return this.why;
+  public ProductDetails getDetails() {
+    return this.details;
   }
 
-  public InvalidOperation setWhy(String why) {
-    this.why = why;
+  public FullProductInfo setDetails(ProductDetails details) {
+    this.details = details;
     return this;
   }
 
-  public void unsetWhy() {
-    this.why = null;
+  public void unsetDetails() {
+    this.details = null;
   }
 
-  /** Returns true if field why is set (has been assigned a value) and false otherwise */
-  public boolean isSetWhy() {
-    return this.why != null;
+  /** Returns true if field details is set (has been assigned a value) and false otherwise */
+  public boolean isSetDetails() {
+    return this.details != null;
   }
 
-  public void setWhyIsSet(boolean value) {
+  public void setDetailsIsSet(boolean value) {
     if (!value) {
-      this.why = null;
+      this.details = null;
     }
   }
 
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
-    case WHAT:
+    case PRODUCT:
       if (value == null) {
-        unsetWhat();
+        unsetProduct();
       } else {
-        setWhat((VoError)value);
+        setProduct((Product)value);
       }
       break;
 
-    case WHY:
+    case DETAILS:
       if (value == null) {
-        unsetWhy();
+        unsetDetails();
       } else {
-        setWhy((String)value);
+        setDetails((ProductDetails)value);
       }
       break;
 
@@ -241,11 +225,11 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
-    case WHAT:
-      return getWhat();
+    case PRODUCT:
+      return getProduct();
 
-    case WHY:
-      return getWhy();
+    case DETAILS:
+      return getDetails();
 
     }
     throw new IllegalStateException();
@@ -258,10 +242,10 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
     }
 
     switch (field) {
-    case WHAT:
-      return isSetWhat();
-    case WHY:
-      return isSetWhy();
+    case PRODUCT:
+      return isSetProduct();
+    case DETAILS:
+      return isSetDetails();
     }
     throw new IllegalStateException();
   }
@@ -270,30 +254,30 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
   public boolean equals(Object that) {
     if (that == null)
       return false;
-    if (that instanceof InvalidOperation)
-      return this.equals((InvalidOperation)that);
+    if (that instanceof FullProductInfo)
+      return this.equals((FullProductInfo)that);
     return false;
   }
 
-  public boolean equals(InvalidOperation that) {
+  public boolean equals(FullProductInfo that) {
     if (that == null)
       return false;
 
-    boolean this_present_what = true && this.isSetWhat();
-    boolean that_present_what = true && that.isSetWhat();
-    if (this_present_what || that_present_what) {
-      if (!(this_present_what && that_present_what))
+    boolean this_present_product = true && this.isSetProduct();
+    boolean that_present_product = true && that.isSetProduct();
+    if (this_present_product || that_present_product) {
+      if (!(this_present_product && that_present_product))
         return false;
-      if (!this.what.equals(that.what))
+      if (!this.product.equals(that.product))
         return false;
     }
 
-    boolean this_present_why = true && this.isSetWhy();
-    boolean that_present_why = true && that.isSetWhy();
-    if (this_present_why || that_present_why) {
-      if (!(this_present_why && that_present_why))
+    boolean this_present_details = true && this.isSetDetails();
+    boolean that_present_details = true && that.isSetDetails();
+    if (this_present_details || that_present_details) {
+      if (!(this_present_details && that_present_details))
         return false;
-      if (!this.why.equals(that.why))
+      if (!this.details.equals(that.details))
         return false;
     }
 
@@ -306,29 +290,29 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
   }
 
   @Override
-  public int compareTo(InvalidOperation other) {
+  public int compareTo(FullProductInfo other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
 
     int lastComparison = 0;
 
-    lastComparison = Boolean.valueOf(isSetWhat()).compareTo(other.isSetWhat());
+    lastComparison = Boolean.valueOf(isSetProduct()).compareTo(other.isSetProduct());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetWhat()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.what, other.what);
+    if (isSetProduct()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.product, other.product);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetWhy()).compareTo(other.isSetWhy());
+    lastComparison = Boolean.valueOf(isSetDetails()).compareTo(other.isSetDetails());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetWhy()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.why, other.why);
+    if (isSetDetails()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.details, other.details);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -350,22 +334,22 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder("InvalidOperation(");
+    StringBuilder sb = new StringBuilder("FullProductInfo(");
     boolean first = true;
 
-    sb.append("what:");
-    if (this.what == null) {
+    sb.append("product:");
+    if (this.product == null) {
       sb.append("null");
     } else {
-      sb.append(this.what);
+      sb.append(this.product);
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("why:");
-    if (this.why == null) {
+    sb.append("details:");
+    if (this.details == null) {
       sb.append("null");
     } else {
-      sb.append(this.why);
+      sb.append(this.details);
     }
     first = false;
     sb.append(")");
@@ -375,6 +359,12 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
   public void validate() throws org.apache.thrift.TException {
     // check for required fields
     // check for sub-struct validity
+    if (product != null) {
+      product.validate();
+    }
+    if (details != null) {
+      details.validate();
+    }
   }
 
   private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -393,15 +383,15 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
     }
   }
 
-  private static class InvalidOperationStandardSchemeFactory implements SchemeFactory {
-    public InvalidOperationStandardScheme getScheme() {
-      return new InvalidOperationStandardScheme();
+  private static class FullProductInfoStandardSchemeFactory implements SchemeFactory {
+    public FullProductInfoStandardScheme getScheme() {
+      return new FullProductInfoStandardScheme();
     }
   }
 
-  private static class InvalidOperationStandardScheme extends StandardScheme<InvalidOperation> {
+  private static class FullProductInfoStandardScheme extends StandardScheme<FullProductInfo> {
 
-    public void read(org.apache.thrift.protocol.TProtocol iprot, InvalidOperation struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol iprot, FullProductInfo struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TField schemeField;
       iprot.readStructBegin();
       while (true)
@@ -411,18 +401,20 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
           break;
         }
         switch (schemeField.id) {
-          case 1: // WHAT
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.what = VoError.findByValue(iprot.readI32());
-              struct.setWhatIsSet(true);
+          case 1: // PRODUCT
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+              struct.product = new Product();
+              struct.product.read(iprot);
+              struct.setProductIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // WHY
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.why = iprot.readString();
-              struct.setWhyIsSet(true);
+          case 2: // DETAILS
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+              struct.details = new ProductDetails();
+              struct.details.read(iprot);
+              struct.setDetailsIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -438,18 +430,18 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
       struct.validate();
     }
 
-    public void write(org.apache.thrift.protocol.TProtocol oprot, InvalidOperation struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol oprot, FullProductInfo struct) throws org.apache.thrift.TException {
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      if (struct.what != null) {
-        oprot.writeFieldBegin(WHAT_FIELD_DESC);
-        oprot.writeI32(struct.what.getValue());
+      if (struct.product != null) {
+        oprot.writeFieldBegin(PRODUCT_FIELD_DESC);
+        struct.product.write(oprot);
         oprot.writeFieldEnd();
       }
-      if (struct.why != null) {
-        oprot.writeFieldBegin(WHY_FIELD_DESC);
-        oprot.writeString(struct.why);
+      if (struct.details != null) {
+        oprot.writeFieldBegin(DETAILS_FIELD_DESC);
+        struct.details.write(oprot);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldStop();
@@ -458,44 +450,46 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
 
   }
 
-  private static class InvalidOperationTupleSchemeFactory implements SchemeFactory {
-    public InvalidOperationTupleScheme getScheme() {
-      return new InvalidOperationTupleScheme();
+  private static class FullProductInfoTupleSchemeFactory implements SchemeFactory {
+    public FullProductInfoTupleScheme getScheme() {
+      return new FullProductInfoTupleScheme();
     }
   }
 
-  private static class InvalidOperationTupleScheme extends TupleScheme<InvalidOperation> {
+  private static class FullProductInfoTupleScheme extends TupleScheme<FullProductInfo> {
 
     @Override
-    public void write(org.apache.thrift.protocol.TProtocol prot, InvalidOperation struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol prot, FullProductInfo struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetWhat()) {
+      if (struct.isSetProduct()) {
         optionals.set(0);
       }
-      if (struct.isSetWhy()) {
+      if (struct.isSetDetails()) {
         optionals.set(1);
       }
       oprot.writeBitSet(optionals, 2);
-      if (struct.isSetWhat()) {
-        oprot.writeI32(struct.what.getValue());
+      if (struct.isSetProduct()) {
+        struct.product.write(oprot);
       }
-      if (struct.isSetWhy()) {
-        oprot.writeString(struct.why);
+      if (struct.isSetDetails()) {
+        struct.details.write(oprot);
       }
     }
 
     @Override
-    public void read(org.apache.thrift.protocol.TProtocol prot, InvalidOperation struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol prot, FullProductInfo struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
       BitSet incoming = iprot.readBitSet(2);
       if (incoming.get(0)) {
-        struct.what = VoError.findByValue(iprot.readI32());
-        struct.setWhatIsSet(true);
+        struct.product = new Product();
+        struct.product.read(iprot);
+        struct.setProductIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.why = iprot.readString();
-        struct.setWhyIsSet(true);
+        struct.details = new ProductDetails();
+        struct.details.read(iprot);
+        struct.setDetailsIsSet(true);
       }
     }
   }

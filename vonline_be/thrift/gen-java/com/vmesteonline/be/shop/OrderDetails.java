@@ -35,13 +35,14 @@ import org.slf4j.LoggerFactory;
 public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, OrderDetails._Fields>, java.io.Serializable, Cloneable, Comparable<OrderDetails> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("OrderDetails");
 
-  private static final org.apache.thrift.protocol.TField DATE_CREATED_FIELD_DESC = new org.apache.thrift.protocol.TField("dateCreated", org.apache.thrift.protocol.TType.I32, (short)1);
+  private static final org.apache.thrift.protocol.TField CREATED_AT_FIELD_DESC = new org.apache.thrift.protocol.TField("createdAt", org.apache.thrift.protocol.TType.I32, (short)1);
   private static final org.apache.thrift.protocol.TField DELIVERY_FIELD_DESC = new org.apache.thrift.protocol.TField("delivery", org.apache.thrift.protocol.TType.I32, (short)2);
   private static final org.apache.thrift.protocol.TField DELIVERY_COST_FIELD_DESC = new org.apache.thrift.protocol.TField("deliveryCost", org.apache.thrift.protocol.TType.DOUBLE, (short)3);
   private static final org.apache.thrift.protocol.TField DELIVERY_TO_FIELD_DESC = new org.apache.thrift.protocol.TField("deliveryTo", org.apache.thrift.protocol.TType.STRUCT, (short)4);
   private static final org.apache.thrift.protocol.TField PAYMENT_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("paymentType", org.apache.thrift.protocol.TType.I32, (short)5);
   private static final org.apache.thrift.protocol.TField PAYMENT_STATUS_FIELD_DESC = new org.apache.thrift.protocol.TField("paymentStatus", org.apache.thrift.protocol.TType.I32, (short)6);
-  private static final org.apache.thrift.protocol.TField COMMENT_FIELD_DESC = new org.apache.thrift.protocol.TField("comment", org.apache.thrift.protocol.TType.STRING, (short)7);
+  private static final org.apache.thrift.protocol.TField ODRER_LINES_FIELD_DESC = new org.apache.thrift.protocol.TField("odrerLines", org.apache.thrift.protocol.TType.LIST, (short)7);
+  private static final org.apache.thrift.protocol.TField COMMENT_FIELD_DESC = new org.apache.thrift.protocol.TField("comment", org.apache.thrift.protocol.TType.STRING, (short)8);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -49,7 +50,7 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
     schemes.put(TupleScheme.class, new OrderDetailsTupleSchemeFactory());
   }
 
-  public int dateCreated; // required
+  public int createdAt; // required
   /**
    * 
    * @see DeliveryType
@@ -67,11 +68,12 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
    * @see PaymentStatus
    */
   public PaymentStatus paymentStatus; // required
+  public List<OrderLine> odrerLines; // required
   public String comment; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    DATE_CREATED((short)1, "dateCreated"),
+    CREATED_AT((short)1, "createdAt"),
     /**
      * 
      * @see DeliveryType
@@ -89,7 +91,8 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
      * @see PaymentStatus
      */
     PAYMENT_STATUS((short)6, "paymentStatus"),
-    COMMENT((short)7, "comment");
+    ODRER_LINES((short)7, "odrerLines"),
+    COMMENT((short)8, "comment");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -104,8 +107,8 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // DATE_CREATED
-          return DATE_CREATED;
+        case 1: // CREATED_AT
+          return CREATED_AT;
         case 2: // DELIVERY
           return DELIVERY;
         case 3: // DELIVERY_COST
@@ -116,7 +119,9 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
           return PAYMENT_TYPE;
         case 6: // PAYMENT_STATUS
           return PAYMENT_STATUS;
-        case 7: // COMMENT
+        case 7: // ODRER_LINES
+          return ODRER_LINES;
+        case 8: // COMMENT
           return COMMENT;
         default:
           return null;
@@ -158,13 +163,13 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
   }
 
   // isset id assignments
-  private static final int __DATECREATED_ISSET_ID = 0;
+  private static final int __CREATEDAT_ISSET_ID = 0;
   private static final int __DELIVERYCOST_ISSET_ID = 1;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.DATE_CREATED, new org.apache.thrift.meta_data.FieldMetaData("dateCreated", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.CREATED_AT, new org.apache.thrift.meta_data.FieldMetaData("createdAt", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.DELIVERY, new org.apache.thrift.meta_data.FieldMetaData("delivery", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, DeliveryType.class)));
@@ -176,6 +181,9 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, PaymentType.class)));
     tmpMap.put(_Fields.PAYMENT_STATUS, new org.apache.thrift.meta_data.FieldMetaData("paymentStatus", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, PaymentStatus.class)));
+    tmpMap.put(_Fields.ODRER_LINES, new org.apache.thrift.meta_data.FieldMetaData("odrerLines", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
+            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, OrderLine.class))));
     tmpMap.put(_Fields.COMMENT, new org.apache.thrift.meta_data.FieldMetaData("comment", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -186,23 +194,25 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
   }
 
   public OrderDetails(
-    int dateCreated,
+    int createdAt,
     DeliveryType delivery,
     double deliveryCost,
     com.vmesteonline.be.PostalAddress deliveryTo,
     PaymentType paymentType,
     PaymentStatus paymentStatus,
+    List<OrderLine> odrerLines,
     String comment)
   {
     this();
-    this.dateCreated = dateCreated;
-    setDateCreatedIsSet(true);
+    this.createdAt = createdAt;
+    setCreatedAtIsSet(true);
     this.delivery = delivery;
     this.deliveryCost = deliveryCost;
     setDeliveryCostIsSet(true);
     this.deliveryTo = deliveryTo;
     this.paymentType = paymentType;
     this.paymentStatus = paymentStatus;
+    this.odrerLines = odrerLines;
     this.comment = comment;
   }
 
@@ -211,7 +221,7 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
    */
   public OrderDetails(OrderDetails other) {
     __isset_bitfield = other.__isset_bitfield;
-    this.dateCreated = other.dateCreated;
+    this.createdAt = other.createdAt;
     if (other.isSetDelivery()) {
       this.delivery = other.delivery;
     }
@@ -225,6 +235,13 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
     if (other.isSetPaymentStatus()) {
       this.paymentStatus = other.paymentStatus;
     }
+    if (other.isSetOdrerLines()) {
+      List<OrderLine> __this__odrerLines = new ArrayList<OrderLine>(other.odrerLines.size());
+      for (OrderLine other_element : other.odrerLines) {
+        __this__odrerLines.add(new OrderLine(other_element));
+      }
+      this.odrerLines = __this__odrerLines;
+    }
     if (other.isSetComment()) {
       this.comment = other.comment;
     }
@@ -236,38 +253,39 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
 
   @Override
   public void clear() {
-    setDateCreatedIsSet(false);
-    this.dateCreated = 0;
+    setCreatedAtIsSet(false);
+    this.createdAt = 0;
     this.delivery = null;
     setDeliveryCostIsSet(false);
     this.deliveryCost = 0.0;
     this.deliveryTo = null;
     this.paymentType = null;
     this.paymentStatus = null;
+    this.odrerLines = null;
     this.comment = null;
   }
 
-  public int getDateCreated() {
-    return this.dateCreated;
+  public int getCreatedAt() {
+    return this.createdAt;
   }
 
-  public OrderDetails setDateCreated(int dateCreated) {
-    this.dateCreated = dateCreated;
-    setDateCreatedIsSet(true);
+  public OrderDetails setCreatedAt(int createdAt) {
+    this.createdAt = createdAt;
+    setCreatedAtIsSet(true);
     return this;
   }
 
-  public void unsetDateCreated() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __DATECREATED_ISSET_ID);
+  public void unsetCreatedAt() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CREATEDAT_ISSET_ID);
   }
 
-  /** Returns true if field dateCreated is set (has been assigned a value) and false otherwise */
-  public boolean isSetDateCreated() {
-    return EncodingUtils.testBit(__isset_bitfield, __DATECREATED_ISSET_ID);
+  /** Returns true if field createdAt is set (has been assigned a value) and false otherwise */
+  public boolean isSetCreatedAt() {
+    return EncodingUtils.testBit(__isset_bitfield, __CREATEDAT_ISSET_ID);
   }
 
-  public void setDateCreatedIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __DATECREATED_ISSET_ID, value);
+  public void setCreatedAtIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CREATEDAT_ISSET_ID, value);
   }
 
   /**
@@ -413,6 +431,45 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
     }
   }
 
+  public int getOdrerLinesSize() {
+    return (this.odrerLines == null) ? 0 : this.odrerLines.size();
+  }
+
+  public java.util.Iterator<OrderLine> getOdrerLinesIterator() {
+    return (this.odrerLines == null) ? null : this.odrerLines.iterator();
+  }
+
+  public void addToOdrerLines(OrderLine elem) {
+    if (this.odrerLines == null) {
+      this.odrerLines = new ArrayList<OrderLine>();
+    }
+    this.odrerLines.add(elem);
+  }
+
+  public List<OrderLine> getOdrerLines() {
+    return this.odrerLines;
+  }
+
+  public OrderDetails setOdrerLines(List<OrderLine> odrerLines) {
+    this.odrerLines = odrerLines;
+    return this;
+  }
+
+  public void unsetOdrerLines() {
+    this.odrerLines = null;
+  }
+
+  /** Returns true if field odrerLines is set (has been assigned a value) and false otherwise */
+  public boolean isSetOdrerLines() {
+    return this.odrerLines != null;
+  }
+
+  public void setOdrerLinesIsSet(boolean value) {
+    if (!value) {
+      this.odrerLines = null;
+    }
+  }
+
   public String getComment() {
     return this.comment;
   }
@@ -439,11 +496,11 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
 
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
-    case DATE_CREATED:
+    case CREATED_AT:
       if (value == null) {
-        unsetDateCreated();
+        unsetCreatedAt();
       } else {
-        setDateCreated((Integer)value);
+        setCreatedAt((Integer)value);
       }
       break;
 
@@ -487,6 +544,14 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
       }
       break;
 
+    case ODRER_LINES:
+      if (value == null) {
+        unsetOdrerLines();
+      } else {
+        setOdrerLines((List<OrderLine>)value);
+      }
+      break;
+
     case COMMENT:
       if (value == null) {
         unsetComment();
@@ -500,8 +565,8 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
-    case DATE_CREATED:
-      return Integer.valueOf(getDateCreated());
+    case CREATED_AT:
+      return Integer.valueOf(getCreatedAt());
 
     case DELIVERY:
       return getDelivery();
@@ -518,6 +583,9 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
     case PAYMENT_STATUS:
       return getPaymentStatus();
 
+    case ODRER_LINES:
+      return getOdrerLines();
+
     case COMMENT:
       return getComment();
 
@@ -532,8 +600,8 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
     }
 
     switch (field) {
-    case DATE_CREATED:
-      return isSetDateCreated();
+    case CREATED_AT:
+      return isSetCreatedAt();
     case DELIVERY:
       return isSetDelivery();
     case DELIVERY_COST:
@@ -544,6 +612,8 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
       return isSetPaymentType();
     case PAYMENT_STATUS:
       return isSetPaymentStatus();
+    case ODRER_LINES:
+      return isSetOdrerLines();
     case COMMENT:
       return isSetComment();
     }
@@ -563,12 +633,12 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
     if (that == null)
       return false;
 
-    boolean this_present_dateCreated = true;
-    boolean that_present_dateCreated = true;
-    if (this_present_dateCreated || that_present_dateCreated) {
-      if (!(this_present_dateCreated && that_present_dateCreated))
+    boolean this_present_createdAt = true;
+    boolean that_present_createdAt = true;
+    if (this_present_createdAt || that_present_createdAt) {
+      if (!(this_present_createdAt && that_present_createdAt))
         return false;
-      if (this.dateCreated != that.dateCreated)
+      if (this.createdAt != that.createdAt)
         return false;
     }
 
@@ -617,6 +687,15 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
         return false;
     }
 
+    boolean this_present_odrerLines = true && this.isSetOdrerLines();
+    boolean that_present_odrerLines = true && that.isSetOdrerLines();
+    if (this_present_odrerLines || that_present_odrerLines) {
+      if (!(this_present_odrerLines && that_present_odrerLines))
+        return false;
+      if (!this.odrerLines.equals(that.odrerLines))
+        return false;
+    }
+
     boolean this_present_comment = true && this.isSetComment();
     boolean that_present_comment = true && that.isSetComment();
     if (this_present_comment || that_present_comment) {
@@ -642,12 +721,12 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
 
     int lastComparison = 0;
 
-    lastComparison = Boolean.valueOf(isSetDateCreated()).compareTo(other.isSetDateCreated());
+    lastComparison = Boolean.valueOf(isSetCreatedAt()).compareTo(other.isSetCreatedAt());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetDateCreated()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.dateCreated, other.dateCreated);
+    if (isSetCreatedAt()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.createdAt, other.createdAt);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -702,6 +781,16 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetOdrerLines()).compareTo(other.isSetOdrerLines());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetOdrerLines()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.odrerLines, other.odrerLines);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     lastComparison = Boolean.valueOf(isSetComment()).compareTo(other.isSetComment());
     if (lastComparison != 0) {
       return lastComparison;
@@ -732,8 +821,8 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
     StringBuilder sb = new StringBuilder("OrderDetails(");
     boolean first = true;
 
-    sb.append("dateCreated:");
-    sb.append(this.dateCreated);
+    sb.append("createdAt:");
+    sb.append(this.createdAt);
     first = false;
     if (!first) sb.append(", ");
     sb.append("delivery:");
@@ -769,6 +858,14 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
       sb.append("null");
     } else {
       sb.append(this.paymentStatus);
+    }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("odrerLines:");
+    if (this.odrerLines == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.odrerLines);
     }
     first = false;
     if (!first) sb.append(", ");
@@ -827,10 +924,10 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
           break;
         }
         switch (schemeField.id) {
-          case 1: // DATE_CREATED
+          case 1: // CREATED_AT
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.dateCreated = iprot.readI32();
-              struct.setDateCreatedIsSet(true);
+              struct.createdAt = iprot.readI32();
+              struct.setCreatedAtIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -876,7 +973,26 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 7: // COMMENT
+          case 7: // ODRER_LINES
+            if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
+              {
+                org.apache.thrift.protocol.TList _list76 = iprot.readListBegin();
+                struct.odrerLines = new ArrayList<OrderLine>(_list76.size);
+                for (int _i77 = 0; _i77 < _list76.size; ++_i77)
+                {
+                  OrderLine _elem78;
+                  _elem78 = new OrderLine();
+                  _elem78.read(iprot);
+                  struct.odrerLines.add(_elem78);
+                }
+                iprot.readListEnd();
+              }
+              struct.setOdrerLinesIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 8: // COMMENT
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.comment = iprot.readString();
               struct.setCommentIsSet(true);
@@ -899,8 +1015,8 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      oprot.writeFieldBegin(DATE_CREATED_FIELD_DESC);
-      oprot.writeI32(struct.dateCreated);
+      oprot.writeFieldBegin(CREATED_AT_FIELD_DESC);
+      oprot.writeI32(struct.createdAt);
       oprot.writeFieldEnd();
       if (struct.delivery != null) {
         oprot.writeFieldBegin(DELIVERY_FIELD_DESC);
@@ -923,6 +1039,18 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
       if (struct.paymentStatus != null) {
         oprot.writeFieldBegin(PAYMENT_STATUS_FIELD_DESC);
         oprot.writeI32(struct.paymentStatus.getValue());
+        oprot.writeFieldEnd();
+      }
+      if (struct.odrerLines != null) {
+        oprot.writeFieldBegin(ODRER_LINES_FIELD_DESC);
+        {
+          oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.odrerLines.size()));
+          for (OrderLine _iter79 : struct.odrerLines)
+          {
+            _iter79.write(oprot);
+          }
+          oprot.writeListEnd();
+        }
         oprot.writeFieldEnd();
       }
       if (struct.comment != null) {
@@ -948,7 +1076,7 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
     public void write(org.apache.thrift.protocol.TProtocol prot, OrderDetails struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetDateCreated()) {
+      if (struct.isSetCreatedAt()) {
         optionals.set(0);
       }
       if (struct.isSetDelivery()) {
@@ -966,12 +1094,15 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
       if (struct.isSetPaymentStatus()) {
         optionals.set(5);
       }
-      if (struct.isSetComment()) {
+      if (struct.isSetOdrerLines()) {
         optionals.set(6);
       }
-      oprot.writeBitSet(optionals, 7);
-      if (struct.isSetDateCreated()) {
-        oprot.writeI32(struct.dateCreated);
+      if (struct.isSetComment()) {
+        optionals.set(7);
+      }
+      oprot.writeBitSet(optionals, 8);
+      if (struct.isSetCreatedAt()) {
+        oprot.writeI32(struct.createdAt);
       }
       if (struct.isSetDelivery()) {
         oprot.writeI32(struct.delivery.getValue());
@@ -988,6 +1119,15 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
       if (struct.isSetPaymentStatus()) {
         oprot.writeI32(struct.paymentStatus.getValue());
       }
+      if (struct.isSetOdrerLines()) {
+        {
+          oprot.writeI32(struct.odrerLines.size());
+          for (OrderLine _iter80 : struct.odrerLines)
+          {
+            _iter80.write(oprot);
+          }
+        }
+      }
       if (struct.isSetComment()) {
         oprot.writeString(struct.comment);
       }
@@ -996,10 +1136,10 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, OrderDetails struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(7);
+      BitSet incoming = iprot.readBitSet(8);
       if (incoming.get(0)) {
-        struct.dateCreated = iprot.readI32();
-        struct.setDateCreatedIsSet(true);
+        struct.createdAt = iprot.readI32();
+        struct.setCreatedAtIsSet(true);
       }
       if (incoming.get(1)) {
         struct.delivery = DeliveryType.findByValue(iprot.readI32());
@@ -1023,6 +1163,20 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
         struct.setPaymentStatusIsSet(true);
       }
       if (incoming.get(6)) {
+        {
+          org.apache.thrift.protocol.TList _list81 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.odrerLines = new ArrayList<OrderLine>(_list81.size);
+          for (int _i82 = 0; _i82 < _list81.size; ++_i82)
+          {
+            OrderLine _elem83;
+            _elem83 = new OrderLine();
+            _elem83.read(iprot);
+            struct.odrerLines.add(_elem83);
+          }
+        }
+        struct.setOdrerLinesIsSet(true);
+      }
+      if (incoming.get(7)) {
         struct.comment = iprot.readString();
         struct.setCommentIsSet(true);
       }

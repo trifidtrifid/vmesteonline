@@ -13,7 +13,8 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
-import com.vmesteonline.be.Error;
+import com.vmesteonline.be.Building;
+import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoGroup;
@@ -29,7 +30,7 @@ public class VoBuilding {
 		try {
 			VoStreet street = pm.getObjectById(VoStreet.class, streetId);
 			if (null == street) {
-				throw new InvalidOperation(Error.GeneralError, "Incorrect street Id user in constructor of VoBuilding. streetId=" + streetId);
+				throw new InvalidOperation(VoError.GeneralError, "Incorrect street Id user in constructor of VoBuilding. streetId=" + streetId);
 			}
 			street.addBuilding(this);
 			
@@ -87,4 +88,14 @@ public class VoBuilding {
 	public void removeUser(VoUser voUser) {
 		users.remove(voUser);
 	}
+
+	public Building getBuilding() {
+		return new Building(id.getId(), streetId.getId(), fullNo);
+	}
+
+	@Override
+	public String toString() {
+		return "VoBuilding [id=" + id + ", fullNo=" + fullNo + ", streetId=" + streetId + ", address=" + address + ", userGroup=" + userGroup + "]";
+	}
+	
 }
