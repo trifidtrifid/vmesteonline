@@ -226,3 +226,193 @@ com.vmesteonline.be.Rubric.prototype.write = function(output) {
   return;
 };
 
+com.vmesteonline.be.FullAddressCatalogue = function(args) {
+  this.countries = null;
+  this.cities = null;
+  this.streets = null;
+  this.buildings = null;
+  if (args) {
+    if (args.countries !== undefined) {
+      this.countries = args.countries;
+    }
+    if (args.cities !== undefined) {
+      this.cities = args.cities;
+    }
+    if (args.streets !== undefined) {
+      this.streets = args.streets;
+    }
+    if (args.buildings !== undefined) {
+      this.buildings = args.buildings;
+    }
+  }
+};
+com.vmesteonline.be.FullAddressCatalogue.prototype = {};
+com.vmesteonline.be.FullAddressCatalogue.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.SET) {
+        var _size0 = 0;
+        var _rtmp34;
+        this.countries = [];
+        var _etype3 = 0;
+        _rtmp34 = input.readSetBegin();
+        _etype3 = _rtmp34.etype;
+        _size0 = _rtmp34.size;
+        for (var _i5 = 0; _i5 < _size0; ++_i5)
+        {
+          var elem6 = null;
+          elem6 = new com.vmesteonline.be.Country();
+          elem6.read(input);
+          this.countries.push(elem6);
+        }
+        input.readSetEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.LIST) {
+        var _size7 = 0;
+        var _rtmp311;
+        this.cities = [];
+        var _etype10 = 0;
+        _rtmp311 = input.readListBegin();
+        _etype10 = _rtmp311.etype;
+        _size7 = _rtmp311.size;
+        for (var _i12 = 0; _i12 < _size7; ++_i12)
+        {
+          var elem13 = null;
+          elem13 = new com.vmesteonline.be.City();
+          elem13.read(input);
+          this.cities.push(elem13);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.LIST) {
+        var _size14 = 0;
+        var _rtmp318;
+        this.streets = [];
+        var _etype17 = 0;
+        _rtmp318 = input.readListBegin();
+        _etype17 = _rtmp318.etype;
+        _size14 = _rtmp318.size;
+        for (var _i19 = 0; _i19 < _size14; ++_i19)
+        {
+          var elem20 = null;
+          elem20 = new com.vmesteonline.be.Street();
+          elem20.read(input);
+          this.streets.push(elem20);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.LIST) {
+        var _size21 = 0;
+        var _rtmp325;
+        this.buildings = [];
+        var _etype24 = 0;
+        _rtmp325 = input.readListBegin();
+        _etype24 = _rtmp325.etype;
+        _size21 = _rtmp325.size;
+        for (var _i26 = 0; _i26 < _size21; ++_i26)
+        {
+          var elem27 = null;
+          elem27 = new com.vmesteonline.be.Building();
+          elem27.read(input);
+          this.buildings.push(elem27);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.FullAddressCatalogue.prototype.write = function(output) {
+  output.writeStructBegin('FullAddressCatalogue');
+  if (this.countries !== null && this.countries !== undefined) {
+    output.writeFieldBegin('countries', Thrift.Type.SET, 1);
+    output.writeSetBegin(Thrift.Type.STRUCT, this.countries.length);
+    for (var iter28 in this.countries)
+    {
+      if (this.countries.hasOwnProperty(iter28))
+      {
+        iter28 = this.countries[iter28];
+        iter28.write(output);
+      }
+    }
+    output.writeSetEnd();
+    output.writeFieldEnd();
+  }
+  if (this.cities !== null && this.cities !== undefined) {
+    output.writeFieldBegin('cities', Thrift.Type.LIST, 2);
+    output.writeListBegin(Thrift.Type.STRUCT, this.cities.length);
+    for (var iter29 in this.cities)
+    {
+      if (this.cities.hasOwnProperty(iter29))
+      {
+        iter29 = this.cities[iter29];
+        iter29.write(output);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.streets !== null && this.streets !== undefined) {
+    output.writeFieldBegin('streets', Thrift.Type.LIST, 3);
+    output.writeListBegin(Thrift.Type.STRUCT, this.streets.length);
+    for (var iter30 in this.streets)
+    {
+      if (this.streets.hasOwnProperty(iter30))
+      {
+        iter30 = this.streets[iter30];
+        iter30.write(output);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.buildings !== null && this.buildings !== undefined) {
+    output.writeFieldBegin('buildings', Thrift.Type.LIST, 4);
+    output.writeListBegin(Thrift.Type.STRUCT, this.buildings.length);
+    for (var iter31 in this.buildings)
+    {
+      if (this.buildings.hasOwnProperty(iter31))
+      {
+        iter31 = this.buildings[iter31];
+        iter31.write(output);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+

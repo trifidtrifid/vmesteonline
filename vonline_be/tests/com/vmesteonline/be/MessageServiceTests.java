@@ -24,6 +24,7 @@ import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.utils.Pair;
 
 public class MessageServiceTests {
@@ -69,7 +70,7 @@ public class MessageServiceTests {
 	@Test 
 	public void testInsertMessageToListRepresentationOfTree(){
 
-		List<Pair<Long, Long>> parentChildPairsList = new Vector<Pair<Long,Long>>();
+		/*List<Pair<Long, Long>> parentChildPairsList = new Vector<Pair<Long,Long>>();
 		try {
 			parentChildPairsList.add( new Pair<Long, Long>(0L, 1L));
 			parentChildPairsList.add( VoTopic.getPosOfTheLastChildOf(1, 0, parentChildPairsList), new Pair<Long, Long>(1L, 2L));
@@ -101,7 +102,7 @@ public class MessageServiceTests {
 		Assert.assertTrue( parentChildPairsList.get(11).right.equals(13L));
 		Assert.assertTrue( parentChildPairsList.get(13).right.equals(14L));
 		Assert.assertTrue( parentChildPairsList.get(15).right.equals(17L));
-		Assert.assertTrue( parentChildPairsList.get(17).right.equals(16L));
+		Assert.assertTrue( parentChildPairsList.get(17).right.equals(16L));*/
 	}
 	
 	@Test
@@ -110,15 +111,11 @@ public class MessageServiceTests {
 		//create locations
 		try{
 			PersistenceManager pm = PMF.get().getPersistenceManager();
-		
-			VoGroup homeGroup = new VoGroup("Home GRP", "", "Descr of Home", 10.0f, 30.0f, 0);
-			VoGroup blockGroup = new VoGroup("Block GRP", "", "Descr of Block", 10.0f, 30.0f, 100);
-			pm.makePersistent(homeGroup);
-			pm.makePersistent(blockGroup);
 			
 			AuthServiceImpl asi = new AuthServiceImpl(sessionId);
-			asi.registerNewUser("Test1", "USer2", "123", "a1@b.com", ""+homeGroup.getId().getId());
-			asi.registerNewUser("Test2", "USer2", "123", "a2@b.com", ""+homeGroup.getId().getId());
+			List<String> locCodes = UserServiceImpl.getLocationCodesForRegistration();
+			asi.registerNewUser("Test1", "USer2", "123", "a1@b.com", locCodes.get(0));
+			asi.registerNewUser("Test2", "USer2", "123", "a2@b.com", locCodes.get(1));
 			
 			Assert.assertTrue(asi.login("a1@b.com", "123"));
 			
@@ -137,10 +134,14 @@ public class MessageServiceTests {
 			HashMap<MessageType, Long> noLinkedMessages = new HashMap<MessageType, Long>();
 			TreeMap<Long, String> noTags = new TreeMap<Long, String>();
 			
-			Topic topic = msi.createTopic(blockGroup.getId().getId(),"Test topic", MessageType.BASE, "CCOntent of the first topic is a simple string", 
+			//Create a group that is bigger than distance between locations of users 
+			VoGroup groupForTopic = new VoGroup("двор", 1000);
+			pm.makePersistent(groupForTopic);
+			
+			Topic topic = msi.createTopic(groupForTopic.getId().getId(),"Test topic", MessageType.BASE, "Content of the first topic is a simple string", 
 					noLinkedMessages, noTags, userRubrics.get(0).getId(), 0L);
 			//create a message inslide the topic
-			Message msg = msi.createMessage(topic.getMessage().getId(), homeGroup.getId().getId(), MessageType.BASE, "COntent of the first message in the topic", 
+			Message msg = msi.createMessage(topic.getMessage().getId(), user1.getHomeGroup().getGroup().getId().getId(), MessageType.BASE, "Content of the first message in the topic", 
 					noLinkedMessages, noTags, 0L);
 			
 			Assert.assertEquals(msg.getTopicId(), topic.getId());
@@ -149,6 +150,13 @@ public class MessageServiceTests {
 			Assert.assertEquals(msg.getAuthorId(), user1.getId().longValue());
 			Assert.assertEquals(msg.likesNum, 0);
 			Assert.assertEquals(msg.unlikesNum, 0);
+			
+			Message msg2 = msi.createMessage(msg.getId(), user2.getHomeGroup().getGroup().getId().getId(), MessageType.BASE, "Content of the SECOND message in the topic", 
+					noLinkedMessages, noTags, 0L);
+			Assert.assertEquals(msg2.getTopicId(), topic.getId());
+			Assert.assertEquals(msg2.getParentId(), msg.getId());
+			Assert.assertEquals(msg.getAuthorId(), user2.getId().longValue());
+			
 	
 		} catch(Exception e){
 			e.printStackTrace();

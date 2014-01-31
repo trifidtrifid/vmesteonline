@@ -75,6 +75,10 @@ public class VoUserGroup {
 	public VoGroup getGroup() {
 		return group;
 	}
+	
+	public boolean isHome(){
+		return group.isHome();
+	}
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -101,6 +105,8 @@ public class VoUserGroup {
 	@Unindexed
 	private VoGroup group;
 
-	@Persistent
-	private VoBuilding building;
+	@Override
+	public String toString() {
+		return "VoUserGroup [id=" + id + ", name=" + name + ", longitude=" + longitude + ", latitude=" + latitude + ", group=" + group + "]";
+	}
 }

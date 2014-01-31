@@ -1,15 +1,15 @@
 package com.vmesteonline.be.jdo2;
 
-import java.io.Serializable;
-import java.util.StringTokenizer;
-
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 
-@PersistenceCapable(objectIdClass = VoUserMessage.PK.class)
+@PersistenceCapable
 public class VoUserMessage {
 
 	/*
@@ -19,12 +19,16 @@ public class VoUserMessage {
 	 */
 
 	@PrimaryKey
-	@Persistent
-	private long userId;
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Key userMessageId;
 
 	@Persistent
-	@PrimaryKey
+	@Unindexed
 	private long messageId;
+	
+	@Persistent
+	@Unindexed
+	private long userId;
 
 	@Persistent
 	@Unindexed
@@ -42,8 +46,32 @@ public class VoUserMessage {
 		return userId;
 	}
 
+	public VoUserMessage( VoUser user, VoMessage message, boolean likes, boolean unlikes,boolean read ){
+		this(user.getId(), message.getId().getId());
+		this.likes = likes;
+		this.unlikes = unlikes;
+		this.read = read;
+	}
+	public VoUserMessage( VoUser user, VoMessage message){
+		this(user.getId(), message.getId().getId());
+	}
+	
+	public VoUserMessage( long userId, long messageId){
+		this.messageId = messageId;
+		this.userId = userId;
+		this.userMessageId = KeyFactory.createKey(VoUserMessage.class.getSimpleName(), userId << 32 + (messageId & 0xFFFFFFFFL));
+	}
+	
+	public static Key getObjectKey( long userId, long messageId ){
+		return KeyFactory.createKey(VoUserMessage.class.getSimpleName(), userId << 32 + (messageId & 0xFFFFFFFFL));
+	}
+	public static Key getObjectKey( VoUser user, VoMessage message ){
+		return getObjectKey( user.getId(), message.getId().getId());
+	}
+	
 	public void setUserId(long userId) {
 		this.userId = userId;
+		this.userMessageId = KeyFactory.createKey(VoUserMessage.class.getSimpleName(), userId << 32 + (messageId & 0xFFFFFFFFL));
 	}
 
 	public long getMessageId() {
@@ -52,6 +80,7 @@ public class VoUserMessage {
 
 	public void setMessage(long messageId) {
 		this.messageId = messageId;
+		this.userMessageId = KeyFactory.createKey(VoUserMessage.class.getSimpleName(), userId << 32 + (messageId & 0xFFFFFFFFL));
 	}
 
 	public boolean isLikes() {
@@ -78,41 +107,9 @@ public class VoUserMessage {
 		this.read = read;
 	}
 
-	public static class PK implements Serializable {
-		private static final long serialVersionUID = 1L;
-		public long userId;
-		public long messageId;
-
-		public PK(){
-			this(0L,0L);
-		}
-		public PK(long userId,long messageId) {
-			this.userId = userId;
-			this.messageId = messageId;
-		}
-
-		public PK(String value) {
-			StringTokenizer token = new StringTokenizer(value, "::");
-			token.nextToken(); // className
-			this.userId = Long.parseLong(token.nextToken());
-			this.messageId = Long.parseLong(token.nextToken());
-		}
-
-		public boolean equals(Object obj) {
-			if (obj == this)
-				return true;
-			if (!(obj instanceof PK))
-				return false;
-			PK c = (PK) obj;
-			return userId == c.userId && messageId == c.messageId;
-		}
-
-		public int hashCode() {
-			return new Long(userId).hashCode() ^ new Long(messageId).hashCode();
-		}
-
-		public String toString() {
-			return this.getClass().getName() + "::" + this.userId + "::" + this.messageId;
-		}
+	@Override
+	public String toString() {
+		return "VoUserMessage [userMessageId=" + userMessageId + ", messageId=" + messageId + ", userId=" + userId + ", likes=" + likes + ", unlikes="
+				+ unlikes + ", read=" + read + "]";
 	}
 }

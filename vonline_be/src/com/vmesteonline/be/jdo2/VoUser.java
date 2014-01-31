@@ -1,7 +1,9 @@
 package com.vmesteonline.be.jdo2;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -28,11 +30,12 @@ public class VoUser {
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
-		this.messagesNum=0;
-		this.topicsNum=0;
-		this.likesNum=0;
-		this.unlikesNum=0;
-		this.rubrics = new ArrayList<VoRubric>(); 
+		this.messagesNum = 0;
+		this.topicsNum = 0;
+		this.likesNum = 0;
+		this.unlikesNum = 0;
+		this.rubrics = new ArrayList<VoRubric>();
+		this.addresses = new HashSet<VoPostalAddress>();
 	}
 
 	public VoUserGroup getHomeGroup() {
@@ -95,74 +98,135 @@ public class VoUser {
 		this.groups = groups;
 	}
 
-	public void updateLikes( int likesDelta ) {
+	public void updateLikes(int likesDelta) {
 		likesNum += likesDelta;
 	}
-	public void updateUnlikes( int unlikesDelta ) {
+
+	public void updateUnlikes(int unlikesDelta) {
 		unlikesNum += unlikesDelta;
 	}
-	
-	public void incrementMessages( int msgsDelta ) {
+
+	public void incrementMessages(int msgsDelta) {
 		messagesNum += msgsDelta;
 	}
-	
-	public void incrementTopics( int topicsDelta ) {
+
+	public void incrementTopics(int topicsDelta) {
 		topicsNum += topicsDelta;
 	}
-	
-	public void setLocation(long locCode, boolean doSave) throws InvalidOperation{
+
+	public VoPostalAddress getAddress() {
+		return address;
+	}
+
+	public void setLocation(long locCode, boolean doSave) throws InvalidOperation {
 		Key addressKey = VoPostalAddress.getKeyValue(locCode);
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
 		try {
 			VoPostalAddress userAddress;
 			try {
-				userAddress = pm.getObjectById(VoPostalAddress.class,addressKey);
+				userAddress = pm.getObjectById(VoPostalAddress.class, addressKey);
 			} catch (JDOObjectNotFoundException eonf) {
-				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "Location not found by CODE=" + locCode);
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Location not found by CODE=" + locCode);
 			}
-			/*if(null!=building){ //location already set, so user should be removed first
+			setCurrentPostalAddress(userAddress, pm);
+		} finally {
+			pm.close();
+		}
+	}
+	/**
+	 * MEthod set current postal address of the user and register user in the building
+	 * @param userAddress newUSer postal address
+	 * @param pm - PersistenceManager to manage the objects
+	 */
+	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) {
+		VoBuilding building = null;
+
+		if (null != this.getAddress()) { // location already set, so user should
+																			// be removed first
+			building = this.address.getBuilding();
+			if (null != building)
 				building.removeUser(this);
-			}
-			building.addUser(this);*/
-			pm.retrieve(userAddress);
-			building = userAddress.getBuilding();
+		}
+		pm.retrieve(userAddress);
+		// building from new address
+		building = userAddress.getBuilding();
+		if (null != building)
+			building.addUser(this);
+
+		home = null;
+		this.address = userAddress;
+		if (null != building) {
 			pm.retrieve(building);
 			home = building.getUserGroup();
-			if( null!=groups){
-				for ( VoUserGroup ug: groups){
+			if (null != groups && !groups.isEmpty()) {
+				for (VoUserGroup ug : groups) {
 					ug.setLatitude(home.getLatitude());
 					ug.setLongitude(home.getLongitude());
 				}
 			} else {
 				groups = new ArrayList<VoUserGroup>();
-				
+
 				groups.add(home);
-				for ( VoGroup grp: Defaults.defaultGroups){
-					groups.add(new VoUserGroup(this, grp));
+				for (VoGroup grp : Defaults.defaultGroups) {
+					if (!grp.isHome())
+						groups.add(new VoUserGroup(this, grp));
 				}
 			}
-			pm.makePersistent(this);
-			pm.makePersistent(building);
-		} finally{
+		} else {
+			groups = new ArrayList<VoUserGroup>();
+		}
+		pm.makePersistent(this);
+		pm.makePersistent(building);
+	}
+	
+	public void addPostalAddress(VoPostalAddress pa){
+		PersistenceManagerFactory pmf = PMF.get();
+		PersistenceManager pm = pmf.getPersistenceManager();
+		try {
+			addPostalAddress(pa, pm);
+		} finally {
 			pm.close();
 		}
 	}
-		
+
+	public void addPostalAddress(VoPostalAddress pa, PersistenceManager pm){
+		//TODO check that address not added already
+		addresses.add(pa);
+		pm.makePersistent(this);
+	}
+	
+	public void setCurrentPostalAddress(VoPostalAddress pa){
+		PersistenceManagerFactory pmf = PMF.get();
+		PersistenceManager pm = pmf.getPersistenceManager();
+		try {
+			setCurrentPostalAddress(pa, pm);
+		} finally {
+			pm.close();
+		}
+	}
+	
+	
+	public Set<VoPostalAddress> getAddresses() {
+		return addresses;
+	}
+
 	@Persistent
 	@Unowned
-	private VoBuilding building;
+	private VoPostalAddress address;
 	
+	@Persistent
+	@Unowned
+	private Set<VoPostalAddress> addresses;
+
 	@Persistent
 	@Unowned
 	private List<VoUserGroup> groups;
-	
 
 	@Persistent
 	@Unindexed
 	@Unowned
 	private VoUserGroup home;
-	
 
 	@Persistent
 	@Unowned
@@ -182,25 +246,36 @@ public class VoUser {
 	@Persistent
 	@Unindexed
 	private String password;
-	
+
 	@Persistent
 	@Unindexed
 	private int messagesNum;
-	
+
 	@Persistent
 	@Unindexed
 	private int topicsNum;
-	
+
 	@Persistent
 	@Unindexed
 	private int likesNum;
-	
+
 	@Persistent
 	@Unindexed
 	private int unlikesNum;
 
 	public void addRubric(VoRubric rubric) {
 		rubrics.add(rubric);
-		
+	}
+
+	
+	@Override
+	public String toString() {
+		return "VoUser [id=" + id + ", name=" + name + ", email=" + email + "]";
+	}
+
+	public String toFullString() {
+		return "VoUser [id=" + id + ", address=" + address + ", home=" + home + ", name=" + name + ", lastName=" + lastName + ", email=" + email
+				+ ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum=" + topicsNum + ", likesNum=" + likesNum + ", unlikesNum="
+				+ unlikesNum + "]";
 	}
 }

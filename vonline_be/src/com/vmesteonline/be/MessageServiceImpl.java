@@ -1,20 +1,27 @@
 package com.vmesteonline.be;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.vmesteonline.be.MessageService.Iface;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoMessage;
+import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoTopic;
+import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserMessage;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
@@ -41,14 +48,68 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public long postMessage(Message msg) throws InvalidOperation, TException {
-		long userId = getUserId();
+		long userId = getCurrentUserId();
 		msg.setAuthorId(userId);
 		boolean newMessage = 0 >= msg.getId();
-		VoMessage vomsg = new VoMessage(msg, true, true, true);
-		if (newMessage)
+		VoMessage vomsg;
+		if (newMessage) {
+			vomsg = new VoMessage(msg);
 			newMessageNotify(vomsg);
-		msg.setId(vomsg.getId().getId());
-		return vomsg.getId().getId();
+			msg.setId(vomsg.getId().getId());
+		} else {
+			updateMessage(msg);
+		}
+		return msg.getId();
+	}
+
+	private void updateMessage(Message msg) throws InvalidOperation {
+
+		int now = (int) (System.currentTimeMillis() / 1000);
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoMessage storedMsg = pm.getObjectById(VoMessage.class, msg.getId());
+			if (null == storedMsg)
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Message not found by ID=" + msg.getId());
+
+			VoTopic topic = storedMsg.getTopic();
+			if (null != topic) {
+				topic.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
+				topic.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());
+			} else {
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No topic found by id=" + storedMsg.getTopic().getId()
+						+ " that stored in Message ID=" + msg.getId());
+			}
+
+			/* Check if content changed, then update edit date */
+			if (!Arrays.equals(storedMsg.getContent(), msg.getContent().getBytes())) {
+				int editedAt = 0 == msg.getEdited() ? now : msg.getEdited();
+				storedMsg.setEditedAt(editedAt);
+				topic.setLastUpdate(editedAt);
+				storedMsg.setContent(msg.getContent().getBytes());
+			}
+
+			VoUser author = pm.getObjectById(VoUser.class, storedMsg.getAuthorId());
+			if (null != author) {
+				author.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
+				author.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());
+			} else {
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No AUTHOR found by id=" + storedMsg.getAuthorId()
+						+ " that stored in Message ID=" + msg.getId());
+			}
+
+			if (storedMsg.getTopic().getId().getId() != msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId()
+					|| storedMsg.getRecipient() != msg.getRecipientId() || storedMsg.getCreatedAt() != msg.getCreated() || storedMsg.getType() != msg.getType())
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs,
+						"Parameters: topic, author, recipient, createdAt, type could not be changed!");
+
+			storedMsg.setLikes(msg.getLikesNum());
+			storedMsg.setUnlikes(msg.getUnlikesNum());
+			pm.makePersistent(storedMsg);
+			pm.makePersistent(topic);
+			pm.makePersistent(storedMsg);
+		} finally {
+			pm.close();
+		}
 	}
 
 	private void newMessageNotify(VoMessage vomsg) throws InvalidOperation, TException {
@@ -68,22 +129,49 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				new UserMessage(true, false, false));
 		Topic topic = new Topic(0, subject, msg, 0, 0, 0, now, 0, 0, new UserTopic());
 		topic.setRubricId(rubricId);
-		long topId = postTopic(topic);
+		postTopic(topic);
 		return topic;
 	}
 
 	@Override
 	public long postTopic(Topic topic) throws InvalidOperation {
-		long userId = getUserId();
+		long userId = getCurrentUserId();
 		topic.getMessage().setAuthorId(userId);
 		boolean newTopic = 0 >= topic.getId();
-		VoTopic votopic = new VoTopic(topic, true, true, true);
 		if (newTopic) {
+			VoTopic votopic = new VoTopic(topic, true, true, true);
 			newTopicNotify(votopic);
+		} else {
+			updateTopic(topic);
 		}
-		topic.setId(votopic.getId().getId());
-		topic.getMessage().setId(votopic.getMessage().getId().getId());
 		return topic.getId();
+	}
+
+	private void updateTopic(Topic topic) throws InvalidOperation {
+
+		PersistenceManagerFactory pmf = PMF.get();
+		PersistenceManager pm = pmf.getPersistenceManager();
+
+		try {
+			VoTopic theTopic = pm.getObjectById(VoTopic.class, topic.getId());
+			if (null == theTopic) {
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
+			}
+			
+			VoRubric rubric = pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
+			if (null == rubric) {
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Failed to move topic No Rubric found by id=" + topic.getRubricId());
+			}
+			theTopic.setLikes(topic.likesNum);
+			theTopic.setUnlikes(topic.unlikesNum);
+			theTopic.setUsersNum(topic.usersNum);
+			theTopic.setViewers(topic.viewers);
+			theTopic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
+			pm.makePersistent(theTopic);	
+
+		} finally {
+			pm.close();
+		}
 	}
 
 	/**
@@ -156,7 +244,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				msgsaaa[ss] = new Message[topicsa.length][];
 
 				for (int topNo = 0; topNo < topicsa.length; topNo++) {
-					Message[] msgsa = new Message[(int) (Math.random() * 100)];
+					Message[] msgsa = new Message[(int) (Math.random() * 100)+1];
 					msgsaaa[ss][topNo] = msgsa;
 
 					boolean likes = Math.random() > 0.3, unlikes = !likes & Math.random() > 0.7;
@@ -255,14 +343,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public long dislike(long messageId) throws InvalidOperation, TException {
 		long unlikesNum = 0;
-		long user = getUserId();
+		long user = getCurrentUserId();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Transaction currentTransaction = pm.currentTransaction();
 		try {
 			VoMessage msg = pm.getObjectById(VoMessage.class, messageId);
-			VoUserMessage um = pm.getObjectById(VoUserMessage.class, new VoUserMessage.PK(user, messageId));
+			VoUserMessage um = pm.getObjectById(VoUserMessage.class, VoUserMessage.getObjectKey(user, messageId));
 			if (null == um) {
-				um = new VoUserMessage();
+				um = new VoUserMessage(user, messageId);
 				um.setLikes(false);
 				um.setUnlikes(true);
 				um.setRead(true);
@@ -283,7 +371,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				currentTransaction.commit();
 			} catch (Exception e) {
 				currentTransaction.rollback();
-				throw new InvalidOperation(Error.GeneralError, "Failed to change dislike. Transaction not commited. Reason is [" + e.getMessage()
+				throw new InvalidOperation(VoError.GeneralError, "Failed to change dislike. Transaction not commited. Reason is [" + e.getMessage()
 						+ "]. Rollbacked.");
 			}
 			return unlikesNum;
@@ -295,14 +383,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public long like(long messageId) throws InvalidOperation, TException {
 		long likesNum = 0;
-		long user = getUserId();
+		long user = getCurrentUserId();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Transaction currentTransaction = pm.currentTransaction();
 		try {
 			VoMessage msg = pm.getObjectById(VoMessage.class, messageId);
-			VoUserMessage um = pm.getObjectById(VoUserMessage.class, new VoUserMessage.PK(user, messageId));
+			VoUserMessage um = pm.getObjectById(VoUserMessage.class, VoUserMessage.getObjectKey(user, messageId));
 			if (null == um) {
-				um = new VoUserMessage();
+				um = new VoUserMessage(user, messageId);
 				um.setLikes(true);
 				um.setUnlikes(false);
 				um.setRead(true);
@@ -323,7 +411,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				currentTransaction.commit();
 			} catch (Exception e) {
 				currentTransaction.rollback();
-				throw new InvalidOperation(Error.GeneralError, "Failed to change like for message " + messageId + " by user " + user
+				throw new InvalidOperation(VoError.GeneralError, "Failed to change like for message " + messageId + " by user " + user
 						+ ". Transaction not commited. Reason is [" + e.getMessage() + "]. Rollbacked.");
 			}
 			return likesNum;

@@ -19,7 +19,11 @@ public class VoRubric {
 		this.subscribedByDefault = defSubscribed;
 	}
 	public Rubric createRubric(){
-			return new Rubric(id.getId(),visibleName,description,0,0);
+			Rubric rubric = new Rubric();
+			rubric.setId(id.getId());
+			rubric.setVisibleName(visibleName);
+			rubric.setDescription(description);
+			return rubric;
 	}
 	
 	public VoRubric(String visibleName, String name, String description) {
@@ -76,4 +80,9 @@ public class VoRubric {
 	@Persistent
 	@Unindexed
 	String name;
+
+	@Override
+	public String toString() {
+		return "VoRubric [id=" + id + ", subscribedByDefault=" + subscribedByDefault + ", visibleName=" + visibleName + ", name=" + name + "]";
+	}
 }

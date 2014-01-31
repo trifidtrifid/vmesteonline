@@ -242,9 +242,9 @@
             <div class="main-content">
                 <nav class="submenu">                
                     <ul>
-                    <jsp:useBean id="g" class="com.vmesteonline.be.Group"></jsp:useBean>
-                    <c:forEach var="g" items="${userService.userGroups}">                    
-                    	<li><a class="btn btn-sm btn-info no-border" href="#">"${g.visibleName}"</a></li> 
+                    
+                    <c:forEach var="group" items="${userService.userGroups}">                    
+                    	<li><a class="btn btn-sm btn-info no-border" href="#">"${group.visibleName}"</a></li> 
                     </c:forEach>
                     <%-- <% for (Group g : userService.getUserGroups()) { %>                    
                 		<li><a class="btn btn-sm btn-info no-border" href="#"><%= g.visibleName %></a></li>            				

@@ -1,6 +1,6 @@
 namespace * com.vmesteonline.be
 
-enum Error{
+enum VoError{
   GeneralError,
   IncorrectParametrs,
   RegistrationAlreadyExist,
@@ -9,7 +9,7 @@ enum Error{
   
 }
 exception InvalidOperation {
-  1: Error what,
+  1: VoError what,
   2: string why
 }
 

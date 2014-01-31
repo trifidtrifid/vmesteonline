@@ -46,16 +46,16 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
 
   /**
    * 
-   * @see Error
+   * @see VoError
    */
-  public Error what; // required
+  public VoError what; // required
   public String why; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     /**
      * 
-     * @see Error
+     * @see VoError
      */
     WHAT((short)1, "what"),
     WHY((short)2, "why");
@@ -121,7 +121,7 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.WHAT, new org.apache.thrift.meta_data.FieldMetaData("what", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, Error.class)));
+        new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, VoError.class)));
     tmpMap.put(_Fields.WHY, new org.apache.thrift.meta_data.FieldMetaData("why", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -132,7 +132,7 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
   }
 
   public InvalidOperation(
-    Error what,
+    VoError what,
     String why)
   {
     this();
@@ -164,17 +164,17 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
 
   /**
    * 
-   * @see Error
+   * @see VoError
    */
-  public Error getWhat() {
+  public VoError getWhat() {
     return this.what;
   }
 
   /**
    * 
-   * @see Error
+   * @see VoError
    */
-  public InvalidOperation setWhat(Error what) {
+  public InvalidOperation setWhat(VoError what) {
     this.what = what;
     return this;
   }
@@ -224,7 +224,7 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
       if (value == null) {
         unsetWhat();
       } else {
-        setWhat((Error)value);
+        setWhat((VoError)value);
       }
       break;
 
@@ -413,7 +413,7 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
         switch (schemeField.id) {
           case 1: // WHAT
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.what = Error.findByValue(iprot.readI32());
+              struct.what = VoError.findByValue(iprot.readI32());
               struct.setWhatIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -490,7 +490,7 @@ public class InvalidOperation extends TException implements org.apache.thrift.TB
       TTupleProtocol iprot = (TTupleProtocol) prot;
       BitSet incoming = iprot.readBitSet(2);
       if (incoming.get(0)) {
-        struct.what = Error.findByValue(iprot.readI32());
+        struct.what = VoError.findByValue(iprot.readI32());
         struct.setWhatIsSet(true);
       }
       if (incoming.get(1)) {

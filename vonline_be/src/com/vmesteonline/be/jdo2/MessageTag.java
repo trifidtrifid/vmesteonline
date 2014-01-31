@@ -38,4 +38,9 @@ public abstract class MessageTag {
 	public Key getKey() {
 		return key;
 	}
+
+	@Override
+	public String toString() {
+		return "MessageTag [key=" + key + ", tag=" + tag + "]";
+	}
 }

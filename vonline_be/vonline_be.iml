@@ -26,7 +26,12 @@
     </facet>
     <facet type="google-app-engine" name="Google App Engine">
       <configuration>
-        <sdk-home-path>/usr/src/appengine-java-sdk-1.8.8</sdk-home-path>
+        <sdk-home-path>$MODULE_DIR$/../../../env/appengine-java-sdk-1.8.8</sdk-home-path>
+        <run-enhancer-on-make>true</run-enhancer-on-make>
+        <files-to-enhance>
+          <file path="$MODULE_DIR$/src" />
+        </files-to-enhance>
+        <persistence-api>JDO3</persistence-api>
       </configuration>
     </facet>
   </component>
@@ -40,7 +45,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="lib" level="project" />
+    <orderEntry type="library" exported="" name="GAE-testing" level="project" />
   </component>
 </module>
 

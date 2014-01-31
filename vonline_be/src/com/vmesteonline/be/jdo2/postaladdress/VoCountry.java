@@ -9,6 +9,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.vmesteonline.be.Country;
 
 @PersistenceCapable
 public class VoCountry {
@@ -30,5 +31,18 @@ public class VoCountry {
 	
 	public void addCity(VoCity city){
 		cities.add(city);
+	}
+
+	public Key getId() {
+		return id;
+	}
+
+	public Country getCountry() {
+		return new Country(id.getId(), name);
+	}
+
+	@Override
+	public String toString() {
+		return "VoCountry [id=" + id + ", name=" + name + "]";
 	}
 }

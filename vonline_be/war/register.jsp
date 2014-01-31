@@ -24,8 +24,11 @@
 
 		var groupSelect = document.getElementById("selectGroup");
 		var groupId = groupSelect.options[groupSelect.selectedIndex].value;
-		client.registerNewUser($("#uname").val(), "family", $("#password")
+		var userId = client.registerNewUser($("#uname").val(), "family", $("#password")
 				.val(), $("#email").val(), groupId);
+		if ( userId != 0 ) { 
+			window.location.replace = '/';
+		}
 	}
 </script>
 

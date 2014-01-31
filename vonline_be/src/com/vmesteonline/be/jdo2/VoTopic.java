@@ -1,8 +1,5 @@
 package com.vmesteonline.be.jdo2;
 
-import java.util.List;
-import java.util.Vector;
-
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -15,55 +12,41 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
-import com.vmesteonline.be.Message;
 import com.vmesteonline.be.Topic;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.utils.Pair;
 
 @PersistenceCapable
 public class VoTopic {
 	// id, message, messageNum, viewers, usersNum, lastUpdate, likes, unlikes,
 	// rubricId
 	public VoTopic(Topic topic, boolean checkConsistacy, boolean updateLInkedObjects, boolean makePersistant) throws InvalidOperation {
-		VoTopic theTopic = this;
 
+		//childTreeList = new ArrayList<Pair<Long,Long>>();
+		
+		
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
 
 		try {
-			if (checkConsistacy) {
-				VoRubric rubric = pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
-				if (null == rubric) {
-					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "No Rubric0found by id=" + topic.getRubricId());
-				}
+			VoRubric rubric = pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
+			if (null == rubric) {
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No Rubric found by id=" + topic.getRubricId());
 			}
 
-			if (topic.getId() <= 0) { // create new Topic
-				theTopic.messageNum = 0;
+			messageNum = 0;
+			usersNum = 1;
+			viewers = 1;
+			lastUpdate = (int) (System.currentTimeMillis() / 1000);
+			likesNum = 0;
+			unlikesNum = 0; 
 
-			} else { // update an existed topic
-				theTopic = pm.getObjectById(VoTopic.class, topic.getId());
-				if (null == theTopic) {
-					throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
-				}
-				theTopic.messageNum = 0;
-				theTopic.usersNum = 1;
-				theTopic.viewers = 1;
-			}
-			theTopic.lastUpdate = (int) (System.currentTimeMillis() / 1000);
-			theTopic.likesNum = topic.likesNum;
-			theTopic.message = new VoMessage(topic.getMessage(), false, false, false);
-			theTopic.unlikesNum = topic.unlikesNum;
-			theTopic.usersNum = topic.usersNum;
-			theTopic.viewers = topic.viewers;
+			lastUpdate = (int) (System.currentTimeMillis() / 1000);
+			message = new VoMessage(topic.getMessage(), this);
 
-			if (makePersistant) {
-				pm.makePersistent(theTopic);
-			}
-			this.id = theTopic.getId();
+			//the topic is made persistent in message constructor
 			topic.setId(id.getId());
-			this.message = theTopic.message;
-			this.setId(theTopic.id);
+			topic.message.setId(message.getId().getId());
+
 		} finally {
 			pm.close();
 		}
@@ -154,7 +137,6 @@ public class VoTopic {
 	}
 
 	@Persistent(dependent = "true")
-	@Unindexed
 	private VoMessage message;
 
 	@Persistent
@@ -187,11 +169,19 @@ public class VoTopic {
 	@Unowned
 	private VoUserTopic userTopic;
 
+	@Override
+	public String toString() {
+		return "VoTopic [id=" + id + ", message=" + message + ", messageNum=" + messageNum + "]";
+	}
+
+	/*@Persistent
+	@Unindexed
+	private long[] listRepresentationOfTree = new long[0];
+
 	@Persistent
 	@Unindexed
-	private long[] listRepresentationOfTree;
-
-	private final List<Pair<Long, Long>> childTreeList = new Vector<Pair<Long, Long>>(); // parent:child
+	@Embedded
+	private List<Pair<Long, Long>> childTreeList; // parent:child
 
 	private void packListRepresentation() {
 		listRepresentationOfTree = new long[childTreeList.size() * 2];
@@ -206,25 +196,29 @@ public class VoTopic {
 			childTreeList.add(new Pair<Long, Long>(listRepresentationOfTree[ptr * 2], listRepresentationOfTree[ptr * 2 + 1]));
 	}
 
-	void addChildMessage(long parentId, long newMessageId) {
-		synchronized (childTreeList) {
-			while (true)
-				try {
-					childTreeList.wait();
-					break;
-				} catch (InterruptedException e) {
-					continue;
-				}
-			if (0 == childTreeList.size()) {
-				unpackListRepresentation();
+	void addChildMessage(long parentId, long newMessageId) throws InvalidOperation {
+		if (0 == parentId) { // root message of the topic
+			if (!childTreeList.isEmpty() && childTreeList.get(0).right != newMessageId) {
+				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "FAiled to rewrite the root message of topic "
+						+ this.getId().getId() + " by message with ID=" + newMessageId);
 			}
-
-			int pos = getPosOfTheLastChildOf(parentId, 0, childTreeList);
-			childTreeList.add(pos, new Pair<Long, Long>(parentId, newMessageId));
+			childTreeList.add(new Pair<Long, Long>(0L, newMessageId));
 			packListRepresentation();
-			childTreeList.notify();
+		} else {
+			synchronized (childTreeList) {
+				if (0 == childTreeList.size()) {
+					unpackListRepresentation();
+				}
+
+				int pos = getPosOfTheLastChildOf(parentId, 0, childTreeList);
+				childTreeList.add(pos, new Pair<Long, Long>(parentId, newMessageId));
+				packListRepresentation();
+				childTreeList.notify();
+			}
 		}
+
 	}
+
 
 	/**
 	 * Method returns a list representation of tree that should be opened under
@@ -232,17 +226,10 @@ public class VoTopic {
 	 * 
 	 * @param msg
 	 * @return list representation of tree
-	 */
+	 /
 	public List<Pair<Long, Long>> getListRepresentationOfTreeUnder(Message msg) {
 		List<Pair<Long, Long>> outList = new Vector<Pair<Long, Long>>();
 		synchronized (childTreeList) {
-			while (true)
-				try {
-					childTreeList.wait();
-					break;
-				} catch (InterruptedException e) {
-					continue;
-				}
 			if (0 == childTreeList.size())
 				unpackListRepresentation();
 			int pos = 0;
@@ -257,6 +244,7 @@ public class VoTopic {
 					outList.add(childTreeList.get(pos));
 				}
 			}
+			childTreeList.notify();
 		}
 		return outList;
 	}
@@ -275,5 +263,7 @@ public class VoTopic {
 			return offset + 1;
 		} else
 			return -1;
-	}
+	}*/
+	
+	
 }

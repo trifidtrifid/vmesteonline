@@ -1,19 +1,14 @@
 package com.vmesteonline.be.jdo2;
 
-import java.io.Serializable;
-import java.util.StringTokenizer;
-
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.Index;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.vmesteonline.be.jdo2.VoUserMessage.PK;
 
-@PersistenceCapable(objectIdClass = VoUserTopic.PK.class)
+@PersistenceCapable
 public class VoUserTopic {
 
 	/*	1: bool archieved,
@@ -23,13 +18,18 @@ public class VoUserTopic {
 	5: i64 lastReadMessageId,
 	6: i64 lastWroteMeessgeId*/
 	
+	//Key is a combination of int value of userId and topicId
 	@Persistent
 	@PrimaryKey
-	private long topicId;
+	private Key userTopic;
 	
 	@Persistent
-	@PrimaryKey
+	@Unindexed 
 	private long userId;
+	
+	@Persistent
+	@Unindexed 
+	private long topicId;
 	
 	@Persistent
 	@Unindexed
@@ -43,25 +43,40 @@ public class VoUserTopic {
 	@Unindexed
 	private boolean likes;
 	
-	public long getTopicId() {
-		return topicId;
+	@Persistent
+	@Unindexed
+	private long lastReadMessageId;
+	
+	@Persistent
+	@Unindexed
+	private long lastWroteMeessgeId;
+	
+	
+	public VoUserTopic( VoUser user, VoTopic topic ){
+		this(user.getId(),topic.getId().getId());
 	}
-
-
-	public void setTopicId(long topicId) {
+	public VoUserTopic( long userId, long topicId ){
+		this.userId = userId;
 		this.topicId = topicId;
+		userTopic = KeyFactory.createKey(VoUserTopic.class.getSimpleName(), userId << 32 + (topicId & 0xFFFFFFFFL));
+	}
+	
+	public static Key getKeyForObject(long userId, long topicId){
+		return KeyFactory.createKey(VoUserTopic.class.getSimpleName(), userId << 32 + (topicId & 0xFFFFFFFFL));
+	}
+	
+	
+	public long getTopicId() {
+		return userTopic.getId() & 0xFFFFFFFFL;
 	}
 
+	public void setUserTopicId( long userId, long topicId ){
+		userTopic = KeyFactory.createKey(VoUserTopic.class.getSimpleName(), userId << 32 + (topicId & 0xFFFFFFFFL));
+	}
 
 	public long getUserId() {
-		return userId;
+		return userTopic.getId() & 0xFFFFFFFF00000000L >> 32;
 	}
-
-
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
-
 
 	public boolean isArchieved() {
 		return archieved;
@@ -111,47 +126,11 @@ public class VoUserTopic {
 	public void setLastWroteMeessgeId(long lastWroteMeessgeId) {
 		this.lastWroteMeessgeId = lastWroteMeessgeId;
 	}
-
-
-	@Persistent
-	@Unindexed
-	private long lastReadMessageId;
-	
-	@Persistent
-	@Unindexed
-	private long lastWroteMeessgeId;
-	
-
-	public static class PK implements Serializable {
-		private static final long serialVersionUID = 1L;
-		public long userId;
-		public long topicId;
-
-		public PK() {
-		}
-
-		public PK(String value) {
-			StringTokenizer token = new StringTokenizer(value, "::");
-			token.nextToken(); // className
-			this.userId = Long.parseLong(token.nextToken());
-			this.topicId = Long.parseLong(token.nextToken());
-		}
-
-		public boolean equals(Object obj) {
-			if (obj == this)
-				return true;
-			if (!(obj instanceof PK))
-				return false;
-			PK c = (PK) obj;
-			return userId == c.userId && topicId == c.topicId;
-		}
-
-		public int hashCode() {
-			return new Long(userId).hashCode() ^ new Long(topicId).hashCode();
-		}
-
-		public String toString() {
-			return this.getClass().getName() + "::" + this.userId + "::" + this.topicId;
-		}
+	@Override
+	public String toString() {
+		return "VoUserTopic [userTopic=" + userTopic + ", userId=" + userId + ", topicId=" + topicId + ", archieved=" + archieved + ", unlikes="
+				+ unlikes + ", likes=" + likes + ", lastReadMessageId=" + lastReadMessageId + ", lastWroteMeessgeId=" + lastWroteMeessgeId + "]";
 	}
+	
+	
 }
