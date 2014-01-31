@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-  <title>Магазин</title>
+  <title>Магазин Нелогин</title>
   <link rel="stylesheet" href="css/shop.css"/>
     <!--[if lt IE 9]>
     <script>
@@ -55,40 +55,11 @@
                     Магазин
                 </a>
             </li>
-            <li class="user-short light-blue">
-                <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                    <img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />
-                    <span class="user-info">
-                        <small>Welcome,</small>
-                        Jason
-                    </span>
-                    <i class="icon-caret-down"></i>
+            <li class="nologin-user-short light-blue">
+                <a href="#">
+                    <span class="login-link">Вход</span>
+                    <span>Регистрация</span>
                 </a>
-
-                <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                    <li>
-                        <a href="#">
-                            <i class="icon-cog"></i>
-                            Настройки
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#">
-                            <i class="icon-user"></i>
-                            Профиль
-                        </a>
-                    </li>
-
-                    <li class="divider"></li>
-
-                    <li>
-                        <a href="#">
-                            <i class="icon-off"></i>
-                            Выход
-                        </a>
-                    </li>
-                </ul>
             </li>
         </ul><!-- /.ace-nav -->
     </div><!-- /.navbar-header -->
@@ -508,7 +479,7 @@
         </div>
     </div>
 
-    <div class="modal modal-order-end">
+    <div class="modal modal-order-end moe-nologin">
         <div class="modal-body">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3>Ваш заказ : </h3>
@@ -570,8 +541,51 @@
             <div class="modal-itogo">
                 Итого : <span>333</span> р.
             </div>
+            <div class="moe-nologin-add">
+                <div class="moe-nologin-item">
+                    <h3>Заказать без регистрации:</h3>
+                    <div>
+                        <label for="name">Имя</label>
+                        <input type="text" required="required" id="name"/>
+                    </div>
+                    <div>
+                        <label for="email">E-mail</label>
+                        <input type="text" required="required" id="email"/>
+                    </div>
+                </div>
+                <div class="moe-nologin-item">или</div>
+                <div class="moe-nologin-item">
+                    <a href="#">Войти</a><br>
+                    <a href="#">Зарегистрироваться</a>
+                </div>
+            </div>
+
             <button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>
             <button class="btn btn-sm btn-grey no-border">Отменить</button>
+        </div>
+    </div>
+    <div class="modal modal-login">
+        <div class="modal-body">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <div class="reg-soc">
+                <h3>Войти через социальну сеть:</h3>
+                <a class="fa fa-vk" href="#"></a>
+                <a class="fa fa-facebook-square" href="#"></a>
+                <a class="fa fa-google-plus-square" href="#"></a>
+                <a class="fa fa-twitter-square" href="#"></a>
+            </div>
+            <div>
+                <h3>Стандартный вход:</h3>
+                <div>
+                    <label for="login">Логин</label>
+                    <input type="text" id="login"/>
+                </div>
+                <div>
+                    <label for="pass1">Пароль</label>
+                    <input type="password" id="pass1"/>
+                </div>
+                <button class="btn btn-primary btn-sm no-border">Войти</button>
+            </div>
         </div>
     </div>
 
@@ -584,7 +598,6 @@
 <script src="js/jquery-ui-1.10.3.full.min.js"></script>
 <script src="js/fuelux/fuelux.spinner.min.js"></script>
 <script src="js/date-time/bootstrap-datepicker.min.js"></script>
-<script src="js/date-time/locales/bootstrap-datepicker.ru.js"></script>
 <script src="js/jquery.flexslider-min.js"></script>
 
 <!-- -->

@@ -177,6 +177,11 @@
                   Избранное
                 </a>
             </li>
+            <li>
+                <a class="btn btn-info no-border" href="#">
+                Магазин
+                </a>
+            </li>
 
             <li class="user-short light-blue">
                 <a data-toggle="dropdown" href="#" class="dropdown-toggle">

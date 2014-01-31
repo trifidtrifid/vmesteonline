@@ -33,9 +33,8 @@ transform()
   background-color #438eb9 !important
 
 .container
-  width 990px
   padding 0
-  max-width none
+  max-width 1240px
   min-height 100%
 
 .ace-nav>li
@@ -85,12 +84,12 @@ transform()
   vertical-align top
 
 .main-content
-  margin-right 190px
+  margin-right 250px
   padding 10px
 
 .shop-right
   float right
-  width 190px
+  width 250px
   border 0
   border-left 1px solid #ccc
   padding-bottom 20px
@@ -113,6 +112,8 @@ transform()
     a
       display block
   .catalog-order
+    max-height 320px
+    overflow-y auto
     margin-left 0
     li
       padding 8px 0 8px 5px
@@ -121,30 +122,49 @@ transform()
       list-style none
       font-size 12px
       border-bottom 1px solid #ccc
+      table
+        width 100%
+        text-align center
+        thead td
+          background #f2f2f2
+        tr
+          td
       img
         float left
         width 40px
       .product-right-descr
         margin-left 45px
+        margin-bottom 10px
         padding-right 20px
         line-height 16px
-        span
-          float right
-          margin-right -10px
-          font-weight bold
+  .itogo-right
+    padding-left 10px
+    font-size 16px
+    span
+      font-weight bold
+  .delivery-right
+    .input-delivery
+      padding-left 10px
+      display none
+      #delivery-addr
+        margin-left 0
   textarea
     margin 10px
-    width 170px
+    width 230px
     height 80px
     font-family Tahoma,Arial
     font-size 14px
     color rgb(133, 133, 133)
   .btn-grey
-    margin-left 10px
-    margin-right 4px
+    margin-left 30px
+    margin-right 20px
 
 .datepicker
-  padding 0 2px
+  padding 0 2px 5px 2px
+  width 250px
+  z-index 11 !important
+  table
+    width 100%
   .switch
     text-align center
   td
@@ -159,6 +179,43 @@ th.prev
 th.next
 .input-group-addon
   cursor pointer
+
+.made
+  background-color #62c462
+  &:after
+    content "Выполненный заказ"
+    margin-left -120px
+.soon
+  background-color #5bc0de
+  &:after
+    content "Заказ на комплектации"
+    margin-left -130px
+.prepare
+  background-color #9baab3
+  &:after
+    content "Заказ готов"
+    margin-left -60px
+.made:after
+.soon:after
+.prepare:after
+  position absolute
+  background-color rgba(0,0,0,.5)
+  border-radius main-radius
+  padding 2px 5px
+  color #fff
+  display none
+.made:hover:after
+.soon:hover:after
+.prepare:hover:after
+  display block
+
+.day-menu
+  position absolute
+  width 150px
+  a
+    display block
+    padding 5px 10px
+    background #9baab3
 
 .ui-menu-item
 .ui-autocomplete-category
@@ -223,18 +280,30 @@ th.next
         text-align center
         &:first-child
           text-align left
-          width 350px
+          width 70%
           padding-left 5px
         img
           width 20px
           float left
+        .fa
+          font-size 24px
+          color #428bca
+          cursor pointer
+          &:hover
+            color #2a6496
         span
           display block
           margin-left 30px
           margin-right 10px
-        .spinner-down:hover
-        .spinner-up:hover
-          background-color rgb(111, 179, 224) !important
+
+.ace-spinner
+  width 50px !important
+  .input-mini
+    width 30px
+    padding 5px 2px
+  .spinner-down:hover
+  .spinner-up:hover
+    background-color rgb(111, 179, 224) !important
 
 .modal
   width 560px
@@ -287,26 +356,65 @@ th.next
       padding-top 15px
       span
       .ace-spinner
-      .btn-primary
+      .fa
         display inline-block
         vertical-align middle
-        margin 0 13px
+        margin 0 23px
       span
         font-size 20px
+.modal-order-end
+  max-height 312px
+  .modal-body-list
+    max-height 148px
+    display block
+    overflow auto
+    tbody
+      width 100%
+      display block
+      tr
+        width 100%
+        display block
+        td:first-child
+          padding-right 0
+        td
+          padding 5px
+  .modal-footer
+    position static
+    border 0
+    padding 0
+    margin 0
+    margin-bottom 5px
+    text-align right
+    width auto
+    padding-right 10px
+    font-size 20px
+    .btn
+      float right
+      margin 5px
+    .modal-itogo
+      border 0
+      padding 0
+      margin 0
+      span
+        margin 0
+        vertical-align baseline
+
 .sidebar#sidebar
   height 100%
   left 0
   top 0
   bottom 0
   position absolute
+  z-index 2
+  .show-left
+    display none
 
 @media all and (max-width: 990px)
   .shop-right
     position fixed
-    //top 20%
     height 100%
-    right -190px
-    z-index 100
+    right -250px
+    z-index 10
     padding 0 0 20px 0
     border-bottom 1px solid #ccc
     &:before
@@ -315,9 +423,11 @@ th.next
       display block
       position fixed
       top: 40%
-      right -32px
+      right -28px
+      border-radius 5px 5px 0 0
       cursor pointer
-      font-size 24px
+      font-size 16px
+      letter-spacing 1px
       border 1px solid #ccc
       background #ccc
       padding 0 10px
@@ -328,19 +438,134 @@ th.next
       top 10px
       right 10px
       cursor pointer
-    .catalog-order
-      max-height 300px
-      overflow-y auto
   .main-content
     margin-right 0
   .catalog table tr td:first-child
     width 450px
 
-
-@media all and (max-width: 768px)
+@media all and (max-width: 768px),screen and (device-width: 320px)
+  .sidebar#sidebar
+    margin-left -190px
+    .show-left
+      display block
+      position fixed
+      top: 40%
+      left -22px
+      border-radius 5px 5px 0 0
+      cursor pointer
+      font-size 16px
+      letter-spacing 1px
+      border 1px solid #ccc
+      background #ccc
+      padding 0 10px
+      transform 90deg;
   .container
     width 758px
-  .catalog table tr td:first-child
-    width 350px
+    .main-content
+      margin-left 0
 
+@media screen and (device-width: 320px)
+   .container
+      width 100%
+
+/* страница регистрации */
+.registration-form
+  width 580px
+  padding 0 10px
+  margin 30px auto
+  border 1px solid #438eb9
+  border-radius main-radius
+  h1
+    margin 0 -10px
+    padding 10px
+    background #438eb9
+    color #fff
+  h3
+    border-bottom 1px solid #438eb9
+    padding-bottom 5px
+    margin-bottom 15px
+  .reg-soc
+    a
+      font-size 50px
+      margin 0 10px
+      &:hover
+        text-decoration none
+  .reg-now
+    &>div
+      margin-bottom 10px
+    label
+      width 200px
+      span
+        color #d2322d
+        &:before
+          margin-right 5px !important
+    .radio
+      display inline-block
+      vertical-align baseline
+      margin 0
+      span
+        color #000
+    .form-control
+      display inline-block
+  .btn-primary
+    width 200px
+    margin 20px auto
+    font-size 20px
+    display block
+  input[type="text"]
+  input[type="email"]
+  input[type="tel"]
+  input[type="password"]
+    width 320px
+  #captcha
+    width 155px
+  input[type="file"]
+  .captcha
+    display inline-block
+/* блоки при нелогине */
+.nologin-user-short
+  a
+    cursor default !important
+    border-bottom 0 !important
+    span
+      color #fff
+      display inline-block
+      line-height 18px
+      &:hover
+        border-bottom 1px solid #fff
+        cursor pointer
+.moe-nologin
+  max-height 420px
+  .moe-nologin-add
+    text-align left;
+    padding-left 10px
+    margin-bottom 10px
+    h3
+      font-size 18px
+    label
+      width 58px
+    .moe-nologin-item
+      display inline-block
+      text-align left
+      vertical-align middle
+      margin 0 10px
+.modal-login
+  width 400px
+  margin-left -205px
+  border-radius main-radius
+  text-align center
+  max-height 270px
+  .fa
+    font-size 40px
+    margin 0 10px 20px 0
+    &:hover
+      text-decoration none
+  input
+    margin-bottom 10px
+  label
+    width 65px
+  .btn
+    width 150px
+    display block
+    margin 5px auto 0
 

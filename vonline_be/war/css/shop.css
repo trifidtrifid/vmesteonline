@@ -22,9 +22,8 @@ a {
   background-color: #438eb9 !important;
 }
 .container {
-  width: 990px;
   padding: 0;
-  max-width: none;
+  max-width: 1240px;
   min-height: 100%;
 }
 .ace-nav>li a {
@@ -75,12 +74,12 @@ a {
   vertical-align: top;
 }
 .main-content {
-  margin-right: 190px;
+  margin-right: 250px;
   padding: 10px;
 }
 .shop-right {
   float: right;
-  width: 190px;
+  width: 250px;
   border: 0;
   border-left: 1px solid #ccc;
   padding-bottom: 20px;
@@ -108,6 +107,8 @@ a {
   display: block;
 }
 .shop-right .catalog-order {
+  max-height: 320px;
+  overflow-y: auto;
   margin-left: 0;
 }
 .shop-right .catalog-order li {
@@ -118,34 +119,56 @@ a {
   font-size: 12px;
   border-bottom: 1px solid #ccc;
 }
+.shop-right .catalog-order li table {
+  width: 100%;
+  text-align: center;
+}
+.shop-right .catalog-order li table thead td {
+  background: #f2f2f2;
+}
 .shop-right .catalog-order li img {
   float: left;
   width: 40px;
 }
 .shop-right .catalog-order li .product-right-descr {
   margin-left: 45px;
+  margin-bottom: 10px;
   padding-right: 20px;
   line-height: 16px;
 }
-.shop-right .catalog-order li .product-right-descr span {
-  float: right;
-  margin-right: -10px;
+.shop-right .itogo-right {
+  padding-left: 10px;
+  font-size: 16px;
+}
+.shop-right .itogo-right span {
   font-weight: bold;
+}
+.shop-right .delivery-right .input-delivery {
+  padding-left: 10px;
+  display: none;
+}
+.shop-right .delivery-right .input-delivery #delivery-addr {
+  margin-left: 0;
 }
 .shop-right textarea {
   margin: 10px;
-  width: 170px;
+  width: 230px;
   height: 80px;
   font-family: Tahoma, Arial;
   font-size: 14px;
   color: #858585;
 }
 .shop-right .btn-grey {
-  margin-left: 10px;
-  margin-right: 4px;
+  margin-left: 30px;
+  margin-right: 20px;
 }
 .datepicker {
-  padding: 0 2px;
+  padding: 0 2px 5px 2px;
+  width: 250px;
+  z-index: 11 !important;
+}
+.datepicker table {
+  width: 100%;
 }
 .datepicker .switch {
   text-align: center;
@@ -163,6 +186,51 @@ th.prev,
 th.next,
 .input-group-addon {
   cursor: pointer;
+}
+.made {
+  background-color: #62c462;
+}
+.made:after {
+  content: "Выполненный заказ";
+  margin-left: -120px;
+}
+.soon {
+  background-color: #5bc0de;
+}
+.soon:after {
+  content: "Заказ на комплектации";
+  margin-left: -130px;
+}
+.prepare {
+  background-color: #9baab3;
+}
+.prepare:after {
+  content: "Заказ готов";
+  margin-left: -60px;
+}
+.made:after,
+.soon:after,
+.prepare:after {
+  position: absolute;
+  background-color: rgba(0,0,0,0.5);
+  border-radius: 2px;
+  padding: 2px 5px;
+  color: #fff;
+  display: none;
+}
+.made:hover:after,
+.soon:hover:after,
+.prepare:hover:after {
+  display: block;
+}
+.day-menu {
+  position: absolute;
+  width: 150px;
+}
+.day-menu a {
+  display: block;
+  padding: 5px 10px;
+  background: #9baab3;
 }
 .ui-menu-item,
 .ui-autocomplete-category {
@@ -236,20 +304,35 @@ span
 }
 .catalog table tr td:first-child {
   text-align: left;
-  width: 350px;
+  width: 70%;
   padding-left: 5px;
 }
 .catalog table tr td img {
   width: 20px;
   float: left;
 }
+.catalog table tr td .fa {
+  font-size: 24px;
+  color: #428bca;
+  cursor: pointer;
+}
+.catalog table tr td .fa:hover {
+  color: #2a6496;
+}
 .catalog table tr td span {
   display: block;
   margin-left: 30px;
   margin-right: 10px;
 }
-.catalog table tr td .spinner-down:hover,
-.catalog table tr td .spinner-up:hover {
+.ace-spinner {
+  width: 50px !important;
+}
+.ace-spinner .input-mini {
+  width: 30px;
+  padding: 5px 2px;
+}
+.ace-spinner .spinner-down:hover,
+.ace-spinner .spinner-up:hover {
   background-color: #6fb3e0 !important;
 }
 .modal {
@@ -315,13 +398,59 @@ span
 }
 .modal .modal-footer span,
 .modal .modal-footer .ace-spinner,
-.modal .modal-footer .btn-primary {
+.modal .modal-footer .fa {
   display: inline-block;
   vertical-align: middle;
-  margin: 0 13px;
+  margin: 0 23px;
 }
 .modal .modal-footer span {
   font-size: 20px;
+}
+.modal-order-end {
+  max-height: 312px;
+}
+.modal-order-end .modal-body-list {
+  max-height: 148px;
+  display: block;
+  overflow: auto;
+}
+.modal-order-end .modal-body-list tbody {
+  width: 100%;
+  display: block;
+}
+.modal-order-end .modal-body-list tbody tr {
+  width: 100%;
+  display: block;
+}
+.modal-order-end .modal-body-list tbody tr td:first-child {
+  padding-right: 0;
+}
+.modal-order-end .modal-body-list tbody tr td {
+  padding: 5px;
+}
+.modal-order-end .modal-footer {
+  position: static;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 5px;
+  text-align: right;
+  width: auto;
+  padding-right: 10px;
+  font-size: 20px;
+}
+.modal-order-end .modal-footer .btn {
+  float: right;
+  margin: 5px;
+}
+.modal-order-end .modal-footer .modal-itogo {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.modal-order-end .modal-footer .modal-itogo span {
+  margin: 0;
+  vertical-align: baseline;
 }
 .sidebar#sidebar {
   height: 100%;
@@ -329,13 +458,17 @@ span
   top: 0;
   bottom: 0;
   position: absolute;
+  z-index: 2;
+}
+.sidebar#sidebar .show-left {
+  display: none;
 }
 @media all and (max-width: 990px) {
   .shop-right {
     position: fixed;
     height: 100%;
-    right: -190px;
-    z-index: 100;
+    right: -250px;
+    z-index: 10;
     padding: 0 0 20px 0;
     border-bottom: 1px solid #ccc;
   }
@@ -346,9 +479,11 @@ span
     display: block;
     position: fixed;
     top: 40%;
-    right: -32px;
+    right: -28px;
+    border-radius: 5px 5px 0 0;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 16px;
+    letter-spacing: 1px;
     border: 1px solid #ccc;
     background: #ccc;
     padding: 0 10px;
@@ -369,10 +504,6 @@ span
     right: 10px;
     cursor: pointer;
   }
-  .shop-right .catalog-order {
-    max-height: 300px;
-    overflow-y: auto;
-  }
   .main-content {
     margin-right: 0;
   }
@@ -380,11 +511,168 @@ span
     width: 450px;
   }
 }
-@media all and (max-width: 768px) {
+@media all and (max-width: 768px),screen and (device-width: 320px) {
+  .sidebar#sidebar {
+    margin-left: -190px;
+  }
+  .sidebar#sidebar .show-left {
+    display: block;
+    position: fixed;
+    top: 40%;
+    left: -22px;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    font-size: 16px;
+    letter-spacing: 1px;
+    border: 1px solid #ccc;
+    background: #ccc;
+    padding: 0 10px;
+    -moz-transform: rotate(90deg);
+/* Для Firefox */
+    -ms-transform: rotate(90deg);
+/* Для IE */
+    -webkit-transform: rotate(90deg);
+/* Для Safari, Chrome, iOS */
+    -o-transform: rotate(90deg);
+/* Для Opera */
+    transform: rotate(90deg);
+  }
   .container {
     width: 758px;
   }
-  .catalog table tr td:first-child {
-    width: 350px;
+  .container .main-content {
+    margin-left: 0;
   }
+}
+@media screen and (device-width: 320px) {
+  .container {
+    width: 100%;
+  }
+}
+/* страница регистрации */
+.registration-form {
+  width: 580px;
+  padding: 0 10px;
+  margin: 30px auto;
+  border: 1px solid #438eb9;
+  border-radius: 2px;
+}
+.registration-form h1 {
+  margin: 0 -10px;
+  padding: 10px;
+  background: #438eb9;
+  color: #fff;
+}
+.registration-form h3 {
+  border-bottom: 1px solid #438eb9;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+}
+.registration-form .reg-soc a {
+  font-size: 50px;
+  margin: 0 10px;
+}
+.registration-form .reg-soc a:hover {
+  text-decoration: none;
+}
+.registration-form .reg-now>div {
+  margin-bottom: 10px;
+}
+.registration-form .reg-now label {
+  width: 200px;
+}
+.registration-form .reg-now label span {
+  color: #d2322d;
+}
+.registration-form .reg-now label span:before {
+  margin-right: 5px !important;
+}
+.registration-form .reg-now .radio {
+  display: inline-block;
+  vertical-align: baseline;
+  margin: 0;
+}
+.registration-form .reg-now .radio span {
+  color: #000;
+}
+.registration-form .reg-now .form-control {
+  display: inline-block;
+}
+.registration-form .btn-primary {
+  width: 200px;
+  margin: 20px auto;
+  font-size: 20px;
+  display: block;
+}
+.registration-form input[type="text"],
+.registration-form input[type="email"],
+.registration-form input[type="tel"],
+.registration-form input[type="password"] {
+  width: 320px;
+}
+.registration-form #captcha {
+  width: 155px;
+}
+.registration-form input[type="file"],
+.registration-form .captcha {
+  display: inline-block;
+}
+/* блоки при нелогине */
+.nologin-user-short a {
+  cursor: default !important;
+  border-bottom: 0 !important;
+}
+.nologin-user-short a span {
+  color: #fff;
+  display: inline-block;
+  line-height: 18px;
+}
+.nologin-user-short a span:hover {
+  border-bottom: 1px solid #fff;
+  cursor: pointer;
+}
+.moe-nologin {
+  max-height: 420px;
+}
+.moe-nologin .moe-nologin-add {
+  text-align: left;
+  padding-left: 10px;
+  margin-bottom: 10px;
+}
+.moe-nologin .moe-nologin-add h3 {
+  font-size: 18px;
+}
+.moe-nologin .moe-nologin-add label {
+  width: 58px;
+}
+.moe-nologin .moe-nologin-add .moe-nologin-item {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+  margin: 0 10px;
+}
+.modal-login {
+  width: 400px;
+  margin-left: -205px;
+  border-radius: 2px;
+  text-align: center;
+  max-height: 270px;
+}
+.modal-login .fa {
+  font-size: 40px;
+  margin: 0 10px 20px 0;
+}
+.modal-login .fa:hover {
+  text-decoration: none;
+}
+.modal-login input {
+  margin-bottom: 10px;
+}
+.modal-login label {
+  width: 65px;
+}
+.modal-login .btn {
+  width: 150px;
+  display: block;
+  margin: 5px auto 0;
 }

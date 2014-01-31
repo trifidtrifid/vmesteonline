@@ -17,14 +17,20 @@ body
 a
   outline none !important
 
+transform()
+  -moz-transform rotate(arguments); /* Для Firefox */
+  -ms-transform rotate(arguments); /* Для IE */
+  -webkit-transform rotate(arguments); /* Для Safari, Chrome, iOS */
+  -o-transform rotate(arguments); /* Для Opera */
+  transform rotate(arguments);
+
 .btn-primary
 .header-color-blue2
   background-color #438eb9 !important
 
 .container
-  width 990px
   padding 0
-  max-width none
+  max-width 1240px
   min-height 100%
 
 .ace-nav>li
@@ -65,6 +71,16 @@ a
 .nav-list > li.active > a,
 .nav-list > li.active:hover a
   font-size 15px
+
+.sidebar#sidebar
+  height 100%
+  left 0
+  top 0
+  bottom 0
+  position absolute
+  z-index 2
+  .show-left
+    display none
 
 .btn
   border-radius main-radius !important
@@ -110,11 +126,9 @@ a
 .options
   padding 8px 0 5px 10px
   height 44px
+  text-align center
   .form-group
-    width 525px
-    margin 0 0 0 12px
-    display inline-block
-    float left
+    margin 0 130px 0 120px
     input
       height 30px
       border-radius main-radius !important
@@ -180,7 +194,6 @@ a
         display inline-block
         margin 0 0 0 17px
         vertical-align middle
-        width 495px
         max-height 39px
         overflow hidden
         font-size 18px
@@ -322,4 +335,23 @@ a
 .dd>.dd-list>.topic-item.list-view>.dd-list
   padding-left 30px
 
-
+@media all and (max-width: 768px),screen and (device-width: 320px)
+  .sidebar#sidebar
+    margin-left -190px
+    .show-left
+      display block
+      position fixed
+      top: 40%
+      left -22px
+      border-radius 5px 5px 0 0
+      cursor pointer
+      font-size 16px
+      letter-spacing 1px
+      border 1px solid #ccc
+      background #ccc
+      padding 0 10px
+      transform 90deg;
+  .container
+    width 100%
+    .main-content
+      margin-left 0
