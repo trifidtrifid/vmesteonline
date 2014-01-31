@@ -11,6 +11,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.Building;
@@ -40,6 +41,10 @@ public class VoBuilding {
 			pm.close();
 		}
 		users = new ArrayList<VoUser>();
+	}
+
+	public VoBuilding(Building building) throws InvalidOperation {
+		this( KeyFactory.createKey( VoStreet.class.getSimpleName(), building.getStreetId()), building.getFullNo(), 0F, 0F);
 	}
 
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)

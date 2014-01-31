@@ -15,7 +15,7 @@ import com.vmesteonline.be.shop.PriceType;
 @PersistenceCapable
 public class VoOrderLine {
 
-	VoOrderLine(VoOrder order, VoProduct product, double quontity, PriceType priceType, double price) throws InvalidOperation {	
+	public VoOrderLine(VoOrder order, VoProduct product, double quontity, PriceType priceType, double price) throws InvalidOperation {	
 			this.quontity = quontity;
 			this.priceType = priceType;
 			this.price = price;
@@ -85,10 +85,18 @@ public class VoOrderLine {
 		this.price = price;
 	}
 
-
 	@Override
 	public String toString() {
 		return "VoOrderLine [order=" + order + ", product=" + product + ", quontity=" + quontity + ", priceType=" + priceType + ", price=" + price + "]";
+	}
+
+
+	public VoOrderLine mergeWith(VoOrder toOrder, VoOrderLine that) throws InvalidOperation {
+		if(null==that)
+			return new VoOrderLine(toOrder, this.product, this.quontity, this.priceType, this.price);
+		else
+			return new VoOrderLine(toOrder, this.product, this.quontity + that.getQuontity(), 
+					this.priceType == that.priceType ? this.priceType : PriceType.MERGED, this.price + that.quontity * this.product.getPrice());
 	}
 	
 	

@@ -17,19 +17,11 @@ if (typeof com.vmesteonline.be === 'undefined') {
 if (typeof com.vmesteonline.be.shop === 'undefined') {
   com.vmesteonline.be.shop = {};
 }
-com.vmesteonline.be.shop.PriceType = {
-'RETAIL' : 0,
-'INET' : 1,
-'VIP' : 2,
-'SPECIAL' : 3
-};
-com.vmesteonline.be.shop.OrderStatus = {
-'UNKNOWN' : 0,
-'NEW' : 1,
-'PENDING' : 2,
-'SHIPPING' : 3,
-'DELIVERED' : 4,
-'CLOSED' : 5
+com.vmesteonline.be.shop.DateType = {
+'CLEAN' : 0,
+'NEXT_ORDER' : 1,
+'SPECIAL_PRICE' : 2,
+'CLOSED' : 3
 };
 com.vmesteonline.be.shop.DeliveryType = {
 'UNKNOWN' : 0,
@@ -41,13 +33,31 @@ com.vmesteonline.be.shop.PaymentType = {
 'UNKNOWN' : 0,
 'CASH' : 1,
 'CREDIT_CARD' : 2,
-'TRANSFER' : 3
+'TRANSFER' : 3,
+'SHOP_CREDIT' : 5
+};
+com.vmesteonline.be.shop.PriceType = {
+'RETAIL' : 0,
+'INET' : 1,
+'VIP' : 2,
+'SPECIAL' : 3,
+'MERGED' : 4
+};
+com.vmesteonline.be.shop.OrderStatus = {
+'UNKNOWN' : 0,
+'NEW' : 1,
+'CONFIRMED' : 2,
+'SHIPPING' : 3,
+'DELIVERED' : 4,
+'CLOSED' : 5,
+'CANCELED' : 6
 };
 com.vmesteonline.be.shop.PaymentStatus = {
 'UNKNOWN' : 0,
-'CASH' : 1,
-'CREDIT_CARD' : 2,
-'TRANSFER' : 3
+'WIAT' : 1,
+'PENDING' : 2,
+'COMPLETE' : 3,
+'CREDIT' : 4
 };
 com.vmesteonline.be.shop.Shop = function(args) {
   this.id = null;
@@ -58,6 +68,8 @@ com.vmesteonline.be.shop.Shop = function(args) {
   this.ownerId = null;
   this.topicSet = null;
   this.tags = null;
+  this.deliveryCosts = null;
+  this.paymentTypes = null;
   if (args) {
     if (args.id !== undefined) {
       this.id = args.id;
@@ -82,6 +94,12 @@ com.vmesteonline.be.shop.Shop = function(args) {
     }
     if (args.tags !== undefined) {
       this.tags = args.tags;
+    }
+    if (args.deliveryCosts !== undefined) {
+      this.deliveryCosts = args.deliveryCosts;
+    }
+    if (args.paymentTypes !== undefined) {
+      this.paymentTypes = args.paymentTypes;
     }
   }
 };
@@ -121,8 +139,9 @@ com.vmesteonline.be.shop.Shop.prototype.read = function(input) {
       }
       break;
       case 4:
-      if (ftype == Thrift.Type.STRING) {
-        this.address = input.readString().value;
+      if (ftype == Thrift.Type.STRUCT) {
+        this.address = new com.vmesteonline.be.PostalAddress();
+        this.address.read(input);
       } else {
         input.skip(ftype);
       }
@@ -181,6 +200,64 @@ com.vmesteonline.be.shop.Shop.prototype.read = function(input) {
         input.skip(ftype);
       }
       break;
+      case 9:
+      if (ftype == Thrift.Type.MAP) {
+        var _size14 = 0;
+        var _rtmp318;
+        this.deliveryCosts = {};
+        var _ktype15 = 0;
+        var _vtype16 = 0;
+        _rtmp318 = input.readMapBegin();
+        _ktype15 = _rtmp318.ktype;
+        _vtype16 = _rtmp318.vtype;
+        _size14 = _rtmp318.size;
+        for (var _i19 = 0; _i19 < _size14; ++_i19)
+        {
+          if (_i19 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key20 = null;
+          var val21 = null;
+          key20 = input.readI32().value;
+          val21 = input.readDouble().value;
+          this.deliveryCosts[key20] = val21;
+        }
+        input.readMapEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 10:
+      if (ftype == Thrift.Type.MAP) {
+        var _size22 = 0;
+        var _rtmp326;
+        this.paymentTypes = {};
+        var _ktype23 = 0;
+        var _vtype24 = 0;
+        _rtmp326 = input.readMapBegin();
+        _ktype23 = _rtmp326.ktype;
+        _vtype24 = _rtmp326.vtype;
+        _size22 = _rtmp326.size;
+        for (var _i27 = 0; _i27 < _size22; ++_i27)
+        {
+          if (_i27 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key28 = null;
+          var val29 = null;
+          key28 = input.readI32().value;
+          val29 = input.readDouble().value;
+          this.paymentTypes[key28] = val29;
+        }
+        input.readMapEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -208,8 +285,8 @@ com.vmesteonline.be.shop.Shop.prototype.write = function(output) {
     output.writeFieldEnd();
   }
   if (this.address !== null && this.address !== undefined) {
-    output.writeFieldBegin('address', Thrift.Type.STRING, 4);
-    output.writeString(this.address);
+    output.writeFieldBegin('address', Thrift.Type.STRUCT, 4);
+    this.address.write(output);
     output.writeFieldEnd();
   }
   if (this.logoURL !== null && this.logoURL !== undefined) {
@@ -225,12 +302,12 @@ com.vmesteonline.be.shop.Shop.prototype.write = function(output) {
   if (this.topicSet !== null && this.topicSet !== undefined) {
     output.writeFieldBegin('topicSet', Thrift.Type.SET, 7);
     output.writeSetBegin(Thrift.Type.I64, this.topicSet.length);
-    for (var iter14 in this.topicSet)
+    for (var iter30 in this.topicSet)
     {
-      if (this.topicSet.hasOwnProperty(iter14))
+      if (this.topicSet.hasOwnProperty(iter30))
       {
-        iter14 = this.topicSet[iter14];
-        output.writeI64(iter14);
+        iter30 = this.topicSet[iter30];
+        output.writeI64(iter30);
       }
     }
     output.writeSetEnd();
@@ -239,15 +316,45 @@ com.vmesteonline.be.shop.Shop.prototype.write = function(output) {
   if (this.tags !== null && this.tags !== undefined) {
     output.writeFieldBegin('tags', Thrift.Type.SET, 8);
     output.writeSetBegin(Thrift.Type.STRING, this.tags.length);
-    for (var iter15 in this.tags)
+    for (var iter31 in this.tags)
     {
-      if (this.tags.hasOwnProperty(iter15))
+      if (this.tags.hasOwnProperty(iter31))
       {
-        iter15 = this.tags[iter15];
-        output.writeString(iter15);
+        iter31 = this.tags[iter31];
+        output.writeString(iter31);
       }
     }
     output.writeSetEnd();
+    output.writeFieldEnd();
+  }
+  if (this.deliveryCosts !== null && this.deliveryCosts !== undefined) {
+    output.writeFieldBegin('deliveryCosts', Thrift.Type.MAP, 9);
+    output.writeMapBegin(Thrift.Type.I32, Thrift.Type.DOUBLE, Thrift.objectLength(this.deliveryCosts));
+    for (var kiter32 in this.deliveryCosts)
+    {
+      if (this.deliveryCosts.hasOwnProperty(kiter32))
+      {
+        var viter33 = this.deliveryCosts[kiter32];
+        output.writeI32(kiter32);
+        output.writeDouble(viter33);
+      }
+    }
+    output.writeMapEnd();
+    output.writeFieldEnd();
+  }
+  if (this.paymentTypes !== null && this.paymentTypes !== undefined) {
+    output.writeFieldBegin('paymentTypes', Thrift.Type.MAP, 10);
+    output.writeMapBegin(Thrift.Type.I32, Thrift.Type.DOUBLE, Thrift.objectLength(this.paymentTypes));
+    for (var kiter34 in this.paymentTypes)
+    {
+      if (this.paymentTypes.hasOwnProperty(kiter34))
+      {
+        var viter35 = this.paymentTypes[kiter34];
+        output.writeI32(kiter34);
+        output.writeDouble(viter35);
+      }
+    }
+    output.writeMapEnd();
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -441,18 +548,18 @@ com.vmesteonline.be.shop.ProductCategory.prototype.read = function(input) {
       break;
       case 5:
       if (ftype == Thrift.Type.SET) {
-        var _size16 = 0;
-        var _rtmp320;
+        var _size36 = 0;
+        var _rtmp340;
         this.logoURLset = [];
-        var _etype19 = 0;
-        _rtmp320 = input.readSetBegin();
-        _etype19 = _rtmp320.etype;
-        _size16 = _rtmp320.size;
-        for (var _i21 = 0; _i21 < _size16; ++_i21)
+        var _etype39 = 0;
+        _rtmp340 = input.readSetBegin();
+        _etype39 = _rtmp340.etype;
+        _size36 = _rtmp340.size;
+        for (var _i41 = 0; _i41 < _size36; ++_i41)
         {
-          var elem22 = null;
-          elem22 = input.readString().value;
-          this.logoURLset.push(elem22);
+          var elem42 = null;
+          elem42 = input.readString().value;
+          this.logoURLset.push(elem42);
         }
         input.readSetEnd();
       } else {
@@ -461,18 +568,18 @@ com.vmesteonline.be.shop.ProductCategory.prototype.read = function(input) {
       break;
       case 6:
       if (ftype == Thrift.Type.SET) {
-        var _size23 = 0;
-        var _rtmp327;
+        var _size43 = 0;
+        var _rtmp347;
         this.topicSet = [];
-        var _etype26 = 0;
-        _rtmp327 = input.readSetBegin();
-        _etype26 = _rtmp327.etype;
-        _size23 = _rtmp327.size;
-        for (var _i28 = 0; _i28 < _size23; ++_i28)
+        var _etype46 = 0;
+        _rtmp347 = input.readSetBegin();
+        _etype46 = _rtmp347.etype;
+        _size43 = _rtmp347.size;
+        for (var _i48 = 0; _i48 < _size43; ++_i48)
         {
-          var elem29 = null;
-          elem29 = input.readI64().value;
-          this.topicSet.push(elem29);
+          var elem49 = null;
+          elem49 = input.readI64().value;
+          this.topicSet.push(elem49);
         }
         input.readSetEnd();
       } else {
@@ -513,12 +620,12 @@ com.vmesteonline.be.shop.ProductCategory.prototype.write = function(output) {
   if (this.logoURLset !== null && this.logoURLset !== undefined) {
     output.writeFieldBegin('logoURLset', Thrift.Type.SET, 5);
     output.writeSetBegin(Thrift.Type.STRING, this.logoURLset.length);
-    for (var iter30 in this.logoURLset)
+    for (var iter50 in this.logoURLset)
     {
-      if (this.logoURLset.hasOwnProperty(iter30))
+      if (this.logoURLset.hasOwnProperty(iter50))
       {
-        iter30 = this.logoURLset[iter30];
-        output.writeString(iter30);
+        iter50 = this.logoURLset[iter50];
+        output.writeString(iter50);
       }
     }
     output.writeSetEnd();
@@ -527,12 +634,12 @@ com.vmesteonline.be.shop.ProductCategory.prototype.write = function(output) {
   if (this.topicSet !== null && this.topicSet !== undefined) {
     output.writeFieldBegin('topicSet', Thrift.Type.SET, 6);
     output.writeSetBegin(Thrift.Type.I64, this.topicSet.length);
-    for (var iter31 in this.topicSet)
+    for (var iter51 in this.topicSet)
     {
-      if (this.topicSet.hasOwnProperty(iter31))
+      if (this.topicSet.hasOwnProperty(iter51))
       {
-        iter31 = this.topicSet[iter31];
-        output.writeI64(iter31);
+        iter51 = this.topicSet[iter51];
+        output.writeI64(iter51);
       }
     }
     output.writeSetEnd();
@@ -591,18 +698,18 @@ com.vmesteonline.be.shop.ProductDetails.prototype.read = function(input) {
     {
       case 1:
       if (ftype == Thrift.Type.SET) {
-        var _size32 = 0;
-        var _rtmp336;
+        var _size52 = 0;
+        var _rtmp356;
         this.categories = [];
-        var _etype35 = 0;
-        _rtmp336 = input.readSetBegin();
-        _etype35 = _rtmp336.etype;
-        _size32 = _rtmp336.size;
-        for (var _i37 = 0; _i37 < _size32; ++_i37)
+        var _etype55 = 0;
+        _rtmp356 = input.readSetBegin();
+        _etype55 = _rtmp356.etype;
+        _size52 = _rtmp356.size;
+        for (var _i57 = 0; _i57 < _size52; ++_i57)
         {
-          var elem38 = null;
-          elem38 = input.readI64().value;
-          this.categories.push(elem38);
+          var elem58 = null;
+          elem58 = input.readI64().value;
+          this.categories.push(elem58);
         }
         input.readSetEnd();
       } else {
@@ -618,18 +725,18 @@ com.vmesteonline.be.shop.ProductDetails.prototype.read = function(input) {
       break;
       case 3:
       if (ftype == Thrift.Type.SET) {
-        var _size39 = 0;
-        var _rtmp343;
+        var _size59 = 0;
+        var _rtmp363;
         this.imagesURLset = [];
-        var _etype42 = 0;
-        _rtmp343 = input.readSetBegin();
-        _etype42 = _rtmp343.etype;
-        _size39 = _rtmp343.size;
-        for (var _i44 = 0; _i44 < _size39; ++_i44)
+        var _etype62 = 0;
+        _rtmp363 = input.readSetBegin();
+        _etype62 = _rtmp363.etype;
+        _size59 = _rtmp363.size;
+        for (var _i64 = 0; _i64 < _size59; ++_i64)
         {
-          var elem45 = null;
-          elem45 = input.readString().value;
-          this.imagesURLset.push(elem45);
+          var elem65 = null;
+          elem65 = input.readString().value;
+          this.imagesURLset.push(elem65);
         }
         input.readSetEnd();
       } else {
@@ -638,27 +745,27 @@ com.vmesteonline.be.shop.ProductDetails.prototype.read = function(input) {
       break;
       case 4:
       if (ftype == Thrift.Type.MAP) {
-        var _size46 = 0;
-        var _rtmp350;
+        var _size66 = 0;
+        var _rtmp370;
         this.pricesMap = {};
-        var _ktype47 = 0;
-        var _vtype48 = 0;
-        _rtmp350 = input.readMapBegin();
-        _ktype47 = _rtmp350.ktype;
-        _vtype48 = _rtmp350.vtype;
-        _size46 = _rtmp350.size;
-        for (var _i51 = 0; _i51 < _size46; ++_i51)
+        var _ktype67 = 0;
+        var _vtype68 = 0;
+        _rtmp370 = input.readMapBegin();
+        _ktype67 = _rtmp370.ktype;
+        _vtype68 = _rtmp370.vtype;
+        _size66 = _rtmp370.size;
+        for (var _i71 = 0; _i71 < _size66; ++_i71)
         {
-          if (_i51 > 0 ) {
+          if (_i71 > 0 ) {
             if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
               input.rstack.pop();
             }
           }
-          var key52 = null;
-          var val53 = null;
-          key52 = input.readI32().value;
-          val53 = input.readDouble().value;
-          this.pricesMap[key52] = val53;
+          var key72 = null;
+          var val73 = null;
+          key72 = input.readI32().value;
+          val73 = input.readDouble().value;
+          this.pricesMap[key72] = val73;
         }
         input.readMapEnd();
       } else {
@@ -667,27 +774,27 @@ com.vmesteonline.be.shop.ProductDetails.prototype.read = function(input) {
       break;
       case 5:
       if (ftype == Thrift.Type.MAP) {
-        var _size54 = 0;
-        var _rtmp358;
+        var _size74 = 0;
+        var _rtmp378;
         this.optionsMap = {};
-        var _ktype55 = 0;
-        var _vtype56 = 0;
-        _rtmp358 = input.readMapBegin();
-        _ktype55 = _rtmp358.ktype;
-        _vtype56 = _rtmp358.vtype;
-        _size54 = _rtmp358.size;
-        for (var _i59 = 0; _i59 < _size54; ++_i59)
+        var _ktype75 = 0;
+        var _vtype76 = 0;
+        _rtmp378 = input.readMapBegin();
+        _ktype75 = _rtmp378.ktype;
+        _vtype76 = _rtmp378.vtype;
+        _size74 = _rtmp378.size;
+        for (var _i79 = 0; _i79 < _size74; ++_i79)
         {
-          if (_i59 > 0 ) {
+          if (_i79 > 0 ) {
             if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
               input.rstack.pop();
             }
           }
-          var key60 = null;
-          var val61 = null;
-          key60 = input.readString().value;
-          val61 = input.readString().value;
-          this.optionsMap[key60] = val61;
+          var key80 = null;
+          var val81 = null;
+          key80 = input.readString().value;
+          val81 = input.readString().value;
+          this.optionsMap[key80] = val81;
         }
         input.readMapEnd();
       } else {
@@ -696,18 +803,18 @@ com.vmesteonline.be.shop.ProductDetails.prototype.read = function(input) {
       break;
       case 6:
       if (ftype == Thrift.Type.SET) {
-        var _size62 = 0;
-        var _rtmp366;
+        var _size82 = 0;
+        var _rtmp386;
         this.topicSet = [];
-        var _etype65 = 0;
-        _rtmp366 = input.readSetBegin();
-        _etype65 = _rtmp366.etype;
-        _size62 = _rtmp366.size;
-        for (var _i67 = 0; _i67 < _size62; ++_i67)
+        var _etype85 = 0;
+        _rtmp386 = input.readSetBegin();
+        _etype85 = _rtmp386.etype;
+        _size82 = _rtmp386.size;
+        for (var _i87 = 0; _i87 < _size82; ++_i87)
         {
-          var elem68 = null;
-          elem68 = input.readI64().value;
-          this.topicSet.push(elem68);
+          var elem88 = null;
+          elem88 = input.readI64().value;
+          this.topicSet.push(elem88);
         }
         input.readSetEnd();
       } else {
@@ -735,12 +842,12 @@ com.vmesteonline.be.shop.ProductDetails.prototype.write = function(output) {
   if (this.categories !== null && this.categories !== undefined) {
     output.writeFieldBegin('categories', Thrift.Type.SET, 1);
     output.writeSetBegin(Thrift.Type.I64, this.categories.length);
-    for (var iter69 in this.categories)
+    for (var iter89 in this.categories)
     {
-      if (this.categories.hasOwnProperty(iter69))
+      if (this.categories.hasOwnProperty(iter89))
       {
-        iter69 = this.categories[iter69];
-        output.writeI64(iter69);
+        iter89 = this.categories[iter89];
+        output.writeI64(iter89);
       }
     }
     output.writeSetEnd();
@@ -754,12 +861,12 @@ com.vmesteonline.be.shop.ProductDetails.prototype.write = function(output) {
   if (this.imagesURLset !== null && this.imagesURLset !== undefined) {
     output.writeFieldBegin('imagesURLset', Thrift.Type.SET, 3);
     output.writeSetBegin(Thrift.Type.STRING, this.imagesURLset.length);
-    for (var iter70 in this.imagesURLset)
+    for (var iter90 in this.imagesURLset)
     {
-      if (this.imagesURLset.hasOwnProperty(iter70))
+      if (this.imagesURLset.hasOwnProperty(iter90))
       {
-        iter70 = this.imagesURLset[iter70];
-        output.writeString(iter70);
+        iter90 = this.imagesURLset[iter90];
+        output.writeString(iter90);
       }
     }
     output.writeSetEnd();
@@ -768,13 +875,13 @@ com.vmesteonline.be.shop.ProductDetails.prototype.write = function(output) {
   if (this.pricesMap !== null && this.pricesMap !== undefined) {
     output.writeFieldBegin('pricesMap', Thrift.Type.MAP, 4);
     output.writeMapBegin(Thrift.Type.I32, Thrift.Type.DOUBLE, Thrift.objectLength(this.pricesMap));
-    for (var kiter71 in this.pricesMap)
+    for (var kiter91 in this.pricesMap)
     {
-      if (this.pricesMap.hasOwnProperty(kiter71))
+      if (this.pricesMap.hasOwnProperty(kiter91))
       {
-        var viter72 = this.pricesMap[kiter71];
-        output.writeI32(kiter71);
-        output.writeDouble(viter72);
+        var viter92 = this.pricesMap[kiter91];
+        output.writeI32(kiter91);
+        output.writeDouble(viter92);
       }
     }
     output.writeMapEnd();
@@ -783,13 +890,13 @@ com.vmesteonline.be.shop.ProductDetails.prototype.write = function(output) {
   if (this.optionsMap !== null && this.optionsMap !== undefined) {
     output.writeFieldBegin('optionsMap', Thrift.Type.MAP, 5);
     output.writeMapBegin(Thrift.Type.STRING, Thrift.Type.STRING, Thrift.objectLength(this.optionsMap));
-    for (var kiter73 in this.optionsMap)
+    for (var kiter93 in this.optionsMap)
     {
-      if (this.optionsMap.hasOwnProperty(kiter73))
+      if (this.optionsMap.hasOwnProperty(kiter93))
       {
-        var viter74 = this.optionsMap[kiter73];
-        output.writeString(kiter73);
-        output.writeString(viter74);
+        var viter94 = this.optionsMap[kiter93];
+        output.writeString(kiter93);
+        output.writeString(viter94);
       }
     }
     output.writeMapEnd();
@@ -798,12 +905,12 @@ com.vmesteonline.be.shop.ProductDetails.prototype.write = function(output) {
   if (this.topicSet !== null && this.topicSet !== undefined) {
     output.writeFieldBegin('topicSet', Thrift.Type.SET, 6);
     output.writeSetBegin(Thrift.Type.I64, this.topicSet.length);
-    for (var iter75 in this.topicSet)
+    for (var iter95 in this.topicSet)
     {
-      if (this.topicSet.hasOwnProperty(iter75))
+      if (this.topicSet.hasOwnProperty(iter95))
       {
-        iter75 = this.topicSet[iter75];
-        output.writeI64(iter75);
+        iter95 = this.topicSet[iter95];
+        output.writeI64(iter95);
       }
     }
     output.writeSetEnd();
@@ -949,7 +1056,7 @@ com.vmesteonline.be.shop.Product.prototype.write = function(output) {
   return;
 };
 
-com.vmesteonline.be.shop.FullProductInto = function(args) {
+com.vmesteonline.be.shop.FullProductInfo = function(args) {
   this.product = null;
   this.details = null;
   if (args) {
@@ -961,8 +1068,8 @@ com.vmesteonline.be.shop.FullProductInto = function(args) {
     }
   }
 };
-com.vmesteonline.be.shop.FullProductInto.prototype = {};
-com.vmesteonline.be.shop.FullProductInto.prototype.read = function(input) {
+com.vmesteonline.be.shop.FullProductInfo.prototype = {};
+com.vmesteonline.be.shop.FullProductInfo.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
@@ -1000,8 +1107,8 @@ com.vmesteonline.be.shop.FullProductInto.prototype.read = function(input) {
   return;
 };
 
-com.vmesteonline.be.shop.FullProductInto.prototype.write = function(output) {
-  output.writeStructBegin('FullProductInto');
+com.vmesteonline.be.shop.FullProductInfo.prototype.write = function(output) {
+  output.writeStructBegin('FullProductInfo');
   if (this.product !== null && this.product !== undefined) {
     output.writeFieldBegin('product', Thrift.Type.STRUCT, 1);
     this.product.write(output);
@@ -1211,19 +1318,19 @@ com.vmesteonline.be.shop.OrderDetails.prototype.read = function(input) {
       break;
       case 7:
       if (ftype == Thrift.Type.LIST) {
-        var _size76 = 0;
-        var _rtmp380;
+        var _size96 = 0;
+        var _rtmp3100;
         this.odrerLines = [];
-        var _etype79 = 0;
-        _rtmp380 = input.readListBegin();
-        _etype79 = _rtmp380.etype;
-        _size76 = _rtmp380.size;
-        for (var _i81 = 0; _i81 < _size76; ++_i81)
+        var _etype99 = 0;
+        _rtmp3100 = input.readListBegin();
+        _etype99 = _rtmp3100.etype;
+        _size96 = _rtmp3100.size;
+        for (var _i101 = 0; _i101 < _size96; ++_i101)
         {
-          var elem82 = null;
-          elem82 = new com.vmesteonline.be.shop.OrderLine();
-          elem82.read(input);
-          this.odrerLines.push(elem82);
+          var elem102 = null;
+          elem102 = new com.vmesteonline.be.shop.OrderLine();
+          elem102.read(input);
+          this.odrerLines.push(elem102);
         }
         input.readListEnd();
       } else {
@@ -1281,12 +1388,12 @@ com.vmesteonline.be.shop.OrderDetails.prototype.write = function(output) {
   if (this.odrerLines !== null && this.odrerLines !== undefined) {
     output.writeFieldBegin('odrerLines', Thrift.Type.LIST, 7);
     output.writeListBegin(Thrift.Type.STRUCT, this.odrerLines.length);
-    for (var iter83 in this.odrerLines)
+    for (var iter103 in this.odrerLines)
     {
-      if (this.odrerLines.hasOwnProperty(iter83))
+      if (this.odrerLines.hasOwnProperty(iter103))
       {
-        iter83 = this.odrerLines[iter83];
-        iter83.write(output);
+        iter103 = this.odrerLines[iter103];
+        iter103.write(output);
       }
     }
     output.writeListEnd();
@@ -1400,6 +1507,74 @@ com.vmesteonline.be.shop.Order.prototype.write = function(output) {
   return;
 };
 
+com.vmesteonline.be.shop.FullOrder = function(args) {
+  this.order = null;
+  this.details = null;
+  if (args) {
+    if (args.order !== undefined) {
+      this.order = args.order;
+    }
+    if (args.details !== undefined) {
+      this.details = args.details;
+    }
+  }
+};
+com.vmesteonline.be.shop.FullOrder.prototype = {};
+com.vmesteonline.be.shop.FullOrder.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.order = new com.vmesteonline.be.shop.Order();
+        this.order.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.details = new com.vmesteonline.be.shop.OrderDetails();
+        this.details.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.FullOrder.prototype.write = function(output) {
+  output.writeStructBegin('FullOrder');
+  if (this.order !== null && this.order !== undefined) {
+    output.writeFieldBegin('order', Thrift.Type.STRUCT, 1);
+    this.order.write(output);
+    output.writeFieldEnd();
+  }
+  if (this.details !== null && this.details !== undefined) {
+    output.writeFieldBegin('details', Thrift.Type.STRUCT, 2);
+    this.details.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 com.vmesteonline.be.shop.ProductListPart = function(args) {
   this.products = null;
   this.length = null;
@@ -1428,19 +1603,19 @@ com.vmesteonline.be.shop.ProductListPart.prototype.read = function(input) {
     {
       case 1:
       if (ftype == Thrift.Type.LIST) {
-        var _size84 = 0;
-        var _rtmp388;
+        var _size104 = 0;
+        var _rtmp3108;
         this.products = [];
-        var _etype87 = 0;
-        _rtmp388 = input.readListBegin();
-        _etype87 = _rtmp388.etype;
-        _size84 = _rtmp388.size;
-        for (var _i89 = 0; _i89 < _size84; ++_i89)
+        var _etype107 = 0;
+        _rtmp3108 = input.readListBegin();
+        _etype107 = _rtmp3108.etype;
+        _size104 = _rtmp3108.size;
+        for (var _i109 = 0; _i109 < _size104; ++_i109)
         {
-          var elem90 = null;
-          elem90 = new com.vmesteonline.be.shop.Product();
-          elem90.read(input);
-          this.products.push(elem90);
+          var elem110 = null;
+          elem110 = new com.vmesteonline.be.shop.Product();
+          elem110.read(input);
+          this.products.push(elem110);
         }
         input.readListEnd();
       } else {
@@ -1468,12 +1643,12 @@ com.vmesteonline.be.shop.ProductListPart.prototype.write = function(output) {
   if (this.products !== null && this.products !== undefined) {
     output.writeFieldBegin('products', Thrift.Type.LIST, 1);
     output.writeListBegin(Thrift.Type.STRUCT, this.products.length);
-    for (var iter91 in this.products)
+    for (var iter111 in this.products)
     {
-      if (this.products.hasOwnProperty(iter91))
+      if (this.products.hasOwnProperty(iter111))
       {
-        iter91 = this.products[iter91];
-        iter91.write(output);
+        iter111 = this.products[iter111];
+        iter111.write(output);
       }
     }
     output.writeListEnd();

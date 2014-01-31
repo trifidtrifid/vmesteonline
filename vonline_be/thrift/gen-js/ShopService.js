@@ -411,12 +411,16 @@ com.vmesteonline.be.shop.ShopService_registerProducer_result.prototype.write = f
 com.vmesteonline.be.shop.ShopService_uploadProducts_args = function(args) {
   this.products = null;
   this.shopId = null;
+  this.cleanShopBeforeUpload = null;
   if (args) {
     if (args.products !== undefined) {
       this.products = args.products;
     }
     if (args.shopId !== undefined) {
       this.shopId = args.shopId;
+    }
+    if (args.cleanShopBeforeUpload !== undefined) {
+      this.cleanShopBeforeUpload = args.cleanShopBeforeUpload;
     }
   }
 };
@@ -436,19 +440,19 @@ com.vmesteonline.be.shop.ShopService_uploadProducts_args.prototype.read = functi
     {
       case 1:
       if (ftype == Thrift.Type.LIST) {
-        var _size92 = 0;
-        var _rtmp396;
+        var _size112 = 0;
+        var _rtmp3116;
         this.products = [];
-        var _etype95 = 0;
-        _rtmp396 = input.readListBegin();
-        _etype95 = _rtmp396.etype;
-        _size92 = _rtmp396.size;
-        for (var _i97 = 0; _i97 < _size92; ++_i97)
+        var _etype115 = 0;
+        _rtmp3116 = input.readListBegin();
+        _etype115 = _rtmp3116.etype;
+        _size112 = _rtmp3116.size;
+        for (var _i117 = 0; _i117 < _size112; ++_i117)
         {
-          var elem98 = null;
-          elem98 = new com.vmesteonline.be.shop.FullProductInto();
-          elem98.read(input);
-          this.products.push(elem98);
+          var elem118 = null;
+          elem118 = new com.vmesteonline.be.shop.FullProductInfo();
+          elem118.read(input);
+          this.products.push(elem118);
         }
         input.readListEnd();
       } else {
@@ -458,6 +462,13 @@ com.vmesteonline.be.shop.ShopService_uploadProducts_args.prototype.read = functi
       case 2:
       if (ftype == Thrift.Type.I64) {
         this.shopId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.BOOL) {
+        this.cleanShopBeforeUpload = input.readBool().value;
       } else {
         input.skip(ftype);
       }
@@ -476,12 +487,12 @@ com.vmesteonline.be.shop.ShopService_uploadProducts_args.prototype.write = funct
   if (this.products !== null && this.products !== undefined) {
     output.writeFieldBegin('products', Thrift.Type.LIST, 1);
     output.writeListBegin(Thrift.Type.STRUCT, this.products.length);
-    for (var iter99 in this.products)
+    for (var iter119 in this.products)
     {
-      if (this.products.hasOwnProperty(iter99))
+      if (this.products.hasOwnProperty(iter119))
       {
-        iter99 = this.products[iter99];
-        iter99.write(output);
+        iter119 = this.products[iter119];
+        iter119.write(output);
       }
     }
     output.writeListEnd();
@@ -490,6 +501,11 @@ com.vmesteonline.be.shop.ShopService_uploadProducts_args.prototype.write = funct
   if (this.shopId !== null && this.shopId !== undefined) {
     output.writeFieldBegin('shopId', Thrift.Type.I64, 2);
     output.writeI64(this.shopId);
+    output.writeFieldEnd();
+  }
+  if (this.cleanShopBeforeUpload !== null && this.cleanShopBeforeUpload !== undefined) {
+    output.writeFieldBegin('cleanShopBeforeUpload', Thrift.Type.BOOL, 3);
+    output.writeBool(this.cleanShopBeforeUpload);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -529,18 +545,18 @@ com.vmesteonline.be.shop.ShopService_uploadProducts_result.prototype.read = func
     {
       case 0:
       if (ftype == Thrift.Type.SET) {
-        var _size100 = 0;
-        var _rtmp3104;
+        var _size120 = 0;
+        var _rtmp3124;
         this.success = [];
-        var _etype103 = 0;
-        _rtmp3104 = input.readSetBegin();
-        _etype103 = _rtmp3104.etype;
-        _size100 = _rtmp3104.size;
-        for (var _i105 = 0; _i105 < _size100; ++_i105)
+        var _etype123 = 0;
+        _rtmp3124 = input.readSetBegin();
+        _etype123 = _rtmp3124.etype;
+        _size120 = _rtmp3124.size;
+        for (var _i125 = 0; _i125 < _size120; ++_i125)
         {
-          var elem106 = null;
-          elem106 = input.readI64().value;
-          this.success.push(elem106);
+          var elem126 = null;
+          elem126 = input.readI64().value;
+          this.success.push(elem126);
         }
         input.readSetEnd();
       } else {
@@ -569,12 +585,12 @@ com.vmesteonline.be.shop.ShopService_uploadProducts_result.prototype.write = fun
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.SET, 0);
     output.writeSetBegin(Thrift.Type.I64, this.success.length);
-    for (var iter107 in this.success)
+    for (var iter127 in this.success)
     {
-      if (this.success.hasOwnProperty(iter107))
+      if (this.success.hasOwnProperty(iter127))
       {
-        iter107 = this.success[iter107];
-        output.writeI64(iter107);
+        iter127 = this.success[iter127];
+        output.writeI64(iter127);
       }
     }
     output.writeSetEnd();
@@ -593,7 +609,7 @@ com.vmesteonline.be.shop.ShopService_uploadProducts_result.prototype.write = fun
 com.vmesteonline.be.shop.ShopService_uploadProductCategoies_args = function(args) {
   this.categories = null;
   this.relativeIds = null;
-  this.rewriteAll = null;
+  this.cleanShopBeforeUpload = null;
   if (args) {
     if (args.categories !== undefined) {
       this.categories = args.categories;
@@ -601,8 +617,8 @@ com.vmesteonline.be.shop.ShopService_uploadProductCategoies_args = function(args
     if (args.relativeIds !== undefined) {
       this.relativeIds = args.relativeIds;
     }
-    if (args.rewriteAll !== undefined) {
-      this.rewriteAll = args.rewriteAll;
+    if (args.cleanShopBeforeUpload !== undefined) {
+      this.cleanShopBeforeUpload = args.cleanShopBeforeUpload;
     }
   }
 };
@@ -622,19 +638,19 @@ com.vmesteonline.be.shop.ShopService_uploadProductCategoies_args.prototype.read 
     {
       case 1:
       if (ftype == Thrift.Type.SET) {
-        var _size108 = 0;
-        var _rtmp3112;
+        var _size128 = 0;
+        var _rtmp3132;
         this.categories = [];
-        var _etype111 = 0;
-        _rtmp3112 = input.readSetBegin();
-        _etype111 = _rtmp3112.etype;
-        _size108 = _rtmp3112.size;
-        for (var _i113 = 0; _i113 < _size108; ++_i113)
+        var _etype131 = 0;
+        _rtmp3132 = input.readSetBegin();
+        _etype131 = _rtmp3132.etype;
+        _size128 = _rtmp3132.size;
+        for (var _i133 = 0; _i133 < _size128; ++_i133)
         {
-          var elem114 = null;
-          elem114 = new com.vmesteonline.be.shop.ProductCategory();
-          elem114.read(input);
-          this.categories.push(elem114);
+          var elem134 = null;
+          elem134 = new com.vmesteonline.be.shop.ProductCategory();
+          elem134.read(input);
+          this.categories.push(elem134);
         }
         input.readSetEnd();
       } else {
@@ -650,7 +666,7 @@ com.vmesteonline.be.shop.ShopService_uploadProductCategoies_args.prototype.read 
       break;
       case 3:
       if (ftype == Thrift.Type.BOOL) {
-        this.rewriteAll = input.readBool().value;
+        this.cleanShopBeforeUpload = input.readBool().value;
       } else {
         input.skip(ftype);
       }
@@ -669,12 +685,12 @@ com.vmesteonline.be.shop.ShopService_uploadProductCategoies_args.prototype.write
   if (this.categories !== null && this.categories !== undefined) {
     output.writeFieldBegin('categories', Thrift.Type.SET, 1);
     output.writeSetBegin(Thrift.Type.STRUCT, this.categories.length);
-    for (var iter115 in this.categories)
+    for (var iter135 in this.categories)
     {
-      if (this.categories.hasOwnProperty(iter115))
+      if (this.categories.hasOwnProperty(iter135))
       {
-        iter115 = this.categories[iter115];
-        iter115.write(output);
+        iter135 = this.categories[iter135];
+        iter135.write(output);
       }
     }
     output.writeSetEnd();
@@ -685,9 +701,9 @@ com.vmesteonline.be.shop.ShopService_uploadProductCategoies_args.prototype.write
     output.writeBool(this.relativeIds);
     output.writeFieldEnd();
   }
-  if (this.rewriteAll !== null && this.rewriteAll !== undefined) {
-    output.writeFieldBegin('rewriteAll', Thrift.Type.BOOL, 3);
-    output.writeBool(this.rewriteAll);
+  if (this.cleanShopBeforeUpload !== null && this.cleanShopBeforeUpload !== undefined) {
+    output.writeFieldBegin('cleanShopBeforeUpload', Thrift.Type.BOOL, 3);
+    output.writeBool(this.cleanShopBeforeUpload);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -697,9 +713,17 @@ com.vmesteonline.be.shop.ShopService_uploadProductCategoies_args.prototype.write
 
 com.vmesteonline.be.shop.ShopService_uploadProductCategoies_result = function(args) {
   this.success = null;
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
   if (args) {
     if (args.success !== undefined) {
       this.success = args.success;
+    }
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
     }
   }
 };
@@ -719,21 +743,307 @@ com.vmesteonline.be.shop.ShopService_uploadProductCategoies_result.prototype.rea
     {
       case 0:
       if (ftype == Thrift.Type.SET) {
-        var _size116 = 0;
-        var _rtmp3120;
+        var _size136 = 0;
+        var _rtmp3140;
         this.success = [];
-        var _etype119 = 0;
-        _rtmp3120 = input.readSetBegin();
-        _etype119 = _rtmp3120.etype;
-        _size116 = _rtmp3120.size;
-        for (var _i121 = 0; _i121 < _size116; ++_i121)
+        var _etype139 = 0;
+        _rtmp3140 = input.readSetBegin();
+        _etype139 = _rtmp3140.etype;
+        _size136 = _rtmp3140.size;
+        for (var _i141 = 0; _i141 < _size136; ++_i141)
         {
-          var elem122 = null;
-          elem122 = new com.vmesteonline.be.shop.ProductCategory();
-          elem122.read(input);
-          this.success.push(elem122);
+          var elem142 = null;
+          elem142 = new com.vmesteonline.be.shop.ProductCategory();
+          elem142.read(input);
+          this.success.push(elem142);
         }
         input.readSetEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_uploadProductCategoies_result.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_uploadProductCategoies_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.SET, 0);
+    output.writeSetBegin(Thrift.Type.STRUCT, this.success.length);
+    for (var iter143 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter143))
+      {
+        iter143 = this.success[iter143];
+        iter143.write(output);
+      }
+    }
+    output.writeSetEnd();
+    output.writeFieldEnd();
+  }
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_getFullOrders_args = function(args) {
+  this.dateFrom = null;
+  this.dateTo = null;
+  this.userId = null;
+  this.shopId = null;
+  if (args) {
+    if (args.dateFrom !== undefined) {
+      this.dateFrom = args.dateFrom;
+    }
+    if (args.dateTo !== undefined) {
+      this.dateTo = args.dateTo;
+    }
+    if (args.userId !== undefined) {
+      this.userId = args.userId;
+    }
+    if (args.shopId !== undefined) {
+      this.shopId = args.shopId;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_getFullOrders_args.prototype = {};
+com.vmesteonline.be.shop.ShopService_getFullOrders_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I32) {
+        this.dateFrom = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.I32) {
+        this.dateTo = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.I64) {
+        this.userId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.I64) {
+        this.shopId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_getFullOrders_args.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_getFullOrders_args');
+  if (this.dateFrom !== null && this.dateFrom !== undefined) {
+    output.writeFieldBegin('dateFrom', Thrift.Type.I32, 1);
+    output.writeI32(this.dateFrom);
+    output.writeFieldEnd();
+  }
+  if (this.dateTo !== null && this.dateTo !== undefined) {
+    output.writeFieldBegin('dateTo', Thrift.Type.I32, 2);
+    output.writeI32(this.dateTo);
+    output.writeFieldEnd();
+  }
+  if (this.userId !== null && this.userId !== undefined) {
+    output.writeFieldBegin('userId', Thrift.Type.I64, 3);
+    output.writeI64(this.userId);
+    output.writeFieldEnd();
+  }
+  if (this.shopId !== null && this.shopId !== undefined) {
+    output.writeFieldBegin('shopId', Thrift.Type.I64, 4);
+    output.writeI64(this.shopId);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_getFullOrders_result = function(args) {
+  this.success = null;
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined) {
+      this.success = args.success;
+    }
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_getFullOrders_result.prototype = {};
+com.vmesteonline.be.shop.ShopService_getFullOrders_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.LIST) {
+        var _size144 = 0;
+        var _rtmp3148;
+        this.success = [];
+        var _etype147 = 0;
+        _rtmp3148 = input.readListBegin();
+        _etype147 = _rtmp3148.etype;
+        _size144 = _rtmp3148.size;
+        for (var _i149 = 0; _i149 < _size144; ++_i149)
+        {
+          var elem150 = null;
+          elem150 = new com.vmesteonline.be.shop.Order();
+          elem150.read(input);
+          this.success.push(elem150);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_getFullOrders_result.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_getFullOrders_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
+    output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
+    for (var iter151 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter151))
+      {
+        iter151 = this.success[iter151];
+        iter151.write(output);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_updateOrderStatusesById_args = function(args) {
+  this.orderStatusMap = null;
+  if (args) {
+    if (args.orderStatusMap !== undefined) {
+      this.orderStatusMap = args.orderStatusMap;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_updateOrderStatusesById_args.prototype = {};
+com.vmesteonline.be.shop.ShopService_updateOrderStatusesById_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.MAP) {
+        var _size152 = 0;
+        var _rtmp3156;
+        this.orderStatusMap = {};
+        var _ktype153 = 0;
+        var _vtype154 = 0;
+        _rtmp3156 = input.readMapBegin();
+        _ktype153 = _rtmp3156.ktype;
+        _vtype154 = _rtmp3156.vtype;
+        _size152 = _rtmp3156.size;
+        for (var _i157 = 0; _i157 < _size152; ++_i157)
+        {
+          if (_i157 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key158 = null;
+          var val159 = null;
+          key158 = input.readI64().value;
+          val159 = input.readI32().value;
+          this.orderStatusMap[key158] = val159;
+        }
+        input.readMapEnd();
       } else {
         input.skip(ftype);
       }
@@ -750,20 +1060,634 @@ com.vmesteonline.be.shop.ShopService_uploadProductCategoies_result.prototype.rea
   return;
 };
 
-com.vmesteonline.be.shop.ShopService_uploadProductCategoies_result.prototype.write = function(output) {
-  output.writeStructBegin('ShopService_uploadProductCategoies_result');
-  if (this.success !== null && this.success !== undefined) {
-    output.writeFieldBegin('success', Thrift.Type.SET, 0);
-    output.writeSetBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter123 in this.success)
+com.vmesteonline.be.shop.ShopService_updateOrderStatusesById_args.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_updateOrderStatusesById_args');
+  if (this.orderStatusMap !== null && this.orderStatusMap !== undefined) {
+    output.writeFieldBegin('orderStatusMap', Thrift.Type.MAP, 1);
+    output.writeMapBegin(Thrift.Type.I64, Thrift.Type.I32, Thrift.objectLength(this.orderStatusMap));
+    for (var kiter160 in this.orderStatusMap)
     {
-      if (this.success.hasOwnProperty(iter123))
+      if (this.orderStatusMap.hasOwnProperty(kiter160))
       {
-        iter123 = this.success[iter123];
-        iter123.write(output);
+        var viter161 = this.orderStatusMap[kiter160];
+        output.writeI64(kiter160);
+        output.writeI32(viter161);
       }
     }
-    output.writeSetEnd();
+    output.writeMapEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_updateOrderStatusesById_result = function(args) {
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
+  if (args) {
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_updateOrderStatusesById_result.prototype = {};
+com.vmesteonline.be.shop.ShopService_updateOrderStatusesById_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_updateOrderStatusesById_result.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_updateOrderStatusesById_result');
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setDates_args = function(args) {
+  this.dateDateTypeMap = null;
+  if (args) {
+    if (args.dateDateTypeMap !== undefined) {
+      this.dateDateTypeMap = args.dateDateTypeMap;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_setDates_args.prototype = {};
+com.vmesteonline.be.shop.ShopService_setDates_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.MAP) {
+        var _size162 = 0;
+        var _rtmp3166;
+        this.dateDateTypeMap = {};
+        var _ktype163 = 0;
+        var _vtype164 = 0;
+        _rtmp3166 = input.readMapBegin();
+        _ktype163 = _rtmp3166.ktype;
+        _vtype164 = _rtmp3166.vtype;
+        _size162 = _rtmp3166.size;
+        for (var _i167 = 0; _i167 < _size162; ++_i167)
+        {
+          if (_i167 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key168 = null;
+          var val169 = null;
+          key168 = input.readI32().value;
+          val169 = input.readI32().value;
+          this.dateDateTypeMap[key168] = val169;
+        }
+        input.readMapEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setDates_args.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_setDates_args');
+  if (this.dateDateTypeMap !== null && this.dateDateTypeMap !== undefined) {
+    output.writeFieldBegin('dateDateTypeMap', Thrift.Type.MAP, 1);
+    output.writeMapBegin(Thrift.Type.I32, Thrift.Type.I32, Thrift.objectLength(this.dateDateTypeMap));
+    for (var kiter170 in this.dateDateTypeMap)
+    {
+      if (this.dateDateTypeMap.hasOwnProperty(kiter170))
+      {
+        var viter171 = this.dateDateTypeMap[kiter170];
+        output.writeI32(kiter170);
+        output.writeI32(viter171);
+      }
+    }
+    output.writeMapEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setDates_result = function(args) {
+};
+com.vmesteonline.be.shop.ShopService_setDates_result.prototype = {};
+com.vmesteonline.be.shop.ShopService_setDates_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    input.skip(ftype);
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setDates_result.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_setDates_result');
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setDeliveryCosts_args = function(args) {
+  this.newDeliveryCosts = null;
+  if (args) {
+    if (args.newDeliveryCosts !== undefined) {
+      this.newDeliveryCosts = args.newDeliveryCosts;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_setDeliveryCosts_args.prototype = {};
+com.vmesteonline.be.shop.ShopService_setDeliveryCosts_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.MAP) {
+        var _size172 = 0;
+        var _rtmp3176;
+        this.newDeliveryCosts = {};
+        var _ktype173 = 0;
+        var _vtype174 = 0;
+        _rtmp3176 = input.readMapBegin();
+        _ktype173 = _rtmp3176.ktype;
+        _vtype174 = _rtmp3176.vtype;
+        _size172 = _rtmp3176.size;
+        for (var _i177 = 0; _i177 < _size172; ++_i177)
+        {
+          if (_i177 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key178 = null;
+          var val179 = null;
+          key178 = input.readI32().value;
+          val179 = input.readDouble().value;
+          this.newDeliveryCosts[key178] = val179;
+        }
+        input.readMapEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setDeliveryCosts_args.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_setDeliveryCosts_args');
+  if (this.newDeliveryCosts !== null && this.newDeliveryCosts !== undefined) {
+    output.writeFieldBegin('newDeliveryCosts', Thrift.Type.MAP, 1);
+    output.writeMapBegin(Thrift.Type.I32, Thrift.Type.DOUBLE, Thrift.objectLength(this.newDeliveryCosts));
+    for (var kiter180 in this.newDeliveryCosts)
+    {
+      if (this.newDeliveryCosts.hasOwnProperty(kiter180))
+      {
+        var viter181 = this.newDeliveryCosts[kiter180];
+        output.writeI32(kiter180);
+        output.writeDouble(viter181);
+      }
+    }
+    output.writeMapEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setDeliveryCosts_result = function(args) {
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
+  if (args) {
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_setDeliveryCosts_result.prototype = {};
+com.vmesteonline.be.shop.ShopService_setDeliveryCosts_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setDeliveryCosts_result.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_setDeliveryCosts_result');
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setOrderPaymentStatus_args = function(args) {
+  this.orderId = null;
+  this.newStatus = null;
+  if (args) {
+    if (args.orderId !== undefined) {
+      this.orderId = args.orderId;
+    }
+    if (args.newStatus !== undefined) {
+      this.newStatus = args.newStatus;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_setOrderPaymentStatus_args.prototype = {};
+com.vmesteonline.be.shop.ShopService_setOrderPaymentStatus_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I64) {
+        this.orderId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.I32) {
+        this.newStatus = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setOrderPaymentStatus_args.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_setOrderPaymentStatus_args');
+  if (this.orderId !== null && this.orderId !== undefined) {
+    output.writeFieldBegin('orderId', Thrift.Type.I64, 1);
+    output.writeI64(this.orderId);
+    output.writeFieldEnd();
+  }
+  if (this.newStatus !== null && this.newStatus !== undefined) {
+    output.writeFieldBegin('newStatus', Thrift.Type.I32, 2);
+    output.writeI32(this.newStatus);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setOrderPaymentStatus_result = function(args) {
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
+  if (args) {
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_setOrderPaymentStatus_result.prototype = {};
+com.vmesteonline.be.shop.ShopService_setOrderPaymentStatus_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setOrderPaymentStatus_result.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_setOrderPaymentStatus_result');
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setProductPrices_args = function(args) {
+  this.newPricesMap = null;
+  if (args) {
+    if (args.newPricesMap !== undefined) {
+      this.newPricesMap = args.newPricesMap;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_setProductPrices_args.prototype = {};
+com.vmesteonline.be.shop.ShopService_setProductPrices_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.MAP) {
+        var _size182 = 0;
+        var _rtmp3186;
+        this.newPricesMap = {};
+        var _ktype183 = 0;
+        var _vtype184 = 0;
+        _rtmp3186 = input.readMapBegin();
+        _ktype183 = _rtmp3186.ktype;
+        _vtype184 = _rtmp3186.vtype;
+        _size182 = _rtmp3186.size;
+        for (var _i187 = 0; _i187 < _size182; ++_i187)
+        {
+          if (_i187 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key188 = null;
+          var val189 = null;
+          key188 = input.readI64().value;
+          var _size190 = 0;
+          var _rtmp3194;
+          val189 = {};
+          var _ktype191 = 0;
+          var _vtype192 = 0;
+          _rtmp3194 = input.readMapBegin();
+          _ktype191 = _rtmp3194.ktype;
+          _vtype192 = _rtmp3194.vtype;
+          _size190 = _rtmp3194.size;
+          for (var _i195 = 0; _i195 < _size190; ++_i195)
+          {
+            if (_i195 > 0 ) {
+              if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+                input.rstack.pop();
+              }
+            }
+            var key196 = null;
+            var val197 = null;
+            key196 = input.readI32().value;
+            val197 = input.readDouble().value;
+            val189[key196] = val197;
+          }
+          input.readMapEnd();
+          this.newPricesMap[key188] = val189;
+        }
+        input.readMapEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setProductPrices_args.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_setProductPrices_args');
+  if (this.newPricesMap !== null && this.newPricesMap !== undefined) {
+    output.writeFieldBegin('newPricesMap', Thrift.Type.MAP, 1);
+    output.writeMapBegin(Thrift.Type.I64, Thrift.Type.MAP, Thrift.objectLength(this.newPricesMap));
+    for (var kiter198 in this.newPricesMap)
+    {
+      if (this.newPricesMap.hasOwnProperty(kiter198))
+      {
+        var viter199 = this.newPricesMap[kiter198];
+        output.writeI64(kiter198);
+        output.writeMapBegin(Thrift.Type.I32, Thrift.Type.DOUBLE, Thrift.objectLength(viter199));
+        for (var kiter200 in viter199)
+        {
+          if (viter199.hasOwnProperty(kiter200))
+          {
+            var viter201 = viter199[kiter200];
+            output.writeI32(kiter200);
+            output.writeDouble(viter201);
+          }
+        }
+        output.writeMapEnd();
+      }
+    }
+    output.writeMapEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setProductPrices_result = function(args) {
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
+  if (args) {
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_setProductPrices_result.prototype = {};
+com.vmesteonline.be.shop.ShopService_setProductPrices_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setProductPrices_result.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_setProductPrices_result');
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -831,19 +1755,19 @@ com.vmesteonline.be.shop.ShopService_getShops_result.prototype.read = function(i
     {
       case 0:
       if (ftype == Thrift.Type.LIST) {
-        var _size124 = 0;
-        var _rtmp3128;
+        var _size202 = 0;
+        var _rtmp3206;
         this.success = [];
-        var _etype127 = 0;
-        _rtmp3128 = input.readListBegin();
-        _etype127 = _rtmp3128.etype;
-        _size124 = _rtmp3128.size;
-        for (var _i129 = 0; _i129 < _size124; ++_i129)
+        var _etype205 = 0;
+        _rtmp3206 = input.readListBegin();
+        _etype205 = _rtmp3206.etype;
+        _size202 = _rtmp3206.size;
+        for (var _i207 = 0; _i207 < _size202; ++_i207)
         {
-          var elem130 = null;
-          elem130 = new com.vmesteonline.be.shop.Shop();
-          elem130.read(input);
-          this.success.push(elem130);
+          var elem208 = null;
+          elem208 = new com.vmesteonline.be.shop.Shop();
+          elem208.read(input);
+          this.success.push(elem208);
         }
         input.readListEnd();
       } else {
@@ -872,15 +1796,184 @@ com.vmesteonline.be.shop.ShopService_getShops_result.prototype.write = function(
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter131 in this.success)
+    for (var iter209 in this.success)
     {
-      if (this.success.hasOwnProperty(iter131))
+      if (this.success.hasOwnProperty(iter209))
       {
-        iter131 = this.success[iter131];
-        iter131.write(output);
+        iter209 = this.success[iter209];
+        iter209.write(output);
       }
     }
     output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_getDates_args = function(args) {
+  this.from = null;
+  this.to = null;
+  if (args) {
+    if (args.from !== undefined) {
+      this.from = args.from;
+    }
+    if (args.to !== undefined) {
+      this.to = args.to;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_getDates_args.prototype = {};
+com.vmesteonline.be.shop.ShopService_getDates_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I32) {
+        this.from = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.I32) {
+        this.to = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_getDates_args.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_getDates_args');
+  if (this.from !== null && this.from !== undefined) {
+    output.writeFieldBegin('from', Thrift.Type.I32, 1);
+    output.writeI32(this.from);
+    output.writeFieldEnd();
+  }
+  if (this.to !== null && this.to !== undefined) {
+    output.writeFieldBegin('to', Thrift.Type.I32, 2);
+    output.writeI32(this.to);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_getDates_result = function(args) {
+  this.success = null;
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined) {
+      this.success = args.success;
+    }
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_getDates_result.prototype = {};
+com.vmesteonline.be.shop.ShopService_getDates_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.MAP) {
+        var _size210 = 0;
+        var _rtmp3214;
+        this.success = {};
+        var _ktype211 = 0;
+        var _vtype212 = 0;
+        _rtmp3214 = input.readMapBegin();
+        _ktype211 = _rtmp3214.ktype;
+        _vtype212 = _rtmp3214.vtype;
+        _size210 = _rtmp3214.size;
+        for (var _i215 = 0; _i215 < _size210; ++_i215)
+        {
+          if (_i215 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key216 = null;
+          var val217 = null;
+          key216 = input.readI32().value;
+          val217 = input.readI32().value;
+          this.success[key216] = val217;
+        }
+        input.readMapEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_getDates_result.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_getDates_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.MAP, 0);
+    output.writeMapBegin(Thrift.Type.I32, Thrift.Type.I32, Thrift.objectLength(this.success));
+    for (var kiter218 in this.success)
+    {
+      if (this.success.hasOwnProperty(kiter218))
+      {
+        var viter219 = this.success[kiter218];
+        output.writeI32(kiter218);
+        output.writeI32(viter219);
+      }
+    }
+    output.writeMapEnd();
     output.writeFieldEnd();
   }
   if (this.exc !== null && this.exc !== undefined) {
@@ -1078,19 +2171,19 @@ com.vmesteonline.be.shop.ShopService_getProducers_result.prototype.read = functi
     {
       case 0:
       if (ftype == Thrift.Type.LIST) {
-        var _size132 = 0;
-        var _rtmp3136;
+        var _size220 = 0;
+        var _rtmp3224;
         this.success = [];
-        var _etype135 = 0;
-        _rtmp3136 = input.readListBegin();
-        _etype135 = _rtmp3136.etype;
-        _size132 = _rtmp3136.size;
-        for (var _i137 = 0; _i137 < _size132; ++_i137)
+        var _etype223 = 0;
+        _rtmp3224 = input.readListBegin();
+        _etype223 = _rtmp3224.etype;
+        _size220 = _rtmp3224.size;
+        for (var _i225 = 0; _i225 < _size220; ++_i225)
         {
-          var elem138 = null;
-          elem138 = new com.vmesteonline.be.shop.Producer();
-          elem138.read(input);
-          this.success.push(elem138);
+          var elem226 = null;
+          elem226 = new com.vmesteonline.be.shop.Producer();
+          elem226.read(input);
+          this.success.push(elem226);
         }
         input.readListEnd();
       } else {
@@ -1119,12 +2212,12 @@ com.vmesteonline.be.shop.ShopService_getProducers_result.prototype.write = funct
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter139 in this.success)
+    for (var iter227 in this.success)
     {
-      if (this.success.hasOwnProperty(iter139))
+      if (this.success.hasOwnProperty(iter227))
       {
-        iter139 = this.success[iter139];
-        iter139.write(output);
+        iter227 = this.success[iter227];
+        iter227.write(output);
       }
     }
     output.writeListEnd();
@@ -1225,19 +2318,19 @@ com.vmesteonline.be.shop.ShopService_getProductCategories_result.prototype.read 
     {
       case 0:
       if (ftype == Thrift.Type.LIST) {
-        var _size140 = 0;
-        var _rtmp3144;
+        var _size228 = 0;
+        var _rtmp3232;
         this.success = [];
-        var _etype143 = 0;
-        _rtmp3144 = input.readListBegin();
-        _etype143 = _rtmp3144.etype;
-        _size140 = _rtmp3144.size;
-        for (var _i145 = 0; _i145 < _size140; ++_i145)
+        var _etype231 = 0;
+        _rtmp3232 = input.readListBegin();
+        _etype231 = _rtmp3232.etype;
+        _size228 = _rtmp3232.size;
+        for (var _i233 = 0; _i233 < _size228; ++_i233)
         {
-          var elem146 = null;
-          elem146 = new com.vmesteonline.be.shop.ProductCategory();
-          elem146.read(input);
-          this.success.push(elem146);
+          var elem234 = null;
+          elem234 = new com.vmesteonline.be.shop.ProductCategory();
+          elem234.read(input);
+          this.success.push(elem234);
         }
         input.readListEnd();
       } else {
@@ -1266,12 +2359,12 @@ com.vmesteonline.be.shop.ShopService_getProductCategories_result.prototype.write
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter147 in this.success)
+    for (var iter235 in this.success)
     {
-      if (this.success.hasOwnProperty(iter147))
+      if (this.success.hasOwnProperty(iter235))
       {
-        iter147 = this.success[iter147];
-        iter147.write(output);
+        iter235 = this.success[iter235];
+        iter235.write(output);
       }
     }
     output.writeListEnd();
@@ -1664,19 +2757,19 @@ com.vmesteonline.be.shop.ShopService_getOrders_result.prototype.read = function(
     {
       case 0:
       if (ftype == Thrift.Type.LIST) {
-        var _size148 = 0;
-        var _rtmp3152;
+        var _size236 = 0;
+        var _rtmp3240;
         this.success = [];
-        var _etype151 = 0;
-        _rtmp3152 = input.readListBegin();
-        _etype151 = _rtmp3152.etype;
-        _size148 = _rtmp3152.size;
-        for (var _i153 = 0; _i153 < _size148; ++_i153)
+        var _etype239 = 0;
+        _rtmp3240 = input.readListBegin();
+        _etype239 = _rtmp3240.etype;
+        _size236 = _rtmp3240.size;
+        for (var _i241 = 0; _i241 < _size236; ++_i241)
         {
-          var elem154 = null;
-          elem154 = new com.vmesteonline.be.shop.Order();
-          elem154.read(input);
-          this.success.push(elem154);
+          var elem242 = null;
+          elem242 = new com.vmesteonline.be.shop.Order();
+          elem242.read(input);
+          this.success.push(elem242);
         }
         input.readListEnd();
       } else {
@@ -1705,12 +2798,12 @@ com.vmesteonline.be.shop.ShopService_getOrders_result.prototype.write = function
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter155 in this.success)
+    for (var iter243 in this.success)
     {
-      if (this.success.hasOwnProperty(iter155))
+      if (this.success.hasOwnProperty(iter243))
       {
-        iter155 = this.success[iter155];
-        iter155.write(output);
+        iter243 = this.success[iter243];
+        iter243.write(output);
       }
     }
     output.writeListEnd();
@@ -1852,6 +2945,12 @@ com.vmesteonline.be.shop.ShopService_getOrderDetails_result.prototype.write = fu
 };
 
 com.vmesteonline.be.shop.ShopService_createOrder_args = function(args) {
+  this.date = null;
+  if (args) {
+    if (args.date !== undefined) {
+      this.date = args.date;
+    }
+  }
 };
 com.vmesteonline.be.shop.ShopService_createOrder_args.prototype = {};
 com.vmesteonline.be.shop.ShopService_createOrder_args.prototype.read = function(input) {
@@ -1865,7 +2964,21 @@ com.vmesteonline.be.shop.ShopService_createOrder_args.prototype.read = function(
     if (ftype == Thrift.Type.STOP) {
       break;
     }
-    input.skip(ftype);
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I32) {
+        this.date = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
     input.readFieldEnd();
   }
   input.readStructEnd();
@@ -1874,6 +2987,11 @@ com.vmesteonline.be.shop.ShopService_createOrder_args.prototype.read = function(
 
 com.vmesteonline.be.shop.ShopService_createOrder_args.prototype.write = function(output) {
   output.writeStructBegin('ShopService_createOrder_args');
+  if (this.date !== null && this.date !== undefined) {
+    output.writeFieldBegin('date', Thrift.Type.I32, 1);
+    output.writeI32(this.date);
+    output.writeFieldEnd();
+  }
   output.writeFieldStop();
   output.writeStructEnd();
   return;
@@ -2133,6 +3251,254 @@ com.vmesteonline.be.shop.ShopService_confirmOrder_result.prototype.read = functi
 
 com.vmesteonline.be.shop.ShopService_confirmOrder_result.prototype.write = function(output) {
   output.writeStructBegin('ShopService_confirmOrder_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.I64, 0);
+    output.writeI64(this.success);
+    output.writeFieldEnd();
+  }
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_appendOrder_args = function(args) {
+  this.oldOrderId = null;
+  if (args) {
+    if (args.oldOrderId !== undefined) {
+      this.oldOrderId = args.oldOrderId;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_appendOrder_args.prototype = {};
+com.vmesteonline.be.shop.ShopService_appendOrder_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I64) {
+        this.oldOrderId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_appendOrder_args.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_appendOrder_args');
+  if (this.oldOrderId !== null && this.oldOrderId !== undefined) {
+    output.writeFieldBegin('oldOrderId', Thrift.Type.I64, 1);
+    output.writeI64(this.oldOrderId);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_appendOrder_result = function(args) {
+  this.success = null;
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined) {
+      this.success = args.success;
+    }
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_appendOrder_result.prototype = {};
+com.vmesteonline.be.shop.ShopService_appendOrder_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.I64) {
+        this.success = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_appendOrder_result.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_appendOrder_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.I64, 0);
+    output.writeI64(this.success);
+    output.writeFieldEnd();
+  }
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_mergeOrder_args = function(args) {
+  this.oldOrderId = null;
+  if (args) {
+    if (args.oldOrderId !== undefined) {
+      this.oldOrderId = args.oldOrderId;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_mergeOrder_args.prototype = {};
+com.vmesteonline.be.shop.ShopService_mergeOrder_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I64) {
+        this.oldOrderId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_mergeOrder_args.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_mergeOrder_args');
+  if (this.oldOrderId !== null && this.oldOrderId !== undefined) {
+    output.writeFieldBegin('oldOrderId', Thrift.Type.I64, 1);
+    output.writeI64(this.oldOrderId);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_mergeOrder_result = function(args) {
+  this.success = null;
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined) {
+      this.success = args.success;
+    }
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_mergeOrder_result.prototype = {};
+com.vmesteonline.be.shop.ShopService_mergeOrder_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.I64) {
+        this.success = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_mergeOrder_result.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_mergeOrder_result');
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.I64, 0);
     output.writeI64(this.success);
@@ -2920,16 +4286,17 @@ com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_registerProducer = fun
   }
   throw 'registerProducer failed: unknown result';
 };
-com.vmesteonline.be.shop.ShopServiceClient.prototype.uploadProducts = function(products, shopId) {
-  this.send_uploadProducts(products, shopId);
+com.vmesteonline.be.shop.ShopServiceClient.prototype.uploadProducts = function(products, shopId, cleanShopBeforeUpload) {
+  this.send_uploadProducts(products, shopId, cleanShopBeforeUpload);
   return this.recv_uploadProducts();
 };
 
-com.vmesteonline.be.shop.ShopServiceClient.prototype.send_uploadProducts = function(products, shopId) {
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_uploadProducts = function(products, shopId, cleanShopBeforeUpload) {
   this.output.writeMessageBegin('uploadProducts', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.shop.ShopService_uploadProducts_args();
   args.products = products;
   args.shopId = shopId;
+  args.cleanShopBeforeUpload = cleanShopBeforeUpload;
   args.write(this.output);
   this.output.writeMessageEnd();
   return this.output.getTransport().flush();
@@ -2958,17 +4325,17 @@ com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_uploadProducts = funct
   }
   throw 'uploadProducts failed: unknown result';
 };
-com.vmesteonline.be.shop.ShopServiceClient.prototype.uploadProductCategoies = function(categories, relativeIds, rewriteAll) {
-  this.send_uploadProductCategoies(categories, relativeIds, rewriteAll);
+com.vmesteonline.be.shop.ShopServiceClient.prototype.uploadProductCategoies = function(categories, relativeIds, cleanShopBeforeUpload) {
+  this.send_uploadProductCategoies(categories, relativeIds, cleanShopBeforeUpload);
   return this.recv_uploadProductCategoies();
 };
 
-com.vmesteonline.be.shop.ShopServiceClient.prototype.send_uploadProductCategoies = function(categories, relativeIds, rewriteAll) {
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_uploadProductCategoies = function(categories, relativeIds, cleanShopBeforeUpload) {
   this.output.writeMessageBegin('uploadProductCategoies', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.shop.ShopService_uploadProductCategoies_args();
   args.categories = categories;
   args.relativeIds = relativeIds;
-  args.rewriteAll = rewriteAll;
+  args.cleanShopBeforeUpload = cleanShopBeforeUpload;
   args.write(this.output);
   this.output.writeMessageEnd();
   return this.output.getTransport().flush();
@@ -2989,10 +4356,221 @@ com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_uploadProductCategoies
   result.read(this.input);
   this.input.readMessageEnd();
 
+  if (null !== result.exc) {
+    throw result.exc;
+  }
   if (null !== result.success) {
     return result.success;
   }
   throw 'uploadProductCategoies failed: unknown result';
+};
+com.vmesteonline.be.shop.ShopServiceClient.prototype.getFullOrders = function(dateFrom, dateTo, userId, shopId) {
+  this.send_getFullOrders(dateFrom, dateTo, userId, shopId);
+  return this.recv_getFullOrders();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_getFullOrders = function(dateFrom, dateTo, userId, shopId) {
+  this.output.writeMessageBegin('getFullOrders', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.shop.ShopService_getFullOrders_args();
+  args.dateFrom = dateFrom;
+  args.dateTo = dateTo;
+  args.userId = userId;
+  args.shopId = shopId;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_getFullOrders = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.shop.ShopService_getFullOrders_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.exc) {
+    throw result.exc;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'getFullOrders failed: unknown result';
+};
+com.vmesteonline.be.shop.ShopServiceClient.prototype.updateOrderStatusesById = function(orderStatusMap) {
+  this.send_updateOrderStatusesById(orderStatusMap);
+  this.recv_updateOrderStatusesById();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_updateOrderStatusesById = function(orderStatusMap) {
+  this.output.writeMessageBegin('updateOrderStatusesById', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.shop.ShopService_updateOrderStatusesById_args();
+  args.orderStatusMap = orderStatusMap;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_updateOrderStatusesById = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.shop.ShopService_updateOrderStatusesById_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.exc) {
+    throw result.exc;
+  }
+  return;
+};
+com.vmesteonline.be.shop.ShopServiceClient.prototype.setDates = function(dateDateTypeMap) {
+  this.send_setDates(dateDateTypeMap);
+  this.recv_setDates();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_setDates = function(dateDateTypeMap) {
+  this.output.writeMessageBegin('setDates', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.shop.ShopService_setDates_args();
+  args.dateDateTypeMap = dateDateTypeMap;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_setDates = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.shop.ShopService_setDates_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  return;
+};
+com.vmesteonline.be.shop.ShopServiceClient.prototype.setDeliveryCosts = function(newDeliveryCosts) {
+  this.send_setDeliveryCosts(newDeliveryCosts);
+  this.recv_setDeliveryCosts();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_setDeliveryCosts = function(newDeliveryCosts) {
+  this.output.writeMessageBegin('setDeliveryCosts', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.shop.ShopService_setDeliveryCosts_args();
+  args.newDeliveryCosts = newDeliveryCosts;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_setDeliveryCosts = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.shop.ShopService_setDeliveryCosts_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.exc) {
+    throw result.exc;
+  }
+  return;
+};
+com.vmesteonline.be.shop.ShopServiceClient.prototype.setOrderPaymentStatus = function(orderId, newStatus) {
+  this.send_setOrderPaymentStatus(orderId, newStatus);
+  this.recv_setOrderPaymentStatus();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_setOrderPaymentStatus = function(orderId, newStatus) {
+  this.output.writeMessageBegin('setOrderPaymentStatus', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.shop.ShopService_setOrderPaymentStatus_args();
+  args.orderId = orderId;
+  args.newStatus = newStatus;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_setOrderPaymentStatus = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.shop.ShopService_setOrderPaymentStatus_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.exc) {
+    throw result.exc;
+  }
+  return;
+};
+com.vmesteonline.be.shop.ShopServiceClient.prototype.setProductPrices = function(newPricesMap) {
+  this.send_setProductPrices(newPricesMap);
+  this.recv_setProductPrices();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_setProductPrices = function(newPricesMap) {
+  this.output.writeMessageBegin('setProductPrices', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.shop.ShopService_setProductPrices_args();
+  args.newPricesMap = newPricesMap;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_setProductPrices = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.shop.ShopService_setProductPrices_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.exc) {
+    throw result.exc;
+  }
+  return;
 };
 com.vmesteonline.be.shop.ShopServiceClient.prototype.getShops = function() {
   this.send_getShops();
@@ -3029,6 +4607,44 @@ com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_getShops = function() 
     return result.success;
   }
   throw 'getShops failed: unknown result';
+};
+com.vmesteonline.be.shop.ShopServiceClient.prototype.getDates = function(from, to) {
+  this.send_getDates(from, to);
+  return this.recv_getDates();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_getDates = function(from, to) {
+  this.output.writeMessageBegin('getDates', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.shop.ShopService_getDates_args();
+  args.from = from;
+  args.to = to;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_getDates = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.shop.ShopService_getDates_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.exc) {
+    throw result.exc;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'getDates failed: unknown result';
 };
 com.vmesteonline.be.shop.ShopServiceClient.prototype.getShop = function(shopId) {
   this.send_getShop(shopId);
@@ -3291,14 +4907,15 @@ com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_getOrderDetails = func
   }
   throw 'getOrderDetails failed: unknown result';
 };
-com.vmesteonline.be.shop.ShopServiceClient.prototype.createOrder = function() {
-  this.send_createOrder();
+com.vmesteonline.be.shop.ShopServiceClient.prototype.createOrder = function(date) {
+  this.send_createOrder(date);
   return this.recv_createOrder();
 };
 
-com.vmesteonline.be.shop.ShopServiceClient.prototype.send_createOrder = function() {
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_createOrder = function(date) {
   this.output.writeMessageBegin('createOrder', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.shop.ShopService_createOrder_args();
+  args.date = date;
   args.write(this.output);
   this.output.writeMessageEnd();
   return this.output.getTransport().flush();
@@ -3398,6 +5015,80 @@ com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_confirmOrder = functio
     return result.success;
   }
   throw 'confirmOrder failed: unknown result';
+};
+com.vmesteonline.be.shop.ShopServiceClient.prototype.appendOrder = function(oldOrderId) {
+  this.send_appendOrder(oldOrderId);
+  return this.recv_appendOrder();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_appendOrder = function(oldOrderId) {
+  this.output.writeMessageBegin('appendOrder', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.shop.ShopService_appendOrder_args();
+  args.oldOrderId = oldOrderId;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_appendOrder = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.shop.ShopService_appendOrder_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.exc) {
+    throw result.exc;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'appendOrder failed: unknown result';
+};
+com.vmesteonline.be.shop.ShopServiceClient.prototype.mergeOrder = function(oldOrderId) {
+  this.send_mergeOrder(oldOrderId);
+  return this.recv_mergeOrder();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_mergeOrder = function(oldOrderId) {
+  this.output.writeMessageBegin('mergeOrder', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.shop.ShopService_mergeOrder_args();
+  args.oldOrderId = oldOrderId;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_mergeOrder = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.shop.ShopService_mergeOrder_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.exc) {
+    throw result.exc;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'mergeOrder failed: unknown result';
 };
 com.vmesteonline.be.shop.ShopServiceClient.prototype.addOrderLine = function(productId, quontity, priceType) {
   this.send_addOrderLine(productId, quontity, priceType);

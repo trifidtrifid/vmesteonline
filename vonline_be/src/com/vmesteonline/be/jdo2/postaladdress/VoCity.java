@@ -10,6 +10,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.vmesteonline.be.City;
 import com.vmesteonline.be.data.PMF;
 
@@ -49,7 +50,7 @@ public class VoCity {
 	}
 
 	public Key getId() {
-		return id;
+		return KeyFactory.createKey(VoCity.class.getSimpleName(), name);
 	}
 
 	public City getCity() {

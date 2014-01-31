@@ -38,11 +38,13 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
   private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I64, (short)1);
   private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)2);
   private static final org.apache.thrift.protocol.TField DESCR_FIELD_DESC = new org.apache.thrift.protocol.TField("descr", org.apache.thrift.protocol.TType.STRING, (short)3);
-  private static final org.apache.thrift.protocol.TField ADDRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("address", org.apache.thrift.protocol.TType.STRING, (short)4);
+  private static final org.apache.thrift.protocol.TField ADDRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("address", org.apache.thrift.protocol.TType.STRUCT, (short)4);
   private static final org.apache.thrift.protocol.TField LOGO_URL_FIELD_DESC = new org.apache.thrift.protocol.TField("logoURL", org.apache.thrift.protocol.TType.STRING, (short)5);
   private static final org.apache.thrift.protocol.TField OWNER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("ownerId", org.apache.thrift.protocol.TType.I64, (short)6);
   private static final org.apache.thrift.protocol.TField TOPIC_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("topicSet", org.apache.thrift.protocol.TType.SET, (short)7);
   private static final org.apache.thrift.protocol.TField TAGS_FIELD_DESC = new org.apache.thrift.protocol.TField("tags", org.apache.thrift.protocol.TType.SET, (short)8);
+  private static final org.apache.thrift.protocol.TField DELIVERY_COSTS_FIELD_DESC = new org.apache.thrift.protocol.TField("deliveryCosts", org.apache.thrift.protocol.TType.MAP, (short)9);
+  private static final org.apache.thrift.protocol.TField PAYMENT_TYPES_FIELD_DESC = new org.apache.thrift.protocol.TField("paymentTypes", org.apache.thrift.protocol.TType.MAP, (short)10);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -53,11 +55,13 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
   public long id; // required
   public String name; // required
   public String descr; // required
-  public String address; // required
+  public com.vmesteonline.be.PostalAddress address; // required
   public String logoURL; // required
   public long ownerId; // required
   public Set<Long> topicSet; // required
   public Set<String> tags; // required
+  public Map<DeliveryType,Double> deliveryCosts; // required
+  public Map<PaymentType,Double> paymentTypes; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -68,7 +72,9 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     LOGO_URL((short)5, "logoURL"),
     OWNER_ID((short)6, "ownerId"),
     TOPIC_SET((short)7, "topicSet"),
-    TAGS((short)8, "tags");
+    TAGS((short)8, "tags"),
+    DELIVERY_COSTS((short)9, "deliveryCosts"),
+    PAYMENT_TYPES((short)10, "paymentTypes");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -99,6 +105,10 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
           return TOPIC_SET;
         case 8: // TAGS
           return TAGS;
+        case 9: // DELIVERY_COSTS
+          return DELIVERY_COSTS;
+        case 10: // PAYMENT_TYPES
+          return PAYMENT_TYPES;
         default:
           return null;
       }
@@ -152,7 +162,7 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     tmpMap.put(_Fields.DESCR, new org.apache.thrift.meta_data.FieldMetaData("descr", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.ADDRESS, new org.apache.thrift.meta_data.FieldMetaData("address", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.vmesteonline.be.PostalAddress.class)));
     tmpMap.put(_Fields.LOGO_URL, new org.apache.thrift.meta_data.FieldMetaData("logoURL", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.OWNER_ID, new org.apache.thrift.meta_data.FieldMetaData("ownerId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -163,6 +173,14 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     tmpMap.put(_Fields.TAGS, new org.apache.thrift.meta_data.FieldMetaData("tags", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
+    tmpMap.put(_Fields.DELIVERY_COSTS, new org.apache.thrift.meta_data.FieldMetaData("deliveryCosts", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
+            new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, DeliveryType.class), 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE))));
+    tmpMap.put(_Fields.PAYMENT_TYPES, new org.apache.thrift.meta_data.FieldMetaData("paymentTypes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
+            new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, PaymentType.class), 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE))));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Shop.class, metaDataMap);
   }
@@ -174,11 +192,13 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     long id,
     String name,
     String descr,
-    String address,
+    com.vmesteonline.be.PostalAddress address,
     String logoURL,
     long ownerId,
     Set<Long> topicSet,
-    Set<String> tags)
+    Set<String> tags,
+    Map<DeliveryType,Double> deliveryCosts,
+    Map<PaymentType,Double> paymentTypes)
   {
     this();
     this.id = id;
@@ -191,6 +211,8 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     setOwnerIdIsSet(true);
     this.topicSet = topicSet;
     this.tags = tags;
+    this.deliveryCosts = deliveryCosts;
+    this.paymentTypes = paymentTypes;
   }
 
   /**
@@ -206,7 +228,7 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       this.descr = other.descr;
     }
     if (other.isSetAddress()) {
-      this.address = other.address;
+      this.address = new com.vmesteonline.be.PostalAddress(other.address);
     }
     if (other.isSetLogoURL()) {
       this.logoURL = other.logoURL;
@@ -219,6 +241,36 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     if (other.isSetTags()) {
       Set<String> __this__tags = new HashSet<String>(other.tags);
       this.tags = __this__tags;
+    }
+    if (other.isSetDeliveryCosts()) {
+      Map<DeliveryType,Double> __this__deliveryCosts = new HashMap<DeliveryType,Double>(other.deliveryCosts.size());
+      for (Map.Entry<DeliveryType, Double> other_element : other.deliveryCosts.entrySet()) {
+
+        DeliveryType other_element_key = other_element.getKey();
+        Double other_element_value = other_element.getValue();
+
+        DeliveryType __this__deliveryCosts_copy_key = other_element_key;
+
+        Double __this__deliveryCosts_copy_value = other_element_value;
+
+        __this__deliveryCosts.put(__this__deliveryCosts_copy_key, __this__deliveryCosts_copy_value);
+      }
+      this.deliveryCosts = __this__deliveryCosts;
+    }
+    if (other.isSetPaymentTypes()) {
+      Map<PaymentType,Double> __this__paymentTypes = new HashMap<PaymentType,Double>(other.paymentTypes.size());
+      for (Map.Entry<PaymentType, Double> other_element : other.paymentTypes.entrySet()) {
+
+        PaymentType other_element_key = other_element.getKey();
+        Double other_element_value = other_element.getValue();
+
+        PaymentType __this__paymentTypes_copy_key = other_element_key;
+
+        Double __this__paymentTypes_copy_value = other_element_value;
+
+        __this__paymentTypes.put(__this__paymentTypes_copy_key, __this__paymentTypes_copy_value);
+      }
+      this.paymentTypes = __this__paymentTypes;
     }
   }
 
@@ -238,6 +290,8 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     this.ownerId = 0;
     this.topicSet = null;
     this.tags = null;
+    this.deliveryCosts = null;
+    this.paymentTypes = null;
   }
 
   public long getId() {
@@ -311,11 +365,11 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     }
   }
 
-  public String getAddress() {
+  public com.vmesteonline.be.PostalAddress getAddress() {
     return this.address;
   }
 
-  public Shop setAddress(String address) {
+  public Shop setAddress(com.vmesteonline.be.PostalAddress address) {
     this.address = address;
     return this;
   }
@@ -460,6 +514,76 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     }
   }
 
+  public int getDeliveryCostsSize() {
+    return (this.deliveryCosts == null) ? 0 : this.deliveryCosts.size();
+  }
+
+  public void putToDeliveryCosts(DeliveryType key, double val) {
+    if (this.deliveryCosts == null) {
+      this.deliveryCosts = new HashMap<DeliveryType,Double>();
+    }
+    this.deliveryCosts.put(key, val);
+  }
+
+  public Map<DeliveryType,Double> getDeliveryCosts() {
+    return this.deliveryCosts;
+  }
+
+  public Shop setDeliveryCosts(Map<DeliveryType,Double> deliveryCosts) {
+    this.deliveryCosts = deliveryCosts;
+    return this;
+  }
+
+  public void unsetDeliveryCosts() {
+    this.deliveryCosts = null;
+  }
+
+  /** Returns true if field deliveryCosts is set (has been assigned a value) and false otherwise */
+  public boolean isSetDeliveryCosts() {
+    return this.deliveryCosts != null;
+  }
+
+  public void setDeliveryCostsIsSet(boolean value) {
+    if (!value) {
+      this.deliveryCosts = null;
+    }
+  }
+
+  public int getPaymentTypesSize() {
+    return (this.paymentTypes == null) ? 0 : this.paymentTypes.size();
+  }
+
+  public void putToPaymentTypes(PaymentType key, double val) {
+    if (this.paymentTypes == null) {
+      this.paymentTypes = new HashMap<PaymentType,Double>();
+    }
+    this.paymentTypes.put(key, val);
+  }
+
+  public Map<PaymentType,Double> getPaymentTypes() {
+    return this.paymentTypes;
+  }
+
+  public Shop setPaymentTypes(Map<PaymentType,Double> paymentTypes) {
+    this.paymentTypes = paymentTypes;
+    return this;
+  }
+
+  public void unsetPaymentTypes() {
+    this.paymentTypes = null;
+  }
+
+  /** Returns true if field paymentTypes is set (has been assigned a value) and false otherwise */
+  public boolean isSetPaymentTypes() {
+    return this.paymentTypes != null;
+  }
+
+  public void setPaymentTypesIsSet(boolean value) {
+    if (!value) {
+      this.paymentTypes = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case ID:
@@ -490,7 +614,7 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       if (value == null) {
         unsetAddress();
       } else {
-        setAddress((String)value);
+        setAddress((com.vmesteonline.be.PostalAddress)value);
       }
       break;
 
@@ -526,6 +650,22 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       }
       break;
 
+    case DELIVERY_COSTS:
+      if (value == null) {
+        unsetDeliveryCosts();
+      } else {
+        setDeliveryCosts((Map<DeliveryType,Double>)value);
+      }
+      break;
+
+    case PAYMENT_TYPES:
+      if (value == null) {
+        unsetPaymentTypes();
+      } else {
+        setPaymentTypes((Map<PaymentType,Double>)value);
+      }
+      break;
+
     }
   }
 
@@ -555,6 +695,12 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     case TAGS:
       return getTags();
 
+    case DELIVERY_COSTS:
+      return getDeliveryCosts();
+
+    case PAYMENT_TYPES:
+      return getPaymentTypes();
+
     }
     throw new IllegalStateException();
   }
@@ -582,6 +728,10 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       return isSetTopicSet();
     case TAGS:
       return isSetTags();
+    case DELIVERY_COSTS:
+      return isSetDeliveryCosts();
+    case PAYMENT_TYPES:
+      return isSetPaymentTypes();
     }
     throw new IllegalStateException();
   }
@@ -668,6 +818,24 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       if (!(this_present_tags && that_present_tags))
         return false;
       if (!this.tags.equals(that.tags))
+        return false;
+    }
+
+    boolean this_present_deliveryCosts = true && this.isSetDeliveryCosts();
+    boolean that_present_deliveryCosts = true && that.isSetDeliveryCosts();
+    if (this_present_deliveryCosts || that_present_deliveryCosts) {
+      if (!(this_present_deliveryCosts && that_present_deliveryCosts))
+        return false;
+      if (!this.deliveryCosts.equals(that.deliveryCosts))
+        return false;
+    }
+
+    boolean this_present_paymentTypes = true && this.isSetPaymentTypes();
+    boolean that_present_paymentTypes = true && that.isSetPaymentTypes();
+    if (this_present_paymentTypes || that_present_paymentTypes) {
+      if (!(this_present_paymentTypes && that_present_paymentTypes))
+        return false;
+      if (!this.paymentTypes.equals(that.paymentTypes))
         return false;
     }
 
@@ -767,6 +935,26 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetDeliveryCosts()).compareTo(other.isSetDeliveryCosts());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetDeliveryCosts()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.deliveryCosts, other.deliveryCosts);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetPaymentTypes()).compareTo(other.isSetPaymentTypes());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetPaymentTypes()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.paymentTypes, other.paymentTypes);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -842,6 +1030,22 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       sb.append(this.tags);
     }
     first = false;
+    if (!first) sb.append(", ");
+    sb.append("deliveryCosts:");
+    if (this.deliveryCosts == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.deliveryCosts);
+    }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("paymentTypes:");
+    if (this.paymentTypes == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.paymentTypes);
+    }
+    first = false;
     sb.append(")");
     return sb.toString();
   }
@@ -849,6 +1053,9 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
   public void validate() throws org.apache.thrift.TException {
     // check for required fields
     // check for sub-struct validity
+    if (address != null) {
+      address.validate();
+    }
   }
 
   private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -912,8 +1119,9 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
             }
             break;
           case 4: // ADDRESS
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.address = iprot.readString();
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+              struct.address = new com.vmesteonline.be.PostalAddress();
+              struct.address.read(iprot);
               struct.setAddressIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -971,6 +1179,46 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 9: // DELIVERY_COSTS
+            if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
+              {
+                org.apache.thrift.protocol.TMap _map6 = iprot.readMapBegin();
+                struct.deliveryCosts = new HashMap<DeliveryType,Double>(2*_map6.size);
+                for (int _i7 = 0; _i7 < _map6.size; ++_i7)
+                {
+                  DeliveryType _key8;
+                  double _val9;
+                  _key8 = DeliveryType.findByValue(iprot.readI32());
+                  _val9 = iprot.readDouble();
+                  struct.deliveryCosts.put(_key8, _val9);
+                }
+                iprot.readMapEnd();
+              }
+              struct.setDeliveryCostsIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 10: // PAYMENT_TYPES
+            if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
+              {
+                org.apache.thrift.protocol.TMap _map10 = iprot.readMapBegin();
+                struct.paymentTypes = new HashMap<PaymentType,Double>(2*_map10.size);
+                for (int _i11 = 0; _i11 < _map10.size; ++_i11)
+                {
+                  PaymentType _key12;
+                  double _val13;
+                  _key12 = PaymentType.findByValue(iprot.readI32());
+                  _val13 = iprot.readDouble();
+                  struct.paymentTypes.put(_key12, _val13);
+                }
+                iprot.readMapEnd();
+              }
+              struct.setPaymentTypesIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -1001,7 +1249,7 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       }
       if (struct.address != null) {
         oprot.writeFieldBegin(ADDRESS_FIELD_DESC);
-        oprot.writeString(struct.address);
+        struct.address.write(oprot);
         oprot.writeFieldEnd();
       }
       if (struct.logoURL != null) {
@@ -1016,9 +1264,9 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
         oprot.writeFieldBegin(TOPIC_SET_FIELD_DESC);
         {
           oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, struct.topicSet.size()));
-          for (long _iter6 : struct.topicSet)
+          for (long _iter14 : struct.topicSet)
           {
-            oprot.writeI64(_iter6);
+            oprot.writeI64(_iter14);
           }
           oprot.writeSetEnd();
         }
@@ -1028,11 +1276,37 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
         oprot.writeFieldBegin(TAGS_FIELD_DESC);
         {
           oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, struct.tags.size()));
-          for (String _iter7 : struct.tags)
+          for (String _iter15 : struct.tags)
           {
-            oprot.writeString(_iter7);
+            oprot.writeString(_iter15);
           }
           oprot.writeSetEnd();
+        }
+        oprot.writeFieldEnd();
+      }
+      if (struct.deliveryCosts != null) {
+        oprot.writeFieldBegin(DELIVERY_COSTS_FIELD_DESC);
+        {
+          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, struct.deliveryCosts.size()));
+          for (Map.Entry<DeliveryType, Double> _iter16 : struct.deliveryCosts.entrySet())
+          {
+            oprot.writeI32(_iter16.getKey().getValue());
+            oprot.writeDouble(_iter16.getValue());
+          }
+          oprot.writeMapEnd();
+        }
+        oprot.writeFieldEnd();
+      }
+      if (struct.paymentTypes != null) {
+        oprot.writeFieldBegin(PAYMENT_TYPES_FIELD_DESC);
+        {
+          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, struct.paymentTypes.size()));
+          for (Map.Entry<PaymentType, Double> _iter17 : struct.paymentTypes.entrySet())
+          {
+            oprot.writeI32(_iter17.getKey().getValue());
+            oprot.writeDouble(_iter17.getValue());
+          }
+          oprot.writeMapEnd();
         }
         oprot.writeFieldEnd();
       }
@@ -1078,7 +1352,13 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       if (struct.isSetTags()) {
         optionals.set(7);
       }
-      oprot.writeBitSet(optionals, 8);
+      if (struct.isSetDeliveryCosts()) {
+        optionals.set(8);
+      }
+      if (struct.isSetPaymentTypes()) {
+        optionals.set(9);
+      }
+      oprot.writeBitSet(optionals, 10);
       if (struct.isSetId()) {
         oprot.writeI64(struct.id);
       }
@@ -1089,7 +1369,7 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
         oprot.writeString(struct.descr);
       }
       if (struct.isSetAddress()) {
-        oprot.writeString(struct.address);
+        struct.address.write(oprot);
       }
       if (struct.isSetLogoURL()) {
         oprot.writeString(struct.logoURL);
@@ -1100,18 +1380,38 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       if (struct.isSetTopicSet()) {
         {
           oprot.writeI32(struct.topicSet.size());
-          for (long _iter8 : struct.topicSet)
+          for (long _iter18 : struct.topicSet)
           {
-            oprot.writeI64(_iter8);
+            oprot.writeI64(_iter18);
           }
         }
       }
       if (struct.isSetTags()) {
         {
           oprot.writeI32(struct.tags.size());
-          for (String _iter9 : struct.tags)
+          for (String _iter19 : struct.tags)
           {
-            oprot.writeString(_iter9);
+            oprot.writeString(_iter19);
+          }
+        }
+      }
+      if (struct.isSetDeliveryCosts()) {
+        {
+          oprot.writeI32(struct.deliveryCosts.size());
+          for (Map.Entry<DeliveryType, Double> _iter20 : struct.deliveryCosts.entrySet())
+          {
+            oprot.writeI32(_iter20.getKey().getValue());
+            oprot.writeDouble(_iter20.getValue());
+          }
+        }
+      }
+      if (struct.isSetPaymentTypes()) {
+        {
+          oprot.writeI32(struct.paymentTypes.size());
+          for (Map.Entry<PaymentType, Double> _iter21 : struct.paymentTypes.entrySet())
+          {
+            oprot.writeI32(_iter21.getKey().getValue());
+            oprot.writeDouble(_iter21.getValue());
           }
         }
       }
@@ -1120,7 +1420,7 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Shop struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(8);
+      BitSet incoming = iprot.readBitSet(10);
       if (incoming.get(0)) {
         struct.id = iprot.readI64();
         struct.setIdIsSet(true);
@@ -1134,7 +1434,8 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
         struct.setDescrIsSet(true);
       }
       if (incoming.get(3)) {
-        struct.address = iprot.readString();
+        struct.address = new com.vmesteonline.be.PostalAddress();
+        struct.address.read(iprot);
         struct.setAddressIsSet(true);
       }
       if (incoming.get(4)) {
@@ -1147,29 +1448,59 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       }
       if (incoming.get(6)) {
         {
-          org.apache.thrift.protocol.TSet _set10 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, iprot.readI32());
-          struct.topicSet = new HashSet<Long>(2*_set10.size);
-          for (int _i11 = 0; _i11 < _set10.size; ++_i11)
+          org.apache.thrift.protocol.TSet _set22 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, iprot.readI32());
+          struct.topicSet = new HashSet<Long>(2*_set22.size);
+          for (int _i23 = 0; _i23 < _set22.size; ++_i23)
           {
-            long _elem12;
-            _elem12 = iprot.readI64();
-            struct.topicSet.add(_elem12);
+            long _elem24;
+            _elem24 = iprot.readI64();
+            struct.topicSet.add(_elem24);
           }
         }
         struct.setTopicSetIsSet(true);
       }
       if (incoming.get(7)) {
         {
-          org.apache.thrift.protocol.TSet _set13 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.tags = new HashSet<String>(2*_set13.size);
-          for (int _i14 = 0; _i14 < _set13.size; ++_i14)
+          org.apache.thrift.protocol.TSet _set25 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+          struct.tags = new HashSet<String>(2*_set25.size);
+          for (int _i26 = 0; _i26 < _set25.size; ++_i26)
           {
-            String _elem15;
-            _elem15 = iprot.readString();
-            struct.tags.add(_elem15);
+            String _elem27;
+            _elem27 = iprot.readString();
+            struct.tags.add(_elem27);
           }
         }
         struct.setTagsIsSet(true);
+      }
+      if (incoming.get(8)) {
+        {
+          org.apache.thrift.protocol.TMap _map28 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, iprot.readI32());
+          struct.deliveryCosts = new HashMap<DeliveryType,Double>(2*_map28.size);
+          for (int _i29 = 0; _i29 < _map28.size; ++_i29)
+          {
+            DeliveryType _key30;
+            double _val31;
+            _key30 = DeliveryType.findByValue(iprot.readI32());
+            _val31 = iprot.readDouble();
+            struct.deliveryCosts.put(_key30, _val31);
+          }
+        }
+        struct.setDeliveryCostsIsSet(true);
+      }
+      if (incoming.get(9)) {
+        {
+          org.apache.thrift.protocol.TMap _map32 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, iprot.readI32());
+          struct.paymentTypes = new HashMap<PaymentType,Double>(2*_map32.size);
+          for (int _i33 = 0; _i33 < _map32.size; ++_i33)
+          {
+            PaymentType _key34;
+            double _val35;
+            _key34 = PaymentType.findByValue(iprot.readI32());
+            _val35 = iprot.readDouble();
+            struct.paymentTypes.put(_key34, _val35);
+          }
+        }
+        struct.setPaymentTypesIsSet(true);
       }
     }
   }

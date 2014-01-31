@@ -14,10 +14,11 @@ import org.apache.thrift.TEnum;
 public enum OrderStatus implements org.apache.thrift.TEnum {
   UNKNOWN(0),
   NEW(1),
-  PENDING(2),
+  CONFIRMED(2),
   SHIPPING(3),
   DELIVERED(4),
-  CLOSED(5);
+  CLOSED(5),
+  CANCELED(6);
 
   private final int value;
 
@@ -43,13 +44,15 @@ public enum OrderStatus implements org.apache.thrift.TEnum {
       case 1:
         return NEW;
       case 2:
-        return PENDING;
+        return CONFIRMED;
       case 3:
         return SHIPPING;
       case 4:
         return DELIVERED;
       case 5:
         return CLOSED;
+      case 6:
+        return CANCELED;
       default:
         return null;
     }

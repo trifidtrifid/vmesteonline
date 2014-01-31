@@ -15,7 +15,8 @@ public enum PriceType implements org.apache.thrift.TEnum {
   RETAIL(0),
   INET(1),
   VIP(2),
-  SPECIAL(3);
+  SPECIAL(3),
+  MERGED(4);
 
   private final int value;
 
@@ -44,6 +45,8 @@ public enum PriceType implements org.apache.thrift.TEnum {
         return VIP;
       case 3:
         return SPECIAL;
+      case 4:
+        return MERGED;
       default:
         return null;
     }

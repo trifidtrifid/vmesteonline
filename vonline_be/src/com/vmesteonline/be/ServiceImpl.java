@@ -11,6 +11,7 @@ import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
+import com.vmesteonline.be.jdo2.VoUser;
 
 public class ServiceImpl {
 	protected SessionIdStorage sessionStorage;
@@ -31,7 +32,7 @@ public class ServiceImpl {
 		;
 	}
 
-	protected long getUserId() throws InvalidOperation {
+	protected long getCurrentUserId() throws InvalidOperation {
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -40,6 +41,25 @@ public class ServiceImpl {
 			if (sess != null)
 				return sess.getUserId();
 			return (long) 0;
+		} finally {
+			pm.close();
+		}
+	}
+	
+	protected VoUser getCurrentUser() throws InvalidOperation {
+		return getCurrentUser(null);
+	}
+	
+	protected VoUser getCurrentUser(PersistenceManager _pm) throws InvalidOperation {
+		if (null == sessionStorage)
+			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			VoSession sess = pm.getObjectById(VoSession.class, sessionStorage.getId());
+			if (sess != null && 0!=sess.getUserId()){
+				return pm.getObjectById(VoUser.class, sess.getUserId());
+			}
+			return null;
 		} finally {
 			pm.close();
 		}
@@ -69,6 +89,17 @@ public class ServiceImpl {
 		public String getId() {
 			return sessId;
 		};
+	}
+	
+	public void setCurrentAttribute( int key, long value) throws InvalidOperation, TException {
+		VoSession currentSession = getCurrentSession();
+		currentSession.setSessionAttribute(key, value);
+		PersistenceManager pm = PMF.getPm();
+		try {
+			pm.makePersistent(currentSession);
+		} finally {
+			pm.close();
+		}
 	}
 	
 	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation, TException {

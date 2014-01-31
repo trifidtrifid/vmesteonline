@@ -191,6 +191,7 @@ public class VoUser {
 	}
 
 	public void addPostalAddress(VoPostalAddress pa, PersistenceManager pm){
+		//TODO check that address not added already
 		addresses.add(pa);
 		pm.makePersistent(this);
 	}
@@ -206,6 +207,10 @@ public class VoUser {
 	}
 	
 	
+	public Set<VoPostalAddress> getAddresses() {
+		return addresses;
+	}
+
 	@Persistent
 	@Unowned
 	private VoPostalAddress address;

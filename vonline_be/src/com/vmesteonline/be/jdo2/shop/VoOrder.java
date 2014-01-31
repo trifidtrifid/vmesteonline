@@ -2,7 +2,9 @@ package com.vmesteonline.be.jdo2.shop;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
@@ -45,7 +47,7 @@ public class VoOrder {
 		this.totalCost = 0D;
 		this.paymentType = PaymentType.CASH;
 		this.paymentStatus = PaymentStatus.WIAT;
-		this.odrerLines = new ArrayList<VoOrderLine>();
+		this.odrerLines = new HashMap<Long,VoOrderLine>();
 		try{
 			pm.makePersistent(this);
 		} catch (Exception ex){
@@ -62,7 +64,7 @@ public class VoOrder {
 		try {
 			VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProduct().getId());
 			VoOrderLine voOrderLine = new VoOrderLine(this, product, orderLine.getQuontity(), orderLine.getPriceType(), orderLine.getPrice());
-			this.odrerLines.add( voOrderLine );
+			this.odrerLines.put(voOrderLine.getProduct().getId(), voOrderLine );
 			this.incrementTotalCost(voOrderLine.getPrice());
 			pm.makePersistent( voOrderLine );
 			pm.makePersistent(this);
@@ -83,7 +85,7 @@ public class VoOrder {
 		OrderDetails od = new OrderDetails(createdAt, delivery, deliveryCost, 
 				deliveryTo.getPostalAddress(), paymentType, paymentStatus,
 				new ArrayList<OrderLine>(), comment);
-		for( VoOrderLine vol: odrerLines){
+		for( VoOrderLine vol: odrerLines.values()){
 			od.odrerLines.add(vol.getOrderLine());
 		}
 		return od;
@@ -134,7 +136,7 @@ public class VoOrder {
   
   @Persistent(mappedBy="order")
   @OneToMany
-  private List<VoOrderLine> odrerLines;
+  private HashMap<Long,VoOrderLine> odrerLines;
   
   @Persistent
   @Unindexed 
@@ -233,7 +235,7 @@ public class VoOrder {
 		return user;
 	}
 
-	public List<VoOrderLine> getOdrerLines() {
+	public Map<Long,VoOrderLine> getOdrerLines() {
 		return odrerLines;
 	}
 

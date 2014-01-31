@@ -56,7 +56,14 @@ public class AuthServiceImpTests  {
 
 	@Test
 	public void testRegisterNewUser() {
-		List<String> locations = UserServiceImpl.getLocationCodesForRegistration();
+		List<String> locations;
+		try {
+			locations = UserServiceImpl.getLocationCodesForRegistration();
+		} catch (InvalidOperation e1) {
+			e1.printStackTrace();
+			fail(e1.getMessage());
+			return;
+		}
 		try {
 			long ret = authSrvc.registerNewUser("testName", "testFamily", "testPassword", "test@eml", locations.get(0));
 			VoUser user = authSrvc.getUserByEmail("test@eml");

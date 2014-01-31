@@ -8,40 +8,50 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.jdo.PersistenceManager;
-import javax.jdo.annotations.Embedded;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-
-import org.mortbay.jetty.servlet.HashSessionIdManager;
 
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoTopic;
+import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
+import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.shop.DateType;
+import com.vmesteonline.be.shop.DeliveryType;
+import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.Shop;
 
 @PersistenceCapable
 public class VoShop {
 
 	public VoShop(Shop shop) throws InvalidOperation {
-		this(shop.getName(),shop.getDescr(),shop.getAddress(), shop.getLogoURL(), shop.getOwnerId(), shop.getTopicSet(), shop.getTags());
+		this(shop.getName(),shop.getDescr(), shop.getAddress(), shop.getLogoURL(), shop.getOwnerId(), shop.getTopicSet(), 
+				shop.getTags(), shop.getDeliveryCosts(), shop.getPaymentTypes());
 	}
-	public VoShop(String name, String descr, String address, String logoURL, long ownerId, Set<Long> topicSet, Set<String> tags) throws InvalidOperation {
+	public VoShop(String name, String descr, PostalAddress postalAddress, String logoURL, long ownerId, Set<Long> topicSet, 
+			Set<String> tags, Map<DeliveryType,Double> deliveryCosts, 
+			Map<PaymentType,Double> paymentTypes) throws InvalidOperation {
+		
 		this.name = name;
 		this.descr = descr;
-		this.address = address;
+		this.address = new VoPostalAddress( postalAddress );
 		this.logoURL = logoURL;
 		this.ownerId = ownerId;
-		this.tags = tags;
-		this.topics = new HashSet<VoTopic>();
+		if( null == (this.tags = tags)) this.tags = new HashSet<String>();
+		if( null == (this.deliveryCosts = deliveryCosts)) this.deliveryCosts = new HashMap<DeliveryType, Double>();
+		if( null == (this.paymentTypes = paymentTypes)) {
+			this.paymentTypes = new HashMap<PaymentType, Double>();
+			this.paymentTypes.put( PaymentType.CASH, 0D );
+		}
 		PersistenceManager pm = PMF.getPm();
 		try {
+			this.topics = new HashSet<VoTopic>();
 			for(long tid: topicSet ){
 				VoTopic vt = pm.getObjectById(VoTopic.class, tid);
 				topics.add(vt);
@@ -60,7 +70,7 @@ public class VoShop {
 	}
 
 	public Shop getShop() {
-		Shop shop = new Shop(id, name, descr, address, logoURL, ownerId, null, tags);
+		Shop shop = new Shop(id, name, descr, address.getPostalAddress(), logoURL, ownerId, null, tags, deliveryCosts, paymentTypes);
 		Set<Long> topicIds = new HashSet<Long>();
 		for (VoTopic vt : getTopics()) {
 			topicIds.add(vt.getId().getId());
@@ -80,7 +90,7 @@ public class VoShop {
 	private String descr;
 	@Persistent
 	@Unindexed
-	private String address;
+	private VoPostalAddress address;
 	@Persistent
 	@Unindexed
 	private String logoURL;
@@ -111,6 +121,20 @@ public class VoShop {
 	@Unindexed
 	private SortedMap<Integer,DateType> dates;
 	
+	@Persistent
+	@Unindexed
+	private Map<DeliveryType,Double> deliveryCosts;
+	
+	@Persistent
+	@Unindexed
+	private Map<PaymentType,Double> paymentTypes;
+	
+	public Map<PaymentType, Double> getPaymentTypes() {
+		return paymentTypes;
+	}
+	public Map<DeliveryType, Double> getDeliveryCosts() {
+		return deliveryCosts;
+	}
 	public void setDates( Map<Integer,DateType> newDates ){
 		dates.putAll(newDates);
 	}
@@ -148,11 +172,11 @@ public class VoShop {
 		this.descr = descr;
 	}
 
-	public String getAddress() {
+	public VoPostalAddress getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public void setAddress(VoPostalAddress address) {
 		this.address = address;
 	}
 
@@ -196,7 +220,12 @@ public class VoShop {
 		return topics;
 	}
 	
-	
+	public Set<VoProducer> getProducers() {
+		return producers;
+	}
+	public SortedMap<Integer, DateType> getDates() {
+		return dates;
+	}
 	@Override
 	public String toString() {
 		return "VoShop [id=" + id + ", name=" + name + "]";
@@ -206,5 +235,7 @@ public class VoShop {
 		return "VoShop [id=" + id + ", name=" + name + ", descr=" + descr + ", address=" + address + ", logoURL=" + logoURL + ", ownerId=" + ownerId
 				+ "]";
 	}
-	
+	public SortedMap<Integer,DateType> getDates(int from, int to) {
+		return dates.subMap(from,  to);
+	}
 }

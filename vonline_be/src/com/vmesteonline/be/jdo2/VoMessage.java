@@ -68,20 +68,6 @@ public class VoMessage {
 
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
-		try {
-
-			/* CHeck the group to post, or move the message to */
-			VoGroup group = pm.getObjectById(VoGroup.class, msg.getGroupId());
-			if (null == group) {
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Group of Message not found by ID=" + msg.getGroupId());
-			}
-			/* CHeck the recipient */
-			if (0 != msg.getRecipientId()) {
-				if (null == pm.getObjectById(VoUser.class, msg.getRecipientId())) {
-					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Recipient of Message not found by ID=" + msg.getRecipientId());
-				}
-				recipient = msg.getRecipientId();
-			}
 
 			VoMessage parentMsg = null;
 			try {
@@ -110,8 +96,7 @@ public class VoMessage {
 							// " using lower level.");
 						} else {
 							query = pm.newQuery(VoMessage.class);
-							query.setFilter("id == parentId");
-							query.declareParameters("long parentId");
+							query.setFilter("id == :key");
 							results = (List<VoMessage>) query.execute(parentId);
 							if (results.iterator().hasNext() ) {
 								parentMsg = results.iterator().next();
@@ -122,7 +107,7 @@ public class VoMessage {
 								// OK lets look through all of messages and try to find it by
 								// hand
 								query = pm.newQuery(VoMessage.class);
-								results = (List<VoMessage>) query.execute(parentId);
+								results = (List<VoMessage>) query.execute();
 								for (VoMessage msg2 : results) {
 									pm.retrieve(msg2);
 									Key parentMsg2 = msg2.getId().getParent();
@@ -145,6 +130,20 @@ public class VoMessage {
 					this.topic = ownerTopic;
 				}
 
+				try {
+					/* CHeck the group to post, or move the message to */
+					VoGroup group = pm.getObjectById(VoGroup.class, msg.getGroupId());
+					if (null == group) {
+						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Group of Message not found by ID=" + msg.getGroupId());
+					}
+					/* CHeck the recipient */
+					if (0 != msg.getRecipientId()) {
+						if (null == pm.getObjectById(VoUser.class, msg.getRecipientId())) {
+							throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Recipient of Message not found by ID=" + msg.getRecipientId());
+						}
+						recipient = msg.getRecipientId();
+					}
+				
 				if (null == this.topic) {
 					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Topic of PArent Message not found");
 				}

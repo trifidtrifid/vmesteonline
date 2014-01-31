@@ -3,16 +3,20 @@ include "bedata.thrift"
 include "error.thrift"
 
 enum DateType { CLEAN=0, NEXT_ORDER=1, SPECIAL_PRICE=2, CLOSED=3  }
+enum DeliveryType { UNKNOWN=0, SELF_PICKUP=1, SHORT_RANGE=2, LONG_RANGE=3 }
+enum PaymentType { UNKNOWN=0, CASH=1, CREDIT_CARD=2, TRANSFER=3, SHOP_CREDIT=5 }
 
 struct Shop {
 	1:i64 id,
 	2:string name,
 	3:string descr,
-	4:string address,
+	4:bedata.PostalAddress address,
 	5:string logoURL,
 	6:i64 ownerId,
 	7:set<i64> topicSet,
-	8:set<string> tags
+	8:set<string> tags,
+	9:map<DeliveryType,double> deliveryCosts,
+	10:map<PaymentType,double> paymentTypes
 }
 
 struct Producer {
@@ -32,7 +36,7 @@ struct ProductCategory {
 	6:set<i64> topicSet
 }
 
-enum PriceType { RETAIL=0, INET=1, VIP=2, SPECIAL=3 }
+enum PriceType { RETAIL=0, INET=1, VIP=2, SPECIAL=3, MERGED=4 }
 
 struct ProductDetails {
 	1:set<i64> categories,
@@ -58,9 +62,7 @@ struct FullProductInfo {
 	2:ProductDetails details,
 }
 
-enum OrderStatus { UNKNOWN=0, NEW=1, PENDING=2, SHIPPING=3, DELIVERED=4, CLOSED=5 }
-enum DeliveryType { UNKNOWN=0, SELF_PICKUP=1, SHORT_RANGE=2, LONG_RANGE=3 }
-enum PaymentType { UNKNOWN=0, CASH=1, CREDIT_CARD=2, TRANSFER=3, SHOP_CREDIT=5 }
+enum OrderStatus { UNKNOWN=0, NEW=1, CONFIRMED=2, SHIPPING=3, DELIVERED=4, CLOSED=5, CANCELED=6 }
 enum PaymentStatus { UNKNOWN=0, WIAT=1, PENDING=2, COMPLETE=3, CREDIT=4 }
 
 struct OrderLine {
@@ -124,6 +126,7 @@ service ShopService {
 	void updateOrderStatusesById( 1:map<i64,OrderStatus> orderStatusMap ) throws (1:error.InvalidOperation exc),
 	
 	void setDates( 1:map<i32,DateType> dateDateTypeMap),
+	void setDeliveryCosts( 1:map<DeliveryType,double> newDeliveryCosts) throws (1:error.InvalidOperation exc),
 	
 	void setOrderPaymentStatus(1:i64 orderId, 2: PaymentStatus newStatus) throws (1:error.InvalidOperation exc),
 	
@@ -162,9 +165,17 @@ service ShopService {
 	/**
 	* Method returns id of new order and set is as a current
 	**/
-	i64 createOrder() throws (1:error.InvalidOperation exc),
+	i64 createOrder(1:i32 date) throws (1:error.InvalidOperation exc),
 	i64 cancelOrder() throws (1:error.InvalidOperation exc),
 	i64 confirmOrder() throws (1:error.InvalidOperation exc),
+	/**
+	* Method adds all orderLines from order with id set in parameter to current order
+	**/
+	i64 appendOrder(1:i64 oldOrderId) throws (1:error.InvalidOperation exc),
+	/**
+	* Method adds to current order Order lines for products that are not included to current order
+	**/
+	i64 mergeOrder(1:i64 oldOrderId) throws (1:error.InvalidOperation exc),
 	
 	/**
 	* Methods adds line to the current order that set by createOrder method of by AuthService.setCurrentAttribute method

@@ -9,7 +9,6 @@ struct Group{
 	3: string name,
 	4: string description,
 	5: i32 radius,
-
 }
 
 struct Rubric{
@@ -37,6 +36,14 @@ service UserService {
 	list<bedata.Building> getBuildings(1:i64 streetId) throws (1:error.InvalidOperation exc),
 	FullAddressCatalogue getAddressCatalogue() throws (1:error.InvalidOperation exc),
 	
+	bedata.Country createNewCountry( 1:string name) throws (1:error.InvalidOperation exc),
+	bedata.City createNewCity( 1:i64 countryId, 2:string name) throws (1:error.InvalidOperation exc),
+	bedata.Street createNewStreet( 1:i64 cityId, 2:string name) throws (1:error.InvalidOperation exc),
+	bedata.Building createNewBuilding( 1:i64 streetId, 2:string fullNo, 3:double longitude, 4:double lattitude) throws (1:error.InvalidOperation exc),
+	
 	//
 	bool setUserAddress( 1:bedata.PostalAddress newAddress );
+	bool addUserAddress( 1:bedata.PostalAddress newAddress );
+	set<bedata.PostalAddress> getUserAddress( );
+	
 }

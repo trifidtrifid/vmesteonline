@@ -873,13 +873,13 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
           case 1: // CATEGORIES
             if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
               {
-                org.apache.thrift.protocol.TSet _set32 = iprot.readSetBegin();
-                struct.categories = new HashSet<Long>(2*_set32.size);
-                for (int _i33 = 0; _i33 < _set32.size; ++_i33)
+                org.apache.thrift.protocol.TSet _set52 = iprot.readSetBegin();
+                struct.categories = new HashSet<Long>(2*_set52.size);
+                for (int _i53 = 0; _i53 < _set52.size; ++_i53)
                 {
-                  long _elem34;
-                  _elem34 = iprot.readI64();
-                  struct.categories.add(_elem34);
+                  long _elem54;
+                  _elem54 = iprot.readI64();
+                  struct.categories.add(_elem54);
                 }
                 iprot.readSetEnd();
               }
@@ -899,13 +899,13 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
           case 3: // IMAGES_URLSET
             if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
               {
-                org.apache.thrift.protocol.TSet _set35 = iprot.readSetBegin();
-                struct.imagesURLset = new HashSet<ByteBuffer>(2*_set35.size);
-                for (int _i36 = 0; _i36 < _set35.size; ++_i36)
+                org.apache.thrift.protocol.TSet _set55 = iprot.readSetBegin();
+                struct.imagesURLset = new HashSet<ByteBuffer>(2*_set55.size);
+                for (int _i56 = 0; _i56 < _set55.size; ++_i56)
                 {
-                  ByteBuffer _elem37;
-                  _elem37 = iprot.readBinary();
-                  struct.imagesURLset.add(_elem37);
+                  ByteBuffer _elem57;
+                  _elem57 = iprot.readBinary();
+                  struct.imagesURLset.add(_elem57);
                 }
                 iprot.readSetEnd();
               }
@@ -917,15 +917,15 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
           case 4: // PRICES_MAP
             if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
               {
-                org.apache.thrift.protocol.TMap _map38 = iprot.readMapBegin();
-                struct.pricesMap = new HashMap<PriceType,Double>(2*_map38.size);
-                for (int _i39 = 0; _i39 < _map38.size; ++_i39)
+                org.apache.thrift.protocol.TMap _map58 = iprot.readMapBegin();
+                struct.pricesMap = new HashMap<PriceType,Double>(2*_map58.size);
+                for (int _i59 = 0; _i59 < _map58.size; ++_i59)
                 {
-                  PriceType _key40;
-                  double _val41;
-                  _key40 = PriceType.findByValue(iprot.readI32());
-                  _val41 = iprot.readDouble();
-                  struct.pricesMap.put(_key40, _val41);
+                  PriceType _key60;
+                  double _val61;
+                  _key60 = PriceType.findByValue(iprot.readI32());
+                  _val61 = iprot.readDouble();
+                  struct.pricesMap.put(_key60, _val61);
                 }
                 iprot.readMapEnd();
               }
@@ -937,15 +937,15 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
           case 5: // OPTIONS_MAP
             if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
               {
-                org.apache.thrift.protocol.TMap _map42 = iprot.readMapBegin();
-                struct.optionsMap = new HashMap<String,String>(2*_map42.size);
-                for (int _i43 = 0; _i43 < _map42.size; ++_i43)
+                org.apache.thrift.protocol.TMap _map62 = iprot.readMapBegin();
+                struct.optionsMap = new HashMap<String,String>(2*_map62.size);
+                for (int _i63 = 0; _i63 < _map62.size; ++_i63)
                 {
-                  String _key44;
-                  String _val45;
-                  _key44 = iprot.readString();
-                  _val45 = iprot.readString();
-                  struct.optionsMap.put(_key44, _val45);
+                  String _key64;
+                  String _val65;
+                  _key64 = iprot.readString();
+                  _val65 = iprot.readString();
+                  struct.optionsMap.put(_key64, _val65);
                 }
                 iprot.readMapEnd();
               }
@@ -957,13 +957,13 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
           case 6: // TOPIC_SET
             if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
               {
-                org.apache.thrift.protocol.TSet _set46 = iprot.readSetBegin();
-                struct.topicSet = new HashSet<Long>(2*_set46.size);
-                for (int _i47 = 0; _i47 < _set46.size; ++_i47)
+                org.apache.thrift.protocol.TSet _set66 = iprot.readSetBegin();
+                struct.topicSet = new HashSet<Long>(2*_set66.size);
+                for (int _i67 = 0; _i67 < _set66.size; ++_i67)
                 {
-                  long _elem48;
-                  _elem48 = iprot.readI64();
-                  struct.topicSet.add(_elem48);
+                  long _elem68;
+                  _elem68 = iprot.readI64();
+                  struct.topicSet.add(_elem68);
                 }
                 iprot.readSetEnd();
               }
@@ -999,9 +999,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(CATEGORIES_FIELD_DESC);
         {
           oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, struct.categories.size()));
-          for (long _iter49 : struct.categories)
+          for (long _iter69 : struct.categories)
           {
-            oprot.writeI64(_iter49);
+            oprot.writeI64(_iter69);
           }
           oprot.writeSetEnd();
         }
@@ -1016,9 +1016,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(IMAGES_URLSET_FIELD_DESC);
         {
           oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, struct.imagesURLset.size()));
-          for (ByteBuffer _iter50 : struct.imagesURLset)
+          for (ByteBuffer _iter70 : struct.imagesURLset)
           {
-            oprot.writeBinary(_iter50);
+            oprot.writeBinary(_iter70);
           }
           oprot.writeSetEnd();
         }
@@ -1028,10 +1028,10 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(PRICES_MAP_FIELD_DESC);
         {
           oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, struct.pricesMap.size()));
-          for (Map.Entry<PriceType, Double> _iter51 : struct.pricesMap.entrySet())
+          for (Map.Entry<PriceType, Double> _iter71 : struct.pricesMap.entrySet())
           {
-            oprot.writeI32(_iter51.getKey().getValue());
-            oprot.writeDouble(_iter51.getValue());
+            oprot.writeI32(_iter71.getKey().getValue());
+            oprot.writeDouble(_iter71.getValue());
           }
           oprot.writeMapEnd();
         }
@@ -1041,10 +1041,10 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(OPTIONS_MAP_FIELD_DESC);
         {
           oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.STRING, struct.optionsMap.size()));
-          for (Map.Entry<String, String> _iter52 : struct.optionsMap.entrySet())
+          for (Map.Entry<String, String> _iter72 : struct.optionsMap.entrySet())
           {
-            oprot.writeString(_iter52.getKey());
-            oprot.writeString(_iter52.getValue());
+            oprot.writeString(_iter72.getKey());
+            oprot.writeString(_iter72.getValue());
           }
           oprot.writeMapEnd();
         }
@@ -1054,9 +1054,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(TOPIC_SET_FIELD_DESC);
         {
           oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, struct.topicSet.size()));
-          for (long _iter53 : struct.topicSet)
+          for (long _iter73 : struct.topicSet)
           {
-            oprot.writeI64(_iter53);
+            oprot.writeI64(_iter73);
           }
           oprot.writeSetEnd();
         }
@@ -1108,9 +1108,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (struct.isSetCategories()) {
         {
           oprot.writeI32(struct.categories.size());
-          for (long _iter54 : struct.categories)
+          for (long _iter74 : struct.categories)
           {
-            oprot.writeI64(_iter54);
+            oprot.writeI64(_iter74);
           }
         }
       }
@@ -1120,38 +1120,38 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (struct.isSetImagesURLset()) {
         {
           oprot.writeI32(struct.imagesURLset.size());
-          for (ByteBuffer _iter55 : struct.imagesURLset)
+          for (ByteBuffer _iter75 : struct.imagesURLset)
           {
-            oprot.writeBinary(_iter55);
+            oprot.writeBinary(_iter75);
           }
         }
       }
       if (struct.isSetPricesMap()) {
         {
           oprot.writeI32(struct.pricesMap.size());
-          for (Map.Entry<PriceType, Double> _iter56 : struct.pricesMap.entrySet())
+          for (Map.Entry<PriceType, Double> _iter76 : struct.pricesMap.entrySet())
           {
-            oprot.writeI32(_iter56.getKey().getValue());
-            oprot.writeDouble(_iter56.getValue());
+            oprot.writeI32(_iter76.getKey().getValue());
+            oprot.writeDouble(_iter76.getValue());
           }
         }
       }
       if (struct.isSetOptionsMap()) {
         {
           oprot.writeI32(struct.optionsMap.size());
-          for (Map.Entry<String, String> _iter57 : struct.optionsMap.entrySet())
+          for (Map.Entry<String, String> _iter77 : struct.optionsMap.entrySet())
           {
-            oprot.writeString(_iter57.getKey());
-            oprot.writeString(_iter57.getValue());
+            oprot.writeString(_iter77.getKey());
+            oprot.writeString(_iter77.getValue());
           }
         }
       }
       if (struct.isSetTopicSet()) {
         {
           oprot.writeI32(struct.topicSet.size());
-          for (long _iter58 : struct.topicSet)
+          for (long _iter78 : struct.topicSet)
           {
-            oprot.writeI64(_iter58);
+            oprot.writeI64(_iter78);
           }
         }
       }
@@ -1166,13 +1166,13 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       BitSet incoming = iprot.readBitSet(7);
       if (incoming.get(0)) {
         {
-          org.apache.thrift.protocol.TSet _set59 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, iprot.readI32());
-          struct.categories = new HashSet<Long>(2*_set59.size);
-          for (int _i60 = 0; _i60 < _set59.size; ++_i60)
+          org.apache.thrift.protocol.TSet _set79 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, iprot.readI32());
+          struct.categories = new HashSet<Long>(2*_set79.size);
+          for (int _i80 = 0; _i80 < _set79.size; ++_i80)
           {
-            long _elem61;
-            _elem61 = iprot.readI64();
-            struct.categories.add(_elem61);
+            long _elem81;
+            _elem81 = iprot.readI64();
+            struct.categories.add(_elem81);
           }
         }
         struct.setCategoriesIsSet(true);
@@ -1183,56 +1183,56 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       }
       if (incoming.get(2)) {
         {
-          org.apache.thrift.protocol.TSet _set62 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.imagesURLset = new HashSet<ByteBuffer>(2*_set62.size);
-          for (int _i63 = 0; _i63 < _set62.size; ++_i63)
+          org.apache.thrift.protocol.TSet _set82 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+          struct.imagesURLset = new HashSet<ByteBuffer>(2*_set82.size);
+          for (int _i83 = 0; _i83 < _set82.size; ++_i83)
           {
-            ByteBuffer _elem64;
-            _elem64 = iprot.readBinary();
-            struct.imagesURLset.add(_elem64);
+            ByteBuffer _elem84;
+            _elem84 = iprot.readBinary();
+            struct.imagesURLset.add(_elem84);
           }
         }
         struct.setImagesURLsetIsSet(true);
       }
       if (incoming.get(3)) {
         {
-          org.apache.thrift.protocol.TMap _map65 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, iprot.readI32());
-          struct.pricesMap = new HashMap<PriceType,Double>(2*_map65.size);
-          for (int _i66 = 0; _i66 < _map65.size; ++_i66)
+          org.apache.thrift.protocol.TMap _map85 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, iprot.readI32());
+          struct.pricesMap = new HashMap<PriceType,Double>(2*_map85.size);
+          for (int _i86 = 0; _i86 < _map85.size; ++_i86)
           {
-            PriceType _key67;
-            double _val68;
-            _key67 = PriceType.findByValue(iprot.readI32());
-            _val68 = iprot.readDouble();
-            struct.pricesMap.put(_key67, _val68);
+            PriceType _key87;
+            double _val88;
+            _key87 = PriceType.findByValue(iprot.readI32());
+            _val88 = iprot.readDouble();
+            struct.pricesMap.put(_key87, _val88);
           }
         }
         struct.setPricesMapIsSet(true);
       }
       if (incoming.get(4)) {
         {
-          org.apache.thrift.protocol.TMap _map69 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.optionsMap = new HashMap<String,String>(2*_map69.size);
-          for (int _i70 = 0; _i70 < _map69.size; ++_i70)
+          org.apache.thrift.protocol.TMap _map89 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+          struct.optionsMap = new HashMap<String,String>(2*_map89.size);
+          for (int _i90 = 0; _i90 < _map89.size; ++_i90)
           {
-            String _key71;
-            String _val72;
-            _key71 = iprot.readString();
-            _val72 = iprot.readString();
-            struct.optionsMap.put(_key71, _val72);
+            String _key91;
+            String _val92;
+            _key91 = iprot.readString();
+            _val92 = iprot.readString();
+            struct.optionsMap.put(_key91, _val92);
           }
         }
         struct.setOptionsMapIsSet(true);
       }
       if (incoming.get(5)) {
         {
-          org.apache.thrift.protocol.TSet _set73 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, iprot.readI32());
-          struct.topicSet = new HashSet<Long>(2*_set73.size);
-          for (int _i74 = 0; _i74 < _set73.size; ++_i74)
+          org.apache.thrift.protocol.TSet _set93 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, iprot.readI32());
+          struct.topicSet = new HashSet<Long>(2*_set93.size);
+          for (int _i94 = 0; _i94 < _set93.size; ++_i94)
           {
-            long _elem75;
-            _elem75 = iprot.readI64();
-            struct.topicSet.add(_elem75);
+            long _elem95;
+            _elem95 = iprot.readI64();
+            struct.topicSet.add(_elem95);
           }
         }
         struct.setTopicSetIsSet(true);

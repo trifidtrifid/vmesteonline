@@ -128,6 +128,10 @@ public class VoSession {
 		return val == null ? 0 : val;
 	}
 	
+	public void setSessionAttribute( int key, long value ){
+		curAttrMap.put( key, value );
+	}
+	
 	public void setSessionAttributes( Map<Integer,Long> newAttrMap ){
 		curAttrMap.putAll( newAttrMap);
 	}

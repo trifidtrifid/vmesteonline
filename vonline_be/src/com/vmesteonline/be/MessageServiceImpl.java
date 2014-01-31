@@ -48,7 +48,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public long postMessage(Message msg) throws InvalidOperation, TException {
-		long userId = getUserId();
+		long userId = getCurrentUserId();
 		msg.setAuthorId(userId);
 		boolean newMessage = 0 >= msg.getId();
 		VoMessage vomsg;
@@ -135,7 +135,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public long postTopic(Topic topic) throws InvalidOperation {
-		long userId = getUserId();
+		long userId = getCurrentUserId();
 		topic.getMessage().setAuthorId(userId);
 		boolean newTopic = 0 >= topic.getId();
 		if (newTopic) {
@@ -343,7 +343,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public long dislike(long messageId) throws InvalidOperation, TException {
 		long unlikesNum = 0;
-		long user = getUserId();
+		long user = getCurrentUserId();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Transaction currentTransaction = pm.currentTransaction();
 		try {
@@ -383,7 +383,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public long like(long messageId) throws InvalidOperation, TException {
 		long likesNum = 0;
-		long user = getUserId();
+		long user = getCurrentUserId();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Transaction currentTransaction = pm.currentTransaction();
 		try {
