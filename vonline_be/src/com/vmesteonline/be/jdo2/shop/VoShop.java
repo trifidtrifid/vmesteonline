@@ -38,9 +38,11 @@ public class VoShop {
 			Set<String> tags, Map<DeliveryType,Double> deliveryCosts, 
 			Map<PaymentType,Double> paymentTypes) throws InvalidOperation {
 		
+		PersistenceManager pm = PMF.getPm();
+		
 		this.name = name;
 		this.descr = descr;
-		this.address = new VoPostalAddress( postalAddress );
+		this.address = new VoPostalAddress( postalAddress, pm );
 		this.logoURL = logoURL;
 		this.ownerId = ownerId;
 		if( null == (this.tags = tags)) this.tags = new HashSet<String>();
@@ -49,7 +51,7 @@ public class VoShop {
 			this.paymentTypes = new HashMap<PaymentType, Double>();
 			this.paymentTypes.put( PaymentType.CASH, 0D );
 		}
-		PersistenceManager pm = PMF.getPm();
+		
 		try {
 			this.topics = new HashSet<VoTopic>();
 			for(long tid: topicSet ){

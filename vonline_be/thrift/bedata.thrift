@@ -30,7 +30,7 @@ struct PostalAddress {
 	4:Building building, 
 	5:byte staircase,
 	6:byte floor,
-	7:byte flatNo,
+	7:i32 flatNo,
 	8:string comment
 }
 

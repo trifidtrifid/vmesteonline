@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -35,7 +36,7 @@ public class VoUser {
 		this.likesNum = 0;
 		this.unlikesNum = 0;
 		this.rubrics = new ArrayList<VoRubric>();
-		this.addresses = new HashSet<VoPostalAddress>();
+		this.addresses = new TreeSet<VoPostalAddress>();
 	}
 
 	public VoUserGroup getHomeGroup() {
@@ -119,9 +120,11 @@ public class VoUser {
 	}
 
 	public void setLocation(long locCode, boolean doSave) throws InvalidOperation {
+		setLocation(locCode, doSave, null);
+	}
+	public void setLocation(long locCode, boolean doSave, PersistenceManager _pm ) throws InvalidOperation {
 		Key addressKey = VoPostalAddress.getKeyValue(locCode);
-		PersistenceManagerFactory pmf = PMF.get();
-		PersistenceManager pm = pmf.getPersistenceManager();
+		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
 		try {
 			VoPostalAddress userAddress;
 			try {
@@ -131,7 +134,7 @@ public class VoUser {
 			}
 			setCurrentPostalAddress(userAddress, pm);
 		} finally {
-			pm.close();
+			if( null==_pm) pm.close();
 		}
 	}
 	/**
@@ -176,6 +179,8 @@ public class VoUser {
 		} else {
 			groups = new ArrayList<VoUserGroup>();
 		}
+		addPostalAddress(userAddress, pm);
+		
 		pm.makePersistent(this);
 		pm.makePersistent(building);
 	}
@@ -191,7 +196,6 @@ public class VoUser {
 	}
 
 	public void addPostalAddress(VoPostalAddress pa, PersistenceManager pm){
-		//TODO check that address not added already
 		addresses.add(pa);
 		pm.makePersistent(this);
 	}

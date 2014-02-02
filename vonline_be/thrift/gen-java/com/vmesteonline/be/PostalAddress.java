@@ -41,7 +41,7 @@ public class PostalAddress implements org.apache.thrift.TBase<PostalAddress, Pos
   private static final org.apache.thrift.protocol.TField BUILDING_FIELD_DESC = new org.apache.thrift.protocol.TField("building", org.apache.thrift.protocol.TType.STRUCT, (short)4);
   private static final org.apache.thrift.protocol.TField STAIRCASE_FIELD_DESC = new org.apache.thrift.protocol.TField("staircase", org.apache.thrift.protocol.TType.BYTE, (short)5);
   private static final org.apache.thrift.protocol.TField FLOOR_FIELD_DESC = new org.apache.thrift.protocol.TField("floor", org.apache.thrift.protocol.TType.BYTE, (short)6);
-  private static final org.apache.thrift.protocol.TField FLAT_NO_FIELD_DESC = new org.apache.thrift.protocol.TField("flatNo", org.apache.thrift.protocol.TType.BYTE, (short)7);
+  private static final org.apache.thrift.protocol.TField FLAT_NO_FIELD_DESC = new org.apache.thrift.protocol.TField("flatNo", org.apache.thrift.protocol.TType.I32, (short)7);
   private static final org.apache.thrift.protocol.TField COMMENT_FIELD_DESC = new org.apache.thrift.protocol.TField("comment", org.apache.thrift.protocol.TType.STRING, (short)8);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -56,7 +56,7 @@ public class PostalAddress implements org.apache.thrift.TBase<PostalAddress, Pos
   public Building building; // required
   public byte staircase; // required
   public byte floor; // required
-  public byte flatNo; // required
+  public int flatNo; // required
   public String comment; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -159,7 +159,7 @@ public class PostalAddress implements org.apache.thrift.TBase<PostalAddress, Pos
     tmpMap.put(_Fields.FLOOR, new org.apache.thrift.meta_data.FieldMetaData("floor", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BYTE)));
     tmpMap.put(_Fields.FLAT_NO, new org.apache.thrift.meta_data.FieldMetaData("flatNo", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BYTE)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.COMMENT, new org.apache.thrift.meta_data.FieldMetaData("comment", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -176,7 +176,7 @@ public class PostalAddress implements org.apache.thrift.TBase<PostalAddress, Pos
     Building building,
     byte staircase,
     byte floor,
-    byte flatNo,
+    int flatNo,
     String comment)
   {
     this();
@@ -379,11 +379,11 @@ public class PostalAddress implements org.apache.thrift.TBase<PostalAddress, Pos
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __FLOOR_ISSET_ID, value);
   }
 
-  public byte getFlatNo() {
+  public int getFlatNo() {
     return this.flatNo;
   }
 
-  public PostalAddress setFlatNo(byte flatNo) {
+  public PostalAddress setFlatNo(int flatNo) {
     this.flatNo = flatNo;
     setFlatNoIsSet(true);
     return this;
@@ -480,7 +480,7 @@ public class PostalAddress implements org.apache.thrift.TBase<PostalAddress, Pos
       if (value == null) {
         unsetFlatNo();
       } else {
-        setFlatNo((Byte)value);
+        setFlatNo((Integer)value);
       }
       break;
 
@@ -516,7 +516,7 @@ public class PostalAddress implements org.apache.thrift.TBase<PostalAddress, Pos
       return Byte.valueOf(getFloor());
 
     case FLAT_NO:
-      return Byte.valueOf(getFlatNo());
+      return Integer.valueOf(getFlatNo());
 
     case COMMENT:
       return getComment();
@@ -914,8 +914,8 @@ public class PostalAddress implements org.apache.thrift.TBase<PostalAddress, Pos
             }
             break;
           case 7: // FLAT_NO
-            if (schemeField.type == org.apache.thrift.protocol.TType.BYTE) {
-              struct.flatNo = iprot.readByte();
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.flatNo = iprot.readI32();
               struct.setFlatNoIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -971,7 +971,7 @@ public class PostalAddress implements org.apache.thrift.TBase<PostalAddress, Pos
       oprot.writeByte(struct.floor);
       oprot.writeFieldEnd();
       oprot.writeFieldBegin(FLAT_NO_FIELD_DESC);
-      oprot.writeByte(struct.flatNo);
+      oprot.writeI32(struct.flatNo);
       oprot.writeFieldEnd();
       if (struct.comment != null) {
         oprot.writeFieldBegin(COMMENT_FIELD_DESC);
@@ -1040,7 +1040,7 @@ public class PostalAddress implements org.apache.thrift.TBase<PostalAddress, Pos
         oprot.writeByte(struct.floor);
       }
       if (struct.isSetFlatNo()) {
-        oprot.writeByte(struct.flatNo);
+        oprot.writeI32(struct.flatNo);
       }
       if (struct.isSetComment()) {
         oprot.writeString(struct.comment);
@@ -1080,7 +1080,7 @@ public class PostalAddress implements org.apache.thrift.TBase<PostalAddress, Pos
         struct.setFloorIsSet(true);
       }
       if (incoming.get(6)) {
-        struct.flatNo = iprot.readByte();
+        struct.flatNo = iprot.readI32();
         struct.setFlatNoIsSet(true);
       }
       if (incoming.get(7)) {

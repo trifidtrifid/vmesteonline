@@ -5,8 +5,7 @@ enum VoError{
   IncorrectParametrs,
   RegistrationAlreadyExist,
   NotAuthorized,
-  IncorectLocationCode
-  
+  IncorectLocationCod  
 }
 exception InvalidOperation {
   1: VoError what,

@@ -634,7 +634,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-			currentOrder.setDeliveryTo(new VoPostalAddress(deliveryAddress));
+			currentOrder.setDeliveryTo(new VoPostalAddress(deliveryAddress, pm));
 			pm.makePersistent(currentOrder);
 			return currentOrder.getOrderDetails();
 

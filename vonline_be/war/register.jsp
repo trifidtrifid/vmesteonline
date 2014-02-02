@@ -26,8 +26,8 @@
 		var groupId = groupSelect.options[groupSelect.selectedIndex].value;
 		var userId = client.registerNewUser($("#uname").val(), "family", $("#password")
 				.val(), $("#email").val(), groupId);
-		if ( userId != 0 ) { 
-			window.location.replace = '/';
+		if ( true ) { 
+			document.location.replace("/");
 		}
 	}
 </script>

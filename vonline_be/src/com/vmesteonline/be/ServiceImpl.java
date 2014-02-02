@@ -53,7 +53,7 @@ public class ServiceImpl {
 	protected VoUser getCurrentUser(PersistenceManager _pm) throws InvalidOperation {
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
 		try {
 			VoSession sess = pm.getObjectById(VoSession.class, sessionStorage.getId());
 			if (sess != null && 0!=sess.getUserId()){
@@ -61,7 +61,7 @@ public class ServiceImpl {
 			}
 			return null;
 		} finally {
-			pm.close();
+			if( null==_pm) pm.close();
 		}
 	}
 

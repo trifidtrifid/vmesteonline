@@ -71,6 +71,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 		PersistenceManager pm = PMF.getPm();
 		VoUser user = new VoUser(firstname, lastname, email, password);
+		pm.makePersistent(user);
 		try {
 			// find all defaults rubrics for user
 			Query q = pm.newQuery(VoRubric.class);
@@ -80,14 +81,15 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			for (VoRubric rubric : defRubrics) {
 				user.addRubric(rubric);
 			}
+			
+			try {
+				user.setLocation(Long.parseLong(locationId), true, pm);
+			} catch (NumberFormatException | InvalidOperation e) {
+				throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
+			}
+			
 		} finally {
 			pm.close();
-		}
-
-		try {
-			user.setLocation(Long.parseLong(locationId), true);
-		} catch (NumberFormatException | InvalidOperation e) {
-			throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 		}
 
 		logger.info("register " + email + " pass " + password + " id " + user.getId());

@@ -18,7 +18,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Queries;
-import javax.jdo.annotations.Query;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
@@ -33,9 +32,6 @@ import com.vmesteonline.be.data.PMF;
  * Created by brozer on 1/12/14.
  */
 @PersistenceCapable
-@Index(name="ID_VALUE_IDX", members={"idValue"})
-@Queries(value={@Query(name="byID_VALUE", language="JDOQL", 
-value="SELECT FROM com.vmesteonline.be.jdo2.VoMessage WHERE idValue == idParam")})
 public class VoMessage {
 
 	// private static final Logger logger = Logger.getLogger(VoMessage.class);
@@ -69,81 +65,70 @@ public class VoMessage {
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
 
-			VoMessage parentMsg = null;
-			try {
-				long parentId = msg.getParentId();
-				if (0 != parentId) {
-					Extent<VoMessage> voMsgExt = pm.getExtent(VoMessage.class);
-					for (VoMessage msg1 : voMsgExt) {
-						pm.retrieve(msg1);
-						Key parentMsg1 = msg1.getId().getParent();
-						System.out.println("MsgKey:" + msg1.getId() + "idValue: " + msg1.idValue + " Msg id: " + msg1.getId().getId() + " topic "
-								+ msg1.getTopic().getId().getId() + (null == parentMsg1 ? " No parent." : " parent Key:" + parentMsg1.getId()));
-					}
-					// TODO WHAT THE FUCK HPPENS!!!! Why message could not be found by
-					// it's ID?
-					try {
-						parentMsg = pm.getObjectById(VoMessage.class, parentId);
-					} catch (JDOObjectNotFoundException e) {
-						// logger.warn("Failed to find message by ID: "+parentId+" using JDO. Will try to find in by lower level Query");
-						javax.jdo.Query query = pm.newNamedQuery(VoMessage.class, "byID_VALUE");// newQuery(VoMessage.class);
-						/*query.setFilter("idValue == parentId");*/
-						query.declareParameters("long idParam");
-						List<VoMessage> results = (List<VoMessage>) query.execute(parentId);
-						if ((results.iterator().hasNext() )) {
-							parentMsg = results.iterator().next();
-							// logger.warn("Yes! message found by ID: "+parentId +
-							// " using lower level.");
-						} else {
-							query = pm.newQuery(VoMessage.class);
-							query.setFilter("id == :key");
-							results = (List<VoMessage>) query.execute(parentId);
-							if (results.iterator().hasNext() ) {
-								parentMsg = results.iterator().next();
-								// logger.warn("Yes! message found by ID: "+parentId +
-								// " using lower level.");
-							} else {
-								// logger.warn("No message found by message ID: "+parentId);
-								// OK lets look through all of messages and try to find it by
-								// hand
-								query = pm.newQuery(VoMessage.class);
-								results = (List<VoMessage>) query.execute();
-								for (VoMessage msg2 : results) {
-									pm.retrieve(msg2);
-									Key parentMsg2 = msg2.getId().getParent();
-									if (msg2.getId().getId() == parentId) {
-										System.out.print("!!!!!! This is it:");
-									}
-									System.out.println("MsgKey:" + msg2.getId() + "idValue: " + msg2.idValue + " Msg id: " + msg2.getId().getId() + " topic "
-											+ msg2.getTopic().getId().getId() + (null == parentMsg2 ? " No parent." : " parent Key:" + parentMsg2.getId()));
-								}
+		VoMessage parentMsg = null;
+		try {
+			long parentId = msg.getParentId();
+			if (0 != parentId) {
+				Extent<VoMessage> voMsgExt = pm.getExtent(VoMessage.class);
+				for (VoMessage msg1 : voMsgExt) {
+					pm.retrieve(msg1);
+					Key parentMsg1 = msg1.getId().getParent();
+					System.out.println("MsgKey:" + msg1.getId() + "idValue: " + msg1.idValue + " Msg id: " + msg1.getId().getId() + " topic "
+							+ msg1.getTopic().getId().getId() + (null == parentMsg1 ? " No parent." : " parent Key:" + parentMsg1.getId()));
+				}
+				// TODO WHAT THE FUCK HPPENS!!!! Why message could not be found by
+				// it's ID?
+				try {
+					parentMsg = pm.getObjectById(VoMessage.class, parentId);
+				} catch (JDOObjectNotFoundException e) {
+					javax.jdo.Query query = pm.newQuery(VoMessage.class);
+					query.setFilter("id == parentId parameters Long parentId");
+					List<VoMessage> results = (List<VoMessage>) query.execute(parentId);
+					if (results.iterator().hasNext()) {
+						parentMsg = results.iterator().next();
+						// logger.warn("Yes! message found by ID: "+parentId +
+						// " using lower level.");
+					} else {
+						// logger.warn("No message found by message ID: "+parentId);
+						// OK lets look through all of messages and try to find it by
+						// hand
+						query = query;
+						results = (List<VoMessage>) query.execute();
+						for (VoMessage msg2 : results) {
+							pm.retrieve(msg2);
+							Key parentMsg2 = msg2.getId().getParent();
+							if (msg2.getId().getId() == parentId) {
+								System.out.print("!!!!!! This is it:");
 							}
+							System.out.println("MsgKey:" + msg2.getId() + "idValue: " + msg2.idValue + " Msg id: " + msg2.getId().getId() + " topic "
+									+ msg2.getTopic().getId().getId() + (null == parentMsg2 ? " No parent." : " parent Key:" + parentMsg2.getId()));
 						}
 					}
-					if (null == parentMsg) {
-						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "parent Message not found by ID=" + parentId);
-					}
-					parentMsg.addChildMessage(this);
-					this.topic = parentMsg.getTopic();
+				}
+				if (null == parentMsg) {
+					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "parent Message not found by ID=" + parentId);
+				}
+				parentMsg.addChildMessage(this);
+				this.topic = parentMsg.getTopic();
 
-				} else {
-					this.topic = ownerTopic;
+			} else {
+				this.topic = ownerTopic;
+			}
+
+			try {
+				/* CHeck the group to post, or move the message to */
+				VoGroup group = pm.getObjectById(VoGroup.class, msg.getGroupId());
+				if (null == group) {
+					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Group of Message not found by ID=" + msg.getGroupId());
+				}
+				/* CHeck the recipient */
+				if (0 != msg.getRecipientId()) {
+					if (null == pm.getObjectById(VoUser.class, msg.getRecipientId())) {
+						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Recipient of Message not found by ID=" + msg.getRecipientId());
+					}
+					recipient = msg.getRecipientId();
 				}
 
-				try {
-					/* CHeck the group to post, or move the message to */
-					VoGroup group = pm.getObjectById(VoGroup.class, msg.getGroupId());
-					if (null == group) {
-						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Group of Message not found by ID=" + msg.getGroupId());
-					}
-					/* CHeck the recipient */
-					if (0 != msg.getRecipientId()) {
-						if (null == pm.getObjectById(VoUser.class, msg.getRecipientId())) {
-							throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Recipient of Message not found by ID=" + msg.getRecipientId());
-						}
-						recipient = msg.getRecipientId();
-					}
-				
 				if (null == this.topic) {
 					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Topic of PArent Message not found");
 				}
@@ -214,6 +199,7 @@ public class VoMessage {
 			} catch (InvalidOperation e) {
 				throw e;
 			} catch (Exception e2) {
+				e2.printStackTrace();
 				throw new InvalidOperation(com.vmesteonline.be.VoError.GeneralError, "Failed to validate Message parameters:" + e2.getMessage());
 			}
 		} finally {
@@ -513,5 +499,4 @@ public class VoMessage {
 				+ longitude + ", latitude=" + latitude + ", radius=" + radius + "]";
 	}
 
-	
 }
