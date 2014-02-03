@@ -95,9 +95,11 @@ public class ServiceImpl {
 	}
 	
 	public void setCurrentAttribute( int key, long value) throws InvalidOperation, TException {
-		VoSession currentSession = getCurrentSession();
-		currentSession.setSessionAttribute(key, value);
 		PersistenceManager pm = PMF.getPm();
+		
+		VoSession currentSession = getCurrentSession(pm);
+		currentSession.setSessionAttribute(key, value);
+		
 		try {
 			pm.makePersistent(currentSession);
 		} finally {
@@ -106,9 +108,9 @@ public class ServiceImpl {
 	}
 	
 	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation, TException {
-		VoSession currentSession = getCurrentSession();
-		currentSession.setSessionAttributes(typeValueMap);
 		PersistenceManager pm = PMF.getPm();
+		VoSession currentSession = getCurrentSession(pm);
+		currentSession.setSessionAttributes(typeValueMap);
 		try {
 			pm.makePersistent(currentSession);
 		} finally {

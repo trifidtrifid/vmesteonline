@@ -73,13 +73,13 @@ public class VoShop {
 	}
 
 	public Shop getShop() {
-		Shop shop = new Shop(id, name, descr, address.getPostalAddress(), logoURL, ownerId, null, tags, 
-				convertToDeliveryTypeMap( deliveryCosts, new HashMap<DeliveryType, Double>()),
-				convertToPaymentTypeMap( paymentTypes, new HashMap<PaymentType, Double>()));
 		Set<Long> topicIds = new HashSet<Long>();
 		for (VoTopic vt : getTopics()) {
 			topicIds.add(vt.getId().getId());
 		}
+		Shop shop = new Shop(id, name, descr, address.getPostalAddress(), logoURL, ownerId, topicIds, tags, 
+				convertToDeliveryTypeMap( deliveryCosts, new HashMap<DeliveryType, Double>()),
+				convertToPaymentTypeMap( paymentTypes, new HashMap<PaymentType, Double>()));
 		return shop;
 	}
 
