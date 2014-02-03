@@ -20,12 +20,12 @@
 	function reg() {
 		var transport = new Thrift.Transport("/thrift/AuthService");
 		var protocol = new Thrift.Protocol(transport);
-		var client = new com.vmesteonline.be.AuthServiceClient(protocol);
+		var client = new com.vmesteonline.be.AuthServiceClient(protocol);	
 
-		var groupSelect = document.getElementById("selectGroup");
-		var groupId = groupSelect.options[groupSelect.selectedIndex].value;
+		var groupSelect = document.getElementById("selectGroup");		
+		var groupId = groupSelect.options[groupSelect.selectedIndex].value;		
 		var userId = client.registerNewUser($("#uname").val(), "family", $("#password")
-				.val(), $("#email").val(), groupId);
+				.val(), $("#email").val(), groupId);		
 		if ( true ) { 
 			document.location.replace("/");
 		}

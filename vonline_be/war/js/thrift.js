@@ -774,6 +774,6 @@ Thrift.Protocol.prototype = {
 
     //Method to arbitrarily skip over data.
     skip: function(type) {
-        throw 'skip not supported yet';
+        //throw 'skip not supported yet';
     }
 };
