@@ -1541,9 +1541,17 @@ com.vmesteonline.be.UserService_setUserAddress_args.prototype.write = function(o
 
 com.vmesteonline.be.UserService_setUserAddress_result = function(args) {
   this.success = null;
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
   if (args) {
     if (args.success !== undefined) {
       this.success = args.success;
+    }
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
     }
   }
 };
@@ -1568,9 +1576,14 @@ com.vmesteonline.be.UserService_setUserAddress_result.prototype.read = function(
         input.skip(ftype);
       }
       break;
-      case 0:
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
         input.skip(ftype);
-        break;
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -1585,6 +1598,11 @@ com.vmesteonline.be.UserService_setUserAddress_result.prototype.write = function
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.BOOL, 0);
     output.writeBool(this.success);
+    output.writeFieldEnd();
+  }
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -1648,9 +1666,17 @@ com.vmesteonline.be.UserService_addUserAddress_args.prototype.write = function(o
 
 com.vmesteonline.be.UserService_addUserAddress_result = function(args) {
   this.success = null;
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
   if (args) {
     if (args.success !== undefined) {
       this.success = args.success;
+    }
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
     }
   }
 };
@@ -1675,9 +1701,14 @@ com.vmesteonline.be.UserService_addUserAddress_result.prototype.read = function(
         input.skip(ftype);
       }
       break;
-      case 0:
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
         input.skip(ftype);
-        break;
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -1694,15 +1725,20 @@ com.vmesteonline.be.UserService_addUserAddress_result.prototype.write = function
     output.writeBool(this.success);
     output.writeFieldEnd();
   }
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
   output.writeFieldStop();
   output.writeStructEnd();
   return;
 };
 
-com.vmesteonline.be.UserService_getUserAddress_args = function(args) {
+com.vmesteonline.be.UserService_getUserHomeAddress_args = function(args) {
 };
-com.vmesteonline.be.UserService_getUserAddress_args.prototype = {};
-com.vmesteonline.be.UserService_getUserAddress_args.prototype.read = function(input) {
+com.vmesteonline.be.UserService_getUserHomeAddress_args.prototype = {};
+com.vmesteonline.be.UserService_getUserHomeAddress_args.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
@@ -1720,23 +1756,131 @@ com.vmesteonline.be.UserService_getUserAddress_args.prototype.read = function(in
   return;
 };
 
-com.vmesteonline.be.UserService_getUserAddress_args.prototype.write = function(output) {
-  output.writeStructBegin('UserService_getUserAddress_args');
+com.vmesteonline.be.UserService_getUserHomeAddress_args.prototype.write = function(output) {
+  output.writeStructBegin('UserService_getUserHomeAddress_args');
   output.writeFieldStop();
   output.writeStructEnd();
   return;
 };
 
-com.vmesteonline.be.UserService_getUserAddress_result = function(args) {
+com.vmesteonline.be.UserService_getUserHomeAddress_result = function(args) {
   this.success = null;
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
   if (args) {
     if (args.success !== undefined) {
       this.success = args.success;
     }
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
   }
 };
-com.vmesteonline.be.UserService_getUserAddress_result.prototype = {};
-com.vmesteonline.be.UserService_getUserAddress_result.prototype.read = function(input) {
+com.vmesteonline.be.UserService_getUserHomeAddress_result.prototype = {};
+com.vmesteonline.be.UserService_getUserHomeAddress_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.success = new com.vmesteonline.be.PostalAddress();
+        this.success.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.UserService_getUserHomeAddress_result.prototype.write = function(output) {
+  output.writeStructBegin('UserService_getUserHomeAddress_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.STRUCT, 0);
+    this.success.write(output);
+    output.writeFieldEnd();
+  }
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.UserService_getUserAddresses_args = function(args) {
+};
+com.vmesteonline.be.UserService_getUserAddresses_args.prototype = {};
+com.vmesteonline.be.UserService_getUserAddresses_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    input.skip(ftype);
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.UserService_getUserAddresses_args.prototype.write = function(output) {
+  output.writeStructBegin('UserService_getUserAddresses_args');
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.UserService_getUserAddresses_result = function(args) {
+  this.success = null;
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined) {
+      this.success = args.success;
+    }
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
+  }
+};
+com.vmesteonline.be.UserService_getUserAddresses_result.prototype = {};
+com.vmesteonline.be.UserService_getUserAddresses_result.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
@@ -1770,9 +1914,14 @@ com.vmesteonline.be.UserService_getUserAddress_result.prototype.read = function(
         input.skip(ftype);
       }
       break;
-      case 0:
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
         input.skip(ftype);
-        break;
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -1782,8 +1931,8 @@ com.vmesteonline.be.UserService_getUserAddress_result.prototype.read = function(
   return;
 };
 
-com.vmesteonline.be.UserService_getUserAddress_result.prototype.write = function(output) {
-  output.writeStructBegin('UserService_getUserAddress_result');
+com.vmesteonline.be.UserService_getUserAddresses_result.prototype.write = function(output) {
+  output.writeStructBegin('UserService_getUserAddresses_result');
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.SET, 0);
     output.writeSetBegin(Thrift.Type.STRUCT, this.success.length);
@@ -1796,6 +1945,11 @@ com.vmesteonline.be.UserService_getUserAddress_result.prototype.write = function
       }
     }
     output.writeSetEnd();
+    output.writeFieldEnd();
+  }
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -2246,6 +2400,9 @@ com.vmesteonline.be.UserServiceClient.prototype.recv_setUserAddress = function()
   result.read(this.input);
   this.input.readMessageEnd();
 
+  if (null !== result.exc) {
+    throw result.exc;
+  }
   if (null !== result.success) {
     return result.success;
   }
@@ -2280,25 +2437,28 @@ com.vmesteonline.be.UserServiceClient.prototype.recv_addUserAddress = function()
   result.read(this.input);
   this.input.readMessageEnd();
 
+  if (null !== result.exc) {
+    throw result.exc;
+  }
   if (null !== result.success) {
     return result.success;
   }
   throw 'addUserAddress failed: unknown result';
 };
-com.vmesteonline.be.UserServiceClient.prototype.getUserAddress = function() {
-  this.send_getUserAddress();
-  return this.recv_getUserAddress();
+com.vmesteonline.be.UserServiceClient.prototype.getUserHomeAddress = function() {
+  this.send_getUserHomeAddress();
+  return this.recv_getUserHomeAddress();
 };
 
-com.vmesteonline.be.UserServiceClient.prototype.send_getUserAddress = function() {
-  this.output.writeMessageBegin('getUserAddress', Thrift.MessageType.CALL, this.seqid);
-  var args = new com.vmesteonline.be.UserService_getUserAddress_args();
+com.vmesteonline.be.UserServiceClient.prototype.send_getUserHomeAddress = function() {
+  this.output.writeMessageBegin('getUserHomeAddress', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.UserService_getUserHomeAddress_args();
   args.write(this.output);
   this.output.writeMessageEnd();
   return this.output.getTransport().flush();
 };
 
-com.vmesteonline.be.UserServiceClient.prototype.recv_getUserAddress = function() {
+com.vmesteonline.be.UserServiceClient.prototype.recv_getUserHomeAddress = function() {
   var ret = this.input.readMessageBegin();
   var fname = ret.fname;
   var mtype = ret.mtype;
@@ -2309,12 +2469,51 @@ com.vmesteonline.be.UserServiceClient.prototype.recv_getUserAddress = function()
     this.input.readMessageEnd();
     throw x;
   }
-  var result = new com.vmesteonline.be.UserService_getUserAddress_result();
+  var result = new com.vmesteonline.be.UserService_getUserHomeAddress_result();
   result.read(this.input);
   this.input.readMessageEnd();
 
+  if (null !== result.exc) {
+    throw result.exc;
+  }
   if (null !== result.success) {
     return result.success;
   }
-  throw 'getUserAddress failed: unknown result';
+  throw 'getUserHomeAddress failed: unknown result';
+};
+com.vmesteonline.be.UserServiceClient.prototype.getUserAddresses = function() {
+  this.send_getUserAddresses();
+  return this.recv_getUserAddresses();
+};
+
+com.vmesteonline.be.UserServiceClient.prototype.send_getUserAddresses = function() {
+  this.output.writeMessageBegin('getUserAddresses', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.UserService_getUserAddresses_args();
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.UserServiceClient.prototype.recv_getUserAddresses = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.UserService_getUserAddresses_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.exc) {
+    throw result.exc;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'getUserAddresses failed: unknown result';
 };

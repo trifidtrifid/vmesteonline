@@ -58,11 +58,13 @@ public class UserService {
 
     public com.vmesteonline.be.Building createNewBuilding(long streetId, String fullNo, double longitude, double lattitude) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public boolean setUserAddress(com.vmesteonline.be.PostalAddress newAddress) throws org.apache.thrift.TException;
+    public boolean setUserAddress(com.vmesteonline.be.PostalAddress newAddress) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public boolean addUserAddress(com.vmesteonline.be.PostalAddress newAddress) throws org.apache.thrift.TException;
+    public boolean addUserAddress(com.vmesteonline.be.PostalAddress newAddress) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public Set<com.vmesteonline.be.PostalAddress> getUserAddress() throws org.apache.thrift.TException;
+    public com.vmesteonline.be.PostalAddress getUserHomeAddress() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+
+    public Set<com.vmesteonline.be.PostalAddress> getUserAddresses() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
   }
 
@@ -94,7 +96,9 @@ public class UserService {
 
     public void addUserAddress(com.vmesteonline.be.PostalAddress newAddress, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void getUserAddress(org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void getUserHomeAddress(org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void getUserAddresses(org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -405,7 +409,7 @@ public class UserService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "createNewBuilding failed: unknown result");
     }
 
-    public boolean setUserAddress(com.vmesteonline.be.PostalAddress newAddress) throws org.apache.thrift.TException
+    public boolean setUserAddress(com.vmesteonline.be.PostalAddress newAddress) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_setUserAddress(newAddress);
       return recv_setUserAddress();
@@ -418,17 +422,20 @@ public class UserService {
       sendBase("setUserAddress", args);
     }
 
-    public boolean recv_setUserAddress() throws org.apache.thrift.TException
+    public boolean recv_setUserAddress() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       setUserAddress_result result = new setUserAddress_result();
       receiveBase(result, "setUserAddress");
       if (result.isSetSuccess()) {
         return result.success;
       }
+      if (result.exc != null) {
+        throw result.exc;
+      }
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "setUserAddress failed: unknown result");
     }
 
-    public boolean addUserAddress(com.vmesteonline.be.PostalAddress newAddress) throws org.apache.thrift.TException
+    public boolean addUserAddress(com.vmesteonline.be.PostalAddress newAddress) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_addUserAddress(newAddress);
       return recv_addUserAddress();
@@ -441,36 +448,67 @@ public class UserService {
       sendBase("addUserAddress", args);
     }
 
-    public boolean recv_addUserAddress() throws org.apache.thrift.TException
+    public boolean recv_addUserAddress() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       addUserAddress_result result = new addUserAddress_result();
       receiveBase(result, "addUserAddress");
       if (result.isSetSuccess()) {
         return result.success;
       }
+      if (result.exc != null) {
+        throw result.exc;
+      }
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "addUserAddress failed: unknown result");
     }
 
-    public Set<com.vmesteonline.be.PostalAddress> getUserAddress() throws org.apache.thrift.TException
+    public com.vmesteonline.be.PostalAddress getUserHomeAddress() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      send_getUserAddress();
-      return recv_getUserAddress();
+      send_getUserHomeAddress();
+      return recv_getUserHomeAddress();
     }
 
-    public void send_getUserAddress() throws org.apache.thrift.TException
+    public void send_getUserHomeAddress() throws org.apache.thrift.TException
     {
-      getUserAddress_args args = new getUserAddress_args();
-      sendBase("getUserAddress", args);
+      getUserHomeAddress_args args = new getUserHomeAddress_args();
+      sendBase("getUserHomeAddress", args);
     }
 
-    public Set<com.vmesteonline.be.PostalAddress> recv_getUserAddress() throws org.apache.thrift.TException
+    public com.vmesteonline.be.PostalAddress recv_getUserHomeAddress() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      getUserAddress_result result = new getUserAddress_result();
-      receiveBase(result, "getUserAddress");
+      getUserHomeAddress_result result = new getUserHomeAddress_result();
+      receiveBase(result, "getUserHomeAddress");
       if (result.isSetSuccess()) {
         return result.success;
       }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUserAddress failed: unknown result");
+      if (result.exc != null) {
+        throw result.exc;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUserHomeAddress failed: unknown result");
+    }
+
+    public Set<com.vmesteonline.be.PostalAddress> getUserAddresses() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    {
+      send_getUserAddresses();
+      return recv_getUserAddresses();
+    }
+
+    public void send_getUserAddresses() throws org.apache.thrift.TException
+    {
+      getUserAddresses_args args = new getUserAddresses_args();
+      sendBase("getUserAddresses", args);
+    }
+
+    public Set<com.vmesteonline.be.PostalAddress> recv_getUserAddresses() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    {
+      getUserAddresses_result result = new getUserAddresses_result();
+      receiveBase(result, "getUserAddresses");
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      if (result.exc != null) {
+        throw result.exc;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUserAddresses failed: unknown result");
     }
 
   }
@@ -868,7 +906,7 @@ public class UserService {
         prot.writeMessageEnd();
       }
 
-      public boolean getResult() throws org.apache.thrift.TException {
+      public boolean getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -900,7 +938,7 @@ public class UserService {
         prot.writeMessageEnd();
       }
 
-      public boolean getResult() throws org.apache.thrift.TException {
+      public boolean getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -910,32 +948,61 @@ public class UserService {
       }
     }
 
-    public void getUserAddress(org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void getUserHomeAddress(org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      getUserAddress_call method_call = new getUserAddress_call(resultHandler, this, ___protocolFactory, ___transport);
+      getUserHomeAddress_call method_call = new getUserHomeAddress_call(resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
-    public static class getUserAddress_call extends org.apache.thrift.async.TAsyncMethodCall {
-      public getUserAddress_call(org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+    public static class getUserHomeAddress_call extends org.apache.thrift.async.TAsyncMethodCall {
+      public getUserHomeAddress_call(org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("getUserAddress", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        getUserAddress_args args = new getUserAddress_args();
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("getUserHomeAddress", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        getUserHomeAddress_args args = new getUserHomeAddress_args();
         args.write(prot);
         prot.writeMessageEnd();
       }
 
-      public Set<com.vmesteonline.be.PostalAddress> getResult() throws org.apache.thrift.TException {
+      public com.vmesteonline.be.PostalAddress getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_getUserAddress();
+        return (new Client(prot)).recv_getUserHomeAddress();
+      }
+    }
+
+    public void getUserAddresses(org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      getUserAddresses_call method_call = new getUserAddresses_call(resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class getUserAddresses_call extends org.apache.thrift.async.TAsyncMethodCall {
+      public getUserAddresses_call(org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("getUserAddresses", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        getUserAddresses_args args = new getUserAddresses_args();
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public Set<com.vmesteonline.be.PostalAddress> getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_getUserAddresses();
       }
     }
 
@@ -965,7 +1032,8 @@ public class UserService {
       processMap.put("createNewBuilding", new createNewBuilding());
       processMap.put("setUserAddress", new setUserAddress());
       processMap.put("addUserAddress", new addUserAddress());
-      processMap.put("getUserAddress", new getUserAddress());
+      processMap.put("getUserHomeAddress", new getUserHomeAddress());
+      processMap.put("getUserAddresses", new getUserAddresses());
       return processMap;
     }
 
@@ -1248,8 +1316,12 @@ public class UserService {
 
       public setUserAddress_result getResult(I iface, setUserAddress_args args) throws org.apache.thrift.TException {
         setUserAddress_result result = new setUserAddress_result();
-        result.success = iface.setUserAddress(args.newAddress);
-        result.setSuccessIsSet(true);
+        try {
+          result.success = iface.setUserAddress(args.newAddress);
+          result.setSuccessIsSet(true);
+        } catch (com.vmesteonline.be.InvalidOperation exc) {
+          result.exc = exc;
+        }
         return result;
       }
     }
@@ -1269,28 +1341,60 @@ public class UserService {
 
       public addUserAddress_result getResult(I iface, addUserAddress_args args) throws org.apache.thrift.TException {
         addUserAddress_result result = new addUserAddress_result();
-        result.success = iface.addUserAddress(args.newAddress);
-        result.setSuccessIsSet(true);
+        try {
+          result.success = iface.addUserAddress(args.newAddress);
+          result.setSuccessIsSet(true);
+        } catch (com.vmesteonline.be.InvalidOperation exc) {
+          result.exc = exc;
+        }
         return result;
       }
     }
 
-    public static class getUserAddress<I extends Iface> extends org.apache.thrift.ProcessFunction<I, getUserAddress_args> {
-      public getUserAddress() {
-        super("getUserAddress");
+    public static class getUserHomeAddress<I extends Iface> extends org.apache.thrift.ProcessFunction<I, getUserHomeAddress_args> {
+      public getUserHomeAddress() {
+        super("getUserHomeAddress");
       }
 
-      public getUserAddress_args getEmptyArgsInstance() {
-        return new getUserAddress_args();
+      public getUserHomeAddress_args getEmptyArgsInstance() {
+        return new getUserHomeAddress_args();
       }
 
       protected boolean isOneway() {
         return false;
       }
 
-      public getUserAddress_result getResult(I iface, getUserAddress_args args) throws org.apache.thrift.TException {
-        getUserAddress_result result = new getUserAddress_result();
-        result.success = iface.getUserAddress();
+      public getUserHomeAddress_result getResult(I iface, getUserHomeAddress_args args) throws org.apache.thrift.TException {
+        getUserHomeAddress_result result = new getUserHomeAddress_result();
+        try {
+          result.success = iface.getUserHomeAddress();
+        } catch (com.vmesteonline.be.InvalidOperation exc) {
+          result.exc = exc;
+        }
+        return result;
+      }
+    }
+
+    public static class getUserAddresses<I extends Iface> extends org.apache.thrift.ProcessFunction<I, getUserAddresses_args> {
+      public getUserAddresses() {
+        super("getUserAddresses");
+      }
+
+      public getUserAddresses_args getEmptyArgsInstance() {
+        return new getUserAddresses_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public getUserAddresses_result getResult(I iface, getUserAddresses_args args) throws org.apache.thrift.TException {
+        getUserAddresses_result result = new getUserAddresses_result();
+        try {
+          result.success = iface.getUserAddresses();
+        } catch (com.vmesteonline.be.InvalidOperation exc) {
+          result.exc = exc;
+        }
         return result;
       }
     }
@@ -1321,7 +1425,8 @@ public class UserService {
       processMap.put("createNewBuilding", new createNewBuilding());
       processMap.put("setUserAddress", new setUserAddress());
       processMap.put("addUserAddress", new addUserAddress());
-      processMap.put("getUserAddress", new getUserAddress());
+      processMap.put("getUserHomeAddress", new getUserHomeAddress());
+      processMap.put("getUserAddresses", new getUserAddresses());
       return processMap;
     }
 
@@ -1980,6 +2085,12 @@ public class UserService {
             byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
             org.apache.thrift.TBase msg;
             setUserAddress_result result = new setUserAddress_result();
+            if (e instanceof com.vmesteonline.be.InvalidOperation) {
+                        result.exc = (com.vmesteonline.be.InvalidOperation) e;
+                        result.setExcIsSet(true);
+                        msg = result;
+            }
+             else 
             {
               msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
               msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
@@ -2032,6 +2143,12 @@ public class UserService {
             byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
             org.apache.thrift.TBase msg;
             addUserAddress_result result = new addUserAddress_result();
+            if (e instanceof com.vmesteonline.be.InvalidOperation) {
+                        result.exc = (com.vmesteonline.be.InvalidOperation) e;
+                        result.setExcIsSet(true);
+                        msg = result;
+            }
+             else 
             {
               msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
               msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
@@ -2056,20 +2173,20 @@ public class UserService {
       }
     }
 
-    public static class getUserAddress<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getUserAddress_args, Set<com.vmesteonline.be.PostalAddress>> {
-      public getUserAddress() {
-        super("getUserAddress");
+    public static class getUserHomeAddress<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getUserHomeAddress_args, com.vmesteonline.be.PostalAddress> {
+      public getUserHomeAddress() {
+        super("getUserHomeAddress");
       }
 
-      public getUserAddress_args getEmptyArgsInstance() {
-        return new getUserAddress_args();
+      public getUserHomeAddress_args getEmptyArgsInstance() {
+        return new getUserHomeAddress_args();
       }
 
-      public AsyncMethodCallback<Set<com.vmesteonline.be.PostalAddress>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<com.vmesteonline.be.PostalAddress> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Set<com.vmesteonline.be.PostalAddress>>() { 
-          public void onComplete(Set<com.vmesteonline.be.PostalAddress> o) {
-            getUserAddress_result result = new getUserAddress_result();
+        return new AsyncMethodCallback<com.vmesteonline.be.PostalAddress>() { 
+          public void onComplete(com.vmesteonline.be.PostalAddress o) {
+            getUserHomeAddress_result result = new getUserHomeAddress_result();
             result.success = o;
             try {
               fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
@@ -2082,7 +2199,13 @@ public class UserService {
           public void onError(Exception e) {
             byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
             org.apache.thrift.TBase msg;
-            getUserAddress_result result = new getUserAddress_result();
+            getUserHomeAddress_result result = new getUserHomeAddress_result();
+            if (e instanceof com.vmesteonline.be.InvalidOperation) {
+                        result.exc = (com.vmesteonline.be.InvalidOperation) e;
+                        result.setExcIsSet(true);
+                        msg = result;
+            }
+             else 
             {
               msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
               msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
@@ -2102,8 +2225,65 @@ public class UserService {
         return false;
       }
 
-      public void start(I iface, getUserAddress_args args, org.apache.thrift.async.AsyncMethodCallback<Set<com.vmesteonline.be.PostalAddress>> resultHandler) throws TException {
-        iface.getUserAddress(resultHandler);
+      public void start(I iface, getUserHomeAddress_args args, org.apache.thrift.async.AsyncMethodCallback<com.vmesteonline.be.PostalAddress> resultHandler) throws TException {
+        iface.getUserHomeAddress(resultHandler);
+      }
+    }
+
+    public static class getUserAddresses<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getUserAddresses_args, Set<com.vmesteonline.be.PostalAddress>> {
+      public getUserAddresses() {
+        super("getUserAddresses");
+      }
+
+      public getUserAddresses_args getEmptyArgsInstance() {
+        return new getUserAddresses_args();
+      }
+
+      public AsyncMethodCallback<Set<com.vmesteonline.be.PostalAddress>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<Set<com.vmesteonline.be.PostalAddress>>() { 
+          public void onComplete(Set<com.vmesteonline.be.PostalAddress> o) {
+            getUserAddresses_result result = new getUserAddresses_result();
+            result.success = o;
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            getUserAddresses_result result = new getUserAddresses_result();
+            if (e instanceof com.vmesteonline.be.InvalidOperation) {
+                        result.exc = (com.vmesteonline.be.InvalidOperation) e;
+                        result.setExcIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, getUserAddresses_args args, org.apache.thrift.async.AsyncMethodCallback<Set<com.vmesteonline.be.PostalAddress>> resultHandler) throws TException {
+        iface.getUserAddresses(resultHandler);
       }
     }
 
@@ -11775,6 +11955,7 @@ public class UserService {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("setUserAddress_result");
 
     private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.BOOL, (short)0);
+    private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -11783,10 +11964,12 @@ public class UserService {
     }
 
     public boolean success; // required
+    public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SUCCESS((short)0, "success");
+      SUCCESS((short)0, "success"),
+      EXC((short)1, "exc");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -11803,6 +11986,8 @@ public class UserService {
         switch(fieldId) {
           case 0: // SUCCESS
             return SUCCESS;
+          case 1: // EXC
+            return EXC;
           default:
             return null;
         }
@@ -11850,6 +12035,8 @@ public class UserService {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+      tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(setUserAddress_result.class, metaDataMap);
     }
@@ -11858,11 +12045,13 @@ public class UserService {
     }
 
     public setUserAddress_result(
-      boolean success)
+      boolean success,
+      com.vmesteonline.be.InvalidOperation exc)
     {
       this();
       this.success = success;
       setSuccessIsSet(true);
+      this.exc = exc;
     }
 
     /**
@@ -11871,6 +12060,9 @@ public class UserService {
     public setUserAddress_result(setUserAddress_result other) {
       __isset_bitfield = other.__isset_bitfield;
       this.success = other.success;
+      if (other.isSetExc()) {
+        this.exc = new com.vmesteonline.be.InvalidOperation(other.exc);
+      }
     }
 
     public setUserAddress_result deepCopy() {
@@ -11881,6 +12073,7 @@ public class UserService {
     public void clear() {
       setSuccessIsSet(false);
       this.success = false;
+      this.exc = null;
     }
 
     public boolean isSuccess() {
@@ -11906,6 +12099,30 @@ public class UserService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SUCCESS_ISSET_ID, value);
     }
 
+    public com.vmesteonline.be.InvalidOperation getExc() {
+      return this.exc;
+    }
+
+    public setUserAddress_result setExc(com.vmesteonline.be.InvalidOperation exc) {
+      this.exc = exc;
+      return this;
+    }
+
+    public void unsetExc() {
+      this.exc = null;
+    }
+
+    /** Returns true if field exc is set (has been assigned a value) and false otherwise */
+    public boolean isSetExc() {
+      return this.exc != null;
+    }
+
+    public void setExcIsSet(boolean value) {
+      if (!value) {
+        this.exc = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case SUCCESS:
@@ -11916,6 +12133,14 @@ public class UserService {
         }
         break;
 
+      case EXC:
+        if (value == null) {
+          unsetExc();
+        } else {
+          setExc((com.vmesteonline.be.InvalidOperation)value);
+        }
+        break;
+
       }
     }
 
@@ -11923,6 +12148,9 @@ public class UserService {
       switch (field) {
       case SUCCESS:
         return Boolean.valueOf(isSuccess());
+
+      case EXC:
+        return getExc();
 
       }
       throw new IllegalStateException();
@@ -11937,6 +12165,8 @@ public class UserService {
       switch (field) {
       case SUCCESS:
         return isSetSuccess();
+      case EXC:
+        return isSetExc();
       }
       throw new IllegalStateException();
     }
@@ -11960,6 +12190,15 @@ public class UserService {
         if (!(this_present_success && that_present_success))
           return false;
         if (this.success != that.success)
+          return false;
+      }
+
+      boolean this_present_exc = true && this.isSetExc();
+      boolean that_present_exc = true && that.isSetExc();
+      if (this_present_exc || that_present_exc) {
+        if (!(this_present_exc && that_present_exc))
+          return false;
+        if (!this.exc.equals(that.exc))
           return false;
       }
 
@@ -11989,6 +12228,16 @@ public class UserService {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetExc()).compareTo(other.isSetExc());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetExc()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.exc, other.exc);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -12011,6 +12260,14 @@ public class UserService {
 
       sb.append("success:");
       sb.append(this.success);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("exc:");
+      if (this.exc == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.exc);
+      }
       first = false;
       sb.append(")");
       return sb.toString();
@@ -12065,6 +12322,15 @@ public class UserService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 1: // EXC
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.exc = new com.vmesteonline.be.InvalidOperation();
+                struct.exc.read(iprot);
+                struct.setExcIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -12083,6 +12349,11 @@ public class UserService {
         if (struct.isSetSuccess()) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           oprot.writeBool(struct.success);
+          oprot.writeFieldEnd();
+        }
+        if (struct.exc != null) {
+          oprot.writeFieldBegin(EXC_FIELD_DESC);
+          struct.exc.write(oprot);
           oprot.writeFieldEnd();
         }
         oprot.writeFieldStop();
@@ -12106,19 +12377,30 @@ public class UserService {
         if (struct.isSetSuccess()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetExc()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
           oprot.writeBool(struct.success);
+        }
+        if (struct.isSetExc()) {
+          struct.exc.write(oprot);
         }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, setUserAddress_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           struct.success = iprot.readBool();
           struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.exc = new com.vmesteonline.be.InvalidOperation();
+          struct.exc.read(iprot);
+          struct.setExcIsSet(true);
         }
       }
     }
@@ -12488,6 +12770,7 @@ public class UserService {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("addUserAddress_result");
 
     private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.BOOL, (short)0);
+    private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -12496,10 +12779,12 @@ public class UserService {
     }
 
     public boolean success; // required
+    public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SUCCESS((short)0, "success");
+      SUCCESS((short)0, "success"),
+      EXC((short)1, "exc");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -12516,6 +12801,8 @@ public class UserService {
         switch(fieldId) {
           case 0: // SUCCESS
             return SUCCESS;
+          case 1: // EXC
+            return EXC;
           default:
             return null;
         }
@@ -12563,6 +12850,8 @@ public class UserService {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+      tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(addUserAddress_result.class, metaDataMap);
     }
@@ -12571,11 +12860,13 @@ public class UserService {
     }
 
     public addUserAddress_result(
-      boolean success)
+      boolean success,
+      com.vmesteonline.be.InvalidOperation exc)
     {
       this();
       this.success = success;
       setSuccessIsSet(true);
+      this.exc = exc;
     }
 
     /**
@@ -12584,6 +12875,9 @@ public class UserService {
     public addUserAddress_result(addUserAddress_result other) {
       __isset_bitfield = other.__isset_bitfield;
       this.success = other.success;
+      if (other.isSetExc()) {
+        this.exc = new com.vmesteonline.be.InvalidOperation(other.exc);
+      }
     }
 
     public addUserAddress_result deepCopy() {
@@ -12594,6 +12888,7 @@ public class UserService {
     public void clear() {
       setSuccessIsSet(false);
       this.success = false;
+      this.exc = null;
     }
 
     public boolean isSuccess() {
@@ -12619,6 +12914,30 @@ public class UserService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SUCCESS_ISSET_ID, value);
     }
 
+    public com.vmesteonline.be.InvalidOperation getExc() {
+      return this.exc;
+    }
+
+    public addUserAddress_result setExc(com.vmesteonline.be.InvalidOperation exc) {
+      this.exc = exc;
+      return this;
+    }
+
+    public void unsetExc() {
+      this.exc = null;
+    }
+
+    /** Returns true if field exc is set (has been assigned a value) and false otherwise */
+    public boolean isSetExc() {
+      return this.exc != null;
+    }
+
+    public void setExcIsSet(boolean value) {
+      if (!value) {
+        this.exc = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case SUCCESS:
@@ -12629,6 +12948,14 @@ public class UserService {
         }
         break;
 
+      case EXC:
+        if (value == null) {
+          unsetExc();
+        } else {
+          setExc((com.vmesteonline.be.InvalidOperation)value);
+        }
+        break;
+
       }
     }
 
@@ -12636,6 +12963,9 @@ public class UserService {
       switch (field) {
       case SUCCESS:
         return Boolean.valueOf(isSuccess());
+
+      case EXC:
+        return getExc();
 
       }
       throw new IllegalStateException();
@@ -12650,6 +12980,8 @@ public class UserService {
       switch (field) {
       case SUCCESS:
         return isSetSuccess();
+      case EXC:
+        return isSetExc();
       }
       throw new IllegalStateException();
     }
@@ -12673,6 +13005,15 @@ public class UserService {
         if (!(this_present_success && that_present_success))
           return false;
         if (this.success != that.success)
+          return false;
+      }
+
+      boolean this_present_exc = true && this.isSetExc();
+      boolean that_present_exc = true && that.isSetExc();
+      if (this_present_exc || that_present_exc) {
+        if (!(this_present_exc && that_present_exc))
+          return false;
+        if (!this.exc.equals(that.exc))
           return false;
       }
 
@@ -12702,6 +13043,16 @@ public class UserService {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetExc()).compareTo(other.isSetExc());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetExc()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.exc, other.exc);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -12724,6 +13075,14 @@ public class UserService {
 
       sb.append("success:");
       sb.append(this.success);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("exc:");
+      if (this.exc == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.exc);
+      }
       first = false;
       sb.append(")");
       return sb.toString();
@@ -12778,6 +13137,15 @@ public class UserService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 1: // EXC
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.exc = new com.vmesteonline.be.InvalidOperation();
+                struct.exc.read(iprot);
+                struct.setExcIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -12796,6 +13164,11 @@ public class UserService {
         if (struct.isSetSuccess()) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           oprot.writeBool(struct.success);
+          oprot.writeFieldEnd();
+        }
+        if (struct.exc != null) {
+          oprot.writeFieldBegin(EXC_FIELD_DESC);
+          struct.exc.write(oprot);
           oprot.writeFieldEnd();
         }
         oprot.writeFieldStop();
@@ -12819,33 +13192,44 @@ public class UserService {
         if (struct.isSetSuccess()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetExc()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
           oprot.writeBool(struct.success);
+        }
+        if (struct.isSetExc()) {
+          struct.exc.write(oprot);
         }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, addUserAddress_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           struct.success = iprot.readBool();
           struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.exc = new com.vmesteonline.be.InvalidOperation();
+          struct.exc.read(iprot);
+          struct.setExcIsSet(true);
         }
       }
     }
 
   }
 
-  public static class getUserAddress_args implements org.apache.thrift.TBase<getUserAddress_args, getUserAddress_args._Fields>, java.io.Serializable, Cloneable, Comparable<getUserAddress_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserAddress_args");
+  public static class getUserHomeAddress_args implements org.apache.thrift.TBase<getUserHomeAddress_args, getUserHomeAddress_args._Fields>, java.io.Serializable, Cloneable, Comparable<getUserHomeAddress_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserHomeAddress_args");
 
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new getUserAddress_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new getUserAddress_argsTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new getUserHomeAddress_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getUserHomeAddress_argsTupleSchemeFactory());
     }
 
 
@@ -12908,20 +13292,20 @@ public class UserService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserAddress_args.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserHomeAddress_args.class, metaDataMap);
     }
 
-    public getUserAddress_args() {
+    public getUserHomeAddress_args() {
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public getUserAddress_args(getUserAddress_args other) {
+    public getUserHomeAddress_args(getUserHomeAddress_args other) {
     }
 
-    public getUserAddress_args deepCopy() {
-      return new getUserAddress_args(this);
+    public getUserHomeAddress_args deepCopy() {
+      return new getUserHomeAddress_args(this);
     }
 
     @Override
@@ -12954,12 +13338,12 @@ public class UserService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof getUserAddress_args)
-        return this.equals((getUserAddress_args)that);
+      if (that instanceof getUserHomeAddress_args)
+        return this.equals((getUserHomeAddress_args)that);
       return false;
     }
 
-    public boolean equals(getUserAddress_args that) {
+    public boolean equals(getUserHomeAddress_args that) {
       if (that == null)
         return false;
 
@@ -12972,7 +13356,7 @@ public class UserService {
     }
 
     @Override
-    public int compareTo(getUserAddress_args other) {
+    public int compareTo(getUserHomeAddress_args other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -12996,7 +13380,7 @@ public class UserService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("getUserAddress_args(");
+      StringBuilder sb = new StringBuilder("getUserHomeAddress_args(");
       boolean first = true;
 
       sb.append(")");
@@ -13024,15 +13408,15 @@ public class UserService {
       }
     }
 
-    private static class getUserAddress_argsStandardSchemeFactory implements SchemeFactory {
-      public getUserAddress_argsStandardScheme getScheme() {
-        return new getUserAddress_argsStandardScheme();
+    private static class getUserHomeAddress_argsStandardSchemeFactory implements SchemeFactory {
+      public getUserHomeAddress_argsStandardScheme getScheme() {
+        return new getUserHomeAddress_argsStandardScheme();
       }
     }
 
-    private static class getUserAddress_argsStandardScheme extends StandardScheme<getUserAddress_args> {
+    private static class getUserHomeAddress_argsStandardScheme extends StandardScheme<getUserHomeAddress_args> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserAddress_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserHomeAddress_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -13053,7 +13437,7 @@ public class UserService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserAddress_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserHomeAddress_args struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -13063,43 +13447,46 @@ public class UserService {
 
     }
 
-    private static class getUserAddress_argsTupleSchemeFactory implements SchemeFactory {
-      public getUserAddress_argsTupleScheme getScheme() {
-        return new getUserAddress_argsTupleScheme();
+    private static class getUserHomeAddress_argsTupleSchemeFactory implements SchemeFactory {
+      public getUserHomeAddress_argsTupleScheme getScheme() {
+        return new getUserHomeAddress_argsTupleScheme();
       }
     }
 
-    private static class getUserAddress_argsTupleScheme extends TupleScheme<getUserAddress_args> {
+    private static class getUserHomeAddress_argsTupleScheme extends TupleScheme<getUserHomeAddress_args> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, getUserAddress_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, getUserHomeAddress_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, getUserAddress_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, getUserHomeAddress_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
       }
     }
 
   }
 
-  public static class getUserAddress_result implements org.apache.thrift.TBase<getUserAddress_result, getUserAddress_result._Fields>, java.io.Serializable, Cloneable, Comparable<getUserAddress_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserAddress_result");
+  public static class getUserHomeAddress_result implements org.apache.thrift.TBase<getUserHomeAddress_result, getUserHomeAddress_result._Fields>, java.io.Serializable, Cloneable, Comparable<getUserHomeAddress_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserHomeAddress_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.SET, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+    private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new getUserAddress_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new getUserAddress_resultTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new getUserHomeAddress_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getUserHomeAddress_resultTupleSchemeFactory());
     }
 
-    public Set<com.vmesteonline.be.PostalAddress> success; // required
+    public com.vmesteonline.be.PostalAddress success; // required
+    public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SUCCESS((short)0, "success");
+      SUCCESS((short)0, "success"),
+      EXC((short)1, "exc");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -13116,6 +13503,715 @@ public class UserService {
         switch(fieldId) {
           case 0: // SUCCESS
             return SUCCESS;
+          case 1: // EXC
+            return EXC;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.vmesteonline.be.PostalAddress.class)));
+      tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserHomeAddress_result.class, metaDataMap);
+    }
+
+    public getUserHomeAddress_result() {
+    }
+
+    public getUserHomeAddress_result(
+      com.vmesteonline.be.PostalAddress success,
+      com.vmesteonline.be.InvalidOperation exc)
+    {
+      this();
+      this.success = success;
+      this.exc = exc;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getUserHomeAddress_result(getUserHomeAddress_result other) {
+      if (other.isSetSuccess()) {
+        this.success = new com.vmesteonline.be.PostalAddress(other.success);
+      }
+      if (other.isSetExc()) {
+        this.exc = new com.vmesteonline.be.InvalidOperation(other.exc);
+      }
+    }
+
+    public getUserHomeAddress_result deepCopy() {
+      return new getUserHomeAddress_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+      this.exc = null;
+    }
+
+    public com.vmesteonline.be.PostalAddress getSuccess() {
+      return this.success;
+    }
+
+    public getUserHomeAddress_result setSuccess(com.vmesteonline.be.PostalAddress success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public com.vmesteonline.be.InvalidOperation getExc() {
+      return this.exc;
+    }
+
+    public getUserHomeAddress_result setExc(com.vmesteonline.be.InvalidOperation exc) {
+      this.exc = exc;
+      return this;
+    }
+
+    public void unsetExc() {
+      this.exc = null;
+    }
+
+    /** Returns true if field exc is set (has been assigned a value) and false otherwise */
+    public boolean isSetExc() {
+      return this.exc != null;
+    }
+
+    public void setExcIsSet(boolean value) {
+      if (!value) {
+        this.exc = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((com.vmesteonline.be.PostalAddress)value);
+        }
+        break;
+
+      case EXC:
+        if (value == null) {
+          unsetExc();
+        } else {
+          setExc((com.vmesteonline.be.InvalidOperation)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
+      case EXC:
+        return getExc();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      case EXC:
+        return isSetExc();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getUserHomeAddress_result)
+        return this.equals((getUserHomeAddress_result)that);
+      return false;
+    }
+
+    public boolean equals(getUserHomeAddress_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      boolean this_present_exc = true && this.isSetExc();
+      boolean that_present_exc = true && that.isSetExc();
+      if (this_present_exc || that_present_exc) {
+        if (!(this_present_exc && that_present_exc))
+          return false;
+        if (!this.exc.equals(that.exc))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    @Override
+    public int compareTo(getUserHomeAddress_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetExc()).compareTo(other.isSetExc());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetExc()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.exc, other.exc);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getUserHomeAddress_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("exc:");
+      if (this.exc == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.exc);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+      if (success != null) {
+        success.validate();
+      }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class getUserHomeAddress_resultStandardSchemeFactory implements SchemeFactory {
+      public getUserHomeAddress_resultStandardScheme getScheme() {
+        return new getUserHomeAddress_resultStandardScheme();
+      }
+    }
+
+    private static class getUserHomeAddress_resultStandardScheme extends StandardScheme<getUserHomeAddress_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserHomeAddress_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.success = new com.vmesteonline.be.PostalAddress();
+                struct.success.read(iprot);
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 1: // EXC
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.exc = new com.vmesteonline.be.InvalidOperation();
+                struct.exc.read(iprot);
+                struct.setExcIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserHomeAddress_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.success != null) {
+          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+          struct.success.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        if (struct.exc != null) {
+          oprot.writeFieldBegin(EXC_FIELD_DESC);
+          struct.exc.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class getUserHomeAddress_resultTupleSchemeFactory implements SchemeFactory {
+      public getUserHomeAddress_resultTupleScheme getScheme() {
+        return new getUserHomeAddress_resultTupleScheme();
+      }
+    }
+
+    private static class getUserHomeAddress_resultTupleScheme extends TupleScheme<getUserHomeAddress_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, getUserHomeAddress_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSuccess()) {
+          optionals.set(0);
+        }
+        if (struct.isSetExc()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetSuccess()) {
+          struct.success.write(oprot);
+        }
+        if (struct.isSetExc()) {
+          struct.exc.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, getUserHomeAddress_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.success = new com.vmesteonline.be.PostalAddress();
+          struct.success.read(iprot);
+          struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.exc = new com.vmesteonline.be.InvalidOperation();
+          struct.exc.read(iprot);
+          struct.setExcIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class getUserAddresses_args implements org.apache.thrift.TBase<getUserAddresses_args, getUserAddresses_args._Fields>, java.io.Serializable, Cloneable, Comparable<getUserAddresses_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserAddresses_args");
+
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new getUserAddresses_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getUserAddresses_argsTupleSchemeFactory());
+    }
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserAddresses_args.class, metaDataMap);
+    }
+
+    public getUserAddresses_args() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getUserAddresses_args(getUserAddresses_args other) {
+    }
+
+    public getUserAddresses_args deepCopy() {
+      return new getUserAddresses_args(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getUserAddresses_args)
+        return this.equals((getUserAddresses_args)that);
+      return false;
+    }
+
+    public boolean equals(getUserAddresses_args that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    @Override
+    public int compareTo(getUserAddresses_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getUserAddresses_args(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class getUserAddresses_argsStandardSchemeFactory implements SchemeFactory {
+      public getUserAddresses_argsStandardScheme getScheme() {
+        return new getUserAddresses_argsStandardScheme();
+      }
+    }
+
+    private static class getUserAddresses_argsStandardScheme extends StandardScheme<getUserAddresses_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserAddresses_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserAddresses_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class getUserAddresses_argsTupleSchemeFactory implements SchemeFactory {
+      public getUserAddresses_argsTupleScheme getScheme() {
+        return new getUserAddresses_argsTupleScheme();
+      }
+    }
+
+    private static class getUserAddresses_argsTupleScheme extends TupleScheme<getUserAddresses_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, getUserAddresses_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, getUserAddresses_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+      }
+    }
+
+  }
+
+  public static class getUserAddresses_result implements org.apache.thrift.TBase<getUserAddresses_result, getUserAddresses_result._Fields>, java.io.Serializable, Cloneable, Comparable<getUserAddresses_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getUserAddresses_result");
+
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.SET, (short)0);
+    private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new getUserAddresses_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getUserAddresses_resultTupleSchemeFactory());
+    }
+
+    public Set<com.vmesteonline.be.PostalAddress> success; // required
+    public com.vmesteonline.be.InvalidOperation exc; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SUCCESS((short)0, "success"),
+      EXC((short)1, "exc");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          case 1: // EXC
+            return EXC;
           default:
             return null;
         }
@@ -13162,24 +14258,28 @@ public class UserService {
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
               new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.vmesteonline.be.PostalAddress.class))));
+      tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserAddress_result.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getUserAddresses_result.class, metaDataMap);
     }
 
-    public getUserAddress_result() {
+    public getUserAddresses_result() {
     }
 
-    public getUserAddress_result(
-      Set<com.vmesteonline.be.PostalAddress> success)
+    public getUserAddresses_result(
+      Set<com.vmesteonline.be.PostalAddress> success,
+      com.vmesteonline.be.InvalidOperation exc)
     {
       this();
       this.success = success;
+      this.exc = exc;
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public getUserAddress_result(getUserAddress_result other) {
+    public getUserAddresses_result(getUserAddresses_result other) {
       if (other.isSetSuccess()) {
         Set<com.vmesteonline.be.PostalAddress> __this__success = new HashSet<com.vmesteonline.be.PostalAddress>(other.success.size());
         for (com.vmesteonline.be.PostalAddress other_element : other.success) {
@@ -13187,15 +14287,19 @@ public class UserService {
         }
         this.success = __this__success;
       }
+      if (other.isSetExc()) {
+        this.exc = new com.vmesteonline.be.InvalidOperation(other.exc);
+      }
     }
 
-    public getUserAddress_result deepCopy() {
-      return new getUserAddress_result(this);
+    public getUserAddresses_result deepCopy() {
+      return new getUserAddresses_result(this);
     }
 
     @Override
     public void clear() {
       this.success = null;
+      this.exc = null;
     }
 
     public int getSuccessSize() {
@@ -13217,7 +14321,7 @@ public class UserService {
       return this.success;
     }
 
-    public getUserAddress_result setSuccess(Set<com.vmesteonline.be.PostalAddress> success) {
+    public getUserAddresses_result setSuccess(Set<com.vmesteonline.be.PostalAddress> success) {
       this.success = success;
       return this;
     }
@@ -13237,6 +14341,30 @@ public class UserService {
       }
     }
 
+    public com.vmesteonline.be.InvalidOperation getExc() {
+      return this.exc;
+    }
+
+    public getUserAddresses_result setExc(com.vmesteonline.be.InvalidOperation exc) {
+      this.exc = exc;
+      return this;
+    }
+
+    public void unsetExc() {
+      this.exc = null;
+    }
+
+    /** Returns true if field exc is set (has been assigned a value) and false otherwise */
+    public boolean isSetExc() {
+      return this.exc != null;
+    }
+
+    public void setExcIsSet(boolean value) {
+      if (!value) {
+        this.exc = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case SUCCESS:
@@ -13247,6 +14375,14 @@ public class UserService {
         }
         break;
 
+      case EXC:
+        if (value == null) {
+          unsetExc();
+        } else {
+          setExc((com.vmesteonline.be.InvalidOperation)value);
+        }
+        break;
+
       }
     }
 
@@ -13254,6 +14390,9 @@ public class UserService {
       switch (field) {
       case SUCCESS:
         return getSuccess();
+
+      case EXC:
+        return getExc();
 
       }
       throw new IllegalStateException();
@@ -13268,6 +14407,8 @@ public class UserService {
       switch (field) {
       case SUCCESS:
         return isSetSuccess();
+      case EXC:
+        return isSetExc();
       }
       throw new IllegalStateException();
     }
@@ -13276,12 +14417,12 @@ public class UserService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof getUserAddress_result)
-        return this.equals((getUserAddress_result)that);
+      if (that instanceof getUserAddresses_result)
+        return this.equals((getUserAddresses_result)that);
       return false;
     }
 
-    public boolean equals(getUserAddress_result that) {
+    public boolean equals(getUserAddresses_result that) {
       if (that == null)
         return false;
 
@@ -13294,6 +14435,15 @@ public class UserService {
           return false;
       }
 
+      boolean this_present_exc = true && this.isSetExc();
+      boolean that_present_exc = true && that.isSetExc();
+      if (this_present_exc || that_present_exc) {
+        if (!(this_present_exc && that_present_exc))
+          return false;
+        if (!this.exc.equals(that.exc))
+          return false;
+      }
+
       return true;
     }
 
@@ -13303,7 +14453,7 @@ public class UserService {
     }
 
     @Override
-    public int compareTo(getUserAddress_result other) {
+    public int compareTo(getUserAddresses_result other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -13316,6 +14466,16 @@ public class UserService {
       }
       if (isSetSuccess()) {
         lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetExc()).compareTo(other.isSetExc());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetExc()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.exc, other.exc);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -13337,7 +14497,7 @@ public class UserService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("getUserAddress_result(");
+      StringBuilder sb = new StringBuilder("getUserAddresses_result(");
       boolean first = true;
 
       sb.append("success:");
@@ -13345,6 +14505,14 @@ public class UserService {
         sb.append("null");
       } else {
         sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("exc:");
+      if (this.exc == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.exc);
       }
       first = false;
       sb.append(")");
@@ -13372,15 +14540,15 @@ public class UserService {
       }
     }
 
-    private static class getUserAddress_resultStandardSchemeFactory implements SchemeFactory {
-      public getUserAddress_resultStandardScheme getScheme() {
-        return new getUserAddress_resultStandardScheme();
+    private static class getUserAddresses_resultStandardSchemeFactory implements SchemeFactory {
+      public getUserAddresses_resultStandardScheme getScheme() {
+        return new getUserAddresses_resultStandardScheme();
       }
     }
 
-    private static class getUserAddress_resultStandardScheme extends StandardScheme<getUserAddress_result> {
+    private static class getUserAddresses_resultStandardScheme extends StandardScheme<getUserAddresses_result> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserAddress_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getUserAddresses_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -13409,6 +14577,15 @@ public class UserService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 1: // EXC
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.exc = new com.vmesteonline.be.InvalidOperation();
+                struct.exc.read(iprot);
+                struct.setExcIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -13420,7 +14597,7 @@ public class UserService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserAddress_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getUserAddresses_result struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -13436,28 +14613,36 @@ public class UserService {
           }
           oprot.writeFieldEnd();
         }
+        if (struct.exc != null) {
+          oprot.writeFieldBegin(EXC_FIELD_DESC);
+          struct.exc.write(oprot);
+          oprot.writeFieldEnd();
+        }
         oprot.writeFieldStop();
         oprot.writeStructEnd();
       }
 
     }
 
-    private static class getUserAddress_resultTupleSchemeFactory implements SchemeFactory {
-      public getUserAddress_resultTupleScheme getScheme() {
-        return new getUserAddress_resultTupleScheme();
+    private static class getUserAddresses_resultTupleSchemeFactory implements SchemeFactory {
+      public getUserAddresses_resultTupleScheme getScheme() {
+        return new getUserAddresses_resultTupleScheme();
       }
     }
 
-    private static class getUserAddress_resultTupleScheme extends TupleScheme<getUserAddress_result> {
+    private static class getUserAddresses_resultTupleScheme extends TupleScheme<getUserAddresses_result> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, getUserAddress_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, getUserAddresses_result struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetSuccess()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetExc()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
@@ -13467,12 +14652,15 @@ public class UserService {
             }
           }
         }
+        if (struct.isSetExc()) {
+          struct.exc.write(oprot);
+        }
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, getUserAddress_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, getUserAddresses_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
             org.apache.thrift.protocol.TSet _set85 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
@@ -13486,6 +14674,11 @@ public class UserService {
             }
           }
           struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.exc = new com.vmesteonline.be.InvalidOperation();
+          struct.exc.read(iprot);
+          struct.setExcIsSet(true);
         }
       }
     }

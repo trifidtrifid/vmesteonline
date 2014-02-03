@@ -54,22 +54,46 @@ public class UsertServiceImplTest {
 	
 	@Test
 	public void testGetUserGroups() {
-		fail("Not yet implemented");
+		try {
+			List<Group> userGroups = usi.getUserGroups();
+			boolean homeFound = false;
+			for( Group ug: userGroups ){
+				if( 0 == ug.getRadius() ){
+					Assert.assertFalse( homeFound );
+					homeFound = true;
+					ug.getName();
+				} 
+			}
+			Assert.assertTrue(userGroups.size() > 0);
+		}  catch (TException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
 	}
 
 	@Test
 	public void testGetUserRubrics() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetLocationCodesForRegistration() {
-		fail("Not yet implemented");
+		try {
+			List<Rubric> userRubrics = usi.getUserRubrics();
+			Assert.assertTrue(userRubrics.size() > 0);
+		}  catch (TException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
 	}
 
 	@Test
 	public void testGetAddressCatalogue() {
-		fail("Not yet implemented");
+		try {
+			FullAddressCatalogue addressCatalogue = usi.getAddressCatalogue();
+			Assert.assertTrue(addressCatalogue.countries.size() > 0);
+			Assert.assertTrue(addressCatalogue.cities.size() > 0);
+			Assert.assertTrue(addressCatalogue.streets.size() > 0);
+			Assert.assertTrue(addressCatalogue.buildings.size() > 0);
+		} catch (TException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
 	}
 
 
@@ -192,7 +216,7 @@ public class UsertServiceImplTest {
 			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, "Комент");
 			boolean created = usi.addUserAddress(newAddress);
 			Assert.assertTrue(created);
-			Set<PostalAddress> userAddresses = usi.getUserAddress();
+			Set<PostalAddress> userAddresses = usi.getUserAddresses();
 			PostalAddress found = null;
 			int addressCount = userAddresses.size();
 			for( PostalAddress pa : userAddresses ) {
@@ -210,15 +234,15 @@ public class UsertServiceImplTest {
 			Assert.assertEquals(found.getComment(), "Комент");
 			
 			created = usi.addUserAddress(newAddress);
-			int nextAddressCount = usi.getUserAddress().size();
+			int nextAddressCount = usi.getUserAddresses().size();
 			Assert.assertEquals(addressCount, nextAddressCount);
 			
 			created = usi.addUserAddress(new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, "Комент"));
-			int next2AddressCount = usi.getUserAddress().size();
+			int next2AddressCount = usi.getUserAddresses().size();
 			Assert.assertEquals(addressCount, next2AddressCount);
 			
 			created = usi.addUserAddress(new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 4, "Комент"));
-			int next3AddressCount = usi.getUserAddress().size();
+			int next3AddressCount = usi.getUserAddresses().size();
 			Assert.assertEquals(addressCount+1, next3AddressCount);
 			
 		} catch (TException e) {
@@ -238,7 +262,8 @@ public class UsertServiceImplTest {
 			
 			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, "Комент");
 			boolean created = usi.setUserAddress(newAddress);
-			Assert.assertTrue( usi.getCurrentUser().getAddress().equals(newAddress));
+			PostalAddress userHomeAddress = usi.getUserHomeAddress();
+			Assert.assertTrue( userHomeAddress.equals(newAddress));
 		} catch (TException e) {
 			e.printStackTrace();
 			fail(e.getMessage());

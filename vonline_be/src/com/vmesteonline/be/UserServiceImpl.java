@@ -400,7 +400,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
-	public Set<PostalAddress> getUserAddress() throws TException {
+	public Set<PostalAddress> getUserAddresses() throws TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser currentUser = getCurrentUser(pm);
@@ -416,4 +416,22 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
+
+	@Override
+	public PostalAddress getUserHomeAddress() throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser currentUser = getCurrentUser(pm);
+			if( null == currentUser )
+				throw new InvalidOperation(VoError.NotAuthorized, "No currnet user is set.");
+			VoPostalAddress address = currentUser.getAddress();
+			if( null == address) {
+				return null;
+			}
+			return address.getPostalAddress();
+		} finally {
+			pm.close();
+		}
+	}
+	
 }

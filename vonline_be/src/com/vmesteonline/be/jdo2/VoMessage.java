@@ -437,6 +437,7 @@ public class VoMessage {
 	 * @Order(extensions = @Extension(vendorName = "datanucleus", key =
 	 * "list-ordering", value = "createdAt asc"))
 	 */
+	@Unowned
 	private Set<VoMessage> childMessages;
 
 	@Persistent
