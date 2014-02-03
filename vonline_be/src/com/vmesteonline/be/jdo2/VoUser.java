@@ -1,7 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -91,11 +90,11 @@ public class VoUser {
 		this.password = password;
 	}
 
-	public List<VoUserGroup> getGroups() {
+	public Set<VoUserGroup> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(List<VoUserGroup> groups) {
+	public void setGroups(Set<VoUserGroup> groups) {
 		this.groups = groups;
 	}
 
@@ -168,7 +167,7 @@ public class VoUser {
 					ug.setLongitude(home.getLongitude());
 				}
 			} else {
-				groups = new ArrayList<VoUserGroup>();
+				groups = new TreeSet<VoUserGroup>();
 
 				groups.add(home);
 				for (VoGroup grp : Defaults.defaultGroups) {
@@ -177,7 +176,7 @@ public class VoUser {
 				}
 			}
 		} else {
-			groups = new ArrayList<VoUserGroup>();
+			groups = new TreeSet<VoUserGroup>();
 		}
 		addPostalAddress(userAddress, pm);
 		
@@ -197,7 +196,6 @@ public class VoUser {
 
 	public void addPostalAddress(VoPostalAddress pa, PersistenceManager pm){
 		addresses.add(pa);
-		pm.makePersistent(this);
 	}
 	
 	public void setCurrentPostalAddress(VoPostalAddress pa){
@@ -225,7 +223,7 @@ public class VoUser {
 
 	@Persistent
 	@Unowned
-	private List<VoUserGroup> groups;
+	private Set<VoUserGroup> groups;
 
 	@Persistent
 	@Unindexed

@@ -9,7 +9,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 
 @PersistenceCapable
-public class VoGroup {
+public class VoGroup implements Comparable <VoGroup>{
 
 	public static final int RADIUS_FOR_UNKNOWNS = 2000000; //whole world
 	
@@ -71,6 +71,11 @@ public class VoGroup {
 	@Override
 	public String toString() {
 		return "VoGroup [id=" + id + ", visibleName=" + visibleName + ", radius=" + radius + ", subscribedByDefault=" + subscribedByDefault + "]";
+	}
+
+	@Override
+	public int compareTo(VoGroup o) {
+		return Integer.compare(o.radius, radius);
 	}
 
 	

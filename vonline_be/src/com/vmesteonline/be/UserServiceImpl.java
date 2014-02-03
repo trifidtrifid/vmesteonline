@@ -61,7 +61,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			throw new InvalidOperation(VoError.NotAuthorized, "can't find user by id");
 		}
 		logger.info("find user name " + user.getEmail());
-		pm.retrieve(user);
+	
 		if (user.getGroups() == null) {
 			logger.warn("user with id " + Long.toString(userId) + " has no any groups");
 			throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");

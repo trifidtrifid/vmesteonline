@@ -18,11 +18,16 @@ import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 
 public class UsertServiceImplTest {
 	
+	private static final String SESSION_ID = "11111111111111111111111";
+	private static final String COMMENT = "Комент";
+	private static final String BUILDING_NO = "31";
+	private static final String STREET = "шоссе Революции";
+	private static final String CITY = "Saint-Petersburg";
 	private static final String COUNTRY = "Russia";
-	
 	
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
 			new LocalDatastoreServiceTestConfig());
+	
 	private AuthServiceImpl asi;
 	private String userHomeLocation;
 	private long userId;
@@ -34,7 +39,7 @@ public class UsertServiceImplTest {
 		
 		//register and login current user
 		//Initialize USer Service
-		String sessionId = "11111111111111111111111";
+		String sessionId = SESSION_ID;
 		asi = new AuthServiceImpl( sessionId );
 		List<String> userLocation = UserServiceImpl.getLocationCodesForRegistration();
 		Assert.assertNotNull( userLocation );
@@ -123,10 +128,10 @@ public class UsertServiceImplTest {
 	public void testCreateNewCity() {
 		try {
 			Country newCountry = usi.createNewCountry(COUNTRY);
-			City newCity = usi.createNewCity(newCountry.getId(),"Saint-Petersburg");
+			City newCity = usi.createNewCity(newCountry.getId(),CITY);
 			
 			
-			Assert.assertEquals(newCity.getName(), "Saint-Petersburg");
+			Assert.assertEquals(newCity.getName(), CITY);
 			Assert.assertEquals(newCity.getCountryId(),  newCountry.getId() );
 			Assert.assertTrue(newCity.getId() > 0 );
 			
@@ -134,7 +139,7 @@ public class UsertServiceImplTest {
 			Assert.assertTrue(cities.size() > 0);
 			City found = null;
 			for( City c : cities ){
-				if( "Saint-Petersburg".equals(c.getName())) 
+				if( CITY.equals(c.getName())) 
 					found = c;
 			}
 			Assert.assertEquals(found.getId(), newCity.getId());
@@ -150,11 +155,11 @@ public class UsertServiceImplTest {
 	public void testCreateNewStreet() {
 		try {
 			Country newCountry = usi.createNewCountry(COUNTRY);
-			City newCity = usi.createNewCity(newCountry.getId(),"Saint-Petersburg");
-			Street newStreet = usi.createNewStreet(newCity.getId(),"шоссе Революции");
+			City newCity = usi.createNewCity(newCountry.getId(),CITY);
+			Street newStreet = usi.createNewStreet(newCity.getId(),STREET);
 			
 			
-			Assert.assertEquals(newStreet.getName(), "шоссе Революции");
+			Assert.assertEquals(newStreet.getName(), STREET);
 			Assert.assertEquals(newStreet.getCityId(), newCity.getId() );
 			Assert.assertTrue(newStreet.getId() > 0 );
 			
@@ -162,7 +167,7 @@ public class UsertServiceImplTest {
 			Assert.assertTrue(streets.size() > 0);
 			Street found = null;
 			for( Street c : streets ){
-				if( "шоссе Революции".equals(c.getName())) 
+				if( STREET.equals(c.getName())) 
 					found = c;
 			}
 			Assert.assertNotNull(found);
@@ -179,11 +184,11 @@ public class UsertServiceImplTest {
 	public void testCreateNewBuilding() {
 		try {
 			Country newCountry = usi.createNewCountry(COUNTRY);
-			City newCity = usi.createNewCity(newCountry.getId(),"Saint-Petersburg");
-			Street newStreet = usi.createNewStreet(newCity.getId(),"шоссе Революции");
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(),"31",17D,53D);
+			City newCity = usi.createNewCity(newCountry.getId(),CITY);
+			Street newStreet = usi.createNewStreet(newCity.getId(),STREET);
+			Building newBuilding = usi.createNewBuilding(newStreet.getId(),BUILDING_NO,17D,53D);
 			
-			Assert.assertEquals(newBuilding.getFullNo(), "31");
+			Assert.assertEquals(newBuilding.getFullNo(), BUILDING_NO);
 			Assert.assertEquals(newBuilding.getStreetId(), newStreet.getId() );
 			Assert.assertTrue(newBuilding.getId() > 0 );
 			
@@ -191,7 +196,7 @@ public class UsertServiceImplTest {
 			Assert.assertTrue(buildings.size() > 0);
 			Building found = null;
 			for( Building c : buildings ){
-				if( "31".equals(c.getFullNo())) 
+				if( BUILDING_NO.equals(c.getFullNo())) 
 					found = c;
 			}
 			Assert.assertNotNull(found);
@@ -208,12 +213,12 @@ public class UsertServiceImplTest {
 	public void testAddUserAddress() {
 		try {
 			Country newCountry = usi.createNewCountry(COUNTRY);
-			City newCity = usi.createNewCity(newCountry.getId(),"Saint-Petersburg");
-			Street newStreet = usi.createNewStreet(newCity.getId(),"шоссе Революции");
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(),"31",17D,53D);
+			City newCity = usi.createNewCity(newCountry.getId(),CITY);
+			Street newStreet = usi.createNewStreet(newCity.getId(),STREET);
+			Building newBuilding = usi.createNewBuilding(newStreet.getId(),BUILDING_NO,17D,53D);
 			byte floor,flat,staircase;
 			
-			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, "Комент");
+			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT);
 			boolean created = usi.addUserAddress(newAddress);
 			Assert.assertTrue(created);
 			Set<PostalAddress> userAddresses = usi.getUserAddresses();
@@ -231,17 +236,17 @@ public class UsertServiceImplTest {
 			Assert.assertEquals(found.getStreet().getId(), newStreet.getId());
 			Assert.assertEquals(found.getCity().getId(), newCity.getId());
 			Assert.assertEquals(found.getCountry().getId(), newCountry.getId());
-			Assert.assertEquals(found.getComment(), "Комент");
+			Assert.assertEquals(found.getComment(), COMMENT);
 			
 			created = usi.addUserAddress(newAddress);
 			int nextAddressCount = usi.getUserAddresses().size();
 			Assert.assertEquals(addressCount, nextAddressCount);
 			
-			created = usi.addUserAddress(new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, "Комент"));
+			created = usi.addUserAddress(new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT));
 			int next2AddressCount = usi.getUserAddresses().size();
 			Assert.assertEquals(addressCount, next2AddressCount);
 			
-			created = usi.addUserAddress(new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 4, "Комент"));
+			created = usi.addUserAddress(new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 4, COMMENT));
 			int next3AddressCount = usi.getUserAddresses().size();
 			Assert.assertEquals(addressCount+1, next3AddressCount);
 			
@@ -255,12 +260,12 @@ public class UsertServiceImplTest {
 	public void testGetUserAddress() {
 		try {
 			Country newCountry = usi.createNewCountry(COUNTRY);
-			City newCity = usi.createNewCity(newCountry.getId(),"Saint-Petersburg");
-			Street newStreet = usi.createNewStreet(newCity.getId(),"шоссе Революции");
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(),"31",17D,53D);
+			City newCity = usi.createNewCity(newCountry.getId(),CITY);
+			Street newStreet = usi.createNewStreet(newCity.getId(),STREET);
+			Building newBuilding = usi.createNewBuilding(newStreet.getId(),BUILDING_NO,17D,53D);
 			byte floor,flat,staircase;
 			
-			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, "Комент");
+			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT);
 			boolean created = usi.setUserAddress(newAddress);
 			PostalAddress userHomeAddress = usi.getUserHomeAddress();
 			Assert.assertTrue( userHomeAddress.equals(newAddress));

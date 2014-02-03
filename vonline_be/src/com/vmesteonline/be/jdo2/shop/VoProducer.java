@@ -13,6 +13,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
@@ -86,8 +87,8 @@ public class VoProducer {
 	@Unindexed
 	private String homeURL;
 	
-	@Persistent(mappedBy="producers")
-	@ManyToMany
+	@Persistent
+	@Unowned
 	private Set<VoShop> shops;
 	
 	@Persistent(mappedBy="producer")

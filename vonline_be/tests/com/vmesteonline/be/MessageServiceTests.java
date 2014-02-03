@@ -4,13 +4,9 @@ import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 
-import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
-import javax.servlet.http.HttpSession;
 
 import org.apache.thrift.TException;
 import org.junit.After;
@@ -22,10 +18,7 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoGroup;
-import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
-import com.vmesteonline.be.jdo2.VoUserGroup;
-import com.vmesteonline.be.utils.Pair;
 
 public class MessageServiceTests {
 	
@@ -155,14 +148,13 @@ public class MessageServiceTests {
 					noLinkedMessages, noTags, 0L);
 			Assert.assertEquals(msg2.getTopicId(), topic.getId());
 			Assert.assertEquals(msg2.getParentId(), msg.getId());
-			Assert.assertEquals(msg.getAuthorId(), user2.getId().longValue());
+			Assert.assertEquals(msg.getAuthorId(), user1.getId().longValue());
 			
 	
 		} catch(Exception e){
 			e.printStackTrace();
 			fail("Exception thrown."+e.getMessage());
 		}			
-		
 	}
 	
 	@Test

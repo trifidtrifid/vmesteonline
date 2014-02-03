@@ -12,7 +12,7 @@ import com.vmesteonline.be.Group;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 
 @PersistenceCapable
-public class VoUserGroup {
+public class VoUserGroup implements Comparable<VoUserGroup>  {
 
 	public VoUserGroup(VoUser user, VoGroup grp) {
 		group = grp;
@@ -22,7 +22,7 @@ public class VoUserGroup {
 	}
 
 	public Group createGroup() {
-		return new Group(id.getId(), getGroup().getVisibleName(), name, description, group.getRadius());
+		return new Group(group.getId().getId(), group.getVisibleName(), name, description, group.getRadius());
 	}
 
 	public VoUserGroup(VoGroup grp, float longitude, float lattitude) {
@@ -108,5 +108,12 @@ public class VoUserGroup {
 	@Override
 	public String toString() {
 		return "VoUserGroup [id=" + id + ", name=" + name + ", longitude=" + longitude + ", latitude=" + latitude + ", group=" + group + "]";
+	}
+
+	@Override
+	public int compareTo(VoUserGroup that) {
+		return Float.compare( that.latitude , this.latitude ) != 0 ? Float.compare( that.latitude , this.latitude ) :
+			Float.compare( that.longitude , this.longitude ) != 0 ? Float.compare( that.longitude , this.longitude ) :
+				that.group.compareTo(this.group);
 	}
 }

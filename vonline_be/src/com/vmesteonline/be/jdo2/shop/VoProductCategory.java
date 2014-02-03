@@ -1,7 +1,9 @@
 package com.vmesteonline.be.jdo2.shop;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.jdo.PersistenceManager;
@@ -35,9 +37,9 @@ public class VoProductCategory {
 		}
 	
 	  topics = new HashSet<VoTopic>();
-	  shops = new HashSet<VoShop>();
+	  shops = new ArrayList<VoShop>();
 	  childs = new HashSet<VoProductCategory>();
-	  products = new HashSet<VoProduct>();
+	  products = new ArrayList<VoProduct>();
 	  
 	  PersistenceManager pm = PMF.getPm();  
 	  try {
@@ -109,15 +111,15 @@ public class VoProductCategory {
 	@OneToMany
 	private Set<VoProductCategory> childs;
 	
-	@Persistent(mappedBy="categories")
-	@ManyToMany
-	private Set<VoProduct> products;
+	@Persistent
+	@Unowned
+	private List<VoProduct> products;
 	
-	@Persistent(mappedBy="categories")
-	@ManyToMany
-	private Set<VoShop> shops;
+	@Persistent
+	@Unowned
+	private List<VoShop> shops;
 	
-	public Set<VoProduct> getProducts(){
+	public List<VoProduct> getProducts(){
 		return products;
 	} 
 	public long getId(){

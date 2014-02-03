@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 
@@ -88,7 +89,7 @@ public class AuthServiceImpTests  {
 			List<VoRubric> rubrics = user.getRubrics();
 			assertEquals(rubrics.isEmpty(), false);
 
-			List<VoUserGroup> groups = user.getGroups();
+			Set<VoUserGroup> groups = user.getGroups();
 			assertEquals(groups.isEmpty(), false);
 			for (VoUserGroup ug : groups) {
 				assertEquals(ug.getLatitude(), latitude, 0F);
