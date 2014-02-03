@@ -498,7 +498,7 @@ com.vmesteonline.be.AuthServiceClient.prototype.recv_registerNewUser = function(
   if (null !== result.success) {
     return result.success;
   }
-  throw 'registerNewUser failed: unknown result';
+  //throw 'registerNewUser failed: unknown result';
 };
 com.vmesteonline.be.AuthServiceClient.prototype.logout = function() {
   this.send_logout();

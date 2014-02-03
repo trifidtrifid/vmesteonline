@@ -3,7 +3,8 @@ $(document).ready(function(){
     var w = $(window),
         sidebar = $('#sidebar'),
         showLeft = $('.show-left'),
-        showLeftTop = (w.height()-showLeft.width())/2;
+        showLeftTop = (w.height()-showLeft.width())/ 2,
+        asideWidth = (w.width()-$('.container').width())/2;
     showLeft.css('top',showLeftTop);
     sidebar.css('min-height', w.height());
 
@@ -20,10 +21,20 @@ $(document).ready(function(){
     w.resize(function(){
         if ($(this).width() > 753){
             sidebar.css({'marginLeft':'0'});
+            $('.main-content').css('margin-left','190px');
         }else{
             sidebar.css({'marginLeft':'-190px'});
+            $('.main-content').css('margin-left','0');
         }
     });
+
+    function ChangeOrientation() {
+        var orientation = Math.abs(window.orientation) === 90 ? 'landscape' : 'portrait';
+        alert(orientation);
+        alert('1');
+    }
+
+    window.addEventListener('orientationchange', ChangeOrientation, false);
 
     $('.dropdown-menu li a').click(function(e){
         e.preventDefault();
@@ -108,14 +119,16 @@ $(document).ready(function(){
     $(window).scroll(function(){
 
        //убираем сайдбар при прокрутке
-        if ($(this).scrollTop() > 270){
-            $('.sidebar').hide();
-            $('.main-content').css('margin-left','0');
-            allFirstTopic.find('>.topic-descr>.widget-header').width('956');
-        }else {
-            $('.sidebar').show();
-            $('.main-content').css('margin-left','190px');
-            allFirstTopic.find('>.topic-descr>.widget-header').width('765');
+        if (w.width()>785){
+            if ($(this).scrollTop() > 270){
+                $('.sidebar').hide();
+                $('.main-content').css('margin-left','0');
+                //allFirstTopic.find('>.topic-descr>.widget-header').css('margin-right',asideWidth+10);////width('1206');
+            }else {
+                $('.sidebar').show();
+                $('.main-content').css('margin-left','190px');
+                //allFirstTopic.find('>.topic-descr>.widget-header').css('margin-right',0);////width('1014');
+            }
         }
 
     // фиксация хэдера темы, если много сообщений
@@ -135,16 +148,12 @@ $(document).ready(function(){
 
             if ($(this).scrollTop()>prevTopicsHeight[i]){
                 allFirstTopic.eq(curInd).find('>.topic-descr>.widget-header').addClass('fixed');
-                //allFirstTopic.eq(curInd).find('>.topic-descr').addClass('passive');
-                allFirstTopic.find('>.topic-descr>.widget-header').width('956');
-                //allFirstTopic.eq(curInd).find('>.topic-descr>.widget-body').hide();
+                allFirstTopic.find('>.topic-descr>.widget-header').css('margin-right',asideWidth+10);////width('1206');
                 if ($(this).scrollTop()<270){
-                    allFirstTopic.find('>.topic-descr>.widget-header').width('765');
+                    allFirstTopic.find('>.topic-descr>.widget-header').css('margin-right',asideWidth+10);////width('1014');
                 }
             }else{
-                allFirstTopic.eq(curInd).find('>.topic-descr>.widget-header').removeClass('fixed');
-                //allFirstTopic.eq(curInd).find('>.topic-descr').removeClass('passive');
-                //allFirstTopic.eq(curInd).find('>.topic-descr>.widget-body').show();
+                allFirstTopic.eq(curInd).find('>.topic-descr>.widget-header').removeClass('fixed').css('margin-right',0);
             }
         }
     });
