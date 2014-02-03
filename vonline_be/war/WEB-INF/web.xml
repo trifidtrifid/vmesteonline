@@ -13,6 +13,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<url-pattern>/thrift/AuthService</url-pattern>
 	</servlet-mapping>
 	<servlet>
+		<servlet-name>UserServiceServlet</servlet-name>
+		<servlet-class>com.vmesteonline.be.UserSericeServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UserServiceServlet</servlet-name>
+		<url-pattern>/thrift/UserService</url-pattern>
+	</servlet-mapping>
+	<servlet>
 		<servlet-name>MessageServiceServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.MessageServiceServlet</servlet-class>
 	</servlet>

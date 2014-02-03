@@ -13,7 +13,9 @@
 <%@ page import="com.vmesteonline.be.Topic"%>
 <%@ page import="com.vmesteonline.be.Message"%>
 <%@ page import="com.vmesteonline.be.MessageType"%>
-<%@ page import="com.vmesteonline.be.MessageServiceImpl"%> 
+<%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
+<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
+<%@ page import="com.vmesteonline.be.jdo2.VoSession"%>  
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
@@ -27,6 +29,7 @@
 <script src="js/thrift.js" type="text/javascript"></script>
 <script src="gen-js/messageservice_types.js" type="text/javascript"></script>
 <script src="gen-js/MessageService.js" type="text/javascript"></script>
+
 <script src="js/jquery-2.0.3.min.js"></script>
     <!--[if lt IE 9]>
     <script>
@@ -39,47 +42,66 @@
     <![endif]-->
 </head>
 <body>
-<%
 
-	UserServiceImpl userService = new UserServiceImpl(request.getSession());
+<%
+	//AuthServiceImpl authService = new AuthServiceImpl(request.getSession().getId());
+	//out.print(AuthServiceImpl.getSession(request.getSession().getId()));
+		
+	 UserServiceImpl userService = new UserServiceImpl(request.getSession());
 			
 	List<Group> someGroupId = userService.getUserGroups();	
 	List<Rubric> someRoubricId = userService.getUserRubrics();	
 	
+	
 	MessageServiceImpl messageService = new MessageServiceImpl();
 	//out.print("Topics:<br>");
-	MessageType mesType = MessageType.BASE;
+	MessageType mesType = MessageType.BASE;	
+	Group ttt = someGroupId.get(0);
+	int a = 8;
+	int c = 9;
 	TopicListPart Topics = messageService.getTopics(someGroupId.get(0).id,someRoubricId.get(0).id,mesType,20,0,10);	
 		
-	//out.print("TopicListPart Size: " + Topics.totalSize + "<br>"); 
-	//out.print("Topics size: " + Topics.topics.size() + "<br>"); 
-		
+			
 	Topic[] currTopic= new Topic[100];// = (Topic)Topics.topics.toArray()[0];
 	int topicsLen = Topics.topics.toArray().length;
 	
-	//out.print(Topics.topics.toArray().length);
-	
-	for (Topic t : Topics.topics) {
-		//out.print("topic id: " + t.id + "<br>");		
-	}
-	
+	pageContext.setAttribute("groups",userService.getUserGroups());
+	pageContext.setAttribute("rubrics",userService.getUserRubrics());
 	
 %>
-    <script type="text/javascript">
+<%-- <c:set var="b" scope="session" value="4" />
+<c:set var="q" value="1" />
+<c:out value="${sessionScope.b}" />
+<c:out value="${txtt.id}" />
+
+<c:set var="friends" value="${UserServiceImpl.userGroups}" />
+ <c:out value="${friends}"/> --%>
+
+   <script type="text/javascript">
         $(document).ready(function(){
-        	var transport = new Thrift.Transport("/thrift/MessageService");
+        	/* var transport = new Thrift.Transport("/thrift/UserService");
     		var protocol = new Thrift.Protocol(transport);
-    		var client = new com.vmesteonline.be.MessageServiceClient(protocol);   		
-        	var Messages;
-        	        	
+    		var client = new com.vmesteonline.be.UserServiceClient(protocol);
+    		
+    		var someGroupId = client.getUserGroups();	
+			var someRoubricId = client.getUserRubrics();
+			
+			alert(someGroupId[0].id); */
+        	
+        	<%-- transport = new Thrift.Transport("/thrift/MessageService");
+    		protocol = new Thrift.Protocol(transport);
+    		client = new com.vmesteonline.be.MessageServiceClient(protocol);   			
+    		
+        	var Messages;       	
+        	
         	var messageList = '';
         	//alert('1');
         	<%
         	for(int i=0; i<topicsLen; i++){
         		currTopic[i] = (Topic)Topics.topics.toArray()[i];	%>
-        		
-        		Messages = client.getMessages(<%= currTopic[i].id %>,<%= someGroupId.get(0).id %>, 'BASE', <%= currTopic[i].id %>,false,0,2);
-        		alert(Messages.messages[0].id);
+        		        		
+        		/*Messages = client.getMessages(<%= currTopic[i].id %>,<%= someGroupId.get(0).id %>, 'BASE', <%= currTopic[i].id %>,false,0,2);*/
+        		//alert(Messages.messages[0].id);
         		
         		<%if(currTopic[i].messageNum > 0){
         			MessageListPart Messages = messageService.getMessages(currTopic[i].id,someGroupId.get(0).id,mesType,currTopic[i].id,false,0,2);
@@ -132,16 +154,17 @@
                         '</div>'+
                     '</li>'+
                 '</ol>';
-        		<% } %>	
+        		<% } %>
+        		//alert(messageList);
         			$('.dd>.dd-list>.topic-item:eq(<%= i %>)').append(messageList);
        		
        		<%
         		}        		
         	}
         	%>        	
-        });
+        }); --%>
     </script>
-
+ 
 <div class="container">
     <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
@@ -229,28 +252,56 @@
                     try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
                 </script>
                 <ul class="nav nav-list">
-                <% for (Rubric r : userService.getUserRubrics()) {%>
+                
+                <c:forEach var="rubric" items="${rubrics}">                    
+                  	<li><a href="#">
+                  		<span class="menu-text">"${rubric.visibleName}"</span>
+                        <b>(3)</b>                  	
+                  	</a></li> 
+                </c:forEach>
+                
+               <%-- <% for (Rubric r : userService.getUserRubrics()) {%>
                 	<li>
                         <a href="index.html">
                             <span class="menu-text"><%= r.visibleName %></span>
                             <b>(3)</b>
                         </a>
                     </li>            				
-            	<% 	} %>
+            	<% 	} %>  --%>
+            	
                 </ul><!-- /.nav-list -->
             </aside>
             <div class="main-content">
                 <nav class="submenu">                
-                    <ul>
-                    
-                    <c:forEach var="group" items="${userService.userGroups}">                    
+                    <ul>                    
+                    <c:forEach var="group" items="${groups}">                    
                     	<li><a class="btn btn-sm btn-info no-border" href="#">"${group.visibleName}"</a></li> 
-                    </c:forEach>
-                    <%-- <% for (Group g : userService.getUserGroups()) { %>                    
+                    </c:forEach> 
+                    	<li class="btn-group">
+                    	<button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                            <span class="btn-group-text">Действие</span>
+                            <span class="icon-caret-down icon-on-right"></span>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-yellow">
+                            <li>
+                                <a href="#">Действие 1</a>
+                            </li>
+
+                            <li>
+                                <a href="#">Действие 2</a>
+                            </li>
+
+                            <li>
+                                <a href="#">Что-то еще</a>
+                            </li>
+                        </ul>
+                    	</li>
+                     <%-- <% for (Group g : userService.getUserGroups()) { %>                    
                 		<li><a class="btn btn-sm btn-info no-border" href="#"><%= g.visibleName %></a></li>            				
-            		<% } %> --%>                       
+            		<% } %>  --%>                        
                     </ul>
-                    <div class="btn-group">
+                    <!-- <div class="btn-group">
                         <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
                             <span class="btn-group-text">Действие</span>
                             <span class="icon-caret-down icon-on-right"></span>
@@ -269,8 +320,8 @@
                                 <a href="#">Что-то еще</a>
                             </li>
                         </ul>
-                    </div><!-- /btn-group -->
-                    <div class="clear"></div>
+                    </div>/btn-group
+                     --><div class="clear"></div>
                 </nav>
                 <section class="options">
                     <div class="btn-group">
@@ -307,7 +358,7 @@
 
                     <div class="dd dd-draghandle">
                         <ol class="dd-list">
-                        <% for (Topic t : Topics.topics) { %>
+                         <% for (Topic t : Topics.topics) { %>
                         	<li class="dd-item dd2-item topic-item" data-id="15">
                                 <div class="dd2-content widget-box topic-descr">
                                     <header class="widget-header header-color-blue2">
@@ -316,13 +367,12 @@
                                             <i class="fa fa-minus"></i>
                                             <i class="fa fa-sitemap"></i>
                                         </span>
-                                        <h2><%= t.subject %></h2>
-
                                         <div class="widget-toolbar no-border">
                                             <a class="fa fa-thumb-tack fa-2x" href="#"></a>
                                             <a class="fa fa-check-square-o fa-2x" href="#"></a>
                                             <a class="fa fa-times fa-2x" href="#"></a>
                                         </div>
+                                        <h2><%= t.subject %></h2>                                        
                                     </header>
 
                                     <div class="widget-body">
@@ -381,7 +431,7 @@
                                 </div>
                             </li>                    
                     				
-                    	<% } %>
+                    	<% } %> 
                             
                         </ol>
                     </div>
