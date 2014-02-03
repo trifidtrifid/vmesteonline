@@ -127,6 +127,7 @@ service ShopService {
 	
 	void setDates( 1:map<i32,DateType> dateDateTypeMap),
 	void setDeliveryCosts( 1:map<DeliveryType,double> newDeliveryCosts) throws (1:error.InvalidOperation exc),
+	void setPaymentTypesCosts( 1:map<PaymentType,double> newPaymentTypeCosts) throws (1:error.InvalidOperation exc),
 	
 	void setOrderPaymentStatus(1:i64 orderId, 2: PaymentStatus newStatus) throws (1:error.InvalidOperation exc),
 	

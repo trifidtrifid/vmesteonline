@@ -81,6 +81,8 @@ public class ShopService {
 
     public void setDeliveryCosts(Map<DeliveryType,Double> newDeliveryCosts) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
+    public void setPaymentTypesCosts(Map<PaymentType,Double> newPaymentTypeCosts) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+
     public void setOrderPaymentStatus(long orderId, PaymentStatus newStatus) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     /**
@@ -212,6 +214,8 @@ public class ShopService {
     public void setDates(Map<Integer,DateType> dateDateTypeMap, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void setDeliveryCosts(Map<DeliveryType,Double> newDeliveryCosts, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void setPaymentTypesCosts(Map<PaymentType,Double> newPaymentTypeCosts, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void setOrderPaymentStatus(long orderId, PaymentStatus newStatus, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -502,6 +506,29 @@ public class ShopService {
     {
       setDeliveryCosts_result result = new setDeliveryCosts_result();
       receiveBase(result, "setDeliveryCosts");
+      if (result.exc != null) {
+        throw result.exc;
+      }
+      return;
+    }
+
+    public void setPaymentTypesCosts(Map<PaymentType,Double> newPaymentTypeCosts) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    {
+      send_setPaymentTypesCosts(newPaymentTypeCosts);
+      recv_setPaymentTypesCosts();
+    }
+
+    public void send_setPaymentTypesCosts(Map<PaymentType,Double> newPaymentTypeCosts) throws org.apache.thrift.TException
+    {
+      setPaymentTypesCosts_args args = new setPaymentTypesCosts_args();
+      args.setNewPaymentTypeCosts(newPaymentTypeCosts);
+      sendBase("setPaymentTypesCosts", args);
+    }
+
+    public void recv_setPaymentTypesCosts() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    {
+      setPaymentTypesCosts_result result = new setPaymentTypesCosts_result();
+      receiveBase(result, "setPaymentTypesCosts");
       if (result.exc != null) {
         throw result.exc;
       }
@@ -1384,6 +1411,38 @@ public class ShopService {
       }
     }
 
+    public void setPaymentTypesCosts(Map<PaymentType,Double> newPaymentTypeCosts, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      setPaymentTypesCosts_call method_call = new setPaymentTypesCosts_call(newPaymentTypeCosts, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class setPaymentTypesCosts_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private Map<PaymentType,Double> newPaymentTypeCosts;
+      public setPaymentTypesCosts_call(Map<PaymentType,Double> newPaymentTypeCosts, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.newPaymentTypeCosts = newPaymentTypeCosts;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("setPaymentTypesCosts", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        setPaymentTypesCosts_args args = new setPaymentTypesCosts_args();
+        args.setNewPaymentTypeCosts(newPaymentTypeCosts);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_setPaymentTypesCosts();
+      }
+    }
+
     public void setOrderPaymentStatus(long orderId, PaymentStatus newStatus, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       setOrderPaymentStatus_call method_call = new setOrderPaymentStatus_call(orderId, newStatus, resultHandler, this, ___protocolFactory, ___transport);
@@ -2087,6 +2146,7 @@ public class ShopService {
       processMap.put("updateOrderStatusesById", new updateOrderStatusesById());
       processMap.put("setDates", new setDates());
       processMap.put("setDeliveryCosts", new setDeliveryCosts());
+      processMap.put("setPaymentTypesCosts", new setPaymentTypesCosts());
       processMap.put("setOrderPaymentStatus", new setOrderPaymentStatus());
       processMap.put("setProductPrices", new setProductPrices());
       processMap.put("getShops", new getShops());
@@ -2319,6 +2379,30 @@ public class ShopService {
         setDeliveryCosts_result result = new setDeliveryCosts_result();
         try {
           iface.setDeliveryCosts(args.newDeliveryCosts);
+        } catch (com.vmesteonline.be.InvalidOperation exc) {
+          result.exc = exc;
+        }
+        return result;
+      }
+    }
+
+    public static class setPaymentTypesCosts<I extends Iface> extends org.apache.thrift.ProcessFunction<I, setPaymentTypesCosts_args> {
+      public setPaymentTypesCosts() {
+        super("setPaymentTypesCosts");
+      }
+
+      public setPaymentTypesCosts_args getEmptyArgsInstance() {
+        return new setPaymentTypesCosts_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public setPaymentTypesCosts_result getResult(I iface, setPaymentTypesCosts_args args) throws org.apache.thrift.TException {
+        setPaymentTypesCosts_result result = new setPaymentTypesCosts_result();
+        try {
+          iface.setPaymentTypesCosts(args.newPaymentTypeCosts);
         } catch (com.vmesteonline.be.InvalidOperation exc) {
           result.exc = exc;
         }
@@ -2859,6 +2943,7 @@ public class ShopService {
       processMap.put("updateOrderStatusesById", new updateOrderStatusesById());
       processMap.put("setDates", new setDates());
       processMap.put("setDeliveryCosts", new setDeliveryCosts());
+      processMap.put("setPaymentTypesCosts", new setPaymentTypesCosts());
       processMap.put("setOrderPaymentStatus", new setOrderPaymentStatus());
       processMap.put("setProductPrices", new setProductPrices());
       processMap.put("getShops", new getShops());
@@ -3387,6 +3472,62 @@ public class ShopService {
 
       public void start(I iface, setDeliveryCosts_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
         iface.setDeliveryCosts(args.newDeliveryCosts,resultHandler);
+      }
+    }
+
+    public static class setPaymentTypesCosts<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, setPaymentTypesCosts_args, Void> {
+      public setPaymentTypesCosts() {
+        super("setPaymentTypesCosts");
+      }
+
+      public setPaymentTypesCosts_args getEmptyArgsInstance() {
+        return new setPaymentTypesCosts_args();
+      }
+
+      public AsyncMethodCallback<Void> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<Void>() { 
+          public void onComplete(Void o) {
+            setPaymentTypesCosts_result result = new setPaymentTypesCosts_result();
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            setPaymentTypesCosts_result result = new setPaymentTypesCosts_result();
+            if (e instanceof com.vmesteonline.be.InvalidOperation) {
+                        result.exc = (com.vmesteonline.be.InvalidOperation) e;
+                        result.setExcIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, setPaymentTypesCosts_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
+        iface.setPaymentTypesCosts(args.newPaymentTypeCosts,resultHandler);
       }
     }
 
@@ -12803,6 +12944,779 @@ public class ShopService {
 
   }
 
+  public static class setPaymentTypesCosts_args implements org.apache.thrift.TBase<setPaymentTypesCosts_args, setPaymentTypesCosts_args._Fields>, java.io.Serializable, Cloneable, Comparable<setPaymentTypesCosts_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("setPaymentTypesCosts_args");
+
+    private static final org.apache.thrift.protocol.TField NEW_PAYMENT_TYPE_COSTS_FIELD_DESC = new org.apache.thrift.protocol.TField("newPaymentTypeCosts", org.apache.thrift.protocol.TType.MAP, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new setPaymentTypesCosts_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new setPaymentTypesCosts_argsTupleSchemeFactory());
+    }
+
+    public Map<PaymentType,Double> newPaymentTypeCosts; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      NEW_PAYMENT_TYPE_COSTS((short)1, "newPaymentTypeCosts");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // NEW_PAYMENT_TYPE_COSTS
+            return NEW_PAYMENT_TYPE_COSTS;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.NEW_PAYMENT_TYPE_COSTS, new org.apache.thrift.meta_data.FieldMetaData("newPaymentTypeCosts", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
+              new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, PaymentType.class), 
+              new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE))));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(setPaymentTypesCosts_args.class, metaDataMap);
+    }
+
+    public setPaymentTypesCosts_args() {
+    }
+
+    public setPaymentTypesCosts_args(
+      Map<PaymentType,Double> newPaymentTypeCosts)
+    {
+      this();
+      this.newPaymentTypeCosts = newPaymentTypeCosts;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public setPaymentTypesCosts_args(setPaymentTypesCosts_args other) {
+      if (other.isSetNewPaymentTypeCosts()) {
+        Map<PaymentType,Double> __this__newPaymentTypeCosts = new HashMap<PaymentType,Double>(other.newPaymentTypeCosts.size());
+        for (Map.Entry<PaymentType, Double> other_element : other.newPaymentTypeCosts.entrySet()) {
+
+          PaymentType other_element_key = other_element.getKey();
+          Double other_element_value = other_element.getValue();
+
+          PaymentType __this__newPaymentTypeCosts_copy_key = other_element_key;
+
+          Double __this__newPaymentTypeCosts_copy_value = other_element_value;
+
+          __this__newPaymentTypeCosts.put(__this__newPaymentTypeCosts_copy_key, __this__newPaymentTypeCosts_copy_value);
+        }
+        this.newPaymentTypeCosts = __this__newPaymentTypeCosts;
+      }
+    }
+
+    public setPaymentTypesCosts_args deepCopy() {
+      return new setPaymentTypesCosts_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.newPaymentTypeCosts = null;
+    }
+
+    public int getNewPaymentTypeCostsSize() {
+      return (this.newPaymentTypeCosts == null) ? 0 : this.newPaymentTypeCosts.size();
+    }
+
+    public void putToNewPaymentTypeCosts(PaymentType key, double val) {
+      if (this.newPaymentTypeCosts == null) {
+        this.newPaymentTypeCosts = new HashMap<PaymentType,Double>();
+      }
+      this.newPaymentTypeCosts.put(key, val);
+    }
+
+    public Map<PaymentType,Double> getNewPaymentTypeCosts() {
+      return this.newPaymentTypeCosts;
+    }
+
+    public setPaymentTypesCosts_args setNewPaymentTypeCosts(Map<PaymentType,Double> newPaymentTypeCosts) {
+      this.newPaymentTypeCosts = newPaymentTypeCosts;
+      return this;
+    }
+
+    public void unsetNewPaymentTypeCosts() {
+      this.newPaymentTypeCosts = null;
+    }
+
+    /** Returns true if field newPaymentTypeCosts is set (has been assigned a value) and false otherwise */
+    public boolean isSetNewPaymentTypeCosts() {
+      return this.newPaymentTypeCosts != null;
+    }
+
+    public void setNewPaymentTypeCostsIsSet(boolean value) {
+      if (!value) {
+        this.newPaymentTypeCosts = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case NEW_PAYMENT_TYPE_COSTS:
+        if (value == null) {
+          unsetNewPaymentTypeCosts();
+        } else {
+          setNewPaymentTypeCosts((Map<PaymentType,Double>)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case NEW_PAYMENT_TYPE_COSTS:
+        return getNewPaymentTypeCosts();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case NEW_PAYMENT_TYPE_COSTS:
+        return isSetNewPaymentTypeCosts();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof setPaymentTypesCosts_args)
+        return this.equals((setPaymentTypesCosts_args)that);
+      return false;
+    }
+
+    public boolean equals(setPaymentTypesCosts_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_newPaymentTypeCosts = true && this.isSetNewPaymentTypeCosts();
+      boolean that_present_newPaymentTypeCosts = true && that.isSetNewPaymentTypeCosts();
+      if (this_present_newPaymentTypeCosts || that_present_newPaymentTypeCosts) {
+        if (!(this_present_newPaymentTypeCosts && that_present_newPaymentTypeCosts))
+          return false;
+        if (!this.newPaymentTypeCosts.equals(that.newPaymentTypeCosts))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    @Override
+    public int compareTo(setPaymentTypesCosts_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetNewPaymentTypeCosts()).compareTo(other.isSetNewPaymentTypeCosts());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetNewPaymentTypeCosts()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.newPaymentTypeCosts, other.newPaymentTypeCosts);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("setPaymentTypesCosts_args(");
+      boolean first = true;
+
+      sb.append("newPaymentTypeCosts:");
+      if (this.newPaymentTypeCosts == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.newPaymentTypeCosts);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class setPaymentTypesCosts_argsStandardSchemeFactory implements SchemeFactory {
+      public setPaymentTypesCosts_argsStandardScheme getScheme() {
+        return new setPaymentTypesCosts_argsStandardScheme();
+      }
+    }
+
+    private static class setPaymentTypesCosts_argsStandardScheme extends StandardScheme<setPaymentTypesCosts_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, setPaymentTypesCosts_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // NEW_PAYMENT_TYPE_COSTS
+              if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
+                {
+                  org.apache.thrift.protocol.TMap _map182 = iprot.readMapBegin();
+                  struct.newPaymentTypeCosts = new HashMap<PaymentType,Double>(2*_map182.size);
+                  for (int _i183 = 0; _i183 < _map182.size; ++_i183)
+                  {
+                    PaymentType _key184;
+                    double _val185;
+                    _key184 = PaymentType.findByValue(iprot.readI32());
+                    _val185 = iprot.readDouble();
+                    struct.newPaymentTypeCosts.put(_key184, _val185);
+                  }
+                  iprot.readMapEnd();
+                }
+                struct.setNewPaymentTypeCostsIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, setPaymentTypesCosts_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.newPaymentTypeCosts != null) {
+          oprot.writeFieldBegin(NEW_PAYMENT_TYPE_COSTS_FIELD_DESC);
+          {
+            oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, struct.newPaymentTypeCosts.size()));
+            for (Map.Entry<PaymentType, Double> _iter186 : struct.newPaymentTypeCosts.entrySet())
+            {
+              oprot.writeI32(_iter186.getKey().getValue());
+              oprot.writeDouble(_iter186.getValue());
+            }
+            oprot.writeMapEnd();
+          }
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class setPaymentTypesCosts_argsTupleSchemeFactory implements SchemeFactory {
+      public setPaymentTypesCosts_argsTupleScheme getScheme() {
+        return new setPaymentTypesCosts_argsTupleScheme();
+      }
+    }
+
+    private static class setPaymentTypesCosts_argsTupleScheme extends TupleScheme<setPaymentTypesCosts_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, setPaymentTypesCosts_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetNewPaymentTypeCosts()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetNewPaymentTypeCosts()) {
+          {
+            oprot.writeI32(struct.newPaymentTypeCosts.size());
+            for (Map.Entry<PaymentType, Double> _iter187 : struct.newPaymentTypeCosts.entrySet())
+            {
+              oprot.writeI32(_iter187.getKey().getValue());
+              oprot.writeDouble(_iter187.getValue());
+            }
+          }
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, setPaymentTypesCosts_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          {
+            org.apache.thrift.protocol.TMap _map188 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, iprot.readI32());
+            struct.newPaymentTypeCosts = new HashMap<PaymentType,Double>(2*_map188.size);
+            for (int _i189 = 0; _i189 < _map188.size; ++_i189)
+            {
+              PaymentType _key190;
+              double _val191;
+              _key190 = PaymentType.findByValue(iprot.readI32());
+              _val191 = iprot.readDouble();
+              struct.newPaymentTypeCosts.put(_key190, _val191);
+            }
+          }
+          struct.setNewPaymentTypeCostsIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class setPaymentTypesCosts_result implements org.apache.thrift.TBase<setPaymentTypesCosts_result, setPaymentTypesCosts_result._Fields>, java.io.Serializable, Cloneable, Comparable<setPaymentTypesCosts_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("setPaymentTypesCosts_result");
+
+    private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new setPaymentTypesCosts_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new setPaymentTypesCosts_resultTupleSchemeFactory());
+    }
+
+    public com.vmesteonline.be.InvalidOperation exc; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      EXC((short)1, "exc");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // EXC
+            return EXC;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(setPaymentTypesCosts_result.class, metaDataMap);
+    }
+
+    public setPaymentTypesCosts_result() {
+    }
+
+    public setPaymentTypesCosts_result(
+      com.vmesteonline.be.InvalidOperation exc)
+    {
+      this();
+      this.exc = exc;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public setPaymentTypesCosts_result(setPaymentTypesCosts_result other) {
+      if (other.isSetExc()) {
+        this.exc = new com.vmesteonline.be.InvalidOperation(other.exc);
+      }
+    }
+
+    public setPaymentTypesCosts_result deepCopy() {
+      return new setPaymentTypesCosts_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.exc = null;
+    }
+
+    public com.vmesteonline.be.InvalidOperation getExc() {
+      return this.exc;
+    }
+
+    public setPaymentTypesCosts_result setExc(com.vmesteonline.be.InvalidOperation exc) {
+      this.exc = exc;
+      return this;
+    }
+
+    public void unsetExc() {
+      this.exc = null;
+    }
+
+    /** Returns true if field exc is set (has been assigned a value) and false otherwise */
+    public boolean isSetExc() {
+      return this.exc != null;
+    }
+
+    public void setExcIsSet(boolean value) {
+      if (!value) {
+        this.exc = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case EXC:
+        if (value == null) {
+          unsetExc();
+        } else {
+          setExc((com.vmesteonline.be.InvalidOperation)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case EXC:
+        return getExc();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case EXC:
+        return isSetExc();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof setPaymentTypesCosts_result)
+        return this.equals((setPaymentTypesCosts_result)that);
+      return false;
+    }
+
+    public boolean equals(setPaymentTypesCosts_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_exc = true && this.isSetExc();
+      boolean that_present_exc = true && that.isSetExc();
+      if (this_present_exc || that_present_exc) {
+        if (!(this_present_exc && that_present_exc))
+          return false;
+        if (!this.exc.equals(that.exc))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    @Override
+    public int compareTo(setPaymentTypesCosts_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetExc()).compareTo(other.isSetExc());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetExc()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.exc, other.exc);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("setPaymentTypesCosts_result(");
+      boolean first = true;
+
+      sb.append("exc:");
+      if (this.exc == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.exc);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class setPaymentTypesCosts_resultStandardSchemeFactory implements SchemeFactory {
+      public setPaymentTypesCosts_resultStandardScheme getScheme() {
+        return new setPaymentTypesCosts_resultStandardScheme();
+      }
+    }
+
+    private static class setPaymentTypesCosts_resultStandardScheme extends StandardScheme<setPaymentTypesCosts_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, setPaymentTypesCosts_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // EXC
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.exc = new com.vmesteonline.be.InvalidOperation();
+                struct.exc.read(iprot);
+                struct.setExcIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, setPaymentTypesCosts_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.exc != null) {
+          oprot.writeFieldBegin(EXC_FIELD_DESC);
+          struct.exc.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class setPaymentTypesCosts_resultTupleSchemeFactory implements SchemeFactory {
+      public setPaymentTypesCosts_resultTupleScheme getScheme() {
+        return new setPaymentTypesCosts_resultTupleScheme();
+      }
+    }
+
+    private static class setPaymentTypesCosts_resultTupleScheme extends TupleScheme<setPaymentTypesCosts_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, setPaymentTypesCosts_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetExc()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetExc()) {
+          struct.exc.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, setPaymentTypesCosts_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.exc = new com.vmesteonline.be.InvalidOperation();
+          struct.exc.read(iprot);
+          struct.setExcIsSet(true);
+        }
+      }
+    }
+
+  }
+
   public static class setOrderPaymentStatus_args implements org.apache.thrift.TBase<setOrderPaymentStatus_args, setOrderPaymentStatus_args._Fields>, java.io.Serializable, Cloneable, Comparable<setOrderPaymentStatus_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("setOrderPaymentStatus_args");
 
@@ -13954,27 +14868,27 @@ public class ShopService {
             case 1: // NEW_PRICES_MAP
               if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
                 {
-                  org.apache.thrift.protocol.TMap _map182 = iprot.readMapBegin();
-                  struct.newPricesMap = new HashMap<Long,Map<PriceType,Double>>(2*_map182.size);
-                  for (int _i183 = 0; _i183 < _map182.size; ++_i183)
+                  org.apache.thrift.protocol.TMap _map192 = iprot.readMapBegin();
+                  struct.newPricesMap = new HashMap<Long,Map<PriceType,Double>>(2*_map192.size);
+                  for (int _i193 = 0; _i193 < _map192.size; ++_i193)
                   {
-                    long _key184;
-                    Map<PriceType,Double> _val185;
-                    _key184 = iprot.readI64();
+                    long _key194;
+                    Map<PriceType,Double> _val195;
+                    _key194 = iprot.readI64();
                     {
-                      org.apache.thrift.protocol.TMap _map186 = iprot.readMapBegin();
-                      _val185 = new HashMap<PriceType,Double>(2*_map186.size);
-                      for (int _i187 = 0; _i187 < _map186.size; ++_i187)
+                      org.apache.thrift.protocol.TMap _map196 = iprot.readMapBegin();
+                      _val195 = new HashMap<PriceType,Double>(2*_map196.size);
+                      for (int _i197 = 0; _i197 < _map196.size; ++_i197)
                       {
-                        PriceType _key188;
-                        double _val189;
-                        _key188 = PriceType.findByValue(iprot.readI32());
-                        _val189 = iprot.readDouble();
-                        _val185.put(_key188, _val189);
+                        PriceType _key198;
+                        double _val199;
+                        _key198 = PriceType.findByValue(iprot.readI32());
+                        _val199 = iprot.readDouble();
+                        _val195.put(_key198, _val199);
                       }
                       iprot.readMapEnd();
                     }
-                    struct.newPricesMap.put(_key184, _val185);
+                    struct.newPricesMap.put(_key194, _val195);
                   }
                   iprot.readMapEnd();
                 }
@@ -14002,15 +14916,15 @@ public class ShopService {
           oprot.writeFieldBegin(NEW_PRICES_MAP_FIELD_DESC);
           {
             oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I64, org.apache.thrift.protocol.TType.MAP, struct.newPricesMap.size()));
-            for (Map.Entry<Long, Map<PriceType,Double>> _iter190 : struct.newPricesMap.entrySet())
+            for (Map.Entry<Long, Map<PriceType,Double>> _iter200 : struct.newPricesMap.entrySet())
             {
-              oprot.writeI64(_iter190.getKey());
+              oprot.writeI64(_iter200.getKey());
               {
-                oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, _iter190.getValue().size()));
-                for (Map.Entry<PriceType, Double> _iter191 : _iter190.getValue().entrySet())
+                oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, _iter200.getValue().size()));
+                for (Map.Entry<PriceType, Double> _iter201 : _iter200.getValue().entrySet())
                 {
-                  oprot.writeI32(_iter191.getKey().getValue());
-                  oprot.writeDouble(_iter191.getValue());
+                  oprot.writeI32(_iter201.getKey().getValue());
+                  oprot.writeDouble(_iter201.getValue());
                 }
                 oprot.writeMapEnd();
               }
@@ -14044,15 +14958,15 @@ public class ShopService {
         if (struct.isSetNewPricesMap()) {
           {
             oprot.writeI32(struct.newPricesMap.size());
-            for (Map.Entry<Long, Map<PriceType,Double>> _iter192 : struct.newPricesMap.entrySet())
+            for (Map.Entry<Long, Map<PriceType,Double>> _iter202 : struct.newPricesMap.entrySet())
             {
-              oprot.writeI64(_iter192.getKey());
+              oprot.writeI64(_iter202.getKey());
               {
-                oprot.writeI32(_iter192.getValue().size());
-                for (Map.Entry<PriceType, Double> _iter193 : _iter192.getValue().entrySet())
+                oprot.writeI32(_iter202.getValue().size());
+                for (Map.Entry<PriceType, Double> _iter203 : _iter202.getValue().entrySet())
                 {
-                  oprot.writeI32(_iter193.getKey().getValue());
-                  oprot.writeDouble(_iter193.getValue());
+                  oprot.writeI32(_iter203.getKey().getValue());
+                  oprot.writeDouble(_iter203.getValue());
                 }
               }
             }
@@ -14066,26 +14980,26 @@ public class ShopService {
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TMap _map194 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I64, org.apache.thrift.protocol.TType.MAP, iprot.readI32());
-            struct.newPricesMap = new HashMap<Long,Map<PriceType,Double>>(2*_map194.size);
-            for (int _i195 = 0; _i195 < _map194.size; ++_i195)
+            org.apache.thrift.protocol.TMap _map204 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I64, org.apache.thrift.protocol.TType.MAP, iprot.readI32());
+            struct.newPricesMap = new HashMap<Long,Map<PriceType,Double>>(2*_map204.size);
+            for (int _i205 = 0; _i205 < _map204.size; ++_i205)
             {
-              long _key196;
-              Map<PriceType,Double> _val197;
-              _key196 = iprot.readI64();
+              long _key206;
+              Map<PriceType,Double> _val207;
+              _key206 = iprot.readI64();
               {
-                org.apache.thrift.protocol.TMap _map198 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, iprot.readI32());
-                _val197 = new HashMap<PriceType,Double>(2*_map198.size);
-                for (int _i199 = 0; _i199 < _map198.size; ++_i199)
+                org.apache.thrift.protocol.TMap _map208 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, iprot.readI32());
+                _val207 = new HashMap<PriceType,Double>(2*_map208.size);
+                for (int _i209 = 0; _i209 < _map208.size; ++_i209)
                 {
-                  PriceType _key200;
-                  double _val201;
-                  _key200 = PriceType.findByValue(iprot.readI32());
-                  _val201 = iprot.readDouble();
-                  _val197.put(_key200, _val201);
+                  PriceType _key210;
+                  double _val211;
+                  _key210 = PriceType.findByValue(iprot.readI32());
+                  _val211 = iprot.readDouble();
+                  _val207.put(_key210, _val211);
                 }
               }
-              struct.newPricesMap.put(_key196, _val197);
+              struct.newPricesMap.put(_key206, _val207);
             }
           }
           struct.setNewPricesMapIsSet(true);
@@ -15083,14 +15997,14 @@ public class ShopService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list202 = iprot.readListBegin();
-                  struct.success = new ArrayList<Shop>(_list202.size);
-                  for (int _i203 = 0; _i203 < _list202.size; ++_i203)
+                  org.apache.thrift.protocol.TList _list212 = iprot.readListBegin();
+                  struct.success = new ArrayList<Shop>(_list212.size);
+                  for (int _i213 = 0; _i213 < _list212.size; ++_i213)
                   {
-                    Shop _elem204;
-                    _elem204 = new Shop();
-                    _elem204.read(iprot);
-                    struct.success.add(_elem204);
+                    Shop _elem214;
+                    _elem214 = new Shop();
+                    _elem214.read(iprot);
+                    struct.success.add(_elem214);
                   }
                   iprot.readListEnd();
                 }
@@ -15127,9 +16041,9 @@ public class ShopService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (Shop _iter205 : struct.success)
+            for (Shop _iter215 : struct.success)
             {
-              _iter205.write(oprot);
+              _iter215.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -15168,9 +16082,9 @@ public class ShopService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (Shop _iter206 : struct.success)
+            for (Shop _iter216 : struct.success)
             {
-              _iter206.write(oprot);
+              _iter216.write(oprot);
             }
           }
         }
@@ -15185,14 +16099,14 @@ public class ShopService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list207 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<Shop>(_list207.size);
-            for (int _i208 = 0; _i208 < _list207.size; ++_i208)
+            org.apache.thrift.protocol.TList _list217 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<Shop>(_list217.size);
+            for (int _i218 = 0; _i218 < _list217.size; ++_i218)
             {
-              Shop _elem209;
-              _elem209 = new Shop();
-              _elem209.read(iprot);
-              struct.success.add(_elem209);
+              Shop _elem219;
+              _elem219 = new Shop();
+              _elem219.read(iprot);
+              struct.success.add(_elem219);
             }
           }
           struct.setSuccessIsSet(true);
@@ -16044,15 +16958,15 @@ public class ShopService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
                 {
-                  org.apache.thrift.protocol.TMap _map210 = iprot.readMapBegin();
-                  struct.success = new HashMap<Integer,DateType>(2*_map210.size);
-                  for (int _i211 = 0; _i211 < _map210.size; ++_i211)
+                  org.apache.thrift.protocol.TMap _map220 = iprot.readMapBegin();
+                  struct.success = new HashMap<Integer,DateType>(2*_map220.size);
+                  for (int _i221 = 0; _i221 < _map220.size; ++_i221)
                   {
-                    int _key212;
-                    DateType _val213;
-                    _key212 = iprot.readI32();
-                    _val213 = DateType.findByValue(iprot.readI32());
-                    struct.success.put(_key212, _val213);
+                    int _key222;
+                    DateType _val223;
+                    _key222 = iprot.readI32();
+                    _val223 = DateType.findByValue(iprot.readI32());
+                    struct.success.put(_key222, _val223);
                   }
                   iprot.readMapEnd();
                 }
@@ -16089,10 +17003,10 @@ public class ShopService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.I32, struct.success.size()));
-            for (Map.Entry<Integer, DateType> _iter214 : struct.success.entrySet())
+            for (Map.Entry<Integer, DateType> _iter224 : struct.success.entrySet())
             {
-              oprot.writeI32(_iter214.getKey());
-              oprot.writeI32(_iter214.getValue().getValue());
+              oprot.writeI32(_iter224.getKey());
+              oprot.writeI32(_iter224.getValue().getValue());
             }
             oprot.writeMapEnd();
           }
@@ -16131,10 +17045,10 @@ public class ShopService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (Map.Entry<Integer, DateType> _iter215 : struct.success.entrySet())
+            for (Map.Entry<Integer, DateType> _iter225 : struct.success.entrySet())
             {
-              oprot.writeI32(_iter215.getKey());
-              oprot.writeI32(_iter215.getValue().getValue());
+              oprot.writeI32(_iter225.getKey());
+              oprot.writeI32(_iter225.getValue().getValue());
             }
           }
         }
@@ -16149,15 +17063,15 @@ public class ShopService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TMap _map216 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.I32, iprot.readI32());
-            struct.success = new HashMap<Integer,DateType>(2*_map216.size);
-            for (int _i217 = 0; _i217 < _map216.size; ++_i217)
+            org.apache.thrift.protocol.TMap _map226 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.I32, iprot.readI32());
+            struct.success = new HashMap<Integer,DateType>(2*_map226.size);
+            for (int _i227 = 0; _i227 < _map226.size; ++_i227)
             {
-              int _key218;
-              DateType _val219;
-              _key218 = iprot.readI32();
-              _val219 = DateType.findByValue(iprot.readI32());
-              struct.success.put(_key218, _val219);
+              int _key228;
+              DateType _val229;
+              _key228 = iprot.readI32();
+              _val229 = DateType.findByValue(iprot.readI32());
+              struct.success.put(_key228, _val229);
             }
           }
           struct.setSuccessIsSet(true);
@@ -17617,14 +18531,14 @@ public class ShopService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list220 = iprot.readListBegin();
-                  struct.success = new ArrayList<Producer>(_list220.size);
-                  for (int _i221 = 0; _i221 < _list220.size; ++_i221)
+                  org.apache.thrift.protocol.TList _list230 = iprot.readListBegin();
+                  struct.success = new ArrayList<Producer>(_list230.size);
+                  for (int _i231 = 0; _i231 < _list230.size; ++_i231)
                   {
-                    Producer _elem222;
-                    _elem222 = new Producer();
-                    _elem222.read(iprot);
-                    struct.success.add(_elem222);
+                    Producer _elem232;
+                    _elem232 = new Producer();
+                    _elem232.read(iprot);
+                    struct.success.add(_elem232);
                   }
                   iprot.readListEnd();
                 }
@@ -17661,9 +18575,9 @@ public class ShopService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (Producer _iter223 : struct.success)
+            for (Producer _iter233 : struct.success)
             {
-              _iter223.write(oprot);
+              _iter233.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -17702,9 +18616,9 @@ public class ShopService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (Producer _iter224 : struct.success)
+            for (Producer _iter234 : struct.success)
             {
-              _iter224.write(oprot);
+              _iter234.write(oprot);
             }
           }
         }
@@ -17719,14 +18633,14 @@ public class ShopService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list225 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<Producer>(_list225.size);
-            for (int _i226 = 0; _i226 < _list225.size; ++_i226)
+            org.apache.thrift.protocol.TList _list235 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<Producer>(_list235.size);
+            for (int _i236 = 0; _i236 < _list235.size; ++_i236)
             {
-              Producer _elem227;
-              _elem227 = new Producer();
-              _elem227.read(iprot);
-              struct.success.add(_elem227);
+              Producer _elem237;
+              _elem237 = new Producer();
+              _elem237.read(iprot);
+              struct.success.add(_elem237);
             }
           }
           struct.setSuccessIsSet(true);
@@ -18479,14 +19393,14 @@ public class ShopService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list228 = iprot.readListBegin();
-                  struct.success = new ArrayList<ProductCategory>(_list228.size);
-                  for (int _i229 = 0; _i229 < _list228.size; ++_i229)
+                  org.apache.thrift.protocol.TList _list238 = iprot.readListBegin();
+                  struct.success = new ArrayList<ProductCategory>(_list238.size);
+                  for (int _i239 = 0; _i239 < _list238.size; ++_i239)
                   {
-                    ProductCategory _elem230;
-                    _elem230 = new ProductCategory();
-                    _elem230.read(iprot);
-                    struct.success.add(_elem230);
+                    ProductCategory _elem240;
+                    _elem240 = new ProductCategory();
+                    _elem240.read(iprot);
+                    struct.success.add(_elem240);
                   }
                   iprot.readListEnd();
                 }
@@ -18523,9 +19437,9 @@ public class ShopService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (ProductCategory _iter231 : struct.success)
+            for (ProductCategory _iter241 : struct.success)
             {
-              _iter231.write(oprot);
+              _iter241.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -18564,9 +19478,9 @@ public class ShopService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (ProductCategory _iter232 : struct.success)
+            for (ProductCategory _iter242 : struct.success)
             {
-              _iter232.write(oprot);
+              _iter242.write(oprot);
             }
           }
         }
@@ -18581,14 +19495,14 @@ public class ShopService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list233 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<ProductCategory>(_list233.size);
-            for (int _i234 = 0; _i234 < _list233.size; ++_i234)
+            org.apache.thrift.protocol.TList _list243 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<ProductCategory>(_list243.size);
+            for (int _i244 = 0; _i244 < _list243.size; ++_i244)
             {
-              ProductCategory _elem235;
-              _elem235 = new ProductCategory();
-              _elem235.read(iprot);
-              struct.success.add(_elem235);
+              ProductCategory _elem245;
+              _elem245 = new ProductCategory();
+              _elem245.read(iprot);
+              struct.success.add(_elem245);
             }
           }
           struct.setSuccessIsSet(true);
@@ -21249,14 +22163,14 @@ public class ShopService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list236 = iprot.readListBegin();
-                  struct.success = new ArrayList<Order>(_list236.size);
-                  for (int _i237 = 0; _i237 < _list236.size; ++_i237)
+                  org.apache.thrift.protocol.TList _list246 = iprot.readListBegin();
+                  struct.success = new ArrayList<Order>(_list246.size);
+                  for (int _i247 = 0; _i247 < _list246.size; ++_i247)
                   {
-                    Order _elem238;
-                    _elem238 = new Order();
-                    _elem238.read(iprot);
-                    struct.success.add(_elem238);
+                    Order _elem248;
+                    _elem248 = new Order();
+                    _elem248.read(iprot);
+                    struct.success.add(_elem248);
                   }
                   iprot.readListEnd();
                 }
@@ -21293,9 +22207,9 @@ public class ShopService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (Order _iter239 : struct.success)
+            for (Order _iter249 : struct.success)
             {
-              _iter239.write(oprot);
+              _iter249.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -21334,9 +22248,9 @@ public class ShopService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (Order _iter240 : struct.success)
+            for (Order _iter250 : struct.success)
             {
-              _iter240.write(oprot);
+              _iter250.write(oprot);
             }
           }
         }
@@ -21351,14 +22265,14 @@ public class ShopService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list241 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<Order>(_list241.size);
-            for (int _i242 = 0; _i242 < _list241.size; ++_i242)
+            org.apache.thrift.protocol.TList _list251 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<Order>(_list251.size);
+            for (int _i252 = 0; _i252 < _list251.size; ++_i252)
             {
-              Order _elem243;
-              _elem243 = new Order();
-              _elem243.read(iprot);
-              struct.success.add(_elem243);
+              Order _elem253;
+              _elem253 = new Order();
+              _elem253.read(iprot);
+              struct.success.add(_elem253);
             }
           }
           struct.setSuccessIsSet(true);

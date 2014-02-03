@@ -111,8 +111,8 @@ public class ShopServiceImplTest {
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, 
 					userId, topicSet, tags, deliveryCosts, paymentTypes);
 			
-			si.registerShop( shop);
-			Shop savedShop = si.getShop( shop.getId());
+			long id = si.registerShop( shop);
+			Shop savedShop = si.getShop( id );
 
 			Assert.assertEquals(savedShop.getName(), NAME);
 			Assert.assertEquals(savedShop.getDescr(),DESCR);
