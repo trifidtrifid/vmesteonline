@@ -7,8 +7,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.thrift.TException;
 
-import com.vmesteonline.be.data.JDBCConnector;
-import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -66,16 +64,21 @@ public class ServiceImpl {
 	}
 
 	protected VoSession getCurrentSession() throws InvalidOperation {
+		return getCurrentSession(null);
+	}
+	
+	protected VoSession getCurrentSession( PersistenceManager _pm ) throws InvalidOperation {
+	
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
 		try {
 			VoSession session = pm.getObjectById(VoSession.class, sessionStorage.getId());
 			if( null == session)
 				throw new InvalidOperation(VoError.NotAuthorized, "No session found.");
 			return session;
 		} finally {
-			pm.close();
+			if(null==_pm) pm.close();
 		}
 	}
 
