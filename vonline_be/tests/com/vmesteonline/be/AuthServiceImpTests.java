@@ -21,11 +21,10 @@ import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 
-public class AuthServiceImpTests  {
+public class AuthServiceImpTests {
 
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
-			new LocalDatastoreServiceTestConfig());
-	
+	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+
 	AuthServiceImpl authSrvc;
 
 	@Before
@@ -53,6 +52,16 @@ public class AuthServiceImpTests  {
 			fail("unhadled exception");
 		}
 
+	}
+
+	@Test
+	public void testGetSessionNotAuthorized() {
+		try {
+			AuthServiceImpl.getSession("ttemptySession");
+			fail("session should throw exception");
+		} catch (InvalidOperation e) {
+			assertEquals(VoError.NotAuthorized, e.what);
+		}
 	}
 
 	@Test
@@ -104,10 +113,10 @@ public class AuthServiceImpTests  {
 					break;
 				}
 			}
-			assertEquals(found,  true);
+			assertEquals(found, true);
 			assertEquals(true, authSrvc.login("test@eml", "testPassword"));
-			
-		} catch ( TException e) {
+
+		} catch (TException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
