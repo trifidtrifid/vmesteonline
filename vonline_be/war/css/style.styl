@@ -31,6 +31,7 @@ transform()
 .container
   padding 0
   max-width 1240px
+  min-width 753px
   min-height 100%
 
 .ace-nav>li
@@ -86,7 +87,7 @@ transform()
   border-radius main-radius !important
 
 .submenu
-  padding 5px 0
+  padding 5px 0 2px 0
   background #d9edf7
   >ul
     display inline-block
@@ -95,8 +96,9 @@ transform()
     margin-left 5px
     li
       list-style none
-      float left
+      display inline-block
       margin-left 5px
+      margin-bottom 5px
       border-top 3px solid rgb(111, 179, 224)
       border-radius main-radius
       a
@@ -109,6 +111,7 @@ transform()
         border-color #4f99c6
   .btn-group
     margin-left 5px
+    border-top 0
     &.active .btn
       border-color #2b7dbc
     .btn
@@ -191,8 +194,7 @@ transform()
           &:hover
             text-decoration none
       h2
-        display inline-block
-        margin 0 0 0 17px
+        margin 0 100px 0 110px
         vertical-align middle
         max-height 39px
         overflow hidden
@@ -201,7 +203,7 @@ transform()
         &.small
           font-size 16px;
       span
-        display inline-block
+        float left
         vertical-align middle
     .topic-right
       margin-left 115px
