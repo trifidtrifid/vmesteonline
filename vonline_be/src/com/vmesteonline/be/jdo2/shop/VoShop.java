@@ -26,6 +26,7 @@ import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.Shop;
+import com.vmesteonline.be.utils.Helper;
 
 @PersistenceCapable
 public class VoShop {
@@ -46,10 +47,10 @@ public class VoShop {
 		this.logoURL = logoURL;
 		this.ownerId = ownerId;
 		if( null == (this.tags = tags)) this.tags = new HashSet<String>();
-		if( null == (this.deliveryCosts = deliveryCosts)) this.deliveryCosts = new HashMap<DeliveryType, Double>();
-		if( null == (this.paymentTypes = paymentTypes)) {
-			this.paymentTypes = new HashMap<PaymentType, Double>();
-			this.paymentTypes.put( PaymentType.CASH, 0D );
+		if( null == (this.deliveryCosts = Helper.copyTheMap( deliveryCosts, new HashMap<Integer, Double>()))) this.deliveryCosts = new HashMap<Integer, Double>();
+		if( null == (this.paymentTypes = Helper.copyTheMap( paymentTypes, new HashMap<Integer, Double>()))) {
+			this.paymentTypes = new HashMap<Integer, Double>();
+			this.paymentTypes.put( PaymentType.CASH.getValue(), 0D );
 		}
 		
 		try {
@@ -72,7 +73,9 @@ public class VoShop {
 	}
 
 	public Shop getShop() {
-		Shop shop = new Shop(id, name, descr, address.getPostalAddress(), logoURL, ownerId, null, tags, deliveryCosts, paymentTypes);
+		Shop shop = new Shop(id, name, descr, address.getPostalAddress(), logoURL, ownerId, null, tags, 
+				Helper.copyTheMap( deliveryCosts, new HashMap<DeliveryType, Double>()),
+				Helper.copyTheMap( paymentTypes, new HashMap<PaymentType, Double>()));
 		Set<Long> topicIds = new HashSet<Long>();
 		for (VoTopic vt : getTopics()) {
 			topicIds.add(vt.getId().getId());
@@ -107,16 +110,16 @@ public class VoShop {
 	@Persistent
 	public Set<String> tags;
 
-	@Persistent(mappedBy = "shops")
-	@ManyToMany
+	@Persistent
+	@Unowned
 	private Set<VoProduct> products;
 
-	@Persistent(mappedBy = "shops")
-	@ManyToMany
+	@Persistent
+	@Unowned
 	private Set<VoProductCategory> categories;
 
-	@Persistent(mappedBy = "shops")
-	@ManyToMany
+	@Persistent
+	@Unowned
 	private Set<VoProducer> producers;
 	
 	@Persistent
@@ -125,16 +128,16 @@ public class VoShop {
 	
 	@Persistent
 	@Unindexed
-	private Map<DeliveryType,Double> deliveryCosts;
+	private Map<Integer,Double> deliveryCosts;
 	
 	@Persistent
 	@Unindexed
-	private Map<PaymentType,Double> paymentTypes;
+	private Map<Integer,Double> paymentTypes;
 	
-	public Map<PaymentType, Double> getPaymentTypes() {
+	public Map<Integer, Double> getPaymentTypes() {
 		return paymentTypes;
 	}
-	public Map<DeliveryType, Double> getDeliveryCosts() {
+	public Map<Integer, Double> getDeliveryCosts() {
 		return deliveryCosts;
 	}
 	public void setDates( Map<Integer,DateType> newDates ){

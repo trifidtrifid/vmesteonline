@@ -81,6 +81,9 @@ public class VoMessage {
 				try {
 					parentMsg = pm.getObjectById(VoMessage.class, parentId);
 				} catch (JDOObjectNotFoundException e) {
+					e.printStackTrace();
+					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "parent Message not found by ID=" + parentId);
+					/*
 					javax.jdo.Query query = pm.newQuery(VoMessage.class);
 					query.setFilter("id == parentId parameters Long parentId");
 					List<VoMessage> results = (List<VoMessage>) query.execute(parentId);
@@ -92,7 +95,6 @@ public class VoMessage {
 						// logger.warn("No message found by message ID: "+parentId);
 						// OK lets look through all of messages and try to find it by
 						// hand
-						query = query;
 						results = (List<VoMessage>) query.execute();
 						for (VoMessage msg2 : results) {
 							pm.retrieve(msg2);
@@ -103,7 +105,7 @@ public class VoMessage {
 							System.out.println("MsgKey:" + msg2.getId() + "idValue: " + msg2.idValue + " Msg id: " + msg2.getId().getId() + " topic "
 									+ msg2.getTopic().getId().getId() + (null == parentMsg2 ? " No parent." : " parent Key:" + parentMsg2.getId()));
 						}
-					}
+					}*/
 				}
 				if (null == parentMsg) {
 					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "parent Message not found by ID=" + parentId);

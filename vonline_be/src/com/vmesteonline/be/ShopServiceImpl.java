@@ -42,10 +42,15 @@ import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.shop.ShopService.Iface;
+import com.vmesteonline.be.utils.Helper;
 
 public class ShopServiceImpl extends ServiceImpl implements Iface {
 
 	public static Logger logger = Logger.getLogger(ShopServiceImpl.class);
+
+	public ShopServiceImpl(String sessionId) {
+		super(sessionId);
+	}
 
 	@Override
 	public long registerShop(Shop shop) throws InvalidOperation, TException {
@@ -578,7 +583,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 			VoOrder currentOrder = getCurrentOrder(pm);
 			VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId());
 
-			Map<DeliveryType, Double> deliveryCosts = voShop.getDeliveryCosts();
+			Map<Integer, Double> deliveryCosts = voShop.getDeliveryCosts();
 			if (deliveryCosts.containsKey(deliveryType)) {
 				currentOrder.setDeliveryCost(deliveryCosts.get(deliveryType));
 				VoUser voUSer = getCurrentUser(pm);
@@ -609,7 +614,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 			VoOrder currentOrder = getCurrentOrder(pm);
 			VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId());
 
-			Map<PaymentType, Double> paymentTypes = voShop.getPaymentTypes();
+			Map<Integer, Double> paymentTypes = voShop.getPaymentTypes();
 			if (paymentTypes.containsKey(paymentType)) {
 				double paymentFee = paymentTypes.get(currentOrder.getPaymentType());
 				currentOrder.setPaymentType(paymentType);
@@ -686,7 +691,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop currentShop = getCurrentShop(pm);
-			currentShop.getDeliveryCosts().putAll(newDeliveryCosts);
+			currentShop.getDeliveryCosts().putAll( Helper.copyTheMap(newDeliveryCosts, new HashMap<Integer,Double>()));
 			pm.makePersistent(currentShop);
 		} catch (Exception e) {
 			e.printStackTrace();
