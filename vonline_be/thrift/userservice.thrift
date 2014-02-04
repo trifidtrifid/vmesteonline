@@ -26,7 +26,7 @@ struct FullAddressCatalogue {
 }
 service UserService {
 
-	list<Group> getUserGroups() throws (1:error.InvalidOperation exc),
+	list<Group> getUserGroups( ) throws (1:error.InvalidOperation exc),
 	list<Rubric> getUserRubrics() throws (1:error.InvalidOperation exc),
 	// implemented as a static list<string> getLocationCodesForRegistration() throws (1:error.InvalidOperation exc),
 	

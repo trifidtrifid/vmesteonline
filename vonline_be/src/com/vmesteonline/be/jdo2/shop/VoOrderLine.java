@@ -1,9 +1,12 @@
 package com.vmesteonline.be.jdo2.shop;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -27,7 +30,10 @@ public class VoOrderLine {
 	public OrderLine getOrderLine() {
 		return new OrderLine(product.getProduct(), quontity, priceType, price);
 	}
-
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+  private Key id;
+	
 	@Persistent
 	private VoOrder order;
 

@@ -1,4 +1,4 @@
-
+﻿
 <%@page import="com.vmesteonline.be.utils.SessionHelper"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -43,7 +43,7 @@
 <script src="gen-js/userservice_types.js" type="text/javascript"></script>
 <script src="gen-js/UserService.js" type="text/javascript"></script>
 
-<script src="js/jquery-2.0.3.min.js"></script>
+<script src="js/jquery-2.1.0.js"></script>
     <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -93,8 +93,8 @@
     		var protocol = new Thrift.Protocol(transport);
     		var client = new com.vmesteonline.be.UserServiceClient(protocol);
     		
-//    		var someGroupId = client.getUserGroups();	
-			var someRoubricId = client.getUserRubrics();
+    		var someGroupId = client.getUserGroups(1);	
+			var someRoubricId = client.getUserRubrics(1);
 			
 			})
 			

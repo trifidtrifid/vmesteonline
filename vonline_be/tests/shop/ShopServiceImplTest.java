@@ -143,19 +143,34 @@ public class ShopServiceImplTest {
 	
 	}
 
-	/*@Test
+	@Test
 	public void testRegisterProductCategory() {
 		try {
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, 
 					userId, topicSet, tags, deliveryCosts, paymentTypes);
 			
-			Long shopId = si.registerShop( shop);
+			Long shopId = si.registerShop( shop );
+			//set current shop
+			si.getShop(shopId);
 
 			Long rootCatId = si.registerProductCategory(new ProductCategory(0L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet), shopId);
 			Long SecCatId = si.registerProductCategory(new ProductCategory(0L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set), shopId);
 			Long THirdCatId = si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set), shopId);
 			Long THird2CatId = si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set), shopId);
 			
+			List<ProductCategory> rootPcs = si.getProductCategories(0);
+			Assert.assertEquals(rootPcs.size(), 1);
+			ProductCategory rc = rootPcs.get(0);
+			Assert.assertEquals( (long)rc.getId(), (long)rootCatId );
+			Assert.assertEquals( (long)rc.getParentId(), 0L );
+			Assert.assertEquals( rc.getName(), ROOT_PRODUCT_CAT1 );
+			Assert.assertEquals( rc.getDescr(), PRC1_DESCR );
+			Assert.assertEquals( rc.getLogoURLset(), images );
+			Assert.assertEquals( rc.getTopicSet(), topicSet );
+			
+			//List<ProductCategory> pc = si.getProductCategories();
+			
+
 		}  catch (TException e) {
 			e.printStackTrace();
 			fail("Exception thrown: "+ e.getMessage());
