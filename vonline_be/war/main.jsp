@@ -92,6 +92,7 @@
         	 var transport = new Thrift.Transport("/thrift/UserService");
     		var protocol = new Thrift.Protocol(transport);
     		var client = new com.vmesteonline.be.UserServiceClient(protocol);
+
     		
     		var someGroupId = client.getUserGroups();
 			var someRoubricId = client.getUserRubrics();
