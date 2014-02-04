@@ -42,7 +42,6 @@ import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.shop.ShopService.Iface;
-import com.vmesteonline.be.utils.Helper;
 
 public class ShopServiceImpl extends ServiceImpl implements Iface {
 
@@ -691,8 +690,21 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop currentShop = getCurrentShop(pm);
-			currentShop.getDeliveryCosts().putAll( Helper.copyTheMap(newDeliveryCosts, new HashMap<Integer,Double>()));
-			pm.makePersistent(currentShop);
+			currentShop.getDeliveryCosts().putAll( VoShop.convertFromDeliveryTypeMap(newDeliveryCosts, new HashMap<Integer,Double>()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to setDeliveryCosts." + e);
+		} finally {
+			pm.close();
+		}
+	}
+	
+	@Override
+	public void setPaymentTypesCosts(Map<PaymentType, Double> setPaymentTypesCosts) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoShop currentShop = getCurrentShop(pm);
+			currentShop.getPaymentTypes().putAll( VoShop.convertFromPaymentTypeMap(setPaymentTypesCosts, new HashMap<Integer,Double>()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to setDeliveryCosts." + e);

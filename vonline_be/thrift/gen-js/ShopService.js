@@ -1396,6 +1396,149 @@ com.vmesteonline.be.shop.ShopService_setDeliveryCosts_result.prototype.write = f
   return;
 };
 
+com.vmesteonline.be.shop.ShopService_setPaymentTypesCosts_args = function(args) {
+  this.newPaymentTypeCosts = null;
+  if (args) {
+    if (args.newPaymentTypeCosts !== undefined) {
+      this.newPaymentTypeCosts = args.newPaymentTypeCosts;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_setPaymentTypesCosts_args.prototype = {};
+com.vmesteonline.be.shop.ShopService_setPaymentTypesCosts_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.MAP) {
+        var _size182 = 0;
+        var _rtmp3186;
+        this.newPaymentTypeCosts = {};
+        var _ktype183 = 0;
+        var _vtype184 = 0;
+        _rtmp3186 = input.readMapBegin();
+        _ktype183 = _rtmp3186.ktype;
+        _vtype184 = _rtmp3186.vtype;
+        _size182 = _rtmp3186.size;
+        for (var _i187 = 0; _i187 < _size182; ++_i187)
+        {
+          if (_i187 > 0 ) {
+            if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
+              input.rstack.pop();
+            }
+          }
+          var key188 = null;
+          var val189 = null;
+          key188 = input.readI32().value;
+          val189 = input.readDouble().value;
+          this.newPaymentTypeCosts[key188] = val189;
+        }
+        input.readMapEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setPaymentTypesCosts_args.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_setPaymentTypesCosts_args');
+  if (this.newPaymentTypeCosts !== null && this.newPaymentTypeCosts !== undefined) {
+    output.writeFieldBegin('newPaymentTypeCosts', Thrift.Type.MAP, 1);
+    output.writeMapBegin(Thrift.Type.I32, Thrift.Type.DOUBLE, Thrift.objectLength(this.newPaymentTypeCosts));
+    for (var kiter190 in this.newPaymentTypeCosts)
+    {
+      if (this.newPaymentTypeCosts.hasOwnProperty(kiter190))
+      {
+        var viter191 = this.newPaymentTypeCosts[kiter190];
+        output.writeI32(kiter190);
+        output.writeDouble(viter191);
+      }
+    }
+    output.writeMapEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setPaymentTypesCosts_result = function(args) {
+  this.exc = null;
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
+    this.exc = args;
+    return;
+  }
+  if (args) {
+    if (args.exc !== undefined) {
+      this.exc = args.exc;
+    }
+  }
+};
+com.vmesteonline.be.shop.ShopService_setPaymentTypesCosts_result.prototype = {};
+com.vmesteonline.be.shop.ShopService_setPaymentTypesCosts_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.exc = new com.vmesteonline.be.InvalidOperation();
+        this.exc.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+com.vmesteonline.be.shop.ShopService_setPaymentTypesCosts_result.prototype.write = function(output) {
+  output.writeStructBegin('ShopService_setPaymentTypesCosts_result');
+  if (this.exc !== null && this.exc !== undefined) {
+    output.writeFieldBegin('exc', Thrift.Type.STRUCT, 1);
+    this.exc.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 com.vmesteonline.be.shop.ShopService_setOrderPaymentStatus_args = function(args) {
   this.orderId = null;
   this.newStatus = null;
@@ -1544,49 +1687,49 @@ com.vmesteonline.be.shop.ShopService_setProductPrices_args.prototype.read = func
     {
       case 1:
       if (ftype == Thrift.Type.MAP) {
-        var _size182 = 0;
-        var _rtmp3186;
+        var _size192 = 0;
+        var _rtmp3196;
         this.newPricesMap = {};
-        var _ktype183 = 0;
-        var _vtype184 = 0;
-        _rtmp3186 = input.readMapBegin();
-        _ktype183 = _rtmp3186.ktype;
-        _vtype184 = _rtmp3186.vtype;
-        _size182 = _rtmp3186.size;
-        for (var _i187 = 0; _i187 < _size182; ++_i187)
+        var _ktype193 = 0;
+        var _vtype194 = 0;
+        _rtmp3196 = input.readMapBegin();
+        _ktype193 = _rtmp3196.ktype;
+        _vtype194 = _rtmp3196.vtype;
+        _size192 = _rtmp3196.size;
+        for (var _i197 = 0; _i197 < _size192; ++_i197)
         {
-          if (_i187 > 0 ) {
+          if (_i197 > 0 ) {
             if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
               input.rstack.pop();
             }
           }
-          var key188 = null;
-          var val189 = null;
-          key188 = input.readI64().value;
-          var _size190 = 0;
-          var _rtmp3194;
-          val189 = {};
-          var _ktype191 = 0;
-          var _vtype192 = 0;
-          _rtmp3194 = input.readMapBegin();
-          _ktype191 = _rtmp3194.ktype;
-          _vtype192 = _rtmp3194.vtype;
-          _size190 = _rtmp3194.size;
-          for (var _i195 = 0; _i195 < _size190; ++_i195)
+          var key198 = null;
+          var val199 = null;
+          key198 = input.readI64().value;
+          var _size200 = 0;
+          var _rtmp3204;
+          val199 = {};
+          var _ktype201 = 0;
+          var _vtype202 = 0;
+          _rtmp3204 = input.readMapBegin();
+          _ktype201 = _rtmp3204.ktype;
+          _vtype202 = _rtmp3204.vtype;
+          _size200 = _rtmp3204.size;
+          for (var _i205 = 0; _i205 < _size200; ++_i205)
           {
-            if (_i195 > 0 ) {
+            if (_i205 > 0 ) {
               if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
                 input.rstack.pop();
               }
             }
-            var key196 = null;
-            var val197 = null;
-            key196 = input.readI32().value;
-            val197 = input.readDouble().value;
-            val189[key196] = val197;
+            var key206 = null;
+            var val207 = null;
+            key206 = input.readI32().value;
+            val207 = input.readDouble().value;
+            val199[key206] = val207;
           }
           input.readMapEnd();
-          this.newPricesMap[key188] = val189;
+          this.newPricesMap[key198] = val199;
         }
         input.readMapEnd();
       } else {
@@ -1610,20 +1753,20 @@ com.vmesteonline.be.shop.ShopService_setProductPrices_args.prototype.write = fun
   if (this.newPricesMap !== null && this.newPricesMap !== undefined) {
     output.writeFieldBegin('newPricesMap', Thrift.Type.MAP, 1);
     output.writeMapBegin(Thrift.Type.I64, Thrift.Type.MAP, Thrift.objectLength(this.newPricesMap));
-    for (var kiter198 in this.newPricesMap)
+    for (var kiter208 in this.newPricesMap)
     {
-      if (this.newPricesMap.hasOwnProperty(kiter198))
+      if (this.newPricesMap.hasOwnProperty(kiter208))
       {
-        var viter199 = this.newPricesMap[kiter198];
-        output.writeI64(kiter198);
-        output.writeMapBegin(Thrift.Type.I32, Thrift.Type.DOUBLE, Thrift.objectLength(viter199));
-        for (var kiter200 in viter199)
+        var viter209 = this.newPricesMap[kiter208];
+        output.writeI64(kiter208);
+        output.writeMapBegin(Thrift.Type.I32, Thrift.Type.DOUBLE, Thrift.objectLength(viter209));
+        for (var kiter210 in viter209)
         {
-          if (viter199.hasOwnProperty(kiter200))
+          if (viter209.hasOwnProperty(kiter210))
           {
-            var viter201 = viter199[kiter200];
-            output.writeI32(kiter200);
-            output.writeDouble(viter201);
+            var viter211 = viter209[kiter210];
+            output.writeI32(kiter210);
+            output.writeDouble(viter211);
           }
         }
         output.writeMapEnd();
@@ -1755,19 +1898,19 @@ com.vmesteonline.be.shop.ShopService_getShops_result.prototype.read = function(i
     {
       case 0:
       if (ftype == Thrift.Type.LIST) {
-        var _size202 = 0;
-        var _rtmp3206;
+        var _size212 = 0;
+        var _rtmp3216;
         this.success = [];
-        var _etype205 = 0;
-        _rtmp3206 = input.readListBegin();
-        _etype205 = _rtmp3206.etype;
-        _size202 = _rtmp3206.size;
-        for (var _i207 = 0; _i207 < _size202; ++_i207)
+        var _etype215 = 0;
+        _rtmp3216 = input.readListBegin();
+        _etype215 = _rtmp3216.etype;
+        _size212 = _rtmp3216.size;
+        for (var _i217 = 0; _i217 < _size212; ++_i217)
         {
-          var elem208 = null;
-          elem208 = new com.vmesteonline.be.shop.Shop();
-          elem208.read(input);
-          this.success.push(elem208);
+          var elem218 = null;
+          elem218 = new com.vmesteonline.be.shop.Shop();
+          elem218.read(input);
+          this.success.push(elem218);
         }
         input.readListEnd();
       } else {
@@ -1796,12 +1939,12 @@ com.vmesteonline.be.shop.ShopService_getShops_result.prototype.write = function(
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter209 in this.success)
+    for (var iter219 in this.success)
     {
-      if (this.success.hasOwnProperty(iter209))
+      if (this.success.hasOwnProperty(iter219))
       {
-        iter209 = this.success[iter209];
-        iter209.write(output);
+        iter219 = this.success[iter219];
+        iter219.write(output);
       }
     }
     output.writeListEnd();
@@ -1915,27 +2058,27 @@ com.vmesteonline.be.shop.ShopService_getDates_result.prototype.read = function(i
     {
       case 0:
       if (ftype == Thrift.Type.MAP) {
-        var _size210 = 0;
-        var _rtmp3214;
+        var _size220 = 0;
+        var _rtmp3224;
         this.success = {};
-        var _ktype211 = 0;
-        var _vtype212 = 0;
-        _rtmp3214 = input.readMapBegin();
-        _ktype211 = _rtmp3214.ktype;
-        _vtype212 = _rtmp3214.vtype;
-        _size210 = _rtmp3214.size;
-        for (var _i215 = 0; _i215 < _size210; ++_i215)
+        var _ktype221 = 0;
+        var _vtype222 = 0;
+        _rtmp3224 = input.readMapBegin();
+        _ktype221 = _rtmp3224.ktype;
+        _vtype222 = _rtmp3224.vtype;
+        _size220 = _rtmp3224.size;
+        for (var _i225 = 0; _i225 < _size220; ++_i225)
         {
-          if (_i215 > 0 ) {
+          if (_i225 > 0 ) {
             if (input.rstack.length > input.rpos[input.rpos.length -1] + 1) {
               input.rstack.pop();
             }
           }
-          var key216 = null;
-          var val217 = null;
-          key216 = input.readI32().value;
-          val217 = input.readI32().value;
-          this.success[key216] = val217;
+          var key226 = null;
+          var val227 = null;
+          key226 = input.readI32().value;
+          val227 = input.readI32().value;
+          this.success[key226] = val227;
         }
         input.readMapEnd();
       } else {
@@ -1964,13 +2107,13 @@ com.vmesteonline.be.shop.ShopService_getDates_result.prototype.write = function(
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.MAP, 0);
     output.writeMapBegin(Thrift.Type.I32, Thrift.Type.I32, Thrift.objectLength(this.success));
-    for (var kiter218 in this.success)
+    for (var kiter228 in this.success)
     {
-      if (this.success.hasOwnProperty(kiter218))
+      if (this.success.hasOwnProperty(kiter228))
       {
-        var viter219 = this.success[kiter218];
-        output.writeI32(kiter218);
-        output.writeI32(viter219);
+        var viter229 = this.success[kiter228];
+        output.writeI32(kiter228);
+        output.writeI32(viter229);
       }
     }
     output.writeMapEnd();
@@ -2171,19 +2314,19 @@ com.vmesteonline.be.shop.ShopService_getProducers_result.prototype.read = functi
     {
       case 0:
       if (ftype == Thrift.Type.LIST) {
-        var _size220 = 0;
-        var _rtmp3224;
+        var _size230 = 0;
+        var _rtmp3234;
         this.success = [];
-        var _etype223 = 0;
-        _rtmp3224 = input.readListBegin();
-        _etype223 = _rtmp3224.etype;
-        _size220 = _rtmp3224.size;
-        for (var _i225 = 0; _i225 < _size220; ++_i225)
+        var _etype233 = 0;
+        _rtmp3234 = input.readListBegin();
+        _etype233 = _rtmp3234.etype;
+        _size230 = _rtmp3234.size;
+        for (var _i235 = 0; _i235 < _size230; ++_i235)
         {
-          var elem226 = null;
-          elem226 = new com.vmesteonline.be.shop.Producer();
-          elem226.read(input);
-          this.success.push(elem226);
+          var elem236 = null;
+          elem236 = new com.vmesteonline.be.shop.Producer();
+          elem236.read(input);
+          this.success.push(elem236);
         }
         input.readListEnd();
       } else {
@@ -2212,12 +2355,12 @@ com.vmesteonline.be.shop.ShopService_getProducers_result.prototype.write = funct
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter227 in this.success)
+    for (var iter237 in this.success)
     {
-      if (this.success.hasOwnProperty(iter227))
+      if (this.success.hasOwnProperty(iter237))
       {
-        iter227 = this.success[iter227];
-        iter227.write(output);
+        iter237 = this.success[iter237];
+        iter237.write(output);
       }
     }
     output.writeListEnd();
@@ -2318,19 +2461,19 @@ com.vmesteonline.be.shop.ShopService_getProductCategories_result.prototype.read 
     {
       case 0:
       if (ftype == Thrift.Type.LIST) {
-        var _size228 = 0;
-        var _rtmp3232;
+        var _size238 = 0;
+        var _rtmp3242;
         this.success = [];
-        var _etype231 = 0;
-        _rtmp3232 = input.readListBegin();
-        _etype231 = _rtmp3232.etype;
-        _size228 = _rtmp3232.size;
-        for (var _i233 = 0; _i233 < _size228; ++_i233)
+        var _etype241 = 0;
+        _rtmp3242 = input.readListBegin();
+        _etype241 = _rtmp3242.etype;
+        _size238 = _rtmp3242.size;
+        for (var _i243 = 0; _i243 < _size238; ++_i243)
         {
-          var elem234 = null;
-          elem234 = new com.vmesteonline.be.shop.ProductCategory();
-          elem234.read(input);
-          this.success.push(elem234);
+          var elem244 = null;
+          elem244 = new com.vmesteonline.be.shop.ProductCategory();
+          elem244.read(input);
+          this.success.push(elem244);
         }
         input.readListEnd();
       } else {
@@ -2359,12 +2502,12 @@ com.vmesteonline.be.shop.ShopService_getProductCategories_result.prototype.write
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter235 in this.success)
+    for (var iter245 in this.success)
     {
-      if (this.success.hasOwnProperty(iter235))
+      if (this.success.hasOwnProperty(iter245))
       {
-        iter235 = this.success[iter235];
-        iter235.write(output);
+        iter245 = this.success[iter245];
+        iter245.write(output);
       }
     }
     output.writeListEnd();
@@ -2757,19 +2900,19 @@ com.vmesteonline.be.shop.ShopService_getOrders_result.prototype.read = function(
     {
       case 0:
       if (ftype == Thrift.Type.LIST) {
-        var _size236 = 0;
-        var _rtmp3240;
+        var _size246 = 0;
+        var _rtmp3250;
         this.success = [];
-        var _etype239 = 0;
-        _rtmp3240 = input.readListBegin();
-        _etype239 = _rtmp3240.etype;
-        _size236 = _rtmp3240.size;
-        for (var _i241 = 0; _i241 < _size236; ++_i241)
+        var _etype249 = 0;
+        _rtmp3250 = input.readListBegin();
+        _etype249 = _rtmp3250.etype;
+        _size246 = _rtmp3250.size;
+        for (var _i251 = 0; _i251 < _size246; ++_i251)
         {
-          var elem242 = null;
-          elem242 = new com.vmesteonline.be.shop.Order();
-          elem242.read(input);
-          this.success.push(elem242);
+          var elem252 = null;
+          elem252 = new com.vmesteonline.be.shop.Order();
+          elem252.read(input);
+          this.success.push(elem252);
         }
         input.readListEnd();
       } else {
@@ -2798,12 +2941,12 @@ com.vmesteonline.be.shop.ShopService_getOrders_result.prototype.write = function
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter243 in this.success)
+    for (var iter253 in this.success)
     {
-      if (this.success.hasOwnProperty(iter243))
+      if (this.success.hasOwnProperty(iter253))
       {
-        iter243 = this.success[iter243];
-        iter243.write(output);
+        iter253 = this.success[iter253];
+        iter253.write(output);
       }
     }
     output.writeListEnd();
@@ -4495,6 +4638,40 @@ com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_setDeliveryCosts = fun
     throw x;
   }
   var result = new com.vmesteonline.be.shop.ShopService_setDeliveryCosts_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.exc) {
+    throw result.exc;
+  }
+  return;
+};
+com.vmesteonline.be.shop.ShopServiceClient.prototype.setPaymentTypesCosts = function(newPaymentTypeCosts) {
+  this.send_setPaymentTypesCosts(newPaymentTypeCosts);
+  this.recv_setPaymentTypesCosts();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.send_setPaymentTypesCosts = function(newPaymentTypeCosts) {
+  this.output.writeMessageBegin('setPaymentTypesCosts', Thrift.MessageType.CALL, this.seqid);
+  var args = new com.vmesteonline.be.shop.ShopService_setPaymentTypesCosts_args();
+  args.newPaymentTypeCosts = newPaymentTypeCosts;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush();
+};
+
+com.vmesteonline.be.shop.ShopServiceClient.prototype.recv_setPaymentTypesCosts = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new com.vmesteonline.be.shop.ShopService_setPaymentTypesCosts_result();
   result.read(this.input);
   this.input.readMessageEnd();
 

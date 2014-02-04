@@ -26,7 +26,17 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		super(sessId);
 	}
 
-	public static VoSession getSession(String sessId) throws InvalidOperation {
+	public static void checkIfAuthorised(String httpSessId) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			getSession(httpSessId, pm);
+		} finally {
+			pm.close();
+		}
+	}
+	
+
+	public static VoSession getSession(String sessId, PersistenceManager pm) throws InvalidOperation {
 
 		try {
 			VoSession sess = null;
@@ -52,7 +62,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 		logger.info("try authentificate user " + email + " pass " + password);
 
-		VoUser u = getUserByEmail(email);
+		PersistenceManager pm = PMF.getPm();
+		VoUser u = getUserByEmail(email, pm);
 		if (u != null) {
 			if (u.getPassword().equals(password)) {
 				VoSession sess = new VoSession(sessionStorage.getId(), u);
@@ -61,7 +72,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 					sess.setLatitude(homeGroup.getLatitude());
 					sess.setLongitude(homeGroup.getLongitude());
 				}
-				PMF.getPm().makePersistent(sess);
+				pm.makePersistent(sess);
 				return true;
 			} else
 				logger.info("incorrect password " + email + " pass " + password);
@@ -109,22 +120,33 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public void logout() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			pm.deletePersistent(getCurrentSession());
+			pm.deletePersistent(getCurrentSession(pm));
 		} finally {
 			pm.close();
 		}
 	}
 
 	public VoUser getUserByEmail(String email) {
-		Query q = PMF.getPm().newQuery(VoUser.class);
-		q.setFilter("email == emailParam");
-		q.declareParameters("float emailParam");
-		List<VoUser> users = (List<VoUser>) q.execute(email);
-		if (users.isEmpty())
-			return null;
-		if (users.size() != 1)
-			logger.error("has more than one user with email " + email);
-		return users.get(0);
+		return getUserByEmail(email, null);
+	}
+
+	public VoUser getUserByEmail(String email, PersistenceManager _pm) {
+
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+		try {
+			Query q = pm.newQuery(VoUser.class);
+			q.setFilter("email == emailParam");
+			q.declareParameters("float emailParam");
+			List<VoUser> users = (List<VoUser>) q.execute(email);
+			if (users.isEmpty())
+				return null;
+			if (users.size() != 1)
+				logger.error("has more than one user with email " + email);
+			return users.get(0);
+		} finally {
+			if (null == _pm)
+				pm.close();
+		}
 	}
 
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");

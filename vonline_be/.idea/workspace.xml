@@ -4,21 +4,21 @@
     <list default="true" id="dee6d34e-f0c3-49b6-a86d-d729727d9be2" name="Default" comment="intelij Idea integration">
       <change type="DELETED" beforePath="C:\work\git_local\vmesteonline\vonline_be\tests\com\vmesteonline\be\DataStoreTestsHelper.java" afterPath="" />
       <change type="DELETED" beforePath="C:\work\git_local\vmesteonline\vonline_be\tests\com\vmesteonline\be\GroupHelperTests.java" afterPath="" />
-      <change type="MOVED" beforePath="C:\work\git_local\vmesteonline\vonline_be\.idea\libraries\lib.xml" afterPath="$PROJECT_DIR$/.idea/libraries/GAE_testing.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.classpath" afterPath="$PROJECT_DIR$/.classpath" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/com/vmesteonline/be/AuthServiceImpTests.java" afterPath="$PROJECT_DIR$/tests/com/vmesteonline/be/AuthServiceImpTests.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/MessageServiceImpl.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/MessageServiceImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/com/vmesteonline/be/MessageServiceTests.java" afterPath="$PROJECT_DIR$/tests/com/vmesteonline/be/MessageServiceTests.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoBuilding.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoBuilding.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoGroup.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoGroup.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoPostalAddress.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoPostalAddress.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoStreet.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoStreet.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoUser.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoUser.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoUserGroup.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoUserGroup.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vonline_be.iml" afterPath="$PROJECT_DIR$/vonline_be.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoBuilding.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoBuilding.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoUser.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoUser.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/lib.xml" afterPath="$PROJECT_DIR$/.idea/libraries/GAE_testing.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoPostalAddress.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoPostalAddress.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.classpath" afterPath="$PROJECT_DIR$/.classpath" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/MessageServiceImpl.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/MessageServiceImpl.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoGroup.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoGroup.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/com/vmesteonline/be/AuthServiceImpTests.java" afterPath="$PROJECT_DIR$/tests/com/vmesteonline/be/AuthServiceImpTests.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/com/vmesteonline/be/MessageServiceTests.java" afterPath="$PROJECT_DIR$/tests/com/vmesteonline/be/MessageServiceTests.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoStreet.java" afterPath="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/postaladdress/VoStreet.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vonline_be.iml" afterPath="$PROJECT_DIR$/vonline_be.iml" />
     </list>
     <ignored path="vonline_be.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -73,8 +73,8 @@
       </breakpoint>
     </breakpoint_any>
     <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
-    <line_breakpoints>
-      <breakpoint url="file://$PROJECT_DIR$/tests/com/vmesteonline/be/MessageServiceTests.java" line="140" class="com.vmesteonline.be.MessageServiceTests" package="com.vmesteonline.be">
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint url="file://$PROJECT_DIR$/tests/com/vmesteonline/be/MessageServiceTests.java" line="133" class="com.vmesteonline.be.MessageServiceTests" package="com.vmesteonline.be">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -102,10 +102,8 @@
       <file leaf-file-name="AuthServiceImpl.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="30" column="30" selection-start="836" selection-end="836" vertical-scroll-proportion="0.0" vertical-offset="1020" max-vertical-offset="2142">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="28" column="30" selection-start="706" selection-end="706" vertical-scroll-proportion="0.0" vertical-offset="986" max-vertical-offset="2856">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -113,7 +111,7 @@
       <file leaf-file-name="MessageServiceTests.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/com/vmesteonline/be/MessageServiceTests.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="140" column="8" selection-start="6328" selection-end="6328" vertical-scroll-proportion="0.0" vertical-offset="1581" max-vertical-offset="2788">
+            <state line="133" column="8" selection-start="6096" selection-end="6096" vertical-scroll-proportion="0.0" vertical-offset="2261" max-vertical-offset="3196">
               <folding />
             </state>
           </provider>
@@ -122,7 +120,38 @@
       <file leaf-file-name="VoMessage.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoMessage.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="39" selection-start="922" selection-end="922" vertical-scroll-proportion="0.58966565" vertical-offset="265" max-vertical-offset="6868">
+            <state line="20" column="0" selection-start="615" selection-end="615" vertical-scroll-proportion="0.33333334" vertical-offset="231" max-vertical-offset="8041">
+              <folding>
+                <element signature="e#8932#8941#0" expanded="true" />
+                <element signature="e#9957#9958#0" expanded="true" />
+                <element signature="e#9984#9985#0" expanded="true" />
+                <element signature="e#10175#10176#0" expanded="true" />
+                <element signature="e#10199#10200#0" expanded="true" />
+                <element signature="e#10777#10778#0" expanded="true" />
+                <element signature="e#10801#10802#0" expanded="true" />
+                <element signature="e#10841#10842#0" expanded="true" />
+                <element signature="e#10873#10874#0" expanded="true" />
+                <element signature="e#11300#11301#0" expanded="true" />
+                <element signature="e#11316#11317#0" expanded="true" />
+                <element signature="e#11346#11347#0" expanded="true" />
+                <element signature="e#11365#11366#0" expanded="true" />
+                <element signature="e#11398#11399#0" expanded="true" />
+                <element signature="e#11416#11417#0" expanded="true" />
+                <element signature="e#11511#11512#0" expanded="true" />
+                <element signature="e#11534#11535#0" expanded="true" />
+                <element signature="e#11574#11575#0" expanded="true" />
+                <element signature="e#11599#11600#0" expanded="true" />
+                <element signature="e#11836#11837#0" expanded="true" />
+                <element signature="e#11856#11857#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="authservice.thrift" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/thrift/authservice.thrift">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
               <folding />
             </state>
           </provider>
@@ -140,7 +169,7 @@
       <file leaf-file-name="ServiceImpl.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="0" selection-start="472" selection-end="472" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="1224">
+            <state line="19" column="0" selection-start="474" selection-end="474" vertical-scroll-proportion="0.0" vertical-offset="323" max-vertical-offset="2210">
               <folding />
             </state>
           </provider>
@@ -193,14 +222,15 @@
       <list>
         <option value="$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java" />
         <option value="$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoMessage.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-1" />
     <option name="y" value="-4" />
-    <option name="width" value="1552" />
-    <option name="height" value="880" />
+    <option name="width" value="1548" />
+    <option name="height" value="876" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -243,10 +273,6 @@
               <option name="myItemId" value="vonline_be" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -268,101 +294,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="tests" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vonline_be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vonline_be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tests" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vonline_be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vonline_be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vonline_be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vonline_be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vonline_be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vonline_be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jdo2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vonline_be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vonline_be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="be" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="data" />
+              <option name="myItemId" value="thrift" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -380,12 +312,12 @@
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="recentsLimit" value="5" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="Facets" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="dynamic.classpath" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/com/vmesteonline/be/jdo2" />
     <property name="options.lastSelected" value="preferences.pluginManager" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
@@ -668,10 +600,9 @@
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
-    <list size="3">
-      <item index="0" class="java.lang.String" itemvalue="Google AppEngine Dev Server.gappDevServer" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.All in vonline_be" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.MessageServiceTests" />
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="JUnit.All in vonline_be" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.MessageServiceTests" />
     </list>
     <recent_temporary>
       <list size="2">
@@ -711,6 +642,7 @@
       <workItem from="1389174051223" duration="1398000" />
       <workItem from="1389175450015" duration="8437000" />
       <workItem from="1390769615905" duration="1410000" />
+      <workItem from="1391498166895" duration="1831000" />
     </task>
     <task id="LOCAL-00001" summary="some fixes">
       <created>1389183107036</created>
@@ -732,10 +664,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11525000" />
+    <option name="totallyTimeSpent" value="13356000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="-4" width="1552" height="880" extended-state="0" />
+    <frame x="-1" y="-4" width="1548" height="876" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -748,24 +680,24 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3994812" sideWeight="0.903125" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.49546045" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.49543676" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.49546045" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299595" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.49546045" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -798,9 +730,43 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="0" selection-start="544" selection-end="544" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="2142">
+        <state line="30" column="30" selection-start="836" selection-end="836" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2142">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/com/vmesteonline/be/MessageServiceTests.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="140" column="8" selection-start="6328" selection-end="6328" vertical-scroll-proportion="0.0" vertical-offset="2380" max-vertical-offset="3213">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoMessage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="39" selection-start="922" selection-end="922" vertical-scroll-proportion="0.0" vertical-offset="459" max-vertical-offset="6868">
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#8932#8941#0" expanded="true" />
+            <element signature="e#9957#9958#0" expanded="true" />
+            <element signature="e#9984#9985#0" expanded="true" />
+            <element signature="e#10175#10176#0" expanded="true" />
+            <element signature="e#10199#10200#0" expanded="true" />
+            <element signature="e#10777#10778#0" expanded="true" />
+            <element signature="e#10801#10802#0" expanded="true" />
+            <element signature="e#10841#10842#0" expanded="true" />
+            <element signature="e#10873#10874#0" expanded="true" />
+            <element signature="e#11300#11301#0" expanded="true" />
+            <element signature="e#11316#11317#0" expanded="true" />
+            <element signature="e#11346#11347#0" expanded="true" />
+            <element signature="e#11365#11366#0" expanded="true" />
+            <element signature="e#11398#11399#0" expanded="true" />
+            <element signature="e#11416#11417#0" expanded="true" />
+            <element signature="e#11511#11512#0" expanded="true" />
+            <element signature="e#11534#11535#0" expanded="true" />
+            <element signature="e#11574#11575#0" expanded="true" />
+            <element signature="e#11599#11600#0" expanded="true" />
+            <element signature="e#11836#11837#0" expanded="true" />
+            <element signature="e#11856#11857#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -842,10 +808,50 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="0" selection-start="544" selection-end="544" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="2142">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthSericeServlet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="31" selection-start="250" selection-end="267" vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="357">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="472" selection-end="472" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="1224">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/data/MySQLJDBCConnector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="13" selection-start="106" selection-end="106" vertical-scroll-proportion="0.0" vertical-offset="68" max-vertical-offset="408">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/thrift/gen-java/com/vmesteonline/be/Group.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="13362">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/data/JDBCConnector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="31" selection-start="628" selection-end="637" vertical-scroll-proportion="0.0" vertical-offset="374" max-vertical-offset="1445">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
         <state line="57" column="31" selection-start="1843" selection-end="1843" vertical-scroll-proportion="0.0" vertical-offset="855" max-vertical-offset="1365">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -859,9 +865,7 @@
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="13" column="71" selection-start="353" selection-end="353" vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="1290">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -888,7 +892,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/ServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="0" selection-start="472" selection-end="472" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="1224">
+        <state line="19" column="0" selection-start="474" selection-end="474" vertical-scroll-proportion="0.0" vertical-offset="323" max-vertical-offset="2210">
           <folding />
         </state>
       </provider>
@@ -902,24 +906,51 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/AuthServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="30" selection-start="836" selection-end="836" vertical-scroll-proportion="0.0" vertical-offset="1020" max-vertical-offset="2142">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="28" column="30" selection-start="706" selection-end="706" vertical-scroll-proportion="0.0" vertical-offset="986" max-vertical-offset="2856">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tests/com/vmesteonline/be/MessageServiceTests.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="140" column="8" selection-start="6328" selection-end="6328" vertical-scroll-proportion="0.0" vertical-offset="1581" max-vertical-offset="2788">
+        <state line="133" column="8" selection-start="6096" selection-end="6096" vertical-scroll-proportion="0.0" vertical-offset="2261" max-vertical-offset="3196">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/thrift/authservice.thrift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vmesteonline/be/jdo2/VoMessage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="39" selection-start="922" selection-end="922" vertical-scroll-proportion="0.58966565" vertical-offset="265" max-vertical-offset="6868">
-          <folding />
+        <state line="20" column="0" selection-start="615" selection-end="615" vertical-scroll-proportion="0.33333334" vertical-offset="231" max-vertical-offset="8041">
+          <folding>
+            <element signature="e#8932#8941#0" expanded="true" />
+            <element signature="e#9957#9958#0" expanded="true" />
+            <element signature="e#9984#9985#0" expanded="true" />
+            <element signature="e#10175#10176#0" expanded="true" />
+            <element signature="e#10199#10200#0" expanded="true" />
+            <element signature="e#10777#10778#0" expanded="true" />
+            <element signature="e#10801#10802#0" expanded="true" />
+            <element signature="e#10841#10842#0" expanded="true" />
+            <element signature="e#10873#10874#0" expanded="true" />
+            <element signature="e#11300#11301#0" expanded="true" />
+            <element signature="e#11316#11317#0" expanded="true" />
+            <element signature="e#11346#11347#0" expanded="true" />
+            <element signature="e#11365#11366#0" expanded="true" />
+            <element signature="e#11398#11399#0" expanded="true" />
+            <element signature="e#11416#11417#0" expanded="true" />
+            <element signature="e#11511#11512#0" expanded="true" />
+            <element signature="e#11534#11535#0" expanded="true" />
+            <element signature="e#11574#11575#0" expanded="true" />
+            <element signature="e#11599#11600#0" expanded="true" />
+            <element signature="e#11836#11837#0" expanded="true" />
+            <element signature="e#11856#11857#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -934,7 +965,6 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.5" />
               </list>
             </option>
           </splitter-proportions>
@@ -942,7 +972,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>Google App Engine</last-edited>
+          <last-edited>Google App Engine (vonline_be)|Google App Engine</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -982,6 +1012,7 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
+                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>

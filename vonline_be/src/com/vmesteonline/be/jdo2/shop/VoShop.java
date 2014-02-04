@@ -3,15 +3,16 @@ package com.vmesteonline.be.jdo2.shop;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.persistence.ManyToMany;
 
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
@@ -20,13 +21,11 @@ import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoTopic;
-import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.Shop;
-import com.vmesteonline.be.utils.Helper;
 
 @PersistenceCapable
 public class VoShop {
@@ -47,12 +46,13 @@ public class VoShop {
 		this.logoURL = logoURL;
 		this.ownerId = ownerId;
 		if( null == (this.tags = tags)) this.tags = new HashSet<String>();
-		if( null == (this.deliveryCosts = Helper.copyTheMap( deliveryCosts, new HashMap<Integer, Double>()))) this.deliveryCosts = new HashMap<Integer, Double>();
-		if( null == (this.paymentTypes = Helper.copyTheMap( paymentTypes, new HashMap<Integer, Double>()))) {
-			this.paymentTypes = new HashMap<Integer, Double>();
+		this.deliveryCosts = null == deliveryCosts ? new HashMap<Integer, Double>() : convertFromDeliveryTypeMap( deliveryCosts, new HashMap<Integer, Double>());
+		if( null == deliveryCosts) 
+			this.deliveryCosts.put(DeliveryType.SELF_PICKUP.getValue(), 0D);
+		this.paymentTypes = null == paymentTypes ? new HashMap<Integer, Double>() : convertFromPaymentTypeMap( paymentTypes, new HashMap<Integer, Double>());
+		if(null == paymentTypes)
 			this.paymentTypes.put( PaymentType.CASH.getValue(), 0D );
-		}
-		
+
 		try {
 			this.topics = new HashSet<VoTopic>();
 			for(long tid: topicSet ){
@@ -73,18 +73,18 @@ public class VoShop {
 	}
 
 	public Shop getShop() {
-		Shop shop = new Shop(id, name, descr, address.getPostalAddress(), logoURL, ownerId, null, tags, 
-				Helper.copyTheMap( deliveryCosts, new HashMap<DeliveryType, Double>()),
-				Helper.copyTheMap( paymentTypes, new HashMap<PaymentType, Double>()));
 		Set<Long> topicIds = new HashSet<Long>();
 		for (VoTopic vt : getTopics()) {
 			topicIds.add(vt.getId().getId());
 		}
+		Shop shop = new Shop(id, name, descr, address.getPostalAddress(), logoURL, ownerId, topicIds, tags, 
+				convertToDeliveryTypeMap( deliveryCosts, new HashMap<DeliveryType, Double>()),
+				convertToPaymentTypeMap( paymentTypes, new HashMap<PaymentType, Double>()));
 		return shop;
 	}
 
-	@Persistent
 	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private long id;
 
 	@Persistent
@@ -95,6 +95,7 @@ public class VoShop {
 	private String descr;
 	@Persistent
 	@Unindexed
+	@Unowned
 	private VoPostalAddress address;
 	@Persistent
 	@Unindexed
@@ -242,5 +243,22 @@ public class VoShop {
 	}
 	public SortedMap<Integer,DateType> getDates(int from, int to) {
 		return dates.subMap(from,  to);
+	}
+	
+	public static Map<Integer, Double> convertFromPaymentTypeMap( Map<PaymentType, Double> in, Map<Integer, Double> out){
+		for( Entry<PaymentType, Double> e: in.entrySet()) out.put(e.getKey().getValue(), e.getValue());
+		return out;
+	}
+	public static Map<PaymentType, Double> convertToPaymentTypeMap( Map<Integer, Double> in, Map<PaymentType, Double> out){
+		for( Entry<Integer, Double> e: in.entrySet()) out.put( PaymentType.values()[e.getKey()], e.getValue());
+		return out;
+	}
+	public static Map<Integer, Double> convertFromDeliveryTypeMap( Map<DeliveryType, Double> in, Map<Integer, Double> out){
+		for( Entry<DeliveryType, Double> e: in.entrySet()) out.put(e.getKey().getValue(), e.getValue());
+		return out;
+	}
+	public static Map<DeliveryType, Double> convertToDeliveryTypeMap( Map<Integer, Double> in, Map<DeliveryType, Double> out){
+		for( Entry<Integer, Double> e: in.entrySet()) out.put( DeliveryType.values()[e.getKey()], e.getValue());
+		return out;
 	}
 }

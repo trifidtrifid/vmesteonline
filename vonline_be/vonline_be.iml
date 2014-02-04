@@ -18,34 +18,30 @@
       <configuration>
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="" />
-        <datasource-mapping>
-          <factory-entry name="transactions-optional" />
-        </datasource-mapping>
-        <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/META-INF/persistence.xml" />
+        <datasource-mapping />
+        <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/bin/out/production/vonline_be/src/META-INF/persistence.xml" />
       </configuration>
     </facet>
     <facet type="google-app-engine" name="Google App Engine">
       <configuration>
-        <sdk-home-path>$MODULE_DIR$/../../../env/appengine-java-sdk-1.8.8</sdk-home-path>
         <run-enhancer-on-make>true</run-enhancer-on-make>
         <files-to-enhance>
-          <file path="$MODULE_DIR$/src" />
+          <file path="$MODULE_DIR$/src/com/vmesteonline/be/jdo2" />
         </files-to-enhance>
-        <persistence-api>JDO3</persistence-api>
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="true">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/out" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/thrift/gen-java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="GAE-testing" level="project" />
+    <orderEntry type="library" name="apache-thrift" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="module" module-name="thrift" />
   </component>
 </module>
 

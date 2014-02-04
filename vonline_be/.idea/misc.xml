@@ -3,6 +3,11 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/bin/out/production/vonline_be/war/WEB-INF/web.xml" />
+    <file type="web" url="file://$PROJECT_DIR$/bin/war/WEB-INF/web.xml" />
+    <file type="web" url="file://$PROJECT_DIR$/out/production/vonline_be/war/WEB-INF/web.xml" />
+  </component>
   <component name="IdProvider" IDEtalkID="406E2F48FB7A9E58F28A9FA9585E4018" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7 (1)" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
