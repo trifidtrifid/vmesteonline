@@ -23,22 +23,22 @@
       <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/log4j-1.2.14.jar!/" />
       <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/commons-logging-1.1.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/mysql-connector-java-5.1.28-bin.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib/testing/appengine-testing.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib/impl/appengine-api-stubs.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib/impl/appengine-api.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib/impl/appengine-api-labs.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib/impl/appengine-local-runtime.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib" />
+      <root url="jar://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib/testing/appengine-testing.jar!/" />
+      <root url="jar://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib/impl/appengine-api-stubs.jar!/" />
+      <root url="jar://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib/impl/appengine-api.jar!/" />
+      <root url="jar://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib/impl/appengine-api-labs.jar!/" />
+      <root url="jar://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib/impl/appengine-local-runtime.jar!/" />
+      <root url="file://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib/testing/appengine-testing.jar!/com/google/appengine/repackaged/com/google/common/base/super" />
-      <root url="jar://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib/impl/appengine-api-labs.jar!/com/google/appengine/labs/repackaged/com/google/common/base/super" />
-      <root url="jar://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib/impl/appengine-api-labs.jar!/com/google/appengine/labs/repackaged/com/google/common/util/super" />
-      <root url="jar://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib/impl/appengine-local-runtime.jar!/com/google/appengine/repackaged/com/google/common/base/super" />
-      <root url="file://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib" />
+      <root url="jar://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib/testing/appengine-testing.jar!/com/google/appengine/repackaged/com/google/common/base/super" />
+      <root url="jar://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib/impl/appengine-api-labs.jar!/com/google/appengine/labs/repackaged/com/google/common/base/super" />
+      <root url="jar://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib/impl/appengine-api-labs.jar!/com/google/appengine/labs/repackaged/com/google/common/util/super" />
+      <root url="jar://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib/impl/appengine-local-runtime.jar!/com/google/appengine/repackaged/com/google/common/base/super" />
+      <root url="file://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib" />
     </SOURCES>
-    <jarDirectory url="file://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib" recursive="false" />
-    <jarDirectory url="file://$PROJECT_DIR$/../../../env/appengine-java-sdk-1.8.8/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib" recursive="false" />
+    <jarDirectory url="file://$USER_HOME$/env/appengine-java-sdk-1.8.8/lib" recursive="false" type="SOURCES" />
   </library>
 </component>
