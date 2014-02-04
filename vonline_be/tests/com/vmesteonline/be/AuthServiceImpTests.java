@@ -57,7 +57,7 @@ public class AuthServiceImpTests {
 	@Test
 	public void testGetSessionNotAuthorized() {
 		try {
-			AuthServiceImpl.getSession("ttemptySession");
+			AuthServiceImpl.checkIfAuthorised("ttemptySession");
 			fail("session should throw exception");
 		} catch (InvalidOperation e) {
 			assertEquals(VoError.NotAuthorized, e.what);
