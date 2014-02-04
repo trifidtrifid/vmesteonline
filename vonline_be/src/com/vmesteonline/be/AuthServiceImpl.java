@@ -34,6 +34,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			pm.close();
 		}
 	}
+	
 
 	public static VoSession getSession(String sessId, PersistenceManager pm) throws InvalidOperation {
 
