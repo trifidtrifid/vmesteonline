@@ -26,7 +26,16 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		super(sessId);
 	}
 
-	public static VoSession getSession(String sessId) throws InvalidOperation {
+	public static void checkIsAuthorised(String httpSessId) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			getSession(httpSessId, pm);
+		} finally {
+			pm.close();
+		}
+	}
+
+	public static VoSession getSession(String sessId, PersistenceManager pm) throws InvalidOperation {
 
 		try {
 			VoSession sess = null;
@@ -119,10 +128,10 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public VoUser getUserByEmail(String email) {
 		return getUserByEmail(email, null);
 	}
-	
-	public VoUser getUserByEmail(String email, PersistenceManager _pm){
-	
-		PersistenceManager pm = null==_pm ? PMF.getPm() :_pm;
+
+	public VoUser getUserByEmail(String email, PersistenceManager _pm) {
+
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		try {
 			Query q = pm.newQuery(VoUser.class);
 			q.setFilter("email == emailParam");
@@ -134,7 +143,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				logger.error("has more than one user with email " + email);
 			return users.get(0);
 		} finally {
-			if(null==_pm) pm.close();
+			if (null == _pm)
+				pm.close();
 		}
 	}
 
