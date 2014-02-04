@@ -26,7 +26,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		super(sessId);
 	}
 
-	public static void checkIsAuthorised(String httpSessId) throws InvalidOperation {
+	public static void checkIfAuthorised(String httpSessId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			getSession(httpSessId, pm);
