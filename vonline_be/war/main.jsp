@@ -92,13 +92,13 @@
         	 var transport = new Thrift.Transport("/thrift/UserService");
     		var protocol = new Thrift.Protocol(transport);
     		var client = new com.vmesteonline.be.UserServiceClient(protocol);
+
     		
-//    		var someGroupId = client.getUserGroups();	
+    		var someGroupId = client.getUserGroups();
 			var someRoubricId = client.getUserRubrics();
 			
-			})
-			
 			//alert(someGroupId[0].id);
+			
         	
         	<%-- transport = new Thrift.Transport("/thrift/MessageService");
     		protocol = new Thrift.Protocol(transport);
@@ -173,8 +173,8 @@
        		<%
         		}        		
         	}
-        	%>        	
-        }); --%>
+        	%> --%>
+        });
         
     </script>
  
@@ -264,6 +264,9 @@
                 <script type="text/javascript">
                     try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
                 </script>
+                <div class="show-left">
+                    Меню
+                </div>
                 <ul class="nav nav-list">
                 
                 <c:forEach var="rubric" items="${rubrics}">                    
