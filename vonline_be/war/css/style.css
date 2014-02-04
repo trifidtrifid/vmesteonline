@@ -126,6 +126,9 @@ h1 {
   margin: 0;
   margin-bottom: 5px;
 }
+.submenu .btn-group li a {
+  font-size: 13px;
+}
 .submenu .btn-group .btn {
   font-size: 14px;
   border: 0;
@@ -138,6 +141,9 @@ h1 {
 }
 .btn-group>.btn {
   border-radius: 2px !important;
+}
+.dropdown-menu {
+  min-width: 115px;
 }
 .options {
   padding: 8px 0 5px 10px;
@@ -162,6 +168,7 @@ h1 {
   float: right;
   margin-right: 14px;
   height: 30px;
+  text-align: left;
 }
 .options .btn-primary {
   font-size: 14px;
@@ -430,8 +437,15 @@ h1 {
 .create-topic {
   padding: 0 10px;
 }
+.create-topic >.btn-group {
+  float: right;
+  margin-left: 5px;
+}
 .create-topic .wysiwig-box {
   display: block;
+}
+.create-topic .wysiwig-box .pull-left .btn {
+  margin-right: 5px;
 }
 .create-topic .wysiwyg-editor {
   border-left: 1px solid #ccc;
