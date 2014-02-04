@@ -15,9 +15,20 @@
 <%@ page import="com.vmesteonline.be.MessageType"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
-<%@ page import="com.vmesteonline.be.jdo2.VoSession"%>  
+<%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
+<%@ page import="com.vmesteonline.be.InvalidOperation"%>    
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
+<%
+	HttpSession sess = request.getSession();
+	try {
+	 	AuthServiceImpl.checkIfAuthorised(sess.getId());
+	} catch (InvalidOperation ioe) {
+		response.sendRedirect("/login.html");
+		return; 
+	}
+%>
 
 <!DOCTYPE html>
 <html>
@@ -29,6 +40,8 @@
 <script src="js/thrift.js" type="text/javascript"></script>
 <script src="gen-js/messageservice_types.js" type="text/javascript"></script>
 <script src="gen-js/MessageService.js" type="text/javascript"></script>
+<script src="gen-js/userservice_types.js" type="text/javascript"></script>
+<script src="gen-js/UserService.js" type="text/javascript"></script>
 
 <script src="js/jquery-2.0.3.min.js"></script>
     <!--[if lt IE 9]>
@@ -44,14 +57,11 @@
 <body>
 
 <%
-	//AuthServiceImpl authService = new AuthServiceImpl(request.getSession().getId());
-	//out.print(AuthServiceImpl.getSession(request.getSession().getId()));
 		
 	 UserServiceImpl userService = new UserServiceImpl(request.getSession());
 			
 	List<Group> someGroupId = userService.getUserGroups();	
-	List<Rubric> someRoubricId = userService.getUserRubrics();	
-	
+	List<Rubric> someRoubricId = userService.getUserRubrics();		
 	
 	MessageServiceImpl messageService = new MessageServiceImpl();
 	//out.print("Topics:<br>");
@@ -79,14 +89,16 @@
 
    <script type="text/javascript">
         $(document).ready(function(){
-        	/* var transport = new Thrift.Transport("/thrift/UserService");
+        	 var transport = new Thrift.Transport("/thrift/UserService");
     		var protocol = new Thrift.Protocol(transport);
     		var client = new com.vmesteonline.be.UserServiceClient(protocol);
     		
-    		var someGroupId = client.getUserGroups();	
+//    		var someGroupId = client.getUserGroups();	
 			var someRoubricId = client.getUserRubrics();
 			
-			alert(someGroupId[0].id); */
+			})
+			
+			//alert(someGroupId[0].id);
         	
         	<%-- transport = new Thrift.Transport("/thrift/MessageService");
     		protocol = new Thrift.Protocol(transport);
@@ -163,6 +175,7 @@
         	}
         	%>        	
         }); --%>
+        
     </script>
  
 <div class="container">
@@ -274,8 +287,8 @@
             <div class="main-content">
                 <nav class="submenu">                
                     <ul>                    
-                    <c:forEach var="group" items="${groups}">                    
-                    	<li><a class="btn btn-sm btn-info no-border" href="#">"${group.visibleName}"</a></li> 
+                    <c:forEach var="group" items="<%=userService.getUserGroups()%>">
+                    	<li><a class="btn btn-sm btn-info no-border" href="#">${group.visibleName}</a></li>
                     </c:forEach> 
                     	<li class="btn-group">
                     	<button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">

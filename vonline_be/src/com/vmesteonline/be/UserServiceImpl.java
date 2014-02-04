@@ -53,24 +53,29 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@Override
 	public List<Group> getUserGroups() throws InvalidOperation, TException {
-		long userId = getCurrentUserId();
-		PersistenceManager pm = PMF.getPm();
-		VoUser user = pm.getObjectById(VoUser.class, userId);
-		if (user == null) {
-			logger.error("can't find user by id " + Long.toString(userId));
-			throw new InvalidOperation(VoError.NotAuthorized, "can't find user by id");
+		try {
+			long userId = getCurrentUserId();
+			PersistenceManager pm = PMF.getPm();
+			VoUser user = pm.getObjectById(VoUser.class, userId);
+			if (user == null) {
+				logger.error("can't find user by id " + Long.toString(userId));
+				throw new InvalidOperation(VoError.NotAuthorized, "can't find user by id");
+			}
+			logger.info("find user name " + user.getEmail());
+
+			if (user.getGroups() == null) {
+				logger.warn("user with id " + Long.toString(userId) + " has no any groups");
+				throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");
+			}
+			List<Group> groups = new ArrayList<Group>();
+			for (VoUserGroup group : user.getGroups()) {
+				groups.add(group.createGroup());
+			}
+			return groups;
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, e.getMessage());
 		}
-		logger.info("find user name " + user.getEmail());
-	
-		if (user.getGroups() == null) {
-			logger.warn("user with id " + Long.toString(userId) + " has no any groups");
-			throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");
-		}
-		List<Group> groups = new ArrayList<Group>();
-		for (VoUserGroup group : user.getGroups()) {
-			groups.add(group.createGroup());
-		}
-		return groups;
 	}
 
 	@Override

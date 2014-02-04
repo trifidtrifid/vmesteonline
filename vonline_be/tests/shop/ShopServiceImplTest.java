@@ -143,7 +143,7 @@ public class ShopServiceImplTest {
 	
 	}
 
-	@Test
+	/*@Test
 	public void testRegisterProductCategory() {
 		try {
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, 
