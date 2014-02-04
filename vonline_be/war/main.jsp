@@ -40,6 +40,8 @@
 <script src="js/thrift.js" type="text/javascript"></script>
 <script src="gen-js/messageservice_types.js" type="text/javascript"></script>
 <script src="gen-js/MessageService.js" type="text/javascript"></script>
+<script src="gen-js/userservice_types.js" type="text/javascript"></script>
+<script src="gen-js/UserService.js" type="text/javascript"></script>
 
 <script src="js/jquery-2.0.3.min.js"></script>
     <!--[if lt IE 9]>
@@ -91,7 +93,7 @@
     		var protocol = new Thrift.Protocol(transport);
     		var client = new com.vmesteonline.be.UserServiceClient(protocol);
     		
-    		var someGroupId = client.getUserGroups();	
+//    		var someGroupId = client.getUserGroups();	
 			var someRoubricId = client.getUserRubrics();
 			
 			})
