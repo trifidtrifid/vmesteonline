@@ -8,7 +8,7 @@ main-radius = 2px
 second-radius = 1px
 
 html
-   height 100%
+  height 100%
 
 body
   background #fff
@@ -16,6 +16,10 @@ body
 
 a
   outline none !important
+
+h1
+  margin-top 10px
+  font-size 24px
 
 transform()
   -moz-transform rotate(arguments); /* Для Firefox */
@@ -35,15 +39,15 @@ transform()
   min-height 100%
 
 .ace-nav>li
+  a
+    padding 11px 12px 0 12px
+    line-height 1.428571429
+    font-size 16px
+    border none
+    border-bottom 3px solid rgb(111, 179, 224)
+  &.active
     a
-      padding 11px 12px 0 12px
-      line-height 1.428571429
-      font-size 16px
-      border none
-      border-bottom 3px solid rgb(111, 179, 224)
-    &.active
-      a
-        border-bottom-color #2b7dbc
+      border-bottom-color #2b7dbc
 
 .ace-nav>.user-short a
   border none
@@ -114,6 +118,15 @@ transform()
     border-top 0
     &.active .btn
       border-color #2b7dbc
+    ul
+      padding-bottom 0
+    li
+      border-top 0
+      display block
+      margin 0
+      margin-bottom 5px
+      a
+        font-size 13px
     .btn
       font-size 14px
       border 0
@@ -125,6 +138,9 @@ transform()
 
 .btn-group>.btn
   border-radius main-radius !important
+
+.dropdown-menu
+  min-width 115px
 
 .options
   padding 8px 0 5px 10px
@@ -144,6 +160,7 @@ transform()
     float right
     margin-right 14px
     height 30px
+    text-align left
   .btn-primary
     font-size 14px
     float left
@@ -357,3 +374,16 @@ transform()
     width 100%
     .main-content
       margin-left 0
+
+/* создание темы */
+.create-topic
+  padding 0 10px
+  >.btn-group
+    float right
+    margin-left 5px
+  .wysiwig-box
+    display block
+    .pull-left .btn
+      margin-right 5px
+  .wysiwyg-editor
+    border-left 1px solid #ccc
