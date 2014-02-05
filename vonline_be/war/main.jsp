@@ -79,13 +79,6 @@
 	pageContext.setAttribute("rubrics",userService.getUserRubrics());
 	
 %>
-<%-- <c:set var="b" scope="session" value="4" />
-<c:set var="q" value="1" />
-<c:out value="${sessionScope.b}" />
-<c:out value="${txtt.id}" />
-
-<c:set var="friends" value="${UserServiceImpl.userGroups}" />
- <c:out value="${friends}"/> --%>
 
    <script type="text/javascript">
         $(document).ready(function(){
@@ -93,21 +86,19 @@
     		var protocol = new Thrift.Protocol(transport);
     		var client = new com.vmesteonline.be.UserServiceClient(protocol);
     		
-//    		var someGroupId = client.getUserGroups();	
-			var someRoubricId = client.getUserRubrics();
-			
-			})
-			
-			//alert(someGroupId[0].id);
-        	
-        	<%-- transport = new Thrift.Transport("/thrift/MessageService");
+    		var someGroup = client.getUserGroups();
+			var someRubric = client.getUserRubrics();
+
+        	transport = new Thrift.Transport("/thrift/MessageService");
     		protocol = new Thrift.Protocol(transport);
-    		client = new com.vmesteonline.be.MessageServiceClient(protocol);   			
-    		
-        	var Messages;       	
+    		client = new com.vmesteonline.be.MessageServiceClient(protocol);
+
+            var Topics = client.getTopics(someGroup[0].id,someRubric[0].id, 1, 1,0,2);
+            //var Messages = client.getMessages(someGroup[0].id,someRubric[0].id, 'BASE', someGroup[0].id,false,0,2);
         	
         	var messageList = '';
-        	//alert('1');
+        	//alert(Messages);
+    <%--
         	<%
         	for(int i=0; i<topicsLen; i++){
         		currTopic[i] = (Topic)Topics.topics.toArray()[i];	%>
@@ -173,8 +164,8 @@
        		<%
         		}        		
         	}
-        	%>        	
-        }); --%>
+        	%> --%>
+        });
         
     </script>
  
