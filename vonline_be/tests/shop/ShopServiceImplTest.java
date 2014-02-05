@@ -2,16 +2,12 @@ package shop;
 
 import static org.junit.Assert.fail;
 
-
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.Assert;
 
-import org.apache.thrift.TException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +16,6 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.Group;
-import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.MessageServiceImpl;
 import com.vmesteonline.be.MessageType;
 import com.vmesteonline.be.PostalAddress;
@@ -29,13 +24,10 @@ import com.vmesteonline.be.Topic;
 import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.PaymentType;
-import com.vmesteonline.be.shop.ProductCategory;
 import com.vmesteonline.be.shop.Shop;
 
 public class ShopServiceImplTest {
 	
-	private static final String PRC1_DESCR = "КОрневая категория";
-	private static final String ROOT_PRODUCT_CAT1 = "Root ProductCat1";
 	private static final String LOGO = "http://www.ru.tele2.ru/img/logo.gif";
 	private static final String DESCR = "TELE2 shop";
 	private static final String NAME = "Во!Магазин";
@@ -53,14 +45,9 @@ public class ShopServiceImplTest {
 	Topic topic;
 	PostalAddress userAddress;
 	private HashSet<Long> topicSet = new HashSet<Long>();
-	private HashSet<Long> topic2Set = new HashSet<Long>();
 	private static HashSet<String> tags;
 	private static HashMap<DeliveryType, Double> deliveryCosts;
 	private static HashMap<PaymentType, Double> paymentTypes;
-	private static Set<ByteBuffer> images = new HashSet<ByteBuffer>();
-	private static Set<ByteBuffer> images2 = new HashSet<ByteBuffer>();
-	private static Set<ByteBuffer> images3 = new HashSet<ByteBuffer>();
-	
 	static {
 		tags = new HashSet<String>();
 		tags.add(TAG);
@@ -74,10 +61,6 @@ public class ShopServiceImplTest {
 		paymentTypes.put(PaymentType.CASH, 1.0D);
 		paymentTypes.put(PaymentType.CREDIT_CARD, 2.0D);
 		paymentTypes.put(PaymentType.TRANSFER, 3.0D);
-		
-		images.add(ByteBuffer.wrap("http://ya.ru".getBytes()));
-		images2.add(ByteBuffer.wrap("http://google.com".getBytes()));
-		images2.add(ByteBuffer.wrap("http://ya.ru".getBytes()));
 	}
 
 	@Before
@@ -143,41 +126,11 @@ public class ShopServiceImplTest {
 	
 	}
 
-	@Test
+	/*@Test
 	public void testRegisterProductCategory() {
-		try {
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, 
-					userId, topicSet, tags, deliveryCosts, paymentTypes);
-			
-			Long shopId = si.registerShop( shop );
-			//set current shop
-			si.getShop(shopId);
-
-			Long rootCatId = si.registerProductCategory(new ProductCategory(0L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet), shopId);
-			Long SecCatId = si.registerProductCategory(new ProductCategory(0L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set), shopId);
-			Long THirdCatId = si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set), shopId);
-			Long THird2CatId = si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set), shopId);
-			
-			List<ProductCategory> rootPcs = si.getProductCategories(0);
-			Assert.assertEquals(rootPcs.size(), 1);
-			ProductCategory rc = rootPcs.get(0);
-			Assert.assertEquals( (long)rc.getId(), (long)rootCatId );
-			Assert.assertEquals( (long)rc.getParentId(), 0L );
-			Assert.assertEquals( rc.getName(), ROOT_PRODUCT_CAT1 );
-			Assert.assertEquals( rc.getDescr(), PRC1_DESCR );
-			Assert.assertEquals( rc.getLogoURLset(), images );
-			Assert.assertEquals( rc.getTopicSet(), topicSet );
-			
-			//List<ProductCategory> pc = si.getProductCategories();
-			
-
-		}  catch (TException e) {
-			e.printStackTrace();
-			fail("Exception thrown: "+ e.getMessage());
-		}
-		
+		fail("Not yet implemented");
 	}
-/*
+
 	@Test
 	public void testRegisterProducer() {
 		fail("Not yet implemented");

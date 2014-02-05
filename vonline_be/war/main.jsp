@@ -1,4 +1,4 @@
-﻿
+
 <%@page import="com.vmesteonline.be.utils.SessionHelper"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -43,7 +43,7 @@
 <script src="gen-js/userservice_types.js" type="text/javascript"></script>
 <script src="gen-js/UserService.js" type="text/javascript"></script>
 
-<script src="js/jquery-2.1.0.js"></script>
+<script src="js/jquery-2.0.3.min.js"></script>
     <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -92,13 +92,13 @@
         	 var transport = new Thrift.Transport("/thrift/UserService");
     		var protocol = new Thrift.Protocol(transport);
     		var client = new com.vmesteonline.be.UserServiceClient(protocol);
-
     		
-    		var someGroupId = client.getUserGroups();
+//    		var someGroupId = client.getUserGroups();	
 			var someRoubricId = client.getUserRubrics();
 			
-			//alert(someGroupId[0].id);
+			})
 			
+			//alert(someGroupId[0].id);
         	
         	<%-- transport = new Thrift.Transport("/thrift/MessageService");
     		protocol = new Thrift.Protocol(transport);
@@ -173,8 +173,8 @@
        		<%
         		}        		
         	}
-        	%> --%>
-        });
+        	%>        	
+        }); --%>
         
     </script>
  
@@ -264,9 +264,6 @@
                 <script type="text/javascript">
                     try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
                 </script>
-                <div class="show-left">
-                    Меню
-                </div>
                 <ul class="nav nav-list">
                 
                 <c:forEach var="rubric" items="${rubrics}">                    
