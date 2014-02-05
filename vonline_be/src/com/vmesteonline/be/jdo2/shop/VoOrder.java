@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -91,7 +92,7 @@ public class VoOrder {
 		return od;
 	}
 	
-	@Persistent
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
   private long id;
 	

@@ -2,12 +2,15 @@ package shop;
 
 import static org.junit.Assert.fail;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
+import org.apache.thrift.TException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +27,7 @@ import com.vmesteonline.be.Topic;
 import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.PaymentType;
+import com.vmesteonline.be.shop.ProductCategory;
 import com.vmesteonline.be.shop.Shop;
 
 public class ShopServiceImplTest {
@@ -32,6 +36,11 @@ public class ShopServiceImplTest {
 	private static final String DESCR = "TELE2 shop";
 	private static final String NAME = "Во!Магазин";
 	private static final String SESSION_ID = "11111111111111111111111";
+	
+	private static final String PRC1_DESCR = "КОрневая категория";
+	private static final String ROOT_PRODUCT_CAT1 = "Root ProductCat1";
+
+	
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
 			new LocalDatastoreServiceTestConfig());
 	
@@ -48,6 +57,12 @@ public class ShopServiceImplTest {
 	private static HashSet<String> tags;
 	private static HashMap<DeliveryType, Double> deliveryCosts;
 	private static HashMap<PaymentType, Double> paymentTypes;
+	
+	private static Set<ByteBuffer> images = new HashSet<ByteBuffer>();
+	private static Set<ByteBuffer> images2 = new HashSet<ByteBuffer>();
+	private static Set<ByteBuffer> images3 = new HashSet<ByteBuffer>();
+
+	private HashSet<Long> topic2Set = new HashSet<Long>();
 	static {
 		tags = new HashSet<String>();
 		tags.add(TAG);
@@ -126,11 +141,58 @@ public class ShopServiceImplTest {
 	
 	}
 
-	/*@Test
+	@Test
 	public void testRegisterProductCategory() {
-		fail("Not yet implemented");
-	}
+				try {
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, 
+					userId, topicSet, tags, deliveryCosts, paymentTypes);
+			
+			Long shopId = si.registerShop( shop );
+			//set current shop
+			si.getShop(shopId);
 
+			Long rootCatId = si.registerProductCategory(new ProductCategory(0L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet), shopId);
+			Long SecCatId = si.registerProductCategory(new ProductCategory(0L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set), shopId);
+			/*Long THirdCatId = */si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set), shopId);
+			Long THird2CatId = si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set), shopId);
+			
+			List<ProductCategory> rootPcs = si.getProductCategories(0);
+			Assert.assertEquals(rootPcs.size(), 1);
+			ProductCategory rc = rootPcs.get(0);
+			Assert.assertEquals( (long)rc.getId(), (long)rootCatId );
+			Assert.assertEquals( (long)rc.getParentId(), 0L );
+			Assert.assertEquals( rc.getName(), ROOT_PRODUCT_CAT1 );
+			Assert.assertEquals( rc.getDescr(), PRC1_DESCR );
+			Assert.assertEquals( rc.getLogoURLset(), images );
+			Assert.assertEquals( rc.getTopicSet(), topicSet );
+			
+			List<ProductCategory> slPcs = si.getProductCategories(rootCatId);
+			Assert.assertEquals(slPcs.size(), 1);
+			ProductCategory l2c = slPcs.get(0);
+			Assert.assertEquals( (long)l2c.getId(), (long)SecCatId );
+			Assert.assertEquals( (long)l2c.getParentId(), (long)rootCatId );
+			Assert.assertEquals( l2c.getName(), "Second LevelPC" );
+			Assert.assertEquals( l2c.getDescr(), "Второй уровень" );
+			Assert.assertEquals( l2c.getLogoURLset(), images2 );
+			Assert.assertEquals( l2c.getTopicSet(), topic2Set );
+			
+			List<ProductCategory> tlPcs = si.getProductCategories(SecCatId);
+			Assert.assertEquals(tlPcs.size(), 2);
+			ProductCategory l3c = tlPcs.get(1);
+			Assert.assertEquals( (long)l3c.getId(), (long)THird2CatId );
+			Assert.assertEquals( (long)l3c.getParentId(), (long)SecCatId );
+			Assert.assertEquals( l3c.getName(), "THird Level2PC" );
+			Assert.assertEquals( l3c.getDescr(), "Третий уровень2" );
+			Assert.assertEquals( l3c.getLogoURLset(), images3 );
+			Assert.assertEquals( l3c.getTopicSet(), topic2Set );
+			
+
+		}  catch (TException e) {
+			e.printStackTrace();
+			fail("Exception thrown: "+ e.getMessage());
+		}
+	}
+/*
 	@Test
 	public void testRegisterProducer() {
 		fail("Not yet implemented");

@@ -158,7 +158,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	@Override
 	public Map<Integer, Long> getCurrentAttributes() throws InvalidOperation, TException {
-		return super.getCurrentAttributes();
+		return super.getCurrentSession().getSessionAttributes();
 	}
 
 }
