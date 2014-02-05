@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -85,14 +86,10 @@ public class VoProductCategory {
 		
 		return pc;
 	}
-	@Persistent
+
 	@PrimaryKey
-<<<<<<< HEAD
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key id;
-=======
-	private long id;
->>>>>>> ce53ac1791bd385cc1a3c6b252a7bf73808f50ea
 	
 	@Persistent
 	private VoProductCategory parent;

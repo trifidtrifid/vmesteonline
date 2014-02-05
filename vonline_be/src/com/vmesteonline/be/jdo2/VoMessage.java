@@ -212,8 +212,8 @@ public class VoMessage {
 	public Message getMessage() {
 		Key parentKey = id.getParent();
 		return new Message(id.getId(), null == parentKey ? 0L : parentKey.getId(), type, getTopic().getId().getId(), 0L, authorId.getId(), createdAt,
-				editedAt, new String(content), likesNum, unlikesNum, links, tags, new UserMessage(getUserMessage().isRead(), getUserMessage().isLikes(),
-						getUserMessage().isUnlikes()));
+				editedAt, new String(content), likesNum, unlikesNum, links, tags, 
+				new UserMessage(getUserMessage().isRead(), getUserMessage().isLikes(), getUserMessage().isUnlikes()));
 	}
 
 	/**
