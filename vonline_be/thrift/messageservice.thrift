@@ -10,7 +10,7 @@ struct MessageLink {
 }
 
 struct UserMessage {
-	1: bool read, //флаг прочитанности сообщения пользователем
+	1: bool isread, //флаг прочитанности сообщения пользователем
 	2: bool likes,
 	3: bool unlikes 
 }

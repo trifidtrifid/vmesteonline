@@ -14,6 +14,7 @@ import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.data.PMF;
@@ -70,7 +71,7 @@ public class VoProductCategory {
 	}
 	
 	public ProductCategory getProductCategory( ){
-		ProductCategory pc = new ProductCategory(id, 
+		ProductCategory pc = new ProductCategory(id.getId(), 
 				null==parent ? 0L : parent.getId(), name, descr, null, null );
 		
 		Set<ByteBuffer> lus = new HashSet<ByteBuffer>();
@@ -87,7 +88,7 @@ public class VoProductCategory {
 	}
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private long id;
+	private Key id;
 	
 	@Persistent
 	private VoProductCategory parent;
@@ -110,6 +111,7 @@ public class VoProductCategory {
 	
 	@Persistent(mappedBy="parent")
 	@OneToMany
+	@Unowned
 	private Set<VoProductCategory> childs;
 	
 	@Persistent
@@ -124,7 +126,7 @@ public class VoProductCategory {
 		return products;
 	} 
 	public long getId(){
-		return id;
+		return id.getId();
 	}
 
 	public VoProductCategory getParent() {
