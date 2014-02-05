@@ -13,10 +13,6 @@ body {
 a {
   outline: none !important;
 }
-h1 {
-  margin-top: 10px;
-  font-size: 24px;
-}
 .btn-primary,
 .header-color-blue2 {
   background-color: #438eb9 !important;
@@ -117,18 +113,6 @@ h1 {
 .submenu .btn-group.active .btn {
   border-color: #2b7dbc;
 }
-.submenu .btn-group ul {
-  padding-bottom: 0;
-}
-.submenu .btn-group li {
-  border-top: 0;
-  display: block;
-  margin: 0;
-  margin-bottom: 5px;
-}
-.submenu .btn-group li a {
-  font-size: 13px;
-}
 .submenu .btn-group .btn {
   font-size: 14px;
   border: 0;
@@ -141,9 +125,6 @@ h1 {
 }
 .btn-group>.btn {
   border-radius: 2px !important;
-}
-.dropdown-menu {
-  min-width: 115px;
 }
 .options {
   padding: 8px 0 5px 10px;
@@ -168,7 +149,6 @@ h1 {
   float: right;
   margin-right: 14px;
   height: 30px;
-  text-align: left;
 }
 .options .btn-primary {
   font-size: 14px;
@@ -432,21 +412,4 @@ h1 {
   .container .main-content {
     margin-left: 0;
   }
-}
-/* создание темы */
-.create-topic {
-  padding: 0 10px;
-}
-.create-topic >.btn-group {
-  float: right;
-  margin-left: 5px;
-}
-.create-topic .wysiwig-box {
-  display: block;
-}
-.create-topic .wysiwig-box .pull-left .btn {
-  margin-right: 5px;
-}
-.create-topic .wysiwyg-editor {
-  border-left: 1px solid #ccc;
 }

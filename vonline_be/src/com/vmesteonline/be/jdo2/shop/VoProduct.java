@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jdo.PersistenceManager;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -120,9 +119,9 @@ public class VoProduct {
 	  productDetails.setProducerId( producer.getId());
 	  return productDetails;
 	}
+	@Persistent
 	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-  private long id;
+	private long id;
 
 	@Persistent
 	@Unindexed

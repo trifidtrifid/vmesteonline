@@ -1,6 +1,5 @@
 package com.vmesteonline.be;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -76,7 +75,6 @@ public class VoServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-
 		serviceImpl.setSession(request.getSession());
 		TTransport inTransport = null;
 		TTransport outTransport = null;
@@ -88,29 +86,10 @@ public class VoServlet extends HttpServlet {
 					response.addHeader(header.getKey(), header.getValue());
 				}
 			}
-			final InputStream in = request.getInputStream();
-			final OutputStream out = response.getOutputStream();
-			
-			final ByteArrayOutputStream writeBaos = new ByteArrayOutputStream();
-			OutputStream writerSniffer = new OutputStream(){
-				@Override
-				public void write(int b) throws IOException {
-					writeBaos.write(b);
-					out.write(b);
-				}};
-			
-			final ByteArrayOutputStream readBaos = new ByteArrayOutputStream();
-				InputStream readerSniffer = new InputStream(){
+			InputStream in = request.getInputStream();
+			OutputStream out = response.getOutputStream();
 
-					@Override
-					public int read() throws IOException {
-						int i = in.read();
-						readBaos.write(i);
-						return i;
-					}
-					};
-				
-			TTransport transport = new TIOStreamTransport(readerSniffer, writerSniffer);
+			TTransport transport = new TIOStreamTransport(in, out);
 			inTransport = transport;
 			outTransport = transport;
 
@@ -120,12 +99,6 @@ public class VoServlet extends HttpServlet {
 
 			processor.process(inProtocol, outProtocol);
 			out.flush();
-			
-			writerSniffer.close();
-			readerSniffer.close();
-			System.out.println("THRIFT Got request: '"+readBaos.toString() +"'");
-			System.out.println("THRIFT Sent a response: '"+writeBaos.toString() +"'");
-			
 		} catch (TException te) {
 			throw new ServletException(te);
 		}
