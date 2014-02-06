@@ -41,8 +41,8 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
   private static final org.apache.thrift.protocol.TField ADDRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("address", org.apache.thrift.protocol.TType.STRUCT, (short)4);
   private static final org.apache.thrift.protocol.TField LOGO_URL_FIELD_DESC = new org.apache.thrift.protocol.TField("logoURL", org.apache.thrift.protocol.TType.STRING, (short)5);
   private static final org.apache.thrift.protocol.TField OWNER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("ownerId", org.apache.thrift.protocol.TType.I64, (short)6);
-  private static final org.apache.thrift.protocol.TField TOPIC_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("topicSet", org.apache.thrift.protocol.TType.SET, (short)7);
-  private static final org.apache.thrift.protocol.TField TAGS_FIELD_DESC = new org.apache.thrift.protocol.TField("tags", org.apache.thrift.protocol.TType.SET, (short)8);
+  private static final org.apache.thrift.protocol.TField TOPIC_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("topicSet", org.apache.thrift.protocol.TType.LIST, (short)7);
+  private static final org.apache.thrift.protocol.TField TAGS_FIELD_DESC = new org.apache.thrift.protocol.TField("tags", org.apache.thrift.protocol.TType.LIST, (short)8);
   private static final org.apache.thrift.protocol.TField DELIVERY_COSTS_FIELD_DESC = new org.apache.thrift.protocol.TField("deliveryCosts", org.apache.thrift.protocol.TType.MAP, (short)9);
   private static final org.apache.thrift.protocol.TField PAYMENT_TYPES_FIELD_DESC = new org.apache.thrift.protocol.TField("paymentTypes", org.apache.thrift.protocol.TType.MAP, (short)10);
 
@@ -58,8 +58,8 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
   public com.vmesteonline.be.PostalAddress address; // required
   public String logoURL; // required
   public long ownerId; // required
-  public Set<Long> topicSet; // required
-  public Set<String> tags; // required
+  public List<Long> topicSet; // required
+  public List<String> tags; // required
   public Map<DeliveryType,Double> deliveryCosts; // required
   public Map<PaymentType,Double> paymentTypes; // required
 
@@ -168,10 +168,10 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     tmpMap.put(_Fields.OWNER_ID, new org.apache.thrift.meta_data.FieldMetaData("ownerId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.TOPIC_SET, new org.apache.thrift.meta_data.FieldMetaData("topicSet", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64))));
     tmpMap.put(_Fields.TAGS, new org.apache.thrift.meta_data.FieldMetaData("tags", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
     tmpMap.put(_Fields.DELIVERY_COSTS, new org.apache.thrift.meta_data.FieldMetaData("deliveryCosts", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
@@ -195,8 +195,8 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     com.vmesteonline.be.PostalAddress address,
     String logoURL,
     long ownerId,
-    Set<Long> topicSet,
-    Set<String> tags,
+    List<Long> topicSet,
+    List<String> tags,
     Map<DeliveryType,Double> deliveryCosts,
     Map<PaymentType,Double> paymentTypes)
   {
@@ -235,11 +235,11 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
     }
     this.ownerId = other.ownerId;
     if (other.isSetTopicSet()) {
-      Set<Long> __this__topicSet = new HashSet<Long>(other.topicSet);
+      List<Long> __this__topicSet = new ArrayList<Long>(other.topicSet);
       this.topicSet = __this__topicSet;
     }
     if (other.isSetTags()) {
-      Set<String> __this__tags = new HashSet<String>(other.tags);
+      List<String> __this__tags = new ArrayList<String>(other.tags);
       this.tags = __this__tags;
     }
     if (other.isSetDeliveryCosts()) {
@@ -446,16 +446,16 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
 
   public void addToTopicSet(long elem) {
     if (this.topicSet == null) {
-      this.topicSet = new HashSet<Long>();
+      this.topicSet = new ArrayList<Long>();
     }
     this.topicSet.add(elem);
   }
 
-  public Set<Long> getTopicSet() {
+  public List<Long> getTopicSet() {
     return this.topicSet;
   }
 
-  public Shop setTopicSet(Set<Long> topicSet) {
+  public Shop setTopicSet(List<Long> topicSet) {
     this.topicSet = topicSet;
     return this;
   }
@@ -485,16 +485,16 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
 
   public void addToTags(String elem) {
     if (this.tags == null) {
-      this.tags = new HashSet<String>();
+      this.tags = new ArrayList<String>();
     }
     this.tags.add(elem);
   }
 
-  public Set<String> getTags() {
+  public List<String> getTags() {
     return this.tags;
   }
 
-  public Shop setTags(Set<String> tags) {
+  public Shop setTags(List<String> tags) {
     this.tags = tags;
     return this;
   }
@@ -638,7 +638,7 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       if (value == null) {
         unsetTopicSet();
       } else {
-        setTopicSet((Set<Long>)value);
+        setTopicSet((List<Long>)value);
       }
       break;
 
@@ -646,7 +646,7 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       if (value == null) {
         unsetTags();
       } else {
-        setTags((Set<String>)value);
+        setTags((List<String>)value);
       }
       break;
 
@@ -1144,17 +1144,17 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
             }
             break;
           case 7: // TOPIC_SET
-            if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
+            if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TSet _set0 = iprot.readSetBegin();
-                struct.topicSet = new HashSet<Long>(2*_set0.size);
-                for (int _i1 = 0; _i1 < _set0.size; ++_i1)
+                org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
+                struct.topicSet = new ArrayList<Long>(_list0.size);
+                for (int _i1 = 0; _i1 < _list0.size; ++_i1)
                 {
                   long _elem2;
                   _elem2 = iprot.readI64();
                   struct.topicSet.add(_elem2);
                 }
-                iprot.readSetEnd();
+                iprot.readListEnd();
               }
               struct.setTopicSetIsSet(true);
             } else { 
@@ -1162,17 +1162,17 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
             }
             break;
           case 8: // TAGS
-            if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
+            if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TSet _set3 = iprot.readSetBegin();
-                struct.tags = new HashSet<String>(2*_set3.size);
-                for (int _i4 = 0; _i4 < _set3.size; ++_i4)
+                org.apache.thrift.protocol.TList _list3 = iprot.readListBegin();
+                struct.tags = new ArrayList<String>(_list3.size);
+                for (int _i4 = 0; _i4 < _list3.size; ++_i4)
                 {
                   String _elem5;
                   _elem5 = iprot.readString();
                   struct.tags.add(_elem5);
                 }
-                iprot.readSetEnd();
+                iprot.readListEnd();
               }
               struct.setTagsIsSet(true);
             } else { 
@@ -1263,24 +1263,24 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       if (struct.topicSet != null) {
         oprot.writeFieldBegin(TOPIC_SET_FIELD_DESC);
         {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, struct.topicSet.size()));
+          oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, struct.topicSet.size()));
           for (long _iter14 : struct.topicSet)
           {
             oprot.writeI64(_iter14);
           }
-          oprot.writeSetEnd();
+          oprot.writeListEnd();
         }
         oprot.writeFieldEnd();
       }
       if (struct.tags != null) {
         oprot.writeFieldBegin(TAGS_FIELD_DESC);
         {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, struct.tags.size()));
+          oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, struct.tags.size()));
           for (String _iter15 : struct.tags)
           {
             oprot.writeString(_iter15);
           }
-          oprot.writeSetEnd();
+          oprot.writeListEnd();
         }
         oprot.writeFieldEnd();
       }
@@ -1448,9 +1448,9 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       }
       if (incoming.get(6)) {
         {
-          org.apache.thrift.protocol.TSet _set22 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, iprot.readI32());
-          struct.topicSet = new HashSet<Long>(2*_set22.size);
-          for (int _i23 = 0; _i23 < _set22.size; ++_i23)
+          org.apache.thrift.protocol.TList _list22 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, iprot.readI32());
+          struct.topicSet = new ArrayList<Long>(_list22.size);
+          for (int _i23 = 0; _i23 < _list22.size; ++_i23)
           {
             long _elem24;
             _elem24 = iprot.readI64();
@@ -1461,9 +1461,9 @@ public class Shop implements org.apache.thrift.TBase<Shop, Shop._Fields>, java.i
       }
       if (incoming.get(7)) {
         {
-          org.apache.thrift.protocol.TSet _set25 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.tags = new HashSet<String>(2*_set25.size);
-          for (int _i26 = 0; _i26 < _set25.size; ++_i26)
+          org.apache.thrift.protocol.TList _list25 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+          struct.tags = new ArrayList<String>(_list25.size);
+          for (int _i26 = 0; _i26 < _list25.size; ++_i26)
           {
             String _elem27;
             _elem27 = iprot.readString();

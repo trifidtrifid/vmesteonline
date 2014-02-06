@@ -13,8 +13,8 @@ struct Shop {
 	4:bedata.PostalAddress address,
 	5:string logoURL,
 	6:i64 ownerId,
-	7:set<i64> topicSet,
-	8:set<string> tags,
+	7:list<i64> topicSet,
+	8:list<string> tags,
 	9:map<DeliveryType,double> deliveryCosts,
 	10:map<PaymentType,double> paymentTypes
 }
@@ -32,19 +32,19 @@ struct ProductCategory {
 	2:i64 parentId,
 	3:string name,
 	4:string descr,
-	5:set<binary> logoURLset
-	6:set<i64> topicSet
+	5:list<binary> logoURLset
+	6:list<i64> topicSet
 }
 
 enum PriceType { RETAIL=0, INET=1, VIP=2, SPECIAL=3, MERGED=4 }
 
 struct ProductDetails {
-	1:set<i64> categories,
+	1:list<i64> categories,
 	2:string fullDescr,
-	3:set<binary> imagesURLset
+	3:list<binary> imagesURLset
 	4:map<PriceType,double> pricesMap,
 	5:map<string,string> optionsMap,
-	6:set<i64> topicSet,
+	6:list<i64> topicSet,
 	7:i64 producerId,
 }
 
@@ -112,12 +112,12 @@ service ShopService {
 	* Method uploads products to the shop that by parameter shopId. All value of image URLS may contain a JPEG image data or HTTP url 
 	* to pull the image from.   
 	**/
-	set<i64> uploadProducts( 1:list<FullProductInfo> products, 2:i64 shopId, 3:bool cleanShopBeforeUpload ) throws (1:error.InvalidOperation exc),
+	list<i64> uploadProducts( 1:list<FullProductInfo> products, 2:i64 shopId, 3:bool cleanShopBeforeUpload ) throws (1:error.InvalidOperation exc),
 	/**
 	* Method uploads categories. List in the request should contain relative values of  and return list with updated values of id, parentId
 	* and URLS replaced to local. Any of URL parameter may contain JPEG image data.
 	**/
-	set<ProductCategory> uploadProductCategoies( 1:set<ProductCategory> categories, 2:bool relativeIds, 3:bool cleanShopBeforeUpload )
+	list<ProductCategory> uploadProductCategoies( 1:list<ProductCategory> categories, 2:bool relativeIds, 3:bool cleanShopBeforeUpload )
 		throws (1:error.InvalidOperation exc),
 	/**
 	* Method returns full orders information. userId and shopId may be used as a filter by defining not 0 value 

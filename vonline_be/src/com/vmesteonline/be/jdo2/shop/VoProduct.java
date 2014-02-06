@@ -2,10 +2,10 @@ package com.vmesteonline.be.jdo2.shop;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.jdo.PersistenceManager;
@@ -13,8 +13,6 @@ import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
@@ -23,7 +21,6 @@ import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.shop.FullProductInfo;
-import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Product;
 import com.vmesteonline.be.shop.ProductDetails;
@@ -49,7 +46,7 @@ public class VoProduct {
 		} catch (IOException ie) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 		}
-		this.imagesURLset = new HashSet<String>();
+		this.imagesURLset = new ArrayList<String>();
 		for (ByteBuffer imgURL : details.getImagesURLset())
 			try {
 				imagesURLset.add(StorageHelper.saveImage(imgURL.array()));
@@ -63,8 +60,8 @@ public class VoProduct {
 		this.pricesMap = convertFromPriceTypeMap( details.getPricesMap(), new HashMap<Integer, Double>());
 		this.optionsMap = details.getOptionsMap();
 
-		this.categories = new HashSet<VoProductCategory>();
-		this.shops = new HashSet<VoShop>();
+		this.categories = new ArrayList<VoProductCategory>();
+		this.shops = new ArrayList<VoShop>();
 		
 		PersistenceManager pm = null==_pm ? PMF.getPm() : _pm;
 		
@@ -82,7 +79,7 @@ public class VoProduct {
 				pm.makePersistent(vpc);
 			}
 			
-			this.topicSet = new HashSet<VoTopic>();
+			this.topicSet = new ArrayList<VoTopic>();
 			for (long topicId : details.getTopicSet()) {
 				VoTopic vTopic = pm.getObjectById(VoTopic.class, topicId);
 				this.topicSet.add(vTopic);
@@ -90,8 +87,9 @@ public class VoProduct {
 			VoProducer producer = pm.getObjectById(VoProducer.class, details.getProducerId());
 			this.producer = producer;
 			producer.getProducts().add(this);
-			pm.makePersistent(producer);
 			pm.makePersistent(this);
+			pm.makePersistent(producer);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to create Product" + e.getMessage());
@@ -106,26 +104,31 @@ public class VoProduct {
 	
 	public ProductDetails getProductDetails() {
 		ProductDetails productDetails = new ProductDetails();
-		PersistenceManager pm = PMF.getPm();
 		
-		Set<Long> cs = new HashSet<Long>();
+		List<Long> cs = new ArrayList<Long>();
 		for( VoProductCategory pc : getCategories()){	
 			cs.add(pc.getId()); 
 		}
 		productDetails.setCategories(cs);
 		
-		Set<ByteBuffer> ius = new HashSet<ByteBuffer>();
+		List<ByteBuffer> ius = new ArrayList<ByteBuffer>();
 		for( String iu : getImagesURLset()){
 			ius.add( ByteBuffer.wrap(iu.getBytes()));
 		}
 			
 		productDetails.setPricesMap( convertToPriceTypeMap(pricesMap, new HashMap<PriceType, Double>())); 
 		productDetails.setOptionsMap(optionsMap);
-	  Set<Long> ts = new HashSet<Long>();
+	  List<Long> ts = new ArrayList<Long>();
 	  for( VoTopic vt : getTopicSet()){
 			ts.add( vt.getId().getId() );
 		}
 	  productDetails.setProducerId( producer.getId());
+	  productDetails.setFullDescr(fullDescr);
+	  productDetails.setTopicSet(ts);
+	  productDetails.setImagesURLset(ius);
+	  
+	  
+	  
 	  return productDetails;
 	}
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -155,7 +158,7 @@ public class VoProduct {
 	@Persistent(mappedBy = "products")
 	/*@ManyToMany*/
 	@Unowned
-	private Set<VoProductCategory> categories;
+	private List<VoProductCategory> categories;
 
 	@Persistent
 	@Unindexed
@@ -163,7 +166,7 @@ public class VoProduct {
 
 	@Persistent
 	@Unindexed
-	private Set<String> imagesURLset;
+	private List<String> imagesURLset;
 
 	@Persistent
 	@Unindexed
@@ -175,7 +178,7 @@ public class VoProduct {
 
 	@Persistent
 	@Unowned
-	private Set<VoTopic> topicSet;
+	private List<VoTopic> topicSet;
 
 	@Persistent(mappedBy = "products")
 	@Unowned
@@ -183,7 +186,7 @@ public class VoProduct {
 	
 	@Persistent(mappedBy="products")
 	@Unowned
-	private Set<VoShop> shops;
+	private List<VoShop> shops;
 
 	public String getName() {
 		return name;
@@ -225,11 +228,11 @@ public class VoProduct {
 		this.price = price;
 	}
 
-	public Set<VoProductCategory> getCategories() {
+	public List<VoProductCategory> getCategories() {
 		return categories;
 	}
 
-	public void setCategories(Set<VoProductCategory> categories) {
+	public void setCategories(List<VoProductCategory> categories) {
 		this.categories = categories;
 	}
 
@@ -241,11 +244,11 @@ public class VoProduct {
 		this.fullDescr = fullDescr;
 	}
 
-	public Set<String> getImagesURLset() {
+	public List<String> getImagesURLset() {
 		return imagesURLset;
 	}
 
-	public void setImagesURLset(Set<String> imagesURLset) {
+	public void setImagesURLset(List<String> imagesURLset) {
 		this.imagesURLset = imagesURLset;
 	}
 
@@ -265,11 +268,11 @@ public class VoProduct {
 		this.optionsMap = optionsMap;
 	}
 
-	public Set<VoTopic> getTopicSet() {
+	public List<VoTopic> getTopicSet() {
 		return topicSet;
 	}
 
-	public void setTopicSet(Set<VoTopic> topicSet) {
+	public void setTopicSet(List<VoTopic> topicSet) {
 		this.topicSet = topicSet;
 	}
 
