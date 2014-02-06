@@ -92,6 +92,7 @@ public class VoProductCategory {
 	private Key id;
 	
 	@Persistent
+	@Unowned
 	private VoProductCategory parent;
 	
 	@Persistent

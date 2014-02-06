@@ -95,14 +95,16 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public Set<ProductCategory> uploadProductCategoies(Set<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload)
 			throws InvalidOperation, TException {
-		Long shopId = super.getCurrentAttributes().get(CurrentAttributeType.SHOP);
+		
+		PersistenceManager pm = PMF.getPm();
+		
+		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to upload Product categories. SHOP ID is not set in session context.");
 		}
 		Set<ProductCategory> categoriesCreated = new HashSet<ProductCategory>();
 		Map<Long, Long> idMap = new HashMap<Long, Long>();
 
-		PersistenceManager pm = PMF.getPm();
 		Transaction currentTransaction = pm.currentTransaction();
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
@@ -196,11 +198,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public void setDates(Map<Integer, DateType> dateDateTypeMap) throws TException {
-		Long shopId = super.getCurrentAttributes().get(CurrentAttributeType.SHOP);
+		
+		PersistenceManager pm = PMF.getPm();
+		
+		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to setDates. SHOP ID is not set in session context.");
 		}
-		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
 			voShop.setDates(dateDateTypeMap);
@@ -232,11 +236,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public Map<Integer, DateType> getDates(int from, int to) throws InvalidOperation, TException {
-		Long shopId = super.getCurrentAttributes().get(CurrentAttributeType.SHOP);
+		PersistenceManager pm = PMF.getPm();
+		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to getDates. SHOP ID is not set in session context.");
 		}
-		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
 			return voShop.getDates(from, to);
@@ -268,8 +272,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public List<Producer> getProducers() throws InvalidOperation, TException {
-		Long shopId = getCurrentShopId();
 		PersistenceManager pm = PMF.getPm();
+		Long shopId = getCurrentShopId(pm);
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
 			if (null != voShop) {
@@ -289,21 +293,27 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public List<ProductCategory> getProductCategories(long currentProductCategoryId) throws InvalidOperation, TException {
-		Long shopId = getCurrentShopId();
+		
 		PersistenceManager pm = PMF.getPm();
+		Long shopId = getCurrentShopId( pm );
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
 			if (null != voShop) {
-				Query pcq = pm.newQuery(VoProductCategory.class);
-				pcq.setFilter("parent == :key ");
-				pcq.setFilter("shops == :key ");
-				List<VoProductCategory> cats = (List<VoProductCategory>) pcq.execute(currentProductCategoryId, shopId);
 				List<ProductCategory> lpc = new ArrayList<ProductCategory>();
-				for (VoProductCategory cat : cats) {
-					lpc.add(cat.getProductCategory());
+				if( 0 == currentProductCategoryId ){
+					Query newQuery = pm.newQuery(VoProductCategory.class);
+					newQuery.setFilter("parent == null");
+					for (VoProductCategory voProductCategory : (List<VoProductCategory>)newQuery.execute()) {
+						lpc.add(voProductCategory.getProductCategory());
+					}
+				} else {
+					VoProductCategory parent = pm.getObjectById(VoProductCategory.class, currentProductCategoryId);
+					for (VoProductCategory child : parent.getChilds()) {
+						lpc.add(child.getProductCategory());
+					}
 				}
-				pcq.closeAll();
 				return lpc;
+				
 			} else {
 				throw new InvalidOperation(VoError.GeneralError, "No shop found by ID");
 			}
@@ -318,8 +328,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public ProductListPart getProducts(int offset, int length, long categoryId) throws InvalidOperation, TException {
-		Long shopId = getCurrentShopId();
 		PersistenceManager pm = PMF.getPm();
+		Long shopId = getCurrentShopId(pm);
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
 			if (null != voShop) {
@@ -364,8 +374,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public List<Order> getOrders(int dateFrom, int dateTo) throws InvalidOperation, TException {
-		Long shopId = getCurrentShopId();
 		PersistenceManager pm = PMF.getPm();
+		Long shopId = getCurrentShopId(pm);
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
 			if (null != voShop) {
@@ -391,20 +401,23 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
-	private Long getCurrentShopId() throws InvalidOperation, TException {
-		Long shopId = super.getCurrentAttributes().get(CurrentAttributeType.SHOP);
+	private Long getCurrentShopId( PersistenceManager pm ) throws InvalidOperation, TException {
+		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
-			throw new InvalidOperation(VoError.IncorrectParametrs, "SHOP ID is not set in session context.");
+			throw new InvalidOperation(VoError.IncorrectParametrs, "SHOP ID is not set in session context. shopId="+shopId);
 		}
 		return shopId;
 	}
 
 	private VoShop getCurrentShop(PersistenceManager _pm) throws InvalidOperation, TException {
-		Long shopId = super.getCurrentAttributes().get(CurrentAttributeType.SHOP);
+		
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+		
+		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "SHOP ID is not set in session context.");
 		}
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+		
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
 			if (null != voShop) {
@@ -421,11 +434,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	private VoOrder getCurrentOrder(PersistenceManager _pm) throws InvalidOperation, TException {
-		Long orderId = super.getCurrentAttributes().get(CurrentAttributeType.ORDER);
+		
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+		Long orderId = super.getSessionAttribute(CurrentAttributeType.ORDER, pm);
 		if (null == orderId || 0 == orderId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "ORDER ID is not set in session context.");
 		}
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+		
 		try {
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, orderId);
 			if (null != voOrder) {
@@ -460,11 +475,16 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public long createOrder(int date) throws InvalidOperation, TException {
-		Long shopId = getCurrentShopId();
-		VoUser user = getCurrentUser();
-		long id = new VoOrder(user, shopId.longValue(), date).getId();
-		setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), id);
-		return id;
+		PersistenceManager pm = PMF.getPm();
+		try {
+			Long shopId = getCurrentShopId(pm);
+			VoUser user = getCurrentUser(pm);
+			long id = new VoOrder(user, shopId.longValue(), date).getId();
+			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), id, pm);
+			return id;
+		} finally {
+			pm.close();
+		}
 	}
 
 	@Override
@@ -580,7 +600,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-			VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId());
+			VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId(pm));
 
 			Map<Integer, Double> deliveryCosts = voShop.getDeliveryCosts();
 			if (deliveryCosts.containsKey(deliveryType)) {
@@ -611,7 +631,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-			VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId());
+			VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId(pm));
 
 			Map<Integer, Double> paymentTypes = voShop.getPaymentTypes();
 			if (paymentTypes.containsKey(paymentType)) {
