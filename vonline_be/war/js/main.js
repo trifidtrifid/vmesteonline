@@ -54,11 +54,11 @@ $(document).ready(function(){
         $(this).closest('ul').find('.active').removeClass('active');
         $(this).parent().addClass('active');
     });
-    $('.submenu .btn').click(function(e){
+    /*$('.submenu .btn').click(function(e){
         e.preventDefault();
         $(this).closest('.submenu').find('.active').removeClass('active');
         $(this).parent().addClass('active');
-    });
+    });*/
 
     $('.fa-sitemap').click(function(){
         $(this).closest('.topic-item').toggleClass('list-view');
@@ -97,7 +97,7 @@ $(document).ready(function(){
                 prevTopicsHeight[i] += allFirstTopic.eq(j).height();
             }
           //  prevTopicsHeight[i] += allFirstTopic.eq(curInd).find('>.topic-descr').height()-allFirstTopic.eq(curInd-1).find('>.topic-descr').height();
-            console.log(prevTopicsHeight[i]);
+
         }
     }
     GetTopicsHeight();
@@ -138,7 +138,7 @@ $(document).ready(function(){
          */
         for (var i = 0; i < count ; i++){
             var curInd = i;
-            console.log($(this).scrollTop()+'--'+prevTopicsHeight[i]);
+            //console.log($(this).scrollTop()+'--'+prevTopicsHeight[i]);
 
             /*
                 здесь сравниваем: если прокрутка больше чем высота всех
