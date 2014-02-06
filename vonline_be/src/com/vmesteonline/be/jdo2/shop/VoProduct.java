@@ -2,9 +2,11 @@ package com.vmesteonline.be.jdo2.shop;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -21,6 +23,7 @@ import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.shop.FullProductInfo;
+import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Product;
 import com.vmesteonline.be.shop.ProductDetails;
@@ -29,7 +32,12 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoProduct {
 
+	
 	public VoProduct(long shopId, FullProductInfo fpi) throws InvalidOperation {
+		this(shopId, fpi, null);
+	}
+	
+	public VoProduct(long shopId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
 		Product product = fpi.getProduct();
 		ProductDetails details = fpi.getDetails();
 
@@ -52,13 +60,13 @@ public class VoProduct {
 		this.price = product.getPrice();
 		this.fullDescr = details.getFullDescr();
 
-		this.pricesMap = details.getPricesMap();
+		this.pricesMap = convertFromPriceTypeMap( details.getPricesMap(), new HashMap<Integer, Double>());
 		this.optionsMap = details.getOptionsMap();
 
 		this.categories = new HashSet<VoProductCategory>();
 		this.shops = new HashSet<VoShop>();
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = null==_pm ? PMF.getPm() : _pm;
 		
 		try {
 			pm.makePersistent(this);
@@ -88,7 +96,7 @@ public class VoProduct {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to create Product" + e.getMessage());
 		} finally {
-			pm.close();
+			if( null==_pm) pm.close();
 		}
 	}
 
@@ -111,7 +119,7 @@ public class VoProduct {
 			ius.add( ByteBuffer.wrap(iu.getBytes()));
 		}
 			
-		productDetails.setPricesMap(pricesMap); 
+		productDetails.setPricesMap( convertToPriceTypeMap(pricesMap, new HashMap<PriceType, Double>())); 
 		productDetails.setOptionsMap(optionsMap);
 	  Set<Long> ts = new HashSet<Long>();
 	  for( VoTopic vt : getTopicSet()){
@@ -145,7 +153,8 @@ public class VoProduct {
 	private double price;
 
 	@Persistent(mappedBy = "products")
-	@ManyToMany
+	/*@ManyToMany*/
+	@Unowned
 	private Set<VoProductCategory> categories;
 
 	@Persistent
@@ -158,7 +167,7 @@ public class VoProduct {
 
 	@Persistent
 	@Unindexed
-	private Map<PriceType, Double> pricesMap;
+	private Map<Integer, Double> pricesMap;
 
 	@Persistent
 	@Unindexed
@@ -169,9 +178,11 @@ public class VoProduct {
 	private Set<VoTopic> topicSet;
 
 	@Persistent(mappedBy = "products")
+	@Unowned
 	private VoProducer producer;
 	
 	@Persistent(mappedBy="products")
+	@Unowned
 	private Set<VoShop> shops;
 
 	public String getName() {
@@ -239,11 +250,11 @@ public class VoProduct {
 	}
 
 	public Map<PriceType, Double> getPricesMap() {
-		return pricesMap;
+		return convertToPriceTypeMap( pricesMap, new HashMap<PriceType, Double>());
 	}
 
 	public void setPricesMap(Map<PriceType, Double> pricesMap) {
-		this.pricesMap = pricesMap;
+		this.pricesMap = convertFromPriceTypeMap(pricesMap, new HashMap<Integer, Double>());
 	}
 
 	public Map<String, String> getOptionsMap() {
@@ -283,5 +294,14 @@ public class VoProduct {
 	public String toFullString() {
 		return "VoProduct [id=" + id + ", name=" + name + ", shortDescr=" + shortDescr + ", weight=" + weight + ", imageURL=" + imageURL + ", price="
 				+ price + ", producer=" + producer + "]";
+	}
+	
+	public static Map<Integer, Double> convertFromPriceTypeMap( Map<PriceType, Double> in, Map<Integer, Double> out){
+		for( Entry<PriceType, Double> e: in.entrySet()) out.put(e.getKey().getValue(), e.getValue());
+		return out;
+	}
+	public static Map<PriceType, Double> convertToPriceTypeMap( Map<Integer, Double> in, Map<PriceType, Double> out){
+		for( Entry<Integer, Double> e: in.entrySet()) out.put( PriceType.values()[e.getKey()], e.getValue());
+		return out;
 	}
 }

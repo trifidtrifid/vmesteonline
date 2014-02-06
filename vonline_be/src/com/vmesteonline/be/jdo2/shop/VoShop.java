@@ -27,8 +27,9 @@ import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.Shop;
 
+
 @PersistenceCapable
-public class VoShop {
+public class VoShop { 
 
 	public VoShop(Shop shop) throws InvalidOperation {
 		this(shop.getName(),shop.getDescr(), shop.getAddress(), shop.getLogoURL(), shop.getOwnerId(), shop.getTopicSet(), 

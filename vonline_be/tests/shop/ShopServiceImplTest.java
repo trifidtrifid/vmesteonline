@@ -3,9 +3,12 @@ package shop;
 import static org.junit.Assert.fail;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -19,15 +22,23 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.Group;
+import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.MessageServiceImpl;
 import com.vmesteonline.be.MessageType;
 import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.ShopServiceImpl;
 import com.vmesteonline.be.Topic;
 import com.vmesteonline.be.UserServiceImpl;
+import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.shop.DeliveryType;
+import com.vmesteonline.be.shop.FullProductInfo;
 import com.vmesteonline.be.shop.PaymentType;
+import com.vmesteonline.be.shop.PriceType;
+import com.vmesteonline.be.shop.Producer;
+import com.vmesteonline.be.shop.Product;
 import com.vmesteonline.be.shop.ProductCategory;
+import com.vmesteonline.be.shop.ProductDetails;
+import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 
 public class ShopServiceImplTest {
@@ -143,66 +154,152 @@ public class ShopServiceImplTest {
 
 	@Test
 	public void testRegisterProductCategory() {
-				try {
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, 
-					userId, topicSet, tags, deliveryCosts, paymentTypes);
-			
-			Long shopId = si.registerShop( shop );
-			//set current shop
+		try {
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+
+			Long shopId = si.registerShop(shop);
+			// set current shop
 			si.getShop(shopId);
 
 			Long rootCatId = si.registerProductCategory(new ProductCategory(0L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet), shopId);
 			Long SecCatId = si.registerProductCategory(new ProductCategory(0L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set), shopId);
-			/*Long THirdCatId = */si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set), shopId);
-			Long THird2CatId = si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set), shopId);
-			
+			/* Long THirdCatId = */si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set),
+					shopId);
+			Long THird2CatId = si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set),
+					shopId);
+
 			List<ProductCategory> rootPcs = si.getProductCategories(0);
 			Assert.assertEquals(rootPcs.size(), 1);
 			ProductCategory rc = rootPcs.get(0);
-			Assert.assertEquals( (long)rc.getId(), (long)rootCatId );
-			Assert.assertEquals( (long)rc.getParentId(), 0L );
-			Assert.assertEquals( rc.getName(), ROOT_PRODUCT_CAT1 );
-			Assert.assertEquals( rc.getDescr(), PRC1_DESCR );
-			Assert.assertEquals( rc.getLogoURLset(), images );
-			Assert.assertEquals( rc.getTopicSet(), topicSet );
-			
+			Assert.assertEquals((long) rc.getId(), (long) rootCatId);
+			Assert.assertEquals((long) rc.getParentId(), 0L);
+			Assert.assertEquals(rc.getName(), ROOT_PRODUCT_CAT1);
+			Assert.assertEquals(rc.getDescr(), PRC1_DESCR);
+			Assert.assertEquals(rc.getLogoURLset(), images);
+			Assert.assertEquals(rc.getTopicSet(), topicSet);
+
 			List<ProductCategory> slPcs = si.getProductCategories(rootCatId);
 			Assert.assertEquals(slPcs.size(), 1);
 			ProductCategory l2c = slPcs.get(0);
-			Assert.assertEquals( (long)l2c.getId(), (long)SecCatId );
-			Assert.assertEquals( (long)l2c.getParentId(), (long)rootCatId );
-			Assert.assertEquals( l2c.getName(), "Second LevelPC" );
-			Assert.assertEquals( l2c.getDescr(), "Второй уровень" );
-			Assert.assertEquals( l2c.getLogoURLset(), images2 );
-			Assert.assertEquals( l2c.getTopicSet(), topic2Set );
-			
+			Assert.assertEquals((long) l2c.getId(), (long) SecCatId);
+			Assert.assertEquals((long) l2c.getParentId(), (long) rootCatId);
+			Assert.assertEquals(l2c.getName(), "Second LevelPC");
+			Assert.assertEquals(l2c.getDescr(), "Второй уровень");
+			Assert.assertEquals(l2c.getLogoURLset(), images2);
+			Assert.assertEquals(l2c.getTopicSet(), topic2Set);
+
 			List<ProductCategory> tlPcs = si.getProductCategories(SecCatId);
 			Assert.assertEquals(tlPcs.size(), 2);
 			ProductCategory l3c = tlPcs.get(1);
-			Assert.assertEquals( (long)l3c.getId(), (long)THird2CatId );
-			Assert.assertEquals( (long)l3c.getParentId(), (long)SecCatId );
-			Assert.assertEquals( l3c.getName(), "THird Level2PC" );
-			Assert.assertEquals( l3c.getDescr(), "Третий уровень2" );
-			Assert.assertEquals( l3c.getLogoURLset(), images3 );
-			Assert.assertEquals( l3c.getTopicSet(), topic2Set );
-			
+			Assert.assertEquals((long) l3c.getId(), (long) THird2CatId);
+			Assert.assertEquals((long) l3c.getParentId(), (long) SecCatId);
+			Assert.assertEquals(l3c.getName(), "THird Level2PC");
+			Assert.assertEquals(l3c.getDescr(), "Третий уровень2");
+			Assert.assertEquals(l3c.getLogoURLset(), images3);
+			Assert.assertEquals(l3c.getTopicSet(), topic2Set);
 
-		}  catch (TException e) {
+		} catch (TException e) {
 			e.printStackTrace();
-			fail("Exception thrown: "+ e.getMessage());
+			fail("Exception thrown: " + e.getMessage());
 		}
 	}
-/*
+
 	@Test
 	public void testRegisterProducer() {
-		fail("Not yet implemented");
+		try {
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+
+			Long shopId = si.registerShop(shop);
+			// set current shop
+			si.getShop(shopId);
+
+			long prodId = si.registerProducer( new Producer(0L, "Производитель1", "Описание производителя", ByteBuffer.wrap(LOGO.getBytes()), "http://google.com"), shopId);
+			try {
+				si.registerProducer( new Producer(0L, "Производитель2", "Описание производителя2", ByteBuffer.wrap(LOGO.getBytes()), "http://google2.com"), shopId+1);
+				fail("Created Producer with incorrect shopId");
+			} catch( InvalidOperation ioe ){
+				Assert.assertEquals(ioe.getWhat(), VoError.IncorrectParametrs);
+			}
+		
+			List<Producer> producers = si.getProducers();
+			Assert.assertEquals(producers.size(), 1);
+			Producer rc = producers.get(0);
+			Assert.assertEquals((long) rc.getId(), (long) prodId);
+			Assert.assertEquals(rc.getName(), "Производитель1");
+			Assert.assertEquals(rc.getDescr(), "Описание производителя");
+			Assert.assertEquals(rc.getHomeURL(), "http://google.com");
+			Assert.assertTrue(Arrays.equals(rc.getLogoURL(), LOGO.getBytes()));
+
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
 	public void testUploadProducts() {
-		fail("Not yet implemented");
-	}
+		try {
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Long shopId = si.registerShop(shop);
+			// set current shop
+			si.getShop(shopId);
 
+			long prodId = si.registerProducer( new Producer(0L, "Производитель1", "Описание производителя", ByteBuffer.wrap(LOGO.getBytes()), "http://google.com"), shopId);
+			long prod2Id = si.registerProducer( new Producer(0L, "Производитель2", "Описание производителя2", ByteBuffer.wrap(LOGO.getBytes()), "http://google2.com"), shopId);
+		
+			Long rootCatId = si.registerProductCategory(new ProductCategory(0L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet), shopId);
+			Long SecCatId = si.registerProductCategory(new ProductCategory(0L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set), shopId);
+			Long THirdCatId = si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set),
+					shopId);
+			Long THird2CatId = si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set),
+					shopId);
+			
+			ArrayList<FullProductInfo> productsList = new ArrayList<FullProductInfo>();
+
+			HashSet<Long> categories1 = new HashSet<Long>();
+			categories1.add(THirdCatId);
+			categories1.add(SecCatId);
+			
+			HashSet<Long> categories2 = new HashSet<Long>();
+			categories2.add(rootCatId);
+			categories2.add(THird2CatId);
+			
+			HashMap<PriceType, Double> pricesMap1 = new HashMap<PriceType,Double>();
+			pricesMap1.put(PriceType.INET, 12.0D);
+			pricesMap1.put(PriceType.INET, 13.0D);
+			
+			HashMap<String, String> optionsMap1 = new HashMap<String, String>();
+			optionsMap1.put("цвет", "белый");
+			optionsMap1.put("вкус", "слабый");
+			
+			HashMap<PriceType, Double> pricesMap2 = new HashMap<PriceType,Double>();
+			pricesMap2.put(PriceType.INET, 14.0D);
+			pricesMap2.put(PriceType.RETAIL, 15.0D);
+			
+			HashMap<String, String> optionsMap2 = new HashMap<String, String>();
+			optionsMap2.put("цвет", "черный");
+			optionsMap2.put("вкус", "мерзкий");
+			
+			productsList.add( new FullProductInfo( new Product(0, "Пролукт 1", "Описание продукта 1", 100D, ByteBuffer.wrap(LOGO.getBytes()), 11D), 
+					new ProductDetails( categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId)));
+			
+			productsList.add( new FullProductInfo( new Product(0, "Пролукт 2", "Описание продукта 2", 200D, ByteBuffer.wrap(LOGO.getBytes()), 12D), 
+					new ProductDetails( categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id)));
+					
+			Set<Long> upProductsIdl = si.uploadProducts( productsList, shopId, true);
+			//expects to get all of products
+			ProductListPart allProductList = si.getProducts(0, 1, rootCatId);
+	
+			Assert.assertEquals(allProductList.getLength(), 2);
+			List<Product> products = allProductList.getProducts();
+			Assert.assertEquals(products.size(), 1);
+			
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+/*
 	@Test
 	public void testUploadProductCategoies() {
 		fail("Not yet implemented");

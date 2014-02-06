@@ -1,13 +1,22 @@
 package com.vmesteonline.be;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import javax.cache.Cache;
+import javax.cache.CacheException;
+import javax.cache.CacheFactory;
+import javax.cache.CacheManager;
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -16,6 +25,7 @@ import javax.jdo.Transaction;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
+import com.sun.org.apache.bcel.internal.generic.CASTORE;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
@@ -43,10 +53,21 @@ import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.shop.ShopService.Iface;
 
-public class ShopServiceImpl extends ServiceImpl implements Iface {
+public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable {
 
-	public static Logger logger = Logger.getLogger(ShopServiceImpl.class);
+	private final class ProdcutNameComparator implements Comparator<Product>,Serializable {
+		@Override
+		public int compare(Product o1, Product o2) {
+			return o1.getName().compareTo(o2.getName());
+		}
+	}
 
+	public static Logger logger;
+	
+	static {
+		logger = Logger.getLogger(ShopServiceImpl.class);
+	}
+	
 	public ShopServiceImpl(String sessionId) {
 		super(sessionId);
 	}
@@ -79,7 +100,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 			}
 			productIds = new HashSet<Long>();
 			for (FullProductInfo fpi : products) {
-				VoProduct voProduct = new VoProduct(shopId, fpi);
+				VoProduct voProduct = new VoProduct(shopId, fpi, pm);
 				productIds.add(voProduct.getId());
 				shopProducts.add(voProduct);
 			}
@@ -326,26 +347,43 @@ public class ShopServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
+	private TreeSet<Product> getProductsFromCategory(VoProductCategory category){
+		TreeSet<Product> rslt = new TreeSet<Product>( new ProdcutNameComparator());
+		for (VoProductCategory cat : category.getChilds()) {
+			rslt.addAll(getProductsFromCategory(cat));
+		}
+		for (VoProduct product : category.getProducts()) {
+			rslt.add( product.getProduct());
+		}
+		return rslt;
+	}
+	
 	@Override
 	public ProductListPart getProducts(int offset, int length, long categoryId) throws InvalidOperation, TException {
+		
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = getCurrentShopId(pm);
 		try {
-			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
-			if (null != voShop) {
-				Query pcq = pm.newQuery(VoProduct.class);
-				pcq.setFilter("categories == :key ");
-				pcq.setFilter("shops == :key ");
-				List<VoProduct> ps = (List<VoProduct>) pcq.execute(categoryId, shopId);
-				List<Product> lp = new ArrayList<Product>();
-				for (VoProduct p : ps.subList(offset, Math.min(length, ps.size() - offset))) {
-					lp.add(p.getProduct());
+		String key = "VoProductsForCategory:"+shopId+":"+categoryId;
+		List<Product> products = ServiceImpl.getObjectFromCache(key);
+		if( null==products ){
+			
+			VoProductCategory voPC = pm.getObjectById(VoProductCategory.class, categoryId);
+			if (null != voPC) {
+				TreeSet<Product> pfc = getProductsFromCategory( voPC );
+				try {
+					super.putObjectToCache(key, pfc);
+				} catch (Exception e) {
+					logger.warn("FAiled to put product list ti the cache. "+e.getMessage());
+					e.printStackTrace();
 				}
-				pcq.closeAll();
-				return new ProductListPart(lp, ps.size());
+				products = new ArrayList<Product>();
+				products.addAll(pfc);
 			} else {
-				throw new InvalidOperation(VoError.GeneralError, "No shop found by ID");
+				throw new InvalidOperation(VoError.GeneralError, "No Category found by ID:" + categoryId);
 			}
+		}
+		return new ProductListPart( products.subList( offset,  offset + length), products.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getProducts for shopId=" + shopId + " currentProductCategoryId=" + categoryId + "."

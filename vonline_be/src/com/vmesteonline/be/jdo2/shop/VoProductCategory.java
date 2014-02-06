@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -41,7 +42,7 @@ public class VoProductCategory {
 	  topics = new HashSet<VoTopic>();
 	  shops = new ArrayList<VoShop>();
 	  childs = new HashSet<VoProductCategory>();
-	  products = new ArrayList<VoProduct>();
+	  products = new HashSet<VoProduct>();
 	  
 	  PersistenceManager pm = PMF.getPm();  
 	  try {
@@ -58,7 +59,7 @@ public class VoProductCategory {
 			
 			for( long tid: topicSet){
 				VoTopic vt = pm.getObjectById(VoTopic.class, tid);
-				topics.add(vt);
+				topics.add(vt); 
 			}
 			
 			pm.makePersistent(shop);
@@ -118,13 +119,13 @@ public class VoProductCategory {
 	
 	@Persistent
 	@Unowned
-	private List<VoProduct> products;
+	private Set<VoProduct> products;
 	
 	@Persistent
 	@Unowned
 	private List<VoShop> shops;
 	
-	public List<VoProduct> getProducts(){
+	public Set<VoProduct> getProducts(){
 		return products;
 	} 
 	public long getId(){
