@@ -140,6 +140,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		boolean newTopic = 0 >= topic.getId();
 		if (newTopic) {
 			VoTopic votopic = new VoTopic(topic, true, true, true);
+			
 			newTopicNotify(votopic);
 		} else {
 			updateTopic(topic);
@@ -214,6 +215,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		if (!TEST_ON_FAKE_DATA) {
 			PersistenceManager pm = PMF.get().getPersistenceManager();
 			try {
+				
+				
 
 			} finally {
 				pm.close();
