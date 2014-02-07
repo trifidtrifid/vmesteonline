@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Detainted;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -12,7 +13,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.CurrentAttributeType;
 
-@PersistenceCapable
+@PersistenceCapable(detachable="true")
 public class VoSession {
  
 	public VoSession(String sessId, VoUser user) {
@@ -124,7 +125,7 @@ public class VoSession {
 	}
 	
 	public long getSessionAttribute( CurrentAttributeType type ){
-		Long val = curAttrMap.get(type);
+		Long val = curAttrMap.get(type.getValue());
 		return val == null ? 0 : val;
 	}
 	

@@ -68,7 +68,7 @@ public class ServiceImpl {
 	}
 	
 	protected VoSession getCurrentSession( PersistenceManager _pm ) throws InvalidOperation {
-	
+		
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
 		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
@@ -76,7 +76,8 @@ public class ServiceImpl {
 			VoSession session = pm.getObjectById(VoSession.class, sessionStorage.getId());
 			if( null == session)
 				throw new InvalidOperation(VoError.NotAuthorized, "No session found.");
-			return session;
+			
+			return _pm == null ? pm.detachCopy(session) : session; 
 		} finally {
 			if(null==_pm) pm.close();
 		}
@@ -95,6 +96,10 @@ public class ServiceImpl {
 	}
 	
 	public void setCurrentAttribute( int key, long value) throws InvalidOperation, TException {
+		setCurrentAttribute( key, value, null);
+	}
+	
+	public void setCurrentAttribute( int key, long value, PersistenceManager _pm) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		
 		VoSession currentSession = getCurrentSession(pm);
@@ -118,7 +123,32 @@ public class ServiceImpl {
 		}
 	}
 
-	public Map<Integer, Long> getCurrentAttributes() throws InvalidOperation, TException {
-		return getCurrentSession().getSessionAttributes();
+	/*public Map<Integer, Long> getCurrentAttributes() throws InvalidOperation, TException {
+		return  getCurrentAttributes(null);
 	}
+	public Map<Integer, Long> getCurrentAttributes(PersistenceManager _pm) throws InvalidOperation, TException {
+		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
+		try {
+			VoSession currentSession = getCurrentSession(pm);
+			pm.retrieve(currentSession);
+			return currentSession.getSessionAttributes();
+		} finally {
+			if(null==_pm) pm.close();
+		}
+	}*/
+	
+	public Long getSessionAttribute( CurrentAttributeType type )throws InvalidOperation{
+		return getSessionAttribute(null);
+	}
+	
+	
+	public Long getSessionAttribute( CurrentAttributeType type, PersistenceManager _pm ) throws InvalidOperation{
+		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
+		try {
+			VoSession currentSession = getCurrentSession(pm);
+			return currentSession.getSessionAttribute( type );
+		} finally {
+			if(null==_pm) pm.close();
+		}
+	} 
 }

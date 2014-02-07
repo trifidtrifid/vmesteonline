@@ -85,7 +85,7 @@
         	 var transport = new Thrift.Transport("/thrift/UserService");
     		var protocol = new Thrift.Protocol(transport);
     		var client = new com.vmesteonline.be.UserServiceClient(protocol);
-    		
+
     		var someGroup = client.getUserGroups();
 			var someRubric = client.getUserRubrics();
 
@@ -94,10 +94,18 @@
     		client = new com.vmesteonline.be.MessageServiceClient(protocol);
 
             var Topics = client.getTopics(someGroup[0].id,someRubric[0].id, 1, 1,0,2);
-            //var Messages = client.getMessages(someGroup[0].id,someRubric[0].id, 'BASE', someGroup[0].id,false,0,2);
+            var Messages = client.getMessages(Topics.topics[0].id,someRubric[0].id, 'BASE', someGroup[0].id,false,0,2);
         	
         	var messageList = '';
-        	//alert(Messages);
+        	alert(Topics.topics[0].subject);
+
+            /*function fnShowProps(obj, objName){
+                var result = " ";
+                for (var i in obj) // обращение к свойствам объекта по индексу
+                    result += objName + "." + i + " = " + obj[i] + "<br /> ";
+                alert(result);
+            }
+            fnShowProps(Topics,"topics");*/
     <%--
         	<%
         	for(int i=0; i<topicsLen; i++){
