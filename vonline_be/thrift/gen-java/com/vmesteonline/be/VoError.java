@@ -16,7 +16,7 @@ public enum VoError implements org.apache.thrift.TEnum {
   IncorrectParametrs(1),
   RegistrationAlreadyExist(2),
   NotAuthorized(3),
-  IncorectLocationCode(4);
+  IncorectLocationCod(4);
 
   private final int value;
 
@@ -46,7 +46,7 @@ public enum VoError implements org.apache.thrift.TEnum {
       case 3:
         return NotAuthorized;
       case 4:
-        return IncorectLocationCode;
+        return IncorectLocationCod;
       default:
         return null;
     }

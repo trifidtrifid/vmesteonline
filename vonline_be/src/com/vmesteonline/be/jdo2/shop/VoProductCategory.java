@@ -2,16 +2,13 @@ package com.vmesteonline.be.jdo2.shop;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import com.google.appengine.api.datastore.Key;
@@ -25,11 +22,14 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoProductCategory {
 
-	public VoProductCategory(long shopId,long parentId, String name, String descr, Set<ByteBuffer> logoURLset, Set<Long> topicSet) {
+	public VoProductCategory(long shopId,long parentId, String name, String descr, List<ByteBuffer> logoURLset, List<Long> topicSet) {
+		this(shopId, parentId, name, descr, logoURLset, topicSet, null);
+	}
+	public VoProductCategory(long shopId,long parentId, String name, String descr, List<ByteBuffer> logoURLset, List<Long> topicSet, PersistenceManager _pm) {
 	  
 		this.name = name;
 		this.descr = descr;
-		this.logoURLset = new HashSet<String>();
+		this.logoURLset = new ArrayList<String>();
 		for( ByteBuffer bb: logoURLset) {
 			try {
 				this.logoURLset.add(StorageHelper.saveImage(bb.array()));
@@ -38,12 +38,12 @@ public class VoProductCategory {
 			}
 		}
 	
-	  topics = new HashSet<VoTopic>();
+	  topics = new ArrayList<VoTopic>();
 	  shops = new ArrayList<VoShop>();
-	  childs = new HashSet<VoProductCategory>();
+	  childs = new ArrayList<VoProductCategory>();
 	  products = new ArrayList<VoProduct>();
 	  
-	  PersistenceManager pm = PMF.getPm();  
+	  PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;  
 	  try {
 			if( 0!=parentId ) {
 				VoProductCategory pc = pm.getObjectById(VoProductCategory.class, parentId);
@@ -58,7 +58,7 @@ public class VoProductCategory {
 			
 			for( long tid: topicSet){
 				VoTopic vt = pm.getObjectById(VoTopic.class, tid);
-				topics.add(vt);
+				topics.add(vt); 
 			}
 			
 			pm.makePersistent(shop);
@@ -66,7 +66,7 @@ public class VoProductCategory {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			pm.close();
+			if( null==_pm) pm.close();
 		}
 	}
 	
@@ -74,11 +74,11 @@ public class VoProductCategory {
 		ProductCategory pc = new ProductCategory(id.getId(), 
 				null==parent ? 0L : parent.getId(), name, descr, null, null );
 		
-		Set<ByteBuffer> lus = new HashSet<ByteBuffer>();
+		List<ByteBuffer> lus = new ArrayList<ByteBuffer>();
 		for( String lu : getLogoURLset()) {
 			lus.add(ByteBuffer.wrap(lu.getBytes()));
 		}
-		Set<Long> ts = new HashSet<Long>();
+		List<Long> ts = new ArrayList<Long>();
 		for( VoTopic vt: getTopics())
 			ts.add(vt.getId().getId());
 		pc.setLogoURLset(lus);
@@ -105,16 +105,16 @@ public class VoProductCategory {
   
 	@Persistent
 	@Unindexed
-	private Set<String> logoURLset;
+	private List<String> logoURLset;
   
 	@Persistent
 	@Unowned
-	private Set<VoTopic> topics;
+	private List<VoTopic> topics;
 	
 	@Persistent(mappedBy="parent")
 	@OneToMany
 	@Unowned
-	private Set<VoProductCategory> childs;
+	private List<VoProductCategory> childs;
 	
 	@Persistent
 	@Unowned
@@ -155,15 +155,15 @@ public class VoProductCategory {
 		this.descr = descr;
 	}
 
-	public Set<String> getLogoURLset() {
+	public List<String> getLogoURLset() {
 		return logoURLset;
 	}
 
-	public void setLogoURLset(Set<String> logoURLset) {
+	public void setLogoURLset(List<String> logoURLset) {
 		this.logoURLset = logoURLset;
 	}
 
-	public Set<VoTopic> getTopics() {
+	public List<VoTopic> getTopics() {
 		return topics;
 	}
 
@@ -171,7 +171,7 @@ public class VoProductCategory {
 		this.topics.add(topic);
 	}
 
-	public Set<VoProductCategory> getChilds() {
+	public List<VoProductCategory> getChilds() {
 		return childs;
 	}
 

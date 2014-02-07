@@ -1,10 +1,10 @@
 package com.vmesteonline.be.jdo2.shop;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -27,15 +27,16 @@ import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.Shop;
 
+
 @PersistenceCapable
-public class VoShop {
+public class VoShop { 
 
 	public VoShop(Shop shop) throws InvalidOperation {
 		this(shop.getName(),shop.getDescr(), shop.getAddress(), shop.getLogoURL(), shop.getOwnerId(), shop.getTopicSet(), 
 				shop.getTags(), shop.getDeliveryCosts(), shop.getPaymentTypes());
 	}
-	public VoShop(String name, String descr, PostalAddress postalAddress, String logoURL, long ownerId, Set<Long> topicSet, 
-			Set<String> tags, Map<DeliveryType,Double> deliveryCosts, 
+	public VoShop(String name, String descr, PostalAddress postalAddress, String logoURL, long ownerId, List<Long> topicSet, 
+			List<String> tags, Map<DeliveryType,Double> deliveryCosts, 
 			Map<PaymentType,Double> paymentTypes) throws InvalidOperation {
 		
 		PersistenceManager pm = PMF.getPm();
@@ -45,7 +46,7 @@ public class VoShop {
 		this.address = new VoPostalAddress( postalAddress, pm );
 		this.logoURL = logoURL;
 		this.ownerId = ownerId;
-		if( null == (this.tags = tags)) this.tags = new HashSet<String>();
+		if( null == (this.tags = tags)) this.tags = new ArrayList<String>();
 		this.deliveryCosts = null == deliveryCosts ? new HashMap<Integer, Double>() : convertFromDeliveryTypeMap( deliveryCosts, new HashMap<Integer, Double>());
 		if( null == deliveryCosts) 
 			this.deliveryCosts.put(DeliveryType.SELF_PICKUP.getValue(), 0D);
@@ -54,14 +55,14 @@ public class VoShop {
 			this.paymentTypes.put( PaymentType.CASH.getValue(), 0D );
 
 		try {
-			this.topics = new HashSet<VoTopic>();
+			this.topics = new ArrayList<VoTopic>();
 			for(long tid: topicSet ){
 				VoTopic vt = pm.getObjectById(VoTopic.class, tid);
 				topics.add(vt);
 			}
-			categories = new HashSet<VoProductCategory>();
-			products = new HashSet<VoProduct>();
-			producers = new HashSet<VoProducer>();
+			categories = new ArrayList<VoProductCategory>();
+			products = new ArrayList<VoProduct>();
+			producers = new ArrayList<VoProducer>();
 			dates = new TreeMap<Integer, DateType>();
 			pm.makePersistent(this);
 		} catch (Exception e) {
@@ -73,7 +74,7 @@ public class VoShop {
 	}
 
 	public Shop getShop() {
-		Set<Long> topicIds = new HashSet<Long>();
+		List<Long> topicIds = new ArrayList<Long>();
 		for (VoTopic vt : getTopics()) {
 			topicIds.add(vt.getId().getId());
 		}
@@ -106,22 +107,22 @@ public class VoShop {
 
 	@Persistent
 	@Unowned
-	public Set<VoTopic> topics;
+	public List<VoTopic> topics;
 
 	@Persistent
-	public Set<String> tags;
-
-	@Persistent
-	@Unowned
-	private Set<VoProduct> products;
+	public List<String> tags;
 
 	@Persistent
 	@Unowned
-	private Set<VoProductCategory> categories;
+	private List<VoProduct> products;
 
 	@Persistent
 	@Unowned
-	private Set<VoProducer> producers;
+	private List<VoProductCategory> categories;
+
+	@Persistent
+	@Unowned
+	private List<VoProducer> producers;
 	
 	@Persistent
 	@Unindexed
@@ -202,11 +203,11 @@ public class VoShop {
 		this.ownerId = ownerId;
 	}
 
-	public Set<String> getTags() {
+	public List<String> getTags() {
 		return tags;
 	}
 
-	public void setTags(Set<String> tags) {
+	public void setTags(List<String> tags) {
 		this.tags = tags;
 	}
 
@@ -214,19 +215,19 @@ public class VoShop {
 		return id;
 	}
 
-	public Set<VoProduct> getProducts() {
+	public List<VoProduct> getProducts() {
 		return products;
 	}
 
-	public Set<VoProductCategory> getCategories() {
+	public List<VoProductCategory> getCategories() {
 		return categories;
 	}
 
-	public Set<VoTopic> getTopics() {
+	public List<VoTopic> getTopics() {
 		return topics;
 	}
 	
-	public Set<VoProducer> getProducers() {
+	public List<VoProducer> getProducers() {
 		return producers;
 	}
 	public SortedMap<Integer, DateType> getDates() {
