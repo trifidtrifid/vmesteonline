@@ -1,10 +1,17 @@
 package com.vmesteonline.be;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
 
+import javax.cache.Cache;
+import javax.cache.CacheException;
+import javax.cache.CacheFactory;
+import javax.cache.CacheManager;
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.data.PMF;
@@ -12,6 +19,43 @@ import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 
 public class ServiceImpl {
+	
+	private static Cache cache;
+	public static Logger logger;
+	
+	static {
+		logger = Logger.getLogger(ServiceImpl.class);
+		try {
+        CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
+        cache = cacheFactory.createCache(Collections.emptyMap());
+    } catch (CacheException e) {
+        logger.error("Failed to initialize chache." + e);
+    }
+	}
+	
+	protected static <T> T getObjectFromCache( Object key) {
+		T rslt = null;
+		if( null!=cache && cache.containsKey(key)){
+			try {
+				rslt = (T)cache.get(key);
+			} catch (ClassCastException cce) {
+				logger.error("CACHE:FAiled to get object by key " + key+". " + cce);
+			}		
+		}
+		return rslt;
+	}
+	
+	protected static <T extends Serializable > void putObjectToCache( Object key, T value) {
+		if( null!=cache ) {
+			try {
+				cache.put(key, value);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("CACHE:FAiled to PUT Object to cache." + e);
+			}		
+		}
+	}
+	
 	protected SessionIdStorage sessionStorage;
 
 	public void setSession(HttpSession session) {

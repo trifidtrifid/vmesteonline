@@ -13,6 +13,7 @@ import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -65,14 +66,14 @@ public class VoProducer {
 	}
 
 	public Producer createProducer(){
-		return new Producer(id, name, descr, ByteBuffer.wrap(logoURL.getBytes()), homeURL);
+		return new Producer(id.getId(), name, descr, ByteBuffer.wrap(logoURL.getBytes()), homeURL);
 	}
 	
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	private long id;
+	private Key id;
 	
-	@Persistent
+	@Persistent 
 	@Unindexed
 	private String name;
 	
@@ -94,6 +95,7 @@ public class VoProducer {
 	
 	@Persistent(mappedBy="producer")
 	@OneToMany
+	@Unowned
 	private Set<VoProduct> products;
 	
 	public Set<VoProduct> getProducts(){
@@ -133,7 +135,7 @@ public class VoProducer {
 	}
 
 	public long getId() {
-		return id;
+		return id.getId();
 	}
 
 	public Set<VoShop> getShops() {

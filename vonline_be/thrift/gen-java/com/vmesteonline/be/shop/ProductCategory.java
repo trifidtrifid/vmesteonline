@@ -39,8 +39,8 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
   private static final org.apache.thrift.protocol.TField PARENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("parentId", org.apache.thrift.protocol.TType.I64, (short)2);
   private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)3);
   private static final org.apache.thrift.protocol.TField DESCR_FIELD_DESC = new org.apache.thrift.protocol.TField("descr", org.apache.thrift.protocol.TType.STRING, (short)4);
-  private static final org.apache.thrift.protocol.TField LOGO_URLSET_FIELD_DESC = new org.apache.thrift.protocol.TField("logoURLset", org.apache.thrift.protocol.TType.SET, (short)5);
-  private static final org.apache.thrift.protocol.TField TOPIC_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("topicSet", org.apache.thrift.protocol.TType.SET, (short)6);
+  private static final org.apache.thrift.protocol.TField LOGO_URLSET_FIELD_DESC = new org.apache.thrift.protocol.TField("logoURLset", org.apache.thrift.protocol.TType.LIST, (short)5);
+  private static final org.apache.thrift.protocol.TField TOPIC_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("topicSet", org.apache.thrift.protocol.TType.LIST, (short)6);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -52,8 +52,8 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
   public long parentId; // required
   public String name; // required
   public String descr; // required
-  public Set<ByteBuffer> logoURLset; // required
-  public Set<Long> topicSet; // required
+  public List<ByteBuffer> logoURLset; // required
+  public List<Long> topicSet; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -144,10 +144,10 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
     tmpMap.put(_Fields.DESCR, new org.apache.thrift.meta_data.FieldMetaData("descr", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.LOGO_URLSET, new org.apache.thrift.meta_data.FieldMetaData("logoURLset", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING            , true))));
     tmpMap.put(_Fields.TOPIC_SET, new org.apache.thrift.meta_data.FieldMetaData("topicSet", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64))));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(ProductCategory.class, metaDataMap);
@@ -161,8 +161,8 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
     long parentId,
     String name,
     String descr,
-    Set<ByteBuffer> logoURLset,
-    Set<Long> topicSet)
+    List<ByteBuffer> logoURLset,
+    List<Long> topicSet)
   {
     this();
     this.id = id;
@@ -189,11 +189,11 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
       this.descr = other.descr;
     }
     if (other.isSetLogoURLset()) {
-      Set<ByteBuffer> __this__logoURLset = new HashSet<ByteBuffer>(other.logoURLset);
+      List<ByteBuffer> __this__logoURLset = new ArrayList<ByteBuffer>(other.logoURLset);
       this.logoURLset = __this__logoURLset;
     }
     if (other.isSetTopicSet()) {
-      Set<Long> __this__topicSet = new HashSet<Long>(other.topicSet);
+      List<Long> __this__topicSet = new ArrayList<Long>(other.topicSet);
       this.topicSet = __this__topicSet;
     }
   }
@@ -318,16 +318,16 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
 
   public void addToLogoURLset(ByteBuffer elem) {
     if (this.logoURLset == null) {
-      this.logoURLset = new HashSet<ByteBuffer>();
+      this.logoURLset = new ArrayList<ByteBuffer>();
     }
     this.logoURLset.add(elem);
   }
 
-  public Set<ByteBuffer> getLogoURLset() {
+  public List<ByteBuffer> getLogoURLset() {
     return this.logoURLset;
   }
 
-  public ProductCategory setLogoURLset(Set<ByteBuffer> logoURLset) {
+  public ProductCategory setLogoURLset(List<ByteBuffer> logoURLset) {
     this.logoURLset = logoURLset;
     return this;
   }
@@ -357,16 +357,16 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
 
   public void addToTopicSet(long elem) {
     if (this.topicSet == null) {
-      this.topicSet = new HashSet<Long>();
+      this.topicSet = new ArrayList<Long>();
     }
     this.topicSet.add(elem);
   }
 
-  public Set<Long> getTopicSet() {
+  public List<Long> getTopicSet() {
     return this.topicSet;
   }
 
-  public ProductCategory setTopicSet(Set<Long> topicSet) {
+  public ProductCategory setTopicSet(List<Long> topicSet) {
     this.topicSet = topicSet;
     return this;
   }
@@ -424,7 +424,7 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
       if (value == null) {
         unsetLogoURLset();
       } else {
-        setLogoURLset((Set<ByteBuffer>)value);
+        setLogoURLset((List<ByteBuffer>)value);
       }
       break;
 
@@ -432,7 +432,7 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
       if (value == null) {
         unsetTopicSet();
       } else {
-        setTopicSet((Set<Long>)value);
+        setTopicSet((List<Long>)value);
       }
       break;
 
@@ -766,17 +766,17 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
             }
             break;
           case 5: // LOGO_URLSET
-            if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
+            if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TSet _set36 = iprot.readSetBegin();
-                struct.logoURLset = new HashSet<ByteBuffer>(2*_set36.size);
-                for (int _i37 = 0; _i37 < _set36.size; ++_i37)
+                org.apache.thrift.protocol.TList _list36 = iprot.readListBegin();
+                struct.logoURLset = new ArrayList<ByteBuffer>(_list36.size);
+                for (int _i37 = 0; _i37 < _list36.size; ++_i37)
                 {
                   ByteBuffer _elem38;
                   _elem38 = iprot.readBinary();
                   struct.logoURLset.add(_elem38);
                 }
-                iprot.readSetEnd();
+                iprot.readListEnd();
               }
               struct.setLogoURLsetIsSet(true);
             } else { 
@@ -784,17 +784,17 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
             }
             break;
           case 6: // TOPIC_SET
-            if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
+            if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TSet _set39 = iprot.readSetBegin();
-                struct.topicSet = new HashSet<Long>(2*_set39.size);
-                for (int _i40 = 0; _i40 < _set39.size; ++_i40)
+                org.apache.thrift.protocol.TList _list39 = iprot.readListBegin();
+                struct.topicSet = new ArrayList<Long>(_list39.size);
+                for (int _i40 = 0; _i40 < _list39.size; ++_i40)
                 {
                   long _elem41;
                   _elem41 = iprot.readI64();
                   struct.topicSet.add(_elem41);
                 }
-                iprot.readSetEnd();
+                iprot.readListEnd();
               }
               struct.setTopicSetIsSet(true);
             } else { 
@@ -835,24 +835,24 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
       if (struct.logoURLset != null) {
         oprot.writeFieldBegin(LOGO_URLSET_FIELD_DESC);
         {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, struct.logoURLset.size()));
+          oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, struct.logoURLset.size()));
           for (ByteBuffer _iter42 : struct.logoURLset)
           {
             oprot.writeBinary(_iter42);
           }
-          oprot.writeSetEnd();
+          oprot.writeListEnd();
         }
         oprot.writeFieldEnd();
       }
       if (struct.topicSet != null) {
         oprot.writeFieldBegin(TOPIC_SET_FIELD_DESC);
         {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, struct.topicSet.size()));
+          oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, struct.topicSet.size()));
           for (long _iter43 : struct.topicSet)
           {
             oprot.writeI64(_iter43);
           }
-          oprot.writeSetEnd();
+          oprot.writeListEnd();
         }
         oprot.writeFieldEnd();
       }
@@ -947,9 +947,9 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
       }
       if (incoming.get(4)) {
         {
-          org.apache.thrift.protocol.TSet _set46 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.logoURLset = new HashSet<ByteBuffer>(2*_set46.size);
-          for (int _i47 = 0; _i47 < _set46.size; ++_i47)
+          org.apache.thrift.protocol.TList _list46 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+          struct.logoURLset = new ArrayList<ByteBuffer>(_list46.size);
+          for (int _i47 = 0; _i47 < _list46.size; ++_i47)
           {
             ByteBuffer _elem48;
             _elem48 = iprot.readBinary();
@@ -960,9 +960,9 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
       }
       if (incoming.get(5)) {
         {
-          org.apache.thrift.protocol.TSet _set49 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, iprot.readI32());
-          struct.topicSet = new HashSet<Long>(2*_set49.size);
-          for (int _i50 = 0; _i50 < _set49.size; ++_i50)
+          org.apache.thrift.protocol.TList _list49 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, iprot.readI32());
+          struct.topicSet = new ArrayList<Long>(_list49.size);
+          for (int _i50 = 0; _i50 < _list49.size; ++_i50)
           {
             long _elem51;
             _elem51 = iprot.readI64();

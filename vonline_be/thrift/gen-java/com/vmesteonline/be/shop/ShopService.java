@@ -51,7 +51,7 @@ public class ShopService {
      * @param shopId
      * @param cleanShopBeforeUpload
      */
-    public Set<Long> uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public List<Long> uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     /**
      * Method uploads categories. List in the request should contain relative values of  and return list with updated values of id, parentId
@@ -62,7 +62,7 @@ public class ShopService {
      * @param relativeIds
      * @param cleanShopBeforeUpload
      */
-    public Set<ProductCategory> uploadProductCategoies(Set<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public List<ProductCategory> uploadProductCategoies(List<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     /**
      * Method returns full orders information. userId and shopId may be used as a filter by defining not 0 value
@@ -205,7 +205,7 @@ public class ShopService {
 
     public void uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void uploadProductCategoies(Set<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void uploadProductCategoies(List<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void getFullOrders(int dateFrom, int dateTo, long userId, long shopId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -361,7 +361,7 @@ public class ShopService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "registerProducer failed: unknown result");
     }
 
-    public Set<Long> uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public List<Long> uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_uploadProducts(products, shopId, cleanShopBeforeUpload);
       return recv_uploadProducts();
@@ -376,7 +376,7 @@ public class ShopService {
       sendBase("uploadProducts", args);
     }
 
-    public Set<Long> recv_uploadProducts() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public List<Long> recv_uploadProducts() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       uploadProducts_result result = new uploadProducts_result();
       receiveBase(result, "uploadProducts");
@@ -389,13 +389,13 @@ public class ShopService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "uploadProducts failed: unknown result");
     }
 
-    public Set<ProductCategory> uploadProductCategoies(Set<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public List<ProductCategory> uploadProductCategoies(List<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_uploadProductCategoies(categories, relativeIds, cleanShopBeforeUpload);
       return recv_uploadProductCategoies();
     }
 
-    public void send_uploadProductCategoies(Set<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload) throws org.apache.thrift.TException
+    public void send_uploadProductCategoies(List<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload) throws org.apache.thrift.TException
     {
       uploadProductCategoies_args args = new uploadProductCategoies_args();
       args.setCategories(categories);
@@ -404,7 +404,7 @@ public class ShopService {
       sendBase("uploadProductCategoies", args);
     }
 
-    public Set<ProductCategory> recv_uploadProductCategoies() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public List<ProductCategory> recv_uploadProductCategoies() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       uploadProductCategoies_result result = new uploadProductCategoies_result();
       receiveBase(result, "uploadProductCategoies");
@@ -1226,7 +1226,7 @@ public class ShopService {
         prot.writeMessageEnd();
       }
 
-      public Set<Long> getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+      public List<Long> getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -1236,7 +1236,7 @@ public class ShopService {
       }
     }
 
-    public void uploadProductCategoies(Set<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void uploadProductCategoies(List<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       uploadProductCategoies_call method_call = new uploadProductCategoies_call(categories, relativeIds, cleanShopBeforeUpload, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -1244,10 +1244,10 @@ public class ShopService {
     }
 
     public static class uploadProductCategoies_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private Set<ProductCategory> categories;
+      private List<ProductCategory> categories;
       private boolean relativeIds;
       private boolean cleanShopBeforeUpload;
-      public uploadProductCategoies_call(Set<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public uploadProductCategoies_call(List<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.categories = categories;
         this.relativeIds = relativeIds;
@@ -1264,7 +1264,7 @@ public class ShopService {
         prot.writeMessageEnd();
       }
 
-      public Set<ProductCategory> getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+      public List<ProductCategory> getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -3142,7 +3142,7 @@ public class ShopService {
       }
     }
 
-    public static class uploadProducts<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, uploadProducts_args, Set<Long>> {
+    public static class uploadProducts<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, uploadProducts_args, List<Long>> {
       public uploadProducts() {
         super("uploadProducts");
       }
@@ -3151,10 +3151,10 @@ public class ShopService {
         return new uploadProducts_args();
       }
 
-      public AsyncMethodCallback<Set<Long>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<List<Long>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Set<Long>>() { 
-          public void onComplete(Set<Long> o) {
+        return new AsyncMethodCallback<List<Long>>() { 
+          public void onComplete(List<Long> o) {
             uploadProducts_result result = new uploadProducts_result();
             result.success = o;
             try {
@@ -3194,12 +3194,12 @@ public class ShopService {
         return false;
       }
 
-      public void start(I iface, uploadProducts_args args, org.apache.thrift.async.AsyncMethodCallback<Set<Long>> resultHandler) throws TException {
+      public void start(I iface, uploadProducts_args args, org.apache.thrift.async.AsyncMethodCallback<List<Long>> resultHandler) throws TException {
         iface.uploadProducts(args.products, args.shopId, args.cleanShopBeforeUpload,resultHandler);
       }
     }
 
-    public static class uploadProductCategoies<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, uploadProductCategoies_args, Set<ProductCategory>> {
+    public static class uploadProductCategoies<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, uploadProductCategoies_args, List<ProductCategory>> {
       public uploadProductCategoies() {
         super("uploadProductCategoies");
       }
@@ -3208,10 +3208,10 @@ public class ShopService {
         return new uploadProductCategoies_args();
       }
 
-      public AsyncMethodCallback<Set<ProductCategory>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<List<ProductCategory>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Set<ProductCategory>>() { 
-          public void onComplete(Set<ProductCategory> o) {
+        return new AsyncMethodCallback<List<ProductCategory>>() { 
+          public void onComplete(List<ProductCategory> o) {
             uploadProductCategoies_result result = new uploadProductCategoies_result();
             result.success = o;
             try {
@@ -3251,7 +3251,7 @@ public class ShopService {
         return false;
       }
 
-      public void start(I iface, uploadProductCategoies_args args, org.apache.thrift.async.AsyncMethodCallback<Set<ProductCategory>> resultHandler) throws TException {
+      public void start(I iface, uploadProductCategoies_args args, org.apache.thrift.async.AsyncMethodCallback<List<ProductCategory>> resultHandler) throws TException {
         iface.uploadProductCategoies(args.categories, args.relativeIds, args.cleanShopBeforeUpload,resultHandler);
       }
     }
@@ -7979,7 +7979,7 @@ public class ShopService {
   public static class uploadProducts_result implements org.apache.thrift.TBase<uploadProducts_result, uploadProducts_result._Fields>, java.io.Serializable, Cloneable, Comparable<uploadProducts_result>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("uploadProducts_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.SET, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.LIST, (short)0);
     private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -7988,7 +7988,7 @@ public class ShopService {
       schemes.put(TupleScheme.class, new uploadProducts_resultTupleSchemeFactory());
     }
 
-    public Set<Long> success; // required
+    public List<Long> success; // required
     public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -8057,7 +8057,7 @@ public class ShopService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
+          new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
               new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64))));
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
@@ -8069,7 +8069,7 @@ public class ShopService {
     }
 
     public uploadProducts_result(
-      Set<Long> success,
+      List<Long> success,
       com.vmesteonline.be.InvalidOperation exc)
     {
       this();
@@ -8082,7 +8082,7 @@ public class ShopService {
      */
     public uploadProducts_result(uploadProducts_result other) {
       if (other.isSetSuccess()) {
-        Set<Long> __this__success = new HashSet<Long>(other.success);
+        List<Long> __this__success = new ArrayList<Long>(other.success);
         this.success = __this__success;
       }
       if (other.isSetExc()) {
@@ -8110,16 +8110,16 @@ public class ShopService {
 
     public void addToSuccess(long elem) {
       if (this.success == null) {
-        this.success = new HashSet<Long>();
+        this.success = new ArrayList<Long>();
       }
       this.success.add(elem);
     }
 
-    public Set<Long> getSuccess() {
+    public List<Long> getSuccess() {
       return this.success;
     }
 
-    public uploadProducts_result setSuccess(Set<Long> success) {
+    public uploadProducts_result setSuccess(List<Long> success) {
       this.success = success;
       return this;
     }
@@ -8169,7 +8169,7 @@ public class ShopService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((Set<Long>)value);
+          setSuccess((List<Long>)value);
         }
         break;
 
@@ -8357,17 +8357,17 @@ public class ShopService {
           }
           switch (schemeField.id) {
             case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
+              if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TSet _set120 = iprot.readSetBegin();
-                  struct.success = new HashSet<Long>(2*_set120.size);
-                  for (int _i121 = 0; _i121 < _set120.size; ++_i121)
+                  org.apache.thrift.protocol.TList _list120 = iprot.readListBegin();
+                  struct.success = new ArrayList<Long>(_list120.size);
+                  for (int _i121 = 0; _i121 < _list120.size; ++_i121)
                   {
                     long _elem122;
                     _elem122 = iprot.readI64();
                     struct.success.add(_elem122);
                   }
-                  iprot.readSetEnd();
+                  iprot.readListEnd();
                 }
                 struct.setSuccessIsSet(true);
               } else { 
@@ -8401,12 +8401,12 @@ public class ShopService {
         if (struct.success != null) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
-            oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, struct.success.size()));
+            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, struct.success.size()));
             for (long _iter123 : struct.success)
             {
               oprot.writeI64(_iter123);
             }
-            oprot.writeSetEnd();
+            oprot.writeListEnd();
           }
           oprot.writeFieldEnd();
         }
@@ -8460,9 +8460,9 @@ public class ShopService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TSet _set125 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, iprot.readI32());
-            struct.success = new HashSet<Long>(2*_set125.size);
-            for (int _i126 = 0; _i126 < _set125.size; ++_i126)
+            org.apache.thrift.protocol.TList _list125 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, iprot.readI32());
+            struct.success = new ArrayList<Long>(_list125.size);
+            for (int _i126 = 0; _i126 < _list125.size; ++_i126)
             {
               long _elem127;
               _elem127 = iprot.readI64();
@@ -8484,7 +8484,7 @@ public class ShopService {
   public static class uploadProductCategoies_args implements org.apache.thrift.TBase<uploadProductCategoies_args, uploadProductCategoies_args._Fields>, java.io.Serializable, Cloneable, Comparable<uploadProductCategoies_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("uploadProductCategoies_args");
 
-    private static final org.apache.thrift.protocol.TField CATEGORIES_FIELD_DESC = new org.apache.thrift.protocol.TField("categories", org.apache.thrift.protocol.TType.SET, (short)1);
+    private static final org.apache.thrift.protocol.TField CATEGORIES_FIELD_DESC = new org.apache.thrift.protocol.TField("categories", org.apache.thrift.protocol.TType.LIST, (short)1);
     private static final org.apache.thrift.protocol.TField RELATIVE_IDS_FIELD_DESC = new org.apache.thrift.protocol.TField("relativeIds", org.apache.thrift.protocol.TType.BOOL, (short)2);
     private static final org.apache.thrift.protocol.TField CLEAN_SHOP_BEFORE_UPLOAD_FIELD_DESC = new org.apache.thrift.protocol.TField("cleanShopBeforeUpload", org.apache.thrift.protocol.TType.BOOL, (short)3);
 
@@ -8494,7 +8494,7 @@ public class ShopService {
       schemes.put(TupleScheme.class, new uploadProductCategoies_argsTupleSchemeFactory());
     }
 
-    public Set<ProductCategory> categories; // required
+    public List<ProductCategory> categories; // required
     public boolean relativeIds; // required
     public boolean cleanShopBeforeUpload; // required
 
@@ -8570,7 +8570,7 @@ public class ShopService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.CATEGORIES, new org.apache.thrift.meta_data.FieldMetaData("categories", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
+          new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
               new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, ProductCategory.class))));
       tmpMap.put(_Fields.RELATIVE_IDS, new org.apache.thrift.meta_data.FieldMetaData("relativeIds", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
@@ -8584,7 +8584,7 @@ public class ShopService {
     }
 
     public uploadProductCategoies_args(
-      Set<ProductCategory> categories,
+      List<ProductCategory> categories,
       boolean relativeIds,
       boolean cleanShopBeforeUpload)
     {
@@ -8602,7 +8602,7 @@ public class ShopService {
     public uploadProductCategoies_args(uploadProductCategoies_args other) {
       __isset_bitfield = other.__isset_bitfield;
       if (other.isSetCategories()) {
-        Set<ProductCategory> __this__categories = new HashSet<ProductCategory>(other.categories.size());
+        List<ProductCategory> __this__categories = new ArrayList<ProductCategory>(other.categories.size());
         for (ProductCategory other_element : other.categories) {
           __this__categories.add(new ProductCategory(other_element));
         }
@@ -8635,16 +8635,16 @@ public class ShopService {
 
     public void addToCategories(ProductCategory elem) {
       if (this.categories == null) {
-        this.categories = new HashSet<ProductCategory>();
+        this.categories = new ArrayList<ProductCategory>();
       }
       this.categories.add(elem);
     }
 
-    public Set<ProductCategory> getCategories() {
+    public List<ProductCategory> getCategories() {
       return this.categories;
     }
 
-    public uploadProductCategoies_args setCategories(Set<ProductCategory> categories) {
+    public uploadProductCategoies_args setCategories(List<ProductCategory> categories) {
       this.categories = categories;
       return this;
     }
@@ -8716,7 +8716,7 @@ public class ShopService {
         if (value == null) {
           unsetCategories();
         } else {
-          setCategories((Set<ProductCategory>)value);
+          setCategories((List<ProductCategory>)value);
         }
         break;
 
@@ -8938,18 +8938,18 @@ public class ShopService {
           }
           switch (schemeField.id) {
             case 1: // CATEGORIES
-              if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
+              if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TSet _set128 = iprot.readSetBegin();
-                  struct.categories = new HashSet<ProductCategory>(2*_set128.size);
-                  for (int _i129 = 0; _i129 < _set128.size; ++_i129)
+                  org.apache.thrift.protocol.TList _list128 = iprot.readListBegin();
+                  struct.categories = new ArrayList<ProductCategory>(_list128.size);
+                  for (int _i129 = 0; _i129 < _list128.size; ++_i129)
                   {
                     ProductCategory _elem130;
                     _elem130 = new ProductCategory();
                     _elem130.read(iprot);
                     struct.categories.add(_elem130);
                   }
-                  iprot.readSetEnd();
+                  iprot.readListEnd();
                 }
                 struct.setCategoriesIsSet(true);
               } else { 
@@ -8990,12 +8990,12 @@ public class ShopService {
         if (struct.categories != null) {
           oprot.writeFieldBegin(CATEGORIES_FIELD_DESC);
           {
-            oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, struct.categories.size()));
+            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.categories.size()));
             for (ProductCategory _iter131 : struct.categories)
             {
               _iter131.write(oprot);
             }
-            oprot.writeSetEnd();
+            oprot.writeListEnd();
           }
           oprot.writeFieldEnd();
         }
@@ -9056,9 +9056,9 @@ public class ShopService {
         BitSet incoming = iprot.readBitSet(3);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TSet _set133 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.categories = new HashSet<ProductCategory>(2*_set133.size);
-            for (int _i134 = 0; _i134 < _set133.size; ++_i134)
+            org.apache.thrift.protocol.TList _list133 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.categories = new ArrayList<ProductCategory>(_list133.size);
+            for (int _i134 = 0; _i134 < _list133.size; ++_i134)
             {
               ProductCategory _elem135;
               _elem135 = new ProductCategory();
@@ -9084,7 +9084,7 @@ public class ShopService {
   public static class uploadProductCategoies_result implements org.apache.thrift.TBase<uploadProductCategoies_result, uploadProductCategoies_result._Fields>, java.io.Serializable, Cloneable, Comparable<uploadProductCategoies_result>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("uploadProductCategoies_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.SET, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.LIST, (short)0);
     private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -9093,7 +9093,7 @@ public class ShopService {
       schemes.put(TupleScheme.class, new uploadProductCategoies_resultTupleSchemeFactory());
     }
 
-    public Set<ProductCategory> success; // required
+    public List<ProductCategory> success; // required
     public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -9162,7 +9162,7 @@ public class ShopService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
+          new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
               new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, ProductCategory.class))));
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
@@ -9174,7 +9174,7 @@ public class ShopService {
     }
 
     public uploadProductCategoies_result(
-      Set<ProductCategory> success,
+      List<ProductCategory> success,
       com.vmesteonline.be.InvalidOperation exc)
     {
       this();
@@ -9187,7 +9187,7 @@ public class ShopService {
      */
     public uploadProductCategoies_result(uploadProductCategoies_result other) {
       if (other.isSetSuccess()) {
-        Set<ProductCategory> __this__success = new HashSet<ProductCategory>(other.success.size());
+        List<ProductCategory> __this__success = new ArrayList<ProductCategory>(other.success.size());
         for (ProductCategory other_element : other.success) {
           __this__success.add(new ProductCategory(other_element));
         }
@@ -9218,16 +9218,16 @@ public class ShopService {
 
     public void addToSuccess(ProductCategory elem) {
       if (this.success == null) {
-        this.success = new HashSet<ProductCategory>();
+        this.success = new ArrayList<ProductCategory>();
       }
       this.success.add(elem);
     }
 
-    public Set<ProductCategory> getSuccess() {
+    public List<ProductCategory> getSuccess() {
       return this.success;
     }
 
-    public uploadProductCategoies_result setSuccess(Set<ProductCategory> success) {
+    public uploadProductCategoies_result setSuccess(List<ProductCategory> success) {
       this.success = success;
       return this;
     }
@@ -9277,7 +9277,7 @@ public class ShopService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((Set<ProductCategory>)value);
+          setSuccess((List<ProductCategory>)value);
         }
         break;
 
@@ -9465,18 +9465,18 @@ public class ShopService {
           }
           switch (schemeField.id) {
             case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
+              if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TSet _set136 = iprot.readSetBegin();
-                  struct.success = new HashSet<ProductCategory>(2*_set136.size);
-                  for (int _i137 = 0; _i137 < _set136.size; ++_i137)
+                  org.apache.thrift.protocol.TList _list136 = iprot.readListBegin();
+                  struct.success = new ArrayList<ProductCategory>(_list136.size);
+                  for (int _i137 = 0; _i137 < _list136.size; ++_i137)
                   {
                     ProductCategory _elem138;
                     _elem138 = new ProductCategory();
                     _elem138.read(iprot);
                     struct.success.add(_elem138);
                   }
-                  iprot.readSetEnd();
+                  iprot.readListEnd();
                 }
                 struct.setSuccessIsSet(true);
               } else { 
@@ -9510,12 +9510,12 @@ public class ShopService {
         if (struct.success != null) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
-            oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
+            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
             for (ProductCategory _iter139 : struct.success)
             {
               _iter139.write(oprot);
             }
-            oprot.writeSetEnd();
+            oprot.writeListEnd();
           }
           oprot.writeFieldEnd();
         }
@@ -9569,9 +9569,9 @@ public class ShopService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TSet _set141 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new HashSet<ProductCategory>(2*_set141.size);
-            for (int _i142 = 0; _i142 < _set141.size; ++_i142)
+            org.apache.thrift.protocol.TList _list141 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<ProductCategory>(_list141.size);
+            for (int _i142 = 0; _i142 < _list141.size; ++_i142)
             {
               ProductCategory _elem143;
               _elem143 = new ProductCategory();
