@@ -144,15 +144,17 @@ public class ShopService {
      * 
      * 
      * @param date
+     * @param priceType
      */
-    public long createOrder(int date) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public long createOrder(int date, PriceType priceType) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     public long cancelOrder() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     public long confirmOrder() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     /**
-     * Method adds all orderLines from order with id set in parameter to current order
+     * Method adds all orderLines from order with id set in parameter to current order.
+     * All Lines with the same product ID would summarized!
      * 
      * 
      * @param oldOrderId
@@ -168,16 +170,14 @@ public class ShopService {
     public long mergeOrder(long oldOrderId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     /**
-     * Methods adds line to the current order that set by createOrder method of by AuthService.setCurrentAttribute method
+     * Methods adds or replaces line to the current order that set by createOrder, or getOrderDetails method
      * it returns orderline that is with price set
-     * 
      * 
      * 
      * @param productId
      * @param quontity
-     * @param priceType
      */
-    public OrderLine addOrderLine(long productId, double quontity, PriceType priceType) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public OrderLine setOrderLine(long productId, double quontity) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     public boolean removeOrderLine(long productId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
@@ -239,7 +239,7 @@ public class ShopService {
 
     public void getOrderDetails(long orderId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void createOrder(int date, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void createOrder(int date, PriceType priceType, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void cancelOrder(org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -249,7 +249,7 @@ public class ShopService {
 
     public void mergeOrder(long oldOrderId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void addOrderLine(long productId, double quontity, PriceType priceType, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void setOrderLine(long productId, double quontity, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void removeOrderLine(long productId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -818,16 +818,17 @@ public class ShopService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getOrderDetails failed: unknown result");
     }
 
-    public long createOrder(int date) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public long createOrder(int date, PriceType priceType) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      send_createOrder(date);
+      send_createOrder(date, priceType);
       return recv_createOrder();
     }
 
-    public void send_createOrder(int date) throws org.apache.thrift.TException
+    public void send_createOrder(int date, PriceType priceType) throws org.apache.thrift.TException
     {
       createOrder_args args = new createOrder_args();
       args.setDate(date);
+      args.setPriceType(priceType);
       sendBase("createOrder", args);
     }
 
@@ -946,32 +947,31 @@ public class ShopService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "mergeOrder failed: unknown result");
     }
 
-    public OrderLine addOrderLine(long productId, double quontity, PriceType priceType) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public OrderLine setOrderLine(long productId, double quontity) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      send_addOrderLine(productId, quontity, priceType);
-      return recv_addOrderLine();
+      send_setOrderLine(productId, quontity);
+      return recv_setOrderLine();
     }
 
-    public void send_addOrderLine(long productId, double quontity, PriceType priceType) throws org.apache.thrift.TException
+    public void send_setOrderLine(long productId, double quontity) throws org.apache.thrift.TException
     {
-      addOrderLine_args args = new addOrderLine_args();
+      setOrderLine_args args = new setOrderLine_args();
       args.setProductId(productId);
       args.setQuontity(quontity);
-      args.setPriceType(priceType);
-      sendBase("addOrderLine", args);
+      sendBase("setOrderLine", args);
     }
 
-    public OrderLine recv_addOrderLine() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public OrderLine recv_setOrderLine() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      addOrderLine_result result = new addOrderLine_result();
-      receiveBase(result, "addOrderLine");
+      setOrderLine_result result = new setOrderLine_result();
+      receiveBase(result, "setOrderLine");
       if (result.isSetSuccess()) {
         return result.success;
       }
       if (result.exc != null) {
         throw result.exc;
       }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "addOrderLine failed: unknown result");
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "setOrderLine failed: unknown result");
     }
 
     public boolean removeOrderLine(long productId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
@@ -1804,24 +1804,27 @@ public class ShopService {
       }
     }
 
-    public void createOrder(int date, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void createOrder(int date, PriceType priceType, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      createOrder_call method_call = new createOrder_call(date, resultHandler, this, ___protocolFactory, ___transport);
+      createOrder_call method_call = new createOrder_call(date, priceType, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
     public static class createOrder_call extends org.apache.thrift.async.TAsyncMethodCall {
       private int date;
-      public createOrder_call(int date, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private PriceType priceType;
+      public createOrder_call(int date, PriceType priceType, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.date = date;
+        this.priceType = priceType;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
         prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("createOrder", org.apache.thrift.protocol.TMessageType.CALL, 0));
         createOrder_args args = new createOrder_args();
         args.setDate(date);
+        args.setPriceType(priceType);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -1958,30 +1961,27 @@ public class ShopService {
       }
     }
 
-    public void addOrderLine(long productId, double quontity, PriceType priceType, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void setOrderLine(long productId, double quontity, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      addOrderLine_call method_call = new addOrderLine_call(productId, quontity, priceType, resultHandler, this, ___protocolFactory, ___transport);
+      setOrderLine_call method_call = new setOrderLine_call(productId, quontity, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
-    public static class addOrderLine_call extends org.apache.thrift.async.TAsyncMethodCall {
+    public static class setOrderLine_call extends org.apache.thrift.async.TAsyncMethodCall {
       private long productId;
       private double quontity;
-      private PriceType priceType;
-      public addOrderLine_call(long productId, double quontity, PriceType priceType, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public setOrderLine_call(long productId, double quontity, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.productId = productId;
         this.quontity = quontity;
-        this.priceType = priceType;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("addOrderLine", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        addOrderLine_args args = new addOrderLine_args();
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("setOrderLine", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        setOrderLine_args args = new setOrderLine_args();
         args.setProductId(productId);
         args.setQuontity(quontity);
-        args.setPriceType(priceType);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -1992,7 +1992,7 @@ public class ShopService {
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_addOrderLine();
+        return (new Client(prot)).recv_setOrderLine();
       }
     }
 
@@ -2163,7 +2163,7 @@ public class ShopService {
       processMap.put("confirmOrder", new confirmOrder());
       processMap.put("appendOrder", new appendOrder());
       processMap.put("mergeOrder", new mergeOrder());
-      processMap.put("addOrderLine", new addOrderLine());
+      processMap.put("setOrderLine", new setOrderLine());
       processMap.put("removeOrderLine", new removeOrderLine());
       processMap.put("setOrderDeliveryType", new setOrderDeliveryType());
       processMap.put("setOrderPaymentType", new setOrderPaymentType());
@@ -2690,7 +2690,7 @@ public class ShopService {
       public createOrder_result getResult(I iface, createOrder_args args) throws org.apache.thrift.TException {
         createOrder_result result = new createOrder_result();
         try {
-          result.success = iface.createOrder(args.date);
+          result.success = iface.createOrder(args.date, args.priceType);
           result.setSuccessIsSet(true);
         } catch (com.vmesteonline.be.InvalidOperation exc) {
           result.exc = exc;
@@ -2799,23 +2799,23 @@ public class ShopService {
       }
     }
 
-    public static class addOrderLine<I extends Iface> extends org.apache.thrift.ProcessFunction<I, addOrderLine_args> {
-      public addOrderLine() {
-        super("addOrderLine");
+    public static class setOrderLine<I extends Iface> extends org.apache.thrift.ProcessFunction<I, setOrderLine_args> {
+      public setOrderLine() {
+        super("setOrderLine");
       }
 
-      public addOrderLine_args getEmptyArgsInstance() {
-        return new addOrderLine_args();
+      public setOrderLine_args getEmptyArgsInstance() {
+        return new setOrderLine_args();
       }
 
       protected boolean isOneway() {
         return false;
       }
 
-      public addOrderLine_result getResult(I iface, addOrderLine_args args) throws org.apache.thrift.TException {
-        addOrderLine_result result = new addOrderLine_result();
+      public setOrderLine_result getResult(I iface, setOrderLine_args args) throws org.apache.thrift.TException {
+        setOrderLine_result result = new setOrderLine_result();
         try {
-          result.success = iface.addOrderLine(args.productId, args.quontity, args.priceType);
+          result.success = iface.setOrderLine(args.productId, args.quontity);
         } catch (com.vmesteonline.be.InvalidOperation exc) {
           result.exc = exc;
         }
@@ -2960,7 +2960,7 @@ public class ShopService {
       processMap.put("confirmOrder", new confirmOrder());
       processMap.put("appendOrder", new appendOrder());
       processMap.put("mergeOrder", new mergeOrder());
-      processMap.put("addOrderLine", new addOrderLine());
+      processMap.put("setOrderLine", new setOrderLine());
       processMap.put("removeOrderLine", new removeOrderLine());
       processMap.put("setOrderDeliveryType", new setOrderDeliveryType());
       processMap.put("setOrderPaymentType", new setOrderPaymentType());
@@ -4210,7 +4210,7 @@ public class ShopService {
       }
 
       public void start(I iface, createOrder_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
-        iface.createOrder(args.date,resultHandler);
+        iface.createOrder(args.date, args.priceType,resultHandler);
       }
     }
 
@@ -4446,20 +4446,20 @@ public class ShopService {
       }
     }
 
-    public static class addOrderLine<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, addOrderLine_args, OrderLine> {
-      public addOrderLine() {
-        super("addOrderLine");
+    public static class setOrderLine<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, setOrderLine_args, OrderLine> {
+      public setOrderLine() {
+        super("setOrderLine");
       }
 
-      public addOrderLine_args getEmptyArgsInstance() {
-        return new addOrderLine_args();
+      public setOrderLine_args getEmptyArgsInstance() {
+        return new setOrderLine_args();
       }
 
       public AsyncMethodCallback<OrderLine> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
         return new AsyncMethodCallback<OrderLine>() { 
           public void onComplete(OrderLine o) {
-            addOrderLine_result result = new addOrderLine_result();
+            setOrderLine_result result = new setOrderLine_result();
             result.success = o;
             try {
               fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
@@ -4472,7 +4472,7 @@ public class ShopService {
           public void onError(Exception e) {
             byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
             org.apache.thrift.TBase msg;
-            addOrderLine_result result = new addOrderLine_result();
+            setOrderLine_result result = new setOrderLine_result();
             if (e instanceof com.vmesteonline.be.InvalidOperation) {
                         result.exc = (com.vmesteonline.be.InvalidOperation) e;
                         result.setExcIsSet(true);
@@ -4498,8 +4498,8 @@ public class ShopService {
         return false;
       }
 
-      public void start(I iface, addOrderLine_args args, org.apache.thrift.async.AsyncMethodCallback<OrderLine> resultHandler) throws TException {
-        iface.addOrderLine(args.productId, args.quontity, args.priceType,resultHandler);
+      public void start(I iface, setOrderLine_args args, org.apache.thrift.async.AsyncMethodCallback<OrderLine> resultHandler) throws TException {
+        iface.setOrderLine(args.productId, args.quontity,resultHandler);
       }
     }
 
@@ -23104,6 +23104,7 @@ public class ShopService {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("createOrder_args");
 
     private static final org.apache.thrift.protocol.TField DATE_FIELD_DESC = new org.apache.thrift.protocol.TField("date", org.apache.thrift.protocol.TType.I32, (short)1);
+    private static final org.apache.thrift.protocol.TField PRICE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("priceType", org.apache.thrift.protocol.TType.I32, (short)2);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -23112,10 +23113,20 @@ public class ShopService {
     }
 
     public int date; // required
+    /**
+     * 
+     * @see PriceType
+     */
+    public PriceType priceType; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      DATE((short)1, "date");
+      DATE((short)1, "date"),
+      /**
+       * 
+       * @see PriceType
+       */
+      PRICE_TYPE((short)2, "priceType");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -23132,6 +23143,8 @@ public class ShopService {
         switch(fieldId) {
           case 1: // DATE
             return DATE;
+          case 2: // PRICE_TYPE
+            return PRICE_TYPE;
           default:
             return null;
         }
@@ -23179,6 +23192,8 @@ public class ShopService {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.DATE, new org.apache.thrift.meta_data.FieldMetaData("date", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+      tmpMap.put(_Fields.PRICE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("priceType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, PriceType.class)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(createOrder_args.class, metaDataMap);
     }
@@ -23187,11 +23202,13 @@ public class ShopService {
     }
 
     public createOrder_args(
-      int date)
+      int date,
+      PriceType priceType)
     {
       this();
       this.date = date;
       setDateIsSet(true);
+      this.priceType = priceType;
     }
 
     /**
@@ -23200,6 +23217,9 @@ public class ShopService {
     public createOrder_args(createOrder_args other) {
       __isset_bitfield = other.__isset_bitfield;
       this.date = other.date;
+      if (other.isSetPriceType()) {
+        this.priceType = other.priceType;
+      }
     }
 
     public createOrder_args deepCopy() {
@@ -23210,6 +23230,7 @@ public class ShopService {
     public void clear() {
       setDateIsSet(false);
       this.date = 0;
+      this.priceType = null;
     }
 
     public int getDate() {
@@ -23235,6 +23256,38 @@ public class ShopService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __DATE_ISSET_ID, value);
     }
 
+    /**
+     * 
+     * @see PriceType
+     */
+    public PriceType getPriceType() {
+      return this.priceType;
+    }
+
+    /**
+     * 
+     * @see PriceType
+     */
+    public createOrder_args setPriceType(PriceType priceType) {
+      this.priceType = priceType;
+      return this;
+    }
+
+    public void unsetPriceType() {
+      this.priceType = null;
+    }
+
+    /** Returns true if field priceType is set (has been assigned a value) and false otherwise */
+    public boolean isSetPriceType() {
+      return this.priceType != null;
+    }
+
+    public void setPriceTypeIsSet(boolean value) {
+      if (!value) {
+        this.priceType = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case DATE:
@@ -23245,6 +23298,14 @@ public class ShopService {
         }
         break;
 
+      case PRICE_TYPE:
+        if (value == null) {
+          unsetPriceType();
+        } else {
+          setPriceType((PriceType)value);
+        }
+        break;
+
       }
     }
 
@@ -23252,6 +23313,9 @@ public class ShopService {
       switch (field) {
       case DATE:
         return Integer.valueOf(getDate());
+
+      case PRICE_TYPE:
+        return getPriceType();
 
       }
       throw new IllegalStateException();
@@ -23266,6 +23330,8 @@ public class ShopService {
       switch (field) {
       case DATE:
         return isSetDate();
+      case PRICE_TYPE:
+        return isSetPriceType();
       }
       throw new IllegalStateException();
     }
@@ -23289,6 +23355,15 @@ public class ShopService {
         if (!(this_present_date && that_present_date))
           return false;
         if (this.date != that.date)
+          return false;
+      }
+
+      boolean this_present_priceType = true && this.isSetPriceType();
+      boolean that_present_priceType = true && that.isSetPriceType();
+      if (this_present_priceType || that_present_priceType) {
+        if (!(this_present_priceType && that_present_priceType))
+          return false;
+        if (!this.priceType.equals(that.priceType))
           return false;
       }
 
@@ -23318,6 +23393,16 @@ public class ShopService {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetPriceType()).compareTo(other.isSetPriceType());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetPriceType()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.priceType, other.priceType);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -23340,6 +23425,14 @@ public class ShopService {
 
       sb.append("date:");
       sb.append(this.date);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("priceType:");
+      if (this.priceType == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.priceType);
+      }
       first = false;
       sb.append(")");
       return sb.toString();
@@ -23394,6 +23487,14 @@ public class ShopService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 2: // PRICE_TYPE
+              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                struct.priceType = PriceType.findByValue(iprot.readI32());
+                struct.setPriceTypeIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -23412,6 +23513,11 @@ public class ShopService {
         oprot.writeFieldBegin(DATE_FIELD_DESC);
         oprot.writeI32(struct.date);
         oprot.writeFieldEnd();
+        if (struct.priceType != null) {
+          oprot.writeFieldBegin(PRICE_TYPE_FIELD_DESC);
+          oprot.writeI32(struct.priceType.getValue());
+          oprot.writeFieldEnd();
+        }
         oprot.writeFieldStop();
         oprot.writeStructEnd();
       }
@@ -23433,19 +23539,29 @@ public class ShopService {
         if (struct.isSetDate()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetPriceType()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetDate()) {
           oprot.writeI32(struct.date);
+        }
+        if (struct.isSetPriceType()) {
+          oprot.writeI32(struct.priceType.getValue());
         }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, createOrder_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           struct.date = iprot.readI32();
           struct.setDateIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.priceType = PriceType.findByValue(iprot.readI32());
+          struct.setPriceTypeIsSet(true);
         }
       }
     }
@@ -26928,36 +27044,25 @@ public class ShopService {
 
   }
 
-  public static class addOrderLine_args implements org.apache.thrift.TBase<addOrderLine_args, addOrderLine_args._Fields>, java.io.Serializable, Cloneable, Comparable<addOrderLine_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("addOrderLine_args");
+  public static class setOrderLine_args implements org.apache.thrift.TBase<setOrderLine_args, setOrderLine_args._Fields>, java.io.Serializable, Cloneable, Comparable<setOrderLine_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("setOrderLine_args");
 
     private static final org.apache.thrift.protocol.TField PRODUCT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("productId", org.apache.thrift.protocol.TType.I64, (short)1);
     private static final org.apache.thrift.protocol.TField QUONTITY_FIELD_DESC = new org.apache.thrift.protocol.TField("quontity", org.apache.thrift.protocol.TType.DOUBLE, (short)2);
-    private static final org.apache.thrift.protocol.TField PRICE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("priceType", org.apache.thrift.protocol.TType.I32, (short)3);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new addOrderLine_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new addOrderLine_argsTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new setOrderLine_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new setOrderLine_argsTupleSchemeFactory());
     }
 
     public long productId; // required
     public double quontity; // required
-    /**
-     * 
-     * @see PriceType
-     */
-    public PriceType priceType; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       PRODUCT_ID((short)1, "productId"),
-      QUONTITY((short)2, "quontity"),
-      /**
-       * 
-       * @see PriceType
-       */
-      PRICE_TYPE((short)3, "priceType");
+      QUONTITY((short)2, "quontity");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -26976,8 +27081,6 @@ public class ShopService {
             return PRODUCT_ID;
           case 2: // QUONTITY
             return QUONTITY;
-          case 3: // PRICE_TYPE
-            return PRICE_TYPE;
           default:
             return null;
         }
@@ -27028,42 +27131,35 @@ public class ShopService {
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.QUONTITY, new org.apache.thrift.meta_data.FieldMetaData("quontity", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
-      tmpMap.put(_Fields.PRICE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("priceType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, PriceType.class)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(addOrderLine_args.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(setOrderLine_args.class, metaDataMap);
     }
 
-    public addOrderLine_args() {
+    public setOrderLine_args() {
     }
 
-    public addOrderLine_args(
+    public setOrderLine_args(
       long productId,
-      double quontity,
-      PriceType priceType)
+      double quontity)
     {
       this();
       this.productId = productId;
       setProductIdIsSet(true);
       this.quontity = quontity;
       setQuontityIsSet(true);
-      this.priceType = priceType;
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public addOrderLine_args(addOrderLine_args other) {
+    public setOrderLine_args(setOrderLine_args other) {
       __isset_bitfield = other.__isset_bitfield;
       this.productId = other.productId;
       this.quontity = other.quontity;
-      if (other.isSetPriceType()) {
-        this.priceType = other.priceType;
-      }
     }
 
-    public addOrderLine_args deepCopy() {
-      return new addOrderLine_args(this);
+    public setOrderLine_args deepCopy() {
+      return new setOrderLine_args(this);
     }
 
     @Override
@@ -27072,14 +27168,13 @@ public class ShopService {
       this.productId = 0;
       setQuontityIsSet(false);
       this.quontity = 0.0;
-      this.priceType = null;
     }
 
     public long getProductId() {
       return this.productId;
     }
 
-    public addOrderLine_args setProductId(long productId) {
+    public setOrderLine_args setProductId(long productId) {
       this.productId = productId;
       setProductIdIsSet(true);
       return this;
@@ -27102,7 +27197,7 @@ public class ShopService {
       return this.quontity;
     }
 
-    public addOrderLine_args setQuontity(double quontity) {
+    public setOrderLine_args setQuontity(double quontity) {
       this.quontity = quontity;
       setQuontityIsSet(true);
       return this;
@@ -27119,38 +27214,6 @@ public class ShopService {
 
     public void setQuontityIsSet(boolean value) {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __QUONTITY_ISSET_ID, value);
-    }
-
-    /**
-     * 
-     * @see PriceType
-     */
-    public PriceType getPriceType() {
-      return this.priceType;
-    }
-
-    /**
-     * 
-     * @see PriceType
-     */
-    public addOrderLine_args setPriceType(PriceType priceType) {
-      this.priceType = priceType;
-      return this;
-    }
-
-    public void unsetPriceType() {
-      this.priceType = null;
-    }
-
-    /** Returns true if field priceType is set (has been assigned a value) and false otherwise */
-    public boolean isSetPriceType() {
-      return this.priceType != null;
-    }
-
-    public void setPriceTypeIsSet(boolean value) {
-      if (!value) {
-        this.priceType = null;
-      }
     }
 
     public void setFieldValue(_Fields field, Object value) {
@@ -27171,14 +27234,6 @@ public class ShopService {
         }
         break;
 
-      case PRICE_TYPE:
-        if (value == null) {
-          unsetPriceType();
-        } else {
-          setPriceType((PriceType)value);
-        }
-        break;
-
       }
     }
 
@@ -27189,9 +27244,6 @@ public class ShopService {
 
       case QUONTITY:
         return Double.valueOf(getQuontity());
-
-      case PRICE_TYPE:
-        return getPriceType();
 
       }
       throw new IllegalStateException();
@@ -27208,8 +27260,6 @@ public class ShopService {
         return isSetProductId();
       case QUONTITY:
         return isSetQuontity();
-      case PRICE_TYPE:
-        return isSetPriceType();
       }
       throw new IllegalStateException();
     }
@@ -27218,12 +27268,12 @@ public class ShopService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof addOrderLine_args)
-        return this.equals((addOrderLine_args)that);
+      if (that instanceof setOrderLine_args)
+        return this.equals((setOrderLine_args)that);
       return false;
     }
 
-    public boolean equals(addOrderLine_args that) {
+    public boolean equals(setOrderLine_args that) {
       if (that == null)
         return false;
 
@@ -27245,15 +27295,6 @@ public class ShopService {
           return false;
       }
 
-      boolean this_present_priceType = true && this.isSetPriceType();
-      boolean that_present_priceType = true && that.isSetPriceType();
-      if (this_present_priceType || that_present_priceType) {
-        if (!(this_present_priceType && that_present_priceType))
-          return false;
-        if (!this.priceType.equals(that.priceType))
-          return false;
-      }
-
       return true;
     }
 
@@ -27263,7 +27304,7 @@ public class ShopService {
     }
 
     @Override
-    public int compareTo(addOrderLine_args other) {
+    public int compareTo(setOrderLine_args other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -27290,16 +27331,6 @@ public class ShopService {
           return lastComparison;
         }
       }
-      lastComparison = Boolean.valueOf(isSetPriceType()).compareTo(other.isSetPriceType());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetPriceType()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.priceType, other.priceType);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
       return 0;
     }
 
@@ -27317,7 +27348,7 @@ public class ShopService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("addOrderLine_args(");
+      StringBuilder sb = new StringBuilder("setOrderLine_args(");
       boolean first = true;
 
       sb.append("productId:");
@@ -27326,14 +27357,6 @@ public class ShopService {
       if (!first) sb.append(", ");
       sb.append("quontity:");
       sb.append(this.quontity);
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("priceType:");
-      if (this.priceType == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.priceType);
-      }
       first = false;
       sb.append(")");
       return sb.toString();
@@ -27362,15 +27385,15 @@ public class ShopService {
       }
     }
 
-    private static class addOrderLine_argsStandardSchemeFactory implements SchemeFactory {
-      public addOrderLine_argsStandardScheme getScheme() {
-        return new addOrderLine_argsStandardScheme();
+    private static class setOrderLine_argsStandardSchemeFactory implements SchemeFactory {
+      public setOrderLine_argsStandardScheme getScheme() {
+        return new setOrderLine_argsStandardScheme();
       }
     }
 
-    private static class addOrderLine_argsStandardScheme extends StandardScheme<addOrderLine_args> {
+    private static class setOrderLine_argsStandardScheme extends StandardScheme<setOrderLine_args> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, addOrderLine_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, setOrderLine_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -27396,14 +27419,6 @@ public class ShopService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 3: // PRICE_TYPE
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.priceType = PriceType.findByValue(iprot.readI32());
-                struct.setPriceTypeIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -27415,7 +27430,7 @@ public class ShopService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, addOrderLine_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, setOrderLine_args struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -27425,27 +27440,22 @@ public class ShopService {
         oprot.writeFieldBegin(QUONTITY_FIELD_DESC);
         oprot.writeDouble(struct.quontity);
         oprot.writeFieldEnd();
-        if (struct.priceType != null) {
-          oprot.writeFieldBegin(PRICE_TYPE_FIELD_DESC);
-          oprot.writeI32(struct.priceType.getValue());
-          oprot.writeFieldEnd();
-        }
         oprot.writeFieldStop();
         oprot.writeStructEnd();
       }
 
     }
 
-    private static class addOrderLine_argsTupleSchemeFactory implements SchemeFactory {
-      public addOrderLine_argsTupleScheme getScheme() {
-        return new addOrderLine_argsTupleScheme();
+    private static class setOrderLine_argsTupleSchemeFactory implements SchemeFactory {
+      public setOrderLine_argsTupleScheme getScheme() {
+        return new setOrderLine_argsTupleScheme();
       }
     }
 
-    private static class addOrderLine_argsTupleScheme extends TupleScheme<addOrderLine_args> {
+    private static class setOrderLine_argsTupleScheme extends TupleScheme<setOrderLine_args> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, addOrderLine_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, setOrderLine_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetProductId()) {
@@ -27454,25 +27464,19 @@ public class ShopService {
         if (struct.isSetQuontity()) {
           optionals.set(1);
         }
-        if (struct.isSetPriceType()) {
-          optionals.set(2);
-        }
-        oprot.writeBitSet(optionals, 3);
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetProductId()) {
           oprot.writeI64(struct.productId);
         }
         if (struct.isSetQuontity()) {
           oprot.writeDouble(struct.quontity);
         }
-        if (struct.isSetPriceType()) {
-          oprot.writeI32(struct.priceType.getValue());
-        }
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, addOrderLine_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, setOrderLine_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(3);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           struct.productId = iprot.readI64();
           struct.setProductIdIsSet(true);
@@ -27481,25 +27485,21 @@ public class ShopService {
           struct.quontity = iprot.readDouble();
           struct.setQuontityIsSet(true);
         }
-        if (incoming.get(2)) {
-          struct.priceType = PriceType.findByValue(iprot.readI32());
-          struct.setPriceTypeIsSet(true);
-        }
       }
     }
 
   }
 
-  public static class addOrderLine_result implements org.apache.thrift.TBase<addOrderLine_result, addOrderLine_result._Fields>, java.io.Serializable, Cloneable, Comparable<addOrderLine_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("addOrderLine_result");
+  public static class setOrderLine_result implements org.apache.thrift.TBase<setOrderLine_result, setOrderLine_result._Fields>, java.io.Serializable, Cloneable, Comparable<setOrderLine_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("setOrderLine_result");
 
     private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
     private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new addOrderLine_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new addOrderLine_resultTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new setOrderLine_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new setOrderLine_resultTupleSchemeFactory());
     }
 
     public OrderLine success; // required
@@ -27575,13 +27575,13 @@ public class ShopService {
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(addOrderLine_result.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(setOrderLine_result.class, metaDataMap);
     }
 
-    public addOrderLine_result() {
+    public setOrderLine_result() {
     }
 
-    public addOrderLine_result(
+    public setOrderLine_result(
       OrderLine success,
       com.vmesteonline.be.InvalidOperation exc)
     {
@@ -27593,7 +27593,7 @@ public class ShopService {
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public addOrderLine_result(addOrderLine_result other) {
+    public setOrderLine_result(setOrderLine_result other) {
       if (other.isSetSuccess()) {
         this.success = new OrderLine(other.success);
       }
@@ -27602,8 +27602,8 @@ public class ShopService {
       }
     }
 
-    public addOrderLine_result deepCopy() {
-      return new addOrderLine_result(this);
+    public setOrderLine_result deepCopy() {
+      return new setOrderLine_result(this);
     }
 
     @Override
@@ -27616,7 +27616,7 @@ public class ShopService {
       return this.success;
     }
 
-    public addOrderLine_result setSuccess(OrderLine success) {
+    public setOrderLine_result setSuccess(OrderLine success) {
       this.success = success;
       return this;
     }
@@ -27640,7 +27640,7 @@ public class ShopService {
       return this.exc;
     }
 
-    public addOrderLine_result setExc(com.vmesteonline.be.InvalidOperation exc) {
+    public setOrderLine_result setExc(com.vmesteonline.be.InvalidOperation exc) {
       this.exc = exc;
       return this;
     }
@@ -27712,12 +27712,12 @@ public class ShopService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof addOrderLine_result)
-        return this.equals((addOrderLine_result)that);
+      if (that instanceof setOrderLine_result)
+        return this.equals((setOrderLine_result)that);
       return false;
     }
 
-    public boolean equals(addOrderLine_result that) {
+    public boolean equals(setOrderLine_result that) {
       if (that == null)
         return false;
 
@@ -27748,7 +27748,7 @@ public class ShopService {
     }
 
     @Override
-    public int compareTo(addOrderLine_result other) {
+    public int compareTo(setOrderLine_result other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -27792,7 +27792,7 @@ public class ShopService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("addOrderLine_result(");
+      StringBuilder sb = new StringBuilder("setOrderLine_result(");
       boolean first = true;
 
       sb.append("success:");
@@ -27838,15 +27838,15 @@ public class ShopService {
       }
     }
 
-    private static class addOrderLine_resultStandardSchemeFactory implements SchemeFactory {
-      public addOrderLine_resultStandardScheme getScheme() {
-        return new addOrderLine_resultStandardScheme();
+    private static class setOrderLine_resultStandardSchemeFactory implements SchemeFactory {
+      public setOrderLine_resultStandardScheme getScheme() {
+        return new setOrderLine_resultStandardScheme();
       }
     }
 
-    private static class addOrderLine_resultStandardScheme extends StandardScheme<addOrderLine_result> {
+    private static class setOrderLine_resultStandardScheme extends StandardScheme<setOrderLine_result> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, addOrderLine_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, setOrderLine_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -27885,7 +27885,7 @@ public class ShopService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, addOrderLine_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, setOrderLine_result struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -27905,16 +27905,16 @@ public class ShopService {
 
     }
 
-    private static class addOrderLine_resultTupleSchemeFactory implements SchemeFactory {
-      public addOrderLine_resultTupleScheme getScheme() {
-        return new addOrderLine_resultTupleScheme();
+    private static class setOrderLine_resultTupleSchemeFactory implements SchemeFactory {
+      public setOrderLine_resultTupleScheme getScheme() {
+        return new setOrderLine_resultTupleScheme();
       }
     }
 
-    private static class addOrderLine_resultTupleScheme extends TupleScheme<addOrderLine_result> {
+    private static class setOrderLine_resultTupleScheme extends TupleScheme<setOrderLine_result> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, addOrderLine_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, setOrderLine_result struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetSuccess()) {
@@ -27933,7 +27933,7 @@ public class ShopService {
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, addOrderLine_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, setOrderLine_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {

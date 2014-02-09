@@ -36,7 +36,7 @@ struct ProductCategory {
 	6:list<i64> topicSet
 }
 
-enum PriceType { RETAIL=0, INET=1, VIP=2, SPECIAL=3, MERGED=4 }
+enum PriceType { RETAIL=0, INET=1, VIP=2, SPECIAL=3 }
 
 struct ProductDetails {
 	1:list<i64> categories,
@@ -67,8 +67,7 @@ enum PaymentStatus { UNKNOWN=0, WIAT=1, PENDING=2, COMPLETE=3, CREDIT=4 }
 
 struct OrderLine {
 	1:Product product,
-	2:double quontity,
-	3:PriceType priceType,
+	2:double quantity,
 	4:double price   
 }
 
@@ -87,7 +86,8 @@ struct Order {
 	1:i64 id,
 	2:i32 date
 	3:OrderStatus status,
-	4:double totalCost,
+	4:PriceType priceType,
+	5:double totalCost,
 } 
 
 struct FullOrder {
@@ -166,11 +166,12 @@ service ShopService {
 	/**
 	* Method returns id of new order and set is as a current
 	**/
-	i64 createOrder(1:i32 date) throws (1:error.InvalidOperation exc),
+	i64 createOrder(1:i32 date, 2:PriceType priceType) throws (1:error.InvalidOperation exc),
 	i64 cancelOrder() throws (1:error.InvalidOperation exc),
 	i64 confirmOrder() throws (1:error.InvalidOperation exc),
 	/**
-	* Method adds all orderLines from order with id set in parameter to current order
+	* Method adds all orderLines from order with id set in parameter to current order. 
+	* All Lines with the same product ID would summarized! 
 	**/
 	i64 appendOrder(1:i64 oldOrderId) throws (1:error.InvalidOperation exc),
 	/**
@@ -179,11 +180,10 @@ service ShopService {
 	i64 mergeOrder(1:i64 oldOrderId) throws (1:error.InvalidOperation exc),
 	
 	/**
-	* Methods adds line to the current order that set by createOrder method of by AuthService.setCurrentAttribute method
-	* it returns orderline that is with price set 
-	 
+	* Methods adds or replaces line to the current order that set by createOrder, or getOrderDetails method
+	* it returns orderline that is with price set
 	**/
-	OrderLine addOrderLine( 1:i64 productId, 2:double quontity, 3:PriceType priceType  ) throws (1:error.InvalidOperation exc),
+	OrderLine setOrderLine( 1:i64 productId, 2:double quontity ) throws (1:error.InvalidOperation exc),
 	bool removeOrderLine(1:i64 productId) throws (1:error.InvalidOperation exc),
 	/**
 	* Method returns Order details that contains new value of postal address and delivery cost of order delivery 

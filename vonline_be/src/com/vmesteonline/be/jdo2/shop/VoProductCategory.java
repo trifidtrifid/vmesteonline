@@ -22,10 +22,10 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoProductCategory {
 
-	public VoProductCategory(long shopId,long parentId, String name, String descr, List<ByteBuffer> logoURLset, List<Long> topicSet) {
-		this(shopId, parentId, name, descr, logoURLset, topicSet, null);
+	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<ByteBuffer> logoURLset, List<Long> topicSet) {
+		this(shop, parentId, name, descr, logoURLset, topicSet, null);
 	}
-	public VoProductCategory(long shopId,long parentId, String name, String descr, List<ByteBuffer> logoURLset, List<Long> topicSet, PersistenceManager _pm) {
+	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<ByteBuffer> logoURLset, List<Long> topicSet, PersistenceManager _pm) {
 	  
 		this.name = name;
 		this.descr = descr;
@@ -52,7 +52,7 @@ public class VoProductCategory {
 				pm.makePersistent(pc);
 			}
 			pm.makePersistent(this);
-			VoShop shop = pm.getObjectById(VoShop.class, shopId);
+			/*VoShop shop = pm.getObjectById(VoShop.class, shopId);*/
 			shop.addProductCategory(this);
 			shops.add(shop);
 			
@@ -60,8 +60,6 @@ public class VoProductCategory {
 				VoTopic vt = pm.getObjectById(VoTopic.class, tid);
 				topics.add(vt); 
 			}
-			
-			pm.makePersistent(shop);
 			pm.makePersistent(this);
 		} catch (Exception e) {
 			e.printStackTrace();

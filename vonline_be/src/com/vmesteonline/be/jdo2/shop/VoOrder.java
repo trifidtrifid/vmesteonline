@@ -1,10 +1,14 @@
 package com.vmesteonline.be.jdo2.shop;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
@@ -14,6 +18,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.OneToMany;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -28,19 +33,28 @@ import com.vmesteonline.be.shop.OrderLine;
 import com.vmesteonline.be.shop.OrderStatus;
 import com.vmesteonline.be.shop.PaymentStatus;
 import com.vmesteonline.be.shop.PaymentType;
+import com.vmesteonline.be.shop.PriceType;
 
 @PersistenceCapable
 public class VoOrder {
 
-	public VoOrder(VoUser user, long shopId, int date) throws InvalidOperation{
+	public PriceType getPriceType() {
+		return priceType;
+	}
+
+	public void setPriceType(PriceType priceType) {
+		this.priceType = priceType;
+	}
+
+	public VoOrder(VoUser user, long shopId, int date, PriceType priceType, PersistenceManager _pm) throws InvalidOperation{
 		this.user = user;
 		this.date = date;
 		this.shopId = shopId;
-		this.createdAt = (int)System.currentTimeMillis()/1000;
+		this.createdAt = (int)(System.currentTimeMillis()/1000L);
 		if( date < createdAt )
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Date for order must be in the future, but provided ("+date+") in the past: "+ new Date(date*1000));
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		this.status = OrderStatus.NEW;
 		this.delivery = DeliveryType.SELF_PICKUP;
 		this.deliveryCost = 0D;
@@ -48,14 +62,23 @@ public class VoOrder {
 		this.totalCost = 0D;
 		this.paymentType = PaymentType.CASH;
 		this.paymentStatus = PaymentStatus.WIAT;
-		this.odrerLines = new HashMap<Long,VoOrderLine>();
+		this.odrerLines = new TreeSet<VoOrderLine>( new Comparator<VoOrderLine>(){
+
+			@Override
+			public int compare(VoOrderLine o1, VoOrderLine o2) {
+				return null == o1.getProduct() ? null == o1.getProduct() ? 0 : 1 :
+					Long.compare(o1.getProduct().getId(),o1.getProduct().getId());
+			}
+			
+		});
+		this.priceType = priceType; 
 		try{
 			pm.makePersistent(this);
 		} catch (Exception ex){
 			ex.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to create order. "+ex.getMessage());
 		} finally {
-			pm.close();
+			if( _pm != null) pm.close();
 		}
 	}
 	
@@ -64,8 +87,8 @@ public class VoOrder {
 		Transaction currentTransaction = pm.currentTransaction();
 		try {
 			VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProduct().getId());
-			VoOrderLine voOrderLine = new VoOrderLine(this, product, orderLine.getQuontity(), orderLine.getPriceType(), orderLine.getPrice());
-			this.odrerLines.put(voOrderLine.getProduct().getId(), voOrderLine );
+			VoOrderLine voOrderLine = new VoOrderLine(this, product, orderLine.getQuantity(), product.getPrice( priceType));
+			this.odrerLines.add( voOrderLine );
 			this.incrementTotalCost(voOrderLine.getPrice());
 			pm.makePersistent( voOrderLine );
 			pm.makePersistent(this);
@@ -80,13 +103,13 @@ public class VoOrder {
 	}
 	
 	public Order getOrder(){
-		return new Order(id, date, status, totalCost);
+		return new Order(id.getId(), date, status, priceType, totalCost);
 	} 
 	public OrderDetails getOrderDetails(){
 		OrderDetails od = new OrderDetails(createdAt, delivery, deliveryCost, 
 				deliveryTo.getPostalAddress(), paymentType, paymentStatus,
 				new ArrayList<OrderLine>(), comment);
-		for( VoOrderLine vol: odrerLines.values()){
+		for( VoOrderLine vol: odrerLines){
 			od.odrerLines.add(vol.getOrderLine());
 		}
 		return od;
@@ -94,7 +117,7 @@ public class VoOrder {
 	
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-  private long id;
+  private Key id;
 	
 	@Persistent
 	@Unowned
@@ -137,7 +160,11 @@ public class VoOrder {
   
   @Persistent(mappedBy="order")
   @OneToMany
-  private HashMap<Long,VoOrderLine> odrerLines;
+  @Unindexed
+  private SortedSet<VoOrderLine> odrerLines;
+  
+  @Persistent
+  private PriceType priceType; 
   
   @Persistent
   @Unindexed 
@@ -147,6 +174,10 @@ public class VoOrder {
 		return date;
 	}
 
+	public double addCost(double cost){
+		return totalCost += cost;
+	}
+	
 	public void setDate(int date) {
 		this.date = date;
 	}
@@ -229,14 +260,14 @@ public class VoOrder {
 	}
 
 	public long getId() {
-		return id;
+		return id.getId();
 	}
 
 	public VoUser getUser() {
 		return user;
 	}
 
-	public Map<Long,VoOrderLine> getOdrerLines() {
+	public SortedSet<VoOrderLine> getOdrerLines() {
 		return odrerLines;
 	}
 

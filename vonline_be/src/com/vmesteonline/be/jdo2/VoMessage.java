@@ -60,7 +60,7 @@ public class VoMessage {
 	VoMessage(Message msg, VoTopic ownerTopic) throws InvalidOperation {
 
 		this.childMessages = new TreeSet<VoMessage>();
-		int now = (int) (System.currentTimeMillis() / 1000);
+		int now = (int) (System.currentTimeMillis() / 1000L);
 
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
