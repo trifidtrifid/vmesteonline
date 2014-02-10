@@ -90,17 +90,17 @@
     		client = new com.vmesteonline.be.MessageServiceClient(protocol);
 
             var Messages,
-                    mesLen,
-                    mesNew,
-                    mesNewLen,
-                    mes,level=0,
-                    message,
-                    messageListNew = "",
-                    messageList = '',
-                    messageListTopLevel = "",
-                    topicsList="",
-                    topic,
-                    iterator = 0;
+                mesLen,
+                mesNew,
+                mesNewLen,
+                mes,level=0,
+                message,
+                messageListNew = "",
+                messageList = '',
+                messageListTopLevel = "",
+                topicsList="",
+                topic,
+                iterator = 0;
 
             $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active');
 
@@ -223,7 +223,7 @@
                     iterator=0;
                     messageList = '<ol class="dd-list">'+
                         '<li class="dd-item dd2-item topic-item" data-id="19">'+
-                            '<div class="dd2-content topic-descr answer-item widget-body">'+
+                            '<div class="dd2-content topic-descr message-item widget-body">'+
                                 '<div class="widget-main">'+
                                     '<div class="topic-left">'+
                                         '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
@@ -276,7 +276,6 @@
             }
 
             for(var i = 0; i < topicLen; i++){
-
                 message = Topics.topics[i];
                 iterator = 0;
                 messageList="";
