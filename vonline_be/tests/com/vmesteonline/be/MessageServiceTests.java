@@ -28,10 +28,24 @@ public class MessageServiceTests {
 	AuthServiceImpl asi;
 	UserServiceImpl usi;
 	MessageServiceImpl msi;
+	HashMap<MessageType, Long> noLinkedMessages = new HashMap<MessageType, Long>();
+	TreeMap<Long, String> noTags = new TreeMap<Long, String>();
+	PersistenceManager pm;
+
+	Group topicGroup;
+	Rubric topicRubric;
+
+	private Topic createTopic() throws Exception {
+
+		return msi.createTopic(topicGroup.getId(), "Test topic", MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages,
+				noTags, topicRubric.getId(), 0L);
+
+	}
 
 	@Before
 	public void setUp() throws Exception {
 		helper.setUp();
+		pm = PMF.get().getPersistenceManager();
 		asi = new AuthServiceImpl(sessionId);
 		List<String> locCodes = UserServiceImpl.getLocationCodesForRegistration();
 		asi.registerNewUser("Test1", "USer2", "123", "a1@b.com", locCodes.get(0));
@@ -40,10 +54,21 @@ public class MessageServiceTests {
 
 		usi = new UserServiceImpl(sessionId);
 		msi = new MessageServiceImpl(sessionId);
+
+		List<Group> userGroups = usi.getUserGroups();
+		Assert.assertTrue(userGroups.size() > 0);
+		Assert.assertTrue(userGroups.get(0) != null);
+		topicGroup = userGroups.get(0);
+
+		List<Rubric> userRubrics = usi.getUserRubrics();
+		Assert.assertTrue(userRubrics.size() > 0);
+		Assert.assertTrue(userRubrics.get(0) != null);
+		topicRubric = userRubrics.get(0);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		pm.close();
 		helper.tearDown();
 	}
 
@@ -52,7 +77,7 @@ public class MessageServiceTests {
 		try {
 			int offset = 0;
 			do {
-				TopicListPart topics = msi.getTopics(0, 0, MessageType.BASE, 0, 0, 10);
+				TopicListPart topics = msi.getTopics(0, 0, 0, 0L, 10);
 				for (Topic top : topics.getTopics()) {
 					System.out.println("TopicID:" + top.getId() + " topic:" + top.getSubject());
 					MessageListPart messages = msi.getMessages(top.getId(), 0, MessageType.BASE, 0L, false, 0, 100000);
@@ -72,87 +97,13 @@ public class MessageServiceTests {
 	}
 
 	@Test
-	public void testInsertMessageToListRepresentationOfTree() {
-
-		/*
-		 * List<Pair<Long, Long>> parentChildPairsList = new
-		 * Vector<Pair<Long,Long>>(); try { parentChildPairsList.add( new Pair<Long,
-		 * Long>(0L, 1L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(1, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(1L, 2L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(1, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(1L, 3L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(1, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(1L, 4L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(1, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(1L, 14L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(4, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(4L, 5L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(4, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(4L, 6L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(6, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(6L, 8L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(6, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(6L, 9L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(6, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(6L, 10L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(10, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(10L, 11L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(10, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(10L, 12L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(10, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(10L, 13L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(14, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(14L, 15L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(4, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(4L, 7L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(14, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(14L, 16L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(15, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(15L, 17L)); parentChildPairsList.add(
-		 * VoTopic.getPosOfTheLastChildOf(15, 0, parentChildPairsList), new
-		 * Pair<Long, Long>(15L, 18L)); } catch (Exception e) { e.printStackTrace();
-		 * fail(e.getMessage()); }
-		 * 
-		 * Assert.assertTrue( parentChildPairsList.get(0).right.equals(1L));
-		 * Assert.assertTrue( parentChildPairsList.get(3).right.equals(4L));
-		 * Assert.assertTrue( parentChildPairsList.get(7).right.equals(9L));
-		 * Assert.assertTrue( parentChildPairsList.get(9).right.equals(11L));
-		 * Assert.assertTrue( parentChildPairsList.get(11).right.equals(13L));
-		 * Assert.assertTrue( parentChildPairsList.get(13).right.equals(14L));
-		 * Assert.assertTrue( parentChildPairsList.get(15).right.equals(17L));
-		 * Assert.assertTrue( parentChildPairsList.get(17).right.equals(16L));
-		 */
-	}
-
-	@Test
 	public void createTopicTest() {
 		// create locations
 		try {
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-
 			VoUser user1 = asi.getUserByEmail("a1@b.com", pm);
 			VoUser user2 = asi.getUserByEmail("a2@b.com", pm);
 
-			// start to test that we can create a topic in a group
-			HashMap<MessageType, Long> noLinkedMessages = new HashMap<MessageType, Long>();
-			TreeMap<Long, String> noTags = new TreeMap<Long, String>();
-
-			// Create a group that is bigger than distance between locations of users
-			VoGroup groupForTopic = new VoGroup("двор", 1000);
-			pm.makePersistent(groupForTopic);
-
-			List<Group> userGroups = usi.getUserGroups();
-			List<Rubric> userRubrics = usi.getUserRubrics();
-			Assert.assertTrue(userGroups.size() > 0);
-			Assert.assertTrue(userRubrics.size() > 0);
-			Assert.assertTrue(userRubrics.get(0) != null);
-
-			Topic topic = msi.createTopic(groupForTopic.getId().getId(), "Test topic", MessageType.BASE, "Content of the first topic is a simple string",
-					noLinkedMessages, noTags, userRubrics.get(0).getId(), 0L);
-			// create a message inside the topic
-
-			Assert.assertNotNull(user1.getHomeGroup());
+			Topic topic = createTopic();
 			Message msg = msi.createMessage(topic.getMessage().getId(), user1.getHomeGroup().getGroup().getId().getId(), MessageType.BASE,
 					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
 
@@ -167,7 +118,7 @@ public class MessageServiceTests {
 					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
 			Assert.assertEquals(msg2.getTopicId(), topic.getId());
 			Assert.assertEquals(msg2.getParentId(), msg.getId());
-			Assert.assertEquals(msg.getAuthorId(), user1.getId().longValue());
+			Assert.assertEquals(msg2.getAuthorId(), user1.getId().longValue());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -183,7 +134,16 @@ public class MessageServiceTests {
 
 	@Test
 	public void testGetTopics() {
-		fail("Not yet implemented");
+		try {
+			createTopic();
+			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 0);
+			Assert.assertEquals(1, rTopic.totalSize);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+
 	}
 
 	@Test

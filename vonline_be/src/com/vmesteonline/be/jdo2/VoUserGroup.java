@@ -12,13 +12,21 @@ import com.vmesteonline.be.Group;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 
 @PersistenceCapable
-public class VoUserGroup implements Comparable<VoUserGroup>  {
+public class VoUserGroup implements Comparable<VoUserGroup> {
 
 	public VoUserGroup(VoUser user, VoGroup grp) {
 		group = grp;
 		longitude = user.getHomeGroup().longitude;
 		latitude = user.getHomeGroup().latitude;
 		name = grp.getVisibleName();
+	}
+
+	public float getLongitudeDelta() {
+		return group.getRadius() / (111.320f * (float) Math.cos(Math.toRadians(latitude)));
+	}
+
+	public float getLatitudeDelta() {
+		return group.getRadius() / 110.54f;
 	}
 
 	public Group createGroup() {
@@ -75,8 +83,8 @@ public class VoUserGroup implements Comparable<VoUserGroup>  {
 	public VoGroup getGroup() {
 		return group;
 	}
-	
-	public boolean isHome(){
+
+	public boolean isHome() {
 		return group.isHome();
 	}
 
@@ -112,8 +120,7 @@ public class VoUserGroup implements Comparable<VoUserGroup>  {
 
 	@Override
 	public int compareTo(VoUserGroup that) {
-		return Float.compare( that.latitude , this.latitude ) != 0 ? Float.compare( that.latitude , this.latitude ) :
-			Float.compare( that.longitude , this.longitude ) != 0 ? Float.compare( that.longitude , this.longitude ) :
-				that.group.compareTo(this.group);
+		return Float.compare(that.latitude, this.latitude) != 0 ? Float.compare(that.latitude, this.latitude) : Float.compare(that.longitude,
+				this.longitude) != 0 ? Float.compare(that.longitude, this.longitude) : that.group.compareTo(this.group);
 	}
 }

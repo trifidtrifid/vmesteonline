@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -13,6 +14,7 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Topic;
+import com.vmesteonline.be.UserTopic;
 import com.vmesteonline.be.data.PMF;
 
 @PersistenceCapable
@@ -21,37 +23,50 @@ public class VoTopic {
 	// rubricId
 	public VoTopic(Topic topic, boolean checkConsistacy, boolean updateLInkedObjects, boolean makePersistant) throws InvalidOperation {
 
-		PersistenceManagerFactory pmf = PMF.get();
-		PersistenceManager pm = pmf.getPersistenceManager();
+		messageNum = 0;
+		usersNum = 1;
+		viewers = 1;
+		lastUpdate = (int) (System.currentTimeMillis() / 1000);
+		likesNum = 0;
+		unlikesNum = 0;
+		rubricId = topic.getRubricId();
 
-		try {
-			VoRubric rubric = pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
-			if (null == rubric) {
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No Rubric found by id=" + topic.getRubricId());
-			}
+		lastUpdate = (int) (System.currentTimeMillis() / 1000);
+		message = new VoMessage(topic.getMessage(), this);
 
-			messageNum = 0;
-			usersNum = 1;
-			viewers = 1;
-			lastUpdate = (int) (System.currentTimeMillis() / 1000);
-			likesNum = 0;
-			unlikesNum = 0;
-
-			lastUpdate = (int) (System.currentTimeMillis() / 1000);
-			message = new VoMessage(topic.getMessage(), this);
-
-			// the topic is made persistent in message constructor
-			topic.setId(id.getId());
-			topic.message.setId(message.getId().getId());
-
-		} finally {
-			pm.close();
-		}
+		// the topic is made persistent in message constructor
+		topic.setId(id.getId());
+		topic.message.setId(message.getId().getId());
 	}
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key id;
+	public int getLikesNum() {
+		return likesNum;
+	}
+
+	public void setLikesNum(int likesNum) {
+		this.likesNum = likesNum;
+	}
+
+	public int getUnlikesNum() {
+		return unlikesNum;
+	}
+
+	public void setUnlikesNum(int unlikesNum) {
+		this.unlikesNum = unlikesNum;
+	}
+
+	public VoUserTopic getUserTopic() {
+		return userTopic;
+	}
+
+	public void setUserTopic(VoUserTopic userTopic) {
+		this.userTopic = userTopic;
+	}
+
+	public Topic getTopic() {
+		return new Topic(getId().getId(), null, getMessage().getMessage(), getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(),
+				getUnlikes(), getUserTopic().getUserTopic());
+	}
 
 	public Key getId() {
 		return id;
@@ -117,6 +132,38 @@ public class VoTopic {
 		this.unlikesNum = unlikes;
 	}
 
+	public float getLongMax() {
+		return longMax;
+	}
+
+	public void setLongMax(float longMax) {
+		this.longMax = longMax;
+	}
+
+	public float getLongMin() {
+		return longMin;
+	}
+
+	public void setLongMin(float longMin) {
+		this.longMin = longMin;
+	}
+
+	public float getLatMax() {
+		return latMax;
+	}
+
+	public void setLatMax(float latMax) {
+		this.latMax = latMax;
+	}
+
+	public float getLatMin() {
+		return latMin;
+	}
+
+	public void setLatMin(float latMin) {
+		this.latMin = latMin;
+	}
+
 	public long getRubricId() {
 		return rubricId;
 	}
@@ -133,12 +180,21 @@ public class VoTopic {
 		unlikesNum += unlikesDelta;
 	}
 
+	@Override
+	public String toString() {
+		return "VoTopic [id=" + id + ", message=" + message + ", messageNum=" + messageNum + "]";
+	}
+
 	@Persistent(dependent = "true")
 	private VoMessage message;
 
 	@Persistent
 	@Unindexed
 	private int messageNum;
+
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Key id;
 
 	@Persistent
 	@Unindexed
@@ -166,10 +222,17 @@ public class VoTopic {
 	@Unowned
 	private VoUserTopic userTopic;
 
-	@Override
-	public String toString() {
-		return "VoTopic [id=" + id + ", message=" + message + ", messageNum=" + messageNum + "]";
-	}
+	@Persistent
+	private float longMax;
+
+	@Persistent
+	private float longMin;
+
+	@Persistent
+	private float latMax;
+
+	@Persistent
+	private float latMin;
 
 	/*
 	 * @Persistent

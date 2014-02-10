@@ -33,11 +33,9 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.utils.Defaults;
-import com.vmesteonline.be.utils.GroupHelper;
 
 public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
-	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
 
 	public UserServiceImpl() {
 
@@ -439,4 +437,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 	
+	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
+
 }

@@ -18,15 +18,18 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Queries;
+
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
+import com.google.apphosting.datastore.shared.DatastoreHelper;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Message;
 import com.vmesteonline.be.MessageType;
 import com.vmesteonline.be.UserMessage;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.data.VoDatastoreHelper;
 
 /**
  * Created by brozer on 1/12/14.
@@ -68,71 +71,31 @@ public class VoMessage {
 		VoMessage parentMsg = null;
 		try {
 			long parentId = msg.getParentId();
-			if (0 != parentId) {
-				Extent<VoMessage> voMsgExt = pm.getExtent(VoMessage.class);
-				for (VoMessage msg1 : voMsgExt) {
-					pm.retrieve(msg1);
-					Key parentMsg1 = msg1.getId().getParent();
-					System.out.println("MsgKey:" + msg1.getId() + "idValue: " + msg1.idValue + " Msg id: " + msg1.getId().getId() + " topic "
-							+ msg1.getTopic().getId().getId() + (null == parentMsg1 ? " No parent." : " parent Key:" + parentMsg1.getId()));
-				}
-				// TODO WHAT THE FUCK HPPENS!!!! Why message could not be found by
-				// it's ID?
+			if (0 == parentId) {
+				this.topic = ownerTopic;
+			} else {
 				try {
 					parentMsg = pm.getObjectById(VoMessage.class, parentId);
+					pm.retrieve(parentMsg);
+					parentMsg.addChildMessage(this);
+					this.topic = parentMsg.getTopic();
+
 				} catch (JDOObjectNotFoundException e) {
 					e.printStackTrace();
 					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "parent Message not found by ID=" + parentId);
-					/*
-					javax.jdo.Query query = pm.newQuery(VoMessage.class);
-					query.setFilter("id == parentId parameters Long parentId");
-					List<VoMessage> results = (List<VoMessage>) query.execute(parentId);
-					if (results.iterator().hasNext()) {
-						parentMsg = results.iterator().next();
-						// logger.warn("Yes! message found by ID: "+parentId +
-						// " using lower level.");
-					} else {
-						// logger.warn("No message found by message ID: "+parentId);
-						// OK lets look through all of messages and try to find it by
-						// hand
-						results = (List<VoMessage>) query.execute();
-						for (VoMessage msg2 : results) {
-							pm.retrieve(msg2);
-							Key parentMsg2 = msg2.getId().getParent();
-							if (msg2.getId().getId() == parentId) {
-								System.out.print("!!!!!! This is it:");
-							}
-							System.out.println("MsgKey:" + msg2.getId() + "idValue: " + msg2.idValue + " Msg id: " + msg2.getId().getId() + " topic "
-									+ msg2.getTopic().getId().getId() + (null == parentMsg2 ? " No parent." : " parent Key:" + parentMsg2.getId()));
-						}
-					}*/
 				}
-				if (null == parentMsg) {
-					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "parent Message not found by ID=" + parentId);
-				}
-				parentMsg.addChildMessage(this);
-				this.topic = parentMsg.getTopic();
-
-			} else {
-				this.topic = ownerTopic;
 			}
+			if (null == this.topic)
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Topic of parent Message not found");
 
 			try {
 				/* CHeck the group to post, or move the message to */
+
 				VoGroup group = pm.getObjectById(VoGroup.class, msg.getGroupId());
-				if (null == group) {
-					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Group of Message not found by ID=" + msg.getGroupId());
-				}
 				/* CHeck the recipient */
 				if (0 != msg.getRecipientId()) {
-					if (null == pm.getObjectById(VoUser.class, msg.getRecipientId())) {
-						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Recipient of Message not found by ID=" + msg.getRecipientId());
-					}
+					VoDatastoreHelper.exist(VoUser.class, msg.getRecipientId(), pm);
 					recipient = msg.getRecipientId();
-				}
-
-				if (null == this.topic) {
-					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Topic of PArent Message not found");
 				}
 
 				/*
@@ -150,14 +113,15 @@ public class VoMessage {
 				this.createdAt = msg.getCreated();
 
 				VoUserGroup homeGroup = author.getHomeGroup();
-				if (null != homeGroup) {
-					latitude = homeGroup.getLatitude();
-					longitude = homeGroup.getLongitude();
-					radius = group.getRadius();
-				} else {
+				if (null == homeGroup)
 					throw new InvalidOperation(com.vmesteonline.be.VoError.GeneralError, "User without HomeGroup must not create a message");
-				}
 
+				radius = group.getRadius();
+
+				topic.setLatMax(homeGroup.getLatitude());
+				topic.setLatMin(homeGroup.getLatitude());
+				topic.setLongMax(homeGroup.getLongitude());
+				topic.setLongMin(homeGroup.getLongitude());
 				topic.setMessageNum(topic.getMessageNum() + 1);
 				topic.setLastUpdate(now);
 				author.incrementMessages(1);
@@ -212,8 +176,8 @@ public class VoMessage {
 	public Message getMessage() {
 		Key parentKey = id.getParent();
 		return new Message(id.getId(), null == parentKey ? 0L : parentKey.getId(), type, getTopic().getId().getId(), 0L, authorId.getId(), createdAt,
-				editedAt, new String(content), likesNum, unlikesNum, links, tags, 
-				new UserMessage(getUserMessage().isRead(), getUserMessage().isLikes(), getUserMessage().isUnlikes()));
+				editedAt, new String(content), likesNum, unlikesNum, links, tags, new UserMessage(getUserMessage().isRead(), getUserMessage().isLikes(),
+						getUserMessage().isUnlikes()));
 	}
 
 	/**
