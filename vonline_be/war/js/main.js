@@ -64,27 +64,20 @@ $(document).ready(function(){
         $(this).closest('.topic-item').toggleClass('list-view');
     });
 /* --- */
-    var allFirstTopic = $('.dd>.dd-list>.topic-item'),
-        //currentTopicIndex = [],
+    var Topics = $('.dd>.dd-list>.topic-item'),
         prevTopicsHeight = [],
-        count=0;
+        TopicsLen = Topics.length,
+        TopicsHeader = Topics.find('>.topic-descr>.widget-header'),
+        TopicsHeaderArray = [];
 
-    function GetTopicsHeight(){
-        /*
-         создаем массив с индексами тех топиков, которые раскрыты
-         т.к только для этих топиков нужен fixed хэдера
-         */
-        count=0;
-        /*allFirstTopic.find('>.dd-list:visible').each(function(){
-            var currentTopic = $(this).parent();
-            currentTopicIndex[count] = allFirstTopic.index(currentTopic);
-            count++;
-        });*/
-        count = allFirstTopic.length;
+    for (var i = 0; i < TopicsLen ;i++){
+        TopicsHeaderArray[i] = Topics.eq(i).find('>.topic-descr>.widget-header');
+    }
 
-        for (var i = 0; i < count ; i++){
-            //var curInd = currentTopicIndex[i];
-            var curInd = i;
+    function GetTopicsHeightForFixedHeader(){
+
+        for (var i = 0; i < TopicsLen ; i++){
+            var currentIndex = i;
             prevTopicsHeight[i] = 0;
             /*
              внутренний цикл это обход всех топиков, в том числе и
@@ -93,20 +86,19 @@ $(document).ready(function(){
              с scrollTop, чтобы понять когда хэдер должен переходить
              в состояние fixed
              */
-            for(var j = 0; j < curInd; j++){
-                prevTopicsHeight[i] += allFirstTopic.eq(j).height();
+            for(var j = 0; j < currentIndex; j++){
+                prevTopicsHeight[i] += Topics.eq(j).height();
             }
-          //  prevTopicsHeight[i] += allFirstTopic.eq(curInd).find('>.topic-descr').height()-allFirstTopic.eq(curInd-1).find('>.topic-descr').height();
-
+          //  prevTopicsHeight[i] += Topics.eq(currentIndex).find('>.topic-descr').height()-Topics.eq(currentIndex-1).find('>.topic-descr').height();
         }
     }
-    GetTopicsHeight();
+    GetTopicsHeightForFixedHeader();
 
 
     $('.plus-minus').click(function(e){
         e.preventDefault();
         $(this).closest('.dd2-item').find('>.dd-list').slideToggle(200,function(){
-            GetTopicsHeight();
+            GetTopicsHeightForFixedHeader();
         });
 
         if ($(this).hasClass('fa-minus')){
@@ -116,18 +108,25 @@ $(document).ready(function(){
         }
     });
 
+    // фиксация хэдера темы, если много сообщений
+
+    /*
+     верхний цикл: обход всех раскрытых топиков
+     */
+
     $(window).scroll(function(){
+        // console.log($(this).scrollTop());
 
        //убираем сайдбар при прокрутке
         if (w.width()>785){
             if ($(this).scrollTop() > 270){
                 $('.sidebar').hide();
                 $('.main-content').css('margin-left','0');
-                //allFirstTopic.find('>.topic-descr>.widget-header').css('margin-right',asideWidth+10);////width('1206');
+                //Topics.find('>.topic-descr>.widget-header').css('margin-right',asideWidth+10);////width('1206');
             }else {
                 $('.sidebar').show();
                 $('.main-content').css('margin-left','190px');
-                //allFirstTopic.find('>.topic-descr>.widget-header').css('margin-right',0);////width('1014');
+                //Topics.find('>.topic-descr>.widget-header').css('margin-right',0);////width('1014');
             }
         }
 
@@ -136,8 +135,8 @@ $(document).ready(function(){
         /*
             верхний цикл: обход всех раскрытых топиков
          */
-        for (var i = 0; i < count ; i++){
-            var curInd = i;
+        for (var i = 0; i < TopicsLen ; i++){
+            var currentIndex = i;
             //console.log($(this).scrollTop()+'--'+prevTopicsHeight[i]);
 
             /*
@@ -146,14 +145,14 @@ $(document).ready(function(){
                 становится в состояние fixed
              */
 
-            if ($(this).scrollTop()>prevTopicsHeight[i]){
-                allFirstTopic.eq(curInd).find('>.topic-descr>.widget-header').addClass('fixed');
-                allFirstTopic.find('>.topic-descr>.widget-header').css('margin-right',asideWidth+10);////width('1206');
+            if ($(this).scrollTop() > prevTopicsHeight[i]){
+                TopicsHeaderArray[currentIndex].addClass('fixed');
+                TopicsHeader.css('margin-right',asideWidth+10);////width('1206');
                 if ($(this).scrollTop()<270){
-                    allFirstTopic.find('>.topic-descr>.widget-header').css('margin-right',asideWidth+10);////width('1014');
+                    TopicsHeader.css('margin-right',asideWidth+10);////width('1014');
                 }
             }else{
-                allFirstTopic.eq(curInd).find('>.topic-descr>.widget-header').removeClass('fixed').css('margin-right',0);
+                TopicsHeaderArray[currentIndex].removeClass('fixed').css('margin-right',0);
             }
         }
     });

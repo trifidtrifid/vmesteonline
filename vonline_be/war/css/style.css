@@ -342,15 +342,15 @@ h1 {
   vertical-align: middle;
   margin-left: 10px;
 }
-.topic-item .topic-descr.answer-item {
+.topic-item .topic-descr.message-item {
   margin: 10px 0 10px 0;
 }
-.topic-item .topic-descr.answer-item .answer-date {
+.topic-item .topic-descr.message-item .answer-date {
   color: #808080;
   float: left;
   margin-top: 5px;
 }
-.topic-item .topic-descr.answer-item .message-author {
+.topic-item .topic-descr.message-item .message-author {
   margin-bottom: 10px;
   font-size: 14px;
 }
@@ -358,13 +358,13 @@ h1 {
   padding: 0;
   margin-bottom: 5px;
 }
-.answer-item {
+.message-item {
   border-radius: 1px !important;
 }
 .wysiwig-box {
   display: none;
 }
-.answer-item+.wysiwig-box {
+.message-item+.wysiwig-box {
   border: 1px solid #5090c1;
 }
 .widget-header.fixed {
