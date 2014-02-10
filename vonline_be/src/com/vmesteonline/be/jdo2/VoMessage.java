@@ -91,7 +91,8 @@ public class VoMessage {
 			try {
 				/* CHeck the group to post, or move the message to */
 
-				VoGroup group = pm.getObjectById(VoGroup.class, msg.getGroupId());
+				VoUserGroup voGroup = pm.getObjectById(VoUserGroup.class, msg.getGroupId());
+				VoGroup group = voGroup.getGroup();
 				/* CHeck the recipient */
 				if (0 != msg.getRecipientId()) {
 					VoDatastoreHelper.exist(VoUser.class, msg.getRecipientId(), pm);

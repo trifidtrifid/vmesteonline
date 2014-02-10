@@ -49,6 +49,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		super(sess);
 	}
 
+	//todo pm.close
 	@Override
 	public List<Group> getUserGroups() throws InvalidOperation, TException {
 		try {

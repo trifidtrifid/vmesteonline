@@ -16,7 +16,7 @@ public class VoGroup implements Comparable <VoGroup>{
 	public VoGroup(String visibleName, int radius) {
 		this(visibleName,radius,false);
 	}
-	
+		
 	public VoGroup(String visibleName, int radius, boolean subscribedByDefault) {
 		this.visibleName = visibleName;
 		this.radius = radius;

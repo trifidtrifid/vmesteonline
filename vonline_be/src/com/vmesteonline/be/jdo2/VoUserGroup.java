@@ -22,7 +22,8 @@ public class VoUserGroup implements Comparable<VoUserGroup> {
 	}
 
 	public float getLongitudeDelta() {
-		return group.getRadius() / (111.320f * (float) Math.cos(Math.toRadians(latitude)));
+		return group.getRadius()
+				/ (111.320f * (float) Math.cos(Math.toRadians(latitude)));
 	}
 
 	public float getLatitudeDelta() {
@@ -30,7 +31,8 @@ public class VoUserGroup implements Comparable<VoUserGroup> {
 	}
 
 	public Group createGroup() {
-		return new Group(group.getId().getId(), group.getVisibleName(), name, description, group.getRadius());
+		return new Group(getId().getId(), group.getVisibleName(), name,
+				description, group.getRadius());
 	}
 
 	public VoUserGroup(VoGroup grp, float longitude, float lattitude) {
@@ -115,12 +117,17 @@ public class VoUserGroup implements Comparable<VoUserGroup> {
 
 	@Override
 	public String toString() {
-		return "VoUserGroup [id=" + id + ", name=" + name + ", longitude=" + longitude + ", latitude=" + latitude + ", group=" + group + "]";
+		return "VoUserGroup [id=" + id + ", name=" + name + ", longitude="
+				+ longitude + ", latitude=" + latitude + ", group=" + group
+				+ "]";
 	}
 
 	@Override
 	public int compareTo(VoUserGroup that) {
-		return Float.compare(that.latitude, this.latitude) != 0 ? Float.compare(that.latitude, this.latitude) : Float.compare(that.longitude,
-				this.longitude) != 0 ? Float.compare(that.longitude, this.longitude) : that.group.compareTo(this.group);
+		return Float.compare(that.latitude, this.latitude) != 0 ? Float
+				.compare(that.latitude, this.latitude) : Float.compare(
+				that.longitude, this.longitude) != 0 ? Float.compare(
+				that.longitude, this.longitude) : that.group
+				.compareTo(this.group);
 	}
 }
