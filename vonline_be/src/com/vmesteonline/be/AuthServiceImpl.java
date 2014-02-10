@@ -137,6 +137,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public VoUser getUserByEmail(String email, PersistenceManager pm) {
 
 		Query q = pm.newQuery(VoUser.class);
+		
 		q.setFilter("email == emailParam");
 		q.declareParameters("float emailParam");
 		List<VoUser> users = (List<VoUser>) q.execute(email);

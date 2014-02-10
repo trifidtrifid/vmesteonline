@@ -104,7 +104,7 @@ public class MessageServiceTests {
 			VoUser user2 = asi.getUserByEmail("a2@b.com", pm);
 
 			Topic topic = createTopic();
-			Message msg = msi.createMessage(topic.getMessage().getId(), user1.getHomeGroup().getGroup().getId().getId(), MessageType.BASE,
+			Message msg = msi.createMessage(topic.getMessage().getId(), user1.getHomeGroup().getId().getId(), MessageType.BASE,
 					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
 
 			Assert.assertEquals(msg.getTopicId(), topic.getId());
@@ -114,7 +114,7 @@ public class MessageServiceTests {
 			Assert.assertEquals(msg.likesNum, 0);
 			Assert.assertEquals(msg.unlikesNum, 0);
 
-			Message msg2 = msi.createMessage(msg.getId(), user2.getHomeGroup().getGroup().getId().getId(), MessageType.BASE,
+			Message msg2 = msi.createMessage(msg.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
 					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
 			Assert.assertEquals(msg2.getTopicId(), topic.getId());
 			Assert.assertEquals(msg2.getParentId(), msg.getId());
@@ -137,6 +137,7 @@ public class MessageServiceTests {
 		try {
 			createTopic();
 			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 0);
+			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 
 		} catch (Exception e) {

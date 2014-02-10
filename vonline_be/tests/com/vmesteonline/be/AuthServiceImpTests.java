@@ -82,7 +82,7 @@ public class AuthServiceImpTests {
 			assertEquals("testName", user.getName());
 			assertEquals("testPassword", user.getPassword());
 			Assert.assertNotNull(user.getHomeGroup());
-			assertEquals(0, user.getHomeGroup().getGroup().getRadius());
+			assertEquals(0, user.getHomeGroup().getRadius());
 
 			VoPostalAddress.getKeyValue(Long.parseLong(locations.get(0)));
 			VoPostalAddress postalAddress = pm.getObjectById(VoPostalAddress.class, VoPostalAddress.getKeyValue(Long.parseLong(locations.get(0))));
@@ -104,8 +104,6 @@ public class AuthServiceImpTests {
 			for (VoUserGroup ug : groups) {
 				assertEquals(ug.getLatitude(), latitude, 0F);
 				assertEquals(ug.getLongitude(), longitude, 0F);
-				if (ug.isHome())
-					assertEquals(ug.getGroup().getRadius(), 0);
 			}
 			boolean found = false;
 			for (VoUser hobit : postalAddress.getBuilding().getUsers()) {

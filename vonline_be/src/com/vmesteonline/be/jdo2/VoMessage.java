@@ -2,13 +2,11 @@ package com.vmesteonline.be.jdo2;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.jdo.Extent;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -17,13 +15,11 @@ import javax.jdo.annotations.Index;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.jdo.annotations.Queries;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
-import com.google.apphosting.datastore.shared.DatastoreHelper;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Message;
 import com.vmesteonline.be.MessageType;
@@ -35,7 +31,7 @@ import com.vmesteonline.be.data.VoDatastoreHelper;
  * Created by brozer on 1/12/14.
  */
 @PersistenceCapable
-public class VoMessage {
+public class VoMessage extends VoBaseMessage {
 
 	// private static final Logger logger = Logger.getLogger(VoMessage.class);
 	// id, (parent), type, createdAt, editedAt, approvedId, topicId, createdId,
@@ -91,8 +87,8 @@ public class VoMessage {
 			try {
 				/* CHeck the group to post, or move the message to */
 
-				VoUserGroup voGroup = pm.getObjectById(VoUserGroup.class, msg.getGroupId());
-				VoGroup group = voGroup.getGroup();
+				// VoUserGroup voGroup = pm.getObjectById(VoUserGroup.class,
+				// msg.getGroupId());
 				/* CHeck the recipient */
 				if (0 != msg.getRecipientId()) {
 					VoDatastoreHelper.exist(VoUser.class, msg.getRecipientId(), pm);
@@ -113,16 +109,9 @@ public class VoMessage {
 				this.type = msg.getType();
 				this.createdAt = msg.getCreated();
 
-				VoUserGroup homeGroup = author.getHomeGroup();
-				if (null == homeGroup)
+				if (null == author.getHomeGroup())
 					throw new InvalidOperation(com.vmesteonline.be.VoError.GeneralError, "User without HomeGroup must not create a message");
 
-				radius = group.getRadius();
-
-				topic.setLatMax(homeGroup.getLatitude());
-				topic.setLatMin(homeGroup.getLatitude());
-				topic.setLongMax(homeGroup.getLongitude());
-				topic.setLongMin(homeGroup.getLongitude());
 				topic.setMessageNum(topic.getMessageNum() + 1);
 				topic.setLastUpdate(now);
 				author.incrementMessages(1);
@@ -229,9 +218,6 @@ public class VoMessage {
 		return count - offset;
 	}
 
-	public int getEditedAt() {
-		return editedAt;
-	}
 
 	public Set<VoMessage> getChildMessages() {
 		return childMessages;
@@ -241,9 +227,7 @@ public class VoMessage {
 		childMessages.add(childMsg);
 	}
 
-	public void setEditedAt(int editedAt) {
-		this.editedAt = editedAt;
-	}
+
 
 	public long getApprovedId() {
 		return approvedId;
@@ -251,90 +235,6 @@ public class VoMessage {
 
 	public void setApprovedId(long approvedId) {
 		this.approvedId = approvedId;
-	}
-
-	public byte[] getContent() {
-		return content;
-	}
-
-	public void setContent(byte[] content) {
-		this.content = content;
-	}
-
-	public int getLikes() {
-		return likesNum;
-	}
-
-	public void setLikes(int likes) {
-		this.likesNum = likes;
-	}
-
-	public int decrementLikes() {
-		return --likesNum;
-	}
-
-	public int incrementLikes() {
-		return ++likesNum;
-	}
-
-	public int decrementUnlikes() {
-		return --unlikesNum;
-	}
-
-	public int incrementUnlikes() {
-		return ++unlikesNum;
-	}
-
-	public int getUnlikes() {
-		return unlikesNum;
-	}
-
-	public void setUnlikes(int unlikes) {
-		this.unlikesNum = unlikes;
-	}
-
-	public long getRecipient() {
-		return recipient;
-	}
-
-	public void setRecipient(long recipient) {
-		this.recipient = recipient;
-	}
-
-	public Map<Long, String> getTags() {
-		return tags;
-	}
-
-	public void setTags(Map<Long, String> tags) {
-		this.tags = tags;
-	}
-
-	public Map<MessageType, Long> getLinks() {
-		return links;
-	}
-
-	public void setLinks(Map<MessageType, Long> links) {
-		this.links = links;
-	}
-
-	public Key getId() {
-		return id;
-	}
-
-	public void setId(Key id) {
-		this.id = id;
-	}
-
-	public MessageType getType() {
-		return type;
-	}
-
-	public void setType(MessageType type) {
-		this.type = type;
-	}
-
-	public int getCreatedAt() {
-		return createdAt;
 	}
 
 	public void setTopic(VoTopic topic) {
@@ -345,9 +245,7 @@ public class VoMessage {
 		return topic;
 	}
 
-	public Key getAuthorId() {
-		return authorId;
-	}
+
 
 	public float getLongitude() {
 		return longitude;
@@ -359,6 +257,10 @@ public class VoMessage {
 
 	public float getRadius() {
 		return radius;
+	}
+
+	public long getRecipient() {
+		return recipient;
 	}
 
 	public VoUserMessage getUserMessage() {
@@ -381,17 +283,10 @@ public class VoMessage {
 		this.userMessage = userMessage;
 	}
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key id;
-
 	@Persistent
 	@Index
 	private long idValue;
 
-	@Persistent
-	@Unindexed
-	private MessageType type;
 
 	@Persistent
 	/*
@@ -407,13 +302,8 @@ public class VoMessage {
 	@Unowned
 	private Set<VoMessage> childMessages;
 
-	@Persistent
-	@Unindexed
-	private int createdAt;
 
-	@Persistent
-	@Unindexed
-	private int editedAt;
+
 
 	@Persistent
 	@Unindexed
@@ -423,24 +313,7 @@ public class VoMessage {
 	@Unowned
 	private VoTopic topic;
 
-	@Persistent
-	private Key authorId;
 
-	@Persistent
-	@Unindexed
-	private byte[] content;
-
-	@Persistent
-	@Unindexed
-	private int likesNum;
-
-	@Persistent
-	@Unindexed
-	private int unlikesNum;
-
-	@Persistent
-	@Unindexed
-	private long recipient;
 
 	@Persistent
 	private float longitude;
@@ -448,18 +321,14 @@ public class VoMessage {
 	private float latitude;
 	@Persistent
 	private float radius;
-
-	@Persistent
-	private Map<Long, String> tags;
-
 	@Persistent
 	@Unindexed
-	private Map<MessageType, Long> links;
+	protected long recipient;
 
 	@Persistent
 	@Unindexed
 	@Unowned
-	private VoUserMessage userMessage;
+	protected VoUserMessage userMessage;
 
 	@Override
 	public String toString() {

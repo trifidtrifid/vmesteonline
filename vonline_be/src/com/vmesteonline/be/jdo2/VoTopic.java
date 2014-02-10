@@ -13,16 +13,19 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.Message;
 import com.vmesteonline.be.Topic;
+import com.vmesteonline.be.UserMessage;
 import com.vmesteonline.be.UserTopic;
 import com.vmesteonline.be.data.PMF;
 
 @PersistenceCapable
-public class VoTopic {
+public class VoTopic extends VoBaseMessage {
 	// id, message, messageNum, viewers, usersNum, lastUpdate, likes, unlikes,
 	// rubricId
 	public VoTopic(Topic topic, boolean checkConsistacy, boolean updateLInkedObjects, boolean makePersistant) throws InvalidOperation {
 
+		super(topic.getMessage());
 		messageNum = 0;
 		usersNum = 1;
 		viewers = 1;
@@ -30,13 +33,9 @@ public class VoTopic {
 		likesNum = 0;
 		unlikesNum = 0;
 		rubricId = topic.getRubricId();
-
+		userGroupId = topic.getMessage().getGroupId();
 		lastUpdate = (int) (System.currentTimeMillis() / 1000);
-		message = new VoMessage(topic.getMessage(), this);
 
-		// the topic is made persistent in message constructor
-		topic.setId(id.getId());
-		topic.message.setId(message.getId().getId());
 	}
 
 	public int getLikesNum() {
@@ -64,24 +63,12 @@ public class VoTopic {
 	}
 
 	public Topic getTopic() {
-		return new Topic(getId().getId(), null, getMessage().getMessage(), getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(),
-				getUnlikes(), getUserTopic().getUserTopic());
-	}
 
-	public Key getId() {
-		return id;
-	}
+		Message msg = new Message(id.getId(), 0L, type, getId().getId(), 0L, authorId.getId(), createdAt, editedAt, new String(content), likesNum,
+				unlikesNum, links, tags, new UserMessage(true, false, false));
 
-	public void setId(Key id) {
-		this.id = id;
-	}
-
-	public VoMessage getMessage() {
-		return message;
-	}
-
-	public void setMessage(VoMessage message) {
-		this.message = message;
+		return new Topic(getId().getId(), null, msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(),
+				getUserTopic().getUserTopic());
 	}
 
 	public int getMessageNum() {
@@ -168,6 +155,14 @@ public class VoTopic {
 		return rubricId;
 	}
 
+	public Long getUserGroupId() {
+		return userGroupId;
+	}
+
+	public void setUserGroupId(Long userGroupId) {
+		this.userGroupId = userGroupId;
+	}
+
 	public void setRubricId(long rubricId) {
 		this.rubricId = rubricId;
 	}
@@ -182,19 +177,12 @@ public class VoTopic {
 
 	@Override
 	public String toString() {
-		return "VoTopic [id=" + id + ", message=" + message + ", messageNum=" + messageNum + "]";
+		return "VoTopic [id=" + id + ", message=" + content.toString() + ", messageNum=" + messageNum + "]";
 	}
-
-	@Persistent(dependent = "true")
-	private VoMessage message;
 
 	@Persistent
 	@Unindexed
 	private int messageNum;
-
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key id;
 
 	@Persistent
 	@Unindexed
@@ -216,23 +204,29 @@ public class VoTopic {
 	private int unlikesNum;
 
 	@Persistent
-	private long rubricId;
+	private Long rubricId;
+
+	@Persistent
+	private Long userGroupId;
 
 	@Persistent
 	@Unowned
 	private VoUserTopic userTopic;
 
 	@Persistent
-	private float longMax;
+	private int ra;
 
 	@Persistent
-	private float longMin;
+	private Float longMax;
 
 	@Persistent
-	private float latMax;
+	private Float longMin;
 
 	@Persistent
-	private float latMin;
+	private Float latMax;
+
+	@Persistent
+	private Float latMin;
 
 	/*
 	 * @Persistent

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
@@ -16,6 +17,8 @@ import org.apache.thrift.TException;
 
 import com.google.appengine.api.datastore.KeyFactory;
 import com.vmesteonline.be.MessageService.Iface;
+import com.vmesteonline.be.data.JDBCConnector;
+import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoRubric;
@@ -28,10 +31,14 @@ import com.vmesteonline.be.jdo2.VoUserMessage;
 public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	public MessageServiceImpl() {
+		con = new MySQLJDBCConnector();
 	}
 
-	public MessageServiceImpl(String sessId) {
+	public MessageServiceImpl(String sessId) throws Exception {
 		super(sessId);
+		con = new MySQLJDBCConnector();
+		con.execute("create table if not exists topic (`id` integer not null, `longitude` float not null, `lattitude` float not null, `radius` integer not null);");
+
 	}
 
 	@Override
@@ -84,9 +91,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public long postTopic(Topic topic) throws InvalidOperation {
-		topic.getMessage().setAuthorId(getCurrentUserId());
 		if (0 == topic.getId()) {
 			VoTopic votopic = new VoTopic(topic, true, true, true);
+			PersistenceManager pm = PMF.getPm();
+			try {
+				pm.makePersistent(votopic);
+			} finally {
+				pm.close();
+			}
 			newTopicNotify(votopic);
 		} else {
 			updateTopic(topic);
@@ -255,35 +267,69 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		TopicListPart mlp = null;
 
 		if (!TEST_ON_FAKE_DATA) {
+			mlp = new TopicListPart();
 			PersistenceManager pm = PMF.get().getPersistenceManager();
+
 			try {
 
-				VoUser user = getCurrentUser(pm);
-				pm.retrieve(user);
-				VoUserGroup group = user.getGroup(groupId);
-				Query q = pm.newQuery(VoTopic.class);
-				q.setFilter("rubricId == " + rubricId);
-				q.setFilter("longMax > " + (group.getLongitude() + group.getLongitudeDelta()));
-				q.setFilter("longMin < " + (group.getLongitude() - group.getLongitudeDelta()));
-				q.setFilter("latMax > " + (group.getLatitude() + group.getLatitudeDelta()));
-				q.setFilter("latMax < " + (group.getLatitude() - group.getLatitudeDelta()));
-				List<VoTopic> topics = (List<VoTopic>) q.execute();
-				if (topics.isEmpty()) {
-					logger.debug("can't find any topics");
-					return null;
-				}
+				try {
 
-				TopicListPart topicListPart = new TopicListPart();
-				topicListPart.totalSize = topics.size();
-				for (VoTopic voTopic : topics) {
-					topicListPart.addToTopics(voTopic.getTopic());
-				}
+					VoUser user = getCurrentUser(pm);
+					pm.retrieve(user);
+					VoUserGroup group = user.getGroup(groupId);
 
-				return topicListPart;
+					String req = "select from com.vmesteonline.be.jdo2.VoTopic where rubricId == " + rubricId + " && longMax < "
+							+ (group.getLongitude() + group.getLongitudeDelta()); // +
+																																		// " && longMin < "
+																																		// +
+																																		// (group.getLongitude()
+																																		// -
+																																		// group.getLongitudeDelta());
+
+					// + "F && latMax > " + (group.getLatitude() +
+					// group.getLatitudeDelta()) + "F && latMin < "
+					// + (group.getLatitude() - group.getLatitudeDelta()) + "F";
+
+					/*
+					 * String req =
+					 * "select from com.vmesteonline.be.jdo2.VoTopic where rubricId == " +
+					 * rubricId +
+					 * " && longMax > lmx && longMin < lmn && latMax > tmx && latMin < tmn PARAMETERS float lmx float lmn float tmx"
+					 * ;
+					 */
+					Query q = pm.newQuery(req);
+					Extent<VoTopic> te = pm.getExtent(VoTopic.class);
+					for (VoTopic voTopic : te) {
+						System.out.print(voTopic.toString());
+					}
+
+					/*
+					 * q.setFilter("rubricId == " + rubricId); q.setFilter("longMax > " +
+					 * (group.getLongitude() + group.getLongitudeDelta()));
+					 * q.setFilter("longMin < " + (group.getLongitude() -
+					 * group.getLongitudeDelta())); q.setFilter("latMax > " +
+					 * (group.getLatitude() + group.getLatitudeDelta()));
+					 * q.setFilter("latMin < " + (group.getLatitude() -
+					 * group.getLatitudeDelta()));
+					 */
+					List<VoTopic> topics = (List<VoTopic>) q.execute();
+					if (topics.isEmpty()) {
+						logger.debug("can't find any topics");
+						return mlp;
+					}
+					mlp.totalSize = topics.size();
+					for (VoTopic voTopic : topics) {
+						mlp.addToTopics(voTopic.getTopic());
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
 			} finally {
 				pm.close();
 			}
+			return mlp;
+
 		} else {
 			int ss = (int) (groupId % 10);
 			mlp = new TopicListPart(new HashSet<Topic>(), topicsaa[ss].length);
@@ -395,6 +441,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			pm.close();
 		}
 	}
+
+	protected JDBCConnector con;
 
 	private static boolean TEST_ON_FAKE_DATA = false;
 	// STUB DATA

@@ -1,6 +1,5 @@
 package com.vmesteonline.be.data;
 
-import com.vmesteonline.be.data.JDBCConnector.Exception;
 
 public class MySQLJDBCConnector extends JDBCConnector {
 	
