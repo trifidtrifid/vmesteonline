@@ -66,7 +66,8 @@
 	MessageType mesType = MessageType.BASE;
 
 	TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,mesType,20,0,10);
-			
+	//MessageListPart Messages = messageService.getMessages(Groups.get(0).id,Rubrics.get(0).id,mesType,20,0,10);
+
 	Topic[] currTopic= new Topic[100];// = (Topic)Topics.topics.toArray()[0];
 	int topicsLen = Topics.topics.toArray().length;
 	
@@ -208,7 +209,7 @@
             function getMessageList(topicID, groupID, parentID){
                 //console.log(Topics.topics[i].id+" "+Groups[0].id+" "+message.id)    ;
                 //console.log('topic '+topicID+" groupID "+ groupID+" parent "+ parentID);
-                mes = client.getMessages(topicID, groupID, 1, parentID, false, 0, 2);
+                mes = client.getMessages(topicID, groupID, 1, parentID, 0, 0, 2);
                 mes = mes.messages;
                 mesLen = mes.length;
                 if (mesLen > 0 && level < 3){
@@ -452,6 +453,10 @@
                         <div class="clear"></div>
                 </section>
                 <section class="forum">
+
+<%--<c:forEach var="topic" items="${topics}">
+
+</c:forEach>--%>
 
                     <div class="dd dd-draghandle">
                         <ol class="dd-list">
