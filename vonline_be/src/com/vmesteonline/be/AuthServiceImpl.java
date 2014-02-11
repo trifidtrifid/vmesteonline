@@ -80,6 +80,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public long registerNewUser(String firstname, String lastname, String password, String email, String locationId) throws InvalidOperation {
 
@@ -134,10 +135,11 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public VoUser getUserByEmail(String email, PersistenceManager pm) {
 
 		Query q = pm.newQuery(VoUser.class);
-		
+
 		q.setFilter("email == emailParam");
 		q.declareParameters("float emailParam");
 		List<VoUser> users = (List<VoUser>) q.execute(email);

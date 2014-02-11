@@ -6,6 +6,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
+@SuppressWarnings("deprecation")
 public class HttpSessionStubForTests implements HttpSession {
 
 	String id;
@@ -21,7 +22,7 @@ public class HttpSessionStubForTests implements HttpSession {
 	}
 
 	@Override
-	public Enumeration getAttributeNames() {
+	public Enumeration<?> getAttributeNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -51,12 +52,6 @@ public class HttpSessionStubForTests implements HttpSession {
 
 	@Override
 	public ServletContext getServletContext() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public HttpSessionContext getSessionContext() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -113,6 +108,12 @@ public class HttpSessionStubForTests implements HttpSession {
 	public void setMaxInactiveInterval(int arg0) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public HttpSessionContext getSessionContext() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
