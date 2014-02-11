@@ -62,14 +62,11 @@
 			
 	List<Group> Groups = userService.getUserGroups();
 	List<Rubric> Rubrics = userService.getUserRubrics();
-	MessageServiceImpl messageService = new MessageServiceImpl();
-	MessageType mesType = MessageType.BASE;
+	MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
+	//MessageType mesType = MessageType.BASE;
 
-	TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,mesType,20,0,10);
+	TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
 
-	Topic[] currTopic= new Topic[100];
-	int topicsLen = Topics.topics.toArray().length;
-	
 	pageContext.setAttribute("groups",Groups);
 	pageContext.setAttribute("rubrics",Rubrics);
 	pageContext.setAttribute("topics",Topics.topics);
@@ -198,7 +195,7 @@
             });
 
             //client.postTopic(
-            client.createTopic(Groups[0].id,'Тест тема-1',1,'некий контент 1',0,0,Rubrics[0].id,1);
+            client.createTopic(Groups[0].id,'Тест тема-1',1,'некий контент 3',0,0,Rubrics[0].id,1);
             var Topics = client.getTopics(Groups[0].id,Rubrics[0].id, 1,0,0,100);
             var topicLen = Topics.topics.length;
             /*for (var z = 0; z<topicLen ;z++){

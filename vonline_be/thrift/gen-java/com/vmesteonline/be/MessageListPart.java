@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class MessageListPart implements org.apache.thrift.TBase<MessageListPart, MessageListPart._Fields>, java.io.Serializable, Cloneable, Comparable<MessageListPart> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("MessageListPart");
 
-  private static final org.apache.thrift.protocol.TField MESSAGES_FIELD_DESC = new org.apache.thrift.protocol.TField("messages", org.apache.thrift.protocol.TType.SET, (short)1);
+  private static final org.apache.thrift.protocol.TField MESSAGES_FIELD_DESC = new org.apache.thrift.protocol.TField("messages", org.apache.thrift.protocol.TType.LIST, (short)1);
   private static final org.apache.thrift.protocol.TField TOTAL_SIZE_FIELD_DESC = new org.apache.thrift.protocol.TField("totalSize", org.apache.thrift.protocol.TType.I32, (short)2);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -44,7 +44,7 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
     schemes.put(TupleScheme.class, new MessageListPartTupleSchemeFactory());
   }
 
-  public Set<Message> messages; // required
+  public List<Message> messages; // required
   public int totalSize; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -115,7 +115,7 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.MESSAGES, new org.apache.thrift.meta_data.FieldMetaData("messages", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
             new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Message.class))));
     tmpMap.put(_Fields.TOTAL_SIZE, new org.apache.thrift.meta_data.FieldMetaData("totalSize", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
@@ -127,7 +127,7 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
   }
 
   public MessageListPart(
-    Set<Message> messages,
+    List<Message> messages,
     int totalSize)
   {
     this();
@@ -142,7 +142,7 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
   public MessageListPart(MessageListPart other) {
     __isset_bitfield = other.__isset_bitfield;
     if (other.isSetMessages()) {
-      Set<Message> __this__messages = new HashSet<Message>(other.messages.size());
+      List<Message> __this__messages = new ArrayList<Message>(other.messages.size());
       for (Message other_element : other.messages) {
         __this__messages.add(new Message(other_element));
       }
@@ -172,16 +172,16 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
 
   public void addToMessages(Message elem) {
     if (this.messages == null) {
-      this.messages = new HashSet<Message>();
+      this.messages = new ArrayList<Message>();
     }
     this.messages.add(elem);
   }
 
-  public Set<Message> getMessages() {
+  public List<Message> getMessages() {
     return this.messages;
   }
 
-  public MessageListPart setMessages(Set<Message> messages) {
+  public MessageListPart setMessages(List<Message> messages) {
     this.messages = messages;
     return this;
   }
@@ -230,7 +230,7 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
       if (value == null) {
         unsetMessages();
       } else {
-        setMessages((Set<Message>)value);
+        setMessages((List<Message>)value);
       }
       break;
 
@@ -416,18 +416,18 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
         }
         switch (schemeField.id) {
           case 1: // MESSAGES
-            if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
+            if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TSet _set38 = iprot.readSetBegin();
-                struct.messages = new HashSet<Message>(2*_set38.size);
-                for (int _i39 = 0; _i39 < _set38.size; ++_i39)
+                org.apache.thrift.protocol.TList _list38 = iprot.readListBegin();
+                struct.messages = new ArrayList<Message>(_list38.size);
+                for (int _i39 = 0; _i39 < _list38.size; ++_i39)
                 {
                   Message _elem40;
                   _elem40 = new Message();
                   _elem40.read(iprot);
                   struct.messages.add(_elem40);
                 }
-                iprot.readSetEnd();
+                iprot.readListEnd();
               }
               struct.setMessagesIsSet(true);
             } else { 
@@ -460,12 +460,12 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
       if (struct.messages != null) {
         oprot.writeFieldBegin(MESSAGES_FIELD_DESC);
         {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, struct.messages.size()));
+          oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.messages.size()));
           for (Message _iter41 : struct.messages)
           {
             _iter41.write(oprot);
           }
-          oprot.writeSetEnd();
+          oprot.writeListEnd();
         }
         oprot.writeFieldEnd();
       }
@@ -517,9 +517,9 @@ public class MessageListPart implements org.apache.thrift.TBase<MessageListPart,
       BitSet incoming = iprot.readBitSet(2);
       if (incoming.get(0)) {
         {
-          org.apache.thrift.protocol.TSet _set43 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.messages = new HashSet<Message>(2*_set43.size);
-          for (int _i44 = 0; _i44 < _set43.size; ++_i44)
+          org.apache.thrift.protocol.TList _list43 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.messages = new ArrayList<Message>(_list43.size);
+          for (int _i44 = 0; _i44 < _list43.size; ++_i44)
           {
             Message _elem45;
             _elem45 = new Message();
