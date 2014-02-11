@@ -35,10 +35,11 @@ public class MessageServiceTests {
 
 	Group topicGroup;
 	Rubric topicRubric;
+	String topicSubject = "Test topic";
 
 	private Topic createTopic() throws Exception {
 
-		return msi.createTopic(topicGroup.getId(), "Test topic", MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages,
+		return msi.createTopic(topicGroup.getId(), topicSubject, MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages,
 				noTags, topicRubric.getId(), 0L);
 
 	}
@@ -146,6 +147,7 @@ public class MessageServiceTests {
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
+			Assert.assertEquals(topicSubject, rTopic.topics.get(0).getSubject());
 
 		} catch (Exception e) {
 			e.printStackTrace();
