@@ -36,8 +36,7 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("OrderLine");
 
   private static final org.apache.thrift.protocol.TField PRODUCT_FIELD_DESC = new org.apache.thrift.protocol.TField("product", org.apache.thrift.protocol.TType.STRUCT, (short)1);
-  private static final org.apache.thrift.protocol.TField QUONTITY_FIELD_DESC = new org.apache.thrift.protocol.TField("quontity", org.apache.thrift.protocol.TType.DOUBLE, (short)2);
-  private static final org.apache.thrift.protocol.TField PRICE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("priceType", org.apache.thrift.protocol.TType.I32, (short)3);
+  private static final org.apache.thrift.protocol.TField QUANTITY_FIELD_DESC = new org.apache.thrift.protocol.TField("quantity", org.apache.thrift.protocol.TType.DOUBLE, (short)2);
   private static final org.apache.thrift.protocol.TField PRICE_FIELD_DESC = new org.apache.thrift.protocol.TField("price", org.apache.thrift.protocol.TType.DOUBLE, (short)4);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -47,23 +46,13 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
   }
 
   public Product product; // required
-  public double quontity; // required
-  /**
-   * 
-   * @see PriceType
-   */
-  public PriceType priceType; // required
+  public double quantity; // required
   public double price; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     PRODUCT((short)1, "product"),
-    QUONTITY((short)2, "quontity"),
-    /**
-     * 
-     * @see PriceType
-     */
-    PRICE_TYPE((short)3, "priceType"),
+    QUANTITY((short)2, "quantity"),
     PRICE((short)4, "price");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
@@ -81,10 +70,8 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
       switch(fieldId) {
         case 1: // PRODUCT
           return PRODUCT;
-        case 2: // QUONTITY
-          return QUONTITY;
-        case 3: // PRICE_TYPE
-          return PRICE_TYPE;
+        case 2: // QUANTITY
+          return QUANTITY;
         case 4: // PRICE
           return PRICE;
         default:
@@ -127,7 +114,7 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
   }
 
   // isset id assignments
-  private static final int __QUONTITY_ISSET_ID = 0;
+  private static final int __QUANTITY_ISSET_ID = 0;
   private static final int __PRICE_ISSET_ID = 1;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
@@ -135,10 +122,8 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.PRODUCT, new org.apache.thrift.meta_data.FieldMetaData("product", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Product.class)));
-    tmpMap.put(_Fields.QUONTITY, new org.apache.thrift.meta_data.FieldMetaData("quontity", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+    tmpMap.put(_Fields.QUANTITY, new org.apache.thrift.meta_data.FieldMetaData("quantity", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
-    tmpMap.put(_Fields.PRICE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("priceType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, PriceType.class)));
     tmpMap.put(_Fields.PRICE, new org.apache.thrift.meta_data.FieldMetaData("price", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -150,15 +135,13 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
 
   public OrderLine(
     Product product,
-    double quontity,
-    PriceType priceType,
+    double quantity,
     double price)
   {
     this();
     this.product = product;
-    this.quontity = quontity;
-    setQuontityIsSet(true);
-    this.priceType = priceType;
+    this.quantity = quantity;
+    setQuantityIsSet(true);
     this.price = price;
     setPriceIsSet(true);
   }
@@ -171,10 +154,7 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
     if (other.isSetProduct()) {
       this.product = new Product(other.product);
     }
-    this.quontity = other.quontity;
-    if (other.isSetPriceType()) {
-      this.priceType = other.priceType;
-    }
+    this.quantity = other.quantity;
     this.price = other.price;
   }
 
@@ -185,9 +165,8 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
   @Override
   public void clear() {
     this.product = null;
-    setQuontityIsSet(false);
-    this.quontity = 0.0;
-    this.priceType = null;
+    setQuantityIsSet(false);
+    this.quantity = 0.0;
     setPriceIsSet(false);
     this.price = 0.0;
   }
@@ -216,59 +195,27 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
     }
   }
 
-  public double getQuontity() {
-    return this.quontity;
+  public double getQuantity() {
+    return this.quantity;
   }
 
-  public OrderLine setQuontity(double quontity) {
-    this.quontity = quontity;
-    setQuontityIsSet(true);
+  public OrderLine setQuantity(double quantity) {
+    this.quantity = quantity;
+    setQuantityIsSet(true);
     return this;
   }
 
-  public void unsetQuontity() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __QUONTITY_ISSET_ID);
+  public void unsetQuantity() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __QUANTITY_ISSET_ID);
   }
 
-  /** Returns true if field quontity is set (has been assigned a value) and false otherwise */
-  public boolean isSetQuontity() {
-    return EncodingUtils.testBit(__isset_bitfield, __QUONTITY_ISSET_ID);
+  /** Returns true if field quantity is set (has been assigned a value) and false otherwise */
+  public boolean isSetQuantity() {
+    return EncodingUtils.testBit(__isset_bitfield, __QUANTITY_ISSET_ID);
   }
 
-  public void setQuontityIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __QUONTITY_ISSET_ID, value);
-  }
-
-  /**
-   * 
-   * @see PriceType
-   */
-  public PriceType getPriceType() {
-    return this.priceType;
-  }
-
-  /**
-   * 
-   * @see PriceType
-   */
-  public OrderLine setPriceType(PriceType priceType) {
-    this.priceType = priceType;
-    return this;
-  }
-
-  public void unsetPriceType() {
-    this.priceType = null;
-  }
-
-  /** Returns true if field priceType is set (has been assigned a value) and false otherwise */
-  public boolean isSetPriceType() {
-    return this.priceType != null;
-  }
-
-  public void setPriceTypeIsSet(boolean value) {
-    if (!value) {
-      this.priceType = null;
-    }
+  public void setQuantityIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __QUANTITY_ISSET_ID, value);
   }
 
   public double getPrice() {
@@ -304,19 +251,11 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
       }
       break;
 
-    case QUONTITY:
+    case QUANTITY:
       if (value == null) {
-        unsetQuontity();
+        unsetQuantity();
       } else {
-        setQuontity((Double)value);
-      }
-      break;
-
-    case PRICE_TYPE:
-      if (value == null) {
-        unsetPriceType();
-      } else {
-        setPriceType((PriceType)value);
+        setQuantity((Double)value);
       }
       break;
 
@@ -336,11 +275,8 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
     case PRODUCT:
       return getProduct();
 
-    case QUONTITY:
-      return Double.valueOf(getQuontity());
-
-    case PRICE_TYPE:
-      return getPriceType();
+    case QUANTITY:
+      return Double.valueOf(getQuantity());
 
     case PRICE:
       return Double.valueOf(getPrice());
@@ -358,10 +294,8 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
     switch (field) {
     case PRODUCT:
       return isSetProduct();
-    case QUONTITY:
-      return isSetQuontity();
-    case PRICE_TYPE:
-      return isSetPriceType();
+    case QUANTITY:
+      return isSetQuantity();
     case PRICE:
       return isSetPrice();
     }
@@ -390,21 +324,12 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
         return false;
     }
 
-    boolean this_present_quontity = true;
-    boolean that_present_quontity = true;
-    if (this_present_quontity || that_present_quontity) {
-      if (!(this_present_quontity && that_present_quontity))
+    boolean this_present_quantity = true;
+    boolean that_present_quantity = true;
+    if (this_present_quantity || that_present_quantity) {
+      if (!(this_present_quantity && that_present_quantity))
         return false;
-      if (this.quontity != that.quontity)
-        return false;
-    }
-
-    boolean this_present_priceType = true && this.isSetPriceType();
-    boolean that_present_priceType = true && that.isSetPriceType();
-    if (this_present_priceType || that_present_priceType) {
-      if (!(this_present_priceType && that_present_priceType))
-        return false;
-      if (!this.priceType.equals(that.priceType))
+      if (this.quantity != that.quantity)
         return false;
     }
 
@@ -443,22 +368,12 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetQuontity()).compareTo(other.isSetQuontity());
+    lastComparison = Boolean.valueOf(isSetQuantity()).compareTo(other.isSetQuantity());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetQuontity()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.quontity, other.quontity);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetPriceType()).compareTo(other.isSetPriceType());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetPriceType()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.priceType, other.priceType);
+    if (isSetQuantity()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.quantity, other.quantity);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -501,16 +416,8 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("quontity:");
-    sb.append(this.quontity);
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("priceType:");
-    if (this.priceType == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.priceType);
-    }
+    sb.append("quantity:");
+    sb.append(this.quantity);
     first = false;
     if (!first) sb.append(", ");
     sb.append("price:");
@@ -573,18 +480,10 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // QUONTITY
+          case 2: // QUANTITY
             if (schemeField.type == org.apache.thrift.protocol.TType.DOUBLE) {
-              struct.quontity = iprot.readDouble();
-              struct.setQuontityIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 3: // PRICE_TYPE
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.priceType = PriceType.findByValue(iprot.readI32());
-              struct.setPriceTypeIsSet(true);
+              struct.quantity = iprot.readDouble();
+              struct.setQuantityIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -617,14 +516,9 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
         struct.product.write(oprot);
         oprot.writeFieldEnd();
       }
-      oprot.writeFieldBegin(QUONTITY_FIELD_DESC);
-      oprot.writeDouble(struct.quontity);
+      oprot.writeFieldBegin(QUANTITY_FIELD_DESC);
+      oprot.writeDouble(struct.quantity);
       oprot.writeFieldEnd();
-      if (struct.priceType != null) {
-        oprot.writeFieldBegin(PRICE_TYPE_FIELD_DESC);
-        oprot.writeI32(struct.priceType.getValue());
-        oprot.writeFieldEnd();
-      }
       oprot.writeFieldBegin(PRICE_FIELD_DESC);
       oprot.writeDouble(struct.price);
       oprot.writeFieldEnd();
@@ -649,24 +543,18 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
       if (struct.isSetProduct()) {
         optionals.set(0);
       }
-      if (struct.isSetQuontity()) {
+      if (struct.isSetQuantity()) {
         optionals.set(1);
       }
-      if (struct.isSetPriceType()) {
+      if (struct.isSetPrice()) {
         optionals.set(2);
       }
-      if (struct.isSetPrice()) {
-        optionals.set(3);
-      }
-      oprot.writeBitSet(optionals, 4);
+      oprot.writeBitSet(optionals, 3);
       if (struct.isSetProduct()) {
         struct.product.write(oprot);
       }
-      if (struct.isSetQuontity()) {
-        oprot.writeDouble(struct.quontity);
-      }
-      if (struct.isSetPriceType()) {
-        oprot.writeI32(struct.priceType.getValue());
+      if (struct.isSetQuantity()) {
+        oprot.writeDouble(struct.quantity);
       }
       if (struct.isSetPrice()) {
         oprot.writeDouble(struct.price);
@@ -676,21 +564,17 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, OrderLine struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(4);
+      BitSet incoming = iprot.readBitSet(3);
       if (incoming.get(0)) {
         struct.product = new Product();
         struct.product.read(iprot);
         struct.setProductIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.quontity = iprot.readDouble();
-        struct.setQuontityIsSet(true);
+        struct.quantity = iprot.readDouble();
+        struct.setQuantityIsSet(true);
       }
       if (incoming.get(2)) {
-        struct.priceType = PriceType.findByValue(iprot.readI32());
-        struct.setPriceTypeIsSet(true);
-      }
-      if (incoming.get(3)) {
         struct.price = iprot.readDouble();
         struct.setPriceIsSet(true);
       }

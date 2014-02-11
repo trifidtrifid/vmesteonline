@@ -4,5 +4,5 @@ gaeDatanucleusVersion=v2
 gaeHrdEnabled=true
 googleCloudSqlEnabled=false
 localDevMySqlEnabled=true
-ormEnhancementInclusions=src/com/vmesteonline/be/jdo2/|tests/tagcloud/|src/com/vmesteonline/be/jdo2/postaladdress/
+ormEnhancementInclusions=src/com/vmesteonline/be/jdo2/|tests/tagcloud/|src/com/vmesteonline/be/jdo2/postaladdress/|src/com/vmesteonline/be/jdo2/shop/
 validationExclusions=src/com/vmesteonline/be/jdo2/VoUser.java

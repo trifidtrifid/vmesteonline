@@ -57,10 +57,8 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 			}
 			//check that the address exists
 			Query q = pm.newQuery(VoPostalAddress.class);
-			q.setFilter("building == :key");
-			q.setFilter("staircase == "+postalAddress.getStaircase());
-			q.setFilter("floor == "+postalAddress.getFloor());
-			q.setFilter("flatNo == "+postalAddress.getFlatNo());
+			q.setFilter("building == :key && staircase == "+postalAddress.getStaircase() + " && floor == "+postalAddress.getFloor() + 
+					" && flatNo == "+postalAddress.getFlatNo());
 			List<VoPostalAddress> pal = (List<VoPostalAddress>) q.execute(postalAddress.getBuilding().getId());
 			if( pal.size() > 0 ){
 				this.id = pal.get(0).id;

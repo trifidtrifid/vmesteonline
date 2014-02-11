@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -25,16 +26,16 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoProducer {
 
-	public VoProducer( long shopId, Producer producer) throws InvalidOperation {
-		this( shopId, producer.getName(), producer.getDescr(), producer.getLogoURL(), producer.getHomeURL());
+	public VoProducer(long shopId, Producer producer) throws InvalidOperation {
+		this(shopId, producer.getName(), producer.getDescr(), producer.getLogoURL(), producer.getHomeURL());
 	}
 
-	public VoProducer( long shopId, String name, String descr, byte[] logoURL, String homeURL) throws InvalidOperation {
+	public VoProducer(long shopId, String name, String descr, byte[] logoURL, String homeURL) throws InvalidOperation {
 		this.name = name;
 		this.descr = descr;
 		try {
 			this.logoURL = null;
-			if(null!=logoURL && logoURL.length > 0 )
+			if (null != logoURL && logoURL.length > 0)
 				this.logoURL = StorageHelper.saveImage(logoURL);
 		} catch (IOException e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, e.getMessage());
@@ -43,62 +44,61 @@ public class VoProducer {
 		this.shops = new HashSet<VoShop>();
 		this.products = new HashSet<VoProduct>();
 		PersistenceManager pm = PMF.getPm();
-		
+
 		try {
 			pm.makePersistent(this);
 			VoShop voShop = null;
 			try {
 				voShop = pm.getObjectById(VoShop.class, shopId);
-				shops.add(voShop);
-				voShop.addProducer(this);
-				pm.makePersistent(voShop);
-			} catch (Exception e) {
+				pm.retrieve(voShop);
+			} catch (JDOObjectNotFoundException e) {
 				e.printStackTrace();
+				throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID=" + shopId + ". " + e);
 			}
-			if(null==voShop){
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID="+shopId);
-			}
+			shops.add(voShop);
+			voShop.addProducer(this);
 			pm.makePersistent(this);
-			
+			pm.makePersistent(voShop);
+
 		} finally {
 			pm.close();
 		}
 	}
 
-	public Producer createProducer(){
+	public Producer createProducer() {
 		return new Producer(id.getId(), name, descr, ByteBuffer.wrap(logoURL.getBytes()), homeURL);
 	}
-	
+
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
 	private Key id;
-	
-	@Persistent 
+
+	@Persistent
 	@Unindexed
 	private String name;
-	
+
 	@Persistent
 	@Unindexed
 	private String descr;
-	
+
 	@Persistent
 	@Unindexed
 	private String logoURL;
-	
+
 	@Persistent
 	@Unindexed
 	private String homeURL;
-	
+
 	@Persistent
 	@Unowned
 	private Set<VoShop> shops;
-	
-	@Persistent(mappedBy="producer")
+
+	@Persistent(mappedBy = "producer")
 	@OneToMany
 	@Unowned
 	private Set<VoProduct> products;
-	
-	public Set<VoProduct> getProducts(){
+
+	public Set<VoProduct> getProducts() {
 		return products;
 	}
 
@@ -146,6 +146,5 @@ public class VoProducer {
 	public String toString() {
 		return "VoProducer [id=" + id + ", name=" + name + "]";
 	}
-	
-	
+
 }

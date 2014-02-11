@@ -38,7 +38,8 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
   private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.I64, (short)1);
   private static final org.apache.thrift.protocol.TField DATE_FIELD_DESC = new org.apache.thrift.protocol.TField("date", org.apache.thrift.protocol.TType.I32, (short)2);
   private static final org.apache.thrift.protocol.TField STATUS_FIELD_DESC = new org.apache.thrift.protocol.TField("status", org.apache.thrift.protocol.TType.I32, (short)3);
-  private static final org.apache.thrift.protocol.TField TOTAL_COST_FIELD_DESC = new org.apache.thrift.protocol.TField("totalCost", org.apache.thrift.protocol.TType.DOUBLE, (short)4);
+  private static final org.apache.thrift.protocol.TField PRICE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("priceType", org.apache.thrift.protocol.TType.I32, (short)4);
+  private static final org.apache.thrift.protocol.TField TOTAL_COST_FIELD_DESC = new org.apache.thrift.protocol.TField("totalCost", org.apache.thrift.protocol.TType.DOUBLE, (short)5);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -53,6 +54,11 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
    * @see OrderStatus
    */
   public OrderStatus status; // required
+  /**
+   * 
+   * @see PriceType
+   */
+  public PriceType priceType; // required
   public double totalCost; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -64,7 +70,12 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
      * @see OrderStatus
      */
     STATUS((short)3, "status"),
-    TOTAL_COST((short)4, "totalCost");
+    /**
+     * 
+     * @see PriceType
+     */
+    PRICE_TYPE((short)4, "priceType"),
+    TOTAL_COST((short)5, "totalCost");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -85,7 +96,9 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
           return DATE;
         case 3: // STATUS
           return STATUS;
-        case 4: // TOTAL_COST
+        case 4: // PRICE_TYPE
+          return PRICE_TYPE;
+        case 5: // TOTAL_COST
           return TOTAL_COST;
         default:
           return null;
@@ -140,6 +153,8 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.STATUS, new org.apache.thrift.meta_data.FieldMetaData("status", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, OrderStatus.class)));
+    tmpMap.put(_Fields.PRICE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("priceType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, PriceType.class)));
     tmpMap.put(_Fields.TOTAL_COST, new org.apache.thrift.meta_data.FieldMetaData("totalCost", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -153,6 +168,7 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     long id,
     int date,
     OrderStatus status,
+    PriceType priceType,
     double totalCost)
   {
     this();
@@ -161,6 +177,7 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     this.date = date;
     setDateIsSet(true);
     this.status = status;
+    this.priceType = priceType;
     this.totalCost = totalCost;
     setTotalCostIsSet(true);
   }
@@ -174,6 +191,9 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     this.date = other.date;
     if (other.isSetStatus()) {
       this.status = other.status;
+    }
+    if (other.isSetPriceType()) {
+      this.priceType = other.priceType;
     }
     this.totalCost = other.totalCost;
   }
@@ -189,6 +209,7 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     setDateIsSet(false);
     this.date = 0;
     this.status = null;
+    this.priceType = null;
     setTotalCostIsSet(false);
     this.totalCost = 0.0;
   }
@@ -271,6 +292,38 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     }
   }
 
+  /**
+   * 
+   * @see PriceType
+   */
+  public PriceType getPriceType() {
+    return this.priceType;
+  }
+
+  /**
+   * 
+   * @see PriceType
+   */
+  public Order setPriceType(PriceType priceType) {
+    this.priceType = priceType;
+    return this;
+  }
+
+  public void unsetPriceType() {
+    this.priceType = null;
+  }
+
+  /** Returns true if field priceType is set (has been assigned a value) and false otherwise */
+  public boolean isSetPriceType() {
+    return this.priceType != null;
+  }
+
+  public void setPriceTypeIsSet(boolean value) {
+    if (!value) {
+      this.priceType = null;
+    }
+  }
+
   public double getTotalCost() {
     return this.totalCost;
   }
@@ -320,6 +373,14 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       }
       break;
 
+    case PRICE_TYPE:
+      if (value == null) {
+        unsetPriceType();
+      } else {
+        setPriceType((PriceType)value);
+      }
+      break;
+
     case TOTAL_COST:
       if (value == null) {
         unsetTotalCost();
@@ -342,6 +403,9 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     case STATUS:
       return getStatus();
 
+    case PRICE_TYPE:
+      return getPriceType();
+
     case TOTAL_COST:
       return Double.valueOf(getTotalCost());
 
@@ -362,6 +426,8 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       return isSetDate();
     case STATUS:
       return isSetStatus();
+    case PRICE_TYPE:
+      return isSetPriceType();
     case TOTAL_COST:
       return isSetTotalCost();
     }
@@ -405,6 +471,15 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       if (!(this_present_status && that_present_status))
         return false;
       if (!this.status.equals(that.status))
+        return false;
+    }
+
+    boolean this_present_priceType = true && this.isSetPriceType();
+    boolean that_present_priceType = true && that.isSetPriceType();
+    if (this_present_priceType || that_present_priceType) {
+      if (!(this_present_priceType && that_present_priceType))
+        return false;
+      if (!this.priceType.equals(that.priceType))
         return false;
     }
 
@@ -463,6 +538,16 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetPriceType()).compareTo(other.isSetPriceType());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetPriceType()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.priceType, other.priceType);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     lastComparison = Boolean.valueOf(isSetTotalCost()).compareTo(other.isSetTotalCost());
     if (lastComparison != 0) {
       return lastComparison;
@@ -506,6 +591,14 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       sb.append("null");
     } else {
       sb.append(this.status);
+    }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("priceType:");
+    if (this.priceType == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.priceType);
     }
     first = false;
     if (!first) sb.append(", ");
@@ -581,7 +674,15 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 4: // TOTAL_COST
+          case 4: // PRICE_TYPE
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.priceType = PriceType.findByValue(iprot.readI32());
+              struct.setPriceTypeIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 5: // TOTAL_COST
             if (schemeField.type == org.apache.thrift.protocol.TType.DOUBLE) {
               struct.totalCost = iprot.readDouble();
               struct.setTotalCostIsSet(true);
@@ -615,6 +716,11 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
         oprot.writeI32(struct.status.getValue());
         oprot.writeFieldEnd();
       }
+      if (struct.priceType != null) {
+        oprot.writeFieldBegin(PRICE_TYPE_FIELD_DESC);
+        oprot.writeI32(struct.priceType.getValue());
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldBegin(TOTAL_COST_FIELD_DESC);
       oprot.writeDouble(struct.totalCost);
       oprot.writeFieldEnd();
@@ -645,10 +751,13 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       if (struct.isSetStatus()) {
         optionals.set(2);
       }
-      if (struct.isSetTotalCost()) {
+      if (struct.isSetPriceType()) {
         optionals.set(3);
       }
-      oprot.writeBitSet(optionals, 4);
+      if (struct.isSetTotalCost()) {
+        optionals.set(4);
+      }
+      oprot.writeBitSet(optionals, 5);
       if (struct.isSetId()) {
         oprot.writeI64(struct.id);
       }
@@ -658,6 +767,9 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
       if (struct.isSetStatus()) {
         oprot.writeI32(struct.status.getValue());
       }
+      if (struct.isSetPriceType()) {
+        oprot.writeI32(struct.priceType.getValue());
+      }
       if (struct.isSetTotalCost()) {
         oprot.writeDouble(struct.totalCost);
       }
@@ -666,7 +778,7 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Order struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(4);
+      BitSet incoming = iprot.readBitSet(5);
       if (incoming.get(0)) {
         struct.id = iprot.readI64();
         struct.setIdIsSet(true);
@@ -680,6 +792,10 @@ public class Order implements org.apache.thrift.TBase<Order, Order._Fields>, jav
         struct.setStatusIsSet(true);
       }
       if (incoming.get(3)) {
+        struct.priceType = PriceType.findByValue(iprot.readI32());
+        struct.setPriceTypeIsSet(true);
+      }
+      if (incoming.get(4)) {
         struct.totalCost = iprot.readDouble();
         struct.setTotalCostIsSet(true);
       }
