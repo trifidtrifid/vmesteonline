@@ -205,10 +205,14 @@
              alert($(this).text());
              });*/
             $('.one-message+.wysiwig-box .btn-primary').click(function(){
-                //alert('1');
-                var message = $(this).closest('.widget-body').find('.wysiwyg-editor').text();
+                var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
+                message = message.replace(new RegExp('&nbsp;','g'),' ');
+                message = message.replace(new RegExp('–;','g'),'1');
+                message = message.replace(new RegExp('-','g'),'-');
+                message = message.replace(new RegExp('&mdash;','g'),'3');
+                //alert(message);
                 var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
-                messageWithGoodLinks = messageWithGoodLinks.replace('undefined',"");
+                messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
                 alert(messageWithGoodLinks);
             });
         });
@@ -218,47 +222,8 @@
  АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ ССЫЛКИ В СТРОКЕ
  -----------------------------------------------------------
  */
-        /*function AutoLinkAndVideo(str) {
-            //var arrayWithLinks = str.match(/^(.* )?(http[s]?:\/\/)?([\dA-Za-z\.-]+)\.([A-Za-z\.]{2,6})(\/[\/\da-zA-Z\.-?]*)*\/?( ?.*)?$/gmi);
-            var regexp = /^(.* )?(http[s]?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})(\/[\/\da-z\.-?]*)*\/?( ?.*)?$/gmi ;
-            var arrayWithLinks = regexp.exec(str);
-            returnText = str;
-            var restText;
-            console.log('0');
-            if (arrayWithLinks && arrayWithLinks.length > 0){
-                var currentLink = arrayWithLinks[2]+arrayWithLinks[3]+'.'+arrayWithLinks[4]+arrayWithLinks[5];
-                var currentNextText = arrayWithLinks[1];
-                if (arrayWithLinks[6] != 'undefined'){restText = arrayWithLinks[6];}
-                else{restText = "";}
-                *//*if (restText == 'undefined'){restText = "kkk"; alert('1');}*//*
-                //alert(restText);
-                returnText = AutoLinkAndVideo(currentNextText);
-                if (arrayWithLinks[3].indexOf('youtu') != -1){
-                    console.log('1');
-                    // у ютуба несколько отличается ссылка и айфрэйм
-                    var youtubeIframe = '<iframe width="560" height="315" src="'+ currentLink +'" frameborder="0" allowfullscreen></iframe>';
-                    //str = str.replace(currentLink,youtubeIframe);
-                    returnText += youtubeIframe+' '+ restText;
-                }else if(arrayWithLinks[3].indexOf('vimeo') != -1){
-                    console.log('2');
-                    var vimeoIframe = '<iframe src="'+ currentLink +'" width="500" height="281" frameborder="0"'+
-                        ' webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
-                    //str = str.replace(currentLink,vimeoIframe);
-                    returnText += vimeoIframe+' '+ restText;
-                }else{
-                    console.log('3');
-                    //str = str.replace(currentLink,'<a href="'+currentLink+'" target="_blank">'+currentLink+'</a>')
-                    returnText = '<a href="'+currentLink+'" target="_blank">'+currentLink+'</a>'+' '+ restText;
-                }
-            }*//*else{
-                beginText = str;
-                returnText = beginText + returnText;
-            }*//*
-            //if (beginText == ""){beginText = arrayWithLinks[1];returnText = beginText + returnText; }
-            return returnText;
-        }*/
         function AutoReplaceLinkAndVideo(str) {
-            var regexp = /^(.* )?(http[s]?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})(\/[\/\da-z\.-?]*)*\/?( ?.*)?$/gmi,
+            var regexp = /^(.* )?(http[s]?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})(\/[\/\da-z\.\-?]*)*\/?( ?.*)?$/gmi,
             arrayWithLinks = regexp.exec(str),
             res = str;
             if (arrayWithLinks && arrayWithLinks.length > 0){
@@ -266,7 +231,6 @@
                 var prefix = arrayWithLinks[1];
                 var suffix = arrayWithLinks[6];
                 var iframe = "";
-                alert('1');
 
                 if (arrayWithLinks[3].indexOf('youtu') != -1){
                     // у ютуба несколько отличается ссылка и айфрэйм
