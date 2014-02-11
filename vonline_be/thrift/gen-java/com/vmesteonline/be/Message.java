@@ -51,6 +51,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   private static final org.apache.thrift.protocol.TField LINKED_MESSAGES_FIELD_DESC = new org.apache.thrift.protocol.TField("linkedMessages", org.apache.thrift.protocol.TType.MAP, (short)14);
   private static final org.apache.thrift.protocol.TField TAGS_FIELD_DESC = new org.apache.thrift.protocol.TField("tags", org.apache.thrift.protocol.TType.MAP, (short)15);
   private static final org.apache.thrift.protocol.TField USER_MESSAGE_FIELD_DESC = new org.apache.thrift.protocol.TField("userMessage", org.apache.thrift.protocol.TType.STRUCT, (short)16);
+  private static final org.apache.thrift.protocol.TField OFFSET_FIELD_DESC = new org.apache.thrift.protocol.TField("offset", org.apache.thrift.protocol.TType.I32, (short)17);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -78,6 +79,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   public Map<MessageType,Long> linkedMessages; // required
   public Map<Long,String> tags; // required
   public UserMessage userMessage; // required
+  public int offset; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -100,7 +102,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     UNLIKES_NUM((short)13, "unlikesNum"),
     LINKED_MESSAGES((short)14, "linkedMessages"),
     TAGS((short)15, "tags"),
-    USER_MESSAGE((short)16, "userMessage");
+    USER_MESSAGE((short)16, "userMessage"),
+    OFFSET((short)17, "offset");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -147,6 +150,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
           return TAGS;
         case 16: // USER_MESSAGE
           return USER_MESSAGE;
+        case 17: // OFFSET
+          return OFFSET;
         default:
           return null;
       }
@@ -198,6 +203,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   private static final int __APPROVEDBY_ISSET_ID = 8;
   private static final int __LIKESNUM_ISSET_ID = 9;
   private static final int __UNLIKESNUM_ISSET_ID = 10;
+  private static final int __OFFSET_ISSET_ID = 11;
   private short __isset_bitfield = 0;
   private _Fields optionals[] = {_Fields.RECIPIENT_ID,_Fields.APPROVED_BY};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
@@ -239,6 +245,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
     tmpMap.put(_Fields.USER_MESSAGE, new org.apache.thrift.meta_data.FieldMetaData("userMessage", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, UserMessage.class)));
+    tmpMap.put(_Fields.OFFSET, new org.apache.thrift.meta_data.FieldMetaData("offset", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Message.class, metaDataMap);
   }
@@ -260,7 +268,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     int unlikesNum,
     Map<MessageType,Long> linkedMessages,
     Map<Long,String> tags,
-    UserMessage userMessage)
+    UserMessage userMessage,
+    int offset)
   {
     this();
     this.id = id;
@@ -286,6 +295,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.linkedMessages = linkedMessages;
     this.tags = tags;
     this.userMessage = userMessage;
+    this.offset = offset;
+    setOffsetIsSet(true);
   }
 
   /**
@@ -332,6 +343,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     if (other.isSetUserMessage()) {
       this.userMessage = new UserMessage(other.userMessage);
     }
+    this.offset = other.offset;
   }
 
   public Message deepCopy() {
@@ -367,6 +379,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.linkedMessages = null;
     this.tags = null;
     this.userMessage = null;
+    setOffsetIsSet(false);
+    this.offset = 0;
   }
 
   public long getId() {
@@ -772,6 +786,29 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
   }
 
+  public int getOffset() {
+    return this.offset;
+  }
+
+  public Message setOffset(int offset) {
+    this.offset = offset;
+    setOffsetIsSet(true);
+    return this;
+  }
+
+  public void unsetOffset() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __OFFSET_ISSET_ID);
+  }
+
+  /** Returns true if field offset is set (has been assigned a value) and false otherwise */
+  public boolean isSetOffset() {
+    return EncodingUtils.testBit(__isset_bitfield, __OFFSET_ISSET_ID);
+  }
+
+  public void setOffsetIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __OFFSET_ISSET_ID, value);
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case ID:
@@ -902,6 +939,14 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       }
       break;
 
+    case OFFSET:
+      if (value == null) {
+        unsetOffset();
+      } else {
+        setOffset((Integer)value);
+      }
+      break;
+
     }
   }
 
@@ -955,6 +1000,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     case USER_MESSAGE:
       return getUserMessage();
 
+    case OFFSET:
+      return Integer.valueOf(getOffset());
+
     }
     throw new IllegalStateException();
   }
@@ -998,6 +1046,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       return isSetTags();
     case USER_MESSAGE:
       return isSetUserMessage();
+    case OFFSET:
+      return isSetOffset();
     }
     throw new IllegalStateException();
   }
@@ -1156,6 +1206,15 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (!(this_present_userMessage && that_present_userMessage))
         return false;
       if (!this.userMessage.equals(that.userMessage))
+        return false;
+    }
+
+    boolean this_present_offset = true;
+    boolean that_present_offset = true;
+    if (this_present_offset || that_present_offset) {
+      if (!(this_present_offset && that_present_offset))
+        return false;
+      if (this.offset != that.offset)
         return false;
     }
 
@@ -1335,6 +1394,16 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetOffset()).compareTo(other.isSetOffset());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetOffset()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.offset, other.offset);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -1441,6 +1510,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     } else {
       sb.append(this.userMessage);
     }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("offset:");
+    sb.append(this.offset);
     first = false;
     sb.append(")");
     return sb.toString();
@@ -1643,6 +1716,14 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 17: // OFFSET
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.offset = iprot.readI32();
+              struct.setOffsetIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -1736,6 +1817,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         struct.userMessage.write(oprot);
         oprot.writeFieldEnd();
       }
+      oprot.writeFieldBegin(OFFSET_FIELD_DESC);
+      oprot.writeI32(struct.offset);
+      oprot.writeFieldEnd();
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -1802,7 +1886,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetUserMessage()) {
         optionals.set(15);
       }
-      oprot.writeBitSet(optionals, 16);
+      if (struct.isSetOffset()) {
+        optionals.set(16);
+      }
+      oprot.writeBitSet(optionals, 17);
       if (struct.isSetId()) {
         oprot.writeI64(struct.id);
       }
@@ -1865,12 +1952,15 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetUserMessage()) {
         struct.userMessage.write(oprot);
       }
+      if (struct.isSetOffset()) {
+        oprot.writeI32(struct.offset);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Message struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(16);
+      BitSet incoming = iprot.readBitSet(17);
       if (incoming.get(0)) {
         struct.id = iprot.readI64();
         struct.setIdIsSet(true);
@@ -1957,6 +2047,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         struct.userMessage = new UserMessage();
         struct.userMessage.read(iprot);
         struct.setUserMessageIsSet(true);
+      }
+      if (incoming.get(16)) {
+        struct.offset = iprot.readI32();
+        struct.setOffsetIsSet(true);
       }
     }
   }

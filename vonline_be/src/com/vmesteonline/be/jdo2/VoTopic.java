@@ -3,7 +3,6 @@ package com.vmesteonline.be.jdo2;
 import java.util.List;
 import java.util.Vector;
 
-import javax.jdo.annotations.Embedded;
 import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -12,7 +11,6 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Message;
 import com.vmesteonline.be.Topic;
-import com.vmesteonline.be.UserMessage;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.utils.Pair;
 
@@ -54,7 +52,7 @@ public class VoTopic extends VoBaseMessage {
 	public Topic getTopic() {
 
 		Message msg = new Message(id.getId(), 0L, type, getId().getId(), 0L, authorId.getId(), createdAt, editedAt, new String(content), likesNum,
-				unlikesNum, links, tags, new UserMessage(true, false, false));
+				unlikesNum, links, tags, null, 0);
 
 		return new Topic(getId().getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(), null);
 	}

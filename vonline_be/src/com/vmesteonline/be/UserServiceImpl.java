@@ -3,12 +3,9 @@ package com.vmesteonline.be;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.jdo.Extent;
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.http.HttpSession;
@@ -16,15 +13,14 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+<<<<<<< HEAD
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.google.apphosting.api.DatastorePb.DatastoreService;
+=======
+>>>>>>> msgPartyDownload
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoRubric;
-import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
@@ -33,7 +29,6 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
-import com.vmesteonline.be.utils.Defaults;
 
 public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
@@ -167,10 +162,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<City> getCities(long countryId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
+			
 			List<City> cl = new ArrayList<City>();
 			Query q = pm.newQuery(VoCity.class);
 			q.setFilter("country == :key");
@@ -188,6 +185,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Street> getStreets(long cityId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
@@ -210,6 +208,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Building> getBuildings(long streetId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
@@ -283,6 +282,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Country createNewCountry(String name) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
@@ -308,6 +308,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public City createNewCity(long countryId, String name) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
@@ -335,6 +336,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Street createNewStreet(long cityId, String name) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
@@ -363,6 +365,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Building createNewBuilding(long streetId, String fullNo, double longitude, double lattitude) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
