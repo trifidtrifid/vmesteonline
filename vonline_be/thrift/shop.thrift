@@ -63,7 +63,7 @@ struct FullProductInfo {
 }
 
 enum OrderStatus { UNKNOWN=0, NEW=1, CONFIRMED=2, SHIPPING=3, DELIVERED=4, CLOSED=5, CANCELED=6 }
-enum PaymentStatus { UNKNOWN=0, WIAT=1, PENDING=2, COMPLETE=3, CREDIT=4 }
+enum PaymentStatus { UNKNOWN=0, WAIT=1, PENDING=2, COMPLETE=3, CREDIT=4 }
 
 struct OrderLine {
 	1:Product product,
@@ -130,12 +130,15 @@ service ShopService {
 	void setPaymentTypesCosts( 1:map<PaymentType,double> newPaymentTypeCosts) throws (1:error.InvalidOperation exc),
 	
 	void setOrderPaymentStatus(1:i64 orderId, 2: PaymentStatus newStatus) throws (1:error.InvalidOperation exc),
-	
+	void setOrderStatus(1:i64 orderId, 2: OrderStatus newStatus) throws (1:error.InvalidOperation exc),
 	/**
 	* Method updates prices for Products. Map contains productId and map of new prices values for types.
 	**/
 	void setProductPrices( 1: map<i64, map<PriceType,double>> newPricesMap) throws (1:error.InvalidOperation exc),
 	
+	void updateProduct( 1:FullProductInfo newInfoWithOldId ) throws (1:error.InvalidOperation exc),
+	void updateShop( 1:Shop newShopWithOldId ) throws (1:error.InvalidOperation exc),
+	void updateCategory( 1:ProductCategory newCategoryInfo) throws (1:error.InvalidOperation exc),
 	
 	//frontend functions================================================================================================
 	list<Shop> getShops() throws (1:error.InvalidOperation exc),
@@ -159,6 +162,9 @@ service ShopService {
 	Order operations use shopId that must be set by AuthService.setCurrentAttribute or by calling method getShop
 	**/
 	list<Order> getOrders(1:i32 dateFrom, 2:i32 dateTo) throws (1:error.InvalidOperation exc),
+	list<Order> getOrdersByStatus(1:i32 dateFrom, 2:i32 dateTo, 3:OrderStatus status) throws (1:error.InvalidOperation exc),
+	//returns order and made in current
+	Order getOrder( 1:i64 orderId) throws (1:error.InvalidOperation exc),
 	/**
 	Method sets orderId as a current order id for the session
 	**/
@@ -191,4 +197,5 @@ service ShopService {
 	OrderDetails setOrderDeliveryType( 1:DeliveryType deliveryType ) throws (1:error.InvalidOperation exc),
 	bool setOrderPaymentType( 1:PaymentType paymentType ) throws (1:error.InvalidOperation exc),
 	OrderDetails setOrderDeliveryAddress( 1:bedata.PostalAddress deliveryAddress ) throws (1:error.InvalidOperation exc),
+	
 }

@@ -5,14 +5,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.jdo.Extent;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -177,22 +175,17 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			Query voquery = pm.newQuery(VoOrder.class);
 			List<VoOrder> results = null;
 			if (shopId != 0) {
-				voquery.setFilter("shopId == theShop");
-				voquery.declareParameters("theShop long");
 				if (0 != userId) {
-					voquery.setFilter("user == :userKey");
-					results = (List<VoOrder>) voquery.execute(VoOrder.class, shopId, userId);
+					voquery.setFilter("user == "+userId+" && shopId == "+shopId);
 				} else {
-					results = (List<VoOrder>) voquery.execute(VoOrder.class, shopId);
+					voquery.setFilter("shopId == "+shopId );
 				}
 			} else {
 				if (0 != userId) {
-					voquery.setFilter("user == :userKey");
-					results = (List<VoOrder>) voquery.execute(VoOrder.class, userId);
-				} else {
-					results = (List<VoOrder>) voquery.execute(VoOrder.class);
-				}
+					voquery.setFilter("user == "+userId);
+				} 
 			}
+			results = (List<VoOrder>) voquery.execute();
 			ol = new ArrayList<Order>();
 			for (VoOrder vo : results) {
 				ol.add(vo.getOrder());
@@ -441,9 +434,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		Long shopId = getCurrentShopId(pm);
 		try {
 			Query pcq = pm.newQuery(VoOrder.class);
-			pcq.setFilter("shopId == " + shopId);
-			pcq.setFilter("user == " + getCurrentUserId(pm));
-			pcq.setFilter("date < " + dateTo);
+			pcq.setFilter("shopId == " + shopId + " && user == " + getCurrentUserId(pm) + " && date >= " + dateFrom);
 			List<VoOrder> ps = (List<VoOrder>) pcq.execute(dateFrom);
 			List<Order> lo = new ArrayList<Order>();
 			for (VoOrder p : ps) {
@@ -521,6 +512,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, orderId);
 			if (null != voOrder) {
+				pm.retrieve(voOrder);
 				return voOrder.getOrderDetails();
 			}
 			throw new InvalidOperation(VoError.GeneralError, "Not found");
@@ -534,9 +526,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	@Override
 	public long createOrder(int date, PriceType priceType) throws InvalidOperation, TException {
-		if( date < System.currentTimeMillis()/1000L )
+		if (date < System.currentTimeMillis() / 1000L)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Order could not be created for the past");
-		
+
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop shop = getCurrentShop(pm);
@@ -567,7 +559,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-		
+
 			currentOrder.setStatus(OrderStatus.CANCELED);
 			// unset current order
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0, pm);
@@ -580,11 +572,17 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	@Override
 	public long confirmOrder() throws InvalidOperation, TException {
-		VoOrder currentOrder = getCurrentOrder(null);
-		currentOrder.setStatus(OrderStatus.CONFIRMED);
-		// unset current order
-		setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0);
-		return currentOrder.getId();
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoOrder currentOrder = getCurrentOrder(pm);
+			currentOrder.setStatus(OrderStatus.CONFIRMED);
+			// unset current order
+			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0);
+			pm.makePersistent(currentOrder);
+			return currentOrder.getId();
+		} finally {
+			pm.close();
+		}
 	}
 
 	/**
@@ -597,41 +595,35 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
 			if (null != voOrder) {
+				double addCost = 0;
 				VoOrder currentOrder = getCurrentOrder(pm);
-				SortedSet<VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
+				Map<Long,VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
 				if (currentOdrerLines.isEmpty()) {
-					currentOdrerLines.addAll(voOrder.getOdrerLines());
-				} else {
-					Iterator<VoOrderLine> currentOrderLinesIterator = currentOdrerLines.iterator();
-					VoOrderLine currentLine = currentOrderLinesIterator.next();
-
-					for (VoOrderLine ol : voOrder.getOdrerLines()) {
-						boolean merged = false;
-						do {
-							// the same line found, so change quantity and total order cost
-							if (0 == currentOdrerLines.comparator().compare(ol, currentLine)) {
-								currentOrder.addCost(currentLine.mergeWith(ol));
-								merged = true;
-							}
-							// current order has a line that is not present in the new one and
-							// listed before in list sorted by productId
-							else if (currentOdrerLines.comparator().compare(ol, currentLine) < 0) {
-								currentLine = currentOrderLinesIterator.next();
-							} else
-								// current order has no line for this product and this product
-								// ID is lower the the next productId in the current order
-								break;
-						} while (currentOrderLinesIterator.hasNext());
-						//
-						if (!merged) { // current order has no line for this product
-							double price = ol.getProduct().getPrice( currentOrder.getPriceType());
-							currentOdrerLines.add( new VoOrderLine(currentOrder, ol.getProduct(), ol.getQuantity(), 
-									price));
-							currentOrder.addCost(price*ol.getQuantity());
-						}
+					for (VoOrderLine voOrderLine : voOrder.getOdrerLines().values()) {
+						double price = voOrderLine.getProduct().getPrice(currentOrder.getPriceType());
+						currentOdrerLines.put(voOrderLine.getProduct().getId(), 
+								new VoOrderLine(currentOrder, voOrderLine.getProduct(), voOrderLine.getQuantity(), price));
+						addCost += voOrderLine.getQuantity() * price;
 					}
+
+				} else {
+					for (VoOrderLine voOrderLine : voOrder.getOdrerLines().values()) {
+						double price = voOrderLine.getProduct().getPrice(currentOrder.getPriceType());
+						long pid = voOrderLine.getProduct().getId();
+						if( currentOdrerLines.containsKey(pid) ){
+							VoOrderLine currentOL = currentOdrerLines.get(pid);
+							currentOL.setQuantity( currentOL.getQuantity() + voOrderLine.getQuantity());
+						} else {
+							currentOdrerLines.put(voOrderLine.getProduct().getId(), 
+									new VoOrderLine(currentOrder, voOrderLine.getProduct(), voOrderLine.getQuantity(), price));
+						}
+						addCost += voOrderLine.getQuantity() * price;
+					}
+					
 				}
+				currentOrder.addCost(addCost);
 				pm.makePersistent(currentOrder);
+				return 0L;// addCost;
 			}
 			throw new InvalidOperation(VoError.GeneralError, "Order not found by ID:" + oldOrderId);
 		} catch (Exception e) {
@@ -651,17 +643,20 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-			SortedSet<VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
+			Map<Long,VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
 			if (null != voOrder) {
-				for (VoOrderLine oldLine : voOrder.getOdrerLines()) {
-					if( !currentOdrerLines.contains( oldLine )){ //there is no such product in the current order
-						Double price = oldLine.getProduct().getPrice(currentOrder.getPriceType()); //Product is detached member so the price stored in this object would be actual
-						currentOdrerLines.add(new VoOrderLine(currentOrder, oldLine.getProduct(), oldLine.getQuantity(), price));
-						currentOrder.addCost(price*oldLine.getQuantity());
+				for (VoOrderLine oldLine : voOrder.getOdrerLines().values()) {
+					if (!currentOdrerLines.containsKey(oldLine.getProduct().getId())) { 
+						// there is no such product in the current order
+						Double price = oldLine.getProduct().getPrice(currentOrder.getPriceType()); 
+						// Product is detached member so the price stored in this object would be actual
+						currentOdrerLines.put(oldLine.getProduct().getId(),new VoOrderLine(currentOrder, oldLine.getProduct(), oldLine.getQuantity(), price));
+						currentOrder.addCost(price * oldLine.getQuantity());
 					}
 				}
 				pm.makePersistent(currentOrder);
+				return 0;
 			}
 			throw new InvalidOperation(VoError.GeneralError, "Order not found by ID:" + oldOrderId);
 		} catch (Exception e) {
@@ -674,27 +669,23 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	@Override
 	public OrderLine setOrderLine(long productId, double quantity) throws InvalidOperation, TException {
-		if( 0==quantity) {
+		if (0 == quantity) {
 			removeOrderLine(productId);
 			return null;
 		}
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-			SortedSet<VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
+			Map<Long, VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
 			if (null != voProduct) {
-				SortedSet<VoOrderLine> subSet = currentOdrerLines.subSet(new VoOrderLine( productId ), new VoOrderLine( productId + 1));
-				double price = voProduct.getPrice( currentOrder.getPriceType());
-				if( subSet.size() > 0 && subSet.first().getProduct().getId() == productId){ //order contains the line for the product
-					double qDelta = quantity - subSet.first().getQuantity(); 
-					subSet.first().setQuantity(quantity);
-					currentOrder.addCost(qDelta * price);
-				} else {
-					currentOdrerLines.add( new VoOrderLine(currentOrder, voProduct, quantity, price));
-					currentOrder.addCost(quantity * price);
-				}
+				double price = voProduct.getPrice(currentOrder.getPriceType());
+				VoOrderLine theLine = new VoOrderLine(currentOrder, voProduct,quantity,price);
+				VoOrderLine oldLine = currentOdrerLines.put(productId, theLine);
+				currentOrder.addCost(quantity * price - 
+						(null == oldLine ? 0 : oldLine.getPrice() * oldLine.getQuantity()));
 				pm.makePersistent(currentOrder);
+				return theLine.getOrderLine();
 			}
 			throw new InvalidOperation(VoError.GeneralError, "PRoduct not found by ID:" + productId);
 		} catch (Exception e) {
@@ -710,13 +701,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-			SortedSet<VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
-			VoOrderLine productLine = new VoOrderLine( productId );
-			SortedSet<VoOrderLine> subSet = currentOdrerLines.subSet(productLine, new VoOrderLine( productId + 1L));
-			if( 0==subSet.size())
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No order line found for product id="+productId);
-			currentOrder.addCost(-subSet.first().getPrice());
-			currentOdrerLines.remove(productLine);
+			Map<Long,VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
+			VoOrderLine removedLine = currentOdrerLines.remove(productId);
+			if (null == removedLine)
+				throw new InvalidOperation(VoError.IncorrectParametrs, "No order line found for product id=" + productId);
+			currentOrder.addCost(-removedLine.getPrice() * removedLine.getQuantity());
 			pm.makePersistent(currentOrder);
 			return true;
 		} catch (Exception e) {
@@ -732,23 +721,28 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-			VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId(pm));
+			DeliveryType oldDelivery;
+			if (deliveryType != (oldDelivery = currentOrder.getDelivery())) {
+				VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId(pm));
 
-			Map<Integer, Double> deliveryCosts = voShop.getDeliveryCosts();
-			if (deliveryCosts.containsKey(deliveryType)) {
-				currentOrder.setDeliveryCost(deliveryCosts.get(deliveryType));
-				VoUser voUSer = getCurrentUser(pm);
-				currentOrder.setDelivery(deliveryType);
-				if (deliveryType == DeliveryType.SELF_PICKUP) {
-					currentOrder.setDeliveryTo(voShop.getAddress());
+				Map<Integer, Double> deliveryCosts = voShop.getDeliveryCosts();
+				if (deliveryCosts.containsKey(deliveryType.getValue())) {
+					
+					currentOrder.setDeliveryCost(deliveryCosts.get(deliveryType.getValue()));
+					VoUser voUSer = getCurrentUser(pm);
+					currentOrder.setDelivery(deliveryType);
+					if (deliveryType == DeliveryType.SELF_PICKUP) {
+						currentOrder.setDeliveryTo(voShop.getAddress());
+					} else {
+						currentOrder.setDeliveryTo(voUSer.getAddress());
+					}
+					currentOrder.addCost(voShop.getDeliveryCosts().get(deliveryType.getValue()) - voShop.getDeliveryCosts().get(oldDelivery.getValue()));
+					pm.makePersistent(currentOrder);
+				
 				} else {
-					currentOrder.setDeliveryTo(voUSer.getAddress());
+					logger.warn("" + voShop + " have no cost for delivery " + deliveryType.name() + " delivery type will not been changed");
 				}
-				pm.makePersistent(currentOrder);
-			} else {
-				logger.warn("" + voShop + " have no cost for delivery " + deliveryType.name() + " delivery type will not been changed");
 			}
-			;
 			return currentOrder.getOrderDetails();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -764,19 +758,23 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
 			VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId(pm));
-
-			Map<Integer, Double> paymentTypes = voShop.getPaymentTypes();
-			if (paymentTypes.containsKey(paymentType)) {
-				double paymentFee = paymentTypes.get(currentOrder.getPaymentType());
-				currentOrder.setPaymentType(paymentType);
-				currentOrder.setTotalCost(currentOrder.getTotalCost() - paymentFee + paymentTypes.get(paymentType));
-				currentOrder.setPaymentType(paymentType);
-				pm.makePersistent(currentOrder);
-				return false;
-			} else {
-				logger.warn("" + voShop + " have no Payment type " + paymentType.name() + " Payment type will not been changed");
-				return false;
+			PaymentType oldPaymentType = currentOrder.getPaymentType();
+			
+			if (oldPaymentType != paymentType) {
+				Map<Integer, Double> paymentTypes = voShop.getPaymentTypes();
+				if (paymentTypes.containsKey(paymentType.getValue())) {
+					double paymentFee = paymentTypes.get(oldPaymentType.getValue());
+					currentOrder.setPaymentType(paymentType);
+					currentOrder.setTotalCost(currentOrder.getTotalCost() - paymentFee + paymentTypes.get(paymentType.getValue()));
+					currentOrder.setPaymentType(paymentType);
+					pm.makePersistent(currentOrder);
+					return false;
+				} else {
+					logger.warn("" + voShop + " have no Payment type " + paymentType.name() + " Payment type will not been changed");
+					return false;
+				}
 			}
+			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to setOrderPaymentType=" + paymentType.name() + ". " + e);
@@ -820,18 +818,38 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	@Override
 	public void setProductPrices(Map<Long, Map<PriceType, Double>> newPricesMap) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
-		Transaction ct = pm.currentTransaction();
-		ct.begin();
+		long shopId = getCurrentShopId(pm);
+		//Transaction ct = pm.currentTransaction(); //cross tranaction required
+		//ct.begin();
 		try {
 			for (Entry<Long, Map<PriceType, Double>> ppe : newPricesMap.entrySet()) {
 				VoProduct vp = pm.getObjectById(VoProduct.class, ppe.getKey());
 				vp.setPricesMap(ppe.getValue());
 				pm.makePersistent(vp);
+			}// Now time to update all of orders that not processed yet 
+			Query voquery = pm.newQuery(VoOrder.class);
+			voquery.setFilter("status == '"+OrderStatus.NEW+"' && shopId == "+shopId);
+			List<VoOrder> orders = (List<VoOrder>) voquery.execute();
+			for (VoOrder voOrder : orders) {
+				Map<Long, VoOrderLine> odrerLines = voOrder.getOdrerLines();
+				double costChange = 0;
+				for (VoOrderLine ol : odrerLines.values()) {
+					//check if update make sense on the current order line for order's kinda price type
+					if( newPricesMap.containsKey(ol.getProduct().getId()) && 
+							newPricesMap.get(ol.getProduct().getId()).containsKey(voOrder.getPriceType()) ){
+						double oldPrice = ol.getPrice(), 
+								newPrice = newPricesMap.get(ol.getProduct().getId()).get(voOrder.getPriceType());
+						ol.setPrice(  newPrice );
+						costChange += (newPrice - oldPrice) * ol.getQuantity();
+					}
+				}
+				voOrder.addCost(costChange);
+				pm.makePersistent(voOrder);
 			}
-			ct.commit();
+			//ct.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
-			ct.rollback();
+			//ct.rollback();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to update order prices map." + e);
 		} finally {
 			pm.close();
@@ -864,5 +882,82 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		} finally {
 			pm.close();
 		}
+	}
+
+	@Override
+	public void setOrderStatus(long orderId, OrderStatus newStatus) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoOrder currentOrder = pm.getObjectById(VoOrder.class, orderId);
+			currentOrder.setStatus(newStatus);
+			pm.makePersistent(currentOrder);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to setOrderPaymentStatus to " + newStatus.name() + e);
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public List<Order> getOrdersByStatus(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		Long shopId = getCurrentShopId(pm);
+		try {
+			Query pcq = pm.newQuery(VoOrder.class);
+			pcq.setFilter("shopId == " + shopId + " && user == " + getCurrentUserId(pm)
+					+ " && date >= " + dateFrom + " && status == '" + status+"'");
+			List<VoOrder> ps = (List<VoOrder>) pcq.execute(dateFrom);
+			List<Order> lo = new ArrayList<Order>();
+			for (VoOrder p : ps) {
+				if (p.getDate() < dateTo)
+					lo.add(p.getOrder());
+			}
+			pcq.closeAll();
+			return lo;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to getOrders for shopId=" + shopId + "." + e);
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public Order getOrder(long orderId) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoOrder currentOrder;
+			if( 0 == orderId ) {
+				currentOrder = getCurrentOrder(pm);
+			} else {
+				currentOrder = pm.getObjectById(VoOrder.class, orderId);
+				super.setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), orderId, pm);
+			}
+			return currentOrder.getOrder();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to get Order by ID " + orderId + ". " + e);
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public void updateProduct(FullProductInfo newInfoWithOldId) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateShop(Shop newShopWithOldId) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateCategory(ProductCategory newCategoryInfo) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		
 	}
 }

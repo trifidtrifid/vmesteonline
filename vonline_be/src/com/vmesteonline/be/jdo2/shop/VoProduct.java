@@ -294,7 +294,7 @@ public class VoProduct {
 	}
 	
 	public double getPrice(PriceType priceType) {
-		return pricesMap.containsKey(priceType) ? pricesMap.get(priceType) : price;
+		return pricesMap.containsKey(priceType.getValue()) ? pricesMap.get(priceType.getValue()) : price;
 	}
 
 	public void setPrice(double price) {

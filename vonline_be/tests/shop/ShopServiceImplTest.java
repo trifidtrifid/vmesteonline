@@ -20,12 +20,16 @@ import org.junit.Test;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.AuthServiceImpl;
+import com.vmesteonline.be.Building;
+import com.vmesteonline.be.City;
+import com.vmesteonline.be.Country;
 import com.vmesteonline.be.Group;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.MessageServiceImpl;
 import com.vmesteonline.be.MessageType;
 import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.ShopServiceImpl;
+import com.vmesteonline.be.Street;
 import com.vmesteonline.be.Topic;
 import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.VoError;
@@ -34,7 +38,9 @@ import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.FullProductInfo;
 import com.vmesteonline.be.shop.Order;
 import com.vmesteonline.be.shop.OrderDetails;
+import com.vmesteonline.be.shop.OrderLine;
 import com.vmesteonline.be.shop.OrderStatus;
+import com.vmesteonline.be.shop.PaymentStatus;
 import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Producer;
@@ -65,6 +71,8 @@ public class ShopServiceImplTest {
 	private static String TAG = "TAG";
 	Topic topic;
 	PostalAddress userAddress;
+	PostalAddress userAddress2;
+
 	private ArrayList<Long> topicSet = new ArrayList<Long>();
 	private static ArrayList<String> tags;
 	private static HashMap<DeliveryType, Double> deliveryCosts;
@@ -118,6 +126,12 @@ public class ShopServiceImplTest {
 				.get(0).getId(), 0);
 
 		topicSet.add(topic.getId());
+
+		Country country = usi.getCounties().get(0);
+		City city = usi.getCities(country.getId()).get(0);
+		Street street = usi.getStreets(city.getId()).get(0);
+		Building building = usi.createNewBuilding(street.getId(), "17/3", 123.45, 54.321);
+		userAddress2 = new PostalAddress(country, city, street, building, (byte) 1, (byte) 2, 3, "");
 	}
 
 	@After
@@ -244,9 +258,9 @@ public class ShopServiceImplTest {
 			Long shopId = si.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
-		// initialize shop dates
-					HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
-					si.setDates(dates);
+			// initialize shop dates
+			HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
+			si.setDates(dates);
 
 			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", ByteBuffer.wrap(LOGO.getBytes()),
 					"http://google.com"), shopId);
@@ -380,103 +394,6 @@ public class ShopServiceImplTest {
 	}
 
 	@Test
-	public void testGetFullOrders() {
-		try {
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
-			// set current shop
-			si.getShop(shopId);
-
-			// initialize shop dates
-			HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
-			si.setDates(dates);
-			
-			// create categories
-			List<ProductCategory> categories = new Vector<ProductCategory>();
-			ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet);
-			ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set);
-			ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set);
-			ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set);
-
-			categories.add(rootCat);
-			categories.add(l2Cat);
-			categories.add(l3cat1);
-			categories.add(l3cat2);
-
-			List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true, true);
-			
-			// initialize shop dates
-			si.setDates(dates);
-
-			// create producers
-			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", ByteBuffer.wrap(LOGO.getBytes()),
-					"http://google.com"), shopId);
-			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", ByteBuffer.wrap(LOGO.getBytes()),
-					"http://google2.com"), shopId);
-
-			// Upload products
-
-			ArrayList<FullProductInfo> productsList = new ArrayList<FullProductInfo>();
-
-			ArrayList<Long> categories1 = new ArrayList<Long>();
-			categories1.add(l3cat1.getId());
-
-			ArrayList<Long> categories2 = new ArrayList<Long>();
-			categories2.add(l3cat2.getId());
-
-			HashMap<PriceType, Double> pricesMap1 = new HashMap<PriceType, Double>();
-			pricesMap1.put(PriceType.RETAIL, 12.0D);
-			pricesMap1.put(PriceType.INET, 13.0D);
-
-			HashMap<String, String> optionsMap1 = new HashMap<String, String>();
-			optionsMap1.put("цвет", "белый");
-			optionsMap1.put("вкус", "слабый");
-
-			HashMap<PriceType, Double> pricesMap2 = new HashMap<PriceType, Double>();
-			pricesMap2.put(PriceType.INET, 14.0D);
-			pricesMap2.put(PriceType.RETAIL, 15.0D);
-
-			HashMap<String, String> optionsMap2 = new HashMap<String, String>();
-			optionsMap2.put("цвет", "черный");
-			optionsMap2.put("вкус", "мерзкий");
-
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, ByteBuffer.wrap(LOGO.getBytes()), 11D),
-					new ProductDetails(categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId)));
-
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, ByteBuffer.wrap(LOGO.getBytes()), 12D),
-					new ProductDetails(categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id)));
-
-			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
-
-			// initialize shop dates
-			dates = new HashMap<Integer, DateType>();
-			si.setDates(dates);
-
-			// si.createOrder(date)
-			fail("Not finished in implementation yet");
-
-			// check the consistency of IDs
-			// get root category
-			List<ProductCategory> rootCats = si.getProductCategories(0);
-			Assert.assertEquals(1, rootCats.size());
-			validateCategory(rootCat, rootCats.get(0));
-
-			List<ProductCategory> l2Cats = si.getProductCategories(rootCats.get(0).getId());
-			Assert.assertEquals(1, l2Cats.size());
-			validateCategory(l2Cat, l2Cats.get(0));
-
-			List<ProductCategory> l3Cats = si.getProductCategories(l2Cats.get(0).getId());
-			Assert.assertEquals(2, l3Cats.size());
-			validateCategory(l3cat1, l3Cats.get(0));
-			validateCategory(l3cat2, l3Cats.get(1));
-
-		} catch (TException e) {
-			e.printStackTrace();
-			fail("Exception thrown: " + e.getMessage());
-		}
-	}
-
-	@Test
 	public void testSetDates() {
 		try {
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
@@ -487,6 +404,8 @@ public class ShopServiceImplTest {
 			// initialize shop dates
 			HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
 			int now = (int) (System.currentTimeMillis() / 1000L);
+			now -= now % 86400;
+			
 			int day = 3600 * 24;
 
 			dates.put(now, DateType.NEXT_ORDER);
@@ -501,8 +420,8 @@ public class ShopServiceImplTest {
 
 			Map<Integer, DateType> sd = si.getDates(now - 10 * day, now + 10 * day);
 			Assert.assertEquals(sd.size(), 4);
-			Assert.assertEquals(sd.get(now + 10), DateType.NEXT_ORDER);
-			Assert.assertEquals(sd.get(now + 3 * day + 100), DateType.CLOSED);
+			Assert.assertEquals(sd.get(now), DateType.NEXT_ORDER);
+			Assert.assertEquals(sd.get(now + 3 * day), DateType.CLOSED);
 			Assert.assertEquals(sd.get(now + 30 * day), null);
 
 		} catch (TException e) {
@@ -551,7 +470,7 @@ public class ShopServiceImplTest {
 			si.setDates(dates);
 			si.setDates(dates);
 			si.setDates(dates);
-			
+
 			// create categories
 			List<ProductCategory> categories = new Vector<ProductCategory>();
 			ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet);
@@ -616,9 +535,10 @@ public class ShopServiceImplTest {
 			dates.put(now + 2 * day, DateType.SPECIAL_PRICE);
 			dates.put(now + 3 * day, DateType.CLOSED);
 			dates.put(now + 6 * day, DateType.NEXT_ORDER);
+			dates.put(now + 10 * day, DateType.NEXT_ORDER);
 			si.setDates(dates);
 
-			si.createOrder(now+1000, PriceType.RETAIL);
+			si.createOrder(now + 1000, PriceType.RETAIL);
 			long canceledOID = si.cancelOrder();
 			try {
 				si.createOrder(now + 5 * day, PriceType.RETAIL);
@@ -628,7 +548,7 @@ public class ShopServiceImplTest {
 				e.printStackTrace();
 			}
 			long lastOrder = si.createOrder(now + 6 * day, PriceType.RETAIL);
-			
+
 			List<Order> orders = si.getOrders(now - 10 * day, now + 10 * day);
 			Assert.assertEquals(orders.size(), 2);
 			boolean orderFound = false;
@@ -636,14 +556,181 @@ public class ShopServiceImplTest {
 				if (order.getStatus() == OrderStatus.CANCELED) {
 					Assert.assertEquals(canceledOID, order.getId());
 					Assert.assertEquals(0.0D, order.getTotalCost());
-					Assert.assertEquals(now+1000, order.getDate());
+					Assert.assertEquals(now + 1000, order.getDate());
 					orderFound = true;
 				}
 			}
-			Assert.assertTrue( orderFound );
-			
-			si.setOrderLine( upProductsIdl.get(0), 1.0D);
+			Assert.assertTrue(orderFound);
+
+			OrderLine newOrderLine = si.setOrderLine(upProductsIdl.get(0), 1.0D);
+			Assert.assertEquals(newOrderLine.getProduct().getId(), upProductsIdl.get(0).longValue());
+			Assert.assertEquals(newOrderLine.getQuantity(), 1.0D);
+			Assert.assertEquals(newOrderLine.getPrice(), 12.0D);
+
+			si.setOrderLine(upProductsIdl.get(0), 1.0D); // set the same quantity
+																										// again
+			si.setOrderLine(upProductsIdl.get(0), 2.0D); // set new quantity
+			si.setOrderLine(upProductsIdl.get(1), 3.0D); // add new product
+
 			OrderDetails orderDetails = si.getOrderDetails(lastOrder);
+			List<OrderLine> odrerLines = orderDetails.getOdrerLines();
+			Assert.assertEquals(odrerLines.size(), 2);
+			orders = si.getOrders(now + 5 * day, now + 7 * day);
+			Assert.assertEquals(orders.size(), 1);
+			Assert.assertEquals(orders.get(0).getTotalCost(), 12.0D * 2.0D + 15.0D * 3.0D);
+			Assert.assertEquals(odrerLines.get(0).getQuantity(), 2.0D);
+			si.removeOrderLine(upProductsIdl.get(0));
+
+			orderDetails = si.getOrderDetails(lastOrder);
+			odrerLines = orderDetails.getOdrerLines();
+			Assert.assertEquals(odrerLines.size(), 1);
+			orders = si.getOrders(now + 5 * day, now + 7 * day);
+			Assert.assertEquals(orders.size(), 1);
+			Assert.assertEquals(orders.get(0).getTotalCost(), 15.0D * 3.0D);
+			Assert.assertEquals(odrerLines.get(0).getQuantity(), 3.0D);
+			// here we have an order with One product of second type lets try merge
+			// and add other orders
+
+			si.createOrder(now + 10 * day, PriceType.INET);
+			si.appendOrder(orders.get(0).getId()); // here we expect to have a copy of
+																							// an old order
+			si.appendOrder(orders.get(0).getId()); // here we expect to have doubled
+																							// order
+			orders = si.getOrders(now + 5 * day, now + 11 * day);
+			Assert.assertEquals(orders.size(), 2);
+			orderDetails = si.getOrderDetails(orders.get(1).getId());
+			odrerLines = orderDetails.getOdrerLines();
+			Assert.assertEquals(orders.get(1).getTotalCost(), 14.0D * 6.0D);
+			Assert.assertEquals(odrerLines.get(0).getQuantity(), 6.0D);
+
+			// merge an order
+			si.mergeOrder(orders.get(0).getId()); // merge will add only products that
+																						// are not included yet, so no lines
+																						// expected to be added
+			orders = si.getOrders(now + 5 * day, now + 11 * day);
+			Assert.assertEquals(orders.size(), 2);
+			orderDetails = si.getOrderDetails(orders.get(1).getId());
+			Assert.assertEquals(orders.get(1).getTotalCost(), 14.0D * 6.0D);
+			Assert.assertEquals(odrerLines.get(0).getQuantity(), 6.0D);
+
+			// clean the order lines add a product 1 and merge with an old order with
+			// product 2
+			si.removeOrderLine(odrerLines.get(0).getProduct().getId());
+			si.setOrderLine(upProductsIdl.get(0), 2.0D);
+			si.mergeOrder(orders.get(0).getId());
+			orders = si.getOrders(now + 9 * day, now + 11 * day);
+			Assert.assertEquals(orders.size(), 1);
+			orderDetails = si.getOrderDetails(orders.get(0).getId());
+
+			// void testConfirmOrder() {
+			long curOrderId = orders.get(0).getId();
+			long confirmedOrder = si.confirmOrder();
+			Assert.assertEquals(curOrderId, confirmedOrder);
+			orders = si.getOrders(now + 9 * day, now + 11 * day);
+			Assert.assertEquals(orders.size(), 1);
+			Assert.assertEquals(orders.get(0).getStatus(), OrderStatus.CONFIRMED);
+
+			List<Order> fullOrders = si.getFullOrders(0, now + 1000 * day, 0, 0);
+			Assert.assertEquals(fullOrders.size(), 3);
+			fullOrders = si.getFullOrders(0, now + 1000 * day, userId + 1, 0);
+			Assert.assertEquals(fullOrders.size(), 0);
+			fullOrders = si.getFullOrders(0, now + 1000 * day, userId, 0);
+			Assert.assertEquals(fullOrders.size(), 3);
+			fullOrders = si.getFullOrders(0, now + 1000 * day, userId, shopId + 1);
+			Assert.assertEquals(fullOrders.size(), 0);
+			fullOrders = si.getFullOrders(0, now + 1000 * day, userId, shopId);
+			Assert.assertEquals(fullOrders.size(), 3);
+			fullOrders = si.getFullOrders(0, now + 1000 * day, 0, shopId);
+			Assert.assertEquals(fullOrders.size(), 3);
+
+			orders = si.getOrdersByStatus(0, now + 1000 * day, OrderStatus.CONFIRMED);
+			Assert.assertEquals(orders.size(), 1);
+			Assert.assertEquals(orders.get(0).getId(), confirmedOrder);
+
+			Order curOrder = si.getOrder(confirmedOrder);
+			OrderDetails curOrderDetails = si.getOrderDetails(curOrder.getId());
+			
+			/*@Test
+			public void testSetProductPrices() {*/
+			Map<Long, Map<PriceType,Double>> productPrices = new HashMap<Long, Map<PriceType,Double>>();
+			
+			HashMap<PriceType, Double> pricesMap11 = new HashMap<PriceType, Double>();
+			pricesMap11.put(PriceType.RETAIL, 22.0D);
+			pricesMap11.put(PriceType.INET, 23.0D);
+			
+			HashMap<PriceType, Double> pricesMap21 = new HashMap<PriceType, Double>();
+			pricesMap21.put(PriceType.INET, 24.0D);
+			pricesMap21.put(PriceType.RETAIL, 25.0D);
+			productPrices.put( upProductsIdl.get(0), pricesMap11);
+			productPrices.put( upProductsIdl.get(1), pricesMap21);
+			
+			//CHeck costs before change of prices 
+			si.setOrderLine(upProductsIdl.get(0), 10.0D);
+			si.setOrderLine(upProductsIdl.get(1), 1.0D);
+			
+			curOrder = si.getOrder(0);
+			curOrderDetails = si.getOrderDetails(curOrder.getId());
+			Assert.assertEquals(curOrder.getTotalCost(), 144.0);
+			Assert.assertEquals(curOrderDetails.getOdrerLines().size(), 2);
+			Assert.assertEquals(curOrderDetails.getOdrerLines().get(0).getPrice(), 13.0D);
+			Assert.assertEquals(curOrderDetails.getOdrerLines().get(0).getQuantity(), 10.0D);
+			Assert.assertEquals(curOrderDetails.getOdrerLines().get(1).getPrice(), 14.0D);
+			Assert.assertEquals(curOrderDetails.getOdrerLines().get(1).getQuantity(), 1.0D);
+			
+			//change Prices and check again
+			si.setProductPrices( productPrices );
+			si.setOrderLine(upProductsIdl.get(0), 10.0D);
+			si.setOrderLine(upProductsIdl.get(1), 1.0D);
+			
+			curOrder = si.getOrder(0);
+			curOrderDetails = si.getOrderDetails(curOrder.getId());
+			Assert.assertEquals(curOrder.getTotalCost(), 254.0);
+			Assert.assertEquals(curOrderDetails.getOdrerLines().size(), 2);
+			Assert.assertEquals(curOrderDetails.getOdrerLines().get(0).getPrice(), 23.0D);
+			Assert.assertEquals(curOrderDetails.getOdrerLines().get(0).getQuantity(), 10.0D);
+			Assert.assertEquals(curOrderDetails.getOdrerLines().get(1).getPrice(), 24.0D);
+			Assert.assertEquals(curOrderDetails.getOdrerLines().get(1).getQuantity(), 1.0D);
+			
+			//}
+			
+			
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testSetOrderDeliveryType() {
+
+		try {
+
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Long shopId = si.registerShop(shop);
+			// set current shop
+			si.getShop(shopId);
+
+			Map<Integer, DateType> dateDateTypeMap = new HashMap<Integer, DateType>();
+			int date = (int) (System.currentTimeMillis() / 1000L) + 1000;
+			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
+			si.setDates(dateDateTypeMap);
+
+			long order = si.createOrder(date, PriceType.INET);
+			Map<DeliveryType, Double> newDeliveryCosts = new HashMap<DeliveryType, Double>();
+			newDeliveryCosts.put(DeliveryType.LONG_RANGE, 10.0D);
+			newDeliveryCosts.put(DeliveryType.SHORT_RANGE, 5.0D);
+			newDeliveryCosts.put(DeliveryType.SELF_PICKUP, 0.0D);
+			si.setDeliveryCosts(newDeliveryCosts);
+
+			si.setOrderDeliveryType(DeliveryType.SHORT_RANGE);
+			List<Order> curOrders = si.getOrders(date, date + 1);
+			Assert.assertEquals(curOrders.size(), 1);
+			Assert.assertEquals(curOrders.get(0).getTotalCost(), 5.0D);
+			si.setOrderDeliveryType(DeliveryType.LONG_RANGE);
+			curOrders = si.getOrders(date, date + 1);
+			Assert.assertEquals(curOrders.size(), 1);
+			Assert.assertEquals(curOrders.get(0).getTotalCost(), 10.0D);
+			Assert.assertEquals(si.getOrderDetails(order).getDelivery(), DeliveryType.LONG_RANGE);
 
 		} catch (TException e) {
 			e.printStackTrace();
@@ -652,34 +739,94 @@ public class ShopServiceImplTest {
 
 	}
 
-	
-	 /* @Test public void testGetOrderDetails() { fail("Not yet implemented"); }
-	 * 
-	 * @Test public void testConfirmOrder() { fail("Not yet implemented"); }
-	 * 
-	 * @Test public void testAppendOrder() { fail("Not yet implemented"); }
-	 * 
-	 * @Test public void testMergeOrder() { fail("Not yet implemented"); }
-	 * 
-	 * @Test public void testAddOrderLine() { fail("Not yet implemented"); }
-	 * 
-	 * @Test public void testRemoveOrderLine() { fail("Not yet implemented"); }
-	 * 
-	 * @Test public void testSetOrderDeliveryType() { fail("Not yet implemented");
-	 * }
-	 * 
-	 * @Test public void testSetOrderPaymentType() { fail("Not yet implemented");
-	 * }
-	 * 
-	 * @Test public void testSetOrderDeliveryAddress() {
-	 * fail("Not yet implemented"); }
-	 * 
-	 * @Test public void testSetOrderPaymentStatus() {
-	 * fail("Not yet implemented"); }
-	 * 
-	 * @Test public void testSetProductPrices() { fail("Not yet implemented"); }
-	 * 
-	 * @Test public void testSetDeliveryCosts() { fail("Not yet implemented"); }
-	 */
+	@Test
+	public void testSetOrderPaymentType() {
 
+		try {
+
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Long shopId = si.registerShop(shop);
+			// set current shop
+			si.getShop(shopId);
+
+			Map<Integer, DateType> dateDateTypeMap = new HashMap<Integer, DateType>();
+			int date = (int) (System.currentTimeMillis() / 1000L) + 1000;
+			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
+			si.setDates(dateDateTypeMap);
+
+			long order = si.createOrder(date, PriceType.INET);
+
+			Map<PaymentType, Double> newPaymentCosts = new HashMap<PaymentType, Double>();
+			newPaymentCosts.put(PaymentType.CREDIT_CARD, 10.0D);
+			newPaymentCosts.put(PaymentType.SHOP_CREDIT, 5.0D);
+			newPaymentCosts.put(PaymentType.CASH, 0.0D);
+			si.setPaymentTypesCosts(newPaymentCosts);
+
+			si.setOrderPaymentType(PaymentType.SHOP_CREDIT);
+			List<Order> curOrders = si.getOrders(date, date + 1);
+			Assert.assertEquals(curOrders.size(), 1);
+			Assert.assertEquals(curOrders.get(0).getTotalCost(), 5.0D);
+			si.setOrderPaymentType(PaymentType.CREDIT_CARD);
+			curOrders = si.getOrders(date, date + 1);
+			Assert.assertEquals(curOrders.size(), 1);
+			Assert.assertEquals(curOrders.get(0).getTotalCost(), 10.0D);
+			Assert.assertEquals(si.getOrderDetails(order).getPaymentType(), PaymentType.CREDIT_CARD);
+
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testSetOrderDeliveryAddress() {
+		try {
+
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Long shopId = si.registerShop(shop);
+			// set current shop
+			si.getShop(shopId);
+
+			Map<Integer, DateType> dateDateTypeMap = new HashMap<Integer, DateType>();
+			int date = (int) (System.currentTimeMillis() / 1000L) + 1000;
+			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
+			si.setDates(dateDateTypeMap);
+
+			long order = si.createOrder(date, PriceType.INET);
+			si.setOrderDeliveryAddress(userAddress2);
+			OrderDetails orderDetails = si.getOrderDetails(order);
+			Assert.assertEquals(orderDetails.getDeliveryTo(), userAddress2);
+
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+
+	@Test 
+	  public void testSetOrderPaymentStatus() {
+
+	try{
+	  		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+				Long shopId = si.registerShop(shop);
+				// set current shop
+				si.getShop(shopId);
+				
+				Map<Integer, DateType> dateDateTypeMap = new HashMap<Integer, DateType>();
+				int date = (int)(System.currentTimeMillis() / 1000L) + 1000;
+				dateDateTypeMap.put( date, DateType.NEXT_ORDER);
+				si.setDates(dateDateTypeMap);
+				
+				long order = si.createOrder(date, PriceType.INET);
+				PaymentStatus ps = si.getOrderDetails(order).getPaymentStatus();
+				Assert.assertEquals(ps, PaymentStatus.WAIT);
+				si.setOrderPaymentStatus(order,  PaymentStatus.COMPLETE);
+				ps = si.getOrderDetails(order).getPaymentStatus();
+				Assert.assertEquals(ps, PaymentStatus.COMPLETE);
+				
+			} catch (TException e) {
+				e.printStackTrace();
+				fail("Exception thrown: " + e.getMessage());
+			}
+	  }
 }

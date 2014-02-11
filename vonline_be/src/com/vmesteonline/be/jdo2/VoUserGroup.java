@@ -9,7 +9,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.Group;
-import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 
 @PersistenceCapable
 public class VoUserGroup implements Comparable<VoUserGroup>  {

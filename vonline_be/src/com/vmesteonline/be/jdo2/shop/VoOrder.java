@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.jdo.PersistenceManager;
-import javax.jdo.Transaction;
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -38,6 +36,14 @@ import com.vmesteonline.be.shop.PriceType;
 @PersistenceCapable
 public class VoOrder {
 
+	private static final class OrderLineComparator implements Comparator<VoOrderLine> {
+		@Override
+		public int compare(VoOrderLine o1, VoOrderLine o2) {
+			return null == o1.getProduct() ? null == o1.getProduct() ? 0 : 1 :
+				o1.getProduct().getName().compareTo(o1.getProduct().getName());
+		}
+	}
+
 	public PriceType getPriceType() {
 		return priceType;
 	}
@@ -61,16 +67,8 @@ public class VoOrder {
 		this.deliveryTo = user.getAddress();
 		this.totalCost = 0D;
 		this.paymentType = PaymentType.CASH;
-		this.paymentStatus = PaymentStatus.WIAT;
-		this.odrerLines = new TreeSet<VoOrderLine>( new Comparator<VoOrderLine>(){
-
-			@Override
-			public int compare(VoOrderLine o1, VoOrderLine o2) {
-				return null == o1.getProduct() ? null == o1.getProduct() ? 0 : 1 :
-					Long.compare(o1.getProduct().getId(),o1.getProduct().getId());
-			}
-			
-		});
+		this.paymentStatus = PaymentStatus.WAIT;
+		this.odrerLines = new HashMap<Long,VoOrderLine>();
 		this.priceType = priceType; 
 		try{
 			pm.makePersistent(this);
@@ -84,18 +82,16 @@ public class VoOrder {
 	
 	public double addOrderLine( OrderLine orderLine ) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		Transaction currentTransaction = pm.currentTransaction();
 		try {
 			VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProduct().getId());
+			
 			VoOrderLine voOrderLine = new VoOrderLine(this, product, orderLine.getQuantity(), product.getPrice( priceType));
-			this.odrerLines.add( voOrderLine );
-			this.incrementTotalCost(voOrderLine.getPrice());
+			VoOrderLine oldLine = this.odrerLines.put( voOrderLine.getProduct().getId(), voOrderLine );
+			this.incrementTotalCost(voOrderLine.getPrice()*voOrderLine.getQuantity() - oldLine.getPrice() * oldLine.getQuantity());
 			pm.makePersistent( voOrderLine );
 			pm.makePersistent(this);
-			currentTransaction.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
-			currentTransaction.rollback();
 		} finally {
 			pm.close();
 		}
@@ -109,11 +105,17 @@ public class VoOrder {
 		OrderDetails od = new OrderDetails(createdAt, delivery, deliveryCost, 
 				deliveryTo.getPostalAddress(), paymentType, paymentStatus,
 				new ArrayList<OrderLine>(), comment);
-		for( VoOrderLine vol: odrerLines){
+		SortedSet<VoOrderLine> ols = new TreeSet<VoOrderLine>();
+		if(null!=odrerLines) ols.addAll(odrerLines.values());
+		for( VoOrderLine vol: ols){
 			od.odrerLines.add(vol.getOrderLine());
 		}
 		return od;
 	}
+	
+	public VoOrderLine getOrderLineByProduct( long productId ){
+		return odrerLines.get(productId);
+	} 
 	
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
@@ -160,8 +162,8 @@ public class VoOrder {
   
   @Persistent(mappedBy="order")
   @OneToMany
-  @Unindexed
-  private SortedSet<VoOrderLine> odrerLines;
+  @Extension(key="comparator-name", value="com.vmesteonline.be.jdo2.shop.VoOrder.OrderLineComparator", vendorName="datanucleus")
+  private Map<Long,VoOrderLine> odrerLines;
   
   @Persistent
   private PriceType priceType; 
@@ -267,7 +269,7 @@ public class VoOrder {
 		return user;
 	}
 
-	public SortedSet<VoOrderLine> getOdrerLines() {
+	public Map<Long,VoOrderLine> getOdrerLines() {
 		return odrerLines;
 	}
 
@@ -290,6 +292,4 @@ public class VoOrder {
 				+ ", delivery=" + delivery + ", deliveryCost=" + deliveryCost + ", deliveryTo=" + deliveryTo + ", paymentType=" + paymentType
 				+ ", paymentStatus=" + paymentStatus + "]";
 	}
-  
-  
 }

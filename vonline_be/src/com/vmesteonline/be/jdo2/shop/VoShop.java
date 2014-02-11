@@ -144,7 +144,10 @@ public class VoShop {
 		return deliveryCosts;
 	}
 	public void setDates( Map<Integer,DateType> newDates ){
-		getDates().putAll( convertFromDateTypeMap(newDates, new TreeMap<Integer, Integer>()));
+		for (Entry<Integer,DateType> e: newDates.entrySet()) { //round to the begining of the day
+			dates.put(e.getKey() - e.getKey() % 86400, e.getValue().getValue());
+		}
+		//getDates().putAll( convertFromDateTypeMap(newDates, new TreeMap<Integer, Integer>()));
 	}
 	
 	public SortedMap<Integer,DateType> selectDates( int fromDate, int toDate){
