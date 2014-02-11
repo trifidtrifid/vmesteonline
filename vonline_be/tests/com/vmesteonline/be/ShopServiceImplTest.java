@@ -1,4 +1,4 @@
-package shop;
+package com.vmesteonline.be;
 
 import static org.junit.Assert.fail;
 

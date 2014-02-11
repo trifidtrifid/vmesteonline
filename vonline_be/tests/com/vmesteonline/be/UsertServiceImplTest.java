@@ -186,7 +186,7 @@ public class UsertServiceImplTest {
 			City newCity = usi.createNewCity(newCountry.getId(), CITY);
 			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
 			Building newBuilding = usi.createNewBuilding(newStreet.getId(),
-					BUILDING_NO, 17D, 53D);
+					BUILDING_NO, 0D, 0D);
 
 			Assert.assertEquals(newBuilding.getFullNo(), BUILDING_NO);
 			Assert.assertEquals(newBuilding.getStreetId(), newStreet.getId());
