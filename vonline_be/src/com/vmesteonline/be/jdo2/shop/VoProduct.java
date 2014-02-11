@@ -14,6 +14,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -29,11 +31,78 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoProduct {
 
-	
+	private VoProduct() {}
+
+	VoProduct( long productId) {
+		this.id = KeyFactory.createKey(VoProduct.class.getSimpleName(), productId);
+	}
+
+	public static VoProduct createObject(long shopId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
+		VoProduct vp = new VoProduct();
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+		try {
+			Product product = fpi.getProduct();
+			ProductDetails details = fpi.getDetails();
+
+			VoShop shop = pm.getObjectById(VoShop.class, shopId);
+
+			vp.name = product.getName();
+			vp.shortDescr = product.shortDescr;
+			vp.weight = product.getWeight();
+			try {
+				vp.imageURL = StorageHelper.saveImage(product.getImageURL());
+			} catch (IOException ie) {
+				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
+			}
+			vp.imagesURLset = new ArrayList<String>();
+			for (ByteBuffer imgURL : details.getImagesURLset())
+				try {
+					vp.imagesURLset.add(StorageHelper.saveImage(imgURL.array()));
+				} catch (IOException ie) {
+					throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
+				}
+
+			vp.price = product.getPrice();
+			vp.fullDescr = details.getFullDescr();
+
+			vp.pricesMap = convertFromPriceTypeMap(details.getPricesMap(), new HashMap<Integer, Double>());
+			vp.optionsMap = details.getOptionsMap();
+
+			vp.categories = new ArrayList<VoProductCategory>();
+			vp.shops = new ArrayList<VoShop>();
+
+			vp.shops.add(shop);
+			pm.makePersistent(vp);
+			shop.addProduct(vp);
+
+			for (long categoryId : details.getCategories()) {
+				VoProductCategory vpc = pm.getObjectById(VoProductCategory.class, categoryId);
+				vpc.getProducts().add(vp);
+				vp.categories.add(vpc);
+				pm.makePersistent(vpc);
+			}
+
+			vp.topicSet = new ArrayList<VoTopic>();
+			for (long topicId : details.getTopicSet()) {
+				VoTopic vTopic = pm.getObjectById(VoTopic.class, topicId);
+				vp.topicSet.add(vTopic);
+			}
+			VoProducer producer = pm.getObjectById(VoProducer.class, details.getProducerId());
+			vp.producer = producer;
+			producer.getProducts().add(vp);
+			pm.makePersistent(vp);
+			pm.makePersistent(producer);
+			return vp;
+		} finally {
+			if (null == _pm)
+				pm.close();
+		}
+	}
+
 	public VoProduct(long shopId, FullProductInfo fpi) throws InvalidOperation {
 		this(shopId, fpi, null);
 	}
-	
+
 	public VoProduct(long shopId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
 		Product product = fpi.getProduct();
 		ProductDetails details = fpi.getDetails();
@@ -57,28 +126,28 @@ public class VoProduct {
 		this.price = product.getPrice();
 		this.fullDescr = details.getFullDescr();
 
-		this.pricesMap = convertFromPriceTypeMap( details.getPricesMap(), new HashMap<Integer, Double>());
+		this.pricesMap = convertFromPriceTypeMap(details.getPricesMap(), new HashMap<Integer, Double>());
 		this.optionsMap = details.getOptionsMap();
 
 		this.categories = new ArrayList<VoProductCategory>();
 		this.shops = new ArrayList<VoShop>();
-		
-		PersistenceManager pm = null==_pm ? PMF.getPm() : _pm;
-		
+
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+
 		try {
 			pm.makePersistent(this);
-			
+
 			VoShop shop = pm.getObjectById(VoShop.class, shopId);
 			shop.addProduct(this);
 			shops.add(shop);
-			
+
 			for (long categoryId : details.getCategories()) {
 				VoProductCategory vpc = pm.getObjectById(VoProductCategory.class, categoryId);
 				vpc.getProducts().add(this);
 				this.categories.add(vpc);
 				pm.makePersistent(vpc);
 			}
-			
+
 			this.topicSet = new ArrayList<VoTopic>();
 			for (long topicId : details.getTopicSet()) {
 				VoTopic vTopic = pm.getObjectById(VoTopic.class, topicId);
@@ -94,46 +163,46 @@ public class VoProduct {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to create Product" + e.getMessage());
 		} finally {
-			if( null==_pm) pm.close();
+			if (null == _pm)
+				pm.close();
 		}
 	}
 
 	public Product getProduct() {
-		return new Product(id, name, shortDescr,weight,ByteBuffer.wrap(imageURL.getBytes()),price);
+		return new Product(id.getId(), name, shortDescr, weight, ByteBuffer.wrap(imageURL.getBytes()), price);
 	}
-	
+
 	public ProductDetails getProductDetails() {
 		ProductDetails productDetails = new ProductDetails();
-		
+
 		List<Long> cs = new ArrayList<Long>();
-		for( VoProductCategory pc : getCategories()){	
-			cs.add(pc.getId()); 
+		for (VoProductCategory pc : getCategories()) {
+			cs.add(pc.getId());
 		}
 		productDetails.setCategories(cs);
-		
+
 		List<ByteBuffer> ius = new ArrayList<ByteBuffer>();
-		for( String iu : getImagesURLset()){
-			ius.add( ByteBuffer.wrap(iu.getBytes()));
+		for (String iu : getImagesURLset()) {
+			ius.add(ByteBuffer.wrap(iu.getBytes()));
 		}
-			
-		productDetails.setPricesMap( convertToPriceTypeMap(pricesMap, new HashMap<PriceType, Double>())); 
+
+		productDetails.setPricesMap(convertToPriceTypeMap(pricesMap, new HashMap<PriceType, Double>()));
 		productDetails.setOptionsMap(optionsMap);
-	  List<Long> ts = new ArrayList<Long>();
-	  for( VoTopic vt : getTopicSet()){
-			ts.add( vt.getId().getId() );
+		List<Long> ts = new ArrayList<Long>();
+		for (VoTopic vt : getTopicSet()) {
+			ts.add(vt.getId().getId());
 		}
-	  productDetails.setProducerId( producer.getId());
-	  productDetails.setFullDescr(fullDescr);
-	  productDetails.setTopicSet(ts);
-	  productDetails.setImagesURLset(ius);
-	  
-	  
-	  
-	  return productDetails;
+		productDetails.setProducerId(producer.getId());
+		productDetails.setFullDescr(fullDescr);
+		productDetails.setTopicSet(ts);
+		productDetails.setImagesURLset(ius);
+
+		return productDetails;
 	}
+
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	private long id;
+	private Key id;
 
 	@Persistent
 	@Unindexed
@@ -156,7 +225,7 @@ public class VoProduct {
 	private double price;
 
 	@Persistent(mappedBy = "products")
-	/*@ManyToMany*/
+	/* @ManyToMany */
 	@Unowned
 	private List<VoProductCategory> categories;
 
@@ -183,8 +252,8 @@ public class VoProduct {
 	@Persistent(mappedBy = "products")
 	@Unowned
 	private VoProducer producer;
-	
-	@Persistent(mappedBy="products")
+
+	@Persistent(mappedBy = "products")
 	@Unowned
 	private List<VoShop> shops;
 
@@ -223,6 +292,10 @@ public class VoProduct {
 	public double getPrice() {
 		return price;
 	}
+	
+	public double getPrice(PriceType priceType) {
+		return pricesMap.containsKey(priceType.getValue()) ? pricesMap.get(priceType.getValue()) : price;
+	}
 
 	public void setPrice(double price) {
 		this.price = price;
@@ -253,7 +326,7 @@ public class VoProduct {
 	}
 
 	public Map<PriceType, Double> getPricesMap() {
-		return convertToPriceTypeMap( pricesMap, new HashMap<PriceType, Double>());
+		return convertToPriceTypeMap(pricesMap, new HashMap<PriceType, Double>());
 	}
 
 	public void setPricesMap(Map<PriceType, Double> pricesMap) {
@@ -285,10 +358,9 @@ public class VoProduct {
 	}
 
 	public long getId() {
-		return id;
+		return id.getId();
 	}
 
-	
 	@Override
 	public String toString() {
 		return "VoProduct [id=" + id + ", name=" + name + ", price=" + price + "]";
@@ -298,13 +370,16 @@ public class VoProduct {
 		return "VoProduct [id=" + id + ", name=" + name + ", shortDescr=" + shortDescr + ", weight=" + weight + ", imageURL=" + imageURL + ", price="
 				+ price + ", producer=" + producer + "]";
 	}
-	
-	public static Map<Integer, Double> convertFromPriceTypeMap( Map<PriceType, Double> in, Map<Integer, Double> out){
-		for( Entry<PriceType, Double> e: in.entrySet()) out.put(e.getKey().getValue(), e.getValue());
+
+	public static Map<Integer, Double> convertFromPriceTypeMap(Map<PriceType, Double> in, Map<Integer, Double> out) {
+		for (Entry<PriceType, Double> e : in.entrySet())
+			out.put(e.getKey().getValue(), e.getValue());
 		return out;
 	}
-	public static Map<PriceType, Double> convertToPriceTypeMap( Map<Integer, Double> in, Map<PriceType, Double> out){
-		for( Entry<Integer, Double> e: in.entrySet()) out.put( PriceType.values()[e.getKey()], e.getValue());
+
+	public static Map<PriceType, Double> convertToPriceTypeMap(Map<Integer, Double> in, Map<PriceType, Double> out) {
+		for (Entry<Integer, Double> e : in.entrySet())
+			out.put(PriceType.values()[e.getKey()], e.getValue());
 		return out;
 	}
 }

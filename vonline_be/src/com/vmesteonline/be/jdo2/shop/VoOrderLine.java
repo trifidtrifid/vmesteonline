@@ -1,6 +1,5 @@
 package com.vmesteonline.be.jdo2.shop;
 
-import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -10,31 +9,31 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
-import com.vmesteonline.be.VoError;
-import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.shop.OrderLine;
-import com.vmesteonline.be.shop.PriceType;
 
 @PersistenceCapable
-public class VoOrderLine {
+public class VoOrderLine implements Comparable<VoOrderLine>{
 
-	public VoOrderLine(VoOrder order, VoProduct product, double quontity, PriceType priceType, double price) throws InvalidOperation {	
-			this.quontity = quontity;
-			this.priceType = priceType;
-			this.price = price;
-			this.product = product;
-			this.order = order;
+	public VoOrderLine(long productId ){
+		this.product = new VoProduct(productId);
+	}
+	public VoOrderLine(VoOrder order, VoProduct product, double quantity, double price) throws InvalidOperation {
+		this.quantity = quantity;
+		this.product = product;
+		this.order = order;
+		this.price = price;
 	}
 
-
 	public OrderLine getOrderLine() {
-		return new OrderLine(product.getProduct(), quontity, priceType, price);
+		OrderLine orderLine = new OrderLine(product.getProduct(), quantity, price);
+		orderLine.product.price = price;
+		return orderLine;
 	}
 
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
 	private Key id;
-	
+
 	@Persistent
 	private VoOrder order;
 
@@ -43,10 +42,7 @@ public class VoOrderLine {
 	private VoProduct product;
 	@Persistent
 	@Unindexed
-	private double quontity;
-
-	@Persistent
-	private PriceType priceType;
+	private double quantity;
 
 	@Persistent
 	@Unindexed
@@ -68,20 +64,12 @@ public class VoOrderLine {
 		this.product = product;
 	}
 
-	public double getQuontity() {
-		return quontity;
+	public double getQuantity() {
+		return quantity;
 	}
 
-	public void setQuontity(double quontity) {
-		this.quontity = quontity;
-	}
-
-	public PriceType getPriceType() {
-		return priceType;
-	}
-
-	public void setPriceType(PriceType priceType) {
-		this.priceType = priceType;
+	public void setQuantity(double quantity) {
+		this.quantity = quantity;
 	}
 
 	public double getPrice() {
@@ -94,17 +82,23 @@ public class VoOrderLine {
 
 	@Override
 	public String toString() {
-		return "VoOrderLine [order=" + order + ", product=" + product + ", quontity=" + quontity + ", priceType=" + priceType + ", price=" + price + "]";
+		return "VoOrderLine [order=" + order + ", product=" + product + ", quontity=" + quantity + ", price=" + price + "]";
 	}
 
-
-	public VoOrderLine mergeWith(VoOrder toOrder, VoOrderLine that) throws InvalidOperation {
-		if(null==that)
-			return new VoOrderLine(toOrder, this.product, this.quontity, this.priceType, this.price);
-		else
-			return new VoOrderLine(toOrder, this.product, this.quontity + that.getQuontity(), 
-					this.priceType == that.priceType ? this.priceType : PriceType.MERGED, this.price + that.quontity * this.product.getPrice());
+	public Key getId() {
+		return id;
 	}
-	
-	
+
+	public Double mergeWith(VoOrderLine that) throws InvalidOperation {
+		if (null == that)
+			return 0.0D;
+		this.quantity += that.getQuantity();
+		return that.quantity * this.price;
+	}
+
+	@Override
+	public int compareTo(VoOrderLine that) {
+		return null == that ? -1 : null == that.product ? null == product ? 0 : -1 : product.getName().compareTo(that.product.getName());
+	}
+
 }

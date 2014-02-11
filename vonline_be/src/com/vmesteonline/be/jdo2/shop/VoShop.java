@@ -14,6 +14,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -63,7 +64,7 @@ public class VoShop {
 			categories = new ArrayList<VoProductCategory>();
 			products = new ArrayList<VoProduct>();
 			producers = new ArrayList<VoProducer>();
-			dates = new TreeMap<Integer, DateType>();
+			dates = new TreeMap<Integer, Integer>();
 			pm.makePersistent(this);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -78,7 +79,7 @@ public class VoShop {
 		for (VoTopic vt : getTopics()) {
 			topicIds.add(vt.getId().getId());
 		}
-		Shop shop = new Shop(id, name, descr, address.getPostalAddress(), logoURL, ownerId, topicIds, tags, 
+		Shop shop = new Shop(id.getId(), name, descr, address.getPostalAddress(), logoURL, ownerId, topicIds, tags, 
 				convertToDeliveryTypeMap( deliveryCosts, new HashMap<DeliveryType, Double>()),
 				convertToPaymentTypeMap( paymentTypes, new HashMap<PaymentType, Double>()));
 		return shop;
@@ -86,7 +87,7 @@ public class VoShop {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private long id;
+	private Key id;
 
 	@Persistent
 	@Unindexed
@@ -125,8 +126,8 @@ public class VoShop {
 	private List<VoProducer> producers;
 	
 	@Persistent
-	@Unindexed
-	private SortedMap<Integer,DateType> dates;
+	@Unindexed 
+	private SortedMap<Integer,Integer> dates;
 	
 	@Persistent
 	@Unindexed
@@ -143,12 +144,15 @@ public class VoShop {
 		return deliveryCosts;
 	}
 	public void setDates( Map<Integer,DateType> newDates ){
-		dates.putAll(newDates);
+		for (Entry<Integer,DateType> e: newDates.entrySet()) { //round to the begining of the day
+			dates.put(e.getKey() - e.getKey() % 86400, e.getValue().getValue());
+		}
+		//getDates().putAll( convertFromDateTypeMap(newDates, new TreeMap<Integer, Integer>()));
 	}
 	
-	public Map<Integer,DateType> selectDates( int fromDate, int toDate){
-		Map<Integer,DateType> selectedDates = new TreeMap<Integer, DateType>();
-		selectedDates.putAll(dates.subMap(fromDate, toDate));
+	public SortedMap<Integer,DateType> selectDates( int fromDate, int toDate){
+		SortedMap<Integer,DateType> selectedDates = new TreeMap<Integer, DateType>();
+		selectedDates.putAll( convertToDateTypeMap( dates.subMap(fromDate, toDate), new TreeMap<Integer, DateType>()));
 		return selectedDates;
 	}
 
@@ -212,15 +216,29 @@ public class VoShop {
 	}
 
 	public long getId() {
-		return id;
+		return id.getId();
 	}
 
+	
 	public List<VoProduct> getProducts() {
 		return products;
 	}
+	
+	public void clearProducts() {
+		getProducts().clear();
+	}
+	
 
 	public List<VoProductCategory> getCategories() {
 		return categories;
+	}
+	
+	public void addCategory(VoProductCategory pc) {
+		categories.add(pc);
+	}
+	
+	public void clearCategories() {
+		categories.clear();
 	}
 
 	public List<VoTopic> getTopics() {
@@ -230,7 +248,7 @@ public class VoShop {
 	public List<VoProducer> getProducers() {
 		return producers;
 	}
-	public SortedMap<Integer, DateType> getDates() {
+	public SortedMap<Integer, Integer> getDates() {
 		return dates;
 	}
 	@Override
@@ -243,7 +261,8 @@ public class VoShop {
 				+ "]";
 	}
 	public SortedMap<Integer,DateType> getDates(int from, int to) {
-		return dates.subMap(from,  to);
+		return convertToDateTypeMap( 
+				dates.subMap(from - from % 86400,  to + 86400 - to % 86400), new TreeMap<Integer, DateType>());
 	}
 	
 	public static Map<Integer, Double> convertFromPaymentTypeMap( Map<PaymentType, Double> in, Map<Integer, Double> out){
@@ -251,7 +270,7 @@ public class VoShop {
 		return out;
 	}
 	public static Map<PaymentType, Double> convertToPaymentTypeMap( Map<Integer, Double> in, Map<PaymentType, Double> out){
-		for( Entry<Integer, Double> e: in.entrySet()) out.put( PaymentType.values()[e.getKey()], e.getValue());
+		for( Entry<Integer, Double> e: in.entrySet()) out.put( PaymentType.findByValue(e.getKey()), e.getValue());
 		return out;
 	}
 	public static Map<Integer, Double> convertFromDeliveryTypeMap( Map<DeliveryType, Double> in, Map<Integer, Double> out){
@@ -259,7 +278,50 @@ public class VoShop {
 		return out;
 	}
 	public static Map<DeliveryType, Double> convertToDeliveryTypeMap( Map<Integer, Double> in, Map<DeliveryType, Double> out){
-		for( Entry<Integer, Double> e: in.entrySet()) out.put( DeliveryType.values()[e.getKey()], e.getValue());
+		for( Entry<Integer, Double> e: in.entrySet()) out.put( DeliveryType.findByValue(e.getKey()), e.getValue());
 		return out;
 	}
+	
+	public static SortedMap<Integer, Integer> convertFromDateTypeMap( Map<Integer, DateType> in, SortedMap<Integer, Integer> out){
+		for( Entry<Integer, DateType> e: in.entrySet()) out.put(e.getKey(), e.getValue().getValue());
+		return out;
+	}
+	public static SortedMap<Integer, DateType> convertToDateTypeMap( Map<Integer, Integer> in, SortedMap<Integer, DateType> out){
+		for( Entry<Integer, Integer> e: in.entrySet()) out.put( e.getKey(), DateType.findByValue(e.getValue()));
+		return out;
+	}
+	
+	/*public static class DateMap<T extends Serializable> extends TreeMap<Integer, T> implements Serializable {
+	
+		private static int DAY = 86400;
+		@Override
+		public boolean containsKey(Object key) {
+			if( key instanceof Integer ) return super.containsKey(((Integer)key).intValue() - ((Integer)key).intValue() % DAY); 
+			return super.containsKey(key);
+		}
+
+		@Override
+		public T get(Object key) {
+			if( key instanceof Integer ) return super.get(((Integer)key).intValue() - ((Integer)key).intValue() % DAY);
+			return super.get(key);
+		}
+
+		@Override
+		public void putAll(Map<? extends Integer, ? extends T> map) {
+			for (Entry<? extends Integer, ? extends T> entry : map.entrySet()) {
+				put(entry.getKey(), entry.getValue()); //rounded in overloadad method above
+			}
+			super.putAll(map);
+		}
+
+		@Override
+		public T put(Integer key, T value) {
+			return super.put(key - key % DAY, value);
+		}
+
+		@Override
+		public Integer ceilingKey(Integer key) {
+			return super.ceilingKey(key - key % DAY );
+		}	
+	}*/
 }

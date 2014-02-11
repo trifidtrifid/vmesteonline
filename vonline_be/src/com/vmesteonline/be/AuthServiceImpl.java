@@ -104,7 +104,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			try {
 				user.setLocation(Long.parseLong(locationId), true, pm);
 			} catch (NumberFormatException | InvalidOperation e) {
-				throw new InvalidOperation(VoError.IncorectLocationCod, "Incorrect code." + e);
+				throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 			}
 
 		} finally {

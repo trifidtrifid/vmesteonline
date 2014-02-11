@@ -13,7 +13,7 @@ import org.apache.thrift.TEnum;
 
 public enum PaymentStatus implements org.apache.thrift.TEnum {
   UNKNOWN(0),
-  WIAT(1),
+  WAIT(1),
   PENDING(2),
   COMPLETE(3),
   CREDIT(4);
@@ -40,7 +40,7 @@ public enum PaymentStatus implements org.apache.thrift.TEnum {
       case 0:
         return UNKNOWN;
       case 1:
-        return WIAT;
+        return WAIT;
       case 2:
         return PENDING;
       case 3:

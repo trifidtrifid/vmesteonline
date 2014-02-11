@@ -5,7 +5,9 @@ enum VoError{
   IncorrectParametrs,
   RegistrationAlreadyExist,
   NotAuthorized,
-  IncorectLocationCod  
+  IncorectLocationCode,
+//Shop specific messages   
+  ShopNotOrderDate,
 }
 exception InvalidOperation {
   1: VoError what,
