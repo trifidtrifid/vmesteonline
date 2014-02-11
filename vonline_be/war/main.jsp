@@ -65,9 +65,9 @@
 	MessageServiceImpl messageService = new MessageServiceImpl();
 	MessageType mesType = MessageType.BASE;
 
-	TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,mesType,20,0,10);
-			
-	Topic[] currTopic= new Topic[100];// = (Topic)Topics.topics.toArray()[0];
+	TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
+
+	Topic[] currTopic= new Topic[100];
 	int topicsLen = Topics.topics.toArray().length;
 	
 	pageContext.setAttribute("groups",Groups);
@@ -78,6 +78,7 @@
 
    <script type="text/javascript">
         $(document).ready(function(){
+
         	var transport = new Thrift.Transport("/thrift/UserService");
     		var protocol = new Thrift.Protocol(transport);
     		var client = new com.vmesteonline.be.UserServiceClient(protocol);
@@ -90,17 +91,17 @@
     		client = new com.vmesteonline.be.MessageServiceClient(protocol);
 
             var Messages,
-                    mesLen,
-                    mesNew,
-                    mesNewLen,
-                    mes,level=0,
-                    message,
-                    messageListNew = "",
-                    messageList = '',
-                    messageListTopLevel = "",
-                    topicsList="",
-                    topic,
-                    iterator = 0;
+                mesLen,
+                mesNew,
+                mesNewLen,
+                mes,level=0,
+                message,
+                messageListNew = "",
+                messageList = '',
+                messageListTopLevel = "",
+                topicsList="",
+                topic,
+                iterator = 0;
 
             $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active');
 
@@ -196,7 +197,8 @@
                 }
             });
 
-            //client.postTopic(client.createTopic(Groups[0].id,'Тест тема-1',1,'некий контент 1',0,0,Rubrics[0].id,1));
+            //client.postTopic(
+            client.createTopic(Groups[0].id,'Тест тема-1',1,'некий контент 1',0,0,Rubrics[0].id,1);
             var Topics = client.getTopics(Groups[0].id,Rubrics[0].id, 1,0,0,100);
             var topicLen = Topics.topics.length;
             /*for (var z = 0; z<topicLen ;z++){
@@ -204,26 +206,30 @@
              alert('ya');
              }
              }*/
+           /* var mes2 = client.getMessages(1, groupID, 1, parentID, 0, 0, 2);
+            mes2 = mes2.messages;*/
 
             function getMessageList(topicID, groupID, parentID){
                 //console.log(Topics.topics[i].id+" "+Groups[0].id+" "+message.id)    ;
-                //console.log('topic '+topicID+" groupID "+ groupID+" parent "+ parentID);
-                mes = client.getMessages(topicID, groupID, 1, parentID, false, 0, 2);
-                mes = mes.messages;
-                mesLen = mes.length;
+                //console.log('Request: topic '+topicID+" groupID "+ groupID+" parent "+ parentID);
+                messagesArray = client.getMessages(topicID, groupID, 1, parentID, 0, 0, 2).messages;
+                //mes = mes.messages;
+                //console.log('Request: 1 '+mes.id+' iterator '+iterator);
+                //console.log('Response: id '+mes[0].id+' parent '+mes.parentId + ' topicId ' + mes.topicId + ' groupId ' + mes.groupId + ' content ' + mes[0].content);
+                mesLen = messagesArray.length;
                 if (mesLen > 0 && level < 3){
                     //console.log('level'+level);
                         level++;
                     while(iterator < mesLen){
                       //console.log('parentId '+message.id+' iterator '+iterator);
-                      mesNew = mes[iterator];
+                      mesNew = messagesArray[iterator];
                       messageListNew += getMessageList(topicID, groupID, mesNew.id);
                       iterator++;
                     }
                     iterator=0;
                     messageList = '<ol class="dd-list">'+
-                        '<li class="dd-item dd2-item topic-item" data-id="19">'+
-                            '<div class="dd2-content topic-descr answer-item widget-body">'+
+                        '<li class="dd-item dd2-item" data-id="19">'+
+                            '<div class="dd2-content topic-descr one-message widget-body">'+
                                 '<div class="widget-main">'+
                                     '<div class="topic-left">'+
                                         '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
@@ -234,16 +240,16 @@
                                             '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
                                             '<a href="#">Иван Грозный</a>'+
                                         '</div>'+
-                                        '<p class="alert">'+ mes.content+" "+ message.id+ '</p>'+
+                                        '<p class="alert">'+ messagesArray[0].content+ '</p>'+
                                         '<div class="likes">'+
-                                            '<div class="answer-date">' + mes.created + '</div>'+
+                                            '<div class="answer-date">' + messagesArray.created + '</div>'+
                                             '<a href="#" class="like-item like">'+
                                                 '<i class="fa fa-thumbs-o-up"></i>'+
-                                                '<span>' + mes.likesNum + '</span>'+
+                                                '<span>' + messagesArray[0].likesNum + '</span>'+
                                             '</a>'+
                                             '<a href="#" class="like-item dislike">'+
                                             '<i class="fa fa-thumbs-o-down"></i>'+
-                                            '<span>' + mes.unlikesNum + '</span>'+
+                                            '<span>' + messagesArray[0].unlikesNum + '</span>'+
                                             '</a>'+
                                         '</div>'+
                                     '</div>'+
@@ -276,14 +282,13 @@
             }
 
             for(var i = 0; i < topicLen; i++){
-
                 message = Topics.topics[i];
                 iterator = 0;
                 messageList="";
                 messageListNew="";
                 level = 0;
                 messageListTopLevel = getMessageList(message.id,Groups[0].id,message.id);
-                console.log('finish '+ i);
+                //console.log('finish '+ i);
                 $('.dd>.dd-list>.topic-item:eq(' + i + ')').append(messageListTopLevel);
                 //console.log('finish-2');
             }
@@ -327,7 +332,7 @@
                 </a>
             </li>
             <li>
-                <a class="btn btn-info no-border" href="#">
+                <a class="btn btn-info no-border" href="/shop.html">
                 Магазин
                 </a>
             </li>
@@ -452,6 +457,10 @@
                         <div class="clear"></div>
                 </section>
                 <section class="forum">
+
+<%--<c:forEach var="topic" items="${topics}">
+
+</c:forEach>--%>
 
                     <div class="dd dd-draghandle">
                         <ol class="dd-list">

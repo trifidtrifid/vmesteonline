@@ -302,7 +302,7 @@ transform()
         display inline-block
         vertical-align middle
         margin-left 10px
-    &.answer-item
+    &.one-message
       margin 10px 0 10px 0
       .answer-date
         color #808080
@@ -312,17 +312,22 @@ transform()
         margin-bottom 10px
         font-size 14px
 
+.one-message
+  .like-item
+    .fa
+      margin-right 5px
+
 .alert
   padding 0
   margin-bottom 5px
 
-.answer-item
+.one-message
   border-radius second-radius !important
 
 .wysiwig-box
   display none
 
-.answer-item+.wysiwig-box
+.one-message+.wysiwig-box
   border 1px solid #5090c1
 
 .widget-header.fixed
@@ -353,6 +358,10 @@ transform()
 
 .dd>.dd-list>.topic-item.list-view>.dd-list
   padding-left 30px
+
+.wysiwyg-editor
+  a
+    cursor pointer
 
 @media all and (max-width: 768px),screen and (device-width: 320px)
   .sidebar#sidebar
