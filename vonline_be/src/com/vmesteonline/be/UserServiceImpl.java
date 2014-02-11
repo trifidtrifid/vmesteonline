@@ -134,14 +134,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				pm.makePersistent(pa);
 				locations.add("" + pa.getAddressCode());
 			}
-			
-			VoDistanceHelper.saveDistance(addresses[0].getBuilding().getUserGroup().getId().getId(), addresses[1].getBuilding().getUserGroup().getId()
-					.getId(), 200);
-
-			VoDistanceHelper.saveDistance(addresses[1].getBuilding().getUserGroup().getId().getId(), addresses[2].getBuilding().getUserGroup().getId()
-					.getId(), 700);
-			VoDistanceHelper.saveDistance(addresses[0].getBuilding().getUserGroup().getId().getId(), addresses[2].getBuilding().getUserGroup().getId()
-					.getId(), 700);
 
 			return locations;
 		} catch (Exception e) {

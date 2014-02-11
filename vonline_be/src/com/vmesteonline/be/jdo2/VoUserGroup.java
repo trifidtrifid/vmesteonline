@@ -30,11 +30,11 @@ public class VoUserGroup implements Comparable<VoUserGroup> {
 	}
 
 	public float getLongitudeDelta() {
-		return radius / (111.320f * (float) Math.cos(Math.toRadians(latitude)));
+		return (float) ((radius / (R * Math.cos(Math.PI * latitude / 180))) * (180.0 / Math.PI));
 	}
 
 	public float getLatitudeDelta() {
-		return radius / 110.54f;
+		return (float) ((radius / R) * (180.0 / Math.PI));
 	}
 
 	public Group createGroup() {
@@ -122,4 +122,6 @@ public class VoUserGroup implements Comparable<VoUserGroup> {
 		return Float.compare(that.latitude, this.latitude) != 0 ? Float.compare(that.latitude, this.latitude) : Float.compare(that.longitude,
 				this.longitude) != 0 ? Float.compare(that.longitude, this.longitude) : Integer.compare(that.radius, this.radius);
 	}
+
+	private static int R = 6378137;
 }

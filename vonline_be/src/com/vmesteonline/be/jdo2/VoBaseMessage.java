@@ -10,6 +10,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.Message;
@@ -25,6 +26,9 @@ public abstract class VoBaseMessage {
 		unlikesNum = msg.getUnlikesNum();
 		tags = msg.getTags();
 		links = msg.getLinkedMessages();
+		type = msg.getType();
+		authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
+		createdAt = msg.getCreated();
 	}
 
 	public VoBaseMessage() {
@@ -127,7 +131,9 @@ public abstract class VoBaseMessage {
 	@Persistent
 	@Unindexed
 	protected MessageType type;
+
 	@Persistent
+	@Unindexed
 	protected Key authorId;
 	@Persistent
 	@Unindexed

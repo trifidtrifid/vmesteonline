@@ -8,6 +8,7 @@
 //HELPER FUNCTIONS AND STRUCTURES
 
 com.vmesteonline.be.MessageService_createMessage_args = function(args) {
+  this.topicId = null;
   this.parentId = null;
   this.groupId = null;
   this.type = null;
@@ -16,6 +17,9 @@ com.vmesteonline.be.MessageService_createMessage_args = function(args) {
   this.tags = null;
   this.recipientId = null;
   if (args) {
+    if (args.topicId !== undefined) {
+      this.topicId = args.topicId;
+    }
     if (args.parentId !== undefined) {
       this.parentId = args.parentId;
     }
@@ -55,33 +59,40 @@ com.vmesteonline.be.MessageService_createMessage_args.prototype.read = function(
     {
       case 1:
       if (ftype == Thrift.Type.I64) {
-        this.parentId = input.readI64().value;
+        this.topicId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
       break;
       case 2:
       if (ftype == Thrift.Type.I64) {
-        this.groupId = input.readI64().value;
+        this.parentId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
       break;
       case 3:
+      if (ftype == Thrift.Type.I64) {
+        this.groupId = input.readI64().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
       if (ftype == Thrift.Type.I32) {
         this.type = input.readI32().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 4:
+      case 5:
       if (ftype == Thrift.Type.STRING) {
         this.content = input.readString().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 5:
+      case 6:
       if (ftype == Thrift.Type.MAP) {
         var _size46 = 0;
         var _rtmp350;
@@ -110,7 +121,7 @@ com.vmesteonline.be.MessageService_createMessage_args.prototype.read = function(
         input.skip(ftype);
       }
       break;
-      case 6:
+      case 7:
       if (ftype == Thrift.Type.MAP) {
         var _size54 = 0;
         var _rtmp358;
@@ -139,7 +150,7 @@ com.vmesteonline.be.MessageService_createMessage_args.prototype.read = function(
         input.skip(ftype);
       }
       break;
-      case 7:
+      case 8:
       if (ftype == Thrift.Type.I64) {
         this.recipientId = input.readI64().value;
       } else {
@@ -157,28 +168,33 @@ com.vmesteonline.be.MessageService_createMessage_args.prototype.read = function(
 
 com.vmesteonline.be.MessageService_createMessage_args.prototype.write = function(output) {
   output.writeStructBegin('MessageService_createMessage_args');
+  if (this.topicId !== null && this.topicId !== undefined) {
+    output.writeFieldBegin('topicId', Thrift.Type.I64, 1);
+    output.writeI64(this.topicId);
+    output.writeFieldEnd();
+  }
   if (this.parentId !== null && this.parentId !== undefined) {
-    output.writeFieldBegin('parentId', Thrift.Type.I64, 1);
+    output.writeFieldBegin('parentId', Thrift.Type.I64, 2);
     output.writeI64(this.parentId);
     output.writeFieldEnd();
   }
   if (this.groupId !== null && this.groupId !== undefined) {
-    output.writeFieldBegin('groupId', Thrift.Type.I64, 2);
+    output.writeFieldBegin('groupId', Thrift.Type.I64, 3);
     output.writeI64(this.groupId);
     output.writeFieldEnd();
   }
   if (this.type !== null && this.type !== undefined) {
-    output.writeFieldBegin('type', Thrift.Type.I32, 3);
+    output.writeFieldBegin('type', Thrift.Type.I32, 4);
     output.writeI32(this.type);
     output.writeFieldEnd();
   }
   if (this.content !== null && this.content !== undefined) {
-    output.writeFieldBegin('content', Thrift.Type.STRING, 4);
+    output.writeFieldBegin('content', Thrift.Type.STRING, 5);
     output.writeString(this.content);
     output.writeFieldEnd();
   }
   if (this.linkedMessages !== null && this.linkedMessages !== undefined) {
-    output.writeFieldBegin('linkedMessages', Thrift.Type.MAP, 5);
+    output.writeFieldBegin('linkedMessages', Thrift.Type.MAP, 6);
     output.writeMapBegin(Thrift.Type.I32, Thrift.Type.I64, Thrift.objectLength(this.linkedMessages));
     for (var kiter62 in this.linkedMessages)
     {
@@ -193,7 +209,7 @@ com.vmesteonline.be.MessageService_createMessage_args.prototype.write = function
     output.writeFieldEnd();
   }
   if (this.tags !== null && this.tags !== undefined) {
-    output.writeFieldBegin('tags', Thrift.Type.MAP, 6);
+    output.writeFieldBegin('tags', Thrift.Type.MAP, 7);
     output.writeMapBegin(Thrift.Type.I64, Thrift.Type.STRING, Thrift.objectLength(this.tags));
     for (var kiter64 in this.tags)
     {
@@ -208,7 +224,7 @@ com.vmesteonline.be.MessageService_createMessage_args.prototype.write = function
     output.writeFieldEnd();
   }
   if (this.recipientId !== null && this.recipientId !== undefined) {
-    output.writeFieldBegin('recipientId', Thrift.Type.I64, 7);
+    output.writeFieldBegin('recipientId', Thrift.Type.I64, 8);
     output.writeI64(this.recipientId);
     output.writeFieldEnd();
   }
@@ -220,7 +236,7 @@ com.vmesteonline.be.MessageService_createMessage_args.prototype.write = function
 com.vmesteonline.be.MessageService_createMessage_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -346,7 +362,7 @@ com.vmesteonline.be.MessageService_postMessage_args.prototype.write = function(o
 com.vmesteonline.be.MessageService_postMessage_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -751,7 +767,7 @@ com.vmesteonline.be.MessageService_postTopic_args.prototype.write = function(out
 com.vmesteonline.be.MessageService_postTopic_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -875,7 +891,7 @@ com.vmesteonline.be.MessageService_checkUpdates_args.prototype.write = function(
 com.vmesteonline.be.MessageService_checkUpdates_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -974,7 +990,7 @@ com.vmesteonline.be.MessageService_getUpdates_args.prototype.write = function(ou
 com.vmesteonline.be.MessageService_getUpdates_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -1046,9 +1062,8 @@ com.vmesteonline.be.MessageService_getUpdates_result.prototype.write = function(
 com.vmesteonline.be.MessageService_getTopics_args = function(args) {
   this.groupId = null;
   this.rubricId = null;
-  this.messageType = null;
   this.commmunityId = null;
-  this.offset = null;
+  this.lastLoadedTopicId = null;
   this.length = null;
   if (args) {
     if (args.groupId !== undefined) {
@@ -1057,14 +1072,11 @@ com.vmesteonline.be.MessageService_getTopics_args = function(args) {
     if (args.rubricId !== undefined) {
       this.rubricId = args.rubricId;
     }
-    if (args.messageType !== undefined) {
-      this.messageType = args.messageType;
-    }
     if (args.commmunityId !== undefined) {
       this.commmunityId = args.commmunityId;
     }
-    if (args.offset !== undefined) {
-      this.offset = args.offset;
+    if (args.lastLoadedTopicId !== undefined) {
+      this.lastLoadedTopicId = args.lastLoadedTopicId;
     }
     if (args.length !== undefined) {
       this.length = args.length;
@@ -1101,26 +1113,19 @@ com.vmesteonline.be.MessageService_getTopics_args.prototype.read = function(inpu
       break;
       case 3:
       if (ftype == Thrift.Type.I32) {
-        this.messageType = input.readI32().value;
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 4:
-      if (ftype == Thrift.Type.I32) {
         this.commmunityId = input.readI32().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 5:
-      if (ftype == Thrift.Type.I32) {
-        this.offset = input.readI32().value;
+      case 4:
+      if (ftype == Thrift.Type.I64) {
+        this.lastLoadedTopicId = input.readI64().value;
       } else {
         input.skip(ftype);
       }
       break;
-      case 6:
+      case 5:
       if (ftype == Thrift.Type.I32) {
         this.length = input.readI32().value;
       } else {
@@ -1148,23 +1153,18 @@ com.vmesteonline.be.MessageService_getTopics_args.prototype.write = function(out
     output.writeI64(this.rubricId);
     output.writeFieldEnd();
   }
-  if (this.messageType !== null && this.messageType !== undefined) {
-    output.writeFieldBegin('messageType', Thrift.Type.I32, 3);
-    output.writeI32(this.messageType);
-    output.writeFieldEnd();
-  }
   if (this.commmunityId !== null && this.commmunityId !== undefined) {
-    output.writeFieldBegin('commmunityId', Thrift.Type.I32, 4);
+    output.writeFieldBegin('commmunityId', Thrift.Type.I32, 3);
     output.writeI32(this.commmunityId);
     output.writeFieldEnd();
   }
-  if (this.offset !== null && this.offset !== undefined) {
-    output.writeFieldBegin('offset', Thrift.Type.I32, 5);
-    output.writeI32(this.offset);
+  if (this.lastLoadedTopicId !== null && this.lastLoadedTopicId !== undefined) {
+    output.writeFieldBegin('lastLoadedTopicId', Thrift.Type.I64, 4);
+    output.writeI64(this.lastLoadedTopicId);
     output.writeFieldEnd();
   }
   if (this.length !== null && this.length !== undefined) {
-    output.writeFieldBegin('length', Thrift.Type.I32, 6);
+    output.writeFieldBegin('length', Thrift.Type.I32, 5);
     output.writeI32(this.length);
     output.writeFieldEnd();
   }
@@ -1176,7 +1176,7 @@ com.vmesteonline.be.MessageService_getTopics_args.prototype.write = function(out
 com.vmesteonline.be.MessageService_getTopics_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -1394,7 +1394,7 @@ com.vmesteonline.be.MessageService_getMessages_args.prototype.write = function(o
 com.vmesteonline.be.MessageService_getMessages_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -1519,7 +1519,7 @@ com.vmesteonline.be.MessageService_like_args.prototype.write = function(output) 
 com.vmesteonline.be.MessageService_like_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -1643,7 +1643,7 @@ com.vmesteonline.be.MessageService_dislike_args.prototype.write = function(outpu
 com.vmesteonline.be.MessageService_dislike_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -1767,7 +1767,7 @@ com.vmesteonline.be.MessageService_markReadMessage_args.prototype.write = functi
 com.vmesteonline.be.MessageService_markReadMessage_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -1891,7 +1891,7 @@ com.vmesteonline.be.MessageService_markReadTopic_args.prototype.write = function
 com.vmesteonline.be.MessageService_markReadTopic_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -2015,7 +2015,7 @@ com.vmesteonline.be.MessageService_moveTopicToArchive_args.prototype.write = fun
 com.vmesteonline.be.MessageService_moveTopicToArchive_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -2139,7 +2139,7 @@ com.vmesteonline.be.MessageService_restoreTopicFromArchive_args.prototype.write 
 com.vmesteonline.be.MessageService_restoreTopicFromArchive_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -2276,7 +2276,7 @@ com.vmesteonline.be.MessageService_markTopicUnintrested_args.prototype.write = f
 com.vmesteonline.be.MessageService_markTopicUnintrested_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -2413,7 +2413,7 @@ com.vmesteonline.be.MessageService_makeMessageLinked_args.prototype.write = func
 com.vmesteonline.be.MessageService_makeMessageLinked_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -2537,7 +2537,7 @@ com.vmesteonline.be.MessageService_likeTopic_args.prototype.write = function(out
 com.vmesteonline.be.MessageService_likeTopic_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -2661,7 +2661,7 @@ com.vmesteonline.be.MessageService_dislikeTopic_args.prototype.write = function(
 com.vmesteonline.be.MessageService_dislikeTopic_result = function(args) {
   this.success = null;
   this.exc = null;
-  if (args && args instanceof com.vmesteonline.be.InvalidOperation) {
+  if (args instanceof com.vmesteonline.be.InvalidOperation) {
     this.exc = args;
     return;
   }
@@ -2735,14 +2735,15 @@ com.vmesteonline.be.MessageServiceClient = function(input, output) {
     this.seqid = 0;
 };
 com.vmesteonline.be.MessageServiceClient.prototype = {};
-com.vmesteonline.be.MessageServiceClient.prototype.createMessage = function(parentId, groupId, type, content, linkedMessages, tags, recipientId) {
-  this.send_createMessage(parentId, groupId, type, content, linkedMessages, tags, recipientId);
+com.vmesteonline.be.MessageServiceClient.prototype.createMessage = function(topicId, parentId, groupId, type, content, linkedMessages, tags, recipientId) {
+  this.send_createMessage(topicId, parentId, groupId, type, content, linkedMessages, tags, recipientId);
   return this.recv_createMessage();
 };
 
-com.vmesteonline.be.MessageServiceClient.prototype.send_createMessage = function(parentId, groupId, type, content, linkedMessages, tags, recipientId) {
+com.vmesteonline.be.MessageServiceClient.prototype.send_createMessage = function(topicId, parentId, groupId, type, content, linkedMessages, tags, recipientId) {
   this.output.writeMessageBegin('createMessage', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.MessageService_createMessage_args();
+  args.topicId = topicId;
   args.parentId = parentId;
   args.groupId = groupId;
   args.type = type;
@@ -2966,19 +2967,18 @@ com.vmesteonline.be.MessageServiceClient.prototype.recv_getUpdates = function() 
   }
   throw 'getUpdates failed: unknown result';
 };
-com.vmesteonline.be.MessageServiceClient.prototype.getTopics = function(groupId, rubricId, messageType, commmunityId, offset, length) {
-  this.send_getTopics(groupId, rubricId, messageType, commmunityId, offset, length);
+com.vmesteonline.be.MessageServiceClient.prototype.getTopics = function(groupId, rubricId, commmunityId, lastLoadedTopicId, length) {
+  this.send_getTopics(groupId, rubricId, commmunityId, lastLoadedTopicId, length);
   return this.recv_getTopics();
 };
 
-com.vmesteonline.be.MessageServiceClient.prototype.send_getTopics = function(groupId, rubricId, messageType, commmunityId, offset, length) {
+com.vmesteonline.be.MessageServiceClient.prototype.send_getTopics = function(groupId, rubricId, commmunityId, lastLoadedTopicId, length) {
   this.output.writeMessageBegin('getTopics', Thrift.MessageType.CALL, this.seqid);
   var args = new com.vmesteonline.be.MessageService_getTopics_args();
   args.groupId = groupId;
   args.rubricId = rubricId;
-  args.messageType = messageType;
   args.commmunityId = commmunityId;
-  args.offset = offset;
+  args.lastLoadedTopicId = lastLoadedTopicId;
   args.length = length;
   args.write(this.output);
   this.output.writeMessageEnd();

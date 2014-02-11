@@ -23,8 +23,6 @@ public abstract class JDBCConnector {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
-		} finally {
-			close();
 		}
 	}
 

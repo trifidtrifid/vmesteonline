@@ -16,9 +16,12 @@ import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
+import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 
 public class MessageServiceTests {
 
@@ -45,6 +48,9 @@ public class MessageServiceTests {
 	@Before
 	public void setUp() throws Exception {
 		helper.setUp();
+		MySQLJDBCConnector con = new MySQLJDBCConnector();
+		con.execute("drop table if exists topic");
+
 		pm = PMF.get().getPersistenceManager();
 		asi = new AuthServiceImpl(sessionId);
 		List<String> locCodes = UserServiceImpl.getLocationCodesForRegistration();
@@ -97,14 +103,15 @@ public class MessageServiceTests {
 	}
 
 	@Test
-	public void createTopicTest() {
+	public void testCreateTopicAndTwoReplies() {
 		// create locations
 		try {
 			VoUser user1 = asi.getUserByEmail("a1@b.com", pm);
 			VoUser user2 = asi.getUserByEmail("a2@b.com", pm);
 
 			Topic topic = createTopic();
-			Message msg = msi.createMessage(topic.getMessage().getId(), user1.getHomeGroup().getId().getId(), MessageType.BASE,
+			Assert.assertNotNull(topic.getId());
+			Message msg = msi.createMessage(topic.getId(), 0, user1.getHomeGroup().getId().getId(), MessageType.BASE,
 					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
 
 			Assert.assertEquals(msg.getTopicId(), topic.getId());
@@ -114,7 +121,7 @@ public class MessageServiceTests {
 			Assert.assertEquals(msg.likesNum, 0);
 			Assert.assertEquals(msg.unlikesNum, 0);
 
-			Message msg2 = msi.createMessage(msg.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
+			Message msg2 = msi.createMessage(topic.getId(), msg.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
 					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
 			Assert.assertEquals(msg2.getTopicId(), topic.getId());
 			Assert.assertEquals(msg2.getParentId(), msg.getId());
@@ -127,13 +134,14 @@ public class MessageServiceTests {
 	}
 
 	@Test
-	public void createMessage() {
+	public void testCreateMessage() {
 		// com.vmesteonline.be.Message msg = new
 		fail("Not yet implemented");
 	}
 
 	@Test
 	public void testGetTopics() {
+
 		try {
 			createTopic();
 			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 0);
@@ -147,14 +155,39 @@ public class MessageServiceTests {
 
 	}
 
-	@Test
-	public void testGetMessagesSTUB() {
-
-	}
+	// test data struct
+	// topic
+	// -msg1
+	// --msg2
+	// -msg3
 
 	@Test
 	public void testGetMessages() {
-		fail("Not yet implemented");
+		try {
+			VoUser user1 = asi.getUserByEmail("a1@b.com", pm);
+			VoUser user2 = asi.getUserByEmail("a2@b.com", pm);
+
+			Topic topic = createTopic();
+			Message msg = msi.createMessage(topic.getId(), 0, user1.getHomeGroup().getId().getId(), MessageType.BASE,
+					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg2 = msi.createMessage(topic.getId(), msg.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
+					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg3 = msi.createMessage(topic.getId(), 0, user2.getHomeGroup().getId().getId(), MessageType.BASE,
+					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+
+			MessageListPart mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, 0, false, 0, 10);
+			Assert.assertNotNull(mlp);
+			Assert.assertEquals(2, mlp.totalSize);
+
+			mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
+			Assert.assertEquals(1, mlp.totalSize);
+
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+
 	}
 
 }

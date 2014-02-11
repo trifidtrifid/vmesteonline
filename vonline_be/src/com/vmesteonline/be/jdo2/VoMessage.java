@@ -52,75 +52,51 @@ public class VoMessage extends VoBaseMessage {
 	 * @throws InvalidOperation
 	 *           if consistency check fails or other exception happens
 	 */
+
 	public VoMessage(Message msg) throws InvalidOperation {
-		this(msg, null);
-	}
 
-	VoMessage(Message msg, VoTopic ownerTopic) throws InvalidOperation {
-
+		super(msg);
+		this.topicId = msg.getTopicId();
+		this.parentId = msg.getParentId();
 		this.childMessages = new TreeSet<VoMessage>();
-		int now = (int) (System.currentTimeMillis() / 1000);
 
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
 
-		VoMessage parentMsg = null;
 		try {
-			long parentId = msg.getParentId();
-			if (0 == parentId) {
-				this.topic = ownerTopic;
-			} else {
+			if (0 != msg.getParentId()) {
 				try {
-					parentMsg = pm.getObjectById(VoMessage.class, parentId);
+					VoMessage parentMsg = pm.getObjectById(VoMessage.class, msg.getParentId());
 					pm.retrieve(parentMsg);
 					parentMsg.addChildMessage(this);
-					this.topic = parentMsg.getTopic();
-
+					pm.makePersistent(parentMsg);
 				} catch (JDOObjectNotFoundException e) {
 					e.printStackTrace();
-					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "parent Message not found by ID=" + parentId);
+					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "parent Message not found by ID=" + msg.getParentId());
 				}
 			}
-			if (null == this.topic)
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Topic of parent Message not found");
 
 			try {
-				/* CHeck the group to post, or move the message to */
-
-				// VoUserGroup voGroup = pm.getObjectById(VoUserGroup.class,
-				// msg.getGroupId());
 				/* CHeck the recipient */
 				if (0 != msg.getRecipientId()) {
 					VoDatastoreHelper.exist(VoUser.class, msg.getRecipientId(), pm);
 					recipient = msg.getRecipientId();
 				}
 
-				/*
-				 * message inserted to the second level, so list representation should
-				 * be updated
-				 */
-				// this.topic.addChildMessage(msg.getParentId(), msg.getId());
-
 				VoUser author = pm.getObjectById(VoUser.class, msg.getAuthorId());
 				if (null == author) {
 					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Author of Message not found by ID=" + msg.getAuthorId());
 				}
-				this.authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
-				this.type = msg.getType();
-				this.createdAt = msg.getCreated();
 
 				if (null == author.getHomeGroup())
 					throw new InvalidOperation(com.vmesteonline.be.VoError.GeneralError, "User without HomeGroup must not create a message");
 
-				topic.setMessageNum(topic.getMessageNum() + 1);
-				topic.setLastUpdate(now);
 				author.incrementMessages(1);
 
 				/*
 				 * Check that all of linked messages exists and has type that is
 				 * required
 				 */
-				this.tags = new HashMap<Long, String>();
 				this.links = new HashMap<MessageType, Long>();
 
 				for (Entry<MessageType, Long> entry : msg.getLinkedMessages().entrySet()) {
@@ -132,25 +108,13 @@ public class VoMessage extends VoBaseMessage {
 								+ " type missmatch. Stored type:" + linkedMsg.getType().name() + " but linked as:" + entry.getKey().name());
 					links.put(entry.getKey(), entry.getValue());
 				}
-				this.tags = msg.getTags();
-				this.content = msg.getContent().getBytes();
-				this.likesNum = 0;
-				this.unlikesNum = 0;
+
 				this.approvedId = msg.getApprovedBy();
 
-				pm.makePersistent(topic);
-				if (null != parentMsg)
-					pm.makePersistent(parentMsg);
 				pm.makePersistent(author);
 				pm.makePersistent(this);
 
-				this.userMessage = new VoUserMessage(author, this, false, false, true);
-				this.idValue = this.id.getId();
-				pm.makePersistent(this.userMessage);
-				pm.makePersistent(this);
-
 				msg.setId(this.id.getId());
-				msg.setTopicId(topic.getId().getId());
 
 			} catch (InvalidOperation e) {
 				throw e;
@@ -165,9 +129,8 @@ public class VoMessage extends VoBaseMessage {
 
 	public Message getMessage() {
 		Key parentKey = id.getParent();
-		return new Message(id.getId(), null == parentKey ? 0L : parentKey.getId(), type, getTopic().getId().getId(), 0L, authorId.getId(), createdAt,
-				editedAt, new String(content), likesNum, unlikesNum, links, tags, new UserMessage(getUserMessage().isRead(), getUserMessage().isLikes(),
-						getUserMessage().isUnlikes()));
+		return new Message(id.getId(), null == parentKey ? 0L : parentKey.getId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(
+				content), likesNum, unlikesNum, links, tags, null);
 	}
 
 	/**
@@ -218,7 +181,6 @@ public class VoMessage extends VoBaseMessage {
 		return count - offset;
 	}
 
-
 	public Set<VoMessage> getChildMessages() {
 		return childMessages;
 	}
@@ -227,8 +189,6 @@ public class VoMessage extends VoBaseMessage {
 		childMessages.add(childMsg);
 	}
 
-
-
 	public long getApprovedId() {
 		return approvedId;
 	}
@@ -236,16 +196,6 @@ public class VoMessage extends VoBaseMessage {
 	public void setApprovedId(long approvedId) {
 		this.approvedId = approvedId;
 	}
-
-	public void setTopic(VoTopic topic) {
-		this.topic = topic;
-	}
-
-	public VoTopic getTopic() {
-		return topic;
-	}
-
-
 
 	public float getLongitude() {
 		return longitude;
@@ -263,31 +213,6 @@ public class VoMessage extends VoBaseMessage {
 		return recipient;
 	}
 
-	public VoUserMessage getUserMessage() {
-		if (null == userMessage) {
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-			try {
-				javax.jdo.Query q = pm.newQuery(VoUserMessage.class);
-				/*
-				 * q.setFilter(arg0); q.setFilter("tag == tagId");
-				 * q.declareParameters("long tagId");
-				 */
-			} finally {
-				pm.close();
-			}
-		}
-		return userMessage;
-	}
-
-	public void setUserMessage(VoUserMessage userMessage) {
-		this.userMessage = userMessage;
-	}
-
-	@Persistent
-	@Index
-	private long idValue;
-
-
 	@Persistent
 	/*
 	 * @Extensions({ @Extension(vendorName = "datanucleus", key =
@@ -302,18 +227,9 @@ public class VoMessage extends VoBaseMessage {
 	@Unowned
 	private Set<VoMessage> childMessages;
 
-
-
-
 	@Persistent
 	@Unindexed
 	private long approvedId;
-
-	@Persistent
-	@Unowned
-	private VoTopic topic;
-
-
 
 	@Persistent
 	private float longitude;
@@ -321,19 +237,37 @@ public class VoMessage extends VoBaseMessage {
 	private float latitude;
 	@Persistent
 	private float radius;
+
 	@Persistent
 	@Unindexed
 	protected long recipient;
 
 	@Persistent
-	@Unindexed
-	@Unowned
-	protected VoUserMessage userMessage;
+	protected long topicId;
+
+	@Persistent
+	private long parentId;
+
+	public long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(long parentId) {
+		this.parentId = parentId;
+	}
+
+	public long getTopicId() {
+		return topicId;
+	}
+
+	public void setTopicId(long topicId) {
+		this.topicId = topicId;
+	}
 
 	@Override
 	public String toString() {
-		return "VoMessage [id=" + id + ", idValue=" + idValue + ", type=" + type + ", authorId=" + authorId + ", recipient=" + recipient + ", longitude="
-				+ longitude + ", latitude=" + latitude + ", radius=" + radius + "]";
+		return "VoMessage [id=" + id + ", type=" + type + ", authorId=" + authorId + ", recipient=" + recipient + ", longitude=" + longitude
+				+ ", latitude=" + latitude + ", radius=" + radius + "]";
 	}
 
 }

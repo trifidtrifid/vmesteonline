@@ -54,21 +54,12 @@ public class VoTopic extends VoBaseMessage {
 		this.unlikesNum = unlikesNum;
 	}
 
-	public VoUserTopic getUserTopic() {
-		return userTopic;
-	}
-
-	public void setUserTopic(VoUserTopic userTopic) {
-		this.userTopic = userTopic;
-	}
-
 	public Topic getTopic() {
 
 		Message msg = new Message(id.getId(), 0L, type, getId().getId(), 0L, authorId.getId(), createdAt, editedAt, new String(content), likesNum,
 				unlikesNum, links, tags, new UserMessage(true, false, false));
 
-		return new Topic(getId().getId(), null, msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(),
-				getUserTopic().getUserTopic());
+		return new Topic(getId().getId(), null, msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(), null);
 	}
 
 	public int getMessageNum() {
@@ -208,10 +199,6 @@ public class VoTopic extends VoBaseMessage {
 
 	@Persistent
 	private Long userGroupId;
-
-	@Persistent
-	@Unowned
-	private VoUserTopic userTopic;
 
 	@Persistent
 	private int ra;

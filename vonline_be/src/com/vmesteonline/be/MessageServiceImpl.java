@@ -1,5 +1,7 @@
 package com.vmesteonline.be;
 
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,21 +34,31 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	public MessageServiceImpl() {
 		con = new MySQLJDBCConnector();
+		try {
+			con.execute("create table if not exists topic (`id` bigint not null, `longitude` decimal(10,7) not null, `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null);");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
-	public MessageServiceImpl(String sessId) throws Exception {
+	public MessageServiceImpl(String sessId) {
 		super(sessId);
 		con = new MySQLJDBCConnector();
-		con.execute("create table if not exists topic (`id` integer not null, `longitude` float not null, `lattitude` float not null, `radius` integer not null);");
+		try {
+			con.execute("create table if not exists topic (`id` bigint not null,`longitude` decimal(10,7) not null, `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null);");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
 	@Override
-	public Message createMessage(long parentId, long groupId, MessageType type, String content, Map<MessageType, Long> linkedMessages,
+	public Message createMessage(long topicId, long parentId, long groupId, MessageType type, String content, Map<MessageType, Long> linkedMessages,
 			Map<Long, String> tags, long recipientId) throws InvalidOperation, TException {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
-		Message newMessage = new Message(0, parentId, type, 0, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
+		Message newMessage = new Message(0, parentId, type, topicId, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
 				new HashMap<Long, String>(), new UserMessage(true, false, false));
 		postMessage(newMessage);
 		return newMessage;
@@ -60,12 +72,100 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		MessageListPart mlp = null;
 
 		if (!TEST_ON_FAKE_DATA) {
+			PersistenceManager pm = PMF.getPm();
+			try {
+				
+				Extent<VoMessage> ext = pm.getExtent(VoMessage.class);
+				for (VoMessage m : ext) {
+					m.toString();
+				}
+				
+				Query q = pm.newQuery(VoMessage.class);
+				q.setFilter("topicId == " + topicId + " && parentId == " + parentId);
+				List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+
+				mlp = new MessageListPart();
+				if (voMsgs == null ) {
+					logger.debug("can't find any topics");
+					return mlp;
+				}
+				mlp.totalSize = voMsgs.size();
+				for (VoMessage voTopic : voMsgs) {
+					mlp.addToMessages(voTopic.getMessage());
+				}
+				return mlp;
+
+			} finally {
+				pm.close();
+			}
 
 		} else {
 			int ss = (int) (groupId % 10);
 			mlp = new MessageListPart(new HashSet<Message>(), msgsaaa[ss][(int) topicId].length);
 			for (int msgNo = 0; msgNo < length && msgNo + offset < msgsaaa[ss][(int) topicId].length; msgNo++) {
 				mlp.addToMessages(msgsaaa[ss][(int) topicId][msgNo]);
+			}
+		}
+		return mlp;
+	}
+
+	@Override
+	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation,
+			TException {
+
+		TopicListPart mlp = null;
+
+		if (!TEST_ON_FAKE_DATA) {
+			mlp = new TopicListPart();
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+
+			try {
+
+				try {
+
+					VoUser user = getCurrentUser(pm);
+					pm.retrieve(user);
+					VoUserGroup group = user.getGroup(groupId);
+					float lgd = group.getLongitudeDelta();
+					float ltd = group.getLatitudeDelta();
+					String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= " + (group.getLongitude() + lgd)
+							+ " and longitude >= " + (group.getLongitude() - group.getLongitudeDelta()) + " and lattitude <= " + (group.getLatitude() + ltd)
+							+ " and lattitude >= " + (group.getLatitude() - group.getLatitudeDelta());
+
+					List<VoTopic> topics = new ArrayList<VoTopic>();
+					try {
+						ResultSet rs = con.executeQuery(req);
+						while (rs.next()) {
+							long topicId = rs.getLong(1);
+							VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
+							topics.add(topic);
+						}
+					} finally {
+						con.close();
+					}
+
+					if (topics.isEmpty()) {
+						logger.debug("can't find any topics");
+						return mlp;
+					}
+					mlp.totalSize = topics.size();
+					for (VoTopic voTopic : topics) {
+						mlp.addToTopics(voTopic.getTopic());
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			} finally {
+				pm.close();
+			}
+			return mlp;
+
+		} else {
+			int ss = (int) (groupId % 10);
+			mlp = new TopicListPart(new HashSet<Topic>(), topicsaa[ss].length);
+			for (int topNo = 0; topNo < length && topNo < topicsaa[ss].length; topNo++) {
+				mlp.addToTopics(topicsaa[ss][topNo]);
 			}
 		}
 		return mlp;
@@ -91,19 +191,29 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public long postTopic(Topic topic) throws InvalidOperation {
-		if (0 == topic.getId()) {
-			VoTopic votopic = new VoTopic(topic, true, true, true);
-			PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = PMF.getPm();
+		try {
 			try {
-				pm.makePersistent(votopic);
-			} finally {
-				pm.close();
+				if (0 == topic.getId()) {
+					VoTopic votopic = new VoTopic(topic, true, true, true);
+					pm.makePersistent(votopic);
+					topic.setId(votopic.getId().getId());
+					VoUser user = getCurrentUser(pm);
+					VoUserGroup ug = user.getGroup(votopic.getUserGroupId());
+					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`) values (" + votopic.getId().getId() + ","
+							+ ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + ");");
+					newTopicNotify(votopic);
+				} else {
+					updateTopic(topic);
+				}
+				return topic.getId();
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new InvalidOperation(VoError.GeneralError, "can't create topic. " + e);
 			}
-			newTopicNotify(votopic);
-		} else {
-			updateTopic(topic);
+		} finally {
+			pm.close();
 		}
-		return topic.getId();
 	}
 
 	@Override
@@ -261,93 +371,26 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation,
-			TException {
-
-		TopicListPart mlp = null;
-
-		if (!TEST_ON_FAKE_DATA) {
-			mlp = new TopicListPart();
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-
-			try {
-
-				try {
-
-					VoUser user = getCurrentUser(pm);
-					pm.retrieve(user);
-					VoUserGroup group = user.getGroup(groupId);
-
-					String req = "select from com.vmesteonline.be.jdo2.VoTopic where rubricId == " + rubricId + " && longMax < "
-							+ (group.getLongitude() + group.getLongitudeDelta()); // +
-																																		// " && longMin < "
-																																		// +
-																																		// (group.getLongitude()
-																																		// -
-																																		// group.getLongitudeDelta());
-
-					// + "F && latMax > " + (group.getLatitude() +
-					// group.getLatitudeDelta()) + "F && latMin < "
-					// + (group.getLatitude() - group.getLatitudeDelta()) + "F";
-
-					/*
-					 * String req =
-					 * "select from com.vmesteonline.be.jdo2.VoTopic where rubricId == " +
-					 * rubricId +
-					 * " && longMax > lmx && longMin < lmn && latMax > tmx && latMin < tmn PARAMETERS float lmx float lmn float tmx"
-					 * ;
-					 */
-					Query q = pm.newQuery(req);
-					Extent<VoTopic> te = pm.getExtent(VoTopic.class);
-					for (VoTopic voTopic : te) {
-						System.out.print(voTopic.toString());
-					}
-
-					/*
-					 * q.setFilter("rubricId == " + rubricId); q.setFilter("longMax > " +
-					 * (group.getLongitude() + group.getLongitudeDelta()));
-					 * q.setFilter("longMin < " + (group.getLongitude() -
-					 * group.getLongitudeDelta())); q.setFilter("latMax > " +
-					 * (group.getLatitude() + group.getLatitudeDelta()));
-					 * q.setFilter("latMin < " + (group.getLatitude() -
-					 * group.getLatitudeDelta()));
-					 */
-					List<VoTopic> topics = (List<VoTopic>) q.execute();
-					if (topics.isEmpty()) {
-						logger.debug("can't find any topics");
-						return mlp;
-					}
-					mlp.totalSize = topics.size();
-					for (VoTopic voTopic : topics) {
-						mlp.addToTopics(voTopic.getTopic());
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			} finally {
-				pm.close();
-			}
-			return mlp;
-
-		} else {
-			int ss = (int) (groupId % 10);
-			mlp = new TopicListPart(new HashSet<Topic>(), topicsaa[ss].length);
-			for (int topNo = 0; topNo < length && topNo < topicsaa[ss].length; topNo++) {
-				mlp.addToTopics(topicsaa[ss][topNo]);
-			}
-		}
-		return mlp;
-	}
-
-	@Override
 	public long postMessage(Message msg) throws InvalidOperation, TException {
 		long userId = getCurrentUserId();
 		msg.setAuthorId(userId);
-		boolean newMessage = 0 >= msg.getId();
 		VoMessage vomsg;
-		if (newMessage) {
-			vomsg = new VoMessage(msg);
+		if (0 == msg.getId()) {
+			PersistenceManager pm = PMF.getPm();
+			try {
+				try {
+					vomsg = new VoMessage(msg);
+					VoTopic topic = pm.getObjectById(VoTopic.class, msg.getTopicId());
+					topic.setMessageNum(topic.getMessageNum() + 1);
+					topic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new InvalidOperation(VoError.IncorrectParametrs, "can't create message " + e.toString());
+				}
+			} finally {
+				pm.close();
+			}
 			newMessageNotify(vomsg);
 			msg.setId(vomsg.getId().getId());
 		} else {
@@ -365,12 +408,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			if (null == storedMsg)
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Message not found by ID=" + msg.getId());
 
-			VoTopic topic = storedMsg.getTopic();
+			VoTopic topic = pm.getObjectById(VoTopic.class, storedMsg.getTopicId());
 			if (null != topic) {
 				topic.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
 				topic.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());
 			} else {
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No topic found by id=" + storedMsg.getTopic().getId()
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No topic found by id=" + storedMsg.getTopicId()
 						+ " that stored in Message ID=" + msg.getId());
 			}
 
@@ -391,7 +434,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 						+ " that stored in Message ID=" + msg.getId());
 			}
 
-			if (storedMsg.getTopic().getId().getId() != msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId()
+			if (storedMsg.getTopicId() != msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId()
 					|| storedMsg.getRecipient() != msg.getRecipientId() || storedMsg.getCreatedAt() != msg.getCreated() || storedMsg.getType() != msg.getType())
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs,
 						"Parameters: topic, author, recipient, createdAt, type could not be changed!");
