@@ -342,29 +342,32 @@ h1 {
   vertical-align: middle;
   margin-left: 10px;
 }
-.topic-item .topic-descr.message-item {
+.topic-item .topic-descr.one-message {
   margin: 10px 0 10px 0;
 }
-.topic-item .topic-descr.message-item .answer-date {
+.topic-item .topic-descr.one-message .answer-date {
   color: #808080;
   float: left;
   margin-top: 5px;
 }
-.topic-item .topic-descr.message-item .message-author {
+.topic-item .topic-descr.one-message .message-author {
   margin-bottom: 10px;
   font-size: 14px;
+}
+.one-message .like-item .fa {
+  margin-right: 5px;
 }
 .alert {
   padding: 0;
   margin-bottom: 5px;
 }
-.message-item {
+.one-message {
   border-radius: 1px !important;
 }
 .wysiwig-box {
   display: none;
 }
-.message-item+.wysiwig-box {
+.one-message+.wysiwig-box {
   border: 1px solid #5090c1;
 }
 .widget-header.fixed {
@@ -399,6 +402,9 @@ h1 {
 }
 .dd>.dd-list>.topic-item.list-view>.dd-list {
   padding-left: 30px;
+}
+.wysiwyg-editor a {
+  cursor: pointer;
 }
 @media all and (max-width: 768px),screen and (device-width: 320px) {
   .sidebar#sidebar {
