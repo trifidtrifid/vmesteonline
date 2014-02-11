@@ -9,14 +9,14 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 
 @PersistenceCapable
-public class VoGroup implements Comparable <VoGroup>{
+public class VoGroup implements Comparable<VoGroup> {
 
-	public static final int RADIUS_FOR_UNKNOWNS = 2000000; //whole world
-	
+	public static final int RADIUS_FOR_UNKNOWNS = 2000000; // whole world
+
 	public VoGroup(String visibleName, int radius) {
-		this(visibleName,radius,false);
+		this(visibleName, radius, false);
 	}
-	
+
 	public VoGroup(String visibleName, int radius, boolean subscribedByDefault) {
 		this.visibleName = visibleName;
 		this.radius = radius;
@@ -52,8 +52,10 @@ public class VoGroup implements Comparable <VoGroup>{
 		this.radius = radius;
 	}
 
-	public boolean isHome(){
-		return radius==0;}
+	public boolean isHome() {
+		return radius == 0;
+	}
+
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key id;
@@ -64,8 +66,8 @@ public class VoGroup implements Comparable <VoGroup>{
 
 	@Persistent
 	private int radius;
-	
-	@Persistent 
+
+	@Persistent
 	private boolean subscribedByDefault;
 
 	@Override
@@ -78,5 +80,4 @@ public class VoGroup implements Comparable <VoGroup>{
 		return Integer.compare(o.radius, radius);
 	}
 
-	
 }

@@ -34,7 +34,6 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			pm.close();
 		}
 	}
-	
 
 	public static VoSession getSession(String sessId, PersistenceManager pm) throws InvalidOperation {
 
@@ -127,26 +126,26 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	public VoUser getUserByEmail(String email) {
-		return getUserByEmail(email, null);
+		PersistenceManager pm = PMF.getPm();
+		try {
+			return getUserByEmail(email, pm);
+		} finally {
+			pm.close();
+		}
 	}
 
-	public VoUser getUserByEmail(String email, PersistenceManager _pm) {
+	public VoUser getUserByEmail(String email, PersistenceManager pm) {
 
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-		try {
-			Query q = pm.newQuery(VoUser.class);
-			q.setFilter("email == emailParam");
-			q.declareParameters("float emailParam");
-			List<VoUser> users = (List<VoUser>) q.execute(email);
-			if (users.isEmpty())
-				return null;
-			if (users.size() != 1)
-				logger.error("has more than one user with email " + email);
-			return users.get(0);
-		} finally {
-			if (null == _pm)
-				pm.close();
-		}
+		Query q = pm.newQuery(VoUser.class);
+		
+		q.setFilter("email == emailParam");
+		q.declareParameters("float emailParam");
+		List<VoUser> users = (List<VoUser>) q.execute(email);
+		if (users.isEmpty())
+			return null;
+		if (users.size() != 1)
+			logger.error("has more than one user with email " + email);
+		return users.get(0);
 	}
 
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");

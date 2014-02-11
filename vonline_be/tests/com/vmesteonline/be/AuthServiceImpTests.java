@@ -10,6 +10,7 @@ import javax.jdo.PersistenceManager;
 
 import org.apache.thrift.TException;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,15 +26,15 @@ public class AuthServiceImpTests {
 
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
-	AuthServiceImpl authSrvc;
+	AuthServiceImpl asi;
 
 	@Before
 	public void setUp() throws Exception {
 		helper.setUp();
-		authSrvc = new AuthServiceImpl();
+		asi = new AuthServiceImpl();
 		HttpSessionStubForTests httpSess = new HttpSessionStubForTests();
 		httpSess.setId("1");
-		authSrvc.setSession(httpSess);
+		asi.setSession(httpSess);
 	}
 
 	@After
@@ -44,7 +45,7 @@ public class AuthServiceImpTests {
 	@Test
 	public void testLogin() {
 		try {
-			authSrvc.login("test", "ppp");
+			asi.login("test", "ppp");
 		} catch (InvalidOperation e) {
 			assertEquals(VoError.IncorrectParametrs, e.what);
 		} catch (TException e) {
@@ -75,15 +76,15 @@ public class AuthServiceImpTests {
 			return;
 		}
 		try {
-			long ret = authSrvc.registerNewUser("testName", "testFamily", "testPassword", "test@eml", locations.get(0));
-			VoUser user = authSrvc.getUserByEmail("test@eml");
+			PersistenceManager pm = PMF.getPm();
+			long ret = asi.registerNewUser("testName", "testFamily", "testPassword", "test@eml", locations.get(0));
+			VoUser user = asi.getUserByEmail("test@eml", pm);
 			assertEquals("testName", user.getName());
 			assertEquals("testPassword", user.getPassword());
-
-			assertEquals(0, user.getHomeGroup().getGroup().getRadius());
+			Assert.assertNotNull(user.getHomeGroup());
+			assertEquals(0, user.getHomeGroup().getRadius());
 
 			VoPostalAddress.getKeyValue(Long.parseLong(locations.get(0)));
-			PersistenceManager pm = PMF.getPm();
 			VoPostalAddress postalAddress = pm.getObjectById(VoPostalAddress.class, VoPostalAddress.getKeyValue(Long.parseLong(locations.get(0))));
 
 			VoUser userByRet = pm.getObjectById(VoUser.class, ret);
@@ -103,8 +104,6 @@ public class AuthServiceImpTests {
 			for (VoUserGroup ug : groups) {
 				assertEquals(ug.getLatitude(), latitude, 0F);
 				assertEquals(ug.getLongitude(), longitude, 0F);
-				if (ug.isHome())
-					assertEquals(ug.getGroup().getRadius(), 0);
 			}
 			boolean found = false;
 			for (VoUser hobit : postalAddress.getBuilding().getUsers()) {
@@ -114,7 +113,7 @@ public class AuthServiceImpTests {
 				}
 			}
 			assertEquals(found, true);
-			assertEquals(true, authSrvc.login("test@eml", "testPassword"));
+			assertEquals(true, asi.login("test@eml", "testPassword"));
 
 		} catch (TException e) {
 			e.printStackTrace();

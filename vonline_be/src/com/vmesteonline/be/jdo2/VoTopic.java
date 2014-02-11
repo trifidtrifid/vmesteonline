@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -12,64 +13,53 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.Message;
 import com.vmesteonline.be.Topic;
+import com.vmesteonline.be.UserMessage;
+import com.vmesteonline.be.UserTopic;
 import com.vmesteonline.be.data.PMF;
 
 @PersistenceCapable
-public class VoTopic {
+public class VoTopic extends VoBaseMessage {
 	// id, message, messageNum, viewers, usersNum, lastUpdate, likes, unlikes,
 	// rubricId
 	public VoTopic(Topic topic, boolean checkConsistacy, boolean updateLInkedObjects, boolean makePersistant) throws InvalidOperation {
 
-		//childTreeList = new ArrayList<Pair<Long,Long>>();
-		
-		
-		PersistenceManagerFactory pmf = PMF.get();
-		PersistenceManager pm = pmf.getPersistenceManager();
+		super(topic.getMessage());
+		messageNum = 0;
+		usersNum = 1;
+		viewers = 1;
+		lastUpdate = (int) (System.currentTimeMillis() / 1000);
+		likesNum = 0;
+		unlikesNum = 0;
+		rubricId = topic.getRubricId();
+		userGroupId = topic.getMessage().getGroupId();
+		lastUpdate = (int) (System.currentTimeMillis() / 1000);
 
-		try {
-			VoRubric rubric = pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
-			if (null == rubric) {
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No Rubric found by id=" + topic.getRubricId());
-			}
-
-			messageNum = 0;
-			usersNum = 1;
-			viewers = 1;
-			lastUpdate = (int) (System.currentTimeMillis() / 1000);
-			likesNum = 0;
-			unlikesNum = 0; 
-
-			lastUpdate = (int) (System.currentTimeMillis() / 1000);
-			message = new VoMessage(topic.getMessage(), this);
-
-			//the topic is made persistent in message constructor
-			topic.setId(id.getId());
-			topic.message.setId(message.getId().getId());
-
-		} finally {
-			pm.close();
-		}
 	}
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key id;
-
-	public Key getId() {
-		return id;
+	public int getLikesNum() {
+		return likesNum;
 	}
 
-	public void setId(Key id) {
-		this.id = id;
+	public void setLikesNum(int likesNum) {
+		this.likesNum = likesNum;
 	}
 
-	public VoMessage getMessage() {
-		return message;
+	public int getUnlikesNum() {
+		return unlikesNum;
 	}
 
-	public void setMessage(VoMessage message) {
-		this.message = message;
+	public void setUnlikesNum(int unlikesNum) {
+		this.unlikesNum = unlikesNum;
+	}
+
+	public Topic getTopic() {
+
+		Message msg = new Message(id.getId(), 0L, type, getId().getId(), 0L, authorId.getId(), createdAt, editedAt, new String(content), likesNum,
+				unlikesNum, links, tags, new UserMessage(true, false, false));
+
+		return new Topic(getId().getId(), null, msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(), null);
 	}
 
 	public int getMessageNum() {
@@ -120,8 +110,48 @@ public class VoTopic {
 		this.unlikesNum = unlikes;
 	}
 
+	public float getLongMax() {
+		return longMax;
+	}
+
+	public void setLongMax(float longMax) {
+		this.longMax = longMax;
+	}
+
+	public float getLongMin() {
+		return longMin;
+	}
+
+	public void setLongMin(float longMin) {
+		this.longMin = longMin;
+	}
+
+	public float getLatMax() {
+		return latMax;
+	}
+
+	public void setLatMax(float latMax) {
+		this.latMax = latMax;
+	}
+
+	public float getLatMin() {
+		return latMin;
+	}
+
+	public void setLatMin(float latMin) {
+		this.latMin = latMin;
+	}
+
 	public long getRubricId() {
 		return rubricId;
+	}
+
+	public Long getUserGroupId() {
+		return userGroupId;
+	}
+
+	public void setUserGroupId(Long userGroupId) {
+		this.userGroupId = userGroupId;
 	}
 
 	public void setRubricId(long rubricId) {
@@ -136,8 +166,10 @@ public class VoTopic {
 		unlikesNum += unlikesDelta;
 	}
 
-	@Persistent(dependent = "true")
-	private VoMessage message;
+	@Override
+	public String toString() {
+		return "VoTopic [id=" + id + ", message=" + content.toString() + ", messageNum=" + messageNum + "]";
+	}
 
 	@Persistent
 	@Unindexed
@@ -163,107 +195,91 @@ public class VoTopic {
 	private int unlikesNum;
 
 	@Persistent
-	private long rubricId;
+	private Long rubricId;
 
 	@Persistent
-	@Unowned
-	private VoUserTopic userTopic;
-
-	@Override
-	public String toString() {
-		return "VoTopic [id=" + id + ", message=" + message + ", messageNum=" + messageNum + "]";
-	}
-
-	/*@Persistent
-	@Unindexed
-	private long[] listRepresentationOfTree = new long[0];
+	private Long userGroupId;
 
 	@Persistent
-	@Unindexed
-	@Embedded
-	private List<Pair<Long, Long>> childTreeList; // parent:child
+	private int ra;
 
-	private void packListRepresentation() {
-		listRepresentationOfTree = new long[childTreeList.size() * 2];
-		for (int ptr = 0; ptr < childTreeList.size(); ptr++) {
-			listRepresentationOfTree[ptr * 2] = childTreeList.get(ptr).left;
-			listRepresentationOfTree[ptr * 2 + 1] = childTreeList.get(ptr).right;
-		}
-	}
+	@Persistent
+	private Float longMax;
 
-	private void unpackListRepresentation() {
-		for (int ptr = 0; ptr < listRepresentationOfTree.length / 2; ptr++)
-			childTreeList.add(new Pair<Long, Long>(listRepresentationOfTree[ptr * 2], listRepresentationOfTree[ptr * 2 + 1]));
-	}
+	@Persistent
+	private Float longMin;
 
-	void addChildMessage(long parentId, long newMessageId) throws InvalidOperation {
-		if (0 == parentId) { // root message of the topic
-			if (!childTreeList.isEmpty() && childTreeList.get(0).right != newMessageId) {
-				throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs, "FAiled to rewrite the root message of topic "
-						+ this.getId().getId() + " by message with ID=" + newMessageId);
-			}
-			childTreeList.add(new Pair<Long, Long>(0L, newMessageId));
-			packListRepresentation();
-		} else {
-			synchronized (childTreeList) {
-				if (0 == childTreeList.size()) {
-					unpackListRepresentation();
-				}
+	@Persistent
+	private Float latMax;
 
-				int pos = getPosOfTheLastChildOf(parentId, 0, childTreeList);
-				childTreeList.add(pos, new Pair<Long, Long>(parentId, newMessageId));
-				packListRepresentation();
-				childTreeList.notify();
-			}
-		}
+	@Persistent
+	private Float latMin;
 
-	}
-
-
-	/**
-	 * Method returns a list representation of tree that should be opened under
-	 * the
+	/*
+	 * @Persistent
+	 * 
+	 * @Unindexed private long[] listRepresentationOfTree = new long[0];
+	 * 
+	 * @Persistent
+	 * 
+	 * @Unindexed
+	 * 
+	 * @Embedded private List<Pair<Long, Long>> childTreeList; // parent:child
+	 * 
+	 * private void packListRepresentation() { listRepresentationOfTree = new
+	 * long[childTreeList.size() * 2]; for (int ptr = 0; ptr <
+	 * childTreeList.size(); ptr++) { listRepresentationOfTree[ptr * 2] =
+	 * childTreeList.get(ptr).left; listRepresentationOfTree[ptr * 2 + 1] =
+	 * childTreeList.get(ptr).right; } }
+	 * 
+	 * private void unpackListRepresentation() { for (int ptr = 0; ptr <
+	 * listRepresentationOfTree.length / 2; ptr++) childTreeList.add(new
+	 * Pair<Long, Long>(listRepresentationOfTree[ptr * 2],
+	 * listRepresentationOfTree[ptr * 2 + 1])); }
+	 * 
+	 * void addChildMessage(long parentId, long newMessageId) throws
+	 * InvalidOperation { if (0 == parentId) { // root message of the topic if
+	 * (!childTreeList.isEmpty() && childTreeList.get(0).right != newMessageId) {
+	 * throw new InvalidOperation(com.vmesteonline.be.Error.IncorrectParametrs,
+	 * "FAiled to rewrite the root message of topic " + this.getId().getId() +
+	 * " by message with ID=" + newMessageId); } childTreeList.add(new Pair<Long,
+	 * Long>(0L, newMessageId)); packListRepresentation(); } else { synchronized
+	 * (childTreeList) { if (0 == childTreeList.size()) {
+	 * unpackListRepresentation(); }
+	 * 
+	 * int pos = getPosOfTheLastChildOf(parentId, 0, childTreeList);
+	 * childTreeList.add(pos, new Pair<Long, Long>(parentId, newMessageId));
+	 * packListRepresentation(); childTreeList.notify(); } }
+	 * 
+	 * }
+	 * 
+	 * 
+	 * /** Method returns a list representation of tree that should be opened
+	 * under the
 	 * 
 	 * @param msg
-	 * @return list representation of tree
-	 /
-	public List<Pair<Long, Long>> getListRepresentationOfTreeUnder(Message msg) {
-		List<Pair<Long, Long>> outList = new Vector<Pair<Long, Long>>();
-		synchronized (childTreeList) {
-			if (0 == childTreeList.size())
-				unpackListRepresentation();
-			int pos = 0;
-			for (; pos < childTreeList.size(); pos++) {
-				if (childTreeList.get(pos).getSecond() == msg.id) {
-					pos++;
-					break;
-				}
-			}
-			if (pos != childTreeList.size()) {
-				for (; pos < childTreeList.size() && msg.parentId != childTreeList.get(pos).getFirst(); pos++) {
-					outList.add(childTreeList.get(pos));
-				}
-			}
-			childTreeList.notify();
-		}
-		return outList;
-	}
+	 * 
+	 * @return list representation of tree / public List<Pair<Long, Long>>
+	 * getListRepresentationOfTreeUnder(Message msg) { List<Pair<Long, Long>>
+	 * outList = new Vector<Pair<Long, Long>>(); synchronized (childTreeList) { if
+	 * (0 == childTreeList.size()) unpackListRepresentation(); int pos = 0; for (;
+	 * pos < childTreeList.size(); pos++) { if (childTreeList.get(pos).getSecond()
+	 * == msg.id) { pos++; break; } } if (pos != childTreeList.size()) { for (;
+	 * pos < childTreeList.size() && msg.parentId !=
+	 * childTreeList.get(pos).getFirst(); pos++) {
+	 * outList.add(childTreeList.get(pos)); } } childTreeList.notify(); } return
+	 * outList; }
+	 * 
+	 * public static int getPosOfTheLastChildOf(long parentId, int offset,
+	 * List<Pair<Long, Long>> parentChildPairsList) {
+	 * 
+	 * for (int pairNo = parentChildPairsList.size() - 1; offset <= pairNo;
+	 * pairNo--) { if (parentId == parentChildPairsList.get(pairNo).getFirst()) {
+	 * return getPosOfTheLastChildOf(parentChildPairsList.get(pairNo).getSecond(),
+	 * pairNo, parentChildPairsList); } else if (parentId ==
+	 * parentChildPairsList.get(pairNo).getSecond()) { return pairNo + 1; } } if
+	 * (parentId == parentChildPairsList.get(offset).getSecond()) { // stop
+	 * recursion on the last leaf return offset + 1; } else return -1; }
+	 */
 
-	public static int getPosOfTheLastChildOf(long parentId, int offset, List<Pair<Long, Long>> parentChildPairsList) {
-
-		for (int pairNo = parentChildPairsList.size() - 1; offset <= pairNo; pairNo--) {
-			if (parentId == parentChildPairsList.get(pairNo).getFirst()) {
-				return getPosOfTheLastChildOf(parentChildPairsList.get(pairNo).getSecond(), pairNo, parentChildPairsList);
-			} else if (parentId == parentChildPairsList.get(pairNo).getSecond()) {
-				return pairNo + 1;
-			}
-		}
-		if (parentId == parentChildPairsList.get(offset).getSecond()) {
-			// stop recursion on the last leaf
-			return offset + 1;
-		} else
-			return -1;
-	}*/
-	
-	
 }

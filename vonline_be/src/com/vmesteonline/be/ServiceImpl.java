@@ -72,13 +72,13 @@ public class ServiceImpl {
 
 	protected ServiceImpl(HttpSession session) {
 		this.sessionStorage = new SessionIdStorage(session.getId());
-		;
 	}
 
 	protected long getCurrentUserId() throws InvalidOperation {
 		return getCurrentUserId(null);
 	}
-	protected long getCurrentUserId(PersistenceManager _pm ) throws InvalidOperation {
+
+	protected long getCurrentUserId(PersistenceManager _pm) throws InvalidOperation {
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
 		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
@@ -88,7 +88,8 @@ public class ServiceImpl {
 				return sess.getUserId();
 			return (long) 0;
 		} finally {
-			if( null==_pm) pm.close();
+			if (null == _pm)
+				pm.close();
 		}
 	}
 
@@ -144,6 +145,7 @@ public class ServiceImpl {
 	}
 
 	public void setCurrentAttribute(int key, long value) throws InvalidOperation, TException {
+
 		setCurrentAttribute(key, value, null);
 	}
 

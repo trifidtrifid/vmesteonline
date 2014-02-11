@@ -22,7 +22,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.apphosting.api.DatastorePb.DatastoreService;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -33,14 +32,10 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.utils.Defaults;
-import com.vmesteonline.be.utils.GroupHelper;
 
 public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
-	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
-
 	public UserServiceImpl() {
-
 	}
 
 	public UserServiceImpl(String sessId) {
@@ -51,6 +46,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		super(sess);
 	}
 
+	// todo pm.close
 	@Override
 	public List<Group> getUserGroups() throws InvalidOperation, TException {
 		try {
@@ -138,6 +134,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				pm.makePersistent(pa);
 				locations.add("" + pa.getAddressCode());
 			}
+
 			return locations;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -287,14 +284,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			// TODO check that there is no country with the same name
 			VoCountry vc = new VoCountry(name);
-			Query q = pm.newQuery( VoCountry.class );
-			q.setFilter("name == '"+name+"'");
-			List <VoCountry> countries = (List<VoCountry>) q.execute();
-			if( countries.size() > 0) {
-				logger.info("City was NOT created. The same City was registered. Return an old one: "+countries.get(0));
+			Query q = pm.newQuery(VoCountry.class);
+			q.setFilter("name == '" + name + "'");
+			List<VoCountry> countries = (List<VoCountry>) q.execute();
+			if (countries.size() > 0) {
+				logger.info("City was NOT created. The same City was registered. Return an old one: " + countries.get(0));
 				return countries.get(0).getCountry();
 			} else {
-				logger.info("Country '"+name+"'was created.");
+				logger.info("Country '" + name + "'was created.");
 				pm.makePersistent(vc);
 				return vc.getCountry();
 			}
@@ -312,15 +309,15 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			// TODO check that there is no country with the same name
 			VoCountry vco = pm.getObjectById(VoCountry.class, countryId);
-			Query q = pm.newQuery( VoCity.class );
-			q.setFilter("country == "+countryId);
-			q.setFilter("name == '"+name+"'");
-			List <VoCity> cities = (List<VoCity>) q.execute();
-			if( cities.size() > 0) {
-				logger.info("City was NOT created. The same City was registered. Return an old one: "+cities.get(0));
+			Query q = pm.newQuery(VoCity.class);
+			q.setFilter("country == " + countryId);
+			q.setFilter("name == '" + name + "'");
+			List<VoCity> cities = (List<VoCity>) q.execute();
+			if (cities.size() > 0) {
+				logger.info("City was NOT created. The same City was registered. Return an old one: " + cities.get(0));
 				return cities.get(0).getCity();
 			} else {
-				logger.info("City '"+name+"'was created.");
+				logger.info("City '" + name + "'was created.");
 				VoCity vc = new VoCity(vco, name);
 				pm.makePersistent(vco);
 				return vc.getCity();
@@ -340,15 +337,15 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			// TODO check that there is no street with the same name
 			VoCity vc = null;
 			vc = pm.getObjectById(VoCity.class, cityId);
-			Query q = pm.newQuery( VoStreet.class );
-			q.setFilter("city == "+cityId);
-			q.setFilter("name == '"+name+"'");
-			List <VoStreet> streets = (List<VoStreet>) q.execute();
-			if( streets.size() > 0) {
-				logger.info("Street was NOT created. The same sreet was registered. Return an old one: "+streets.get(0));
+			Query q = pm.newQuery(VoStreet.class);
+			q.setFilter("city == " + cityId);
+			q.setFilter("name == '" + name + "'");
+			List<VoStreet> streets = (List<VoStreet>) q.execute();
+			if (streets.size() > 0) {
+				logger.info("Street was NOT created. The same sreet was registered. Return an old one: " + streets.get(0));
 				return streets.get(0).getStreet();
 			} else {
-				logger.info("Street '"+name+"'was created.");
+				logger.info("Street '" + name + "'was created.");
 				VoStreet vs = new VoStreet(vc, name);
 				pm.makePersistent(vs);
 				return vs.getStreet();
@@ -367,15 +364,15 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			// TODO check that there is no building with the same name
 			VoStreet vs = pm.getObjectById(VoStreet.class, streetId);
-			Query q = pm.newQuery( VoBuilding.class );
-			q.setFilter("streetId == "+streetId);
-			q.setFilter("fullNo == '"+fullNo+"'");
-			List <VoBuilding> buildings = (List<VoBuilding>) q.execute();
-			if( buildings.size() > 0) { 
-				logger.info("VoBuilding was NOT created. The same VoBuilding was registered. Return an old one: "+buildings.get(0));
+			Query q = pm.newQuery(VoBuilding.class);
+			q.setFilter("streetId == " + streetId);
+			q.setFilter("fullNo == '" + fullNo + "'");
+			List<VoBuilding> buildings = (List<VoBuilding>) q.execute();
+			if (buildings.size() > 0) {
+				logger.info("VoBuilding was NOT created. The same VoBuilding was registered. Return an old one: " + buildings.get(0));
 				return buildings.get(0).getBuilding();
 			} else {
-				logger.info("VoBuilding '"+fullNo+"'was created.");
+				logger.info("VoBuilding '" + fullNo + "'was created.");
 				VoBuilding voBuilding = new VoBuilding(vs, fullNo, (float) longitude, (float) lattitude);
 				pm.makePersistent(voBuilding);
 				return voBuilding.getBuilding();
@@ -427,10 +424,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser currentUser = getCurrentUser(pm);
-			if( null == currentUser )
+			if (null == currentUser)
 				throw new InvalidOperation(VoError.NotAuthorized, "No currnet user is set.");
 			VoPostalAddress address = currentUser.getAddress();
-			if( null == address) {
+			if (null == address) {
 				return null;
 			}
 			return address.getPostalAddress();
@@ -438,5 +435,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
-	
+
+	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
+
 }

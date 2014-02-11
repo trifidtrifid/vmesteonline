@@ -94,13 +94,14 @@ service MessageService {
 * МЕтод для создаия нового сообщения
 *
 **/
-	Message createMessage( 1: i64 parentId, // 'идентификатор родительского сообщения, NULL для корневого со',
-		2: i64 groupId, //идентификатор пользовтельской группы, в которой он размещает сообщение
-		3: MessageType type, // 'тип один из (сообщение, чат)',
-		4: string content, // 'содержание сообщения',
-		5: map<MessageType,i64> linkedMessages,
-		6: map<i64,string> tags,
-		7: i64 recipientId // 'адресат задан только для личных сообщений, иначе NULL',
+	Message createMessage( 1:i64 topicId, 
+		2: i64 parentId, // 'идентификатор родительского сообщения, NULL для корневого со',
+		3: i64 groupId, //идентификатор пользовтельской группы, в которой он размещает сообщение
+		4: MessageType type, // 'тип один из (сообщение, чат)',
+		5: string content, // 'содержание сообщения',
+		6: map<MessageType,i64> linkedMessages,
+		7: map<i64,string> tags,
+		8: i64 recipientId // 'адресат задан только для личных сообщений, иначе NULL',
 		) throws (1:error.InvalidOperation exc),
 /**
 * Cоздание нового или обновление старого сообщения
@@ -127,7 +128,7 @@ service MessageService {
 	i32 checkUpdates( 1:i32 lastResposeTimestamp ) throws (1:error.InvalidOperation exc),
 	GroupUpdates getUpdates() throws (1:error.InvalidOperation exc),
 
-	TopicListPart getTopics( 1:i64 groupId , 2:i64 rubricId, 3:MessageType messageType, 4:i32 commmunityId,  5:i32 offset, 6:i32 length) throws (1:error.InvalidOperation exc),
+	TopicListPart getTopics( 1:i64 groupId , 2:i64 rubricId, 3:i32 commmunityId, 4:i64 lastLoadedTopicId, 5:i32 length) throws (1:error.InvalidOperation exc),
 	/**
 	* Загрузка части преставления дерева сообщений в виде дерева. parentID указывает на сообщение топика или на сообщение первого уровня
 	**/

@@ -17,6 +17,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
@@ -36,6 +37,17 @@ public class VoUser {
 		this.unlikesNum = 0;
 		this.rubrics = new ArrayList<VoRubric>();
 		this.addresses = new TreeSet<VoPostalAddress>();
+	}
+
+	public VoUserGroup getGroup(long id) throws InvalidOperation{
+		if (home.getId().getId() == id)
+			return home;
+
+		for (VoUserGroup g : groups) {
+			if (g.getId().getId() == id)
+				return g;
+		}
+		throw new InvalidOperation(VoError.IncorrectParametrs, "user with id " + getId() + " have no group with id " + id);
 	}
 
 	public VoUserGroup getHomeGroup() {
@@ -121,7 +133,8 @@ public class VoUser {
 	public void setLocation(long locCode, boolean doSave) throws InvalidOperation {
 		setLocation(locCode, doSave, null);
 	}
-	public void setLocation(long locCode, boolean doSave, PersistenceManager _pm ) throws InvalidOperation {
+
+	public void setLocation(long locCode, boolean doSave, PersistenceManager _pm) throws InvalidOperation {
 		Key addressKey = VoPostalAddress.getKeyValue(locCode);
 		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
 		try {
@@ -133,13 +146,19 @@ public class VoUser {
 			}
 			setCurrentPostalAddress(userAddress, pm);
 		} finally {
-			if( null==_pm) pm.close();
+			if (null == _pm)
+				pm.close();
 		}
 	}
+
 	/**
-	 * MEthod set current postal address of the user and register user in the building
-	 * @param userAddress newUSer postal address
-	 * @param pm - PersistenceManager to manage the objects
+	 * MEthod set current postal address of the user and register user in the
+	 * building
+	 * 
+	 * @param userAddress
+	 *          newUSer postal address
+	 * @param pm
+	 *          - PersistenceManager to manage the objects
 	 */
 	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) {
 		VoBuilding building = null;
@@ -179,12 +198,12 @@ public class VoUser {
 			groups = new TreeSet<VoUserGroup>();
 		}
 		addPostalAddress(userAddress, pm);
-		
+
 		pm.makePersistent(this);
 		pm.makePersistent(building);
 	}
-	
-	public void addPostalAddress(VoPostalAddress pa){
+
+	public void addPostalAddress(VoPostalAddress pa) {
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
 		try {
@@ -194,11 +213,11 @@ public class VoUser {
 		}
 	}
 
-	public void addPostalAddress(VoPostalAddress pa, PersistenceManager pm){
+	public void addPostalAddress(VoPostalAddress pa, PersistenceManager pm) {
 		addresses.add(pa);
 	}
-	
-	public void setCurrentPostalAddress(VoPostalAddress pa){
+
+	public void setCurrentPostalAddress(VoPostalAddress pa) {
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
 		try {
@@ -207,8 +226,7 @@ public class VoUser {
 			pm.close();
 		}
 	}
-	
-	
+
 	public Set<VoPostalAddress> getAddresses() {
 		return addresses;
 	}
@@ -216,7 +234,7 @@ public class VoUser {
 	@Persistent
 	@Unowned
 	private VoPostalAddress address;
-	
+
 	@Persistent
 	@Unowned
 	private Set<VoPostalAddress> addresses;
@@ -269,7 +287,6 @@ public class VoUser {
 		rubrics.add(rubric);
 	}
 
-	
 	@Override
 	public String toString() {
 		return "VoUser [id=" + id + ", name=" + name + ", email=" + email + "]";
