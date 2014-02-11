@@ -94,7 +94,7 @@ service MessageService {
 * МЕтод для создаия нового сообщения
 *
 **/
-	Message createMessage( 1:i64 topicId, 
+	Message createMessage( 1:i64 topicId,  
 		2: i64 parentId, // 'идентификатор родительского сообщения, NULL для корневого со',
 		3: i64 groupId, //идентификатор пользовтельской группы, в которой он размещает сообщение
 		4: MessageType type, // 'тип один из (сообщение, чат)',

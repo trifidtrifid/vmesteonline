@@ -65,7 +65,7 @@
 	MessageServiceImpl messageService = new MessageServiceImpl();
 	MessageType mesType = MessageType.BASE;
 
-	TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,mesType,20,0,10);
+	TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
 
 	Topic[] currTopic= new Topic[100];
 	int topicsLen = Topics.topics.toArray().length;

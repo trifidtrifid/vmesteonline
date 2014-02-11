@@ -207,10 +207,6 @@
             $('.one-message+.wysiwig-box .btn-primary').click(function(){
                 var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
                 message = message.replace(new RegExp('&nbsp;','g'),' ');
-                message = message.replace(new RegExp('–;','g'),'1');
-                message = message.replace(new RegExp('-','g'),'-');
-                message = message.replace(new RegExp('&mdash;','g'),'3');
-                //alert(message);
                 var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
                 messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
                 alert(messageWithGoodLinks);
