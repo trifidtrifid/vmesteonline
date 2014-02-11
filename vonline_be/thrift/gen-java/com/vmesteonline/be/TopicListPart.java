@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, TopicListPart._Fields>, java.io.Serializable, Cloneable, Comparable<TopicListPart> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("TopicListPart");
 
-  private static final org.apache.thrift.protocol.TField TOPICS_FIELD_DESC = new org.apache.thrift.protocol.TField("topics", org.apache.thrift.protocol.TType.SET, (short)1);
+  private static final org.apache.thrift.protocol.TField TOPICS_FIELD_DESC = new org.apache.thrift.protocol.TField("topics", org.apache.thrift.protocol.TType.LIST, (short)1);
   private static final org.apache.thrift.protocol.TField TOTAL_SIZE_FIELD_DESC = new org.apache.thrift.protocol.TField("totalSize", org.apache.thrift.protocol.TType.I32, (short)2);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
@@ -44,7 +44,7 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
     schemes.put(TupleScheme.class, new TopicListPartTupleSchemeFactory());
   }
 
-  public Set<Topic> topics; // required
+  public List<Topic> topics; // required
   public int totalSize; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -115,7 +115,7 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.TOPICS, new org.apache.thrift.meta_data.FieldMetaData("topics", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
             new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Topic.class))));
     tmpMap.put(_Fields.TOTAL_SIZE, new org.apache.thrift.meta_data.FieldMetaData("totalSize", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
@@ -127,7 +127,7 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
   }
 
   public TopicListPart(
-    Set<Topic> topics,
+    List<Topic> topics,
     int totalSize)
   {
     this();
@@ -142,7 +142,7 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
   public TopicListPart(TopicListPart other) {
     __isset_bitfield = other.__isset_bitfield;
     if (other.isSetTopics()) {
-      Set<Topic> __this__topics = new HashSet<Topic>(other.topics.size());
+      List<Topic> __this__topics = new ArrayList<Topic>(other.topics.size());
       for (Topic other_element : other.topics) {
         __this__topics.add(new Topic(other_element));
       }
@@ -172,16 +172,16 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
 
   public void addToTopics(Topic elem) {
     if (this.topics == null) {
-      this.topics = new HashSet<Topic>();
+      this.topics = new ArrayList<Topic>();
     }
     this.topics.add(elem);
   }
 
-  public Set<Topic> getTopics() {
+  public List<Topic> getTopics() {
     return this.topics;
   }
 
-  public TopicListPart setTopics(Set<Topic> topics) {
+  public TopicListPart setTopics(List<Topic> topics) {
     this.topics = topics;
     return this;
   }
@@ -230,7 +230,7 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
       if (value == null) {
         unsetTopics();
       } else {
-        setTopics((Set<Topic>)value);
+        setTopics((List<Topic>)value);
       }
       break;
 
@@ -416,18 +416,18 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
         }
         switch (schemeField.id) {
           case 1: // TOPICS
-            if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
+            if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TSet _set30 = iprot.readSetBegin();
-                struct.topics = new HashSet<Topic>(2*_set30.size);
-                for (int _i31 = 0; _i31 < _set30.size; ++_i31)
+                org.apache.thrift.protocol.TList _list30 = iprot.readListBegin();
+                struct.topics = new ArrayList<Topic>(_list30.size);
+                for (int _i31 = 0; _i31 < _list30.size; ++_i31)
                 {
                   Topic _elem32;
                   _elem32 = new Topic();
                   _elem32.read(iprot);
                   struct.topics.add(_elem32);
                 }
-                iprot.readSetEnd();
+                iprot.readListEnd();
               }
               struct.setTopicsIsSet(true);
             } else { 
@@ -460,12 +460,12 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
       if (struct.topics != null) {
         oprot.writeFieldBegin(TOPICS_FIELD_DESC);
         {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, struct.topics.size()));
+          oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.topics.size()));
           for (Topic _iter33 : struct.topics)
           {
             _iter33.write(oprot);
           }
-          oprot.writeSetEnd();
+          oprot.writeListEnd();
         }
         oprot.writeFieldEnd();
       }
@@ -517,9 +517,9 @@ public class TopicListPart implements org.apache.thrift.TBase<TopicListPart, Top
       BitSet incoming = iprot.readBitSet(2);
       if (incoming.get(0)) {
         {
-          org.apache.thrift.protocol.TSet _set35 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.topics = new HashSet<Topic>(2*_set35.size);
-          for (int _i36 = 0; _i36 < _set35.size; ++_i36)
+          org.apache.thrift.protocol.TList _list35 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.topics = new ArrayList<Topic>(_list35.size);
+          for (int _i36 = 0; _i36 < _list35.size; ++_i36)
           {
             Topic _elem37;
             _elem37 = new Topic();

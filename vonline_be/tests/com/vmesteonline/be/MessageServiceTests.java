@@ -2,6 +2,7 @@ package com.vmesteonline.be;
 
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -9,6 +10,7 @@ import java.util.TreeMap;
 import javax.jdo.PersistenceManager;
 
 import org.apache.thrift.TException;
+import org.apache.tools.ant.taskdefs.Sleep;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,16 +20,12 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoUser;
-import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
-import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 
 public class MessageServiceTests {
 
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 	private String sessionId = "11111111111111111111111";
-	private VoGroup groupForTopic = new VoGroup("двор", 1000);
 	AuthServiceImpl asi;
 	UserServiceImpl usi;
 	MessageServiceImpl msi;
@@ -143,10 +141,36 @@ public class MessageServiceTests {
 	public void testGetTopics() {
 
 		try {
-			createTopic();
+			Topic tpc = createTopic();
 			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 0);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
+			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+
+	}
+
+	@Test
+	public void testGetFirstFiveTopics() {
+		try {
+			List<Topic> tpcs = new ArrayList<Topic>();
+			for (int i = 0; i < 10; i++) {
+				tpcs.add(createTopic());
+				Thread.sleep(2000);
+			}
+
+			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 5);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(5, rTopic.totalSize);
+			Assert.assertEquals(tpcs.get(0).getId(), rTopic.topics.get(0).getId());
+			Assert.assertEquals(tpcs.get(1).getId(), rTopic.topics.get(1).getId());
+			Assert.assertEquals(tpcs.get(2).getId(), rTopic.topics.get(2).getId());
+			Assert.assertEquals(tpcs.get(3).getId(), rTopic.topics.get(3).getId());
+			Assert.assertEquals(tpcs.get(4).getId(), rTopic.topics.get(4).getId());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -182,7 +206,6 @@ public class MessageServiceTests {
 			mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
 			Assert.assertEquals(1, mlp.totalSize);
 
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());

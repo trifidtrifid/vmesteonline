@@ -101,7 +101,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		} else {
 			int ss = (int) (groupId % 10);
-			mlp = new MessageListPart(new HashSet<Message>(), msgsaaa[ss][(int) topicId].length);
+			mlp = new MessageListPart(new ArrayList<Message>(), msgsaaa[ss][(int) topicId].length);
 			for (int msgNo = 0; msgNo < length && msgNo + offset < msgsaaa[ss][(int) topicId].length; msgNo++) {
 				mlp.addToMessages(msgsaaa[ss][(int) topicId][msgNo]);
 			}
@@ -163,7 +163,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		} else {
 			int ss = (int) (groupId % 10);
-			mlp = new TopicListPart(new HashSet<Topic>(), topicsaa[ss].length);
+			mlp = new TopicListPart(new ArrayList<Topic>(), topicsaa[ss].length);
 			for (int topNo = 0; topNo < length && topNo < topicsaa[ss].length; topNo++) {
 				mlp.addToTopics(topicsaa[ss][topNo]);
 			}
@@ -479,7 +479,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			theTopic.setViewers(topic.viewers);
 			theTopic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
 			pm.makePersistent(theTopic);
-
+			
 		} finally {
 			pm.close();
 		}

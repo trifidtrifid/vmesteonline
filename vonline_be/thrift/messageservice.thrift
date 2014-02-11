@@ -79,12 +79,12 @@ struct GroupUpdates {
 }
 
 struct TopicListPart {
-	1:set<Topic> topics,
+	1:list<Topic> topics,
 	2:i32	totalSize //size of full list
 } 
 
 struct MessageListPart {
-	1:set<Message> messages,
+	1:list<Message> messages,
 	2:i32	totalSize //size of full list
 } 
 
