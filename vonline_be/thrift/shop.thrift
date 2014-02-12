@@ -183,12 +183,14 @@ service ShopService {
 	void updateCategory( 1:ProductCategory newCategoryInfo) throws (1:error.InvalidOperation exc),
 	
 	//IMPORT-EXPORT
+
 	DataSet importData(1:DataSet data) throws (1:error.InvalidOperation exc),
 	DataSet exportOrders( 1:i32 dateFrom, 2:i32 dateTo, 3:OrderStatus status ) throws (1:error.InvalidOperation exc),
 	DataSet exportOrderLines( 1:i32 dateFrom, 2:i32 dateTo, 3:OrderStatus status ) throws (1:error.InvalidOperation exc),
 	DataSet exportProductsOrdered( 1:i32 dateFrom, 2:i32 dateTo, 3:i64 producerId, 4:i64 productCategoryId ) 
 		throws (1:error.InvalidOperation exc),
-	
+
+
 	//frontend functions================================================================================================
 	list<Shop> getShops() throws (1:error.InvalidOperation exc),
 	map<i32,DateType> getDates(1:i32 from, 2: i32 to) throws (1:error.InvalidOperation exc),
