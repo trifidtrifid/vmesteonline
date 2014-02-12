@@ -47,12 +47,14 @@ public class VoMessage extends VoBaseMessage {
 	 *           if consistency check fails or other exception happens
 	 */
 
+	public VoMessage() {
+	}
+
 	public VoMessage(Message msg) throws InvalidOperation {
 
 		super(msg);
 		this.topicId = msg.getTopicId();
 		this.parentId = msg.getParentId();
-		this.childMessages = new TreeSet<VoMessage>();
 
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
@@ -62,7 +64,6 @@ public class VoMessage extends VoBaseMessage {
 				try {
 					VoMessage parentMsg = pm.getObjectById(VoMessage.class, msg.getParentId());
 					pm.retrieve(parentMsg);
-					parentMsg.addChildMessage(this);
 					pm.makePersistent(parentMsg);
 				} catch (JDOObjectNotFoundException e) {
 					e.printStackTrace();
@@ -127,62 +128,6 @@ public class VoMessage extends VoBaseMessage {
 				content), likesNum, unlikesNum, links, tags, null, 0);
 	}
 
-	/**
-	 * Method returns child messages of one level below the current message. Set
-	 * is limited by size parameter and shifted by order
-	 * 
-	 * @param offset
-	 *          how many of childs should be skipped
-	 * @param size
-	 *          how big list should be returned
-	 * @return set of childs
-	 */
-	public Set<Message> getDirectChildMessages(int offset, int size) {
-		Set<Message> childs = new HashSet<Message>();
-		int count = 0;
-		for (VoMessage child : this.getChildMessages()) {
-			if (count >= offset) {
-				childs.add(child.getMessage());
-				if (--size == 0)
-					break;
-			}
-		}
-		return childs;
-	}
-
-	/**
-	 * Method returns a list representation of child tree f messages. The size of
-	 * the tree limited by size parameter and offset messages are skipped.
-	 * 
-	 * @param setToFill
-	 *          a set to fill list to
-	 * @param offset
-	 *          - skip first of messages
-	 * @param size
-	 *          - maximum size of list to return
-	 * @return filled size
-	 */
-	public int getChildMessagesTree(Set<Message> setToFill, int offset, int size) {
-		int count = 0;
-		for (VoMessage child : this.getChildMessages()) {
-			if (--size == 0)
-				break;
-			count += child.getChildMessagesTree(setToFill, offset - count, size);
-			if (count > offset)
-				setToFill.add(child.getMessage());
-			count++;
-		}
-		return count - offset;
-	}
-
-	public Set<VoMessage> getChildMessages() {
-		return childMessages;
-	}
-
-	public void addChildMessage(VoMessage childMsg) {
-		childMessages.add(childMsg);
-	}
-
 	public long getApprovedId() {
 		return approvedId;
 	}
@@ -208,20 +153,6 @@ public class VoMessage extends VoBaseMessage {
 	}
 
 	@Persistent
-	/*
-	 * @Extensions({ @Extension(vendorName = "datanucleus", key =
-	 * "cascade-update", value = "false"),
-	 * 
-	 * @Extension(vendorName = "datanucleus", key = "collection", value =
-	 * "dependent-element") })
-	 * 
-	 * @Order(extensions = @Extension(vendorName = "datanucleus", key =
-	 * "list-ordering", value = "createdAt asc"))
-	 */
-	@Unowned
-	private Set<VoMessage> childMessages;
-
-	@Persistent
 	@Unindexed
 	private long approvedId;
 
@@ -241,6 +172,16 @@ public class VoMessage extends VoBaseMessage {
 
 	@Persistent
 	private long parentId;
+
+	protected long visibleOffset;
+
+	public long getVisibleOffset() {
+		return visibleOffset;
+	}
+
+	public void setVisibleOffset(long visibleOffset) {
+		this.visibleOffset = visibleOffset;
+	}
 
 	public long getParentId() {
 		return parentId;

@@ -51,7 +51,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
@@ -71,7 +70,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length)
 			throws InvalidOperation, TException {
 
-		MessageListPart mlp = null;
+		MessageListPart mlp = new MessageListPart();
 
 		if (!TEST_ON_FAKE_DATA) {
 			PersistenceManager pm = PMF.getPm();
@@ -81,25 +80,19 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoMessage m : ext) {
 					m.toString();
 				}
-
-				Query q = pm.newQuery(VoMessage.class);
-				q.setFilter("topicId == " + topicId + " && parentId == " + parentId);
-				List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
-
-				mlp = new MessageListPart();
-				if (voMsgs == null) {
-					logger.debug("can't find any topics");
-					return mlp;
+				if (parentId == 0) {
+					Query q = pm.newQuery(VoMessage.class);
+					q.setFilter("topicId == " + topicId + " && parentId == 0");
+					List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+					return createMlp(voMsgs);
+				} else {
+					Query q = pm.newQuery(VoMessage.class);
+					q.setFilter("topicId == " + topicId);
+					List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+					MessagesTree tree = new MessagesTree(voMsgs);
+					voMsgs = tree.getTreeMessagesAfter(parentId, length);
+					return createMlp(voMsgs);
 				}
-				mlp.totalSize = voMsgs.size();
-				for (VoMessage voMsg : voMsgs) {
-					mlp.addToMessages(voMsg.getMessage());
-					if (0 != parentId) {
-
-					}
-				}
-				return mlp;
-
 			} finally {
 				pm.close();
 			}
@@ -114,10 +107,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return mlp;
 	}
 
-/*	private void getAllChildMessages(List<VoMessage> list, VoMessage msg) {
-		for
-	}
-*/
+	/*
+	 * private void getAllChildMessages(List<VoMessage> list, VoMessage msg) { for
+	 * }
+	 */
 	@Override
 	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation,
 			TException {
@@ -414,6 +407,19 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			updateMessage(msg);
 		}
 		return msg.getId();
+	}
+
+	private static MessageListPart createMlp(List<VoMessage> lst) {
+		MessageListPart mlp = new MessageListPart();
+		if (lst == null) {
+			logger.warn("try to create MessagePartList from null object");
+			return mlp;
+		}
+		mlp.totalSize = lst.size();
+		for (VoMessage voMessage : lst) {
+			mlp.addToMessages(voMessage.getMessage());
+		}
+		return mlp;
 	}
 
 	private void updateMessage(Message msg) throws InvalidOperation {
