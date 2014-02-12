@@ -87,9 +87,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		HashMap<DeliveryType, Double> deliveryCosts;
 		HashMap<PaymentType, Double> paymentTypes;
 
-		List<ByteBuffer> images = new ArrayList<ByteBuffer>();
-		List<ByteBuffer> images2 = new ArrayList<ByteBuffer>();
-		List<ByteBuffer> images3 = new ArrayList<ByteBuffer>();
+		List<String> images = new ArrayList<String>();
+		List<String> images2 = new ArrayList<String>();
+		List<String> images3 = new ArrayList<String>();
 
 		List<Long> topic2Set = new ArrayList<Long>();
 
@@ -164,9 +164,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true, true);
 
 			// create producers
-			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", ByteBuffer.wrap(LOGO.getBytes()),
+			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO,
 					"http://google.com"), shopId);
-			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", ByteBuffer.wrap(LOGO.getBytes()),
+			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", LOGO,
 					"http://google2.com"), shopId);
 
 			// Upload products
@@ -195,10 +195,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			optionsMap2.put("цвет", "черный");
 			optionsMap2.put("вкус", "мерзкий");
 
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, ByteBuffer.wrap(LOGO.getBytes()), 11D),
+			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D),
 					new ProductDetails(categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId)));
 
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, ByteBuffer.wrap(LOGO.getBytes()), 12D),
+			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D),
 					new ProductDetails(categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id)));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
@@ -1177,6 +1177,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	@Override
 	public DataSet importData(DataSet data) throws InvalidOperation, TException {
+		//data.
 		return null;
 	}
 

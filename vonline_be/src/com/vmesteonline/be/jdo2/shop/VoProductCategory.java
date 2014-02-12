@@ -22,17 +22,17 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoProductCategory {
 
-	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<ByteBuffer> logoURLset, List<Long> topicSet) {
+	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet) {
 		this(shop, parentId, name, descr, logoURLset, topicSet, null);
 	}
-	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<ByteBuffer> logoURLset, List<Long> topicSet, PersistenceManager _pm) {
+	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, PersistenceManager _pm) {
 	  
 		this.name = name;
 		this.descr = descr;
 		this.logoURLset = new ArrayList<String>();
-		for( ByteBuffer bb: logoURLset) {
+		for( String bb: logoURLset) {
 			try {
-				this.logoURLset.add(StorageHelper.saveImage(bb.array()));
+				this.logoURLset.add(StorageHelper.saveImage(bb));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -72,14 +72,10 @@ public class VoProductCategory {
 		ProductCategory pc = new ProductCategory(id.getId(), 
 				null==parent ? 0L : parent.getId(), name, descr, null, null );
 		
-		List<ByteBuffer> lus = new ArrayList<ByteBuffer>();
-		for( String lu : getLogoURLset()) {
-			lus.add(ByteBuffer.wrap(lu.getBytes()));
-		}
 		List<Long> ts = new ArrayList<Long>();
 		for( VoTopic vt: getTopics())
 			ts.add(vt.getId().getId());
-		pc.setLogoURLset(lus);
+		pc.setLogoURLset(getLogoURLset());
 		pc.setTopicSet(ts);
 		
 		return pc;
@@ -191,9 +187,9 @@ public class VoProductCategory {
 		this.name = newCategoryInfo.name;
 		this.descr = newCategoryInfo.descr;
 		this.logoURLset = new ArrayList<String>();
-		for( ByteBuffer bb: newCategoryInfo.logoURLset) {
+		for( String bb: newCategoryInfo.logoURLset) {
 			try {
-				this.logoURLset.add(StorageHelper.saveImage(bb.array()));
+				this.logoURLset.add(StorageHelper.saveImage(bb));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

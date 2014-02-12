@@ -50,9 +50,9 @@ public class VoProduct {
 		this.price = newInfo.product.price;
 		this.fullDescr = newInfo.details.fullDescr;
 		this.imagesURLset = new ArrayList<String>();
-		for (ByteBuffer imgURL : newInfo.details.getImagesURLset())
+		for (String imgURL : newInfo.details.getImagesURLset())
 			try {
-				this.imagesURLset.add(StorageHelper.saveImage(imgURL.array()));
+				this.imagesURLset.add(StorageHelper.saveImage(imgURL));
 			} catch (IOException ie) {
 				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 			}
@@ -86,9 +86,9 @@ public class VoProduct {
 				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 			}
 			vp.imagesURLset = new ArrayList<String>();
-			for (ByteBuffer imgURL : details.getImagesURLset())
+			for (String imgURL : details.getImagesURLset())
 				try {
-					vp.imagesURLset.add(StorageHelper.saveImage(imgURL.array()));
+					vp.imagesURLset.add(StorageHelper.saveImage(imgURL));
 				} catch (IOException ie) {
 					throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 				}
@@ -147,9 +147,9 @@ public class VoProduct {
 			throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 		}
 		this.imagesURLset = new ArrayList<String>();
-		for (ByteBuffer imgURL : details.getImagesURLset())
+		for (String imgURL : details.getImagesURLset())
 			try {
-				imagesURLset.add(StorageHelper.saveImage(imgURL.array()));
+				imagesURLset.add(StorageHelper.saveImage(imgURL));
 			} catch (IOException ie) {
 				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 			}
@@ -200,7 +200,7 @@ public class VoProduct {
 	}
 
 	public Product getProduct() {
-		return new Product(id.getId(), name, shortDescr, weight, ByteBuffer.wrap(imageURL.getBytes()), price);
+		return new Product(id.getId(), name, shortDescr, weight, imageURL, price);
 	}
 
 	public ProductDetails getProductDetails() {
@@ -212,11 +212,6 @@ public class VoProduct {
 		}
 		productDetails.setCategories(cs);
 
-		List<ByteBuffer> ius = new ArrayList<ByteBuffer>();
-		for (String iu : getImagesURLset()) {
-			ius.add(ByteBuffer.wrap(iu.getBytes()));
-		}
-
 		productDetails.setPricesMap(convertToPriceTypeMap(pricesMap, new HashMap<PriceType, Double>()));
 		productDetails.setOptionsMap(optionsMap);
 		List<Long> ts = new ArrayList<Long>();
@@ -226,7 +221,7 @@ public class VoProduct {
 		productDetails.setProducerId(producer.getId());
 		productDetails.setFullDescr(fullDescr);
 		productDetails.setTopicSet(ts);
-		productDetails.setImagesURLset(ius);
+		productDetails.setImagesURLset(getImagesURLset());
 
 		return productDetails;
 	}

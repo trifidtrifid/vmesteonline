@@ -30,7 +30,11 @@ public class StorageHelper {
 				!new String( urlOrContent, 0, 7).startsWith("http://"))
 			throw new IOException("Only external resources are supported now. URL must starts with 'http://'");
 		return new String(urlOrContent);
-	} 
+	}
+	
+	public static String saveImage( String urlOrContent )  throws IOException{
+		return saveImage(urlOrContent.getBytes());
+	}
 	
 	public static<T> List<T> loadCSVData( InputStream is, Map<Integer,String> fieldPosMap, T otf, String fieldDelim, String setDelim, String avpDelim) throws IOException{
 		LineReader lr = new LineReader(  new InputStreamReader( is ) );

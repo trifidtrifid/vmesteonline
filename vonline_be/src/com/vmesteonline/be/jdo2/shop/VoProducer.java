@@ -30,12 +30,12 @@ public class VoProducer {
 		this(shopId, producer.getName(), producer.getDescr(), producer.getLogoURL(), producer.getHomeURL());
 	}
 
-	public VoProducer(long shopId, String name, String descr, byte[] logoURL, String homeURL) throws InvalidOperation {
+	public VoProducer(long shopId, String name, String descr,String logoURL, String homeURL) throws InvalidOperation {
 		this.name = name;
 		this.descr = descr;
 		try {
 			this.logoURL = null;
-			if (null != logoURL && logoURL.length > 0)
+			if (null != logoURL && logoURL.length() > 0)
 				this.logoURL = StorageHelper.saveImage(logoURL);
 		} catch (IOException e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, e.getMessage());
@@ -66,7 +66,7 @@ public class VoProducer {
 	}
 
 	public Producer createProducer() {
-		return new Producer(id.getId(), name, descr, ByteBuffer.wrap(logoURL.getBytes()), homeURL);
+		return new Producer(id.getId(), name, descr, logoURL, homeURL);
 	}
 
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)

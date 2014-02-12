@@ -23,7 +23,7 @@ struct Producer {
 	1:i64 id,
 	2:string name,
 	3:string descr,
-	4:binary logoURL,
+	4:string logoURL,
 	5:string homeURL
 }
 
@@ -32,7 +32,7 @@ struct ProductCategory {
 	2:i64 parentId,
 	3:string name,
 	4:string descr,
-	5:list<binary> logoURLset
+	5:list<string> logoURLset
 	6:list<i64> topicSet
 }
 
@@ -41,7 +41,7 @@ enum PriceType { RETAIL=0, INET=1, VIP=2, SPECIAL=3 }
 struct ProductDetails {
 	1:list<i64> categories,
 	2:string fullDescr,
-	3:list<binary> imagesURLset
+	3:list<string> imagesURLset
 	4:map<PriceType,double> pricesMap,
 	5:map<string,string> optionsMap,
 	6:list<i64> topicSet,
@@ -53,7 +53,7 @@ struct Product {
 	2:string name,
 	3:string shortDescr,
 	4:double weight,
-	5:binary imageURL,
+	5:string imageURL,
 	6:double price,
 }
 
