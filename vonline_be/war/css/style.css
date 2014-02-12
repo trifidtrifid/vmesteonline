@@ -228,13 +228,20 @@ h1 {
 .topic-item .topic-descr header h2 {
   margin: 0 100px 0 110px;
   vertical-align: middle;
-  max-height: 39px;
+  height: 39px;
+  line-height: 39px;
   overflow: hidden;
   font-size: 18px;
   font-weight: bold;
 }
 .topic-item .topic-descr header h2.small {
   font-size: 16px;
+}
+.topic-item .topic-descr header h2 span {
+  vertical-align: middle;
+  line-height: 18px;
+  display: inline-block;
+  float: none;
 }
 .topic-item .topic-descr header span {
   float: left;

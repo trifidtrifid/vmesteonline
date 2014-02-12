@@ -29,7 +29,7 @@
 
         $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active');
 
-        $('.submenu .btn').click(function(e){
+ /*       $('.submenu .btn').click(function(e){
             e.preventDefault();
             $(this).closest('.submenu').find('.active').removeClass('active');
             $(this).parent().addClass('active');
@@ -121,8 +121,6 @@
             }
         });
 
-
-//        client.createTopic(Groups[0].id,'Тест тема-1',1,'некий контент 3',0,0,Rubrics[0].id,1);
         var topicsContent = client.getTopics(Groups[0].id,Rubrics[0].id, 1,0,0,100);
         var topicLen = topicsContent.topics.length;
 
@@ -200,7 +198,7 @@
             level = 0;
             messageListTopLevel = getMessageList(message.id,Groups[0].id,message.id);
             $('.dd>.dd-list>.topic-item:eq(' + i + ')').append(messageListTopLevel);
-        }
+        }*/
 
         /* --- */
 
@@ -283,10 +281,12 @@
                 if (scrollTop > 270){
                     $('.sidebar').hide();
                     $('.main-content').css('margin-left','0');
+                    $('.widget-header h2').css('min-width','996px');
                     staffCounterForGoodTopicsHeight++;
                 }else {
                     $('.sidebar').show();
                     $('.main-content').css('margin-left','190px');
+                    $('.widget-header h2').css('min-width','805px');
                     staffCounterForGoodTopicsHeight=0;
                 }
             }

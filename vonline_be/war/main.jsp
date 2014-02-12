@@ -59,7 +59,7 @@
 	MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
 	//MessageType mesType = MessageType.BASE;
 
-	TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
+	TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,20);
 
 	pageContext.setAttribute("groups",Groups);
 	pageContext.setAttribute("rubrics",Rubrics);
@@ -217,7 +217,7 @@
                         </ul>
                     </div><!-- /btn-group -->
 
-                    <a class="btn btn-primary btn-sm no-border" href="#">Создать тему</a>
+                    <a class="btn btn-primary btn-sm no-border" href="/createTopic.html">Создать тему</a>
 
                     <form method="post" action="#" class="form-group has-info">
                         <span class="block input-icon input-icon-right">
@@ -249,7 +249,7 @@
                                                 <a class="fa fa-check-square-o fa-2x" href="#"></a>
                                                 <a class="fa fa-times fa-2x" href="#"></a>
                                             </div>
-                                            <h2>${topic.subject}</h2>
+                                            <h2><span>${topic.subject}</span></h2>
                                         </header>
 
                                         <div class="widget-body">
