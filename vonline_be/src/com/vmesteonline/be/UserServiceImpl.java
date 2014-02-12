@@ -15,7 +15,6 @@ import org.apache.thrift.TException;
 
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
-import com.google.apphosting.api.DatastorePb.DatastoreService;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoUser;

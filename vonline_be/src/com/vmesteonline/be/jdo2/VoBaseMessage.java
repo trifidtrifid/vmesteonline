@@ -12,18 +12,16 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.Message;
 import com.vmesteonline.be.MessageType;
 
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
-public abstract class VoBaseMessage {
+public abstract class VoBaseMessage extends VoUserAttitude {
 
 	public VoBaseMessage(Message msg) {
+		super(msg.getLikesNum(), msg.getUnlikesNum());
 		content = msg.getContent().getBytes();
-		likesNum = msg.getLikesNum();
-		unlikesNum = msg.getUnlikesNum();
 		tags = msg.getTags();
 		links = msg.getLinkedMessages();
 		type = msg.getType();
@@ -66,38 +64,6 @@ public abstract class VoBaseMessage {
 		this.content = content;
 	}
 
-	public int getLikes() {
-		return likesNum;
-	}
-
-	public void setLikes(int likes) {
-		this.likesNum = likes;
-	}
-
-	public int decrementLikes() {
-		return --likesNum;
-	}
-
-	public int incrementLikes() {
-		return ++likesNum;
-	}
-
-	public int decrementUnlikes() {
-		return --unlikesNum;
-	}
-
-	public int incrementUnlikes() {
-		return ++unlikesNum;
-	}
-
-	public int getUnlikes() {
-		return unlikesNum;
-	}
-
-	public void setUnlikes(int unlikes) {
-		this.unlikesNum = unlikes;
-	}
-
 	public int getCreatedAt() {
 		return createdAt;
 	}
@@ -117,14 +83,6 @@ public abstract class VoBaseMessage {
 	@Persistent
 	@Unindexed
 	protected byte[] content;
-
-	@Persistent
-	@Unindexed
-	protected int likesNum;
-
-	@Persistent
-	@Unindexed
-	protected int unlikesNum;
 
 	@Persistent
 	protected Map<Long, String> tags;

@@ -26,8 +26,11 @@ import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.VoUserAttitude;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.VoUserMessage;
+import com.vmesteonline.be.jdo2.VoUserObject;
+import com.vmesteonline.be.jdo2.VoUserTopic;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
 
@@ -238,12 +241,21 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return 0;
 	}
 
+	protected void testMthd(long i, long d){
+		
+	}
+	
 	@Override
 	public long dislike(long messageId) throws InvalidOperation, TException {
 		long unlikesNum = 0;
 		long user = getCurrentUserId();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Transaction currentTransaction = pm.currentTransaction();
+		try {
+			this.getClass().getMethod("testMthd").invoke(1, 43);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		try {
 			VoMessage msg = pm.getObjectById(VoMessage.class, messageId);
 			VoUserMessage um = pm.getObjectById(VoUserMessage.class, VoUserMessage.getObjectKey(user, messageId));
@@ -253,7 +265,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				um.setUnlikes(true);
 				um.setRead(true);
 				um.setUserId(user);
-				um.setMessage(messageId);
+				um.setId(messageId);
 			} else {
 				if (!um.isUnlikes()) { // unlike already set
 					if (um.isLikes()) {
@@ -280,42 +292,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public long like(long messageId) throws InvalidOperation, TException {
-		long likesNum = 0;
-		long user = getCurrentUserId();
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Transaction currentTransaction = pm.currentTransaction();
-		try {
-			VoMessage msg = pm.getObjectById(VoMessage.class, messageId);
-			VoUserMessage um = pm.getObjectById(VoUserMessage.class, VoUserMessage.getObjectKey(user, messageId));
-			if (null == um) {
-				um = new VoUserMessage(user, messageId);
-				um.setLikes(true);
-				um.setUnlikes(false);
-				um.setRead(true);
-				um.setUserId(user);
-				um.setMessage(messageId);
-			} else {
-				if (!um.isLikes()) { // unlike already set
-					if (um.isUnlikes()) {
-						msg.decrementUnlikes();
-					}
-					um.setUnlikes(false);
-				}
-			}
-			likesNum = msg.incrementLikes();
-			pm.makePersistent(um);
-			pm.makePersistent(msg);
-			try {
-				currentTransaction.commit();
-			} catch (Exception e) {
-				currentTransaction.rollback();
-				throw new InvalidOperation(VoError.GeneralError, "Failed to change like for message " + messageId + " by user " + user
-						+ ". Transaction not commited. Reason is [" + e.getMessage() + "]. Rollbacked.");
-			}
-			return likesNum;
-		} finally {
-			pm.close();
-		}
+		return this.<VoMessage, VoUserMessage> like(messageId, VoMessage.class, VoUserMessage.class, new VoUserMessage());
 	}
 
 	@Override
@@ -326,8 +303,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public long likeTopic(long topicId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic());
 	}
 
 	@Override
@@ -407,6 +383,47 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			updateMessage(msg);
 		}
 		return msg.getId();
+	}
+
+	protected <T extends VoUserAttitude, UserT extends VoUserObject> long like(long messageId, Class<T> tclass, Class<UserT> tUserClass, UserT newObject)
+			throws InvalidOperation {
+		long likesNum = 0;
+		long userId = getCurrentUserId();
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Transaction currentTransaction = pm.currentTransaction();
+		try {
+	
+			T msg = (T) pm.getObjectById(tclass, messageId);
+			UserT um = (UserT) pm.getObjectById(tUserClass, VoUserMessage.getObjectKey(userId, messageId));
+			if (null == um) {
+				um = newObject;
+				um.setLikes(true);
+				um.setUnlikes(false);
+				um.setRead(true);
+				um.setId(messageId);
+				um.setUserId(userId);
+			} else {
+				if (!um.isLikes()) { // unlike already set
+					if (um.isUnlikes()) {
+						msg.decrementUnlikes();
+					}
+					um.setUnlikes(false);
+				}
+			}
+			likesNum = msg.incrementLikes();
+			pm.makePersistent(um);
+			pm.makePersistent(msg);
+			try {
+				currentTransaction.commit();
+			} catch (Exception e) {
+				currentTransaction.rollback();
+				throw new InvalidOperation(VoError.GeneralError, "Failed to change like for message " + messageId + " by user " + userId
+						+ ". Transaction not commited. Reason is [" + e.getMessage() + "]. Rollbacked.");
+			}
+			return likesNum;
+		} finally {
+			pm.close();
+		}
 	}
 
 	private static MessageListPart createMlp(List<VoMessage> lst) {
