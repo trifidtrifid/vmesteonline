@@ -28,6 +28,19 @@
 		response.sendRedirect("/login.html");
 		return; 
 	}
+
+    UserServiceImpl userService = new UserServiceImpl(request.getSession());
+
+    List<Group> Groups = userService.getUserGroups();
+    List<Rubric> Rubrics = userService.getUserRubrics();
+    MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
+    //MessageType mesType = MessageType.BASE;
+
+    TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,20);
+
+    pageContext.setAttribute("groups",Groups);
+    pageContext.setAttribute("rubrics",Rubrics);
+    pageContext.setAttribute("topics",Topics.topics);
 %>
 
 <!DOCTYPE html>
@@ -49,24 +62,6 @@
     <![endif]-->
 </head>
 <body>
-
-<%
-		
-	UserServiceImpl userService = new UserServiceImpl(request.getSession());
-			
-	List<Group> Groups = userService.getUserGroups();
-	List<Rubric> Rubrics = userService.getUserRubrics();
-	MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
-	//MessageType mesType = MessageType.BASE;
-
-	TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,20);
-
-	pageContext.setAttribute("groups",Groups);
-	pageContext.setAttribute("rubrics",Rubrics);
-	pageContext.setAttribute("topics",Topics.topics);
-
-%>
-
 <div class="container">
     <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
@@ -103,7 +98,7 @@
                 </a>
             </li>
             <li>
-                <a class="btn btn-info no-border" href="/shop.html">
+                <a class="btn btn-info no-border" href="/shop.jsp">
                 Магазин
                 </a>
             </li>
