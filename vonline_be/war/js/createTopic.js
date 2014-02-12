@@ -37,11 +37,13 @@ $(document).ready(function(){
     $('.wysiwig-box .btn-primary').click(function(){
         var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
         message = message.replace(new RegExp('&nbsp;','g'),' ');
-        var head = $('.head').text();
+        message = message.replace(new RegExp('<div>','g'),'<div> ');
+        var head = $('.head').val();
         var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
         messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
-        client.createTopic(Groups[0].id,head,1,messageWithGoodLinks,0,0,Rubrics[0].id,1);
         //alert(messageWithGoodLinks);
+        client.createTopic(Groups[0].id,head,1,messageWithGoodLinks,0,0,Rubrics[0].id,1);
+        document.location.replace("/main.jsp");
     });
 
 /*
@@ -61,7 +63,14 @@ function AutoReplaceLinkAndVideo(str) {
 
         if (arrayWithLinks[3].indexOf('youtu') != -1){
             // у ютуба несколько отличается ссылка и айфрэйм
-            iframe = '<iframe width="560" height="315" src="//www.youtube.com/embed/'+ arrayWithLinks[5] +'" frameborder="0" allowfullscreen></iframe>';
+            var youtubeLink="";
+            var indexSymbolRavno = arrayWithLinks[5].indexOf('=');
+            if (indexSymbolRavno != -1){
+                youtubeLink = arrayWithLinks[5].substr(indexSymbolRavno+1);
+            }else{
+                youtubeLink = arrayWithLinks[5];
+            }
+            iframe = '<iframe width="560" height="315" src="//www.youtube.com/embed/'+ youtubeLink +'" frameborder="0" allowfullscreen></iframe>';
         }else if(arrayWithLinks[3].indexOf('vimeo') != -1){
             iframe = '<iframe src="'+ currentLink +'" width="500" height="281" frameborder="0"'+
                 ' webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
