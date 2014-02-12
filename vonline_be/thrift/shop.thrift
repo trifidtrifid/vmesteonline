@@ -164,6 +164,7 @@ service ShopService {
 	void updateCategory( 1:ProductCategory newCategoryInfo) throws (1:error.InvalidOperation exc),
 	
 	//IMPORT-EXPORT
+	
 	//list<map<String>> importProducers( 1:list<ExchangeFieldType> fieldsOrder,  2:string fileName, 3:binary fileData, 4:bool doClean );
 	//list<map<String>> importCategiories( 1:list<ExchangeFieldType> fieldsOrder,  2:string fileName, 3:binary fileData, 4:bool doClean );
 	//list<map<String>> importProducts( 1:list<ExchangeFieldType> fieldsOrder,  2:string fileName, 3:binary fileData, 4:bool doClean );
