@@ -123,6 +123,25 @@ enum ExchangeFieldType {
 //ORDER LINES CONTAINS OPRDER_ID, PRODUCT_ID, PRODUCT_NAME, PRODUCER_ID, PRODUCER_NAME,    	
 	ORDER_LINE_QUANTITY = 1100, ORDER_LINE_PRICE,
 } 
+
+enum ImExType { IMPORT_SHOP = 10, IMPORT_PRODUCERS, IMPORT_CATEGORIES, IMPORT_PRODUCTS, 
+	EXPORT_ORDERS=20, ORDER_LINES }
+
+struct ImportElement {
+	1:ImExType type,
+	2:string fileName,
+	3:list<ExchangeFieldType> fieldsOrder,
+	4:optional binary fileData,
+	5:optional list<list<string>> fieldsData, //returned in response if empty in request
+}
+
+struct DataSet {
+	1:optional i64 id, //should not been initialized first time by FE.
+	2:string name,
+	3:i32 date,
+	4:list<ImportElement> data,
+}
+
 service ShopService {
 	
 	//backend functions=================================================================================================
@@ -164,13 +183,12 @@ service ShopService {
 	void updateCategory( 1:ProductCategory newCategoryInfo) throws (1:error.InvalidOperation exc),
 	
 	//IMPORT-EXPORT
-	//list<map<String>> importProducers( 1:list<ExchangeFieldType> fieldsOrder,  2:string fileName, 3:binary fileData, 4:bool doClean );
-	//list<map<String>> importCategiories( 1:list<ExchangeFieldType> fieldsOrder,  2:string fileName, 3:binary fileData, 4:bool doClean );
-	//list<map<String>> importProducts( 1:list<ExchangeFieldType> fieldsOrder,  2:string fileName, 3:binary fileData, 4:bool doClean );
+	DataSet importData(1:DataSet data) throws (1:error.InvalidOperation exc),
+	DataSet exportOrders( 1:i32 dateFrom, 2:i32 dateTo, 3:OrderStatus status ) throws (1:error.InvalidOperation exc),
+	DataSet exportOrderLines( 1:i32 dateFrom, 2:i32 dateTo, 3:OrderStatus status ) throws (1:error.InvalidOperation exc),
+	DataSet exportProductsOrdered( 1:i32 dateFrom, 2:i32 dateTo, 3:i64 producerId, 4:i64 productCategoryId ) 
+		throws (1:error.InvalidOperation exc),
 	
-	
-	//list<map<String>> importProducts( 1:list<ExchangeFieldType> fieldsOrder,  2:string fileName, 3:binary fileData, 4:bool doClean );
-
 	//frontend functions================================================================================================
 	list<Shop> getShops() throws (1:error.InvalidOperation exc),
 	map<i32,DateType> getDates(1:i32 from, 2: i32 to) throws (1:error.InvalidOperation exc),
