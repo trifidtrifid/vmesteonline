@@ -47,6 +47,9 @@ public class VoMessage extends VoBaseMessage {
 	 *           if consistency check fails or other exception happens
 	 */
 
+	public VoMessage() {
+	}
+
 	public VoMessage(Message msg) throws InvalidOperation {
 
 		super(msg);

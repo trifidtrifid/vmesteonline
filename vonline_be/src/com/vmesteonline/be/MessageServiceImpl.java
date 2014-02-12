@@ -92,10 +92,16 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					return mlp;
 				}
 				mlp.totalSize = voMsgs.size();
-				for (VoMessage voMsg : voMsgs) {
-					mlp.addToMessages(voMsg.getMessage());
-					if (0 != parentId) {
+				if (parentId == 0) {
+					for (VoMessage voMsg : voMsgs) {
+						mlp.addToMessages(voMsg.getMessage());
+					}
+				} else {
+					for (VoMessage voMsg : voMsgs) {
+						mlp.addToMessages(voMsg.getMessage());
+						if (0 != parentId) {
 
+						}
 					}
 				}
 				return mlp;
@@ -114,10 +120,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return mlp;
 	}
 
-/*	private void getAllChildMessages(List<VoMessage> list, VoMessage msg) {
-		for
-	}
-*/
+	/*
+	 * private void getAllChildMessages(List<VoMessage> list, VoMessage msg) { for
+	 * }
+	 */
 	@Override
 	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation,
 			TException {
