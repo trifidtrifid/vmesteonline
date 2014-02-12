@@ -4,11 +4,14 @@
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ServiceImpl"%>
-<%@ page import="com.vmesteonline.be.shop.Shop"%>
-<%@ page import="com.vmesteonline.be.shop.ProductCategory"%>
-<%@ page import="com.vmesteonline.be.shop.Product"%>
 <%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
+
+<%@ page import="java.nio.Buffer"%>
+<%@ page import="java.nio.ByteBuffer"%>
+<%@ page import="java.nio.ByteOrder"%>
+<%@ page import="java.nio.CharBuffer"%>
+<%@ page import="com.vmesteonline.be.shop.*" %>
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
@@ -16,15 +19,30 @@
 
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
-    //List<Shop> ArrayShops = shopService.getShops();
-    //Shop shop = shopService.getShop(1);
+    List<Shop> ArrayShops = shopService.getShops();
+    Shop shop = shopService.getShop(ArrayShops.get(0).id);
 
-    //out.print(ArrayShops.get(0).name);
-    //out.print(shop.name);
+    List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(0);
+    ProductListPart productsListPart = shopService.getProducts(0,10,ArrayProductCategory.get(0).id);
+    ProductDetails productDetails = shopService.getProductDetails(productsListPart.products.get(0).id);
+    //String productURL = new String( productsListPart.products.get(0).imageURL.array());
 
-    //List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(0);
+    List<Order> ArrayOrders = shopService.getOrders(0,(int)(System.currentTimeMillis()/1000L)+86400*30);
+    Order order = shopService.getOrder(ArrayOrders.get(1).id);
+    OrderDetails orderDetails = shopService.getOrderDetails(order.id);
+    List<OrderLine> orderLineArray= orderDetails.odrerLines;
 
-    //out.print(ArrayProductCategory.get(0).name);
+    //out.print(orderDetails.odrerLines.size());
+    //out.print(orderDetails.odrerLines.get(0).product.id);
+    //out.print(ArrayProductCategory.get(0).logoURLset);
+    //out.print(new String( productsListPart.products.get(0).imageURL.array()));
+    //out.print(ArrayOrders.get(0).id);
+
+    pageContext.setAttribute("productCategories", ArrayProductCategory);
+    pageContext.setAttribute("products",productsListPart.products);
+    pageContext.setAttribute("productDetails",productDetails);
+    //pageContext.setAttribute("productURL",productURL);
+    pageContext.setAttribute("orderLines",orderLineArray);
 
 %>
 
@@ -177,7 +195,32 @@
                     </div>
                 </nav>
                 <ul class="catalog-order">
-                    <li>
+                    <c:forEach var="orderLine" items="${orderLines}">
+                        <li>
+                            <img src="${orderLine.product.imageURL}" alt="картинка"/>
+                            <div class="product-right-descr">
+                                ${orderLine.product.name}  <br>
+                                ${orderLine.product.shortDescr}
+                            </div>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <td>Цена(шт)</td>
+                                    <td>Кол-во</td>
+                                    <td>Сумма</td>
+                                    <td></td>
+                                </tr>
+                                </thead>
+                                <tr>
+                                    <td class="td-price">${orderLine.product.price}</td>
+                                    <td><input type="text" class="input-mini spinner1" /></td>
+                                    <td class="td-summa">${orderLine.product.price}</td>
+                                    <td><a href="#" class="delete-product">Удалить</a></td>
+                                </tr>
+                            </table>
+                        </li>
+                    </c:forEach>
+                    <%--<li>
                         <img src="i/shop/1.jpg" alt="картинка"/>
                         <div class="product-right-descr">
                             100г Вкусный обед рагу с индейкой и кроликом Whiskas Вискас
@@ -242,7 +285,7 @@
                                 <td><a href="#" class="delete-product">Удалить</a></td>
                             </tr>
                         </table>
-                    </li>
+                    </li>--%>
                 </ul>
                 <div class="itogo-right">
                     Товаров на сумму: <span>333</span> руб.
@@ -281,18 +324,12 @@
                             <a href="#" class="fa fa-reply-all"></a>
                             <div>Назад</div>
                         </li>
-                        <li class="active">
-                            <a href="#" class="fa fa-beer"></a>
-                            <div>Для животных</div>
-                        </li>
-                        <li>
-                            <a href="#" class="fa fa-cutlery"></a>
-                            <div>Для людей</div>
-                        </li>
-                        <li>
-                            <a href="#" class="fa fa-coffee"></a>
-                            <div>Для маленьких детей</div>
-                        </li>
+                        <c:forEach var="productCategory" items="${productCategories}">
+                            <li data-catid="${productCategory.id}">
+                                <a href="#" class="fa fa-beer"></a>
+                                <div>${productCategory.name}</div>
+                            </li>
+                        </c:forEach>
                     </ul>
                 </nav>
                 <section class="catalog">
@@ -305,7 +342,85 @@
                             <td></td>
                         </tr>
                         </thead>
-                        <tr>
+                        <c:forEach var="product" items="${products}">
+                            <tr>
+                                <td>
+                                    <a href="#" class="product-link">
+                                        <img src="${product.imageURL}" alt="картинка"/>
+                                        <span>
+                                        ${product.name} <br>
+                                        ${product.shortDescr}
+                                        </span>
+                                    </a>
+                                    <div class="modal">
+                                        <div class="modal-body">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                            <div class="product-slider">
+                                                <div class="slider flexslider">
+                                                    <ul class="slides">
+                                                        <li>
+                                                            <img src="${product.imageURL}" />
+                                                        </li>
+                                                        <%--<li>
+                                                            <img src="i/shop/2.jpg" />
+                                                        </li>
+                                                        <li>
+                                                            <img src="i/shop/3.jpg" />
+                                                        </li>
+                                                        <li>
+                                                            <img src="i/shop/4.jpg" />
+                                                        </li>
+                                                        <li>
+                                                            <img src="i/shop/5.jpg" />
+                                                        </li>--%>
+                                                        <!-- items mirrored twice, total of 12 -->
+                                                    </ul>
+                                                </div>
+                                                <div class="carousel flexslider">
+                                                    <ul class="slides">
+                                                        <li>
+                                                            <img src="${product.imageURL}" />
+                                                        </li>
+                                                        <%--<li>
+                                                            <img src="i/shop/2.jpg" />
+                                                        </li>
+                                                        <li>
+                                                            <img src="i/shop/3.jpg" />
+                                                        </li>
+                                                        <li>
+                                                            <img src="i/shop/4.jpg" />
+                                                        </li>
+                                                        <li>
+                                                            <img src="i/shop/5.jpg" />
+                                                        </li>--%>
+                                                        <!-- items mirrored twice, total of 12 -->
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="product-descr">
+                                                <h3>${product.name}</h3>
+                                                <div class="product-text">
+                                                    ${productDetails.fullDescr}
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <span>Цена: ${product.price}</span>
+                                                    <input type="text" class="input-mini spinner1" />
+                                                    <i class="fa fa-shopping-cart"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="product-price">${product.price}</td>
+                                <td>
+                                    <input type="text" class="input-mini spinner1" />
+                                </td>
+                                <td>
+                                    <i class="fa fa-shopping-cart"></i>
+                                </td>
+                            </tr>
+                        </c:forEach>
+<%--                        <tr>
                             <td>
                                 <a href="#" class="product-link">
                                     <img src="i/shop/1.jpg" alt="картинка"/>
@@ -379,157 +494,7 @@
                             <td>
                                 <i class="fa fa-shopping-cart"></i>
                             </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="#" class="product-link">
-                                    <img src="i/shop/1.jpg" alt="картинка"/>
-                                    <span>100г Вкусный обед рагу с индейкой и кроликом Whiskas Вискас</span>
-                                </a>
-                                <div class="modal">
-                                    <div class="modal-body">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                        <div class="product-slider">
-                                            <div class="slider flexslider">
-                                                <ul class="slides">
-                                                    <li>
-                                                        <img src="i/shop/1.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/2.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/3.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/4.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/5.jpg" />
-                                                    </li>
-                                                    <!-- items mirrored twice, total of 12 -->
-                                                </ul>
-                                            </div>
-                                            <div class="carousel flexslider">
-                                                <ul class="slides">
-                                                    <li>
-                                                        <img src="i/shop/1.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/2.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/3.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/4.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/5.jpg" />
-                                                    </li>
-                                                    <!-- items mirrored twice, total of 12 -->
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="product-descr">
-                                            <h3>Вкусный обед рагу 2</h3>
-                                            <div class="product-text">
-                                                <p>Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас</p>
-                                                <p>Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас</p>
-                                                <p>Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <span>Цена: 500р</span>
-                                                <input type="text" class="input-mini spinner1" />
-                                                <button class="btn btn-primary btn-sm no-border">Купить</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td></td>
-                            <td>
-                                <input type="text" class="input-mini spinner1" />
-                            </td>
-                            <td>
-                                <i class="fa fa-shopping-cart"></i>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="#" class="product-link">
-                                    <img src="i/shop/1.jpg" alt="картинка"/>
-                                    <span>100г Вкусный обед рагу с индейкой и кроликом Whiskas Вискас</span>
-                                </a>
-                                <div class="modal">
-                                    <div class="modal-body">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                        <div class="product-slider">
-                                            <div class="slider flexslider">
-                                                <ul class="slides">
-                                                    <li>
-                                                        <img src="i/shop/1.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/2.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/3.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/4.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/5.jpg" />
-                                                    </li>
-                                                    <!-- items mirrored twice, total of 12 -->
-                                                </ul>
-                                            </div>
-                                            <div class="carousel flexslider">
-                                                <ul class="slides">
-                                                    <li>
-                                                        <img src="i/shop/1.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/2.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/3.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/4.jpg" />
-                                                    </li>
-                                                    <li>
-                                                        <img src="i/shop/5.jpg" />
-                                                    </li>
-                                                    <!-- items mirrored twice, total of 12 -->
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="product-descr">
-                                            <h3>Вкусный обед рагу 3</h3>
-                                            <div class="product-text">
-                                                <p>Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас</p>
-                                                <p>Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас</p>
-                                                <p>Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас Вкусный обед рагу с индейкой и кроликом Whiskas Вискас</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <span>Цена: 500р</span>
-                                                <input type="text" class="input-mini spinner1" />
-                                                <button class="btn btn-primary btn-sm no-border">Купить</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td></td>
-                            <td>
-                                <input type="text" class="input-mini spinner1" />
-                            </td>
-                            <td>
-                                <i class="fa fa-shopping-cart"></i>
-                            </td>
-                        </tr>
+                        </tr>--%>
                     </table>
                 </section>
 
