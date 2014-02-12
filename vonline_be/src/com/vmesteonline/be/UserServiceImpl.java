@@ -172,8 +172,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 			List<City> cl = new ArrayList<City>();
 			Query q = pm.newQuery(VoCity.class);
-			q.setFilter("country == :key");
-			List<VoCity> cs = (List<VoCity>) q.execute(countryId);
+			q.setFilter("country == "+countryId);
+			List<VoCity> cs = (List<VoCity>) q.execute();
 			for (VoCity c : cs) {
 				cl.add(c.getCity());
 			}

@@ -56,8 +56,12 @@ import com.vmesteonline.be.shop.ShopService.Iface;
 
 public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable {
 
-	// create fake data for tests
+	public static Logger logger;
+
 	static {
+		
+		logger = Logger.getLogger(ShopServiceImpl.class);
+		// create fake data for tests
 
 		String LOGO = "http://www.ru.tele2.ru/img/logo.gif";
 		String DESCR = "TELE2 shop";
@@ -110,7 +114,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			List<String> userLocation = UserServiceImpl.getLocationCodesForRegistration();
 
 			userHomeLocation = userLocation.get(0);
-			userId = asi.registerNewUser("fn", "ln", "pswd", "eml", userHomeLocation);
+			userId = 0;
+			try {
+				userId = asi.registerNewUser("fn", "ln", "pswd", "eml", userHomeLocation);
+			} catch (InvalidOperation e1) {
+				e1.printStackTrace();
+			}
 			asi.login("eml", "pswd");
 			usi = new UserServiceImpl(sessionId);
 			si = new ShopServiceImpl(sessionId);
@@ -122,16 +131,16 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			topic = msi.createTopic(gId, "AAA", MessageType.BASE, "", new HashMap<MessageType, Long>(), new HashMap<Long, String>(), usi.getUserRubrics()
 					.get(0).getId(), 0);
-
 			topicSet.add(topic.getId());
+
 
 			Country country = usi.getCounties().get(0);
 			City city = usi.getCities(country.getId()).get(0);
 			Street street = usi.getStreets(city.getId()).get(0);
 			Building building = usi.createNewBuilding(street.getId(), "17/3", 123.45, 54.321);
 			userAddress2 = new PostalAddress(country, city, street, building, (byte) 1, (byte) 2, 3, "");
-
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress2, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 			Long shopId = si.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
@@ -209,11 +218,6 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			si.createOrder(now + 1000, PriceType.RETAIL);
 			long canceledOID = si.cancelOrder();
-			try {
-				si.createOrder(now + 5 * day, PriceType.RETAIL);
-			} catch (InvalidOperation e) {
-				e.printStackTrace();
-			}
 			long lastOrder = si.createOrder(now + 6 * day, PriceType.RETAIL);
 
 			List<Order> orders = si.getOrders(now - 10 * day, now + 10 * day);
@@ -247,12 +251,6 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	ShopServiceImpl() {
-	}
-
-	public static Logger logger;
-
-	static {
-		logger = Logger.getLogger(ShopServiceImpl.class);
 	}
 
 	public ShopServiceImpl(String sessionId) {
