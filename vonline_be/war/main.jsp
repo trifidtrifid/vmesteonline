@@ -37,12 +37,6 @@
   <title>Главная</title>
   <link rel="stylesheet" href="css/style.css"/>
 
-<script src="js/thrift.js" type="text/javascript"></script>
-<script src="gen-js/messageservice_types.js" type="text/javascript"></script>
-<script src="gen-js/MessageService.js" type="text/javascript"></script>
-<script src="gen-js/userservice_types.js" type="text/javascript"></script>
-<script src="gen-js/UserService.js" type="text/javascript"></script>
-
 <script src="js/jquery-2.0.3.min.js"></script>
     <!--[if lt IE 9]>
     <script>
@@ -73,226 +67,6 @@
 
 %>
 
-   <script type="text/javascript">
-        $(document).ready(function(){
-
-        	var transport = new Thrift.Transport("/thrift/UserService");
-    		var protocol = new Thrift.Protocol(transport);
-    		var client = new com.vmesteonline.be.UserServiceClient(protocol);
-
-    		var Groups = client.getUserGroups();
-			var Rubrics = client.getUserRubrics();
-
-        	transport = new Thrift.Transport("/thrift/MessageService");
-    		protocol = new Thrift.Protocol(transport);
-    		client = new com.vmesteonline.be.MessageServiceClient(protocol);
-
-            var Messages,
-                mesLen,
-                mesNew,
-                mesNewLen,
-                mes,level=0,
-                message,
-                messageListNew = "",
-                messageList = '',
-                messageListTopLevel = "",
-                topicsList="",
-                topic,
-                iterator = 0;
-
-            $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active');
-
-            $('.submenu .btn').click(function(e){
-                e.preventDefault();
-                $(this).closest('.submenu').find('.active').removeClass('active');
-                $(this).parent().addClass('active');
-                var groupID = $(this).data('groupid');
-                 Topics = client.getTopics(groupID,Rubrics[0].id, 1,0,0,100);
-                 var topicLen = Topics.topics.length;
-                $('.dd>.dd-list').html('');
-                //alert('s');
-
-                for(var i = 0; i < topicLen; i++){
-                    topic = Topics.topics[i];
-                    topicsList = '<li class="dd-item dd2-item topic-item" data-id="15">'+
-                        '<div class="dd2-content widget-box topic-descr">'+
-                        '<header class="widget-header header-color-blue2">'+
-                            '<span class="topic-header-date">01.04.2014 10:10</span>'+
-                            '<span class="topic-header-left">'+
-                                '<i class="fa fa-minus"></i>'+
-                                '<i class="fa fa-sitemap"></i>'+
-                            '</span>'+
-                            '<div class="widget-toolbar no-border">'+
-                                '<a class="fa fa-thumb-tack fa-2x" href="#"></a>'+
-                                '<a class="fa fa-check-square-o fa-2x" href="#"></a>'+
-                                '<a class="fa fa-times fa-2x" href="#"></a>'+
-                            '</div>'+
-                            '<h2>'+ topic.subject +'</h2>'+
-                        '</header>'+
-                        '<div class="widget-body">'+
-                            '<div class="widget-main">'+
-                                '<div class="topic-left">'+
-                                    '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"/></a>'+
-                                    '<div class="topic-author">'+
-                                        '<a href="#">Иван Грозный</a>'+
-                                        '<div class="author-rating">'+
-                                        '<a href="#" class="fa fa-star"></a>'+
-                                        '<a class="fa fa-star" href="#"></a>'+
-                                        '<a class="fa fa-star" href="#"></a>'+
-                                        '<a class="fa fa-star-half-o" href="#"></a>'+
-                                        '<a class="fa fa-star-o" href="#"></a>'+
-                                '</div>'+
-                            '</div>'+
-                        '</div>'+
-                        '<div class="topic-right">'+
-                            '<a class="fa fa-link fa-relations" href="#"></a>'+
-                            '<p class="alert ">'+ topic.message.content +'</p>'+
-                            '<div class="likes">'+
-                                '<a href="#" class="like-item like">'+
-                                '<i class="fa fa-thumbs-o-up"></i>'+
-                                '<span>'+ topic.likesNum +'</span>'+
-                                '</a>'+
-                                '<a href="#" class="like-item dislike">'+
-                                '<i class="fa fa-thumbs-o-down"></i>'+
-                                '<span>'+ topic.unlikesNum +'</span>'+
-                                '</a>'+
-                            '</div>'+
-                        '</div>'+
-                        '</div>'+
-                        '<footer class="widget-toolbox clearfix">'+
-                            '<div class="btn-group ans-btn">'+
-                                '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
-                                    'Ответить'+
-                                    '<span class="icon-caret-down icon-on-right"></span>'+
-                                '</button>'+
-                                '<ul class="dropdown-menu dropdown-warning">'+
-                                    '<li>'+
-                                        '<a href="#">Ответить лично</a>'+
-                                    '</li>'+
-                                '</ul>'+
-                            '</div>'+
-                            '<div class="answers-ctrl">'+
-                                '<a class="fa fa-minus plus-minus" href="#"></a>'+
-                                '<span> <span>'+ topic.messageNum +'</span> <a href="#">(3)</a></span>'+
-                            '</div>'+
-                            '<div class="topic-statistic">'+
-                                'Участников '+ topic.usersNum + 'Просмторов '+ topic.viewers +
-                            '</div>'+
-                        '</footer>'+
-                        '</div>'+
-                        '</div>'+
-                '</li>';
-                    $('.dd>.dd-list').append(topicsList);
-                    //message = Topics.topics[i];
-                    iterator = 0;
-                    messageList="";
-                    level = 0;
-                    messageListNew="";
-                    messageListTopLevel = getMessageList(topic.id, groupID, topic.id);
-                    //console.log(messageListTopLevel);
-                    $('.dd>.dd-list>.topic-item:eq(' + i + ')').append(messageListTopLevel);
-                }
-            });
-
-            //client.postTopic(
-            client.createTopic(Groups[0].id,'Тест тема-1',1,'некий контент 3',0,0,Rubrics[0].id,1);
-            var Topics = client.getTopics(Groups[0].id,Rubrics[0].id, 1,0,0,100);
-            var topicLen = Topics.topics.length;
-            /*for (var z = 0; z<topicLen ;z++){
-             if (Topics.topics[z].subject == 'Тест тема-1'){
-             alert('ya');
-             }
-             }*/
-           /* var mes2 = client.getMessages(1, groupID, 1, parentID, 0, 0, 2);
-            mes2 = mes2.messages;*/
-
-            function getMessageList(topicID, groupID, parentID){
-                //console.log(Topics.topics[i].id+" "+Groups[0].id+" "+message.id)    ;
-                //console.log('Request: topic '+topicID+" groupID "+ groupID+" parent "+ parentID);
-                messagesArray = client.getMessages(topicID, groupID, 1, parentID, 0, 0, 2).messages;
-                //mes = mes.messages;
-                //console.log('Request: 1 '+mes.id+' iterator '+iterator);
-                //console.log('Response: id '+mes[0].id+' parent '+mes.parentId + ' topicId ' + mes.topicId + ' groupId ' + mes.groupId + ' content ' + mes[0].content);
-                mesLen = messagesArray.length;
-                if (mesLen > 0 && level < 3){
-                    //console.log('level'+level);
-                        level++;
-                    while(iterator < mesLen){
-                      //console.log('parentId '+message.id+' iterator '+iterator);
-                      mesNew = messagesArray[iterator];
-                      messageListNew += getMessageList(topicID, groupID, mesNew.id);
-                      iterator++;
-                    }
-                    iterator=0;
-                    messageList = '<ol class="dd-list">'+
-                        '<li class="dd-item dd2-item" data-id="19">'+
-                            '<div class="dd2-content topic-descr one-message widget-body">'+
-                                '<div class="widget-main">'+
-                                    '<div class="topic-left">'+
-                                        '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
-                                    '</div>'+
-                                    '<div class="topic-right">'+
-                                        '<div class="message-author">'+
-                                            '<a class="fa fa-link fa-relations" href="#" style="display: none;"></a>'+
-                                            '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
-                                            '<a href="#">Иван Грозный</a>'+
-                                        '</div>'+
-                                        '<p class="alert">'+ messagesArray[0].content+ '</p>'+
-                                        '<div class="likes">'+
-                                            '<div class="answer-date">' + messagesArray.created + '</div>'+
-                                            '<a href="#" class="like-item like">'+
-                                                '<i class="fa fa-thumbs-o-up"></i>'+
-                                                '<span>' + messagesArray[0].likesNum + '</span>'+
-                                            '</a>'+
-                                            '<a href="#" class="like-item dislike">'+
-                                            '<i class="fa fa-thumbs-o-down"></i>'+
-                                            '<span>' + messagesArray[0].unlikesNum + '</span>'+
-                                            '</a>'+
-                                        '</div>'+
-                                    '</div>'+
-                                '</div>'+
-                                '<footer class="widget-toolbox padding-4 clearfix">'+
-                                    '<div class="btn-group ans-btn">'+
-                                        '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
-                                            'Ответить'+
-                                            '<span class="icon-caret-down icon-on-right"></span>'+
-                                        '</button>'+
-                                        '<ul class="dropdown-menu dropdown-warning">'+
-                                            '<li>'+
-                                                '<a href="#">Ответить лично</a>'+
-                                            '</li>'+
-                                        '</ul>'+
-                                    '</div>'+
-                                    '<div class="answers-ctrl">'+
-                                        '<a class="fa fa-minus plus-minus" href="#"></a>'+
-                                        '<span> <span>8</span> <a href="#">(3)</a></span>'+
-                                    '</div>'+
-                                '</footer>'+
-                            '</div>'+
-                            messageListNew +
-                        '</li>'+
-                        '</ol>';
-                } else {
-                    messageListNew = "";
-                }
-                return messageList;
-            }
-
-            for(var i = 0; i < topicLen; i++){
-                message = Topics.topics[i];
-                iterator = 0;
-                messageList="";
-                messageListNew="";
-                level = 0;
-                messageListTopLevel = getMessageList(message.id,Groups[0].id,message.id);
-                //console.log('finish '+ i);
-                $('.dd>.dd-list>.topic-item:eq(' + i + ')').append(messageListTopLevel);
-                //console.log('finish-2');
-            }
-        });
-        
-    </script>
- 
 <div class="container">
     <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
@@ -594,8 +368,15 @@
     <!-- -->
 
 <!-- -->
-
+<!-- файлы thrift -->
+<script src="js/thrift.js" type="text/javascript"></script>
+<script src="gen-js/messageservice_types.js" type="text/javascript"></script>
+<script src="gen-js/MessageService.js" type="text/javascript"></script>
+<script src="gen-js/userservice_types.js" type="text/javascript"></script>
+<script src="gen-js/UserService.js" type="text/javascript"></script>
+<!-- -->
 <!-- собственные скрипты  -->
+<script src="js/common.js"></script>
 <script src="js/main.js"></script>
 
 </body>

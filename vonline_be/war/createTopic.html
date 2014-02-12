@@ -164,27 +164,7 @@
                         </li>
 
                     </ul>
-                    <!-- <div class="btn-group">
-                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                            <span class="btn-group-text">Действие</span>
-                            <span class="icon-caret-down icon-on-right"></span>
-                        </button>
-
-                        <ul class="dropdown-menu dropdown-yellow">
-                            <li>
-                                <a href="#">Действие 1</a>
-                            </li>
-
-                            <li>
-                                <a href="#">Действие 2</a>
-                            </li>
-
-                            <li>
-                                <a href="#">Что-то еще</a>
-                            </li>
-                        </ul>
-                    </div>/btn-group
-                     --><div class="clear"></div>
+                     <div class="clear"></div>
                 </nav>
                 <section class="options">
                     <div class="btn-group">
@@ -258,7 +238,7 @@
                     </div><!-- /btn-group -->
                     <h1>Создание темы</h1>
                     <div class="has-info form-group">
-                        <input type="text" class="width-100" value="Заголовок" onblur="if(this.value=='') this.value='Заголовок';" onfocus="if(this.value=='Заголовок') this.value='';" />
+                        <input type="text" class="width-100 head" value="Заголовок" onblur="if(this.value=='') this.value='Заголовок';" onfocus="if(this.value=='Заголовок') this.value='';" />
                     </div>
                     <div class="widget-box wysiwig-box">
                         <div class="widget-header widget-header-small  header-color-blue2">
@@ -316,7 +296,15 @@
     <script src="js/bootbox.min.js"></script>
     <!-- -->
 <!-- -->
+<!-- файлы thrift -->
+<script src="js/thrift.js" type="text/javascript"></script>
+<script src="gen-js/messageservice_types.js" type="text/javascript"></script>
+<script src="gen-js/MessageService.js" type="text/javascript"></script>
+<script src="gen-js/userservice_types.js" type="text/javascript"></script>
+<script src="gen-js/UserService.js" type="text/javascript"></script>
+<!-- -->
 <!-- собственные скрипты  -->
+<script src="js/common.js"></script>
 <script src="js/createTopic.js"></script>
 
 </body>
