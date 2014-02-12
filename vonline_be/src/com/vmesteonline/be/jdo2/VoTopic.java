@@ -105,37 +105,6 @@ public class VoTopic extends VoBaseMessage {
 		this.unlikesNum = unlikes;
 	}
 
-	public float getLongMax() {
-		return longMax;
-	}
-
-	public void setLongMax(float longMax) {
-		this.longMax = longMax;
-	}
-
-	public float getLongMin() {
-		return longMin;
-	}
-
-	public void setLongMin(float longMin) {
-		this.longMin = longMin;
-	}
-
-	public float getLatMax() {
-		return latMax;
-	}
-
-	public void setLatMax(float latMax) {
-		this.latMax = latMax;
-	}
-
-	public float getLatMin() {
-		return latMin;
-	}
-
-	public void setLatMin(float latMin) {
-		this.latMin = latMin;
-	}
 
 	public long getRubricId() {
 		return rubricId;
@@ -196,21 +165,6 @@ public class VoTopic extends VoBaseMessage {
 	private Long userGroupId;
 
 	@Persistent
-	private int ra;
-
-	@Persistent
-	private Float longMax;
-
-	@Persistent
-	private Float longMin;
-
-	@Persistent
-	private Float latMax;
-
-	@Persistent
-	private Float latMin;
-
-	@Persistent
 	@Unindexed
 	private long[] listRepresentationOfTree = new long[0];
 
@@ -264,7 +218,9 @@ public class VoTopic extends VoBaseMessage {
 	 * @param msg
 	 * 
 	 * @return list representation of tree /
-	 */public List<Pair<Long, Long>> getListRepresentationOfTreeUnder(Message msg) {
+	 */
+	
+	public List<Pair<Long, Long>> getListRepresentationOfTreeUnder(Message msg) {
 		List<Pair<Long, Long>> outList = new Vector<Pair<Long, Long>>();
 		synchronized (childTreeList) {
 			if (0 == childTreeList.size())

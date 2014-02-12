@@ -7,8 +7,6 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.google.appengine.datanucleus.annotations.Unowned;
-
 
 @PersistenceCapable
 public class VoDataSnapshot {

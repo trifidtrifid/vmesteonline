@@ -51,7 +51,7 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
 
   public List<Long> categories; // required
   public String fullDescr; // required
-  public List<ByteBuffer> imagesURLset; // required
+  public List<String> imagesURLset; // required
   public Map<PriceType,Double> pricesMap; // required
   public Map<String,String> optionsMap; // required
   public List<Long> topicSet; // required
@@ -146,7 +146,7 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.IMAGES_URLSET, new org.apache.thrift.meta_data.FieldMetaData("imagesURLset", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING            , true))));
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
     tmpMap.put(_Fields.PRICES_MAP, new org.apache.thrift.meta_data.FieldMetaData("pricesMap", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
             new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, PriceType.class), 
@@ -170,7 +170,7 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
   public ProductDetails(
     List<Long> categories,
     String fullDescr,
-    List<ByteBuffer> imagesURLset,
+    List<String> imagesURLset,
     Map<PriceType,Double> pricesMap,
     Map<String,String> optionsMap,
     List<Long> topicSet,
@@ -200,7 +200,7 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       this.fullDescr = other.fullDescr;
     }
     if (other.isSetImagesURLset()) {
-      List<ByteBuffer> __this__imagesURLset = new ArrayList<ByteBuffer>(other.imagesURLset);
+      List<String> __this__imagesURLset = new ArrayList<String>(other.imagesURLset);
       this.imagesURLset = __this__imagesURLset;
     }
     if (other.isSetPricesMap()) {
@@ -312,22 +312,22 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
     return (this.imagesURLset == null) ? 0 : this.imagesURLset.size();
   }
 
-  public java.util.Iterator<ByteBuffer> getImagesURLsetIterator() {
+  public java.util.Iterator<String> getImagesURLsetIterator() {
     return (this.imagesURLset == null) ? null : this.imagesURLset.iterator();
   }
 
-  public void addToImagesURLset(ByteBuffer elem) {
+  public void addToImagesURLset(String elem) {
     if (this.imagesURLset == null) {
-      this.imagesURLset = new ArrayList<ByteBuffer>();
+      this.imagesURLset = new ArrayList<String>();
     }
     this.imagesURLset.add(elem);
   }
 
-  public List<ByteBuffer> getImagesURLset() {
+  public List<String> getImagesURLset() {
     return this.imagesURLset;
   }
 
-  public ProductDetails setImagesURLset(List<ByteBuffer> imagesURLset) {
+  public ProductDetails setImagesURLset(List<String> imagesURLset) {
     this.imagesURLset = imagesURLset;
     return this;
   }
@@ -501,7 +501,7 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (value == null) {
         unsetImagesURLset();
       } else {
-        setImagesURLset((List<ByteBuffer>)value);
+        setImagesURLset((List<String>)value);
       }
       break;
 
@@ -900,11 +900,11 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
                 org.apache.thrift.protocol.TList _list55 = iprot.readListBegin();
-                struct.imagesURLset = new ArrayList<ByteBuffer>(_list55.size);
+                struct.imagesURLset = new ArrayList<String>(_list55.size);
                 for (int _i56 = 0; _i56 < _list55.size; ++_i56)
                 {
-                  ByteBuffer _elem57;
-                  _elem57 = iprot.readBinary();
+                  String _elem57;
+                  _elem57 = iprot.readString();
                   struct.imagesURLset.add(_elem57);
                 }
                 iprot.readListEnd();
@@ -1016,9 +1016,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(IMAGES_URLSET_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, struct.imagesURLset.size()));
-          for (ByteBuffer _iter70 : struct.imagesURLset)
+          for (String _iter70 : struct.imagesURLset)
           {
-            oprot.writeBinary(_iter70);
+            oprot.writeString(_iter70);
           }
           oprot.writeListEnd();
         }
@@ -1120,9 +1120,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (struct.isSetImagesURLset()) {
         {
           oprot.writeI32(struct.imagesURLset.size());
-          for (ByteBuffer _iter75 : struct.imagesURLset)
+          for (String _iter75 : struct.imagesURLset)
           {
-            oprot.writeBinary(_iter75);
+            oprot.writeString(_iter75);
           }
         }
       }
@@ -1184,11 +1184,11 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (incoming.get(2)) {
         {
           org.apache.thrift.protocol.TList _list82 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.imagesURLset = new ArrayList<ByteBuffer>(_list82.size);
+          struct.imagesURLset = new ArrayList<String>(_list82.size);
           for (int _i83 = 0; _i83 < _list82.size; ++_i83)
           {
-            ByteBuffer _elem84;
-            _elem84 = iprot.readBinary();
+            String _elem84;
+            _elem84 = iprot.readString();
             struct.imagesURLset.add(_elem84);
           }
         }

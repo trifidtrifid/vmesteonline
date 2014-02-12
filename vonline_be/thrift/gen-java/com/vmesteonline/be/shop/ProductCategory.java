@@ -52,7 +52,7 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
   public long parentId; // required
   public String name; // required
   public String descr; // required
-  public List<ByteBuffer> logoURLset; // required
+  public List<String> logoURLset; // required
   public List<Long> topicSet; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -145,7 +145,7 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.LOGO_URLSET, new org.apache.thrift.meta_data.FieldMetaData("logoURLset", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING            , true))));
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
     tmpMap.put(_Fields.TOPIC_SET, new org.apache.thrift.meta_data.FieldMetaData("topicSet", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64))));
@@ -161,7 +161,7 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
     long parentId,
     String name,
     String descr,
-    List<ByteBuffer> logoURLset,
+    List<String> logoURLset,
     List<Long> topicSet)
   {
     this();
@@ -189,7 +189,7 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
       this.descr = other.descr;
     }
     if (other.isSetLogoURLset()) {
-      List<ByteBuffer> __this__logoURLset = new ArrayList<ByteBuffer>(other.logoURLset);
+      List<String> __this__logoURLset = new ArrayList<String>(other.logoURLset);
       this.logoURLset = __this__logoURLset;
     }
     if (other.isSetTopicSet()) {
@@ -312,22 +312,22 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
     return (this.logoURLset == null) ? 0 : this.logoURLset.size();
   }
 
-  public java.util.Iterator<ByteBuffer> getLogoURLsetIterator() {
+  public java.util.Iterator<String> getLogoURLsetIterator() {
     return (this.logoURLset == null) ? null : this.logoURLset.iterator();
   }
 
-  public void addToLogoURLset(ByteBuffer elem) {
+  public void addToLogoURLset(String elem) {
     if (this.logoURLset == null) {
-      this.logoURLset = new ArrayList<ByteBuffer>();
+      this.logoURLset = new ArrayList<String>();
     }
     this.logoURLset.add(elem);
   }
 
-  public List<ByteBuffer> getLogoURLset() {
+  public List<String> getLogoURLset() {
     return this.logoURLset;
   }
 
-  public ProductCategory setLogoURLset(List<ByteBuffer> logoURLset) {
+  public ProductCategory setLogoURLset(List<String> logoURLset) {
     this.logoURLset = logoURLset;
     return this;
   }
@@ -424,7 +424,7 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
       if (value == null) {
         unsetLogoURLset();
       } else {
-        setLogoURLset((List<ByteBuffer>)value);
+        setLogoURLset((List<String>)value);
       }
       break;
 
@@ -769,11 +769,11 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
                 org.apache.thrift.protocol.TList _list36 = iprot.readListBegin();
-                struct.logoURLset = new ArrayList<ByteBuffer>(_list36.size);
+                struct.logoURLset = new ArrayList<String>(_list36.size);
                 for (int _i37 = 0; _i37 < _list36.size; ++_i37)
                 {
-                  ByteBuffer _elem38;
-                  _elem38 = iprot.readBinary();
+                  String _elem38;
+                  _elem38 = iprot.readString();
                   struct.logoURLset.add(_elem38);
                 }
                 iprot.readListEnd();
@@ -836,9 +836,9 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
         oprot.writeFieldBegin(LOGO_URLSET_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, struct.logoURLset.size()));
-          for (ByteBuffer _iter42 : struct.logoURLset)
+          for (String _iter42 : struct.logoURLset)
           {
-            oprot.writeBinary(_iter42);
+            oprot.writeString(_iter42);
           }
           oprot.writeListEnd();
         }
@@ -908,9 +908,9 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
       if (struct.isSetLogoURLset()) {
         {
           oprot.writeI32(struct.logoURLset.size());
-          for (ByteBuffer _iter44 : struct.logoURLset)
+          for (String _iter44 : struct.logoURLset)
           {
-            oprot.writeBinary(_iter44);
+            oprot.writeString(_iter44);
           }
         }
       }
@@ -948,11 +948,11 @@ public class ProductCategory implements org.apache.thrift.TBase<ProductCategory,
       if (incoming.get(4)) {
         {
           org.apache.thrift.protocol.TList _list46 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.logoURLset = new ArrayList<ByteBuffer>(_list46.size);
+          struct.logoURLset = new ArrayList<String>(_list46.size);
           for (int _i47 = 0; _i47 < _list46.size; ++_i47)
           {
-            ByteBuffer _elem48;
-            _elem48 = iprot.readBinary();
+            String _elem48;
+            _elem48 = iprot.readString();
             struct.logoURLset.add(_elem48);
           }
         }

@@ -52,7 +52,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
   public String name; // required
   public String shortDescr; // required
   public double weight; // required
-  public ByteBuffer imageURL; // required
+  public String imageURL; // required
   public double price; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -145,7 +145,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     tmpMap.put(_Fields.WEIGHT, new org.apache.thrift.meta_data.FieldMetaData("weight", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
     tmpMap.put(_Fields.IMAGE_URL, new org.apache.thrift.meta_data.FieldMetaData("imageURL", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , true)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.PRICE, new org.apache.thrift.meta_data.FieldMetaData("price", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -160,7 +160,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     String name,
     String shortDescr,
     double weight,
-    ByteBuffer imageURL,
+    String imageURL,
     double price)
   {
     this();
@@ -189,8 +189,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     }
     this.weight = other.weight;
     if (other.isSetImageURL()) {
-      this.imageURL = org.apache.thrift.TBaseHelper.copyBinary(other.imageURL);
-;
+      this.imageURL = other.imageURL;
     }
     this.price = other.price;
   }
@@ -306,21 +305,11 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __WEIGHT_ISSET_ID, value);
   }
 
-  public byte[] getImageURL() {
-    setImageURL(org.apache.thrift.TBaseHelper.rightSize(imageURL));
-    return imageURL == null ? null : imageURL.array();
+  public String getImageURL() {
+    return this.imageURL;
   }
 
-  public ByteBuffer bufferForImageURL() {
-    return imageURL;
-  }
-
-  public Product setImageURL(byte[] imageURL) {
-    setImageURL(imageURL == null ? (ByteBuffer)null : ByteBuffer.wrap(imageURL));
-    return this;
-  }
-
-  public Product setImageURL(ByteBuffer imageURL) {
+  public Product setImageURL(String imageURL) {
     this.imageURL = imageURL;
     return this;
   }
@@ -401,7 +390,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
       if (value == null) {
         unsetImageURL();
       } else {
-        setImageURL((ByteBuffer)value);
+        setImageURL((String)value);
       }
       break;
 
@@ -654,7 +643,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
     if (this.imageURL == null) {
       sb.append("null");
     } else {
-      org.apache.thrift.TBaseHelper.toString(this.imageURL, sb);
+      sb.append(this.imageURL);
     }
     first = false;
     if (!first) sb.append(", ");
@@ -740,7 +729,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
             break;
           case 5: // IMAGE_URL
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.imageURL = iprot.readBinary();
+              struct.imageURL = iprot.readString();
               struct.setImageURLIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -787,7 +776,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
       oprot.writeFieldEnd();
       if (struct.imageURL != null) {
         oprot.writeFieldBegin(IMAGE_URL_FIELD_DESC);
-        oprot.writeBinary(struct.imageURL);
+        oprot.writeString(struct.imageURL);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldBegin(PRICE_FIELD_DESC);
@@ -843,7 +832,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
         oprot.writeDouble(struct.weight);
       }
       if (struct.isSetImageURL()) {
-        oprot.writeBinary(struct.imageURL);
+        oprot.writeString(struct.imageURL);
       }
       if (struct.isSetPrice()) {
         oprot.writeDouble(struct.price);
@@ -871,7 +860,7 @@ public class Product implements org.apache.thrift.TBase<Product, Product._Fields
         struct.setWeightIsSet(true);
       }
       if (incoming.get(4)) {
-        struct.imageURL = iprot.readBinary();
+        struct.imageURL = iprot.readString();
         struct.setImageURLIsSet(true);
       }
       if (incoming.get(5)) {

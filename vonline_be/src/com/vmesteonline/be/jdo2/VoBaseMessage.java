@@ -31,6 +31,10 @@ public abstract class VoBaseMessage {
 		createdAt = msg.getCreated();
 	}
 
+	public void setCreatedAt(int createdAt) {
+		this.createdAt = createdAt;
+	}
+
 	public VoBaseMessage() {
 	}
 

@@ -78,9 +78,9 @@ public class ShopServiceImplTest {
 	private static HashMap<DeliveryType, Double> deliveryCosts;
 	private static HashMap<PaymentType, Double> paymentTypes;
 
-	private static List<ByteBuffer> images = new ArrayList<ByteBuffer>();
-	private static List<ByteBuffer> images2 = new ArrayList<ByteBuffer>();
-	private static List<ByteBuffer> images3 = new ArrayList<ByteBuffer>();
+	private static List<String> images = new ArrayList<String>();
+	private static List<String> images2 = new ArrayList<String>();
+	private static List<String> images3 = new ArrayList<String>();
 
 	private ArrayList<Long> topic2Set = new ArrayList<Long>();
 	static {
@@ -226,10 +226,10 @@ public class ShopServiceImplTest {
 			// set current shop
 			si.getShop(shopId);
 
-			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", ByteBuffer.wrap(LOGO.getBytes()),
+			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO,
 					"http://google.com"), shopId);
 			try {
-				si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", ByteBuffer.wrap(LOGO.getBytes()), "http://google2.com"),
+				si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"),
 						shopId + 1);
 				fail("Created Producer with incorrect shopId");
 			} catch (InvalidOperation ioe) {
@@ -243,7 +243,7 @@ public class ShopServiceImplTest {
 			Assert.assertEquals(rc.getName(), "Производитель1");
 			Assert.assertEquals(rc.getDescr(), "Описание производителя");
 			Assert.assertEquals(rc.getHomeURL(), "http://google.com");
-			Assert.assertTrue(Arrays.equals(rc.getLogoURL(), LOGO.getBytes()));
+			Assert.assertTrue(rc.getLogoURL().equals(LOGO));
 
 		} catch (TException e) {
 			e.printStackTrace();
@@ -262,9 +262,9 @@ public class ShopServiceImplTest {
 			HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
 			si.setDates(dates);
 
-			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", ByteBuffer.wrap(LOGO.getBytes()),
+			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO,
 					"http://google.com"), shopId);
-			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", ByteBuffer.wrap(LOGO.getBytes()),
+			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", LOGO,
 					"http://google2.com"), shopId);
 
 			Long rootCatId = si.registerProductCategory(new ProductCategory(0L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet), shopId);
@@ -299,10 +299,10 @@ public class ShopServiceImplTest {
 			optionsMap2.put("цвет", "черный");
 			optionsMap2.put("вкус", "мерзкий");
 
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, ByteBuffer.wrap(LOGO.getBytes()), 11D),
+			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D),
 					new ProductDetails(categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId)));
 
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, ByteBuffer.wrap(LOGO.getBytes()), 12D),
+			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D),
 					new ProductDetails(categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id)));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
@@ -332,7 +332,7 @@ public class ShopServiceImplTest {
 			Assert.assertEquals(product2.getName(), "Пролукт 2");
 			Assert.assertEquals(product2.getShortDescr(), "Описание продукта 2");
 			Assert.assertEquals(product2.getPrice(), 12D);
-			Assert.assertTrue(Arrays.equals(product2.getImageURL(), LOGO.getBytes()));
+			Assert.assertTrue(product2.getImageURL().equals( LOGO));
 			Assert.assertEquals(product2.getWeight(), 200D);
 
 			ProductDetails product2Details = si.getProductDetails(product2.getId());
@@ -486,9 +486,9 @@ public class ShopServiceImplTest {
 			List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true, true);
 
 			// create producers
-			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", ByteBuffer.wrap(LOGO.getBytes()),
+			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO,
 					"http://google.com"), shopId);
-			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", ByteBuffer.wrap(LOGO.getBytes()),
+			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", LOGO,
 					"http://google2.com"), shopId);
 
 			// Upload products
@@ -517,10 +517,10 @@ public class ShopServiceImplTest {
 			optionsMap2.put("цвет", "черный");
 			optionsMap2.put("вкус", "мерзкий");
 
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, ByteBuffer.wrap(LOGO.getBytes()), 11D),
+			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D),
 					new ProductDetails(categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId)));
 
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, ByteBuffer.wrap(LOGO.getBytes()), 12D),
+			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D),
 					new ProductDetails(categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id)));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
