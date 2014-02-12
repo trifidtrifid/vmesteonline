@@ -37,10 +37,8 @@ public class MessageServiceTests {
 	String topicSubject = "Test topic";
 
 	private Topic createTopic() throws Exception {
-
 		return msi.createTopic(topicGroup.getId(), topicSubject, MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages,
 				noTags, topicRubric.getId(), 0L);
-
 	}
 
 	@Before
@@ -210,7 +208,7 @@ public class MessageServiceTests {
 			Assert.assertEquals(msg3.getId(), mlp.messages.get(1).getId());
 
 			mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
-			Assert.assertEquals(2, mlp.totalSize);
+			Assert.assertEquals(3, mlp.totalSize);
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals(msg2.getId(), mlp.messages.get(1).getId());
 			

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.appengine.api.datastore.Key;
 import com.vmesteonline.be.jdo2.VoMessage;
 
 public class MessagesTree {
@@ -17,8 +16,30 @@ public class MessagesTree {
 		parseLevel(firstLevel, 0);
 	}
 
-//	public get
-	
+	public List<VoMessage> getTreeMessagesAfter(long parentId, int length) throws InvalidOperation {
+
+		List<VoMessage> lst = new ArrayList<>();
+		for (int i = 0; i < items.size(); i++) {
+			if (items.get(i).id == parentId) {
+				int fromPos = i + 1;
+				int toPos = i + 1 + length;
+				if (fromPos >= items.size())
+					break;
+				if (toPos >= items.size()) {
+					toPos = items.size();
+				}
+				List<ItemPosition> iList = items.subList(fromPos, toPos);
+				for (ItemPosition iPos : iList) {
+					VoMessage voMsg = getMessage(iPos.id);
+					voMsg.setVisibleOffset(iPos.level);
+					lst.add(voMsg);
+				}
+			}
+		}
+
+		return lst;
+	}
+
 	private void parseLevel(List<VoMessage> levelMsgs, int level) {
 		Collections.sort(levelMsgs, new ByCreateTimeComparator());
 		for (VoMessage voMsg : levelMsgs) {
@@ -35,6 +56,14 @@ public class MessagesTree {
 				l.add(m);
 		}
 		return l;
+	}
+
+	private VoMessage getMessage(long id) throws InvalidOperation {
+		for (VoMessage m : msgs) {
+			if (m.getId().getId() == id)
+				return m;
+		}
+		throw new InvalidOperation(VoError.GeneralError, "can't find message by tree representation");
 	}
 
 	class ByCreateTimeComparator implements Comparator<VoMessage> {
