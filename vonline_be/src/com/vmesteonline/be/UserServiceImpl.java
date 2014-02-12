@@ -3,12 +3,9 @@ package com.vmesteonline.be;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.jdo.Extent;
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.http.HttpSession;
@@ -16,15 +13,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.google.apphosting.api.DatastorePb.DatastoreService;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoRubric;
-import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
@@ -33,7 +26,6 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
-import com.vmesteonline.be.utils.Defaults;
 
 public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
@@ -128,10 +120,15 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.makePersistent(street);
 			VoPostalAddress[] addresses;
 			addresses = new VoPostalAddress[] {
-					/*new VoPostalAddress(new VoBuilding(street, "32/3", 59.933146F, 30.423117F), (byte) 2, (byte) 1, (byte) 5, "", pm),
-					new VoPostalAddress(new VoBuilding(street, "35", 59.932544F, 30.419684F), (byte) 1, (byte) 11, (byte) 35, "", pm),
-					new VoPostalAddress(new VoBuilding(street, "6", 59.934177F, 30.404331F), (byte) 1, (byte) 2, (byte) 25, "", pm) };*/
-					new VoPostalAddress(new VoBuilding(street, "32/3", 0F, 0F), (byte) 2, (byte) 1, (byte) 5, "", pm),
+			/*
+			 * new VoPostalAddress(new VoBuilding(street, "32/3", 59.933146F,
+			 * 30.423117F), (byte) 2, (byte) 1, (byte) 5, "", pm), new
+			 * VoPostalAddress(new VoBuilding(street, "35", 59.932544F, 30.419684F),
+			 * (byte) 1, (byte) 11, (byte) 35, "", pm), new VoPostalAddress(new
+			 * VoBuilding(street, "6", 59.934177F, 30.404331F), (byte) 1, (byte) 2,
+			 * (byte) 25, "", pm) };
+			 */
+			new VoPostalAddress(new VoBuilding(street, "32/3", 0F, 0F), (byte) 2, (byte) 1, (byte) 5, "", pm),
 					new VoPostalAddress(new VoBuilding(street, "35", 0F, 0F), (byte) 1, (byte) 11, (byte) 35, "", pm),
 					new VoPostalAddress(new VoBuilding(street, "6", 0F, 0F), (byte) 1, (byte) 2, (byte) 25, "", pm) };
 
@@ -167,10 +164,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<City> getCities(long countryId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
+
 			List<City> cl = new ArrayList<City>();
 			Query q = pm.newQuery(VoCity.class);
 			q.setFilter("country == :key");
@@ -188,6 +187,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Street> getStreets(long cityId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
@@ -210,6 +210,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Building> getBuildings(long streetId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
@@ -283,6 +284,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Country createNewCountry(String name) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
@@ -308,6 +310,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public City createNewCity(long countryId, String name) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
@@ -335,6 +338,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Street createNewStreet(long cityId, String name) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
@@ -363,6 +367,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Building createNewBuilding(long streetId, String fullNo, double longitude, double lattitude) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
@@ -379,15 +384,15 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			} else {
 				logger.info("VoBuilding '" + fullNo + "'was created.");
 				VoBuilding voBuilding = new VoBuilding(vs, fullNo, (float) longitude, (float) lattitude);
-				if( 0==longitude ||  0==lattitude) { //calculate location
+				if (0 == longitude || 0 == lattitude) { // calculate location
 					try {
 						Pair<Float, Float> position = VoGeocoder.getPosition(voBuilding);
-						voBuilding.setLocation( position.first, position.second );
+						voBuilding.setLocation(position.first, position.second);
 					} catch (Exception e) {
 						e.printStackTrace();
 						throw new InvalidOperation(VoError.GeneralError, "FAiled to determine location of the building." + e.getMessage());
 					}
-					
+
 				}
 				pm.makePersistent(voBuilding);
 				return voBuilding.getBuilding();

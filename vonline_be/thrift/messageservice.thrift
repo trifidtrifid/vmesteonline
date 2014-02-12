@@ -31,6 +31,8 @@ struct Message {
 	14: map<MessageType,i64> linkedMessages,
 	15: map<i64,string> tags, //идентификаторы тегов с их значениями
 	16: UserMessage userMessage, //how user treats the message
+	17: i32 offset, //смещение сообщения для формирования древовидной структуры
+
 } // 'сообщение';
 		
 

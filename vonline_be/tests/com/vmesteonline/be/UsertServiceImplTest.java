@@ -1,6 +1,7 @@
 package com.vmesteonline.be;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.Set;
@@ -14,7 +15,6 @@ import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 
 public class UsertServiceImplTest {
 
@@ -273,7 +273,9 @@ public class UsertServiceImplTest {
 			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
 			Building newBuilding = usi.createNewBuilding(newStreet.getId(),
 					BUILDING_NO, 17D, 53D);
-			byte floor, flat, staircase;
+			byte floor;
+			byte flat; 
+			byte staircase;
 
 			PostalAddress newAddress = new PostalAddress(newCountry, newCity,
 					newStreet, newBuilding, staircase = 1, floor = 2, flat = 3,

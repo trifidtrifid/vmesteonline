@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public MessageServiceImpl() {
 		con = new MySQLJDBCConnector();
 		try {
-			con.execute("create table if not exists topic (`id` bigint not null, `longitude` decimal(10,7) not null, `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null);");
+			con.execute("create table if not exists topic (`id` bigint not null, `longitude` decimal(10,7) not null,"
+					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null);");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -46,7 +46,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		super(sessId);
 		con = new MySQLJDBCConnector();
 		try {
-			con.execute("create table if not exists topic (`id` bigint not null,`longitude` decimal(10,7) not null, `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null);");
+			con.execute("create table if not exists topic (`id` bigint not null,`longitude` decimal(10,7) not null,"
+					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null);");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -59,12 +60,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		Message newMessage = new Message(0, parentId, type, topicId, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
-				new HashMap<Long, String>(), new UserMessage(true, false, false));
+				new HashMap<Long, String>(), new UserMessage(true, false, false), 0);
 		postMessage(newMessage);
 		return newMessage;
 	}
 
 	// ===================================================================================================================================
+	@SuppressWarnings("unchecked")
 	@Override
 	public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length)
 			throws InvalidOperation, TException {
@@ -74,24 +76,27 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		if (!TEST_ON_FAKE_DATA) {
 			PersistenceManager pm = PMF.getPm();
 			try {
-				
+
 				Extent<VoMessage> ext = pm.getExtent(VoMessage.class);
 				for (VoMessage m : ext) {
 					m.toString();
 				}
-				
+
 				Query q = pm.newQuery(VoMessage.class);
 				q.setFilter("topicId == " + topicId + " && parentId == " + parentId);
 				List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
 
 				mlp = new MessageListPart();
-				if (voMsgs == null ) {
+				if (voMsgs == null) {
 					logger.debug("can't find any topics");
 					return mlp;
 				}
 				mlp.totalSize = voMsgs.size();
-				for (VoMessage voTopic : voMsgs) {
-					mlp.addToMessages(voTopic.getMessage());
+				for (VoMessage voMsg : voMsgs) {
+					mlp.addToMessages(voMsg.getMessage());
+					if (0 != parentId) {
+
+					}
 				}
 				return mlp;
 
@@ -109,6 +114,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return mlp;
 	}
 
+/*	private void getAllChildMessages(List<VoMessage> list, VoMessage msg) {
+		for
+	}
+*/
 	@Override
 	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation,
 			TException {
@@ -130,15 +139,22 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					float ltd = group.getLatitudeDelta();
 					String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= " + (group.getLongitude() + lgd)
 							+ " and longitude >= " + (group.getLongitude() - group.getLongitudeDelta()) + " and lattitude <= " + (group.getLatitude() + ltd)
-							+ " and lattitude >= " + (group.getLatitude() - group.getLatitudeDelta());
+							+ " and lattitude >= " + (group.getLatitude() - group.getLatitudeDelta()) + " order by createTime";
 
 					List<VoTopic> topics = new ArrayList<VoTopic>();
 					try {
 						ResultSet rs = con.executeQuery(req);
-						while (rs.next()) {
+						boolean addTopic = 0 == lastLoadedTopicId ? true : false;
+						while (rs.next() && topics.size() < length) {
 							long topicId = rs.getLong(1);
 							VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
-							topics.add(topic);
+							if (addTopic) {
+								topics.add(topic);
+							} else {
+								if (topic.getId().getId() == lastLoadedTopicId) {
+									addTopic = true;
+								}
+							}
 						}
 					} finally {
 						con.close();
@@ -200,8 +216,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					topic.setId(votopic.getId().getId());
 					VoUser user = getCurrentUser(pm);
 					VoUserGroup ug = user.getGroup(votopic.getUserGroupId());
-					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`) values (" + votopic.getId().getId() + ","
-							+ ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + ");");
+					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId().getId()
+							+ "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + "," + votopic.getCreatedAt()
+							+ ");");
 					newTopicNotify(votopic);
 				} else {
 					updateTopic(topic);
@@ -332,7 +349,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		Message msg = new Message(0, 0, type, 0, groupId, getCurrentUserId(), now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
-				new HashMap<Long, String>(), new UserMessage(true, false, false));
+				new HashMap<Long, String>(), new UserMessage(true, false, false), 0);
 		Topic topic = new Topic(0, subject, msg, 0, 0, 0, now, 0, 0, new UserTopic());
 		topic.setRubricId(rubricId);
 		postTopic(topic);
@@ -479,7 +496,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			theTopic.setViewers(topic.viewers);
 			theTopic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
 			pm.makePersistent(theTopic);
-			
+
 		} finally {
 			pm.close();
 		}
@@ -518,7 +535,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					int unlikesi = (int) (Math.random() * 100);
 					msgsa[0] = new Message(msgNo, 0, MessageType.findByValue(1), topNo, 0, 1, 0, 0, "" + msgNo + "# " + longText.substring(pos, pos + len),
 							likesi, unlikesi, new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(Math.random() > 0.5,
-									Math.random() > 0.5, Math.random() > 0.5));
+									Math.random() > 0.5, Math.random() > 0.5), 0);
 
 					msgNo++;
 
@@ -539,7 +556,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 						int likes1 = (int) (Math.random() * 100), unlikes1 = (int) (Math.random() * 100);
 						msgsa[no] = new Message(msgNo, parent, MessageType.findByValue(1), topNo, 0, 1, 0, 0, "" + msgNo + "# "
 								+ longText.substring(pos1, pos1 + len1), likes1, unlikes1, new HashMap<MessageType, Long>(), new HashMap<Long, String>(),
-								new UserMessage(Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5));
+								new UserMessage(Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5), 0);
 						topicsa[topNo].setLikesNum(topicsa[topNo].getLikesNum() + likes1);
 						topicsa[topNo].setUnlikesNum(topicsa[topNo].getUnlikesNum() + unlikes1);
 						topicsa[topNo].setMessageNum(topicsa[topNo].getMessageNum() + 1);

@@ -1,31 +1,5 @@
 $(document).ready(function(){
-    var w = $(window),
-        sidebar = $('#sidebar'),
-        showLeft = $('.show-left'),
-        showLeftTop = (w.height()-showLeft.width())/ 2,
-        asideWidth = (w.width()-$('.container').width())/2;
-    showLeft.css('top',showLeftTop);
-    sidebar.css('min-height', w.height());
-
-    showLeft.click(function(){
-        if (!$(this).hasClass('active')){
-            $(this).animate({'margin-left':'190px'},200).addClass('active');
-            $(this).parent().animate({'marginLeft':0},200);
-        }else{
-            $(this).parent().animate({'marginLeft':'-190px'},200);
-            $(this).animate({'marginLeft':'0'},200).removeClass('active');
-        }
-    });
-
-    w.resize(function(){
-        if ($(this).width() > 753){
-            sidebar.css({'marginLeft':'0'});
-            $('.main-content').css('margin-left','190px');
-        }else{
-            sidebar.css({'marginLeft':'-190px'});
-            $('.main-content').css('margin-left','0');
-        }
-    });
+    var w = $(window);
 
 /* появление wysiwig редактора */
     $('.widget-box .wysiwyg-editor').css({'height':'300px'}).ace_wysiwyg({
@@ -48,5 +22,57 @@ $(document).ready(function(){
         speech_button:false
     });
 /* --- */
+
+    var transport = new Thrift.Transport("/thrift/UserService");
+    var protocol = new Thrift.Protocol(transport);
+    var client = new com.vmesteonline.be.UserServiceClient(protocol);
+
+    var Groups = client.getUserGroups();
+    var Rubrics = client.getUserRubrics();
+
+    transport = new Thrift.Transport("/thrift/MessageService");
+    protocol = new Thrift.Protocol(transport);
+    client = new com.vmesteonline.be.MessageServiceClient(protocol);
+
+    $('.wysiwig-box .btn-primary').click(function(){
+        var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
+        message = message.replace(new RegExp('&nbsp;','g'),' ');
+        var head = $('.head').text();
+        var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
+        messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
+        client.createTopic(Groups[0].id,head,1,messageWithGoodLinks,0,0,Rubrics[0].id,1);
+        //alert(messageWithGoodLinks);
+    });
+
+/*
+ -----------------------------------------------------------
+ АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ ССЫЛКИ В СТРОКЕ
+ -----------------------------------------------------------
+ */
+function AutoReplaceLinkAndVideo(str) {
+    var regexp = /^(.* )?(http[s]?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})(\/[\/\da-z\.=\-?]*)*\/?( ?.*)?$/gmi,
+        arrayWithLinks = regexp.exec(str),
+        res = str;
+    if (arrayWithLinks && arrayWithLinks.length > 0){
+        var currentLink = arrayWithLinks[2]+arrayWithLinks[3]+'.'+arrayWithLinks[4]+arrayWithLinks[5];
+        var prefix = arrayWithLinks[1];
+        var suffix = arrayWithLinks[6];
+        var iframe = "";
+
+        if (arrayWithLinks[3].indexOf('youtu') != -1){
+            // у ютуба несколько отличается ссылка и айфрэйм
+            iframe = '<iframe width="560" height="315" src="//www.youtube.com/embed/'+ arrayWithLinks[5] +'" frameborder="0" allowfullscreen></iframe>';
+        }else if(arrayWithLinks[3].indexOf('vimeo') != -1){
+            iframe = '<iframe src="'+ currentLink +'" width="500" height="281" frameborder="0"'+
+                ' webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+        }else{
+            iframe = '<a href="'+currentLink+'" target="_blank">'+currentLink+'</a>';
+        }
+
+        res = AutoReplaceLinkAndVideo(prefix) + iframe + AutoReplaceLinkAndVideo(suffix)
+    }
+    return res;
+}
+/* ------------ */
 
 });
