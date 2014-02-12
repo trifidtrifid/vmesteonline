@@ -231,7 +231,7 @@
                     <div class="dd dd-draghandle">
                         <ol class="dd-list">
                             <c:forEach var="topic" items="${topics}">
-                                <li class="dd-item dd2-item topic-item" data-id="15">
+                                <li class="dd-item dd2-item topic-item" data-topicid="${topic.id}">
                                     <div class="dd2-content widget-box topic-descr">
                                         <header class="widget-header header-color-blue2">
                                             <span class="topic-header-date">01.04.2014 10:10</span>
@@ -292,7 +292,7 @@
                                                     </ul>
                                                 </div>
                                                 <div class="answers-ctrl">
-                                                    <a class="fa fa-minus plus-minus" href="#"></a>
+                                                    <a class="fa fa-plus plus-minus" href="#"></a>
                                                     <span> <span>${topic.messageNum}</span> <a href="#">(3)</a></span>
                                                 </div>
                                                 <div class="topic-statistic">

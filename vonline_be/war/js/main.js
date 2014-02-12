@@ -29,7 +29,7 @@
 
         $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active');
 
- /*       $('.submenu .btn').click(function(e){
+/*        $('.submenu .btn').click(function(e){
             e.preventDefault();
             $(this).closest('.submenu').find('.active').removeClass('active');
             $(this).parent().addClass('active');
@@ -119,20 +119,21 @@
                 //console.log(messageListTopLevel);
                 $('.dd>.dd-list>.topic-item:eq(' + i + ')').append(messageListTopLevel);
             }
-        });
+        });*/
 
-        var topicsContent = client.getTopics(Groups[0].id,Rubrics[0].id, 1,0,0,100);
+        var topicsContent = client.getTopics(Groups[0].id,Rubrics[0].id, 0, 0, 10);
         var topicLen = topicsContent.topics.length;
 
         function getMessageList(topicID, groupID, parentID){
-            messagesArray = client.getMessages(topicID, groupID, 1, parentID, 0, 0, 2).messages;
+            messagesArray = client.getMessages(topicID, groupID, 1, parentID, 0, 0, 4).messages;
             mesLen=0;
             if (messagesArray){mesLen = messagesArray.length;}
-            if (mesLen > 0 && level < 3){
+            if (mesLen > 0 && level < 6){
                 level++;
                 while(iterator < mesLen){
-                    mesNew = messagesArray[iterator];
+                    var mesNew = messagesArray[iterator];
                     messageListNew += getMessageList(topicID, groupID, mesNew.id);
+                    //alert(messageListNew);
                     iterator++;
                 }
                 iterator=0;
@@ -149,16 +150,16 @@
                     '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
                     '<a href="#">Иван Грозный</a>'+
                     '</div>'+
-                    '<p class="alert">'+ messagesArray[0].content+ '</p>'+
+                    '<p class="alert">'+ mesNew.content+ '</p>'+
                     '<div class="likes">'+
-                    '<div class="answer-date">' + messagesArray.created + '</div>'+
+                    '<div class="answer-date">' + mesNew.created + '</div>'+
                     '<a href="#" class="like-item like">'+
                     '<i class="fa fa-thumbs-o-up"></i>'+
-                    '<span>' + messagesArray[0].likesNum + '</span>'+
+                    '<span>' + mesNew.likesNum + '</span>'+
                     '</a>'+
                     '<a href="#" class="like-item dislike">'+
                     '<i class="fa fa-thumbs-o-down"></i>'+
-                    '<span>' + messagesArray[0].unlikesNum + '</span>'+
+                    '<span>' + mesNew.unlikesNum + '</span>'+
                     '</a>'+
                     '</div>'+
                     '</div>'+
@@ -188,17 +189,21 @@
                 messageListNew = "";
             }
             return messageList;
+
         }
 
-        for(var i = 0; i < topicLen; i++){
+        /*for(i = 0; i < topicLen; i++){
             message = topicsContent.topics[i];
             iterator = 0;
             messageList="";
             messageListNew="";
             level = 0;
-            messageListTopLevel = getMessageList(message.id,Groups[0].id,message.id);
+            messageListTopLevel = getMessageList(message.id,Groups[0].id,0);
             $('.dd>.dd-list>.topic-item:eq(' + i + ')').append(messageListTopLevel);
-        }*/
+        }
+
+        //var temp = client.getMessages(5840605766746112,Groups[0].id,1,0,0,0,10);
+        //alert(temp.messages[0].id);
 
         /* --- */
 
@@ -267,6 +272,69 @@
                 $(this).removeClass('fa-minus').addClass('fa-plus');
             }else{
                 $(this).removeClass('fa-plus').addClass('fa-minus');
+            }
+
+            if ($(this).closest('.one-message').length <= 0){
+                /* значит подгружаем сообщения первого уровня */
+
+                var topicID  = $(this).closest('.topic-item').data('topicid');
+                var currentMessages = client.getMessages(topicID,Groups[0].id,1,0,0,0,10).messages;
+                var currentMessagesLength = currentMessages.length;
+                var messageHtml = '';
+                alert(currentMessagesLength);
+
+                for(var i = 0; i < currentMessagesLength ; i++){
+                    messageHtml += '<li class="dd-item dd2-item">'+
+                        '<div class="dd2-content topic-descr one-message widget-body">'+
+                            '<div class="widget-main">'+
+                                '<div class="topic-left">'+
+                                    '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
+                                        '</div>'+
+                                    '<div class="topic-right">'+
+                                        '<div class="message-author">'+
+                                            '<a class="fa fa-link fa-relations" href="#" style="display: none;"></a>'+
+                                            '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
+                                            '<a href="#">Иван Грозный</a>'+
+                                            '</div>'+
+                                        '<p class="alert">'+ currentMessages[i].content+ '</p>'+
+                                        '<div class="likes">'+
+                                            '<div class="answer-date">' + currentMessages[i].created + '</div>'+
+                                            '<a href="#" class="like-item like">'+
+                                                '<i class="fa fa-thumbs-o-up"></i>'+
+                                                '<span>' + currentMessages[i].likesNum + '</span>'+
+                                                '</a>'+
+                                            '<a href="#" class="like-item dislike">'+
+                                                '<i class="fa fa-thumbs-o-down"></i>'+
+                                                '<span>' + currentMessages[i].unlikesNum + '</span>'+
+                                                '</a>'+
+                                            '</div>'+
+                                        '</div>'+
+                                    '</div>'+
+                                '<footer class="widget-toolbox padding-4 clearfix">'+
+                                    '<div class="btn-group ans-btn">'+
+                                        '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
+                                            'Ответить'+
+                                            '<span class="icon-caret-down icon-on-right"></span>'+
+                                            '</button>'+
+                                        '<ul class="dropdown-menu dropdown-warning">'+
+                                            '<li>'+
+                                                '<a href="#">Ответить лично</a>'+
+                                                '</li>'+
+                                            '</ul>'+
+                                        '</div>'+
+                                    '<div class="answers-ctrl">'+
+                                        '<a class="fa fa-minus plus-minus" href="#"></a>'+
+                                        '<span> <span>8</span> <a href="#">(3)</a></span>'+
+                                        '</div>'+
+                                    '</footer>'+
+                                '</div>'+
+                            '</li>';
+
+                    $(this).closest('.topic-item').append('<ol class="dd-list">' + messageHtml + '</ol>');
+                }
+            } else{
+                /* открываем сообщения остальных уровней */
+
             }
         });
 
@@ -365,7 +433,11 @@
                 message = message.replace(new RegExp('&nbsp;','g'),' ');
                 var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
                 messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
-                client.createTopic(Groups[0].id,'Тест тема-1',1,messageWithGoodLinks,0,0,Rubrics[0].id,1)
+                //client.createTopic(Groups[0].id,'Тест тема-1',1,messageWithGoodLinks,0,0,Rubrics[0].id,1)
+                var topicID = $(this).closest('.topic-item').data('topicid');
+                var parentID = $(this).closest('.one-message').data('messageid');
+                if (parentID === undefined){parentID = 0;}
+                client.createMessage(topicID,parentID,Groups[0].id,1,messageWithGoodLinks,0,0,0);
                 //alert(messageWithGoodLinks);
             });
         });
