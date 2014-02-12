@@ -2,6 +2,8 @@ package com.vmesteonline.be.utils;
 
 import java.io.IOError;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 public class StorageHelper {
 
@@ -20,4 +22,8 @@ public class StorageHelper {
 			throw new IOException("Only external resources are supported now. URL must starts with 'http://'");
 		return new String(urlOrContent);
 	} 
+	
+	public static<T> List<T> loadCSVData( InputStream is, T otf){
+		return null;
+	}
 }
