@@ -132,12 +132,6 @@ public class MessageServiceTests {
 	}
 
 	@Test
-	public void testCreateMessage() {
-		// com.vmesteonline.be.Message msg = new
-		fail("Not yet implemented");
-	}
-
-	@Test
 	public void testGetTopics() {
 
 		try {
