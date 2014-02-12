@@ -55,6 +55,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
+	ShopServiceImpl() {}
+	
 	public static Logger logger;
 
 	static {

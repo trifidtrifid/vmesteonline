@@ -100,6 +100,29 @@ struct ProductListPart {
 	2:i32 length
 }
 
+enum ExchangeFieldType {
+
+	SHOP_ID=10, SHOP_NAME,SHOP_DESCRIPTION,SHOP_ADDRESS,SHOP_LOGOURL,SHOP_OWNERID,SHOP_TOPICS,SHOP_TAGSAVP,
+	SHOP_DELIVERY_COST_AVP,
+	SHOP_PAYMENT_COST_AVP,
+	
+	PRODUCER_NAME_ID = 100, PRODUCER_NAME, PRODUCER_DESCRIPTION, PRODUCER_LOGOURL, PRODUCER_HOMEURL,
+
+	CATEGORY_ID = 200, CATEGORY_PARENT_NAME, CATEGORY_NAME, CATEGORY_DESCRIPTION, CATEGORY_LOGOURLS, CATEGORY_TOPICS,
+	
+	PRODUCT_ID=300, PRODUCT_NAME,	PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_NAMES,
+	PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
+	PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_NAME,
+	
+	DATE_TYPE=400, DATE_DATE,
+	
+	ORDER_ID = 1000, ORDER_DATE, ORDER_STATUS, ORDER_PRICE_TYPE, ORDER_TOTAL_COST, 
+	ORDER_CREATED, ORDER_DELIVERY_TYPE, ORDER_DELIVERY_COST, ORDER_DELIVERY_ADDRESS,ORDER_PAYMENT_TYPE, ORDER_PAYMENT_STATUS,
+	ORDER_COMMENT,
+	
+//ORDER LINES CONTAINS OPRDER_ID, PRODUCT_ID, PRODUCT_NAME, PRODUCER_ID, PRODUCER_NAME,    	
+	ORDER_LINE_QUANTITY = 1100, ORDER_LINE_PRICE,
+} 
 service ShopService {
 	
 	//backend functions=================================================================================================
@@ -140,6 +163,14 @@ service ShopService {
 	void updateShop( 1:Shop newShopWithOldId ) throws (1:error.InvalidOperation exc),
 	void updateCategory( 1:ProductCategory newCategoryInfo) throws (1:error.InvalidOperation exc),
 	
+	//IMPORT-EXPORT
+	//list<map<String>> importProducers( 1:list<ExchangeFieldType> fieldsOrder,  2:string fileName, 3:binary fileData, 4:bool doClean );
+	//list<map<String>> importCategiories( 1:list<ExchangeFieldType> fieldsOrder,  2:string fileName, 3:binary fileData, 4:bool doClean );
+	//list<map<String>> importProducts( 1:list<ExchangeFieldType> fieldsOrder,  2:string fileName, 3:binary fileData, 4:bool doClean );
+	
+	
+	//list<map<String>> importProducts( 1:list<ExchangeFieldType> fieldsOrder,  2:string fileName, 3:binary fileData, 4:bool doClean );
+
 	//frontend functions================================================================================================
 	list<Shop> getShops() throws (1:error.InvalidOperation exc),
 	map<i32,DateType> getDates(1:i32 from, 2: i32 to) throws (1:error.InvalidOperation exc),
