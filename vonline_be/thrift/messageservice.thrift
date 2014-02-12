@@ -31,6 +31,8 @@ struct Message {
 	14: map<MessageType,i64> linkedMessages,
 	15: map<i64,string> tags, //идентификаторы тегов с их значениями
 	16: UserMessage userMessage, //how user treats the message
+	17: i32 offset, //смещение сообщения для формирования древовидной структуры
+
 } // 'сообщение';
 		
 
@@ -79,12 +81,12 @@ struct GroupUpdates {
 }
 
 struct TopicListPart {
-	1:set<Topic> topics,
+	1:list<Topic> topics,
 	2:i32	totalSize //size of full list
 } 
 
 struct MessageListPart {
-	1:set<Message> messages,
+	1:list<Message> messages,
 	2:i32	totalSize //size of full list
 } 
 

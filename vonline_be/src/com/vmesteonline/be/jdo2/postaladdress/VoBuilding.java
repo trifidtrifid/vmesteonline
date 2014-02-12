@@ -132,5 +132,10 @@ public class VoBuilding implements Comparable<VoBuilding> {
 				that.fullNo == null ? this.fullNo == null ? 0 : -1 :
 					null == this.fullNo ? 1 : fullNo.compareTo(that.fullNo); 
 	}
+
+	public void setLocation(Float longitude, Float latitude) {
+		userGroup.setLongitude(longitude);
+		userGroup.setLatitude(latitude);
+	}
 	
 }

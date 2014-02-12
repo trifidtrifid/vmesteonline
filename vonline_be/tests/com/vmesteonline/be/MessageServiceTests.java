@@ -2,6 +2,7 @@ package com.vmesteonline.be;
 
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -18,16 +19,12 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoUser;
-import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
-import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 
 public class MessageServiceTests {
 
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 	private String sessionId = "11111111111111111111111";
-	private VoGroup groupForTopic = new VoGroup("двор", 1000);
 	AuthServiceImpl asi;
 	UserServiceImpl usi;
 	MessageServiceImpl msi;
@@ -37,10 +34,11 @@ public class MessageServiceTests {
 
 	Group topicGroup;
 	Rubric topicRubric;
+	String topicSubject = "Test topic";
 
 	private Topic createTopic() throws Exception {
 
-		return msi.createTopic(topicGroup.getId(), "Test topic", MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages,
+		return msi.createTopic(topicGroup.getId(), topicSubject, MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages,
 				noTags, topicRubric.getId(), 0L);
 
 	}
@@ -143,10 +141,43 @@ public class MessageServiceTests {
 	public void testGetTopics() {
 
 		try {
-			createTopic();
+			Topic tpc = createTopic();
 			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 0);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
+			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
+			Assert.assertEquals(topicSubject, rTopic.topics.get(0).getSubject());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+
+	}
+
+	@Test
+	public void testGetFirstFiveTopics() {
+		try {
+			List<Topic> tpcs = new ArrayList<Topic>();
+			for (int i = 0; i < 7; i++) {
+				tpcs.add(createTopic());
+				Thread.sleep(1200);
+			}
+
+			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 5);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(5, rTopic.totalSize);
+			Assert.assertEquals(tpcs.get(0).getId(), rTopic.topics.get(0).getId());
+			Assert.assertEquals(tpcs.get(1).getId(), rTopic.topics.get(1).getId());
+			Assert.assertEquals(tpcs.get(2).getId(), rTopic.topics.get(2).getId());
+			Assert.assertEquals(tpcs.get(3).getId(), rTopic.topics.get(3).getId());
+			Assert.assertEquals(tpcs.get(4).getId(), rTopic.topics.get(4).getId());
+
+			rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, rTopic.topics.get(4).getId(), 5);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(2, rTopic.totalSize);
+			Assert.assertEquals(tpcs.get(5).getId(), rTopic.topics.get(0).getId());
+			Assert.assertEquals(tpcs.get(6).getId(), rTopic.topics.get(1).getId());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -157,8 +188,9 @@ public class MessageServiceTests {
 
 	// test data struct
 	// topic
-	// -msg1
-	// --msg2
+	// -msg
+	// --msg1
+	// ---msg2
 	// -msg3
 
 	@Test
@@ -170,7 +202,9 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Message msg = msi.createMessage(topic.getId(), 0, user1.getHomeGroup().getId().getId(), MessageType.BASE,
 					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
-			Message msg2 = msi.createMessage(topic.getId(), msg.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
+			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
+					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
 					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
 			Message msg3 = msi.createMessage(topic.getId(), 0, user2.getHomeGroup().getId().getId(), MessageType.BASE,
 					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
@@ -178,10 +212,13 @@ public class MessageServiceTests {
 			MessageListPart mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, 0, false, 0, 10);
 			Assert.assertNotNull(mlp);
 			Assert.assertEquals(2, mlp.totalSize);
+			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getId());
+			Assert.assertEquals(msg3.getId(), mlp.messages.get(1).getId());
 
 			mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
-			Assert.assertEquals(1, mlp.totalSize);
-
+			Assert.assertEquals(2, mlp.totalSize);
+			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
+			Assert.assertEquals(msg2.getId(), mlp.messages.get(1).getId());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
