@@ -296,7 +296,7 @@
                                                     <span> <span>${topic.messageNum}</span> <a href="#">(3)</a></span>
                                                 </div>
                                                 <div class="topic-statistic">
-                                                    Участников ${topic.usersNum} Просмторов ${topic.viewers}
+                                                    Участников ${topic.usersNum} Просмотров ${topic.viewers}
                                                 </div>
                                             </footer>
                                         </div>

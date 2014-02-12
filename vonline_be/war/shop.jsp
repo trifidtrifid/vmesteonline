@@ -16,7 +16,7 @@
 
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
-    List<Shop> ArrayShops = shopService.getShops();
+    //List<Shop> ArrayShops = shopService.getShops();
     //Shop shop = shopService.getShop(1);
 
     //out.print(ArrayShops.get(0).name);
