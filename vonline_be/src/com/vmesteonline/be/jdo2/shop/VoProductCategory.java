@@ -185,4 +185,18 @@ public class VoProductCategory {
 	public String toString() {
 		return "VoProductCategory [id=" + id + ", parent=" + parent + ", name=" + name + "]";
 	}
+	
+	public void update(ProductCategory newCategoryInfo, PersistenceManager pm) {
+	  
+		this.name = newCategoryInfo.name;
+		this.descr = newCategoryInfo.descr;
+		this.logoURLset = new ArrayList<String>();
+		for( ByteBuffer bb: newCategoryInfo.logoURLset) {
+			try {
+				this.logoURLset.add(StorageHelper.saveImage(bb.array()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

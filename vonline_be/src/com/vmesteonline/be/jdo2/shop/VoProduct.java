@@ -36,6 +36,37 @@ public class VoProduct {
 	VoProduct( long productId) {
 		this.id = KeyFactory.createKey(VoProduct.class.getSimpleName(), productId);
 	}
+	
+	public void update( FullProductInfo newInfo, PersistenceManager _pm ) throws InvalidOperation{
+		this.name = newInfo.product.name;
+		this.shortDescr = newInfo.product.shortDescr;
+		this.weight = newInfo.product.weight;
+		try {
+			this.imageURL = StorageHelper.saveImage(newInfo.product.getImageURL());
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: "+e);
+		}
+		this.price = newInfo.product.price;
+		this.fullDescr = newInfo.details.fullDescr;
+		this.imagesURLset = new ArrayList<String>();
+		for (ByteBuffer imgURL : newInfo.details.getImagesURLset())
+			try {
+				this.imagesURLset.add(StorageHelper.saveImage(imgURL.array()));
+			} catch (IOException ie) {
+				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
+			}
+		
+		this.pricesMap = convertFromPriceTypeMap(newInfo.details.getPricesMap(), new HashMap<Integer, Double>());;
+		this.optionsMap = newInfo.details.optionsMap;
+		this.topicSet = new ArrayList<VoTopic>();
+		for (long topicId : newInfo.details.getTopicSet()) {
+			VoTopic vTopic = _pm.getObjectById(VoTopic.class, topicId);
+			this.topicSet.add(vTopic);
+		}
+		VoProducer producer = _pm.getObjectById(VoProducer.class, newInfo.details.producerId);
+		producer.getProducts().add(this);
+	}
 
 	public static VoProduct createObject(long shopId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
 		VoProduct vp = new VoProduct();

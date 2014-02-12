@@ -945,19 +945,43 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	@Override
 	public void updateProduct(FullProductInfo newInfoWithOldId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoProduct vop = pm.getObjectById(VoProduct.class, newInfoWithOldId.getProduct().getId());
+			vop.update(newInfoWithOldId, pm);
+			pm.makePersistent(vop);
+		} catch( Exception e){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update product: "+e.getMessage());
+		} finally {
+			pm.close();
+		}
 	}
 
 	@Override
 	public void updateShop(Shop newShopWithOldId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoShop vos = pm.getObjectById(VoShop.class, newShopWithOldId.getId());
+			vos.update(newShopWithOldId, pm);
+			pm.makePersistent(vos);
+		} catch( Exception e){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update shop: "+e.getMessage());
+		} finally {
+			pm.close();
+		}
 	}
 
 	@Override
 	public void updateCategory(ProductCategory newCategoryInfo) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoProductCategory vopc = pm.getObjectById(VoProductCategory.class, newCategoryInfo.getId());
+			vopc.update(newCategoryInfo, pm);
+			pm.makePersistent(vopc);
+		} catch( Exception e){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update shop: "+e.getMessage());
+		} finally {
+			pm.close();
+		}
 	}
 }
