@@ -210,7 +210,10 @@ public class MessageServiceTests {
 			mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
+			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getParentId());
+
 			Assert.assertEquals(msg2.getId(), mlp.messages.get(1).getId());
+			Assert.assertEquals(msg1.getId(), mlp.messages.get(1).getParentId());
 
 		} catch (Exception e) {
 			e.printStackTrace();

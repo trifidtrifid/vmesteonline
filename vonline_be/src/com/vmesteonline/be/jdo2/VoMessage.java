@@ -49,7 +49,6 @@ public class VoMessage extends VoBaseMessage {
 
 	public VoMessage() {
 	}
-	
 
 	public VoMessage(Message msg) throws InvalidOperation {
 
@@ -124,9 +123,8 @@ public class VoMessage extends VoBaseMessage {
 	}
 
 	public Message getMessage() {
-		Key parentKey = id.getParent();
-		return new Message(id.getId(), null == parentKey ? 0L : parentKey.getId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(
-				content), getLikes(), getUnlikes(), links, tags, null, 0);
+		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
+				getUnlikes(), links, tags, null, 0);
 	}
 
 	public long getApprovedId() {

@@ -32,6 +32,8 @@ struct Message {
 	15: map<i64,string> tags, //идентификаторы тегов с их значениями
 	16: UserMessage userMessage, //how user treats the message
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
+	18: ShortUserInfo userInfo
+	
 
 } // 'сообщение';
 		
@@ -59,15 +61,8 @@ struct Topic {
 	10: optional i64 rubricId, //ссылка на рубрику
 	11: optional i64 communityId, //ссылка на сообщество
 	//отношение пользователя к топику
-	12: UserTopic usertTopic
-}
-
-struct Rubric {
-	1: i64 id,
-	2: string visibleName,
-	3: string description, // COMMENT 'Описание рубрики',
-	4: i32 topicsNum, // 'число тем в рубрике',
-	5: i32 messagesNum// 'число сообщений в рубрике'
+	12: UserTopic usertTopic,
+	13: ShortUserInfo userInfo
 }
 
 struct RubricCounter {
