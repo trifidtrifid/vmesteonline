@@ -213,7 +213,7 @@
         function ChangeOrientation() {
             var orientation = Math.abs(window.orientation) === 90 ? 'landscape' : 'portrait';
             alert(orientation);
-            alert('1');
+            //alert('1');
         }
 
         window.addEventListener('orientationchange', ChangeOrientation, false);
@@ -260,11 +260,312 @@
         }
 
         GetTopicsHeightForFixedHeader(0);
-        var zeroLevelFlag = 1;
-        var firstLevelFlag = 1;
-        var otherLevelsFlag = 1;
+        var zeroLevelFlag = [];
+        for(i = 0; i < $('.topic-item').length; i++){
+            zeroLevelFlag[i] = 1;
+        }
 
-        $('.plus-minus').click(function(e){
+        $('.topic-item>.topic-descr .plus-minus').click(function(e){
+            e.preventDefault();
+
+            if ($(this).hasClass('fa-minus')){
+                $(this).removeClass('fa-minus').addClass('fa-plus');
+            }else{
+                $(this).removeClass('fa-plus').addClass('fa-minus');
+            }
+
+            var topicItem = $(this).closest('.topic-item'),
+                topicID  = topicItem.data('topicid'),
+                currentMessages,
+                currentMessagesLength,
+                messageHtml,i;
+
+            var index = topicItem.index();
+
+            if (zeroLevelFlag[index]){
+                /* значит подгружаем сообщения первого уровня */
+                zeroLevelFlag[index] = 0;
+                currentMessages = client.getMessages(topicID,Groups[0].id,1,0,0,0,10).messages;
+                currentMessagesLength = currentMessages.length;
+                messageHtml = '';
+
+                for(i = 0; i < currentMessagesLength ; i++){
+                    messageHtml += '<li class="dd-item dd2-item">'+
+                        '<div class="dd2-content topic-descr one-message level-1 widget-body" data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
+                        '<div class="widget-main">'+
+                        '<div class="topic-left">'+
+                        '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
+                        '</div>'+
+                        '<div class="topic-right">'+
+                        '<div class="message-author">'+
+                        '<a class="fa fa-link fa-relations" href="#" style="display: none;"></a>'+
+                        '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
+                        '<a href="#">Иван Грозный</a>'+
+                        '</div>'+
+                        '<p class="alert">'+ currentMessages[i].content+ '</p>'+
+                        '<div class="likes">'+
+                        '<div class="answer-date">' + currentMessages[i].created + '</div>'+
+                        '<a href="#" class="like-item like">'+
+                        '<i class="fa fa-thumbs-o-up"></i>'+
+                        '<span>' + currentMessages[i].likesNum + '</span>'+
+                        '</a>'+
+                        '<a href="#" class="like-item dislike">'+
+                        '<i class="fa fa-thumbs-o-down"></i>'+
+                        '<span>' + currentMessages[i].unlikesNum + '</span>'+
+                        '</a>'+
+                        '</div>'+
+                        '</div>'+
+                        '</div>'+
+                        '<footer class="widget-toolbox padding-4 clearfix">'+
+                        '<div class="btn-group ans-btn">'+
+                        '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
+                        'Ответить'+
+                        '<span class="icon-caret-down icon-on-right"></span>'+
+                        '</button>'+
+                        '<ul class="dropdown-menu dropdown-warning">'+
+                        '<li>'+
+                        '<a href="#">Ответить лично</a>'+
+                        '</li>'+
+                        '</ul>'+
+                        '</div>'+
+                        '<div class="answers-ctrl">'+
+                        '<a class="fa fa-plus plus-minus" href="#"></a>'+
+                        '<span> <span>8</span> <a href="#">(3)</a></span>'+
+                        '</div>'+
+                        '</footer>'+
+                        '</div>'+
+                        '</li>';
+                }
+                $(this).closest('.topic-item').append('<ol class="dd-list">' + messageHtml + '</ol>');
+
+                //var btnsGroup = topicItem.find('>.dd-list>.dd-item .ans-btn.btn-group');
+                $('.level-1 .ans-btn.btn-group').click(function(){
+                    //alert('d');
+                    var cont = $('.wysiwig-wrap').html();
+                    var widget = $(this).closest('.widget-body');
+                    if (widget.find('+.widget-box').length <= 0)
+                    {
+                        widget.after(cont);
+                        $('.btn-cancel').click(function(){
+                            $(this).closest('.widget-box').slideUp(200);
+                        });
+                        widget.find('+.widget-box .wysiwyg-editor').css({'height':'200px'}).ace_wysiwyg({
+                            toolbar_place: function(toolbar) {
+                                return $(this).closest('.widget-box').find('.widget-header').prepend(toolbar).children(0).addClass('inline');
+                            },
+                            toolbar:
+                                [
+                                    'bold',
+                                    //{name:'italic' , title:'Change Title!', icon: 'icon-leaf'},
+                                    'italic',
+                                    'strikethrough',
+                                    'underline',
+                                    null,
+                                    'insertunorderedlist',
+                                    'insertorderedlist',
+                                    null,
+                                    'justifyleft',
+                                    'justifycenter',
+                                    'justifyright',
+                                    'createLink',
+                                    'unlink',
+                                    'insertImage'
+                                ],
+                            speech_button:false
+                        });
+                    }
+                    widget.find('+.widget-box').slideToggle(200);
+
+                    //$('.one-message+.wysiwig-box .btn-primary');
+                    $('.wysiwig-box .btn-primary').click(function(){
+                        var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
+                        message = message.replace(new RegExp('&nbsp;','g'),' ');
+                        var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
+                        messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
+                        //client.createTopic(Groups[0].id,'Тест тема-1',1,messageWithGoodLinks,0,0,Rubrics[0].id,1)
+                        var topicID = $(this).closest('.topic-item').data('topicid');
+                        var parentID = $(this).closest('.dd-item').find('.one-message').data('messageid');
+                        if (parentID === undefined){parentID = 0;}
+                        alert('1 '+parentID );
+                        client.createMessage(topicID,parentID,Groups[0].id,1,messageWithGoodLinks,0,0,0);
+                        //alert(messageWithGoodLinks);
+                    });
+                });
+
+                var firstLevelFlag = [];
+                for (i = 0 ; i < topicItem.find('.level-1').length; i++){
+                    firstLevelFlag[i] = 1;
+                }
+                //alert(topicItem.find('.level-1').length);
+
+                $('.one-message .plus-minus').click(function(e){
+                    e.preventDefault();
+
+                    if ($(this).hasClass('fa-minus')){
+                        $(this).removeClass('fa-minus').addClass('fa-plus');
+                    }else{
+                        $(this).removeClass('fa-plus').addClass('fa-minus');
+                    }
+
+                    var index = $(this).closest('.level-1').parent().index();
+                    //alert('1 '+ index);
+
+                    if (firstLevelFlag[index]){
+                        /* открываем сообщения остальных уровней */
+                        var parentID = $(this).closest('.one-message').data('messageid');
+                        var messagesPart = client.getMessages(topicID,Groups[0].id,1,parentID,0,0,10);
+                        currentMessages = messagesPart.messages;
+                        currentMessagesLength = currentMessages.length;
+                        messageHtml = '';
+
+                        for(i = 0; i < currentMessagesLength ; i++){
+                            //(currentMessages[i].offset == 0)? marginLeft = 30 : marginLeft = currentMessages[i].offset*30 ;
+                            messageHtml += '<li class="dd-item dd2-item" style="margin-left:'+(currentMessages[i].offset+1)*30+'px">'+
+                                '<div class="dd2-content topic-descr one-message widget-body" data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
+                                '<div class="widget-main">'+
+                                '<div class="topic-left">'+
+                                '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
+                                '</div>'+
+                                '<div class="topic-right">'+
+                                '<div class="message-author">'+
+                                '<a class="fa fa-link fa-relations" href="#" style="display: none;"></a>'+
+                                '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
+                                '<a href="#">Иван Грозный</a>'+
+                                '</div>'+
+                                '<p class="alert">'+ currentMessages[i].content+ '</p>'+
+                                '<div class="likes">'+
+                                '<div class="answer-date">' + currentMessages[i].created + '</div>'+
+                                '<a href="#" class="like-item like">'+
+                                '<i class="fa fa-thumbs-o-up"></i>'+
+                                '<span>' + currentMessages[i].likesNum + '</span>'+
+                                '</a>'+
+                                '<a href="#" class="like-item dislike">'+
+                                '<i class="fa fa-thumbs-o-down"></i>'+
+                                '<span>' + currentMessages[i].unlikesNum + '</span>'+
+                                '</a>'+
+                                '</div>'+
+                                '</div>'+
+                                '</div>'+
+                                '<footer class="widget-toolbox padding-4 clearfix">'+
+                                '<div class="btn-group ans-btn">'+
+                                '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
+                                'Ответить'+
+                                '<span class="icon-caret-down icon-on-right"></span>'+
+                                '</button>'+
+                                '<ul class="dropdown-menu dropdown-warning">'+
+                                '<li>'+
+                                '<a href="#">Ответить лично</a>'+
+                                '</li>'+
+                                '</ul>'+
+                                '</div>'+
+                                '<div class="answers-ctrl">'+
+                                '<a class="fa fa-minus plus-minus" href="#"></a>'+
+                                '<span> <span>8</span> <a href="#">(3)</a></span>'+
+                                '</div>'+
+                                '</footer>'+
+                                '</div>'+
+                                '</li>';
+                        }
+                        $(this).closest('.dd-item').after(messageHtml);
+
+                        $('.one-message:not(.level-1) .plus-minus').click(function(e){
+                            alert('deep');
+                            e.preventDefault();
+                            var currentParent;
+
+                            firstLevelFlag ? currentParent=0 : currentParent=$(this).closest('.one-message').data('messageid');
+                            //for (i = 0; i < currentMessagesLength; i++){
+                            $('.dd-list .dd-list').find('.one-message').each(function(){
+                                console.log('1');
+                                if ($(this).data('parentid') == currentParent){
+                                    $(this).slideToggle();
+                                }
+                            });
+
+                            if ($(this).hasClass('fa-minus')){
+                                $(this).removeClass('fa-minus').addClass('fa-plus');
+                            }else{
+                                $(this).removeClass('fa-plus').addClass('fa-minus');
+                            }
+
+                            var currentTopicIndex = $(this).closest('.topic-item').index();
+                            GetTopicsHeightForFixedHeader(currentTopicIndex+1);
+                        });
+
+                        /* появление wysiwig редактора */
+                        $('.one-message:not(.level-1)').find('.ans-btn.btn-group').click(function(){
+                            var cont = $('.wysiwig-wrap').html();
+                            var widget = $(this).closest('.widget-body');
+                            if (widget.find('+.widget-box').length <= 0)
+                            {
+                                widget.after(cont);
+                                $('.btn-cancel').click(function(){
+                                    $(this).closest('.widget-box').slideUp(200);
+                                });
+                                widget.find('+.widget-box .wysiwyg-editor').css({'height':'200px'}).ace_wysiwyg({
+                                    toolbar_place: function(toolbar) {
+                                        return $(this).closest('.widget-box').find('.widget-header').prepend(toolbar).children(0).addClass('inline');
+                                    },
+                                    toolbar:
+                                        [
+                                            'bold',
+                                            //{name:'italic' , title:'Change Title!', icon: 'icon-leaf'},
+                                            'italic',
+                                            'strikethrough',
+                                            'underline',
+                                            null,
+                                            'insertunorderedlist',
+                                            'insertorderedlist',
+                                            null,
+                                            'justifyleft',
+                                            'justifycenter',
+                                            'justifyright',
+                                            'createLink',
+                                            'unlink',
+                                            'insertImage'
+                                        ],
+                                    speech_button:false
+                                });
+                            }
+                            widget.find('+.widget-box').slideToggle(200);
+
+                            $('.wysiwig-box .btn-primary').click(function(){
+                                alert('2');
+                                var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
+                                message = message.replace(new RegExp('&nbsp;','g'),' ');
+                                var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
+                                messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
+                                var topicID = $(this).closest('.topic-item').data('topicid');
+                                var parentID = $(this).closest('.dd-item').find('.one-message').data('messageid');
+                                if (parentID === undefined){parentID = 0;}
+                                client.createMessage(topicID,parentID,Groups[0].id,1,messageWithGoodLinks,0,0,0);
+                            });
+                        });
+                        /* --- */
+                        firstLevelFlag[index] = 0;
+                    }else{
+                        var currentParent=$(this).closest('.one-message').data('messageid');
+                        //for (i = 0; i < currentMessagesLength; i++){
+                        $('.dd-list .dd-list').find('.one-message').each(function(){
+                            console.log('1');
+                            if ($(this).data('parentid') == currentParent){
+                                $(this).slideToggle();
+                            }
+                        });
+                    }
+                });
+
+            } else {
+                $(this).closest('.dd2-item').find('>.dd-list').slideToggle(200,function(){
+                    var currentTopicIndex = $(this).closest('.topic-item').index();
+                    GetTopicsHeightForFixedHeader(currentTopicIndex+1);
+                });
+            }
+        });
+
+
+
+/*        $('.plus-minus').click(function(e){
             e.preventDefault();
             $(this).closest('.dd2-item').find('>.dd-list').slideToggle(200,function(){
                 var currentTopicIndex = $(this).closest('.topic-item').index();
@@ -276,72 +577,14 @@
             }else{
                 $(this).removeClass('fa-plus').addClass('fa-minus');
             }
+
             var topicID  = $(this).closest('.topic-item').data('topicid'),
                 currentMessages,
                 currentMessagesLength,
                 messageHtml,i;
                 //$(this).closest('.one-message').length <= 0 &&
-            if (zeroLevelFlag){
-                /* значит подгружаем сообщения первого уровня */
-                zeroLevelFlag = 0;
-                currentMessages = client.getMessages(topicID,Groups[0].id,1,0,0,0,10).messages;
-                currentMessagesLength = currentMessages.length;
-                messageHtml = '';
-                //alert(currentMessagesLength);
 
-                for(i = 0; i < currentMessagesLength ; i++){
-                    messageHtml += '<li class="dd-item dd2-item">'+
-                        '<div class="dd2-content topic-descr one-message widget-body" data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
-                            '<div class="widget-main">'+
-                                '<div class="topic-left">'+
-                                    '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
-                                        '</div>'+
-                                    '<div class="topic-right">'+
-                                        '<div class="message-author">'+
-                                            '<a class="fa fa-link fa-relations" href="#" style="display: none;"></a>'+
-                                            '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
-                                            '<a href="#">Иван Грозный</a>'+
-                                            '</div>'+
-                                        '<p class="alert">'+ currentMessages[i].content+ '</p>'+
-                                        '<div class="likes">'+
-                                            '<div class="answer-date">' + currentMessages[i].created + '</div>'+
-                                            '<a href="#" class="like-item like">'+
-                                                '<i class="fa fa-thumbs-o-up"></i>'+
-                                                '<span>' + currentMessages[i].likesNum + '</span>'+
-                                                '</a>'+
-                                            '<a href="#" class="like-item dislike">'+
-                                                '<i class="fa fa-thumbs-o-down"></i>'+
-                                                '<span>' + currentMessages[i].unlikesNum + '</span>'+
-                                                '</a>'+
-                                            '</div>'+
-                                        '</div>'+
-                                    '</div>'+
-                                '<footer class="widget-toolbox padding-4 clearfix">'+
-                                    '<div class="btn-group ans-btn">'+
-                                        '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
-                                            'Ответить'+
-                                            '<span class="icon-caret-down icon-on-right"></span>'+
-                                            '</button>'+
-                                        '<ul class="dropdown-menu dropdown-warning">'+
-                                            '<li>'+
-                                                '<a href="#">Ответить лично</a>'+
-                                                '</li>'+
-                                            '</ul>'+
-                                        '</div>'+
-                                    '<div class="answers-ctrl">'+
-                                        '<a class="fa fa-plus plus-minus" href="#"></a>'+
-                                        '<span> <span>8</span> <a href="#">(3)</a></span>'+
-                                        '</div>'+
-                                    '</footer>'+
-                                '</div>'+
-                            '</li>';
-                }
-                $(this).closest('.topic-item').append('<ol class="dd-list">' + messageHtml + '</ol>');
-            }
-            /*else if(otherLevelsFlag){
-            }*/
-
-            /* обработка клика на плюс-минус */
+            *//* обработка клика на плюс-минус *//*
 
             $('.plus-minus').click(function(e){
                 e.preventDefault();
@@ -357,9 +600,8 @@
                 }
 
                 if (firstLevelFlag){
-                /* открываем сообщения остальных уровней */
+                *//* открываем сообщения остальных уровней *//*
                 //alert('otherLevel');
-                firstLevelFlag = 0;
                 var parentID = $(this).closest('.one-message').data('messageid');
                 var messagesPart = client.getMessages(topicID,Groups[0].id,1,parentID,0,0,10);
                 //var marginLeft;
@@ -421,10 +663,12 @@
                 $('.plus-minus').click(function(e){
                     alert('deep');
                     e.preventDefault();
+                    var currentParent;
 
-                    var currentParent = $(this).closest('.one-message').data('messageid');
+                    firstLevelFlag ? currentParent=0 : currentParent=$(this).closest('.one-message').data('messageid');
                     //for (i = 0; i < currentMessagesLength; i++){
                      $('.dd-list .dd-list').find('.one-message').each(function(){
+                         console.log('1');
                         if ($(this).data('parentid') == currentParent){
                             $(this).slideToggle();
                         }
@@ -440,7 +684,7 @@
                     GetTopicsHeightForFixedHeader(currentTopicIndex+1);
                 });
 
-                /* появление wysiwig редактора */
+                *//* появление wysiwig редактора *//*
                 $('.ans-btn.btn-group').click(function(){
                     //alert('d');
                     var cont = $('.wysiwig-wrap').html();
@@ -492,13 +736,14 @@
                         //alert(messageWithGoodLinks);
                     });
                 });
-                /* --- */
+                *//* --- *//*
+                 firstLevelFlag = 0;
                 }
             });
 
-            /**/
+            *//**//*
 
-            /* появление wysiwig редактора */
+            *//* появление wysiwig редактора *//*
             $('.ans-btn.btn-group').click(function(){
                 //alert('d');
                 var cont = $('.wysiwig-wrap').html();
@@ -550,8 +795,8 @@
                     //alert(messageWithGoodLinks);
                 });
             });
-            /* --- */
-        });
+            *//* --- *//*
+        });*/
 
         var staffCounterForGoodTopicsHeight = 0;
 
