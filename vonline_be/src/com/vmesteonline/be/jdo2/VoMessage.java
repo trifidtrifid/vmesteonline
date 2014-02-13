@@ -124,8 +124,7 @@ public class VoMessage extends VoBaseMessage {
 	}
 
 	public Message getMessage() {
-		Key parentKey = id.getParent();
-		return new Message(id.getId(), null == parentKey ? 0L : parentKey.getId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(
+		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(
 				content), getLikes(), getUnlikes(), links, tags, null, 0);
 	}
 
