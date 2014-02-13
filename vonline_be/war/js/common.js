@@ -33,7 +33,7 @@
             $(this).closest('.btn-group').find('.btn-group-text').text($(this).text());
         });
 
-        $('.ace-nav .btn,.nav-list a').click(function(e){
+        $('.nav-list a').click(function(e){
             e.preventDefault();
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
