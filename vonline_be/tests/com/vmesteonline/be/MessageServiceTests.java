@@ -143,7 +143,6 @@ public class MessageServiceTests {
 			Assert.assertEquals("Test1", rTopic.topics.get(0).userInfo.firstName);
 			Assert.assertEquals("USer2", rTopic.topics.get(0).userInfo.lastName);
 
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());
@@ -231,22 +230,27 @@ public class MessageServiceTests {
 
 		try {
 			Topic topic = createTopic();
-			msi.likeTopic(topic.getId());
+			Assert.assertEquals(1, msi.likeTopic(topic.getId()));
 
 			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(topic.getId(), rTopic.topics.get(0).getId());
+			Assert.assertEquals(1, rTopic.topics.get(0).getLikesNum());
+			Assert.assertEquals(0, rTopic.topics.get(0).getUnlikesNum());
+
 			Assert.assertNotNull(rTopic.topics.get(0).getUsertTopic());
 			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().likes);
 			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().isread);
 			Assert.assertFalse(rTopic.topics.get(0).getUsertTopic().unlikes);
 
-			msi.dislikeTopic(topic.getId());
+			Assert.assertEquals(1, msi.dislikeTopic(topic.getId()));
 			rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(topic.getId(), rTopic.topics.get(0).getId());
+			Assert.assertEquals(0, rTopic.topics.get(0).getLikesNum());
+			Assert.assertEquals(1, rTopic.topics.get(0).getUnlikesNum());
 			Assert.assertNotNull(rTopic.topics.get(0).getUsertTopic());
 			Assert.assertFalse(rTopic.topics.get(0).getUsertTopic().likes);
 			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().isread);
