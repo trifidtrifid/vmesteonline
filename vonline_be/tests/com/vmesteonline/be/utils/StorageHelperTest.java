@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,11 +19,22 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StorageHelperTest extends StorageHelper {
+import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
-	@Before
-	public void setUp() throws Exception {
-	}
+public class StorageHelperTest extends StorageHelper {
+	
+	private static final LocalServiceTestHelper helper = 
+	    new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig(),
+	                               new LocalBlobstoreServiceTestConfig()
+	                              );
+
+	  @Before
+	  public void setUp() {
+	    helper.setUp();
+	  }
+
 
 	@After
 	public void tearDown() throws Exception {
@@ -60,11 +73,31 @@ public class StorageHelperTest extends StorageHelper {
 		fieldPosMap.put(7, "str");
 		
 		try {
-			List<Result> res = StorageHelper.loadCSVData(new ByteArrayInputStream( input.getBytes()), fieldPosMap, new Result(), null, null, null);
+			List<Result> res = CSVHelper.loadCSVData(new ByteArrayInputStream( input.getBytes()), fieldPosMap, new Result(), null, null, null);
 			Assert.assertTrue(null!=res);
 		} catch (IOException e) {
 			e.printStackTrace();
 			
+		}
+	}
+	
+	@Test 
+	public void testStoreData(){
+		try {
+			String origURL = "http://3.14.by/files/e4000.jpg";
+			String newImageUrl = StorageHelper.saveImage(origURL);
+			String newImageUrl2 = StorageHelper.saveImage(newImageUrl);
+			URL url = new URL(origURL);
+			URL url2 = new URL(newImageUrl2);
+			InputStream is = url.openStream();
+			InputStream is2 = url2.openStream();
+			int read1;
+			while( -1 !=(read1 = is.read()) )
+				Assert.assertEquals(read1, is2.read());
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 

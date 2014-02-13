@@ -53,7 +53,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public boolean login(final String email, final String password) throws InvalidOperation, TException {
+	public boolean login(final String email, final String password) throws InvalidOperation {
 		if (sessionStorage == null) {
 			logger.error("http session is null");
 			throw new InvalidOperation(VoError.IncorrectParametrs, "http session is null");
@@ -153,12 +153,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
 
 	@Override
-	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation, TException {
+	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation {
 		super.setCurrentAttribute(typeValueMap);
 	}
 
 	@Override
-	public Map<Integer, Long> getCurrentAttributes() throws InvalidOperation, TException {
+	public Map<Integer, Long> getCurrentAttributes() throws InvalidOperation {
 		return super.getCurrentSession().getSessionAttributes();
 	}
 

@@ -146,12 +146,12 @@ public class ServiceImpl {
 		};
 	}
 
-	public void setCurrentAttribute(int key, long value) throws InvalidOperation, TException {
+	public void setCurrentAttribute(int key, long value) throws InvalidOperation {
 
 		setCurrentAttribute(key, value, null);
 	}
 
-	public void setCurrentAttribute(int key, long value, PersistenceManager _pm) throws InvalidOperation, TException {
+	public void setCurrentAttribute(int key, long value, PersistenceManager _pm) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 
 		VoSession currentSession = getCurrentSession(pm);
@@ -164,7 +164,7 @@ public class ServiceImpl {
 		}
 	}
 
-	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation, TException {
+	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		VoSession currentSession = getCurrentSession(pm);
 		currentSession.setSessionAttributes(typeValueMap);

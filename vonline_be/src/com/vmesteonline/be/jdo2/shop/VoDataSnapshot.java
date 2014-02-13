@@ -12,7 +12,6 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 public class VoDataSnapshot {
 
 	public VoDataSnapshot() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	@PrimaryKey
@@ -29,4 +28,7 @@ public class VoDataSnapshot {
 	@Unindexed
 	private String  fileName;
 	
+	@Persistent
+	@Unindexed
+	private String elements;
 }

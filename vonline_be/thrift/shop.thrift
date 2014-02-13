@@ -106,7 +106,7 @@ enum ExchangeFieldType {
 	SHOP_DELIVERY_COST_AVP,
 	SHOP_PAYMENT_COST_AVP,
 	
-	PRODUCER_NAME_ID = 100, PRODUCER_NAME, PRODUCER_DESCRIPTION, PRODUCER_LOGOURL, PRODUCER_HOMEURL,
+	PRODUCER_ID = 100, PRODUCER_NAME, PRODUCER_DESCRIPTION, PRODUCER_LOGOURL, PRODUCER_HOMEURL,
 
 	CATEGORY_ID = 200, CATEGORY_PARENT_NAME, CATEGORY_NAME, CATEGORY_DESCRIPTION, CATEGORY_LOGOURLS, CATEGORY_TOPICS,
 	
@@ -181,6 +181,7 @@ service ShopService {
 	void updateProduct( 1:FullProductInfo newInfoWithOldId ) throws (1:error.InvalidOperation exc),
 	void updateShop( 1:Shop newShopWithOldId ) throws (1:error.InvalidOperation exc),
 	void updateCategory( 1:ProductCategory newCategoryInfo) throws (1:error.InvalidOperation exc),
+	void updateProducer( 1:Producer newInfoWithOldId ) throws (1:error.InvalidOperation exc),
 	
 	//IMPORT-EXPORT
 

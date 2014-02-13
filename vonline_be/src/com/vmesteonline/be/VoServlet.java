@@ -20,6 +20,8 @@ import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.transport.TIOStreamTransport;
 import org.apache.thrift.transport.TTransport;
 
+import com.google.appengine.api.images.ServingUrlOptions;
+
 /**
  * Servlet implementation class ThriftServer
  */
@@ -73,6 +75,9 @@ public class VoServlet extends HttpServlet {
 	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if( null==serviceImpl)
+			throw new IOException("serviceImpl not initialized.");
+		
 		serviceImpl.setSession(request.getSession());
 		TTransport inTransport = null;
 		TTransport outTransport = null;
