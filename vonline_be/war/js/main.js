@@ -28,19 +28,22 @@ var mesLen,
 
 $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active');
 
-       $('.submenu .btn').click(function(e){
+   $('.submenu .btn').click(function(e){
     e.preventDefault();
+
     $(this).closest('.submenu').find('.active').removeClass('active');
     $(this).parent().addClass('active');
     var groupID = $(this).data('groupid');
-    topicsContent = client.getTopics(groupID,Rubrics[0].id,0,0,10);
+    var topicsContent = client.getTopics(groupID,Rubrics[0].id,0,0,10);
     var topicLen = topicsContent.topics.length;
-    $('.dd>.dd-list').html('');
+    topicsList="";
+    var ddList = $('.dd>.dd-list');
+    ddList.html('');
     //alert('s');
 
     for(var i = 0; i < topicLen; i++){
         oneTopicContent = topicsContent.topics[i];
-        topicsList = '<li class="dd-item dd2-item topic-item" data-id="15">'+
+        topicsList = '<li class="dd-item dd2-item topic-item">'+
             '<div class="dd2-content widget-box topic-descr">'+
             '<header class="widget-header header-color-blue2">'+
             '<span class="topic-header-date">01.04.2014 10:10</span>'+
@@ -60,7 +63,7 @@ $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active
             '<div class="topic-left">'+
             '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"/></a>'+
             '<div class="topic-author">'+
-            '<a href="#">Иван Грозный</a>'+
+            '<a href="#">'+oneTopicContent.userInfo.firstName+' '+oneTopicContent.userInfo.lastName+'</a>'+
             '<div class="author-rating">'+
             '<a href="#" class="fa fa-star"></a>'+
             '<a class="fa fa-star" href="#"></a>'+
@@ -108,20 +111,9 @@ $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active
             '</div>'+
             '</div>'+
             '</li>';
-        $('.dd>.dd-list').append(topicsList);
-        //message = topicsContent.topics[i];
-        iterator = 0;
-        messageList="";
-        level = 0;
-        messageListNew="";
-        messageListTopLevel = getMessageList(oneTopicContent.id, groupID, oneTopicContent.id);
-        //console.log(messageListTopLevel);
-        $('.dd>.dd-list>.topic-item:eq(' + i + ')').append(messageListTopLevel);
     }
+       ddList.append(topicsList);
 });
-
-//var topicsContent = client.getTopics(Groups[0].id,Rubrics[0].id, 0, 0, 10);
-//var topicLen = topicsContent.topics.length;
 
 /*        function getMessageList(topicID, groupID, parentID){
     messagesArray = client.getMessages(topicID, groupID, 1, parentID, 0, 0, 4).messages;
@@ -202,24 +194,74 @@ alert(orientation);
         selector.click(function(e){
             e.preventDefault();
 
-            var oldLikesVal = $(this).find('span').text();
-            var topicID = $(this).closest('.topic-item').data('topicid');
-            $(this).find('span').text(++oldLikesVal);
-
             if($(this).closest('.one-message').length <= 0){
+                var topicID = $(this).closest('.topic-item').data('topicid');
                 if ($(this).hasClass('like')){
-                    client.likeTopic(topicID);
+                    $(this).find('span').text(client.likeTopic(topicID));
                 }else{
-                    client.dislikeTopic(topicID);
+                    $(this).find('span').text(client.dislikeTopic(topicID));
                 }
             }else{
+                var messageID = $(this).closest('.one-message').data('messageid');
                 if ($(this).hasClass('like')){
-                    client.like(topicID);
+                    $(this).find('span').text(client.like(messageID));
                 }else{
-                    client.dislike(topicID);
+                    $(this).find('span').text(client.dislike(messageID));
                 }
             }
 
+        });
+    }
+    function SetCreateMessageClick(selector){
+        selector.click(function(){
+            var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
+            message = message.replace(new RegExp('&nbsp;','g'),' ');
+            var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
+            messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
+            var topicID = $(this).closest('.topic-item').data('topicid');
+            var parentID = $(this).closest('.dd-item').find('.one-message').data('messageid');
+            if (parentID === undefined){parentID = 0;}
+            client.createMessage(topicID,parentID,Groups[0].id,1,messageWithGoodLinks,0,0,0);
+        });
+    }
+    function SetShowEditorClick(selector){
+        selector.click(function(){
+            var cont = $('.wysiwig-wrap').html();
+            var widget = $(this).closest('.widget-body');
+            if (widget.find('+.widget-box').length <= 0)
+            {
+                widget.after(cont);
+                $('.btn-cancel').click(function(){
+                    $(this).closest('.widget-box').slideUp(200);
+                });
+                widget.find('+.widget-box .wysiwyg-editor').css({'height':'200px'}).ace_wysiwyg({
+                    toolbar_place: function(toolbar) {
+                        return $(this).closest('.widget-box').find('.widget-header').prepend(toolbar).children(0).addClass('inline');
+                    },
+                    toolbar:
+                        [
+                            'bold',
+                            //{name:'italic' , title:'Change Title!', icon: 'icon-leaf'},
+                            'italic',
+                            'strikethrough',
+                            'underline',
+                            null,
+                            'insertunorderedlist',
+                            'insertorderedlist',
+                            null,
+                            'justifyleft',
+                            'justifycenter',
+                            'justifyright',
+                            'createLink',
+                            'unlink',
+                            'insertImage'
+                        ],
+                    speech_button:false
+                });
+            }
+            widget.find('+.widget-box').slideToggle(200);
+
+            SetCreateMessageClick($('.wysiwig-box .btn-primary'));
         });
     }
     SetLikeClick($('.like-item'));
@@ -375,58 +417,6 @@ $('.topic-item>.topic-descr .plus-minus').click(function(e){
         */
         $(this).closest('.topic-item').append('<ol class="dd-list">' + messageHtml + '</ol>');
 
-        /*
-         событие появления wysiwig редактора для сообщений 1го уровня
-        (можно вынести в функцию, т.к повторяется)
-        */
-        $('.level-1 .ans-btn.btn-group').click(function(){
-            var cont = $('.wysiwig-wrap').html();
-            var widget = $(this).closest('.widget-body');
-            if (widget.find('+.widget-box').length <= 0)
-            {
-                widget.after(cont);
-                $('.btn-cancel').click(function(){
-                    $(this).closest('.widget-box').slideUp(200);
-                });
-                widget.find('+.widget-box .wysiwyg-editor').css({'height':'200px'}).ace_wysiwyg({
-                    toolbar_place: function(toolbar) {
-                        return $(this).closest('.widget-box').find('.widget-header').prepend(toolbar).children(0).addClass('inline');
-                    },
-                    toolbar:
-                        [
-                            'bold',
-                            //{name:'italic' , title:'Change Title!', icon: 'icon-leaf'},
-                            'italic',
-                            'strikethrough',
-                            'underline',
-                            null,
-                            'insertunorderedlist',
-                            'insertorderedlist',
-                            null,
-                            'justifyleft',
-                            'justifycenter',
-                            'justifyright',
-                            'createLink',
-                            'unlink',
-                            'insertImage'
-                        ],
-                    speech_button:false
-                });
-            }
-            widget.find('+.widget-box').slideToggle(200);
-
-            $('.wysiwig-box .btn-primary').click(function(){
-                var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
-                message = message.replace(new RegExp('&nbsp;','g'),' ');
-                var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
-                messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
-                var topicID = $(this).closest('.topic-item').data('topicid');
-                var parentID = $(this).closest('.dd-item').find('.one-message').data('messageid');
-                if (parentID === undefined){parentID = 0;}
-                //alert('1 '+parentID );
-                client.createMessage(topicID,parentID,Groups[0].id,1,messageWithGoodLinks,0,0,0);
-            });
-        });
 
         var firstLevelFlag = [];
         /*
@@ -548,53 +538,7 @@ $('.topic-item>.topic-descr .plus-minus').click(function(e){
                 });
 
                 /* появление wysiwig редактора (для остальных сообщений) */
-                $('.one-message:not(.level-1)').find('.ans-btn.btn-group').click(function(){
-                    var cont = $('.wysiwig-wrap').html();
-                    var widget = $(this).closest('.widget-body');
-                    if (widget.find('+.widget-box').length <= 0)
-                    {
-                        widget.after(cont);
-                        $('.btn-cancel').click(function(){
-                            $(this).closest('.widget-box').slideUp(200);
-                        });
-                        widget.find('+.widget-box .wysiwyg-editor').css({'height':'200px'}).ace_wysiwyg({
-                            toolbar_place: function(toolbar) {
-                                return $(this).closest('.widget-box').find('.widget-header').prepend(toolbar).children(0).addClass('inline');
-                            },
-                            toolbar:
-                                [
-                                    'bold',
-                                    //{name:'italic' , title:'Change Title!', icon: 'icon-leaf'},
-                                    'italic',
-                                    'strikethrough',
-                                    'underline',
-                                    null,
-                                    'insertunorderedlist',
-                                    'insertorderedlist',
-                                    null,
-                                    'justifyleft',
-                                    'justifycenter',
-                                    'justifyright',
-                                    'createLink',
-                                    'unlink',
-                                    'insertImage'
-                                ],
-                            speech_button:false
-                        });
-                    }
-                    widget.find('+.widget-box').slideToggle(200);
-
-                    $('.wysiwig-box .btn-primary').click(function(){
-                        var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
-                        message = message.replace(new RegExp('&nbsp;','g'),' ');
-                        var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
-                        messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
-                        var topicID = $(this).closest('.topic-item').data('topicid');
-                        var parentID = $(this).closest('.dd-item').find('.one-message').data('messageid');
-                        if (parentID === undefined){parentID = 0;}
-                        client.createMessage(topicID,parentID,Groups[0].id,1,messageWithGoodLinks,0,0,0);
-                    });
-                });
+                SetShowEditorClick($('.one-message:not(.level-1)').find('.ans-btn.btn-group'));
                 /* --- */
                 SetLikeClick($('.one-message:not(.level-1) .like-item'));
                 firstLevelFlag[index] = 0;
@@ -612,6 +556,11 @@ $('.topic-item>.topic-descr .plus-minus').click(function(e){
                 });
             }
         });
+        /*
+         событие появления wysiwig редактора для сообщений 1го уровня
+         (можно вынести в функцию, т.к повторяется)
+         */
+        SetShowEditorClick($('.level-1 .ans-btn.btn-group'));
         SetLikeClick(topicItem.find('.level-1 .like-item'));
 
     } else {
@@ -681,58 +630,7 @@ $(window).scroll(function(){
 });
 
 /* появление wysiwig редактора (для топиков) */
-$('.ans-btn.btn-group').click(function(){
-    //alert('d');
-    var cont = $('.wysiwig-wrap').html();
-    var widget = $(this).closest('.widget-body');
-    if (widget.find('+.widget-box').length <= 0)
-    {
-        widget.after(cont);
-        $('.btn-cancel').click(function(){
-            $(this).closest('.widget-box').slideUp(200);
-        });
-        widget.find('+.widget-box .wysiwyg-editor').css({'height':'200px'}).ace_wysiwyg({
-            toolbar_place: function(toolbar) {
-                return $(this).closest('.widget-box').find('.widget-header').prepend(toolbar).children(0).addClass('inline');
-            },
-            toolbar:
-                [
-                    'bold',
-                    //{name:'italic' , title:'Change Title!', icon: 'icon-leaf'},
-                    'italic',
-                    'strikethrough',
-                    'underline',
-                    null,
-                    'insertunorderedlist',
-                    'insertorderedlist',
-                    null,
-                    'justifyleft',
-                    'justifycenter',
-                    'justifyright',
-                    'createLink',
-                    'unlink',
-                    'insertImage'
-                ],
-            speech_button:false
-        });
-    }
-    widget.find('+.widget-box').slideToggle(200);
-
-    //$('.one-message+.wysiwig-box .btn-primary');
-    $('.wysiwig-box .btn-primary').click(function(){
-        var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
-        message = message.replace(new RegExp('&nbsp;','g'),' ');
-        var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
-        messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
-        //client.createTopic(Groups[0].id,'Тест тема-1',1,messageWithGoodLinks,0,0,Rubrics[0].id,1)
-        var topicID = $(this).closest('.topic-item').data('topicid');
-        var parentID = $(this).closest('.dd-tem').find('.one-message').data('messageid');
-        if (parentID === undefined){parentID = 0;}
-
-        client.createMessage(topicID,parentID,Groups[0].id,1,messageWithGoodLinks,0,0,0);
-        //alert(messageWithGoodLinks);
-    });
-});
+    SetShowEditorClick($('.ans-btn.btn-group'));
 /* --- */
 /*
 -----------------------------------------------------------
