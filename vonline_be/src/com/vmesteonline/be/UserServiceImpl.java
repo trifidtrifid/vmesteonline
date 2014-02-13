@@ -15,7 +15,6 @@ import org.apache.thrift.TException;
 
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
-import com.google.apphosting.api.DatastorePb.DatastoreService;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -120,6 +119,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.makePersistent(street);
 			VoPostalAddress[] addresses;
 			addresses = new VoPostalAddress[] {
+
 			/*
 			 * new VoPostalAddress(new VoBuilding(street, "32/3", 59.933146F,
 			 * 30.423117F), (byte) 2, (byte) 1, (byte) 5, "", pm), new
@@ -128,6 +128,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			 * VoBuilding(street, "6", 59.934177F, 30.404331F), (byte) 1, (byte) 2,
 			 * (byte) 25, "", pm) };
 			 */
+
 			new VoPostalAddress(new VoBuilding(street, "32/3", 0F, 0F), (byte) 2, (byte) 1, (byte) 5, "", pm),
 					new VoPostalAddress(new VoBuilding(street, "35", 0F, 0F), (byte) 1, (byte) 11, (byte) 35, "", pm),
 					new VoPostalAddress(new VoBuilding(street, "6", 0F, 0F), (byte) 1, (byte) 2, (byte) 25, "", pm) };
@@ -172,7 +173,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 			List<City> cl = new ArrayList<City>();
 			Query q = pm.newQuery(VoCity.class);
-			q.setFilter("country == "+countryId);
+			q.setFilter("country == " + countryId);
 			List<VoCity> cs = (List<VoCity>) q.execute();
 			for (VoCity c : cs) {
 				cl.add(c.getCity());

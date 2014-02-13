@@ -134,7 +134,7 @@ public class MessageServiceTests {
 
 		try {
 			Topic tpc = createTopic();
-			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 0);
+			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
@@ -211,7 +211,7 @@ public class MessageServiceTests {
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals(msg2.getId(), mlp.messages.get(1).getId());
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());
@@ -219,4 +219,36 @@ public class MessageServiceTests {
 
 	}
 
+	@Test
+	public void testLikeDislikeTopic() {
+
+		try {
+			Topic topic = createTopic();
+			msi.likeTopic(topic.getId());
+
+			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 10);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(1, rTopic.totalSize);
+			Assert.assertEquals(topic.getId(), rTopic.topics.get(0).getId());
+			Assert.assertNotNull(rTopic.topics.get(0).getUsertTopic());
+			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().likes);
+			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().isread);
+			Assert.assertFalse(rTopic.topics.get(0).getUsertTopic().unlikes);
+
+			msi.dislikeTopic(topic.getId());
+			rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 10);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(1, rTopic.totalSize);
+			Assert.assertEquals(topic.getId(), rTopic.topics.get(0).getId());
+			Assert.assertNotNull(rTopic.topics.get(0).getUsertTopic());
+			Assert.assertFalse(rTopic.topics.get(0).getUsertTopic().likes);
+			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().isread);
+			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().unlikes);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("exception: " + e.getMessage());
+		}
+
+	}
 }
