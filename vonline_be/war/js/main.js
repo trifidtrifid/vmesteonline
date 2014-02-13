@@ -120,8 +120,8 @@ $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active
     }
 });*/
 
-var topicsContent = client.getTopics(Groups[0].id,Rubrics[0].id, 0, 0, 10);
-var topicLen = topicsContent.topics.length;
+//var topicsContent = client.getTopics(Groups[0].id,Rubrics[0].id, 0, 0, 10);
+//var topicLen = topicsContent.topics.length;
 
 /*        function getMessageList(topicID, groupID, parentID){
     messagesArray = client.getMessages(topicID, groupID, 1, parentID, 0, 0, 4).messages;

@@ -1,6 +1,7 @@
 /out
 /.classpath
 /.idea
+/thrift/thrift.exe
 
 .classpath
 .project

@@ -365,6 +365,7 @@
 <!-- -->
 <!-- файлы thrift -->
 <script src="js/thrift.js" type="text/javascript"></script>
+<script src="gen-js/bedata_types.js" type="text/javascript"></script>
 <script src="gen-js/messageservice_types.js" type="text/javascript"></script>
 <script src="gen-js/MessageService.js" type="text/javascript"></script>
 <script src="gen-js/userservice_types.js" type="text/javascript"></script>
