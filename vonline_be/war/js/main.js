@@ -198,6 +198,17 @@ alert(orientation);
 //alert('1');
 }
 
+$('.topic-item>.topic-descr .like-item').click(function(){
+    var oldLikesVal = $(this).find('span').text();
+    var topicID = $(this).closest('.topic-item').data('topicid');
+    $(this).find('span').text(++oldLikesVal);
+    if ($(this).hasClass('like')){
+        client.likeTopic(topicID);
+    }else{
+        client.dislikeTopic(topicID);
+    }
+});
+
 window.addEventListener('orientationchange', ChangeOrientation, false);
 
 $('.widget-main').hover(function(){
