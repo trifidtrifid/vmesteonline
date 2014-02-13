@@ -49,6 +49,7 @@ public class VoMessage extends VoBaseMessage {
 
 	public VoMessage() {
 	}
+	
 
 	public VoMessage(Message msg) throws InvalidOperation {
 
