@@ -50,3 +50,19 @@ struct ShortUserInfo{
 	5: string avatar,
 }
 
+struct Group{
+	1: i64 id,
+	2: string visibleName,
+	3: string name,
+	4: string description,
+	5: i32 radius,
+}
+
+struct Rubric{
+	1: i64 id,
+	2: string visibleName,
+	3: string name,
+	4: string description,
+}
+
+
