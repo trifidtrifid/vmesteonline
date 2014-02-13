@@ -16,11 +16,7 @@ public class MessagesTree {
 		parseLevel(firstLevel, 0);
 	}
 
-<<<<<<< HEAD
-	List<VoMessage> firstLevel;
-=======
 	private List<VoMessage> firstLevel;
->>>>>>> master
 
 	public List<VoMessage> getTreeMessagesAfter(long parentId, int length) throws InvalidOperation {
 
