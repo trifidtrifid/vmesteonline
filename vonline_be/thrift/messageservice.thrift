@@ -42,7 +42,8 @@ struct UserTopic {
 	3: bool likes, 
 	4: bool notIntrested, 
 	5: i64 lastReadMessageId,
-	6: i64 lastWroteMeessgeId
+	6: i64 lastWroteMeessgeId,
+	7: bool isread
 }
 
 struct Topic {

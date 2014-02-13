@@ -21,12 +21,13 @@ import com.vmesteonline.be.MessageService.Iface;
 import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.data.VoDatastoreHelper;
+import com.vmesteonline.be.jdo2.VoBaseMessage;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
-import com.vmesteonline.be.jdo2.VoUserAttitude;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.VoUserMessage;
 import com.vmesteonline.be.jdo2.VoUserObject;
@@ -162,7 +163,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					}
 					mlp.totalSize = topics.size();
 					for (VoTopic voTopic : topics) {
-						mlp.addToTopics(voTopic.getTopic());
+						Topic tpc = voTopic.getTopic();
+
+						VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
+						tpc.usertTopic = null == voUserTopic ? null : voUserTopic.getUserTopic();
+						mlp.addToTopics(tpc);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -181,6 +186,24 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			}
 		}
 		return mlp;
+	}
+
+	@Override
+	public long restoreTopicFromArchive(long topicId) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long makeMessageLinked(long message1Id, long message2Id) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long markTopicUnintrested(long topicId, boolean interested) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override
@@ -229,87 +252,28 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
-	@Override
-	public long restoreTopicFromArchive(long topicId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
+	protected void testMthd(long i, long d) {
+
 	}
 
-	@Override
-	public long makeMessageLinked(long message1Id, long message2Id) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	protected void testMthd(long i, long d){
-		
-	}
-	
 	@Override
 	public long dislike(long messageId) throws InvalidOperation, TException {
-		long unlikesNum = 0;
-		long user = getCurrentUserId();
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Transaction currentTransaction = pm.currentTransaction();
-		try {
-			this.getClass().getMethod("testMthd").invoke(1, 43);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		try {
-			VoMessage msg = pm.getObjectById(VoMessage.class, messageId);
-			VoUserMessage um = pm.getObjectById(VoUserMessage.class, VoUserMessage.getObjectKey(user, messageId));
-			if (null == um) {
-				um = new VoUserMessage(user, messageId);
-				um.setLikes(false);
-				um.setUnlikes(true);
-				um.setRead(true);
-				um.setUserId(user);
-				um.setId(messageId);
-			} else {
-				if (!um.isUnlikes()) { // unlike already set
-					if (um.isLikes()) {
-						msg.decrementLikes();
-					}
-					um.setLikes(false);
-				}
-			}
-			unlikesNum = msg.incrementUnlikes();
-			pm.makePersistent(um);
-			pm.makePersistent(msg);
-			try {
-				currentTransaction.commit();
-			} catch (Exception e) {
-				currentTransaction.rollback();
-				throw new InvalidOperation(VoError.GeneralError, "Failed to change dislike. Transaction not commited. Reason is [" + e.getMessage()
-						+ "]. Rollbacked.");
-			}
-			return unlikesNum;
-		} finally {
-			pm.close();
-		}
+		return this.<VoMessage, VoUserMessage> like(messageId, VoMessage.class, VoUserMessage.class, new VoUserMessage(), false);
 	}
 
 	@Override
 	public long like(long messageId) throws InvalidOperation, TException {
-		return this.<VoMessage, VoUserMessage> like(messageId, VoMessage.class, VoUserMessage.class, new VoUserMessage());
-	}
-
-	@Override
-	public long markTopicUnintrested(long topicId, boolean interested) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.<VoMessage, VoUserMessage> like(messageId, VoMessage.class, VoUserMessage.class, new VoUserMessage(), true);
 	}
 
 	@Override
 	public long likeTopic(long topicId) throws InvalidOperation, TException {
-		return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic());
+		return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic(), true);
 	}
 
 	@Override
 	public long dislikeTopic(long topicId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic(), false);
 	}
 
 	@Override
@@ -351,12 +315,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public GroupUpdates getUpdates() throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public long postMessage(Message msg) throws InvalidOperation, TException {
 		long userId = getCurrentUserId();
 		msg.setAuthorId(userId);
@@ -385,45 +343,72 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return msg.getId();
 	}
 
-	protected <T extends VoUserAttitude, UserT extends VoUserObject> long like(long messageId, Class<T> tclass, Class<UserT> tUserClass, UserT newObject)
-			throws InvalidOperation {
+	protected <T extends VoBaseMessage, UserT extends VoUserObject> long like(long messageId, Class<T> tclass, Class<UserT> tUserClass,
+			UserT newObject, boolean like) throws InvalidOperation {
 		long likesNum = 0;
 		long userId = getCurrentUserId();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Transaction currentTransaction = pm.currentTransaction();
 		try {
-	
-			T msg = (T) pm.getObjectById(tclass, messageId);
-			UserT um = (UserT) pm.getObjectById(tUserClass, VoUserMessage.getObjectKey(userId, messageId));
-			if (null == um) {
-				um = newObject;
-				um.setLikes(true);
-				um.setUnlikes(false);
-				um.setRead(true);
-				um.setId(messageId);
-				um.setUserId(userId);
-			} else {
-				if (!um.isLikes()) { // unlike already set
-					if (um.isUnlikes()) {
-						msg.decrementUnlikes();
-					}
-					um.setUnlikes(false);
-				}
+
+			T msg;
+			try {
+				msg = (T) pm.getObjectById(tclass, messageId);
+			} catch (Exception e) {
+				throw new InvalidOperation(VoError.IncorrectParametrs, "can't find object with id " + messageId);
 			}
-			likesNum = msg.incrementLikes();
+
+			UserT um;
+			try {
+				um = (UserT) pm.getObjectById(tUserClass, VoUserObject.<UserT> createKey(tUserClass, userId, messageId));
+			} catch (Exception e) {
+				um = newObject;
+				um.setUserId(userId);
+				um.setId(messageId);
+			}
+
+			if (like)
+				likesNum = this.<T, UserT> incrementer(msg, um);
+			else
+				likesNum = this.<T, UserT> decrementer(msg, um);
+
 			pm.makePersistent(um);
 			pm.makePersistent(msg);
-			try {
-				currentTransaction.commit();
-			} catch (Exception e) {
-				currentTransaction.rollback();
-				throw new InvalidOperation(VoError.GeneralError, "Failed to change like for message " + messageId + " by user " + userId
-						+ ". Transaction not commited. Reason is [" + e.getMessage() + "]. Rollbacked.");
-			}
 			return likesNum;
 		} finally {
 			pm.close();
 		}
+	}
+
+	protected <T extends VoBaseMessage, UserT extends VoUserObject> int incrementer(T msg, UserT um) {
+		int retVal;
+		if (um.isLikes()) {
+			retVal = msg.getLikes();
+		} else {
+			um.setLikes(true);
+			retVal = msg.incrementLikes();
+		}
+		if (um.isUnlikes()) {
+			um.setUnlikes(false);
+			msg.decrementUnlikes();
+		}
+		um.setRead(true);
+		return retVal;
+	}
+
+	protected <T extends VoBaseMessage, UserT extends VoUserObject> int decrementer(T msg, UserT um) {
+		int retVal;
+		if (um.isUnlikes()) {
+			retVal = msg.getUnlikes();
+		} else {
+			um.setUnlikes(true);
+			retVal = msg.incrementUnlikes();
+		}
+		if (um.isLikes()) {
+			um.setLikes(false);
+			msg.decrementUnlikes();
+		}
+		um.setRead(true);
+		return retVal;
 	}
 
 	private static MessageListPart createMlp(List<VoMessage> lst) {
@@ -497,6 +482,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		/* TODO Implement user notification */
 	}
 
+	@Override
+	public GroupUpdates getUpdates() throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private void updateTopic(Topic topic) throws InvalidOperation {
 
 		PersistenceManagerFactory pmf = PMF.get();
@@ -564,7 +555,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 					topicsa[topNo] = new Topic(topNo, "" + topNo + "# " + longText.substring(pos, pos + len), msgsa[0], 0, (int) (Math.random() * 100), 0, 0,
 							(int) (Math.random() * 10000), (int) (Math.random() * 100000), new UserTopic(false, likes, unlikes, Math.random() > 0.7,
-									(int) (Math.random() * 1000), (int) (Math.random() * 1000)));
+									(int) (Math.random() * 1000), (int) (Math.random() * 1000), false));
 
 					topicsa[topNo].setLikesNum(topicsa[topNo].getLikesNum() + likesi);
 					topicsa[topNo].setUnlikesNum(topicsa[topNo].getUnlikesNum() + unlikesi);

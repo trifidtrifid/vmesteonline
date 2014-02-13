@@ -4,6 +4,7 @@ import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.jdo2.VoUserObject;
 
 public class VoDatastoreHelper {
 
@@ -24,4 +25,16 @@ public class VoDatastoreHelper {
 					+ Long.toString(id));
 		}
 	}
+
+	public static <T> T getUserMsg(Class<T> className, long userId, long msgId, PersistenceManager pm) throws InvalidOperation {
+		try {
+			T t = pm.getObjectById(className, VoUserObject.<T> createKey(className, userId, msgId));
+			return t;
+		} catch (JDOObjectNotFoundException e) {
+			return null;
+
+		}
+
+	}
+
 }

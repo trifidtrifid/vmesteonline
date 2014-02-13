@@ -17,16 +17,18 @@ import com.vmesteonline.be.MessageType;
 
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
-public abstract class VoBaseMessage extends VoUserAttitude {
+public abstract class VoBaseMessage {
 
 	public VoBaseMessage(Message msg) {
-		super(msg.getLikesNum(), msg.getUnlikesNum());
+	//	super(msg.getLikesNum(), msg.getUnlikesNum());
 		content = msg.getContent().getBytes();
 		tags = msg.getTags();
 		links = msg.getLinkedMessages();
 		type = msg.getType();
 		authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
 		createdAt = msg.getCreated();
+		likesNum = msg.getLikesNum();
+		unlikesNum = msg.getUnlikesNum();
 	}
 
 	public void setCreatedAt(int createdAt) {
@@ -104,4 +106,49 @@ public abstract class VoBaseMessage extends VoUserAttitude {
 	@Persistent
 	@Unindexed
 	protected int editedAt;
+	
+/*	public VoUserAttitude(int likes, int unlikes) {
+		likesNum = likes;
+		unlikesNum = unlikes;
+	}
+*/
+	public int getLikes() {
+		return likesNum;
+	}
+
+	public void setLikes(int likes) {
+		this.likesNum = likes;
+	}
+
+	public int decrementLikes() {
+		return --likesNum;
+	}
+
+	public int incrementLikes() {
+		return ++likesNum;
+	}
+
+	public int decrementUnlikes() {
+		return --unlikesNum;
+	}
+
+	public int incrementUnlikes() {
+		return ++unlikesNum;
+	}
+
+	public int getUnlikes() {
+		return unlikesNum;
+	}
+
+	public void setUnlikes(int unlikes) {
+		this.unlikesNum = unlikes;
+	}
+
+	@Persistent
+	@Unindexed
+	private int likesNum;
+
+	@Persistent
+	@Unindexed
+	private int unlikesNum;
 }

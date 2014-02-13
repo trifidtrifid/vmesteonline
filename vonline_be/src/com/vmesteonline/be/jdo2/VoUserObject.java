@@ -32,25 +32,12 @@ public class VoUserObject {
 	public VoUserObject(long userId, long messageId) {
 		this.id = messageId;
 		this.userId = userId;
-		this.userMessageId = "" + userId + "X" + messageId; // KeyFactory.createKey(VoUserMessage.class.getSimpleName(),
-																												// userId << 32 +
-																												// (messageId &
-																												// 0xFFFFFFFFL));
-	}
-
-	public static Key getObjectKey(long userId, long messageId) {
-		return KeyFactory.createKey(VoUserMessage.class.getSimpleName(), userId << 32 + (messageId & 0xFFFFFFFFL));
-	}
-
-	public static Key getObjectKey(VoUser user, VoMessage message) {
-		return getObjectKey(user.getId(), message.getId().getId());
+		this.userMessageId = createUserMessageId(userId, messageId);
 	}
 
 	public void setUserId(long userId) {
 		this.userId = userId;
-		this.userMessageId = "" + userId + "X" + id;
-		; // KeyFactory.createKey(VoUserMessage.class.getSimpleName(), userId << 32
-			// + (messageId & 0xFFFFFFFFL));
+		this.userMessageId = createUserMessageId(userId, id);
 	}
 
 	public long getId() {
@@ -59,7 +46,7 @@ public class VoUserObject {
 
 	public void setId(long id) {
 		this.id = id;
-		this.userMessageId = "" + userId + "X" + id;
+		this.userMessageId = createUserMessageId(userId, id);
 	}
 
 	public boolean isLikes() {
@@ -92,8 +79,17 @@ public class VoUserObject {
 				+ ", read=" + read + "]";
 	}
 
-	public static Key createKey(long userId, long messageId) {
-		return KeyFactory.createKey(VoUserMessage.class.getSimpleName(), "" + userId + "X" + messageId);
+	public static <T> Key createKey(Class<T> className, long userId, long messageId) {
+		return KeyFactory.createKey(className.getSimpleName(), createUserMessageId(userId, messageId));
+	}
+
+	/*
+	 * public static <T> Key getObjectKey(Class<T> className, long userId, long
+	 * messageId) { return KeyFactory.createKey(className.getSimpleName(), userId
+	 * << 32 + (messageId & 0xFFFFFFFFL)); }
+	 */
+	private static String createUserMessageId(long userId, long messageId) {
+		return new String("" + userId + "X" + messageId);
 	}
 
 	@PrimaryKey
