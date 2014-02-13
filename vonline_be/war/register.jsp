@@ -10,7 +10,7 @@
 
 
 <script src="js/thrift.js" type="text/javascript"></script>
-<script src="gen-js/user_types.js" type="text/javascript"></script>
+<script src="gen-js/authservice_types.js" type="text/javascript"></script>
 <script src="gen-js/AuthService.js" type="text/javascript"></script>
 
 <script type="text/javascript"

@@ -105,12 +105,9 @@ public class MessagesTreeTests extends MessagesTree {
 			MessagesTree t = new MessagesTree(lst);
 			
 			List<VoMessage> msgs = t.getTreeMessagesAfter(5, 20);
-			Assert.assertEquals(5, msgs.size());
+			Assert.assertEquals(2, msgs.size());
 			Assert.assertEquals(6, msgs.get(0).getId().getId());
 			Assert.assertEquals(7, msgs.get(1).getId().getId());
-			Assert.assertEquals(2, msgs.get(2).getId().getId());
-			Assert.assertEquals(8, msgs.get(3).getId().getId());
-			Assert.assertEquals(3, msgs.get(4).getId().getId());
 
 		} catch (Exception e) {
 			e.printStackTrace();

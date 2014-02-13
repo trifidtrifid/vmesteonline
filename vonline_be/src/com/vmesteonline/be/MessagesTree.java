@@ -16,7 +16,11 @@ public class MessagesTree {
 		parseLevel(firstLevel, 0);
 	}
 
+<<<<<<< HEAD
 	List<VoMessage> firstLevel;
+=======
+	private List<VoMessage> firstLevel;
+>>>>>>> master
 
 	public List<VoMessage> getTreeMessagesAfter(long parentId, int length) throws InvalidOperation {
 
@@ -32,10 +36,8 @@ public class MessagesTree {
 				}
 				List<ItemPosition> iList = items.subList(fromPos, toPos);
 				for (ItemPosition iPos : iList) {
-
-					if (isFromFirstlevel(iPos.id))
+					if (isFirstLevel(iPos.id))
 						break;
-
 					VoMessage voMsg = getMessage(iPos.id);
 					voMsg.setVisibleOffset(iPos.level);
 					lst.add(voMsg);
@@ -46,13 +48,13 @@ public class MessagesTree {
 		return lst;
 	}
 
-	private boolean isFromFirstlevel(long id) {
+	boolean isFirstLevel(long id) {
+
 		for (VoMessage voMsg : firstLevel) {
 			if (voMsg.getId().getId() == id)
 				return true;
 		}
 		return false;
-
 	}
 
 	private void parseLevel(List<VoMessage> levelMsgs, int level) {
