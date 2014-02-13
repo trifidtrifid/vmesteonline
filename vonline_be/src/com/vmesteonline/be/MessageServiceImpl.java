@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -85,19 +86,22 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoMessage m : ext) {
 					m.toString();
 				}
+				List<VoMessage> voMsgs;
 				if (parentId == 0) {
 					Query q = pm.newQuery(VoMessage.class);
 					q.setFilter("topicId == " + topicId + " && parentId == 0");
-					List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
-					return createMlp(voMsgs, userId, pm);
+					voMsgs = (List<VoMessage>) q.execute();
 				} else {
 					Query q = pm.newQuery(VoMessage.class);
 					q.setFilter("topicId == " + topicId);
-					List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+					voMsgs = (List<VoMessage>) q.execute();
 					MessagesTree tree = new MessagesTree(voMsgs);
 					voMsgs = tree.getTreeMessagesAfter(parentId, length);
-					return createMlp(voMsgs, userId, pm);
 				}
+
+				voMsgs = removePersonalMessages(voMsgs, userId);
+				voMsgs = removeExtraMessages(voMsgs, length);
+				return createMlp(voMsgs, userId, pm);
 			} finally {
 				pm.close();
 			}
@@ -112,10 +116,22 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return mlp;
 	}
 
-	/*
-	 * private void getAllChildMessages(List<VoMessage> list, VoMessage msg) { for
-	 * }
-	 */
+	private List<VoMessage> removePersonalMessages(List<VoMessage> list, long userId) {
+		List<VoMessage> lstNew = new ArrayList<VoMessage>();
+		for (VoMessage voMsg : list) {
+			if (voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId)
+				lstNew.add(voMsg);
+
+		}
+		return lstNew;
+	}
+
+	private List<VoMessage> removeExtraMessages(List<VoMessage> list, int length) {
+		if (list.size() <= length)
+			return list;
+		return list.subList(0, length);
+	}
+
 	@Override
 	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation,
 			TException {
@@ -252,10 +268,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		} finally {
 			pm.close();
 		}
-	}
-
-	protected void testMthd(long i, long d) {
-
 	}
 
 	@Override

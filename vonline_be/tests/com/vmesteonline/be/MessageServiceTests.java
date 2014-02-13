@@ -31,7 +31,7 @@ public class MessageServiceTests {
 	private static String user2email = "a2@b.com";
 	private static String user2pass = "123";
 
-	private static String user3email = "a1@b.com";
+	private static String user3email = "a3@b.com";
 	private static String user3pass = "123";
 
 	AuthServiceImpl asi;
@@ -59,7 +59,7 @@ public class MessageServiceTests {
 		pm = PMF.get().getPersistenceManager();
 		asi = new AuthServiceImpl(sessionId);
 		List<String> locCodes = UserServiceImpl.getLocationCodesForRegistration();
-		asi.registerNewUser("Test1", "USer2", "123", "a1@b.com", locCodes.get(0));
+		asi.registerNewUser("Test1", "USer2", user1pass, user1email, locCodes.get(0));
 		asi.registerNewUser("Test2", "USer2", "123", "a2@b.com", locCodes.get(1));
 		asi.registerNewUser("Test3", "USer2", user3pass, user3email, locCodes.get(1));
 
@@ -229,6 +229,11 @@ public class MessageServiceTests {
 			Assert.assertEquals(msg2.getId(), mlp.messages.get(1).getId());
 			Assert.assertEquals(2, mlp.messages.get(1).getOffset());
 
+			mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 1);
+			Assert.assertEquals(1, mlp.totalSize);
+			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
+			Assert.assertEquals(1, mlp.messages.get(0).getOffset());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());
@@ -274,6 +279,7 @@ public class MessageServiceTests {
 	// -msg - user1
 	// --msg1 - user1
 	// ---msg2 - user2
+	// ----msg4 user1->user2
 	// -msg3 - user2->user1
 
 	@Test
@@ -293,6 +299,10 @@ public class MessageServiceTests {
 					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
 			Message msg3 = msi.createMessage(topic.getId(), 0, user2.getHomeGroup().getId().getId(), MessageType.BASE,
 					"Content of the SECOND message in the topic", noLinkedMessages, noTags, user1.getId());
+
+			Assert.assertTrue(asi.login(user1email, user1pass));
+			Message msg4 = msi.createMessage(topic.getId(), msg2.getId(), user1.getHomeGroup().getId().getId(), MessageType.BASE,
+					"Content of the SECOND message in the topic", noLinkedMessages, noTags, user2.getId());
 
 			Assert.assertTrue(asi.login(user3email, user3pass));
 
