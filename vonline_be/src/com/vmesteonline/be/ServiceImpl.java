@@ -10,7 +10,6 @@ import javax.cache.CacheFactory;
 import javax.cache.CacheManager;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
-import javax.management.openmbean.InvalidOpenTypeException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;

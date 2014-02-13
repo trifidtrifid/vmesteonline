@@ -2,6 +2,22 @@ namespace * com.vmesteonline.be
 include "bedata.thrift"
 include "error.thrift"
 
+struct Group{
+	1: i64 id,
+	2: string visibleName,
+	3: string name,
+	4: string description,
+	5: i32 radius,
+}
+
+struct Rubric{
+	1: i64 id,
+	2: string visibleName,
+	3: string name,
+	4: string description,
+}
+
+
 struct FullAddressCatalogue {
 	1:set<bedata.Country> countries,
 	2:list<bedata.City> cities,
@@ -10,8 +26,8 @@ struct FullAddressCatalogue {
 }
 service UserService {
 
-	list<bedata.Group> getUserGroups() throws (1:error.InvalidOperation exc),
-	list<bedata.Rubric> getUserRubrics() throws (1:error.InvalidOperation exc),
+	list<Group> getUserGroups() throws (1:error.InvalidOperation exc),
+	list<Rubric> getUserRubrics() throws (1:error.InvalidOperation exc),
 	
 	list<bedata.Country> getCounties() throws (1:error.InvalidOperation exc),
 	list<bedata.City> getCities(1:i64 countryId) throws (1:error.InvalidOperation exc),

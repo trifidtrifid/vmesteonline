@@ -42,21 +42,6 @@ struct Friendship {
 	3: FriendshipType state // 'состояние - запрос, подтверждено, отклонено ',
 } // 'список друзей';
 
-struct Group{
-	1: i64 id,
-	2: string visibleName,
-	3: string name,
-	4: string description,
-	5: i32 radius,
-}
-
-struct Rubric{
-	1: i64 id,
-	2: string visibleName,
-	3: string name,
-	4: string description,
-}
-
 struct ShortUserInfo{
 	1: i64 id,
 	2: string firstName,
