@@ -2,6 +2,8 @@ package com.vmesteonline.be.jdo2;
 
 import javax.jdo.annotations.PersistenceCapable;
 
+import com.vmesteonline.be.UserMessage;
+
 @PersistenceCapable
 public class VoUserMessage extends VoUserObject {
 
@@ -16,4 +18,7 @@ public class VoUserMessage extends VoUserObject {
 		super(userId, messageId);
 	}
 
+	public UserMessage getUserMessage() {
+		return new UserMessage(isRead(), isLikes(), isUnlikes());
+	}
 }

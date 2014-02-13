@@ -41,9 +41,15 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	public static ShortUserInfo getShortUserInfo(long userId) {
 
-		ShortUserInfo sui = new ShortUserInfo();
-
-		return sui;
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser voUser = pm.getObjectById(VoUser.class, userId);
+			return voUser.getShortUserInfo();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.warn("request short user info for absent user " + userId);
+		}
+		return null;
 	}
 
 	@Override

@@ -73,6 +73,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length)
 			throws InvalidOperation, TException {
 
+		long userId = getCurrentUserId();
 		MessageListPart mlp = new MessageListPart();
 
 		if (!TEST_ON_FAKE_DATA) {
@@ -87,14 +88,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					Query q = pm.newQuery(VoMessage.class);
 					q.setFilter("topicId == " + topicId + " && parentId == 0");
 					List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
-					return createMlp(voMsgs);
+					return createMlp(voMsgs, userId, pm);
 				} else {
 					Query q = pm.newQuery(VoMessage.class);
 					q.setFilter("topicId == " + topicId);
 					List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
 					MessagesTree tree = new MessagesTree(voMsgs);
 					voMsgs = tree.getTreeMessagesAfter(parentId, length);
-					return createMlp(voMsgs);
+					return createMlp(voMsgs, userId, pm);
 				}
 			} finally {
 				pm.close();
@@ -411,7 +412,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return retVal;
 	}
 
-	private static MessageListPart createMlp(List<VoMessage> lst) {
+	private static MessageListPart createMlp(List<VoMessage> lst, long userId, PersistenceManager pm) throws InvalidOperation {
 		MessageListPart mlp = new MessageListPart();
 		if (lst == null) {
 			logger.warn("try to create MessagePartList from null object");
@@ -419,7 +420,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 		mlp.totalSize = lst.size();
 		for (VoMessage voMessage : lst) {
-			mlp.addToMessages(voMessage.getMessage());
+			VoUserMessage voUserMsg = VoDatastoreHelper.<VoUserMessage> getUserMsg(VoUserMessage.class, userId, voMessage.getId().getId(), pm);
+			Message msg = voMessage.getMessage();
+			msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId());
+			msg.userMessage = null == voUserMsg ? null : voUserMsg.getUserMessage();
+			mlp.addToMessages(msg);
 		}
 		return mlp;
 	}
