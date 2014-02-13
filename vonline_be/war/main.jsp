@@ -37,6 +37,7 @@
     //MessageType mesType = MessageType.BASE;
 
     TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,20);
+    //out.print(Topics.topics.get(0).userInfo.rating);
 
     pageContext.setAttribute("groups",Groups);
     pageContext.setAttribute("rubrics",Rubrics);
@@ -231,7 +232,7 @@
                     <div class="dd dd-draghandle">
                         <ol class="dd-list">
                             <c:forEach var="topic" items="${topics}">
-                                <li class="dd-item dd2-item topic-item" data-id="15">
+                                <li class="dd-item dd2-item topic-item" data-topicid="${topic.id}">
                                     <div class="dd2-content widget-box topic-descr">
                                         <header class="widget-header header-color-blue2">
                                             <span class="topic-header-date">01.04.2014 10:10</span>
@@ -252,7 +253,7 @@
                                                 <div class="topic-left">
                                                     <a href="#"><img src="i/avatars/clint.jpg" alt="картинка"/></a>
                                                     <div class="topic-author">
-                                                        <a href="#">Иван Грозный</a>
+                                                        <a href="#">${topic.userInfo.firstName} ${topic.userInfo.lastName}</a>
                                                         <div class="author-rating">
                                                             <a href="#" class="fa fa-star"></a>
                                                             <a class="fa fa-star" href="#"></a>
@@ -292,7 +293,7 @@
                                                     </ul>
                                                 </div>
                                                 <div class="answers-ctrl">
-                                                    <a class="fa fa-minus plus-minus" href="#"></a>
+                                                    <a class="fa fa-plus plus-minus" href="#"></a>
                                                     <span> <span>${topic.messageNum}</span> <a href="#">(3)</a></span>
                                                 </div>
                                                 <div class="topic-statistic">
@@ -365,6 +366,7 @@
 <!-- -->
 <!-- файлы thrift -->
 <script src="js/thrift.js" type="text/javascript"></script>
+<script src="gen-js/bedata_types.js" type="text/javascript"></script>
 <script src="gen-js/messageservice_types.js" type="text/javascript"></script>
 <script src="gen-js/MessageService.js" type="text/javascript"></script>
 <script src="gen-js/userservice_types.js" type="text/javascript"></script>

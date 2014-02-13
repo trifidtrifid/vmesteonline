@@ -36,9 +36,9 @@ public class UserService {
 
   public interface Iface {
 
-    public List<Group> getUserGroups() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public List<com.vmesteonline.be.Group> getUserGroups() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public List<Rubric> getUserRubrics() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public List<com.vmesteonline.be.Rubric> getUserRubrics() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     public List<com.vmesteonline.be.Country> getCounties() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
@@ -122,7 +122,7 @@ public class UserService {
       super(iprot, oprot);
     }
 
-    public List<Group> getUserGroups() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public List<com.vmesteonline.be.Group> getUserGroups() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_getUserGroups();
       return recv_getUserGroups();
@@ -134,7 +134,7 @@ public class UserService {
       sendBase("getUserGroups", args);
     }
 
-    public List<Group> recv_getUserGroups() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public List<com.vmesteonline.be.Group> recv_getUserGroups() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       getUserGroups_result result = new getUserGroups_result();
       receiveBase(result, "getUserGroups");
@@ -147,7 +147,7 @@ public class UserService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUserGroups failed: unknown result");
     }
 
-    public List<Rubric> getUserRubrics() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public List<com.vmesteonline.be.Rubric> getUserRubrics() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       send_getUserRubrics();
       return recv_getUserRubrics();
@@ -159,7 +159,7 @@ public class UserService {
       sendBase("getUserRubrics", args);
     }
 
-    public List<Rubric> recv_getUserRubrics() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public List<com.vmesteonline.be.Rubric> recv_getUserRubrics() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
       getUserRubrics_result result = new getUserRubrics_result();
       receiveBase(result, "getUserRubrics");
@@ -548,7 +548,7 @@ public class UserService {
         prot.writeMessageEnd();
       }
 
-      public List<Group> getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+      public List<com.vmesteonline.be.Group> getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -577,7 +577,7 @@ public class UserService {
         prot.writeMessageEnd();
       }
 
-      public List<Rubric> getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+      public List<com.vmesteonline.be.Rubric> getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -1430,7 +1430,7 @@ public class UserService {
       return processMap;
     }
 
-    public static class getUserGroups<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getUserGroups_args, List<Group>> {
+    public static class getUserGroups<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getUserGroups_args, List<com.vmesteonline.be.Group>> {
       public getUserGroups() {
         super("getUserGroups");
       }
@@ -1439,10 +1439,10 @@ public class UserService {
         return new getUserGroups_args();
       }
 
-      public AsyncMethodCallback<List<Group>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<List<com.vmesteonline.be.Group>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<List<Group>>() { 
-          public void onComplete(List<Group> o) {
+        return new AsyncMethodCallback<List<com.vmesteonline.be.Group>>() { 
+          public void onComplete(List<com.vmesteonline.be.Group> o) {
             getUserGroups_result result = new getUserGroups_result();
             result.success = o;
             try {
@@ -1482,12 +1482,12 @@ public class UserService {
         return false;
       }
 
-      public void start(I iface, getUserGroups_args args, org.apache.thrift.async.AsyncMethodCallback<List<Group>> resultHandler) throws TException {
+      public void start(I iface, getUserGroups_args args, org.apache.thrift.async.AsyncMethodCallback<List<com.vmesteonline.be.Group>> resultHandler) throws TException {
         iface.getUserGroups(resultHandler);
       }
     }
 
-    public static class getUserRubrics<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getUserRubrics_args, List<Rubric>> {
+    public static class getUserRubrics<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getUserRubrics_args, List<com.vmesteonline.be.Rubric>> {
       public getUserRubrics() {
         super("getUserRubrics");
       }
@@ -1496,10 +1496,10 @@ public class UserService {
         return new getUserRubrics_args();
       }
 
-      public AsyncMethodCallback<List<Rubric>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<List<com.vmesteonline.be.Rubric>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<List<Rubric>>() { 
-          public void onComplete(List<Rubric> o) {
+        return new AsyncMethodCallback<List<com.vmesteonline.be.Rubric>>() { 
+          public void onComplete(List<com.vmesteonline.be.Rubric> o) {
             getUserRubrics_result result = new getUserRubrics_result();
             result.success = o;
             try {
@@ -1539,7 +1539,7 @@ public class UserService {
         return false;
       }
 
-      public void start(I iface, getUserRubrics_args args, org.apache.thrift.async.AsyncMethodCallback<List<Rubric>> resultHandler) throws TException {
+      public void start(I iface, getUserRubrics_args args, org.apache.thrift.async.AsyncMethodCallback<List<com.vmesteonline.be.Rubric>> resultHandler) throws TException {
         iface.getUserRubrics(resultHandler);
       }
     }
@@ -2547,7 +2547,7 @@ public class UserService {
       schemes.put(TupleScheme.class, new getUserGroups_resultTupleSchemeFactory());
     }
 
-    public List<Group> success; // required
+    public List<com.vmesteonline.be.Group> success; // required
     public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -2617,7 +2617,7 @@ public class UserService {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
-              new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Group.class))));
+              new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.vmesteonline.be.Group.class))));
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -2628,7 +2628,7 @@ public class UserService {
     }
 
     public getUserGroups_result(
-      List<Group> success,
+      List<com.vmesteonline.be.Group> success,
       com.vmesteonline.be.InvalidOperation exc)
     {
       this();
@@ -2641,9 +2641,9 @@ public class UserService {
      */
     public getUserGroups_result(getUserGroups_result other) {
       if (other.isSetSuccess()) {
-        List<Group> __this__success = new ArrayList<Group>(other.success.size());
-        for (Group other_element : other.success) {
-          __this__success.add(new Group(other_element));
+        List<com.vmesteonline.be.Group> __this__success = new ArrayList<com.vmesteonline.be.Group>(other.success.size());
+        for (com.vmesteonline.be.Group other_element : other.success) {
+          __this__success.add(new com.vmesteonline.be.Group(other_element));
         }
         this.success = __this__success;
       }
@@ -2666,22 +2666,22 @@ public class UserService {
       return (this.success == null) ? 0 : this.success.size();
     }
 
-    public java.util.Iterator<Group> getSuccessIterator() {
+    public java.util.Iterator<com.vmesteonline.be.Group> getSuccessIterator() {
       return (this.success == null) ? null : this.success.iterator();
     }
 
-    public void addToSuccess(Group elem) {
+    public void addToSuccess(com.vmesteonline.be.Group elem) {
       if (this.success == null) {
-        this.success = new ArrayList<Group>();
+        this.success = new ArrayList<com.vmesteonline.be.Group>();
       }
       this.success.add(elem);
     }
 
-    public List<Group> getSuccess() {
+    public List<com.vmesteonline.be.Group> getSuccess() {
       return this.success;
     }
 
-    public getUserGroups_result setSuccess(List<Group> success) {
+    public getUserGroups_result setSuccess(List<com.vmesteonline.be.Group> success) {
       this.success = success;
       return this;
     }
@@ -2731,7 +2731,7 @@ public class UserService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((List<Group>)value);
+          setSuccess((List<com.vmesteonline.be.Group>)value);
         }
         break;
 
@@ -2922,11 +2922,11 @@ public class UserService {
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
                   org.apache.thrift.protocol.TList _list32 = iprot.readListBegin();
-                  struct.success = new ArrayList<Group>(_list32.size);
+                  struct.success = new ArrayList<com.vmesteonline.be.Group>(_list32.size);
                   for (int _i33 = 0; _i33 < _list32.size; ++_i33)
                   {
-                    Group _elem34;
-                    _elem34 = new Group();
+                    com.vmesteonline.be.Group _elem34;
+                    _elem34 = new com.vmesteonline.be.Group();
                     _elem34.read(iprot);
                     struct.success.add(_elem34);
                   }
@@ -2965,7 +2965,7 @@ public class UserService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (Group _iter35 : struct.success)
+            for (com.vmesteonline.be.Group _iter35 : struct.success)
             {
               _iter35.write(oprot);
             }
@@ -3006,7 +3006,7 @@ public class UserService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (Group _iter36 : struct.success)
+            for (com.vmesteonline.be.Group _iter36 : struct.success)
             {
               _iter36.write(oprot);
             }
@@ -3024,11 +3024,11 @@ public class UserService {
         if (incoming.get(0)) {
           {
             org.apache.thrift.protocol.TList _list37 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<Group>(_list37.size);
+            struct.success = new ArrayList<com.vmesteonline.be.Group>(_list37.size);
             for (int _i38 = 0; _i38 < _list37.size; ++_i38)
             {
-              Group _elem39;
-              _elem39 = new Group();
+              com.vmesteonline.be.Group _elem39;
+              _elem39 = new com.vmesteonline.be.Group();
               _elem39.read(iprot);
               struct.success.add(_elem39);
             }
@@ -3303,7 +3303,7 @@ public class UserService {
       schemes.put(TupleScheme.class, new getUserRubrics_resultTupleSchemeFactory());
     }
 
-    public List<Rubric> success; // required
+    public List<com.vmesteonline.be.Rubric> success; // required
     public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -3373,7 +3373,7 @@ public class UserService {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
-              new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Rubric.class))));
+              new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.vmesteonline.be.Rubric.class))));
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -3384,7 +3384,7 @@ public class UserService {
     }
 
     public getUserRubrics_result(
-      List<Rubric> success,
+      List<com.vmesteonline.be.Rubric> success,
       com.vmesteonline.be.InvalidOperation exc)
     {
       this();
@@ -3397,9 +3397,9 @@ public class UserService {
      */
     public getUserRubrics_result(getUserRubrics_result other) {
       if (other.isSetSuccess()) {
-        List<Rubric> __this__success = new ArrayList<Rubric>(other.success.size());
-        for (Rubric other_element : other.success) {
-          __this__success.add(new Rubric(other_element));
+        List<com.vmesteonline.be.Rubric> __this__success = new ArrayList<com.vmesteonline.be.Rubric>(other.success.size());
+        for (com.vmesteonline.be.Rubric other_element : other.success) {
+          __this__success.add(new com.vmesteonline.be.Rubric(other_element));
         }
         this.success = __this__success;
       }
@@ -3422,22 +3422,22 @@ public class UserService {
       return (this.success == null) ? 0 : this.success.size();
     }
 
-    public java.util.Iterator<Rubric> getSuccessIterator() {
+    public java.util.Iterator<com.vmesteonline.be.Rubric> getSuccessIterator() {
       return (this.success == null) ? null : this.success.iterator();
     }
 
-    public void addToSuccess(Rubric elem) {
+    public void addToSuccess(com.vmesteonline.be.Rubric elem) {
       if (this.success == null) {
-        this.success = new ArrayList<Rubric>();
+        this.success = new ArrayList<com.vmesteonline.be.Rubric>();
       }
       this.success.add(elem);
     }
 
-    public List<Rubric> getSuccess() {
+    public List<com.vmesteonline.be.Rubric> getSuccess() {
       return this.success;
     }
 
-    public getUserRubrics_result setSuccess(List<Rubric> success) {
+    public getUserRubrics_result setSuccess(List<com.vmesteonline.be.Rubric> success) {
       this.success = success;
       return this;
     }
@@ -3487,7 +3487,7 @@ public class UserService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((List<Rubric>)value);
+          setSuccess((List<com.vmesteonline.be.Rubric>)value);
         }
         break;
 
@@ -3678,11 +3678,11 @@ public class UserService {
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
                   org.apache.thrift.protocol.TList _list40 = iprot.readListBegin();
-                  struct.success = new ArrayList<Rubric>(_list40.size);
+                  struct.success = new ArrayList<com.vmesteonline.be.Rubric>(_list40.size);
                   for (int _i41 = 0; _i41 < _list40.size; ++_i41)
                   {
-                    Rubric _elem42;
-                    _elem42 = new Rubric();
+                    com.vmesteonline.be.Rubric _elem42;
+                    _elem42 = new com.vmesteonline.be.Rubric();
                     _elem42.read(iprot);
                     struct.success.add(_elem42);
                   }
@@ -3721,7 +3721,7 @@ public class UserService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (Rubric _iter43 : struct.success)
+            for (com.vmesteonline.be.Rubric _iter43 : struct.success)
             {
               _iter43.write(oprot);
             }
@@ -3762,7 +3762,7 @@ public class UserService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (Rubric _iter44 : struct.success)
+            for (com.vmesteonline.be.Rubric _iter44 : struct.success)
             {
               _iter44.write(oprot);
             }
@@ -3780,11 +3780,11 @@ public class UserService {
         if (incoming.get(0)) {
           {
             org.apache.thrift.protocol.TList _list45 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<Rubric>(_list45.size);
+            struct.success = new ArrayList<com.vmesteonline.be.Rubric>(_list45.size);
             for (int _i46 = 0; _i46 < _list45.size; ++_i46)
             {
-              Rubric _elem47;
-              _elem47 = new Rubric();
+              com.vmesteonline.be.Rubric _elem47;
+              _elem47 = new com.vmesteonline.be.Rubric();
               _elem47.read(iprot);
               struct.success.add(_elem47);
             }

@@ -20,7 +20,7 @@ struct Message {
 	3: MessageType type, // 'тип один из (сообщение, чат)',
 	4: i64 topicId,
 	5: i64 groupId,	
-	6: i64 authorId, //'автор сообщения или темы',
+	6: i64 authorId, //'автор сообщения или темы' TODO удалить этот мембер и использовать userInfo
 	7: optional i64 recipientId, // 'адресат задан только для личных сообщений, иначе NULL',
 	8: i32 created, // 'дата создания',
 	9: i32 edited,
@@ -32,6 +32,8 @@ struct Message {
 	15: map<i64,string> tags, //идентификаторы тегов с их значениями
 	16: UserMessage userMessage, //how user treats the message
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
+	18: bedata.ShortUserInfo userInfo,
+	
 
 } // 'сообщение';
 		
@@ -42,7 +44,8 @@ struct UserTopic {
 	3: bool likes, 
 	4: bool notIntrested, 
 	5: i64 lastReadMessageId,
-	6: i64 lastWroteMeessgeId
+	6: i64 lastWroteMeessgeId,
+	7: bool isread
 }
 
 struct Topic {
@@ -58,15 +61,8 @@ struct Topic {
 	10: optional i64 rubricId, //ссылка на рубрику
 	11: optional i64 communityId, //ссылка на сообщество
 	//отношение пользователя к топику
-	12: UserTopic usertTopic
-}
-
-struct Rubric {
-	1: i64 id,
-	2: string visibleName,
-	3: string description, // COMMENT 'Описание рубрики',
-	4: i32 topicsNum, // 'число тем в рубрике',
-	5: i32 messagesNum// 'число сообщений в рубрике'
+	12: UserTopic usertTopic,
+	13: bedata.ShortUserInfo userInfo
 }
 
 struct RubricCounter {

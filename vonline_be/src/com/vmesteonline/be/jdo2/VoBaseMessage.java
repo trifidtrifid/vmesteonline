@@ -12,7 +12,6 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.Message;
 import com.vmesteonline.be.MessageType;
 
@@ -21,14 +20,19 @@ import com.vmesteonline.be.MessageType;
 public abstract class VoBaseMessage {
 
 	public VoBaseMessage(Message msg) {
+	//	super(msg.getLikesNum(), msg.getUnlikesNum());
 		content = msg.getContent().getBytes();
-		likesNum = msg.getLikesNum();
-		unlikesNum = msg.getUnlikesNum();
 		tags = msg.getTags();
 		links = msg.getLinkedMessages();
 		type = msg.getType();
 		authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
 		createdAt = msg.getCreated();
+		likesNum = msg.getLikesNum();
+		unlikesNum = msg.getUnlikesNum();
+	}
+
+	public void setCreatedAt(int createdAt) {
+		this.createdAt = createdAt;
 	}
 
 	public VoBaseMessage() {
@@ -62,6 +66,23 @@ public abstract class VoBaseMessage {
 		this.content = content;
 	}
 
+	public int getCreatedAt() {
+		return createdAt;
+	}
+
+	public int getEditedAt() {
+		return editedAt;
+	}
+
+	public void setEditedAt(int editedAt) {
+		this.editedAt = editedAt;
+	}
+
+	/*	public VoUserAttitude(int likes, int unlikes) {
+		likesNum = likes;
+		unlikesNum = unlikes;
+	}
+*/
 	public int getLikes() {
 		return likesNum;
 	}
@@ -94,18 +115,6 @@ public abstract class VoBaseMessage {
 		this.unlikesNum = unlikes;
 	}
 
-	public int getCreatedAt() {
-		return createdAt;
-	}
-
-	public int getEditedAt() {
-		return editedAt;
-	}
-
-	public void setEditedAt(int editedAt) {
-		this.editedAt = editedAt;
-	}
-
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	protected Key id;
@@ -115,19 +124,12 @@ public abstract class VoBaseMessage {
 	protected byte[] content;
 
 	@Persistent
-	@Unindexed
-	protected int likesNum;
-
-	@Persistent
-	@Unindexed
-	protected int unlikesNum;
-
-	@Persistent
 	protected Map<Long, String> tags;
 
 	@Persistent
 	@Unindexed
 	protected Map<MessageType, Long> links;
+
 	@Persistent
 	@Unindexed
 	protected MessageType type;
@@ -135,6 +137,7 @@ public abstract class VoBaseMessage {
 	@Persistent
 	@Unindexed
 	protected Key authorId;
+
 	@Persistent
 	@Unindexed
 	protected int createdAt;
@@ -142,4 +145,12 @@ public abstract class VoBaseMessage {
 	@Persistent
 	@Unindexed
 	protected int editedAt;
+
+	@Persistent
+	@Unindexed
+	protected int likesNum;
+
+	@Persistent
+	@Unindexed
+	protected int unlikesNum;
 }

@@ -3,21 +3,6 @@ include "bedata.thrift"
 include "error.thrift"
 
 
-struct Group{
-	1: i64 id,
-	2: string visibleName,
-	3: string name,
-	4: string description,
-	5: i32 radius,
-}
-
-struct Rubric{
-	1: i64 id,
-	2: string visibleName,
-	3: string name,
-	4: string description,
-}
-
 struct FullAddressCatalogue {
 	1:set<bedata.Country> countries,
 	2:list<bedata.City> cities,
@@ -26,9 +11,8 @@ struct FullAddressCatalogue {
 }
 service UserService {
 
-	list<Group> getUserGroups() throws (1:error.InvalidOperation exc),
-	list<Rubric> getUserRubrics() throws (1:error.InvalidOperation exc),
-	// implemented as a static list<string> getLocationCodesForRegistration() throws (1:error.InvalidOperation exc),
+	list<bedata.Group> getUserGroups() throws (1:error.InvalidOperation exc),
+	list<bedata.Rubric> getUserRubrics() throws (1:error.InvalidOperation exc),
 	
 	list<bedata.Country> getCounties() throws (1:error.InvalidOperation exc),
 	list<bedata.City> getCities(1:i64 countryId) throws (1:error.InvalidOperation exc),
@@ -41,7 +25,7 @@ service UserService {
 	bedata.Street createNewStreet( 1:i64 cityId, 2:string name) throws (1:error.InvalidOperation exc),
 	bedata.Building createNewBuilding( 1:i64 streetId, 2:string fullNo, 3:double longitude, 4:double lattitude) throws (1:error.InvalidOperation exc),
 	
-	//
+	
 	bool setUserAddress( 1:bedata.PostalAddress newAddress )throws (1:error.InvalidOperation exc),
 	bool addUserAddress( 1:bedata.PostalAddress newAddress )throws (1:error.InvalidOperation exc),
 	bedata.PostalAddress getUserHomeAddress( )throws (1:error.InvalidOperation exc),

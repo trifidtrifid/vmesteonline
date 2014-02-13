@@ -37,10 +37,8 @@ public class MessageServiceTests {
 	String topicSubject = "Test topic";
 
 	private Topic createTopic() throws Exception {
-
 		return msi.createTopic(topicGroup.getId(), topicSubject, MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages,
 				noTags, topicRubric.getId(), 0L);
-
 	}
 
 	@Before
@@ -136,11 +134,14 @@ public class MessageServiceTests {
 
 		try {
 			Topic tpc = createTopic();
-			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 0);
+			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
 			Assert.assertEquals(topicSubject, rTopic.topics.get(0).getSubject());
+			Assert.assertNotNull(rTopic.topics.get(0).userInfo);
+			Assert.assertEquals("Test1", rTopic.topics.get(0).userInfo.firstName);
+			Assert.assertEquals("USer2", rTopic.topics.get(0).userInfo.lastName);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -212,8 +213,11 @@ public class MessageServiceTests {
 			mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
+			Assert.assertEquals(1, mlp.messages.get(0).getOffset());
+
 			Assert.assertEquals(msg2.getId(), mlp.messages.get(1).getId());
-			
+			Assert.assertEquals(2, mlp.messages.get(1).getOffset());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());
@@ -221,4 +225,41 @@ public class MessageServiceTests {
 
 	}
 
+	@Test
+	public void testLikeDislikeTopic() {
+
+		try {
+			Topic topic = createTopic();
+			Assert.assertEquals(1, msi.likeTopic(topic.getId()));
+
+			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 10);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(1, rTopic.totalSize);
+			Assert.assertEquals(topic.getId(), rTopic.topics.get(0).getId());
+			Assert.assertEquals(1, rTopic.topics.get(0).getLikesNum());
+			Assert.assertEquals(0, rTopic.topics.get(0).getUnlikesNum());
+
+			Assert.assertNotNull(rTopic.topics.get(0).getUsertTopic());
+			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().likes);
+			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().isread);
+			Assert.assertFalse(rTopic.topics.get(0).getUsertTopic().unlikes);
+
+			Assert.assertEquals(1, msi.dislikeTopic(topic.getId()));
+			rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 10);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(1, rTopic.totalSize);
+			Assert.assertEquals(topic.getId(), rTopic.topics.get(0).getId());
+			Assert.assertEquals(0, rTopic.topics.get(0).getLikesNum());
+			Assert.assertEquals(1, rTopic.topics.get(0).getUnlikesNum());
+			Assert.assertNotNull(rTopic.topics.get(0).getUsertTopic());
+			Assert.assertFalse(rTopic.topics.get(0).getUsertTopic().likes);
+			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().isread);
+			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().unlikes);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("exception: " + e.getMessage());
+		}
+
+	}
 }
