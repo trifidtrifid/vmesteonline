@@ -32,7 +32,7 @@ struct Message {
 	15: map<i64,string> tags, //идентификаторы тегов с их значениями
 	16: UserMessage userMessage, //how user treats the message
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
-	18: ShortUserInfo userInfo
+	18: bedata.ShortUserInfo userInfo,
 	
 
 } // 'сообщение';

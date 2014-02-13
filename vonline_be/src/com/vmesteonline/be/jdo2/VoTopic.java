@@ -52,9 +52,9 @@ public class VoTopic extends VoBaseMessage {
 	public Topic getTopic() {
 
 		Message msg = new Message(id.getId(), 0L, type, getId().getId(), 0L, authorId.getId(), createdAt, editedAt, new String(content), likesNum,
-				unlikesNum, links, tags, null, 0);
+				unlikesNum, links, tags, null, 0, null);
 
-		return new Topic(getId().getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(), null);
+		return new Topic(getId().getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(), null, null);
 	}
 
 	public int getMessageNum() {

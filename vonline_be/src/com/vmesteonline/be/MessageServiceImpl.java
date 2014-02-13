@@ -62,7 +62,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		Message newMessage = new Message(0, parentId, type, topicId, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
-				new HashMap<Long, String>(), new UserMessage(true, false, false), 0);
+				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
 		postMessage(newMessage);
 		return newMessage;
 	}
@@ -166,7 +166,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 						VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
 						tpc.usertTopic = null == voUserTopic ? null : voUserTopic.getUserTopic();
-						tpc. = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
+						tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
 						mlp.addToTopics(tpc);
 					}
 				} catch (Exception e) {
@@ -282,8 +282,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		Message msg = new Message(0, 0, type, 0, groupId, getCurrentUserId(), now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
-				new HashMap<Long, String>(), new UserMessage(true, false, false), 0);
-		Topic topic = new Topic(0, subject, msg, 0, 0, 0, now, 0, 0, new UserTopic());
+				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+		Topic topic = new Topic(0, subject, msg, 0, 0, 0, now, 0, 0, new UserTopic(), null);
 		topic.setRubricId(rubricId);
 		postTopic(topic);
 		return topic;
@@ -549,13 +549,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					int unlikesi = (int) (Math.random() * 100);
 					msgsa[0] = new Message(msgNo, 0, MessageType.findByValue(1), topNo, 0, 1, 0, 0, "" + msgNo + "# " + longText.substring(pos, pos + len),
 							likesi, unlikesi, new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(Math.random() > 0.5,
-									Math.random() > 0.5, Math.random() > 0.5), 0);
+									Math.random() > 0.5, Math.random() > 0.5), 0, null);
 
 					msgNo++;
 
 					topicsa[topNo] = new Topic(topNo, "" + topNo + "# " + longText.substring(pos, pos + len), msgsa[0], 0, (int) (Math.random() * 100), 0, 0,
 							(int) (Math.random() * 10000), (int) (Math.random() * 100000), new UserTopic(false, likes, unlikes, Math.random() > 0.7,
-									(int) (Math.random() * 1000), (int) (Math.random() * 1000), false));
+									(int) (Math.random() * 1000), (int) (Math.random() * 1000), false), null);
 
 					topicsa[topNo].setLikesNum(topicsa[topNo].getLikesNum() + likesi);
 					topicsa[topNo].setUnlikesNum(topicsa[topNo].getUnlikesNum() + unlikesi);
@@ -570,7 +570,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 						int likes1 = (int) (Math.random() * 100), unlikes1 = (int) (Math.random() * 100);
 						msgsa[no] = new Message(msgNo, parent, MessageType.findByValue(1), topNo, 0, 1, 0, 0, "" + msgNo + "# "
 								+ longText.substring(pos1, pos1 + len1), likes1, unlikes1, new HashMap<MessageType, Long>(), new HashMap<Long, String>(),
-								new UserMessage(Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5), 0);
+								new UserMessage(Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5), 0, null);
 						topicsa[topNo].setLikesNum(topicsa[topNo].getLikesNum() + likes1);
 						topicsa[topNo].setUnlikesNum(topicsa[topNo].getUnlikesNum() + unlikes1);
 						topicsa[topNo].setMessageNum(topicsa[topNo].getMessageNum() + 1);

@@ -119,7 +119,7 @@ public class VoMessage extends VoBaseMessage {
 
 	public Message getMessage() {
 		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
-				getUnlikes(), links, tags, null, 0);
+				getUnlikes(), links, tags, null, visibleOffset, null);
 	}
 
 	public long getApprovedId() {
@@ -167,13 +167,13 @@ public class VoMessage extends VoBaseMessage {
 	@Persistent
 	private long parentId;
 
-	protected long visibleOffset;
+	protected int visibleOffset;
 
 	public long getVisibleOffset() {
 		return visibleOffset;
 	}
 
-	public void setVisibleOffset(long visibleOffset) {
+	public void setVisibleOffset(int visibleOffset) {
 		this.visibleOffset = visibleOffset;
 	}
 
