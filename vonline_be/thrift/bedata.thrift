@@ -61,7 +61,7 @@ struct ShortUserInfo{
 	1: i64 id,
 	2: string firstName,
 	3: string lastName,
-	4: i32 rating,
-	5: string avatar
+	4: i32 rating
+	5: string avatar,
 }
 

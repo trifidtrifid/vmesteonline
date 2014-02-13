@@ -11,7 +11,6 @@ import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
-import javax.jdo.Transaction;
 
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
@@ -167,6 +166,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 						VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
 						tpc.usertTopic = null == voUserTopic ? null : voUserTopic.getUserTopic();
+						tpc. = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
 						mlp.addToTopics(tpc);
 					}
 				} catch (Exception e) {

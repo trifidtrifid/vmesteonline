@@ -39,12 +39,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		super(sess);
 	}
 
-	ShortUserInfo getShortUserInfo(long userId) {
+	public static ShortUserInfo getShortUserInfo(long userId) {
 
 		ShortUserInfo sui = new ShortUserInfo();
-		
-		
-		
+
 		return sui;
 	}
 

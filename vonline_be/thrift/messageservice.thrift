@@ -62,7 +62,7 @@ struct Topic {
 	11: optional i64 communityId, //ссылка на сообщество
 	//отношение пользователя к топику
 	12: UserTopic usertTopic,
-	13: ShortUserInfo userInfo
+	13: bedata.ShortUserInfo userInfo
 }
 
 struct RubricCounter {
