@@ -78,36 +78,7 @@ public abstract class VoBaseMessage {
 		this.editedAt = editedAt;
 	}
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	protected Key id;
-
-	@Persistent
-	@Unindexed
-	protected byte[] content;
-
-	@Persistent
-	protected Map<Long, String> tags;
-
-	@Persistent
-	@Unindexed
-	protected Map<MessageType, Long> links;
-	@Persistent
-	@Unindexed
-	protected MessageType type;
-
-	@Persistent
-	@Unindexed
-	protected Key authorId;
-	@Persistent
-	@Unindexed
-	protected int createdAt;
-
-	@Persistent
-	@Unindexed
-	protected int editedAt;
-	
-/*	public VoUserAttitude(int likes, int unlikes) {
+	/*	public VoUserAttitude(int likes, int unlikes) {
 		likesNum = likes;
 		unlikesNum = unlikes;
 	}
@@ -144,11 +115,42 @@ public abstract class VoBaseMessage {
 		this.unlikesNum = unlikes;
 	}
 
-	@Persistent
-	@Unindexed
-	private int likesNum;
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	protected Key id;
 
 	@Persistent
 	@Unindexed
-	private int unlikesNum;
+	protected byte[] content;
+
+	@Persistent
+	protected Map<Long, String> tags;
+
+	@Persistent
+	@Unindexed
+	protected Map<MessageType, Long> links;
+
+	@Persistent
+	@Unindexed
+	protected MessageType type;
+
+	@Persistent
+	@Unindexed
+	protected Key authorId;
+
+	@Persistent
+	@Unindexed
+	protected int createdAt;
+
+	@Persistent
+	@Unindexed
+	protected int editedAt;
+
+	@Persistent
+	@Unindexed
+	protected int likesNum;
+
+	@Persistent
+	@Unindexed
+	protected int unlikesNum;
 }

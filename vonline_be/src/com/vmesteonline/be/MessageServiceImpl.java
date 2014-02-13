@@ -406,7 +406,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 		if (um.isLikes()) {
 			um.setLikes(false);
-			msg.decrementUnlikes();
+			msg.decrementLikes();
 		}
 		um.setRead(true);
 		return retVal;
