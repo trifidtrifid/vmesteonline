@@ -17,6 +17,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
@@ -39,7 +40,11 @@ public class VoUser {
 		this.addresses = new TreeSet<VoPostalAddress>();
 	}
 
-	public VoUserGroup getGroup(long id) throws InvalidOperation{
+	public ShortUserInfo getShortUserInfo() {
+		return new ShortUserInfo(getId(), name, lastName, 0, null);
+	}
+
+	public VoUserGroup getGroup(long id) throws InvalidOperation {
 		if (home.getId().getId() == id)
 			return home;
 

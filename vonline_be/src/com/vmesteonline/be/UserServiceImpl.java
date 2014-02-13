@@ -39,28 +39,45 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		super(sess);
 	}
 
-	// todo pm.close
+	public static ShortUserInfo getShortUserInfo(long userId) {
+
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser voUser = pm.getObjectById(VoUser.class, userId);
+			return voUser.getShortUserInfo();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.warn("request short user info for absent user " + userId);
+		}
+		return null;
+	}
+
 	@Override
 	public List<Group> getUserGroups() throws InvalidOperation, TException {
 		try {
 			long userId = getCurrentUserId();
 			PersistenceManager pm = PMF.getPm();
-			VoUser user = pm.getObjectById(VoUser.class, userId);
-			if (user == null) {
-				logger.error("can't find user by id " + Long.toString(userId));
-				throw new InvalidOperation(VoError.NotAuthorized, "can't find user by id");
-			}
-			logger.info("find user name " + user.getEmail());
+			try {
+				VoUser user = pm.getObjectById(VoUser.class, userId);
+				if (user == null) {
+					logger.error("can't find user by id " + Long.toString(userId));
+					throw new InvalidOperation(VoError.NotAuthorized, "can't find user by id");
+				}
+				logger.info("find user name " + user.getEmail());
 
-			if (user.getGroups() == null) {
-				logger.warn("user with id " + Long.toString(userId) + " has no any groups");
-				throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");
+				if (user.getGroups() == null) {
+					logger.warn("user with id " + Long.toString(userId) + " has no any groups");
+					throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");
+				}
+				List<Group> groups = new ArrayList<Group>();
+				for (VoUserGroup group : user.getGroups()) {
+					groups.add(group.createGroup());
+				}
+
+				return groups;
+			} finally {
+				pm.close();
 			}
-			List<Group> groups = new ArrayList<Group>();
-			for (VoUserGroup group : user.getGroups()) {
-				groups.add(group.createGroup());
-			}
-			return groups;
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, e.getMessage());
@@ -70,24 +87,30 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public List<Rubric> getUserRubrics() throws InvalidOperation, TException {
 		long userId = getCurrentUserId();
-		VoUser user = PMF.getPm().getObjectById(VoUser.class, userId);
-		if (user == null) {
-			logger.error("can't find user by id " + Long.toString(userId));
-			throw new InvalidOperation(VoError.NotAuthorized, "can't find user bu id");
-		}
+		PersistenceManager pm = PMF.getPm();
+		try {
 
-		logger.info("find user name " + user.getEmail());
+			VoUser user = pm.getObjectById(VoUser.class, userId);
+			if (user == null) {
+				logger.error("can't find user by id " + Long.toString(userId));
+				throw new InvalidOperation(VoError.NotAuthorized, "can't find user bu id");
+			}
 
-		if (user.getRubrics() == null) {
-			logger.warn("user with id " + Long.toString(userId) + " has no any rubrics");
-			throw new InvalidOperation(VoError.GeneralError, "No Rubrics are initialized for user=" + userId);
-		}
+			logger.info("find user name " + user.getEmail());
 
-		List<Rubric> rubrics = new ArrayList<Rubric>();
-		for (VoRubric r : user.getRubrics()) {
-			rubrics.add(r.createRubric());
+			if (user.getRubrics() == null) {
+				logger.warn("user with id " + Long.toString(userId) + " has no any rubrics");
+				throw new InvalidOperation(VoError.GeneralError, "No Rubrics are initialized for user=" + userId);
+			}
+
+			List<Rubric> rubrics = new ArrayList<Rubric>();
+			for (VoRubric r : user.getRubrics()) {
+				rubrics.add(r.createRubric());
+			}
+			return rubrics;
+		} finally {
+			pm.close();
 		}
-		return rubrics;
 	}
 
 	public static List<String> getLocationCodesForRegistration() throws InvalidOperation {

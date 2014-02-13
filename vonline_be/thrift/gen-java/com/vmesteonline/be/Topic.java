@@ -47,6 +47,7 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
   private static final org.apache.thrift.protocol.TField RUBRIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("rubricId", org.apache.thrift.protocol.TType.I64, (short)10);
   private static final org.apache.thrift.protocol.TField COMMUNITY_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("communityId", org.apache.thrift.protocol.TType.I64, (short)11);
   private static final org.apache.thrift.protocol.TField USERT_TOPIC_FIELD_DESC = new org.apache.thrift.protocol.TField("usertTopic", org.apache.thrift.protocol.TType.STRUCT, (short)12);
+  private static final org.apache.thrift.protocol.TField USER_INFO_FIELD_DESC = new org.apache.thrift.protocol.TField("userInfo", org.apache.thrift.protocol.TType.STRUCT, (short)13);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -66,6 +67,7 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
   public long rubricId; // optional
   public long communityId; // optional
   public UserTopic usertTopic; // required
+  public com.vmesteonline.be.ShortUserInfo userInfo; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -80,7 +82,8 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     UNLIKES_NUM((short)9, "unlikesNum"),
     RUBRIC_ID((short)10, "rubricId"),
     COMMUNITY_ID((short)11, "communityId"),
-    USERT_TOPIC((short)12, "usertTopic");
+    USERT_TOPIC((short)12, "usertTopic"),
+    USER_INFO((short)13, "userInfo");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -119,6 +122,8 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
           return COMMUNITY_ID;
         case 12: // USERT_TOPIC
           return USERT_TOPIC;
+        case 13: // USER_INFO
+          return USER_INFO;
         default:
           return null;
       }
@@ -197,6 +202,8 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
     tmpMap.put(_Fields.USERT_TOPIC, new org.apache.thrift.meta_data.FieldMetaData("usertTopic", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, UserTopic.class)));
+    tmpMap.put(_Fields.USER_INFO, new org.apache.thrift.meta_data.FieldMetaData("userInfo", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.vmesteonline.be.ShortUserInfo.class)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Topic.class, metaDataMap);
   }
@@ -214,7 +221,8 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     int lastUpdate,
     int likesNum,
     int unlikesNum,
-    UserTopic usertTopic)
+    UserTopic usertTopic,
+    com.vmesteonline.be.ShortUserInfo userInfo)
   {
     this();
     this.id = id;
@@ -234,6 +242,7 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     this.unlikesNum = unlikesNum;
     setUnlikesNumIsSet(true);
     this.usertTopic = usertTopic;
+    this.userInfo = userInfo;
   }
 
   /**
@@ -258,6 +267,9 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     this.communityId = other.communityId;
     if (other.isSetUsertTopic()) {
       this.usertTopic = new UserTopic(other.usertTopic);
+    }
+    if (other.isSetUserInfo()) {
+      this.userInfo = new com.vmesteonline.be.ShortUserInfo(other.userInfo);
     }
   }
 
@@ -288,6 +300,7 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     setCommunityIdIsSet(false);
     this.communityId = 0;
     this.usertTopic = null;
+    this.userInfo = null;
   }
 
   public long getId() {
@@ -569,6 +582,30 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     }
   }
 
+  public com.vmesteonline.be.ShortUserInfo getUserInfo() {
+    return this.userInfo;
+  }
+
+  public Topic setUserInfo(com.vmesteonline.be.ShortUserInfo userInfo) {
+    this.userInfo = userInfo;
+    return this;
+  }
+
+  public void unsetUserInfo() {
+    this.userInfo = null;
+  }
+
+  /** Returns true if field userInfo is set (has been assigned a value) and false otherwise */
+  public boolean isSetUserInfo() {
+    return this.userInfo != null;
+  }
+
+  public void setUserInfoIsSet(boolean value) {
+    if (!value) {
+      this.userInfo = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case ID:
@@ -667,6 +704,14 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       }
       break;
 
+    case USER_INFO:
+      if (value == null) {
+        unsetUserInfo();
+      } else {
+        setUserInfo((com.vmesteonline.be.ShortUserInfo)value);
+      }
+      break;
+
     }
   }
 
@@ -708,6 +753,9 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     case USERT_TOPIC:
       return getUsertTopic();
 
+    case USER_INFO:
+      return getUserInfo();
+
     }
     throw new IllegalStateException();
   }
@@ -743,6 +791,8 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       return isSetCommunityId();
     case USERT_TOPIC:
       return isSetUsertTopic();
+    case USER_INFO:
+      return isSetUserInfo();
     }
     throw new IllegalStateException();
   }
@@ -865,6 +915,15 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       if (!(this_present_usertTopic && that_present_usertTopic))
         return false;
       if (!this.usertTopic.equals(that.usertTopic))
+        return false;
+    }
+
+    boolean this_present_userInfo = true && this.isSetUserInfo();
+    boolean that_present_userInfo = true && that.isSetUserInfo();
+    if (this_present_userInfo || that_present_userInfo) {
+      if (!(this_present_userInfo && that_present_userInfo))
+        return false;
+      if (!this.userInfo.equals(that.userInfo))
         return false;
     }
 
@@ -1004,6 +1063,16 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetUserInfo()).compareTo(other.isSetUserInfo());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetUserInfo()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userInfo, other.userInfo);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -1087,6 +1156,14 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       sb.append(this.usertTopic);
     }
     first = false;
+    if (!first) sb.append(", ");
+    sb.append("userInfo:");
+    if (this.userInfo == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.userInfo);
+    }
+    first = false;
     sb.append(")");
     return sb.toString();
   }
@@ -1099,6 +1176,9 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     }
     if (usertTopic != null) {
       usertTopic.validate();
+    }
+    if (userInfo != null) {
+      userInfo.validate();
     }
   }
 
@@ -1236,6 +1316,15 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 13: // USER_INFO
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+              struct.userInfo = new com.vmesteonline.be.ShortUserInfo();
+              struct.userInfo.read(iprot);
+              struct.setUserInfoIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -1297,6 +1386,11 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
         struct.usertTopic.write(oprot);
         oprot.writeFieldEnd();
       }
+      if (struct.userInfo != null) {
+        oprot.writeFieldBegin(USER_INFO_FIELD_DESC);
+        struct.userInfo.write(oprot);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -1351,7 +1445,10 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       if (struct.isSetUsertTopic()) {
         optionals.set(11);
       }
-      oprot.writeBitSet(optionals, 12);
+      if (struct.isSetUserInfo()) {
+        optionals.set(12);
+      }
+      oprot.writeBitSet(optionals, 13);
       if (struct.isSetId()) {
         oprot.writeI64(struct.id);
       }
@@ -1388,12 +1485,15 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       if (struct.isSetUsertTopic()) {
         struct.usertTopic.write(oprot);
       }
+      if (struct.isSetUserInfo()) {
+        struct.userInfo.write(oprot);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Topic struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(12);
+      BitSet incoming = iprot.readBitSet(13);
       if (incoming.get(0)) {
         struct.id = iprot.readI64();
         struct.setIdIsSet(true);
@@ -1443,6 +1543,11 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
         struct.usertTopic = new UserTopic();
         struct.usertTopic.read(iprot);
         struct.setUsertTopicIsSet(true);
+      }
+      if (incoming.get(12)) {
+        struct.userInfo = new com.vmesteonline.be.ShortUserInfo();
+        struct.userInfo.read(iprot);
+        struct.setUserInfoIsSet(true);
       }
     }
   }

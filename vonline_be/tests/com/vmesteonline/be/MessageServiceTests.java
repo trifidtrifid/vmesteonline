@@ -139,7 +139,11 @@ public class MessageServiceTests {
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
 			Assert.assertEquals(topicSubject, rTopic.topics.get(0).getSubject());
+			Assert.assertNotNull(rTopic.topics.get(0).userInfo);
+			Assert.assertEquals("Test1", rTopic.topics.get(0).userInfo.firstName);
+			Assert.assertEquals("USer2", rTopic.topics.get(0).userInfo.lastName);
 
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());

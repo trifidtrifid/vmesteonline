@@ -1,10 +1,7 @@
 package com.vmesteonline.be.jdo2;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -12,9 +9,7 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Message;
 import com.vmesteonline.be.MessageType;
@@ -124,7 +119,7 @@ public class VoMessage extends VoBaseMessage {
 
 	public Message getMessage() {
 		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
-				getUnlikes(), links, tags, null, visibleOffset);
+				getUnlikes(), links, tags, null, visibleOffset, null);
 	}
 
 	public long getApprovedId() {

@@ -10,6 +10,7 @@ import javax.cache.CacheFactory;
 import javax.cache.CacheManager;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
+import javax.management.openmbean.InvalidOpenTypeException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -85,14 +86,18 @@ public class ServiceImpl {
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
 		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
 		try {
-			VoSession sess = pm.getObjectById(VoSession.class, sessionStorage.getId());
-			if (sess != null)
-				return sess.getUserId();
-			return (long) 0;
+			try {
+				VoSession sess = pm.getObjectById(VoSession.class, sessionStorage.getId());
+				if (sess != null)
+					return sess.getUserId();
+			} catch (Exception e) {
+				throw new InvalidOperation(VoError.NotAuthorized, "can't get current user id");
+			}
 		} finally {
 			if (null == _pm)
 				pm.close();
 		}
+		throw new InvalidOperation(VoError.NotAuthorized, "can't get current user id");
 	}
 
 	protected VoUser getCurrentUser() throws InvalidOperation {

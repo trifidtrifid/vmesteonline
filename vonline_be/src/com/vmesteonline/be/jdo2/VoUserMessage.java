@@ -2,7 +2,7 @@ package com.vmesteonline.be.jdo2;
 
 import javax.jdo.annotations.PersistenceCapable;
 
-import com.google.appengine.api.datastore.Key;
+import com.vmesteonline.be.UserMessage;
 
 @PersistenceCapable
 public class VoUserMessage extends VoUserObject {
@@ -18,8 +18,7 @@ public class VoUserMessage extends VoUserObject {
 		super(userId, messageId);
 	}
 
-/*	public static Key getObjectKey(VoUser user, VoMessage message) {
-		return VoUserObject.<VoUserMessage> getObjectKey(VoUserMessage.class, user.getId(), message.getId().getId());
+	public UserMessage getUserMessage() {
+		return new UserMessage(isRead(), isLikes(), isUnlikes());
 	}
-*/
 }
