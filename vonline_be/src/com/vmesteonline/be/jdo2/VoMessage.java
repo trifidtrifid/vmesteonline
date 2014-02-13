@@ -50,6 +50,8 @@ public class VoMessage extends VoBaseMessage {
 		super(msg);
 		this.topicId = msg.getTopicId();
 		this.parentId = msg.getParentId();
+		this.parentId = msg.getParentId();
+		this.recipient = msg.getRecipientId();
 
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();

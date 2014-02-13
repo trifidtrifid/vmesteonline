@@ -24,7 +24,16 @@ import com.vmesteonline.be.jdo2.VoUser;
 public class MessageServiceTests {
 
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
-	private String sessionId = "11111111111111111111111";
+	private static String sessionId = "11111111111111111111111";
+	private static String user1email = "a1@b.com";
+	private static String user1pass = "123";
+
+	private static String user2email = "a2@b.com";
+	private static String user2pass = "123";
+
+	private static String user3email = "a1@b.com";
+	private static String user3pass = "123";
+
 	AuthServiceImpl asi;
 	UserServiceImpl usi;
 	MessageServiceImpl msi;
@@ -52,6 +61,8 @@ public class MessageServiceTests {
 		List<String> locCodes = UserServiceImpl.getLocationCodesForRegistration();
 		asi.registerNewUser("Test1", "USer2", "123", "a1@b.com", locCodes.get(0));
 		asi.registerNewUser("Test2", "USer2", "123", "a2@b.com", locCodes.get(1));
+		asi.registerNewUser("Test3", "USer2", user3pass, user3email, locCodes.get(1));
+
 		Assert.assertTrue(asi.login("a1@b.com", "123"));
 
 		usi = new UserServiceImpl(sessionId);
@@ -143,7 +154,6 @@ public class MessageServiceTests {
 			Assert.assertEquals("Test1", rTopic.topics.get(0).userInfo.firstName);
 			Assert.assertEquals("USer2", rTopic.topics.get(0).userInfo.lastName);
 
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());
@@ -258,4 +268,52 @@ public class MessageServiceTests {
 		}
 
 	}
+
+	// test data struct
+	// topic - user1
+	// -msg - user1
+	// --msg1 - user1
+	// ---msg2 - user2
+	// -msg3 - user2->user1
+
+	@Test
+	public void testGetPrivateMessage() {
+		try {
+			VoUser user1 = asi.getUserByEmail("a1@b.com", pm);
+			VoUser user2 = asi.getUserByEmail("a2@b.com", pm);
+
+			Topic topic = createTopic();
+			Message msg = msi.createMessage(topic.getId(), 0, user1.getHomeGroup().getId().getId(), MessageType.BASE,
+					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
+					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+
+			Assert.assertTrue(asi.login(user2email, user2pass));
+			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
+					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg3 = msi.createMessage(topic.getId(), 0, user2.getHomeGroup().getId().getId(), MessageType.BASE,
+					"Content of the SECOND message in the topic", noLinkedMessages, noTags, user1.getId());
+
+			Assert.assertTrue(asi.login(user3email, user3pass));
+
+			MessageListPart mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, 0, false, 0, 10);
+			Assert.assertNotNull(mlp);
+			Assert.assertEquals(1, mlp.totalSize);
+			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getId());
+
+			mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
+			Assert.assertEquals(2, mlp.totalSize);
+			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
+			Assert.assertEquals(1, mlp.messages.get(0).getOffset());
+
+			Assert.assertEquals(msg2.getId(), mlp.messages.get(1).getId());
+			Assert.assertEquals(2, mlp.messages.get(1).getOffset());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+
+	}
+
 }
