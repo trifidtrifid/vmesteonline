@@ -432,7 +432,7 @@
                                 '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
                                 '<a href="#">Иван Грозный</a>'+
                                 '</div>'+
-                                '<p class="alert">'+ currentMessages[i].content+ '</p>'+
+                                '<p class="alert">'+ currentMessages[i].content+ ' смещение: ' + currentMessages[i].offset + '</p>'+
                                 '<div class="likes">'+
                                 '<div class="answer-date">' + currentMessages[i].created + '</div>'+
                                 '<a href="#" class="like-item like">'+
@@ -469,11 +469,9 @@
                         $(this).closest('.dd-item').after(messageHtml);
 
                         $('.one-message:not(.level-1) .plus-minus').click(function(e){
-                            alert('deep');
+                            //alert('deep');
                             e.preventDefault();
-                            var currentParent;
-
-                            firstLevelFlag ? currentParent=0 : currentParent=$(this).closest('.one-message').data('messageid');
+                            var currentParent=$(this).closest('.one-message').data('messageid');
                             //for (i = 0; i < currentMessagesLength; i++){
                             $('.dd-list .dd-list').find('.one-message').each(function(){
                                 console.log('1');
@@ -530,7 +528,6 @@
                             widget.find('+.widget-box').slideToggle(200);
 
                             $('.wysiwig-box .btn-primary').click(function(){
-                                alert('2');
                                 var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
                                 message = message.replace(new RegExp('&nbsp;','g'),' ');
                                 var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
