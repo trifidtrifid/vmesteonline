@@ -182,7 +182,7 @@ public class VoTopic extends VoBaseMessage {
 			listRepresentationOfTree[ptr * 2 + 1] = childTreeList.get(ptr).right;
 		}
 	}
-
+	
 	private void unpackListRepresentation() {
 		for (int ptr = 0; ptr < listRepresentationOfTree.length / 2; ptr++)
 			childTreeList.add(new Pair<Long, Long>(listRepresentationOfTree[ptr * 2], listRepresentationOfTree[ptr * 2 + 1]));
