@@ -28,12 +28,12 @@ var mesLen,
 
 $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active');
 
-/*        $('.submenu .btn').click(function(e){
+       $('.submenu .btn').click(function(e){
     e.preventDefault();
     $(this).closest('.submenu').find('.active').removeClass('active');
     $(this).parent().addClass('active');
     var groupID = $(this).data('groupid');
-    topicsContent = client.getTopics(groupID,Rubrics[0].id, 1,0,0,100);
+    topicsContent = client.getTopics(groupID,Rubrics[0].id,0,0,10);
     var topicLen = topicsContent.topics.length;
     $('.dd>.dd-list').html('');
     //alert('s');
@@ -118,7 +118,7 @@ $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active
         //console.log(messageListTopLevel);
         $('.dd>.dd-list>.topic-item:eq(' + i + ')').append(messageListTopLevel);
     }
-});*/
+});
 
 //var topicsContent = client.getTopics(Groups[0].id,Rubrics[0].id, 0, 0, 10);
 //var topicLen = topicsContent.topics.length;
@@ -198,16 +198,32 @@ alert(orientation);
 //alert('1');
 }
 
-$('.topic-item>.topic-descr .like-item').click(function(){
-    var oldLikesVal = $(this).find('span').text();
-    var topicID = $(this).closest('.topic-item').data('topicid');
-    $(this).find('span').text(++oldLikesVal);
-    if ($(this).hasClass('like')){
-        client.likeTopic(topicID);
-    }else{
-        client.dislikeTopic(topicID);
+    function SetLikeClick(selector){
+        selector.click(function(e){
+            e.preventDefault();
+
+            var oldLikesVal = $(this).find('span').text();
+            var topicID = $(this).closest('.topic-item').data('topicid');
+            $(this).find('span').text(++oldLikesVal);
+
+            if($(this).closest('.one-message').length <= 0){
+                if ($(this).hasClass('like')){
+                    client.likeTopic(topicID);
+                }else{
+                    client.dislikeTopic(topicID);
+                }
+            }else{
+                if ($(this).hasClass('like')){
+                    client.like(topicID);
+                }else{
+                    client.dislike(topicID);
+                }
+            }
+
+        });
     }
-});
+    SetLikeClick($('.like-item'));
+
 
 window.addEventListener('orientationchange', ChangeOrientation, false);
 
@@ -407,7 +423,7 @@ $('.topic-item>.topic-descr .plus-minus').click(function(e){
                 var topicID = $(this).closest('.topic-item').data('topicid');
                 var parentID = $(this).closest('.dd-item').find('.one-message').data('messageid');
                 if (parentID === undefined){parentID = 0;}
-                alert('1 '+parentID );
+                //alert('1 '+parentID );
                 client.createMessage(topicID,parentID,Groups[0].id,1,messageWithGoodLinks,0,0,0);
             });
         });
@@ -468,7 +484,7 @@ $('.topic-item>.topic-descr .plus-minus').click(function(e){
                         '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
                         '<a href="#">Иван Грозный</a>'+
                         '</div>'+
-                        '<p class="alert">'+ currentMessages[i].content+ ' смещение: ' + currentMessages[i].offset + '</p>'+
+                        '<p class="alert">'+ currentMessages[i].content + '</p>'+
                         '<div class="likes">'+
                         '<div class="answer-date">' + currentMessages[i].created + '</div>'+
                         '<a href="#" class="like-item like">'+
@@ -580,6 +596,7 @@ $('.topic-item>.topic-descr .plus-minus').click(function(e){
                     });
                 });
                 /* --- */
+                SetLikeClick($('.one-message:not(.level-1) .like-item'));
                 firstLevelFlag[index] = 0;
             }else{
                 /*
@@ -595,6 +612,7 @@ $('.topic-item>.topic-descr .plus-minus').click(function(e){
                 });
             }
         });
+        SetLikeClick(topicItem.find('.level-1 .like-item'));
 
     } else {
         /*
