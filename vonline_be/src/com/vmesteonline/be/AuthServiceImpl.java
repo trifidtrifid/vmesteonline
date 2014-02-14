@@ -88,9 +88,11 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			throw new InvalidOperation(VoError.RegistrationAlreadyExist, "registration exsist");
 
 		PersistenceManager pm = PMF.getPm();
-		VoUser user = new VoUser(firstname, lastname, email, password);
-		pm.makePersistent(user);
+
 		try {
+			VoUser user = new VoUser(firstname, lastname, email, password);
+			pm.makePersistent(user);
+
 			// find all defaults rubrics for user
 			Query q = pm.newQuery(VoRubric.class);
 			q.setFilter(" subscribedByDefault == true");
@@ -107,12 +109,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 			}
 
+			logger.info("register " + email + " pass " + password + " id " + user.getId());
+			return user.getId();
+
 		} finally {
 			pm.close();
 		}
-
-		logger.info("register " + email + " pass " + password + " id " + user.getId());
-		return user.getId();
 
 	}
 

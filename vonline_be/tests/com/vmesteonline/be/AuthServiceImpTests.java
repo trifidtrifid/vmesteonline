@@ -48,9 +48,6 @@ public class AuthServiceImpTests {
 			asi.login("test", "ppp");
 		} catch (InvalidOperation e) {
 			assertEquals(VoError.IncorrectParametrs, e.what);
-		} catch (TException e) {
-			e.printStackTrace();
-			fail("unhadled exception");
 		}
 
 	}
@@ -99,7 +96,7 @@ public class AuthServiceImpTests {
 			List<VoRubric> rubrics = user.getRubrics();
 			assertEquals(rubrics.isEmpty(), false);
 
-			Set<VoUserGroup> groups = user.getGroups();
+			List<VoUserGroup> groups = user.getGroups();
 			assertEquals(groups.isEmpty(), false);
 			for (VoUserGroup ug : groups) {
 				assertEquals(ug.getLatitude(), latitude, 0F);

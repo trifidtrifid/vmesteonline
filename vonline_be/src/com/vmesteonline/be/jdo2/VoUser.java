@@ -107,11 +107,11 @@ public class VoUser {
 		this.password = password;
 	}
 
-	public Set<VoUserGroup> getGroups() {
+	public List<VoUserGroup> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(Set<VoUserGroup> groups) {
+	public void setGroups(List<VoUserGroup> groups) {
 		this.groups = groups;
 	}
 
@@ -191,7 +191,7 @@ public class VoUser {
 					ug.setLongitude(home.getLongitude());
 				}
 			} else {
-				groups = new TreeSet<VoUserGroup>();
+				groups = new ArrayList<VoUserGroup>();
 
 				groups.add(home);
 				for (VoGroup grp : Defaults.defaultGroups) {
@@ -200,7 +200,7 @@ public class VoUser {
 				}
 			}
 		} else {
-			groups = new TreeSet<VoUserGroup>();
+			groups = new ArrayList<VoUserGroup>();
 		}
 		addPostalAddress(userAddress, pm);
 
@@ -246,7 +246,7 @@ public class VoUser {
 
 	@Persistent
 	@Unowned
-	private Set<VoUserGroup> groups;
+	private List<VoUserGroup> groups;
 
 	@Persistent
 	@Unindexed
