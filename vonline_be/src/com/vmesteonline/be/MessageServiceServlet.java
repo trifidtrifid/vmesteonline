@@ -5,14 +5,14 @@ import org.apache.thrift.protocol.TProtocolFactory;
 
 public class MessageServiceServlet extends VoServlet {
 
-    public MessageServiceServlet() {
+    public MessageServiceServlet() throws InvalidOperation {
         super(new TJSONProtocol.Factory());
         MessageServiceImpl servImpl = new MessageServiceImpl();
         serviceImpl = servImpl;
         super.setProcessor(new MessageService.Processor<MessageServiceImpl>(servImpl));
     }
 
-    public MessageServiceServlet(TProtocolFactory protocolFactory) {
+    public MessageServiceServlet(TProtocolFactory protocolFactory) throws InvalidOperation {
 		super(new TJSONProtocol.Factory());		
 		MessageServiceImpl servImpl = new MessageServiceImpl();
 		serviceImpl = servImpl;

@@ -53,7 +53,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public boolean login(final String email, final String password) throws InvalidOperation, TException {
+	public boolean login(final String email, final String password) throws InvalidOperation {
 		if (sessionStorage == null) {
 			logger.error("http session is null");
 			throw new InvalidOperation(VoError.IncorrectParametrs, "http session is null");
@@ -88,9 +88,11 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			throw new InvalidOperation(VoError.RegistrationAlreadyExist, "registration exsist");
 
 		PersistenceManager pm = PMF.getPm();
-		VoUser user = new VoUser(firstname, lastname, email, password);
-		pm.makePersistent(user);
+
 		try {
+			VoUser user = new VoUser(firstname, lastname, email, password);
+			pm.makePersistent(user);
+
 			// find all defaults rubrics for user
 			Query q = pm.newQuery(VoRubric.class);
 			q.setFilter(" subscribedByDefault == true");
@@ -107,12 +109,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 			}
 
+			logger.info("register " + email + " pass " + password + " id " + user.getId());
+			return user.getId();
+
 		} finally {
 			pm.close();
 		}
-
-		logger.info("register " + email + " pass " + password + " id " + user.getId());
-		return user.getId();
 
 	}
 
@@ -153,12 +155,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
 
 	@Override
-	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation, TException {
+	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation {
 		super.setCurrentAttribute(typeValueMap);
 	}
 
 	@Override
-	public Map<Integer, Long> getCurrentAttributes() throws InvalidOperation, TException {
+	public Map<Integer, Long> getCurrentAttributes() throws InvalidOperation {
 		return super.getCurrentSession().getSessionAttributes();
 	}
 

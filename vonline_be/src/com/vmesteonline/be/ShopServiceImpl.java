@@ -2,6 +2,10 @@ package com.vmesteonline.be;
 
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -35,10 +39,14 @@ import com.vmesteonline.be.jdo2.shop.VoProducer;
 import com.vmesteonline.be.jdo2.shop.VoProduct;
 import com.vmesteonline.be.jdo2.shop.VoProductCategory;
 import com.vmesteonline.be.jdo2.shop.VoShop;
+import com.vmesteonline.be.jdo2.shop.exchange.FieldTranslator;
+import com.vmesteonline.be.jdo2.shop.exchange.ProducerDescription;
 import com.vmesteonline.be.shop.DataSet;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
+import com.vmesteonline.be.shop.ExchangeFieldType;
 import com.vmesteonline.be.shop.FullProductInfo;
+import com.vmesteonline.be.shop.ImportElement;
 import com.vmesteonline.be.shop.Order;
 import com.vmesteonline.be.shop.OrderDetails;
 import com.vmesteonline.be.shop.OrderLine;
@@ -53,6 +61,7 @@ import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.shop.ShopService.Iface;
+import com.vmesteonline.be.utils.CSVHelper;
 
 public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable {
 
@@ -258,12 +267,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public long registerShop(Shop shop) throws InvalidOperation, TException {
+	public long registerShop(Shop shop) throws InvalidOperation {
 		return new VoShop(shop).getId();
 	}
 
 	@Override
-	public long registerProductCategory(ProductCategory productCategory, long shopId) throws InvalidOperation, TException {
+	public long registerProductCategory(ProductCategory productCategory, long shopId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
@@ -280,12 +289,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public long registerProducer(Producer producer, long shopId) throws InvalidOperation, TException {
+	public long registerProducer(Producer producer, long shopId) throws InvalidOperation {
 		return new VoProducer(shopId, producer.getName(), producer.getDescr(), producer.getLogoURL(), producer.getHomeURL()).getId();
 	}
 
 	@Override
-	public List<Long> uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload) throws InvalidOperation, TException {
+	public List<Long> uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		List<Long> productIds;
 		try {
@@ -313,7 +322,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	@Override
 	public List<ProductCategory> uploadProductCategoies(List<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload)
-			throws InvalidOperation, TException {
+			throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
 
@@ -359,7 +368,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public List<Order> getFullOrders(int dateFrom, int dateTo, long userId, long shopId) throws InvalidOperation, TException {
+	public List<Order> getFullOrders(int dateFrom, int dateTo, long userId, long shopId) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
 		List<Order> ol;
@@ -392,7 +401,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public void updateOrderStatusesById(Map<Long, OrderStatus> orderStatusMap) throws InvalidOperation, TException {
+	public void updateOrderStatusesById(Map<Long, OrderStatus> orderStatusMap) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
 		Transaction ct = pm.currentTransaction();
@@ -418,7 +427,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public void setDates(Map<Integer, DateType> dateDateTypeMap) throws TException {
+	public void setDates(Map<Integer, DateType> dateDateTypeMap) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
 
@@ -440,7 +449,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public List<Shop> getShops() throws InvalidOperation, TException {
+	public List<Shop> getShops() throws InvalidOperation {
 		List<Shop> shops = new ArrayList<Shop>();
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -457,7 +466,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public Map<Integer, DateType> getDates(int from, int to) throws InvalidOperation, TException {
+	public Map<Integer, DateType> getDates(int from, int to) throws InvalidOperation{
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
@@ -475,7 +484,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public Shop getShop(long shopId) throws InvalidOperation, TException {
+	public Shop getShop(long shopId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
@@ -493,7 +502,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public List<Producer> getProducers() throws InvalidOperation, TException {
+	public List<Producer> getProducers() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = getCurrentShopId(pm);
 		try {
@@ -514,7 +523,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public List<ProductCategory> getProductCategories(long currentProductCategoryId) throws InvalidOperation, TException {
+	public List<ProductCategory> getProductCategories(long currentProductCategoryId) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = getCurrentShopId(pm);
@@ -560,7 +569,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public ProductListPart getProducts(int offset, int length, long categoryId) throws InvalidOperation, TException {
+	public ProductListPart getProducts(int offset, int length, long categoryId) throws InvalidOperation {
 
 		if (offset < 0 || length < 1)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "offset must be >= 0 and length > 0 ");
@@ -604,7 +613,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public ProductDetails getProductDetails(long productId) throws InvalidOperation, TException {
+	public ProductDetails getProductDetails(long productId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
@@ -621,7 +630,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public List<Order> getOrders(int dateFrom, int dateTo) throws InvalidOperation, TException {
+	public List<Order> getOrders(int dateFrom, int dateTo) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = getCurrentShopId(pm);
 		try {
@@ -643,7 +652,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
-	private Long getCurrentShopId(PersistenceManager pm) throws InvalidOperation, TException {
+	private Long getCurrentShopId(PersistenceManager pm) throws InvalidOperation {
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "SHOP ID is not set in session context. shopId=" + shopId);
@@ -651,7 +660,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		return shopId;
 	}
 
-	private VoShop getCurrentShop(PersistenceManager _pm) throws InvalidOperation, TException {
+	private VoShop getCurrentShop(PersistenceManager _pm) throws InvalidOperation {
 
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
@@ -675,7 +684,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
-	private VoOrder getCurrentOrder(PersistenceManager _pm) throws InvalidOperation, TException {
+	private VoOrder getCurrentOrder(PersistenceManager _pm) throws InvalidOperation {
 
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		Long orderId = super.getSessionAttribute(CurrentAttributeType.ORDER, pm);
@@ -699,7 +708,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public OrderDetails getOrderDetails(long orderId) throws InvalidOperation, TException {
+	public OrderDetails getOrderDetails(long orderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, orderId);
@@ -717,7 +726,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public long createOrder(int date, PriceType priceType) throws InvalidOperation, TException {
+	public long createOrder(int date, PriceType priceType) throws InvalidOperation {
 		if (date < System.currentTimeMillis() / 1000L)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Order could not be created for the past");
 
@@ -747,7 +756,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public long cancelOrder() throws InvalidOperation, TException {
+	public long cancelOrder() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
@@ -763,7 +772,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public long confirmOrder() throws InvalidOperation, TException {
+	public long confirmOrder() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
@@ -782,7 +791,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	 * order. All Lines with the same product ID would summarized!
 	 **/
 	@Override
-	public long appendOrder(long oldOrderId) throws InvalidOperation, TException {
+	public long appendOrder(long oldOrderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
@@ -831,7 +840,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	 * current order
 	 **/
 	@Override
-	public long mergeOrder(long oldOrderId) throws InvalidOperation, TException {
+	public long mergeOrder(long oldOrderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
@@ -861,7 +870,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public OrderLine setOrderLine(long productId, double quantity) throws InvalidOperation, TException {
+	public OrderLine setOrderLine(long productId, double quantity) throws InvalidOperation {
 		if (0 == quantity) {
 			removeOrderLine(productId);
 			return null;
@@ -889,7 +898,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public boolean removeOrderLine(long productId) throws InvalidOperation, TException {
+	public boolean removeOrderLine(long productId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
@@ -909,7 +918,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public OrderDetails setOrderDeliveryType(DeliveryType deliveryType) throws InvalidOperation, TException {
+	public OrderDetails setOrderDeliveryType(DeliveryType deliveryType) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
@@ -945,7 +954,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public boolean setOrderPaymentType(PaymentType paymentType) throws InvalidOperation, TException {
+	public boolean setOrderPaymentType(PaymentType paymentType) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
@@ -976,7 +985,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public OrderDetails setOrderDeliveryAddress(PostalAddress deliveryAddress) throws InvalidOperation, TException {
+	public OrderDetails setOrderDeliveryAddress(PostalAddress deliveryAddress) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
@@ -993,7 +1002,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public void setOrderPaymentStatus(long orderId, PaymentStatus newStatus) throws InvalidOperation, TException {
+	public void setOrderPaymentStatus(long orderId, PaymentStatus newStatus) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
@@ -1008,7 +1017,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public void setProductPrices(Map<Long, Map<PriceType, Double>> newPricesMap) throws InvalidOperation, TException {
+	public void setProductPrices(Map<Long, Map<PriceType, Double>> newPricesMap) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		long shopId = getCurrentShopId(pm);
 		// Transaction ct = pm.currentTransaction(); //cross tranaction required
@@ -1048,7 +1057,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public void setDeliveryCosts(Map<DeliveryType, Double> newDeliveryCosts) throws InvalidOperation, TException {
+	public void setDeliveryCosts(Map<DeliveryType, Double> newDeliveryCosts) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop currentShop = getCurrentShop(pm);
@@ -1062,7 +1071,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public void setPaymentTypesCosts(Map<PaymentType, Double> setPaymentTypesCosts) throws InvalidOperation, TException {
+	public void setPaymentTypesCosts(Map<PaymentType, Double> setPaymentTypesCosts) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop currentShop = getCurrentShop(pm);
@@ -1076,7 +1085,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public void setOrderStatus(long orderId, OrderStatus newStatus) throws InvalidOperation, TException {
+	public void setOrderStatus(long orderId, OrderStatus newStatus) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = pm.getObjectById(VoOrder.class, orderId);
@@ -1091,7 +1100,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public List<Order> getOrdersByStatus(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation, TException {
+	public List<Order> getOrdersByStatus(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = getCurrentShopId(pm);
 		try {
@@ -1114,7 +1123,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public Order getOrder(long orderId) throws InvalidOperation, TException {
+	public Order getOrder(long orderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder;
@@ -1134,7 +1143,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public void updateProduct(FullProductInfo newInfoWithOldId) throws InvalidOperation, TException {
+	public void updateProduct(FullProductInfo newInfoWithOldId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoProduct vop = pm.getObjectById(VoProduct.class, newInfoWithOldId.getProduct().getId());
@@ -1148,7 +1157,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public void updateShop(Shop newShopWithOldId) throws InvalidOperation, TException {
+	public void updateShop(Shop newShopWithOldId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop vos = pm.getObjectById(VoShop.class, newShopWithOldId.getId());
@@ -1162,7 +1171,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public void updateCategory(ProductCategory newCategoryInfo) throws InvalidOperation, TException {
+	public void updateCategory(ProductCategory newCategoryInfo) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoProductCategory vopc = pm.getObjectById(VoProductCategory.class, newCategoryInfo.getId());
@@ -1174,27 +1183,98 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			pm.close();
 		}
 	}
-
+	
 	@Override
-	public DataSet importData(DataSet data) throws InvalidOperation, TException {
-		//data.
-		return null;
+	public void updateProducer(Producer newInfoWithOldId) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoProducer vopc = pm.getObjectById(VoProducer.class, newInfoWithOldId.getId());
+			vopc.update(newInfoWithOldId, pm);
+			pm.makePersistent(vopc);
+		} catch (Exception e) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update shop: " + e.getMessage());
+		} finally {
+			pm.close();
+		}
+		
 	}
 
 	@Override
-	public DataSet exportOrders(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation, TException {
+	public DataSet importData(DataSet data) throws InvalidOperation {
+
+		for (ImportElement ie : data.getData()) {
+			switch( ie.getType()){
+			case IMPORT_SHOP:
+				List<ExchangeFieldType> fieldsOrder = ie.getFieldsOrder();
+				break;
+			case IMPORT_PRODUCTS:
+			{
+				//new FieldTranslator(100, ie.getFieldsOrder(), )
+			}
+				break;
+			case IMPORT_PRODUCERS:
+			{
+				Map<Integer, String> fieldsMap = FieldTranslator.Translate(ExchangeFieldType.PRODUCER_ID.getValue(), 
+						ie.getFieldsOrder(), new ProducerDescription());
+				new ByteArrayInputStream( ie.fileData.array() );
+				
+				try {
+					List<ProducerDescription> producerRows = CSVHelper.loadCSVData( new ByteArrayInputStream( ie.fileData.array() ), fieldsMap, new ProducerDescription());
+					processUpdateProducers(producerRows); 
+					
+					//Prepare new CSV data
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					if( !fieldsMap.containsValue(ExchangeFieldType.PRODUCER_ID)){//insert ID As a first field
+						fieldsMap.put(fieldsMap.size(), "id");
+					} 
+					CSVHelper.writeCSVData( baos, fieldsMap, producerRows );
+					baos.close();
+					ie.setFileData(baos.toByteArray());
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read PRODUCERS "+e.getMessage());
+				}
+			}
+				break;
+			case IMPORT_CATEGORIES:
+				break;
+			default:
+				break;
+			}
+		}
+		return data;
+	}
+
+	private void processUpdateProducers(List<ProducerDescription> producerRows) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			Long currentShopId = getCurrentShopId(pm);
+			for (ProducerDescription producerDescription : producerRows) {
+				if( 0 != producerDescription.id )
+					updateProducer(producerDescription.getProducer());
+				else 
+					producerDescription.id = registerProducer(producerDescription.getProducer(), currentShopId);
+			}
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public DataSet exportOrders(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public DataSet exportOrderLines(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation, TException {
+	public DataSet exportOrderLines(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public DataSet exportProductsOrdered(int dateFrom, int dateTo, long producerId, long productCategoryId) throws InvalidOperation, TException {
+	public DataSet exportProductsOrdered(int dateFrom, int dateTo, long producerId, long productCategoryId) throws InvalidOperation {
 		// TODO Auto-generated method stub
 		return null;
 	}
