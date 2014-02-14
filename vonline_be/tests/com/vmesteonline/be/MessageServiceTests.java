@@ -20,6 +20,7 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.VoUserGroup;
 
 public class MessageServiceTests {
 
@@ -41,13 +42,21 @@ public class MessageServiceTests {
 	TreeMap<Long, String> noTags = new TreeMap<Long, String>();
 	PersistenceManager pm;
 
-	Group topicGroup;
+	Group homeGroup;
+	Group group200m;
+	Group group2000m;
+
 	Rubric topicRubric;
 	String topicSubject = "Test topic";
 
 	private Topic createTopic() throws Exception {
-		return msi.createTopic(topicGroup.getId(), topicSubject, MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages,
+		return msi.createTopic(homeGroup.getId(), topicSubject, MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages,
 				noTags, topicRubric.getId(), 0L);
+	}
+
+	private Topic createTopic(long groupId) throws Exception {
+		return msi.createTopic(groupId, topicSubject, MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages, noTags,
+				topicRubric.getId(), 0L);
 	}
 
 	@Before
@@ -71,7 +80,9 @@ public class MessageServiceTests {
 		List<Group> userGroups = usi.getUserGroups();
 		Assert.assertTrue(userGroups.size() > 0);
 		Assert.assertTrue(userGroups.get(0) != null);
-		topicGroup = userGroups.get(0);
+		homeGroup = userGroups.get(0);
+		group200m = userGroups.get(1);
+		group2000m = userGroups.get(2);
 
 		List<Rubric> userRubrics = usi.getUserRubrics();
 		Assert.assertTrue(userRubrics.size() > 0);
@@ -145,7 +156,7 @@ public class MessageServiceTests {
 
 		try {
 			Topic tpc = createTopic();
-			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 10);
+			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
@@ -170,7 +181,7 @@ public class MessageServiceTests {
 				Thread.sleep(1200);
 			}
 
-			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 5);
+			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 5);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(5, rTopic.totalSize);
 			Assert.assertEquals(tpcs.get(0).getId(), rTopic.topics.get(0).getId());
@@ -179,7 +190,7 @@ public class MessageServiceTests {
 			Assert.assertEquals(tpcs.get(3).getId(), rTopic.topics.get(3).getId());
 			Assert.assertEquals(tpcs.get(4).getId(), rTopic.topics.get(4).getId());
 
-			rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, rTopic.topics.get(4).getId(), 5);
+			rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, rTopic.topics.get(4).getId(), 5);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(2, rTopic.totalSize);
 			Assert.assertEquals(tpcs.get(5).getId(), rTopic.topics.get(0).getId());
@@ -215,13 +226,13 @@ public class MessageServiceTests {
 			Message msg3 = msi.createMessage(topic.getId(), 0, user2.getHomeGroup().getId().getId(), MessageType.BASE,
 					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
 
-			MessageListPart mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, 0, false, 0, 10);
+			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 0, 10);
 			Assert.assertNotNull(mlp);
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals(msg3.getId(), mlp.messages.get(1).getId());
 
-			mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
+			mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals(1, mlp.messages.get(0).getOffset());
@@ -229,7 +240,7 @@ public class MessageServiceTests {
 			Assert.assertEquals(msg2.getId(), mlp.messages.get(1).getId());
 			Assert.assertEquals(2, mlp.messages.get(1).getOffset());
 
-			mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 1);
+			mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 1);
 			Assert.assertEquals(1, mlp.totalSize);
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals(1, mlp.messages.get(0).getOffset());
@@ -248,7 +259,7 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Assert.assertEquals(1, msi.likeTopic(topic.getId()));
 
-			TopicListPart rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 10);
+			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(topic.getId(), rTopic.topics.get(0).getId());
@@ -261,7 +272,7 @@ public class MessageServiceTests {
 			Assert.assertFalse(rTopic.topics.get(0).getUsertTopic().unlikes);
 
 			Assert.assertEquals(1, msi.dislikeTopic(topic.getId()));
-			rTopic = msi.getTopics(topicGroup.getId(), topicRubric.getId(), 0, 0L, 10);
+			rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(topic.getId(), rTopic.topics.get(0).getId());
@@ -311,12 +322,12 @@ public class MessageServiceTests {
 
 			Assert.assertTrue(asi.login(user3email, user3pass));
 
-			MessageListPart mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, 0, false, 0, 10);
+			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 0, 10);
 			Assert.assertNotNull(mlp);
 			Assert.assertEquals(1, mlp.totalSize);
 			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getId());
 
-			mlp = msi.getMessages(topic.getId(), topicGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
+			mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals(1, mlp.messages.get(0).getOffset());
@@ -331,4 +342,30 @@ public class MessageServiceTests {
 
 	}
 
+	@Test
+	public void testGetTopicsFromBiggerGroupAnotherUser() {
+
+		try {
+			createTopic();
+
+			asi.login(user2email, user2pass);
+			getUserGroupId(user2email, 200);
+			TopicListPart rTopic = msi.getTopics(group200m.getId(), topicRubric.getId(), 0, 0L, 10);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(0, rTopic.totalSize);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+	}
+
+	long getUserGroupId(String email, int radius) {
+		VoUser user = asi.getUserByEmail(email, pm);
+		for (VoUserGroup ug : user.getGroups()) {
+			if (ug.getRadius() == radius)
+				return ug.getId().getId();
+		}
+		return 0L;
+	}
 }

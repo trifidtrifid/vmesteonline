@@ -167,7 +167,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 						while (rs.next() && topics.size() < length) {
 							long topicId = rs.getLong(1);
 							VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
-							if (addTopic) {
+							if (addTopic ) {
 								topics.add(topic);
 							} else {
 								if (topic.getId().getId() == lastLoadedTopicId) {
