@@ -12,7 +12,8 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
+
 import org.apache.thrift.TException;
 
 import com.google.appengine.api.datastore.KeyFactory;
@@ -33,26 +34,30 @@ import com.vmesteonline.be.jdo2.VoUserObject;
 import com.vmesteonline.be.jdo2.VoUserTopic;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
-
-	public MessageServiceImpl() {
+	
+	public MessageServiceImpl() throws InvalidOperation {
 		con = new MySQLJDBCConnector();
 		try {
 			con.execute("create table if not exists topic (`id` bigint not null, `longitude` decimal(10,7) not null,"
 					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null);");
 		} catch (Exception e) {
+			logger.severe("Failed to connect to database."+e.getMessage());
 			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database."+e.getMessage());
 		}
 
 	}
 
-	public MessageServiceImpl(String sessId) {
+	public MessageServiceImpl(String sessId) throws InvalidOperation {
 		super(sessId);
 		con = new MySQLJDBCConnector();
 		try {
 			con.execute("create table if not exists topic (`id` bigint not null,`longitude` decimal(10,7) not null,"
 					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null);");
 		} catch (Exception e) {
+			logger.severe("Failed to connect to database."+e.getMessage());
 			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database."+e.getMessage());
 		}
 	}
 
@@ -158,7 +163,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					}
 
 					if (topics.isEmpty()) {
-						logger.debug("can't find any topics");
+						logger.fine("can't find any topics");
 						return mlp;
 					}
 					mlp.totalSize = topics.size();
@@ -415,7 +420,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	private static MessageListPart createMlp(List<VoMessage> lst, long userId, PersistenceManager pm) throws InvalidOperation {
 		MessageListPart mlp = new MessageListPart();
 		if (lst == null) {
-			logger.warn("try to create MessagePartList from null object");
+			logger.warning("try to create MessagePartList from null object");
 			return mlp;
 		}
 		mlp.totalSize = lst.size();
