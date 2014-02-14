@@ -29,6 +29,7 @@ import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.utils.StorageHelper;
+import com.vmesteonline.be.utils.VoHelper;
 
 @PersistenceCapable
 public class VoShop {
@@ -45,8 +46,12 @@ public class VoShop {
 
 		this.name = name;
 		this.descr = descr;
-		this.address = new VoPostalAddress(postalAddress, pm);
-		this.logoURL = logoURL;
+		if(postalAddress != null ) this.address = new VoPostalAddress(postalAddress, pm);
+		try {
+			VoHelper.replaceURL(this, "logoURL", logoURL);
+		} catch (NoSuchFieldException e1) {
+			e1.printStackTrace();
+		}
 		this.ownerId = ownerId;
 		if (null == (this.tags = tags))
 			this.tags = new ArrayList<String>();
@@ -60,10 +65,12 @@ public class VoShop {
 			this.paymentTypes.put(PaymentType.CASH.getValue(), 0D);
 
 		try {
-			this.topics = new ArrayList<VoTopic>();
-			for (long tid : topicSet) {
-				VoTopic vt = pm.getObjectById(VoTopic.class, tid);
-				topics.add(vt);
+			if( null!=topicSet){
+				this.topics = new ArrayList<VoTopic>();
+				for (long tid : topicSet) {
+					VoTopic vt = pm.getObjectById(VoTopic.class, tid);
+					topics.add(vt);
+				}
 			}
 			categories = new ArrayList<VoProductCategory>();
 			products = new ArrayList<VoProduct>();
@@ -83,8 +90,10 @@ public class VoShop {
 		for (VoTopic vt : getTopics()) {
 			topicIds.add(vt.getId().getId());
 		}
-		Shop shop = new Shop(id.getId(), name, descr, address.getPostalAddress(), logoURL, ownerId, topicIds, tags, convertToDeliveryTypeMap(
-				deliveryCosts, new HashMap<DeliveryType, Double>()), convertToPaymentTypeMap(paymentTypes, new HashMap<PaymentType, Double>()));
+		Shop shop = new Shop(id.getId(), name, descr, null==address ? null : address.getPostalAddress(), logoURL, ownerId, 
+				topicIds, tags, 
+				convertToDeliveryTypeMap(deliveryCosts, new HashMap<DeliveryType, Double>()),
+				convertToPaymentTypeMap(paymentTypes, new HashMap<PaymentType, Double>()));
 		return shop;
 	}
 
@@ -311,11 +320,17 @@ public class VoShop {
 	}
 
 	public void update(Shop newShopWithOldId, PersistenceManager pm) throws InvalidOperation, IOException {
-		this.name = newShopWithOldId.name;
-		this.descr = newShopWithOldId.descr;
+		try {
+			VoHelper.copyIfNotNull(this, "name", newShopWithOldId.name) ;
+			VoHelper.copyIfNotNull(this, "descr", newShopWithOldId.descr) ;
+			VoHelper.replaceURL(this, "logoURL", newShopWithOldId.logoURL);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		}
+		
+		if( 0!=newShopWithOldId.ownerId  ) this.ownerId = newShopWithOldId.ownerId ;
 		this.address = new VoPostalAddress(newShopWithOldId.getAddress(), pm);
-		this.logoURL = StorageHelper.saveImage(newShopWithOldId.logoURL.getBytes());
-		this.ownerId = newShopWithOldId.ownerId;
+		
 		if (null == (this.tags = newShopWithOldId.tags))
 			this.tags = new ArrayList<String>();
 

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,11 @@ public class CSVHelper {
 						
 						Object fo = field.get(nextOtf);
 						if(null==fo){ //try to create fo by default constructor
-							fo = field.getType().getConstructor(new Class[]{}).newInstance(new Object[]{});
+							if( field.getType() == List.class || field.getType() == Set.class ) fo = new ArrayList();
+							else if( field.getType() == Map.class ) fo = new HashMap();
+							else {	
+								fo = field.getType().getConstructor(new Class[]{}).newInstance(new Object[]{});
+							}
 							field.set(nextOtf, fo);
 						}
 						if ( fo instanceof Double ) field.set(nextOtf, Double.parseDouble(nextItem));

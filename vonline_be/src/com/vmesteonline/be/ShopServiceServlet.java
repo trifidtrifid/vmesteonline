@@ -1,11 +1,10 @@
 package com.vmesteonline.be;
 
-import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TJSONProtocol;
-import org.apache.thrift.protocol.TProtocolFactory;
 
 import com.vmesteonline.be.shop.ShopService;
 
+@SuppressWarnings("serial")
 public class ShopServiceServlet extends VoServlet {
 
 	public ShopServiceServlet() {

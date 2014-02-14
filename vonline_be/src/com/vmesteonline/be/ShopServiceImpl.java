@@ -1,34 +1,27 @@
 package com.vmesteonline.be;
 
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Vector;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-import junit.framework.Assert;
-
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
-import org.junit.Before;
 
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -39,8 +32,10 @@ import com.vmesteonline.be.jdo2.shop.VoProducer;
 import com.vmesteonline.be.jdo2.shop.VoProduct;
 import com.vmesteonline.be.jdo2.shop.VoProductCategory;
 import com.vmesteonline.be.jdo2.shop.VoShop;
+import com.vmesteonline.be.jdo2.shop.exchange.CategoryDesrciption;
 import com.vmesteonline.be.jdo2.shop.exchange.FieldTranslator;
 import com.vmesteonline.be.jdo2.shop.exchange.ProducerDescription;
+import com.vmesteonline.be.jdo2.shop.exchange.ShopDescription;
 import com.vmesteonline.be.shop.DataSet;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
@@ -62,13 +57,14 @@ import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.shop.ShopService.Iface;
 import com.vmesteonline.be.utils.CSVHelper;
+import com.vmesteonline.be.utils.VoHelper;
 
 public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable {
 
 	public static Logger logger;
 
 	static {
-		
+
 		logger = Logger.getLogger(ShopServiceImpl.class);
 		// create fake data for tests
 
@@ -142,13 +138,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					.get(0).getId(), 0);
 			topicSet.add(topic.getId());
 
-
 			Country country = usi.getCounties().get(0);
 			City city = usi.getCities(country.getId()).get(0);
 			Street street = usi.getStreets(city.getId()).get(0);
 			Building building = usi.createNewBuilding(street.getId(), "17/3", 123.45, 54.321);
 			userAddress2 = new PostalAddress(country, city, street, building, (byte) 1, (byte) 2, 3, "");
-			
+
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress2, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 			Long shopId = si.registerShop(shop);
 			// set current shop
@@ -173,10 +168,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true, true);
 
 			// create producers
-			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO,
-					"http://google.com"), shopId);
-			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", LOGO,
-					"http://google2.com"), shopId);
+			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
+			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
 
 			// Upload products
 
@@ -204,11 +197,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			optionsMap2.put("цвет", "черный");
 			optionsMap2.put("вкус", "мерзкий");
 
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D),
-					new ProductDetails(categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId)));
+			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D), new ProductDetails(categories1,
+					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId)));
 
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D),
-					new ProductDetails(categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id)));
+			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D), new ProductDetails(categories2,
+					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id)));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
 
@@ -268,13 +261,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	@Override
 	public long registerShop(Shop shop) throws InvalidOperation {
-		return new VoShop(shop).getId();
+		return shop.id = new VoShop(shop).getId();
 	}
 
 	@Override
 	public long registerProductCategory(ProductCategory productCategory, long shopId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
+			if( 0==shopId) shopId = getCurrentShopId(pm);
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
 			VoProductCategory voProductCategory = new VoProductCategory(voShop, productCategory.getParentId(), productCategory.getName(),
 					productCategory.getDescr(), productCategory.getLogoURLset(), productCategory.getTopicSet(), pm);
@@ -290,7 +284,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	@Override
 	public long registerProducer(Producer producer, long shopId) throws InvalidOperation {
-		return new VoProducer(shopId, producer.getName(), producer.getDescr(), producer.getLogoURL(), producer.getHomeURL()).getId();
+		return producer.id = new VoProducer(shopId, producer.getName(), producer.getDescr(), producer.getLogoURL(), producer.getHomeURL()).getId();
 	}
 
 	@Override
@@ -466,7 +460,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public Map<Integer, DateType> getDates(int from, int to) throws InvalidOperation{
+	public Map<Integer, DateType> getDates(int from, int to) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
@@ -652,7 +646,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
-	private Long getCurrentShopId(PersistenceManager pm) throws InvalidOperation {
+	Long getCurrentShopId(PersistenceManager pm) throws InvalidOperation {
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "SHOP ID is not set in session context. shopId=" + shopId);
@@ -1084,6 +1078,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
+	// ======================================================================================================================
 	@Override
 	public void setOrderStatus(long orderId, OrderStatus newStatus) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -1099,6 +1094,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
+	// ======================================================================================================================
 	@Override
 	public List<Order> getOrdersByStatus(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -1122,6 +1118,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
+	// ======================================================================================================================
 	@Override
 	public Order getOrder(long orderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -1142,6 +1139,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
+	// ======================================================================================================================
 	@Override
 	public void updateProduct(FullProductInfo newInfoWithOldId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -1156,6 +1154,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
+	// ======================================================================================================================
 	@Override
 	public void updateShop(Shop newShopWithOldId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -1170,6 +1169,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
+	// ======================================================================================================================
 	@Override
 	public void updateCategory(ProductCategory newCategoryInfo) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -1178,12 +1178,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			vopc.update(newCategoryInfo, pm);
 			pm.makePersistent(vopc);
 		} catch (Exception e) {
-			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update shop: " + e.getMessage());
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update CAtegory: " + e.getMessage());
 		} finally {
 			pm.close();
 		}
 	}
-	
+
+	// ======================================================================================================================
 	@Override
 	public void updateProducer(Producer newInfoWithOldId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -1196,48 +1197,51 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		} finally {
 			pm.close();
 		}
-		
 	}
+
+	// ======================================================================================================================
+	protected static interface ImportDataProcessor<T> {
+		public void process(List<T> list) throws InvalidOperation;
+	}
+
+	// ======================================================================================================================
 
 	@Override
 	public DataSet importData(DataSet data) throws InvalidOperation {
 
 		for (ImportElement ie : data.getData()) {
-			switch( ie.getType()){
-			case IMPORT_SHOP:
-				List<ExchangeFieldType> fieldsOrder = ie.getFieldsOrder();
-				break;
-			case IMPORT_PRODUCTS:
-			{
-				//new FieldTranslator(100, ie.getFieldsOrder(), )
+			switch (ie.getType()) {
+			case IMPORT_SHOP: {
+				importInformation(ie, ExchangeFieldType.SHOP_ID, new ShopDescription(), new ImportDataProcessor() {
+					@Override
+					public void process(List list) throws InvalidOperation {
+						processUpdateShops(list);
+					}
+				});
 			}
 				break;
-			case IMPORT_PRODUCERS:
-			{
-				Map<Integer, String> fieldsMap = FieldTranslator.Translate(ExchangeFieldType.PRODUCER_ID.getValue(), 
-						ie.getFieldsOrder(), new ProducerDescription());
-				new ByteArrayInputStream( ie.fileData.array() );
-				
-				try {
-					List<ProducerDescription> producerRows = CSVHelper.loadCSVData( new ByteArrayInputStream( ie.fileData.array() ), fieldsMap, new ProducerDescription());
-					processUpdateProducers(producerRows); 
-					
-					//Prepare new CSV data
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					if( !fieldsMap.containsValue(ExchangeFieldType.PRODUCER_ID)){//insert ID As a first field
-						fieldsMap.put(fieldsMap.size(), "id");
-					} 
-					CSVHelper.writeCSVData( baos, fieldsMap, producerRows );
-					baos.close();
-					ie.setFileData(baos.toByteArray());
-					
-				} catch (IOException e) {
-					e.printStackTrace();
-					throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read PRODUCERS "+e.getMessage());
-				}
+			case IMPORT_PRODUCTS: {
+				// new FieldTranslator(100, ie.getFieldsOrder(), )
 			}
 				break;
-			case IMPORT_CATEGORIES:
+			case IMPORT_PRODUCERS: {
+				importInformation(ie, ExchangeFieldType.PRODUCER_ID, new ProducerDescription(), new ImportDataProcessor() {
+					@Override
+					public void process(List list) throws InvalidOperation {
+						processUpdateProducers(list);
+					}
+				});
+			}
+				break;
+			case IMPORT_CATEGORIES: {
+
+				importInformation(ie, ExchangeFieldType.CATEGORY_ID, new CategoryDesrciption(), new ImportDataProcessor() {
+					@Override
+					public void process(List list) throws InvalidOperation {
+						processUpdateCategories(list);
+					}
+				});
+			}
 				break;
 			default:
 				break;
@@ -1246,14 +1250,43 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		return data;
 	}
 
+	// ======================================================================================================================
+
+	private <T> void importInformation(ImportElement ie, ExchangeFieldType idField, T descriptionObject, ImportDataProcessor<T> processor)
+			throws InvalidOperation {
+		Map<Integer, String> fieldsMap = FieldTranslator.Translate(idField.getValue(), ie.getFieldsOrder(), descriptionObject);
+		new ByteArrayInputStream(ie.fileData.array());
+
+		try {
+			List<T> infoRows = CSVHelper.loadCSVData(new ByteArrayInputStream(ie.fileData.array()), fieldsMap, descriptionObject);
+
+			processor.process(infoRows);
+
+			// Prepare new CSV data
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			if (!fieldsMap.containsValue("id")) {// insert ID As a last field if
+																							// was not set
+				fieldsMap.put(fieldsMap.size(), "id");
+			}
+			CSVHelper.writeCSVData(baos, fieldsMap, infoRows);
+			baos.close();
+			ie.setFileData(baos.toByteArray());
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read Update " + e.getMessage());
+		}
+	}
+
+	// ======================================================================================================================
 	private void processUpdateProducers(List<ProducerDescription> producerRows) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			Long currentShopId = getCurrentShopId(pm);
 			for (ProducerDescription producerDescription : producerRows) {
-				if( 0 != producerDescription.id )
+				if (0 != producerDescription.id)
 					updateProducer(producerDescription.getProducer());
-				else 
+				else
 					producerDescription.id = registerProducer(producerDescription.getProducer(), currentShopId);
 			}
 		} finally {
@@ -1261,22 +1294,59 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
+	// ======================================================================================================================
+	private void processUpdateShops(List<ShopDescription> shopRows) throws InvalidOperation {
+		for (ShopDescription shopDescription : shopRows) {
+			if (0 != shopDescription.id)
+				updateShop(shopDescription.getShop());
+			else
+				shopDescription.id = registerShop(shopDescription.getShop());
+		}
+	}
+
+	// ======================================================================================================================
+
+	protected void processUpdateCategories(List<CategoryDesrciption> caregoryROws) throws InvalidOperation {
+		
+		//check if file contains update information for product categories
+		if( 0 < caregoryROws.size() ) {
+			
+			if( caregoryROws.get(0).parentId == 0 ) { //so looks like it's an new category upload
+				//convert presentation
+				ArrayList<ProductCategory> pcl = new ArrayList<ProductCategory>();
+				VoHelper.convertMutableSet(caregoryROws, pcl, new ProductCategory());
+				this.uploadProductCategoies(pcl, true, false); //do not delete categories
+			
+			} else {
+				for (CategoryDesrciption categoryDesrciption : caregoryROws) {
+					if (0 != categoryDesrciption.id)
+						updateCategory(categoryDesrciption.getProductCategory());
+					else
+						categoryDesrciption.id = registerProductCategory(categoryDesrciption.getProductCategory(), 0);
+				}
+			}
+		}
+	}
+
+	// ======================================================================================================================
+
 	@Override
 	public DataSet exportOrders(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	// ======================================================================================================================
 	@Override
 	public DataSet exportOrderLines(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	// ======================================================================================================================
 	@Override
 	public DataSet exportProductsOrdered(int dateFrom, int dateTo, long producerId, long productCategoryId) throws InvalidOperation {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

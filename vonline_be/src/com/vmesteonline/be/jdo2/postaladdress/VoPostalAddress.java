@@ -49,6 +49,8 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	}
 
 	public VoPostalAddress(PostalAddress postalAddress, PersistenceManager _pm) throws InvalidOperation {
+		if( null==postalAddress) return;
+		
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		try {
 			VoBuilding vob;

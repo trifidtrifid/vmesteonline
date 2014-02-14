@@ -835,7 +835,7 @@ public class ShopServiceImplTest {
 	  }
 	
 	@Test
-	public void testDataImportTest(){
+	public void testDataImportProducersTest(){
 		DataSet ds = new DataSet();
 		ds.date = (int)(System.currentTimeMillis()/1000L);
 		ds.name =" Producers UPDATE Test";
@@ -860,6 +860,75 @@ public class ShopServiceImplTest {
 			DataSet importData2 = si.importData(ds);
 			List<Producer> producers = si.getProducers();
 			Assert.assertEquals(producers.size(), 2);
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Import failed!" + e);
+		}
+	}
+	
+	@Test
+	public void testDataImportShopsTest(){
+		DataSet ds = new DataSet();
+		ds.date = (int)(System.currentTimeMillis()/1000L);
+		ds.name =" Shops UPDATE Test";
+	  
+		List<ExchangeFieldType> fieldsOrder = new ArrayList<ExchangeFieldType>();
+		fieldsOrder.add(ExchangeFieldType.SHOP_NAME);
+		fieldsOrder.add(ExchangeFieldType.SHOP_DESCRIPTION);
+		fieldsOrder.add(ExchangeFieldType.SHOP_LOGOURL);
+		fieldsOrder.add(ExchangeFieldType.SHOP_TAGS);
+		
+		ImportElement importData = new ImportElement(ImExType.IMPORT_SHOP, "shops.csv", fieldsOrder );
+		importData.setFileData(("Магазин %1, Мага зин бытовой техники, http://yandex.st/www/1.807/yaru/i/logo.png, 1 | 2 | tag 3\n"
+				+ "Техношок, Магазин Электроники, http://yandex.st/www/1.807/yaru/i/logo.png,").getBytes());
+		
+		ds.addToData( importData );
+		try {
+			DataSet importData2 = si.importData(ds);
+			List<Shop> shops = si.getShops();
+			Assert.assertEquals(shops.size(), 2);
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Import failed!" + e);
+		}
+	}
+	
+	@Test
+	public void testDataImportCategoryTest(){
+		DataSet ds = new DataSet();
+		ds.date = (int)(System.currentTimeMillis()/1000L);
+		ds.name =" Categories UPDATE Test";
+	  
+		//CATEGORY_ID = 200, CATEGORY_PARENT_ID, CATEGORY_NAME, CATEGORY_DESCRIPTION, CATEGORY_LOGOURLS, CATEGORY_TOPICS
+		List<ExchangeFieldType> fieldsOrder = new ArrayList<ExchangeFieldType>();
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_PARENT_ID);
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_ID);
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_NAME);
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_DESCRIPTION);
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_LOGOURLS);
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
+		
+		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", fieldsOrder );
+		importData.setFileData((
+				"0, 1, КОпмы, Копьютеры и комплектующие, "
+				+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif | "
+				+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif,\n"
+				+ "1, 2, Ноутбуки,Ноуты и Планшеты,,,\n"
+				+ "2, 3, Ноуты, ТОлько ноуты,,,\n"
+				+ "2, 4, Планшеты,Только планшеты,,,\n"
+				+ "1, 5, Переферия,\"Принтеры, мышы, клавы\",,,\n").getBytes());
+				
+		ds.addToData( importData );
+		try {
+			
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Long shopId = si.registerShop(shop);
+			// set current shop
+			si.getShop(shopId);
+			
+			DataSet importData2 = si.importData(ds);
+			List<ProductCategory> productCategories = si.getProductCategories(0);
+			Assert.assertEquals(productCategories.size(), 2);
 		} catch (TException e) {
 			e.printStackTrace();
 			fail("Import failed!" + e);

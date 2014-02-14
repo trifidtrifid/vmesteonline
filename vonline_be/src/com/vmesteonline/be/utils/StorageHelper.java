@@ -54,19 +54,22 @@ public class StorageHelper {
 			throw new IOException("Invalid content. Failed to store null or empty content");
 
 		} else {
-
+			String fname; 
 			InputStream is = null;
 
 			try { // try to create URL from content
 				URL url;
 				url = new URL(new String(urlOrContent));
 				is = url.openStream();
+				//file name for the same sources will be the same
+				fname = "V0" + urlOrContent.hashCode() + ("VONLINE"+urlOrContent).hashCode();
 
 			} catch (Exception e) {
 				is = new ByteArrayInputStream(urlOrContent);
+				fname = "VO" + ("VONLINE" + System.currentTimeMillis()).hashCode();
 			}
 
-			String fname = "" + ("" + System.currentTimeMillis() + "VOFILES").hashCode() + ".jpeg";
+			
 			GcsFilename filename = new GcsFilename("public", fname);
 			GcsOutputChannel outputChannel = gcsService.createOrReplace(filename, GcsFileOptions.getDefaultInstance());
 			streamCopy(is, Channels.newOutputStream(outputChannel));

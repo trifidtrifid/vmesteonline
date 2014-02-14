@@ -29,12 +29,14 @@ public class VoProductCategory {
 	  
 		this.name = name;
 		this.descr = descr;
-		this.logoURLset = new ArrayList<String>();
-		for( String bb: logoURLset) {
-			try {
-				this.logoURLset.add(StorageHelper.saveImage(bb));
-			} catch (Exception e) {
-				e.printStackTrace();
+		if( null!=logoURLset){
+			this.logoURLset = new ArrayList<String>();
+			for( String bb: logoURLset) {
+				try {
+					this.logoURLset.add(StorageHelper.saveImage(bb));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	
@@ -56,10 +58,11 @@ public class VoProductCategory {
 			shop.addProductCategory(this);
 			shops.add(shop);
 			
-			for( long tid: topicSet){
-				VoTopic vt = pm.getObjectById(VoTopic.class, tid);
-				topics.add(vt); 
-			}
+			if(null!=topicSet)
+				for( long tid: topicSet){
+					VoTopic vt = pm.getObjectById(VoTopic.class, tid);
+					topics.add(vt); 
+				}
 			pm.makePersistent(this);
 		} catch (Exception e) {
 			e.printStackTrace();
