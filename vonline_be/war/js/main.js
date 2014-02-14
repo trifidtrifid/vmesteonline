@@ -14,28 +14,48 @@ transport = new Thrift.Transport("/thrift/MessageService");
 protocol = new Thrift.Protocol(transport);
 client = new com.vmesteonline.be.MessageServiceClient(protocol);
 
-var mesLen,
-    mesNew,
-    level=0,
+var level=0,
     message,
-    messageListNew = "",
-    messageList = '',
-    messageListTopLevel = "",
     topicsList="",
-    oneTopicContent,
-    messagesArray,
-    iterator = 0;
+    oneTopicContent;
+
+/* простые обработчики событий */
 
 $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active');
 
-   $('.submenu .btn').click(function(e){
+$('.widget-main').hover(function(){
+    $(this).find('.fa-relations').animate({opacity:1},200);
+    $(this).find('.fa-sitemap').animate({opacity:1},200);
+},function(){
+    $(this).find('.fa-relations').animate({opacity:0},200);
+    $(this).find('.fa-sitemap').animate({opacity:0},200);
+});
+
+$('.fa-sitemap').click(function(){
+    $(this).closest('.topic-item').toggleClass('list-view');
+});
+
+/* --- */
+
+   $('.submenu .btn,.nav-list a').click(function(e){
     e.preventDefault();
 
-    $(this).closest('.submenu').find('.active').removeClass('active');
+       if ($(this).closest('.submenu').length){
+           $(this).closest('.submenu').find('.active').removeClass('active');
+       } else{
+           $(this).closest('.nav-list').find('.active').removeClass('active');
+       }
     $(this).parent().addClass('active');
-    var groupID = $(this).data('groupid');
-    var topicsContent = client.getTopics(groupID,Rubrics[0].id,0,0,10);
-    var topicLen = topicsContent.topics.length;
+    var groupID = $('.submenu .active .btn').data('groupid');
+    var rubricID = $('.nav-list .active a').data('rubricid');
+    var topicsContent = client.getTopics(groupID,rubricID,0,0,10);
+       var topicLen = 0;
+       if (topicsContent.topics){
+           topicLen = topicsContent.topics.length;
+       }
+
+       //alert(topicLen);
+
     topicsList="";
     var ddList = $('.dd>.dd-list');
     ddList.html('');
@@ -43,7 +63,11 @@ $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active
 
     for(var i = 0; i < topicLen; i++){
         oneTopicContent = topicsContent.topics[i];
-        topicsList = '<li class="dd-item dd2-item topic-item">'+
+        var hide = "";
+        if (oneTopicContent.messageNum == 0){
+            hide = 'hide';
+        }
+        topicsList += '<li class="dd-item dd2-item topic-item" data-topicid="'+ oneTopicContent.id +'">'+
             '<div class="dd2-content widget-box topic-descr">'+
             '<header class="widget-header header-color-blue2">'+
             '<span class="topic-header-date">01.04.2014 10:10</span>'+
@@ -75,7 +99,7 @@ $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active
             '</div>'+
             '<div class="topic-right">'+
             '<a class="fa fa-link fa-relations" href="#"></a>'+
-            '<p class="alert ">'+ topic.message.content +'</p>'+
+            '<p class="alert ">'+ oneTopicContent.message.content +'</p>'+
             '<div class="likes">'+
             '<a href="#" class="like-item like">'+
             '<i class="fa fa-thumbs-o-up"></i>'+
@@ -101,11 +125,11 @@ $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active
             '</ul>'+
             '</div>'+
             '<div class="answers-ctrl">'+
-            '<a class="fa fa-minus plus-minus" href="#"></a>'+
+            '<a class="fa fa-plus plus-minus '+ hide +'" href="#"></a>'+
             '<span> <span>'+ oneTopicContent.messageNum +'</span> <a href="#">(3)</a></span>'+
             '</div>'+
             '<div class="topic-statistic">'+
-            'Участников '+ oneTopicContent.usersNum + 'Просмторов '+ oneTopicContent.viewers +
+            'Участников '+ oneTopicContent.usersNum + 'Просмотров '+ oneTopicContent.viewers +
             '</div>'+
             '</footer>'+
             '</div>'+
@@ -113,6 +137,7 @@ $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active
             '</li>';
     }
        ddList.append(topicsList);
+       SetMainEvents();
 });
 
 /*        function getMessageList(topicID, groupID, parentID){
@@ -181,14 +206,6 @@ $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active
     }
     return messageList;
 }*/
-
-/* простые обработчики событий */
-
-function ChangeOrientation() {
-var orientation = Math.abs(window.orientation) === 90 ? 'landscape' : 'portrait';
-alert(orientation);
-//alert('1');
-}
 
     function SetLikeClick(selector){
         selector.click(function(e){
@@ -264,42 +281,12 @@ alert(orientation);
             SetCreateMessageClick($('.wysiwig-box .btn-primary'));
         });
     }
-    SetLikeClick($('.like-item'));
-
-
-window.addEventListener('orientationchange', ChangeOrientation, false);
-
-$('.widget-main').hover(function(){
-    $(this).find('.fa-relations').animate({opacity:1},200);
-    $(this).find('.fa-sitemap').animate({opacity:1},200);
-    },function(){
-    $(this).find('.fa-relations').animate({opacity:0},200);
-    $(this).find('.fa-sitemap').animate({opacity:0},200);
-});
-
-$('.fa-sitemap').click(function(){
-    $(this).closest('.topic-item').toggleClass('list-view');
-});
-/* --- */
-
-var topics = $('.dd>.dd-list>.topic-item'),
-prevTopicsHeight = [],
-topicsLen = topics.length,
-topicsHeader = topics.find('>.topic-descr>.widget-header'),
-topicsHeaderArray = [];
-
-/* заносим DOM элементы в массив для оптимизации */
-for (var i = 0; i < topicsLen ;i++){
-    topicsHeaderArray[i] = topics.eq(i).find('>.topic-descr>.widget-header');
-}
-/* ---- */
-
 /*
 ф-я определения высот топиков для того, чтобы
 делать fixed хэдеры. Параметр: индекс топика с которого
 начинать отсчет высот.
 */
-function GetTopicsHeightForFixedHeader(beginTopicIndex){
+    function GetTopicsHeightForFixedHeader(beginTopicIndex,topics,topicsLen,prevTopicsHeight){
 
     for (var i = beginTopicIndex; i < topicsLen ; i++){
         var currentIndex = i;
@@ -318,120 +305,25 @@ function GetTopicsHeightForFixedHeader(beginTopicIndex){
     }
 }
 /* --- */
-GetTopicsHeightForFixedHeader(0);
+
+
 
 /* мега раздел подгрузки и отправки сообщений  */
 
-var zeroLevelFlag = [];
-    /*
-     создаем массив флагов (каждому топику по одному флагу),
-     которые сигнализируют была ли загрузка
-     контента к топику(значение 0) или нет(значение 1)
-    */
-for(i = 0; i < $('.topic-item').length; i++){
-    zeroLevelFlag[i] = 1;
-}
-    /*
-    раскрываем топик - начинается самое интересное
-    */
-$('.topic-item>.topic-descr .plus-minus').click(function(e){
-    e.preventDefault();
-
-    if ($(this).hasClass('fa-minus')){
-        $(this).removeClass('fa-minus').addClass('fa-plus');
-    }else{
-        $(this).removeClass('fa-plus').addClass('fa-minus');
-    }
-
-    var topicItem = $(this).closest('.topic-item'),
-        topicID  = topicItem.data('topicid'),
-        currentMessages,
-        currentMessagesLength,
-        messageHtml,i;
-
-    var index = topicItem.index();
-
-    if (zeroLevelFlag[index]){
-        /* Если флаг говорит, что еще не подгружали, значит подгружаем сообщения первого уровня */
-        zeroLevelFlag[index] = 0;   // сбрасываем флаг
+    function SetMainEvents(){
+        var zeroLevelFlag = [];
         /*
-        сообщения ПЕРВОГО уровня берем от родителя с id 0 (т.е от топика)
-        */
-        currentMessages = client.getMessages(topicID,Groups[0].id,1,0,0,0,10).messages;
-        currentMessagesLength = currentMessages.length;
-        messageHtml = '';
-
-        /*
-         создаем html с сообщениями ПЕРВОГО уровня, который будем подгружать
-         для этого топика
+         создаем массив флагов (каждому топику по одному флагу),
+         которые сигнализируют была ли загрузка
+         контента к топику(значение 0) или нет(значение 1)
          */
-        for(i = 0; i < currentMessagesLength ; i++){
-            messageHtml += '<li class="dd-item dd2-item">'+
-                '<div class="dd2-content topic-descr one-message level-1 widget-body" data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
-                '<div class="widget-main">'+
-                '<div class="topic-left">'+
-                '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
-                '</div>'+
-                '<div class="topic-right">'+
-                '<div class="message-author">'+
-                '<a class="fa fa-link fa-relations" href="#" style="display: none;"></a>'+
-                '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
-                '<a href="#">Иван Грозный</a>'+
-                '</div>'+
-                '<p class="alert">'+ currentMessages[i].content+ '</p>'+
-                '<div class="likes">'+
-                '<div class="answer-date">' + currentMessages[i].created + '</div>'+
-                '<a href="#" class="like-item like">'+
-                '<i class="fa fa-thumbs-o-up"></i>'+
-                '<span>' + currentMessages[i].likesNum + '</span>'+
-                '</a>'+
-                '<a href="#" class="like-item dislike">'+
-                '<i class="fa fa-thumbs-o-down"></i>'+
-                '<span>' + currentMessages[i].unlikesNum + '</span>'+
-                '</a>'+
-                '</div>'+
-                '</div>'+
-                '</div>'+
-                '<footer class="widget-toolbox padding-4 clearfix">'+
-                '<div class="btn-group ans-btn">'+
-                '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
-                'Ответить'+
-                '<span class="icon-caret-down icon-on-right"></span>'+
-                '</button>'+
-                '<ul class="dropdown-menu dropdown-warning">'+
-                '<li>'+
-                '<a href="#">Ответить лично</a>'+
-                '</li>'+
-                '</ul>'+
-                '</div>'+
-                '<div class="answers-ctrl">'+
-                '<a class="fa fa-plus plus-minus" href="#"></a>'+
-                '<span> <span>8</span> <a href="#">(3)</a></span>'+
-                '</div>'+
-                '</footer>'+
-                '</div>'+
-                '</li>';
+        for(i = 0; i < $('.topic-item').length; i++){
+            zeroLevelFlag[i] = 1;
         }
         /*
-        и подгружаем его, в списке
-        */
-        $(this).closest('.topic-item').append('<ol class="dd-list">' + messageHtml + '</ol>');
-
-
-        var firstLevelFlag = [];
-        /*
-        создаем массив флагов сообщений ПЕРВОГО уровня,
-         аналогично флагам для топиков (см. выше)
-        */
-        for (i = 0 ; i < topicItem.find('.level-1').length; i++){
-            firstLevelFlag[i] = 1;
-        }
-
-        /*
-        событие раскрытия/скрытия сообщений остальных урвоней
-        карнавал продолжается
-        */
-        $('.one-message .plus-minus').click(function(e){
+         раскрываем топик - начинается самое интересное
+         */
+        $('.topic-item>.topic-descr .plus-minus').click(function(e){
             e.preventDefault();
 
             if ($(this).hasClass('fa-minus')){
@@ -440,30 +332,32 @@ $('.topic-item>.topic-descr .plus-minus').click(function(e){
                 $(this).removeClass('fa-plus').addClass('fa-minus');
             }
 
-            var index = $(this).closest('.level-1').parent().index();
+            var topicItem = $(this).closest('.topic-item'),
+                topicID  = topicItem.data('topicid'),
+                currentMessages,
+                currentMessagesLength,
+                messageHtml,i;
 
-            if (firstLevelFlag[index]){
+            var index = topicItem.index();
+
+            if (zeroLevelFlag[index]){
+                /* Если флаг говорит, что еще не подгружали, значит подгружаем сообщения первого уровня */
+                zeroLevelFlag[index] = 0;   // сбрасываем флаг
                 /*
-                 Если флаг стоит, значит
-                подгружаем сообщения остальных уровней
-                 для этого сообщения ПЕРВОГО уровня
-                */
-                var parentID = $(this).closest('.one-message').data('messageid');
-                var messagesPart = client.getMessages(topicID,Groups[0].id,1,parentID,0,0,10);
-                currentMessages = messagesPart.messages;
+                 сообщения ПЕРВОГО уровня берем от родителя с id 0 (т.е от топика)
+                 */
+                console.log(topicID,Groups[0].id,1,0,0,0,10);
+                currentMessages = client.getMessages(topicID,Groups[0].id,1,0,0,0,10).messages;
                 currentMessagesLength = currentMessages.length;
                 messageHtml = '';
 
                 /*
-                создаем html, который содержит в себе
-                все остальные сообщения. Html всех сообщений
-                идентичен, древовидная структура создается
-                за счет параметра offset, который есть у каждого сообщения,
-                он определяет margin-left для него.
-                */
+                 создаем html с сообщениями ПЕРВОГО уровня, который будем подгружать
+                 для этого топика
+                 */
                 for(i = 0; i < currentMessagesLength ; i++){
-                    messageHtml += '<li class="dd-item dd2-item" style="margin-left:'+currentMessages[i].offset*30+'px">'+
-                        '<div class="dd2-content topic-descr one-message widget-body" data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
+                    messageHtml += '<li class="dd-item dd2-item">'+
+                        '<div class="dd2-content topic-descr one-message level-1 widget-body" data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
                         '<div class="widget-main">'+
                         '<div class="topic-left">'+
                         '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
@@ -472,9 +366,9 @@ $('.topic-item>.topic-descr .plus-minus').click(function(e){
                         '<div class="message-author">'+
                         '<a class="fa fa-link fa-relations" href="#" style="display: none;"></a>'+
                         '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
-                        '<a href="#">Иван Грозный</a>'+
+                        '<a href="#">'+ currentMessages[i].userInfo.firstName + " " + currentMessages[i].userInfo.lastName +'</a>'+
                         '</div>'+
-                        '<p class="alert">'+ currentMessages[i].content + '</p>'+
+                        '<p class="alert">'+ currentMessages[i].content+ '</p>'+
                         '<div class="likes">'+
                         '<div class="answer-date">' + currentMessages[i].created + '</div>'+
                         '<a href="#" class="like-item like">'+
@@ -501,7 +395,7 @@ $('.topic-item>.topic-descr .plus-minus').click(function(e){
                         '</ul>'+
                         '</div>'+
                         '<div class="answers-ctrl">'+
-                        '<a class="fa fa-minus plus-minus" href="#"></a>'+
+                        '<a class="fa fa-plus plus-minus" href="#"></a>'+
                         '<span> <span>8</span> <a href="#">(3)</a></span>'+
                         '</div>'+
                         '</footer>'+
@@ -509,129 +403,373 @@ $('.topic-item>.topic-descr .plus-minus').click(function(e){
                         '</li>';
                 }
                 /*
-                и подгружаем его к нашему сообщению
-                */
-                $(this).closest('.dd-item').after(messageHtml);
+                 и подгружаем его, в списке
+                 */
+                $(this).closest('.topic-item').append('<ol class="dd-list">' + messageHtml + '</ol>');
+
+
+                var firstLevelFlag = [];
+                /*
+                 создаем массив флагов сообщений ПЕРВОГО уровня,
+                 аналогично флагам для топиков (см. выше)
+                 */
+                for (i = 0 ; i < topicItem.find('.level-1').length; i++){
+                    firstLevelFlag[i] = 1;
+                }
 
                 /*
-                событие сворачивание разворачивания для любого сообщения,
-                кроме ПЕРВОГО уровня
-                */
-                $('.one-message:not(.level-1) .plus-minus').click(function(e){
+                 событие раскрытия/скрытия сообщений остальных урвоней
+                 карнавал продолжается
+                 */
+                $('.level-1 .plus-minus').click(function(e){
                     e.preventDefault();
-                    var currentParent=$(this).closest('.one-message').data('messageid');
-                    $('.dd-list .dd-list').find('.one-message').each(function(){
-                        console.log('1');
-                        if ($(this).data('parentid') == currentParent){
-                            $(this).slideToggle();
+
+                    var index = $(this).closest('.level-1').parent().index();
+
+                    if (firstLevelFlag[index]){
+                        /*
+                         Если флаг стоит, значит
+                         подгружаем сообщения остальных уровней
+                         для этого сообщения ПЕРВОГО уровня
+                         */
+                        var parentID = $(this).closest('.one-message').data('messageid');
+                        var messagesPart = client.getMessages(topicID,Groups[0].id,1,parentID,0,0,10);
+                        currentMessages = messagesPart.messages;
+                        currentMessagesLength = currentMessages.length;
+                        messageHtml = '';
+
+                        /*
+                         создаем html, который содержит в себе
+                         все остальные сообщения. Html всех сообщений
+                         идентичен, древовидная структура создается
+                         за счет параметра offset, который есть у каждого сообщения,
+                         он определяет margin-left для него.
+                         */
+                        for(i = 0; i < currentMessagesLength ; i++){
+                            messageHtml += '<li class="dd-item dd2-item" data-offset="'+ currentMessages[i].offset +'" style="margin-left:'+currentMessages[i].offset*30+'px">'+
+                                '<div class="dd2-content topic-descr one-message widget-body state-open"  data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
+                                '<div class="widget-main">'+
+                                '<div class="topic-left">'+
+                                '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
+                                '</div>'+
+                                '<div class="topic-right">'+
+                                '<div class="message-author">'+
+                                '<a class="fa fa-link fa-relations" href="#" style="display: none;"></a>'+
+                                '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
+                                '<a href="#">'+ currentMessages[i].userInfo.firstName + " " + currentMessages[i].userInfo.lastName +'</a>'+
+                                '</div>'+
+                                '<p class="alert">'+ currentMessages[i].content + '</p>'+
+                                '<div class="likes">'+
+                                '<div class="answer-date">' + currentMessages[i].created + '</div>'+
+                                '<a href="#" class="like-item like">'+
+                                '<i class="fa fa-thumbs-o-up"></i>'+
+                                '<span>' + currentMessages[i].likesNum + '</span>'+
+                                '</a>'+
+                                '<a href="#" class="like-item dislike">'+
+                                '<i class="fa fa-thumbs-o-down"></i>'+
+                                '<span>' + currentMessages[i].unlikesNum + '</span>'+
+                                '</a>'+
+                                '</div>'+
+                                '</div>'+
+                                '</div>'+
+                                '<footer class="widget-toolbox padding-4 clearfix">'+
+                                '<div class="btn-group ans-btn">'+
+                                '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
+                                'Ответить'+
+                                '<span class="icon-caret-down icon-on-right"></span>'+
+                                '</button>'+
+                                '<ul class="dropdown-menu dropdown-warning">'+
+                                '<li>'+
+                                '<a href="#">Ответить лично</a>'+
+                                '</li>'+
+                                '</ul>'+
+                                '</div>'+
+                                '<div class="answers-ctrl">'+
+                                '<a class="fa fa-minus plus-minus" href="#"></a>'+
+                                '<span> <span>8</span> <a href="#">(3)</a></span>'+
+                                '</div>'+
+                                '</footer>'+
+                                '</div>'+
+                                '</li>';
                         }
-                    });
+                        /*
+                         и подгружаем его к нашему сообщению
+                         */
+                        $(this).closest('.dd-item').after(messageHtml);
+                     //   StaffForGoodMessagesSlide();
+
+
+/*                        function StaffForGoodMessagesSlide(){
+
+                            var i = 0,
+                                j = 0;
+                            var offset = 1;
+                            var newMessagesArray=[],
+                                messagesLen=[],
+                                currentMessage,
+                                nextMessage;
+
+                            while( true ){
+                                j = 0;
+                                newMessagesArray[offset] = [];
+                                $('.one-message:not(.level-1)').each(function(){
+                                    //alert("-- "+parseInt($(this).parent().data('offset')));
+                                    if (parseInt($(this).parent().data('offset')) == offset){
+                                        alert('1');
+                                        newMessagesArray[offset][j] = $(this);
+                                        j++
+                                    }
+                                });
+                                if (j == 0){break;}else{messagesLen[offset] = j;}
+                                offset++;
+                            }
+
+                            for(var indexOffset = 0; indexOffset < offset; indexOffset++ ){
+                                var neighborLength = 0;
+                                var commonIndex = newMessagesArray[indexOffset][0];
+
+                                var indexMessage = 0;
+                                while(indexMessage < messagesLen[indexOffset]){
+                                //for (var indexMessage = 0; indexMessage < messagesLen[indexOffset]; indexMessage++){
+
+                                    currentMessage = newMessagesArray[indexOffset][indexMessage];
+                                    nextMessage = newMessagesArray[indexOffset][indexMessage+1];
+
+                                    if (currentMessage.find('+'+nextMessage).length){
+                                        neighborLength++;
+                                        indexMessage++;
+                                    }else{
+                                        //currentMessage.index();
+                                        $('.one-message:not(.level-1):gt('+ commonIndex-1 +'):lt('+ commonIndex+neighborLength+1 +')').wrap('<span></span>');
+                                        neighborLength = 0;
+                                        //indexMessage = indexMessage+neighborLength+1;
+                                        indexMessage++;
+                                    }
+
+                                }
+                            }
+                        }*/
+
+                        /*
+                         событие сворачивание разворачивания для любого сообщения,
+                         кроме ПЕРВОГО уровня
+                         */
+                        $('.one-message:not(.level-1) .plus-minus').click(function(e){
+                            e.preventDefault();
+
+                            var beginIndex = 0,
+                                endIndex = 0,
+                                topOffset = $(this).closest('.one-message').parent().data('offset'),
+                                indexMessage = $(this).closest('.one-message').parent().index();
+                            //alert('клик на второй уровень');
+                            var currentParent=$(this).closest('.one-message').data('messageid');
+                            currentMessages = $('.dd-list .dd-list').find('.one-message:not(level-1)');
+
+                            var plusMinus = $(this);
+                            currentMessages.each(function(){
+                                if (parseInt($(this).parent().data('offset')) > topOffset){
+
+                                    if (plusMinus.hasClass('fa-plus')){
+
+                                        if ($(this).data('parentid') == currentParent){
+                                            $(this).parent().slideToggle();
+                                            $(this).toggleClass('state-open');
+                                        }else{
+                                            if ($(this).hasClass('state-open')){
+                                                $(this).parent().slideDown();
+                                            }/*else{
+                                             $(this).parent().slideUp();
+                                             }*/
+                                        }
+
+                                    }else{
+                                        if ($(this).data('parentid') == currentParent){
+                                            $(this).toggleClass('state-open');
+                                        }
+                                        $(this).parent().slideUp();
+                                    }
+
+                                    /*if (!beginIndex){
+                                        beginIndex = $(this).parent().index();
+                                    }
+                                    endIndex = $(this).parent().index();*/
+                                }
+                            });
+                            //currentMessages.parent().slice(beginIndex,endIndex+1).slideToggle(200);
+                            /*if ($(this).hasClass('fa-plus')){
+                                currentMessages.parent().slice(beginIndex,endIndex+1).slideDown(200);
+                            }else{
+                                currentMessages.parent().slice(beginIndex,endIndex+1).slideUp(200);
+                            }*/
+
+                            if ($(this).hasClass('fa-minus')){
+                                $(this).removeClass('fa-minus').addClass('fa-plus');
+                            }else{
+                                $(this).removeClass('fa-plus').addClass('fa-minus');
+                            }
+
+                            var currentTopicIndex = $(this).closest('.topic-item').index();
+                            GetTopicsHeightForFixedHeader(currentTopicIndex+1,topics,topicsLen,prevTopicsHeight);
+                        });
+
+                        /* появление wysiwig редактора (для остальных сообщений) */
+                        SetShowEditorClick($('.one-message:not(.level-1)').find('.ans-btn.btn-group'));
+                        /* --- */
+                        SetLikeClick($('.one-message:not(.level-1) .like-item'));
+                        firstLevelFlag[index] = 0;
+                    }else{
+                        /*
+                         Иначе сворачиваем-разворачиваем сообщения
+                         Кого свернуть-развернуть смотрим с помощью параметра parentId
+                         */
+                        var currentParent=$(this).closest('.one-message').data('messageid');
+                        var beginIndex = 0,
+                            endIndex = 0,
+                          //  messageIndex = $(this).closest('.one-message').parent().index();
+                        //alert(messageIndex);
+                            currentMessages = $('.dd-list .dd-list').find('.one-message');
+                        //alert('клик на первый уровень');
+                        var plusMinus = $(this);
+                        currentMessages.each(function(){
+                            if (parseInt($(this).parent().data('offset')) > 0){
+
+                                if (plusMinus.hasClass('fa-plus')){
+
+                                    if ($(this).data('parentid') == currentParent){
+                                        $(this).parent().slideToggle();
+                                        $(this).toggleClass('state-open');
+                                    }else{
+                                        if ($(this).hasClass('state-open')){
+                                            $(this).parent().slideDown();
+                                        }/*else{
+                                            $(this).parent().slideUp();
+                                        }*/
+                                    }
+
+                                }else{
+                                    if ($(this).data('parentid') == currentParent){
+                                        $(this).toggleClass('state-open');
+                                    }
+                                    $(this).parent().slideUp();
+                                }
+
+
+
+                               /* if (!beginIndex){
+                                    beginIndex = $(this).parent().index();
+                                }
+                                endIndex = $(this).parent().index();*/
+                            }
+                        });
+                        //alert(endIndex);
+                        //currentMessages.parent().slice(beginIndex,endIndex+1).slideToggle();
+
+                        /*if ($(this).hasClass('fa-plus')){
+                            currentMessages.parent().slice(beginIndex,endIndex+1).slideDown();
+                        }else{
+                            currentMessages.parent().slice(beginIndex,endIndex+1).slideUp();
+                        }*/
+                    }
+
 
                     if ($(this).hasClass('fa-minus')){
                         $(this).removeClass('fa-minus').addClass('fa-plus');
                     }else{
                         $(this).removeClass('fa-plus').addClass('fa-minus');
                     }
-
-                    var currentTopicIndex = $(this).closest('.topic-item').index();
-                    GetTopicsHeightForFixedHeader(currentTopicIndex+1);
                 });
-
-                /* появление wysiwig редактора (для остальных сообщений) */
-                SetShowEditorClick($('.one-message:not(.level-1)').find('.ans-btn.btn-group'));
-                /* --- */
-                SetLikeClick($('.one-message:not(.level-1) .like-item'));
-                firstLevelFlag[index] = 0;
-            }else{
                 /*
-                Иначе сворачиваем-разворачиваем сообщения
-                 Кого свернуть-развернуть смотрим с помощью параметра parentId
-                */
-                var currentParent=$(this).closest('.one-message').data('messageid');
-                $('.dd-list .dd-list').find('.one-message').each(function(){
-                    console.log('1');
-                    if ($(this).data('parentid') == currentParent){
-                        $(this).slideToggle();
-                    }
+                 событие появления wysiwig редактора для сообщений 1го уровня
+                 (можно вынести в функцию, т.к повторяется)
+                 */
+                SetShowEditorClick($('.level-1 .ans-btn.btn-group'));
+                SetLikeClick(topicItem.find('.level-1 .like-item'));
+
+            } else {
+                /*
+                 Если контент уже был загружен, то просто
+                 скрываем раскрываем сообщения ПЕРВОГО уроввня для данного топика
+                 и пересчитываем высоты для fixed хэдеров.
+                 */
+                $(this).closest('.dd2-item').find('>.dd-list').slideToggle(200,function(){
+                    var currentTopicIndex = $(this).closest('.topic-item').index();
+                    GetTopicsHeightForFixedHeader(currentTopicIndex+1,topics,topicsLen,prevTopicsHeight);
                 });
             }
         });
-        /*
-         событие появления wysiwig редактора для сообщений 1го уровня
-         (можно вынести в функцию, т.к повторяется)
-         */
-        SetShowEditorClick($('.level-1 .ans-btn.btn-group'));
-        SetLikeClick(topicItem.find('.level-1 .like-item'));
+        /* появление wysiwig редактора (для топиков) */
+        SetShowEditorClick($('.ans-btn.btn-group'));
+        /* --- */
+        SetLikeClick($('.like-item'));
 
-    } else {
-        /*
-         Если контент уже был загружен, то просто
-        скрываем раскрываем сообщения ПЕРВОГО уроввня для данного топика
-        и пересчитываем высоты для fixed хэдеров.
-        */
-        $(this).closest('.dd2-item').find('>.dd-list').slideToggle(200,function(){
-            var currentTopicIndex = $(this).closest('.topic-item').index();
-            GetTopicsHeightForFixedHeader(currentTopicIndex+1);
+        var topics = $('.dd>.dd-list>.topic-item'),
+            prevTopicsHeight = [],
+            topicsLen = topics.length,
+            topicsHeader = topics.find('>.topic-descr>.widget-header'),
+            topicsHeaderArray = [];
+
+        /* заносим DOM элементы в массив для оптимизации */
+        for (var i = 0; i < topicsLen ;i++){
+            topicsHeaderArray[i] = topics.eq(i).find('>.topic-descr>.widget-header');
+        }
+        /* ---- */
+
+        GetTopicsHeightForFixedHeader(0,topics,topicsLen,prevTopicsHeight);
+
+        var staffCounterForGoodTopicsHeight = 0;
+        $(window).scroll(function(){
+            // console.log($(this).scrollTop());
+            var scrollTop = $(this).scrollTop();
+
+            //убираем сайдбар при прокрутке
+            if (w.width()>785){
+                if (scrollTop > 270){
+                    $('.sidebar').hide();
+                    $('.main-content').css('margin-left','0');
+                    $('.widget-header h2').css('min-width','996px');
+                    staffCounterForGoodTopicsHeight++;
+                }else {
+                    $('.sidebar').show();
+                    $('.main-content').css('margin-left','190px');
+                    $('.widget-header h2').css('min-width','805px');
+                    staffCounterForGoodTopicsHeight=0;
+                }
+            }
+            if (staffCounterForGoodTopicsHeight == 1){
+                GetTopicsHeightForFixedHeader(0,topics,topicsLen,prevTopicsHeight);
+            }
+
+            // фиксация хэдера темы, если много сообщений
+
+            /*
+             верхний цикл: обход всех раскрытых топиков
+             */
+            for (var i = 0; i < topicsLen ; i++){
+                var currentIndex = i;
+                //console.log(scrollTop+'--'+prevTopicsHeight[i]);
+
+                /*
+                 здесь сравниваем: если прокрутка больше чем высота всех
+                 предшествующих топиков, то хэдер этого раскрытого топика
+                 становится в состояние fixed
+                 */
+
+                if (scrollTop > prevTopicsHeight[i]){
+                    topicsHeaderArray[currentIndex].addClass('fixed');
+                    topicsHeader.css('margin-right',asideWidth+10);////width('1206');
+                    if (scrollTop<270){
+                        topicsHeader.css('margin-right',asideWidth+10);////width('1014');
+                    }
+                }else{
+                    topicsHeaderArray[currentIndex].removeClass('fixed').css('margin-right',0);
+                }
+            }
         });
     }
-});
+    SetMainEvents();
 
 /* конец мега раздела */
 
-var staffCounterForGoodTopicsHeight = 0;
-
-$(window).scroll(function(){
-    // console.log($(this).scrollTop());
-    var scrollTop = $(this).scrollTop();
-
-    //убираем сайдбар при прокрутке
-    if (w.width()>785){
-        if (scrollTop > 270){
-            $('.sidebar').hide();
-            $('.main-content').css('margin-left','0');
-            $('.widget-header h2').css('min-width','996px');
-            staffCounterForGoodTopicsHeight++;
-        }else {
-            $('.sidebar').show();
-            $('.main-content').css('margin-left','190px');
-            $('.widget-header h2').css('min-width','805px');
-            staffCounterForGoodTopicsHeight=0;
-        }
-    }
-    if (staffCounterForGoodTopicsHeight == 1){
-        GetTopicsHeightForFixedHeader(0);
-    }
-
-    // фиксация хэдера темы, если много сообщений
-
-    /*
-     верхний цикл: обход всех раскрытых топиков
-     */
-    for (var i = 0; i < topicsLen ; i++){
-        var currentIndex = i;
-        //console.log(scrollTop+'--'+prevTopicsHeight[i]);
-
-        /*
-         здесь сравниваем: если прокрутка больше чем высота всех
-         предшествующих топиков, то хэдер этого раскрытого топика
-         становится в состояние fixed
-         */
-
-        if (scrollTop > prevTopicsHeight[i]){
-            topicsHeaderArray[currentIndex].addClass('fixed');
-            topicsHeader.css('margin-right',asideWidth+10);////width('1206');
-            if (scrollTop<270){
-                topicsHeader.css('margin-right',asideWidth+10);////width('1014');
-            }
-        }else{
-            topicsHeaderArray[currentIndex].removeClass('fixed').css('margin-right',0);
-        }
-    }
-});
-
-/* появление wysiwig редактора (для топиков) */
-    SetShowEditorClick($('.ans-btn.btn-group'));
-/* --- */
 /*
 -----------------------------------------------------------
 АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ ССЫЛКИ В СТРОКЕ
@@ -664,12 +802,6 @@ function AutoReplaceLinkAndVideo(str) {
 
 /* ------------ */
 
-/* Включение дерева (а нужно ли теперь ?) */
-$('.dd').nestable();
 
-$('.dd-handle a').on('mousedown', function(e){
-    e.stopPropagation();
-});
-/* --- */
 });
 

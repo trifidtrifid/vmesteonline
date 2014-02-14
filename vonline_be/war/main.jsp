@@ -37,7 +37,7 @@
     //MessageType mesType = MessageType.BASE;
 
     TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,20);
-    //out.print(Topics.topics.get(0).userInfo.rating);
+    //out.print(Topics.totalSize);
 
     pageContext.setAttribute("groups",Groups);
     pageContext.setAttribute("rubrics",Rubrics);
@@ -152,7 +152,7 @@
                 <ul class="nav nav-list">
                 
                 <c:forEach var="rubric" items="${rubrics}">
-                  	<li><a href="#">
+                  	<li><a href="#" data-rubricid="${rubric.id}">
                   		<span class="menu-text">${rubric.visibleName}</span>
                         <b>(3)</b>                  	
                   	</a></li> 
@@ -164,7 +164,7 @@
                 <nav class="submenu">                
                     <ul>                    
                     <c:forEach var="group" items="${groups}">
-                    	<li><a class="btn btn-sm btn-info no-border" data-groupID="${group.id}" href="#">${group.visibleName}</a></li>
+                    	<li><a class="btn btn-sm btn-info no-border" data-groupid="${group.id}" href="#">${group.visibleName}</a></li>
                     </c:forEach>
                     	<li class="btn-group">
                     	<button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
@@ -235,7 +235,7 @@
                                 <li class="dd-item dd2-item topic-item" data-topicid="${topic.id}">
                                     <div class="dd2-content widget-box topic-descr">
                                         <header class="widget-header header-color-blue2">
-                                            <span class="topic-header-date">01.04.2014 10:10</span>
+                                            <span class="topic-header-date">${topic.message.created}</span>
                                         <span class="topic-header-left">
                                             <i class="fa fa-minus"></i>
                                             <i class="fa fa-sitemap"></i>
@@ -293,7 +293,7 @@
                                                     </ul>
                                                 </div>
                                                 <div class="answers-ctrl">
-                                                    <a class="fa fa-plus plus-minus" href="#"></a>
+                                                    <a class="fa fa-plus plus-minus <c:if test="${topic.messageNum == 0}">hide</c:if>" href="#"></a>
                                                     <span> <span>${topic.messageNum}</span> <a href="#">(3)</a></span>
                                                 </div>
                                                 <div class="topic-statistic">
@@ -350,9 +350,6 @@
 <script src="js/ace-elements.min.js"></script>
 
 <!-- конкретные плагины -->
-
-    <!-- библиотека для дерева сообщений -->
-<script src="js/jquery.nestable.min.js"></script>
 
     <!-- библиотеки для wysiwig редактора  -->
 <script src="js/jquery-ui-1.10.3.custom.min.js"></script>

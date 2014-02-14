@@ -349,9 +349,6 @@ h1 {
   vertical-align: middle;
   margin-left: 10px;
 }
-.topic-item .topic-descr.one-message {
-  margin: 10px 0 10px 0;
-}
 .topic-item .topic-descr.one-message .answer-date {
   color: #808080;
   float: left;
@@ -409,6 +406,10 @@ h1 {
 }
 .dd>.dd-list>.topic-item.list-view>.dd-list {
   padding-left: 30px;
+}
+.dd-item {
+  min-height: 0;
+  margin: 10px 0;
 }
 .wysiwyg-editor a {
   cursor: pointer;

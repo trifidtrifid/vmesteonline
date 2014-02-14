@@ -42,7 +42,8 @@ $(document).ready(function(){
         var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
         messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
         //alert(messageWithGoodLinks);
-        client.createTopic(Groups[1].id,head,1,messageWithGoodLinks,0,0,Rubrics[0].id,1);
+        //alert(Groups[0].id);
+        client.createTopic(Groups[0].id,head,1,messageWithGoodLinks,0,0,Rubrics[0].id,1);
         document.location.replace("/main.jsp");
     });
 
