@@ -15,6 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -22,6 +23,7 @@ import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.shop.Producer;
 import com.vmesteonline.be.utils.StorageHelper;
+import com.vmesteonline.be.utils.VoHelper;
 
 @PersistenceCapable
 public class VoProducer {
@@ -141,10 +143,23 @@ public class VoProducer {
 	public Set<VoShop> getShops() {
 		return shops;
 	}
+	
 
 	@Override
 	public String toString() {
 		return "VoProducer [id=" + id + ", name=" + name + "]";
 	}
 
+	public void update(Producer newInfoWithOldId, PersistenceManager pm) throws InvalidOperation {
+		this.id = KeyFactory.createKey(this.getClass().getSimpleName(), newInfoWithOldId.id);
+		try {
+			VoHelper.copyIfNotNull(this, "descr", newInfoWithOldId.descr);
+			VoHelper.replaceURL(this, "homeURL", newInfoWithOldId.homeURL);
+			VoHelper.replaceURL(this, "logoURL", newInfoWithOldId.logoURL);
+			VoHelper.copyIfNotNull(this, "name", newInfoWithOldId.name);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+			throw new InvalidOperation( VoError.IncorrectParametrs, "Failed to update Producer:"+e.getMessage());
+		}
+	}
 }

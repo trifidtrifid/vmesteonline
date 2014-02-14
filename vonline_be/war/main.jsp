@@ -37,6 +37,7 @@
     //MessageType mesType = MessageType.BASE;
 
     TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,20);
+    //out.print(Topics.topics.get(0).userInfo.rating);
 
     pageContext.setAttribute("groups",Groups);
     pageContext.setAttribute("rubrics",Rubrics);
@@ -252,7 +253,7 @@
                                                 <div class="topic-left">
                                                     <a href="#"><img src="i/avatars/clint.jpg" alt="картинка"/></a>
                                                     <div class="topic-author">
-                                                        <a href="#">Иван Грозный</a>
+                                                        <a href="#">${topic.userInfo.firstName} ${topic.userInfo.lastName}</a>
                                                         <div class="author-rating">
                                                             <a href="#" class="fa fa-star"></a>
                                                             <a class="fa fa-star" href="#"></a>

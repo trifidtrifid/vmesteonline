@@ -33,9 +33,13 @@ import com.vmesteonline.be.Street;
 import com.vmesteonline.be.Topic;
 import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.VoError;
+import com.vmesteonline.be.shop.DataSet;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
+import com.vmesteonline.be.shop.ExchangeFieldType;
 import com.vmesteonline.be.shop.FullProductInfo;
+import com.vmesteonline.be.shop.ImExType;
+import com.vmesteonline.be.shop.ImportElement;
 import com.vmesteonline.be.shop.Order;
 import com.vmesteonline.be.shop.OrderDetails;
 import com.vmesteonline.be.shop.OrderLine;
@@ -829,4 +833,36 @@ public class ShopServiceImplTest {
 				fail("Exception thrown: " + e.getMessage());
 			}
 	  }
+	
+	@Test
+	public void testDataImportTest(){
+		DataSet ds = new DataSet();
+		ds.date = (int)(System.currentTimeMillis()/1000L);
+		ds.name =" Producers UPDATE Test";
+		
+		List<ExchangeFieldType> fieldsOrder = new ArrayList<ExchangeFieldType>();
+		fieldsOrder.add(ExchangeFieldType.PRODUCER_NAME);
+		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
+		fieldsOrder.add(ExchangeFieldType.PRODUCER_LOGOURL);
+		fieldsOrder.add(ExchangeFieldType.PRODUCER_DESCRIPTION);
+		
+		ImportElement importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", fieldsOrder );
+		importData.setFileData(("Производитель 1, http://yandex.ru/, \"HTTP://ya.ru/logo.gif\", \"Длинный текст описания, с заятыми...\"\n"
+				+ "Производитель 2, http://google.ru/, \"HTTP://google.ru/logo.gif\", \"JОпять и снова, Длинный текст описания, с заятыми...\"\n").getBytes());
+		
+		ds.addToData( importData );
+		try {
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+
+			Long id = si.registerShop(shop);
+			Shop savedShop = si.getShop(id);
+			
+			DataSet importData2 = si.importData(ds);
+			List<Producer> producers = si.getProducers();
+			Assert.assertEquals(producers.size(), 2);
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Import failed!" + e);
+		}
+	}
 }
