@@ -117,11 +117,10 @@ enum ExchangeFieldType {
 	DATE_TYPE=400, DATE_DATE,
 	
 	ORDER_ID = 1000, ORDER_DATE, ORDER_STATUS, ORDER_PRICE_TYPE, ORDER_TOTAL_COST, 
-	ORDER_CREATED, ORDER_DELIVERY_TYPE, ORDER_DELIVERY_COST, ORDER_DELIVERY_ADDRESS,ORDER_PAYMENT_TYPE, ORDER_PAYMENT_STATUS,
-	ORDER_COMMENT,
+	ORDER_CREATED, ORDER_DELIVERY_TYPE, ORDER_DELIVERY_COST, ORDER_DELIVERY_ADDRESS, ORDER_PAYMENT_TYPE, ORDER_PAYMENT_STATUS,
+	ORDER_COMMENT, ORDER_USER_ID, ORDER_USER_NAME
 	
-//ORDER LINES CONTAINS OPRDER_ID, PRODUCT_ID, PRODUCT_NAME, PRODUCER_ID, PRODUCER_NAME,    	
-	ORDER_LINE_QUANTITY = 1100, ORDER_LINE_PRICE,
+	ORDER_LINE_ID = 1100, ORDER_LINE_QUANTITY, ORDER_LINE_OPRDER_ID, ORDER_LINE_PRODUCT_ID, ORDER_LINE_PRODUCT_NAME, ORDER_LINE_PRODUCER_ID, ORDER_LINE_PRODUCER_NAME ORDER_LINE_PRICE,
 } 
 
 enum ImExType { IMPORT_SHOP = 10, IMPORT_PRODUCERS, IMPORT_CATEGORIES, IMPORT_PRODUCTS, 
@@ -149,6 +148,7 @@ service ShopService {
 	i64 registerShop( 1:Shop shop) throws (1:error.InvalidOperation exc),
 	i64 registerProductCategory( 1:ProductCategory productCategory, 2:i64 shopId) throws (1:error.InvalidOperation exc),
 	i64 registerProducer( 1:Producer producer, 2:i64 shopId, ) throws (1:error.InvalidOperation exc),
+	i64 registerProduct( 1:FullProductInfo fpi, 2:i64 shopId ) throws (1:error.InvalidOperation exc),
 	
 	/**
 	* Method uploads products to the shop that by parameter shopId. All value of image URLS may contain a JPEG image data or HTTP url 

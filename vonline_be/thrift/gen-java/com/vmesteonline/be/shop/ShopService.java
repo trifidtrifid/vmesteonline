@@ -42,6 +42,8 @@ public class ShopService {
 
     public long registerProducer(Producer producer, long shopId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
+    public long registerProduct(FullProductInfo fpi, long shopId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+
     /**
      * Method uploads products to the shop that by parameter shopId. All value of image URLS may contain a JPEG image data or HTTP url
      * to pull the image from.
@@ -225,6 +227,8 @@ public class ShopService {
 
     public void registerProducer(Producer producer, long shopId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
+    public void registerProduct(FullProductInfo fpi, long shopId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
     public void uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void uploadProductCategoies(List<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
@@ -403,6 +407,33 @@ public class ShopService {
         throw result.exc;
       }
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "registerProducer failed: unknown result");
+    }
+
+    public long registerProduct(FullProductInfo fpi, long shopId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    {
+      send_registerProduct(fpi, shopId);
+      return recv_registerProduct();
+    }
+
+    public void send_registerProduct(FullProductInfo fpi, long shopId) throws org.apache.thrift.TException
+    {
+      registerProduct_args args = new registerProduct_args();
+      args.setFpi(fpi);
+      args.setShopId(shopId);
+      sendBase("registerProduct", args);
+    }
+
+    public long recv_registerProduct() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    {
+      registerProduct_result result = new registerProduct_result();
+      receiveBase(result, "registerProduct");
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      if (result.exc != null) {
+        throw result.exc;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "registerProduct failed: unknown result");
     }
 
     public List<Long> uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
@@ -1520,6 +1551,41 @@ public class ShopService {
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
         return (new Client(prot)).recv_registerProducer();
+      }
+    }
+
+    public void registerProduct(FullProductInfo fpi, long shopId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      registerProduct_call method_call = new registerProduct_call(fpi, shopId, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class registerProduct_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private FullProductInfo fpi;
+      private long shopId;
+      public registerProduct_call(FullProductInfo fpi, long shopId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.fpi = fpi;
+        this.shopId = shopId;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("registerProduct", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        registerProduct_args args = new registerProduct_args();
+        args.setFpi(fpi);
+        args.setShopId(shopId);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public long getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_registerProduct();
       }
     }
 
@@ -2847,6 +2913,7 @@ public class ShopService {
       processMap.put("registerShop", new registerShop());
       processMap.put("registerProductCategory", new registerProductCategory());
       processMap.put("registerProducer", new registerProducer());
+      processMap.put("registerProduct", new registerProduct());
       processMap.put("uploadProducts", new uploadProducts());
       processMap.put("uploadProductCategoies", new uploadProductCategoies());
       processMap.put("getFullOrders", new getFullOrders());
@@ -2956,6 +3023,31 @@ public class ShopService {
         registerProducer_result result = new registerProducer_result();
         try {
           result.success = iface.registerProducer(args.producer, args.shopId);
+          result.setSuccessIsSet(true);
+        } catch (com.vmesteonline.be.InvalidOperation exc) {
+          result.exc = exc;
+        }
+        return result;
+      }
+    }
+
+    public static class registerProduct<I extends Iface> extends org.apache.thrift.ProcessFunction<I, registerProduct_args> {
+      public registerProduct() {
+        super("registerProduct");
+      }
+
+      public registerProduct_args getEmptyArgsInstance() {
+        return new registerProduct_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public registerProduct_result getResult(I iface, registerProduct_args args) throws org.apache.thrift.TException {
+        registerProduct_result result = new registerProduct_result();
+        try {
+          result.success = iface.registerProduct(args.fpi, args.shopId);
           result.setSuccessIsSet(true);
         } catch (com.vmesteonline.be.InvalidOperation exc) {
           result.exc = exc;
@@ -3919,6 +4011,7 @@ public class ShopService {
       processMap.put("registerShop", new registerShop());
       processMap.put("registerProductCategory", new registerProductCategory());
       processMap.put("registerProducer", new registerProducer());
+      processMap.put("registerProduct", new registerProduct());
       processMap.put("uploadProducts", new uploadProducts());
       processMap.put("uploadProductCategoies", new uploadProductCategoies());
       processMap.put("getFullOrders", new getFullOrders());
@@ -4132,6 +4225,64 @@ public class ShopService {
 
       public void start(I iface, registerProducer_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
         iface.registerProducer(args.producer, args.shopId,resultHandler);
+      }
+    }
+
+    public static class registerProduct<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, registerProduct_args, Long> {
+      public registerProduct() {
+        super("registerProduct");
+      }
+
+      public registerProduct_args getEmptyArgsInstance() {
+        return new registerProduct_args();
+      }
+
+      public AsyncMethodCallback<Long> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<Long>() { 
+          public void onComplete(Long o) {
+            registerProduct_result result = new registerProduct_result();
+            result.success = o;
+            result.setSuccessIsSet(true);
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            registerProduct_result result = new registerProduct_result();
+            if (e instanceof com.vmesteonline.be.InvalidOperation) {
+                        result.exc = (com.vmesteonline.be.InvalidOperation) e;
+                        result.setExcIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, registerProduct_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
+        iface.registerProduct(args.fpi, args.shopId,resultHandler);
       }
     }
 
@@ -8975,6 +9126,919 @@ public class ShopService {
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, registerProducer_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.success = iprot.readI64();
+          struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.exc = new com.vmesteonline.be.InvalidOperation();
+          struct.exc.read(iprot);
+          struct.setExcIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class registerProduct_args implements org.apache.thrift.TBase<registerProduct_args, registerProduct_args._Fields>, java.io.Serializable, Cloneable, Comparable<registerProduct_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("registerProduct_args");
+
+    private static final org.apache.thrift.protocol.TField FPI_FIELD_DESC = new org.apache.thrift.protocol.TField("fpi", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+    private static final org.apache.thrift.protocol.TField SHOP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("shopId", org.apache.thrift.protocol.TType.I64, (short)2);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new registerProduct_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new registerProduct_argsTupleSchemeFactory());
+    }
+
+    public FullProductInfo fpi; // required
+    public long shopId; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      FPI((short)1, "fpi"),
+      SHOP_ID((short)2, "shopId");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // FPI
+            return FPI;
+          case 2: // SHOP_ID
+            return SHOP_ID;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __SHOPID_ISSET_ID = 0;
+    private byte __isset_bitfield = 0;
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.FPI, new org.apache.thrift.meta_data.FieldMetaData("fpi", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, FullProductInfo.class)));
+      tmpMap.put(_Fields.SHOP_ID, new org.apache.thrift.meta_data.FieldMetaData("shopId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(registerProduct_args.class, metaDataMap);
+    }
+
+    public registerProduct_args() {
+    }
+
+    public registerProduct_args(
+      FullProductInfo fpi,
+      long shopId)
+    {
+      this();
+      this.fpi = fpi;
+      this.shopId = shopId;
+      setShopIdIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public registerProduct_args(registerProduct_args other) {
+      __isset_bitfield = other.__isset_bitfield;
+      if (other.isSetFpi()) {
+        this.fpi = new FullProductInfo(other.fpi);
+      }
+      this.shopId = other.shopId;
+    }
+
+    public registerProduct_args deepCopy() {
+      return new registerProduct_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.fpi = null;
+      setShopIdIsSet(false);
+      this.shopId = 0;
+    }
+
+    public FullProductInfo getFpi() {
+      return this.fpi;
+    }
+
+    public registerProduct_args setFpi(FullProductInfo fpi) {
+      this.fpi = fpi;
+      return this;
+    }
+
+    public void unsetFpi() {
+      this.fpi = null;
+    }
+
+    /** Returns true if field fpi is set (has been assigned a value) and false otherwise */
+    public boolean isSetFpi() {
+      return this.fpi != null;
+    }
+
+    public void setFpiIsSet(boolean value) {
+      if (!value) {
+        this.fpi = null;
+      }
+    }
+
+    public long getShopId() {
+      return this.shopId;
+    }
+
+    public registerProduct_args setShopId(long shopId) {
+      this.shopId = shopId;
+      setShopIdIsSet(true);
+      return this;
+    }
+
+    public void unsetShopId() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SHOPID_ISSET_ID);
+    }
+
+    /** Returns true if field shopId is set (has been assigned a value) and false otherwise */
+    public boolean isSetShopId() {
+      return EncodingUtils.testBit(__isset_bitfield, __SHOPID_ISSET_ID);
+    }
+
+    public void setShopIdIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SHOPID_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case FPI:
+        if (value == null) {
+          unsetFpi();
+        } else {
+          setFpi((FullProductInfo)value);
+        }
+        break;
+
+      case SHOP_ID:
+        if (value == null) {
+          unsetShopId();
+        } else {
+          setShopId((Long)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case FPI:
+        return getFpi();
+
+      case SHOP_ID:
+        return Long.valueOf(getShopId());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case FPI:
+        return isSetFpi();
+      case SHOP_ID:
+        return isSetShopId();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof registerProduct_args)
+        return this.equals((registerProduct_args)that);
+      return false;
+    }
+
+    public boolean equals(registerProduct_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_fpi = true && this.isSetFpi();
+      boolean that_present_fpi = true && that.isSetFpi();
+      if (this_present_fpi || that_present_fpi) {
+        if (!(this_present_fpi && that_present_fpi))
+          return false;
+        if (!this.fpi.equals(that.fpi))
+          return false;
+      }
+
+      boolean this_present_shopId = true;
+      boolean that_present_shopId = true;
+      if (this_present_shopId || that_present_shopId) {
+        if (!(this_present_shopId && that_present_shopId))
+          return false;
+        if (this.shopId != that.shopId)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    @Override
+    public int compareTo(registerProduct_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetFpi()).compareTo(other.isSetFpi());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetFpi()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.fpi, other.fpi);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetShopId()).compareTo(other.isSetShopId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetShopId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.shopId, other.shopId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("registerProduct_args(");
+      boolean first = true;
+
+      sb.append("fpi:");
+      if (this.fpi == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.fpi);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("shopId:");
+      sb.append(this.shopId);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+      if (fpi != null) {
+        fpi.validate();
+      }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+        __isset_bitfield = 0;
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class registerProduct_argsStandardSchemeFactory implements SchemeFactory {
+      public registerProduct_argsStandardScheme getScheme() {
+        return new registerProduct_argsStandardScheme();
+      }
+    }
+
+    private static class registerProduct_argsStandardScheme extends StandardScheme<registerProduct_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, registerProduct_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // FPI
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.fpi = new FullProductInfo();
+                struct.fpi.read(iprot);
+                struct.setFpiIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 2: // SHOP_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.shopId = iprot.readI64();
+                struct.setShopIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, registerProduct_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.fpi != null) {
+          oprot.writeFieldBegin(FPI_FIELD_DESC);
+          struct.fpi.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldBegin(SHOP_ID_FIELD_DESC);
+        oprot.writeI64(struct.shopId);
+        oprot.writeFieldEnd();
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class registerProduct_argsTupleSchemeFactory implements SchemeFactory {
+      public registerProduct_argsTupleScheme getScheme() {
+        return new registerProduct_argsTupleScheme();
+      }
+    }
+
+    private static class registerProduct_argsTupleScheme extends TupleScheme<registerProduct_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, registerProduct_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetFpi()) {
+          optionals.set(0);
+        }
+        if (struct.isSetShopId()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetFpi()) {
+          struct.fpi.write(oprot);
+        }
+        if (struct.isSetShopId()) {
+          oprot.writeI64(struct.shopId);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, registerProduct_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.fpi = new FullProductInfo();
+          struct.fpi.read(iprot);
+          struct.setFpiIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.shopId = iprot.readI64();
+          struct.setShopIdIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class registerProduct_result implements org.apache.thrift.TBase<registerProduct_result, registerProduct_result._Fields>, java.io.Serializable, Cloneable, Comparable<registerProduct_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("registerProduct_result");
+
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I64, (short)0);
+    private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new registerProduct_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new registerProduct_resultTupleSchemeFactory());
+    }
+
+    public long success; // required
+    public com.vmesteonline.be.InvalidOperation exc; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SUCCESS((short)0, "success"),
+      EXC((short)1, "exc");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          case 1: // EXC
+            return EXC;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __SUCCESS_ISSET_ID = 0;
+    private byte __isset_bitfield = 0;
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+      tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(registerProduct_result.class, metaDataMap);
+    }
+
+    public registerProduct_result() {
+    }
+
+    public registerProduct_result(
+      long success,
+      com.vmesteonline.be.InvalidOperation exc)
+    {
+      this();
+      this.success = success;
+      setSuccessIsSet(true);
+      this.exc = exc;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public registerProduct_result(registerProduct_result other) {
+      __isset_bitfield = other.__isset_bitfield;
+      this.success = other.success;
+      if (other.isSetExc()) {
+        this.exc = new com.vmesteonline.be.InvalidOperation(other.exc);
+      }
+    }
+
+    public registerProduct_result deepCopy() {
+      return new registerProduct_result(this);
+    }
+
+    @Override
+    public void clear() {
+      setSuccessIsSet(false);
+      this.success = 0;
+      this.exc = null;
+    }
+
+    public long getSuccess() {
+      return this.success;
+    }
+
+    public registerProduct_result setSuccess(long success) {
+      this.success = success;
+      setSuccessIsSet(true);
+      return this;
+    }
+
+    public void unsetSuccess() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return EncodingUtils.testBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SUCCESS_ISSET_ID, value);
+    }
+
+    public com.vmesteonline.be.InvalidOperation getExc() {
+      return this.exc;
+    }
+
+    public registerProduct_result setExc(com.vmesteonline.be.InvalidOperation exc) {
+      this.exc = exc;
+      return this;
+    }
+
+    public void unsetExc() {
+      this.exc = null;
+    }
+
+    /** Returns true if field exc is set (has been assigned a value) and false otherwise */
+    public boolean isSetExc() {
+      return this.exc != null;
+    }
+
+    public void setExcIsSet(boolean value) {
+      if (!value) {
+        this.exc = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((Long)value);
+        }
+        break;
+
+      case EXC:
+        if (value == null) {
+          unsetExc();
+        } else {
+          setExc((com.vmesteonline.be.InvalidOperation)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return Long.valueOf(getSuccess());
+
+      case EXC:
+        return getExc();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      case EXC:
+        return isSetExc();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof registerProduct_result)
+        return this.equals((registerProduct_result)that);
+      return false;
+    }
+
+    public boolean equals(registerProduct_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true;
+      boolean that_present_success = true;
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (this.success != that.success)
+          return false;
+      }
+
+      boolean this_present_exc = true && this.isSetExc();
+      boolean that_present_exc = true && that.isSetExc();
+      if (this_present_exc || that_present_exc) {
+        if (!(this_present_exc && that_present_exc))
+          return false;
+        if (!this.exc.equals(that.exc))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    @Override
+    public int compareTo(registerProduct_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetExc()).compareTo(other.isSetExc());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetExc()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.exc, other.exc);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("registerProduct_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      sb.append(this.success);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("exc:");
+      if (this.exc == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.exc);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+        __isset_bitfield = 0;
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class registerProduct_resultStandardSchemeFactory implements SchemeFactory {
+      public registerProduct_resultStandardScheme getScheme() {
+        return new registerProduct_resultStandardScheme();
+      }
+    }
+
+    private static class registerProduct_resultStandardScheme extends StandardScheme<registerProduct_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, registerProduct_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.success = iprot.readI64();
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 1: // EXC
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.exc = new com.vmesteonline.be.InvalidOperation();
+                struct.exc.read(iprot);
+                struct.setExcIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, registerProduct_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.isSetSuccess()) {
+          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+          oprot.writeI64(struct.success);
+          oprot.writeFieldEnd();
+        }
+        if (struct.exc != null) {
+          oprot.writeFieldBegin(EXC_FIELD_DESC);
+          struct.exc.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class registerProduct_resultTupleSchemeFactory implements SchemeFactory {
+      public registerProduct_resultTupleScheme getScheme() {
+        return new registerProduct_resultTupleScheme();
+      }
+    }
+
+    private static class registerProduct_resultTupleScheme extends TupleScheme<registerProduct_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, registerProduct_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSuccess()) {
+          optionals.set(0);
+        }
+        if (struct.isSetExc()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetSuccess()) {
+          oprot.writeI64(struct.success);
+        }
+        if (struct.isSetExc()) {
+          struct.exc.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, registerProduct_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {

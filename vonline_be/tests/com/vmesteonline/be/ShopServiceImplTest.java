@@ -157,7 +157,7 @@ public class ShopServiceImplTest {
 			Assert.assertEquals(savedShop.getDescr(), DESCR);
 			Assert.assertEquals(savedShop.getAddress(), userAddress);
 			Assert.assertEquals(savedShop.getOwnerId(), userId);
-			Assert.assertEquals(savedShop.getLogoURL(), LOGO);
+			Assert.assertTrue(savedShop.getLogoURL() != null);
 			Assert.assertEquals(savedShop.getTopicSet(), topicSet);
 			Assert.assertEquals(savedShop.getTags(), tags);
 			Assert.assertEquals(savedShop.getDeliveryCosts(), deliveryCosts);
@@ -247,7 +247,7 @@ public class ShopServiceImplTest {
 			Assert.assertEquals(rc.getName(), "Производитель1");
 			Assert.assertEquals(rc.getDescr(), "Описание производителя");
 			Assert.assertEquals(rc.getHomeURL(), "http://google.com");
-			Assert.assertTrue(rc.getLogoURL().equals(LOGO));
+			Assert.assertTrue(rc.getLogoURL() != null);
 
 		} catch (TException e) {
 			e.printStackTrace();
@@ -336,7 +336,7 @@ public class ShopServiceImplTest {
 			Assert.assertEquals(product2.getName(), "Пролукт 2");
 			Assert.assertEquals(product2.getShortDescr(), "Описание продукта 2");
 			Assert.assertEquals(product2.getPrice(), 12D);
-			Assert.assertTrue(product2.getImageURL().equals( LOGO));
+			Assert.assertTrue(product2.getImageURL() != null );
 			Assert.assertEquals(product2.getWeight(), 200D);
 
 			ProductDetails product2Details = si.getProductDetails(product2.getId());
@@ -742,7 +742,7 @@ public class ShopServiceImplTest {
 		}
 
 	}
-
+//=====================================================================================================================
 	@Test
 	public void testSetOrderPaymentType() {
 
@@ -781,7 +781,7 @@ public class ShopServiceImplTest {
 			fail("Exception thrown: " + e.getMessage());
 		}
 	}
-
+//	=====================================================================================================================
 	@Test
 	public void testSetOrderDeliveryAddress() {
 		try {
@@ -806,7 +806,7 @@ public class ShopServiceImplTest {
 			fail("Exception thrown: " + e.getMessage());
 		}
 	}
-
+//	=====================================================================================================================
 	@Test 
 	  public void testSetOrderPaymentStatus() {
 
@@ -833,7 +833,7 @@ public class ShopServiceImplTest {
 				fail("Exception thrown: " + e.getMessage());
 			}
 	  }
-	
+//=====================================================================================================================	
 	@Test
 	public void testDataImportProducersTest(){
 		DataSet ds = new DataSet();
@@ -865,7 +865,7 @@ public class ShopServiceImplTest {
 			fail("Import failed!" + e);
 		}
 	}
-	
+//=====================================================================================================================	
 	@Test
 	public void testDataImportShopsTest(){
 		DataSet ds = new DataSet();
@@ -892,7 +892,7 @@ public class ShopServiceImplTest {
 			fail("Import failed!" + e);
 		}
 	}
-	
+//=====================================================================================================================
 	@Test
 	public void testDataImportCategoryTest(){
 		DataSet ds = new DataSet();
@@ -928,7 +928,117 @@ public class ShopServiceImplTest {
 			
 			DataSet importData2 = si.importData(ds);
 			List<ProductCategory> productCategories = si.getProductCategories(0);
+			Assert.assertEquals(productCategories.size(), 1);
+			productCategories = si.getProductCategories(productCategories.get(0).getId());
 			Assert.assertEquals(productCategories.size(), 2);
+			productCategories = si.getProductCategories(productCategories.get(0).getId());
+			Assert.assertEquals(productCategories.size(), 2);
+			
+			
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Import failed!" + e);
+		}
+	}
+//=====================================================================================================================
+	@Test
+	public void testDataImportProductTest(){
+		
+		DataSet ds = new DataSet();
+		ds.date = (int)(System.currentTimeMillis()/1000L);
+		ds.name =" Categories, Producer";
+	  
+		//CATEGORY_ID = 200, CATEGORY_PARENT_ID, CATEGORY_NAME, CATEGORY_DESCRIPTION, CATEGORY_LOGOURLS, CATEGORY_TOPICS
+		List<ExchangeFieldType> fieldsOrder = new ArrayList<ExchangeFieldType>();
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_PARENT_ID);
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_ID);
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_NAME);
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_DESCRIPTION);
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_LOGOURLS);
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
+		
+		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", fieldsOrder );
+		importData.setFileData((
+				"0, 1, КОпмы, Копьютеры и комплектующие, "
+				+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif | "
+				+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif,\n"
+				+ "1, 2, Ноутбуки,Ноуты и Планшеты,,,\n"
+				+ "2, 3, Ноуты, ТОлько ноуты,,,\n"
+				+ "2, 4, Планшеты,Только планшеты,,,\n"
+				+ "1, 5, Переферия,\"Принтеры, мышы, клавы\",,,\n").getBytes());
+		
+		
+		ds.addToData( importData );
+		
+		fieldsOrder = new ArrayList<ExchangeFieldType>();
+		fieldsOrder.add(ExchangeFieldType.PRODUCER_NAME);
+		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
+		fieldsOrder.add(ExchangeFieldType.PRODUCER_LOGOURL);
+		fieldsOrder.add(ExchangeFieldType.PRODUCER_DESCRIPTION);
+		
+		importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", fieldsOrder );
+		importData.setFileData(("Производитель 1, http://yandex.ru/, \"HTTP://ya.ru/logo.gif\", \"Длинный текст описания, с заятыми...\"\n"
+				+ "Производитель 2, http://google.ru/, \"HTTP://google.ru/logo.gif\", \"JОпять и снова, Длинный текст описания, с заятыми...\"\n").getBytes());
+		
+		ds.addToData( importData );
+
+		List<Producer> producers = null;
+		List<ProductCategory> productCategories = null;
+		try {
+			
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Long shopId = si.registerShop(shop);
+			// set current shop
+			si.getShop(shopId);
+			
+			DataSet importData2 = si.importData(ds);
+			productCategories = si.getProductCategories(0);
+			productCategories = si.getProductCategories(productCategories.get(0).id);
+			
+			producers = si.getProducers();
+			
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Import failed!" + e);
+		}
+		
+		DataSet ds2 = new DataSet();
+		ds2.date = (int)(System.currentTimeMillis()/1000L);
+		ds2.name ="Products";
+		
+	/*
+	PRODUCT_ID=300, PRODUCT_NAME,	PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
+	PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
+	PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
+	*/
+		List<ExchangeFieldType> productFieldsOrder = new ArrayList<ExchangeFieldType>();
+		productFieldsOrder.add(ExchangeFieldType.PRODUCT_NAME);
+		productFieldsOrder.add(ExchangeFieldType.PRODUCT_SHORT_DESCRIPTION);
+		productFieldsOrder.add(ExchangeFieldType.PRODUCT_WEIGHT);
+		productFieldsOrder.add(ExchangeFieldType.PRODUCT_IMAGEURL);
+		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE);
+		productFieldsOrder.add(ExchangeFieldType.PRODUCT_CATEGORY_IDS);
+		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_RETAIL);
+		productFieldsOrder.add(ExchangeFieldType.PRODUCT_OPIONSAVP);
+		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRODUCER_ID);
+
+		importData = new ImportElement(ImExType.IMPORT_PRODUCTS, "product.csv", productFieldsOrder );
+		importData.setFileData(("KEyboard, Клавистура 101 кнопка, 250.0, http://yandex.st/www/1.808/yaru/i/logo.png, 125.0, "+
+		productCategories.get(0).getId() + "|" + productCategories.get(1).getId() + "|" + productCategories.get(0).getId() +", 123.0, \"цвет:черный|материал:пластик\", "+producers.get(0).getId()+"\n"+
+			"Mouse, Мышь 3 кнопки, 1250.0,, 1125.0, "+productCategories.get(0).getId() + ", 1123.0, цвет:зеленый, "+producers.get(0).getId()+"\n").getBytes());
+		
+		ds2.addToData( importData );
+		try {
+			
+			
+			/*DataSet importData2 = */si.importData(ds2);
+			
+			ProductListPart products = si.getProducts(0, 100, productCategories.get(0).getId());
+			Assert.assertEquals(products.length, 2);
+			products = si.getProducts(0, 100, productCategories.get(1).getId());
+			Assert.assertEquals(products.length, 1);
+			
+			
 		} catch (TException e) {
 			e.printStackTrace();
 			fail("Import failed!" + e);

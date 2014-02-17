@@ -67,27 +67,25 @@ public class VoProduct {
 		VoProducer producer = _pm.getObjectById(VoProducer.class, newInfo.details.producerId);
 		producer.getProducts().add(this);
 	}
-
-	public static VoProduct createObject(long shopId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
+	
+	public static VoProduct createObject(VoShop shop, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
 		VoProduct vp = new VoProduct();
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		try {
 			Product product = fpi.getProduct();
 			ProductDetails details = fpi.getDetails();
 
-			VoShop shop = pm.getObjectById(VoShop.class, shopId);
-
 			vp.name = product.getName();
 			vp.shortDescr = product.shortDescr;
 			vp.weight = product.getWeight();
-			try {
+			if(null!=product.getImageURL() && product.getImageURL().length() > 0 ) try {
 				vp.imageURL = StorageHelper.saveImage(product.getImageURL());
 			} catch (IOException ie) {
 				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 			}
 			vp.imagesURLset = new ArrayList<String>();
-			for (String imgURL : details.getImagesURLset())
-				try {
+			if( null!=details.getImagesURLset() ) for (String imgURL : details.getImagesURLset())
+				if(null!=imgURL && imgURL.length() > 0 )try {
 					vp.imagesURLset.add(StorageHelper.saveImage(imgURL));
 				} catch (IOException ie) {
 					throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
@@ -106,7 +104,7 @@ public class VoProduct {
 			pm.makePersistent(vp);
 			shop.addProduct(vp);
 
-			for (long categoryId : details.getCategories()) {
+			if(null!=details.getCategories()) for (long categoryId : details.getCategories()) {
 				VoProductCategory vpc = pm.getObjectById(VoProductCategory.class, categoryId);
 				vpc.getProducts().add(vp);
 				vp.categories.add(vpc);
@@ -114,7 +112,7 @@ public class VoProduct {
 			}
 
 			vp.topicSet = new ArrayList<VoTopic>();
-			for (long topicId : details.getTopicSet()) {
+			if(null!=details.getTopicSet()) for (long topicId : details.getTopicSet()) {
 				VoTopic vTopic = pm.getObjectById(VoTopic.class, topicId);
 				vp.topicSet.add(vTopic);
 			}
@@ -398,12 +396,14 @@ public class VoProduct {
 	}
 
 	public static Map<Integer, Double> convertFromPriceTypeMap(Map<PriceType, Double> in, Map<Integer, Double> out) {
+		if( null==in ) return null; 
 		for (Entry<PriceType, Double> e : in.entrySet())
 			out.put(e.getKey().getValue(), e.getValue());
 		return out;
 	}
 
 	public static Map<PriceType, Double> convertToPriceTypeMap(Map<Integer, Double> in, Map<PriceType, Double> out) {
+		if( null==in ) return null;
 		for (Entry<Integer, Double> e : in.entrySet())
 			out.put(PriceType.values()[e.getKey()], e.getValue());
 		return out;

@@ -60,7 +60,9 @@ public class CSVHelper {
 						if(null==fo){ //try to create fo by default constructor
 							if( field.getType() == List.class || field.getType() == Set.class ) fo = new ArrayList();
 							else if( field.getType() == Map.class ) fo = new HashMap();
-							else {	
+							else if( field.getType().getSuperclass() == Number.class ) {
+								fo = field.getType().getConstructor(new Class[]{String.class}).newInstance(new Object[]{"0"});
+							} else {	
 								fo = field.getType().getConstructor(new Class[]{}).newInstance(new Object[]{});
 							}
 							field.set(nextOtf, fo);
@@ -144,7 +146,8 @@ public class CSVHelper {
 							}
 							outStr = outStr.substring(sd.length());
 						} else {
-							outStr = "\""+fieldToWrite.toString()+"\"";
+							outStr = fieldToWrite.toString().contains(fd) ? "\""+fieldToWrite.toString()+"\"" :
+								"" + fieldToWrite;
 						}
 						lineStr += outStr;
 					}
@@ -156,5 +159,4 @@ public class CSVHelper {
 			throw new IOException("Failed to write CSV:"+e.getMessage(), e);
 		}
 	}
-
 }
