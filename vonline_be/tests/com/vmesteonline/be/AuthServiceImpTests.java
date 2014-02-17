@@ -78,9 +78,10 @@ public class AuthServiceImpTests {
 			VoUser user = asi.getUserByEmail("test@eml", pm);
 			assertEquals("testName", user.getName());
 			assertEquals("testPassword", user.getPassword());
-			Assert.assertNotNull(user.getHomeGroup());
-			assertEquals(0, user.getHomeGroup().getRadius());
-
+			/*
+			 * Assert.assertNotNull(user.getHomeGroup()); assertEquals(0,
+			 * user.getHomeGroup().getRadius());
+			 */
 			VoPostalAddress.getKeyValue(Long.parseLong(locations.get(0)));
 			VoPostalAddress postalAddress = pm.getObjectById(VoPostalAddress.class, VoPostalAddress.getKeyValue(Long.parseLong(locations.get(0))));
 
@@ -89,9 +90,9 @@ public class AuthServiceImpTests {
 			assertEquals(userByRet.getPassword(), user.getPassword());
 
 			float longitude = postalAddress.getBuilding().getUserGroup().getLongitude();
-			assertEquals(user.getHomeGroup().getLongitude(), longitude, 0F);
+			assertEquals(user.getLongitude(), longitude, 0F);
 			float latitude = postalAddress.getBuilding().getUserGroup().getLatitude();
-			assertEquals(user.getHomeGroup().getLatitude(), latitude, 0F);
+			assertEquals(user.getLatitude(), latitude, 0F);
 
 			List<VoRubric> rubrics = user.getRubrics();
 			assertEquals(rubrics.isEmpty(), false);
@@ -104,7 +105,7 @@ public class AuthServiceImpTests {
 			}
 			boolean found = false;
 			for (VoUser hobit : postalAddress.getBuilding().getUsers()) {
-				if (hobit.getId().equals(userByRet.getId())) {
+				if (hobit.getId() == (userByRet.getId())) {
 					found = true;
 					break;
 				}

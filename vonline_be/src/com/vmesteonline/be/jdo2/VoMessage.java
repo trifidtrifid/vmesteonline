@@ -79,8 +79,9 @@ public class VoMessage extends VoBaseMessage {
 				if (null == author) {
 					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Author of Message not found by ID=" + msg.getAuthorId());
 				}
-
-				if (null == author.getHomeGroup())
+				// todo сделать проверку на права создания сообщений не зависящей от
+				// наличия домашней группы.
+				if (0 == author.getLongitude() || 0 == author.getLatitude())
 					throw new InvalidOperation(com.vmesteonline.be.VoError.GeneralError, "User without HomeGroup must not create a message");
 
 				author.incrementMessages(1);

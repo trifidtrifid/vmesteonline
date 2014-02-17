@@ -119,7 +119,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			Extent<VoPostalAddress> postalAddresses = pm.getExtent(VoPostalAddress.class, true);
 			if (!postalAddresses.iterator().hasNext()) {
-				return initializeTestLocations();
+				throw new InvalidOperation(VoError.GeneralError, "can't find any location codes");
 			}
 
 			List<String> locations = new ArrayList<String>();
@@ -128,43 +128,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				locations.add("" + pa.getAddressCode());
 			}
 			return locations;
-		} finally {
-			pm.close();
-		}
-	}
-
-	private static List<String> initializeTestLocations() throws InvalidOperation {
-		List<String> locations = new ArrayList<String>();
-		VoStreet street = new VoStreet(new VoCity(new VoCountry("Россия"), "Санкт Петербург"), "Республиканская");
-		PersistenceManager pm = PMF.getPm();
-
-		try {
-			pm.makePersistent(street);
-			VoPostalAddress[] addresses;
-			addresses = new VoPostalAddress[] {
-
-			/*
-			 * new VoPostalAddress(new VoBuilding(street, "32/3", 59.933146F,
-			 * 30.423117F), (byte) 2, (byte) 1, (byte) 5, "", pm), new
-			 * VoPostalAddress(new VoBuilding(street, "35", 59.932544F, 30.419684F),
-			 * (byte) 1, (byte) 11, (byte) 35, "", pm), new VoPostalAddress(new
-			 * VoBuilding(street, "6", 59.934177F, 30.404331F), (byte) 1, (byte) 2,
-			 * (byte) 25, "", pm) };
-			 */
-
-			new VoPostalAddress(new VoBuilding(street, "32/3", 0F, 0F), (byte) 2, (byte) 1, (byte) 5, "", pm),
-					new VoPostalAddress(new VoBuilding(street, "35", 0F, 0F), (byte) 1, (byte) 11, (byte) 35, "", pm),
-					new VoPostalAddress(new VoBuilding(street, "6", 0F, 0F), (byte) 1, (byte) 2, (byte) 25, "", pm) };
-
-			for (VoPostalAddress pa : addresses) {
-				pm.makePersistent(pa);
-				locations.add("" + pa.getAddressCode());
-			}
-
-			return locations;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to initTestLocations. " + e.getMessage());
 		} finally {
 			pm.close();
 		}

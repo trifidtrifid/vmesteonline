@@ -17,23 +17,15 @@ import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.utils.Defaults;
 
 public class MessageServiceTests {
 
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
-	private static String sessionId = "11111111111111111111111";
-	private static String user1email = "a1@b.com";
-	private static String user1pass = "123";
-
-	private static String user2email = "a2@b.com";
-	private static String user2pass = "123";
-
-	private static String user3email = "a3@b.com";
-	private static String user3pass = "123";
+	public static String sessionId = "11111111111111111111111";
 
 	AuthServiceImpl asi;
 	UserServiceImpl usi;
@@ -62,20 +54,17 @@ public class MessageServiceTests {
 	@Before
 	public void setUp() throws Exception {
 		helper.setUp();
-		MySQLJDBCConnector con = new MySQLJDBCConnector();
-		con.execute("drop table if exists topic");
+		Assert.assertTrue(Defaults.init());
 
 		pm = PMF.get().getPersistenceManager();
 		asi = new AuthServiceImpl(sessionId);
-		List<String> locCodes = UserServiceImpl.getLocationCodesForRegistration();
-		asi.registerNewUser("Test1", "USer2", user1pass, user1email, locCodes.get(0));
-		asi.registerNewUser("Test2", "USer2", "123", "a2@b.com", locCodes.get(1));
-		asi.registerNewUser("Test3", "USer2", user3pass, user3email, locCodes.get(1));
-
-		Assert.assertTrue(asi.login("a1@b.com", "123"));
-
+		Assert.assertTrue(asi.login(Defaults.user1email, Defaults.user1pass));
 		usi = new UserServiceImpl(sessionId);
 		msi = new MessageServiceImpl(sessionId);
+		List<Rubric> userRubrics = usi.getUserRubrics();
+		Assert.assertTrue(userRubrics.size() > 0);
+		Assert.assertTrue(userRubrics.get(0) != null);
+		topicRubric = userRubrics.get(0);
 
 		List<Group> userGroups = usi.getUserGroups();
 		Assert.assertTrue(userGroups.size() > 0);
@@ -83,16 +72,12 @@ public class MessageServiceTests {
 		homeGroup = userGroups.get(0);
 		group200m = userGroups.get(1);
 		group2000m = userGroups.get(2);
-
-		List<Rubric> userRubrics = usi.getUserRubrics();
-		Assert.assertTrue(userRubrics.size() > 0);
-		Assert.assertTrue(userRubrics.get(0) != null);
-		topicRubric = userRubrics.get(0);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		pm.close();
+		if (pm != null)
+			pm.close();
 		helper.tearDown();
 	}
 
@@ -124,26 +109,26 @@ public class MessageServiceTests {
 	public void testCreateTopicAndTwoReplies() {
 		// create locations
 		try {
-			VoUser user1 = asi.getUserByEmail("a1@b.com", pm);
-			VoUser user2 = asi.getUserByEmail("a2@b.com", pm);
+			VoUser user1 = asi.getUserByEmail(Defaults.user1name, pm);
 
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
-			Message msg = msi.createMessage(topic.getId(), 0, user1.getHomeGroup().getId().getId(), MessageType.BASE,
-					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
+			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
+			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic", noLinkedMessages,
+					noTags, 0L);
 
 			Assert.assertEquals(msg.getTopicId(), topic.getId());
 			Assert.assertEquals(msg.getParentId(), topic.getMessage().getId());
 			Assert.assertEquals(msg.getAuthorId(), topic.getMessage().getAuthorId());
-			Assert.assertEquals(msg.getAuthorId(), user1.getId().longValue());
+			Assert.assertEquals(msg.getAuthorId(), user1.getId());
 			Assert.assertEquals(msg.likesNum, 0);
 			Assert.assertEquals(msg.unlikesNum, 0);
 
-			Message msg2 = msi.createMessage(topic.getId(), msg.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg2 = msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
 			Assert.assertEquals(msg2.getTopicId(), topic.getId());
 			Assert.assertEquals(msg2.getParentId(), msg.getId());
-			Assert.assertEquals(msg2.getAuthorId(), user1.getId().longValue());
+			Assert.assertEquals(msg2.getAuthorId(), user1.getId());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -162,8 +147,8 @@ public class MessageServiceTests {
 			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
 			Assert.assertEquals(topicSubject, rTopic.topics.get(0).getSubject());
 			Assert.assertNotNull(rTopic.topics.get(0).userInfo);
-			Assert.assertEquals("Test1", rTopic.topics.get(0).userInfo.firstName);
-			Assert.assertEquals("USer2", rTopic.topics.get(0).userInfo.lastName);
+			Assert.assertEquals(Defaults.user1name, rTopic.topics.get(0).userInfo.firstName);
+			Assert.assertEquals(Defaults.user1lastName, rTopic.topics.get(0).userInfo.lastName);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -213,18 +198,18 @@ public class MessageServiceTests {
 	@Test
 	public void testGetMessages() {
 		try {
-			VoUser user1 = asi.getUserByEmail("a1@b.com", pm);
-			VoUser user2 = asi.getUserByEmail("a2@b.com", pm);
+			long user1homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
+			long user2homeGroupId = getUserGroupId(Defaults.user2email, Defaults.radiusHome);
 
 			Topic topic = createTopic();
-			Message msg = msi.createMessage(topic.getId(), 0, user1.getHomeGroup().getId().getId(), MessageType.BASE,
-					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
-			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
-			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
-			Message msg3 = msi.createMessage(topic.getId(), 0, user2.getHomeGroup().getId().getId(), MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg = msi.createMessage(topic.getId(), 0, user1homeGroupId, MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg3 = msi.createMessage(topic.getId(), 0, user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
 
 			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 0, 10);
 			Assert.assertNotNull(mlp);
@@ -303,24 +288,26 @@ public class MessageServiceTests {
 		try {
 			VoUser user1 = asi.getUserByEmail("a1@b.com", pm);
 			VoUser user2 = asi.getUserByEmail("a2@b.com", pm);
+			long user1homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
+			long user2homeGroupId = getUserGroupId(Defaults.user2email, Defaults.radiusHome);
 
 			Topic topic = createTopic();
-			Message msg = msi.createMessage(topic.getId(), 0, user1.getHomeGroup().getId().getId(), MessageType.BASE,
-					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
-			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg = msi.createMessage(topic.getId(), 0, user1homeGroupId, MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
 
-			Assert.assertTrue(asi.login(user2email, user2pass));
-			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2.getHomeGroup().getId().getId(), MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
-			Message msg3 = msi.createMessage(topic.getId(), 0, user2.getHomeGroup().getId().getId(), MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, user1.getId());
+			Assert.assertTrue(asi.login(Defaults.user2email, Defaults.user2pass));
+			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg3 = msi.createMessage(topic.getId(), 0, user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, user1.getId());
 
-			Assert.assertTrue(asi.login(user1email, user1pass));
-			Message msg4 = msi.createMessage(topic.getId(), msg2.getId(), user1.getHomeGroup().getId().getId(), MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, user2.getId());
+			Assert.assertTrue(asi.login(Defaults.user1email, Defaults.user1pass));
+			Message msg4 = msi.createMessage(topic.getId(), msg2.getId(), user1homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, user2.getId());
 
-			Assert.assertTrue(asi.login(user3email, user3pass));
+			Assert.assertTrue(asi.login(Defaults.user3email, Defaults.user3pass));
 
 			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 0, 10);
 			Assert.assertNotNull(mlp);
@@ -343,14 +330,14 @@ public class MessageServiceTests {
 	}
 
 	@Test
-	public void testGetTopicsFromBiggerGroupAnotherUser() {
+	public void testGetTopicsFromSameGroupAnotherUser() {
 
 		try {
 			createTopic();
 
-			asi.login(user2email, user2pass);
-			getUserGroupId(user2email, 200);
-			TopicListPart rTopic = msi.getTopics(group200m.getId(), topicRubric.getId(), 0, 0L, 10);
+			asi.login(Defaults.user2email, Defaults.user2pass);
+			long grId = getUserGroupId(Defaults.user2email, 200);
+			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(0, rTopic.totalSize);
 
@@ -360,11 +347,53 @@ public class MessageServiceTests {
 		}
 	}
 
+	@Test
+	public void testGetTopicsFromBiggerGroupSameUser() {
+
+		try {
+			createTopic();
+			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusSmall);
+			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(0, rTopic.totalSize);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetTopicsFromSmallerGroupSameUser() {
+
+		try {
+			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusMedium);
+			Assert.assertNotNull(grId);
+			Topic tpc = createTopic(grId);
+
+			grId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
+
+			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(1, rTopic.totalSize);
+			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
+			Assert.assertEquals(topicSubject, rTopic.topics.get(0).getSubject());
+			Assert.assertNotNull(rTopic.topics.get(0).userInfo);
+			Assert.assertEquals("Test1", rTopic.topics.get(0).userInfo.firstName);
+			Assert.assertEquals("USer2", rTopic.topics.get(0).userInfo.lastName);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+
+	}
+
 	long getUserGroupId(String email, int radius) {
 		VoUser user = asi.getUserByEmail(email, pm);
 		for (VoUserGroup ug : user.getGroups()) {
 			if (ug.getRadius() == radius)
-				return ug.getId().getId();
+				return ug.getId();
 		}
 		return 0L;
 	}

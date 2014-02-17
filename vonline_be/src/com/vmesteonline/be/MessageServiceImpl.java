@@ -35,16 +35,16 @@ import com.vmesteonline.be.jdo2.VoUserObject;
 import com.vmesteonline.be.jdo2.VoUserTopic;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
-	
+
 	public MessageServiceImpl() throws InvalidOperation {
 		con = new MySQLJDBCConnector();
 		try {
 			con.execute("create table if not exists topic (`id` bigint not null, `longitude` decimal(10,7) not null,"
 					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null);");
 		} catch (Exception e) {
-			logger.severe("Failed to connect to database."+e.getMessage());
+			logger.severe("Failed to connect to database." + e.getMessage());
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database."+e.getMessage());
+			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database." + e.getMessage());
 		}
 
 	}
@@ -56,9 +56,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			con.execute("create table if not exists topic (`id` bigint not null,`longitude` decimal(10,7) not null,"
 					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null);");
 		} catch (Exception e) {
-			logger.severe("Failed to connect to database."+e.getMessage());
+			logger.severe("Failed to connect to database." + e.getMessage());
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database."+e.getMessage());
+			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database." + e.getMessage());
 		}
 	}
 
@@ -153,12 +153,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 					VoUser user = getCurrentUser(pm);
 					pm.retrieve(user);
-					VoUserGroup group = user.getGroup(groupId);
+					VoUserGroup group = user.getGroupById(groupId);
 					float lgd = group.getLongitudeDelta();
 					float ltd = group.getLatitudeDelta();
 					String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= " + (group.getLongitude() + lgd)
 							+ " and longitude >= " + (group.getLongitude() - group.getLongitudeDelta()) + " and lattitude <= " + (group.getLatitude() + ltd)
-							+ " and lattitude >= " + (group.getLatitude() - group.getLatitudeDelta()) + " order by createTime";
+							+ " and lattitude >= " + (group.getLatitude() - group.getLatitudeDelta()) + " and radius >= " + group.getRadius()
+							+ " order by createTime";
 
 					List<VoTopic> topics = new ArrayList<VoTopic>();
 					try {
@@ -167,7 +168,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 						while (rs.next() && topics.size() < length) {
 							long topicId = rs.getLong(1);
 							VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
-							if (addTopic ) {
+							if (addTopic) {
 								topics.add(topic);
 							} else {
 								if (topic.getId().getId() == lastLoadedTopicId) {
@@ -257,7 +258,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					pm.makePersistent(votopic);
 					topic.setId(votopic.getId().getId());
 					VoUser user = getCurrentUser(pm);
-					VoUserGroup ug = user.getGroup(votopic.getUserGroupId());
+					VoUserGroup ug = user.getGroupById(votopic.getUserGroupId());
 					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId().getId()
 							+ "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + "," + votopic.getCreatedAt()
 							+ ");");

@@ -25,7 +25,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.utils.Defaults;
 
 @PersistenceCapable
-public class VoUser {
+public class VoUser extends GeoLocation {
 
 	public VoUser(String name, String lastName, String email, String password) {
 		this.name = name;
@@ -37,26 +37,19 @@ public class VoUser {
 		this.likesNum = 0;
 		this.unlikesNum = 0;
 		this.rubrics = new ArrayList<VoRubric>();
-		this.addresses = new TreeSet<VoPostalAddress>();
+		this.deliveryAddresses = new TreeSet<VoPostalAddress>();
 	}
 
 	public ShortUserInfo getShortUserInfo() {
 		return new ShortUserInfo(getId(), name, lastName, 0, null);
 	}
 
-	public VoUserGroup getGroup(long id) throws InvalidOperation {
-		if (home.getId().getId() == id)
-			return home;
-
+	public VoUserGroup getGroupById(long id) throws InvalidOperation {
 		for (VoUserGroup g : groups) {
-			if (g.getId().getId() == id)
+			if (g.getId() == id)
 				return g;
 		}
 		throw new InvalidOperation(VoError.IncorrectParametrs, "user with id " + getId() + " have no group with id " + id);
-	}
-
-	public VoUserGroup getHomeGroup() {
-		return home;
 	}
 
 	public List<VoRubric> getRubrics() {
@@ -65,14 +58,6 @@ public class VoUser {
 
 	public void setRubrics(List<VoRubric> rubrics) {
 		this.rubrics = rubrics;
-	}
-
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
-
-	public Long getId() {
-		return id;
 	}
 
 	public String getName() {
@@ -165,6 +150,8 @@ public class VoUser {
 	 * @param pm
 	 *          - PersistenceManager to manage the objects
 	 */
+
+	// todo shoul test removing
 	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) {
 		VoBuilding building = null;
 
@@ -180,11 +167,10 @@ public class VoUser {
 		if (null != building)
 			building.addUser(this);
 
-		home = null;
 		this.address = userAddress;
 		if (null != building) {
 			pm.retrieve(building);
-			home = building.getUserGroup();
+			VoUserGroup home = building.getUserGroup();
 			if (null != groups && !groups.isEmpty()) {
 				for (VoUserGroup ug : groups) {
 					ug.setLatitude(home.getLatitude());
@@ -192,7 +178,6 @@ public class VoUser {
 				}
 			} else {
 				groups = new ArrayList<VoUserGroup>();
-
 				groups.add(home);
 				for (VoGroup grp : Defaults.defaultGroups) {
 					if (!grp.isHome())
@@ -219,7 +204,7 @@ public class VoUser {
 	}
 
 	public void addPostalAddress(VoPostalAddress pa, PersistenceManager pm) {
-		addresses.add(pa);
+		deliveryAddresses.add(pa);
 	}
 
 	public void setCurrentPostalAddress(VoPostalAddress pa) {
@@ -233,25 +218,23 @@ public class VoUser {
 	}
 
 	public Set<VoPostalAddress> getAddresses() {
-		return addresses;
+		return deliveryAddresses;
 	}
-
-	@Persistent
-	@Unowned
-	private VoPostalAddress address;
-
-	@Persistent
-	@Unowned
-	private Set<VoPostalAddress> addresses;
-
-	@Persistent
-	@Unowned
-	private List<VoUserGroup> groups;
 
 	@Persistent
 	@Unindexed
 	@Unowned
-	private VoUserGroup home;
+	private VoPostalAddress address;
+
+	@Persistent
+	@Unindexed
+	@Unowned
+	private Set<VoPostalAddress> deliveryAddresses;
+
+	@Persistent
+	@Unindexed
+	@Unowned
+	private List<VoUserGroup> groups;
 
 	@Persistent
 	@Unowned
@@ -294,12 +277,12 @@ public class VoUser {
 
 	@Override
 	public String toString() {
-		return "VoUser [id=" + id + ", name=" + name + ", email=" + email + "]";
+		return "VoUser [id=" + getId() + ", name=" + name + ", email=" + email + "]";
 	}
 
 	public String toFullString() {
-		return "VoUser [id=" + id + ", address=" + address + ", home=" + home + ", name=" + name + ", lastName=" + lastName + ", email=" + email
-				+ ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum=" + topicsNum + ", likesNum=" + likesNum + ", unlikesNum="
-				+ unlikesNum + "]";
+		return "VoUser [id=" + getId() + ", address=" + address + ", longitude=" + longitude + ", latitude=" + latitude + ", name=" + name
+				+ ", lastName=" + lastName + ", email=" + email + ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum=" + topicsNum
+				+ ", likesNum=" + likesNum + ", unlikesNum=" + unlikesNum + "]";
 	}
 }
