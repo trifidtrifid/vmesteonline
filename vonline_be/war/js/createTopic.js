@@ -1,6 +1,18 @@
 $(document).ready(function(){
     var w = $(window);
 
+    $('.submenu li:first-child, #sidebar .nav-list li:first-child').addClass('active');
+    $('.submenu .btn,.nav-list a').click(function(e){
+        e.preventDefault();
+
+        if ($(this).closest('.submenu').length){
+            $(this).closest('.submenu').find('.active').removeClass('active');
+        } else{
+            $(this).closest('.nav-list').find('.active').removeClass('active');
+        }
+        $(this).parent().addClass('active');
+    });
+
 /* появление wysiwig редактора */
     $('.widget-box .wysiwyg-editor').css({'height':'300px'}).ace_wysiwyg({
         toolbar_place: function(toolbar) {

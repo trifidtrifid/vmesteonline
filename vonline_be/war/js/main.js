@@ -309,7 +309,7 @@ $('.fa-sitemap').click(function(){
 
 
 /* мега раздел подгрузки и отправки сообщений  */
-    var arrayOfStateMessages = new Array(10);
+    var arrayOfStateMessages = new Array(20);
     for(var j = 0; j < arrayOfStateMessages.length; j++) {
         arrayOfStateMessages[j]=[];
     }
