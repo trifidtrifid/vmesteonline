@@ -53,17 +53,19 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
-	public List<Group> getUserGroups() throws InvalidOperation, TException {
+	public List<Group> getUserGroups() throws InvalidOperation {
 		try {
+
 			long userId = getCurrentUserId();
 			PersistenceManager pm = PMF.getPm();
 			try {
 				VoUser user = pm.getObjectById(VoUser.class, userId);
+
 				if (user == null) {
 					logger.error("can't find user by id " + Long.toString(userId));
 					throw new InvalidOperation(VoError.NotAuthorized, "can't find user by id");
 				}
-				logger.info("find user name " + user.getEmail());
+				logger.info("find user email " + user.getEmail() + " name " + user.getName());
 
 				if (user.getGroups() == null) {
 					logger.warn("user with id " + Long.toString(userId) + " has no any groups");
@@ -71,6 +73,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				}
 				List<Group> groups = new ArrayList<Group>();
 				for (VoUserGroup group : user.getGroups()) {
+					logger.info("return group " + group.getName());
 					groups.add(group.createGroup());
 				}
 

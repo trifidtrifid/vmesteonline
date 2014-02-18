@@ -109,7 +109,7 @@ public class MessageServiceTests {
 	public void testCreateTopicAndTwoReplies() {
 		// create locations
 		try {
-			VoUser user1 = asi.getUserByEmail(Defaults.user1name, pm);
+			VoUser user1 = asi.getUserByEmail(Defaults.user1email, pm);
 
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
@@ -286,8 +286,8 @@ public class MessageServiceTests {
 	@Test
 	public void testGetPrivateMessage() {
 		try {
-			VoUser user1 = asi.getUserByEmail("a1@b.com", pm);
-			VoUser user2 = asi.getUserByEmail("a2@b.com", pm);
+			VoUser user1 = asi.getUserByEmail(Defaults.user1email, pm);
+			VoUser user2 = asi.getUserByEmail(Defaults.user2email, pm);
 			long user1homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
 			long user2homeGroupId = getUserGroupId(Defaults.user2email, Defaults.radiusHome);
 
@@ -333,13 +333,13 @@ public class MessageServiceTests {
 	public void testGetTopicsFromSameGroupAnotherUser() {
 
 		try {
-			createTopic();
+			createTopic(getUserGroupId(Defaults.user1email, Defaults.radiusMedium));
 
 			asi.login(Defaults.user2email, Defaults.user2pass);
-			long grId = getUserGroupId(Defaults.user2email, 200);
+			long grId = getUserGroupId(Defaults.user2email, Defaults.radiusMedium);
 			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
-			Assert.assertEquals(0, rTopic.totalSize);
+			Assert.assertEquals(1, rTopic.totalSize);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -379,8 +379,8 @@ public class MessageServiceTests {
 			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
 			Assert.assertEquals(topicSubject, rTopic.topics.get(0).getSubject());
 			Assert.assertNotNull(rTopic.topics.get(0).userInfo);
-			Assert.assertEquals("Test1", rTopic.topics.get(0).userInfo.firstName);
-			Assert.assertEquals("USer2", rTopic.topics.get(0).userInfo.lastName);
+			Assert.assertEquals(Defaults.user1name, rTopic.topics.get(0).userInfo.firstName);
+			Assert.assertEquals(Defaults.user1lastName, rTopic.topics.get(0).userInfo.lastName);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -391,6 +391,7 @@ public class MessageServiceTests {
 
 	long getUserGroupId(String email, int radius) {
 		VoUser user = asi.getUserByEmail(email, pm);
+		System.out.print("user " + email + " home address: " + user.getGroups().get(0).getName());
 		for (VoUserGroup ug : user.getGroups()) {
 			if (ug.getRadius() == radius)
 				return ug.getId();

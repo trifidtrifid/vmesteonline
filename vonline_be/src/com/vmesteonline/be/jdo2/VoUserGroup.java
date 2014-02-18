@@ -29,7 +29,7 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	}
 
 	public float getLatitudeDelta() {
-		return (float) ((radius / R) * (180.0 / Math.PI));
+		return (float) (((float)radius / (float)R) * (180.0 / Math.PI));
 	}
 
 	public Group createGroup() {

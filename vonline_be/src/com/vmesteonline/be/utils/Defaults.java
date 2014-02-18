@@ -78,13 +78,12 @@ public class Defaults {
 					pm.makePersistent(dg);
 				}
 
-			initializeTestLocations();
+			List<String> locCodes = initializeTestLocations();
 
 			MySQLJDBCConnector con = new MySQLJDBCConnector();
 			con.execute("drop table if exists topic");
 
 			AuthServiceImpl asi = new AuthServiceImpl();
-			List<String> locCodes = UserServiceImpl.getLocationCodesForRegistration();
 			asi.registerNewUser(user1name, user1lastName, user1pass, user1email, locCodes.get(0));
 			asi.registerNewUser(user2name, user2lastName, user2pass, user2email, locCodes.get(1));
 			asi.registerNewUser(user3name, user3lastName, user3pass, user3email, locCodes.get(2));

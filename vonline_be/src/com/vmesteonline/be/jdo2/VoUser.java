@@ -151,7 +151,7 @@ public class VoUser extends GeoLocation {
 	 *          - PersistenceManager to manage the objects
 	 */
 
-	// todo shoul test removing
+	// todo should test removing
 	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) {
 		VoBuilding building = null;
 
@@ -171,6 +171,8 @@ public class VoUser extends GeoLocation {
 		if (null != building) {
 			pm.retrieve(building);
 			VoUserGroup home = building.getUserGroup();
+			this.setLatitude(home.getLatitude());
+			this.setLongitude(home.getLongitude());
 			if (null != groups && !groups.isEmpty()) {
 				for (VoUserGroup ug : groups) {
 					ug.setLatitude(home.getLatitude());

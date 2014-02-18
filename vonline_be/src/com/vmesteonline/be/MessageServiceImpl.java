@@ -157,8 +157,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					float lgd = group.getLongitudeDelta();
 					float ltd = group.getLatitudeDelta();
 					String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= " + (group.getLongitude() + lgd)
-							+ " and longitude >= " + (group.getLongitude() - group.getLongitudeDelta()) + " and lattitude <= " + (group.getLatitude() + ltd)
-							+ " and lattitude >= " + (group.getLatitude() - group.getLatitudeDelta()) + " and radius >= " + group.getRadius()
+							+ " and longitude >= " + (group.getLongitude() - lgd) + " and lattitude <= " + (group.getLatitude() + ltd)
+							+ " and lattitude >= " + (group.getLatitude() - ltd) + " and radius >= " + group.getRadius()
 							+ " order by createTime";
 
 					List<VoTopic> topics = new ArrayList<VoTopic>();

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 
@@ -21,25 +20,66 @@ import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
+import com.vmesteonline.be.utils.Defaults;
 
 public class AuthServiceImpTests {
 
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
 	AuthServiceImpl asi;
+	UserServiceImpl usi;
+
+	PersistenceManager pm;
+
+	static private String httpSessionId = "111";
 
 	@Before
 	public void setUp() throws Exception {
 		helper.setUp();
-		asi = new AuthServiceImpl();
-		HttpSessionStubForTests httpSess = new HttpSessionStubForTests();
-		httpSess.setId("1");
-		asi.setSession(httpSess);
+		Defaults.init();
+		pm = PMF.getPm();
+		asi = new AuthServiceImpl(httpSessionId);
+		usi = new UserServiceImpl(httpSessionId);
+
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		pm.close();
 		helper.tearDown();
+	}
+
+	@Test
+	public void testDefaultsUserGetGroups() {
+		try {
+			asi.login(Defaults.user1email, Defaults.user1pass);
+			List<Group> gs = usi.getUserGroups();
+			Assert.assertEquals("Республиканская 32/3", gs.get(0).getName());
+
+			asi.login(Defaults.user2email, Defaults.user2pass);
+			gs = usi.getUserGroups();
+			Assert.assertEquals("Республиканская 35", gs.get(0).getName());
+
+		} catch (InvalidOperation e) {
+			e.printStackTrace();
+			fail("exception: " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testDefaultsUserCreation() {
+		VoUser user = asi.getUserByEmail(Defaults.user1email, pm);
+		Assert.assertEquals(0, user.getGroups().get(0).getRadius());
+		Assert.assertEquals("Республиканская 32/3", user.getGroups().get(0).getName());
+
+		user = asi.getUserByEmail(Defaults.user2email, pm);
+		Assert.assertEquals(0, user.getGroups().get(0).getRadius());
+		Assert.assertEquals("Республиканская 35", user.getGroups().get(0).getName());
+
+		user = asi.getUserByEmail(Defaults.user3email, pm);
+		Assert.assertEquals(0, user.getGroups().get(0).getRadius());
+		Assert.assertEquals("Республиканская 6", user.getGroups().get(0).getName());
+
 	}
 
 	@Test

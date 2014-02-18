@@ -105,7 +105,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 			}
 
-			logger.info("register " + email + " pass " + password + " id " + user.getId());
+			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + locationId + " home group: "
+					+ user.getGroups().get(0).getName());
 			return user.getId();
 
 		} finally {
