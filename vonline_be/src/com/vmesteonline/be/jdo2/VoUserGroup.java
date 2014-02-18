@@ -1,21 +1,17 @@
 package com.vmesteonline.be.jdo2;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.Group;
 
 @PersistenceCapable
-public class VoUserGroup implements Comparable<VoUserGroup> {
+public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> {
 
 	public VoUserGroup(VoUser user, VoGroup grp) {
-		longitude = user.getHomeGroup().longitude;
-		latitude = user.getHomeGroup().latitude;
+		longitude = user.getLongitude();
+		latitude = user.getLatitude();
 		radius = grp.getRadius();
 		name = grp.getVisibleName();
 	}
@@ -33,11 +29,11 @@ public class VoUserGroup implements Comparable<VoUserGroup> {
 	}
 
 	public float getLatitudeDelta() {
-		return (float) ((radius / R) * (180.0 / Math.PI));
+		return (float) (((float)radius / (float)R) * (180.0 / Math.PI));
 	}
 
 	public Group createGroup() {
-		return new Group(getId().getId(), name, name, description, radius);
+		return new Group(getId(), name, name, description, radius);
 	}
 
 	public VoUserGroup(VoGroup grp, float longitude, float lattitude) {
@@ -45,14 +41,6 @@ public class VoUserGroup implements Comparable<VoUserGroup> {
 		this.longitude = longitude;
 		this.latitude = lattitude;
 		this.name = grp.getVisibleName();
-	}
-
-	public Key getId() {
-		return id;
-	}
-
-	public void setId(Key id) {
-		this.id = id;
 	}
 
 	public String getName() {
@@ -71,7 +59,7 @@ public class VoUserGroup implements Comparable<VoUserGroup> {
 		this.description = description;
 	}
 
-	public float getLongitude() {
+	public Float getLongitude() {
 		return longitude;
 	}
 
@@ -79,17 +67,13 @@ public class VoUserGroup implements Comparable<VoUserGroup> {
 		this.longitude = longitude;
 	}
 
-	public float getLatitude() {
+	public Float getLatitude() {
 		return latitude;
 	}
 
 	public void setLatitude(float latitude) {
 		this.latitude = latitude;
 	}
-
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key id;
 
 	@Persistent
 	@Unindexed
@@ -101,19 +85,11 @@ public class VoUserGroup implements Comparable<VoUserGroup> {
 
 	@Persistent
 	@Unindexed
-	private Float longitude;
-
-	@Persistent
-	@Unindexed
-	private Float latitude;
-
-	@Persistent
-	@Unindexed
 	private int radius;
 
 	@Override
 	public String toString() {
-		return "VoUserGroup [id=" + id + ", name=" + name + ", longitude=" + longitude + ", latitude=" + latitude + ", radius=" + radius + "]";
+		return "VoUserGroup [id=" + getId() + ", name=" + name + ", longitude=" + longitude + ", latitude=" + latitude + ", radius=" + radius + "]";
 	}
 
 	@Override

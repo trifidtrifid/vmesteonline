@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,16 +35,16 @@ import com.vmesteonline.be.jdo2.VoUserObject;
 import com.vmesteonline.be.jdo2.VoUserTopic;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
-	
+
 	public MessageServiceImpl() throws InvalidOperation {
 		con = new MySQLJDBCConnector();
 		try {
 			con.execute("create table if not exists topic (`id` bigint not null, `longitude` decimal(10,7) not null,"
 					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null);");
 		} catch (Exception e) {
-			logger.severe("Failed to connect to database."+e.getMessage());
+			logger.severe("Failed to connect to database." + e.getMessage());
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database."+e.getMessage());
+			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database." + e.getMessage());
 		}
 
 	}
@@ -55,9 +56,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			con.execute("create table if not exists topic (`id` bigint not null,`longitude` decimal(10,7) not null,"
 					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null);");
 		} catch (Exception e) {
-			logger.severe("Failed to connect to database."+e.getMessage());
+			logger.severe("Failed to connect to database." + e.getMessage());
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database."+e.getMessage());
+			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database." + e.getMessage());
 		}
 	}
 
@@ -68,6 +69,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		Message newMessage = new Message(0, parentId, type, topicId, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
 				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+		newMessage.recipientId = recipientId;
 		postMessage(newMessage);
 		return newMessage;
 	}
@@ -89,19 +91,22 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoMessage m : ext) {
 					m.toString();
 				}
+				List<VoMessage> voMsgs;
 				if (parentId == 0) {
 					Query q = pm.newQuery(VoMessage.class);
 					q.setFilter("topicId == " + topicId + " && parentId == 0");
-					List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
-					return createMlp(voMsgs, userId, pm);
+					voMsgs = (List<VoMessage>) q.execute();
 				} else {
 					Query q = pm.newQuery(VoMessage.class);
 					q.setFilter("topicId == " + topicId);
-					List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+					voMsgs = (List<VoMessage>) q.execute();
 					MessagesTree tree = new MessagesTree(voMsgs);
 					voMsgs = tree.getTreeMessagesAfter(parentId, length);
-					return createMlp(voMsgs, userId, pm);
 				}
+
+				voMsgs = removePersonalMessages(voMsgs, userId);
+				voMsgs = removeExtraMessages(voMsgs, length);
+				return createMlp(voMsgs, userId, pm);
 			} finally {
 				pm.close();
 			}
@@ -116,10 +121,22 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return mlp;
 	}
 
-	/*
-	 * private void getAllChildMessages(List<VoMessage> list, VoMessage msg) { for
-	 * }
-	 */
+	private List<VoMessage> removePersonalMessages(List<VoMessage> list, long userId) {
+		List<VoMessage> lstNew = new ArrayList<VoMessage>();
+		for (VoMessage voMsg : list) {
+			if (voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId)
+				lstNew.add(voMsg);
+
+		}
+		return lstNew;
+	}
+
+	private List<VoMessage> removeExtraMessages(List<VoMessage> list, int length) {
+		if (list.size() <= length)
+			return list;
+		return list.subList(0, length);
+	}
+
 	@Override
 	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation,
 			TException {
@@ -136,12 +153,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 					VoUser user = getCurrentUser(pm);
 					pm.retrieve(user);
-					VoUserGroup group = user.getGroup(groupId);
+					VoUserGroup group = user.getGroupById(groupId);
 					float lgd = group.getLongitudeDelta();
 					float ltd = group.getLatitudeDelta();
 					String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= " + (group.getLongitude() + lgd)
-							+ " and longitude >= " + (group.getLongitude() - group.getLongitudeDelta()) + " and lattitude <= " + (group.getLatitude() + ltd)
-							+ " and lattitude >= " + (group.getLatitude() - group.getLatitudeDelta()) + " order by createTime";
+							+ " and longitude >= " + (group.getLongitude() - lgd) + " and lattitude <= " + (group.getLatitude() + ltd)
+							+ " and lattitude >= " + (group.getLatitude() - ltd) + " and radius >= " + group.getRadius()
+							+ " order by createTime";
 
 					List<VoTopic> topics = new ArrayList<VoTopic>();
 					try {
@@ -240,7 +258,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					pm.makePersistent(votopic);
 					topic.setId(votopic.getId().getId());
 					VoUser user = getCurrentUser(pm);
-					VoUserGroup ug = user.getGroup(votopic.getUserGroupId());
+					VoUserGroup ug = user.getGroupById(votopic.getUserGroupId());
 					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId().getId()
 							+ "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + "," + votopic.getCreatedAt()
 							+ ");");
@@ -256,10 +274,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		} finally {
 			pm.close();
 		}
-	}
-
-	protected void testMthd(long i, long d) {
-
 	}
 
 	@Override

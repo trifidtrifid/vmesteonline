@@ -14,7 +14,6 @@ import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
-import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.utils.Defaults;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
@@ -66,11 +65,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		if (u != null) {
 			if (u.getPassword().equals(password)) {
 				VoSession sess = new VoSession(sessionStorage.getId(), u);
-				VoUserGroup homeGroup = u.getHomeGroup();
-				if (homeGroup != null) {
-					sess.setLatitude(homeGroup.getLatitude());
-					sess.setLongitude(homeGroup.getLongitude());
-				}
+				sess.setLatitude(u.getLatitude());
+				sess.setLongitude(u.getLongitude());
 				pm.makePersistent(sess);
 				return true;
 			} else
@@ -85,7 +81,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public long registerNewUser(String firstname, String lastname, String password, String email, String locationId) throws InvalidOperation {
 
 		if (getUserByEmail(email) != null)
-			throw new InvalidOperation(VoError.RegistrationAlreadyExist, "registration exsist");
+			throw new InvalidOperation(VoError.RegistrationAlreadyExist, "registration exsist for user with email " + email);
 
 		PersistenceManager pm = PMF.getPm();
 
@@ -109,7 +105,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 			}
 
-			logger.info("register " + email + " pass " + password + " id " + user.getId());
+			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + locationId + " home group: "
+					+ user.getGroups().get(0).getName());
 			return user.getId();
 
 		} finally {
