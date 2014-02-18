@@ -213,7 +213,7 @@
                         </ul>
                     </div><!-- /btn-group -->
 
-                    <a class="btn btn-primary btn-sm no-border" href="/createTopic.html">Создать тему</a>
+                    <a class="btn btn-primary btn-sm no-border" href="/createTopic.jsp">Создать тему</a>
 
                     <form method="post" action="#" class="form-group has-info">
                         <span class="block input-icon input-icon-right">

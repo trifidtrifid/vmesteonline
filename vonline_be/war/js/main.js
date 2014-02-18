@@ -237,7 +237,7 @@ $('.fa-sitemap').click(function(){
             messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
             var topicID = $(this).closest('.topic-item').data('topicid');
             var parentID = $(this).closest('.dd-item').find('.one-message').data('messageid');
-            if (parentID === undefined){parentID = 0;}
+            if (parentID === undefined || $(this).closest('.dd-item').hasClass('topic-item')){parentID = 0;}
             client.createMessage(topicID,parentID,Groups[0].id,1,messageWithGoodLinks,0,0,0);
         });
     }
@@ -309,7 +309,10 @@ $('.fa-sitemap').click(function(){
 
 
 /* мега раздел подгрузки и отправки сообщений  */
-    var arrayOfStateMessages = [[],[]];
+    var arrayOfStateMessages = new Array(10);
+    for(var j = 0; j < arrayOfStateMessages.length; j++) {
+        arrayOfStateMessages[j]=[];
+    }
 
     function SetMainEvents(){
         var zeroLevelFlag = [];
@@ -347,7 +350,7 @@ $('.fa-sitemap').click(function(){
                 /*
                  сообщения ПЕРВОГО уровня берем от родителя с id 0 (т.е от топика)
                  */
-                console.log(topicID,Groups[0].id,1,0,0,0,10);
+                //console.log(topicID,Groups[0].id,1,0,0,0,10);
                 currentMessages = client.getMessages(topicID,Groups[0].id,1,0,0,0,10).messages;
                 currentMessagesLength = currentMessages.length;
                 messageHtml = '';
@@ -357,7 +360,7 @@ $('.fa-sitemap').click(function(){
                  для этого топика
                  */
                 for(i = 0; i < currentMessagesLength ; i++){
-                    messageHtml += '<li class="dd-item dd2-item">'+
+                    messageHtml += '<li class="dd-item dd2-item" data-offset="'+ currentMessages[i].offset +'">'+
                         '<div class="dd2-content topic-descr one-message level-1 widget-body" data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
                         '<div class="widget-main">'+
                         '<div class="topic-left">'+
@@ -435,6 +438,7 @@ $('.fa-sitemap').click(function(){
                          */
                         var parentID = $(this).closest('.one-message').data('messageid');
                         var messagesPart = client.getMessages(topicID,Groups[0].id,1,parentID,0,0,10);
+                        if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
                         currentMessages = messagesPart.messages;
                         currentMessagesLength = currentMessages.length;
                         messageHtml = '';
@@ -497,59 +501,6 @@ $('.fa-sitemap').click(function(){
                          и подгружаем его к нашему сообщению
                          */
                         $(this).closest('.dd-item').after(messageHtml);
-                     //   StaffForGoodMessagesSlide();
-
-
-/*                        function StaffForGoodMessagesSlide(){
-
-                            var i = 0,
-                                j = 0;
-                            var offset = 1;
-                            var newMessagesArray=[],
-                                messagesLen=[],
-                                currentMessage,
-                                nextMessage;
-
-                            while( true ){
-                                j = 0;
-                                newMessagesArray[offset] = [];
-                                $('.one-message:not(.level-1)').each(function(){
-                                    //alert("-- "+parseInt($(this).parent().data('offset')));
-                                    if (parseInt($(this).parent().data('offset')) == offset){
-                                        alert('1');
-                                        newMessagesArray[offset][j] = $(this);
-                                        j++
-                                    }
-                                });
-                                if (j == 0){break;}else{messagesLen[offset] = j;}
-                                offset++;
-                            }
-
-                            for(var indexOffset = 0; indexOffset < offset; indexOffset++ ){
-                                var neighborLength = 0;
-                                var commonIndex = newMessagesArray[indexOffset][0];
-
-                                var indexMessage = 0;
-                                while(indexMessage < messagesLen[indexOffset]){
-                                //for (var indexMessage = 0; indexMessage < messagesLen[indexOffset]; indexMessage++){
-
-                                    currentMessage = newMessagesArray[indexOffset][indexMessage];
-                                    nextMessage = newMessagesArray[indexOffset][indexMessage+1];
-
-                                    if (currentMessage.find('+'+nextMessage).length){
-                                        neighborLength++;
-                                        indexMessage++;
-                                    }else{
-                                        //currentMessage.index();
-                                        $('.one-message:not(.level-1):gt('+ commonIndex-1 +'):lt('+ commonIndex+neighborLength+1 +')').wrap('<span></span>');
-                                        neighborLength = 0;
-                                        //indexMessage = indexMessage+neighborLength+1;
-                                        indexMessage++;
-                                    }
-
-                                }
-                            }
-                        }*/
 
                         /*
                          событие сворачивание разворачивания для любого сообщения,
@@ -618,6 +569,7 @@ $('.fa-sitemap').click(function(){
                         /* --- */
                         SetLikeClick($('.one-message:not(.level-1) .like-item'));
                         firstLevelFlag[index] = 0;
+                        }
                     }else{
                         /*
                          Иначе сворачиваем-разворачиваем сообщения
@@ -626,10 +578,12 @@ $('.fa-sitemap').click(function(){
                         var currentMessageIndex = $(this).closest('.one-message').parent().index();
                         var allMessages = $('.dd-list .dd-list').find('.one-message').parent(),
                             nextMessageIndexOnThisLevel = 0,
+                            nextMessageIndexOnAllLevels = allMessages.length,
                             childOfMessage;
 
                         if ($(this).hasClass('fa-minus')){
-
+                            /* клик на минус/сворачивание/запоминание состояний */
+                                                    //alert('1');
                             allMessages.each(function(){
                                 var tempMessageIndex = $(this).index();
 
@@ -639,11 +593,17 @@ $('.fa-sitemap').click(function(){
                                         if (!nextMessageIndexOnThisLevel){
                                             nextMessageIndexOnThisLevel = $(this).index();
                                         }
+                                    }else if($(this).data('offset') < currentMessageOffset){
+                                        if (nextMessageIndexOnAllLevels == allMessages.length-1){
+                                            nextMessageIndexOnAllLevels = $(this).index();
+                                        }
                                     }
                                 }
                             });
+                            if (!nextMessageIndexOnThisLevel){nextMessageIndexOnThisLevel = nextMessageIndexOnAllLevels;}
 
-                            childOfMessage = allMessages.slice(currentMessageIndex,nextMessageIndexOnThisLevel);
+                            console.log(currentMessageIndex);
+                            childOfMessage = allMessages.slice(currentMessageIndex+1,nextMessageIndexOnThisLevel);
                             childOfMessage.each(function(){
                                 if ($(this).css('display') == 'none'){
                                     arrayOfStateMessages[currentMessageIndex][$(this).index()] = 'hidden';
@@ -654,6 +614,7 @@ $('.fa-sitemap').click(function(){
                             childOfMessage.slideUp();
 
                         }else{
+                            /* клик на плюс/разворачивание/вспоминание состояний */
 
                             allMessages.each(function(){
                                 var tempMessageIndex = $(this).index();
@@ -664,11 +625,16 @@ $('.fa-sitemap').click(function(){
                                         if (!nextMessageIndexOnThisLevel){
                                             nextMessageIndexOnThisLevel = $(this).index();
                                         }
+                                    }else if($(this).data('offset') < currentMessageOffset){
+                                        if (nextMessageIndexOnAllLevels == allMessages.length-1){
+                                            nextMessageIndexOnAllLevels = $(this).index();
+                                        }
                                     }
                                 }
                             });
+                            if (!nextMessageIndexOnThisLevel){nextMessageIndexOnThisLevel = nextMessageIndexOnAllLevels;}
 
-                            childOfMessage = allMessages.slice(currentMessageIndex,nextMessageIndexOnThisLevel);
+                            childOfMessage = allMessages.slice(currentMessageIndex+1,nextMessageIndexOnThisLevel);
                             childOfMessage.each(function(){
                                 if(arrayOfStateMessages[currentMessageIndex][$(this).index()] == 'hidden'){
                                    $(this).slideUp();
