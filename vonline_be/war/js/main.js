@@ -309,6 +309,7 @@ $('.fa-sitemap').click(function(){
 
 
 /* мега раздел подгрузки и отправки сообщений  */
+    var arrayOfStateMessages = [[],[]];
 
     function SetMainEvents(){
         var zeroLevelFlag = [];
@@ -620,55 +621,63 @@ $('.fa-sitemap').click(function(){
                     }else{
                         /*
                          Иначе сворачиваем-разворачиваем сообщения
-                         Кого свернуть-развернуть смотрим с помощью параметра parentId
                          */
-                        var currentParent=$(this).closest('.one-message').data('messageid');
-                        var beginIndex = 0,
-                            endIndex = 0,
-                          //  messageIndex = $(this).closest('.one-message').parent().index();
-                        //alert(messageIndex);
-                            currentMessages = $('.dd-list .dd-list').find('.one-message');
-                        //alert('клик на первый уровень');
-                        var plusMinus = $(this);
-                        currentMessages.each(function(){
-                            if (parseInt($(this).parent().data('offset')) > 0){
+                        var currentMessageOffset = $(this).closest('.one-message').parent().data('offset');
+                        var currentMessageIndex = $(this).closest('.one-message').parent().index();
+                        var allMessages = $('.dd-list .dd-list').find('.one-message').parent(),
+                            nextMessageIndexOnThisLevel = 0,
+                            childOfMessage;
 
-                                if (plusMinus.hasClass('fa-plus')){
+                        if ($(this).hasClass('fa-minus')){
 
-                                    if ($(this).data('parentid') == currentParent){
-                                        $(this).parent().slideToggle();
-                                        $(this).toggleClass('state-open');
-                                    }else{
-                                        if ($(this).hasClass('state-open')){
-                                            $(this).parent().slideDown();
-                                        }/*else{
-                                            $(this).parent().slideUp();
-                                        }*/
+                            allMessages.each(function(){
+                                var tempMessageIndex = $(this).index();
+
+                                if (tempMessageIndex > currentMessageIndex){
+
+                                    if ($(this).data('offset') == currentMessageOffset){
+                                        if (!nextMessageIndexOnThisLevel){
+                                            nextMessageIndexOnThisLevel = $(this).index();
+                                        }
                                     }
+                                }
+                            });
 
+                            childOfMessage = allMessages.slice(currentMessageIndex,nextMessageIndexOnThisLevel);
+                            childOfMessage.each(function(){
+                                if ($(this).css('display') == 'none'){
+                                    arrayOfStateMessages[currentMessageIndex][$(this).index()] = 'hidden';
                                 }else{
-                                    if ($(this).data('parentid') == currentParent){
-                                        $(this).toggleClass('state-open');
-                                    }
-                                    $(this).parent().slideUp();
+                                    arrayOfStateMessages[currentMessageIndex][$(this).index()] = 'visible';
                                 }
+                            });
+                            childOfMessage.slideUp();
 
-
-
-                               /* if (!beginIndex){
-                                    beginIndex = $(this).parent().index();
-                                }
-                                endIndex = $(this).parent().index();*/
-                            }
-                        });
-                        //alert(endIndex);
-                        //currentMessages.parent().slice(beginIndex,endIndex+1).slideToggle();
-
-                        /*if ($(this).hasClass('fa-plus')){
-                            currentMessages.parent().slice(beginIndex,endIndex+1).slideDown();
                         }else{
-                            currentMessages.parent().slice(beginIndex,endIndex+1).slideUp();
-                        }*/
+
+                            allMessages.each(function(){
+                                var tempMessageIndex = $(this).index();
+
+                                if (tempMessageIndex > currentMessageIndex){
+
+                                    if ($(this).data('offset') == currentMessageOffset){
+                                        if (!nextMessageIndexOnThisLevel){
+                                            nextMessageIndexOnThisLevel = $(this).index();
+                                        }
+                                    }
+                                }
+                            });
+
+                            childOfMessage = allMessages.slice(currentMessageIndex,nextMessageIndexOnThisLevel);
+                            childOfMessage.each(function(){
+                                if(arrayOfStateMessages[currentMessageIndex][$(this).index()] == 'hidden'){
+                                   $(this).slideUp();
+                                }else{
+                                    $(this).slideDown();
+                                }
+                            });
+
+                        }
                     }
 
 
