@@ -316,6 +316,74 @@ $('.fa-sitemap').click(function(){
         //console.log('++'+prevTopicsHeight[currentIndex]);
     }
 }
+
+    function MessageHtmlConstructor(arrayOfData,len,level1){
+        var messageHtml = "";
+        /*
+         создаем html, который содержит в себе все остальные сообщения. Html всех сообщений
+         идентичен, древовидная структура создается за счет параметра offset, который есть у каждого сообщения,
+         он определяет margin-left для него.
+         */
+        for(var i = 0; i < len ; i++){
+            if (level1){
+                messageHtml += '<li class="dd-item dd2-item" data-offset="'+ arrayOfData[i].offset +'">'+
+                    '<div class="dd2-content topic-descr one-message level-1 widget-body" data-level1index="'+ i +'" data-parentid="'+ arrayOfData[i].parentId +'" data-messageid="'+ arrayOfData[i].id +'">';
+            }else{
+                messageHtml += '<li class="dd-item dd2-item" data-offset="'+ arrayOfData[i].offset +'" style="margin-left:'+arrayOfData[i].offset*30+'px">'+
+                    '<div class="dd2-content topic-descr one-message widget-body"  data-parentid="'+ arrayOfData[i].parentId +'" data-messageid="'+ arrayOfData[i].id +'">';
+            }
+            messageHtml += '<div class="widget-main">'+
+                '<div class="topic-left">'+
+                '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
+                '</div>'+
+                '<div class="topic-right">'+
+                '<div class="message-author">'+
+                '<a class="fa fa-link fa-relations" href="#" style="display: none;"></a>'+
+                '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
+                '<a href="#">'+ arrayOfData[i].userInfo.firstName + " " + arrayOfData[i].userInfo.lastName +'</a>'+
+                '</div>'+
+                '<p class="alert">'+ arrayOfData[i].content+ '</p>'+
+                '<div class="likes">'+
+                '<div class="answer-date">' + arrayOfData[i].created + '</div>'+
+                '<a href="#" class="like-item like">'+
+                '<i class="fa fa-thumbs-o-up"></i>'+
+                '<span>' + arrayOfData[i].likesNum + '</span>'+
+                '</a>'+
+                '<a href="#" class="like-item dislike">'+
+                '<i class="fa fa-thumbs-o-down"></i>'+
+                '<span>' + arrayOfData[i].unlikesNum + '</span>'+
+                '</a>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '<footer class="widget-toolbox padding-4 clearfix">'+
+                '<div class="btn-group ans-btn">'+
+                '<button class="btn btn-primary btn-sm dropdown-toggle no-border ans-all">Ответить</button>'+
+                '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border ans-pers">'+
+                '<span class="icon-caret-down icon-only smaller-90"></span>'+
+                '</button>'+
+                '<ul class="dropdown-menu dropdown-warning">'+
+                '<li>'+
+                '<a href="#">Ответить лично</a>'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '<div class="answers-ctrl">';
+
+            if (level1){
+                messageHtml += '<a class="fa fa-plus plus-minus" href="#"></a>';
+            }else{
+                messageHtml += '<a class="fa fa-minus plus-minus" href="#"></a>';
+            }
+
+            messageHtml += '<span> <span>8</span> <a href="#">(3)</a></span>'+
+                '</div>'+
+                '</footer>'+
+                '</div>'+
+                '</li>';
+        }
+        return messageHtml;
+    }
 /* --- */
 
     /*
@@ -329,10 +397,12 @@ $('.fa-sitemap').click(function(){
 function StateClass(){}
 
     var topicsMessagesStates = [];
-    for(i = 0; i < $('.topic-item').length; i++){
+    var tempLen = $('.topic-item').length;
+    for(i = 0; i < tempLen; i++){
         topicsMessagesStates[i] = new StateClass();
         topicsMessagesStates[i].arrayOfStateMessages = new Array(20);
-        for(var j = 0; j < topicsMessagesStates[i].arrayOfStateMessages.length; j++) {
+        var tempLen2 = topicsMessagesStates[i].arrayOfStateMessages.length;
+        for(var j = 0; j < tempLen2; j++) {
             topicsMessagesStates[i].arrayOfStateMessages[j]=[];
         }
     }
@@ -346,7 +416,8 @@ function StateClass(){}
          создаем массив флагов (каждому топику по одному флагу), которые сигнализируют была ли загрузка
          контента к топику(значение 0) или нет(значение 1)
          */
-        for(i = 0; i < $('.topic-item').length; i++){
+        var tempLen = $('.topic-item').length;
+        for(i = 0; i < tempLen; i++){
             zeroLevelFlag[i] = 1;
         }
 
@@ -377,8 +448,7 @@ function StateClass(){}
                 currentMessagesLength = currentMessages.length;
                 messageHtml = '';
 
-                /* создаем html с сообщениями ПЕРВОГО уровня, который будем подгружать для этого топика */
-                for(i = 0; i < currentMessagesLength ; i++){
+/*                for(i = 0; i < currentMessagesLength ; i++){
                     messageHtml += '<li class="dd-item dd2-item" data-offset="'+ currentMessages[i].offset +'">'+
                         '<div class="dd2-content topic-descr one-message level-1 widget-body" data-level1index="'+ i +'" data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
                         '<div class="widget-main">'+
@@ -424,14 +494,15 @@ function StateClass(){}
                         '</footer>'+
                         '</div>'+
                         '</li>';
-                }
+                }*/
+                /* создаем html с сообщениями ПЕРВОГО уровня, который будем подгружать для этого топика */
                 /* и подгружаем его, в списке */
-                topicItem.append('<ol class="dd-list">' + messageHtml + '</ol>');
-
+                topicItem.append('<ol class="dd-list">' + MessageHtmlConstructor(currentMessages,currentMessagesLength,true) + '</ol>');
 
                 var firstLevelFlag = [];
                 /* создаем массив флагов сообщений ПЕРВОГО уровня, аналогично флагам для топиков (см. выше) */
-                for (i = 0 ; i < topicItem.find('.level-1').length; i++){
+                var tempLen = topicItem.find('.level-1').length;
+                for (i = 0 ; i < tempLen; i++){
                     firstLevelFlag[i] = 1;
                 }
 
@@ -452,15 +523,9 @@ function StateClass(){}
                         currentMessages = messagesPart.messages;
                         currentMessagesLength = currentMessages.length;
                         messageHtml = '';
-
-                        /*
-                         создаем html, который содержит в себе все остальные сообщения. Html всех сообщений
-                         идентичен, древовидная структура создается за счет параметра offset, который есть у каждого сообщения,
-                         он определяет margin-left для него.
-                         */
-                        for(i = 0; i < currentMessagesLength ; i++){
+/*                        for(i = 0; i < currentMessagesLength ; i++){
                             messageHtml += '<li class="dd-item dd2-item" data-offset="'+ currentMessages[i].offset +'" style="margin-left:'+currentMessages[i].offset*30+'px">'+
-                                '<div class="dd2-content topic-descr one-message widget-body state-open"  data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
+                                '<div class="dd2-content topic-descr one-message widget-body"  data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
                                 '<div class="widget-main">'+
                                 '<div class="topic-left">'+
                                 '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
@@ -504,9 +569,9 @@ function StateClass(){}
                                 '</footer>'+
                                 '</div>'+
                             '</li>';
-                        }
-                        /* и подгружаем его к нашему сообщению */
-                        $(this).closest('.dd-item').after(messageHtml);
+                        }*/
+                        /* подгружаем остальные сообщения к этому сообщению первого уровня */
+                        $(this).closest('.dd-item').after(MessageHtmlConstructor(currentMessages,currentMessagesLength,false));
 
                         /* событие сворачивание разворачивания для любого сообщения, кроме ПЕРВОГО уровня */
                          topicItem.find('.one-message:not(.level-1):not(.withPlusMinusClick) .plus-minus').click(function(e){
@@ -665,6 +730,7 @@ function AutoReplaceLinkAndVideo(str) {
 
     $('.create-topic-show').click(function(){
         var forum = $('.forum');
+        var activeGroupItem = $('.submenu .active .btn');
         forum.html('');
         var createTopicHtml = $('.create-topic').html();
 
@@ -677,15 +743,11 @@ function AutoReplaceLinkAndVideo(str) {
                 var head = $('.head').val();
                 var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
                 messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
-                var groupID = $('.submenu .active .btn').data('groupid');
+                var groupID = activeGroupItem.data('groupid');
                 client.createTopic(groupID,head,1,messageWithGoodLinks,0,0,Rubrics[0].id,1);
-                $('.submenu .active .btn').trigger('click');
+                activeGroupItem.trigger('click');
             });
         });
     });
-
-
-
-
 });
 
