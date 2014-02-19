@@ -56,7 +56,7 @@ $('.fa-sitemap').click(function(){
     $(this).parent().addClass('active');
     var groupID = $('.submenu .active .btn').data('groupid');
     var rubricID = $('.nav-list .active a').data('rubricid');
-    var topicsContent = client.getTopics(groupID,rubricID,0,0,10);
+    var topicsContent = client.getTopics(groupID,rubricID,0,0,20);
        var topicLen = 0;
        if (topicsContent.topics){
            topicLen = topicsContent.topics.length;
@@ -681,8 +681,6 @@ function AutoReplaceLinkAndVideo(str) {
                 $('.submenu .active .btn').trigger('click');
             });
         });
-
-
     });
 
 
