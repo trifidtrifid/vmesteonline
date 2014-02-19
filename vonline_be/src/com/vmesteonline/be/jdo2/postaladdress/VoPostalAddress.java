@@ -48,9 +48,11 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public VoPostalAddress(PostalAddress postalAddress, PersistenceManager _pm) throws InvalidOperation {
-		if( null==postalAddress) return;
-		
+		if (null == postalAddress)
+			return;
+
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		try {
 			VoBuilding vob;
@@ -62,8 +64,8 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 			}
 			// check that the address exists
 			Query q = pm.newQuery(VoPostalAddress.class);
-			q.setFilter("building == :key && staircase == "+postalAddress.getStaircase() + " && floor == "+postalAddress.getFloor() + 
-					" && flatNo == "+postalAddress.getFlatNo());
+			q.setFilter("building == :key && staircase == " + postalAddress.getStaircase() + " && floor == " + postalAddress.getFloor() + " && flatNo == "
+					+ postalAddress.getFlatNo());
 			List<VoPostalAddress> pal = (List<VoPostalAddress>) q.execute(postalAddress.getBuilding().getId());
 			if (pal.size() > 0) {
 				this.id = pal.get(0).id;
@@ -98,7 +100,6 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 				that.flatNo);
 	}
 
-	
 	public long getAddressCode() {
 		return id.getId() ^ valueMask;
 	}
