@@ -175,7 +175,11 @@ $('.fa-sitemap').click(function(){
     }
 
     function SetShowEditorClick(selector){
-        selector.click(function(){
+        selector.click(function(e){
+
+            e.preventDefault();
+            //alert('1');
+            
             var cont = $('.wysiwig-wrap').html();
             var widget = $(this).closest('.widget-body');
             if (widget.find('+.widget-box').length <= 0)
@@ -396,9 +400,9 @@ function StateClass(){}
                         '</div>'+
                         '<footer class="widget-toolbox padding-4 clearfix">'+
                         '<div class="btn-group ans-btn">'+
-                        '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
-                        'Ответить'+
-                        '<span class="icon-caret-down icon-on-right"></span>'+
+                        '<button class="btn btn-primary btn-sm dropdown-toggle no-border ans-all">Ответить</button>'+
+                        '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border ans-pers">'+
+                        '<span class="icon-caret-down icon-only smaller-90"></span>'+
                         '</button>'+
                         '<ul class="dropdown-menu dropdown-warning">'+
                         '<li>'+
@@ -474,6 +478,25 @@ function StateClass(){}
                                 '</div>'+
                                 '<footer class="widget-toolbox padding-4 clearfix">'+
                                 '<div class="btn-group ans-btn">'+
+                                    '<button class="btn btn-primary btn-sm dropdown-toggle no-border ans-all">Ответить</button>'+
+                                   '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border ans-pers">'+
+                                        '<span class="icon-caret-down icon-only smaller-90"></span>'+
+                                    '</button>'+
+                                    '<ul class="dropdown-menu dropdown-warning">'+
+                                        '<li>'+
+                                            '<a href="#">Ответить лично</a>'+
+                                        '</li>'+
+                                    '</ul>'+
+                                '</div>'+
+                            '<div class="answers-ctrl">'+
+                                '<a class="fa fa-minus plus-minus" href="#"></a>'+
+                                '<span> <span>8</span> <a href="#">(3)</a></span>'+
+                                '</div>'+
+                                '</footer>'+
+                                '</div>'+
+                            '</li>';
+
+                                /*'<div class="btn-group ans-btn">'+
                                 '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
                                 'Ответить'+
                                 '<span class="icon-caret-down icon-on-right"></span>'+
@@ -483,14 +506,10 @@ function StateClass(){}
                                 '<a href="#">Ответить лично</a>'+
                                 '</li>'+
                                 '</ul>'+
-                                '</div>'+
-                                '<div class="answers-ctrl">'+
-                                '<a class="fa fa-minus plus-minus" href="#"></a>'+
-                                '<span> <span>8</span> <a href="#">(3)</a></span>'+
-                                '</div>'+
-                                '</footer>'+
-                                '</div>'+
-                                '</li>';
+                                '</div>'+*/
+
+
+
                         }
                         /* и подгружаем его к нашему сообщению */
                         $(this).closest('.dd-item').after(messageHtml);
@@ -515,7 +534,7 @@ function StateClass(){}
                         });
 
                         /* появление wysiwig редактора (для остальных сообщений) */
-                        SetShowEditorClick(topicItem.find('.one-message:not(.level-1)').find('.ans-btn.btn-group'));
+                        SetShowEditorClick(topicItem.find('.one-message:not(.level-1)').find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
                         /* --- */
                         SetLikeClick(topicItem.find('.one-message:not(.level-1) .like-item'));
                         firstLevelFlag[index] = 0;
@@ -535,7 +554,7 @@ function StateClass(){}
                  событие появления wysiwig редактора для сообщений 1го уровня
                  (можно вынести в функцию, т.к повторяется)
                  */
-                SetShowEditorClick(topicItem.find('.level-1 .ans-btn.btn-group'));
+                SetShowEditorClick(topicItem.find('.level-1 .ans-btn.btn-group .ans-all,.level-1 .ans-btn.btn-group .dropdown-menu a'));
                 SetLikeClick(topicItem.find('.level-1 .like-item'));
 
             } else {
@@ -550,7 +569,7 @@ function StateClass(){}
             }
         });
         /* появление wysiwig редактора (для топиков) */
-        SetShowEditorClick($('.ans-btn.btn-group'));
+        SetShowEditorClick($('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
         /* --- */
         SetLikeClick($('.like-item'));
 

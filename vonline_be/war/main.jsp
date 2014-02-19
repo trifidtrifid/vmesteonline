@@ -281,6 +281,19 @@
 
                                             <footer class="widget-toolbox clearfix">
                                                 <div class="btn-group ans-btn">
+                                                    <button class="btn btn-primary btn-sm dropdown-toggle no-border ans-all">Ответить</button>
+
+                                                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border ans-pers">
+                                                        <span class="icon-caret-down icon-only smaller-90"></span>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-warning">
+                                                        <li>
+                                                            <a href="#">Ответить лично</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <!--<div class="btn-group ans-btn">
                                                     <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">
                                                         Ответить
                                                         <span class="icon-caret-down icon-on-right"></span>
@@ -291,7 +304,7 @@
                                                             <a href="#">Ответить лично</a>
                                                         </li>
                                                     </ul>
-                                                </div>
+                                                </div>-->
                                                 <div class="answers-ctrl">
                                                     <a class="fa fa-plus plus-minus <c:if test="${topic.messageNum == 0}">hide</c:if>" href="#"></a>
                                                     <span> <span>${topic.messageNum}</span> <a href="#">(3)</a></span>
