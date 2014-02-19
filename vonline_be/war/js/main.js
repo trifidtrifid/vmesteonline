@@ -40,6 +40,14 @@ $('.fa-sitemap').click(function(){
    $('.submenu .btn,.nav-list a').click(function(e){
     e.preventDefault();
 
+       var forum = $('.forum');
+       if (forum.hasClass('create-topic')){
+           forum.removeClass('create-topic');
+       }
+       var forumHtml = '<div class="dd dd-draghandle"><ol class="dd-list"></ol></div>';
+       forum.html('');
+       forum.append(forumHtml);
+
        if ($(this).closest('.submenu').length){
            $(this).closest('.submenu').find('.active').removeClass('active');
        } else{
@@ -56,7 +64,6 @@ $('.fa-sitemap').click(function(){
 
     topicsList="";
     var ddList = $('.dd>.dd-list');
-    ddList.html('');
 
     for(var i = 0; i < topicLen; i++){
         oneTopicContent = topicsContent.topics[i];
@@ -111,9 +118,9 @@ $('.fa-sitemap').click(function(){
             '</div>'+
             '<footer class="widget-toolbox clearfix">'+
             '<div class="btn-group ans-btn">'+
-            '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
-            'Ответить'+
-            '<span class="icon-caret-down icon-on-right"></span>'+
+            '<button class="btn btn-primary btn-sm dropdown-toggle no-border ans-all">Ответить</button>'+
+            '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border ans-pers">'+
+            '<span class="icon-caret-down icon-only smaller-90"></span>'+
             '</button>'+
             '<ul class="dropdown-menu dropdown-warning">'+
             '<li>'+
@@ -432,6 +439,7 @@ function StateClass(){}
                 topicItem.find('.level-1 .plus-minus').click(function(e){
                     e.preventDefault();
 
+                    /* класс служит для того чтобы не вешать событие по нескольку раз на одно и тоже сообщение */
                     topicItem.find('.one-message').addClass('withPlusMinusClick');
                     var index = $(this).closest('.level-1').parent().index();
 
@@ -495,21 +503,6 @@ function StateClass(){}
                                 '</footer>'+
                                 '</div>'+
                             '</li>';
-
-                                /*'<div class="btn-group ans-btn">'+
-                                '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">'+
-                                'Ответить'+
-                                '<span class="icon-caret-down icon-on-right"></span>'+
-                                '</button>'+
-                                '<ul class="dropdown-menu dropdown-warning">'+
-                                '<li>'+
-                                '<a href="#">Ответить лично</a>'+
-                                '</li>'+
-                                '</ul>'+
-                                '</div>'+*/
-
-
-
                         }
                         /* и подгружаем его к нашему сообщению */
                         $(this).closest('.dd-item').after(messageHtml);
@@ -668,6 +661,31 @@ function AutoReplaceLinkAndVideo(str) {
 }
 
 /* ------------ */
+
+    $('.create-topic-show').click(function(){
+        var forum = $('.forum');
+        forum.html('');
+        var createTopicHtml = $('.create-topic').html();
+
+        forum.html(createTopicHtml).addClass('create-topic').show(200,function(){
+
+            $('.create-topic .wysiwig-box .btn-primary').click(function(){
+                var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
+                message = message.replace(new RegExp('&nbsp;','g'),' ');
+                message = message.replace(new RegExp('<div>','g'),'<div> ');
+                var head = $('.head').val();
+                var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
+                messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
+                var groupID = $('.submenu .active .btn').data('groupid');
+                client.createTopic(groupID,head,1,messageWithGoodLinks,0,0,Rubrics[0].id,1);
+                $('.submenu .active .btn').trigger('click');
+            });
+        });
+
+
+    });
+
+
 
 
 });
