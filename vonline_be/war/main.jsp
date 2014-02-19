@@ -36,7 +36,7 @@
     MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
     //MessageType mesType = MessageType.BASE;
 
-    TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,20);
+    TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
     //out.print(Topics.totalSize);
 
     pageContext.setAttribute("groups",Groups);

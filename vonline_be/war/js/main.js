@@ -37,6 +37,7 @@ $('.fa-sitemap').click(function(){
 
 /* --- */
 
+    /* переключение между группами и рубриками */
    $('.submenu .btn,.nav-list a').click(function(e){
     e.preventDefault();
 
@@ -56,16 +57,15 @@ $('.fa-sitemap').click(function(){
     $(this).parent().addClass('active');
     var groupID = $('.submenu .active .btn').data('groupid');
     var rubricID = $('.nav-list .active a').data('rubricid');
-    var topicsContent = client.getTopics(groupID,rubricID,0,0,20);
+    var topicsContent = client.getTopics(groupID,rubricID,0,0,10);
        var topicLen = 0;
        if (topicsContent.topics){
            topicLen = topicsContent.topics.length;
        }
 
-    topicsList="";
     var ddList = $('.dd>.dd-list');
 
-    for(var i = 0; i < topicLen; i++){
+/*    for(var i = 0; i < topicLen; i++){
         oneTopicContent = topicsContent.topics[i];
         var hide = "";
         if (oneTopicContent.messageNum == 0){
@@ -139,8 +139,8 @@ $('.fa-sitemap').click(function(){
             '</div>'+
             '</div>'+
             '</li>';
-    }
-       ddList.append(topicsList);
+    }*/
+       ddList.append(TopicHtmlConstructor(topicsContent,topicLen));
        SetMainEvents();
 });
 
@@ -383,6 +383,86 @@ $('.fa-sitemap').click(function(){
                 '</li>';
         }
         return messageHtml;
+    }
+
+    function TopicHtmlConstructor(arrayOfData,len){
+        var topicsList="";
+        for(var i = 0; i < len; i++){
+            oneTopicContent = arrayOfData.topics[i];
+            var hide = "";
+            if (oneTopicContent.messageNum == 0){
+                hide = 'hide';
+            }
+            topicsList += '<li class="dd-item dd2-item topic-item" data-topicid="'+ oneTopicContent.id +'">'+
+                '<div class="dd2-content widget-box topic-descr">'+
+                '<header class="widget-header header-color-blue2">'+
+                '<span class="topic-header-date">01.04.2014 10:10</span>'+
+                '<span class="topic-header-left">'+
+                '<i class="fa fa-minus"></i>'+
+                '<i class="fa fa-sitemap"></i>'+
+                '</span>'+
+                '<div class="widget-toolbar no-border">'+
+                '<a class="fa fa-thumb-tack fa-2x" href="#"></a>'+
+                '<a class="fa fa-check-square-o fa-2x" href="#"></a>'+
+                '<a class="fa fa-times fa-2x" href="#"></a>'+
+                '</div>'+
+                '<h2>'+ oneTopicContent.subject +'</h2>'+
+                '</header>'+
+                '<div class="widget-body">'+
+                '<div class="widget-main">'+
+                '<div class="topic-left">'+
+                '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"/></a>'+
+                '<div class="topic-author">'+
+                '<a href="#">'+oneTopicContent.userInfo.firstName+' '+oneTopicContent.userInfo.lastName+'</a>'+
+                '<div class="author-rating">'+
+                '<a href="#" class="fa fa-star"></a>'+
+                '<a class="fa fa-star" href="#"></a>'+
+                '<a class="fa fa-star" href="#"></a>'+
+                '<a class="fa fa-star-half-o" href="#"></a>'+
+                '<a class="fa fa-star-o" href="#"></a>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '<div class="topic-right">'+
+                '<a class="fa fa-link fa-relations" href="#"></a>'+
+                '<p class="alert ">'+ oneTopicContent.message.content +'</p>'+
+                '<div class="likes">'+
+                '<a href="#" class="like-item like">'+
+                '<i class="fa fa-thumbs-o-up"></i>'+
+                '<span>'+ oneTopicContent.likesNum +'</span>'+
+                '</a>'+
+                '<a href="#" class="like-item dislike">'+
+                '<i class="fa fa-thumbs-o-down"></i>'+
+                '<span>'+ oneTopicContent.unlikesNum +'</span>'+
+                '</a>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '<footer class="widget-toolbox clearfix">'+
+                '<div class="btn-group ans-btn">'+
+                '<button class="btn btn-primary btn-sm dropdown-toggle no-border ans-all">Ответить</button>'+
+                '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border ans-pers">'+
+                '<span class="icon-caret-down icon-only smaller-90"></span>'+
+                '</button>'+
+                '<ul class="dropdown-menu dropdown-warning">'+
+                '<li>'+
+                '<a href="#">Ответить лично</a>'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '<div class="answers-ctrl">'+
+                '<a class="fa fa-plus plus-minus '+ hide +'" href="#"></a>'+
+                '<span> <span>'+ oneTopicContent.messageNum +'</span> <a href="#">(3)</a></span>'+
+                '</div>'+
+                '<div class="topic-statistic">'+
+                'Участников '+ oneTopicContent.usersNum + 'Просмотров '+ oneTopicContent.viewers +
+                '</div>'+
+                '</footer>'+
+                '</div>'+
+                '</div>'+
+                '</li>';
+        }
+        return topicsList;
     }
 /* --- */
 
@@ -647,8 +727,11 @@ function StateClass(){}
         GetTopicsHeightForFixedHeader(0,topics,topicsLen,prevTopicsHeight);
 
         var staffCounterForGoodTopicsHeight = 0;
+        var groupID = $('.submenu .active .btn').data('groupid');
+        var rubricID = $('.nav-list .active a').data('rubricid');
+        var lastTopicId = $('.dd .topic-item:last').data('topicid');
+
         $(window).scroll(function(){
-            // console.log($(this).scrollTop());
             var scrollTop = $(this).scrollTop();
 
             //убираем сайдбар при прокрутке
@@ -671,7 +754,6 @@ function StateClass(){}
 
             // фиксация хэдера темы, если много сообщений
 
-            /* верхний цикл: обход всех раскрытых топиков */
             for (var i = 0; i < topicsLen ; i++){
                 var currentIndex = i;
 
@@ -682,14 +764,26 @@ function StateClass(){}
 
                 if (scrollTop > prevTopicsHeight[i]){
                     topicsHeaderArray[currentIndex].addClass('fixed');
-                    topicsHeader.css('margin-right',asideWidth+10);////width('1206');
+                    topicsHeader.css('margin-right',asideWidth+10);
+
+                    if( currentIndex == topicsLen-5){
+                        //alert('1 '+currentIndex);
+                        var topicsContent = client.getTopics(groupID,rubricID,0,lastTopicId,10);
+                        if (topicsContent.topics){
+                            var tempTopicLen = topicsContent.topics.length;
+                            $('.dd>.dd-list').append(TopicHtmlConstructor(topicsContent,tempTopicLen));
+                            topicsLen = topics.length;
+                            lastTopicId = $('.dd .topic-item:last').data('topicid');
+                        }
+                    }
                     if (scrollTop<270){
-                        topicsHeader.css('margin-right',asideWidth+10);////width('1014');
+                        topicsHeader.css('margin-right',asideWidth+10);
                     }
                 }else{
                     topicsHeaderArray[currentIndex].removeClass('fixed').css('margin-right',0);
                 }
             }
+
         });
     }
     SetMainEvents();
@@ -728,29 +822,30 @@ function AutoReplaceLinkAndVideo(str) {
 
 /* ------------ */
 
-    $('.create-topic-show').click(function(){
-        var forum = $('.forum');
-        var activeGroupItem = $('.submenu .active .btn');
-        var activeRubricItem = $('.nav-list .active a');
-        forum.html('');
-        var createTopicHtml = $('.create-topic').html();
+    /* переключение на создание топика */
+$('.create-topic-show').click(function(){
+    var forum = $('.forum');
+    var activeGroupItem = $('.submenu .active .btn');
+    var activeRubricItem = $('.nav-list .active a');
+    forum.html('');
+    var createTopicHtml = $('.create-topic').html();
 
-        forum.html(createTopicHtml).addClass('create-topic').show(200,function(){
+    forum.html(createTopicHtml).addClass('create-topic').show(200,function(){
 
-            $('.create-topic .wysiwig-box .btn-primary').click(function(){
-                var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
-                message = message.replace(new RegExp('&nbsp;','g'),' ');
-                message = message.replace(new RegExp('<div>','g'),'<div> ');
-                var head = $('.head').val();
-                var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
-                messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
-                var groupID = activeGroupItem.data('groupid');
-                var rubricID = activeRubricItem.data('rubricid');
-                client.createTopic(groupID,head,1,messageWithGoodLinks,0,0,rubricID,1);
-                activeGroupItem.trigger('click');
-                activeRubricItem.trigger('click');
-            });
+        $('.create-topic .wysiwig-box .btn-primary').click(function(){
+            var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
+            message = message.replace(new RegExp('&nbsp;','g'),' ');
+            message = message.replace(new RegExp('<div>','g'),'<div> ');
+            var head = $('.head').val();
+            var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
+            messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
+            var groupID = activeGroupItem.data('groupid');
+            var rubricID = activeRubricItem.data('rubricid');
+            client.createTopic(groupID,head,1,messageWithGoodLinks,0,0,rubricID,1);
+            activeGroupItem.trigger('click');
+            activeRubricItem.trigger('click');
         });
     });
+});
 });
 
