@@ -380,7 +380,7 @@ function StateClass(){}
                 /* создаем html с сообщениями ПЕРВОГО уровня, который будем подгружать для этого топика */
                 for(i = 0; i < currentMessagesLength ; i++){
                     messageHtml += '<li class="dd-item dd2-item" data-offset="'+ currentMessages[i].offset +'">'+
-                        '<div class="dd2-content topic-descr one-message level-1 widget-body" data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
+                        '<div class="dd2-content topic-descr one-message level-1 widget-body" data-level1index="'+ i +'" data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
                         '<div class="widget-main">'+
                         '<div class="topic-left">'+
                         '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
@@ -441,7 +441,8 @@ function StateClass(){}
 
                     /* класс служит для того чтобы не вешать событие по нескольку раз на одно и тоже сообщение */
                     topicItem.find('.one-message').addClass('withPlusMinusClick');
-                    var index = $(this).closest('.level-1').parent().index();
+                    var index = $(this).closest('.level-1').data('level1index');//parent().index();
+                    //alert(index);
 
                     if (firstLevelFlag[index]){
                         /* Если флаг стоит, значит подгружаем сообщения остальных уровней для этого сообщения ПЕРВОГО уровня */
@@ -527,9 +528,9 @@ function StateClass(){}
                         });
 
                         /* появление wysiwig редактора (для остальных сообщений) */
-                        SetShowEditorClick(topicItem.find('.one-message:not(.level-1)').find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
+                        SetShowEditorClick(topicItem.find('.one-message:not(.level-1):not(.withPlusMinusClick)').find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
                         /* --- */
-                        SetLikeClick(topicItem.find('.one-message:not(.level-1) .like-item'));
+                        SetLikeClick(topicItem.find('.one-message:not(.level-1):not(.withPlusMinusClick) .like-item'));
                         firstLevelFlag[index] = 0;
                         }
                     }else{
