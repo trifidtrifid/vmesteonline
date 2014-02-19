@@ -731,6 +731,7 @@ function AutoReplaceLinkAndVideo(str) {
     $('.create-topic-show').click(function(){
         var forum = $('.forum');
         var activeGroupItem = $('.submenu .active .btn');
+        var activeRubricItem = $('.nav-list .active a');
         forum.html('');
         var createTopicHtml = $('.create-topic').html();
 
@@ -744,8 +745,10 @@ function AutoReplaceLinkAndVideo(str) {
                 var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
                 messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
                 var groupID = activeGroupItem.data('groupid');
-                client.createTopic(groupID,head,1,messageWithGoodLinks,0,0,Rubrics[0].id,1);
+                var rubricID = activeRubricItem.data('rubricid');
+                client.createTopic(groupID,head,1,messageWithGoodLinks,0,0,rubricID,1);
                 activeGroupItem.trigger('click');
+                activeRubricItem.trigger('click');
             });
         });
     });
