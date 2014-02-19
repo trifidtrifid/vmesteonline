@@ -428,6 +428,7 @@ function StateClass(){}
                 topicItem.find('.level-1 .plus-minus').click(function(e){
                     e.preventDefault();
 
+                    topicItem.find('.one-message').addClass('withPlusMinusClick');
                     var index = $(this).closest('.level-1').parent().index();
 
                     if (firstLevelFlag[index]){
@@ -495,8 +496,10 @@ function StateClass(){}
                         $(this).closest('.dd-item').after(messageHtml);
 
                         /* событие сворачивание разворачивания для любого сообщения, кроме ПЕРВОГО уровня */
-                         topicItem.find('.one-message:not(.level-1) .plus-minus').click(function(e){
+                         topicItem.find('.one-message:not(.level-1):not(.withPlusMinusClick) .plus-minus').click(function(e){
+
                             e.preventDefault();
+                             topicItem.find('.one-message').addClass('withPlusMinusClick');
 
                              /* Иначе сворачиваем-разворачиваем сообщения */
                              SaveOrLoadMessagesStates($(this),topicItem);
