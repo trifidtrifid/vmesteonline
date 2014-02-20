@@ -16,7 +16,6 @@ client = new com.vmesteonline.be.MessageServiceClient(protocol);
 
 var level=0,
     message,
-    topicsList="",
     oneTopicContent;
 
 /* простые обработчики событий */
@@ -65,81 +64,6 @@ $('.fa-sitemap').click(function(){
 
     var ddList = $('.dd>.dd-list');
 
-/*    for(var i = 0; i < topicLen; i++){
-        oneTopicContent = topicsContent.topics[i];
-        var hide = "";
-        if (oneTopicContent.messageNum == 0){
-            hide = 'hide';
-        }
-        topicsList += '<li class="dd-item dd2-item topic-item" data-topicid="'+ oneTopicContent.id +'">'+
-            '<div class="dd2-content widget-box topic-descr">'+
-            '<header class="widget-header header-color-blue2">'+
-            '<span class="topic-header-date">01.04.2014 10:10</span>'+
-            '<span class="topic-header-left">'+
-            '<i class="fa fa-minus"></i>'+
-            '<i class="fa fa-sitemap"></i>'+
-            '</span>'+
-            '<div class="widget-toolbar no-border">'+
-            '<a class="fa fa-thumb-tack fa-2x" href="#"></a>'+
-            '<a class="fa fa-check-square-o fa-2x" href="#"></a>'+
-            '<a class="fa fa-times fa-2x" href="#"></a>'+
-            '</div>'+
-            '<h2>'+ oneTopicContent.subject +'</h2>'+
-            '</header>'+
-            '<div class="widget-body">'+
-            '<div class="widget-main">'+
-            '<div class="topic-left">'+
-            '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"/></a>'+
-            '<div class="topic-author">'+
-            '<a href="#">'+oneTopicContent.userInfo.firstName+' '+oneTopicContent.userInfo.lastName+'</a>'+
-            '<div class="author-rating">'+
-            '<a href="#" class="fa fa-star"></a>'+
-            '<a class="fa fa-star" href="#"></a>'+
-            '<a class="fa fa-star" href="#"></a>'+
-            '<a class="fa fa-star-half-o" href="#"></a>'+
-            '<a class="fa fa-star-o" href="#"></a>'+
-            '</div>'+
-            '</div>'+
-            '</div>'+
-            '<div class="topic-right">'+
-            '<a class="fa fa-link fa-relations" href="#"></a>'+
-            '<p class="alert ">'+ oneTopicContent.message.content +'</p>'+
-            '<div class="likes">'+
-            '<a href="#" class="like-item like">'+
-            '<i class="fa fa-thumbs-o-up"></i>'+
-            '<span>'+ oneTopicContent.likesNum +'</span>'+
-            '</a>'+
-            '<a href="#" class="like-item dislike">'+
-            '<i class="fa fa-thumbs-o-down"></i>'+
-            '<span>'+ oneTopicContent.unlikesNum +'</span>'+
-            '</a>'+
-            '</div>'+
-            '</div>'+
-            '</div>'+
-            '<footer class="widget-toolbox clearfix">'+
-            '<div class="btn-group ans-btn">'+
-            '<button class="btn btn-primary btn-sm dropdown-toggle no-border ans-all">Ответить</button>'+
-            '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border ans-pers">'+
-            '<span class="icon-caret-down icon-only smaller-90"></span>'+
-            '</button>'+
-            '<ul class="dropdown-menu dropdown-warning">'+
-            '<li>'+
-            '<a href="#">Ответить лично</a>'+
-            '</li>'+
-            '</ul>'+
-            '</div>'+
-            '<div class="answers-ctrl">'+
-            '<a class="fa fa-plus plus-minus '+ hide +'" href="#"></a>'+
-            '<span> <span>'+ oneTopicContent.messageNum +'</span> <a href="#">(3)</a></span>'+
-            '</div>'+
-            '<div class="topic-statistic">'+
-            'Участников '+ oneTopicContent.usersNum + 'Просмотров '+ oneTopicContent.viewers +
-            '</div>'+
-            '</footer>'+
-            '</div>'+
-            '</div>'+
-            '</li>';
-    }*/
        ddList.append(TopicHtmlConstructor(topicsContent,topicLen));
        SetMainEvents($('.dd>.dd-list>.topic-item'));
 });
@@ -464,13 +388,32 @@ $('.fa-sitemap').click(function(){
         return topicsList;
     }
 
-    function topicHeaderOptimization(topics,topicsHeaderArray){
+    function TopicHeaderOptimization(topics){
         /* заносим DOM элементы в массив для оптимизации */
         var topicsLen = topics.length;
+        var topicsHeaderArray = [];
         for (var i = 0; i < topicsLen ;i++){
             topicsHeaderArray[i] = topics.eq(i).find('>.topic-descr>.widget-header');
         }
+
+        return topicsHeaderArray;
     }
+
+    function SetGlobalParameters(){
+        topics = $('.dd>.dd-list>.topic-item');
+        prevTopicsHeight = [];
+        topicsLen = topics.length;
+        topicsHeader = topics.find('>.topic-descr>.widget-header');
+        topicsHeaderArray = TopicHeaderOptimization(topics);
+
+        staffCounterForGoodTopicsHeight = 0;
+        groupID = $('.submenu .active .btn').data('groupid');
+        rubricID = $('.nav-list .active a').data('rubricid');
+        lastTopicId = $('.dd .topic-item:last').data('topicid');
+
+        FlagOfEndTopics = 1;
+    }
+
 /* --- */
 
 /* мега раздел подгрузки и отправки сообщений  */
@@ -486,7 +429,6 @@ $('.fa-sitemap').click(function(){
     function StateClass(){}
 
     var topicsMessagesStates = [];
-    //var tempLen = $('.topic-item').length;
     var tempLen = $('.topic-item').length;
 
     for(i = 0; i < tempLen; i++){
@@ -498,10 +440,9 @@ $('.fa-sitemap').click(function(){
         }
     }
     /* --- */
-    var FlagOfEndTopics = 1;
 
     function SetMainEvents(topicsSelector){
-
+        SetGlobalParameters();
         /*
          конструктор для объектов топиков. У каждого топика выведенного на страницу
          есть массив состояний для каждого из его внутренних сообщений. Это двумерный массив, где первый
@@ -535,7 +476,6 @@ $('.fa-sitemap').click(function(){
         }
 
         /* раскрываем топик - начинается самое интересное */
-        //$('.topic-item>.topic-descr .plus-minus')
         topicsSelector.find('>.topic-descr .plus-minus').click(function(e){
             e.preventDefault();
 
@@ -562,53 +502,6 @@ $('.fa-sitemap').click(function(){
                 currentMessagesLength = currentMessages.length;
                 messageHtml = '';
 
-/*                for(i = 0; i < currentMessagesLength ; i++){
-                    messageHtml += '<li class="dd-item dd2-item" data-offset="'+ currentMessages[i].offset +'">'+
-                        '<div class="dd2-content topic-descr one-message level-1 widget-body" data-level1index="'+ i +'" data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
-                        '<div class="widget-main">'+
-                        '<div class="topic-left">'+
-                        '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
-                        '</div>'+
-                        '<div class="topic-right">'+
-                        '<div class="message-author">'+
-                        '<a class="fa fa-link fa-relations" href="#" style="display: none;"></a>'+
-                        '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
-                        '<a href="#">'+ currentMessages[i].userInfo.firstName + " " + currentMessages[i].userInfo.lastName +'</a>'+
-                        '</div>'+
-                        '<p class="alert">'+ currentMessages[i].content+ '</p>'+
-                        '<div class="likes">'+
-                        '<div class="answer-date">' + currentMessages[i].created + '</div>'+
-                        '<a href="#" class="like-item like">'+
-                        '<i class="fa fa-thumbs-o-up"></i>'+
-                        '<span>' + currentMessages[i].likesNum + '</span>'+
-                        '</a>'+
-                        '<a href="#" class="like-item dislike">'+
-                        '<i class="fa fa-thumbs-o-down"></i>'+
-                        '<span>' + currentMessages[i].unlikesNum + '</span>'+
-                        '</a>'+
-                        '</div>'+
-                        '</div>'+
-                        '</div>'+
-                        '<footer class="widget-toolbox padding-4 clearfix">'+
-                        '<div class="btn-group ans-btn">'+
-                        '<button class="btn btn-primary btn-sm dropdown-toggle no-border ans-all">Ответить</button>'+
-                        '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border ans-pers">'+
-                        '<span class="icon-caret-down icon-only smaller-90"></span>'+
-                        '</button>'+
-                        '<ul class="dropdown-menu dropdown-warning">'+
-                        '<li>'+
-                        '<a href="#">Ответить лично</a>'+
-                        '</li>'+
-                        '</ul>'+
-                        '</div>'+
-                        '<div class="answers-ctrl">'+
-                        '<a class="fa fa-plus plus-minus" href="#"></a>'+
-                        '<span> <span>8</span> <a href="#">(3)</a></span>'+
-                        '</div>'+
-                        '</footer>'+
-                        '</div>'+
-                        '</li>';
-                }*/
                 /* создаем html с сообщениями ПЕРВОГО уровня, который будем подгружать для этого топика */
                 /* и подгружаем его, в списке */
                 topicItem.append('<ol class="dd-list">' + MessageHtmlConstructor(currentMessages,currentMessagesLength,true) + '</ol>');
@@ -627,7 +520,6 @@ $('.fa-sitemap').click(function(){
                     /* класс служит для того чтобы не вешать событие по нескольку раз на одно и тоже сообщение */
                     topicItem.find('.one-message').addClass('withPlusMinusClick');
                     var index = $(this).closest('.level-1').data('level1index');//parent().index();
-                    //alert(index);
 
                     if (firstLevelFlag[index]){
                         /* Если флаг стоит, значит подгружаем сообщения остальных уровней для этого сообщения ПЕРВОГО уровня */
@@ -637,53 +529,7 @@ $('.fa-sitemap').click(function(){
                         currentMessages = messagesPart.messages;
                         currentMessagesLength = currentMessages.length;
                         messageHtml = '';
-/*                        for(i = 0; i < currentMessagesLength ; i++){
-                            messageHtml += '<li class="dd-item dd2-item" data-offset="'+ currentMessages[i].offset +'" style="margin-left:'+currentMessages[i].offset*30+'px">'+
-                                '<div class="dd2-content topic-descr one-message widget-body"  data-parentid="'+ currentMessages[i].parentId +'" data-messageid="'+ currentMessages[i].id +'">'+
-                                '<div class="widget-main">'+
-                                '<div class="topic-left">'+
-                                '<a href="#"><img src="i/avatars/clint.jpg" alt="картинка"></a>'+
-                                '</div>'+
-                                '<div class="topic-right">'+
-                                '<div class="message-author">'+
-                                '<a class="fa fa-link fa-relations" href="#" style="display: none;"></a>'+
-                                '<a class="fa fa-sitemap" href="#" style="display: none;"></a>'+
-                                '<a href="#">'+ currentMessages[i].userInfo.firstName + " " + currentMessages[i].userInfo.lastName +'</a>'+
-                                '</div>'+
-                                '<p class="alert">'+ currentMessages[i].content + '</p>'+
-                                '<div class="likes">'+
-                                '<div class="answer-date">' + currentMessages[i].created + '</div>'+
-                                '<a href="#" class="like-item like">'+
-                                '<i class="fa fa-thumbs-o-up"></i>'+
-                                '<span>' + currentMessages[i].likesNum + '</span>'+
-                                '</a>'+
-                                '<a href="#" class="like-item dislike">'+
-                                '<i class="fa fa-thumbs-o-down"></i>'+
-                                '<span>' + currentMessages[i].unlikesNum + '</span>'+
-                                '</a>'+
-                                '</div>'+
-                                '</div>'+
-                                '</div>'+
-                                '<footer class="widget-toolbox padding-4 clearfix">'+
-                                '<div class="btn-group ans-btn">'+
-                                    '<button class="btn btn-primary btn-sm dropdown-toggle no-border ans-all">Ответить</button>'+
-                                   '<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border ans-pers">'+
-                                        '<span class="icon-caret-down icon-only smaller-90"></span>'+
-                                    '</button>'+
-                                    '<ul class="dropdown-menu dropdown-warning">'+
-                                        '<li>'+
-                                            '<a href="#">Ответить лично</a>'+
-                                        '</li>'+
-                                    '</ul>'+
-                                '</div>'+
-                            '<div class="answers-ctrl">'+
-                                '<a class="fa fa-minus plus-minus" href="#"></a>'+
-                                '<span> <span>8</span> <a href="#">(3)</a></span>'+
-                                '</div>'+
-                                '</footer>'+
-                                '</div>'+
-                            '</li>';
-                        }*/
+
                         /* подгружаем остальные сообщения к этому сообщению первого уровня */
                         $(this).closest('.dd-item').after(MessageHtmlConstructor(currentMessages,currentMessagesLength,false));
 
@@ -742,94 +588,85 @@ $('.fa-sitemap').click(function(){
             }
         });
         /* появление wysiwig редактора (для топиков) */
-        //$('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a')
         SetShowEditorClick(topicsSelector.find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
         /* --- */
         SetLikeClick(topicsSelector.find('.like-item'));
 
-        var topics = $('.dd>.dd-list>.topic-item'),
-            prevTopicsHeight = [],
-            topicsLen = topics.length,
-            topicsHeader = topics.find('>.topic-descr>.widget-header'),
-            topicsHeaderArray = [];
-
-        /* заносим DOM элементы в массив для оптимизации */
-        /*for (var i = 0; i < topicsLen ;i++){
-            topicsHeaderArray[i] = topics.eq(i).find('>.topic-descr>.widget-header');
-        }*/
-        topicHeaderOptimization(topics,topicsHeaderArray);
-        /* ---- */
-
         GetTopicsHeightForFixedHeader(0,topics,topicsLen,prevTopicsHeight);
-
-        var staffCounterForGoodTopicsHeight = 0;
-        var groupID = $('.submenu .active .btn').data('groupid');
-        var rubricID = $('.nav-list .active a').data('rubricid');
-        var lastTopicId = $('.dd .topic-item:last').data('topicid');
-
-        $(window).scroll(function(){
-            var scrollTop = $(this).scrollTop();
-
-            //убираем сайдбар при прокрутке
-            if (w.width()>785){
-                if (scrollTop > 270){
-                    $('.sidebar').hide();
-                    $('.main-content').css('margin-left','0');
-                    $('.widget-header h2').css('min-width','996px');
-                    staffCounterForGoodTopicsHeight++;
-                }else {
-                    $('.sidebar').show();
-                    $('.main-content').css('margin-left','190px');
-                    $('.widget-header h2').css('min-width','805px');
-                    staffCounterForGoodTopicsHeight=0;
-                }
-            }
-            if (staffCounterForGoodTopicsHeight == 1){
-                GetTopicsHeightForFixedHeader(0,topics,topicsLen,prevTopicsHeight);
-            }
-
-            // фиксация хэдера темы, если много сообщений
-
-            for (var i = 0; i < topicsLen ; i++){
-                var currentIndex = i;
-
-                /*
-                 здесь сравниваем: если прокрутка больше чем высота всех предшествующих топиков, то хэдер этого раскрытого топика
-                 становится в состояние fixed
-                 */
-
-                if (scrollTop > prevTopicsHeight[i]){
-                    topicsHeaderArray[currentIndex].addClass('fixed');
-                    topicsHeader.css('margin-right',asideWidth+10);
-
-                    if( currentIndex == topicsLen-5 && FlagOfEndTopics){
-                        //alert('подгружаем !');
-                        var topicsContent = client.getTopics(groupID,rubricID,0,lastTopicId,10);
-                        if (topicsContent.topics){
-                            var tempTopicLen = topicsContent.topics.length;
-                            $('.dd>.dd-list').append(TopicHtmlConstructor(topicsContent,tempTopicLen));
-                            topics = $('.dd>.dd-list>.topic-item');
-                            topicsLen = topics.length;
-                            lastTopicId = $('.dd .topic-item:last').data('topicid');
-                            var newTopicsSelector = topics.slice(topicsLen-10,topicsLen);
-                            /* заносим DOM элементы в массив для оптимизации */
-                            topicHeaderOptimization(topics,topicsHeaderArray);
-                            SetMainEvents(newTopicsSelector);
-                        }else{
-                            FlagOfEndTopics = 0;
-                        }
-                    }
-                    if (scrollTop<270){
-                        topicsHeader.css('margin-right',asideWidth+10);
-                    }
-                }else{
-                    topicsHeaderArray[currentIndex].removeClass('fixed').css('margin-right',0);
-                }
-            }
-
-        });
     }
     SetMainEvents($('.dd>.dd-list>.topic-item'));
+
+/* глобальные переменные */
+    var topics,
+        prevTopicsHeight,
+        topicsLen,
+        topicsHeader,
+        topicsHeaderArray,
+        staffCounterForGoodTopicsHeight,
+        groupID,
+        rubricID,
+        lastTopicId,
+        FlagOfEndTopics = 1;
+/* --------------------- */
+    SetGlobalParameters();
+
+    $(window).scroll(function(){
+        var scrollTop = $(this).scrollTop();
+
+        //убираем сайдбар при прокрутке
+        if (w.width()>785){
+            if (scrollTop > 270){
+                $('.sidebar').hide();
+                $('.main-content').css('margin-left','0');
+                $('.widget-header h2').css('min-width','994px');
+                staffCounterForGoodTopicsHeight++;
+            }else {
+                $('.sidebar').show();
+                $('.main-content').css('margin-left','190px');
+                $('.widget-header h2').css('min-width','804px');
+                staffCounterForGoodTopicsHeight=0;
+            }
+        }
+        if (staffCounterForGoodTopicsHeight == 1){
+            GetTopicsHeightForFixedHeader(0,topics,topicsLen,prevTopicsHeight);
+        }
+
+        // фиксация хэдера темы, если много сообщений
+
+        for (var i = 0; i < topicsLen ; i++){
+            var currentIndex = i;
+
+            /*
+             здесь сравниваем: если прокрутка больше чем высота всех предшествующих топиков, то хэдер этого раскрытого топика
+             становится в состояние fixed
+             */
+            if (scrollTop > prevTopicsHeight[i]){
+                topicsHeaderArray[currentIndex].addClass('fixed');
+                topicsHeader.css('margin-right',asideWidth+10);
+
+                if( currentIndex == topicsLen-5 && FlagOfEndTopics){
+                    var topicsContent = client.getTopics(groupID,rubricID,0,lastTopicId,10);
+                    if (topicsContent.topics){
+                        var tempTopicLen = topicsContent.topics.length;
+                        $('.dd>.dd-list').append(TopicHtmlConstructor(topicsContent,tempTopicLen));
+                        topics = $('.dd>.dd-list>.topic-item');
+                        topicsLen = topics.length;
+                        lastTopicId = $('.dd .topic-item:last').data('topicid');
+                        var newTopicsSelector = topics.slice(topicsLen-10,topicsLen);
+                        SetMainEvents(newTopicsSelector);
+                    }else{
+                        FlagOfEndTopics = 0;
+                    }
+                }
+                if (scrollTop<270){
+                    topicsHeader.css('margin-right',asideWidth+10);
+                }
+            }else{
+                topicsHeaderArray[currentIndex].removeClass('fixed').css('margin-right',0);
+            }
+        }
+
+    });
 
 /* конец мега раздела */
 
