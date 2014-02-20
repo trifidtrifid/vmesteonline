@@ -242,7 +242,8 @@ public class MessageServiceTests {
 
 		try {
 			Topic topic = createTopic();
-			Assert.assertEquals(1, msi.likeTopic(topic.getId()));
+			Assert.assertEquals(1, msi.likeOrDislikeTopic(topic.getId(), 1).likes);
+			Assert.assertEquals(0, msi.likeOrDislikeTopic(topic.getId(), 1).dislikes);
 
 			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
@@ -256,7 +257,8 @@ public class MessageServiceTests {
 			Assert.assertTrue(rTopic.topics.get(0).getUsertTopic().isread);
 			Assert.assertFalse(rTopic.topics.get(0).getUsertTopic().unlikes);
 
-			Assert.assertEquals(1, msi.dislikeTopic(topic.getId()));
+			Assert.assertEquals(1, msi.likeOrDislikeTopic(topic.getId(), -1).dislikes);
+			Assert.assertEquals(0, msi.likeOrDislikeTopic(topic.getId(), -1).likes);
 			rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
