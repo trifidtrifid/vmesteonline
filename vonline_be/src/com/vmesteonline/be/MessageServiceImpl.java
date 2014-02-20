@@ -157,9 +157,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					float lgd = group.getLongitudeDelta();
 					float ltd = group.getLatitudeDelta();
 					String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= " + (group.getLongitude() + lgd)
-							+ " and longitude >= " + (group.getLongitude() - lgd) + " and lattitude <= " + (group.getLatitude() + ltd)
-							+ " and lattitude >= " + (group.getLatitude() - ltd) + " and radius >= " + group.getRadius()
-							+ " order by createTime";
+							+ " and longitude >= " + (group.getLongitude() - lgd) + " and lattitude <= " + (group.getLatitude() + ltd) + " and lattitude >= "
+							+ (group.getLatitude() - ltd) + " and radius >= " + group.getRadius() + " order by createTime";
 
 					List<VoTopic> topics = new ArrayList<VoTopic>();
 					try {
@@ -277,22 +276,17 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public long dislike(long messageId) throws InvalidOperation, TException {
+	public UserOpinion likeOrDislikeMessage(long messageId, int opinion) throws InvalidOperation {
+		if (opinion > 0)
+			return this.<VoMessage, VoUserMessage> like(messageId, VoMessage.class, VoUserMessage.class, new VoUserMessage(), true);
+
 		return this.<VoMessage, VoUserMessage> like(messageId, VoMessage.class, VoUserMessage.class, new VoUserMessage(), false);
 	}
 
 	@Override
-	public long like(long messageId) throws InvalidOperation, TException {
-		return this.<VoMessage, VoUserMessage> like(messageId, VoMessage.class, VoUserMessage.class, new VoUserMessage(), true);
-	}
-
-	@Override
-	public long likeTopic(long topicId) throws InvalidOperation, TException {
-		return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic(), true);
-	}
-
-	@Override
-	public long dislikeTopic(long topicId) throws InvalidOperation, TException {
+	public UserOpinion likeOrDislikeTopic(long topicId, int opinion) throws InvalidOperation {
+		if (opinion > 0)
+			return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic(), true);
 		return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic(), false);
 	}
 
@@ -363,9 +357,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return msg.getId();
 	}
 
-	protected <T extends VoBaseMessage, UserT extends VoUserObject> long like(long messageId, Class<T> tclass, Class<UserT> tUserClass,
+	protected <T extends VoBaseMessage, UserT extends VoUserObject> UserOpinion like(long messageId, Class<T> tclass, Class<UserT> tUserClass,
 			UserT newObject, boolean like) throws InvalidOperation {
-		long likesNum = 0;
 		long userId = getCurrentUserId();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
@@ -387,48 +380,42 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			}
 
 			if (like)
-				likesNum = this.<T, UserT> incrementer(msg, um);
+				this.<T, UserT> incrementer(msg, um);
 			else
-				likesNum = this.<T, UserT> decrementer(msg, um);
+				this.<T, UserT> decrementer(msg, um);
 
 			pm.makePersistent(um);
 			pm.makePersistent(msg);
-			return likesNum;
+
+			return new UserOpinion(msg.getLikes(), msg.getUnlikes());
 		} finally {
 			pm.close();
 		}
 	}
 
-	protected <T extends VoBaseMessage, UserT extends VoUserObject> int incrementer(T msg, UserT um) {
-		int retVal;
-		if (um.isLikes()) {
-			retVal = msg.getLikes();
-		} else {
+	protected <T extends VoBaseMessage, UserT extends VoUserObject> void incrementer(T msg, UserT um) {
+		if (!um.isLikes()) {
 			um.setLikes(true);
-			retVal = msg.incrementLikes();
+			msg.incrementLikes();
 		}
+
 		if (um.isUnlikes()) {
 			um.setUnlikes(false);
 			msg.decrementUnlikes();
 		}
 		um.setRead(true);
-		return retVal;
 	}
 
-	protected <T extends VoBaseMessage, UserT extends VoUserObject> int decrementer(T msg, UserT um) {
-		int retVal;
-		if (um.isUnlikes()) {
-			retVal = msg.getUnlikes();
-		} else {
+	protected <T extends VoBaseMessage, UserT extends VoUserObject> void decrementer(T msg, UserT um) {
+		if (!um.isUnlikes()) {
 			um.setUnlikes(true);
-			retVal = msg.incrementUnlikes();
+			msg.incrementUnlikes();
 		}
 		if (um.isLikes()) {
 			um.setLikes(false);
 			msg.decrementLikes();
 		}
 		um.setRead(true);
-		return retVal;
 	}
 
 	private static MessageListPart createMlp(List<VoMessage> lst, long userId, PersistenceManager pm) throws InvalidOperation {

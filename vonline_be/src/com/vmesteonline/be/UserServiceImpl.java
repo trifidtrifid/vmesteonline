@@ -39,6 +39,11 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		super(sess);
 	}
 
+	@Override
+	public ShortUserInfo getShortUserInfo() throws InvalidOperation {
+		return getShortUserInfo(getCurrentUserId());
+	}
+
 	public static ShortUserInfo getShortUserInfo(long userId) {
 
 		PersistenceManager pm = PMF.getPm();
@@ -162,7 +167,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			UserContacts uc = new UserContacts();
 			if (u.getAddress() == null) {
 				uc.setAddressStatus(UserStatus.UNCONFIRMED);
-			
+
 			} else {
 				uc.setHomeAddress(u.getAddress().getPostalAddress());
 			}
