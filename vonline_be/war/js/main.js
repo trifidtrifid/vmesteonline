@@ -141,9 +141,8 @@ $('.fa-sitemap').click(function(){
             '</li>';
     }*/
        ddList.append(TopicHtmlConstructor(topicsContent,topicLen));
-       SetMainEvents();
+       SetMainEvents($('.dd>.dd-list>.topic-item'));
 });
-
 
     function SetLikeClick(selector){
         selector.click(function(e){
@@ -464,20 +463,32 @@ $('.fa-sitemap').click(function(){
         }
         return topicsList;
     }
+
+    function topicHeaderOptimization(topics,topicsHeaderArray){
+        /* заносим DOM элементы в массив для оптимизации */
+        var topicsLen = topics.length;
+        for (var i = 0; i < topicsLen ;i++){
+            topicsHeaderArray[i] = topics.eq(i).find('>.topic-descr>.widget-header');
+        }
+    }
 /* --- */
 
+/* мега раздел подгрузки и отправки сообщений  */
+
     /*
-    конструктор для объектов топиков. У каждого топика выведенного на страницу
-    есть массив состояний для каждого из его внутренних сообщений. Это двумерный массив, где первый
-    индекс это индекс сообщения в контексте которого сохранено состояние, а второй индекс
-    это индекс "внутреннего" сообщения чье состояние нам нужно в этом контексте.
-    Эта штука нужна для корректного сворачивания-разворачивания сообщений. Здесь же мы просто
-    иниицализируем эту структуры данных.
+     конструктор для объектов топиков. У каждого топика выведенного на страницу
+     есть массив состояний для каждого из его внутренних сообщений. Это двумерный массив, где первый
+     индекс это индекс сообщения в контексте которого сохранено состояние, а второй индекс
+     это индекс "внутреннего" сообщения чье состояние нам нужно в этом контексте.
+     Эта штука нужна для корректного сворачивания-разворачивания сообщений. Здесь же мы просто
+     иниицализируем эту структуры данных.
      */
-function StateClass(){}
+    function StateClass(){}
 
     var topicsMessagesStates = [];
+    //var tempLen = $('.topic-item').length;
     var tempLen = $('.topic-item').length;
+
     for(i = 0; i < tempLen; i++){
         topicsMessagesStates[i] = new StateClass();
         topicsMessagesStates[i].arrayOfStateMessages = new Array(20);
@@ -487,22 +498,45 @@ function StateClass(){}
         }
     }
     /* --- */
+    var FlagOfEndTopics = 1;
 
-/* мега раздел подгрузки и отправки сообщений  */
+    function SetMainEvents(topicsSelector){
 
-    function SetMainEvents(){
+        /*
+         конструктор для объектов топиков. У каждого топика выведенного на страницу
+         есть массив состояний для каждого из его внутренних сообщений. Это двумерный массив, где первый
+         индекс это индекс сообщения в контексте которого сохранено состояние, а второй индекс
+         это индекс "внутреннего" сообщения чье состояние нам нужно в этом контексте.
+         Эта штука нужна для корректного сворачивания-разворачивания сообщений. Здесь же мы просто
+         иниицализируем эту структуры данных.
+         */
+        function StateClass(){}
+
+        topicsMessagesStates = [];
+        var tempLen = $('.topic-item').length;
+
+        for(var i = 0; i < tempLen; i++){
+            topicsMessagesStates[i] = new StateClass();
+            topicsMessagesStates[i].arrayOfStateMessages = new Array(20);
+            var tempLen2 = topicsMessagesStates[i].arrayOfStateMessages.length;
+            for(var j = 0; j < tempLen2; j++) {
+                topicsMessagesStates[i].arrayOfStateMessages[j]=[];
+            }
+        }
+        /* --- */
+
         var zeroLevelFlag = [];
         /*
          создаем массив флагов (каждому топику по одному флагу), которые сигнализируют была ли загрузка
          контента к топику(значение 0) или нет(значение 1)
          */
-        var tempLen = $('.topic-item').length;
         for(i = 0; i < tempLen; i++){
             zeroLevelFlag[i] = 1;
         }
 
         /* раскрываем топик - начинается самое интересное */
-        $('.topic-item>.topic-descr .plus-minus').click(function(e){
+        //$('.topic-item>.topic-descr .plus-minus')
+        topicsSelector.find('>.topic-descr .plus-minus').click(function(e){
             e.preventDefault();
 
             if ($(this).hasClass('fa-minus')){
@@ -708,9 +742,10 @@ function StateClass(){}
             }
         });
         /* появление wysiwig редактора (для топиков) */
-        SetShowEditorClick($('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
+        //$('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a')
+        SetShowEditorClick(topicsSelector.find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
         /* --- */
-        SetLikeClick($('.like-item'));
+        SetLikeClick(topicsSelector.find('.like-item'));
 
         var topics = $('.dd>.dd-list>.topic-item'),
             prevTopicsHeight = [],
@@ -719,9 +754,10 @@ function StateClass(){}
             topicsHeaderArray = [];
 
         /* заносим DOM элементы в массив для оптимизации */
-        for (var i = 0; i < topicsLen ;i++){
+        /*for (var i = 0; i < topicsLen ;i++){
             topicsHeaderArray[i] = topics.eq(i).find('>.topic-descr>.widget-header');
-        }
+        }*/
+        topicHeaderOptimization(topics,topicsHeaderArray);
         /* ---- */
 
         GetTopicsHeightForFixedHeader(0,topics,topicsLen,prevTopicsHeight);
@@ -766,14 +802,21 @@ function StateClass(){}
                     topicsHeaderArray[currentIndex].addClass('fixed');
                     topicsHeader.css('margin-right',asideWidth+10);
 
-                    if( currentIndex == topicsLen-5){
-                        //alert('1 '+currentIndex);
+                    if( currentIndex == topicsLen-5 && FlagOfEndTopics){
+                        //alert('подгружаем !');
                         var topicsContent = client.getTopics(groupID,rubricID,0,lastTopicId,10);
                         if (topicsContent.topics){
                             var tempTopicLen = topicsContent.topics.length;
                             $('.dd>.dd-list').append(TopicHtmlConstructor(topicsContent,tempTopicLen));
+                            topics = $('.dd>.dd-list>.topic-item');
                             topicsLen = topics.length;
                             lastTopicId = $('.dd .topic-item:last').data('topicid');
+                            var newTopicsSelector = topics.slice(topicsLen-10,topicsLen);
+                            /* заносим DOM элементы в массив для оптимизации */
+                            topicHeaderOptimization(topics,topicsHeaderArray);
+                            SetMainEvents(newTopicsSelector);
+                        }else{
+                            FlagOfEndTopics = 0;
                         }
                     }
                     if (scrollTop<270){
@@ -786,7 +829,7 @@ function StateClass(){}
 
         });
     }
-    SetMainEvents();
+    SetMainEvents($('.dd>.dd-list>.topic-item'));
 
 /* конец мега раздела */
 
