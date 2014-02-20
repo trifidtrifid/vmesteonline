@@ -36,7 +36,7 @@
     MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
     //MessageType mesType = MessageType.BASE;
 
-    TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,20);
+    TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
     //out.print(Topics.totalSize);
 
     pageContext.setAttribute("groups",Groups);
@@ -213,7 +213,7 @@
                         </ul>
                     </div><!-- /btn-group -->
 
-                    <a class="btn btn-primary btn-sm no-border" href="/createTopic.jsp">Создать тему</a>
+                    <a class="btn btn-primary btn-sm no-border create-topic-show" href="#">Создать тему</a>
 
                     <form method="post" action="#" class="form-group has-info">
                         <span class="block input-icon input-icon-right">
@@ -281,14 +281,13 @@
 
                                             <footer class="widget-toolbox clearfix">
                                                 <div class="btn-group ans-btn">
-                                                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border">
-                                                        Ответить
-                                                        <span class="icon-caret-down icon-on-right"></span>
-                                                    </button>
-
-                                                    <ul class="dropdown-menu dropdown-warning">
-                                                        <li>
-                                                            <a href="#">Ответить лично</a>
+                                                <button class="btn btn-primary btn-sm dropdown-toggle no-border ans-all">Ответить</button>
+                                                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle no-border ans-pers">
+                                                    <span class="icon-caret-down icon-only smaller-90"></span>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-warning">
+                                                    <li>
+                                                        <a href="#">Ответить лично</a>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -342,6 +341,80 @@
         </div>
     </div>
 </div>
+<section class="create-topic">
+    <div class="btn-group">
+        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+            <span class="btn-group-text">Писать могут</span>
+            <span class="icon-caret-down icon-on-right"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-info pull-right">
+            <li>
+                <a href="#">Группа 1</a>
+            </li>
+
+            <li>
+                <a href="#">Группа 2</a>
+            </li>
+
+            <li>
+                <a href="#">Все</a>
+            </li>
+        </ul>
+    </div><!-- /btn-group -->
+    <div class="btn-group">
+        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+            <span class="btn-group-text">Читать могут</span>
+            <span class="icon-caret-down icon-on-right"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-info pull-right">
+            <li>
+                <a href="#">Группа 1</a>
+            </li>
+
+            <li>
+                <a href="#">Группа 2</a>
+            </li>
+
+            <li>
+                <a href="#">Все</a>
+            </li>
+        </ul>
+    </div><!-- /btn-group -->
+    <h1>Создание темы</h1>
+    <div class="has-info form-group">
+        <input type="text" class="width-100 head" value="Заголовок" onblur="if(this.value=='') this.value='Заголовок';" onfocus="if(this.value=='Заголовок') this.value='';" />
+    </div>
+    <div class="widget-box wysiwig-box">
+        <div class="widget-header widget-header-small  header-color-blue2">
+
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main no-padding">
+                <div class="wysiwyg-editor"></div>
+            </div>
+
+            <div class="widget-toolbox padding-4 clearfix">
+                <div class="btn-group pull-left">
+                    <button class="btn btn-sm btn-primary">
+                        Предпросмотр
+                    </button>
+                    <button class="btn btn-sm btn-primary">
+                        В черновик
+                    </button>
+                </div>
+
+                <div class="btn-group pull-right">
+                    <button class="btn btn-sm btn-primary">
+                        <i class="icon-globe bigger-125"></i>
+                        Создать
+                        <i class="icon-arrow-right icon-on-right bigger-125"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 
 <!-- общие библиотеки -->
@@ -372,6 +445,7 @@
 <!-- собственные скрипты  -->
 <script src="js/common.js"></script>
 <script src="js/main.js"></script>
+<script src="js/createTopic.js"></script>
 
 </body>
 
