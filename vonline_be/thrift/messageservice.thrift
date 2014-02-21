@@ -33,8 +33,9 @@ struct Message {
 	16: UserMessage userMessage, //how user treats the message
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
 	18: bedata.ShortUserInfo userInfo,
+	19: optional i32 childMsgs,
+	20: optional i32 childUnreadMsgs, 
 	
-
 } // 'сообщение';
 		
 
@@ -60,9 +61,9 @@ struct Topic {
 	9: i32 unlikesNum,
 	10: optional i64 rubricId, //ссылка на рубрику
 	11: optional i64 communityId, //ссылка на сообщество
-	//отношение пользователя к топику
 	12: UserTopic usertTopic,
-	13: bedata.ShortUserInfo userInfo
+	13: bedata.ShortUserInfo userInfo,
+	15: optional i32 childUnreadMsgs, 	
 }
 
 struct RubricCounter {
