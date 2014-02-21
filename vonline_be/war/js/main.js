@@ -100,7 +100,7 @@ $('.fa-sitemap').click(function(){
             var topicID = $(this).closest('.topic-item').data('topicid');
             var parentID = $(this).closest('.dd-item').find('.one-message').data('messageid');
             if (parentID === undefined || $(this).closest('.dd-item').hasClass('topic-item')){parentID = 0;}
-            client.createMessage(topicID,parentID,Groups[0].id,1,messageWithGoodLinks,0,0,0);
+            client.createMessage(topicID,parentID,groupID,1,messageWithGoodLinks,0,0,0);
         });
     }
 
@@ -108,8 +108,7 @@ $('.fa-sitemap').click(function(){
         selector.click(function(e){
 
             e.preventDefault();
-            //alert('1');
-            
+
             var cont = $('.wysiwig-wrap').html();
             var widget = $(this).closest('.widget-body');
             if (widget.find('+.widget-box').length <= 0)
@@ -240,8 +239,9 @@ $('.fa-sitemap').click(function(){
     }
 }
 
-    function MessageHtmlConstructor(arrayOfData,len,level1){
+    function MessageHtmlConstructor(arrayOfData,level1){
         var messageHtml = "";
+        var len = arrayOfData.length;
         /*
          создаем html, который содержит в себе все остальные сообщения. Html всех сообщений
          идентичен, древовидная структура создается за счет параметра offset, который есть у каждого сообщения,
@@ -488,7 +488,6 @@ $('.fa-sitemap').click(function(){
             var topicItem = $(this).closest('.topic-item'),
                 topicID  = topicItem.data('topicid'),
                 currentMessages,
-                currentMessagesLength,
                 messageHtml,i;
 
             var index = topicItem.index();
@@ -498,13 +497,12 @@ $('.fa-sitemap').click(function(){
                 zeroLevelFlag[index] = 0;   // сбрасываем флаг
 
                 /* сообщения ПЕРВОГО уровня берем от родителя с id 0 (т.е от топика) */
-                currentMessages = client.getMessages(topicID,Groups[0].id,1,0,0,0,10).messages;
-                currentMessagesLength = currentMessages.length;
+                currentMessages = client.getMessages(topicID,groupID,1,0,0,0,10).messages;
                 messageHtml = '';
 
                 /* создаем html с сообщениями ПЕРВОГО уровня, который будем подгружать для этого топика */
                 /* и подгружаем его, в списке */
-                topicItem.append('<ol class="dd-list">' + MessageHtmlConstructor(currentMessages,currentMessagesLength,true) + '</ol>');
+                topicItem.append('<ol class="dd-list">' + MessageHtmlConstructor(currentMessages,true) + '</ol>');
 
                 var firstLevelFlag = [];
                 /* создаем массив флагов сообщений ПЕРВОГО уровня, аналогично флагам для топиков (см. выше) */
@@ -524,14 +522,13 @@ $('.fa-sitemap').click(function(){
                     if (firstLevelFlag[index]){
                         /* Если флаг стоит, значит подгружаем сообщения остальных уровней для этого сообщения ПЕРВОГО уровня */
                         var parentID = $(this).closest('.one-message').data('messageid');
-                        var messagesPart = client.getMessages(topicID,Groups[0].id,1,parentID,0,0,10);
+                        var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,0,10);
                         if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
                         currentMessages = messagesPart.messages;
-                        currentMessagesLength = currentMessages.length;
                         messageHtml = '';
 
                         /* подгружаем остальные сообщения к этому сообщению первого уровня */
-                        $(this).closest('.dd-item').after(MessageHtmlConstructor(currentMessages,currentMessagesLength,false));
+                        $(this).closest('.dd-item').after(MessageHtmlConstructor(currentMessages,false));
 
                         /* событие сворачивание разворачивания для любого сообщения, кроме ПЕРВОГО уровня */
                          topicItem.find('.one-message:not(.level-1):not(.withPlusMinusClick) .plus-minus').click(function(e){
@@ -607,6 +604,8 @@ $('.fa-sitemap').click(function(){
         rubricID,
         lastTopicId,
         FlagOfEndTopics = 1;
+    /* константы */
+    var heightOfMessagesForLoadNew = 760;
 /* --------------------- */
     SetGlobalParameters();
 
@@ -635,15 +634,15 @@ $('.fa-sitemap').click(function(){
 
         for (var i = 0; i < topicsLen ; i++){
             var currentIndex = i;
-
             /*
              здесь сравниваем: если прокрутка больше чем высота всех предшествующих топиков, то хэдер этого раскрытого топика
              становится в состояние fixed
              */
-            if (scrollTop > prevTopicsHeight[i]){
+            if (scrollTop > prevTopicsHeight[currentIndex]){
                 topicsHeaderArray[currentIndex].addClass('fixed');
                 topicsHeader.css('margin-right',asideWidth+10);
 
+                /* если до конца остается 5 топиков, то подгружаем еще, если есть  */
                 if( currentIndex == topicsLen-5 && FlagOfEndTopics){
                     var topicsContent = client.getTopics(groupID,rubricID,0,lastTopicId,10);
                     if (topicsContent.topics){
@@ -663,6 +662,22 @@ $('.fa-sitemap').click(function(){
                 }
             }else{
                 topicsHeaderArray[currentIndex].removeClass('fixed').css('margin-right',0);
+            }
+            /* подгружаем сообщения первого уровня если до следующего топика еще не больше определенного расстояния
+            * (heightOfMessagesForLoadNew)
+            * */
+            if (scrollTop > prevTopicsHeight[currentIndex+1]-heightOfMessagesForLoadNew){
+                var parentID = 0,
+                    topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
+                    topicID  = topicItem.data('topicid');
+                    //messageOffset = 20;
+                var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,10,5);
+                if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
+                    //alert(messagesPart.messages.length);
+                    var currentMessages = messagesPart.messages;
+                    topicItem.find('.dd-list').append(MessageHtmlConstructor(currentMessages,true));
+                    GetTopicsHeightForFixedHeader(0,topics,topicsLen,prevTopicsHeight);
+                }
             }
         }
 
