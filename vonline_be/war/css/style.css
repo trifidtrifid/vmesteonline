@@ -451,6 +451,7 @@ h1 {
 /* создание темы */
 .create-topic {
   padding: 0 10px;
+  display: none;
 }
 .create-topic >.btn-group {
   float: right;

@@ -39,6 +39,11 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		super(sess);
 	}
 
+	@Override
+	public ShortUserInfo getShortUserInfo() throws InvalidOperation {
+		return getShortUserInfo(getCurrentUserId());
+	}
+
 	public static ShortUserInfo getShortUserInfo(long userId) {
 
 		PersistenceManager pm = PMF.getPm();

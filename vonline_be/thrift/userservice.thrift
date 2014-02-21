@@ -18,7 +18,8 @@ service UserService {
 	bool addUserAddress( 1:bedata.PostalAddress newAddress )throws (1:error.InvalidOperation exc),
 	bedata.PostalAddress getUserHomeAddress( )throws (1:error.InvalidOperation exc),
 	set<bedata.PostalAddress> getUserAddresses( )throws (1:error.InvalidOperation exc),
-	
+
+	bedata.ShortUserInfo getShortUserInfo() throws (1:error.InvalidOperation exc),
 	bedata.UserInfo getUserInfo() throws (1:error.InvalidOperation exc),
 	bedata.UserContacts getUserContacts() throws (1:error.InvalidOperation exc),
 	

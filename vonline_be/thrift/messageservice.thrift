@@ -87,6 +87,11 @@ struct MessageListPart {
 	2:i32	totalSize //size of full list
 } 
 
+struct UserOpinion {
+	1: i32 likes,
+	2: i32 dislikes,
+}
+
 service MessageService {
 
 /**
@@ -133,16 +138,15 @@ service MessageService {
 	**/
 	MessageListPart getMessages( 1:i64 topicId , 2:i64 groupId 3:MessageType messageType, 4:i64 parentId, 5:bool archived, 6:i32 offset, 7:i32 length) throws (1:error.InvalidOperation exc),
 	
-	i64 like(1:i64 messageId ) throws (1:error.InvalidOperation exc),
-	i64 dislike(1:i64 messageId ) throws (1:error.InvalidOperation exc),
+	UserOpinion likeOrDislikeMessage(1:i64 messageId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
+	UserOpinion likeOrDislikeTopic(1:i64 topicId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
+	
 	i64 markReadMessage(1:i64 messageId ) throws (1:error.InvalidOperation exc),
 	i64 markReadTopic(1:i64 topicId ) throws (1:error.InvalidOperation exc),
 	i64 moveTopicToArchive(1:i64 topicId ) throws (1:error.InvalidOperation exc),
 	i64 restoreTopicFromArchive(1:i64 topicId) throws (1:error.InvalidOperation exc),
 	i64 markTopicUnintrested(1:i64 topicId, 2:bool interested) throws (1:error.InvalidOperation exc),
 	i64 makeMessageLinked(1:i64 message1Id, 2:i64 message2Id ) throws (1:error.InvalidOperation exc),
-	i64 likeTopic(1:i64 topicId ) throws (1:error.InvalidOperation exc),
-	i64 dislikeTopic(1:i64 topicId ) throws (1:error.InvalidOperation exc),
 	
 	
 }
