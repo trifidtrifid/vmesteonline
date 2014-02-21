@@ -1,4 +1,4 @@
-//@echo off
+@echo off
 cd thrift
 for %%f in (*.thrift) do (
 	thrift --gen js %%f
