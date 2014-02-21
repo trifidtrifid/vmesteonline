@@ -116,14 +116,14 @@
 
                 <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                     <li>
-                        <a href="#">
+                        <a href="settings.html">
                             <i class="icon-cog"></i>
                             Настройки
                         </a>
                     </li>
 
                     <li>
-                        <a href="#">
+                        <a href="profile.html">
                             <i class="icon-user"></i>
                             Профиль
                         </a>
