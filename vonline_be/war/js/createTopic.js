@@ -1,8 +1,8 @@
-$(document).ready(function(){
+//$(document).ready(function(){
     var w = $(window);
 
 /* появление wysiwig редактора */
-    $('.widget-box .wysiwyg-editor').css({'height':'300px'}).ace_wysiwyg({
+    $('.create-topic .widget-box .wysiwyg-editor').css({'height':'300px'}).ace_wysiwyg({
         toolbar_place: function(toolbar) {
             return $(this).closest('.widget-box').find('.widget-header').prepend(toolbar).children(0).addClass('inline');
         },
@@ -34,16 +34,16 @@ $(document).ready(function(){
     protocol = new Thrift.Protocol(transport);
     client = new com.vmesteonline.be.MessageServiceClient(protocol);
 
-    $('.wysiwig-box .btn-primary').click(function(){
+    $('.create-topic .wysiwig-box .btn-primary').click(function(){
+        alert('1');
         var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
         message = message.replace(new RegExp('&nbsp;','g'),' ');
         message = message.replace(new RegExp('<div>','g'),'<div> ');
         var head = $('.head').val();
         var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
         messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
-        //alert(messageWithGoodLinks);
-        //alert(Groups[0].id);
-        client.createTopic(Groups[0].id,head,1,messageWithGoodLinks,0,0,Rubrics[0].id,1);
+        var groupID = $('.submenu .active .btn').data('groupid');
+        client.createTopic(groupID,head,1,messageWithGoodLinks,0,0,Rubrics[0].id,1);
         document.location.replace("/main.jsp");
     });
 
@@ -85,4 +85,4 @@ function AutoReplaceLinkAndVideo(str) {
 }
 /* ------------ */
 
-});
+//});

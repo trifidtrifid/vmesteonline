@@ -39,6 +39,11 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		super(sess);
 	}
 
+	@Override
+	public ShortUserInfo getShortUserInfo() throws InvalidOperation {
+		return getShortUserInfo(getCurrentUserId());
+	}
+
 	public static ShortUserInfo getShortUserInfo(long userId) {
 
 		PersistenceManager pm = PMF.getPm();
@@ -149,6 +154,37 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getCounties. " + e.getMessage());
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public UserContacts getUserContacts() throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser u = getCurrentUser(pm);
+			UserContacts uc = new UserContacts();
+			if (u.getAddress() == null) {
+				uc.setAddressStatus(UserStatus.UNCONFIRMED);
+
+			} else {
+				uc.setHomeAddress(u.getAddress().getPostalAddress());
+			}
+			UserInfo ui = new UserInfo(u.getId(), u.getName(), u.getLastName(), 0, "avatar path", "birthday", "relations");
+			return uc;
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public UserInfo getUserInfo() throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser u = getCurrentUser(pm);
+			UserInfo ui = new UserInfo(u.getId(), u.getName(), u.getLastName(), 0, "avatar path", "birthday", "relations");
+			return ui;
 		} finally {
 			pm.close();
 		}

@@ -61,7 +61,7 @@
         document.createElement('nav');
     </script>
     <![endif]-->
-</head>
+</head> 
 <body>
 <div class="container">
     <div class="navbar navbar-default" id="navbar">

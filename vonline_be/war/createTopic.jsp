@@ -1,3 +1,27 @@
+
+<%@ page import="com.vmesteonline.be.utils.SessionHelper"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.List"%>
+<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
+<%@ page import="com.vmesteonline.be.ServiceImpl"%>
+<%@ page import="com.vmesteonline.be.Group"%>
+<%@ page import="com.vmesteonline.be.Rubric"%>
+<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
+<%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
+<%@ page import="com.vmesteonline.be.InvalidOperation"%>
+
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
+<%
+UserServiceImpl userService = new UserServiceImpl(request.getSession());
+List<Group> Groups = userService.getUserGroups();
+List<Rubric> Rubrics = userService.getUserRubrics();
+
+pageContext.setAttribute("groups",Groups);
+pageContext.setAttribute("rubrics",Rubrics);
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,8 +57,8 @@
 
     <div class="navbar-header pull-right" role="navigation">
         <ul class="nav ace-nav">
-            <li>
-                <a class="btn btn-info no-border" href="#">
+            <li class="active">
+                <a class="btn btn-info no-border" href="/">
                     Сообщения
                 </a>
             </li>
@@ -50,8 +74,8 @@
                     Избранное
                 </a>
             </li>
-            <li class="active">
-                <a class="btn btn-info no-border" href="#">
+            <li>
+                <a class="btn btn-info no-border" href="/shop.jsp">
                     Магазин
                 </a>
             </li>
@@ -104,43 +128,21 @@
                     Меню
                 </div>
                 <ul class="nav nav-list">
-                    <li class="active">
-                        <a href="index.html">
-                            <span class="menu-text"> Подразделение </span>
+                    <c:forEach var="rubric" items="${rubrics}">
+                        <li><a href="#" data-rubricid="${rubric.id}">
+                            <span class="menu-text">${rubric.visibleName}</span>
                             <b>(3)</b>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.html">
-                            <span class="menu-text"> Подразделение 1 </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.html">
-                            <span class="menu-text"> Подразделение 1 </span>
-                            <b>(3)</b>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.html">
-                            <span class="menu-text"> Подразделение 1 Подразделение </span>
-                            <b>(3)</b>
-                        </a>
-                    </li>
-
+                        </a></li>
+                    </c:forEach>
                 </ul><!-- /.nav-list -->
             </aside>
             <div class="main-content">
                 <nav class="submenu">
                     <ul>
 
-                        <li><a class="btn btn-sm btn-info no-border" href="#">Быстро Доехать</a></li>
-
-                        <li><a class="btn btn-sm btn-info no-border" href="#">Пешая доступность</a></li>
-
-                        <li><a class="btn btn-sm btn-info no-border" href="#">Соседи</a></li>
-
-                        <li><a class="btn btn-sm btn-info no-border" href="#">Республиканская 35</a></li>
+                        <c:forEach var="group" items="${groups}">
+                            <li><a class="btn btn-sm btn-info no-border" data-groupid="${group.id}" href="#">${group.visibleName}</a></li>
+                        </c:forEach>
 
                         <li class="btn-group">
                             <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">

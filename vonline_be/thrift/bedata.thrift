@@ -50,6 +50,26 @@ struct ShortUserInfo{
 	5: string avatar,
 }
 
+struct UserInfo{
+	1: i64 id,
+	2: string firstName,
+	3: string lastName,
+	4: i32 rating
+	5: string avatar,
+	6: string birthday,
+	7: string relations,
+}
+
+enum UserStatus { UNCONFIRMED=0, CONFIRMED=1, REQUESTED=2, WAIT_CONFIRMATION=3, HIDE=4 }
+
+struct UserContacts{
+	1: UserStatus addressStatus,
+	2: PostalAddress homeAddress,
+	3: string mobilePhone,
+	4: string email, 
+}
+
+
 struct Group{
 	1: i64 id,
 	2: string visibleName,
