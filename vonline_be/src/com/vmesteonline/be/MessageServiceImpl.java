@@ -74,6 +74,45 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return newMessage;
 	}
 
+	@Override
+	public MessageListPart getFirstLevelMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length)
+			throws InvalidOperation {
+		long userId = getCurrentUserId();
+		PersistenceManager pm = PMF.getPm();
+		try {
+			Query q = pm.newQuery(VoMessage.class);
+			q.setFilter("topicId == " + topicId + " && parentId == 0");
+			// todo move this in MessagesTree class
+			List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+
+			List<VoMessage> lst = new ArrayList<VoMessage>();
+			for (VoMessage voMsg : voMsgs) {
+				if (voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId) {
+					lst.add(voMsg);
+				}
+			}
+			voMsgs = lst;
+
+			if (lastLoadedId != 0) {
+				List<VoMessage> subLst = null;
+				for (int i = 0; i < voMsgs.size() + 1; i++) {
+					if (voMsgs.get(i).getId().getId() == lastLoadedId)
+						subLst = voMsgs.subList(i + 1, voMsgs.size());
+				}
+
+				if (subLst == null)
+					voMsgs = new ArrayList<VoMessage>();
+			}
+
+			voMsgs = removeExtraMessages(voMsgs, length);
+
+			return createMlp(voMsgs, userId, pm);
+		} finally {
+			pm.close();
+		}
+
+	}
+
 	// ===================================================================================================================================
 	@SuppressWarnings("unchecked")
 	@Override
@@ -81,53 +120,21 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			throws InvalidOperation, TException {
 
 		long userId = getCurrentUserId();
-		MessageListPart mlp = new MessageListPart();
+		PersistenceManager pm = PMF.getPm();
+		try {
 
-		if (!TEST_ON_FAKE_DATA) {
-			PersistenceManager pm = PMF.getPm();
-			try {
+			Query q = pm.newQuery(VoMessage.class);
+			q.setFilter("topicId == " + topicId);
+			List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+			MessagesTree tree = new MessagesTree(voMsgs);
+			voMsgs = tree.getTreeMessagesAfter(lastLoadedMsgId, userId);
 
-				Extent<VoMessage> ext = pm.getExtent(VoMessage.class);
-				for (VoMessage m : ext) {
-					m.toString();
-				}
-				List<VoMessage> voMsgs;
-				if (lastLoadedMsgId == 0) {
-					Query q = pm.newQuery(VoMessage.class);
-					q.setFilter("topicId == " + topicId + " && parentId == 0");
-//todo move this in  MessagesTree class
-					voMsgs = (List<VoMessage>) q.execute();
-
-					List<VoMessage> lst = new ArrayList<VoMessage>();
-					for (VoMessage voMsg : voMsgs) {
-						if (voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId) {
-							lst.add(voMsg);
-						}
-					}
-					voMsgs = lst;
-
-				} else {
-					Query q = pm.newQuery(VoMessage.class);
-					q.setFilter("topicId == " + topicId);
-					voMsgs = (List<VoMessage>) q.execute();
-					MessagesTree tree = new MessagesTree(voMsgs);
-					voMsgs = tree.getTreeMessagesAfter(lastLoadedMsgId, userId);
-				}
-
-				voMsgs = removeExtraMessages(voMsgs, length);
-				return createMlp(voMsgs, userId, pm);
-			} finally {
-				pm.close();
-			}
-
-		} else {
-			int ss = (int) (groupId % 10);
-			mlp = new MessageListPart(new ArrayList<Message>(), msgsaaa[ss][(int) topicId].length);
-			for (int msgNo = 0; msgNo < length && msgNo + 0 < msgsaaa[ss][(int) topicId].length; msgNo++) {
-				mlp.addToMessages(msgsaaa[ss][(int) topicId][msgNo]);
-			}
+			voMsgs = removeExtraMessages(voMsgs, length);
+			return createMlp(voMsgs, userId, pm);
+		} finally {
+			pm.close();
 		}
-		return mlp;
+
 	}
 
 	private List<VoMessage> removeExtraMessages(List<VoMessage> list, int length) {
