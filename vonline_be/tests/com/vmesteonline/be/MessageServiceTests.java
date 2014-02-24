@@ -447,4 +447,46 @@ public class MessageServiceTests {
 		}
 		return 0L;
 	}
+
+
+	@Test
+	public void testGetFirstLeveMessages() {
+		try {
+
+			Topic topic = createTopic();
+			Message msg = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg1 = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg2 = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg3 = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg4 = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg5 = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+
+			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 2);
+			Assert.assertNotNull(mlp);
+			Assert.assertEquals(2, mlp.totalSize);
+			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getId());
+			Assert.assertEquals(msg1.getId(), mlp.messages.get(1).getId());
+
+			mlp = msi.getFirstLevelMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg2.getId(), false, 10);
+			Assert.assertNotNull(mlp);
+			Assert.assertEquals(3, mlp.totalSize);
+			Assert.assertEquals(msg3.getId(), mlp.messages.get(0).getId());
+			Assert.assertEquals(msg4.getId(), mlp.messages.get(1).getId());
+			Assert.assertEquals(msg5.getId(), mlp.messages.get(2).getId());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+
+	}
+
+
+
 }

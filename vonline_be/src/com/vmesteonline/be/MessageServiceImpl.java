@@ -102,6 +102,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 				if (subLst == null)
 					voMsgs = new ArrayList<VoMessage>();
+				else
+					voMsgs = subLst;
 			}
 
 			voMsgs = removeExtraMessages(voMsgs, length);
