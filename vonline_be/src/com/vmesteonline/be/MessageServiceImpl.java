@@ -95,7 +95,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 			if (lastLoadedId != 0) {
 				List<VoMessage> subLst = null;
-				for (int i = 0; i < voMsgs.size() + 1; i++) {
+				for (int i = 0; i < voMsgs.size() - 1; i++) {
 					if (voMsgs.get(i).getId().getId() == lastLoadedId)
 						subLst = voMsgs.subList(i + 1, voMsgs.size());
 				}
