@@ -765,9 +765,9 @@ $('.fa-sitemap').click(function(){
             if (scrollTop > Math.abs(prevTopicsHeight[currentIndex+1]-heightOfMessagesForLoadNew) && level1Length > 9){
                 var parentID = 0,
                     topicID  = topicItem.data('topicid');
-                var lastMessageID = 5004976929636352;//topicItem.find('>.dd-list>li:last-child .one-message').data('messageid');
+                var lastMessageID = topicItem.find('>.dd-list>li:last-child .one-message').data('messageid');
                 console.log("-- "+lastMessageID);
-                var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,lastMessageID,10);
+                var messagesPart = client.getMessages(topicID,groupID,1,lastMessageID,0,0,10);
                 if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
                     //alert(messagesPart.messages.length);
                     var currentMessages = messagesPart.messages;
