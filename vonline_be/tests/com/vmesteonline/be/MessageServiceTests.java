@@ -83,30 +83,6 @@ public class MessageServiceTests {
 	}
 
 	@Test
-	public void testGetTopicsSTUB() {
-		try {
-			int offset = 0;
-			do {
-				TopicListPart topics = msi.getTopics(0, 0, 0, 0L, 10);
-				for (Topic top : topics.getTopics()) {
-					System.out.println("TopicID:" + top.getId() + " topic:" + top.getSubject());
-					MessageListPart messages = msi.getMessages(top.getId(), 0, MessageType.BASE, 0L, false, 100000);
-					for (Message msg : messages.getMessages()) {
-						System.out.println("msg ID:" + msg.getId() + " topic:" + msg.getTopicId() + " parent:" + msg.getParentId() + " :" + msg.getContent());
-					}
-				}
-				offset += topics.getTopicsSize();
-				if (offset >= topics.getTotalSize())
-					break;
-			} while (true);
-
-		} catch (TException e) {
-			e.printStackTrace();
-			fail("Exception: " + e.getMessage());
-		}
-	}
-
-	@Test
 	public void testCreateTopicAndTwoReplies() {
 		// create locations
 		try {
@@ -282,7 +258,7 @@ public class MessageServiceTests {
 			Message msg3 = msi.createMessage(topic.getId(), 0, user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
 					noLinkedMessages, noTags, 0L);
 
-			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
+			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
 			Assert.assertNotNull(mlp);
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getId());
@@ -382,7 +358,7 @@ public class MessageServiceTests {
 
 			Assert.assertTrue(asi.login(Defaults.user3email, Defaults.user3pass));
 
-			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
+			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
 			Assert.assertNotNull(mlp);
 			Assert.assertEquals(1, mlp.totalSize);
 			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getId());
