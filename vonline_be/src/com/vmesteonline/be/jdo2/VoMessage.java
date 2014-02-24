@@ -176,7 +176,7 @@ public class VoMessage extends VoBaseMessage {
 
 	protected int visibleOffset;
 
-	public long getVisibleOffset() {
+	public int getVisibleOffset() {
 		return visibleOffset;
 	}
 

@@ -95,7 +95,17 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				if (lastLoadedMsgId == 0) {
 					Query q = pm.newQuery(VoMessage.class);
 					q.setFilter("topicId == " + topicId + " && parentId == 0");
+//todo move this in  MessagesTree class
 					voMsgs = (List<VoMessage>) q.execute();
+
+					List<VoMessage> lst = new ArrayList<VoMessage>();
+					for (VoMessage voMsg : voMsgs) {
+						if (voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId) {
+							lst.add(voMsg);
+						}
+					}
+					voMsgs = lst;
+
 				} else {
 					Query q = pm.newQuery(VoMessage.class);
 					q.setFilter("topicId == " + topicId);

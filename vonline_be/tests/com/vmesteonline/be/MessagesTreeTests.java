@@ -61,25 +61,24 @@ public class MessagesTreeTests extends MessagesTree {
 	public void tearDown() throws Exception {
 		helper.tearDown();
 	}
-		
+
 	@Test
 	public void testGetMessagesWithChildMessagesNum() {
 		MessagesTree t = new MessagesTree(lst);
 		try {
-			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 100, 0);
+			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 0);
 			Assert.assertEquals(4, msgs.size());
 			Assert.assertEquals(4, msgs.get(0).getId().getId());
 			Assert.assertEquals(0, msgs.get(0).getChildMessageNum());
 
 			Assert.assertEquals(5, msgs.get(1).getId().getId());
 			Assert.assertEquals(2, msgs.get(1).getChildMessageNum());
-			
-			Assert.assertEquals(6, msgs.get(2).getChildMessageNum());
+
+			Assert.assertEquals(6, msgs.get(2).getId().getId());
 			Assert.assertEquals(1, msgs.get(2).getChildMessageNum());
 
-			Assert.assertEquals(7, msgs.get(3).getChildMessageNum());
+			Assert.assertEquals(7, msgs.get(3).getId().getId());
 			Assert.assertEquals(0, msgs.get(3).getChildMessageNum());
-
 
 		} catch (InvalidOperation e) {
 			e.printStackTrace();
@@ -87,7 +86,6 @@ public class MessagesTreeTests extends MessagesTree {
 		}
 
 	}
-
 
 	// topic
 	// -msg1
@@ -109,10 +107,10 @@ public class MessagesTreeTests extends MessagesTree {
 
 		MessagesTree t = new MessagesTree(lst);
 		try {
-			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 100, 0);
+			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 0);
 			Assert.assertEquals(4, msgs.size());
 
-			msgs = t.getTreeMessagesAfter(1, 100, userId);
+			msgs = t.getTreeMessagesAfter(1, userId);
 			Assert.assertEquals(5, msgs.size());
 
 		} catch (InvalidOperation e) {
@@ -145,8 +143,8 @@ public class MessagesTreeTests extends MessagesTree {
 		try {
 			MessagesTree t = new MessagesTree(lst);
 
-			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 3, 0);
-			Assert.assertEquals(3, msgs.size());
+			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 0);
+			Assert.assertEquals(4, msgs.size());
 			Assert.assertEquals(4, msgs.get(0).getId().getId());
 			Assert.assertEquals(1, msgs.get(0).getVisibleOffset());
 
@@ -167,7 +165,7 @@ public class MessagesTreeTests extends MessagesTree {
 		try {
 			MessagesTree t = new MessagesTree(lst);
 
-			List<VoMessage> msgs = t.getTreeMessagesAfter(5, 20, 0);
+			List<VoMessage> msgs = t.getTreeMessagesAfter(5, 0);
 			Assert.assertEquals(2, msgs.size());
 			Assert.assertEquals(6, msgs.get(0).getId().getId());
 			Assert.assertEquals(7, msgs.get(1).getId().getId());
