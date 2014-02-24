@@ -507,6 +507,14 @@ $('.fa-sitemap').click(function(){
         });
     }
 
+    function GetLevel1Selector(currentIndex){
+        var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
+            level1 = {};
+            level1.selector = topicItem.find('.level-1');
+            level1.len = level1.selector.length;
+            return level1;
+    }
+
 /* --- */
 
 /* мега раздел подгрузки и отправки сообщений  */
@@ -762,8 +770,8 @@ $('.fa-sitemap').click(function(){
 
 
             var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
-                level1 = topicItem.find('.level-1'),
-                level1Length = level1.length;
+                level1 = GetLevel1Selector(currentIndex).selector,
+                level1Length = GetLevel1Selector(currentIndex).len;
 
             if (scrollTop > Math.abs(prevTopicsHeight[currentIndex+1]-heightOfMessagesForLoadNew) && level1Length > 9){
                 var topicID  = topicItem.data('topicid');
@@ -771,13 +779,16 @@ $('.fa-sitemap').click(function(){
                 console.log("-- "+lastMessageID);
                 var messagesPart = client.getFirstLevelMessages(topicID,groupID,1,lastMessageID,0,10);
                 if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
-                    alert(messagesPart.messages.length);
                     var currentMessages = messagesPart.messages;
                     var currentMessagesLength = currentMessages.length;
                     topicItem.find('.dd-list').append(MessageHtmlConstructor(currentMessages,true));
                     GetTopicsHeightForFixedHeader(0,topics,topicsLen,prevTopicsHeight);
+                    level1Length = GetLevel1Selector(currentIndex).len;
+                    level1 = GetLevel1Selector(currentIndex).selector;
 
                     var addedMessages = level1.slice(level1Length-currentMessagesLength,level1Length);
+                    //alert(addedMessages.length);
+
 
                     SetLevel1Click(addedMessages.find('.plus-minus'),topicItem);
                     SetShowEditorClick(addedMessages.find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
