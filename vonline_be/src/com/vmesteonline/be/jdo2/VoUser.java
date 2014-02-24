@@ -277,6 +277,19 @@ public class VoUser extends GeoLocation {
 		rubrics.add(rubric);
 	}
 
+	@Persistent
+	@Unindexed
+	private String mobilePhone;
+
+	
+	public String getMobilePhone() {
+		return mobilePhone;
+	}
+
+	public void setMobilePhone(String mobilePhone) {
+		this.mobilePhone = mobilePhone;
+	}
+
 	@Override
 	public String toString() {
 		return "VoUser [id=" + getId() + ", name=" + name + ", email=" + email + "]";

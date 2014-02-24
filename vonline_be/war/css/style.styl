@@ -398,7 +398,6 @@ transform()
 /* создание темы */
 .create-topic
   padding 0 10px
-  display none
   >.btn-group
     float right
     margin-left 5px
@@ -463,6 +462,7 @@ transform()
 
  /* настройки */
 .settings
+.edit-personal
   padding 0 10px
   .tabbable
     z-index 5
@@ -484,7 +484,16 @@ transform()
       padding-left 15px
     .checkbox label
       width auto
+  input[type="text"]
+  textarea
+    margin-bottom 10px
+    width 200px
 
+.create-topic-wrap
+.edit-personal-wrap
+.settings-wrap
+.user-descr-wrap
+  display none
 
 #subscription>label
   text-align right

@@ -20,7 +20,7 @@ import com.vmesteonline.be.MessageType;
 public abstract class VoBaseMessage {
 
 	public VoBaseMessage(Message msg) {
-	//	super(msg.getLikesNum(), msg.getUnlikesNum());
+		// super(msg.getLikesNum(), msg.getUnlikesNum());
 		content = msg.getContent().getBytes();
 		tags = msg.getTags();
 		links = msg.getLinkedMessages();
@@ -33,6 +33,10 @@ public abstract class VoBaseMessage {
 
 	public void setCreatedAt(int createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public void setAuthorId(Key authorId) {
+		this.authorId = authorId;
 	}
 
 	public VoBaseMessage() {
@@ -70,6 +74,14 @@ public abstract class VoBaseMessage {
 		return createdAt;
 	}
 
+	public int getChildMessageNum() {
+		return childMessageNum;
+	}
+
+	public void setChildMessageNum(int childMessageNum) {
+		this.childMessageNum = childMessageNum;
+	}
+
 	public int getEditedAt() {
 		return editedAt;
 	}
@@ -78,11 +90,10 @@ public abstract class VoBaseMessage {
 		this.editedAt = editedAt;
 	}
 
-	/*	public VoUserAttitude(int likes, int unlikes) {
-		likesNum = likes;
-		unlikesNum = unlikes;
-	}
-*/
+	/*
+	 * public VoUserAttitude(int likes, int unlikes) { likesNum = likes;
+	 * unlikesNum = unlikes; }
+	 */
 	public int getLikes() {
 		return likesNum;
 	}
@@ -153,4 +164,7 @@ public abstract class VoBaseMessage {
 	@Persistent
 	@Unindexed
 	protected int unlikesNum;
+
+	protected int childMessageNum;
+
 }

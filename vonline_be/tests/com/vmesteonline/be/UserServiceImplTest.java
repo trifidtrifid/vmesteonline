@@ -16,7 +16,7 @@ import org.junit.Test;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
-public class UsertServiceImplTest {
+public class UserServiceImplTest {
 
 	private static final String SESSION_ID = "11111111111111111111111";
 	private static final String COMMENT = "Комент";

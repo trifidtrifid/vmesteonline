@@ -167,11 +167,11 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			UserContacts uc = new UserContacts();
 			if (u.getAddress() == null) {
 				uc.setAddressStatus(UserStatus.UNCONFIRMED);
-
 			} else {
 				uc.setHomeAddress(u.getAddress().getPostalAddress());
 			}
-			UserInfo ui = new UserInfo(u.getId(), u.getName(), u.getLastName(), 0, "avatar path", "birthday", "relations");
+			uc.setEmail(u.getEmail());
+			uc.setMobilePhone(u.getMobilePhone());
 			return uc;
 		} finally {
 			pm.close();
