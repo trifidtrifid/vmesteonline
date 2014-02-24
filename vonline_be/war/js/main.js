@@ -462,7 +462,7 @@ $('.fa-sitemap').click(function(){
             if (firstLevelFlag[index]){
                 /* Если флаг стоит, значит подгружаем сообщения остальных уровней для этого сообщения ПЕРВОГО уровня */
                 var parentID = $(this).closest('.one-message').data('messageid');
-                var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,0,10);
+                var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,10);
                 if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
                     var currentMessages = messagesPart.messages;
 
@@ -589,7 +589,7 @@ $('.fa-sitemap').click(function(){
                 zeroLevelFlag[index] = 0;   // сбрасываем флаг
 
                 /* сообщения ПЕРВОГО уровня берем от родителя с id 0 (т.е от топика) */
-                currentMessages = client.getMessages(topicID,groupID,1,0,0,0,10).messages;
+                currentMessages = client.getFirstLevelMessages(topicID,groupID,1,0,0,10).messages;
 
                 /* создаем html с сообщениями ПЕРВОГО уровня, который будем подгружать для этого топика */
                 /* и подгружаем его, в списке */
@@ -614,7 +614,7 @@ $('.fa-sitemap').click(function(){
                     if (firstLevelFlag[index]){
                     //     Если флаг стоит, значит подгружаем сообщения остальных уровней для этого сообщения ПЕРВОГО уровня
                         var parentID = $(this).closest('.one-message').data('messageid');
-                        var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,0,10);
+                        var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,10);
                         if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
                         currentMessages = messagesPart.messages;
 
@@ -758,7 +758,7 @@ $('.fa-sitemap').click(function(){
             /* подгружаем сообщения первого уровня если до следующего топика еще не больше определенного расстояния
             * (heightOfMessagesForLoadNew)
             * */
-            /*var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
+            var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
                 level1 = topicItem.find('.level-1'),
                 level1Length = level1.length;
 
@@ -767,7 +767,7 @@ $('.fa-sitemap').click(function(){
                     topicID  = topicItem.data('topicid');
                 var lastMessageID = topicItem.find('>.dd-list>li:last-child .one-message').data('messageid');
                 console.log("-- "+lastMessageID);
-                var messagesPart = client.getMessages(topicID,groupID,1,lastMessageID,0,0,10);
+                var messagesPart = client.getFirstLevelMessages(topicID,groupID,1,lastMessageID,0,10);
                 if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
                     //alert(messagesPart.messages.length);
                     var currentMessages = messagesPart.messages;
@@ -781,7 +781,7 @@ $('.fa-sitemap').click(function(){
                     SetShowEditorClick(addedMessages.find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
                     SetLikeClick(addedMessages.find('.like-item'));
                 }
-            }*/
+            }
         }
 
     });
