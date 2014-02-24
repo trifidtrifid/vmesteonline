@@ -589,7 +589,8 @@ $('.fa-sitemap').click(function(){
                 zeroLevelFlag[index] = 0;   // сбрасываем флаг
 
                 /* сообщения ПЕРВОГО уровня берем от родителя с id 0 (т.е от топика) */
-                currentMessages = client.getFirstLevelMessages (topicID,groupID,1,0,0,10).messages;
+
+                currentMessages = client.getFirstLevelMessages(topicID,groupID,1,0,0,10).messages;
 
                 /* создаем html с сообщениями ПЕРВОГО уровня, который будем подгружать для этого топика */
                 /* и подгружаем его, в списке */
@@ -758,6 +759,7 @@ $('.fa-sitemap').click(function(){
             /* подгружаем сообщения первого уровня если до следующего топика еще не больше определенного расстояния
             * (heightOfMessagesForLoadNew)
             * */
+
 
             var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
                 level1 = topicItem.find('.level-1'),
