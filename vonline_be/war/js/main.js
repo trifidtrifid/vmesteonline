@@ -730,15 +730,16 @@ $('.fa-sitemap').click(function(){
             /* подгружаем сообщения первого уровня если до следующего топика еще не больше определенного расстояния
             * (heightOfMessagesForLoadNew)
             * */
-            var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
+            /*var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
                 level1 = topicItem.find('.level-1'),
                 level1Length = level1.length;
 
             if (scrollTop > Math.abs(prevTopicsHeight[currentIndex+1]-heightOfMessagesForLoadNew) && level1Length > 9){
                 var parentID = 0,
                     topicID  = topicItem.data('topicid');
-                    //messageOffset = 20;
-                var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,10,10);
+                var lastMessageID = 5004976929636352;//topicItem.find('>.dd-list>li:last-child .one-message').data('messageid');
+                console.log("-- "+lastMessageID);
+                var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,lastMessageID,10);
                 if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
                     //alert(messagesPart.messages.length);
                     var currentMessages = messagesPart.messages;
@@ -752,7 +753,7 @@ $('.fa-sitemap').click(function(){
                     SetShowEditorClick(addedMessages.find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
                     SetLikeClick(addedMessages.find('.like-item'));
                 }
-            }
+            }*/
         }
 
     });
@@ -823,6 +824,15 @@ $('.create-topic-show').click(function(){
         }else{
             document.location.replace("profile.html");
         }
+    });
+
+    $('.user-menu li:last a').click(function(){
+        var transport = new Thrift.Transport("/thrift/AuthService");
+        var protocol = new Thrift.Protocol(transport);
+        var client = new com.vmesteonline.be.AuthServiceClient(protocol);
+        client.logout();
+
+        document.location.replace("login.html");
     });
 });
 

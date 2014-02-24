@@ -441,11 +441,12 @@
 <script src="gen-js/MessageService.js" type="text/javascript"></script>
 <script src="gen-js/userservice_types.js" type="text/javascript"></script>
 <script src="gen-js/UserService.js" type="text/javascript"></script>
+<script src="gen-js/authservice_types.js" type="text/javascript"></script>
+<script src="gen-js/AuthService.js" type="text/javascript"></script>
 <!-- -->
 <!-- собственные скрипты  -->
 <script src="js/common.js"></script>
 <script src="js/main.js"></script>
-<script src="js/createTopic.js"></script>
 
 </body>
 
