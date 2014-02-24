@@ -40,13 +40,9 @@ $('.fa-sitemap').click(function(){
    $('.submenu .btn,.nav-list a').click(function(e){
     e.preventDefault();
 
-       var forum = $('.forum');
-       if (forum.hasClass('create-topic')){
-           forum.removeClass('create-topic');
-       }
-       var forumHtml = '<div class="dd dd-draghandle"><ol class="dd-list"></ol></div>';
-       forum.html('');
-       forum.append(forumHtml);
+       var dynamic = $('.dynamic');
+       //var forumHtml = '<section class="forum"><div class="dd dd-draghandle"><ol class="dd-list"></ol></div></section> ';
+       dynamic.html(forum);//.append(forumHtml);
 
        if ($(this).closest('.submenu').length){
            $(this).closest('.submenu').find('.active').removeClass('active');
@@ -64,7 +60,8 @@ $('.fa-sitemap').click(function(){
 
     var ddList = $('.dd>.dd-list');
 
-       ddList.append(TopicHtmlConstructor(topicsContent,topicLen));
+       ddList.html('').append(TopicHtmlConstructor(topicsContent,topicLen));
+       SetCreateTopicBtn();
        SetTopicEvents($('.dd>.dd-list>.topic-item'));
 });
 
@@ -104,6 +101,35 @@ $('.fa-sitemap').click(function(){
         });
     }
 
+    function SetWysiwig(selector){
+
+        selector.css({'height':'200px'}).ace_wysiwyg({
+            toolbar_place: function(toolbar) {
+                return $(this).closest('.widget-box').find('.widget-header').prepend(toolbar).children(0).addClass('inline');
+            },
+            toolbar:
+                [
+                    'bold',
+                    //{name:'italic' , title:'Change Title!', icon: 'icon-leaf'},
+                    'italic',
+                    'strikethrough',
+                    'underline',
+                    null,
+                    'insertunorderedlist',
+                    'insertorderedlist',
+                    null,
+                    'justifyleft',
+                    'justifycenter',
+                    'justifyright',
+                    'createLink',
+                    'unlink',
+                    'insertImage'
+                ],
+            speech_button:false
+        });
+
+    }
+
     function SetShowEditorClick(selector){
         selector.click(function(e){
 
@@ -117,7 +143,8 @@ $('.fa-sitemap').click(function(){
                 $('.btn-cancel').click(function(){
                     $(this).closest('.widget-box').slideUp(200);
                 });
-                widget.find('+.widget-box .wysiwyg-editor').css({'height':'200px'}).ace_wysiwyg({
+                SetWysiwig(widget.find('+.widget-box .wysiwyg-editor'));
+/*                widget.find('+.widget-box .wysiwyg-editor').css({'height':'200px'}).ace_wysiwyg({
                     toolbar_place: function(toolbar) {
                         return $(this).closest('.widget-box').find('.widget-header').prepend(toolbar).children(0).addClass('inline');
                     },
@@ -140,7 +167,7 @@ $('.fa-sitemap').click(function(){
                             'insertImage'
                         ],
                     speech_button:false
-                });
+                });*/
             }
             widget.find('+.widget-box').slideToggle(200);
 
@@ -667,7 +694,8 @@ $('.fa-sitemap').click(function(){
         groupID,
         rubricID,
         lastTopicId,
-        FlagOfEndTopics = 1;
+        FlagOfEndTopics = 1,
+        forum = $('.forum-wrap').html();
     /* константы */
     var heightOfMessagesForLoadNew = 760;
 /* --------------------- */
@@ -730,15 +758,16 @@ $('.fa-sitemap').click(function(){
             /* подгружаем сообщения первого уровня если до следующего топика еще не больше определенного расстояния
             * (heightOfMessagesForLoadNew)
             * */
-            var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
+            /*var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
                 level1 = topicItem.find('.level-1'),
                 level1Length = level1.length;
 
             if (scrollTop > Math.abs(prevTopicsHeight[currentIndex+1]-heightOfMessagesForLoadNew) && level1Length > 9){
                 var parentID = 0,
                     topicID  = topicItem.data('topicid');
-                    //messageOffset = 20;
-                var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,10,10);
+                var lastMessageID = 5004976929636352;//topicItem.find('>.dd-list>li:last-child .one-message').data('messageid');
+                console.log("-- "+lastMessageID);
+                var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,lastMessageID,10);
                 if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
                     //alert(messagesPart.messages.length);
                     var currentMessages = messagesPart.messages;
@@ -752,7 +781,7 @@ $('.fa-sitemap').click(function(){
                     SetShowEditorClick(addedMessages.find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
                     SetLikeClick(addedMessages.find('.like-item'));
                 }
-            }
+            }*/
         }
 
     });
@@ -792,37 +821,58 @@ function AutoReplaceLinkAndVideo(str) {
 /* ------------ */
 
     /* переключение на создание топика */
-$('.create-topic-show').click(function(){
-    var forum = $('.forum');
+    function SetCreateTopicBtn(){
+        $('.create-topic-show').click(function(){
+    var dynamic = $('.dynamic');
     var activeGroupItem = $('.submenu .active .btn');
     var activeRubricItem = $('.nav-list .active a');
-    forum.html('');
-    var createTopicHtml = $('.create-topic').html();
+    var createTopicHtml = $('.create-topic-wrap').html();
 
-    forum.html(createTopicHtml).addClass('create-topic').show(200,function(){
+    dynamic.html(createTopicHtml);
 
-        $('.create-topic .wysiwig-box .btn-primary').click(function(){
-            var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
-            message = message.replace(new RegExp('&nbsp;','g'),' ');
-            message = message.replace(new RegExp('<div>','g'),'<div> ');
-            var head = $('.head').val();
-            var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
-            messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
-            var groupID = activeGroupItem.data('groupid');
-            var rubricID = activeRubricItem.data('rubricid');
-            client.createTopic(groupID,head,1,messageWithGoodLinks,0,0,rubricID,1);
-            activeGroupItem.trigger('click');
-            activeRubricItem.trigger('click');
-        });
+    SetWysiwig($('.create-topic .wysiwyg-editor'));
+
+    $('.create-topic .wysiwig-box .btn-primary').click(function(){
+        var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
+        message = message.replace(new RegExp('&nbsp;','g'),' ');
+        message = message.replace(new RegExp('<div>','g'),'<div> ');
+        var head = $('.head').val();
+        var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
+        messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
+        var groupID = activeGroupItem.data('groupid');
+        var rubricID = activeRubricItem.data('rubricid');
+        client.createTopic(groupID,head,1,messageWithGoodLinks,0,0,rubricID,1);
+        activeGroupItem.trigger('click');
+        activeRubricItem.trigger('click');
     });
+    //});
 });
+    }
+    SetCreateTopicBtn();
 
+    /* переключения на настройки, профиль и выход */
     $('.user-menu a').click(function(){
-        if ($(this).parent().index() == 0){
-            document.location.replace("settings.html");
-        }else{
-            document.location.replace("profile.html");
+        var ind = $(this).parent().index();
+        var dynamic = $('.dynamic');
+        if (ind == 0){
+            var settingsHtml = $('.settings-wrap').html();
+            dynamic.html(settingsHtml);
+        }else if (ind == 1){
+            var profileHtml = $('.user-descr-wrap').html();
+            dynamic.html(profileHtml);
+            $('.edit-personal-link').click(function(){
+                var editPersonalHtml = $('.edit-personal-wrap').html();
+                dynamic.html(editPersonalHtml);
+            });
+        } else {
+            var transport = new Thrift.Transport("/thrift/AuthService");
+            var protocol = new Thrift.Protocol(transport);
+            var client = new com.vmesteonline.be.AuthServiceClient(protocol);
+            client.logout();
+
+            document.location.replace("login.html");
         }
     });
+
 });
 
