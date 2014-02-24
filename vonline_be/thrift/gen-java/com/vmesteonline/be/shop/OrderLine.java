@@ -37,7 +37,9 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
 
   private static final org.apache.thrift.protocol.TField PRODUCT_FIELD_DESC = new org.apache.thrift.protocol.TField("product", org.apache.thrift.protocol.TType.STRUCT, (short)1);
   private static final org.apache.thrift.protocol.TField QUANTITY_FIELD_DESC = new org.apache.thrift.protocol.TField("quantity", org.apache.thrift.protocol.TType.DOUBLE, (short)2);
-  private static final org.apache.thrift.protocol.TField PRICE_FIELD_DESC = new org.apache.thrift.protocol.TField("price", org.apache.thrift.protocol.TType.DOUBLE, (short)4);
+  private static final org.apache.thrift.protocol.TField PRICE_FIELD_DESC = new org.apache.thrift.protocol.TField("price", org.apache.thrift.protocol.TType.DOUBLE, (short)3);
+  private static final org.apache.thrift.protocol.TField PACKS_FIELD_DESC = new org.apache.thrift.protocol.TField("packs", org.apache.thrift.protocol.TType.MAP, (short)4);
+  private static final org.apache.thrift.protocol.TField COMMENT_FIELD_DESC = new org.apache.thrift.protocol.TField("comment", org.apache.thrift.protocol.TType.STRING, (short)5);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -48,12 +50,16 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
   public Product product; // required
   public double quantity; // required
   public double price; // required
+  public Map<Double,Integer> packs; // optional
+  public String comment; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     PRODUCT((short)1, "product"),
     QUANTITY((short)2, "quantity"),
-    PRICE((short)4, "price");
+    PRICE((short)3, "price"),
+    PACKS((short)4, "packs"),
+    COMMENT((short)5, "comment");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -72,8 +78,12 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
           return PRODUCT;
         case 2: // QUANTITY
           return QUANTITY;
-        case 4: // PRICE
+        case 3: // PRICE
           return PRICE;
+        case 4: // PACKS
+          return PACKS;
+        case 5: // COMMENT
+          return COMMENT;
         default:
           return null;
       }
@@ -117,6 +127,7 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
   private static final int __QUANTITY_ISSET_ID = 0;
   private static final int __PRICE_ISSET_ID = 1;
   private byte __isset_bitfield = 0;
+  private _Fields optionals[] = {_Fields.PACKS,_Fields.COMMENT};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -126,6 +137,12 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
     tmpMap.put(_Fields.PRICE, new org.apache.thrift.meta_data.FieldMetaData("price", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
+    tmpMap.put(_Fields.PACKS, new org.apache.thrift.meta_data.FieldMetaData("packs", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE), 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32))));
+    tmpMap.put(_Fields.COMMENT, new org.apache.thrift.meta_data.FieldMetaData("comment", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(OrderLine.class, metaDataMap);
   }
@@ -156,6 +173,13 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
     }
     this.quantity = other.quantity;
     this.price = other.price;
+    if (other.isSetPacks()) {
+      Map<Double,Integer> __this__packs = new HashMap<Double,Integer>(other.packs);
+      this.packs = __this__packs;
+    }
+    if (other.isSetComment()) {
+      this.comment = other.comment;
+    }
   }
 
   public OrderLine deepCopy() {
@@ -169,6 +193,8 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
     this.quantity = 0.0;
     setPriceIsSet(false);
     this.price = 0.0;
+    this.packs = null;
+    this.comment = null;
   }
 
   public Product getProduct() {
@@ -241,6 +267,65 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PRICE_ISSET_ID, value);
   }
 
+  public int getPacksSize() {
+    return (this.packs == null) ? 0 : this.packs.size();
+  }
+
+  public void putToPacks(double key, int val) {
+    if (this.packs == null) {
+      this.packs = new HashMap<Double,Integer>();
+    }
+    this.packs.put(key, val);
+  }
+
+  public Map<Double,Integer> getPacks() {
+    return this.packs;
+  }
+
+  public OrderLine setPacks(Map<Double,Integer> packs) {
+    this.packs = packs;
+    return this;
+  }
+
+  public void unsetPacks() {
+    this.packs = null;
+  }
+
+  /** Returns true if field packs is set (has been assigned a value) and false otherwise */
+  public boolean isSetPacks() {
+    return this.packs != null;
+  }
+
+  public void setPacksIsSet(boolean value) {
+    if (!value) {
+      this.packs = null;
+    }
+  }
+
+  public String getComment() {
+    return this.comment;
+  }
+
+  public OrderLine setComment(String comment) {
+    this.comment = comment;
+    return this;
+  }
+
+  public void unsetComment() {
+    this.comment = null;
+  }
+
+  /** Returns true if field comment is set (has been assigned a value) and false otherwise */
+  public boolean isSetComment() {
+    return this.comment != null;
+  }
+
+  public void setCommentIsSet(boolean value) {
+    if (!value) {
+      this.comment = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case PRODUCT:
@@ -267,6 +352,22 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
       }
       break;
 
+    case PACKS:
+      if (value == null) {
+        unsetPacks();
+      } else {
+        setPacks((Map<Double,Integer>)value);
+      }
+      break;
+
+    case COMMENT:
+      if (value == null) {
+        unsetComment();
+      } else {
+        setComment((String)value);
+      }
+      break;
+
     }
   }
 
@@ -280,6 +381,12 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
 
     case PRICE:
       return Double.valueOf(getPrice());
+
+    case PACKS:
+      return getPacks();
+
+    case COMMENT:
+      return getComment();
 
     }
     throw new IllegalStateException();
@@ -298,6 +405,10 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
       return isSetQuantity();
     case PRICE:
       return isSetPrice();
+    case PACKS:
+      return isSetPacks();
+    case COMMENT:
+      return isSetComment();
     }
     throw new IllegalStateException();
   }
@@ -339,6 +450,24 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
       if (!(this_present_price && that_present_price))
         return false;
       if (this.price != that.price)
+        return false;
+    }
+
+    boolean this_present_packs = true && this.isSetPacks();
+    boolean that_present_packs = true && that.isSetPacks();
+    if (this_present_packs || that_present_packs) {
+      if (!(this_present_packs && that_present_packs))
+        return false;
+      if (!this.packs.equals(that.packs))
+        return false;
+    }
+
+    boolean this_present_comment = true && this.isSetComment();
+    boolean that_present_comment = true && that.isSetComment();
+    if (this_present_comment || that_present_comment) {
+      if (!(this_present_comment && that_present_comment))
+        return false;
+      if (!this.comment.equals(that.comment))
         return false;
     }
 
@@ -388,6 +517,26 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetPacks()).compareTo(other.isSetPacks());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetPacks()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.packs, other.packs);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetComment()).compareTo(other.isSetComment());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetComment()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.comment, other.comment);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -423,6 +572,26 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
     sb.append("price:");
     sb.append(this.price);
     first = false;
+    if (isSetPacks()) {
+      if (!first) sb.append(", ");
+      sb.append("packs:");
+      if (this.packs == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.packs);
+      }
+      first = false;
+    }
+    if (isSetComment()) {
+      if (!first) sb.append(", ");
+      sb.append("comment:");
+      if (this.comment == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.comment);
+      }
+      first = false;
+    }
     sb.append(")");
     return sb.toString();
   }
@@ -488,10 +657,38 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 4: // PRICE
+          case 3: // PRICE
             if (schemeField.type == org.apache.thrift.protocol.TType.DOUBLE) {
               struct.price = iprot.readDouble();
               struct.setPriceIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 4: // PACKS
+            if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
+              {
+                org.apache.thrift.protocol.TMap _map104 = iprot.readMapBegin();
+                struct.packs = new HashMap<Double,Integer>(2*_map104.size);
+                for (int _i105 = 0; _i105 < _map104.size; ++_i105)
+                {
+                  double _key106;
+                  int _val107;
+                  _key106 = iprot.readDouble();
+                  _val107 = iprot.readI32();
+                  struct.packs.put(_key106, _val107);
+                }
+                iprot.readMapEnd();
+              }
+              struct.setPacksIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 5: // COMMENT
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.comment = iprot.readString();
+              struct.setCommentIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -522,6 +719,28 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
       oprot.writeFieldBegin(PRICE_FIELD_DESC);
       oprot.writeDouble(struct.price);
       oprot.writeFieldEnd();
+      if (struct.packs != null) {
+        if (struct.isSetPacks()) {
+          oprot.writeFieldBegin(PACKS_FIELD_DESC);
+          {
+            oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.DOUBLE, org.apache.thrift.protocol.TType.I32, struct.packs.size()));
+            for (Map.Entry<Double, Integer> _iter108 : struct.packs.entrySet())
+            {
+              oprot.writeDouble(_iter108.getKey());
+              oprot.writeI32(_iter108.getValue());
+            }
+            oprot.writeMapEnd();
+          }
+          oprot.writeFieldEnd();
+        }
+      }
+      if (struct.comment != null) {
+        if (struct.isSetComment()) {
+          oprot.writeFieldBegin(COMMENT_FIELD_DESC);
+          oprot.writeString(struct.comment);
+          oprot.writeFieldEnd();
+        }
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -549,7 +768,13 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
       if (struct.isSetPrice()) {
         optionals.set(2);
       }
-      oprot.writeBitSet(optionals, 3);
+      if (struct.isSetPacks()) {
+        optionals.set(3);
+      }
+      if (struct.isSetComment()) {
+        optionals.set(4);
+      }
+      oprot.writeBitSet(optionals, 5);
       if (struct.isSetProduct()) {
         struct.product.write(oprot);
       }
@@ -559,12 +784,25 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
       if (struct.isSetPrice()) {
         oprot.writeDouble(struct.price);
       }
+      if (struct.isSetPacks()) {
+        {
+          oprot.writeI32(struct.packs.size());
+          for (Map.Entry<Double, Integer> _iter109 : struct.packs.entrySet())
+          {
+            oprot.writeDouble(_iter109.getKey());
+            oprot.writeI32(_iter109.getValue());
+          }
+        }
+      }
+      if (struct.isSetComment()) {
+        oprot.writeString(struct.comment);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, OrderLine struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(3);
+      BitSet incoming = iprot.readBitSet(5);
       if (incoming.get(0)) {
         struct.product = new Product();
         struct.product.read(iprot);
@@ -577,6 +815,25 @@ public class OrderLine implements org.apache.thrift.TBase<OrderLine, OrderLine._
       if (incoming.get(2)) {
         struct.price = iprot.readDouble();
         struct.setPriceIsSet(true);
+      }
+      if (incoming.get(3)) {
+        {
+          org.apache.thrift.protocol.TMap _map110 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.DOUBLE, org.apache.thrift.protocol.TType.I32, iprot.readI32());
+          struct.packs = new HashMap<Double,Integer>(2*_map110.size);
+          for (int _i111 = 0; _i111 < _map110.size; ++_i111)
+          {
+            double _key112;
+            int _val113;
+            _key112 = iprot.readDouble();
+            _val113 = iprot.readI32();
+            struct.packs.put(_key112, _val113);
+          }
+        }
+        struct.setPacksIsSet(true);
+      }
+      if (incoming.get(4)) {
+        struct.comment = iprot.readString();
+        struct.setCommentIsSet(true);
       }
     }
   }

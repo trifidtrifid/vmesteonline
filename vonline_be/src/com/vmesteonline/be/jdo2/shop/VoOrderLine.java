@@ -1,5 +1,8 @@
 package com.vmesteonline.be.jdo2.shop;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -9,6 +12,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.shop.OrderLine;
 
 @PersistenceCapable
@@ -17,16 +21,27 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 	public VoOrderLine(long productId ){
 		this.product = new VoProduct(productId);
 	}
-	public VoOrderLine(VoOrder order, VoProduct product, double quantity, double price) throws InvalidOperation {
+	public VoOrderLine(VoOrder order, VoProduct product, double quantity, double price, 
+			String comment, Map<Double,Integer> packets) throws InvalidOperation {
 		this.quantity = quantity;
 		this.product = product;
 		this.order = order;
 		this.price = price;
+		this.comment = comment;
+		if( null!=packets && packets.size() > 1 ){
+			if(product.isPrepackRequired()){
+				this.packets = packets;
+			} else { 
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Not prepacked product '"+product.getName()+"' can't have packets set, but provided "+packets.size()+"!");
+			}
+		}
 	}
 
 	public OrderLine getOrderLine() {
 		OrderLine orderLine = new OrderLine(product.getProduct(), quantity, price);
 		orderLine.product.price = price;
+		if( null!=comment && comment.length() > 0 ) orderLine.setComment(comment);
+		if( packets != null && packets.size() > 1 ) orderLine.setPacks(packets);
 		return orderLine;
 	}
 
@@ -43,6 +58,15 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 	@Persistent
 	@Unindexed
 	private double quantity;
+
+	@Persistent
+	@Unindexed
+	private Map<Double,Integer> packets;
+
+	@Persistent
+	@Unindexed
+	private String comment;
+
 
 	@Persistent
 	@Unindexed
@@ -99,6 +123,17 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 	@Override
 	public int compareTo(VoOrderLine that) {
 		return null == that ? -1 : null == that.product ? null == product ? 0 : -1 : product.getName().compareTo(that.product.getName());
+	}
+	
+	public String getComment() {
+		return comment;
+	}
+	
+	public Map<Double,Integer> getPackets(){
+		return packets;
+	}
+	public void setPackets(HashMap<Double, Integer> pMap) {
+		packets = pMap;
 	}
 
 }

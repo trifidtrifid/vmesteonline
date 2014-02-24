@@ -72,7 +72,10 @@ enum PaymentStatus { UNKNOWN=0, WAIT=1, PENDING=2, COMPLETE=3, CREDIT=4 }
 struct OrderLine {
 	1:Product product,
 	2:double quantity,
-	4:double price   
+	3:double price
+	4:optional map<double, i32> packs; //can be applied to prepacked products if customer wants to buy several packet of 
+	//different weight
+	5:optional string comment    
 }
 
 struct OrderDetails {
@@ -238,6 +241,7 @@ service ShopService {
 	* Method returns id of new order and set is as a current
 	**/
 	i64 createOrder(1:i32 date, 2:string comment, 3:PriceType priceType) throws (1:error.InvalidOperation exc),
+	void updateOrder( 1:i64 orderId, 2:i32 date, 3:string comment) throws (1:error.InvalidOperation exc),
 	i64 cancelOrder() throws (1:error.InvalidOperation exc),
 	i64 confirmOrder() throws (1:error.InvalidOperation exc),
 	/**
@@ -254,7 +258,7 @@ service ShopService {
 	* Methods adds or replaces line to the current order that set by createOrder, or getOrderDetails method
 	* it returns orderline that is with price set
 	**/
-	OrderLine setOrderLine( 1:i64 productId, 2:double quontity ) throws (1:error.InvalidOperation exc),
+	OrderLine setOrderLine( 1:i64 productId, 2:double quantity, 3:string comment, 4:map<double, i32>  packets) throws (1:error.InvalidOperation exc),
 	bool removeOrderLine(1:i64 productId) throws (1:error.InvalidOperation exc),
 	/**
 	* Method returns Order details that contains new value of postal address and delivery cost of order delivery 
