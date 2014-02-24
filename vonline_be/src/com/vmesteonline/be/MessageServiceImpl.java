@@ -81,17 +81,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			Query q = pm.newQuery(VoMessage.class);
-			q.setFilter("topicId == " + topicId + " && parentId == 0");
-			// todo move this in MessagesTree class
+			q.setFilter("topicId == " + topicId);
 			List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
-
-			List<VoMessage> lst = new ArrayList<VoMessage>();
-			for (VoMessage voMsg : voMsgs) {
-				if (voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId) {
-					lst.add(voMsg);
-				}
-			}
-			voMsgs = lst;
+			MessagesTree tree = new MessagesTree(voMsgs);
+			voMsgs = tree.getTreeMessagesFirstLevel(userId);
 
 			if (lastLoadedId != 0) {
 				List<VoMessage> subLst = null;
@@ -105,7 +98,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				else
 					voMsgs = subLst;
 			}
-
 			voMsgs = removeExtraMessages(voMsgs, length);
 
 			return createMlp(voMsgs, userId, pm);
@@ -437,6 +429,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			Message msg = voMessage.getMessage();
 			msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId());
 			msg.userMessage = null == voUserMsg ? null : voUserMsg.getUserMessage();
+			msg.childMsgsNum = voMessage.getChildMessageNum();
 			mlp.addToMessages(msg);
 		}
 		return mlp;

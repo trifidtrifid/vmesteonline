@@ -159,23 +159,28 @@ public class MessageServiceTests {
 
 	@Test
 	public void testGetChildMessagesNumInMessage() {
-		// create locations
 		try {
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
 			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic", noLinkedMessages,
-					noTags, 0L);
-			msg = msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+			Message msg1 = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg = msi.createMessage(topic.getId(), msg1.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
 					noLinkedMessages, noTags, 0L);
 			msg = msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the third message in the topic",
 					noLinkedMessages, noTags, 0L);
 			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the fourth message in the topic", noLinkedMessages,
 					noTags, 0L);
 
-			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
+			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
 			Assert.assertNotNull(mlp);
 			Assert.assertEquals(1, mlp.totalSize);
+			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
+			Assert.assertEquals(3, mlp.messages.get(0).getChildMsgsNum());
+
+			mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg1.getId(), false, 10);
+			Assert.assertNotNull(mlp);
+			Assert.assertEquals(3, mlp.totalSize);
 			Assert.assertEquals(2, mlp.messages.get(0).getChildMsgsNum());
 
 		} catch (Exception e) {
@@ -448,7 +453,6 @@ public class MessageServiceTests {
 		return 0L;
 	}
 
-
 	@Test
 	public void testGetFirstLeveMessages() {
 		try {
@@ -486,7 +490,5 @@ public class MessageServiceTests {
 		}
 
 	}
-
-
 
 }
