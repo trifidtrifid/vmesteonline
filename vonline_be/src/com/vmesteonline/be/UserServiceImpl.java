@@ -39,6 +39,11 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		super(sess);
 	}
 
+	@Override
+	public ShortUserInfo getShortUserInfo() throws InvalidOperation {
+		return getShortUserInfo(getCurrentUserId());
+	}
+
 	public static ShortUserInfo getShortUserInfo(long userId) {
 
 		PersistenceManager pm = PMF.getPm();
@@ -149,6 +154,37 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getCounties. " + e.getMessage());
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public UserContacts getUserContacts() throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser u = getCurrentUser(pm);
+			UserContacts uc = new UserContacts();
+			if (u.getAddress() == null) {
+				uc.setAddressStatus(UserStatus.UNCONFIRMED);
+			} else {
+				uc.setHomeAddress(u.getAddress().getPostalAddress());
+			}
+			uc.setEmail(u.getEmail());
+			uc.setMobilePhone(u.getMobilePhone());
+			return uc;
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public UserInfo getUserInfo() throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser u = getCurrentUser(pm);
+			UserInfo ui = new UserInfo(u.getId(), u.getName(), u.getLastName(), 0, "avatar path", "birthday", "relations");
+			return ui;
 		} finally {
 			pm.close();
 		}
@@ -418,7 +454,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoUser currentUser = getCurrentUser(pm);
 			Set<PostalAddress> pas = new HashSet<PostalAddress>();
 			for (VoPostalAddress pa : currentUser.getAddresses()) {
-				pas.add(pa.getPostalAddress());
+				pas.add(pa.getPostalAddress(pm));
 			}
 			return pas;
 		} catch (Exception e) {
@@ -440,7 +476,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			if (null == address) {
 				return null;
 			}
-			return address.getPostalAddress();
+			return address.getPostalAddress(pm);
 		} finally {
 			pm.close();
 		}

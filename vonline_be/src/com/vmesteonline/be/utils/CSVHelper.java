@@ -1,14 +1,14 @@
 package com.vmesteonline.be.utils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,7 +17,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import com.google.appengine.labs.repackaged.com.google.common.io.LineReader;
-import com.vmesteonline.be.jdo2.shop.exchange.ProducerDescription;
+import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.VoError;
+import com.vmesteonline.be.jdo2.shop.exchange.OrderLineDescription;
+import com.vmesteonline.be.shop.ExchangeFieldType;
 
 public class CSVHelper {
 
@@ -107,35 +110,52 @@ public class CSVHelper {
 		return rslt;
 	}
 
-	//=====================================================================================================================
+//=====================================================================================================================
 	
-	public static<T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listTowrite ) throws IOException{
-			writeCSVData(os, fieldsMap, listTowrite, null, null, null );
+	public static<T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listToRead, 
+			List<List<String>> fieldsToFill ) throws IOException{
+			writeCSVData(os, fieldsMap, listToRead, fieldsToFill, null, null, null );
 	}
 	
-	public static<T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listToWrite,
+	public static<T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listToRead, List<List<String>> fieldsToFill,
 			String fieldDelim, String setDelim, String avpDelim) throws IOException {
 		
 		String fd = null == fieldDelim ? "," : fieldDelim ;
 		String sd = null == setDelim ? "|" : setDelim;
 		String avpd = null == avpDelim ? ":" : avpDelim;
 		
-		SortedMap<Integer, String> sortedFields = new TreeMap<Integer, String>();
-		sortedFields.putAll(fieldsMap);
+		Collection<Object> fieldNames = new ArrayList<Object>();; 
+		if( null!=fieldsMap ){
+			SortedMap<Integer, String> sortedFields = new TreeMap<Integer, String>();
+			sortedFields.putAll(fieldsMap);
+			fieldNames.addAll( sortedFields.values());
+		} 
 		
 		try {
-			for (T objectToWrite : listToWrite) {
+			for (T objectToWrite : listToRead) {
 				String lineStr = "";
-				for( Entry<Integer, String> e: sortedFields.entrySet()){
+				
+				ArrayList<String> nextFieldsLine = null;
+				if(null!=fieldsToFill) {
+					nextFieldsLine = new ArrayList<String>();
+					fieldsToFill.add( nextFieldsLine);
+				}
+
+				if(fieldsMap == null ) {
+					fieldNames.clear();
+					fieldNames.addAll( Arrays.asList(objectToWrite.getClass().getFields()));
+				}
+				for( Object value: fieldNames ){
 					lineStr += fd;
 					String outStr = "";
-					Field field = objectToWrite.getClass().getField( e.getValue());
+					Field field = value instanceof Field ? (Field)value : objectToWrite.getClass().getField( value.toString() );
 					Object fieldToWrite = field.get(objectToWrite);
 					if( null!=fieldToWrite ){ 
 						if( fieldToWrite instanceof Number )
 							outStr = fieldToWrite.toString();
+						
 						else if( fieldToWrite instanceof Set || fieldToWrite instanceof List){
-							for (Object object : listToWrite) {
+							for (Object object : listToRead) {
 								outStr += sd + object;
 							}
 							outStr = outStr.substring(sd.length());
@@ -149,6 +169,9 @@ public class CSVHelper {
 							outStr = fieldToWrite.toString().contains(fd) ? "\""+fieldToWrite.toString()+"\"" :
 								"" + fieldToWrite;
 						}
+						if( nextFieldsLine!=null) 
+							nextFieldsLine.add( outStr );
+						
 						lineStr += outStr;
 					}
 				}
@@ -158,5 +181,20 @@ public class CSVHelper {
 			e.printStackTrace();
 			throw new IOException("Failed to write CSV:"+e.getMessage(), e);
 		}
+	}
+	
+	public static<T> SortedMap<Integer,String> getFieldsMap( T instance, ExchangeFieldType id, List<ExchangeFieldType> requiredFields) throws InvalidOperation{
+		SortedMap<Integer,String> fmap = new TreeMap<Integer, String>();
+		Field[] fields = instance.getClass().getFields();
+		int i = 0;
+		for (ExchangeFieldType ft : requiredFields) {
+			int idx = ft.getValue()-id.getValue();
+			if( idx >= 0 && idx <fields.length ){
+				fmap.put( i++, fields[ idx ].getName() );
+			} else {
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Field["+ft.name()+"] is not described in the class or id["+id.name()+"] is incorrect");
+			}
+		}
+		return fmap;
 	}
 }

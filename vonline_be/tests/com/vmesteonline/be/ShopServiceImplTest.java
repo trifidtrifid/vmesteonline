@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -53,6 +54,7 @@ import com.vmesteonline.be.shop.ProductCategory;
 import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
+import com.vmesteonline.be.utils.Defaults;
 
 public class ShopServiceImplTest {
 
@@ -105,7 +107,7 @@ public class ShopServiceImplTest {
 	@Before
 	public void setUp() throws Exception {
 		helper.setUp();
-
+		Defaults.init();
 		// register and login current user
 		// Initialize USer Service
 		String sessionId = SESSION_ID;
@@ -304,10 +306,10 @@ public class ShopServiceImplTest {
 			optionsMap2.put("вкус", "мерзкий");
 
 			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D),
-					new ProductDetails(categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId)));
+					new ProductDetails(categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId, 1000, 3000, true, new HashSet<String>())));
 
 			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D),
-					new ProductDetails(categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id)));
+					new ProductDetails(categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id, 1000, 3000, true, new HashSet<String>())));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
 			// expects to get all of products
@@ -522,10 +524,10 @@ public class ShopServiceImplTest {
 			optionsMap2.put("вкус", "мерзкий");
 
 			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D),
-					new ProductDetails(categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId)));
+					new ProductDetails(categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId, 1000, 3000, true, new HashSet<String>())));
 
 			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D),
-					new ProductDetails(categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id)));
+					new ProductDetails(categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id, 1000, 3000, true, new HashSet<String>())));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
 
@@ -542,16 +544,16 @@ public class ShopServiceImplTest {
 			dates.put(now + 10 * day, DateType.NEXT_ORDER);
 			si.setDates(dates);
 
-			si.createOrder(now + 1000, PriceType.RETAIL);
+			si.createOrder(now + 1000, "aaaa",PriceType.RETAIL);
 			long canceledOID = si.cancelOrder();
 			try {
-				si.createOrder(now + 5 * day, PriceType.RETAIL);
+				si.createOrder(now + 5 * day, "aaaa",PriceType.RETAIL);
 				fail("Order could not be created in this date!");
 			} catch (InvalidOperation e) {
 				Assert.assertEquals(e.what, VoError.ShopNotOrderDate);
 				e.printStackTrace();
 			}
-			long lastOrder = si.createOrder(now + 6 * day, PriceType.RETAIL);
+			long lastOrder = si.createOrder(now + 6 * day, "aaaa",PriceType.RETAIL);
 
 			List<Order> orders = si.getOrders(now - 10 * day, now + 10 * day);
 			Assert.assertEquals(orders.size(), 2);
@@ -595,7 +597,7 @@ public class ShopServiceImplTest {
 			// here we have an order with One product of second type lets try merge
 			// and add other orders
 
-			si.createOrder(now + 10 * day, PriceType.INET);
+			si.createOrder(now + 10 * day, "aaaa",PriceType.INET);
 			si.appendOrder(orders.get(0).getId()); // here we expect to have a copy of
 																							// an old order
 			si.appendOrder(orders.get(0).getId()); // here we expect to have doubled
@@ -719,7 +721,7 @@ public class ShopServiceImplTest {
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
 			si.setDates(dateDateTypeMap);
 
-			long order = si.createOrder(date, PriceType.INET);
+			long order = si.createOrder(date, "aaaa",PriceType.INET);
 			Map<DeliveryType, Double> newDeliveryCosts = new HashMap<DeliveryType, Double>();
 			newDeliveryCosts.put(DeliveryType.LONG_RANGE, 10.0D);
 			newDeliveryCosts.put(DeliveryType.SHORT_RANGE, 5.0D);
@@ -758,7 +760,7 @@ public class ShopServiceImplTest {
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
 			si.setDates(dateDateTypeMap);
 
-			long order = si.createOrder(date, PriceType.INET);
+			long order = si.createOrder(date, "aaaa",PriceType.INET);
 
 			Map<PaymentType, Double> newPaymentCosts = new HashMap<PaymentType, Double>();
 			newPaymentCosts.put(PaymentType.CREDIT_CARD, 10.0D);
@@ -796,7 +798,7 @@ public class ShopServiceImplTest {
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
 			si.setDates(dateDateTypeMap);
 
-			long order = si.createOrder(date, PriceType.INET);
+			long order = si.createOrder(date, "aaaa",PriceType.INET);
 			si.setOrderDeliveryAddress(userAddress2);
 			OrderDetails orderDetails = si.getOrderDetails(order);
 			Assert.assertEquals(orderDetails.getDeliveryTo(), userAddress2);
@@ -821,7 +823,7 @@ public class ShopServiceImplTest {
 				dateDateTypeMap.put( date, DateType.NEXT_ORDER);
 				si.setDates(dateDateTypeMap);
 				
-				long order = si.createOrder(date, PriceType.INET);
+				long order = si.createOrder(date, "aaaa",PriceType.INET);
 				PaymentStatus ps = si.getOrderDetails(order).getPaymentStatus();
 				Assert.assertEquals(ps, PaymentStatus.WAIT);
 				si.setOrderPaymentStatus(order,  PaymentStatus.COMPLETE);

@@ -18,30 +18,47 @@ public class MessagesTree {
 
 	private List<VoMessage> firstLevel;
 
-	public List<VoMessage> getTreeMessagesAfter(long parentId, int length) throws InvalidOperation {
+	// эта функция возращает все сообщения от parentId до ближайшего сообщения
+	// 1-го уровня
+
+	public List<VoMessage> getTreeMessagesAfter(long parentId, long userId) throws InvalidOperation {
 
 		List<VoMessage> lst = new ArrayList<>();
+		boolean add = false;
 		for (int i = 0; i < items.size(); i++) {
 			if (items.get(i).id == parentId) {
-				int fromPos = i + 1;
-				int toPos = i + 1 + length;
-				if (fromPos >= items.size())
+				add = true;
+			} else if (add) {
+
+				VoMessage voMsg = getMessage(items.get(i).id);
+				if (voMsg.getParentId() == 0)
 					break;
-				if (toPos >= items.size()) {
-					toPos = items.size();
-				}
-				List<ItemPosition> iList = items.subList(fromPos, toPos);
-				for (ItemPosition iPos : iList) {
-					if (isFirstLevel(iPos.id))
-						break;
-					VoMessage voMsg = getMessage(iPos.id);
-					voMsg.setVisibleOffset(iPos.level);
+
+				if (voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId) {
+					voMsg.setVisibleOffset(items.get(i).level);
 					lst.add(voMsg);
 				}
+
 			}
 		}
 
+		for (int i = 0; i < lst.size(); i++) {
+			lst.get(i).setChildMessageNum(getChildsNum(lst, i, lst.get(i).getVisibleOffset()));
+		}
+
 		return lst;
+	}
+
+	int getChildsNum(List<VoMessage> lst, int currentIndex, int currentLevel) {
+		int childMsgsNum = 0;
+		for (int i = currentIndex + 1; i < lst.size(); i++) {
+			if (lst.get(i).getVisibleOffset() > currentLevel)
+				childMsgsNum++;
+			else
+				break;
+		}
+
+		return childMsgsNum;
 	}
 
 	boolean isFirstLevel(long id) {

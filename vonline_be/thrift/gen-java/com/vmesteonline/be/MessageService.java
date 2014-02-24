@@ -85,16 +85,15 @@ public class MessageService {
      * @param topicId
      * @param groupId
      * @param messageType
-     * @param parentId
+     * @param lastLoadedId
      * @param archived
-     * @param offset
      * @param length
      */
-    public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public long like(long messageId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public UserOpinion likeOrDislikeMessage(long messageId, int opinion) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
-    public long dislike(long messageId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public UserOpinion likeOrDislikeTopic(long topicId, int opinion) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     public long markReadMessage(long messageId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
@@ -107,10 +106,6 @@ public class MessageService {
     public long markTopicUnintrested(long topicId, boolean interested) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     public long makeMessageLinked(long message1Id, long message2Id) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
-
-    public long likeTopic(long topicId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
-
-    public long dislikeTopic(long topicId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
   }
 
@@ -130,11 +125,11 @@ public class MessageService {
 
     public void getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void like(long messageId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void likeOrDislikeMessage(long messageId, int opinion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void dislike(long messageId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void likeOrDislikeTopic(long topicId, int opinion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void markReadMessage(long messageId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -147,10 +142,6 @@ public class MessageService {
     public void markTopicUnintrested(long topicId, boolean interested, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void makeMessageLinked(long message1Id, long message2Id, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
-
-    public void likeTopic(long topicId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
-
-    public void dislikeTopic(long topicId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -370,21 +361,20 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getTopics failed: unknown result");
     }
 
-    public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      send_getMessages(topicId, groupId, messageType, parentId, archived, offset, length);
+      send_getMessages(topicId, groupId, messageType, lastLoadedId, archived, length);
       return recv_getMessages();
     }
 
-    public void send_getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length) throws org.apache.thrift.TException
+    public void send_getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length) throws org.apache.thrift.TException
     {
       getMessages_args args = new getMessages_args();
       args.setTopicId(topicId);
       args.setGroupId(groupId);
       args.setMessageType(messageType);
-      args.setParentId(parentId);
+      args.setLastLoadedId(lastLoadedId);
       args.setArchived(archived);
-      args.setOffset(offset);
       args.setLength(length);
       sendBase("getMessages", args);
     }
@@ -402,56 +392,58 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getMessages failed: unknown result");
     }
 
-    public long like(long messageId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public UserOpinion likeOrDislikeMessage(long messageId, int opinion) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      send_like(messageId);
-      return recv_like();
+      send_likeOrDislikeMessage(messageId, opinion);
+      return recv_likeOrDislikeMessage();
     }
 
-    public void send_like(long messageId) throws org.apache.thrift.TException
+    public void send_likeOrDislikeMessage(long messageId, int opinion) throws org.apache.thrift.TException
     {
-      like_args args = new like_args();
+      likeOrDislikeMessage_args args = new likeOrDislikeMessage_args();
       args.setMessageId(messageId);
-      sendBase("like", args);
+      args.setOpinion(opinion);
+      sendBase("likeOrDislikeMessage", args);
     }
 
-    public long recv_like() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public UserOpinion recv_likeOrDislikeMessage() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      like_result result = new like_result();
-      receiveBase(result, "like");
+      likeOrDislikeMessage_result result = new likeOrDislikeMessage_result();
+      receiveBase(result, "likeOrDislikeMessage");
       if (result.isSetSuccess()) {
         return result.success;
       }
       if (result.exc != null) {
         throw result.exc;
       }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "like failed: unknown result");
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "likeOrDislikeMessage failed: unknown result");
     }
 
-    public long dislike(long messageId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public UserOpinion likeOrDislikeTopic(long topicId, int opinion) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      send_dislike(messageId);
-      return recv_dislike();
+      send_likeOrDislikeTopic(topicId, opinion);
+      return recv_likeOrDislikeTopic();
     }
 
-    public void send_dislike(long messageId) throws org.apache.thrift.TException
+    public void send_likeOrDislikeTopic(long topicId, int opinion) throws org.apache.thrift.TException
     {
-      dislike_args args = new dislike_args();
-      args.setMessageId(messageId);
-      sendBase("dislike", args);
+      likeOrDislikeTopic_args args = new likeOrDislikeTopic_args();
+      args.setTopicId(topicId);
+      args.setOpinion(opinion);
+      sendBase("likeOrDislikeTopic", args);
     }
 
-    public long recv_dislike() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public UserOpinion recv_likeOrDislikeTopic() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      dislike_result result = new dislike_result();
-      receiveBase(result, "dislike");
+      likeOrDislikeTopic_result result = new likeOrDislikeTopic_result();
+      receiveBase(result, "likeOrDislikeTopic");
       if (result.isSetSuccess()) {
         return result.success;
       }
       if (result.exc != null) {
         throw result.exc;
       }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "dislike failed: unknown result");
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "likeOrDislikeTopic failed: unknown result");
     }
 
     public long markReadMessage(long messageId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
@@ -610,58 +602,6 @@ public class MessageService {
         throw result.exc;
       }
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "makeMessageLinked failed: unknown result");
-    }
-
-    public long likeTopic(long topicId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
-    {
-      send_likeTopic(topicId);
-      return recv_likeTopic();
-    }
-
-    public void send_likeTopic(long topicId) throws org.apache.thrift.TException
-    {
-      likeTopic_args args = new likeTopic_args();
-      args.setTopicId(topicId);
-      sendBase("likeTopic", args);
-    }
-
-    public long recv_likeTopic() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
-    {
-      likeTopic_result result = new likeTopic_result();
-      receiveBase(result, "likeTopic");
-      if (result.isSetSuccess()) {
-        return result.success;
-      }
-      if (result.exc != null) {
-        throw result.exc;
-      }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "likeTopic failed: unknown result");
-    }
-
-    public long dislikeTopic(long topicId) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
-    {
-      send_dislikeTopic(topicId);
-      return recv_dislikeTopic();
-    }
-
-    public void send_dislikeTopic(long topicId) throws org.apache.thrift.TException
-    {
-      dislikeTopic_args args = new dislikeTopic_args();
-      args.setTopicId(topicId);
-      sendBase("dislikeTopic", args);
-    }
-
-    public long recv_dislikeTopic() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
-    {
-      dislikeTopic_result result = new dislikeTopic_result();
-      receiveBase(result, "dislikeTopic");
-      if (result.isSetSuccess()) {
-        return result.success;
-      }
-      if (result.exc != null) {
-        throw result.exc;
-      }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "dislikeTopic failed: unknown result");
     }
 
   }
@@ -957,9 +897,9 @@ public class MessageService {
       }
     }
 
-    public void getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      getMessages_call method_call = new getMessages_call(topicId, groupId, messageType, parentId, archived, offset, length, resultHandler, this, ___protocolFactory, ___transport);
+      getMessages_call method_call = new getMessages_call(topicId, groupId, messageType, lastLoadedId, archived, length, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
@@ -968,18 +908,16 @@ public class MessageService {
       private long topicId;
       private long groupId;
       private MessageType messageType;
-      private long parentId;
+      private long lastLoadedId;
       private boolean archived;
-      private int offset;
       private int length;
-      public getMessages_call(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public getMessages_call(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.topicId = topicId;
         this.groupId = groupId;
         this.messageType = messageType;
-        this.parentId = parentId;
+        this.lastLoadedId = lastLoadedId;
         this.archived = archived;
-        this.offset = offset;
         this.length = length;
       }
 
@@ -989,9 +927,8 @@ public class MessageService {
         args.setTopicId(topicId);
         args.setGroupId(groupId);
         args.setMessageType(messageType);
-        args.setParentId(parentId);
+        args.setLastLoadedId(lastLoadedId);
         args.setArchived(archived);
-        args.setOffset(offset);
         args.setLength(length);
         args.write(prot);
         prot.writeMessageEnd();
@@ -1007,67 +944,73 @@ public class MessageService {
       }
     }
 
-    public void like(long messageId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void likeOrDislikeMessage(long messageId, int opinion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      like_call method_call = new like_call(messageId, resultHandler, this, ___protocolFactory, ___transport);
+      likeOrDislikeMessage_call method_call = new likeOrDislikeMessage_call(messageId, opinion, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
-    public static class like_call extends org.apache.thrift.async.TAsyncMethodCall {
+    public static class likeOrDislikeMessage_call extends org.apache.thrift.async.TAsyncMethodCall {
       private long messageId;
-      public like_call(long messageId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private int opinion;
+      public likeOrDislikeMessage_call(long messageId, int opinion, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.messageId = messageId;
+        this.opinion = opinion;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("like", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        like_args args = new like_args();
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("likeOrDislikeMessage", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        likeOrDislikeMessage_args args = new likeOrDislikeMessage_args();
         args.setMessageId(messageId);
+        args.setOpinion(opinion);
         args.write(prot);
         prot.writeMessageEnd();
       }
 
-      public long getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+      public UserOpinion getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_like();
+        return (new Client(prot)).recv_likeOrDislikeMessage();
       }
     }
 
-    public void dislike(long messageId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void likeOrDislikeTopic(long topicId, int opinion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      dislike_call method_call = new dislike_call(messageId, resultHandler, this, ___protocolFactory, ___transport);
+      likeOrDislikeTopic_call method_call = new likeOrDislikeTopic_call(topicId, opinion, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
-    public static class dislike_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private long messageId;
-      public dislike_call(long messageId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+    public static class likeOrDislikeTopic_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private long topicId;
+      private int opinion;
+      public likeOrDislikeTopic_call(long topicId, int opinion, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
-        this.messageId = messageId;
+        this.topicId = topicId;
+        this.opinion = opinion;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("dislike", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        dislike_args args = new dislike_args();
-        args.setMessageId(messageId);
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("likeOrDislikeTopic", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        likeOrDislikeTopic_args args = new likeOrDislikeTopic_args();
+        args.setTopicId(topicId);
+        args.setOpinion(opinion);
         args.write(prot);
         prot.writeMessageEnd();
       }
 
-      public long getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
+      public UserOpinion getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_dislike();
+        return (new Client(prot)).recv_likeOrDislikeTopic();
       }
     }
 
@@ -1269,70 +1212,6 @@ public class MessageService {
       }
     }
 
-    public void likeTopic(long topicId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
-      checkReady();
-      likeTopic_call method_call = new likeTopic_call(topicId, resultHandler, this, ___protocolFactory, ___transport);
-      this.___currentMethod = method_call;
-      ___manager.call(method_call);
-    }
-
-    public static class likeTopic_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private long topicId;
-      public likeTopic_call(long topicId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
-        super(client, protocolFactory, transport, resultHandler, false);
-        this.topicId = topicId;
-      }
-
-      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("likeTopic", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        likeTopic_args args = new likeTopic_args();
-        args.setTopicId(topicId);
-        args.write(prot);
-        prot.writeMessageEnd();
-      }
-
-      public long getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
-        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
-          throw new IllegalStateException("Method call not finished!");
-        }
-        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
-        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_likeTopic();
-      }
-    }
-
-    public void dislikeTopic(long topicId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
-      checkReady();
-      dislikeTopic_call method_call = new dislikeTopic_call(topicId, resultHandler, this, ___protocolFactory, ___transport);
-      this.___currentMethod = method_call;
-      ___manager.call(method_call);
-    }
-
-    public static class dislikeTopic_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private long topicId;
-      public dislikeTopic_call(long topicId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
-        super(client, protocolFactory, transport, resultHandler, false);
-        this.topicId = topicId;
-      }
-
-      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("dislikeTopic", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        dislikeTopic_args args = new dislikeTopic_args();
-        args.setTopicId(topicId);
-        args.write(prot);
-        prot.writeMessageEnd();
-      }
-
-      public long getResult() throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException {
-        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
-          throw new IllegalStateException("Method call not finished!");
-        }
-        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
-        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_dislikeTopic();
-      }
-    }
-
   }
 
   public static class Processor<I extends Iface> extends org.apache.thrift.TBaseProcessor<I> implements org.apache.thrift.TProcessor {
@@ -1354,16 +1233,14 @@ public class MessageService {
       processMap.put("getUpdates", new getUpdates());
       processMap.put("getTopics", new getTopics());
       processMap.put("getMessages", new getMessages());
-      processMap.put("like", new like());
-      processMap.put("dislike", new dislike());
+      processMap.put("likeOrDislikeMessage", new likeOrDislikeMessage());
+      processMap.put("likeOrDislikeTopic", new likeOrDislikeTopic());
       processMap.put("markReadMessage", new markReadMessage());
       processMap.put("markReadTopic", new markReadTopic());
       processMap.put("moveTopicToArchive", new moveTopicToArchive());
       processMap.put("restoreTopicFromArchive", new restoreTopicFromArchive());
       processMap.put("markTopicUnintrested", new markTopicUnintrested());
       processMap.put("makeMessageLinked", new makeMessageLinked());
-      processMap.put("likeTopic", new likeTopic());
-      processMap.put("dislikeTopic", new dislikeTopic());
       return processMap;
     }
 
@@ -1550,7 +1427,7 @@ public class MessageService {
       public getMessages_result getResult(I iface, getMessages_args args) throws org.apache.thrift.TException {
         getMessages_result result = new getMessages_result();
         try {
-          result.success = iface.getMessages(args.topicId, args.groupId, args.messageType, args.parentId, args.archived, args.offset, args.length);
+          result.success = iface.getMessages(args.topicId, args.groupId, args.messageType, args.lastLoadedId, args.archived, args.length);
         } catch (com.vmesteonline.be.InvalidOperation exc) {
           result.exc = exc;
         }
@@ -1558,24 +1435,23 @@ public class MessageService {
       }
     }
 
-    public static class like<I extends Iface> extends org.apache.thrift.ProcessFunction<I, like_args> {
-      public like() {
-        super("like");
+    public static class likeOrDislikeMessage<I extends Iface> extends org.apache.thrift.ProcessFunction<I, likeOrDislikeMessage_args> {
+      public likeOrDislikeMessage() {
+        super("likeOrDislikeMessage");
       }
 
-      public like_args getEmptyArgsInstance() {
-        return new like_args();
+      public likeOrDislikeMessage_args getEmptyArgsInstance() {
+        return new likeOrDislikeMessage_args();
       }
 
       protected boolean isOneway() {
         return false;
       }
 
-      public like_result getResult(I iface, like_args args) throws org.apache.thrift.TException {
-        like_result result = new like_result();
+      public likeOrDislikeMessage_result getResult(I iface, likeOrDislikeMessage_args args) throws org.apache.thrift.TException {
+        likeOrDislikeMessage_result result = new likeOrDislikeMessage_result();
         try {
-          result.success = iface.like(args.messageId);
-          result.setSuccessIsSet(true);
+          result.success = iface.likeOrDislikeMessage(args.messageId, args.opinion);
         } catch (com.vmesteonline.be.InvalidOperation exc) {
           result.exc = exc;
         }
@@ -1583,24 +1459,23 @@ public class MessageService {
       }
     }
 
-    public static class dislike<I extends Iface> extends org.apache.thrift.ProcessFunction<I, dislike_args> {
-      public dislike() {
-        super("dislike");
+    public static class likeOrDislikeTopic<I extends Iface> extends org.apache.thrift.ProcessFunction<I, likeOrDislikeTopic_args> {
+      public likeOrDislikeTopic() {
+        super("likeOrDislikeTopic");
       }
 
-      public dislike_args getEmptyArgsInstance() {
-        return new dislike_args();
+      public likeOrDislikeTopic_args getEmptyArgsInstance() {
+        return new likeOrDislikeTopic_args();
       }
 
       protected boolean isOneway() {
         return false;
       }
 
-      public dislike_result getResult(I iface, dislike_args args) throws org.apache.thrift.TException {
-        dislike_result result = new dislike_result();
+      public likeOrDislikeTopic_result getResult(I iface, likeOrDislikeTopic_args args) throws org.apache.thrift.TException {
+        likeOrDislikeTopic_result result = new likeOrDislikeTopic_result();
         try {
-          result.success = iface.dislike(args.messageId);
-          result.setSuccessIsSet(true);
+          result.success = iface.likeOrDislikeTopic(args.topicId, args.opinion);
         } catch (com.vmesteonline.be.InvalidOperation exc) {
           result.exc = exc;
         }
@@ -1758,56 +1633,6 @@ public class MessageService {
       }
     }
 
-    public static class likeTopic<I extends Iface> extends org.apache.thrift.ProcessFunction<I, likeTopic_args> {
-      public likeTopic() {
-        super("likeTopic");
-      }
-
-      public likeTopic_args getEmptyArgsInstance() {
-        return new likeTopic_args();
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public likeTopic_result getResult(I iface, likeTopic_args args) throws org.apache.thrift.TException {
-        likeTopic_result result = new likeTopic_result();
-        try {
-          result.success = iface.likeTopic(args.topicId);
-          result.setSuccessIsSet(true);
-        } catch (com.vmesteonline.be.InvalidOperation exc) {
-          result.exc = exc;
-        }
-        return result;
-      }
-    }
-
-    public static class dislikeTopic<I extends Iface> extends org.apache.thrift.ProcessFunction<I, dislikeTopic_args> {
-      public dislikeTopic() {
-        super("dislikeTopic");
-      }
-
-      public dislikeTopic_args getEmptyArgsInstance() {
-        return new dislikeTopic_args();
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public dislikeTopic_result getResult(I iface, dislikeTopic_args args) throws org.apache.thrift.TException {
-        dislikeTopic_result result = new dislikeTopic_result();
-        try {
-          result.success = iface.dislikeTopic(args.topicId);
-          result.setSuccessIsSet(true);
-        } catch (com.vmesteonline.be.InvalidOperation exc) {
-          result.exc = exc;
-        }
-        return result;
-      }
-    }
-
   }
 
   public static class AsyncProcessor<I extends AsyncIface> extends org.apache.thrift.TBaseAsyncProcessor<I> {
@@ -1829,16 +1654,14 @@ public class MessageService {
       processMap.put("getUpdates", new getUpdates());
       processMap.put("getTopics", new getTopics());
       processMap.put("getMessages", new getMessages());
-      processMap.put("like", new like());
-      processMap.put("dislike", new dislike());
+      processMap.put("likeOrDislikeMessage", new likeOrDislikeMessage());
+      processMap.put("likeOrDislikeTopic", new likeOrDislikeTopic());
       processMap.put("markReadMessage", new markReadMessage());
       processMap.put("markReadTopic", new markReadTopic());
       processMap.put("moveTopicToArchive", new moveTopicToArchive());
       processMap.put("restoreTopicFromArchive", new restoreTopicFromArchive());
       processMap.put("markTopicUnintrested", new markTopicUnintrested());
       processMap.put("makeMessageLinked", new makeMessageLinked());
-      processMap.put("likeTopic", new likeTopic());
-      processMap.put("dislikeTopic", new dislikeTopic());
       return processMap;
     }
 
@@ -2291,26 +2114,25 @@ public class MessageService {
       }
 
       public void start(I iface, getMessages_args args, org.apache.thrift.async.AsyncMethodCallback<MessageListPart> resultHandler) throws TException {
-        iface.getMessages(args.topicId, args.groupId, args.messageType, args.parentId, args.archived, args.offset, args.length,resultHandler);
+        iface.getMessages(args.topicId, args.groupId, args.messageType, args.lastLoadedId, args.archived, args.length,resultHandler);
       }
     }
 
-    public static class like<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, like_args, Long> {
-      public like() {
-        super("like");
+    public static class likeOrDislikeMessage<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, likeOrDislikeMessage_args, UserOpinion> {
+      public likeOrDislikeMessage() {
+        super("likeOrDislikeMessage");
       }
 
-      public like_args getEmptyArgsInstance() {
-        return new like_args();
+      public likeOrDislikeMessage_args getEmptyArgsInstance() {
+        return new likeOrDislikeMessage_args();
       }
 
-      public AsyncMethodCallback<Long> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<UserOpinion> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Long>() { 
-          public void onComplete(Long o) {
-            like_result result = new like_result();
+        return new AsyncMethodCallback<UserOpinion>() { 
+          public void onComplete(UserOpinion o) {
+            likeOrDislikeMessage_result result = new likeOrDislikeMessage_result();
             result.success = o;
-            result.setSuccessIsSet(true);
             try {
               fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
               return;
@@ -2322,7 +2144,7 @@ public class MessageService {
           public void onError(Exception e) {
             byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
             org.apache.thrift.TBase msg;
-            like_result result = new like_result();
+            likeOrDislikeMessage_result result = new likeOrDislikeMessage_result();
             if (e instanceof com.vmesteonline.be.InvalidOperation) {
                         result.exc = (com.vmesteonline.be.InvalidOperation) e;
                         result.setExcIsSet(true);
@@ -2348,27 +2170,26 @@ public class MessageService {
         return false;
       }
 
-      public void start(I iface, like_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
-        iface.like(args.messageId,resultHandler);
+      public void start(I iface, likeOrDislikeMessage_args args, org.apache.thrift.async.AsyncMethodCallback<UserOpinion> resultHandler) throws TException {
+        iface.likeOrDislikeMessage(args.messageId, args.opinion,resultHandler);
       }
     }
 
-    public static class dislike<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, dislike_args, Long> {
-      public dislike() {
-        super("dislike");
+    public static class likeOrDislikeTopic<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, likeOrDislikeTopic_args, UserOpinion> {
+      public likeOrDislikeTopic() {
+        super("likeOrDislikeTopic");
       }
 
-      public dislike_args getEmptyArgsInstance() {
-        return new dislike_args();
+      public likeOrDislikeTopic_args getEmptyArgsInstance() {
+        return new likeOrDislikeTopic_args();
       }
 
-      public AsyncMethodCallback<Long> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<UserOpinion> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Long>() { 
-          public void onComplete(Long o) {
-            dislike_result result = new dislike_result();
+        return new AsyncMethodCallback<UserOpinion>() { 
+          public void onComplete(UserOpinion o) {
+            likeOrDislikeTopic_result result = new likeOrDislikeTopic_result();
             result.success = o;
-            result.setSuccessIsSet(true);
             try {
               fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
               return;
@@ -2380,7 +2201,7 @@ public class MessageService {
           public void onError(Exception e) {
             byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
             org.apache.thrift.TBase msg;
-            dislike_result result = new dislike_result();
+            likeOrDislikeTopic_result result = new likeOrDislikeTopic_result();
             if (e instanceof com.vmesteonline.be.InvalidOperation) {
                         result.exc = (com.vmesteonline.be.InvalidOperation) e;
                         result.setExcIsSet(true);
@@ -2406,8 +2227,8 @@ public class MessageService {
         return false;
       }
 
-      public void start(I iface, dislike_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
-        iface.dislike(args.messageId,resultHandler);
+      public void start(I iface, likeOrDislikeTopic_args args, org.apache.thrift.async.AsyncMethodCallback<UserOpinion> resultHandler) throws TException {
+        iface.likeOrDislikeTopic(args.topicId, args.opinion,resultHandler);
       }
     }
 
@@ -2756,122 +2577,6 @@ public class MessageService {
 
       public void start(I iface, makeMessageLinked_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
         iface.makeMessageLinked(args.message1Id, args.message2Id,resultHandler);
-      }
-    }
-
-    public static class likeTopic<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, likeTopic_args, Long> {
-      public likeTopic() {
-        super("likeTopic");
-      }
-
-      public likeTopic_args getEmptyArgsInstance() {
-        return new likeTopic_args();
-      }
-
-      public AsyncMethodCallback<Long> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
-        final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Long>() { 
-          public void onComplete(Long o) {
-            likeTopic_result result = new likeTopic_result();
-            result.success = o;
-            result.setSuccessIsSet(true);
-            try {
-              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
-              return;
-            } catch (Exception e) {
-              LOGGER.error("Exception writing to internal frame buffer", e);
-            }
-            fb.close();
-          }
-          public void onError(Exception e) {
-            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
-            org.apache.thrift.TBase msg;
-            likeTopic_result result = new likeTopic_result();
-            if (e instanceof com.vmesteonline.be.InvalidOperation) {
-                        result.exc = (com.vmesteonline.be.InvalidOperation) e;
-                        result.setExcIsSet(true);
-                        msg = result;
-            }
-             else 
-            {
-              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
-            }
-            try {
-              fcall.sendResponse(fb,msg,msgType,seqid);
-              return;
-            } catch (Exception ex) {
-              LOGGER.error("Exception writing to internal frame buffer", ex);
-            }
-            fb.close();
-          }
-        };
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public void start(I iface, likeTopic_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
-        iface.likeTopic(args.topicId,resultHandler);
-      }
-    }
-
-    public static class dislikeTopic<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, dislikeTopic_args, Long> {
-      public dislikeTopic() {
-        super("dislikeTopic");
-      }
-
-      public dislikeTopic_args getEmptyArgsInstance() {
-        return new dislikeTopic_args();
-      }
-
-      public AsyncMethodCallback<Long> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
-        final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Long>() { 
-          public void onComplete(Long o) {
-            dislikeTopic_result result = new dislikeTopic_result();
-            result.success = o;
-            result.setSuccessIsSet(true);
-            try {
-              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
-              return;
-            } catch (Exception e) {
-              LOGGER.error("Exception writing to internal frame buffer", e);
-            }
-            fb.close();
-          }
-          public void onError(Exception e) {
-            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
-            org.apache.thrift.TBase msg;
-            dislikeTopic_result result = new dislikeTopic_result();
-            if (e instanceof com.vmesteonline.be.InvalidOperation) {
-                        result.exc = (com.vmesteonline.be.InvalidOperation) e;
-                        result.setExcIsSet(true);
-                        msg = result;
-            }
-             else 
-            {
-              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
-            }
-            try {
-              fcall.sendResponse(fb,msg,msgType,seqid);
-              return;
-            } catch (Exception ex) {
-              LOGGER.error("Exception writing to internal frame buffer", ex);
-            }
-            fb.close();
-          }
-        };
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public void start(I iface, dislikeTopic_args args, org.apache.thrift.async.AsyncMethodCallback<Long> resultHandler) throws TException {
-        iface.dislikeTopic(args.topicId,resultHandler);
       }
     }
 
@@ -10373,10 +10078,9 @@ public class MessageService {
     private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I64, (short)1);
     private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)2);
     private static final org.apache.thrift.protocol.TField MESSAGE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("messageType", org.apache.thrift.protocol.TType.I32, (short)3);
-    private static final org.apache.thrift.protocol.TField PARENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("parentId", org.apache.thrift.protocol.TType.I64, (short)4);
+    private static final org.apache.thrift.protocol.TField LAST_LOADED_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("lastLoadedId", org.apache.thrift.protocol.TType.I64, (short)4);
     private static final org.apache.thrift.protocol.TField ARCHIVED_FIELD_DESC = new org.apache.thrift.protocol.TField("archived", org.apache.thrift.protocol.TType.BOOL, (short)5);
-    private static final org.apache.thrift.protocol.TField OFFSET_FIELD_DESC = new org.apache.thrift.protocol.TField("offset", org.apache.thrift.protocol.TType.I32, (short)6);
-    private static final org.apache.thrift.protocol.TField LENGTH_FIELD_DESC = new org.apache.thrift.protocol.TField("length", org.apache.thrift.protocol.TType.I32, (short)7);
+    private static final org.apache.thrift.protocol.TField LENGTH_FIELD_DESC = new org.apache.thrift.protocol.TField("length", org.apache.thrift.protocol.TType.I32, (short)6);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -10391,9 +10095,8 @@ public class MessageService {
      * @see MessageType
      */
     public MessageType messageType; // required
-    public long parentId; // required
+    public long lastLoadedId; // required
     public boolean archived; // required
-    public int offset; // required
     public int length; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -10405,10 +10108,9 @@ public class MessageService {
        * @see MessageType
        */
       MESSAGE_TYPE((short)3, "messageType"),
-      PARENT_ID((short)4, "parentId"),
+      LAST_LOADED_ID((short)4, "lastLoadedId"),
       ARCHIVED((short)5, "archived"),
-      OFFSET((short)6, "offset"),
-      LENGTH((short)7, "length");
+      LENGTH((short)6, "length");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -10429,13 +10131,11 @@ public class MessageService {
             return GROUP_ID;
           case 3: // MESSAGE_TYPE
             return MESSAGE_TYPE;
-          case 4: // PARENT_ID
-            return PARENT_ID;
+          case 4: // LAST_LOADED_ID
+            return LAST_LOADED_ID;
           case 5: // ARCHIVED
             return ARCHIVED;
-          case 6: // OFFSET
-            return OFFSET;
-          case 7: // LENGTH
+          case 6: // LENGTH
             return LENGTH;
           default:
             return null;
@@ -10479,10 +10179,9 @@ public class MessageService {
     // isset id assignments
     private static final int __TOPICID_ISSET_ID = 0;
     private static final int __GROUPID_ISSET_ID = 1;
-    private static final int __PARENTID_ISSET_ID = 2;
+    private static final int __LASTLOADEDID_ISSET_ID = 2;
     private static final int __ARCHIVED_ISSET_ID = 3;
-    private static final int __OFFSET_ISSET_ID = 4;
-    private static final int __LENGTH_ISSET_ID = 5;
+    private static final int __LENGTH_ISSET_ID = 4;
     private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
@@ -10493,12 +10192,10 @@ public class MessageService {
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.MESSAGE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("messageType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, MessageType.class)));
-      tmpMap.put(_Fields.PARENT_ID, new org.apache.thrift.meta_data.FieldMetaData("parentId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.LAST_LOADED_ID, new org.apache.thrift.meta_data.FieldMetaData("lastLoadedId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.ARCHIVED, new org.apache.thrift.meta_data.FieldMetaData("archived", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-      tmpMap.put(_Fields.OFFSET, new org.apache.thrift.meta_data.FieldMetaData("offset", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       tmpMap.put(_Fields.LENGTH, new org.apache.thrift.meta_data.FieldMetaData("length", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -10512,9 +10209,8 @@ public class MessageService {
       long topicId,
       long groupId,
       MessageType messageType,
-      long parentId,
+      long lastLoadedId,
       boolean archived,
-      int offset,
       int length)
     {
       this();
@@ -10523,12 +10219,10 @@ public class MessageService {
       this.groupId = groupId;
       setGroupIdIsSet(true);
       this.messageType = messageType;
-      this.parentId = parentId;
-      setParentIdIsSet(true);
+      this.lastLoadedId = lastLoadedId;
+      setLastLoadedIdIsSet(true);
       this.archived = archived;
       setArchivedIsSet(true);
-      this.offset = offset;
-      setOffsetIsSet(true);
       this.length = length;
       setLengthIsSet(true);
     }
@@ -10543,9 +10237,8 @@ public class MessageService {
       if (other.isSetMessageType()) {
         this.messageType = other.messageType;
       }
-      this.parentId = other.parentId;
+      this.lastLoadedId = other.lastLoadedId;
       this.archived = other.archived;
-      this.offset = other.offset;
       this.length = other.length;
     }
 
@@ -10560,12 +10253,10 @@ public class MessageService {
       setGroupIdIsSet(false);
       this.groupId = 0;
       this.messageType = null;
-      setParentIdIsSet(false);
-      this.parentId = 0;
+      setLastLoadedIdIsSet(false);
+      this.lastLoadedId = 0;
       setArchivedIsSet(false);
       this.archived = false;
-      setOffsetIsSet(false);
-      this.offset = 0;
       setLengthIsSet(false);
       this.length = 0;
     }
@@ -10648,27 +10339,27 @@ public class MessageService {
       }
     }
 
-    public long getParentId() {
-      return this.parentId;
+    public long getLastLoadedId() {
+      return this.lastLoadedId;
     }
 
-    public getMessages_args setParentId(long parentId) {
-      this.parentId = parentId;
-      setParentIdIsSet(true);
+    public getMessages_args setLastLoadedId(long lastLoadedId) {
+      this.lastLoadedId = lastLoadedId;
+      setLastLoadedIdIsSet(true);
       return this;
     }
 
-    public void unsetParentId() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __PARENTID_ISSET_ID);
+    public void unsetLastLoadedId() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LASTLOADEDID_ISSET_ID);
     }
 
-    /** Returns true if field parentId is set (has been assigned a value) and false otherwise */
-    public boolean isSetParentId() {
-      return EncodingUtils.testBit(__isset_bitfield, __PARENTID_ISSET_ID);
+    /** Returns true if field lastLoadedId is set (has been assigned a value) and false otherwise */
+    public boolean isSetLastLoadedId() {
+      return EncodingUtils.testBit(__isset_bitfield, __LASTLOADEDID_ISSET_ID);
     }
 
-    public void setParentIdIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PARENTID_ISSET_ID, value);
+    public void setLastLoadedIdIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LASTLOADEDID_ISSET_ID, value);
     }
 
     public boolean isArchived() {
@@ -10692,29 +10383,6 @@ public class MessageService {
 
     public void setArchivedIsSet(boolean value) {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ARCHIVED_ISSET_ID, value);
-    }
-
-    public int getOffset() {
-      return this.offset;
-    }
-
-    public getMessages_args setOffset(int offset) {
-      this.offset = offset;
-      setOffsetIsSet(true);
-      return this;
-    }
-
-    public void unsetOffset() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __OFFSET_ISSET_ID);
-    }
-
-    /** Returns true if field offset is set (has been assigned a value) and false otherwise */
-    public boolean isSetOffset() {
-      return EncodingUtils.testBit(__isset_bitfield, __OFFSET_ISSET_ID);
-    }
-
-    public void setOffsetIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __OFFSET_ISSET_ID, value);
     }
 
     public int getLength() {
@@ -10766,11 +10434,11 @@ public class MessageService {
         }
         break;
 
-      case PARENT_ID:
+      case LAST_LOADED_ID:
         if (value == null) {
-          unsetParentId();
+          unsetLastLoadedId();
         } else {
-          setParentId((Long)value);
+          setLastLoadedId((Long)value);
         }
         break;
 
@@ -10779,14 +10447,6 @@ public class MessageService {
           unsetArchived();
         } else {
           setArchived((Boolean)value);
-        }
-        break;
-
-      case OFFSET:
-        if (value == null) {
-          unsetOffset();
-        } else {
-          setOffset((Integer)value);
         }
         break;
 
@@ -10812,14 +10472,11 @@ public class MessageService {
       case MESSAGE_TYPE:
         return getMessageType();
 
-      case PARENT_ID:
-        return Long.valueOf(getParentId());
+      case LAST_LOADED_ID:
+        return Long.valueOf(getLastLoadedId());
 
       case ARCHIVED:
         return Boolean.valueOf(isArchived());
-
-      case OFFSET:
-        return Integer.valueOf(getOffset());
 
       case LENGTH:
         return Integer.valueOf(getLength());
@@ -10841,12 +10498,10 @@ public class MessageService {
         return isSetGroupId();
       case MESSAGE_TYPE:
         return isSetMessageType();
-      case PARENT_ID:
-        return isSetParentId();
+      case LAST_LOADED_ID:
+        return isSetLastLoadedId();
       case ARCHIVED:
         return isSetArchived();
-      case OFFSET:
-        return isSetOffset();
       case LENGTH:
         return isSetLength();
       }
@@ -10893,12 +10548,12 @@ public class MessageService {
           return false;
       }
 
-      boolean this_present_parentId = true;
-      boolean that_present_parentId = true;
-      if (this_present_parentId || that_present_parentId) {
-        if (!(this_present_parentId && that_present_parentId))
+      boolean this_present_lastLoadedId = true;
+      boolean that_present_lastLoadedId = true;
+      if (this_present_lastLoadedId || that_present_lastLoadedId) {
+        if (!(this_present_lastLoadedId && that_present_lastLoadedId))
           return false;
-        if (this.parentId != that.parentId)
+        if (this.lastLoadedId != that.lastLoadedId)
           return false;
       }
 
@@ -10908,15 +10563,6 @@ public class MessageService {
         if (!(this_present_archived && that_present_archived))
           return false;
         if (this.archived != that.archived)
-          return false;
-      }
-
-      boolean this_present_offset = true;
-      boolean that_present_offset = true;
-      if (this_present_offset || that_present_offset) {
-        if (!(this_present_offset && that_present_offset))
-          return false;
-        if (this.offset != that.offset)
           return false;
       }
 
@@ -10975,12 +10621,12 @@ public class MessageService {
           return lastComparison;
         }
       }
-      lastComparison = Boolean.valueOf(isSetParentId()).compareTo(other.isSetParentId());
+      lastComparison = Boolean.valueOf(isSetLastLoadedId()).compareTo(other.isSetLastLoadedId());
       if (lastComparison != 0) {
         return lastComparison;
       }
-      if (isSetParentId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.parentId, other.parentId);
+      if (isSetLastLoadedId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.lastLoadedId, other.lastLoadedId);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -10991,16 +10637,6 @@ public class MessageService {
       }
       if (isSetArchived()) {
         lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.archived, other.archived);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetOffset()).compareTo(other.isSetOffset());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetOffset()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.offset, other.offset);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -11051,16 +10687,12 @@ public class MessageService {
       }
       first = false;
       if (!first) sb.append(", ");
-      sb.append("parentId:");
-      sb.append(this.parentId);
+      sb.append("lastLoadedId:");
+      sb.append(this.lastLoadedId);
       first = false;
       if (!first) sb.append(", ");
       sb.append("archived:");
       sb.append(this.archived);
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("offset:");
-      sb.append(this.offset);
       first = false;
       if (!first) sb.append(", ");
       sb.append("length:");
@@ -11135,10 +10767,10 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 4: // PARENT_ID
+            case 4: // LAST_LOADED_ID
               if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.parentId = iprot.readI64();
-                struct.setParentIdIsSet(true);
+                struct.lastLoadedId = iprot.readI64();
+                struct.setLastLoadedIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
@@ -11151,15 +10783,7 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 6: // OFFSET
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.offset = iprot.readI32();
-                struct.setOffsetIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            case 7: // LENGTH
+            case 6: // LENGTH
               if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
                 struct.length = iprot.readI32();
                 struct.setLengthIsSet(true);
@@ -11193,14 +10817,11 @@ public class MessageService {
           oprot.writeI32(struct.messageType.getValue());
           oprot.writeFieldEnd();
         }
-        oprot.writeFieldBegin(PARENT_ID_FIELD_DESC);
-        oprot.writeI64(struct.parentId);
+        oprot.writeFieldBegin(LAST_LOADED_ID_FIELD_DESC);
+        oprot.writeI64(struct.lastLoadedId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(ARCHIVED_FIELD_DESC);
         oprot.writeBool(struct.archived);
-        oprot.writeFieldEnd();
-        oprot.writeFieldBegin(OFFSET_FIELD_DESC);
-        oprot.writeI32(struct.offset);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(LENGTH_FIELD_DESC);
         oprot.writeI32(struct.length);
@@ -11232,19 +10853,16 @@ public class MessageService {
         if (struct.isSetMessageType()) {
           optionals.set(2);
         }
-        if (struct.isSetParentId()) {
+        if (struct.isSetLastLoadedId()) {
           optionals.set(3);
         }
         if (struct.isSetArchived()) {
           optionals.set(4);
         }
-        if (struct.isSetOffset()) {
+        if (struct.isSetLength()) {
           optionals.set(5);
         }
-        if (struct.isSetLength()) {
-          optionals.set(6);
-        }
-        oprot.writeBitSet(optionals, 7);
+        oprot.writeBitSet(optionals, 6);
         if (struct.isSetTopicId()) {
           oprot.writeI64(struct.topicId);
         }
@@ -11254,14 +10872,11 @@ public class MessageService {
         if (struct.isSetMessageType()) {
           oprot.writeI32(struct.messageType.getValue());
         }
-        if (struct.isSetParentId()) {
-          oprot.writeI64(struct.parentId);
+        if (struct.isSetLastLoadedId()) {
+          oprot.writeI64(struct.lastLoadedId);
         }
         if (struct.isSetArchived()) {
           oprot.writeBool(struct.archived);
-        }
-        if (struct.isSetOffset()) {
-          oprot.writeI32(struct.offset);
         }
         if (struct.isSetLength()) {
           oprot.writeI32(struct.length);
@@ -11271,7 +10886,7 @@ public class MessageService {
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, getMessages_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(7);
+        BitSet incoming = iprot.readBitSet(6);
         if (incoming.get(0)) {
           struct.topicId = iprot.readI64();
           struct.setTopicIdIsSet(true);
@@ -11285,18 +10900,14 @@ public class MessageService {
           struct.setMessageTypeIsSet(true);
         }
         if (incoming.get(3)) {
-          struct.parentId = iprot.readI64();
-          struct.setParentIdIsSet(true);
+          struct.lastLoadedId = iprot.readI64();
+          struct.setLastLoadedIdIsSet(true);
         }
         if (incoming.get(4)) {
           struct.archived = iprot.readBool();
           struct.setArchivedIsSet(true);
         }
         if (incoming.get(5)) {
-          struct.offset = iprot.readI32();
-          struct.setOffsetIsSet(true);
-        }
-        if (incoming.get(6)) {
           struct.length = iprot.readI32();
           struct.setLengthIsSet(true);
         }
@@ -11766,22 +11377,25 @@ public class MessageService {
 
   }
 
-  public static class like_args implements org.apache.thrift.TBase<like_args, like_args._Fields>, java.io.Serializable, Cloneable, Comparable<like_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("like_args");
+  public static class likeOrDislikeMessage_args implements org.apache.thrift.TBase<likeOrDislikeMessage_args, likeOrDislikeMessage_args._Fields>, java.io.Serializable, Cloneable, Comparable<likeOrDislikeMessage_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("likeOrDislikeMessage_args");
 
     private static final org.apache.thrift.protocol.TField MESSAGE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("messageId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField OPINION_FIELD_DESC = new org.apache.thrift.protocol.TField("opinion", org.apache.thrift.protocol.TType.I32, (short)2);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new like_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new like_argsTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new likeOrDislikeMessage_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new likeOrDislikeMessage_argsTupleSchemeFactory());
     }
 
     public long messageId; // required
+    public int opinion; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      MESSAGE_ID((short)1, "messageId");
+      MESSAGE_ID((short)1, "messageId"),
+      OPINION((short)2, "opinion");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -11798,6 +11412,8 @@ public class MessageService {
         switch(fieldId) {
           case 1: // MESSAGE_ID
             return MESSAGE_ID;
+          case 2: // OPINION
+            return OPINION;
           default:
             return null;
         }
@@ -11839,50 +11455,59 @@ public class MessageService {
 
     // isset id assignments
     private static final int __MESSAGEID_ISSET_ID = 0;
+    private static final int __OPINION_ISSET_ID = 1;
     private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.MESSAGE_ID, new org.apache.thrift.meta_data.FieldMetaData("messageId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+      tmpMap.put(_Fields.OPINION, new org.apache.thrift.meta_data.FieldMetaData("opinion", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(like_args.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(likeOrDislikeMessage_args.class, metaDataMap);
     }
 
-    public like_args() {
+    public likeOrDislikeMessage_args() {
     }
 
-    public like_args(
-      long messageId)
+    public likeOrDislikeMessage_args(
+      long messageId,
+      int opinion)
     {
       this();
       this.messageId = messageId;
       setMessageIdIsSet(true);
+      this.opinion = opinion;
+      setOpinionIsSet(true);
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public like_args(like_args other) {
+    public likeOrDislikeMessage_args(likeOrDislikeMessage_args other) {
       __isset_bitfield = other.__isset_bitfield;
       this.messageId = other.messageId;
+      this.opinion = other.opinion;
     }
 
-    public like_args deepCopy() {
-      return new like_args(this);
+    public likeOrDislikeMessage_args deepCopy() {
+      return new likeOrDislikeMessage_args(this);
     }
 
     @Override
     public void clear() {
       setMessageIdIsSet(false);
       this.messageId = 0;
+      setOpinionIsSet(false);
+      this.opinion = 0;
     }
 
     public long getMessageId() {
       return this.messageId;
     }
 
-    public like_args setMessageId(long messageId) {
+    public likeOrDislikeMessage_args setMessageId(long messageId) {
       this.messageId = messageId;
       setMessageIdIsSet(true);
       return this;
@@ -11901,6 +11526,29 @@ public class MessageService {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MESSAGEID_ISSET_ID, value);
     }
 
+    public int getOpinion() {
+      return this.opinion;
+    }
+
+    public likeOrDislikeMessage_args setOpinion(int opinion) {
+      this.opinion = opinion;
+      setOpinionIsSet(true);
+      return this;
+    }
+
+    public void unsetOpinion() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __OPINION_ISSET_ID);
+    }
+
+    /** Returns true if field opinion is set (has been assigned a value) and false otherwise */
+    public boolean isSetOpinion() {
+      return EncodingUtils.testBit(__isset_bitfield, __OPINION_ISSET_ID);
+    }
+
+    public void setOpinionIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __OPINION_ISSET_ID, value);
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case MESSAGE_ID:
@@ -11911,6 +11559,14 @@ public class MessageService {
         }
         break;
 
+      case OPINION:
+        if (value == null) {
+          unsetOpinion();
+        } else {
+          setOpinion((Integer)value);
+        }
+        break;
+
       }
     }
 
@@ -11918,6 +11574,9 @@ public class MessageService {
       switch (field) {
       case MESSAGE_ID:
         return Long.valueOf(getMessageId());
+
+      case OPINION:
+        return Integer.valueOf(getOpinion());
 
       }
       throw new IllegalStateException();
@@ -11932,6 +11591,8 @@ public class MessageService {
       switch (field) {
       case MESSAGE_ID:
         return isSetMessageId();
+      case OPINION:
+        return isSetOpinion();
       }
       throw new IllegalStateException();
     }
@@ -11940,12 +11601,12 @@ public class MessageService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof like_args)
-        return this.equals((like_args)that);
+      if (that instanceof likeOrDislikeMessage_args)
+        return this.equals((likeOrDislikeMessage_args)that);
       return false;
     }
 
-    public boolean equals(like_args that) {
+    public boolean equals(likeOrDislikeMessage_args that) {
       if (that == null)
         return false;
 
@@ -11958,6 +11619,15 @@ public class MessageService {
           return false;
       }
 
+      boolean this_present_opinion = true;
+      boolean that_present_opinion = true;
+      if (this_present_opinion || that_present_opinion) {
+        if (!(this_present_opinion && that_present_opinion))
+          return false;
+        if (this.opinion != that.opinion)
+          return false;
+      }
+
       return true;
     }
 
@@ -11967,7 +11637,7 @@ public class MessageService {
     }
 
     @Override
-    public int compareTo(like_args other) {
+    public int compareTo(likeOrDislikeMessage_args other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -11980,6 +11650,16 @@ public class MessageService {
       }
       if (isSetMessageId()) {
         lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.messageId, other.messageId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOpinion()).compareTo(other.isSetOpinion());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOpinion()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.opinion, other.opinion);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -12001,11 +11681,15 @@ public class MessageService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("like_args(");
+      StringBuilder sb = new StringBuilder("likeOrDislikeMessage_args(");
       boolean first = true;
 
       sb.append("messageId:");
       sb.append(this.messageId);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("opinion:");
+      sb.append(this.opinion);
       first = false;
       sb.append(")");
       return sb.toString();
@@ -12034,15 +11718,15 @@ public class MessageService {
       }
     }
 
-    private static class like_argsStandardSchemeFactory implements SchemeFactory {
-      public like_argsStandardScheme getScheme() {
-        return new like_argsStandardScheme();
+    private static class likeOrDislikeMessage_argsStandardSchemeFactory implements SchemeFactory {
+      public likeOrDislikeMessage_argsStandardScheme getScheme() {
+        return new likeOrDislikeMessage_argsStandardScheme();
       }
     }
 
-    private static class like_argsStandardScheme extends StandardScheme<like_args> {
+    private static class likeOrDislikeMessage_argsStandardScheme extends StandardScheme<likeOrDislikeMessage_args> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, like_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, likeOrDislikeMessage_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -12060,6 +11744,14 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 2: // OPINION
+              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                struct.opinion = iprot.readI32();
+                struct.setOpinionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -12071,12 +11763,15 @@ public class MessageService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, like_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, likeOrDislikeMessage_args struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(MESSAGE_ID_FIELD_DESC);
         oprot.writeI64(struct.messageId);
+        oprot.writeFieldEnd();
+        oprot.writeFieldBegin(OPINION_FIELD_DESC);
+        oprot.writeI32(struct.opinion);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -12084,53 +11779,63 @@ public class MessageService {
 
     }
 
-    private static class like_argsTupleSchemeFactory implements SchemeFactory {
-      public like_argsTupleScheme getScheme() {
-        return new like_argsTupleScheme();
+    private static class likeOrDislikeMessage_argsTupleSchemeFactory implements SchemeFactory {
+      public likeOrDislikeMessage_argsTupleScheme getScheme() {
+        return new likeOrDislikeMessage_argsTupleScheme();
       }
     }
 
-    private static class like_argsTupleScheme extends TupleScheme<like_args> {
+    private static class likeOrDislikeMessage_argsTupleScheme extends TupleScheme<likeOrDislikeMessage_args> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, like_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, likeOrDislikeMessage_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetMessageId()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetOpinion()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetMessageId()) {
           oprot.writeI64(struct.messageId);
+        }
+        if (struct.isSetOpinion()) {
+          oprot.writeI32(struct.opinion);
         }
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, like_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, likeOrDislikeMessage_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           struct.messageId = iprot.readI64();
           struct.setMessageIdIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.opinion = iprot.readI32();
+          struct.setOpinionIsSet(true);
         }
       }
     }
 
   }
 
-  public static class like_result implements org.apache.thrift.TBase<like_result, like_result._Fields>, java.io.Serializable, Cloneable, Comparable<like_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("like_result");
+  public static class likeOrDislikeMessage_result implements org.apache.thrift.TBase<likeOrDislikeMessage_result, likeOrDislikeMessage_result._Fields>, java.io.Serializable, Cloneable, Comparable<likeOrDislikeMessage_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("likeOrDislikeMessage_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I64, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
     private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new like_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new like_resultTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new likeOrDislikeMessage_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new likeOrDislikeMessage_resultTupleSchemeFactory());
     }
 
-    public long success; // required
+    public UserOpinion success; // required
     public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -12195,82 +11900,80 @@ public class MessageService {
     }
 
     // isset id assignments
-    private static final int __SUCCESS_ISSET_ID = 0;
-    private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, UserOpinion.class)));
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(like_result.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(likeOrDislikeMessage_result.class, metaDataMap);
     }
 
-    public like_result() {
+    public likeOrDislikeMessage_result() {
     }
 
-    public like_result(
-      long success,
+    public likeOrDislikeMessage_result(
+      UserOpinion success,
       com.vmesteonline.be.InvalidOperation exc)
     {
       this();
       this.success = success;
-      setSuccessIsSet(true);
       this.exc = exc;
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public like_result(like_result other) {
-      __isset_bitfield = other.__isset_bitfield;
-      this.success = other.success;
+    public likeOrDislikeMessage_result(likeOrDislikeMessage_result other) {
+      if (other.isSetSuccess()) {
+        this.success = new UserOpinion(other.success);
+      }
       if (other.isSetExc()) {
         this.exc = new com.vmesteonline.be.InvalidOperation(other.exc);
       }
     }
 
-    public like_result deepCopy() {
-      return new like_result(this);
+    public likeOrDislikeMessage_result deepCopy() {
+      return new likeOrDislikeMessage_result(this);
     }
 
     @Override
     public void clear() {
-      setSuccessIsSet(false);
-      this.success = 0;
+      this.success = null;
       this.exc = null;
     }
 
-    public long getSuccess() {
+    public UserOpinion getSuccess() {
       return this.success;
     }
 
-    public like_result setSuccess(long success) {
+    public likeOrDislikeMessage_result setSuccess(UserOpinion success) {
       this.success = success;
-      setSuccessIsSet(true);
       return this;
     }
 
     public void unsetSuccess() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+      this.success = null;
     }
 
     /** Returns true if field success is set (has been assigned a value) and false otherwise */
     public boolean isSetSuccess() {
-      return EncodingUtils.testBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+      return this.success != null;
     }
 
     public void setSuccessIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SUCCESS_ISSET_ID, value);
+      if (!value) {
+        this.success = null;
+      }
     }
 
     public com.vmesteonline.be.InvalidOperation getExc() {
       return this.exc;
     }
 
-    public like_result setExc(com.vmesteonline.be.InvalidOperation exc) {
+    public likeOrDislikeMessage_result setExc(com.vmesteonline.be.InvalidOperation exc) {
       this.exc = exc;
       return this;
     }
@@ -12296,7 +11999,7 @@ public class MessageService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((Long)value);
+          setSuccess((UserOpinion)value);
         }
         break;
 
@@ -12314,7 +12017,7 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case SUCCESS:
-        return Long.valueOf(getSuccess());
+        return getSuccess();
 
       case EXC:
         return getExc();
@@ -12342,21 +12045,21 @@ public class MessageService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof like_result)
-        return this.equals((like_result)that);
+      if (that instanceof likeOrDislikeMessage_result)
+        return this.equals((likeOrDislikeMessage_result)that);
       return false;
     }
 
-    public boolean equals(like_result that) {
+    public boolean equals(likeOrDislikeMessage_result that) {
       if (that == null)
         return false;
 
-      boolean this_present_success = true;
-      boolean that_present_success = true;
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
       if (this_present_success || that_present_success) {
         if (!(this_present_success && that_present_success))
           return false;
-        if (this.success != that.success)
+        if (!this.success.equals(that.success))
           return false;
       }
 
@@ -12378,7 +12081,7 @@ public class MessageService {
     }
 
     @Override
-    public int compareTo(like_result other) {
+    public int compareTo(likeOrDislikeMessage_result other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -12422,11 +12125,15 @@ public class MessageService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("like_result(");
+      StringBuilder sb = new StringBuilder("likeOrDislikeMessage_result(");
       boolean first = true;
 
       sb.append("success:");
-      sb.append(this.success);
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
       first = false;
       if (!first) sb.append(", ");
       sb.append("exc:");
@@ -12443,6 +12150,9 @@ public class MessageService {
     public void validate() throws org.apache.thrift.TException {
       // check for required fields
       // check for sub-struct validity
+      if (success != null) {
+        success.validate();
+      }
     }
 
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -12455,23 +12165,21 @@ public class MessageService {
 
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
       try {
-        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-        __isset_bitfield = 0;
         read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
       } catch (org.apache.thrift.TException te) {
         throw new java.io.IOException(te);
       }
     }
 
-    private static class like_resultStandardSchemeFactory implements SchemeFactory {
-      public like_resultStandardScheme getScheme() {
-        return new like_resultStandardScheme();
+    private static class likeOrDislikeMessage_resultStandardSchemeFactory implements SchemeFactory {
+      public likeOrDislikeMessage_resultStandardScheme getScheme() {
+        return new likeOrDislikeMessage_resultStandardScheme();
       }
     }
 
-    private static class like_resultStandardScheme extends StandardScheme<like_result> {
+    private static class likeOrDislikeMessage_resultStandardScheme extends StandardScheme<likeOrDislikeMessage_result> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, like_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, likeOrDislikeMessage_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -12482,8 +12190,9 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.success = iprot.readI64();
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.success = new UserOpinion();
+                struct.success.read(iprot);
                 struct.setSuccessIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -12509,13 +12218,13 @@ public class MessageService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, like_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, likeOrDislikeMessage_result struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.isSetSuccess()) {
+        if (struct.success != null) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          oprot.writeI64(struct.success);
+          struct.success.write(oprot);
           oprot.writeFieldEnd();
         }
         if (struct.exc != null) {
@@ -12529,16 +12238,16 @@ public class MessageService {
 
     }
 
-    private static class like_resultTupleSchemeFactory implements SchemeFactory {
-      public like_resultTupleScheme getScheme() {
-        return new like_resultTupleScheme();
+    private static class likeOrDislikeMessage_resultTupleSchemeFactory implements SchemeFactory {
+      public likeOrDislikeMessage_resultTupleScheme getScheme() {
+        return new likeOrDislikeMessage_resultTupleScheme();
       }
     }
 
-    private static class like_resultTupleScheme extends TupleScheme<like_result> {
+    private static class likeOrDislikeMessage_resultTupleScheme extends TupleScheme<likeOrDislikeMessage_result> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, like_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, likeOrDislikeMessage_result struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetSuccess()) {
@@ -12549,7 +12258,7 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
-          oprot.writeI64(struct.success);
+          struct.success.write(oprot);
         }
         if (struct.isSetExc()) {
           struct.exc.write(oprot);
@@ -12557,11 +12266,12 @@ public class MessageService {
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, like_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, likeOrDislikeMessage_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.success = iprot.readI64();
+          struct.success = new UserOpinion();
+          struct.success.read(iprot);
           struct.setSuccessIsSet(true);
         }
         if (incoming.get(1)) {
@@ -12574,22 +12284,25 @@ public class MessageService {
 
   }
 
-  public static class dislike_args implements org.apache.thrift.TBase<dislike_args, dislike_args._Fields>, java.io.Serializable, Cloneable, Comparable<dislike_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("dislike_args");
+  public static class likeOrDislikeTopic_args implements org.apache.thrift.TBase<likeOrDislikeTopic_args, likeOrDislikeTopic_args._Fields>, java.io.Serializable, Cloneable, Comparable<likeOrDislikeTopic_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("likeOrDislikeTopic_args");
 
-    private static final org.apache.thrift.protocol.TField MESSAGE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("messageId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField OPINION_FIELD_DESC = new org.apache.thrift.protocol.TField("opinion", org.apache.thrift.protocol.TType.I32, (short)2);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new dislike_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new dislike_argsTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new likeOrDislikeTopic_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new likeOrDislikeTopic_argsTupleSchemeFactory());
     }
 
-    public long messageId; // required
+    public long topicId; // required
+    public int opinion; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      MESSAGE_ID((short)1, "messageId");
+      TOPIC_ID((short)1, "topicId"),
+      OPINION((short)2, "opinion");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -12604,8 +12317,10 @@ public class MessageService {
        */
       public static _Fields findByThriftId(int fieldId) {
         switch(fieldId) {
-          case 1: // MESSAGE_ID
-            return MESSAGE_ID;
+          case 1: // TOPIC_ID
+            return TOPIC_ID;
+          case 2: // OPINION
+            return OPINION;
           default:
             return null;
         }
@@ -12646,76 +12361,116 @@ public class MessageService {
     }
 
     // isset id assignments
-    private static final int __MESSAGEID_ISSET_ID = 0;
+    private static final int __TOPICID_ISSET_ID = 0;
+    private static final int __OPINION_ISSET_ID = 1;
     private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.MESSAGE_ID, new org.apache.thrift.meta_data.FieldMetaData("messageId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.TOPIC_ID, new org.apache.thrift.meta_data.FieldMetaData("topicId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+      tmpMap.put(_Fields.OPINION, new org.apache.thrift.meta_data.FieldMetaData("opinion", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(dislike_args.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(likeOrDislikeTopic_args.class, metaDataMap);
     }
 
-    public dislike_args() {
+    public likeOrDislikeTopic_args() {
     }
 
-    public dislike_args(
-      long messageId)
+    public likeOrDislikeTopic_args(
+      long topicId,
+      int opinion)
     {
       this();
-      this.messageId = messageId;
-      setMessageIdIsSet(true);
+      this.topicId = topicId;
+      setTopicIdIsSet(true);
+      this.opinion = opinion;
+      setOpinionIsSet(true);
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public dislike_args(dislike_args other) {
+    public likeOrDislikeTopic_args(likeOrDislikeTopic_args other) {
       __isset_bitfield = other.__isset_bitfield;
-      this.messageId = other.messageId;
+      this.topicId = other.topicId;
+      this.opinion = other.opinion;
     }
 
-    public dislike_args deepCopy() {
-      return new dislike_args(this);
+    public likeOrDislikeTopic_args deepCopy() {
+      return new likeOrDislikeTopic_args(this);
     }
 
     @Override
     public void clear() {
-      setMessageIdIsSet(false);
-      this.messageId = 0;
+      setTopicIdIsSet(false);
+      this.topicId = 0;
+      setOpinionIsSet(false);
+      this.opinion = 0;
     }
 
-    public long getMessageId() {
-      return this.messageId;
+    public long getTopicId() {
+      return this.topicId;
     }
 
-    public dislike_args setMessageId(long messageId) {
-      this.messageId = messageId;
-      setMessageIdIsSet(true);
+    public likeOrDislikeTopic_args setTopicId(long topicId) {
+      this.topicId = topicId;
+      setTopicIdIsSet(true);
       return this;
     }
 
-    public void unsetMessageId() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __MESSAGEID_ISSET_ID);
+    public void unsetTopicId() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPICID_ISSET_ID);
     }
 
-    /** Returns true if field messageId is set (has been assigned a value) and false otherwise */
-    public boolean isSetMessageId() {
-      return EncodingUtils.testBit(__isset_bitfield, __MESSAGEID_ISSET_ID);
+    /** Returns true if field topicId is set (has been assigned a value) and false otherwise */
+    public boolean isSetTopicId() {
+      return EncodingUtils.testBit(__isset_bitfield, __TOPICID_ISSET_ID);
     }
 
-    public void setMessageIdIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MESSAGEID_ISSET_ID, value);
+    public void setTopicIdIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICID_ISSET_ID, value);
+    }
+
+    public int getOpinion() {
+      return this.opinion;
+    }
+
+    public likeOrDislikeTopic_args setOpinion(int opinion) {
+      this.opinion = opinion;
+      setOpinionIsSet(true);
+      return this;
+    }
+
+    public void unsetOpinion() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __OPINION_ISSET_ID);
+    }
+
+    /** Returns true if field opinion is set (has been assigned a value) and false otherwise */
+    public boolean isSetOpinion() {
+      return EncodingUtils.testBit(__isset_bitfield, __OPINION_ISSET_ID);
+    }
+
+    public void setOpinionIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __OPINION_ISSET_ID, value);
     }
 
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
-      case MESSAGE_ID:
+      case TOPIC_ID:
         if (value == null) {
-          unsetMessageId();
+          unsetTopicId();
         } else {
-          setMessageId((Long)value);
+          setTopicId((Long)value);
+        }
+        break;
+
+      case OPINION:
+        if (value == null) {
+          unsetOpinion();
+        } else {
+          setOpinion((Integer)value);
         }
         break;
 
@@ -12724,8 +12479,11 @@ public class MessageService {
 
     public Object getFieldValue(_Fields field) {
       switch (field) {
-      case MESSAGE_ID:
-        return Long.valueOf(getMessageId());
+      case TOPIC_ID:
+        return Long.valueOf(getTopicId());
+
+      case OPINION:
+        return Integer.valueOf(getOpinion());
 
       }
       throw new IllegalStateException();
@@ -12738,8 +12496,10 @@ public class MessageService {
       }
 
       switch (field) {
-      case MESSAGE_ID:
-        return isSetMessageId();
+      case TOPIC_ID:
+        return isSetTopicId();
+      case OPINION:
+        return isSetOpinion();
       }
       throw new IllegalStateException();
     }
@@ -12748,21 +12508,30 @@ public class MessageService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof dislike_args)
-        return this.equals((dislike_args)that);
+      if (that instanceof likeOrDislikeTopic_args)
+        return this.equals((likeOrDislikeTopic_args)that);
       return false;
     }
 
-    public boolean equals(dislike_args that) {
+    public boolean equals(likeOrDislikeTopic_args that) {
       if (that == null)
         return false;
 
-      boolean this_present_messageId = true;
-      boolean that_present_messageId = true;
-      if (this_present_messageId || that_present_messageId) {
-        if (!(this_present_messageId && that_present_messageId))
+      boolean this_present_topicId = true;
+      boolean that_present_topicId = true;
+      if (this_present_topicId || that_present_topicId) {
+        if (!(this_present_topicId && that_present_topicId))
           return false;
-        if (this.messageId != that.messageId)
+        if (this.topicId != that.topicId)
+          return false;
+      }
+
+      boolean this_present_opinion = true;
+      boolean that_present_opinion = true;
+      if (this_present_opinion || that_present_opinion) {
+        if (!(this_present_opinion && that_present_opinion))
+          return false;
+        if (this.opinion != that.opinion)
           return false;
       }
 
@@ -12775,19 +12544,29 @@ public class MessageService {
     }
 
     @Override
-    public int compareTo(dislike_args other) {
+    public int compareTo(likeOrDislikeTopic_args other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
 
       int lastComparison = 0;
 
-      lastComparison = Boolean.valueOf(isSetMessageId()).compareTo(other.isSetMessageId());
+      lastComparison = Boolean.valueOf(isSetTopicId()).compareTo(other.isSetTopicId());
       if (lastComparison != 0) {
         return lastComparison;
       }
-      if (isSetMessageId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.messageId, other.messageId);
+      if (isSetTopicId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topicId, other.topicId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOpinion()).compareTo(other.isSetOpinion());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOpinion()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.opinion, other.opinion);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -12809,11 +12588,15 @@ public class MessageService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("dislike_args(");
+      StringBuilder sb = new StringBuilder("likeOrDislikeTopic_args(");
       boolean first = true;
 
-      sb.append("messageId:");
-      sb.append(this.messageId);
+      sb.append("topicId:");
+      sb.append(this.topicId);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("opinion:");
+      sb.append(this.opinion);
       first = false;
       sb.append(")");
       return sb.toString();
@@ -12842,15 +12625,15 @@ public class MessageService {
       }
     }
 
-    private static class dislike_argsStandardSchemeFactory implements SchemeFactory {
-      public dislike_argsStandardScheme getScheme() {
-        return new dislike_argsStandardScheme();
+    private static class likeOrDislikeTopic_argsStandardSchemeFactory implements SchemeFactory {
+      public likeOrDislikeTopic_argsStandardScheme getScheme() {
+        return new likeOrDislikeTopic_argsStandardScheme();
       }
     }
 
-    private static class dislike_argsStandardScheme extends StandardScheme<dislike_args> {
+    private static class likeOrDislikeTopic_argsStandardScheme extends StandardScheme<likeOrDislikeTopic_args> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, dislike_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, likeOrDislikeTopic_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -12860,10 +12643,18 @@ public class MessageService {
             break;
           }
           switch (schemeField.id) {
-            case 1: // MESSAGE_ID
+            case 1: // TOPIC_ID
               if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.messageId = iprot.readI64();
-                struct.setMessageIdIsSet(true);
+                struct.topicId = iprot.readI64();
+                struct.setTopicIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 2: // OPINION
+              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                struct.opinion = iprot.readI32();
+                struct.setOpinionIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
@@ -12879,12 +12670,15 @@ public class MessageService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, dislike_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, likeOrDislikeTopic_args struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
-        oprot.writeFieldBegin(MESSAGE_ID_FIELD_DESC);
-        oprot.writeI64(struct.messageId);
+        oprot.writeFieldBegin(TOPIC_ID_FIELD_DESC);
+        oprot.writeI64(struct.topicId);
+        oprot.writeFieldEnd();
+        oprot.writeFieldBegin(OPINION_FIELD_DESC);
+        oprot.writeI32(struct.opinion);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -12892,53 +12686,63 @@ public class MessageService {
 
     }
 
-    private static class dislike_argsTupleSchemeFactory implements SchemeFactory {
-      public dislike_argsTupleScheme getScheme() {
-        return new dislike_argsTupleScheme();
+    private static class likeOrDislikeTopic_argsTupleSchemeFactory implements SchemeFactory {
+      public likeOrDislikeTopic_argsTupleScheme getScheme() {
+        return new likeOrDislikeTopic_argsTupleScheme();
       }
     }
 
-    private static class dislike_argsTupleScheme extends TupleScheme<dislike_args> {
+    private static class likeOrDislikeTopic_argsTupleScheme extends TupleScheme<likeOrDislikeTopic_args> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, dislike_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, likeOrDislikeTopic_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
-        if (struct.isSetMessageId()) {
+        if (struct.isSetTopicId()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
-        if (struct.isSetMessageId()) {
-          oprot.writeI64(struct.messageId);
+        if (struct.isSetOpinion()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetTopicId()) {
+          oprot.writeI64(struct.topicId);
+        }
+        if (struct.isSetOpinion()) {
+          oprot.writeI32(struct.opinion);
         }
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, dislike_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, likeOrDislikeTopic_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.messageId = iprot.readI64();
-          struct.setMessageIdIsSet(true);
+          struct.topicId = iprot.readI64();
+          struct.setTopicIdIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.opinion = iprot.readI32();
+          struct.setOpinionIsSet(true);
         }
       }
     }
 
   }
 
-  public static class dislike_result implements org.apache.thrift.TBase<dislike_result, dislike_result._Fields>, java.io.Serializable, Cloneable, Comparable<dislike_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("dislike_result");
+  public static class likeOrDislikeTopic_result implements org.apache.thrift.TBase<likeOrDislikeTopic_result, likeOrDislikeTopic_result._Fields>, java.io.Serializable, Cloneable, Comparable<likeOrDislikeTopic_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("likeOrDislikeTopic_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I64, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
     private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new dislike_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new dislike_resultTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new likeOrDislikeTopic_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new likeOrDislikeTopic_resultTupleSchemeFactory());
     }
 
-    public long success; // required
+    public UserOpinion success; // required
     public com.vmesteonline.be.InvalidOperation exc; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -13003,82 +12807,80 @@ public class MessageService {
     }
 
     // isset id assignments
-    private static final int __SUCCESS_ISSET_ID = 0;
-    private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, UserOpinion.class)));
       tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(dislike_result.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(likeOrDislikeTopic_result.class, metaDataMap);
     }
 
-    public dislike_result() {
+    public likeOrDislikeTopic_result() {
     }
 
-    public dislike_result(
-      long success,
+    public likeOrDislikeTopic_result(
+      UserOpinion success,
       com.vmesteonline.be.InvalidOperation exc)
     {
       this();
       this.success = success;
-      setSuccessIsSet(true);
       this.exc = exc;
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public dislike_result(dislike_result other) {
-      __isset_bitfield = other.__isset_bitfield;
-      this.success = other.success;
+    public likeOrDislikeTopic_result(likeOrDislikeTopic_result other) {
+      if (other.isSetSuccess()) {
+        this.success = new UserOpinion(other.success);
+      }
       if (other.isSetExc()) {
         this.exc = new com.vmesteonline.be.InvalidOperation(other.exc);
       }
     }
 
-    public dislike_result deepCopy() {
-      return new dislike_result(this);
+    public likeOrDislikeTopic_result deepCopy() {
+      return new likeOrDislikeTopic_result(this);
     }
 
     @Override
     public void clear() {
-      setSuccessIsSet(false);
-      this.success = 0;
+      this.success = null;
       this.exc = null;
     }
 
-    public long getSuccess() {
+    public UserOpinion getSuccess() {
       return this.success;
     }
 
-    public dislike_result setSuccess(long success) {
+    public likeOrDislikeTopic_result setSuccess(UserOpinion success) {
       this.success = success;
-      setSuccessIsSet(true);
       return this;
     }
 
     public void unsetSuccess() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+      this.success = null;
     }
 
     /** Returns true if field success is set (has been assigned a value) and false otherwise */
     public boolean isSetSuccess() {
-      return EncodingUtils.testBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+      return this.success != null;
     }
 
     public void setSuccessIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SUCCESS_ISSET_ID, value);
+      if (!value) {
+        this.success = null;
+      }
     }
 
     public com.vmesteonline.be.InvalidOperation getExc() {
       return this.exc;
     }
 
-    public dislike_result setExc(com.vmesteonline.be.InvalidOperation exc) {
+    public likeOrDislikeTopic_result setExc(com.vmesteonline.be.InvalidOperation exc) {
       this.exc = exc;
       return this;
     }
@@ -13104,7 +12906,7 @@ public class MessageService {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((Long)value);
+          setSuccess((UserOpinion)value);
         }
         break;
 
@@ -13122,7 +12924,7 @@ public class MessageService {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case SUCCESS:
-        return Long.valueOf(getSuccess());
+        return getSuccess();
 
       case EXC:
         return getExc();
@@ -13150,21 +12952,21 @@ public class MessageService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof dislike_result)
-        return this.equals((dislike_result)that);
+      if (that instanceof likeOrDislikeTopic_result)
+        return this.equals((likeOrDislikeTopic_result)that);
       return false;
     }
 
-    public boolean equals(dislike_result that) {
+    public boolean equals(likeOrDislikeTopic_result that) {
       if (that == null)
         return false;
 
-      boolean this_present_success = true;
-      boolean that_present_success = true;
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
       if (this_present_success || that_present_success) {
         if (!(this_present_success && that_present_success))
           return false;
-        if (this.success != that.success)
+        if (!this.success.equals(that.success))
           return false;
       }
 
@@ -13186,7 +12988,7 @@ public class MessageService {
     }
 
     @Override
-    public int compareTo(dislike_result other) {
+    public int compareTo(likeOrDislikeTopic_result other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -13230,11 +13032,15 @@ public class MessageService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("dislike_result(");
+      StringBuilder sb = new StringBuilder("likeOrDislikeTopic_result(");
       boolean first = true;
 
       sb.append("success:");
-      sb.append(this.success);
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
       first = false;
       if (!first) sb.append(", ");
       sb.append("exc:");
@@ -13251,6 +13057,9 @@ public class MessageService {
     public void validate() throws org.apache.thrift.TException {
       // check for required fields
       // check for sub-struct validity
+      if (success != null) {
+        success.validate();
+      }
     }
 
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -13263,23 +13072,21 @@ public class MessageService {
 
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
       try {
-        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-        __isset_bitfield = 0;
         read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
       } catch (org.apache.thrift.TException te) {
         throw new java.io.IOException(te);
       }
     }
 
-    private static class dislike_resultStandardSchemeFactory implements SchemeFactory {
-      public dislike_resultStandardScheme getScheme() {
-        return new dislike_resultStandardScheme();
+    private static class likeOrDislikeTopic_resultStandardSchemeFactory implements SchemeFactory {
+      public likeOrDislikeTopic_resultStandardScheme getScheme() {
+        return new likeOrDislikeTopic_resultStandardScheme();
       }
     }
 
-    private static class dislike_resultStandardScheme extends StandardScheme<dislike_result> {
+    private static class likeOrDislikeTopic_resultStandardScheme extends StandardScheme<likeOrDislikeTopic_result> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, dislike_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, likeOrDislikeTopic_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -13290,8 +13097,9 @@ public class MessageService {
           }
           switch (schemeField.id) {
             case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.success = iprot.readI64();
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.success = new UserOpinion();
+                struct.success.read(iprot);
                 struct.setSuccessIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -13317,13 +13125,13 @@ public class MessageService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, dislike_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, likeOrDislikeTopic_result struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.isSetSuccess()) {
+        if (struct.success != null) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          oprot.writeI64(struct.success);
+          struct.success.write(oprot);
           oprot.writeFieldEnd();
         }
         if (struct.exc != null) {
@@ -13337,16 +13145,16 @@ public class MessageService {
 
     }
 
-    private static class dislike_resultTupleSchemeFactory implements SchemeFactory {
-      public dislike_resultTupleScheme getScheme() {
-        return new dislike_resultTupleScheme();
+    private static class likeOrDislikeTopic_resultTupleSchemeFactory implements SchemeFactory {
+      public likeOrDislikeTopic_resultTupleScheme getScheme() {
+        return new likeOrDislikeTopic_resultTupleScheme();
       }
     }
 
-    private static class dislike_resultTupleScheme extends TupleScheme<dislike_result> {
+    private static class likeOrDislikeTopic_resultTupleScheme extends TupleScheme<likeOrDislikeTopic_result> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, dislike_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, likeOrDislikeTopic_result struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetSuccess()) {
@@ -13357,7 +13165,7 @@ public class MessageService {
         }
         oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
-          oprot.writeI64(struct.success);
+          struct.success.write(oprot);
         }
         if (struct.isSetExc()) {
           struct.exc.write(oprot);
@@ -13365,11 +13173,12 @@ public class MessageService {
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, dislike_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, likeOrDislikeTopic_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.success = iprot.readI64();
+          struct.success = new UserOpinion();
+          struct.success.read(iprot);
           struct.setSuccessIsSet(true);
         }
         if (incoming.get(1)) {
@@ -18402,1622 +18211,6 @@ public class MessageService {
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, makeMessageLinked_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(2);
-        if (incoming.get(0)) {
-          struct.success = iprot.readI64();
-          struct.setSuccessIsSet(true);
-        }
-        if (incoming.get(1)) {
-          struct.exc = new com.vmesteonline.be.InvalidOperation();
-          struct.exc.read(iprot);
-          struct.setExcIsSet(true);
-        }
-      }
-    }
-
-  }
-
-  public static class likeTopic_args implements org.apache.thrift.TBase<likeTopic_args, likeTopic_args._Fields>, java.io.Serializable, Cloneable, Comparable<likeTopic_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("likeTopic_args");
-
-    private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I64, (short)1);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new likeTopic_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new likeTopic_argsTupleSchemeFactory());
-    }
-
-    public long topicId; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      TOPIC_ID((short)1, "topicId");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 1: // TOPIC_ID
-            return TOPIC_ID;
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-
-    // isset id assignments
-    private static final int __TOPICID_ISSET_ID = 0;
-    private byte __isset_bitfield = 0;
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.TOPIC_ID, new org.apache.thrift.meta_data.FieldMetaData("topicId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(likeTopic_args.class, metaDataMap);
-    }
-
-    public likeTopic_args() {
-    }
-
-    public likeTopic_args(
-      long topicId)
-    {
-      this();
-      this.topicId = topicId;
-      setTopicIdIsSet(true);
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public likeTopic_args(likeTopic_args other) {
-      __isset_bitfield = other.__isset_bitfield;
-      this.topicId = other.topicId;
-    }
-
-    public likeTopic_args deepCopy() {
-      return new likeTopic_args(this);
-    }
-
-    @Override
-    public void clear() {
-      setTopicIdIsSet(false);
-      this.topicId = 0;
-    }
-
-    public long getTopicId() {
-      return this.topicId;
-    }
-
-    public likeTopic_args setTopicId(long topicId) {
-      this.topicId = topicId;
-      setTopicIdIsSet(true);
-      return this;
-    }
-
-    public void unsetTopicId() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPICID_ISSET_ID);
-    }
-
-    /** Returns true if field topicId is set (has been assigned a value) and false otherwise */
-    public boolean isSetTopicId() {
-      return EncodingUtils.testBit(__isset_bitfield, __TOPICID_ISSET_ID);
-    }
-
-    public void setTopicIdIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICID_ISSET_ID, value);
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      case TOPIC_ID:
-        if (value == null) {
-          unsetTopicId();
-        } else {
-          setTopicId((Long)value);
-        }
-        break;
-
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      case TOPIC_ID:
-        return Long.valueOf(getTopicId());
-
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      case TOPIC_ID:
-        return isSetTopicId();
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof likeTopic_args)
-        return this.equals((likeTopic_args)that);
-      return false;
-    }
-
-    public boolean equals(likeTopic_args that) {
-      if (that == null)
-        return false;
-
-      boolean this_present_topicId = true;
-      boolean that_present_topicId = true;
-      if (this_present_topicId || that_present_topicId) {
-        if (!(this_present_topicId && that_present_topicId))
-          return false;
-        if (this.topicId != that.topicId)
-          return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      return 0;
-    }
-
-    @Override
-    public int compareTo(likeTopic_args other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      lastComparison = Boolean.valueOf(isSetTopicId()).compareTo(other.isSetTopicId());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetTopicId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topicId, other.topicId);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("likeTopic_args(");
-      boolean first = true;
-
-      sb.append("topicId:");
-      sb.append(this.topicId);
-      first = false;
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-        __isset_bitfield = 0;
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class likeTopic_argsStandardSchemeFactory implements SchemeFactory {
-      public likeTopic_argsStandardScheme getScheme() {
-        return new likeTopic_argsStandardScheme();
-      }
-    }
-
-    private static class likeTopic_argsStandardScheme extends StandardScheme<likeTopic_args> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, likeTopic_args struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            case 1: // TOPIC_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.topicId = iprot.readI64();
-                struct.setTopicIdIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, likeTopic_args struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        oprot.writeFieldBegin(TOPIC_ID_FIELD_DESC);
-        oprot.writeI64(struct.topicId);
-        oprot.writeFieldEnd();
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class likeTopic_argsTupleSchemeFactory implements SchemeFactory {
-      public likeTopic_argsTupleScheme getScheme() {
-        return new likeTopic_argsTupleScheme();
-      }
-    }
-
-    private static class likeTopic_argsTupleScheme extends TupleScheme<likeTopic_args> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, likeTopic_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-        BitSet optionals = new BitSet();
-        if (struct.isSetTopicId()) {
-          optionals.set(0);
-        }
-        oprot.writeBitSet(optionals, 1);
-        if (struct.isSetTopicId()) {
-          oprot.writeI64(struct.topicId);
-        }
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, likeTopic_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
-        if (incoming.get(0)) {
-          struct.topicId = iprot.readI64();
-          struct.setTopicIdIsSet(true);
-        }
-      }
-    }
-
-  }
-
-  public static class likeTopic_result implements org.apache.thrift.TBase<likeTopic_result, likeTopic_result._Fields>, java.io.Serializable, Cloneable, Comparable<likeTopic_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("likeTopic_result");
-
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I64, (short)0);
-    private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new likeTopic_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new likeTopic_resultTupleSchemeFactory());
-    }
-
-    public long success; // required
-    public com.vmesteonline.be.InvalidOperation exc; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SUCCESS((short)0, "success"),
-      EXC((short)1, "exc");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 0: // SUCCESS
-            return SUCCESS;
-          case 1: // EXC
-            return EXC;
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-
-    // isset id assignments
-    private static final int __SUCCESS_ISSET_ID = 0;
-    private byte __isset_bitfield = 0;
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-      tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(likeTopic_result.class, metaDataMap);
-    }
-
-    public likeTopic_result() {
-    }
-
-    public likeTopic_result(
-      long success,
-      com.vmesteonline.be.InvalidOperation exc)
-    {
-      this();
-      this.success = success;
-      setSuccessIsSet(true);
-      this.exc = exc;
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public likeTopic_result(likeTopic_result other) {
-      __isset_bitfield = other.__isset_bitfield;
-      this.success = other.success;
-      if (other.isSetExc()) {
-        this.exc = new com.vmesteonline.be.InvalidOperation(other.exc);
-      }
-    }
-
-    public likeTopic_result deepCopy() {
-      return new likeTopic_result(this);
-    }
-
-    @Override
-    public void clear() {
-      setSuccessIsSet(false);
-      this.success = 0;
-      this.exc = null;
-    }
-
-    public long getSuccess() {
-      return this.success;
-    }
-
-    public likeTopic_result setSuccess(long success) {
-      this.success = success;
-      setSuccessIsSet(true);
-      return this;
-    }
-
-    public void unsetSuccess() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SUCCESS_ISSET_ID);
-    }
-
-    /** Returns true if field success is set (has been assigned a value) and false otherwise */
-    public boolean isSetSuccess() {
-      return EncodingUtils.testBit(__isset_bitfield, __SUCCESS_ISSET_ID);
-    }
-
-    public void setSuccessIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SUCCESS_ISSET_ID, value);
-    }
-
-    public com.vmesteonline.be.InvalidOperation getExc() {
-      return this.exc;
-    }
-
-    public likeTopic_result setExc(com.vmesteonline.be.InvalidOperation exc) {
-      this.exc = exc;
-      return this;
-    }
-
-    public void unsetExc() {
-      this.exc = null;
-    }
-
-    /** Returns true if field exc is set (has been assigned a value) and false otherwise */
-    public boolean isSetExc() {
-      return this.exc != null;
-    }
-
-    public void setExcIsSet(boolean value) {
-      if (!value) {
-        this.exc = null;
-      }
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      case SUCCESS:
-        if (value == null) {
-          unsetSuccess();
-        } else {
-          setSuccess((Long)value);
-        }
-        break;
-
-      case EXC:
-        if (value == null) {
-          unsetExc();
-        } else {
-          setExc((com.vmesteonline.be.InvalidOperation)value);
-        }
-        break;
-
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      case SUCCESS:
-        return Long.valueOf(getSuccess());
-
-      case EXC:
-        return getExc();
-
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      case SUCCESS:
-        return isSetSuccess();
-      case EXC:
-        return isSetExc();
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof likeTopic_result)
-        return this.equals((likeTopic_result)that);
-      return false;
-    }
-
-    public boolean equals(likeTopic_result that) {
-      if (that == null)
-        return false;
-
-      boolean this_present_success = true;
-      boolean that_present_success = true;
-      if (this_present_success || that_present_success) {
-        if (!(this_present_success && that_present_success))
-          return false;
-        if (this.success != that.success)
-          return false;
-      }
-
-      boolean this_present_exc = true && this.isSetExc();
-      boolean that_present_exc = true && that.isSetExc();
-      if (this_present_exc || that_present_exc) {
-        if (!(this_present_exc && that_present_exc))
-          return false;
-        if (!this.exc.equals(that.exc))
-          return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      return 0;
-    }
-
-    @Override
-    public int compareTo(likeTopic_result other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetSuccess()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetExc()).compareTo(other.isSetExc());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetExc()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.exc, other.exc);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-      }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("likeTopic_result(");
-      boolean first = true;
-
-      sb.append("success:");
-      sb.append(this.success);
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("exc:");
-      if (this.exc == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.exc);
-      }
-      first = false;
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-        __isset_bitfield = 0;
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class likeTopic_resultStandardSchemeFactory implements SchemeFactory {
-      public likeTopic_resultStandardScheme getScheme() {
-        return new likeTopic_resultStandardScheme();
-      }
-    }
-
-    private static class likeTopic_resultStandardScheme extends StandardScheme<likeTopic_result> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, likeTopic_result struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.success = iprot.readI64();
-                struct.setSuccessIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            case 1: // EXC
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-                struct.exc = new com.vmesteonline.be.InvalidOperation();
-                struct.exc.read(iprot);
-                struct.setExcIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, likeTopic_result struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.isSetSuccess()) {
-          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          oprot.writeI64(struct.success);
-          oprot.writeFieldEnd();
-        }
-        if (struct.exc != null) {
-          oprot.writeFieldBegin(EXC_FIELD_DESC);
-          struct.exc.write(oprot);
-          oprot.writeFieldEnd();
-        }
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class likeTopic_resultTupleSchemeFactory implements SchemeFactory {
-      public likeTopic_resultTupleScheme getScheme() {
-        return new likeTopic_resultTupleScheme();
-      }
-    }
-
-    private static class likeTopic_resultTupleScheme extends TupleScheme<likeTopic_result> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, likeTopic_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-        BitSet optionals = new BitSet();
-        if (struct.isSetSuccess()) {
-          optionals.set(0);
-        }
-        if (struct.isSetExc()) {
-          optionals.set(1);
-        }
-        oprot.writeBitSet(optionals, 2);
-        if (struct.isSetSuccess()) {
-          oprot.writeI64(struct.success);
-        }
-        if (struct.isSetExc()) {
-          struct.exc.write(oprot);
-        }
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, likeTopic_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(2);
-        if (incoming.get(0)) {
-          struct.success = iprot.readI64();
-          struct.setSuccessIsSet(true);
-        }
-        if (incoming.get(1)) {
-          struct.exc = new com.vmesteonline.be.InvalidOperation();
-          struct.exc.read(iprot);
-          struct.setExcIsSet(true);
-        }
-      }
-    }
-
-  }
-
-  public static class dislikeTopic_args implements org.apache.thrift.TBase<dislikeTopic_args, dislikeTopic_args._Fields>, java.io.Serializable, Cloneable, Comparable<dislikeTopic_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("dislikeTopic_args");
-
-    private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I64, (short)1);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new dislikeTopic_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new dislikeTopic_argsTupleSchemeFactory());
-    }
-
-    public long topicId; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      TOPIC_ID((short)1, "topicId");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 1: // TOPIC_ID
-            return TOPIC_ID;
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-
-    // isset id assignments
-    private static final int __TOPICID_ISSET_ID = 0;
-    private byte __isset_bitfield = 0;
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.TOPIC_ID, new org.apache.thrift.meta_data.FieldMetaData("topicId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(dislikeTopic_args.class, metaDataMap);
-    }
-
-    public dislikeTopic_args() {
-    }
-
-    public dislikeTopic_args(
-      long topicId)
-    {
-      this();
-      this.topicId = topicId;
-      setTopicIdIsSet(true);
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public dislikeTopic_args(dislikeTopic_args other) {
-      __isset_bitfield = other.__isset_bitfield;
-      this.topicId = other.topicId;
-    }
-
-    public dislikeTopic_args deepCopy() {
-      return new dislikeTopic_args(this);
-    }
-
-    @Override
-    public void clear() {
-      setTopicIdIsSet(false);
-      this.topicId = 0;
-    }
-
-    public long getTopicId() {
-      return this.topicId;
-    }
-
-    public dislikeTopic_args setTopicId(long topicId) {
-      this.topicId = topicId;
-      setTopicIdIsSet(true);
-      return this;
-    }
-
-    public void unsetTopicId() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TOPICID_ISSET_ID);
-    }
-
-    /** Returns true if field topicId is set (has been assigned a value) and false otherwise */
-    public boolean isSetTopicId() {
-      return EncodingUtils.testBit(__isset_bitfield, __TOPICID_ISSET_ID);
-    }
-
-    public void setTopicIdIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TOPICID_ISSET_ID, value);
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      case TOPIC_ID:
-        if (value == null) {
-          unsetTopicId();
-        } else {
-          setTopicId((Long)value);
-        }
-        break;
-
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      case TOPIC_ID:
-        return Long.valueOf(getTopicId());
-
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      case TOPIC_ID:
-        return isSetTopicId();
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof dislikeTopic_args)
-        return this.equals((dislikeTopic_args)that);
-      return false;
-    }
-
-    public boolean equals(dislikeTopic_args that) {
-      if (that == null)
-        return false;
-
-      boolean this_present_topicId = true;
-      boolean that_present_topicId = true;
-      if (this_present_topicId || that_present_topicId) {
-        if (!(this_present_topicId && that_present_topicId))
-          return false;
-        if (this.topicId != that.topicId)
-          return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      return 0;
-    }
-
-    @Override
-    public int compareTo(dislikeTopic_args other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      lastComparison = Boolean.valueOf(isSetTopicId()).compareTo(other.isSetTopicId());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetTopicId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.topicId, other.topicId);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("dislikeTopic_args(");
-      boolean first = true;
-
-      sb.append("topicId:");
-      sb.append(this.topicId);
-      first = false;
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-        __isset_bitfield = 0;
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class dislikeTopic_argsStandardSchemeFactory implements SchemeFactory {
-      public dislikeTopic_argsStandardScheme getScheme() {
-        return new dislikeTopic_argsStandardScheme();
-      }
-    }
-
-    private static class dislikeTopic_argsStandardScheme extends StandardScheme<dislikeTopic_args> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, dislikeTopic_args struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            case 1: // TOPIC_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.topicId = iprot.readI64();
-                struct.setTopicIdIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, dislikeTopic_args struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        oprot.writeFieldBegin(TOPIC_ID_FIELD_DESC);
-        oprot.writeI64(struct.topicId);
-        oprot.writeFieldEnd();
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class dislikeTopic_argsTupleSchemeFactory implements SchemeFactory {
-      public dislikeTopic_argsTupleScheme getScheme() {
-        return new dislikeTopic_argsTupleScheme();
-      }
-    }
-
-    private static class dislikeTopic_argsTupleScheme extends TupleScheme<dislikeTopic_args> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, dislikeTopic_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-        BitSet optionals = new BitSet();
-        if (struct.isSetTopicId()) {
-          optionals.set(0);
-        }
-        oprot.writeBitSet(optionals, 1);
-        if (struct.isSetTopicId()) {
-          oprot.writeI64(struct.topicId);
-        }
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, dislikeTopic_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
-        if (incoming.get(0)) {
-          struct.topicId = iprot.readI64();
-          struct.setTopicIdIsSet(true);
-        }
-      }
-    }
-
-  }
-
-  public static class dislikeTopic_result implements org.apache.thrift.TBase<dislikeTopic_result, dislikeTopic_result._Fields>, java.io.Serializable, Cloneable, Comparable<dislikeTopic_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("dislikeTopic_result");
-
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I64, (short)0);
-    private static final org.apache.thrift.protocol.TField EXC_FIELD_DESC = new org.apache.thrift.protocol.TField("exc", org.apache.thrift.protocol.TType.STRUCT, (short)1);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new dislikeTopic_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new dislikeTopic_resultTupleSchemeFactory());
-    }
-
-    public long success; // required
-    public com.vmesteonline.be.InvalidOperation exc; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SUCCESS((short)0, "success"),
-      EXC((short)1, "exc");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 0: // SUCCESS
-            return SUCCESS;
-          case 1: // EXC
-            return EXC;
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-
-    // isset id assignments
-    private static final int __SUCCESS_ISSET_ID = 0;
-    private byte __isset_bitfield = 0;
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-      tmpMap.put(_Fields.EXC, new org.apache.thrift.meta_data.FieldMetaData("exc", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(dislikeTopic_result.class, metaDataMap);
-    }
-
-    public dislikeTopic_result() {
-    }
-
-    public dislikeTopic_result(
-      long success,
-      com.vmesteonline.be.InvalidOperation exc)
-    {
-      this();
-      this.success = success;
-      setSuccessIsSet(true);
-      this.exc = exc;
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public dislikeTopic_result(dislikeTopic_result other) {
-      __isset_bitfield = other.__isset_bitfield;
-      this.success = other.success;
-      if (other.isSetExc()) {
-        this.exc = new com.vmesteonline.be.InvalidOperation(other.exc);
-      }
-    }
-
-    public dislikeTopic_result deepCopy() {
-      return new dislikeTopic_result(this);
-    }
-
-    @Override
-    public void clear() {
-      setSuccessIsSet(false);
-      this.success = 0;
-      this.exc = null;
-    }
-
-    public long getSuccess() {
-      return this.success;
-    }
-
-    public dislikeTopic_result setSuccess(long success) {
-      this.success = success;
-      setSuccessIsSet(true);
-      return this;
-    }
-
-    public void unsetSuccess() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SUCCESS_ISSET_ID);
-    }
-
-    /** Returns true if field success is set (has been assigned a value) and false otherwise */
-    public boolean isSetSuccess() {
-      return EncodingUtils.testBit(__isset_bitfield, __SUCCESS_ISSET_ID);
-    }
-
-    public void setSuccessIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SUCCESS_ISSET_ID, value);
-    }
-
-    public com.vmesteonline.be.InvalidOperation getExc() {
-      return this.exc;
-    }
-
-    public dislikeTopic_result setExc(com.vmesteonline.be.InvalidOperation exc) {
-      this.exc = exc;
-      return this;
-    }
-
-    public void unsetExc() {
-      this.exc = null;
-    }
-
-    /** Returns true if field exc is set (has been assigned a value) and false otherwise */
-    public boolean isSetExc() {
-      return this.exc != null;
-    }
-
-    public void setExcIsSet(boolean value) {
-      if (!value) {
-        this.exc = null;
-      }
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      case SUCCESS:
-        if (value == null) {
-          unsetSuccess();
-        } else {
-          setSuccess((Long)value);
-        }
-        break;
-
-      case EXC:
-        if (value == null) {
-          unsetExc();
-        } else {
-          setExc((com.vmesteonline.be.InvalidOperation)value);
-        }
-        break;
-
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      case SUCCESS:
-        return Long.valueOf(getSuccess());
-
-      case EXC:
-        return getExc();
-
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      case SUCCESS:
-        return isSetSuccess();
-      case EXC:
-        return isSetExc();
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof dislikeTopic_result)
-        return this.equals((dislikeTopic_result)that);
-      return false;
-    }
-
-    public boolean equals(dislikeTopic_result that) {
-      if (that == null)
-        return false;
-
-      boolean this_present_success = true;
-      boolean that_present_success = true;
-      if (this_present_success || that_present_success) {
-        if (!(this_present_success && that_present_success))
-          return false;
-        if (this.success != that.success)
-          return false;
-      }
-
-      boolean this_present_exc = true && this.isSetExc();
-      boolean that_present_exc = true && that.isSetExc();
-      if (this_present_exc || that_present_exc) {
-        if (!(this_present_exc && that_present_exc))
-          return false;
-        if (!this.exc.equals(that.exc))
-          return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      return 0;
-    }
-
-    @Override
-    public int compareTo(dislikeTopic_result other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetSuccess()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetExc()).compareTo(other.isSetExc());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetExc()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.exc, other.exc);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-      }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("dislikeTopic_result(");
-      boolean first = true;
-
-      sb.append("success:");
-      sb.append(this.success);
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("exc:");
-      if (this.exc == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.exc);
-      }
-      first = false;
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-        __isset_bitfield = 0;
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class dislikeTopic_resultStandardSchemeFactory implements SchemeFactory {
-      public dislikeTopic_resultStandardScheme getScheme() {
-        return new dislikeTopic_resultStandardScheme();
-      }
-    }
-
-    private static class dislikeTopic_resultStandardScheme extends StandardScheme<dislikeTopic_result> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, dislikeTopic_result struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.success = iprot.readI64();
-                struct.setSuccessIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            case 1: // EXC
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-                struct.exc = new com.vmesteonline.be.InvalidOperation();
-                struct.exc.read(iprot);
-                struct.setExcIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, dislikeTopic_result struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.isSetSuccess()) {
-          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          oprot.writeI64(struct.success);
-          oprot.writeFieldEnd();
-        }
-        if (struct.exc != null) {
-          oprot.writeFieldBegin(EXC_FIELD_DESC);
-          struct.exc.write(oprot);
-          oprot.writeFieldEnd();
-        }
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class dislikeTopic_resultTupleSchemeFactory implements SchemeFactory {
-      public dislikeTopic_resultTupleScheme getScheme() {
-        return new dislikeTopic_resultTupleScheme();
-      }
-    }
-
-    private static class dislikeTopic_resultTupleScheme extends TupleScheme<dislikeTopic_result> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, dislikeTopic_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-        BitSet optionals = new BitSet();
-        if (struct.isSetSuccess()) {
-          optionals.set(0);
-        }
-        if (struct.isSetExc()) {
-          optionals.set(1);
-        }
-        oprot.writeBitSet(optionals, 2);
-        if (struct.isSetSuccess()) {
-          oprot.writeI64(struct.success);
-        }
-        if (struct.isSetExc()) {
-          struct.exc.write(oprot);
-        }
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, dislikeTopic_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {

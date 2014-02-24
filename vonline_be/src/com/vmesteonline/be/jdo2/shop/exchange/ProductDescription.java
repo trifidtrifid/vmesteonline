@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.vmesteonline.be.shop.FullProductInfo;
 import com.vmesteonline.be.shop.PriceType;
@@ -17,8 +18,8 @@ public class ProductDescription {
 	
 //PRODUCT_ID=300, PRODUCT_NAME,	PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
 //PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, 
-	//PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
-//PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
+//PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
+//PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID, PRODUCT_MIN_CLN_PACK_G, PRODUCT_MIN_PROD_PACK_G, PRODUCT_PREPACK_REQ, PRODUCT_KNOWN_NAMES
 
 	public long id;
 	public String name;
@@ -36,6 +37,10 @@ public class ProductDescription {
 	public Map<String, String> optionsMap;
 	public List<String> topicSet;
 	public long producerId;
+	public int minClientPackGramms;
+	public int minProducerPackGramms;
+	public boolean prepackRequired;
+	public Set<String> knownNames;
 	
 	public FullProductInfo getFullProductInfo(){
 		Product product = new Product(id, name, shortDescr, weight, imageURL, price);
@@ -48,7 +53,8 @@ public class ProductDescription {
 		
 		List<Long> topics = VoHelper.convertSet(topicSet, new ArrayList<Long>(), new Long(0));
 		List<Long> categoriesSet = VoHelper.convertSet(categories, new ArrayList<Long>(), new Long(0));
-		ProductDetails details = new ProductDetails(categoriesSet, fullDescr, imagesURLset, pricesMap , optionsMap, topics, producerId);
+		ProductDetails details = new ProductDetails(categoriesSet, fullDescr, imagesURLset, pricesMap , optionsMap, topics, 
+				producerId, minClientPackGramms, minProducerPackGramms, prepackRequired, knownNames);
 		FullProductInfo fpi = new FullProductInfo(product, details);
 		return fpi;
 	}

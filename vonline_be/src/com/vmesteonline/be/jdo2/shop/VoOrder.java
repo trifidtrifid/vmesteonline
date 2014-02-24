@@ -52,7 +52,7 @@ public class VoOrder {
 		this.priceType = priceType;
 	}
 
-	public VoOrder(VoUser user, long shopId, int date, PriceType priceType, PersistenceManager _pm) throws InvalidOperation{
+	public VoOrder(VoUser user, long shopId, int date, PriceType priceType, String comment, PersistenceManager _pm) throws InvalidOperation{
 		this.user = user;
 		this.date = date;
 		this.shopId = shopId;
@@ -69,7 +69,8 @@ public class VoOrder {
 		this.paymentType = PaymentType.CASH;
 		this.paymentStatus = PaymentStatus.WAIT;
 		this.odrerLines = new HashMap<Long,VoOrderLine>();
-		this.priceType = priceType; 
+		this.priceType = priceType;
+		this.comment = comment;
 		try{
 			pm.makePersistent(this);
 		} catch (Exception ex){
@@ -99,7 +100,7 @@ public class VoOrder {
 	}
 	
 	public Order getOrder(){
-		return new Order(id.getId(), date, status, priceType, totalCost);
+		return new Order(id.getId(), date, status, priceType, totalCost, user.getId(), user.getName() + " " + user.getLastName());
 	} 
 	public OrderDetails getOrderDetails(){
 		OrderDetails od = new OrderDetails(createdAt, delivery, deliveryCost, 

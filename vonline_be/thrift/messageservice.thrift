@@ -33,8 +33,9 @@ struct Message {
 	16: UserMessage userMessage, //how user treats the message
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
 	18: bedata.ShortUserInfo userInfo,
+	19: optional i32 childMsgsNum,
+	20: optional i32 childUnreadMsgsNum, 
 	
-
 } // 'сообщение';
 		
 
@@ -60,9 +61,9 @@ struct Topic {
 	9: i32 unlikesNum,
 	10: optional i64 rubricId, //ссылка на рубрику
 	11: optional i64 communityId, //ссылка на сообщество
-	//отношение пользователя к топику
 	12: UserTopic usertTopic,
-	13: bedata.ShortUserInfo userInfo
+	13: bedata.ShortUserInfo userInfo,
+	15: optional i32 childUnreadMsgs, 	
 }
 
 struct RubricCounter {
@@ -85,6 +86,11 @@ struct MessageListPart {
 	1:list<Message> messages,
 	2:i32	totalSize //size of full list
 } 
+
+struct UserOpinion {
+	1: i32 likes,
+	2: i32 dislikes,
+}
 
 service MessageService {
 
@@ -130,18 +136,18 @@ service MessageService {
 	/**
 	* Загрузка части преставления дерева сообщений в виде дерева. parentID указывает на сообщение топика или на сообщение первого уровня
 	**/
-	MessageListPart getMessages( 1:i64 topicId , 2:i64 groupId 3:MessageType messageType, 4:i64 parentId, 5:bool archived, 6:i32 offset, 7:i32 length) throws (1:error.InvalidOperation exc),
+	MessageListPart getMessages( 1:i64 topicId , 2:i64 groupId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
 	
-	i64 like(1:i64 messageId ) throws (1:error.InvalidOperation exc),
-	i64 dislike(1:i64 messageId ) throws (1:error.InvalidOperation exc),
+		
+	UserOpinion likeOrDislikeMessage(1:i64 messageId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
+	UserOpinion likeOrDislikeTopic(1:i64 topicId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
+	
 	i64 markReadMessage(1:i64 messageId ) throws (1:error.InvalidOperation exc),
 	i64 markReadTopic(1:i64 topicId ) throws (1:error.InvalidOperation exc),
 	i64 moveTopicToArchive(1:i64 topicId ) throws (1:error.InvalidOperation exc),
 	i64 restoreTopicFromArchive(1:i64 topicId) throws (1:error.InvalidOperation exc),
 	i64 markTopicUnintrested(1:i64 topicId, 2:bool interested) throws (1:error.InvalidOperation exc),
 	i64 makeMessageLinked(1:i64 message1Id, 2:i64 message2Id ) throws (1:error.InvalidOperation exc),
-	i64 likeTopic(1:i64 topicId ) throws (1:error.InvalidOperation exc),
-	i64 dislikeTopic(1:i64 topicId ) throws (1:error.InvalidOperation exc),
 	
 	
 }

@@ -48,6 +48,7 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
   private static final org.apache.thrift.protocol.TField COMMUNITY_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("communityId", org.apache.thrift.protocol.TType.I64, (short)11);
   private static final org.apache.thrift.protocol.TField USERT_TOPIC_FIELD_DESC = new org.apache.thrift.protocol.TField("usertTopic", org.apache.thrift.protocol.TType.STRUCT, (short)12);
   private static final org.apache.thrift.protocol.TField USER_INFO_FIELD_DESC = new org.apache.thrift.protocol.TField("userInfo", org.apache.thrift.protocol.TType.STRUCT, (short)13);
+  private static final org.apache.thrift.protocol.TField CHILD_UNREAD_MSGS_FIELD_DESC = new org.apache.thrift.protocol.TField("childUnreadMsgs", org.apache.thrift.protocol.TType.I32, (short)15);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -68,6 +69,7 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
   public long communityId; // optional
   public UserTopic usertTopic; // required
   public com.vmesteonline.be.ShortUserInfo userInfo; // required
+  public int childUnreadMsgs; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -83,7 +85,8 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     RUBRIC_ID((short)10, "rubricId"),
     COMMUNITY_ID((short)11, "communityId"),
     USERT_TOPIC((short)12, "usertTopic"),
-    USER_INFO((short)13, "userInfo");
+    USER_INFO((short)13, "userInfo"),
+    CHILD_UNREAD_MSGS((short)15, "childUnreadMsgs");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -124,6 +127,8 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
           return USERT_TOPIC;
         case 13: // USER_INFO
           return USER_INFO;
+        case 15: // CHILD_UNREAD_MSGS
+          return CHILD_UNREAD_MSGS;
         default:
           return null;
       }
@@ -173,8 +178,9 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
   private static final int __UNLIKESNUM_ISSET_ID = 6;
   private static final int __RUBRICID_ISSET_ID = 7;
   private static final int __COMMUNITYID_ISSET_ID = 8;
+  private static final int __CHILDUNREADMSGS_ISSET_ID = 9;
   private short __isset_bitfield = 0;
-  private _Fields optionals[] = {_Fields.RUBRIC_ID,_Fields.COMMUNITY_ID};
+  private _Fields optionals[] = {_Fields.RUBRIC_ID,_Fields.COMMUNITY_ID,_Fields.CHILD_UNREAD_MSGS};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -204,6 +210,8 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, UserTopic.class)));
     tmpMap.put(_Fields.USER_INFO, new org.apache.thrift.meta_data.FieldMetaData("userInfo", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.vmesteonline.be.ShortUserInfo.class)));
+    tmpMap.put(_Fields.CHILD_UNREAD_MSGS, new org.apache.thrift.meta_data.FieldMetaData("childUnreadMsgs", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Topic.class, metaDataMap);
   }
@@ -271,6 +279,7 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     if (other.isSetUserInfo()) {
       this.userInfo = new com.vmesteonline.be.ShortUserInfo(other.userInfo);
     }
+    this.childUnreadMsgs = other.childUnreadMsgs;
   }
 
   public Topic deepCopy() {
@@ -301,6 +310,8 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     this.communityId = 0;
     this.usertTopic = null;
     this.userInfo = null;
+    setChildUnreadMsgsIsSet(false);
+    this.childUnreadMsgs = 0;
   }
 
   public long getId() {
@@ -606,6 +617,29 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     }
   }
 
+  public int getChildUnreadMsgs() {
+    return this.childUnreadMsgs;
+  }
+
+  public Topic setChildUnreadMsgs(int childUnreadMsgs) {
+    this.childUnreadMsgs = childUnreadMsgs;
+    setChildUnreadMsgsIsSet(true);
+    return this;
+  }
+
+  public void unsetChildUnreadMsgs() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CHILDUNREADMSGS_ISSET_ID);
+  }
+
+  /** Returns true if field childUnreadMsgs is set (has been assigned a value) and false otherwise */
+  public boolean isSetChildUnreadMsgs() {
+    return EncodingUtils.testBit(__isset_bitfield, __CHILDUNREADMSGS_ISSET_ID);
+  }
+
+  public void setChildUnreadMsgsIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CHILDUNREADMSGS_ISSET_ID, value);
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case ID:
@@ -712,6 +746,14 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       }
       break;
 
+    case CHILD_UNREAD_MSGS:
+      if (value == null) {
+        unsetChildUnreadMsgs();
+      } else {
+        setChildUnreadMsgs((Integer)value);
+      }
+      break;
+
     }
   }
 
@@ -756,6 +798,9 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
     case USER_INFO:
       return getUserInfo();
 
+    case CHILD_UNREAD_MSGS:
+      return Integer.valueOf(getChildUnreadMsgs());
+
     }
     throw new IllegalStateException();
   }
@@ -793,6 +838,8 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       return isSetUsertTopic();
     case USER_INFO:
       return isSetUserInfo();
+    case CHILD_UNREAD_MSGS:
+      return isSetChildUnreadMsgs();
     }
     throw new IllegalStateException();
   }
@@ -924,6 +971,15 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       if (!(this_present_userInfo && that_present_userInfo))
         return false;
       if (!this.userInfo.equals(that.userInfo))
+        return false;
+    }
+
+    boolean this_present_childUnreadMsgs = true && this.isSetChildUnreadMsgs();
+    boolean that_present_childUnreadMsgs = true && that.isSetChildUnreadMsgs();
+    if (this_present_childUnreadMsgs || that_present_childUnreadMsgs) {
+      if (!(this_present_childUnreadMsgs && that_present_childUnreadMsgs))
+        return false;
+      if (this.childUnreadMsgs != that.childUnreadMsgs)
         return false;
     }
 
@@ -1073,6 +1129,16 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetChildUnreadMsgs()).compareTo(other.isSetChildUnreadMsgs());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetChildUnreadMsgs()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.childUnreadMsgs, other.childUnreadMsgs);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -1164,6 +1230,12 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       sb.append(this.userInfo);
     }
     first = false;
+    if (isSetChildUnreadMsgs()) {
+      if (!first) sb.append(", ");
+      sb.append("childUnreadMsgs:");
+      sb.append(this.childUnreadMsgs);
+      first = false;
+    }
     sb.append(")");
     return sb.toString();
   }
@@ -1325,6 +1397,14 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 15: // CHILD_UNREAD_MSGS
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.childUnreadMsgs = iprot.readI32();
+              struct.setChildUnreadMsgsIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -1391,6 +1471,11 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
         struct.userInfo.write(oprot);
         oprot.writeFieldEnd();
       }
+      if (struct.isSetChildUnreadMsgs()) {
+        oprot.writeFieldBegin(CHILD_UNREAD_MSGS_FIELD_DESC);
+        oprot.writeI32(struct.childUnreadMsgs);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -1448,7 +1533,10 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       if (struct.isSetUserInfo()) {
         optionals.set(12);
       }
-      oprot.writeBitSet(optionals, 13);
+      if (struct.isSetChildUnreadMsgs()) {
+        optionals.set(13);
+      }
+      oprot.writeBitSet(optionals, 14);
       if (struct.isSetId()) {
         oprot.writeI64(struct.id);
       }
@@ -1488,12 +1576,15 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
       if (struct.isSetUserInfo()) {
         struct.userInfo.write(oprot);
       }
+      if (struct.isSetChildUnreadMsgs()) {
+        oprot.writeI32(struct.childUnreadMsgs);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Topic struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(13);
+      BitSet incoming = iprot.readBitSet(14);
       if (incoming.get(0)) {
         struct.id = iprot.readI64();
         struct.setIdIsSet(true);
@@ -1548,6 +1639,10 @@ public class Topic implements org.apache.thrift.TBase<Topic, Topic._Fields>, jav
         struct.userInfo = new com.vmesteonline.be.ShortUserInfo();
         struct.userInfo.read(iprot);
         struct.setUserInfoIsSet(true);
+      }
+      if (incoming.get(13)) {
+        struct.childUnreadMsgs = iprot.readI32();
+        struct.setChildUnreadMsgsIsSet(true);
       }
     }
   }

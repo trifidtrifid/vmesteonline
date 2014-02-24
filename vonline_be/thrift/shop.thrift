@@ -46,6 +46,10 @@ struct ProductDetails {
 	5:map<string,string> optionsMap,
 	6:list<i64> topicSet,
 	7:i64 producerId,
+	9:i32 minClientPackGramms,
+	10:i32 minProducerPackGramms,
+	11:bool prepackRequired,
+	12:set<string> knownNames,
 }
 
 struct Product {
@@ -88,6 +92,8 @@ struct Order {
 	3:OrderStatus status,
 	4:PriceType priceType,
 	5:double totalCost,
+	6:i64 userId,
+	7:string userName
 } 
 
 struct FullOrder {
@@ -112,7 +118,7 @@ enum ExchangeFieldType {
 	
 	PRODUCT_ID=300, PRODUCT_NAME,	PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
 	PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
-	PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID,
+	PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID, PRODUCT_MIN_CLN_PACK_G, PRODUCT_MIN_PROD_PACK_G, PRODUCT_PREPACK_REQ, PRODUCT_KNOWN_NAMES
 	
 	DATE_TYPE=400, DATE_DATE,
 	
@@ -121,10 +127,15 @@ enum ExchangeFieldType {
 	ORDER_COMMENT, ORDER_USER_ID, ORDER_USER_NAME
 	
 	ORDER_LINE_ID = 1100, ORDER_LINE_QUANTITY, ORDER_LINE_OPRDER_ID, ORDER_LINE_PRODUCT_ID, ORDER_LINE_PRODUCT_NAME, ORDER_LINE_PRODUCER_ID, ORDER_LINE_PRODUCER_NAME ORDER_LINE_PRICE,
+	
+	//product report
+	TOTAL_PROUCT_ID=2000, TOTAL_PRODUCT_NAME, TOTAL_PRODUCER_ID, TOTAL_PRODUCER_NAME, TOTAL_PRODUCT_MIN_PACK, TOTAL_ORDERED, TOTAL_MIN_QUANTITY, TOTAL_REST, TOTAL_PREPACK_REQUIRED
+	//pack variants report by delivery type
+	TOTAL_PACK_SIZE,TOTAL_PACK_QUANTYTY, TOTAL_DELIVERY_TYPE  
 } 
 
 enum ImExType { IMPORT_SHOP = 10, IMPORT_PRODUCERS, IMPORT_CATEGORIES, IMPORT_PRODUCTS, 
-	EXPORT_ORDERS=20, ORDER_LINES }
+	EXPORT_ORDERS=20, EXPORT_ORDER_LINES, EXPORT_TOTAL_PRODUCT, EXPORT_TOTAL_PACK  }
 
 struct ImportElement {
 	1:ImExType type,
@@ -183,13 +194,15 @@ service ShopService {
 	void updateCategory( 1:ProductCategory newCategoryInfo) throws (1:error.InvalidOperation exc),
 	void updateProducer( 1:Producer newInfoWithOldId ) throws (1:error.InvalidOperation exc),
 	
-	//IMPORT-EXPORT
+	//IMPORT-EXPORT BACK OFFICE
 
 	DataSet importData(1:DataSet data) throws (1:error.InvalidOperation exc),
-	DataSet exportOrders( 1:i32 dateFrom, 2:i32 dateTo, 3:OrderStatus status ) throws (1:error.InvalidOperation exc),
-	DataSet exportOrderLines( 1:i32 dateFrom, 2:i32 dateTo, 3:OrderStatus status ) throws (1:error.InvalidOperation exc),
-	DataSet exportProductsOrdered( 1:i32 dateFrom, 2:i32 dateTo, 3:i64 producerId, 4:i64 productCategoryId ) 
-		throws (1:error.InvalidOperation exc),
+	DataSet getTotalOrdersReport( 1:i32 date, 2:DeliveryType deliveryType, 
+		3:list<ExchangeFieldType> orderFields, 4:list<ExchangeFieldType> orderLineFIelds) throws (1:error.InvalidOperation exc),
+	DataSet getTotalProductsReport( 1:i32 date, 2:DeliveryType deliveryType,
+		3:list<ExchangeFieldType> productFields ) throws (1:error.InvalidOperation exc),
+	DataSet getTotalPackReport( 1:i32 date, 2:DeliveryType deliveryType,
+		3:list<ExchangeFieldType> packFields ) throws (1:error.InvalidOperation exc),
 
 
 	//frontend functions================================================================================================
@@ -224,18 +237,18 @@ service ShopService {
 	/**
 	* Method returns id of new order and set is as a current
 	**/
-	i64 createOrder(1:i32 date, 2:PriceType priceType) throws (1:error.InvalidOperation exc),
+	i64 createOrder(1:i32 date, 2:string comment, 3:PriceType priceType) throws (1:error.InvalidOperation exc),
 	i64 cancelOrder() throws (1:error.InvalidOperation exc),
 	i64 confirmOrder() throws (1:error.InvalidOperation exc),
 	/**
 	* Method adds all orderLines from order with id set in parameter to current order. 
 	* All Lines with the same product ID would summarized! 
 	**/
-	i64 appendOrder(1:i64 oldOrderId) throws (1:error.InvalidOperation exc),
+	OrderDetails appendOrder(1:i64 oldOrderId) throws (1:error.InvalidOperation exc),
 	/**
 	* Method adds to current order Order lines for products that are not included to current order
 	**/
-	i64 mergeOrder(1:i64 oldOrderId) throws (1:error.InvalidOperation exc),
+	OrderDetails mergeOrder(1:i64 oldOrderId) throws (1:error.InvalidOperation exc),
 	
 	/**
 	* Methods adds or replaces line to the current order that set by createOrder, or getOrderDetails method
@@ -249,5 +262,4 @@ service ShopService {
 	OrderDetails setOrderDeliveryType( 1:DeliveryType deliveryType ) throws (1:error.InvalidOperation exc),
 	bool setOrderPaymentType( 1:PaymentType paymentType ) throws (1:error.InvalidOperation exc),
 	OrderDetails setOrderDeliveryAddress( 1:bedata.PostalAddress deliveryAddress ) throws (1:error.InvalidOperation exc),
-	
 }

@@ -3,15 +3,21 @@ package com.vmesteonline.be;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -35,14 +41,18 @@ import com.vmesteonline.be.jdo2.shop.VoProductCategory;
 import com.vmesteonline.be.jdo2.shop.VoShop;
 import com.vmesteonline.be.jdo2.shop.exchange.CategoryDesrciption;
 import com.vmesteonline.be.jdo2.shop.exchange.FieldTranslator;
+import com.vmesteonline.be.jdo2.shop.exchange.OrderDescription;
+import com.vmesteonline.be.jdo2.shop.exchange.OrderLineDescription;
 import com.vmesteonline.be.jdo2.shop.exchange.ProducerDescription;
 import com.vmesteonline.be.jdo2.shop.exchange.ProductDescription;
+import com.vmesteonline.be.jdo2.shop.exchange.ProductOrderDescription;
 import com.vmesteonline.be.jdo2.shop.exchange.ShopDescription;
 import com.vmesteonline.be.shop.DataSet;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.ExchangeFieldType;
 import com.vmesteonline.be.shop.FullProductInfo;
+import com.vmesteonline.be.shop.ImExType;
 import com.vmesteonline.be.shop.ImportElement;
 import com.vmesteonline.be.shop.Order;
 import com.vmesteonline.be.shop.OrderDetails;
@@ -59,6 +69,7 @@ import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.shop.ShopService.Iface;
 import com.vmesteonline.be.utils.CSVHelper;
+import com.vmesteonline.be.utils.Pair;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable {
@@ -199,11 +210,16 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			optionsMap2.put("цвет", "черный");
 			optionsMap2.put("вкус", "мерзкий");
 
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D), new ProductDetails(categories1,
-					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId)));
+			Product p1 = new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D);
+			ProductDetails p1d = new ProductDetails(categories1,
+					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId, 1000, 5000, false, new HashSet<String>());
+			
+			productsList.add(new FullProductInfo(p1, p1d));
 
-			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D), new ProductDetails(categories2,
-					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id)));
+			Product p2 = new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D);
+			ProductDetails p2d = new ProductDetails(categories2,
+					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id, 2000, 15000, true, new HashSet<String>());
+			productsList.add(new FullProductInfo(p2, p2d));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
 
@@ -220,9 +236,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			dates.put(now + 10 * day, DateType.NEXT_ORDER);
 			si.setDates(dates);
 
-			si.createOrder(now + 1000, PriceType.RETAIL);
+			si.createOrder(now + 1000, "aaaaaaaaa", PriceType.RETAIL);
 			long canceledOID = si.cancelOrder();
-			long lastOrder = si.createOrder(now + 6 * day, PriceType.RETAIL);
+			long lastOrder = si.createOrder(now + 6 * day, "bbbbbbbbbbbb", PriceType.RETAIL);
 
 			List<Order> orders = si.getOrders(now - 10 * day, now + 10 * day);
 			OrderLine newOrderLine = si.setOrderLine(upProductsIdl.get(0), 1.0D);
@@ -235,7 +251,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			orders = si.getOrders(now + 5 * day, now + 7 * day);
 			si.removeOrderLine(upProductsIdl.get(0));
 
-			si.createOrder(now + 10 * day, PriceType.INET);
+			si.createOrder(now + 10 * day, "ccccccccccccc", PriceType.INET);
 			// merge an order
 			si.mergeOrder(orders.get(0).getId());
 			si.setOrderLine(upProductsIdl.get(0), 2.0D);
@@ -725,7 +741,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 //======================================================================================================================
 	@Override
-	public long createOrder(int date, PriceType priceType) throws InvalidOperation {
+	public long createOrder(int date, String comment, PriceType priceType) throws InvalidOperation {
 		if (date < System.currentTimeMillis() / 1000L)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Order could not be created for the past");
 
@@ -746,7 +762,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				throw new InvalidOperation(VoError.ShopNotOrderDate, "The date is not avialable for order");
 
 			VoUser user = getCurrentUser(pm);
-			long id = new VoOrder(user, shop.getId(), date, priceType, pm).getId();
+			VoOrder voOrder = new VoOrder(user, shop.getId(), date, priceType, comment, pm);
+			
+			long id = voOrder.getId();
+			
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), id, pm);
 			return id;
 		} finally {
@@ -790,7 +809,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	 * order. All Lines with the same product ID would summarized!
 	 **/
 	@Override
-	public long appendOrder(long oldOrderId) throws InvalidOperation {
+	public OrderDetails appendOrder(long oldOrderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
@@ -823,7 +842,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				}
 				currentOrder.addCost(addCost);
 				pm.makePersistent(currentOrder);
-				return 0L;// addCost;
+				return voOrder.getOrderDetails();// addCost;
 			}
 			throw new InvalidOperation(VoError.GeneralError, "Order not found by ID:" + oldOrderId);
 		} catch (Exception e) {
@@ -839,7 +858,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	 * current order
 	 **/
 	@Override
-	public long mergeOrder(long oldOrderId) throws InvalidOperation {
+	public OrderDetails mergeOrder(long oldOrderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
@@ -857,7 +876,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					}
 				}
 				pm.makePersistent(currentOrder);
-				return 0;
+				return voOrder.getOrderDetails();
 			}
 			throw new InvalidOperation(VoError.GeneralError, "Order not found by ID:" + oldOrderId);
 		} catch (Exception e) {
@@ -1278,7 +1297,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 																						// was not set
 				fieldsMap.put(fieldsMap.size(), "id");
 			}
-			CSVHelper.writeCSVData(baos, fieldsMap, infoRows);
+			CSVHelper.writeCSVData(baos, fieldsMap, infoRows, null);
 			baos.close();
 			ie.setFileData(baos.toByteArray());
 
@@ -1394,24 +1413,310 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	// ======================================================================================================================
 
-	@Override
-	public DataSet exportOrders(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
-		List<Order> orders = getOrders(dateFrom, dateTo);
 		
-		return null;
-	}
+		@Override
+		public DataSet getTotalOrdersReport(int date, DeliveryType deliveryType, 
+				List<ExchangeFieldType> orderFields,
+				List<ExchangeFieldType> orderLineFIelds ) throws InvalidOperation {
+			DataSet ds = new DataSet();
+			ds.date = date;
+			ds.id = 0;
+			ds.name = "TotalOrdersReport";
+			PersistenceManager pm = PMF.getPm();
+			try {
+				VoShop shop = getCurrentShop(pm);
+				// import get all of orders for the shop by date
+				Query q = pm.newQuery( VoOrder.class );
+				q.setFilter("shopId == "+shop.getId() + " && date == " + date + 
+						(deliveryType == DeliveryType.UNKNOWN ? "" : " && delivery == '"+deliveryType.toString()+"'"));
+				
+				List<VoOrder> olist = (List<VoOrder>)q.execute();
+								
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				OrderLineDescription odInstance = new OrderLineDescription();
+				OrderDescription oInstance = new OrderDescription();
+				List<OrderDescription> odl = new ArrayList<OrderDescription>();
+				List<List<String>> fieldsData = new ArrayList<List<String>>();
+				
+				for (VoOrder voOrder : olist) {
+					OrderDescription od = new OrderDescription();
+					od.orderId = voOrder.getId();
+					od.date = date;
+					od.status = voOrder.getStatus();
+					od.priceType = voOrder.getPriceType();
+					od.tatalCost = voOrder.getTotalCost();
+					od.createdDate = voOrder.getCreatedAt();
+					od.deliveryType = voOrder.getDelivery();
+					od.deliveryCost = voOrder.getDeliveryCost();
+					od.deliveryAddress = voOrder.getDeliveryTo().getAddressText(pm);
+					od.paymentType = voOrder.getPaymentType();
+					od.paymentStatus = voOrder.getPaymentStatus();
+					od.comment = voOrder.getComment();
+					VoUser user = voOrder.getUser();
+					od.userId = user.getId(); 
+					od.userName = user.getName() + " " + user.getLastName();
+					
+					ArrayList<OrderLineDescription> oldl = new ArrayList<OrderLineDescription>();
+					for (VoOrderLine vol : voOrder.getOdrerLines().values()) {
+						OrderLineDescription old = new OrderLineDescription();
+						old.lineId = vol.getId().getId();
+						old.quantity = vol.getQuantity();
+						old.orderId = voOrder.getId();
+						//TODO optimize count of requests to DB
+						old.productId = vol.getProduct().getId();
+						old.productName = vol.getProduct().getName();
+						old.producerId = vol.getProduct().getProducer().getId();
+						old.producerName = vol.getProduct().getProducer().getName();
+						old.price = vol.getPrice();
+						oldl.add(old);
+					}
+					ByteArrayOutputStream lbaos = new ByteArrayOutputStream();
+					ImportElement ordersLinesIE = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_"+od.orderId+"_lines.csv", 
+							orderLineFIelds);
+					List<List<String>> lfieldsData = new ArrayList<List<String>>();
+					
+					CSVHelper.writeCSVData(lbaos, CSVHelper.getFieldsMap(odInstance, ExchangeFieldType.ORDER_LINE_ID, orderLineFIelds),
+							oldl, lfieldsData); 
+					ordersLinesIE.setFieldsData(lfieldsData);
+					lbaos.close();
+					byte[] fileData = lbaos.toByteArray();
+					ordersLinesIE.setFileData(fileData);
+					
+					baos.write(fileData);
+					fieldsData.addAll(lfieldsData);
+					
+					odl.add(od);
+					ds.addToData( ordersLinesIE );
+				}
+				ImportElement ordersIE = new ImportElement(ImExType.EXPORT_ORDERS, "orders.csv", orderFields);
+				
+				
+				CSVHelper.writeCSVData(baos, CSVHelper.getFieldsMap(oInstance, ExchangeFieldType.ORDER_ID, orderFields),
+						odl, fieldsData); 
+				ordersIE.setFieldsData(fieldsData);
+				baos.close();
+				byte[] fileData = baos.toByteArray();
+				ordersIE.setFileData(fileData);
+				
+				ds.addToData( ordersIE );
 
-	// ======================================================================================================================
-	@Override
-	public DataSet exportOrderLines(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
-		// TODO Auto-generated method stub
-		return null;
-	}
+				return ds;
+				
+			} catch( Exception e) {
+				throw new InvalidOperation(VoError.GeneralError, "Failed to export data. "+e.getMessage());
 
-	// ======================================================================================================================
-	@Override
-	public DataSet exportProductsOrdered(int dateFrom, int dateTo, long producerId, long productCategoryId) throws InvalidOperation {
-		// TODO Auto-generated method stub
-		return null;
-	}
+			} finally {
+				pm.close();
+			}
+		}
+		// ======================================================================================================================
+
+		@Override
+		public DataSet getTotalProductsReport(int date, DeliveryType deliveryType, List<ExchangeFieldType> productFields) throws InvalidOperation {
+			
+			DataSet ds = new DataSet();
+			ds.date = date;
+			ds.id = 0;
+			ds.name = "TotalProductsReport";
+			
+			PersistenceManager pm = PMF.getPm();
+			try {
+				VoShop shop = getCurrentShop(pm);
+				// import get all of orders for the shop by date
+				Query q = pm.newQuery( VoOrder.class );
+				q.setFilter("shopId == "+shop.getId() + " && date == " + date + 
+						(deliveryType == DeliveryType.UNKNOWN ? "" : " && delivery == '"+deliveryType.toString()+"'"));
+				
+				List<VoOrder> olist = (List<VoOrder>)q.execute();
+				
+				//Products combined by producer 				
+				SortedMap< Long, SortedMap<Long, ProductOrderDescription>> prodDescMap = new TreeMap<Long, SortedMap<Long, ProductOrderDescription>>();
+				
+				for (VoOrder voOrder : olist) {
+					
+					for (VoOrderLine vol : voOrder.getOdrerLines().values()) {
+					
+						//TODO optimize DB requests count
+						VoProduct product = vol.getProduct();
+						VoProducer producer = product.getProducer();
+
+						ProductOrderDescription pod;
+
+						if( !prodDescMap.containsKey( producer.getId()) ){
+							 prodDescMap.put( producer.getId(), new TreeMap<Long, ProductOrderDescription>());
+						}
+						
+						if( prodDescMap.get( producer.getId()).containsKey(product.getId())){
+								
+							pod = prodDescMap.get(producer.getId()).get(product.getId());
+							pod.orderedQuantity += vol.getQuantity();
+							pod.packSize = product.getMinProducerPackGramms();
+							pod.packQuantity = 0 != product.getMinProducerPackGramms() ? (int)(pod.orderedQuantity * 1000 / product.getMinProducerPackGramms()) :
+								0;
+							continue;
+						} 
+						 
+						prodDescMap.get(producer.getId()).put(product.getId(), pod = new ProductOrderDescription());
+						pod.producerId = producer.getId();
+						pod.producerName = producer.getName();
+						pod.productId = product.getId();
+						pod.productName = product.getName();
+						pod.minProducerPackSize = product.getMinProducerPackGramms();
+						pod.orderedQuantity = vol.getQuantity();
+						pod.prepackRequired = product.isPrepackRequired();
+						pod.packSize = product.getMinProducerPackGramms();
+						pod.packQuantity = 0 != product.getMinProducerPackGramms() ? 1 + (int)(pod.orderedQuantity * 1000 / product.getMinProducerPackGramms()) :
+							0;
+						pod.deliveryType = deliveryType;
+					}
+				}
+				
+				ProductOrderDescription pod = new ProductOrderDescription();
+				
+				ImportElement fpIE = new ImportElement(ImExType.EXPORT_TOTAL_PRODUCT, "products.csv", productFields);
+				ByteArrayOutputStream fbaos = new ByteArrayOutputStream();
+				List<List<String>> ffl = new ArrayList<List<String>>();
+				
+				for( Entry<Long,SortedMap<Long, ProductOrderDescription>> podme: prodDescMap.entrySet()){
+					
+					SortedMap<Long, ProductOrderDescription> podm = podme.getValue();
+					
+					ImportElement pIE = new ImportElement(ImExType.EXPORT_TOTAL_PRODUCT, "product_"+podme.getKey()+".csv", productFields);
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					List<List<String>> fl = new ArrayList<List<String>>();
+					List<ProductOrderDescription> podl = new ArrayList<ProductOrderDescription>();
+					podl.addAll(podm.values());
+					
+					CSVHelper.writeCSVData(baos, CSVHelper.getFieldsMap(pod, ExchangeFieldType.TOTAL_PROUCT_ID, productFields), podl, fl);
+					baos.close();
+					fbaos.write( baos.toByteArray());
+					ffl.addAll(fl);
+					
+					pIE.setFieldsData(fl);
+					pIE.setFileData( baos.toByteArray() );
+					
+					ds.addToData(  pIE );
+				}
+				fbaos.close();
+				fpIE.setFieldsData(ffl);
+				fpIE.setFileData( fbaos.toByteArray() );
+				
+				ds.addToData(  fpIE );
+				
+				return ds;
+				
+			} catch( Exception e) {
+				throw new InvalidOperation(VoError.GeneralError, "Failed to export data. "+e.getMessage());
+
+			} finally {
+				pm.close();
+			}
+		}
+		// ======================================================================================================================
+
+		@Override
+		public DataSet getTotalPackReport(int date, DeliveryType deliveryType, List<ExchangeFieldType> packFields) throws InvalidOperation {
+			
+			DataSet ds = new DataSet();
+			ds.date = date;
+			ds.id = 0;
+			ds.name = "TotalProductsPackReport";
+			
+			PersistenceManager pm = PMF.getPm();
+			try {
+				VoShop shop = getCurrentShop(pm);
+				// import get all of orders for the shop by date
+				Query q = pm.newQuery( VoOrder.class );
+				q.setFilter("shopId == "+shop.getId() + " && date == " + date + 
+						(deliveryType == DeliveryType.UNKNOWN ? "" : " && delivery == '"+deliveryType.toString()+"'"));
+				
+				List<VoOrder> olist = (List<VoOrder>)q.execute();
+				
+				//Products combined by pack size required				
+				SortedMap<Long, SortedMap<Double, ProductOrderDescription> > prodDescMap = new TreeMap<Long, SortedMap<Double, ProductOrderDescription> >();
+				
+				for (VoOrder voOrder : olist) {
+					
+					for (VoOrderLine vol : voOrder.getOdrerLines().values()) {
+					
+						//TODO optimize DB requests count
+						VoProduct product = vol.getProduct();
+						VoProducer producer = product.getProducer();
+
+						ProductOrderDescription pod;
+						double qKey;
+						if( product.isPrepackRequired() ){
+							qKey = vol.getQuantity();
+						} else {
+							continue; //skip product that does not require prepacking
+						}
+						if( !prodDescMap.containsKey( product.getId()) ) {
+							prodDescMap.put(product.getId(), new TreeMap<Double, ProductOrderDescription>());
+						}
+							
+						if( prodDescMap.get(product.getId()).containsKey( qKey) ){
+								
+								pod = prodDescMap.get(product.getId()).get(qKey);
+								pod.orderedQuantity += vol.getQuantity();
+								pod.packQuantity++;
+								continue;
+						}
+						prodDescMap.get(product.getId()).put(qKey, pod = new ProductOrderDescription());
+						pod.producerId = producer.getId();
+						pod.producerName = producer.getName();
+						pod.productId = product.getId();
+						pod.productName = product.getName();
+						pod.minProducerPackSize = product.getMinProducerPackGramms();
+						pod.orderedQuantity = vol.getQuantity();
+						pod.prepackRequired = product.isPrepackRequired();
+						pod.packSize = vol.getQuantity();
+						pod.packQuantity = 1;
+						pod.deliveryType = deliveryType;
+					}
+				}
+				
+				ProductOrderDescription pod = new ProductOrderDescription();
+				
+				ImportElement fpIE = new ImportElement(ImExType.EXPORT_TOTAL_PRODUCT, "products.csv", packFields);
+				ByteArrayOutputStream fbaos = new ByteArrayOutputStream();
+				List<List<String>> ffl = new ArrayList<List<String>>();
+				
+				for( Entry<Long, SortedMap<Double, ProductOrderDescription> > podme: prodDescMap.entrySet()){
+					
+					SortedMap<Double, ProductOrderDescription> podm = podme.getValue();
+					
+					ImportElement pIE = new ImportElement(ImExType.EXPORT_TOTAL_PRODUCT, "product_"+podme.getKey()+".csv", packFields);
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					List<List<String>> fl = new ArrayList<List<String>>();
+					List<ProductOrderDescription> podl = new ArrayList<ProductOrderDescription>();
+					podl.addAll(podm.values());
+					
+					CSVHelper.writeCSVData(baos, CSVHelper.getFieldsMap(pod, ExchangeFieldType.TOTAL_PROUCT_ID, packFields), podl, fl);
+					baos.close();
+					fbaos.write( baos.toByteArray());
+					ffl.addAll(fl);
+					
+					pIE.setFieldsData(fl);
+					pIE.setFileData( baos.toByteArray() );
+					
+					ds.addToData(  pIE );
+				}
+				fbaos.close();
+				fpIE.setFieldsData(ffl);
+				fpIE.setFileData( fbaos.toByteArray() );
+				
+				ds.addToData(  fpIE );
+				
+				return ds;
+				
+			} catch( Exception e) {
+				throw new InvalidOperation(VoError.GeneralError, "Failed to export data. "+e.getMessage());
+
+			} finally {
+				pm.close();
+			}
+		}
+
+		// ======================================================================================================================
+	
 }

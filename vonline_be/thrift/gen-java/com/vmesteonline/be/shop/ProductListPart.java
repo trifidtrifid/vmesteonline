@@ -418,14 +418,14 @@ public class ProductListPart implements org.apache.thrift.TBase<ProductListPart,
           case 1: // PRODUCTS
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list104 = iprot.readListBegin();
-                struct.products = new ArrayList<Product>(_list104.size);
-                for (int _i105 = 0; _i105 < _list104.size; ++_i105)
+                org.apache.thrift.protocol.TList _list112 = iprot.readListBegin();
+                struct.products = new ArrayList<Product>(_list112.size);
+                for (int _i113 = 0; _i113 < _list112.size; ++_i113)
                 {
-                  Product _elem106;
-                  _elem106 = new Product();
-                  _elem106.read(iprot);
-                  struct.products.add(_elem106);
+                  Product _elem114;
+                  _elem114 = new Product();
+                  _elem114.read(iprot);
+                  struct.products.add(_elem114);
                 }
                 iprot.readListEnd();
               }
@@ -461,9 +461,9 @@ public class ProductListPart implements org.apache.thrift.TBase<ProductListPart,
         oprot.writeFieldBegin(PRODUCTS_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.products.size()));
-          for (Product _iter107 : struct.products)
+          for (Product _iter115 : struct.products)
           {
-            _iter107.write(oprot);
+            _iter115.write(oprot);
           }
           oprot.writeListEnd();
         }
@@ -500,9 +500,9 @@ public class ProductListPart implements org.apache.thrift.TBase<ProductListPart,
       if (struct.isSetProducts()) {
         {
           oprot.writeI32(struct.products.size());
-          for (Product _iter108 : struct.products)
+          for (Product _iter116 : struct.products)
           {
-            _iter108.write(oprot);
+            _iter116.write(oprot);
           }
         }
       }
@@ -517,14 +517,14 @@ public class ProductListPart implements org.apache.thrift.TBase<ProductListPart,
       BitSet incoming = iprot.readBitSet(2);
       if (incoming.get(0)) {
         {
-          org.apache.thrift.protocol.TList _list109 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.products = new ArrayList<Product>(_list109.size);
-          for (int _i110 = 0; _i110 < _list109.size; ++_i110)
+          org.apache.thrift.protocol.TList _list117 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.products = new ArrayList<Product>(_list117.size);
+          for (int _i118 = 0; _i118 < _list117.size; ++_i118)
           {
-            Product _elem111;
-            _elem111 = new Product();
-            _elem111.read(iprot);
-            struct.products.add(_elem111);
+            Product _elem119;
+            _elem119 = new Product();
+            _elem119.read(iprot);
+            struct.products.add(_elem119);
           }
         }
         struct.setProductsIsSet(true);
