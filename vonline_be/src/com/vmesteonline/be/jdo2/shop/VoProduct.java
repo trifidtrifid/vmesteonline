@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -118,6 +120,15 @@ public class VoProduct {
 			}
 			VoProducer producer = pm.getObjectById(VoProducer.class, details.getProducerId());
 			vp.producer = producer;
+			
+			vp.minClientPackGramms = details.minClientPackGramms;
+			vp.minProducerPackGramms = details.minProducerPackGramms;
+			vp.prepackRequired =details.prepackRequired;
+			vp.knownNames = new HashSet<String>();
+			if( details.knownNames != null ) for (String name : details.knownNames ){
+				vp.knownNames.add(name);
+			}
+			
 			producer.getProducts().add(vp);
 			pm.makePersistent(vp);
 			pm.makePersistent(producer);
@@ -160,6 +171,7 @@ public class VoProduct {
 
 		this.categories = new ArrayList<VoProductCategory>();
 		this.shops = new ArrayList<VoShop>();
+		this.knownNames = new HashSet<String>();
 
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
@@ -280,6 +292,54 @@ public class VoProduct {
 	@Persistent(mappedBy = "products")
 	@Unowned
 	private List<VoShop> shops;
+	
+	@Persistent
+	@Unindexed
+	private long minClientPackGramms;
+	
+	@Persistent
+	@Unindexed
+	private long minProducerPackGramms;
+	
+	@Persistent
+	private boolean prepackRequired;
+	
+	
+	@Persistent
+	private Set<String> knownNames;
+
+	
+	public long getMinClientPackGramms() {
+		return minClientPackGramms;
+	}
+
+	public void setMinClientPackGramms(long minClientPackGramms) {
+		this.minClientPackGramms = minClientPackGramms;
+	}
+
+	public long getMinProducerPackGramms() {
+		return minProducerPackGramms;
+	}
+
+	public void setMinProducerPackGramms(long minProducerPackGramms) {
+		this.minProducerPackGramms = minProducerPackGramms;
+	}
+
+	public boolean isPrepackRequired() {
+		return prepackRequired;
+	}
+
+	public void setPrepackRequired(boolean prepackRequired) {
+		this.prepackRequired = prepackRequired;
+	}
+
+	public List<VoShop> getShops() {
+		return shops;
+	}
+
+	public Set<String> getKnownNames() {
+		return knownNames;
+	}
 
 	public String getName() {
 		return name;

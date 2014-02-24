@@ -137,6 +137,8 @@ service MessageService {
 	* Загрузка части преставления дерева сообщений в виде дерева. parentID указывает на сообщение топика или на сообщение первого уровня
 	**/
 	MessageListPart getMessages( 1:i64 topicId , 2:i64 groupId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
+
+	MessageListPart getFirstLevelMessages( 1:i64 topicId , 2:i64 groupId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
 	
 		
 	UserOpinion likeOrDislikeMessage(1:i64 messageId, 2:i32 opinion) throws (1:error.InvalidOperation exc),

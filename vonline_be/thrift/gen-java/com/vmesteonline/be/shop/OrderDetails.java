@@ -976,14 +976,14 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
           case 7: // ODRER_LINES
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
-                org.apache.thrift.protocol.TList _list96 = iprot.readListBegin();
-                struct.odrerLines = new ArrayList<OrderLine>(_list96.size);
-                for (int _i97 = 0; _i97 < _list96.size; ++_i97)
+                org.apache.thrift.protocol.TList _list104 = iprot.readListBegin();
+                struct.odrerLines = new ArrayList<OrderLine>(_list104.size);
+                for (int _i105 = 0; _i105 < _list104.size; ++_i105)
                 {
-                  OrderLine _elem98;
-                  _elem98 = new OrderLine();
-                  _elem98.read(iprot);
-                  struct.odrerLines.add(_elem98);
+                  OrderLine _elem106;
+                  _elem106 = new OrderLine();
+                  _elem106.read(iprot);
+                  struct.odrerLines.add(_elem106);
                 }
                 iprot.readListEnd();
               }
@@ -1045,9 +1045,9 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
         oprot.writeFieldBegin(ODRER_LINES_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.odrerLines.size()));
-          for (OrderLine _iter99 : struct.odrerLines)
+          for (OrderLine _iter107 : struct.odrerLines)
           {
-            _iter99.write(oprot);
+            _iter107.write(oprot);
           }
           oprot.writeListEnd();
         }
@@ -1122,9 +1122,9 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
       if (struct.isSetOdrerLines()) {
         {
           oprot.writeI32(struct.odrerLines.size());
-          for (OrderLine _iter100 : struct.odrerLines)
+          for (OrderLine _iter108 : struct.odrerLines)
           {
-            _iter100.write(oprot);
+            _iter108.write(oprot);
           }
         }
       }
@@ -1164,14 +1164,14 @@ public class OrderDetails implements org.apache.thrift.TBase<OrderDetails, Order
       }
       if (incoming.get(6)) {
         {
-          org.apache.thrift.protocol.TList _list101 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.odrerLines = new ArrayList<OrderLine>(_list101.size);
-          for (int _i102 = 0; _i102 < _list101.size; ++_i102)
+          org.apache.thrift.protocol.TList _list109 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+          struct.odrerLines = new ArrayList<OrderLine>(_list109.size);
+          for (int _i110 = 0; _i110 < _list109.size; ++_i110)
           {
-            OrderLine _elem103;
-            _elem103 = new OrderLine();
-            _elem103.read(iprot);
-            struct.odrerLines.add(_elem103);
+            OrderLine _elem111;
+            _elem111 = new OrderLine();
+            _elem111.read(iprot);
+            struct.odrerLines.add(_elem111);
           }
         }
         struct.setOdrerLinesIsSet(true);

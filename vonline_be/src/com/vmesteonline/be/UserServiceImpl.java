@@ -454,7 +454,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoUser currentUser = getCurrentUser(pm);
 			Set<PostalAddress> pas = new HashSet<PostalAddress>();
 			for (VoPostalAddress pa : currentUser.getAddresses()) {
-				pas.add(pa.getPostalAddress());
+				pas.add(pa.getPostalAddress(pm));
 			}
 			return pas;
 		} catch (Exception e) {
@@ -476,7 +476,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			if (null == address) {
 				return null;
 			}
-			return address.getPostalAddress();
+			return address.getPostalAddress(pm);
 		} finally {
 			pm.close();
 		}

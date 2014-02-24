@@ -42,6 +42,10 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
   private static final org.apache.thrift.protocol.TField OPTIONS_MAP_FIELD_DESC = new org.apache.thrift.protocol.TField("optionsMap", org.apache.thrift.protocol.TType.MAP, (short)5);
   private static final org.apache.thrift.protocol.TField TOPIC_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("topicSet", org.apache.thrift.protocol.TType.LIST, (short)6);
   private static final org.apache.thrift.protocol.TField PRODUCER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("producerId", org.apache.thrift.protocol.TType.I64, (short)7);
+  private static final org.apache.thrift.protocol.TField MIN_CLIENT_PACK_GRAMMS_FIELD_DESC = new org.apache.thrift.protocol.TField("minClientPackGramms", org.apache.thrift.protocol.TType.I32, (short)9);
+  private static final org.apache.thrift.protocol.TField MIN_PRODUCER_PACK_GRAMMS_FIELD_DESC = new org.apache.thrift.protocol.TField("minProducerPackGramms", org.apache.thrift.protocol.TType.I32, (short)10);
+  private static final org.apache.thrift.protocol.TField PREPACK_REQUIRED_FIELD_DESC = new org.apache.thrift.protocol.TField("prepackRequired", org.apache.thrift.protocol.TType.BOOL, (short)11);
+  private static final org.apache.thrift.protocol.TField KNOWN_NAMES_FIELD_DESC = new org.apache.thrift.protocol.TField("knownNames", org.apache.thrift.protocol.TType.SET, (short)12);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -56,6 +60,10 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
   public Map<String,String> optionsMap; // required
   public List<Long> topicSet; // required
   public long producerId; // required
+  public int minClientPackGramms; // required
+  public int minProducerPackGramms; // required
+  public boolean prepackRequired; // required
+  public Set<String> knownNames; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -65,7 +73,11 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
     PRICES_MAP((short)4, "pricesMap"),
     OPTIONS_MAP((short)5, "optionsMap"),
     TOPIC_SET((short)6, "topicSet"),
-    PRODUCER_ID((short)7, "producerId");
+    PRODUCER_ID((short)7, "producerId"),
+    MIN_CLIENT_PACK_GRAMMS((short)9, "minClientPackGramms"),
+    MIN_PRODUCER_PACK_GRAMMS((short)10, "minProducerPackGramms"),
+    PREPACK_REQUIRED((short)11, "prepackRequired"),
+    KNOWN_NAMES((short)12, "knownNames");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -94,6 +106,14 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
           return TOPIC_SET;
         case 7: // PRODUCER_ID
           return PRODUCER_ID;
+        case 9: // MIN_CLIENT_PACK_GRAMMS
+          return MIN_CLIENT_PACK_GRAMMS;
+        case 10: // MIN_PRODUCER_PACK_GRAMMS
+          return MIN_PRODUCER_PACK_GRAMMS;
+        case 11: // PREPACK_REQUIRED
+          return PREPACK_REQUIRED;
+        case 12: // KNOWN_NAMES
+          return KNOWN_NAMES;
         default:
           return null;
       }
@@ -135,6 +155,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
 
   // isset id assignments
   private static final int __PRODUCERID_ISSET_ID = 0;
+  private static final int __MINCLIENTPACKGRAMMS_ISSET_ID = 1;
+  private static final int __MINPRODUCERPACKGRAMMS_ISSET_ID = 2;
+  private static final int __PREPACKREQUIRED_ISSET_ID = 3;
   private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
@@ -160,6 +183,15 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64))));
     tmpMap.put(_Fields.PRODUCER_ID, new org.apache.thrift.meta_data.FieldMetaData("producerId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+    tmpMap.put(_Fields.MIN_CLIENT_PACK_GRAMMS, new org.apache.thrift.meta_data.FieldMetaData("minClientPackGramms", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.MIN_PRODUCER_PACK_GRAMMS, new org.apache.thrift.meta_data.FieldMetaData("minProducerPackGramms", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.PREPACK_REQUIRED, new org.apache.thrift.meta_data.FieldMetaData("prepackRequired", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+    tmpMap.put(_Fields.KNOWN_NAMES, new org.apache.thrift.meta_data.FieldMetaData("knownNames", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(ProductDetails.class, metaDataMap);
   }
@@ -174,7 +206,11 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
     Map<PriceType,Double> pricesMap,
     Map<String,String> optionsMap,
     List<Long> topicSet,
-    long producerId)
+    long producerId,
+    int minClientPackGramms,
+    int minProducerPackGramms,
+    boolean prepackRequired,
+    Set<String> knownNames)
   {
     this();
     this.categories = categories;
@@ -185,6 +221,13 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
     this.topicSet = topicSet;
     this.producerId = producerId;
     setProducerIdIsSet(true);
+    this.minClientPackGramms = minClientPackGramms;
+    setMinClientPackGrammsIsSet(true);
+    this.minProducerPackGramms = minProducerPackGramms;
+    setMinProducerPackGrammsIsSet(true);
+    this.prepackRequired = prepackRequired;
+    setPrepackRequiredIsSet(true);
+    this.knownNames = knownNames;
   }
 
   /**
@@ -227,6 +270,13 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       this.topicSet = __this__topicSet;
     }
     this.producerId = other.producerId;
+    this.minClientPackGramms = other.minClientPackGramms;
+    this.minProducerPackGramms = other.minProducerPackGramms;
+    this.prepackRequired = other.prepackRequired;
+    if (other.isSetKnownNames()) {
+      Set<String> __this__knownNames = new HashSet<String>(other.knownNames);
+      this.knownNames = __this__knownNames;
+    }
   }
 
   public ProductDetails deepCopy() {
@@ -243,6 +293,13 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
     this.topicSet = null;
     setProducerIdIsSet(false);
     this.producerId = 0;
+    setMinClientPackGrammsIsSet(false);
+    this.minClientPackGramms = 0;
+    setMinProducerPackGrammsIsSet(false);
+    this.minProducerPackGramms = 0;
+    setPrepackRequiredIsSet(false);
+    this.prepackRequired = false;
+    this.knownNames = null;
   }
 
   public int getCategoriesSize() {
@@ -479,6 +536,114 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PRODUCERID_ISSET_ID, value);
   }
 
+  public int getMinClientPackGramms() {
+    return this.minClientPackGramms;
+  }
+
+  public ProductDetails setMinClientPackGramms(int minClientPackGramms) {
+    this.minClientPackGramms = minClientPackGramms;
+    setMinClientPackGrammsIsSet(true);
+    return this;
+  }
+
+  public void unsetMinClientPackGramms() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __MINCLIENTPACKGRAMMS_ISSET_ID);
+  }
+
+  /** Returns true if field minClientPackGramms is set (has been assigned a value) and false otherwise */
+  public boolean isSetMinClientPackGramms() {
+    return EncodingUtils.testBit(__isset_bitfield, __MINCLIENTPACKGRAMMS_ISSET_ID);
+  }
+
+  public void setMinClientPackGrammsIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MINCLIENTPACKGRAMMS_ISSET_ID, value);
+  }
+
+  public int getMinProducerPackGramms() {
+    return this.minProducerPackGramms;
+  }
+
+  public ProductDetails setMinProducerPackGramms(int minProducerPackGramms) {
+    this.minProducerPackGramms = minProducerPackGramms;
+    setMinProducerPackGrammsIsSet(true);
+    return this;
+  }
+
+  public void unsetMinProducerPackGramms() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __MINPRODUCERPACKGRAMMS_ISSET_ID);
+  }
+
+  /** Returns true if field minProducerPackGramms is set (has been assigned a value) and false otherwise */
+  public boolean isSetMinProducerPackGramms() {
+    return EncodingUtils.testBit(__isset_bitfield, __MINPRODUCERPACKGRAMMS_ISSET_ID);
+  }
+
+  public void setMinProducerPackGrammsIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MINPRODUCERPACKGRAMMS_ISSET_ID, value);
+  }
+
+  public boolean isPrepackRequired() {
+    return this.prepackRequired;
+  }
+
+  public ProductDetails setPrepackRequired(boolean prepackRequired) {
+    this.prepackRequired = prepackRequired;
+    setPrepackRequiredIsSet(true);
+    return this;
+  }
+
+  public void unsetPrepackRequired() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __PREPACKREQUIRED_ISSET_ID);
+  }
+
+  /** Returns true if field prepackRequired is set (has been assigned a value) and false otherwise */
+  public boolean isSetPrepackRequired() {
+    return EncodingUtils.testBit(__isset_bitfield, __PREPACKREQUIRED_ISSET_ID);
+  }
+
+  public void setPrepackRequiredIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PREPACKREQUIRED_ISSET_ID, value);
+  }
+
+  public int getKnownNamesSize() {
+    return (this.knownNames == null) ? 0 : this.knownNames.size();
+  }
+
+  public java.util.Iterator<String> getKnownNamesIterator() {
+    return (this.knownNames == null) ? null : this.knownNames.iterator();
+  }
+
+  public void addToKnownNames(String elem) {
+    if (this.knownNames == null) {
+      this.knownNames = new HashSet<String>();
+    }
+    this.knownNames.add(elem);
+  }
+
+  public Set<String> getKnownNames() {
+    return this.knownNames;
+  }
+
+  public ProductDetails setKnownNames(Set<String> knownNames) {
+    this.knownNames = knownNames;
+    return this;
+  }
+
+  public void unsetKnownNames() {
+    this.knownNames = null;
+  }
+
+  /** Returns true if field knownNames is set (has been assigned a value) and false otherwise */
+  public boolean isSetKnownNames() {
+    return this.knownNames != null;
+  }
+
+  public void setKnownNamesIsSet(boolean value) {
+    if (!value) {
+      this.knownNames = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case CATEGORIES:
@@ -537,6 +702,38 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       }
       break;
 
+    case MIN_CLIENT_PACK_GRAMMS:
+      if (value == null) {
+        unsetMinClientPackGramms();
+      } else {
+        setMinClientPackGramms((Integer)value);
+      }
+      break;
+
+    case MIN_PRODUCER_PACK_GRAMMS:
+      if (value == null) {
+        unsetMinProducerPackGramms();
+      } else {
+        setMinProducerPackGramms((Integer)value);
+      }
+      break;
+
+    case PREPACK_REQUIRED:
+      if (value == null) {
+        unsetPrepackRequired();
+      } else {
+        setPrepackRequired((Boolean)value);
+      }
+      break;
+
+    case KNOWN_NAMES:
+      if (value == null) {
+        unsetKnownNames();
+      } else {
+        setKnownNames((Set<String>)value);
+      }
+      break;
+
     }
   }
 
@@ -563,6 +760,18 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
     case PRODUCER_ID:
       return Long.valueOf(getProducerId());
 
+    case MIN_CLIENT_PACK_GRAMMS:
+      return Integer.valueOf(getMinClientPackGramms());
+
+    case MIN_PRODUCER_PACK_GRAMMS:
+      return Integer.valueOf(getMinProducerPackGramms());
+
+    case PREPACK_REQUIRED:
+      return Boolean.valueOf(isPrepackRequired());
+
+    case KNOWN_NAMES:
+      return getKnownNames();
+
     }
     throw new IllegalStateException();
   }
@@ -588,6 +797,14 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       return isSetTopicSet();
     case PRODUCER_ID:
       return isSetProducerId();
+    case MIN_CLIENT_PACK_GRAMMS:
+      return isSetMinClientPackGramms();
+    case MIN_PRODUCER_PACK_GRAMMS:
+      return isSetMinProducerPackGramms();
+    case PREPACK_REQUIRED:
+      return isSetPrepackRequired();
+    case KNOWN_NAMES:
+      return isSetKnownNames();
     }
     throw new IllegalStateException();
   }
@@ -665,6 +882,42 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (!(this_present_producerId && that_present_producerId))
         return false;
       if (this.producerId != that.producerId)
+        return false;
+    }
+
+    boolean this_present_minClientPackGramms = true;
+    boolean that_present_minClientPackGramms = true;
+    if (this_present_minClientPackGramms || that_present_minClientPackGramms) {
+      if (!(this_present_minClientPackGramms && that_present_minClientPackGramms))
+        return false;
+      if (this.minClientPackGramms != that.minClientPackGramms)
+        return false;
+    }
+
+    boolean this_present_minProducerPackGramms = true;
+    boolean that_present_minProducerPackGramms = true;
+    if (this_present_minProducerPackGramms || that_present_minProducerPackGramms) {
+      if (!(this_present_minProducerPackGramms && that_present_minProducerPackGramms))
+        return false;
+      if (this.minProducerPackGramms != that.minProducerPackGramms)
+        return false;
+    }
+
+    boolean this_present_prepackRequired = true;
+    boolean that_present_prepackRequired = true;
+    if (this_present_prepackRequired || that_present_prepackRequired) {
+      if (!(this_present_prepackRequired && that_present_prepackRequired))
+        return false;
+      if (this.prepackRequired != that.prepackRequired)
+        return false;
+    }
+
+    boolean this_present_knownNames = true && this.isSetKnownNames();
+    boolean that_present_knownNames = true && that.isSetKnownNames();
+    if (this_present_knownNames || that_present_knownNames) {
+      if (!(this_present_knownNames && that_present_knownNames))
+        return false;
+      if (!this.knownNames.equals(that.knownNames))
         return false;
     }
 
@@ -754,6 +1007,46 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetMinClientPackGramms()).compareTo(other.isSetMinClientPackGramms());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetMinClientPackGramms()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.minClientPackGramms, other.minClientPackGramms);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetMinProducerPackGramms()).compareTo(other.isSetMinProducerPackGramms());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetMinProducerPackGramms()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.minProducerPackGramms, other.minProducerPackGramms);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetPrepackRequired()).compareTo(other.isSetPrepackRequired());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetPrepackRequired()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.prepackRequired, other.prepackRequired);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetKnownNames()).compareTo(other.isSetKnownNames());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetKnownNames()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.knownNames, other.knownNames);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -824,6 +1117,26 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
     if (!first) sb.append(", ");
     sb.append("producerId:");
     sb.append(this.producerId);
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("minClientPackGramms:");
+    sb.append(this.minClientPackGramms);
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("minProducerPackGramms:");
+    sb.append(this.minProducerPackGramms);
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("prepackRequired:");
+    sb.append(this.prepackRequired);
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("knownNames:");
+    if (this.knownNames == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.knownNames);
+    }
     first = false;
     sb.append(")");
     return sb.toString();
@@ -980,6 +1293,48 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 9: // MIN_CLIENT_PACK_GRAMMS
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.minClientPackGramms = iprot.readI32();
+              struct.setMinClientPackGrammsIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 10: // MIN_PRODUCER_PACK_GRAMMS
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.minProducerPackGramms = iprot.readI32();
+              struct.setMinProducerPackGrammsIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 11: // PREPACK_REQUIRED
+            if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+              struct.prepackRequired = iprot.readBool();
+              struct.setPrepackRequiredIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 12: // KNOWN_NAMES
+            if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
+              {
+                org.apache.thrift.protocol.TSet _set69 = iprot.readSetBegin();
+                struct.knownNames = new HashSet<String>(2*_set69.size);
+                for (int _i70 = 0; _i70 < _set69.size; ++_i70)
+                {
+                  String _elem71;
+                  _elem71 = iprot.readString();
+                  struct.knownNames.add(_elem71);
+                }
+                iprot.readSetEnd();
+              }
+              struct.setKnownNamesIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -999,9 +1354,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(CATEGORIES_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, struct.categories.size()));
-          for (long _iter69 : struct.categories)
+          for (long _iter72 : struct.categories)
           {
-            oprot.writeI64(_iter69);
+            oprot.writeI64(_iter72);
           }
           oprot.writeListEnd();
         }
@@ -1016,9 +1371,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(IMAGES_URLSET_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, struct.imagesURLset.size()));
-          for (String _iter70 : struct.imagesURLset)
+          for (String _iter73 : struct.imagesURLset)
           {
-            oprot.writeString(_iter70);
+            oprot.writeString(_iter73);
           }
           oprot.writeListEnd();
         }
@@ -1028,10 +1383,10 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(PRICES_MAP_FIELD_DESC);
         {
           oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, struct.pricesMap.size()));
-          for (Map.Entry<PriceType, Double> _iter71 : struct.pricesMap.entrySet())
+          for (Map.Entry<PriceType, Double> _iter74 : struct.pricesMap.entrySet())
           {
-            oprot.writeI32(_iter71.getKey().getValue());
-            oprot.writeDouble(_iter71.getValue());
+            oprot.writeI32(_iter74.getKey().getValue());
+            oprot.writeDouble(_iter74.getValue());
           }
           oprot.writeMapEnd();
         }
@@ -1041,10 +1396,10 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(OPTIONS_MAP_FIELD_DESC);
         {
           oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.STRING, struct.optionsMap.size()));
-          for (Map.Entry<String, String> _iter72 : struct.optionsMap.entrySet())
+          for (Map.Entry<String, String> _iter75 : struct.optionsMap.entrySet())
           {
-            oprot.writeString(_iter72.getKey());
-            oprot.writeString(_iter72.getValue());
+            oprot.writeString(_iter75.getKey());
+            oprot.writeString(_iter75.getValue());
           }
           oprot.writeMapEnd();
         }
@@ -1054,9 +1409,9 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
         oprot.writeFieldBegin(TOPIC_SET_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, struct.topicSet.size()));
-          for (long _iter73 : struct.topicSet)
+          for (long _iter76 : struct.topicSet)
           {
-            oprot.writeI64(_iter73);
+            oprot.writeI64(_iter76);
           }
           oprot.writeListEnd();
         }
@@ -1065,6 +1420,27 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       oprot.writeFieldBegin(PRODUCER_ID_FIELD_DESC);
       oprot.writeI64(struct.producerId);
       oprot.writeFieldEnd();
+      oprot.writeFieldBegin(MIN_CLIENT_PACK_GRAMMS_FIELD_DESC);
+      oprot.writeI32(struct.minClientPackGramms);
+      oprot.writeFieldEnd();
+      oprot.writeFieldBegin(MIN_PRODUCER_PACK_GRAMMS_FIELD_DESC);
+      oprot.writeI32(struct.minProducerPackGramms);
+      oprot.writeFieldEnd();
+      oprot.writeFieldBegin(PREPACK_REQUIRED_FIELD_DESC);
+      oprot.writeBool(struct.prepackRequired);
+      oprot.writeFieldEnd();
+      if (struct.knownNames != null) {
+        oprot.writeFieldBegin(KNOWN_NAMES_FIELD_DESC);
+        {
+          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, struct.knownNames.size()));
+          for (String _iter77 : struct.knownNames)
+          {
+            oprot.writeString(_iter77);
+          }
+          oprot.writeSetEnd();
+        }
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -1104,13 +1480,25 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (struct.isSetProducerId()) {
         optionals.set(6);
       }
-      oprot.writeBitSet(optionals, 7);
+      if (struct.isSetMinClientPackGramms()) {
+        optionals.set(7);
+      }
+      if (struct.isSetMinProducerPackGramms()) {
+        optionals.set(8);
+      }
+      if (struct.isSetPrepackRequired()) {
+        optionals.set(9);
+      }
+      if (struct.isSetKnownNames()) {
+        optionals.set(10);
+      }
+      oprot.writeBitSet(optionals, 11);
       if (struct.isSetCategories()) {
         {
           oprot.writeI32(struct.categories.size());
-          for (long _iter74 : struct.categories)
+          for (long _iter78 : struct.categories)
           {
-            oprot.writeI64(_iter74);
+            oprot.writeI64(_iter78);
           }
         }
       }
@@ -1120,59 +1508,77 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (struct.isSetImagesURLset()) {
         {
           oprot.writeI32(struct.imagesURLset.size());
-          for (String _iter75 : struct.imagesURLset)
+          for (String _iter79 : struct.imagesURLset)
           {
-            oprot.writeString(_iter75);
+            oprot.writeString(_iter79);
           }
         }
       }
       if (struct.isSetPricesMap()) {
         {
           oprot.writeI32(struct.pricesMap.size());
-          for (Map.Entry<PriceType, Double> _iter76 : struct.pricesMap.entrySet())
+          for (Map.Entry<PriceType, Double> _iter80 : struct.pricesMap.entrySet())
           {
-            oprot.writeI32(_iter76.getKey().getValue());
-            oprot.writeDouble(_iter76.getValue());
+            oprot.writeI32(_iter80.getKey().getValue());
+            oprot.writeDouble(_iter80.getValue());
           }
         }
       }
       if (struct.isSetOptionsMap()) {
         {
           oprot.writeI32(struct.optionsMap.size());
-          for (Map.Entry<String, String> _iter77 : struct.optionsMap.entrySet())
+          for (Map.Entry<String, String> _iter81 : struct.optionsMap.entrySet())
           {
-            oprot.writeString(_iter77.getKey());
-            oprot.writeString(_iter77.getValue());
+            oprot.writeString(_iter81.getKey());
+            oprot.writeString(_iter81.getValue());
           }
         }
       }
       if (struct.isSetTopicSet()) {
         {
           oprot.writeI32(struct.topicSet.size());
-          for (long _iter78 : struct.topicSet)
+          for (long _iter82 : struct.topicSet)
           {
-            oprot.writeI64(_iter78);
+            oprot.writeI64(_iter82);
           }
         }
       }
       if (struct.isSetProducerId()) {
         oprot.writeI64(struct.producerId);
       }
+      if (struct.isSetMinClientPackGramms()) {
+        oprot.writeI32(struct.minClientPackGramms);
+      }
+      if (struct.isSetMinProducerPackGramms()) {
+        oprot.writeI32(struct.minProducerPackGramms);
+      }
+      if (struct.isSetPrepackRequired()) {
+        oprot.writeBool(struct.prepackRequired);
+      }
+      if (struct.isSetKnownNames()) {
+        {
+          oprot.writeI32(struct.knownNames.size());
+          for (String _iter83 : struct.knownNames)
+          {
+            oprot.writeString(_iter83);
+          }
+        }
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, ProductDetails struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(7);
+      BitSet incoming = iprot.readBitSet(11);
       if (incoming.get(0)) {
         {
-          org.apache.thrift.protocol.TList _list79 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, iprot.readI32());
-          struct.categories = new ArrayList<Long>(_list79.size);
-          for (int _i80 = 0; _i80 < _list79.size; ++_i80)
+          org.apache.thrift.protocol.TList _list84 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, iprot.readI32());
+          struct.categories = new ArrayList<Long>(_list84.size);
+          for (int _i85 = 0; _i85 < _list84.size; ++_i85)
           {
-            long _elem81;
-            _elem81 = iprot.readI64();
-            struct.categories.add(_elem81);
+            long _elem86;
+            _elem86 = iprot.readI64();
+            struct.categories.add(_elem86);
           }
         }
         struct.setCategoriesIsSet(true);
@@ -1183,56 +1589,56 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       }
       if (incoming.get(2)) {
         {
-          org.apache.thrift.protocol.TList _list82 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.imagesURLset = new ArrayList<String>(_list82.size);
-          for (int _i83 = 0; _i83 < _list82.size; ++_i83)
+          org.apache.thrift.protocol.TList _list87 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+          struct.imagesURLset = new ArrayList<String>(_list87.size);
+          for (int _i88 = 0; _i88 < _list87.size; ++_i88)
           {
-            String _elem84;
-            _elem84 = iprot.readString();
-            struct.imagesURLset.add(_elem84);
+            String _elem89;
+            _elem89 = iprot.readString();
+            struct.imagesURLset.add(_elem89);
           }
         }
         struct.setImagesURLsetIsSet(true);
       }
       if (incoming.get(3)) {
         {
-          org.apache.thrift.protocol.TMap _map85 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, iprot.readI32());
-          struct.pricesMap = new HashMap<PriceType,Double>(2*_map85.size);
-          for (int _i86 = 0; _i86 < _map85.size; ++_i86)
+          org.apache.thrift.protocol.TMap _map90 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.DOUBLE, iprot.readI32());
+          struct.pricesMap = new HashMap<PriceType,Double>(2*_map90.size);
+          for (int _i91 = 0; _i91 < _map90.size; ++_i91)
           {
-            PriceType _key87;
-            double _val88;
-            _key87 = PriceType.findByValue(iprot.readI32());
-            _val88 = iprot.readDouble();
-            struct.pricesMap.put(_key87, _val88);
+            PriceType _key92;
+            double _val93;
+            _key92 = PriceType.findByValue(iprot.readI32());
+            _val93 = iprot.readDouble();
+            struct.pricesMap.put(_key92, _val93);
           }
         }
         struct.setPricesMapIsSet(true);
       }
       if (incoming.get(4)) {
         {
-          org.apache.thrift.protocol.TMap _map89 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-          struct.optionsMap = new HashMap<String,String>(2*_map89.size);
-          for (int _i90 = 0; _i90 < _map89.size; ++_i90)
+          org.apache.thrift.protocol.TMap _map94 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+          struct.optionsMap = new HashMap<String,String>(2*_map94.size);
+          for (int _i95 = 0; _i95 < _map94.size; ++_i95)
           {
-            String _key91;
-            String _val92;
-            _key91 = iprot.readString();
-            _val92 = iprot.readString();
-            struct.optionsMap.put(_key91, _val92);
+            String _key96;
+            String _val97;
+            _key96 = iprot.readString();
+            _val97 = iprot.readString();
+            struct.optionsMap.put(_key96, _val97);
           }
         }
         struct.setOptionsMapIsSet(true);
       }
       if (incoming.get(5)) {
         {
-          org.apache.thrift.protocol.TList _list93 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, iprot.readI32());
-          struct.topicSet = new ArrayList<Long>(_list93.size);
-          for (int _i94 = 0; _i94 < _list93.size; ++_i94)
+          org.apache.thrift.protocol.TList _list98 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I64, iprot.readI32());
+          struct.topicSet = new ArrayList<Long>(_list98.size);
+          for (int _i99 = 0; _i99 < _list98.size; ++_i99)
           {
-            long _elem95;
-            _elem95 = iprot.readI64();
-            struct.topicSet.add(_elem95);
+            long _elem100;
+            _elem100 = iprot.readI64();
+            struct.topicSet.add(_elem100);
           }
         }
         struct.setTopicSetIsSet(true);
@@ -1240,6 +1646,31 @@ public class ProductDetails implements org.apache.thrift.TBase<ProductDetails, P
       if (incoming.get(6)) {
         struct.producerId = iprot.readI64();
         struct.setProducerIdIsSet(true);
+      }
+      if (incoming.get(7)) {
+        struct.minClientPackGramms = iprot.readI32();
+        struct.setMinClientPackGrammsIsSet(true);
+      }
+      if (incoming.get(8)) {
+        struct.minProducerPackGramms = iprot.readI32();
+        struct.setMinProducerPackGrammsIsSet(true);
+      }
+      if (incoming.get(9)) {
+        struct.prepackRequired = iprot.readBool();
+        struct.setPrepackRequiredIsSet(true);
+      }
+      if (incoming.get(10)) {
+        {
+          org.apache.thrift.protocol.TSet _set101 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+          struct.knownNames = new HashSet<String>(2*_set101.size);
+          for (int _i102 = 0; _i102 < _set101.size; ++_i102)
+          {
+            String _elem103;
+            _elem103 = iprot.readString();
+            struct.knownNames.add(_elem103);
+          }
+        }
+        struct.setKnownNamesIsSet(true);
       }
     }
   }
