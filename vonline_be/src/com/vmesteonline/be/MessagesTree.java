@@ -18,25 +18,22 @@ public class MessagesTree {
 
 	private List<VoMessage> firstLevel;
 
-	public List<VoMessage> getTreeMessagesAfter(long parentId, int length) throws InvalidOperation {
+	public List<VoMessage> getTreeMessagesAfter(long parentId, long userId) throws InvalidOperation {
 
 		List<VoMessage> lst = new ArrayList<>();
 		for (int i = 0; i < items.size(); i++) {
 			if (items.get(i).id == parentId) {
-				int fromPos = i + 1;
-				int toPos = i + 1 + length;
-				if (fromPos >= items.size())
-					break;
-				if (toPos >= items.size()) {
-					toPos = items.size();
-				}
+
+				
 				List<ItemPosition> iList = items.subList(fromPos, toPos);
 				for (ItemPosition iPos : iList) {
 					if (isFirstLevel(iPos.id))
 						break;
 					VoMessage voMsg = getMessage(iPos.id);
-					voMsg.setVisibleOffset(iPos.level);
-					lst.add(voMsg);
+					if (voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId) {
+						voMsg.setVisibleOffset(iPos.level);
+						lst.add(voMsg);
+					}
 				}
 			}
 		}

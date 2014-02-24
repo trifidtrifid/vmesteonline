@@ -33,8 +33,8 @@ struct Message {
 	16: UserMessage userMessage, //how user treats the message
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
 	18: bedata.ShortUserInfo userInfo,
-	19: optional i32 childMsgs,
-	20: optional i32 childUnreadMsgs, 
+	19: optional i32 childMsgsNum,
+	20: optional i32 childUnreadMsgsNum, 
 	
 } // 'сообщение';
 		
@@ -136,8 +136,9 @@ service MessageService {
 	/**
 	* Загрузка части преставления дерева сообщений в виде дерева. parentID указывает на сообщение топика или на сообщение первого уровня
 	**/
-	MessageListPart getMessages( 1:i64 topicId , 2:i64 groupId 3:MessageType messageType, 4:i64 parentId, 5:bool archived, 6:i32 offset, 7:i32 length) throws (1:error.InvalidOperation exc),
+	MessageListPart getMessages( 1:i64 topicId , 2:i64 groupId 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
 	
+		
 	UserOpinion likeOrDislikeMessage(1:i64 messageId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
 	UserOpinion likeOrDislikeTopic(1:i64 topicId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
 	

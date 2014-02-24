@@ -85,12 +85,11 @@ public class MessageService {
      * @param topicId
      * @param groupId
      * @param messageType
-     * @param parentId
+     * @param lastLoadedId
      * @param archived
-     * @param offset
      * @param length
      */
-    public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
+    public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
     public UserOpinion likeOrDislikeMessage(long messageId, int opinion) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException;
 
@@ -126,7 +125,7 @@ public class MessageService {
 
     public void getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void likeOrDislikeMessage(long messageId, int opinion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -362,21 +361,20 @@ public class MessageService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getTopics failed: unknown result");
     }
 
-    public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
+    public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length) throws com.vmesteonline.be.InvalidOperation, org.apache.thrift.TException
     {
-      send_getMessages(topicId, groupId, messageType, parentId, archived, offset, length);
+      send_getMessages(topicId, groupId, messageType, lastLoadedId, archived, length);
       return recv_getMessages();
     }
 
-    public void send_getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length) throws org.apache.thrift.TException
+    public void send_getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length) throws org.apache.thrift.TException
     {
       getMessages_args args = new getMessages_args();
       args.setTopicId(topicId);
       args.setGroupId(groupId);
       args.setMessageType(messageType);
-      args.setParentId(parentId);
+      args.setLastLoadedId(lastLoadedId);
       args.setArchived(archived);
-      args.setOffset(offset);
       args.setLength(length);
       sendBase("getMessages", args);
     }
@@ -899,9 +897,9 @@ public class MessageService {
       }
     }
 
-    public void getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      getMessages_call method_call = new getMessages_call(topicId, groupId, messageType, parentId, archived, offset, length, resultHandler, this, ___protocolFactory, ___transport);
+      getMessages_call method_call = new getMessages_call(topicId, groupId, messageType, lastLoadedId, archived, length, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
@@ -910,18 +908,16 @@ public class MessageService {
       private long topicId;
       private long groupId;
       private MessageType messageType;
-      private long parentId;
+      private long lastLoadedId;
       private boolean archived;
-      private int offset;
       private int length;
-      public getMessages_call(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public getMessages_call(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.topicId = topicId;
         this.groupId = groupId;
         this.messageType = messageType;
-        this.parentId = parentId;
+        this.lastLoadedId = lastLoadedId;
         this.archived = archived;
-        this.offset = offset;
         this.length = length;
       }
 
@@ -931,9 +927,8 @@ public class MessageService {
         args.setTopicId(topicId);
         args.setGroupId(groupId);
         args.setMessageType(messageType);
-        args.setParentId(parentId);
+        args.setLastLoadedId(lastLoadedId);
         args.setArchived(archived);
-        args.setOffset(offset);
         args.setLength(length);
         args.write(prot);
         prot.writeMessageEnd();
@@ -1432,7 +1427,7 @@ public class MessageService {
       public getMessages_result getResult(I iface, getMessages_args args) throws org.apache.thrift.TException {
         getMessages_result result = new getMessages_result();
         try {
-          result.success = iface.getMessages(args.topicId, args.groupId, args.messageType, args.parentId, args.archived, args.offset, args.length);
+          result.success = iface.getMessages(args.topicId, args.groupId, args.messageType, args.lastLoadedId, args.archived, args.length);
         } catch (com.vmesteonline.be.InvalidOperation exc) {
           result.exc = exc;
         }
@@ -2119,7 +2114,7 @@ public class MessageService {
       }
 
       public void start(I iface, getMessages_args args, org.apache.thrift.async.AsyncMethodCallback<MessageListPart> resultHandler) throws TException {
-        iface.getMessages(args.topicId, args.groupId, args.messageType, args.parentId, args.archived, args.offset, args.length,resultHandler);
+        iface.getMessages(args.topicId, args.groupId, args.messageType, args.lastLoadedId, args.archived, args.length,resultHandler);
       }
     }
 
@@ -10083,10 +10078,9 @@ public class MessageService {
     private static final org.apache.thrift.protocol.TField TOPIC_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("topicId", org.apache.thrift.protocol.TType.I64, (short)1);
     private static final org.apache.thrift.protocol.TField GROUP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("groupId", org.apache.thrift.protocol.TType.I64, (short)2);
     private static final org.apache.thrift.protocol.TField MESSAGE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("messageType", org.apache.thrift.protocol.TType.I32, (short)3);
-    private static final org.apache.thrift.protocol.TField PARENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("parentId", org.apache.thrift.protocol.TType.I64, (short)4);
+    private static final org.apache.thrift.protocol.TField LAST_LOADED_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("lastLoadedId", org.apache.thrift.protocol.TType.I64, (short)4);
     private static final org.apache.thrift.protocol.TField ARCHIVED_FIELD_DESC = new org.apache.thrift.protocol.TField("archived", org.apache.thrift.protocol.TType.BOOL, (short)5);
-    private static final org.apache.thrift.protocol.TField OFFSET_FIELD_DESC = new org.apache.thrift.protocol.TField("offset", org.apache.thrift.protocol.TType.I32, (short)6);
-    private static final org.apache.thrift.protocol.TField LENGTH_FIELD_DESC = new org.apache.thrift.protocol.TField("length", org.apache.thrift.protocol.TType.I32, (short)7);
+    private static final org.apache.thrift.protocol.TField LENGTH_FIELD_DESC = new org.apache.thrift.protocol.TField("length", org.apache.thrift.protocol.TType.I32, (short)6);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -10101,9 +10095,8 @@ public class MessageService {
      * @see MessageType
      */
     public MessageType messageType; // required
-    public long parentId; // required
+    public long lastLoadedId; // required
     public boolean archived; // required
-    public int offset; // required
     public int length; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -10115,10 +10108,9 @@ public class MessageService {
        * @see MessageType
        */
       MESSAGE_TYPE((short)3, "messageType"),
-      PARENT_ID((short)4, "parentId"),
+      LAST_LOADED_ID((short)4, "lastLoadedId"),
       ARCHIVED((short)5, "archived"),
-      OFFSET((short)6, "offset"),
-      LENGTH((short)7, "length");
+      LENGTH((short)6, "length");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -10139,13 +10131,11 @@ public class MessageService {
             return GROUP_ID;
           case 3: // MESSAGE_TYPE
             return MESSAGE_TYPE;
-          case 4: // PARENT_ID
-            return PARENT_ID;
+          case 4: // LAST_LOADED_ID
+            return LAST_LOADED_ID;
           case 5: // ARCHIVED
             return ARCHIVED;
-          case 6: // OFFSET
-            return OFFSET;
-          case 7: // LENGTH
+          case 6: // LENGTH
             return LENGTH;
           default:
             return null;
@@ -10189,10 +10179,9 @@ public class MessageService {
     // isset id assignments
     private static final int __TOPICID_ISSET_ID = 0;
     private static final int __GROUPID_ISSET_ID = 1;
-    private static final int __PARENTID_ISSET_ID = 2;
+    private static final int __LASTLOADEDID_ISSET_ID = 2;
     private static final int __ARCHIVED_ISSET_ID = 3;
-    private static final int __OFFSET_ISSET_ID = 4;
-    private static final int __LENGTH_ISSET_ID = 5;
+    private static final int __LENGTH_ISSET_ID = 4;
     private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
@@ -10203,12 +10192,10 @@ public class MessageService {
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.MESSAGE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("messageType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, MessageType.class)));
-      tmpMap.put(_Fields.PARENT_ID, new org.apache.thrift.meta_data.FieldMetaData("parentId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.LAST_LOADED_ID, new org.apache.thrift.meta_data.FieldMetaData("lastLoadedId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       tmpMap.put(_Fields.ARCHIVED, new org.apache.thrift.meta_data.FieldMetaData("archived", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-      tmpMap.put(_Fields.OFFSET, new org.apache.thrift.meta_data.FieldMetaData("offset", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       tmpMap.put(_Fields.LENGTH, new org.apache.thrift.meta_data.FieldMetaData("length", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -10222,9 +10209,8 @@ public class MessageService {
       long topicId,
       long groupId,
       MessageType messageType,
-      long parentId,
+      long lastLoadedId,
       boolean archived,
-      int offset,
       int length)
     {
       this();
@@ -10233,12 +10219,10 @@ public class MessageService {
       this.groupId = groupId;
       setGroupIdIsSet(true);
       this.messageType = messageType;
-      this.parentId = parentId;
-      setParentIdIsSet(true);
+      this.lastLoadedId = lastLoadedId;
+      setLastLoadedIdIsSet(true);
       this.archived = archived;
       setArchivedIsSet(true);
-      this.offset = offset;
-      setOffsetIsSet(true);
       this.length = length;
       setLengthIsSet(true);
     }
@@ -10253,9 +10237,8 @@ public class MessageService {
       if (other.isSetMessageType()) {
         this.messageType = other.messageType;
       }
-      this.parentId = other.parentId;
+      this.lastLoadedId = other.lastLoadedId;
       this.archived = other.archived;
-      this.offset = other.offset;
       this.length = other.length;
     }
 
@@ -10270,12 +10253,10 @@ public class MessageService {
       setGroupIdIsSet(false);
       this.groupId = 0;
       this.messageType = null;
-      setParentIdIsSet(false);
-      this.parentId = 0;
+      setLastLoadedIdIsSet(false);
+      this.lastLoadedId = 0;
       setArchivedIsSet(false);
       this.archived = false;
-      setOffsetIsSet(false);
-      this.offset = 0;
       setLengthIsSet(false);
       this.length = 0;
     }
@@ -10358,27 +10339,27 @@ public class MessageService {
       }
     }
 
-    public long getParentId() {
-      return this.parentId;
+    public long getLastLoadedId() {
+      return this.lastLoadedId;
     }
 
-    public getMessages_args setParentId(long parentId) {
-      this.parentId = parentId;
-      setParentIdIsSet(true);
+    public getMessages_args setLastLoadedId(long lastLoadedId) {
+      this.lastLoadedId = lastLoadedId;
+      setLastLoadedIdIsSet(true);
       return this;
     }
 
-    public void unsetParentId() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __PARENTID_ISSET_ID);
+    public void unsetLastLoadedId() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LASTLOADEDID_ISSET_ID);
     }
 
-    /** Returns true if field parentId is set (has been assigned a value) and false otherwise */
-    public boolean isSetParentId() {
-      return EncodingUtils.testBit(__isset_bitfield, __PARENTID_ISSET_ID);
+    /** Returns true if field lastLoadedId is set (has been assigned a value) and false otherwise */
+    public boolean isSetLastLoadedId() {
+      return EncodingUtils.testBit(__isset_bitfield, __LASTLOADEDID_ISSET_ID);
     }
 
-    public void setParentIdIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PARENTID_ISSET_ID, value);
+    public void setLastLoadedIdIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LASTLOADEDID_ISSET_ID, value);
     }
 
     public boolean isArchived() {
@@ -10402,29 +10383,6 @@ public class MessageService {
 
     public void setArchivedIsSet(boolean value) {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __ARCHIVED_ISSET_ID, value);
-    }
-
-    public int getOffset() {
-      return this.offset;
-    }
-
-    public getMessages_args setOffset(int offset) {
-      this.offset = offset;
-      setOffsetIsSet(true);
-      return this;
-    }
-
-    public void unsetOffset() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __OFFSET_ISSET_ID);
-    }
-
-    /** Returns true if field offset is set (has been assigned a value) and false otherwise */
-    public boolean isSetOffset() {
-      return EncodingUtils.testBit(__isset_bitfield, __OFFSET_ISSET_ID);
-    }
-
-    public void setOffsetIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __OFFSET_ISSET_ID, value);
     }
 
     public int getLength() {
@@ -10476,11 +10434,11 @@ public class MessageService {
         }
         break;
 
-      case PARENT_ID:
+      case LAST_LOADED_ID:
         if (value == null) {
-          unsetParentId();
+          unsetLastLoadedId();
         } else {
-          setParentId((Long)value);
+          setLastLoadedId((Long)value);
         }
         break;
 
@@ -10489,14 +10447,6 @@ public class MessageService {
           unsetArchived();
         } else {
           setArchived((Boolean)value);
-        }
-        break;
-
-      case OFFSET:
-        if (value == null) {
-          unsetOffset();
-        } else {
-          setOffset((Integer)value);
         }
         break;
 
@@ -10522,14 +10472,11 @@ public class MessageService {
       case MESSAGE_TYPE:
         return getMessageType();
 
-      case PARENT_ID:
-        return Long.valueOf(getParentId());
+      case LAST_LOADED_ID:
+        return Long.valueOf(getLastLoadedId());
 
       case ARCHIVED:
         return Boolean.valueOf(isArchived());
-
-      case OFFSET:
-        return Integer.valueOf(getOffset());
 
       case LENGTH:
         return Integer.valueOf(getLength());
@@ -10551,12 +10498,10 @@ public class MessageService {
         return isSetGroupId();
       case MESSAGE_TYPE:
         return isSetMessageType();
-      case PARENT_ID:
-        return isSetParentId();
+      case LAST_LOADED_ID:
+        return isSetLastLoadedId();
       case ARCHIVED:
         return isSetArchived();
-      case OFFSET:
-        return isSetOffset();
       case LENGTH:
         return isSetLength();
       }
@@ -10603,12 +10548,12 @@ public class MessageService {
           return false;
       }
 
-      boolean this_present_parentId = true;
-      boolean that_present_parentId = true;
-      if (this_present_parentId || that_present_parentId) {
-        if (!(this_present_parentId && that_present_parentId))
+      boolean this_present_lastLoadedId = true;
+      boolean that_present_lastLoadedId = true;
+      if (this_present_lastLoadedId || that_present_lastLoadedId) {
+        if (!(this_present_lastLoadedId && that_present_lastLoadedId))
           return false;
-        if (this.parentId != that.parentId)
+        if (this.lastLoadedId != that.lastLoadedId)
           return false;
       }
 
@@ -10618,15 +10563,6 @@ public class MessageService {
         if (!(this_present_archived && that_present_archived))
           return false;
         if (this.archived != that.archived)
-          return false;
-      }
-
-      boolean this_present_offset = true;
-      boolean that_present_offset = true;
-      if (this_present_offset || that_present_offset) {
-        if (!(this_present_offset && that_present_offset))
-          return false;
-        if (this.offset != that.offset)
           return false;
       }
 
@@ -10685,12 +10621,12 @@ public class MessageService {
           return lastComparison;
         }
       }
-      lastComparison = Boolean.valueOf(isSetParentId()).compareTo(other.isSetParentId());
+      lastComparison = Boolean.valueOf(isSetLastLoadedId()).compareTo(other.isSetLastLoadedId());
       if (lastComparison != 0) {
         return lastComparison;
       }
-      if (isSetParentId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.parentId, other.parentId);
+      if (isSetLastLoadedId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.lastLoadedId, other.lastLoadedId);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -10701,16 +10637,6 @@ public class MessageService {
       }
       if (isSetArchived()) {
         lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.archived, other.archived);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetOffset()).compareTo(other.isSetOffset());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetOffset()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.offset, other.offset);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -10761,16 +10687,12 @@ public class MessageService {
       }
       first = false;
       if (!first) sb.append(", ");
-      sb.append("parentId:");
-      sb.append(this.parentId);
+      sb.append("lastLoadedId:");
+      sb.append(this.lastLoadedId);
       first = false;
       if (!first) sb.append(", ");
       sb.append("archived:");
       sb.append(this.archived);
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("offset:");
-      sb.append(this.offset);
       first = false;
       if (!first) sb.append(", ");
       sb.append("length:");
@@ -10845,10 +10767,10 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 4: // PARENT_ID
+            case 4: // LAST_LOADED_ID
               if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                struct.parentId = iprot.readI64();
-                struct.setParentIdIsSet(true);
+                struct.lastLoadedId = iprot.readI64();
+                struct.setLastLoadedIdIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
@@ -10861,15 +10783,7 @@ public class MessageService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 6: // OFFSET
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.offset = iprot.readI32();
-                struct.setOffsetIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            case 7: // LENGTH
+            case 6: // LENGTH
               if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
                 struct.length = iprot.readI32();
                 struct.setLengthIsSet(true);
@@ -10903,14 +10817,11 @@ public class MessageService {
           oprot.writeI32(struct.messageType.getValue());
           oprot.writeFieldEnd();
         }
-        oprot.writeFieldBegin(PARENT_ID_FIELD_DESC);
-        oprot.writeI64(struct.parentId);
+        oprot.writeFieldBegin(LAST_LOADED_ID_FIELD_DESC);
+        oprot.writeI64(struct.lastLoadedId);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(ARCHIVED_FIELD_DESC);
         oprot.writeBool(struct.archived);
-        oprot.writeFieldEnd();
-        oprot.writeFieldBegin(OFFSET_FIELD_DESC);
-        oprot.writeI32(struct.offset);
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(LENGTH_FIELD_DESC);
         oprot.writeI32(struct.length);
@@ -10942,19 +10853,16 @@ public class MessageService {
         if (struct.isSetMessageType()) {
           optionals.set(2);
         }
-        if (struct.isSetParentId()) {
+        if (struct.isSetLastLoadedId()) {
           optionals.set(3);
         }
         if (struct.isSetArchived()) {
           optionals.set(4);
         }
-        if (struct.isSetOffset()) {
+        if (struct.isSetLength()) {
           optionals.set(5);
         }
-        if (struct.isSetLength()) {
-          optionals.set(6);
-        }
-        oprot.writeBitSet(optionals, 7);
+        oprot.writeBitSet(optionals, 6);
         if (struct.isSetTopicId()) {
           oprot.writeI64(struct.topicId);
         }
@@ -10964,14 +10872,11 @@ public class MessageService {
         if (struct.isSetMessageType()) {
           oprot.writeI32(struct.messageType.getValue());
         }
-        if (struct.isSetParentId()) {
-          oprot.writeI64(struct.parentId);
+        if (struct.isSetLastLoadedId()) {
+          oprot.writeI64(struct.lastLoadedId);
         }
         if (struct.isSetArchived()) {
           oprot.writeBool(struct.archived);
-        }
-        if (struct.isSetOffset()) {
-          oprot.writeI32(struct.offset);
         }
         if (struct.isSetLength()) {
           oprot.writeI32(struct.length);
@@ -10981,7 +10886,7 @@ public class MessageService {
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, getMessages_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(7);
+        BitSet incoming = iprot.readBitSet(6);
         if (incoming.get(0)) {
           struct.topicId = iprot.readI64();
           struct.setTopicIdIsSet(true);
@@ -10995,18 +10900,14 @@ public class MessageService {
           struct.setMessageTypeIsSet(true);
         }
         if (incoming.get(3)) {
-          struct.parentId = iprot.readI64();
-          struct.setParentIdIsSet(true);
+          struct.lastLoadedId = iprot.readI64();
+          struct.setLastLoadedIdIsSet(true);
         }
         if (incoming.get(4)) {
           struct.archived = iprot.readBool();
           struct.setArchivedIsSet(true);
         }
         if (incoming.get(5)) {
-          struct.offset = iprot.readI32();
-          struct.setOffsetIsSet(true);
-        }
-        if (incoming.get(6)) {
           struct.length = iprot.readI32();
           struct.setLengthIsSet(true);
         }

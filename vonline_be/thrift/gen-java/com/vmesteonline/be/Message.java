@@ -53,8 +53,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   private static final org.apache.thrift.protocol.TField USER_MESSAGE_FIELD_DESC = new org.apache.thrift.protocol.TField("userMessage", org.apache.thrift.protocol.TType.STRUCT, (short)16);
   private static final org.apache.thrift.protocol.TField OFFSET_FIELD_DESC = new org.apache.thrift.protocol.TField("offset", org.apache.thrift.protocol.TType.I32, (short)17);
   private static final org.apache.thrift.protocol.TField USER_INFO_FIELD_DESC = new org.apache.thrift.protocol.TField("userInfo", org.apache.thrift.protocol.TType.STRUCT, (short)18);
-  private static final org.apache.thrift.protocol.TField CHILD_MSGS_FIELD_DESC = new org.apache.thrift.protocol.TField("childMsgs", org.apache.thrift.protocol.TType.I32, (short)19);
-  private static final org.apache.thrift.protocol.TField CHILD_UNREAD_MSGS_FIELD_DESC = new org.apache.thrift.protocol.TField("childUnreadMsgs", org.apache.thrift.protocol.TType.I32, (short)20);
+  private static final org.apache.thrift.protocol.TField CHILD_MSGS_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("childMsgsNum", org.apache.thrift.protocol.TType.I32, (short)19);
+  private static final org.apache.thrift.protocol.TField CHILD_UNREAD_MSGS_NUM_FIELD_DESC = new org.apache.thrift.protocol.TField("childUnreadMsgsNum", org.apache.thrift.protocol.TType.I32, (short)20);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -84,8 +84,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   public UserMessage userMessage; // required
   public int offset; // required
   public com.vmesteonline.be.ShortUserInfo userInfo; // required
-  public int childMsgs; // optional
-  public int childUnreadMsgs; // optional
+  public int childMsgsNum; // optional
+  public int childUnreadMsgsNum; // optional
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -111,8 +111,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     USER_MESSAGE((short)16, "userMessage"),
     OFFSET((short)17, "offset"),
     USER_INFO((short)18, "userInfo"),
-    CHILD_MSGS((short)19, "childMsgs"),
-    CHILD_UNREAD_MSGS((short)20, "childUnreadMsgs");
+    CHILD_MSGS_NUM((short)19, "childMsgsNum"),
+    CHILD_UNREAD_MSGS_NUM((short)20, "childUnreadMsgsNum");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -163,10 +163,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
           return OFFSET;
         case 18: // USER_INFO
           return USER_INFO;
-        case 19: // CHILD_MSGS
-          return CHILD_MSGS;
-        case 20: // CHILD_UNREAD_MSGS
-          return CHILD_UNREAD_MSGS;
+        case 19: // CHILD_MSGS_NUM
+          return CHILD_MSGS_NUM;
+        case 20: // CHILD_UNREAD_MSGS_NUM
+          return CHILD_UNREAD_MSGS_NUM;
         default:
           return null;
       }
@@ -219,10 +219,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   private static final int __LIKESNUM_ISSET_ID = 9;
   private static final int __UNLIKESNUM_ISSET_ID = 10;
   private static final int __OFFSET_ISSET_ID = 11;
-  private static final int __CHILDMSGS_ISSET_ID = 12;
-  private static final int __CHILDUNREADMSGS_ISSET_ID = 13;
+  private static final int __CHILDMSGSNUM_ISSET_ID = 12;
+  private static final int __CHILDUNREADMSGSNUM_ISSET_ID = 13;
   private short __isset_bitfield = 0;
-  private _Fields optionals[] = {_Fields.RECIPIENT_ID,_Fields.APPROVED_BY,_Fields.CHILD_MSGS,_Fields.CHILD_UNREAD_MSGS};
+  private _Fields optionals[] = {_Fields.RECIPIENT_ID,_Fields.APPROVED_BY,_Fields.CHILD_MSGS_NUM,_Fields.CHILD_UNREAD_MSGS_NUM};
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -266,9 +266,9 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     tmpMap.put(_Fields.USER_INFO, new org.apache.thrift.meta_data.FieldMetaData("userInfo", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.vmesteonline.be.ShortUserInfo.class)));
-    tmpMap.put(_Fields.CHILD_MSGS, new org.apache.thrift.meta_data.FieldMetaData("childMsgs", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.CHILD_MSGS_NUM, new org.apache.thrift.meta_data.FieldMetaData("childMsgsNum", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.CHILD_UNREAD_MSGS, new org.apache.thrift.meta_data.FieldMetaData("childUnreadMsgs", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.CHILD_UNREAD_MSGS_NUM, new org.apache.thrift.meta_data.FieldMetaData("childUnreadMsgsNum", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Message.class, metaDataMap);
@@ -372,8 +372,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     if (other.isSetUserInfo()) {
       this.userInfo = new com.vmesteonline.be.ShortUserInfo(other.userInfo);
     }
-    this.childMsgs = other.childMsgs;
-    this.childUnreadMsgs = other.childUnreadMsgs;
+    this.childMsgsNum = other.childMsgsNum;
+    this.childUnreadMsgsNum = other.childUnreadMsgsNum;
   }
 
   public Message deepCopy() {
@@ -412,10 +412,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     setOffsetIsSet(false);
     this.offset = 0;
     this.userInfo = null;
-    setChildMsgsIsSet(false);
-    this.childMsgs = 0;
-    setChildUnreadMsgsIsSet(false);
-    this.childUnreadMsgs = 0;
+    setChildMsgsNumIsSet(false);
+    this.childMsgsNum = 0;
+    setChildUnreadMsgsNumIsSet(false);
+    this.childUnreadMsgsNum = 0;
   }
 
   public long getId() {
@@ -868,50 +868,50 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
   }
 
-  public int getChildMsgs() {
-    return this.childMsgs;
+  public int getChildMsgsNum() {
+    return this.childMsgsNum;
   }
 
-  public Message setChildMsgs(int childMsgs) {
-    this.childMsgs = childMsgs;
-    setChildMsgsIsSet(true);
+  public Message setChildMsgsNum(int childMsgsNum) {
+    this.childMsgsNum = childMsgsNum;
+    setChildMsgsNumIsSet(true);
     return this;
   }
 
-  public void unsetChildMsgs() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CHILDMSGS_ISSET_ID);
+  public void unsetChildMsgsNum() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CHILDMSGSNUM_ISSET_ID);
   }
 
-  /** Returns true if field childMsgs is set (has been assigned a value) and false otherwise */
-  public boolean isSetChildMsgs() {
-    return EncodingUtils.testBit(__isset_bitfield, __CHILDMSGS_ISSET_ID);
+  /** Returns true if field childMsgsNum is set (has been assigned a value) and false otherwise */
+  public boolean isSetChildMsgsNum() {
+    return EncodingUtils.testBit(__isset_bitfield, __CHILDMSGSNUM_ISSET_ID);
   }
 
-  public void setChildMsgsIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CHILDMSGS_ISSET_ID, value);
+  public void setChildMsgsNumIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CHILDMSGSNUM_ISSET_ID, value);
   }
 
-  public int getChildUnreadMsgs() {
-    return this.childUnreadMsgs;
+  public int getChildUnreadMsgsNum() {
+    return this.childUnreadMsgsNum;
   }
 
-  public Message setChildUnreadMsgs(int childUnreadMsgs) {
-    this.childUnreadMsgs = childUnreadMsgs;
-    setChildUnreadMsgsIsSet(true);
+  public Message setChildUnreadMsgsNum(int childUnreadMsgsNum) {
+    this.childUnreadMsgsNum = childUnreadMsgsNum;
+    setChildUnreadMsgsNumIsSet(true);
     return this;
   }
 
-  public void unsetChildUnreadMsgs() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CHILDUNREADMSGS_ISSET_ID);
+  public void unsetChildUnreadMsgsNum() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CHILDUNREADMSGSNUM_ISSET_ID);
   }
 
-  /** Returns true if field childUnreadMsgs is set (has been assigned a value) and false otherwise */
-  public boolean isSetChildUnreadMsgs() {
-    return EncodingUtils.testBit(__isset_bitfield, __CHILDUNREADMSGS_ISSET_ID);
+  /** Returns true if field childUnreadMsgsNum is set (has been assigned a value) and false otherwise */
+  public boolean isSetChildUnreadMsgsNum() {
+    return EncodingUtils.testBit(__isset_bitfield, __CHILDUNREADMSGSNUM_ISSET_ID);
   }
 
-  public void setChildUnreadMsgsIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CHILDUNREADMSGS_ISSET_ID, value);
+  public void setChildUnreadMsgsNumIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CHILDUNREADMSGSNUM_ISSET_ID, value);
   }
 
   public void setFieldValue(_Fields field, Object value) {
@@ -1060,19 +1060,19 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       }
       break;
 
-    case CHILD_MSGS:
+    case CHILD_MSGS_NUM:
       if (value == null) {
-        unsetChildMsgs();
+        unsetChildMsgsNum();
       } else {
-        setChildMsgs((Integer)value);
+        setChildMsgsNum((Integer)value);
       }
       break;
 
-    case CHILD_UNREAD_MSGS:
+    case CHILD_UNREAD_MSGS_NUM:
       if (value == null) {
-        unsetChildUnreadMsgs();
+        unsetChildUnreadMsgsNum();
       } else {
-        setChildUnreadMsgs((Integer)value);
+        setChildUnreadMsgsNum((Integer)value);
       }
       break;
 
@@ -1135,11 +1135,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     case USER_INFO:
       return getUserInfo();
 
-    case CHILD_MSGS:
-      return Integer.valueOf(getChildMsgs());
+    case CHILD_MSGS_NUM:
+      return Integer.valueOf(getChildMsgsNum());
 
-    case CHILD_UNREAD_MSGS:
-      return Integer.valueOf(getChildUnreadMsgs());
+    case CHILD_UNREAD_MSGS_NUM:
+      return Integer.valueOf(getChildUnreadMsgsNum());
 
     }
     throw new IllegalStateException();
@@ -1188,10 +1188,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       return isSetOffset();
     case USER_INFO:
       return isSetUserInfo();
-    case CHILD_MSGS:
-      return isSetChildMsgs();
-    case CHILD_UNREAD_MSGS:
-      return isSetChildUnreadMsgs();
+    case CHILD_MSGS_NUM:
+      return isSetChildMsgsNum();
+    case CHILD_UNREAD_MSGS_NUM:
+      return isSetChildUnreadMsgsNum();
     }
     throw new IllegalStateException();
   }
@@ -1371,21 +1371,21 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return false;
     }
 
-    boolean this_present_childMsgs = true && this.isSetChildMsgs();
-    boolean that_present_childMsgs = true && that.isSetChildMsgs();
-    if (this_present_childMsgs || that_present_childMsgs) {
-      if (!(this_present_childMsgs && that_present_childMsgs))
+    boolean this_present_childMsgsNum = true && this.isSetChildMsgsNum();
+    boolean that_present_childMsgsNum = true && that.isSetChildMsgsNum();
+    if (this_present_childMsgsNum || that_present_childMsgsNum) {
+      if (!(this_present_childMsgsNum && that_present_childMsgsNum))
         return false;
-      if (this.childMsgs != that.childMsgs)
+      if (this.childMsgsNum != that.childMsgsNum)
         return false;
     }
 
-    boolean this_present_childUnreadMsgs = true && this.isSetChildUnreadMsgs();
-    boolean that_present_childUnreadMsgs = true && that.isSetChildUnreadMsgs();
-    if (this_present_childUnreadMsgs || that_present_childUnreadMsgs) {
-      if (!(this_present_childUnreadMsgs && that_present_childUnreadMsgs))
+    boolean this_present_childUnreadMsgsNum = true && this.isSetChildUnreadMsgsNum();
+    boolean that_present_childUnreadMsgsNum = true && that.isSetChildUnreadMsgsNum();
+    if (this_present_childUnreadMsgsNum || that_present_childUnreadMsgsNum) {
+      if (!(this_present_childUnreadMsgsNum && that_present_childUnreadMsgsNum))
         return false;
-      if (this.childUnreadMsgs != that.childUnreadMsgs)
+      if (this.childUnreadMsgsNum != that.childUnreadMsgsNum)
         return false;
     }
 
@@ -1585,22 +1585,22 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetChildMsgs()).compareTo(other.isSetChildMsgs());
+    lastComparison = Boolean.valueOf(isSetChildMsgsNum()).compareTo(other.isSetChildMsgsNum());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetChildMsgs()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.childMsgs, other.childMsgs);
+    if (isSetChildMsgsNum()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.childMsgsNum, other.childMsgsNum);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetChildUnreadMsgs()).compareTo(other.isSetChildUnreadMsgs());
+    lastComparison = Boolean.valueOf(isSetChildUnreadMsgsNum()).compareTo(other.isSetChildUnreadMsgsNum());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetChildUnreadMsgs()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.childUnreadMsgs, other.childUnreadMsgs);
+    if (isSetChildUnreadMsgsNum()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.childUnreadMsgsNum, other.childUnreadMsgsNum);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -1724,16 +1724,16 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       sb.append(this.userInfo);
     }
     first = false;
-    if (isSetChildMsgs()) {
+    if (isSetChildMsgsNum()) {
       if (!first) sb.append(", ");
-      sb.append("childMsgs:");
-      sb.append(this.childMsgs);
+      sb.append("childMsgsNum:");
+      sb.append(this.childMsgsNum);
       first = false;
     }
-    if (isSetChildUnreadMsgs()) {
+    if (isSetChildUnreadMsgsNum()) {
       if (!first) sb.append(", ");
-      sb.append("childUnreadMsgs:");
-      sb.append(this.childUnreadMsgs);
+      sb.append("childUnreadMsgsNum:");
+      sb.append(this.childUnreadMsgsNum);
       first = false;
     }
     sb.append(")");
@@ -1957,18 +1957,18 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 19: // CHILD_MSGS
+          case 19: // CHILD_MSGS_NUM
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.childMsgs = iprot.readI32();
-              struct.setChildMsgsIsSet(true);
+              struct.childMsgsNum = iprot.readI32();
+              struct.setChildMsgsNumIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 20: // CHILD_UNREAD_MSGS
+          case 20: // CHILD_UNREAD_MSGS_NUM
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.childUnreadMsgs = iprot.readI32();
-              struct.setChildUnreadMsgsIsSet(true);
+              struct.childUnreadMsgsNum = iprot.readI32();
+              struct.setChildUnreadMsgsNumIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -2074,14 +2074,14 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         struct.userInfo.write(oprot);
         oprot.writeFieldEnd();
       }
-      if (struct.isSetChildMsgs()) {
-        oprot.writeFieldBegin(CHILD_MSGS_FIELD_DESC);
-        oprot.writeI32(struct.childMsgs);
+      if (struct.isSetChildMsgsNum()) {
+        oprot.writeFieldBegin(CHILD_MSGS_NUM_FIELD_DESC);
+        oprot.writeI32(struct.childMsgsNum);
         oprot.writeFieldEnd();
       }
-      if (struct.isSetChildUnreadMsgs()) {
-        oprot.writeFieldBegin(CHILD_UNREAD_MSGS_FIELD_DESC);
-        oprot.writeI32(struct.childUnreadMsgs);
+      if (struct.isSetChildUnreadMsgsNum()) {
+        oprot.writeFieldBegin(CHILD_UNREAD_MSGS_NUM_FIELD_DESC);
+        oprot.writeI32(struct.childUnreadMsgsNum);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldStop();
@@ -2156,10 +2156,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetUserInfo()) {
         optionals.set(17);
       }
-      if (struct.isSetChildMsgs()) {
+      if (struct.isSetChildMsgsNum()) {
         optionals.set(18);
       }
-      if (struct.isSetChildUnreadMsgs()) {
+      if (struct.isSetChildUnreadMsgsNum()) {
         optionals.set(19);
       }
       oprot.writeBitSet(optionals, 20);
@@ -2231,11 +2231,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetUserInfo()) {
         struct.userInfo.write(oprot);
       }
-      if (struct.isSetChildMsgs()) {
-        oprot.writeI32(struct.childMsgs);
+      if (struct.isSetChildMsgsNum()) {
+        oprot.writeI32(struct.childMsgsNum);
       }
-      if (struct.isSetChildUnreadMsgs()) {
-        oprot.writeI32(struct.childUnreadMsgs);
+      if (struct.isSetChildUnreadMsgsNum()) {
+        oprot.writeI32(struct.childUnreadMsgsNum);
       }
     }
 
@@ -2340,12 +2340,12 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         struct.setUserInfoIsSet(true);
       }
       if (incoming.get(18)) {
-        struct.childMsgs = iprot.readI32();
-        struct.setChildMsgsIsSet(true);
+        struct.childMsgsNum = iprot.readI32();
+        struct.setChildMsgsNumIsSet(true);
       }
       if (incoming.get(19)) {
-        struct.childUnreadMsgs = iprot.readI32();
-        struct.setChildUnreadMsgsIsSet(true);
+        struct.childUnreadMsgsNum = iprot.readI32();
+        struct.setChildUnreadMsgsNumIsSet(true);
       }
     }
   }

@@ -13,6 +13,7 @@ import org.apache.thrift.TException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
@@ -89,10 +90,9 @@ public class MessageServiceTests {
 				TopicListPart topics = msi.getTopics(0, 0, 0, 0L, 10);
 				for (Topic top : topics.getTopics()) {
 					System.out.println("TopicID:" + top.getId() + " topic:" + top.getSubject());
-					MessageListPart messages = msi.getMessages(top.getId(), 0, MessageType.BASE, 0L, false, 0, 100000);
+					MessageListPart messages = msi.getMessages(top.getId(), 0, MessageType.BASE, 0L, false, 100000);
 					for (Message msg : messages.getMessages()) {
-						System.out.println("msg ID:" + msg.getId() + " topic:" + msg.getTopicId() + " parent:" + msg.getParentId() + " :"
-								+ msg.getContent());
+						System.out.println("msg ID:" + msg.getId() + " topic:" + msg.getTopicId() + " parent:" + msg.getParentId() + " :" + msg.getContent());
 					}
 				}
 				offset += topics.getTopicsSize();
@@ -115,8 +115,8 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
 			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic", noLinkedMessages,
+					noTags, 0L);
 
 			Assert.assertEquals(msg.getTopicId(), topic.getId());
 			Assert.assertEquals(msg.getParentId(), topic.getMessage().getId());
@@ -145,10 +145,10 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
 			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
-			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic", noLinkedMessages,
+					noTags, 0L);
+			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic", noLinkedMessages,
+					noTags, 0L);
 			TopicListPart tlp = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertEquals(2, tlp.topics.get(0).getMessageNum());
 
@@ -158,6 +158,7 @@ public class MessageServiceTests {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void testGetChildUnreadMessagesInTopic() {
 		// create locations
@@ -165,14 +166,41 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
 			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic", noLinkedMessages,
+					noTags, 0L);
 			asi.login(Defaults.user2email, Defaults.user2email);
-			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
-					noLinkedMessages, noTags, 0L);
+			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic", noLinkedMessages,
+					noTags, 0L);
 			asi.login(Defaults.user1email, Defaults.user1email);
 			TopicListPart tlp = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertEquals(1, tlp.topics.get(0).getChildUnreadMsgs());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetChildMessagesNumInMessage() {
+		// create locations
+		try {
+			Topic topic = createTopic();
+			Assert.assertNotNull(topic.getId());
+			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
+			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic", noLinkedMessages,
+					noTags, 0L);
+			msg = msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
+			msg = msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the third message in the topic",
+					noLinkedMessages, noTags, 0L);
+			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the fourth message in the topic", noLinkedMessages,
+					noTags, 0L);
+
+			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
+			Assert.assertNotNull(mlp);
+			Assert.assertEquals(1, mlp.totalSize);
+			Assert.assertEquals(2, mlp.messages.get(0).getChildMsgsNum());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -207,7 +235,6 @@ public class MessageServiceTests {
 			List<Topic> tpcs = new ArrayList<Topic>();
 			for (int i = 0; i < 7; i++) {
 				tpcs.add(createTopic());
-				Thread.sleep(1200);
 			}
 
 			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 5);
@@ -248,20 +275,20 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Message msg = msi.createMessage(topic.getId(), 0, user1homeGroupId, MessageType.BASE, "Content of the first message in the topic",
 					noLinkedMessages, noTags, 0L);
-			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2homeGroupId, MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
-			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2homeGroupId, MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
 			Message msg3 = msi.createMessage(topic.getId(), 0, user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
 					noLinkedMessages, noTags, 0L);
 
-			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 0, 10);
+			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
 			Assert.assertNotNull(mlp);
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals(msg3.getId(), mlp.messages.get(1).getId());
 
-			mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
+			mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg.getId(), false, 10);
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals(1, mlp.messages.get(0).getOffset());
@@ -269,7 +296,7 @@ public class MessageServiceTests {
 			Assert.assertEquals(msg2.getId(), mlp.messages.get(1).getId());
 			Assert.assertEquals(2, mlp.messages.get(1).getOffset());
 
-			mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 1);
+			mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg.getId(), false, 1);
 			Assert.assertEquals(1, mlp.totalSize);
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals(1, mlp.messages.get(0).getOffset());
@@ -340,27 +367,27 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Message msg = msi.createMessage(topic.getId(), 0, user1homeGroupId, MessageType.BASE, "Content of the first message in the topic",
 					noLinkedMessages, noTags, 0L);
-			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2homeGroupId, MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
 
 			Assert.assertTrue(asi.login(Defaults.user2email, Defaults.user2pass));
-			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2homeGroupId, MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
-			Message msg3 = msi.createMessage(topic.getId(), 0, user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
-					noLinkedMessages, noTags, user1.getId());
+			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
+			msi.createMessage(topic.getId(), 0, user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic", noLinkedMessages, noTags,
+					user1.getId());
 
 			Assert.assertTrue(asi.login(Defaults.user1email, Defaults.user1pass));
-			Message msg4 = msi.createMessage(topic.getId(), msg2.getId(), user1homeGroupId, MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, user2.getId());
+			msi.createMessage(topic.getId(), msg2.getId(), user1homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, user2.getId());
 
 			Assert.assertTrue(asi.login(Defaults.user3email, Defaults.user3pass));
 
-			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 0, 10);
+			MessageListPart mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
 			Assert.assertNotNull(mlp);
 			Assert.assertEquals(1, mlp.totalSize);
 			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getId());
 
-			mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg.getId(), false, 0, 10);
+			mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg.getId(), false, 10);
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals(1, mlp.messages.get(0).getOffset());

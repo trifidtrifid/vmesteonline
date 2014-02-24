@@ -77,7 +77,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	// ===================================================================================================================================
 	@SuppressWarnings("unchecked")
 	@Override
-	public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long parentId, boolean archived, int offset, int length)
+	public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedMsgId, boolean archived, int length)
 			throws InvalidOperation, TException {
 
 		long userId = getCurrentUserId();
@@ -92,7 +92,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					m.toString();
 				}
 				List<VoMessage> voMsgs;
-				if (parentId == 0) {
+				if (lastLoadedMsgId == 0) {
 					Query q = pm.newQuery(VoMessage.class);
 					q.setFilter("topicId == " + topicId + " && parentId == 0");
 					voMsgs = (List<VoMessage>) q.execute();
@@ -101,10 +101,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					q.setFilter("topicId == " + topicId);
 					voMsgs = (List<VoMessage>) q.execute();
 					MessagesTree tree = new MessagesTree(voMsgs);
-					voMsgs = tree.getTreeMessagesAfter(parentId, length);
+					voMsgs = tree.getTreeMessagesAfter(lastLoadedMsgId, userId);
 				}
 
-				voMsgs = removePersonalMessages(voMsgs, userId);
 				voMsgs = removeExtraMessages(voMsgs, length);
 				return createMlp(voMsgs, userId, pm);
 			} finally {
@@ -114,21 +113,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		} else {
 			int ss = (int) (groupId % 10);
 			mlp = new MessageListPart(new ArrayList<Message>(), msgsaaa[ss][(int) topicId].length);
-			for (int msgNo = 0; msgNo < length && msgNo + offset < msgsaaa[ss][(int) topicId].length; msgNo++) {
+			for (int msgNo = 0; msgNo < length && msgNo + 0 < msgsaaa[ss][(int) topicId].length; msgNo++) {
 				mlp.addToMessages(msgsaaa[ss][(int) topicId][msgNo]);
 			}
 		}
 		return mlp;
-	}
-
-	private List<VoMessage> removePersonalMessages(List<VoMessage> list, long userId) {
-		List<VoMessage> lstNew = new ArrayList<VoMessage>();
-		for (VoMessage voMsg : list) {
-			if (voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId)
-				lstNew.add(voMsg);
-
-		}
-		return lstNew;
 	}
 
 	private List<VoMessage> removeExtraMessages(List<VoMessage> list, int length) {
@@ -157,8 +146,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					float lgd = group.getLongitudeDelta();
 					float ltd = group.getLatitudeDelta();
 					String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= " + (group.getLongitude() + lgd)
-							+ " and longitude >= " + (group.getLongitude() - lgd) + " and lattitude <= " + (group.getLatitude() + ltd)
-							+ " and lattitude >= " + (group.getLatitude() - ltd) + " and radius >= " + group.getRadius() + " order by createTime";
+							+ " and longitude >= " + (group.getLongitude() - lgd) + " and lattitude <= " + (group.getLatitude() + ltd) + " and lattitude >= "
+							+ (group.getLatitude() - ltd) + " and radius >= " + group.getRadius() + " order by createTime";
 					List<VoTopic> topics = new ArrayList<VoTopic>();
 					try {
 						ResultSet rs = con.executeQuery(req);
@@ -257,9 +246,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					topic.setId(votopic.getId().getId());
 					VoUser user = getCurrentUser(pm);
 					VoUserGroup ug = user.getGroupById(votopic.getUserGroupId());
-					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values ("
-							+ votopic.getId().getId() + "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + ","
-							+ votopic.getRubricId() + "," + votopic.getCreatedAt() + ");");
+					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId().getId()
+							+ "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + "," + votopic.getCreatedAt()
+							+ ");");
 					newTopicNotify(votopic);
 				} else {
 					updateTopic(topic);
@@ -303,19 +292,19 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	/**
-	 * checkUpdates запрашивает наличие обновлений с момента предыдущего
-	 * запроса, который возвращает сервер в ответе, если обновлений нет - в
-	 * ответ приходит новое значение таймстампа формирования ответа на сервере.
-	 * При наличии обновлений возвращается 0
+	 * checkUpdates запрашивает наличие обновлений с момента предыдущего запроса,
+	 * который возвращает сервер в ответе, если обновлений нет - в ответ приходит
+	 * новое значение таймстампа формирования ответа на сервере. При наличии
+	 * обновлений возвращается 0
 	 **/
 	@Override
 	public int checkUpdates(int lastRequest) throws InvalidOperation {
 		VoSession sess = getCurrentSession();
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		if (now - sess.getLastActivityTs() > 60) { /*
-													 * Update last Activity once
-													 * per minute
-													 */
+																								 * Update last Activity once per
+																								 * minute
+																								 */
 			sess.setLastActivityTs(now);
 			PersistenceManager pm = PMF.get().getPersistenceManager();
 			try {
@@ -470,8 +459,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			}
 
 			if (storedMsg.getTopicId() != msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId()
-					|| storedMsg.getRecipient() != msg.getRecipientId() || storedMsg.getCreatedAt() != msg.getCreated()
-					|| storedMsg.getType() != msg.getType())
+					|| storedMsg.getRecipient() != msg.getRecipientId() || storedMsg.getCreatedAt() != msg.getCreated() || storedMsg.getType() != msg.getType())
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs,
 						"Parameters: topic, author, recipient, createdAt, type could not be changed!");
 
@@ -507,8 +495,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		try {
 			VoTopic theTopic = pm.getObjectById(VoTopic.class, topic.getId());
 			if (null == theTopic) {
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "FAiled to update Topic. No topic found by ID"
-						+ topic.getId());
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
 			}
 
 			VoRubric rubric = pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
@@ -535,7 +522,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	// =======================================================================================================================
 	static Topic topicsaa[][] = new Topic[10][]; // rubric/ topics
 	static Message msgsaaa[][][] = new Message[10][][]; // rubric/ topic
-														// /messages
+	// /messages
 	static String longText = "GPRS Tunneling Protocol (GTP) is a group of IP-based communications protocols used to carry general packet radio service (GPRS) within GSM, UMTS and LTE networks. In 3GPP architectures, GTP and Proxy Mobile IPv6 based interfaces are specified on various interface points. GTP can be decomposed into separate protocols, GTP-C, GTP-U and GTP'. GTP-C is used within the GPRS core network for signaling between gateway GPRS support nodes (GGSN) and serving GPRS support nodes (SGSN). This allows the SGSN to activate a session on a user's behalf (PDP context activation), to deactivate the same session, to adjust quality of service parameters, or to update a session for a subscriber who has just arrived from another SGSN. GTP-U is used for carrying user data within the GPRS core network and between the radio access network and the core network. The user data transported can be packets in any of IPv4, IPv6, or PPP formats. GTP' (GTP prime) uses the same message structure as GTP-C and GTP-U, but has an independent function. It can be used for carrying charging data from the charging data function (CDF) of the GSM or UMTS network to the charging gateway function (CGF). In most cases, this should mean from many individual network elements such as the GGSNs to a centralized computer that delivers the charging data more conveniently to the network operator's billing center. Different GTP variants are implemented by RNCs, SGSNs, GGSNs and CGFs within 3GPP networks. GPRS mobile stations (MSs) are connected to a SGSN without being aware of GTP. GTP can be used with UDP or TCP. UDP is either recommended or mandatory, except for tunnelling X.25 in version 0. GTP version 1 is used only on UDP. GPRS Tunneling Protocol (GTP) is a group of IP-based communications protocols used to carry general packet radio service (GPRS) within GSM, UMTS and LTE networks. In 3GPP architectures, GTP and Proxy Mobile IPv6 based interfaces are specified on various interface points. GTP can be decomposed into separate protocols, GTP-C, GTP-U and GTP'. GTP-C is used within the GPRS core network for signaling between gateway GPRS support nodes (GGSN) and serving GPRS support nodes (SGSN). This allows the SGSN to activate a session on a user's behalf (PDP context activation), to deactivate the same session, to adjust quality of service parameters, or to update a session for a subscriber who has just arrived from another SGSN. GTP-U is used for carrying user data within the GPRS core network and between the radio access network and the core network. The user data transported can be packets in any of IPv4, IPv6, or PPP formats. GTP' (GTP prime) uses the same message structure as GTP-C and GTP-U, but has an independent function. It can be used for carrying charging data from the charging data function (CDF) of the GSM or UMTS network to the charging gateway function (CGF). In most cases, this should mean from many individual network elements such as the GGSNs to a centralized computer that delivers the charging data more conveniently to the network operator's billing center. Different GTP variants are implemented by RNCs, SGSNs, GGSNs and CGFs within 3GPP networks. GPRS mobile stations (MSs) are connected to a SGSN without being aware of GTP. GTP can be used with UDP or TCP. UDP is either recommended or mandatory, except for tunnelling X.25 in version 0. GTP version 1 is used only on UDP.GPRS Tunneling Protocol (GTP) is a group of IP-based communications protocols used to carry general packet radio service (GPRS) within GSM, UMTS and LTE networks. In 3GPP architectures, GTP and Proxy Mobile IPv6 based interfaces are specified on various interface points. GTP can be decomposed into separate protocols, GTP-C, GTP-U and GTP'. GTP-C is used within the GPRS core network for signaling between gateway GPRS support nodes (GGSN) and serving GPRS support nodes (SGSN). This allows the SGSN to activate a session on a user's behalf (PDP context activation), to deactivate the same session, to adjust quality of service parameters, or to update a session for a subscriber who has just arrived from another SGSN. GTP-U is used for carrying user data within the GPRS core network and between the radio access network and the core network. The user data transported can be packets in any of IPv4, IPv6, or PPP formats. GTP' (GTP prime) uses the same message structure as GTP-C and GTP-U, but has an independent function. It can be used for carrying charging data from the charging data function (CDF) of the GSM or UMTS network to the charging gateway function (CGF). In most cases, this should mean from many individual network elements such as the GGSNs to a centralized computer that delivers the charging data more conveniently to the network operator's billing center. Different GTP variants are implemented by RNCs, SGSNs, GGSNs and CGFs within 3GPP networks. GPRS mobile stations (MSs) are connected to a SGSN without being aware of GTP. GTP can be used with UDP or TCP. UDP is either recommended or mandatory, except for tunnelling X.25 in version 0. GTP version 1 is used only on UDP.GPRS Tunneling Protocol (GTP) is a group of IP-based communications protocols used to carry general packet radio service (GPRS) within GSM, UMTS and LTE networks. In 3GPP architectures, GTP and Proxy Mobile IPv6 based interfaces are specified on various interface points. GTP can be decomposed into separate protocols, GTP-C, GTP-U and GTP'. GTP-C is used within the GPRS core network for signaling between gateway GPRS support nodes (GGSN) and serving GPRS support nodes (SGSN). This allows the SGSN to activate a session on a user's behalf (PDP context activation), to deactivate the same session, to adjust quality of service parameters, or to update a session for a subscriber who has just arrived from another SGSN. GTP-U is used for carrying user data within the GPRS core network and between the radio access network and the core network. The user data transported can be packets in any of IPv4, IPv6, or PPP formats. GTP' (GTP prime) uses the same message structure as GTP-C and GTP-U, but has an independent function. It can be used for carrying charging data from the charging data function (CDF) of the GSM or UMTS network to the charging gateway function (CGF). In most cases, this should mean from many individual network elements such as the GGSNs to a centralized computer that delivers the charging data more conveniently to the network operator's billing center. Different GTP variants are implemented by RNCs, SGSNs, GGSNs and CGFs within 3GPP networks. GPRS mobile stations (MSs) are connected to a SGSN without being aware of GTP. GTP can be used with UDP or TCP. UDP is either recommended or mandatory, except for tunnelling X.25 in version 0. GTP version 1 is used only on UDP.GPRS Tunneling Protocol (GTP) is a group of IP-based communications protocols used to carry general packet radio service (GPRS) within GSM, UMTS and LTE networks. In 3GPP architectures, GTP and Proxy Mobile IPv6 based interfaces are specified on various interface points. GTP can be decomposed into separate protocols, GTP-C, GTP-U and GTP'. GTP-C is used within the GPRS core network for signaling between gateway GPRS support nodes (GGSN) and serving GPRS support nodes (SGSN). This allows the SGSN to activate a session on a user's behalf (PDP context activation), to deactivate the same session, to adjust quality of service parameters, or to update a session for a subscriber who has just arrived from another SGSN. GTP-U is used for carrying user data within the GPRS core network and between the radio access network and the core network. The user data transported can be packets in any of IPv4, IPv6, or PPP formats. GTP' (GTP prime) uses the same message structure as GTP-C and GTP-U, but has an independent function. It can be used for carrying charging data from the charging data function (CDF) of the GSM or UMTS network to the charging gateway function (CGF). In most cases, this should mean from many individual network elements such as the GGSNs to a centralized computer that delivers the charging data more conveniently to the network operator's billing center. Different GTP variants are implemented by RNCs, SGSNs, GGSNs and CGFs within 3GPP networks. GPRS mobile stations (MSs) are connected to a SGSN without being aware of GTP. GTP can be used with UDP or TCP. UDP is either recommended or mandatory, except for tunnelling X.25 in version 0. GTP version 1 is used only on UDP.GPRS Tunneling Protocol (GTP) is a group of IP-based communications protocols used to carry general packet radio service (GPRS) within GSM, UMTS and LTE networks. In 3GPP architectures, GTP and Proxy Mobile IPv6 based interfaces are specified on various interface points. GTP can be decomposed into separate protocols, GTP-C, GTP-U and GTP'. GTP-C is used within the GPRS core network for signaling between gateway GPRS support nodes (GGSN) and serving GPRS support nodes (SGSN). This allows the SGSN to activate a session on a user's behalf (PDP context activation), to deactivate the same session, to adjust quality of service parameters, or to update a session for a subscriber who has just arrived from another SGSN. GTP-U is used for carrying user data within the GPRS core network and between the radio access network and the core network. The user data transported can be packets in any of IPv4, IPv6, or PPP formats. GTP' (GTP prime) uses the same message structure as GTP-C and GTP-U, but has an independent function. It can be used for carrying charging data from the charging data function (CDF) of the GSM or UMTS network to the charging gateway function (CGF). In most cases, this should mean from many individual network elements such as the GGSNs to a centralized computer that delivers the charging data more conveniently to the network operator's billing center. Different GTP variants are implemented by RNCs, SGSNs, GGSNs and CGFs within 3GPP networks. GPRS mobile stations (MSs) are connected to a SGSN without being aware of GTP. GTP can be used with UDP or TCP. UDP is either recommended or mandatory, except for tunnelling X.25 in version 0. GTP version 1 is used only on UDP.GPRS Tunneling Protocol (GTP) is a group of IP-based communications protocols used to carry general packet radio service (GPRS) within GSM, UMTS and LTE networks. In 3GPP architectures, GTP and Proxy Mobile IPv6 based interfaces are specified on various interface points. GTP can be decomposed into separate protocols, GTP-C, GTP-U and GTP'. GTP-C is used within the GPRS core network for signaling between gateway GPRS support nodes (GGSN) and serving GPRS support nodes (SGSN). This allows the SGSN to activate a session on a user's behalf (PDP context activation), to deactivate the same session, to adjust quality of service parameters, or to update a session for a subscriber who has just arrived from another SGSN. GTP-U is used for carrying user data within the GPRS core network and between the radio access network and the core network. The user data transported can be packets in any of IPv4, IPv6, or PPP formats. GTP' (GTP prime) uses the same message structure as GTP-C and GTP-U, but has an independent function. It can be used for carrying charging data from the charging data function (CDF) of the GSM or UMTS network to the charging gateway function (CGF). In most cases, this should mean from many individual network elements such as the GGSNs to a centralized computer that delivers the charging data more conveniently to the network operator's billing center. Different GTP variants are implemented by RNCs, SGSNs, GGSNs and CGFs within 3GPP networks. GPRS mobile stations (MSs) are connected to a SGSN without being aware of GTP. GTP can be used with UDP or TCP. UDP is either recommended or mandatory, except for tunnelling X.25 in version 0. GTP version 1 is used only on UDP.GPRS Tunneling Protocol (GTP) is a group of IP-based communications protocols used to carry general packet radio service (GPRS) within GSM, UMTS and LTE networks. In 3GPP architectures, GTP and Proxy Mobile IPv6 based interfaces are specified on various interface points. GTP can be decomposed into separate protocols, GTP-C, GTP-U and GTP'. GTP-C is used within the GPRS core network for signaling between gateway GPRS support nodes (GGSN) and serving GPRS support nodes (SGSN). This allows the SGSN to activate a session on a user's behalf (PDP context activation), to deactivate the same session, to adjust quality of service parameters, or to update a session for a subscriber who has just arrived from another SGSN. GTP-U is used for carrying user data within the GPRS core network and between the radio access network and the core network. The user data transported can be packets in any of IPv4, IPv6, or PPP formats. GTP' (GTP prime) uses the same message structure as GTP-C and GTP-U, but has an independent function. It can be used for carrying charging data from the charging data function (CDF) of the GSM or UMTS network to the charging gateway function (CGF). In most cases, this should mean from many individual network elements such as the GGSNs to a centralized computer that delivers the charging data more conveniently to the network operator's billing center. Different GTP variants are implemented by RNCs, SGSNs, GGSNs and CGFs within 3GPP networks. GPRS mobile stations (MSs) are connected to a SGSN without being aware of GTP. GTP can be used with UDP or TCP. UDP is either recommended or mandatory, except for tunnelling X.25 in version 0. GTP version 1 is used only on UDP.GPRS Tunneling Protocol (GTP) is a group of IP-based communications protocols used to carry general packet radio service (GPRS) within GSM, UMTS and LTE networks. In 3GPP architectures, GTP and Proxy Mobile IPv6 based interfaces are specified on various interface points. GTP can be decomposed into separate protocols, GTP-C, GTP-U and GTP'. GTP-C is used within the GPRS core network for signaling between gateway GPRS support nodes (GGSN) and serving GPRS support nodes (SGSN). This allows the SGSN to activate a session on a user's behalf (PDP context activation), to deactivate the same session, to adjust quality of service parameters, or to update a session for a subscriber who has just arrived from another SGSN. GTP-U is used for carrying user data within the GPRS core network and between the radio access network and the core network. The user data transported can be packets in any of IPv4, IPv6, or PPP formats. GTP' (GTP prime) uses the same message structure as GTP-C and GTP-U, but has an independent function. It can be used for carrying charging data from the charging data function (CDF) of the GSM or UMTS network to the charging gateway function (CGF). In most cases, this should mean from many individual network elements such as the GGSNs to a centralized computer that delivers the charging data more conveniently to the network operator's billing center. Different GTP variants are implemented by RNCs, SGSNs, GGSNs and CGFs within 3GPP networks. GPRS mobile stations (MSs) are connected to a SGSN without being aware of GTP. GTP can be used with UDP or TCP. UDP is either recommended or mandatory, except for tunnelling X.25 in version 0. GTP version 1 is used only on UDP.GPRS Tunneling Protocol (GTP) is a group of IP-based communications protocols used to carry general packet radio service (GPRS) within GSM, UMTS and LTE networks. In 3GPP architectures, GTP and Proxy Mobile IPv6 based interfaces are specified on various interface points. GTP can be decomposed into separate protocols, GTP-C, GTP-U and GTP'. GTP-C is used within the GPRS core network for signaling between gateway GPRS support nodes (GGSN) and serving GPRS support nodes (SGSN). This allows the SGSN to activate a session on a user's behalf (PDP context activation), to deactivate the same session, to adjust quality of service parameters, or to update a session for a subscriber who has just arrived from another SGSN. GTP-U is used for carrying user data within the GPRS core network and between the radio access network and the core network. The user data transported can be packets in any of IPv4, IPv6, or PPP formats. GTP' (GTP prime) uses the same message structure as GTP-C and GTP-U, but has an independent function. It can be used for carrying charging data from the charging data function (CDF) of the GSM or UMTS network to the charging gateway function (CGF). In most cases, this should mean from many individual network elements such as the GGSNs to a centralized computer that delivers the charging data more conveniently to the network operator's billing center. Different GTP variants are implemented by RNCs, SGSNs, GGSNs and CGFs within 3GPP networks. GPRS mobile stations (MSs) are connected to a SGSN without being aware of GTP. GTP can be used with UDP or TCP. UDP is either recommended or mandatory, except for tunnelling X.25 in version 0. GTP version 1 is used only on UDP.";
 	static {
 		if (TEST_ON_FAKE_DATA) {
@@ -560,15 +547,15 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					len = (int) (Math.random() * (longText.length() - pos));
 					int likesi = (int) (Math.random() * 100);
 					int unlikesi = (int) (Math.random() * 100);
-					msgsa[0] = new Message(msgNo, 0, MessageType.findByValue(1), topNo, 0, 1, 0, 0, "" + msgNo + "# "
-							+ longText.substring(pos, pos + len), likesi, unlikesi, new HashMap<MessageType, Long>(), new HashMap<Long, String>(),
-							new UserMessage(Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5), 0, null);
+					msgsa[0] = new Message(msgNo, 0, MessageType.findByValue(1), topNo, 0, 1, 0, 0, "" + msgNo + "# " + longText.substring(pos, pos + len),
+							likesi, unlikesi, new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(Math.random() > 0.5,
+									Math.random() > 0.5, Math.random() > 0.5), 0, null);
 
 					msgNo++;
 
-					topicsa[topNo] = new Topic(topNo, "" + topNo + "# " + longText.substring(pos, pos + len), msgsa[0], 0,
-							(int) (Math.random() * 100), 0, 0, (int) (Math.random() * 10000), (int) (Math.random() * 100000), new UserTopic(false,
-									likes, unlikes, Math.random() > 0.7, (int) (Math.random() * 1000), (int) (Math.random() * 1000), false), null);
+					topicsa[topNo] = new Topic(topNo, "" + topNo + "# " + longText.substring(pos, pos + len), msgsa[0], 0, (int) (Math.random() * 100), 0, 0,
+							(int) (Math.random() * 10000), (int) (Math.random() * 100000), new UserTopic(false, likes, unlikes, Math.random() > 0.7,
+									(int) (Math.random() * 1000), (int) (Math.random() * 1000), false), null);
 
 					topicsa[topNo].setLikesNum(topicsa[topNo].getLikesNum() + likesi);
 					topicsa[topNo].setUnlikesNum(topicsa[topNo].getUnlikesNum() + unlikesi);
@@ -582,8 +569,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 						int len1 = (int) (Math.random() * (longText.length() - pos1 - 1));
 						int likes1 = (int) (Math.random() * 100), unlikes1 = (int) (Math.random() * 100);
 						msgsa[no] = new Message(msgNo, parent, MessageType.findByValue(1), topNo, 0, 1, 0, 0, "" + msgNo + "# "
-								+ longText.substring(pos1, pos1 + len1), likes1, unlikes1, new HashMap<MessageType, Long>(),
-								new HashMap<Long, String>(), new UserMessage(Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5), 0, null);
+								+ longText.substring(pos1, pos1 + len1), likes1, unlikes1, new HashMap<MessageType, Long>(), new HashMap<Long, String>(),
+								new UserMessage(Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5), 0, null);
 						topicsa[topNo].setLikesNum(topicsa[topNo].getLikesNum() + likes1);
 						topicsa[topNo].setUnlikesNum(topicsa[topNo].getUnlikesNum() + unlikes1);
 						topicsa[topNo].setMessageNum(topicsa[topNo].getMessageNum() + 1);

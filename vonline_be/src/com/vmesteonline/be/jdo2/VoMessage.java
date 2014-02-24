@@ -149,6 +149,10 @@ public class VoMessage extends VoBaseMessage {
 		return recipient;
 	}
 
+	public void setRecipient(long recipient) {
+		this.recipient = recipient;
+	}
+
 	@Persistent
 	@Unindexed
 	private long approvedId;
