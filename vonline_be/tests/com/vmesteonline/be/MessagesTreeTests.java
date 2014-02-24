@@ -126,15 +126,19 @@ public class MessagesTreeTests extends MessagesTree {
 		Assert.assertEquals(8, t.items.size());
 		Assert.assertEquals(1, t.items.get(0).id);
 		Assert.assertEquals(0, t.items.get(0).level);
+		Assert.assertEquals(4, t.items.get(0).childMsgsNum);
 
 		Assert.assertEquals(4, t.items.get(1).id);
 		Assert.assertEquals(1, t.items.get(1).level);
+		Assert.assertEquals(0, t.items.get(1).childMsgsNum);
 
 		Assert.assertEquals(5, t.items.get(2).id);
 		Assert.assertEquals(1, t.items.get(2).level);
+		Assert.assertEquals(2, t.items.get(2).childMsgsNum);
 
 		Assert.assertEquals(6, t.items.get(3).id);
 		Assert.assertEquals(2, t.items.get(3).level);
+		Assert.assertEquals(1, t.items.get(3).childMsgsNum);
 
 	}
 

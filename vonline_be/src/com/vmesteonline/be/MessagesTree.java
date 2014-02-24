@@ -14,12 +14,27 @@ public class MessagesTree {
 		items = new ArrayList<ItemPosition>();
 		firstLevel = getLevel(0);
 		parseLevel(firstLevel, 0);
+		for (VoMessage voMsg : firstLevel) {
+			voMsg.setChildMessageNum(getChildsNum(voMsg.getId().getId()));
+		}
+
 	}
 
-	private List<VoMessage> firstLevel;
+	public List<VoMessage> getTreeMessagesFirstLevel(long userId) {
+		List<VoMessage> retList = new ArrayList<VoMessage>();
+		for (VoMessage voMsg : firstLevel) {
+			if (isVisibleMessage(voMsg, userId))
+				retList.add(voMsg);
+		}
+		return retList;
+	}
 
 	// эта функция возращает все сообщения от parentId до ближайшего сообщения
 	// 1-го уровня
+
+	boolean isVisibleMessage(VoMessage voMsg, long userId) {
+		return voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId;
+	}
 
 	public List<VoMessage> getTreeMessagesAfter(long parentId, long userId) throws InvalidOperation {
 
@@ -34,31 +49,23 @@ public class MessagesTree {
 				if (voMsg.getParentId() == 0)
 					break;
 
-				if (voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId) {
+				if (isVisibleMessage(voMsg, userId)) {
 					voMsg.setVisibleOffset(items.get(i).level);
+					voMsg.setChildMessageNum(items.get(i).childMsgsNum);
 					lst.add(voMsg);
 				}
-
 			}
-		}
-
-		for (int i = 0; i < lst.size(); i++) {
-			lst.get(i).setChildMessageNum(getChildsNum(lst, i, lst.get(i).getVisibleOffset()));
 		}
 
 		return lst;
 	}
 
-	int getChildsNum(List<VoMessage> lst, int currentIndex, int currentLevel) {
-		int childMsgsNum = 0;
-		for (int i = currentIndex + 1; i < lst.size(); i++) {
-			if (lst.get(i).getVisibleOffset() > currentLevel)
-				childMsgsNum++;
-			else
-				break;
+	int getChildsNum(long msgId) {
+		for (ItemPosition ip : items) {
+			if (ip.id == msgId)
+				return ip.childMsgsNum;
 		}
-
-		return childMsgsNum;
+		return 0;
 	}
 
 	boolean isFirstLevel(long id) {
@@ -70,13 +77,18 @@ public class MessagesTree {
 		return false;
 	}
 
-	private void parseLevel(List<VoMessage> levelMsgs, int level) {
+	private int parseLevel(List<VoMessage> levelMsgs, int level) {
 		Collections.sort(levelMsgs, new ByCreateTimeComparator());
+		int childsInSublevels = levelMsgs.size();
 		for (VoMessage voMsg : levelMsgs) {
-			items.add(new ItemPosition(voMsg.getId().getId(), 0, level));
+			ItemPosition ip = new ItemPosition(voMsg.getId().getId(), 0, level);
+			items.add(ip);
 			List<VoMessage> nextLevel = getLevel(voMsg.getId().getId());
-			parseLevel(nextLevel, level + 1);
+			ip.childMsgsNum = parseLevel(nextLevel, level + 1);
+			childsInSublevels += ip.childMsgsNum;
 		}
+
+		return childsInSublevels;
 	}
 
 	private List<VoMessage> getLevel(long parentId) {
@@ -96,7 +108,7 @@ public class MessagesTree {
 		throw new InvalidOperation(VoError.GeneralError, "can't find message by tree representation");
 	}
 
-	class ByCreateTimeComparator implements Comparator<VoMessage> {
+	public static class ByCreateTimeComparator implements Comparator<VoMessage> {
 
 		@Override
 		public int compare(VoMessage a, VoMessage b) {
@@ -112,11 +124,14 @@ public class MessagesTree {
 			this.level = level;
 		}
 
+		public int childMsgsNum;
 		public long id;
 		public long parentId;
 		public int level;
 
 	}
+
+	private List<VoMessage> firstLevel;
 
 	protected MessagesTree() {
 	}
