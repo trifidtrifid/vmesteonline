@@ -14,6 +14,23 @@ transport = new Thrift.Transport("/thrift/MessageService");
 protocol = new Thrift.Protocol(transport);
 client = new com.vmesteonline.be.MessageServiceClient(protocol);
 
+    /* глобальные переменные */
+    var topics,
+        prevTopicsHeight,
+        topicsLen,
+        topicsHeader,
+        topicsHeaderArray,
+        staffCounterForGoodTopicsHeight,
+        groupID,
+        rubricID,
+        lastTopicId,
+        FlagOfEndTopics = 1,
+        endOfLevel1Flag = [],
+        forum = $('.forum-wrap').html();
+    /* константы */
+    var heightOfMessagesForLoadNew = 760;
+    /* --------------------- */
+
 var level=0,
     message,
     oneTopicContent;
@@ -88,6 +105,24 @@ $('.fa-sitemap').click(function(){
         });
     }
 
+    var someLevel = 0;
+    function AutoLoadLevel1(tempScrollTop,ddList,newMessageHtml,level1Length){
+         someLevel++;
+        console.log("--"+someLevel);
+        $('html,body').animate({scrollTop: tempScrollTop},function(){
+            var ddListLengthNew = ddList.find('.dd-item').length;
+            console.log(ddListLengthNew+"--"+level1Length);
+            if (ddListLengthNew < level1Length){
+                tempScrollTop = ddList.height() + w.scrollTop();
+                AutoLoadLevel1(tempScrollTop,ddList,newMessageHtml,level1Length);
+                console.log('1');
+            }else{
+                console.log('2');
+                ddList.append(newMessageHtml);
+            }
+        });
+    }
+
     function SetCreateMessageClick(selector){
         selector.one('click',function(){
             var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
@@ -105,19 +140,24 @@ $('.fa-sitemap').click(function(){
                     newMessageHtml = MessageHtmlConstructor(newMessage,0);
                 }else{
                 // сообщение первого уровня
-                    newMessageHtml = MessageHtmlConstructor(newMessage,1);
-                    var ddList = $('.dd-list .dd-list');
-                    ddList.append(newMessageHtml);
-                    w.scrollTop(ddList.height() + w.scrollTop()-50);
+                    var ddListLengthNew= 0;
+                    var topicItem = $(this).closest('.topic-item');
+                    var currentTopicIndex = topicItem.index();
+                    var ddList = topicItem.find('.dd-list');
+                    var lastLoadedId = ddList.find('li:last-child .one-message').data('messageid');
+                    var level1Data = client.getFirstLevelMessages(topicItem.data('topicid'),groupID,1,lastLoadedId,0,50);
+                    var level1Messages = level1Data.messages;
+                    ddList.append(MessageHtmlConstructor(level1Messages,1));
+                    var tempScrollTop = ddList.height() + w.scrollTop()-50;
+                    $('html,body').scrollTop(tempScrollTop);
 
                     // обновляем счетчик сообщений в теме
-                    var topicItem = $(this).closest('.topic-item');
                     var counterSelector = topicItem.find('.topic-descr>.widget-body .answers-ctrl span span');
                     var messageInTopicCounter = parseInt(counterSelector.text());
                     counterSelector.text(++messageInTopicCounter);
 
                     // ставим события для нового сообщения
-                    var currentTopicIndex = topicItem.index();
+
                     GetTopicsHeightForFixedHeader(currentTopicIndex+1,topics,topicsLen,prevTopicsHeight);
                     SetShowEditorClick(ddList.find('li:last-child').find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
 
@@ -439,6 +479,12 @@ $('.fa-sitemap').click(function(){
         return topicsHeaderArray;
     }
 
+    function SetEndOfLevel1Flags(beginIndex){
+        for (var i = beginIndex; i < topicsLen; i++) {
+            endOfLevel1Flag[i] = 0;
+        }
+    }
+
     function SetGlobalParameters(){
         topics = $('.dd>.dd-list>.topic-item');
         prevTopicsHeight = [];
@@ -452,6 +498,7 @@ $('.fa-sitemap').click(function(){
         lastTopicId = $('.dd .topic-item:last').data('topicid');
 
         FlagOfEndTopics = 1;
+        SetEndOfLevel1Flags(0);
 
     }
 
@@ -640,21 +687,6 @@ $('.fa-sitemap').click(function(){
     }
     SetTopicEvents($('.dd>.dd-list>.topic-item'));
 
-/* глобальные переменные */
-    var topics,
-        prevTopicsHeight,
-        topicsLen,
-        topicsHeader,
-        topicsHeaderArray,
-        staffCounterForGoodTopicsHeight,
-        groupID,
-        rubricID,
-        lastTopicId,
-        FlagOfEndTopics = 1,
-        forum = $('.forum-wrap').html();
-    /* константы */
-    var heightOfMessagesForLoadNew = 760;
-/* --------------------- */
     SetGlobalParameters();
 
     $(window).scroll(function(){
