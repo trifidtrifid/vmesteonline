@@ -462,7 +462,7 @@ $('.fa-sitemap').click(function(){
             if (firstLevelFlag[index]){
                 /* Если флаг стоит, значит подгружаем сообщения остальных уровней для этого сообщения ПЕРВОГО уровня */
                 var parentID = $(this).closest('.one-message').data('messageid');
-                var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,0,10);
+                var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,10);
                 if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
                     var currentMessages = messagesPart.messages;
 
@@ -505,6 +505,14 @@ $('.fa-sitemap').click(function(){
                 $(this).removeClass('fa-plus').addClass('fa-minus');
             }
         });
+    }
+
+    function GetLevel1Selector(currentIndex){
+        var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
+            level1 = {};
+            level1.selector = topicItem.find('.level-1');
+            level1.len = level1.selector.length;
+            return level1;
     }
 
 /* --- */
@@ -589,7 +597,8 @@ $('.fa-sitemap').click(function(){
                 zeroLevelFlag[index] = 0;   // сбрасываем флаг
 
                 /* сообщения ПЕРВОГО уровня берем от родителя с id 0 (т.е от топика) */
-                currentMessages = client.getMessages(topicID,groupID,1,0,0,0,10).messages;
+
+                currentMessages = client.getFirstLevelMessages(topicID,groupID,1,0,0,10).messages;
 
                 /* создаем html с сообщениями ПЕРВОГО уровня, который будем подгружать для этого топика */
                 /* и подгружаем его, в списке */
@@ -614,7 +623,7 @@ $('.fa-sitemap').click(function(){
                     if (firstLevelFlag[index]){
                     //     Если флаг стоит, значит подгружаем сообщения остальных уровней для этого сообщения ПЕРВОГО уровня
                         var parentID = $(this).closest('.one-message').data('messageid');
-                        var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,0,10);
+                        var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,10);
                         if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
                         currentMessages = messagesPart.messages;
 
@@ -758,30 +767,34 @@ $('.fa-sitemap').click(function(){
             /* подгружаем сообщения первого уровня если до следующего топика еще не больше определенного расстояния
             * (heightOfMessagesForLoadNew)
             * */
-            /*var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
-                level1 = topicItem.find('.level-1'),
-                level1Length = level1.length;
+
+
+            var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
+                level1 = GetLevel1Selector(currentIndex).selector,
+                level1Length = GetLevel1Selector(currentIndex).len;
 
             if (scrollTop > Math.abs(prevTopicsHeight[currentIndex+1]-heightOfMessagesForLoadNew) && level1Length > 9){
-                var parentID = 0,
-                    topicID  = topicItem.data('topicid');
-                var lastMessageID = 5004976929636352;//topicItem.find('>.dd-list>li:last-child .one-message').data('messageid');
+                var topicID  = topicItem.data('topicid');
+                var lastMessageID = topicItem.find('>.dd-list>li:last-child .one-message').data('messageid');
                 console.log("-- "+lastMessageID);
-                var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,lastMessageID,10);
+                var messagesPart = client.getFirstLevelMessages(topicID,groupID,1,lastMessageID,0,10);
                 if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
-                    //alert(messagesPart.messages.length);
                     var currentMessages = messagesPart.messages;
                     var currentMessagesLength = currentMessages.length;
                     topicItem.find('.dd-list').append(MessageHtmlConstructor(currentMessages,true));
                     GetTopicsHeightForFixedHeader(0,topics,topicsLen,prevTopicsHeight);
+                    level1Length = GetLevel1Selector(currentIndex).len;
+                    level1 = GetLevel1Selector(currentIndex).selector;
 
                     var addedMessages = level1.slice(level1Length-currentMessagesLength,level1Length);
+                    //alert(addedMessages.length);
+
 
                     SetLevel1Click(addedMessages.find('.plus-minus'),topicItem);
                     SetShowEditorClick(addedMessages.find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
                     SetLikeClick(addedMessages.find('.like-item'));
                 }
-            }*/
+            }
         }
 
     });
