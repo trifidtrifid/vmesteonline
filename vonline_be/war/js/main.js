@@ -98,6 +98,10 @@ $('.fa-sitemap').click(function(){
             var parentID = $(this).closest('.dd-item').find('.one-message').data('messageid');
             if (parentID === undefined || $(this).closest('.dd-item').hasClass('topic-item')){parentID = 0;}
             client.createMessage(topicID,parentID,groupID,1,messageWithGoodLinks,0,0,0);
+            $(this).closest('.widget-box').fadeOut(200,function(){
+                //client.getFirstLevelMessages()
+                //client.getMessages()
+            });
         });
     }
 
@@ -144,30 +148,7 @@ $('.fa-sitemap').click(function(){
                     $(this).closest('.widget-box').slideUp(200);
                 });
                 SetWysiwig(widget.find('+.widget-box .wysiwyg-editor'));
-/*                widget.find('+.widget-box .wysiwyg-editor').css({'height':'200px'}).ace_wysiwyg({
-                    toolbar_place: function(toolbar) {
-                        return $(this).closest('.widget-box').find('.widget-header').prepend(toolbar).children(0).addClass('inline');
-                    },
-                    toolbar:
-                        [
-                            'bold',
-                            //{name:'italic' , title:'Change Title!', icon: 'icon-leaf'},
-                            'italic',
-                            'strikethrough',
-                            'underline',
-                            null,
-                            'insertunorderedlist',
-                            'insertorderedlist',
-                            null,
-                            'justifyleft',
-                            'justifycenter',
-                            'justifyright',
-                            'createLink',
-                            'unlink',
-                            'insertImage'
-                        ],
-                    speech_button:false
-                });*/
+
             }
             widget.find('+.widget-box').slideToggle(200);
 
@@ -507,15 +488,7 @@ $('.fa-sitemap').click(function(){
         });
     }
 
-    function GetLevel1Selector(currentIndex){
-        var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
-            level1 = {};
-            level1.selector = topicItem.find('.level-1');
-            level1.len = level1.selector.length;
-            return level1;
-    }
-
-/* --- */
+ /* --- */
 
 /* мега раздел подгрузки и отправки сообщений  */
 
@@ -604,68 +577,10 @@ $('.fa-sitemap').click(function(){
                 /* и подгружаем его, в списке */
                 topicItem.append('<ol class="dd-list">' + MessageHtmlConstructor(currentMessages,true) + '</ol>');
 
-                /*var firstLevelFlag = [];
-
-                var tempLen = topicItem.find('.level-1').length;
-                for (i = 0 ; i < tempLen; i++){
-                    firstLevelFlag[i] = 1;
-                }*/
 
                 /* событие раскрытия/скрытия сообщений остальных урвоней. Чтобы не было повторений важно указывать в селекторе topicItem. */
                 SetLevel1Click(topicItem.find('.level-1 .plus-minus'),topicItem);
-/*                topicItem.find('.level-1 .plus-minus').click(function(e){
-                    e.preventDefault();
 
-                  //   класс служит для того чтобы не вешать событие по нескольку раз на одно и тоже сообщение
-                    topicItem.find('.one-message').addClass('withPlusMinusClick');
-                    var index = $(this).closest('.level-1').data('level1index');//parent().index();
-
-                    if (firstLevelFlag[index]){
-                    //     Если флаг стоит, значит подгружаем сообщения остальных уровней для этого сообщения ПЕРВОГО уровня
-                        var parentID = $(this).closest('.one-message').data('messageid');
-                        var messagesPart = client.getMessages(topicID,groupID,1,parentID,0,10);
-                        if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
-                        currentMessages = messagesPart.messages;
-
-                   //      подгружаем остальные сообщения к этому сообщению первого уровня
-                        $(this).closest('.dd-item').after(MessageHtmlConstructor(currentMessages,false));
-
-                    //     событие сворачивание разворачивания для любого сообщения, кроме ПЕРВОГО уровня
-                         topicItem.find('.one-message:not(.level-1):not(.withPlusMinusClick) .plus-minus').click(function(e){
-
-                            e.preventDefault();
-                             topicItem.find('.one-message').addClass('withPlusMinusClick');
-
-                       //       Иначе сворачиваем-разворачиваем сообщения
-                             SaveOrLoadMessagesStates($(this),topicItem);
-
-                            if ($(this).hasClass('fa-minus')){
-                                $(this).removeClass('fa-minus').addClass('fa-plus');
-                            }else{
-                                $(this).removeClass('fa-plus').addClass('fa-minus');
-                            }
-
-                            var currentTopicIndex = topicItem.index();
-                            GetTopicsHeightForFixedHeader(currentTopicIndex+1,topics,topicsLen,prevTopicsHeight);
-                        });
-
-                    //     появление wysiwig редактора (для остальных сообщений)
-                        SetShowEditorClick(topicItem.find('.one-message:not(.level-1):not(.withPlusMinusClick)').find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
-                      //   ---
-                        SetLikeClick(topicItem.find('.one-message:not(.level-1):not(.withPlusMinusClick) .like-item'));
-                        firstLevelFlag[index] = 0;
-                        }
-                    }else{
-                    //     Иначе сворачиваем-разворачиваем сообщения
-                        SaveOrLoadMessagesStates($(this),topicItem);
-                    }
-
-                    if ($(this).hasClass('fa-minus')){
-                        $(this).removeClass('fa-minus').addClass('fa-plus');
-                    }else{
-                        $(this).removeClass('fa-plus').addClass('fa-minus');
-                    }
-                });*/
                 /*
                  событие появления wysiwig редактора для сообщений 1го уровня
                  (можно вынести в функцию, т.к повторяется)
@@ -770,25 +685,22 @@ $('.fa-sitemap').click(function(){
 
 
             var topicItem = $('.dd>.dd-list>.topic-item:eq('+ currentIndex +')'),
-                level1 = GetLevel1Selector(currentIndex).selector,
-                level1Length = GetLevel1Selector(currentIndex).len;
+                level1 = topicItem.find('.level-1'),
+                level1Length = level1.length;
 
             if (scrollTop > Math.abs(prevTopicsHeight[currentIndex+1]-heightOfMessagesForLoadNew) && level1Length > 9){
                 var topicID  = topicItem.data('topicid');
                 var lastMessageID = topicItem.find('>.dd-list>li:last-child .one-message').data('messageid');
-                console.log("-- "+lastMessageID);
                 var messagesPart = client.getFirstLevelMessages(topicID,groupID,1,lastMessageID,0,10);
                 if (messagesPart.messages){       // добавляем html только если есть внутренние сообщения
                     var currentMessages = messagesPart.messages;
                     var currentMessagesLength = currentMessages.length;
                     topicItem.find('.dd-list').append(MessageHtmlConstructor(currentMessages,true));
                     GetTopicsHeightForFixedHeader(0,topics,topicsLen,prevTopicsHeight);
-                    level1Length = GetLevel1Selector(currentIndex).len;
-                    level1 = GetLevel1Selector(currentIndex).selector;
+                    level1 = topicItem.find('.level-1');
+                    level1Length = level1.length;
 
                     var addedMessages = level1.slice(level1Length-currentMessagesLength,level1Length);
-                    //alert(addedMessages.length);
-
 
                     SetLevel1Click(addedMessages.find('.plus-minus'),topicItem);
                     SetShowEditorClick(addedMessages.find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
@@ -858,7 +770,6 @@ function AutoReplaceLinkAndVideo(str) {
         activeGroupItem.trigger('click');
         activeRubricItem.trigger('click');
     });
-    //});
 });
     }
     SetCreateTopicBtn();
