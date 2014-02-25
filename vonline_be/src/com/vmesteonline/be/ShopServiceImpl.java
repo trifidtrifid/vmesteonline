@@ -859,39 +859,42 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	
 //======================================================================================================================
 
-	private void mergeOrderLinePackets(VoOrderLine voOrderLine, VoOrderLine currentOL) {
+	public void mergeOrderLinePackets(VoOrderLine voOrderLine, VoOrderLine currentOL) {
 		Map<Double, Integer> cpm = currentOL.getPackets();
 		Map<Double, Integer> nol = voOrderLine.getPackets();
 		
 		if( null == cpm && null==nol ){
 			HashMap<Double, Integer> pMap = new HashMap<Double,Integer>();
-			currentOL.setPackets( pMap );
 			if( currentOL.getQuantity() == voOrderLine.getQuantity() )
 				pMap.put(currentOL.getQuantity(), 2);
 			else {
 				pMap.put(currentOL.getQuantity(), 1);
 				pMap.put(voOrderLine.getQuantity(), 1);
 			}
+			currentOL.setPackets( pMap );
+			
 		} else if( null != cpm && null==nol ){
-			if( cpm.containsKey(voOrderLine.getQuantity()))
+			
 				cpm.put( voOrderLine.getQuantity(), 
 						cpm.containsKey(voOrderLine.getQuantity()) ? 
 								cpm.get(voOrderLine.getQuantity())+1 : 1 );
 		} else if( null == cpm && null!=nol ){
 			
 			HashMap<Double, Integer> pMap = new HashMap<Double,Integer>();
-			currentOL.setPackets( pMap );
 			pMap.putAll(nol);
 			if( pMap.containsKey(currentOL.getQuantity()))
 				pMap.put( currentOL.getQuantity(), 
 						pMap.containsKey(currentOL.getQuantity()) ? 
 								pMap.get(currentOL.getQuantity())+1 : 1 );
+			currentOL.setPackets( pMap );
 		} else {
 			for( Entry<Double,Integer> npe: nol.entrySet()){
 				cpm.put( npe.getKey(), cpm.containsKey( npe.getKey() ) ? 
 						cpm.get(npe.getKey()) + npe.getValue() : npe.getValue());									
 			}
 		}
+		
+		
 	}
 //======================================================================================================================
 	/**
@@ -1508,8 +1511,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 						old.producerId = vol.getProduct().getProducer().getId();
 						old.producerName = vol.getProduct().getProducer().getName();
 						old.price = vol.getPrice();
+						old.comment = vol.getComment();
+						if(null!=vol.getPackets()){
+							old.packets = new TreeMap<Double, Integer>();
+							old.packets.putAll(vol.getPackets());
+						}
 						oldl.add(old);
 					}
+					//collect all order line information 
 					ByteArrayOutputStream lbaos = new ByteArrayOutputStream();
 					ImportElement ordersLinesIE = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_"+od.orderId+"_lines.csv", 
 							orderLineFIelds);
@@ -1517,13 +1526,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					
 					CSVHelper.writeCSVData(lbaos, CSVHelper.getFieldsMap(odInstance, ExchangeFieldType.ORDER_LINE_ID, orderLineFIelds),
 							oldl, lfieldsData); 
+					
 					ordersLinesIE.setFieldsData(lfieldsData);
 					lbaos.close();
 					byte[] fileData = lbaos.toByteArray();
 					ordersLinesIE.setFileData(fileData);
 					
-					baos.write(fileData);
-					fieldsData.addAll(lfieldsData);
+					//baos.write(fileData);
+					//fieldsData.addAll(lfieldsData);
 					
 					odl.add(od);
 					ds.addToData( ordersLinesIE );
@@ -1591,8 +1601,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 							pod = prodDescMap.get(producer.getId()).get(product.getId());
 							pod.orderedQuantity += vol.getQuantity();
 							pod.packSize = product.getMinProducerPackGramms();
-							pod.packQuantity = 0 != product.getMinProducerPackGramms() ? (int)(pod.orderedQuantity * 1000 / product.getMinProducerPackGramms()) :
-								0;
+							pod.packQuantity = 0 != product.getMinProducerPackGramms() ?
+									(int)(pod.orderedQuantity * 1000 / product.getMinProducerPackGramms()) : 0;
 							continue;
 						} 
 						 

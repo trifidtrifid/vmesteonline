@@ -2,6 +2,7 @@ package com.vmesteonline.be.jdo2.shop;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -31,6 +32,13 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 		if( null!=packets && packets.size() > 1 ){
 			if(product.isPrepackRequired()){
 				this.packets = packets;
+				//CHECK THAP PACKETS QONTITY MATCH the total quantity
+				double tq = 0;
+				for (Entry<Double, Integer> pe : packets.entrySet()) {
+					tq += pe.getKey() * pe.getValue();
+				}
+				if( tq != quantity )
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Total quantity("+quantity+") of '"+product.getName()+"' does not meet summary of packets ("+tq+")!");
 			} else { 
 				throw new InvalidOperation(VoError.IncorrectParametrs, "Not prepacked product '"+product.getName()+"' can't have packets set, but provided "+packets.size()+"!");
 			}

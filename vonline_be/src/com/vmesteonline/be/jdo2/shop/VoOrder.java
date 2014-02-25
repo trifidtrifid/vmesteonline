@@ -86,7 +86,10 @@ public class VoOrder {
 		try {
 			VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProduct().getId());
 			
-			VoOrderLine voOrderLine = new VoOrderLine(this, product, orderLine.getQuantity(), product.getPrice( priceType));
+			VoOrderLine voOrderLine = 
+					 new VoOrderLine(this, product, orderLine.getQuantity(), product.getPrice( priceType), orderLine.getComment(),
+								 product.isPrepackRequired() ? orderLine.getPacks() : null );
+				
 			VoOrderLine oldLine = this.orderLines.put( voOrderLine.getProduct().getId(), voOrderLine );
 			this.incrementTotalCost(voOrderLine.getPrice()*voOrderLine.getQuantity() - oldLine.getPrice() * oldLine.getQuantity());
 			pm.makePersistent( voOrderLine );
