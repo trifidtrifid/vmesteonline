@@ -68,7 +68,7 @@ public class VoOrder {
 		this.totalCost = 0D;
 		this.paymentType = PaymentType.CASH;
 		this.paymentStatus = PaymentStatus.WAIT;
-		this.odrerLines = new HashMap<Long,VoOrderLine>();
+		this.orderLines = new HashMap<Long,VoOrderLine>();
 		this.priceType = priceType;
 		this.comment = comment;
 		try{
@@ -86,8 +86,11 @@ public class VoOrder {
 		try {
 			VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProduct().getId());
 			
-			VoOrderLine voOrderLine = new VoOrderLine(this, product, orderLine.getQuantity(), product.getPrice( priceType));
-			VoOrderLine oldLine = this.odrerLines.put( voOrderLine.getProduct().getId(), voOrderLine );
+			VoOrderLine voOrderLine = 
+					 new VoOrderLine(this, product, orderLine.getQuantity(), product.getPrice( priceType), orderLine.getComment(),
+								 product.isPrepackRequired() ? orderLine.getPacks() : null );
+				
+			VoOrderLine oldLine = this.orderLines.put( voOrderLine.getProduct().getId(), voOrderLine );
 			this.incrementTotalCost(voOrderLine.getPrice()*voOrderLine.getQuantity() - oldLine.getPrice() * oldLine.getQuantity());
 			pm.makePersistent( voOrderLine );
 			pm.makePersistent(this);
@@ -107,7 +110,7 @@ public class VoOrder {
 				deliveryTo.getPostalAddress(), paymentType, paymentStatus,
 				new ArrayList<OrderLine>(), comment);
 		SortedSet<VoOrderLine> ols = new TreeSet<VoOrderLine>();
-		if(null!=odrerLines) ols.addAll(odrerLines.values());
+		if(null!=orderLines) ols.addAll(orderLines.values());
 		for( VoOrderLine vol: ols){
 			od.odrerLines.add(vol.getOrderLine());
 		}
@@ -115,7 +118,7 @@ public class VoOrder {
 	}
 	
 	public VoOrderLine getOrderLineByProduct( long productId ){
-		return odrerLines.get(productId);
+		return orderLines.get(productId);
 	} 
 	
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -164,7 +167,7 @@ public class VoOrder {
   @Persistent(mappedBy="order")
   @OneToMany
   @Extension(key="comparator-name", value="com.vmesteonline.be.jdo2.shop.VoOrder.OrderLineComparator", vendorName="datanucleus")
-  private Map<Long,VoOrderLine> odrerLines;
+  private Map<Long,VoOrderLine> orderLines;
   
   @Persistent
   private PriceType priceType; 
@@ -270,8 +273,8 @@ public class VoOrder {
 		return user;
 	}
 
-	public Map<Long,VoOrderLine> getOdrerLines() {
-		return odrerLines;
+	public Map<Long,VoOrderLine> getOrderLines() {
+		return orderLines;
 	}
 
 	public long getShopId() {

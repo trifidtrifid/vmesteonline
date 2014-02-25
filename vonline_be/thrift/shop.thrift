@@ -72,7 +72,10 @@ enum PaymentStatus { UNKNOWN=0, WAIT=1, PENDING=2, COMPLETE=3, CREDIT=4 }
 struct OrderLine {
 	1:Product product,
 	2:double quantity,
-	4:double price   
+	3:double price
+	4:optional map<double, i32> packs; //can be applied to prepacked products if customer wants to buy several packet of 
+	//different weight
+	5:optional string comment    
 }
 
 struct OrderDetails {
@@ -118,18 +121,19 @@ enum ExchangeFieldType {
 	
 	PRODUCT_ID=300, PRODUCT_NAME,	PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
 	PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
-	PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID, PRODUCT_MIN_CLN_PACK_G, PRODUCT_MIN_PROD_PACK_G, PRODUCT_PREPACK_REQ, PRODUCT_KNOWN_NAMES
+	PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID, PRODUCT_MIN_CLN_PACK_G, PRODUCT_MIN_PROD_PACK_G, PRODUCT_PREPACK_REQ, PRODUCT_KNOWN_NAMES,
 	
 	DATE_TYPE=400, DATE_DATE,
 	
 	ORDER_ID = 1000, ORDER_DATE, ORDER_STATUS, ORDER_PRICE_TYPE, ORDER_TOTAL_COST, 
 	ORDER_CREATED, ORDER_DELIVERY_TYPE, ORDER_DELIVERY_COST, ORDER_DELIVERY_ADDRESS, ORDER_PAYMENT_TYPE, ORDER_PAYMENT_STATUS,
-	ORDER_COMMENT, ORDER_USER_ID, ORDER_USER_NAME
+	ORDER_COMMENT, ORDER_USER_ID, ORDER_USER_NAME,
 	
-	ORDER_LINE_ID = 1100, ORDER_LINE_QUANTITY, ORDER_LINE_OPRDER_ID, ORDER_LINE_PRODUCT_ID, ORDER_LINE_PRODUCT_NAME, ORDER_LINE_PRODUCER_ID, ORDER_LINE_PRODUCER_NAME ORDER_LINE_PRICE,
+	ORDER_LINE_ID = 1100, ORDER_LINE_QUANTITY, ORDER_LINE_OPRDER_ID, ORDER_LINE_PRODUCT_ID, ORDER_LINE_PRODUCT_NAME, ORDER_LINE_PRODUCER_ID, ORDER_LINE_PRODUCER_NAME, 
+	ORDER_LINE_PRICE, ORDER_LINE_COMMENT, ORDER_LINE_PACKETS
 	
 	//product report
-	TOTAL_PROUCT_ID=2000, TOTAL_PRODUCT_NAME, TOTAL_PRODUCER_ID, TOTAL_PRODUCER_NAME, TOTAL_PRODUCT_MIN_PACK, TOTAL_ORDERED, TOTAL_MIN_QUANTITY, TOTAL_REST, TOTAL_PREPACK_REQUIRED
+	TOTAL_PROUCT_ID=2000, TOTAL_PRODUCT_NAME, TOTAL_PRODUCER_ID, TOTAL_PRODUCER_NAME, TOTAL_PRODUCT_MIN_PACK, TOTAL_ORDERED, TOTAL_MIN_QUANTITY, TOTAL_REST, TOTAL_PREPACK_REQUIRED,
 	//pack variants report by delivery type
 	TOTAL_PACK_SIZE,TOTAL_PACK_QUANTYTY, TOTAL_DELIVERY_TYPE  
 } 
@@ -238,6 +242,7 @@ service ShopService {
 	* Method returns id of new order and set is as a current
 	**/
 	i64 createOrder(1:i32 date, 2:string comment, 3:PriceType priceType) throws (1:error.InvalidOperation exc),
+	void updateOrder( 1:i64 orderId, 2:i32 date, 3:string comment) throws (1:error.InvalidOperation exc),
 	i64 cancelOrder() throws (1:error.InvalidOperation exc),
 	i64 confirmOrder() throws (1:error.InvalidOperation exc),
 	/**
@@ -254,7 +259,7 @@ service ShopService {
 	* Methods adds or replaces line to the current order that set by createOrder, or getOrderDetails method
 	* it returns orderline that is with price set
 	**/
-	OrderLine setOrderLine( 1:i64 productId, 2:double quontity ) throws (1:error.InvalidOperation exc),
+	OrderLine setOrderLine( 1:i64 productId, 2:double quantity, 3:string comment, 4:map<double, i32>  packets) throws (1:error.InvalidOperation exc),
 	bool removeOrderLine(1:i64 productId) throws (1:error.InvalidOperation exc),
 	/**
 	* Method returns Order details that contains new value of postal address and delivery cost of order delivery 

@@ -116,7 +116,7 @@ public class CSVHelper {
 			List<List<String>> fieldsToFill ) throws IOException{
 			writeCSVData(os, fieldsMap, listToRead, fieldsToFill, null, null, null );
 	}
-	
+	//====================================================================================================================
 	public static<T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listToRead, List<List<String>> fieldsToFill,
 			String fieldDelim, String setDelim, String avpDelim) throws IOException {
 		
@@ -182,7 +182,7 @@ public class CSVHelper {
 			throw new IOException("Failed to write CSV:"+e.getMessage(), e);
 		}
 	}
-	
+	//====================================================================================================================
 	public static<T> SortedMap<Integer,String> getFieldsMap( T instance, ExchangeFieldType id, List<ExchangeFieldType> requiredFields) throws InvalidOperation{
 		SortedMap<Integer,String> fmap = new TreeMap<Integer, String>();
 		Field[] fields = instance.getClass().getFields();
