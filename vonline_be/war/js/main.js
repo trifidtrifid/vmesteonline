@@ -89,7 +89,7 @@ $('.fa-sitemap').click(function(){
     }
 
     function SetCreateMessageClick(selector){
-        selector.click(function(){
+        selector.one('click',function(){
             var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
             message = message.replace(new RegExp('&nbsp;','g'),' ');
             var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
@@ -97,10 +97,32 @@ $('.fa-sitemap').click(function(){
             var topicID = $(this).closest('.topic-item').data('topicid');
             var parentID = $(this).closest('.dd-item').find('.one-message').data('messageid');
             if (parentID === undefined || $(this).closest('.dd-item').hasClass('topic-item')){parentID = 0;}
-            client.createMessage(topicID,parentID,groupID,1,messageWithGoodLinks,0,0,0);
+            var newMessage = client.createMessage(topicID,parentID,groupID,1,messageWithGoodLinks,0,0,0);
+
             $(this).closest('.widget-box').fadeOut(200,function(){
-                //client.getFirstLevelMessages()
-                //client.getMessages()
+                var newMessageHtml = "";
+                if ($(this).closest('.widget-box').prev().hasClass('one-message')){
+                    newMessageHtml = MessageHtmlConstructor(newMessage,0);
+                }else{
+                // сообщение первого уровня
+                    newMessageHtml = MessageHtmlConstructor(newMessage,1);
+                    var ddList = $('.dd-list .dd-list');
+                    ddList.append(newMessageHtml);
+                    w.scrollTop(ddList.height() + w.scrollTop()-50);
+
+                    // обновляем счетчик сообщений в теме
+                    var topicItem = $(this).closest('.topic-item');
+                    var counterSelector = topicItem.find('.topic-descr>.widget-body .answers-ctrl span span');
+                    var messageInTopicCounter = parseInt(counterSelector.text());
+                    counterSelector.text(++messageInTopicCounter);
+
+                    // ставим события для нового сообщения
+                    var currentTopicIndex = topicItem.index();
+                    GetTopicsHeightForFixedHeader(currentTopicIndex+1,topics,topicsLen,prevTopicsHeight);
+                    SetShowEditorClick(ddList.find('li:last-child').find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
+
+                }
+                // куда вставляем
             });
         });
     }
@@ -250,6 +272,16 @@ $('.fa-sitemap').click(function(){
     function MessageHtmlConstructor(arrayOfData,level1){
         var messageHtml = "";
         var len = arrayOfData.length;
+        if (len === undefined){
+            len = 1;
+            arrayOfData[0] = arrayOfData;
+            /* временно */
+            arrayOfData[0].userInfo = {};
+            arrayOfData[0].userInfo.firstName = "Иван";
+            arrayOfData[0].userInfo.lastName = "Грозный";
+
+        }
+        //alert(arrayOfData[0].content);
         /*
          создаем html, который содержит в себе все остальные сообщения. Html всех сообщений
          идентичен, древовидная структура создается за счет параметра offset, который есть у каждого сообщения,
