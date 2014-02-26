@@ -125,20 +125,23 @@ $('.fa-sitemap').click(function(){
 
     function AddNewMessage(newMessage,parentOfNewMessage,ddList,selector){
         /* ------- */
+        var lastIndex;
         if (parentOfNewMessage.find('.plus-minus').hasClass('fa-plus')){
             // если свернуто - разворачиваем
             parentOfNewMessage.find('.plus-minus').trigger('click');
         }
         var newMessageHtml = MessageHtmlConstructor(newMessage,0);
         var currentOffset = selector.closest('.dd-item').data('offset') + 1;
-        var lastIndex = GetIndexForNewMessage(ddList,selector,newMessage.parentId);
+        lastIndex = GetIndexForNewMessage(ddList,selector,newMessage.parentId);
         //alert(lastIndex);
 
         ddList.find('.dd-item:eq('+ lastIndex +')').after(newMessageHtml);
         var newMessageSelector = ddList.find('.dd-item:eq('+ ++lastIndex +')');
         newMessageSelector.css('margin-left',currentOffset*30+'px').data('offset',currentOffset);
-        $.scrollTo(newMessageSelector);
+        setTimeout(function(){$.scrollTo(ddList.find('.dd-item:eq('+ ++lastIndex +')'))},200);
 
+        var counter = selector.closest('.topic-item').find('>.topic-descr .answers-ctrl span span').text();
+        selector.closest('.topic-item').find('>.topic-descr .answers-ctrl span span').text(++counter);
         // ставим события для нового сообщения
         SetShowEditorClick(newMessageSelector.find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
         /* ------ */
@@ -153,11 +156,21 @@ $('.fa-sitemap').click(function(){
             var topicID = $(this).closest('.topic-item').data('topicid');
             var parentID = $(this).closest('.dd-item').find('.one-message').data('messageid');
             if (parentID === undefined || $(this).closest('.dd-item').hasClass('topic-item')){parentID = 0;}
+
+            var topicItem = $(this).closest('.topic-item');
+            var level1Data = client.getFirstLevelMessages(topicItem.data('topicid'),groupID,1,0,0,50);
+            if (!level1Data.messages){
+                var oldSize = 0;
+            }
+            else{
+                oldSize = level1Data.messages.length;
+            }
+
+
             var newMessage = client.createMessage(topicID,parentID,groupID,1,messageWithGoodLinks,0,0,0);
 
             $(this).closest('.widget-box').fadeOut(200,function(){
                 var newMessageHtml = "";
-                var topicItem = $(this).closest('.topic-item');
                 var currentTopicIndex = topicItem.index();
                 var ddList = topicItem.find('.dd-list');
                 var tempScrollTop;
@@ -170,7 +183,6 @@ $('.fa-sitemap').click(function(){
                          if (parentOfNewMessage.parent().next().data('offset') > parentOfNewMessage.parent().data('offset')){
                              // если уже подгружали к 1му уровню
                              AddNewMessage(newMessage,parentOfNewMessage,ddList,$(this));
-
                          }else{
                              // если еще не подгружали к 1му уровню
                              if (parentOfNewMessage.find('.plus-minus').hasClass('fa-plus')){
@@ -193,23 +205,24 @@ $('.fa-sitemap').click(function(){
                         // если уже подгружали
                         if (parentOfNewMessage.find('.plus-minus').hasClass('fa-plus')){
                             // если свернуто - разворачиваем
-                            parentOfNewMessage.find('.plus-minus').trigger('click');
+                            parentOfNewMessage.find('.plus-minus').removeClass('fa-plus').addClass('fa-minus');//trigger('click');
+                            topicItem.find('.dd-list').show();
                         }
 
-                        var lastLoadedId = ddList.find('li:last-child .one-message').data('messageid');
-                        var level1Data = client.getFirstLevelMessages(topicItem.data('topicid'),groupID,1,lastLoadedId,0,50);
+                        //var lastLoadedId = ddList.find('li:last-child .one-message').data('messageid');
+                        var lastLoadedId = 0;
+                        var newSize;
+                        while(true){
+                            var level1Data = client.getFirstLevelMessages(topicItem.data('topicid'),groupID,1,lastLoadedId,0,50);
+                            newSize = level1Data.messages.length;
+                            //console.log(level1Data);
+                            if (newSize > oldSize){break;}
+                        }
                         var level1Messages = level1Data.messages;
                         ddList = topicItem.find('.dd-list');
-                        ddList.append(MessageHtmlConstructor(level1Messages,1));
-                        //alert(ddList.find('.dd-item').height());
-                        /*var h = 0;
-                        ddList.find('.dd-item').each(function(){
-                            h += $(this).height();
-                        });
-                        alert(h);*/
-                        //var temp = topicItem.height();
-                        //$.scrollTo($('.topic-item:eq('+ topicItem.index()+1 +')'));
-                        //$.scrollTo(h);
+
+                        ddList.html(MessageHtmlConstructor(level1Messages,1));
+                        $.scrollTo(ddList.find('.dd-item:last-child'));
 
                         // обновляем счетчик сообщений в теме
                         var counterSelector = topicItem.find('.topic-descr>.widget-body .answers-ctrl span span');
@@ -226,12 +239,19 @@ $('.fa-sitemap').click(function(){
                             parentOfNewMessage.find('.plus-minus').trigger('click');
                         }
 
-                        var lastLoadedId = ddList.find('li:last-child .one-message').data('messageid');
-                        var level1Data = client.getFirstLevelMessages(topicItem.data('topicid'),groupID,1,lastLoadedId,0,50);
+                        //var lastLoadedId = ddList.find('li:last-child .one-message').data('messageid');
+                        var lastLoadedId = 0;
+                        var newSize;
+                        while(true){
+                            var level1Data = client.getFirstLevelMessages(topicItem.data('topicid'),groupID,1,lastLoadedId,0,50);
+                            newSize = level1Data.messages.length;
+                            if (newSize > oldSize){break;}
+                        }
                         var level1Messages = level1Data.messages;
                         ddList = topicItem.find('.dd-list');
-                        ddList.append(MessageHtmlConstructor(level1Messages,1));
-                        $.scrollTo(topicItem.find('.dd-list .dd-item:last-child'));
+
+                        ddList.html(MessageHtmlConstructor(level1Messages,1));
+                        $.scrollTo(ddList.find('.dd-item:last-child'));
 
                         // обновляем счетчик сообщений в теме
                         var counterSelector = topicItem.find('.topic-descr>.widget-body .answers-ctrl span span');
@@ -245,6 +265,7 @@ $('.fa-sitemap').click(function(){
 
                 }
                 GetTopicsHeightForFixedHeader(currentTopicIndex+1,topics,topicsLen,prevTopicsHeight);
+
 
             });
         });
