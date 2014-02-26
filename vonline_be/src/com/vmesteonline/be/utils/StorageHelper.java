@@ -154,7 +154,7 @@ public class StorageHelper {
 	//===================================================================================================================
 
 	public static String saveImage(String fileName, long userId, boolean isPublic, InputStream is, PersistenceManager _pm ) throws IOException {
-		VoFileAccessRecord vfar = createFileAccessRecord(userId,isPublic, fileName);
+		VoFileAccessRecord vfar = createFileAccessRecord(userId, isPublic, fileName);
 		PersistenceManager pm = null==_pm ?  PMF.getPm() : _pm;
 		try {
 			vfar = pm.makePersistent(vfar);
@@ -167,16 +167,7 @@ public class StorageHelper {
 		int liop; //append with '.bin' extension if no extension is set
 		return getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? "bin" : fileName.substring( liop + 1 ));
 	}
-//===================================================================================================================
-
-	private static void saveImage(GcsFilename fileName, InputStream inputStream) throws IOException {
-		
-		GcsOutputChannel outputChannel = gcsService.createOrReplace(fileName,
-				GcsFileOptions.getDefaultInstance());
-		StorageHelper.streamCopy(inputStream, Channels.newOutputStream(outputChannel));
-	}
-
-	//===================================================================================================================
+//=====================================================================================================================
 
 	public static boolean deleteImage(String url, PersistenceManager _pm) throws IOException {
 		long oldFileId = getFileId(url);

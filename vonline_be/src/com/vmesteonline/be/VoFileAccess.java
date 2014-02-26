@@ -1,5 +1,6 @@
 package com.vmesteonline.be;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.jdo.PersistenceManager;
@@ -81,7 +82,14 @@ public class VoFileAccess extends HttpServlet {
 		try {
 			long currentUserId = serviceImpl.getCurrentUserId(pm);
 			boolean isPublic = null != req.getParameter("public");
-			resp.getOutputStream().write(StorageHelper.saveImage(req.getRequestURI(), currentUserId, isPublic, req.getInputStream(), pm).getBytes());
+			String fname = req.getParameter("fname");
+			
+			String extUrl = req.getParameter("extUrl");
+			String data = req.getParameter("data");
+			if(null==data && extUrl == null){
+				throw new IOException("'data' or 'extUrl' Parameter must be set to upload file.");
+			}
+			resp.getOutputStream().write(StorageHelper.saveImage(""+fname, currentUserId, isPublic, new ByteArrayInputStream(data.getBytes()), pm).getBytes());
 		} catch( InvalidOperation e){
 			throw new IOException("Failed to save file:"+e.getMessage(), e);
 		} finally {
