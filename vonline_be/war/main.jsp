@@ -691,6 +691,7 @@
 <script src="js/bootstrap-wysiwyg.min.js"></script>
 <script src="js/bootbox.min.js"></script>
     <!-- -->
+<script src="js/jquery.scrollTo-min.js"></script>
 
 <!-- -->
 <!-- файлы thrift -->

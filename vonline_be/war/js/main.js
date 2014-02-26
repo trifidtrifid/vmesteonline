@@ -25,7 +25,6 @@ client = new com.vmesteonline.be.MessageServiceClient(protocol);
         rubricID,
         lastTopicId,
         FlagOfEndTopics = 1,
-        endOfLevel1Flag = [],
         forum = $('.forum-wrap').html();
     /* константы */
     var heightOfMessagesForLoadNew = 760;
@@ -105,24 +104,6 @@ $('.fa-sitemap').click(function(){
         });
     }
 
-    var someLevel = 0;
-    function AutoLoadLevel1(tempScrollTop,ddList,newMessageHtml,level1Length){
-         someLevel++;
-        console.log("--"+someLevel);
-        $('html,body').animate({scrollTop: tempScrollTop},function(){
-            var ddListLengthNew = ddList.find('.dd-item').length;
-            console.log(ddListLengthNew+"--"+level1Length);
-            if (ddListLengthNew < level1Length){
-                tempScrollTop = ddList.height() + w.scrollTop();
-                AutoLoadLevel1(tempScrollTop,ddList,newMessageHtml,level1Length);
-                console.log('1');
-            }else{
-                console.log('2');
-                ddList.append(newMessageHtml);
-            }
-        });
-    }
-
     function SetCreateMessageClick(selector){
         selector.one('click',function(){
             var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
@@ -136,14 +117,27 @@ $('.fa-sitemap').click(function(){
 
             $(this).closest('.widget-box').fadeOut(200,function(){
                 var newMessageHtml = "";
+                var topicItem = $(this).closest('.topic-item');
+                var currentTopicIndex = topicItem.index();
+                var ddList = topicItem.find('.dd-list');
                 if ($(this).closest('.widget-box').prev().hasClass('one-message')){
+                // сообщения остальных уровней, кроме 1го
                     newMessageHtml = MessageHtmlConstructor(newMessage,0);
+                    var lastIndex = 0;
+                    //alert("2 "+newMessage.offset);
+                    ddList.find('.dd-item').each(function(){
+                        if ($(this).find('.one-message').data('parentid') == newMessage.parentId && $(this).data('offset') == newMessage.offset+1){
+                            lastIndex = $(this).index();
+                        }
+                    });
+                    //alert("--"+lastIndex);
+                    ddList.find('.dd-item:eq('+ lastIndex +')').after(newMessageHtml);
+                    var tempScrollTop = ddList.find('.dd-item:eq('+ lastIndex +')');
+                    //alert(tempScrollTop);
+                    //$('html,body').scrollTop(tempScrollTop);
+                    $.scrollTo(tempScrollTop);
                 }else{
                 // сообщение первого уровня
-                    var ddListLengthNew= 0;
-                    var topicItem = $(this).closest('.topic-item');
-                    var currentTopicIndex = topicItem.index();
-                    var ddList = topicItem.find('.dd-list');
                     var lastLoadedId = ddList.find('li:last-child .one-message').data('messageid');
                     var level1Data = client.getFirstLevelMessages(topicItem.data('topicid'),groupID,1,lastLoadedId,0,50);
                     var level1Messages = level1Data.messages;
@@ -157,7 +151,6 @@ $('.fa-sitemap').click(function(){
                     counterSelector.text(++messageInTopicCounter);
 
                     // ставим события для нового сообщения
-
                     GetTopicsHeightForFixedHeader(currentTopicIndex+1,topics,topicsLen,prevTopicsHeight);
                     SetShowEditorClick(ddList.find('li:last-child').find('.ans-btn.btn-group .ans-all,.ans-btn.btn-group .dropdown-menu a'));
 
@@ -311,6 +304,7 @@ $('.fa-sitemap').click(function(){
 
     function MessageHtmlConstructor(arrayOfData,level1){
         var messageHtml = "";
+        if (arrayOfData){
         var len = arrayOfData.length;
         if (len === undefined){
             len = 1;
@@ -385,7 +379,9 @@ $('.fa-sitemap').click(function(){
                 '</div>'+
                 '</li>';
         }
+        }
         return messageHtml;
+
     }
 
     function TopicHtmlConstructor(arrayOfData,len){
@@ -479,11 +475,6 @@ $('.fa-sitemap').click(function(){
         return topicsHeaderArray;
     }
 
-    function SetEndOfLevel1Flags(beginIndex){
-        for (var i = beginIndex; i < topicsLen; i++) {
-            endOfLevel1Flag[i] = 0;
-        }
-    }
 
     function SetGlobalParameters(){
         topics = $('.dd>.dd-list>.topic-item');
@@ -498,7 +489,6 @@ $('.fa-sitemap').click(function(){
         lastTopicId = $('.dd .topic-item:last').data('topicid');
 
         FlagOfEndTopics = 1;
-        SetEndOfLevel1Flags(0);
 
     }
 
