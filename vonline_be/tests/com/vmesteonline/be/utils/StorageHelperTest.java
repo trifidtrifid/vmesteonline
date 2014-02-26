@@ -3,6 +3,7 @@ package com.vmesteonline.be.utils;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -22,6 +23,9 @@ import org.junit.Test;
 import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.vmesteonline.be.AuthServiceImpl;
+import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.UserServiceImpl;
 
 public class StorageHelperTest extends StorageHelper {
 	
@@ -30,9 +34,29 @@ public class StorageHelperTest extends StorageHelper {
 	                               new LocalBlobstoreServiceTestConfig()
 	                              );
 
+		long userId;
+		AuthServiceImpl asi;
 	  @Before
 	  public void setUp() {
 	    helper.setUp();
+
+			// register and login current user
+			// Initialize USer Service
+			String sessionId = "11111";
+			try {
+				Defaults.init();
+				asi = new AuthServiceImpl(sessionId);
+				List<String> userLocation = UserServiceImpl.getLocationCodesForRegistration();
+				Assert.assertNotNull(userLocation);
+				Assert.assertTrue(userLocation.size() > 0);
+
+				String userHomeLocation = userLocation.get(0);
+				userId = asi.registerNewUser("fn", "ln", "pswd", "eml", userHomeLocation);
+				Assert.assertTrue(userId > 0);
+				asi.login("eml", "pswd");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	  }
 
 
@@ -85,20 +109,46 @@ public class StorageHelperTest extends StorageHelper {
 	public void testStoreData(){
 		try {
 			String origURL = "http://3.14.by/files/e4000.jpg";
-			String newImageUrl = StorageHelper.saveImage(origURL);
-			String newImageUrl2 = StorageHelper.saveImage(newImageUrl);
-			URL url = new URL(origURL);
-			URL url2 = new URL(newImageUrl2);
-			InputStream is = url.openStream();
-			InputStream is2 = url2.openStream();
+			String newImageUrl = StorageHelper.saveImage(origURL, asi.getCurrentUserId(), true, null);
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			StorageHelperTest.getFile(newImageUrl, baos);
+			baos.close();
+			ByteArrayInputStream is2 = new ByteArrayInputStream(baos.toByteArray());
+			
+			URL orig = new URL( origURL );
+			InputStream is = orig.openStream();
+			
 			int read1;
 			while( -1 !=(read1 = is.read()) )
 				Assert.assertEquals(read1, is2.read());
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}
 
+	@Test 
+	public void testStringToLong(){
+		String nts = StorageHelper.numberToString( Long.MAX_VALUE);
+		Long stn = StorageHelper.stringToNumber( nts );
+		Assert.assertEquals(""+Long.MAX_VALUE, ""+stn);
+		
+		nts = StorageHelper.numberToString( Long.MIN_VALUE );
+		stn = StorageHelper.stringToNumber( nts );
+		Assert.assertEquals(""+Long.MIN_VALUE, ""+stn);
+		
+		nts = StorageHelper.numberToString( 0L );
+		stn = StorageHelper.stringToNumber( nts );
+		Assert.assertEquals(""+0L, ""+stn);
+		
+		nts = StorageHelper.numberToString( Long.MAX_VALUE/2L );
+		stn = StorageHelper.stringToNumber( nts );
+		Assert.assertEquals(""+Long.MAX_VALUE/2, ""+stn);
+		
+		nts = StorageHelper.numberToString( Long.MIN_VALUE/2L );
+		stn = StorageHelper.stringToNumber( nts );
+		Assert.assertEquals(""+Long.MIN_VALUE/2L, ""+stn);
+	}
 }

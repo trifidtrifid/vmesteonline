@@ -76,7 +76,7 @@ public class ServiceImpl {
 		this.sessionStorage = new SessionIdStorage(session.getId());
 	}
 
-	protected long getCurrentUserId() throws InvalidOperation {
+	public long getCurrentUserId() throws InvalidOperation {
 		return getCurrentUserId(null);
 	}
 
