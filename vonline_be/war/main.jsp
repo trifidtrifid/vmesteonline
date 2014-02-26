@@ -11,6 +11,7 @@
 <%@ page import="com.vmesteonline.be.TopicListPart"%>
 <%@ page import="com.vmesteonline.be.MessageListPart"%>
 <%@ page import="com.vmesteonline.be.Topic"%>
+<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.Message"%>
 <%@ page import="com.vmesteonline.be.MessageType"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
@@ -33,15 +34,18 @@
 
     List<Group> Groups = userService.getUserGroups();
     List<Rubric> Rubrics = userService.getUserRubrics();
+    ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
     MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
     //MessageType mesType = MessageType.BASE;
 
     TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
-    //out.print(Topics.totalSize);
+    //out.print(ShortUserInfo.firstName);
 
     pageContext.setAttribute("groups",Groups);
     pageContext.setAttribute("rubrics",Rubrics);
     pageContext.setAttribute("topics",Topics.topics);
+    pageContext.setAttribute("firstName",ShortUserInfo.firstName);
+    pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 %>
 
 <!DOCTYPE html>
@@ -108,8 +112,8 @@
                 <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                     <img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />
                     <span class="user-info">
-                        <small>Welcome,</small>
-                        Jason
+                        <small><c:out value="${firstName}"/></small>
+                        <c:out value="${lastName}"/>
                     </span>
                     <i class="icon-caret-down"></i>
                 </a>
