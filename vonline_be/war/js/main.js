@@ -87,17 +87,26 @@ $('.fa-sitemap').click(function(){
 
             if($(this).closest('.one-message').length <= 0){
                 var topicID = $(this).closest('.topic-item').data('topicid');
+                var opinion;
                 if ($(this).hasClass('like')){
-                    $(this).find('span').text(client.likeTopic(topicID));
+                    opinion = client.likeOrDislikeTopic(topicID,1);
+                    $(this).find('span').text(opinion.likes);
+                    $(this).parent().find('.dislike span').text(opinion.dislikes);
                 }else{
-                    $(this).find('span').text(client.dislikeTopic(topicID));
+                    opinion = client.likeOrDislikeTopic(topicID,0);
+                    $(this).find('span').text(opinion.dislikes);
+                    $(this).parent().find('.like span').text(opinion.likes);
                 }
             }else{
                 var messageID = $(this).closest('.one-message').data('messageid');
                 if ($(this).hasClass('like')){
-                    $(this).find('span').text(client.like(messageID));
+                    opinion = client.likeOrDislikeMessage(messageID,1);
+                    $(this).find('span').text(opinion.likes);
+                    $(this).parent().find('.dislike span').text(opinion.dislikes);
                 }else{
-                    $(this).find('span').text(client.dislike(messageID));
+                    opinion = client.likeOrDislikeMessage(messageID,0);
+                    $(this).find('span').text(opinion.dislikes);
+                    $(this).parent().find('.like span').text(opinion.likes);
                 }
             }
 
@@ -454,7 +463,7 @@ $('.fa-sitemap').click(function(){
                 messageHtml += '<a class="fa fa-minus plus-minus" href="#"></a>';
             }
 
-            messageHtml += '<span> <span>8</span> <a href="#">(3)</a></span>'+
+            messageHtml += '<span> <span>'+ arrayOfData[i].childMsgsNum +'</span> <a href="#">('+ arrayOfData[i].childUnreadMsgsNum +')</a></span>'+
                 '</div>'+
                 '</footer>'+
                 '</div>'+
