@@ -182,10 +182,10 @@ $(document).ready(function(){
         //if (e.state){
         //alert("-- "+e.state.catid);
         if (e.state.catid && e.state.catid != 1){
-            alert('1');
+            //alert('1');
             SetNewCategoryAndProducts(e.state.catid);
         }else {
-            alert('2');
+            //alert('2');
             SetNewCategoryAndProducts(0);
         }
     //}
