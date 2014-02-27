@@ -676,3 +676,19 @@ span
   display: block;
   margin: 5px auto 0;
 }
+/* регистрация для магазина */
+.shop-reg {
+  width: 320px;
+}
+.shop-reg h1 {
+  text-align: center;
+}
+.shop-reg .reg-now label {
+  width: 60px;
+}
+.shop-reg input[type="text"],
+.shop-reg input[type="email"],
+.shop-reg input[type="tel"],
+.shop-reg input[type="password"] {
+  width: 220px;
+}
