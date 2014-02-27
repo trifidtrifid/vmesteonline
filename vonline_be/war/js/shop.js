@@ -33,6 +33,7 @@ $(document).ready(function(){
        $(this).append(madeMenu);
     });
 
+    // окно с подробной информацией о продукте
     $('.product-link').click(function(){
        $(this).find('+.modal').modal();
        var carousel = $(this).find('+.modal').find('.carousel');
@@ -138,6 +139,7 @@ $(document).ready(function(){
         }
     });
 
+    // добавление продукта в orderlines
     $('.fa-shopping-cart').click(function(){
 
        var currentProduct = $(this).closest('tr');
@@ -175,6 +177,7 @@ $(document).ready(function(){
 
     });
 
+    // переключение между категориями
     $('.shop-menu li').click(function(){
         /* замена меню категорий */
        var catID = $(this).data('catid');
@@ -350,6 +353,7 @@ $(document).ready(function(){
       });
         return summa;
     }
+
     $('.spinner-input').on('change',function(){
        myTable = $(this).closest('tr');
        price = myTable.find('.td-price').text();
@@ -359,6 +363,7 @@ $(document).ready(function(){
        $('.itogo-right span').text(countItogo($('.catalog-order')));
        $('.modal-itogo span').text(countItogo($('.modal-body-list')));
     });
+
     $('.login-link').click(function(){
         $('.modal-login').modal();
     });

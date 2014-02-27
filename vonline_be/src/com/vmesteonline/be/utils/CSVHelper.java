@@ -116,7 +116,7 @@ public class CSVHelper {
 			List<List<String>> fieldsToFill ) throws IOException{
 			writeCSVData(os, fieldsMap, listToRead, fieldsToFill, null, null, null );
 	}
-	
+	//====================================================================================================================
 	public static<T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listToRead, List<List<String>> fieldsToFill,
 			String fieldDelim, String setDelim, String avpDelim) throws IOException {
 		
@@ -182,17 +182,17 @@ public class CSVHelper {
 			throw new IOException("Failed to write CSV:"+e.getMessage(), e);
 		}
 	}
-	
-	public static<T> SortedMap<Integer,String> getFieldsMap( T instance, ExchangeFieldType id, List<ExchangeFieldType> requiredFields) throws InvalidOperation{
+	//====================================================================================================================
+	public static<T> SortedMap<Integer,String> getFieldsMap( T instance, ExchangeFieldType id, Map<Integer,ExchangeFieldType> requiredFields) throws InvalidOperation{
 		SortedMap<Integer,String> fmap = new TreeMap<Integer, String>();
 		Field[] fields = instance.getClass().getFields();
 		int i = 0;
-		for (ExchangeFieldType ft : requiredFields) {
-			int idx = ft.getValue()-id.getValue();
+		for (Entry<Integer,ExchangeFieldType> fte : requiredFields.entrySet()) {
+			int idx = fte.getValue().getValue()-id.getValue();
 			if( idx >= 0 && idx <fields.length ){
-				fmap.put( i++, fields[ idx ].getName() );
+				fmap.put( fte.getKey(), fields[ idx ].getName() );
 			} else {
-				throw new InvalidOperation(VoError.IncorrectParametrs, "Field["+ft.name()+"] is not described in the class or id["+id.name()+"] is incorrect");
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Field["+fte.getValue().name()+"] is not described in the class or id["+id.name()+"] is incorrect");
 			}
 		}
 		return fmap;

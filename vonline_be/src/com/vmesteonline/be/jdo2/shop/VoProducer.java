@@ -35,13 +35,6 @@ public class VoProducer {
 	public VoProducer(long shopId, String name, String descr,String logoURL, String homeURL) throws InvalidOperation {
 		this.name = name;
 		this.descr = descr;
-		try {
-			this.logoURL = null;
-			if (null != logoURL && logoURL.length() > 0)
-				this.logoURL = StorageHelper.saveImage(logoURL);
-		} catch (IOException e) {
-			throw new InvalidOperation(VoError.IncorrectParametrs, e.getMessage());
-		}
 		this.homeURL = homeURL;
 		this.shops = new HashSet<VoShop>();
 		this.products = new HashSet<VoProduct>();
@@ -57,6 +50,15 @@ public class VoProducer {
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID=" + shopId + ". " + e);
 			}
+			
+			try {
+				this.logoURL = null;
+				if (null != logoURL && logoURL.length() > 0)
+					this.logoURL = StorageHelper.saveImage(logoURL, voShop.getOwnerId(), true, pm);
+			} catch (IOException e) {
+				throw new InvalidOperation(VoError.IncorrectParametrs, e.getMessage());
+			}
+			
 			shops.add(voShop);
 			voShop.addProducer(this);
 			pm.makePersistent(this);
@@ -150,12 +152,12 @@ public class VoProducer {
 		return "VoProducer [id=" + id + ", name=" + name + "]";
 	}
 
-	public void update(Producer newInfoWithOldId, PersistenceManager pm) throws InvalidOperation {
+	public void update(Producer newInfoWithOldId, long userId, boolean isPublic, PersistenceManager pm) throws InvalidOperation {
 		this.id = KeyFactory.createKey(this.getClass().getSimpleName(), newInfoWithOldId.id);
 		try {
 			VoHelper.copyIfNotNull(this, "descr", newInfoWithOldId.descr);
-			VoHelper.replaceURL(this, "homeURL", newInfoWithOldId.homeURL);
-			VoHelper.replaceURL(this, "logoURL", newInfoWithOldId.logoURL);
+			VoHelper.replaceURL(this, "homeURL", newInfoWithOldId.homeURL, userId, isPublic, pm);
+			VoHelper.replaceURL(this, "logoURL", newInfoWithOldId.logoURL, userId, isPublic, pm);
 			VoHelper.copyIfNotNull(this, "name", newInfoWithOldId.name);
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();

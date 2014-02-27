@@ -3,17 +3,14 @@ package com.vmesteonline.be;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -29,7 +26,6 @@ import javax.jdo.Transaction;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
-import com.vmesteonline.be.AuthService.getCurrentAttributes_result;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
@@ -69,7 +65,7 @@ import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.shop.ShopService.Iface;
 import com.vmesteonline.be.utils.CSVHelper;
-import com.vmesteonline.be.utils.Pair;
+import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable {
@@ -81,9 +77,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		logger = Logger.getLogger(ShopServiceImpl.class);
 		// create fake data for tests
 
-		String LOGO = "http://www.ru.tele2.ru/img/logo.gif";
-		String DESCR = "TELE2 shop";
-		String NAME = "Во!Магазин";
+		String LOGO = "http://vomoloko.ru.ru/img/logo.jpg";
+		String DESCR = "Интернет магазин молочной продукции от лучших производителей вологодского края";
+		String NAME = "Во!Молоко";
 		String SESSION_ID = "11111111111111111111111";
 
 		String PRC1_DESCR = "КОрневая категория";
@@ -241,12 +237,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			long lastOrder = si.createOrder(now + 6 * day, "bbbbbbbbbbbb", PriceType.RETAIL);
 
 			List<Order> orders = si.getOrders(now - 10 * day, now + 10 * day);
-			OrderLine newOrderLine = si.setOrderLine(upProductsIdl.get(0), 1.0D);
+			OrderLine newOrderLine = si.setOrderLine(upProductsIdl.get(0), 1.0D, null, null);
 
-			si.setOrderLine(upProductsIdl.get(0), 1.0D); // set the same quantity
+			si.setOrderLine(upProductsIdl.get(0), 1.0D,null, null); // set the same quantity
 																										// again
-			si.setOrderLine(upProductsIdl.get(0), 2.0D); // set new quantity
-			si.setOrderLine(upProductsIdl.get(1), 3.0D); // add new product
+			si.setOrderLine(upProductsIdl.get(0), 2.0D,null, null); // set new quantity
+			si.setOrderLine(upProductsIdl.get(1), 3.0D,null, null); // add new product
 
 			orders = si.getOrders(now + 5 * day, now + 7 * day);
 			si.removeOrderLine(upProductsIdl.get(0));
@@ -254,7 +250,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			si.createOrder(now + 10 * day, "ccccccccccccc", PriceType.INET);
 			// merge an order
 			si.mergeOrder(orders.get(0).getId());
-			si.setOrderLine(upProductsIdl.get(0), 2.0D);
+			si.setOrderLine(upProductsIdl.get(0), 2.0D,null, null);
 			si.mergeOrder(orders.get(0).getId());
 		} catch (InvalidOperation e) {
 			e.printStackTrace();
@@ -290,7 +286,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				shopId = getCurrentShopId(pm);
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
 			VoProductCategory voProductCategory = new VoProductCategory(voShop, productCategory.getParentId(), productCategory.getName(),
-					productCategory.getDescr(), productCategory.getLogoURLset(), productCategory.getTopicSet(), pm);
+					productCategory.getDescr(), productCategory.getLogoURLset(), productCategory.getTopicSet(), voShop.getOwnerId(), pm);
 			productCategory.setId(voProductCategory.getId());
 			pm.makePersistent(voShop);
 			return voProductCategory.getId();
@@ -364,7 +360,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				}
 				long parentId = relativeIds && idMap.containsKey(pc.getParentId()) ? idMap.get(pc.getParentId()) : pc.getParentId();
 				logger.debug("Use paret category " + parentId + " to instead of " + pc.getParentId());
-				VoProductCategory vpc = new VoProductCategory(voShop, parentId, pc.getName(), pc.getDescr(), pc.getLogoURLset(), pc.getTopicSet(), pm);
+				VoProductCategory vpc = new VoProductCategory(voShop, parentId, pc.getName(), pc.getDescr(), pc.getLogoURLset(), pc.getTopicSet(), 
+						voShop.getOwnerId(), pm);
 				idMap.put(pc.getId(), vpc.getId());
 				categoriesCreated.add(vpc.getProductCategory());
 				voShop.addProductCategory(vpc);
@@ -816,25 +813,34 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			if (null != voOrder) {
 				double addCost = 0;
 				VoOrder currentOrder = getCurrentOrder(pm);
-				Map<Long, VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
+				Map<Long, VoOrderLine> currentOdrerLines = currentOrder.getOrderLines();
 				if (currentOdrerLines.isEmpty()) {
-					for (VoOrderLine voOrderLine : voOrder.getOdrerLines().values()) {
+					for (VoOrderLine voOrderLine : voOrder.getOrderLines().values()) {
 						double price = voOrderLine.getProduct().getPrice(currentOrder.getPriceType());
 						currentOdrerLines.put(voOrderLine.getProduct().getId(), new VoOrderLine(currentOrder, voOrderLine.getProduct(),
-								voOrderLine.getQuantity(), price));
+								voOrderLine.getQuantity(), price, voOrderLine.getComment(), voOrderLine.getPackets()));
 						addCost += voOrderLine.getQuantity() * price;
 					}
 
 				} else {
-					for (VoOrderLine voOrderLine : voOrder.getOdrerLines().values()) {
+					
+					for (VoOrderLine voOrderLine : voOrder.getOrderLines().values()) {
 						double price = voOrderLine.getProduct().getPrice(currentOrder.getPriceType());
 						long pid = voOrderLine.getProduct().getId();
+						
 						if (currentOdrerLines.containsKey(pid)) {
 							VoOrderLine currentOL = currentOdrerLines.get(pid);
 							currentOL.setQuantity(currentOL.getQuantity() + voOrderLine.getQuantity());
+							
+							//merge packets for prepack product
+							if( currentOL.getProduct().isPrepackRequired() ){			
+								mergeOrderLinePackets(voOrderLine, currentOL);
+							}
+							
 						} else {
 							currentOdrerLines.put(voOrderLine.getProduct().getId(),
-									new VoOrderLine(currentOrder, voOrderLine.getProduct(), voOrderLine.getQuantity(), price));
+									new VoOrderLine(currentOrder, voOrderLine.getProduct(), voOrderLine.getQuantity(), price,
+											voOrderLine.getComment(), voOrderLine.getPackets()));
 						}
 						addCost += voOrderLine.getQuantity() * price;
 					}
@@ -852,6 +858,46 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			pm.close();
 		}
 	}
+	
+//======================================================================================================================
+
+	public void mergeOrderLinePackets(VoOrderLine voOrderLine, VoOrderLine currentOL) {
+		Map<Double, Integer> cpm = currentOL.getPackets();
+		Map<Double, Integer> nol = voOrderLine.getPackets();
+		
+		if( null == cpm && null==nol ){
+			HashMap<Double, Integer> pMap = new HashMap<Double,Integer>();
+			if( currentOL.getQuantity() == voOrderLine.getQuantity() )
+				pMap.put(currentOL.getQuantity(), 2);
+			else {
+				pMap.put(currentOL.getQuantity(), 1);
+				pMap.put(voOrderLine.getQuantity(), 1);
+			}
+			currentOL.setPackets( pMap );
+			
+		} else if( null != cpm && null==nol ){
+			
+				cpm.put( voOrderLine.getQuantity(), 
+						cpm.containsKey(voOrderLine.getQuantity()) ? 
+								cpm.get(voOrderLine.getQuantity())+1 : 1 );
+		} else if( null == cpm && null!=nol ){
+			
+			HashMap<Double, Integer> pMap = new HashMap<Double,Integer>();
+			pMap.putAll(nol);
+			if( pMap.containsKey(currentOL.getQuantity()))
+				pMap.put( currentOL.getQuantity(), 
+						pMap.containsKey(currentOL.getQuantity()) ? 
+								pMap.get(currentOL.getQuantity())+1 : 1 );
+			currentOL.setPackets( pMap );
+		} else {
+			for( Entry<Double,Integer> npe: nol.entrySet()){
+				cpm.put( npe.getKey(), cpm.containsKey( npe.getKey() ) ? 
+						cpm.get(npe.getKey()) + npe.getValue() : npe.getValue());									
+			}
+		}
+		
+		
+	}
 //======================================================================================================================
 	/**
 	 * Method adds to current order lines for products that are not included to
@@ -862,16 +908,17 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-			Map<Long, VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
+			Map<Long, VoOrderLine> currentOdrerLines = currentOrder.getOrderLines();
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
 			if (null != voOrder) {
-				for (VoOrderLine oldLine : voOrder.getOdrerLines().values()) {
+				for (VoOrderLine oldLine : voOrder.getOrderLines().values()) {
 					if (!currentOdrerLines.containsKey(oldLine.getProduct().getId())) {
 						// there is no such product in the current order
 						Double price = oldLine.getProduct().getPrice(currentOrder.getPriceType());
 						// Product is detached member so the price stored in this object
 						// would be actual
-						currentOdrerLines.put(oldLine.getProduct().getId(), new VoOrderLine(currentOrder, oldLine.getProduct(), oldLine.getQuantity(), price));
+						currentOdrerLines.put(oldLine.getProduct().getId(), new VoOrderLine(currentOrder, oldLine.getProduct(), oldLine.getQuantity(), price,
+								oldLine.getComment(), oldLine.getPackets()));
 						currentOrder.addCost(price * oldLine.getQuantity());
 					}
 				}
@@ -888,7 +935,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 //======================================================================================================================
 	@Override
-	public OrderLine setOrderLine(long productId, double quantity) throws InvalidOperation {
+	public OrderLine setOrderLine(long productId, double quantity, String comment, Map<Double, Integer> packs) throws InvalidOperation {
 		if (0 == quantity) {
 			removeOrderLine(productId);
 			return null;
@@ -896,11 +943,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-			Map<Long, VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
+			Map<Long, VoOrderLine> currentOdrerLines = currentOrder.getOrderLines();
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
 			if (null != voProduct) {
 				double price = voProduct.getPrice(currentOrder.getPriceType());
-				VoOrderLine theLine = new VoOrderLine(currentOrder, voProduct, quantity, price);
+				VoOrderLine theLine = new VoOrderLine(currentOrder, voProduct, quantity, price, comment, packs);
 				VoOrderLine oldLine = currentOdrerLines.put(productId, theLine);
 				currentOrder.addCost(quantity * price - (null == oldLine ? 0 : oldLine.getPrice() * oldLine.getQuantity()));
 				pm.makePersistent(currentOrder);
@@ -920,7 +967,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-			Map<Long, VoOrderLine> currentOdrerLines = currentOrder.getOdrerLines();
+			Map<Long, VoOrderLine> currentOdrerLines = currentOrder.getOrderLines();
 			VoOrderLine removedLine = currentOdrerLines.remove(productId);
 			if (null == removedLine)
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No order line found for product id=" + productId);
@@ -1050,7 +1097,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			voquery.setFilter("status == '" + OrderStatus.NEW + "' && shopId == " + shopId);
 			List<VoOrder> orders = (List<VoOrder>) voquery.execute();
 			for (VoOrder voOrder : orders) {
-				Map<Long, VoOrderLine> odrerLines = voOrder.getOdrerLines();
+				Map<Long, VoOrderLine> odrerLines = voOrder.getOrderLines();
 				double costChange = 0;
 				for (VoOrderLine ol : odrerLines.values()) {
 					// check if update make sense on the current order line for order's
@@ -1169,7 +1216,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoProduct vop = pm.getObjectById(VoProduct.class, newInfoWithOldId.getProduct().getId());
-			vop.update(newInfoWithOldId, pm);
+			long cuid = getCurrentUserId(pm);
+			vop.update(newInfoWithOldId, cuid, pm);
 			pm.makePersistent(vop);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update product: " + e.getMessage());
@@ -1184,7 +1232,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop vos = pm.getObjectById(VoShop.class, newShopWithOldId.getId());
-			vos.update(newShopWithOldId, pm);
+			long cuid = getCurrentUserId(pm);
+			vos.update(newShopWithOldId, cuid, true, pm);
 			pm.makePersistent(vos);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update shop: " + e.getMessage());
@@ -1199,7 +1248,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoProductCategory vopc = pm.getObjectById(VoProductCategory.class, newCategoryInfo.getId());
-			vopc.update(newCategoryInfo, pm);
+			long cuid = getCurrentUserId(pm);
+			vopc.update(newCategoryInfo, cuid, pm);
 			pm.makePersistent(vopc);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update CAtegory: " + e.getMessage());
@@ -1214,7 +1264,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoProducer vopc = pm.getObjectById(VoProducer.class, newInfoWithOldId.getId());
-			vopc.update(newInfoWithOldId, pm);
+			long cuid = getCurrentUserId(pm);
+			vopc.update(newInfoWithOldId, cuid, true, pm);
 			pm.makePersistent(vopc);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update shop: " + e.getMessage());
@@ -1283,11 +1334,24 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	private <T> void importInformation(ImportElement ie, ExchangeFieldType idField, T descriptionObject, ImportDataProcessor<T> processor)
 			throws InvalidOperation {
-		Map<Integer, String> fieldsMap = FieldTranslator.Translate(idField.getValue(), ie.getFieldsOrder(), descriptionObject);
-		new ByteArrayInputStream(ie.fileData.array());
+		Map<Integer, String> fieldsMap = FieldTranslator.Translate(idField.getValue(), ie.getFieldsMap(), descriptionObject);
+		String dataUrl = ie.getUrl();
+		byte[] csvData;
+		if( null != dataUrl){
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			try {
+				StorageHelper.getFile(dataUrl, baos);
+				baos.close();
+			} catch (IOException e) {
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read data from URL:"+dataUrl+". "+e.getLocalizedMessage());
+			}
+			csvData = baos.toByteArray();
+		} else {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read data from URL:"+dataUrl);
+		}
 
 		try {
-			List<T> infoRows = CSVHelper.loadCSVData(new ByteArrayInputStream(ie.fileData.array()), fieldsMap, descriptionObject);
+			List<T> infoRows = CSVHelper.loadCSVData(new ByteArrayInputStream(csvData), fieldsMap, descriptionObject);
 
 			processor.process(infoRows);
 
@@ -1299,7 +1363,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			}
 			CSVHelper.writeCSVData(baos, fieldsMap, infoRows, null);
 			baos.close();
-			ie.setFileData(baos.toByteArray());
+			String newURL = StorageHelper.replaceImage(baos.toString(), dataUrl, 0, null, null);
+			ie.setUrl(newURL);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1398,7 +1463,6 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			pm.close();
 		}
 	}
-
 		// ======================================================================================================================
 		public long registerProduct( FullProductInfo fpi, VoShop _shop, PersistenceManager _pm) throws InvalidOperation{
 			PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
@@ -1412,12 +1476,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			}
 		}
 	// ======================================================================================================================
-
 		
 		@Override
 		public DataSet getTotalOrdersReport(int date, DeliveryType deliveryType, 
-				List<ExchangeFieldType> orderFields,
-				List<ExchangeFieldType> orderLineFIelds ) throws InvalidOperation {
+				Map<Integer,ExchangeFieldType> orderFields,
+				Map<Integer,ExchangeFieldType> orderLineFIelds ) throws InvalidOperation {
 			DataSet ds = new DataSet();
 			ds.date = date;
 			ds.id = 0;
@@ -1457,7 +1520,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					od.userName = user.getName() + " " + user.getLastName();
 					
 					ArrayList<OrderLineDescription> oldl = new ArrayList<OrderLineDescription>();
-					for (VoOrderLine vol : voOrder.getOdrerLines().values()) {
+					for (VoOrderLine vol : voOrder.getOrderLines().values()) {
 						OrderLineDescription old = new OrderLineDescription();
 						old.lineId = vol.getId().getId();
 						old.quantity = vol.getQuantity();
@@ -1468,8 +1531,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 						old.producerId = vol.getProduct().getProducer().getId();
 						old.producerName = vol.getProduct().getProducer().getName();
 						old.price = vol.getPrice();
+						old.comment = vol.getComment();
+						if(null!=vol.getPackets()){
+							old.packets = new TreeMap<Double, Integer>();
+							old.packets.putAll(vol.getPackets());
+						}
 						oldl.add(old);
 					}
+					//collect all order line information 
 					ByteArrayOutputStream lbaos = new ByteArrayOutputStream();
 					ImportElement ordersLinesIE = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_"+od.orderId+"_lines.csv", 
 							orderLineFIelds);
@@ -1477,13 +1546,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					
 					CSVHelper.writeCSVData(lbaos, CSVHelper.getFieldsMap(odInstance, ExchangeFieldType.ORDER_LINE_ID, orderLineFIelds),
 							oldl, lfieldsData); 
+					
 					ordersLinesIE.setFieldsData(lfieldsData);
 					lbaos.close();
 					byte[] fileData = lbaos.toByteArray();
-					ordersLinesIE.setFileData(fileData);
 					
-					baos.write(fileData);
-					fieldsData.addAll(lfieldsData);
+					ordersLinesIE.setUrl(StorageHelper.saveImage(fileData, shop.getOwnerId(), false, pm));
 					
 					odl.add(od);
 					ds.addToData( ordersLinesIE );
@@ -1496,7 +1564,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ordersIE.setFieldsData(fieldsData);
 				baos.close();
 				byte[] fileData = baos.toByteArray();
-				ordersIE.setFileData(fileData);
+				ordersIE.setUrl(StorageHelper.saveImage(fileData, shop.getOwnerId(), false, pm));
+
 				
 				ds.addToData( ordersIE );
 
@@ -1512,7 +1581,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		// ======================================================================================================================
 
 		@Override
-		public DataSet getTotalProductsReport(int date, DeliveryType deliveryType, List<ExchangeFieldType> productFields) throws InvalidOperation {
+		public DataSet getTotalProductsReport(int date, DeliveryType deliveryType, Map<Integer,ExchangeFieldType> productFields) throws InvalidOperation {
 			
 			DataSet ds = new DataSet();
 			ds.date = date;
@@ -1534,7 +1603,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				
 				for (VoOrder voOrder : olist) {
 					
-					for (VoOrderLine vol : voOrder.getOdrerLines().values()) {
+					for (VoOrderLine vol : voOrder.getOrderLines().values()) {
 					
 						//TODO optimize DB requests count
 						VoProduct product = vol.getProduct();
@@ -1551,8 +1620,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 							pod = prodDescMap.get(producer.getId()).get(product.getId());
 							pod.orderedQuantity += vol.getQuantity();
 							pod.packSize = product.getMinProducerPackGramms();
-							pod.packQuantity = 0 != product.getMinProducerPackGramms() ? (int)(pod.orderedQuantity * 1000 / product.getMinProducerPackGramms()) :
-								0;
+							pod.packQuantity = 0 != product.getMinProducerPackGramms() ?
+									(int)(pod.orderedQuantity * 1000 / product.getMinProducerPackGramms()) : 0;
 							continue;
 						} 
 						 
@@ -1593,13 +1662,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					ffl.addAll(fl);
 					
 					pIE.setFieldsData(fl);
-					pIE.setFileData( baos.toByteArray() );
+					pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), shop.getOwnerId(), false, pm));
 					
 					ds.addToData(  pIE );
 				}
 				fbaos.close();
 				fpIE.setFieldsData(ffl);
-				fpIE.setFileData( fbaos.toByteArray() );
+				fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), shop.getOwnerId(), false, pm));
 				
 				ds.addToData(  fpIE );
 				
@@ -1615,7 +1684,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		// ======================================================================================================================
 
 		@Override
-		public DataSet getTotalPackReport(int date, DeliveryType deliveryType, List<ExchangeFieldType> packFields) throws InvalidOperation {
+		public DataSet getTotalPackReport(int date, DeliveryType deliveryType, Map<Integer,ExchangeFieldType> packFields) throws InvalidOperation {
 			
 			DataSet ds = new DataSet();
 			ds.date = date;
@@ -1637,75 +1706,51 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				
 				for (VoOrder voOrder : olist) {
 					
-					for (VoOrderLine vol : voOrder.getOdrerLines().values()) {
+					for (VoOrderLine vol : voOrder.getOrderLines().values()) {
 					
 						//TODO optimize DB requests count
 						VoProduct product = vol.getProduct();
 						VoProducer producer = product.getProducer();
 
 						ProductOrderDescription pod;
-						double qKey;
-						if( product.isPrepackRequired() ){
-							qKey = vol.getQuantity();
-						} else {
-							continue; //skip product that does not require prepacking
-						}
+						
 						if( !prodDescMap.containsKey( product.getId()) ) {
 							prodDescMap.put(product.getId(), new TreeMap<Double, ProductOrderDescription>());
 						}
-							
-						if( prodDescMap.get(product.getId()).containsKey( qKey) ){
-								
-								pod = prodDescMap.get(product.getId()).get(qKey);
-								pod.orderedQuantity += vol.getQuantity();
-								pod.packQuantity++;
-								continue;
+						
+						if( !product.isPrepackRequired() )
+							continue; //skip product that does not require prepacking
+
+						Map<Double,Integer> packets = vol.getPackets();
+						if( packets == null ){
+							packets = new HashMap<Double, Integer>();
+							packets.put(vol.getQuantity(), 1);
 						}
-						prodDescMap.get(product.getId()).put(qKey, pod = new ProductOrderDescription());
-						pod.producerId = producer.getId();
-						pod.producerName = producer.getName();
-						pod.productId = product.getId();
-						pod.productName = product.getName();
-						pod.minProducerPackSize = product.getMinProducerPackGramms();
-						pod.orderedQuantity = vol.getQuantity();
-						pod.prepackRequired = product.isPrepackRequired();
-						pod.packSize = vol.getQuantity();
-						pod.packQuantity = 1;
-						pod.deliveryType = deliveryType;
+						for( Entry<Double,Integer> pqe: packets.entrySet() ){
+								
+							if( prodDescMap.get(product.getId()).containsKey( pqe.getKey() ) ){
+									
+									pod = prodDescMap.get(product.getId()).get(pqe.getKey() );
+									pod.orderedQuantity += pqe.getKey();
+									pod.packQuantity+=pqe.getValue();
+									continue;
+							}
+							prodDescMap.get(product.getId()).put(pqe.getKey() , pod = new ProductOrderDescription());
+							pod.producerId = producer.getId();
+							pod.producerName = producer.getName();
+							pod.productId = product.getId();
+							pod.productName = product.getName();
+							pod.minProducerPackSize = product.getMinProducerPackGramms();
+							pod.orderedQuantity = pqe.getKey();
+							pod.prepackRequired = product.isPrepackRequired();
+							pod.packSize = pqe.getKey();
+							pod.packQuantity = 1;
+							pod.deliveryType = deliveryType;
+						}
 					}
 				}
 				
-				ProductOrderDescription pod = new ProductOrderDescription();
-				
-				ImportElement fpIE = new ImportElement(ImExType.EXPORT_TOTAL_PRODUCT, "products.csv", packFields);
-				ByteArrayOutputStream fbaos = new ByteArrayOutputStream();
-				List<List<String>> ffl = new ArrayList<List<String>>();
-				
-				for( Entry<Long, SortedMap<Double, ProductOrderDescription> > podme: prodDescMap.entrySet()){
-					
-					SortedMap<Double, ProductOrderDescription> podm = podme.getValue();
-					
-					ImportElement pIE = new ImportElement(ImExType.EXPORT_TOTAL_PRODUCT, "product_"+podme.getKey()+".csv", packFields);
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					List<List<String>> fl = new ArrayList<List<String>>();
-					List<ProductOrderDescription> podl = new ArrayList<ProductOrderDescription>();
-					podl.addAll(podm.values());
-					
-					CSVHelper.writeCSVData(baos, CSVHelper.getFieldsMap(pod, ExchangeFieldType.TOTAL_PROUCT_ID, packFields), podl, fl);
-					baos.close();
-					fbaos.write( baos.toByteArray());
-					ffl.addAll(fl);
-					
-					pIE.setFieldsData(fl);
-					pIE.setFileData( baos.toByteArray() );
-					
-					ds.addToData(  pIE );
-				}
-				fbaos.close();
-				fpIE.setFieldsData(ffl);
-				fpIE.setFileData( fbaos.toByteArray() );
-				
-				ds.addToData(  fpIE );
+				incapsulatePacketData(packFields, ds, prodDescMap, shop.getOwnerId(), pm);
 				
 				return ds;
 				
@@ -1716,7 +1761,56 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				pm.close();
 			}
 		}
+//=====================================================================================================================
+		
+		private void incapsulatePacketData(Map<Integer,ExchangeFieldType> packFields, DataSet ds,
+				SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap, long userId, PersistenceManager pm) throws IOException, InvalidOperation {
+			
+			ProductOrderDescription pod = new ProductOrderDescription();
+			
+			ImportElement fpIE = new ImportElement(ImExType.EXPORT_TOTAL_PRODUCT, "products.csv", packFields);
+			ByteArrayOutputStream fbaos = new ByteArrayOutputStream();
+			List<List<String>> ffl = new ArrayList<List<String>>();
+			
+			for( Entry<Long, SortedMap<Double, ProductOrderDescription> > podme: prodDescMap.entrySet()){
+				
+				SortedMap<Double, ProductOrderDescription> podm = podme.getValue();
+				
+				ImportElement pIE = new ImportElement(ImExType.EXPORT_TOTAL_PRODUCT, "product_"+podme.getKey()+".csv", packFields);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				List<List<String>> fl = new ArrayList<List<String>>();
+				List<ProductOrderDescription> podl = new ArrayList<ProductOrderDescription>();
+				podl.addAll(podm.values());
+				
+				CSVHelper.writeCSVData(baos, CSVHelper.getFieldsMap(pod, ExchangeFieldType.TOTAL_PROUCT_ID, packFields), podl, fl);
+				baos.close();
+				fbaos.write( baos.toByteArray());
+				ffl.addAll(fl);
+				
+				pIE.setFieldsData(fl);
+				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), userId, false, pm));
+				
+				ds.addToData(  pIE );
+			}
+			fbaos.close();
+			fpIE.setFieldsData(ffl);
+			fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), userId, false, pm));
+			
+			ds.addToData(  fpIE );
+		}
 
 		// ======================================================================================================================
-	
+		@Override
+		public void updateOrder(long orderId, int date, String comment) throws InvalidOperation {
+			PersistenceManager pm = PMF.getPm();
+			try {
+				VoOrder voOrder = 0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+				voOrder.setDate(date);
+				voOrder.setComment(comment);
+				pm.makePersistent(voOrder);
+			} finally {
+				pm.close();
+			}
+		}
+		
 }

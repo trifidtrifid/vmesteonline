@@ -4,10 +4,17 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.URL;
 import java.nio.channels.Channels;
+import java.util.Arrays;
 
+import javax.jdo.JDOObjectNotFoundException;
+import javax.jdo.PersistenceManager;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+
+import org.datanucleus.util.Base64;
 
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
@@ -16,6 +23,8 @@ import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
+import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 
 public class StorageHelper {
 
@@ -48,7 +57,7 @@ public class StorageHelper {
 	 *          - http URL or content of a JPEG coded image
 	 * @return
 	 */
-	public static String saveImage(byte[] urlOrContent) throws IOException {
+	public static String saveImage(byte[] urlOrContent, long ownerId, boolean isPublic, PersistenceManager _pm) throws IOException {
 
 		if (null == urlOrContent || 0 == urlOrContent.length) {
 			throw new IOException("Invalid content. Failed to store null or empty content");
@@ -62,32 +71,46 @@ public class StorageHelper {
 				url = new URL(new String(urlOrContent));
 				is = url.openStream();
 				//file name for the same sources will be the same
-				fname = "V0" + urlOrContent.hashCode() + ("VONLINE"+urlOrContent).hashCode();
+				fname = url.getFile();
 
 			} catch (Exception e) {
 				is = new ByteArrayInputStream(urlOrContent);
-				fname = "VO" + ("VONLINE" + System.currentTimeMillis()).hashCode();
+				fname = numberToString( (long)(Math.random()*Long.MAX_VALUE));
 			}
 
-			
-			GcsFilename filename = new GcsFilename("public", fname);
-			GcsOutputChannel outputChannel = gcsService.createOrReplace(filename, GcsFileOptions.getDefaultInstance());
-			streamCopy(is, Channels.newOutputStream(outputChannel));
-
-			return "/file/" + filename.getBucketName() + "/" + filename.getObjectName();
+			return saveImage(fname, ownerId, isPublic, is, null );
 		}
 	}
+//===================================================================================================================
 
-	public static String saveImage(String urlOrContent) throws IOException {
-		return saveImage(urlOrContent.getBytes());
+	public static VoFileAccessRecord createFileAccessRecord( long userId, boolean isPublic, String fileName){
+		return new VoFileAccessRecord(userId, isPublic, fileName);
+	}
+//===================================================================================================================
+
+	public static String saveImage(String urlOrContent, long onerId, boolean isPublic, PersistenceManager _pm) throws IOException {
+		return saveImage(urlOrContent.getBytes(), onerId, isPublic,_pm);
 	}
 
-	public static String replaceImage(String urlOrContent, String oldURL) throws IOException {
-		String newURL = saveImage(urlOrContent);
-		gcsService.delete(getFileName(oldURL));
-		return newURL;
+	//===================================================================================================================
+	
+	public static String replaceImage(String urlOrContent, String oldURL, long userId, Boolean isPublic, PersistenceManager _pm) throws IOException {
+		long oldFileId = getFileId(oldURL);
+		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
+		try{
+			try {
+				VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+				if(0==userId) userId = oldFile.getUserId();
+				if(null==isPublic) isPublic = oldFile.isPublic();
+				deleteImage(oldFile.getFileName());
+			} catch( JDOObjectNotFoundException onfe){
+			}
+			return saveImage(urlOrContent, userId, isPublic,pm);
+		} finally {
+			if(null==_pm) pm.close();
+		}
 	}
-
+//===================================================================================================================
 	/**
 	 * Transfer the data from the inputStream to the outputStream. Then close both
 	 * streams.
@@ -105,42 +128,97 @@ public class StorageHelper {
 			output.close();
 		}
 	}
-
-	
-	private static GcsFilename getFileName(String uri) {
-		String[] splits = uri.split("/", 4);
-		if (splits.length < 4 || !splits[0].equals("") || !splits[1].equals("file")) {
-			throw new IllegalArgumentException("The URL is not formed as expected. " + "Expecting /file/<bucket>/<object>");
+//===================================================================================================================
+	public static boolean getFile(String url, OutputStream os) throws IOException {
+		long oldFileId = getFileId(url);
+		PersistenceManager pm = PMF.getPm();
+		try{
+			try {
+				VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+				getFile(vfar.getFileName(), os);
+				return true;
+			} catch( JDOObjectNotFoundException onfe){
+				return false;
+			}
+		} finally {
+			pm.close();
 		}
-		return new GcsFilename(splits[2], splits[3]);
 	}
-
-	/**
-	 * Retrieves a file from GCS and returns it in the outputStream. If the
-	 * request path is /file/Foo/Bar this will be interpreted as a request to read
-	 * the GCS file named Bar in the bucket Foo.
-	 */
+//===================================================================================================================
 	
-	public static void getFile(String requestURI, ServletOutputStream outputStream) throws IOException {
-
-		GcsFilename fileName = StorageHelper.getFileName(requestURI);
+	private static void getFile(GcsFilename fileName, OutputStream outputStream) throws IOException {
 		GcsInputChannel readChannel = gcsService.openPrefetchingReadChannel(fileName, 0, BUFFER_SIZE);
 		StorageHelper.streamCopy(Channels.newInputStream(readChannel), outputStream);
-
 	}
 
-	public static String saveImage(String requestURI, InputStream inputStream) throws IOException {
-		
-		GcsFilename fileName = getFileName(requestURI);
-		GcsOutputChannel outputChannel = gcsService.createOrReplace(fileName,
-				GcsFileOptions.getDefaultInstance());
-		StorageHelper.streamCopy(inputStream, Channels.newOutputStream(outputChannel));
-		return "/file/" + fileName.getBucketName()+"/" + fileName.getObjectName();
-	}
+	//===================================================================================================================
 
-	public static boolean deleteImage(String requestURI) throws IOException {
-		
-		GcsFilename fileName = getFileName(requestURI);
+	public static String saveImage(String fileName, long userId, boolean isPublic, InputStream is, PersistenceManager _pm ) throws IOException {
+		VoFileAccessRecord vfar = createFileAccessRecord(userId, isPublic, fileName);
+		PersistenceManager pm = null==_pm ?  PMF.getPm() : _pm;
+		try {
+			vfar = pm.makePersistent(vfar);
+		} finally {
+			if(null==_pm) pm.close();
+		}
+		GcsOutputChannel outputChannel = gcsService.createOrReplace( vfar.getFileName(), GcsFileOptions.getDefaultInstance());
+		streamCopy(is, Channels.newOutputStream(outputChannel));
+
+		int liop; //append with '.bin' extension if no extension is set
+		return getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? "bin" : fileName.substring( liop + 1 ));
+	}
+//=====================================================================================================================
+
+	public static boolean deleteImage(String url, PersistenceManager _pm) throws IOException {
+		long oldFileId = getFileId(url);
+		PersistenceManager pm = null==_pm ? PMF.getPm() : _pm;
+		try{
+			try {
+				VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+				deleteImage(oldFile.getFileName());
+				return true;
+			} catch( JDOObjectNotFoundException onfe){
+				return false;
+			}
+		} finally {
+			if(null==_pm) pm.close();
+		}
+	}
+	//===================================================================================================================
+
+	private static boolean deleteImage(GcsFilename fileName) throws IOException {
 		return gcsService.delete(fileName);
 	}
+	
+//===================================================================================================================
+	public static String getURL( long id, String ext ){
+		return "/file/"+numberToString(id)+"."+ext;
+	}
+	//===================================================================================================================
+	public static long getFileId( String requestURI ){
+		String[] splits = requestURI.split("/", 3);
+		if (splits.length < 3 || !splits[0].equals("") || !splits[1].equals("file") ||
+				splits[2].length()==0) {
+			throw new IllegalArgumentException("The URL is not formed as expected. " + "Expecting /file/<id>.<extension>");
+		}
+		splits = splits[2].split("[.]", 2);
+		if( splits.length < 2 || splits[0].length()<2){
+			throw new IllegalArgumentException("The URL '"+requestURI+"' is not formed as expected. " + "Expecting /file/<id>.<extension>");
+		}
+		return stringToNumber(splits[0]);
+	}
+	
+//===================================================================================================================
+	public static String numberToString( Long n ){
+		String string = new String(Base64.encode( BigInteger.valueOf(n).toByteArray()));
+		string = string.substring(0,string.length() - 1);
+		string = string.replace("/", "_");
+		return string;
+	}
+	
+	public static long stringToNumber(String str){
+		str = str.replace("_", "/") + "=";
+		return new BigInteger(Base64.decode( str )).longValue();
+	}
+	
 }

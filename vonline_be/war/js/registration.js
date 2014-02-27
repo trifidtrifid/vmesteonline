@@ -31,6 +31,11 @@ $(document).ready(function(){
         source: data
     });
 
+    $('.shop-reg').submit(function(e){
+        e.preventDefault();
+        document.location.replace("/shop.jsp");
+    });
+
 /* простые обработчики событий */
         /* --- */
 });

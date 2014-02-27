@@ -9,12 +9,6 @@ import com.vmesteonline.be.shop.PriceType;
 
 public class OrderDescription {
 	
-	public static final ExchangeFieldType[] fullFieldsList = new ExchangeFieldType[] {
-		ExchangeFieldType.ORDER_ID, ExchangeFieldType.ORDER_DATE, ExchangeFieldType.ORDER_STATUS, ExchangeFieldType.ORDER_PRICE_TYPE,
-		ExchangeFieldType.ORDER_TOTAL_COST, ExchangeFieldType.ORDER_CREATED, ExchangeFieldType.ORDER_DELIVERY_TYPE, 
-		ExchangeFieldType.ORDER_DELIVERY_COST, ExchangeFieldType.ORDER_DELIVERY_ADDRESS, ExchangeFieldType.ORDER_PAYMENT_TYPE,
-		ExchangeFieldType.ORDER_PAYMENT_STATUS, ExchangeFieldType.ORDER_COMMENT, ExchangeFieldType.ORDER_USER_ID, ExchangeFieldType.ORDER_USER_NAME };
-	
 	public long orderId;
 	public int date;
 	public OrderStatus status;
@@ -29,4 +23,10 @@ public class OrderDescription {
 	public String comment;
 	public long userId;
 	public String userName;
+	
+	/*public static final ExchangeFieldType[] fullFieldsList = new ExchangeFieldType[] {
+		ExchangeFieldType.ORDER_ID, ExchangeFieldType.ORDER_DATE, ExchangeFieldType.ORDER_STATUS, ExchangeFieldType.ORDER_PRICE_TYPE,
+		ExchangeFieldType.ORDER_TOTAL_COST, ExchangeFieldType.ORDER_CREATED, ExchangeFieldType.ORDER_DELIVERY_TYPE, 
+		ExchangeFieldType.ORDER_DELIVERY_COST, ExchangeFieldType.ORDER_DELIVERY_ADDRESS, ExchangeFieldType.ORDER_PAYMENT_TYPE,
+		ExchangeFieldType.ORDER_PAYMENT_STATUS, ExchangeFieldType.ORDER_COMMENT, ExchangeFieldType.ORDER_USER_ID, ExchangeFieldType.ORDER_USER_NAME };*/
 }
