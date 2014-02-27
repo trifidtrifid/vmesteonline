@@ -288,24 +288,29 @@
                         </table>
                     </li>--%>
                 </ul>
-                <div class="itogo-right">
-                    Товаров на сумму: <span>333</span> руб.
-                </div>
-                <div class="delivery-right">
-                    <div class="checkbox">
-                        <label>
-                            <input name="form-field-checkbox" type="checkbox" class="ace">
-                            <span class="lbl"> Доставка</span>
-                        </label>
+                <div class="additionally-order">
+                    <div class="itogo-right">
+                        Товаров на сумму: <span>333</span> руб.
                     </div>
-                    <div class="input-delivery">
-                        <label for="delivery-addr">Введите адрес доставки</label>
-                        <textarea id="delivery-addr"></textarea>
+                    <div class="delivery-right">
+                        <div class="checkbox">
+                            <label>
+                                <input name="form-field-checkbox" type="checkbox" class="ace">
+                                <span class="lbl"> Доставка</span>
+                            </label>
+                        </div>
+                        <div class="input-delivery">
+                            <label for="delivery-addr">Введите адрес доставки</label>
+                            <textarea id="delivery-addr"></textarea>
+                        </div>
                     </div>
+                    <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
+                    <button class="btn btn-sm btn-grey no-border">Отменить</button>
+                    <button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>
                 </div>
-                <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
-                <button class="btn btn-sm btn-grey no-border">Отменить</button>
-                <button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>
+                <div class="empty-basket">
+                    Ваша корзина пуста
+                </div>
             </aside>
             <div class="main-content">
                 <nav class="breadcrambs">
