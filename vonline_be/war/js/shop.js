@@ -3,6 +3,195 @@ $(document).ready(function(){
     var protocol = new Thrift.Protocol(transport);
     var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
 
+    window.history.pushState({'catid': 0}, null,'shop.jsp');
+
+    function SetProductDetailPopup(){
+        $('.product-link').click(function(){
+            $(this).find('+.modal').modal();
+            var carousel = $(this).find('+.modal').find('.carousel');
+            var slider = $(this).find('+.modal').find('.slider');
+
+            carousel.flexslider({
+                animation: "slide",
+                controlNav: false,
+                animationLoop: false,
+                slideshow: false,
+                itemWidth: 60,
+                itemMargin: 5,
+                asNavFor: slider
+            });
+
+            slider.flexslider({
+                animation: "slide",
+                controlNav: false,
+                animationLoop: false,
+                slideshow: false,
+                sync: carousel
+            });
+        });
+    }
+
+    function SetEventAddProductToOrderline(){
+        $('.fa-shopping-cart').click(function(){
+
+            var currentProduct = $(this).closest('tr');
+            var productHtml = '<li>'+
+                '<img src="'+ currentProduct.find('.product-price') +'" alt="картинка"/>'+
+                '<div class="product-right-descr">'+
+                currentProduct.find('.product-link span').text()+
+                '</div>'+
+                '<table>'+
+                '<thead>'+
+                '<tr>'+
+                '<td>Цена(шт)</td>'+
+                '<td>Кол-во</td>'+
+                '<td>Сумма</td>'+
+                '<td></td>'+
+                '</tr>'+
+                '</thead>'+
+                '<tr>'+
+                '<td class="td-price">'+ currentProduct.find('.product-price').text() +'</td>'+
+                '<td><input type="text" class="input-mini spinner1" /></td>'+
+                '<td class="td-summa">'+ currentProduct.find('.product-price').text() +'</td>'+
+                '<td><a href="#" class="delete-product">Удалить</a></td>'+
+                '</tr>'+
+                '</table>'+
+                '</li>';
+
+            $('.catalog-order').append(productHtml);
+
+            $('.delete-product').click(function(){
+                $(this).closest('li').slideUp(function(){
+                    $(this).detach();
+                    $('.itogo-right span').text(countItogo($('.catalog-order')));
+                });
+            });
+
+        });
+    }
+
+    function SetNewCategoryAndProducts(catID){
+        /* замена меню категорий */
+
+        if (catID){
+            window.history.pushState({'catid' : catID },null,catID);
+        } else {
+            window.history.pushState({'catid': 0 }, null,'shop');
+        }
+        var productCategories = client.getProductCategories(catID);
+        var categoriesLength = productCategories.length;
+        var shopMenu = '';
+        var firstMenuItem = '<li>'+
+            '<a href="#" class="fa fa-reply-all"></a>'+
+            '<div>Назад</div>'+
+            '</li>';
+
+        for(var i = 0; i < categoriesLength; i++){
+            shopMenu += '<li data-catid="'+ productCategories[i].id +'">'+
+                '<a href="#" class="fa fa-beer"></a>'+
+                '<div>'+ productCategories[i].name +'</div>'+
+                '</li>';
+        }
+
+        $('.shop-menu ul').html(firstMenuItem).append(shopMenu);
+
+        /* новый список товаров */
+        var tempCatID = catID;
+        if (!tempCatID){tempCatID = productCategories[1].id;}
+        var productsList = client.getProducts(0,10,tempCatID).products;
+        var productListLength = productsList.length;
+        var productsHtml = '';
+        for (i = 0; i < productListLength; i++){
+            productsHtml += '<tr>'+
+                '<td>'+
+                '<a href="#" class="product-link">'+
+                '<img src="'+ productsList[i].imageURL +'" alt="картинка"/>'+
+                '<span>'+ productsList[i].name + ' 2 level'+'</span>'+
+                '</a>'+
+                '<div class="modal">'+
+                '<div class="modal-body">'+
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
+                '<div class="product-slider">'+
+                '<div class="slider flexslider">'+
+                '<ul class="slides">'+
+                '<li>'+
+                '<img src="'+ productsList[i].imageURL +'" />'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '<div class="carousel flexslider">'+
+                '<ul class="slides">'+
+                '<li>'+
+                '<img src="'+ productsList[i].imageURL +'" />'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '</div>'+
+                '<div class="product-descr">'+
+                '<h3>'+ productsList[i].name +'</h3>'+
+                '<div class="product-text">'+
+                '${productDetails.fullDescr}'+
+                '</div>'+
+                '<div class="modal-footer">'+
+                '<span>Цена: '+ productsList[i].price +'</span>'+
+                '<input type="text" class="input-mini spinner1" />'+
+                '<i class="fa fa-shopping-cart"></i>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '</td>'+
+                '<td class="product-price">'+ productsList[i].price  +'</td>'+
+                '<td>'+
+                '<input type="text" class="input-mini spinner1" />'+
+                '</td>'+
+                '<td>'+
+                '<i class="fa fa-shopping-cart"></i>'+
+                '</td>'+
+                '</tr>';
+        }
+        $('.catalog table tbody').html("").append(productsHtml);
+
+        /* подключение событий */
+        $('.catalog table .spinner1').ace_spinner({value:1,min:1,max:200,step:1, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
+            .on('change', function(){
+                //alert(this.value)
+            });
+
+        SetProductDetailPopup();
+        SetEventAddProductToOrderline();
+        SetCategoryClick();
+
+    }
+
+    function SetCategoryClick(){
+        $('.shop-menu li a').click(function(e){
+            e.preventDefault();
+            if ($(this).parent().index() == 0){
+                window.history.back();
+                //window.history.replaceState($(this).parent().data('catid'), null,$(this).parent().data('catid'));
+            }
+            else {
+                SetNewCategoryAndProducts($(this).parent().data('catid'));
+            }
+
+        });
+    }
+
+    window.addEventListener('popstate',function(e){
+        //if (e.state){
+        //alert("-- "+e.state.catid);
+        if (e.state.catid && e.state.catid != 1){
+            alert('1');
+            SetNewCategoryAndProducts(e.state.catid);
+        }else {
+            alert('2');
+            SetNewCategoryAndProducts(0);
+        }
+    //}
+    });
+
+
 /* инициализация плагинов */
     $('.spinner1').ace_spinner({value:1,min:1,max:200,step:1, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
         .on('change', function(){
@@ -34,29 +223,8 @@ $(document).ready(function(){
     });
 
     // окно с подробной информацией о продукте
-    $('.product-link').click(function(){
-       $(this).find('+.modal').modal();
-       var carousel = $(this).find('+.modal').find('.carousel');
-       var slider = $(this).find('+.modal').find('.slider');
 
-        carousel.flexslider({
-            animation: "slide",
-            controlNav: false,
-            animationLoop: false,
-            slideshow: false,
-            itemWidth: 60,
-            itemMargin: 5,
-            asNavFor: slider
-        });
 
-        slider.flexslider({
-            animation: "slide",
-            controlNav: false,
-            animationLoop: false,
-            slideshow: false,
-            sync: carousel
-        });
-    });
 
     //custom autocomplete (category selection)
     $.widget( "custom.catcomplete", $.ui.autocomplete, {
@@ -139,190 +307,12 @@ $(document).ready(function(){
         }
     });
 
-    // добавление продукта в orderlines
-    $('.fa-shopping-cart').click(function(){
-
-       var currentProduct = $(this).closest('tr');
-       var productHtml = '<li>'+
-            '<img src="'+ currentProduct.find('.product-price') +'" alt="картинка"/>'+
-            '<div class="product-right-descr">'+
-            currentProduct.find('.product-link span').text()+
-        '</div>'+
-        '<table>'+
-            '<thead>'+
-                '<tr>'+
-                    '<td>Цена(шт)</td>'+
-                    '<td>Кол-во</td>'+
-                    '<td>Сумма</td>'+
-                    '<td></td>'+
-                '</tr>'+
-            '</thead>'+
-            '<tr>'+
-                '<td class="td-price">'+ currentProduct.find('.product-price').text() +'</td>'+
-                '<td><input type="text" class="input-mini spinner1" /></td>'+
-                '<td class="td-summa">'+ currentProduct.find('.product-price').text() +'</td>'+
-                '<td><a href="#" class="delete-product">Удалить</a></td>'+
-            '</tr>'+
-        '</table>'+
-        '</li>';
-
-        $('.catalog-order').append(productHtml);
-
-        $('.delete-product').click(function(){
-            $(this).closest('li').slideUp(function(){
-                $(this).detach();
-                $('.itogo-right span').text(countItogo($('.catalog-order')));
-            });
-        });
-
-    });
+    SetEventAddProductToOrderline();
+    SetProductDetailPopup();
 
     // переключение между категориями
-    $('.shop-menu li').click(function(){
-        /* замена меню категорий */
-       var catID = $(this).data('catid');
-       var productCategories = client.getProductCategories(catID);
-        var categoriesLength = productCategories.length;
-        var shopMenu = '';
-        var firstMenuItem = '<li>'+
-            '<a href="#" class="fa fa-reply-all"></a>'+
-            '<div>Назад</div>'+
-        '</li>';
+   SetCategoryClick();
 
-        for(var i = 0; i < categoriesLength; i++){
-             shopMenu += '<li data-catid="'+ productCategories[i].id +'">'+
-                 '<a href="#" class="fa fa-beer"></a>'+
-                 '<div>'+ productCategories[i].name +'</div>'+
-             '</li>';
-        }
-
-        $('.shop-menu ul').html(firstMenuItem).append(shopMenu);
-
-        /* новый список товаров */
-
-        var productsList = client.getProducts(0,10,catID).products;
-        var productListLength = productsList.length;
-        var productsHtml = '';
-        for (i = 0; i < productListLength; i++){
-            productsHtml += '<tr>'+
-                '<td>'+
-                    '<a href="#" class="product-link">'+
-                        '<img src="'+ productsList[i].imageURL +'" alt="картинка"/>'+
-                        '<span>'+ productsList[i].name + ' 2 level'+'</span>'+
-                    '</a>'+
-                    '<div class="modal">'+
-                        '<div class="modal-body">'+
-                            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
-                            '<div class="product-slider">'+
-                                '<div class="slider flexslider">'+
-                                    '<ul class="slides">'+
-                                        '<li>'+
-                                            '<img src="'+ productsList[i].imageURL +'" />'+
-                                        '</li>'+
-                                        '</ul>'+
-                                    '</div>'+
-                                    '<div class="carousel flexslider">'+
-                                        '<ul class="slides">'+
-                                            '<li>'+
-                                                '<img src="'+ productsList[i].imageURL +'" />'+
-                                            '</li>'+
-                                            '</ul>'+
-                                        '</div>'+
-                                    '</div>'+
-                                    '<div class="product-descr">'+
-                                        '<h3>'+ productsList[i].name +'</h3>'+
-                                        '<div class="product-text">'+
-                                        '${productDetails.fullDescr}'+
-                                        '</div>'+
-                                        '<div class="modal-footer">'+
-                                            '<span>Цена: '+ productsList[i].price +'</span>'+
-                                            '<input type="text" class="input-mini spinner1" />'+
-                                            '<i class="fa fa-shopping-cart"></i>'+
-                                        '</div>'+
-                                    '</div>'+
-                                '</div>'+
-                            '</div>'+
-                        '</td>'+
-                        '<td class="product-price">'+ productsList[i].price  +'</td>'+
-                        '<td>'+
-                            '<input type="text" class="input-mini spinner1" />'+
-                        '</td>'+
-                        '<td>'+
-                            '<i class="fa fa-shopping-cart"></i>'+
-                        '</td>'+
-                    '</tr>';
-        }
-              $('.catalog table tbody').html("").append(productsHtml);
-
-        /* подключение событий */
-
-          $('.catalog table .spinner1').ace_spinner({value:1,min:1,max:200,step:1, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
-                .on('change', function(){
-                    //alert(this.value)
-                });
-
-        $('.product-link').click(function(){
-            $(this).find('+.modal').modal();
-            var carousel = $(this).find('+.modal').find('.carousel');
-            var slider = $(this).find('+.modal').find('.slider');
-
-            carousel.flexslider({
-                animation: "slide",
-                controlNav: false,
-                animationLoop: false,
-                slideshow: false,
-                itemWidth: 60,
-                itemMargin: 5,
-                asNavFor: slider
-            });
-
-            slider.flexslider({
-                animation: "slide",
-                controlNav: false,
-                animationLoop: false,
-                slideshow: false,
-                sync: carousel
-            });
-        });
-
-        $('.fa-shopping-cart').click(function(){
-
-            var currentProduct = $(this).closest('tr');
-            var productHtml = '<li>'+
-                '<img src="'+ currentProduct.find('.product-price') +'" alt="картинка"/>'+
-                '<div class="product-right-descr">'+
-                currentProduct.find('.product-link span').text()+
-                '</div>'+
-                '<table>'+
-                '<thead>'+
-                '<tr>'+
-                '<td>Цена(шт)</td>'+
-                '<td>Кол-во</td>'+
-                '<td>Сумма</td>'+
-                '<td></td>'+
-                '</tr>'+
-                '</thead>'+
-                '<tr>'+
-                '<td class="td-price">'+ currentProduct.find('.product-price').text() +'</td>'+
-                '<td><input type="text" class="input-mini spinner1" /></td>'+
-                '<td class="td-summa">'+ currentProduct.find('.product-price').text() +'</td>'+
-                '<td><a href="#" class="delete-product">Удалить</a></td>'+
-                '</tr>'+
-                '</table>'+
-                '</li>';
-
-            $('.catalog-order').append(productHtml);
-
-            $('.delete-product').click(function(){
-                $(this).closest('li').slideUp(function(){
-                    $(this).detach();
-                    $('.itogo-right span').text(countItogo($('.catalog-order')));
-                });
-            });
-
-        });
-
-    });
 
     $('.checkbox span').click(function(){
        $(this).parent().parent().find('+.input-delivery').slideToggle();
