@@ -2,18 +2,15 @@ package com.vmesteonline.be;
 
 import static org.junit.Assert.fail;
 
-import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -27,30 +24,9 @@ import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.vmesteonline.be.AuthServiceImpl;
-import com.vmesteonline.be.Building;
-import com.vmesteonline.be.City;
-import com.vmesteonline.be.Country;
-import com.vmesteonline.be.Group;
-import com.vmesteonline.be.InvalidOperation;
-import com.vmesteonline.be.MessageServiceImpl;
-import com.vmesteonline.be.MessageType;
-import com.vmesteonline.be.PostalAddress;
-import com.vmesteonline.be.ShopServiceImpl;
-import com.vmesteonline.be.Street;
-import com.vmesteonline.be.Topic;
-import com.vmesteonline.be.UserServiceImpl;
-import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.shop.VoOrder;
 import com.vmesteonline.be.jdo2.shop.VoOrderLine;
-import com.vmesteonline.be.jdo2.shop.VoProducer;
-import com.vmesteonline.be.jdo2.shop.VoProduct;
-import com.vmesteonline.be.jdo2.shop.VoShop;
-import com.vmesteonline.be.jdo2.shop.exchange.OrderDescription;
-import com.vmesteonline.be.jdo2.shop.exchange.OrderLineDescription;
-import com.vmesteonline.be.jdo2.shop.exchange.ProductOrderDescription;
 import com.vmesteonline.be.shop.DataSet;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
@@ -71,8 +47,8 @@ import com.vmesteonline.be.shop.ProductCategory;
 import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
-import com.vmesteonline.be.utils.CSVHelper;
 import com.vmesteonline.be.utils.Defaults;
+import com.vmesteonline.be.utils.StorageHelper;
 
 public class ShopServiceImplTest {
 
@@ -877,15 +853,17 @@ public class ShopServiceImplTest {
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_LOGOURL);
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_DESCRIPTION);
-
-		ImportElement importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", fieldsOrder);
-		importData
-				.setFileData(("Производитель 1, http://yandex.ru/, \"HTTP://ya.ru/logo.gif\", \"Длинный текст описания, с заятыми...\"\n"
-						+ "Производитель 2, http://google.ru/, \"HTTP://google.ru/logo.gif\", \"JОпять и снова, Длинный текст описания, с заятыми...\"\n")
-						.getBytes());
+		try {
+			
+		ImportElement importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", listToMap(fieldsOrder));
+		String imgURL = StorageHelper.saveImage(
+				("Производитель 1, http://yandex.ru/, \"HTTP://ya.ru/logo.gif\", \"Длинный текст описания, с заятыми...\"\n"
+		+ "Производитель 2, http://google.ru/, \"HTTP://google.ru/logo.gif\", \"JОпять и снова, Длинный текст описания, с заятыми...\"\n")
+		.getBytes(), userId, false, null);
+		importData.setUrl(imgURL);
 
 		ds.addToData(importData);
-		try {
+		
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 
 			Long id = si.registerShop(shop);
@@ -894,12 +872,20 @@ public class ShopServiceImplTest {
 			DataSet importData2 = si.importData(ds);
 			List<Producer> producers = si.getProducers();
 			Assert.assertEquals(producers.size(), 2);
-		} catch (TException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Import failed!" + e);
 		}
 	}
 
+	public static <T> Map<Integer,T> listToMap( Collection<T> col ){
+		int i=0;
+		Map<Integer,T> res = new TreeMap<Integer, T>();
+		for (T t : col) {
+			res.put(i++, t);
+		}
+		return res;
+	}
 	// =====================================================================================================================
 	@Test
 	public void testDataImportShopsTest() {
@@ -913,16 +899,20 @@ public class ShopServiceImplTest {
 		fieldsOrder.add(ExchangeFieldType.SHOP_LOGOURL);
 		fieldsOrder.add(ExchangeFieldType.SHOP_TAGS);
 
-		ImportElement importData = new ImportElement(ImExType.IMPORT_SHOP, "shops.csv", fieldsOrder);
-		importData.setFileData(("Магазин %1, Мага зин бытовой техники, http://yandex.st/www/1.807/yaru/i/logo.png, 1 | 2 | tag 3\n"
-				+ "Техношок, Магазин Электроники, http://yandex.st/www/1.807/yaru/i/logo.png,").getBytes());
-
-		ds.addToData(importData);
+		ImportElement importData = new ImportElement(ImExType.IMPORT_SHOP, "shops.csv", listToMap(fieldsOrder));
 		try {
+			String imgURL = StorageHelper.saveImage(
+					("Магазин %1, Мага зин бытовой техники, http://yandex.st/www/1.807/yaru/i/logo.png, 1 | 2 | tag 3\n"
+							+ "Техношок, Магазин Электроники, http://yandex.st/www/1.807/yaru/i/logo.png,").getBytes(), userId, false, null);
+			importData.setUrl(imgURL);
+	
+	
+			ds.addToData(importData);
+
 			DataSet importData2 = si.importData(ds);
 			List<Shop> shops = si.getShops();
 			Assert.assertEquals(shops.size(), 2);
-		} catch (TException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Import failed!" + e);
 		}
@@ -945,14 +935,19 @@ public class ShopServiceImplTest {
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_LOGOURLS);
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
 
-		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", fieldsOrder);
-		importData.setFileData(("0, 1, КОпмы, Копьютеры и комплектующие, "
-				+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif | "
-				+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif,\n" + "1, 2, Ноутбуки,Ноуты и Планшеты,,,\n"
-				+ "2, 3, Ноуты, ТОлько ноуты,,,\n" + "2, 4, Планшеты,Только планшеты,,,\n" + "1, 5, Переферия,\"Принтеры, мышы, клавы\",,,\n").getBytes());
-
-		ds.addToData(importData);
+		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", listToMap(fieldsOrder));
 		try {
+		
+			String imgURL = StorageHelper.saveImage(
+					("0, 1, КОпмы, Копьютеры и комплектующие, "
+							+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif | "
+							+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif,\n" + "1, 2, Ноутбуки,Ноуты и Планшеты,,,\n"
+							+ "2, 3, Ноуты, ТОлько ноуты,,,\n" + "2, 4, Планшеты,Только планшеты,,,\n" + "1, 5, Переферия,\"Принтеры, мышы, клавы\",,,\n").getBytes(),
+							userId, false, null);
+			importData.setUrl(imgURL);
+			
+	
+			ds.addToData(importData);
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 			Long shopId = si.registerShop(shop);
@@ -967,7 +962,7 @@ public class ShopServiceImplTest {
 			productCategories = si.getProductCategories(productCategories.get(0).getId());
 			Assert.assertEquals(productCategories.size(), 2);
 
-		} catch (TException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Import failed!" + e);
 		}
@@ -991,31 +986,37 @@ public class ShopServiceImplTest {
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_LOGOURLS);
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
 
-		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", fieldsOrder);
-		importData.setFileData(("0, 1, КОпмы, Копьютеры и комплектующие, "
-				+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif | "
-				+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif,\n" + "1, 2, Ноутбуки,Ноуты и Планшеты,,,\n"
-				+ "2, 3, Ноуты, ТОлько ноуты,,,\n" + "2, 4, Планшеты,Только планшеты,,,\n" + "1, 5, Переферия,\"Принтеры, мышы, клавы\",,,\n").getBytes());
-
-		ds.addToData(importData);
-
-		fieldsOrder = new ArrayList<ExchangeFieldType>();
-		fieldsOrder.add(ExchangeFieldType.PRODUCER_NAME);
-		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
-		fieldsOrder.add(ExchangeFieldType.PRODUCER_LOGOURL);
-		fieldsOrder.add(ExchangeFieldType.PRODUCER_DESCRIPTION);
-
-		importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", fieldsOrder);
-		importData
-				.setFileData(("Производитель 1, http://yandex.ru/, \"HTTP://ya.ru/logo.gif\", \"Длинный текст описания, с заятыми...\"\n"
-						+ "Производитель 2, http://google.ru/, \"HTTP://google.ru/logo.gif\", \"JОпять и снова, Длинный текст описания, с заятыми...\"\n")
-						.getBytes());
-
-		ds.addToData(importData);
-
-		List<Producer> producers = null;
-		List<ProductCategory> productCategories = null;
+		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", listToMap(fieldsOrder));
+		
 		try {
+			String imgURL = StorageHelper.saveImage(
+					("0, 1, КОпмы, Копьютеры и комплектующие, "
+							+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif | "
+							+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif,\n" + "1, 2, Ноутбуки,Ноуты и Планшеты,,,\n"
+							+ "2, 3, Ноуты, ТОлько ноуты,,,\n" + "2, 4, Планшеты,Только планшеты,,,\n" + "1, 5, Переферия,\"Принтеры, мышы, клавы\",,,\n").getBytes(),
+							userId, false, null);
+			importData.setUrl(imgURL);
+			
+			ds.addToData(importData);
+	
+			fieldsOrder = new ArrayList<ExchangeFieldType>();
+			fieldsOrder.add(ExchangeFieldType.PRODUCER_NAME);
+			fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
+			fieldsOrder.add(ExchangeFieldType.PRODUCER_LOGOURL);
+			fieldsOrder.add(ExchangeFieldType.PRODUCER_DESCRIPTION);
+	
+			importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", listToMap(fieldsOrder));
+			imgURL = StorageHelper.saveImage(
+					("Производитель 1, http://yandex.ru/, \"HTTP://ya.ru/logo.gif\", \"Длинный текст описания, с заятыми...\"\n"
+							+ "Производитель 2, http://google.ru/, \"HTTP://google.ru/logo.gif\", \"JОпять и снова, Длинный текст описания, с заятыми...\"\n")
+							.getBytes(),
+							userId, false, null);
+			importData.setUrl(imgURL);
+			
+			ds.addToData(importData);
+	
+			List<Producer> producers = null;
+			List<ProductCategory> productCategories = null;
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 			Long shopId = si.registerShop(shop);
@@ -1028,10 +1029,7 @@ public class ShopServiceImplTest {
 
 			producers = si.getProducers();
 
-		} catch (TException e) {
-			e.printStackTrace();
-			fail("Import failed!" + e);
-		}
+		
 
 		DataSet ds2 = new DataSet();
 		ds2.date = (int) (System.currentTimeMillis() / 1000L);
@@ -1055,14 +1053,17 @@ public class ShopServiceImplTest {
 		productFieldsOrder.add(ExchangeFieldType.PRODUCT_OPIONSAVP);
 		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRODUCER_ID);
 
-		importData = new ImportElement(ImExType.IMPORT_PRODUCTS, "product.csv", productFieldsOrder);
-		importData.setFileData(("KEyboard, Клавистура 101 кнопка, 250.0, http://yandex.st/www/1.808/yaru/i/logo.png, 125.0, "
-				+ productCategories.get(0).getId() + "|" + productCategories.get(1).getId() + "|" + productCategories.get(0).getId()
-				+ ", 123.0, \"цвет:черный|материал:пластик\", " + producers.get(0).getId() + "\n" + "Mouse, Мышь 3 кнопки, 1250.0,, 1125.0, "
-				+ productCategories.get(0).getId() + ", 1123.0, цвет:зеленый, " + producers.get(0).getId() + "\n").getBytes());
+		importData = new ImportElement(ImExType.IMPORT_PRODUCTS, "product.csv", listToMap(productFieldsOrder));
+		imgURL = StorageHelper.saveImage(
+				("KEyboard, Клавистура 101 кнопка, 250.0, http://yandex.st/www/1.808/yaru/i/logo.png, 125.0, "
+						+ productCategories.get(0).getId() + "|" + productCategories.get(1).getId() + "|" + productCategories.get(0).getId()
+						+ ", 123.0, \"цвет:черный|материал:пластик\", " + producers.get(0).getId() + "\n" + "Mouse, Мышь 3 кнопки, 1250.0,, 1125.0, "
+						+ productCategories.get(0).getId() + ", 1123.0, цвет:зеленый, " + producers.get(0).getId() + "\n").getBytes(),
+						userId, false, null);
+		importData.setUrl(imgURL);
 
 		ds2.addToData(importData);
-		try {
+
 
 			/* DataSet importData2 = */si.importData(ds2);
 
@@ -1071,7 +1072,7 @@ public class ShopServiceImplTest {
 			products = si.getProducts(0, 100, productCategories.get(1).getId());
 			Assert.assertEquals(products.length, 1);
 
-		} catch (TException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Import failed!" + e);
 		}
@@ -1212,7 +1213,8 @@ public class ShopServiceImplTest {
 					ExchangeFieldType.ORDER_LINE_PRICE, ExchangeFieldType.ORDER_LINE_COMMENT, ExchangeFieldType.ORDER_LINE_PACKETS
 			});
 			
-			DataSet totalOrdersReport = si.getTotalOrdersReport( now + 1000, DeliveryType.SELF_PICKUP, orderFields,  orderLineFIelds); 
+			DataSet totalOrdersReport = si.getTotalOrdersReport( now + 1000, DeliveryType.SELF_PICKUP, 
+					listToMap(orderFields),  listToMap(orderLineFIelds)); 
 			
 			Assert.assertTrue(totalOrdersReport != null);
 			Assert.assertEquals(totalOrdersReport.data.size(), 3); //two order lines and one orders
@@ -1281,7 +1283,7 @@ public class ShopServiceImplTest {
 			si.confirmOrder();
 			
 			long order2ID = si.createOrder(now + 1000, "22aaaa", PriceType.INET);
-			OrderLine ol21 = si.setOrderLine(upProductsIdl.get(0), 22.0D, "comment21", packets);
+			OrderLine ol21 = si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment21", packets);
 			si.confirmOrder();
 			
 			long order3ID = si.createOrder(now + 1000, "33aaaa", PriceType.INET);
@@ -1306,7 +1308,7 @@ public class ShopServiceImplTest {
 					ExchangeFieldType.ORDER_LINE_PRICE, ExchangeFieldType.ORDER_LINE_COMMENT, ExchangeFieldType.ORDER_LINE_PACKETS
 			});
 			
-			DataSet totalOrdersReport = si.getTotalOrdersReport( now + 1000, DeliveryType.SELF_PICKUP, orderFields,  orderLineFIelds); 
+			DataSet totalOrdersReport = si.getTotalOrdersReport( now + 1000, DeliveryType.SELF_PICKUP, listToMap(orderFields),  listToMap(orderLineFIelds)); 
 		} catch (TException e) {
 			e.printStackTrace();
 			fail("Import failed!" + e);

@@ -22,10 +22,10 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoProductCategory {
 
-	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet) {
-		this(shop, parentId, name, descr, logoURLset, topicSet, null);
+	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId) {
+		this(shop, parentId, name, descr, logoURLset, topicSet, ownedId, null);
 	}
-	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, PersistenceManager _pm) {
+	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId, PersistenceManager _pm) {
 	  
 		this.name = name;
 		this.descr = descr;
@@ -33,7 +33,7 @@ public class VoProductCategory {
 			this.logoURLset = new ArrayList<String>();
 			for( String bb: logoURLset) {
 				try {
-					this.logoURLset.add(StorageHelper.saveImage(bb));
+					this.logoURLset.add(StorageHelper.saveImage(bb, ownedId, true, null));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -185,14 +185,14 @@ public class VoProductCategory {
 		return "VoProductCategory [id=" + id + ", parent=" + parent + ", name=" + name + "]";
 	}
 	
-	public void update(ProductCategory newCategoryInfo, PersistenceManager pm) {
+	public void update(ProductCategory newCategoryInfo, long userId, PersistenceManager pm) {
 	  
 		this.name = newCategoryInfo.name;
 		this.descr = newCategoryInfo.descr;
 		this.logoURLset = new ArrayList<String>();
 		for( String bb: newCategoryInfo.logoURLset) {
 			try {
-				this.logoURLset.add(StorageHelper.saveImage(bb));
+				this.logoURLset.add(StorageHelper.saveImage(bb, userId, true, pm));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

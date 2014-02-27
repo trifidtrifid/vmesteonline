@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.jdo.PersistenceManager;
+
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 
@@ -35,7 +37,7 @@ public class VoHelper {
 
 	// ===================================================================================================================
 
-	public static void replaceURL(Object owner, String fieldName, String newUrl) throws NoSuchFieldException {
+	public static void replaceURL(Object owner, String fieldName, String newUrl, long userId, boolean isPublic, PersistenceManager _pm) throws NoSuchFieldException {
 		if (null != newUrl) {
 			String oldVal = null;
 			try {
@@ -51,9 +53,9 @@ public class VoHelper {
 				}
 				String newStorageUrl;
 				if (null == oldVal) { // old URL was not set
-					newStorageUrl = StorageHelper.saveImage(newUrl);
+					newStorageUrl = StorageHelper.saveImage(newUrl, userId, isPublic, _pm);
 				} else {
-					newStorageUrl =  StorageHelper.replaceImage(newUrl, oldVal);
+					newStorageUrl =  StorageHelper.replaceImage(newUrl, oldVal, userId, isPublic, _pm);
 				}
 
 				if( null==field ){

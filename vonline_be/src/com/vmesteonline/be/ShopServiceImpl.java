@@ -65,6 +65,7 @@ import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.shop.ShopService.Iface;
 import com.vmesteonline.be.utils.CSVHelper;
+import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable {
@@ -285,7 +286,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				shopId = getCurrentShopId(pm);
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
 			VoProductCategory voProductCategory = new VoProductCategory(voShop, productCategory.getParentId(), productCategory.getName(),
-					productCategory.getDescr(), productCategory.getLogoURLset(), productCategory.getTopicSet(), pm);
+					productCategory.getDescr(), productCategory.getLogoURLset(), productCategory.getTopicSet(), voShop.getOwnerId(), pm);
 			productCategory.setId(voProductCategory.getId());
 			pm.makePersistent(voShop);
 			return voProductCategory.getId();
@@ -359,7 +360,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				}
 				long parentId = relativeIds && idMap.containsKey(pc.getParentId()) ? idMap.get(pc.getParentId()) : pc.getParentId();
 				logger.debug("Use paret category " + parentId + " to instead of " + pc.getParentId());
-				VoProductCategory vpc = new VoProductCategory(voShop, parentId, pc.getName(), pc.getDescr(), pc.getLogoURLset(), pc.getTopicSet(), pm);
+				VoProductCategory vpc = new VoProductCategory(voShop, parentId, pc.getName(), pc.getDescr(), pc.getLogoURLset(), pc.getTopicSet(), 
+						voShop.getOwnerId(), pm);
 				idMap.put(pc.getId(), vpc.getId());
 				categoriesCreated.add(vpc.getProductCategory());
 				voShop.addProductCategory(vpc);
@@ -1214,7 +1216,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoProduct vop = pm.getObjectById(VoProduct.class, newInfoWithOldId.getProduct().getId());
-			vop.update(newInfoWithOldId, pm);
+			long cuid = getCurrentUserId(pm);
+			vop.update(newInfoWithOldId, cuid, pm);
 			pm.makePersistent(vop);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update product: " + e.getMessage());
@@ -1229,7 +1232,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop vos = pm.getObjectById(VoShop.class, newShopWithOldId.getId());
-			vos.update(newShopWithOldId, pm);
+			long cuid = getCurrentUserId(pm);
+			vos.update(newShopWithOldId, cuid, true, pm);
 			pm.makePersistent(vos);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update shop: " + e.getMessage());
@@ -1244,7 +1248,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoProductCategory vopc = pm.getObjectById(VoProductCategory.class, newCategoryInfo.getId());
-			vopc.update(newCategoryInfo, pm);
+			long cuid = getCurrentUserId(pm);
+			vopc.update(newCategoryInfo, cuid, pm);
 			pm.makePersistent(vopc);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update CAtegory: " + e.getMessage());
@@ -1259,7 +1264,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoProducer vopc = pm.getObjectById(VoProducer.class, newInfoWithOldId.getId());
-			vopc.update(newInfoWithOldId, pm);
+			long cuid = getCurrentUserId(pm);
+			vopc.update(newInfoWithOldId, cuid, true, pm);
 			pm.makePersistent(vopc);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update shop: " + e.getMessage());
@@ -1328,11 +1334,24 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	private <T> void importInformation(ImportElement ie, ExchangeFieldType idField, T descriptionObject, ImportDataProcessor<T> processor)
 			throws InvalidOperation {
-		Map<Integer, String> fieldsMap = FieldTranslator.Translate(idField.getValue(), ie.getFieldsOrder(), descriptionObject);
-		new ByteArrayInputStream(ie.fileData.array());
+		Map<Integer, String> fieldsMap = FieldTranslator.Translate(idField.getValue(), ie.getFieldsMap(), descriptionObject);
+		String dataUrl = ie.getUrl();
+		byte[] csvData;
+		if( null != dataUrl){
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			try {
+				StorageHelper.getFile(dataUrl, baos);
+				baos.close();
+			} catch (IOException e) {
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read data from URL:"+dataUrl+". "+e.getLocalizedMessage());
+			}
+			csvData = baos.toByteArray();
+		} else {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read data from URL:"+dataUrl);
+		}
 
 		try {
-			List<T> infoRows = CSVHelper.loadCSVData(new ByteArrayInputStream(ie.fileData.array()), fieldsMap, descriptionObject);
+			List<T> infoRows = CSVHelper.loadCSVData(new ByteArrayInputStream(csvData), fieldsMap, descriptionObject);
 
 			processor.process(infoRows);
 
@@ -1344,7 +1363,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			}
 			CSVHelper.writeCSVData(baos, fieldsMap, infoRows, null);
 			baos.close();
-			ie.setFileData(baos.toByteArray());
+			String newURL = StorageHelper.replaceImage(baos.toString(), dataUrl, 0, null, null);
+			ie.setUrl(newURL);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1459,8 +1479,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		
 		@Override
 		public DataSet getTotalOrdersReport(int date, DeliveryType deliveryType, 
-				List<ExchangeFieldType> orderFields,
-				List<ExchangeFieldType> orderLineFIelds ) throws InvalidOperation {
+				Map<Integer,ExchangeFieldType> orderFields,
+				Map<Integer,ExchangeFieldType> orderLineFIelds ) throws InvalidOperation {
 			DataSet ds = new DataSet();
 			ds.date = date;
 			ds.id = 0;
@@ -1530,10 +1550,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					ordersLinesIE.setFieldsData(lfieldsData);
 					lbaos.close();
 					byte[] fileData = lbaos.toByteArray();
-					ordersLinesIE.setFileData(fileData);
 					
-					//baos.write(fileData);
-					//fieldsData.addAll(lfieldsData);
+					ordersLinesIE.setUrl(StorageHelper.saveImage(fileData, shop.getOwnerId(), false, pm));
 					
 					odl.add(od);
 					ds.addToData( ordersLinesIE );
@@ -1546,7 +1564,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ordersIE.setFieldsData(fieldsData);
 				baos.close();
 				byte[] fileData = baos.toByteArray();
-				ordersIE.setFileData(fileData);
+				ordersIE.setUrl(StorageHelper.saveImage(fileData, shop.getOwnerId(), false, pm));
+
 				
 				ds.addToData( ordersIE );
 
@@ -1562,7 +1581,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		// ======================================================================================================================
 
 		@Override
-		public DataSet getTotalProductsReport(int date, DeliveryType deliveryType, List<ExchangeFieldType> productFields) throws InvalidOperation {
+		public DataSet getTotalProductsReport(int date, DeliveryType deliveryType, Map<Integer,ExchangeFieldType> productFields) throws InvalidOperation {
 			
 			DataSet ds = new DataSet();
 			ds.date = date;
@@ -1643,13 +1662,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					ffl.addAll(fl);
 					
 					pIE.setFieldsData(fl);
-					pIE.setFileData( baos.toByteArray() );
+					pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), shop.getOwnerId(), false, pm));
 					
 					ds.addToData(  pIE );
 				}
 				fbaos.close();
 				fpIE.setFieldsData(ffl);
-				fpIE.setFileData( fbaos.toByteArray() );
+				fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), shop.getOwnerId(), false, pm));
 				
 				ds.addToData(  fpIE );
 				
@@ -1665,7 +1684,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		// ======================================================================================================================
 
 		@Override
-		public DataSet getTotalPackReport(int date, DeliveryType deliveryType, List<ExchangeFieldType> packFields) throws InvalidOperation {
+		public DataSet getTotalPackReport(int date, DeliveryType deliveryType, Map<Integer,ExchangeFieldType> packFields) throws InvalidOperation {
 			
 			DataSet ds = new DataSet();
 			ds.date = date;
@@ -1731,7 +1750,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					}
 				}
 				
-				incapsulatePacketData(packFields, ds, prodDescMap);
+				incapsulatePacketData(packFields, ds, prodDescMap, shop.getOwnerId(), pm);
 				
 				return ds;
 				
@@ -1744,8 +1763,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 //=====================================================================================================================
 		
-		private void incapsulatePacketData(List<ExchangeFieldType> packFields, DataSet ds,
-				SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap) throws IOException, InvalidOperation {
+		private void incapsulatePacketData(Map<Integer,ExchangeFieldType> packFields, DataSet ds,
+				SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap, long userId, PersistenceManager pm) throws IOException, InvalidOperation {
 			
 			ProductOrderDescription pod = new ProductOrderDescription();
 			
@@ -1769,13 +1788,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ffl.addAll(fl);
 				
 				pIE.setFieldsData(fl);
-				pIE.setFileData( baos.toByteArray() );
+				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), userId, false, pm));
 				
 				ds.addToData(  pIE );
 			}
 			fbaos.close();
 			fpIE.setFieldsData(ffl);
-			fpIE.setFileData( fbaos.toByteArray() );
+			fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), userId, false, pm));
 			
 			ds.addToData(  fpIE );
 		}

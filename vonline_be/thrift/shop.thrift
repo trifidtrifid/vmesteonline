@@ -110,7 +110,7 @@ struct ProductListPart {
 }
 
 enum ExchangeFieldType {
-
+	
 	SHOP_ID=10, SHOP_NAME,SHOP_DESCRIPTION,SHOP_ADDRESS,SHOP_LOGOURL,SHOP_OWNERID,SHOP_TOPICS,SHOP_TAGS,
 	SHOP_DELIVERY_COST_AVP,
 	SHOP_PAYMENT_COST_AVP,
@@ -144,8 +144,8 @@ enum ImExType { IMPORT_SHOP = 10, IMPORT_PRODUCERS, IMPORT_CATEGORIES, IMPORT_PR
 struct ImportElement {
 	1:ImExType type,
 	2:string fileName,
-	3:list<ExchangeFieldType> fieldsOrder,
-	4:optional binary fileData,
+	3:map<i32,ExchangeFieldType> fieldsMap,
+	4:optional string url,
 	5:optional list<list<string>> fieldsData, //returned in response if empty in request
 }
 
@@ -202,11 +202,11 @@ service ShopService {
 
 	DataSet importData(1:DataSet data) throws (1:error.InvalidOperation exc),
 	DataSet getTotalOrdersReport( 1:i32 date, 2:DeliveryType deliveryType, 
-		3:list<ExchangeFieldType> orderFields, 4:list<ExchangeFieldType> orderLineFIelds) throws (1:error.InvalidOperation exc),
+		3:map<i32,ExchangeFieldType> orderFields, 4:map<i32,ExchangeFieldType> orderLineFIelds) throws (1:error.InvalidOperation exc),
 	DataSet getTotalProductsReport( 1:i32 date, 2:DeliveryType deliveryType,
-		3:list<ExchangeFieldType> productFields ) throws (1:error.InvalidOperation exc),
+		3:map<i32,ExchangeFieldType> productFields ) throws (1:error.InvalidOperation exc),
 	DataSet getTotalPackReport( 1:i32 date, 2:DeliveryType deliveryType,
-		3:list<ExchangeFieldType> packFields ) throws (1:error.InvalidOperation exc),
+		3:map<i32,ExchangeFieldType> packFields ) throws (1:error.InvalidOperation exc),
 
 
 	//frontend functions================================================================================================

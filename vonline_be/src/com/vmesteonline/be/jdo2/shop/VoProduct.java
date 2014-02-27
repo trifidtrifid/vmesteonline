@@ -39,12 +39,12 @@ public class VoProduct {
 		this.id = KeyFactory.createKey(VoProduct.class.getSimpleName(), productId);
 	}
 	
-	public void update( FullProductInfo newInfo, PersistenceManager _pm ) throws InvalidOperation{
+	public void update( FullProductInfo newInfo, long userId, PersistenceManager _pm ) throws InvalidOperation{
 		this.name = newInfo.product.name;
 		this.shortDescr = newInfo.product.shortDescr;
 		this.weight = newInfo.product.weight;
 		try {
-			this.imageURL = StorageHelper.saveImage(newInfo.product.getImageURL());
+			this.imageURL = StorageHelper.saveImage(newInfo.product.getImageURL(), userId, true, _pm);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: "+e);
@@ -54,7 +54,7 @@ public class VoProduct {
 		this.imagesURLset = new ArrayList<String>();
 		for (String imgURL : newInfo.details.getImagesURLset())
 			try {
-				this.imagesURLset.add(StorageHelper.saveImage(imgURL));
+				this.imagesURLset.add(StorageHelper.saveImage(imgURL,userId, true, _pm));
 			} catch (IOException ie) {
 				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 			}
@@ -81,14 +81,14 @@ public class VoProduct {
 			vp.shortDescr = product.shortDescr;
 			vp.weight = product.getWeight();
 			if(null!=product.getImageURL() && product.getImageURL().length() > 0 ) try {
-				vp.imageURL = StorageHelper.saveImage(product.getImageURL());
+				vp.imageURL = StorageHelper.saveImage(product.getImageURL(), shop.ownerId, true, _pm);
 			} catch (IOException ie) {
 				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 			}
 			vp.imagesURLset = new ArrayList<String>();
 			if( null!=details.getImagesURLset() ) for (String imgURL : details.getImagesURLset())
 				if(null!=imgURL && imgURL.length() > 0 )try {
-					vp.imagesURLset.add(StorageHelper.saveImage(imgURL));
+					vp.imagesURLset.add(StorageHelper.saveImage(imgURL,shop.ownerId, true, _pm));
 				} catch (IOException ie) {
 					throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 				}
@@ -150,18 +150,6 @@ public class VoProduct {
 		this.name = product.getName();
 		this.shortDescr = product.shortDescr;
 		this.weight = product.getWeight();
-		try {
-			this.imageURL = StorageHelper.saveImage(product.getImageURL());
-		} catch (IOException ie) {
-			throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
-		}
-		this.imagesURLset = new ArrayList<String>();
-		for (String imgURL : details.getImagesURLset())
-			try {
-				imagesURLset.add(StorageHelper.saveImage(imgURL));
-			} catch (IOException ie) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
-			}
 
 		this.price = product.getPrice();
 		this.fullDescr = details.getFullDescr();
@@ -182,6 +170,19 @@ public class VoProduct {
 			shop.addProduct(this);
 			shops.add(shop);
 
+			try {
+				this.imageURL = StorageHelper.saveImage(product.getImageURL(), shop.getOwnerId(), true, pm);
+			} catch (IOException ie) {
+				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
+			}
+			this.imagesURLset = new ArrayList<String>();
+			for (String imgURL : details.getImagesURLset())
+				try {
+					imagesURLset.add(StorageHelper.saveImage(imgURL, shop.getOwnerId(), true, pm));
+				} catch (IOException ie) {
+					throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
+				}
+			
 			for (long categoryId : details.getCategories()) {
 				VoProductCategory vpc = pm.getObjectById(VoProductCategory.class, categoryId);
 				vpc.getProducts().add(this);

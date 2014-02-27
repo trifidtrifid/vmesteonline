@@ -48,7 +48,7 @@ public class VoShop {
 		this.descr = descr;
 		if(postalAddress != null ) this.address = new VoPostalAddress(postalAddress, pm);
 		try {
-			VoHelper.replaceURL(this, "logoURL", logoURL);
+			VoHelper.replaceURL(this, "logoURL", logoURL, ownerId, true, pm);
 		} catch (NoSuchFieldException e1) {
 			e1.printStackTrace();
 		}
@@ -319,11 +319,11 @@ public class VoShop {
 		return out;
 	}
 
-	public void update(Shop newShopWithOldId, PersistenceManager pm) throws InvalidOperation, IOException {
+	public void update(Shop newShopWithOldId, long userId, boolean isPublic, PersistenceManager pm) throws InvalidOperation, IOException {
 		try {
 			VoHelper.copyIfNotNull(this, "name", newShopWithOldId.name) ;
 			VoHelper.copyIfNotNull(this, "descr", newShopWithOldId.descr) ;
-			VoHelper.replaceURL(this, "logoURL", newShopWithOldId.logoURL);
+			VoHelper.replaceURL(this, "logoURL", newShopWithOldId.logoURL, userId, isPublic, pm);
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
 		}
