@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.management.openmbean.InvalidOpenTypeException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -296,7 +297,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
-	public boolean setUserAddress(PostalAddress newAddress) throws TException {
+	public boolean setUserAddress(PostalAddress newAddress) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser currentUser = getCurrentUser(pm);
@@ -312,7 +313,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Country createNewCountry(String name) throws InvalidOperation, TException {
+	public Country createNewCountry(String name) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no country with the same name
@@ -338,7 +339,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public City createNewCity(long countryId, String name) throws InvalidOperation, TException {
+	public City createNewCity(long countryId, String name) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no country with the same name
@@ -366,7 +367,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Street createNewStreet(long cityId, String name) throws InvalidOperation, TException {
+	public Street createNewStreet(long cityId, String name) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no street with the same name
@@ -395,7 +396,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Building createNewBuilding(long streetId, String fullNo, double longitude, double lattitude) throws InvalidOperation, TException {
+	public Building createNewBuilding(long streetId, String fullNo, double longitude, double lattitude) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no building with the same name
@@ -466,7 +467,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
-	public PostalAddress getUserHomeAddress() throws InvalidOperation, TException {
+	public PostalAddress getUserHomeAddress() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser currentUser = getCurrentUser(pm);

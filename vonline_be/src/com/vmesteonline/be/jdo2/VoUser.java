@@ -170,7 +170,7 @@ public class VoUser extends GeoLocation {
 		this.address = userAddress;
 		if (null != building) {
 			pm.retrieve(building);
-			VoUserGroup home = building.getUserGroup();
+			VoUserGroup home = userAddress.getUserHomeGroup();
 			this.setLatitude(home.getLatitude());
 			this.setLongitude(home.getLongitude());
 			if (null != groups && !groups.isEmpty()) {
@@ -281,7 +281,6 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private String mobilePhone;
 
-	
 	public String getMobilePhone() {
 		return mobilePhone;
 	}

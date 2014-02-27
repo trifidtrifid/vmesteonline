@@ -41,7 +41,8 @@ public class Defaults {
 	public static String user3email = "c";
 	public static String user3pass = "c";
 
-	public static int radiusHome = 0;
+	public static int radiusStarecase = 0;
+	public static int radiusHome = 10;
 	public static int radiusSmall = 200;
 	public static int radiusMedium = 2000;
 	public static int radiusLarge = 5000;
@@ -72,8 +73,9 @@ public class Defaults {
 			List<VoGroup> defGroups = (List<VoGroup>) q.execute();
 			if (defGroups.isEmpty())
 
-				for (VoGroup dg : new VoGroup[] { new VoGroup("Мой дом", 0, true), new VoGroup("Соседи", radiusSmall, true),
-						new VoGroup("Пешая доступность", radiusMedium, true), new VoGroup("Быстро Доехать", radiusLarge, true) }) {
+				for (VoGroup dg : new VoGroup[] { new VoGroup("Мой подъзд", radiusStarecase, true), new VoGroup("Мой дом", radiusHome, true),
+						new VoGroup("Соседи", radiusSmall, true), new VoGroup("Пешая доступность", radiusMedium, true),
+						new VoGroup("Быстро Доехать", radiusLarge, true) }) {
 					defaultGroups.add(dg);
 					pm.makePersistent(dg);
 				}
@@ -111,9 +113,10 @@ public class Defaults {
 			addresses = new VoPostalAddress[] {
 
 					// адресов должно быть минимум три! кол-во юзеров хардкодится выше
-					new VoPostalAddress(new VoBuilding(street, "32/3", 59.933146F, 30.423117F), (byte) 2, (byte) 1, (byte) 5, "", pm),
-					new VoPostalAddress(new VoBuilding(street, "35", 59.932544F, 30.419684F), (byte) 1, (byte) 11, (byte) 35, "", pm),
-					new VoPostalAddress(new VoBuilding(street, "6", 59.934177F, 30.404331F), (byte) 1, (byte) 2, (byte) 25, "", pm) };
+					new VoPostalAddress(new VoBuilding(street, "32/3", 59.933146F, 30.423117F), (byte) 2, (byte) 1, (byte) 5, ""),
+					new VoPostalAddress(new VoBuilding(street, "32/3", 59.933146F, 30.423117F), (byte) 1, (byte) 1, (byte) 50, ""),
+					new VoPostalAddress(new VoBuilding(street, "35", 59.932544F, 30.419684F), (byte) 1, (byte) 11, (byte) 35, ""),
+					new VoPostalAddress(new VoBuilding(street, "6", 59.934177F, 30.404331F), (byte) 1, (byte) 2, (byte) 25, "") };
 
 			for (VoPostalAddress pa : addresses) {
 				pm.makePersistent(pa);

@@ -4,16 +4,13 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
-
-import java.util.logging.Logger;
 
 import org.apache.thrift.TException;
 
@@ -74,6 +71,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return newMessage;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public MessageListPart getFirstLevelMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length)
 			throws InvalidOperation {

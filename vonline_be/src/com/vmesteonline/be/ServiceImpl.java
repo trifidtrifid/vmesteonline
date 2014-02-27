@@ -13,7 +13,6 @@ import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.thrift.TException;
 
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;

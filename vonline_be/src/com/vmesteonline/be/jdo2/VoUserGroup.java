@@ -29,18 +29,19 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	}
 
 	public float getLatitudeDelta() {
-		return (float) (((float)radius / (float)R) * (180.0 / Math.PI));
+		return (float) (((float) radius / (float) R) * (180.0 / Math.PI));
 	}
 
 	public Group createGroup() {
 		return new Group(getId(), name, name, description, radius);
 	}
 
-	public VoUserGroup(VoGroup grp, float longitude, float lattitude) {
-		this.radius = grp.getRadius();
+	public VoUserGroup(String visibleName, int radius, float longitude, float lattitude) {
+		this.radius = radius;
 		this.longitude = longitude;
+		System.out.print("long " + longitude + " lat " + latitude + " visible name " + visibleName + "\n");
 		this.latitude = lattitude;
-		this.name = grp.getVisibleName();
+		this.name = visibleName;
 	}
 
 	public String getName() {

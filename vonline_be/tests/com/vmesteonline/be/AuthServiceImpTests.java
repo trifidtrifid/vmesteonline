@@ -70,15 +70,18 @@ public class AuthServiceImpTests {
 	public void testDefaultsUserCreation() {
 		VoUser user = asi.getUserByEmail(Defaults.user1email, pm);
 		Assert.assertEquals(0, user.getGroups().get(0).getRadius());
-		Assert.assertEquals("Республиканская 32/3", user.getGroups().get(0).getName());
+		Assert.assertEquals("Парадная 2", user.getGroups().get(0).getName());
+		Assert.assertEquals("Парадная 2", user.getGroups().get(0).getLongitude());
 
 		user = asi.getUserByEmail(Defaults.user2email, pm);
 		Assert.assertEquals(0, user.getGroups().get(0).getRadius());
-		Assert.assertEquals("Республиканская 35", user.getGroups().get(0).getName());
+		Assert.assertEquals("Парадная 1", user.getGroups().get(0).getName());
+		Assert.assertEquals("Парадная 1", user.getGroups().get(0).getLongitude());
 
+		
 		user = asi.getUserByEmail(Defaults.user3email, pm);
 		Assert.assertEquals(0, user.getGroups().get(0).getRadius());
-		Assert.assertEquals("Республиканская 6", user.getGroups().get(0).getName());
+		Assert.assertEquals("Парадная 1", user.getGroups().get(0).getName());
 
 	}
 
@@ -129,9 +132,9 @@ public class AuthServiceImpTests {
 			assertEquals(userByRet.getName(), user.getName());
 			assertEquals(userByRet.getPassword(), user.getPassword());
 
-			float longitude = postalAddress.getBuilding().getUserGroup().getLongitude();
+			float longitude = postalAddress.getUserHomeGroup().getLongitude();
 			assertEquals(user.getLongitude(), longitude, 0F);
-			float latitude = postalAddress.getBuilding().getUserGroup().getLatitude();
+			float latitude = postalAddress.getUserHomeGroup().getLatitude();
 			assertEquals(user.getLatitude(), latitude, 0F);
 
 			List<VoRubric> rubrics = user.getRubrics();
