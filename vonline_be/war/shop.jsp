@@ -293,15 +293,22 @@
                         Товаров на сумму: <span>333</span> руб.
                     </div>
                     <div class="delivery-right">
-                        <div class="checkbox">
+                        <h3>Доставка</h3>
+                        <div class="radio">
                             <label>
-                                <input name="form-field-checkbox" type="checkbox" class="ace">
-                                <span class="lbl"> Доставка</span>
+                                <input name="form-field-radio" type="radio" checked="checked" class="ace">
+                                <span class="lbl"> Самовывоз</span>
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label>
+                                <input name="form-field-radio" type="radio" class="ace courier-delivery">
+                                <span class="lbl"> Курьер</span>
                             </label>
                         </div>
                         <div class="input-delivery">
-                            <label for="delivery-addr">Введите адрес доставки</label>
-                            <textarea id="delivery-addr"></textarea>
+                            <input type="tel" placeholder="Номер телефона"/>
+                            <textarea id="delivery-addr" placeholder="Адрес доставки"></textarea>
                         </div>
                     </div>
                     <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>

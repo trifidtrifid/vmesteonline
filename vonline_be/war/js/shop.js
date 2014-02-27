@@ -65,9 +65,14 @@ $(document).ready(function(){
         $('.modal-login').modal();
     });
 
-    $('.checkbox span').click(function(){
-        $(this).parent().parent().find('+.input-delivery').slideToggle();
+    $('.radio input').click(function(){
+        if ($(this).hasClass('courier-delivery')){
+            $(this).closest('.delivery-right').find('.input-delivery').slideDown();
+        }else{
+            $(this).closest('.delivery-right').find('.input-delivery').slideUp();
+        }
     });
+
 
     //window.history.pushState({'catid': 0}, null,'shop.jsp');
 

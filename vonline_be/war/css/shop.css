@@ -143,9 +143,17 @@ a {
 .shop-right .itogo-right span {
   font-weight: bold;
 }
-.shop-right .delivery-right .input-delivery {
+.shop-right .delivery-right {
   padding-left: 10px;
+}
+.shop-right .delivery-right h3 {
+  font-size: 16px;
+}
+.shop-right .delivery-right .input-delivery {
   display: none;
+}
+.shop-right .delivery-right .input-delivery input {
+  width: 230px;
 }
 .shop-right .delivery-right .input-delivery #delivery-addr {
   margin-left: 0;
