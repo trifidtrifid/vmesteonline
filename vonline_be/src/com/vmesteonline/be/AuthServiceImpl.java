@@ -188,6 +188,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			
 			EMailHelper.sendSimpleEMail("Во! <info@vmesteonline.ru>", to, "Код для смены пароля на сайте Во!", 
 					htmlTemplate.replace("%code%", ""+code).replace("%name%", vu.getName() + " " +vu.getLastName()));
+			logger.info("Code to change password is: "+code);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
