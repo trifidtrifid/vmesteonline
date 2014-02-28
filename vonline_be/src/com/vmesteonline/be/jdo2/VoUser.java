@@ -27,6 +27,8 @@ import com.vmesteonline.be.utils.Defaults;
 @PersistenceCapable
 public class VoUser extends GeoLocation {
 
+	private static VoUserGroup defaultGroup = new VoUserGroup(new VoGroup("Мой Город", 10000), 60.0F, 30.0F);
+	
 	public VoUser(String name, String lastName, String email, String password) {
 		this.name = name;
 		this.lastName = lastName;
@@ -203,7 +205,24 @@ public class VoUser extends GeoLocation {
 		pm.makePersistent(this);
 		pm.makePersistent(building);
 	}
-
+//*****
+	public void setDefaultUserLocation(PersistenceManager pm) {
+		
+		VoBuilding building = null;
+		if (null != this.getAddress()) { // location already set, so user should
+																			// be removed first
+			building = this.address.getBuilding();
+			if (null != building)
+				building.removeUser(this);
+		}
+		groups = new ArrayList<VoUserGroup>();
+		groups.add(defaultGroup);
+		this.setLatitude(defaultGroup.getLatitude());
+		this.setLongitude(defaultGroup.getLongitude());
+		
+		pm.makePersistent(this);
+	}
+	
 	public void addPostalAddress(VoPostalAddress pa) {
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
