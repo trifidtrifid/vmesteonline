@@ -23,13 +23,15 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	public void setRadius(int radius) {
 		this.radius = radius;
 	}
-
+// r / (2pR/360)
 	public float getLongitudeDelta() {
-		return (float) ((radius / (R * Math.cos(Math.PI * latitude / 180))) * (180.0 / Math.PI));
+		return (float) (((float) radius / (float) R) * (180.0 / Math.PI));
+
 	}
 
 	public float getLatitudeDelta() {
-		return (float) (((float) radius / (float) R) * (180.0 / Math.PI));
+		return (float) ((radius / (R * Math.cos(Math.PI * latitude / 180))) * (180.0 / Math.PI));
+
 	}
 
 	public Group createGroup() {

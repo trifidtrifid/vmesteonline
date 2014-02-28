@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.utils.Defaults;
 
 public class UserServiceImplTest {
@@ -55,6 +56,12 @@ public class UserServiceImplTest {
 	public void tearDown() throws Exception {
 		helper.tearDown();
 		// asi.logout();
+	}
+
+	@Test
+	public void testMinimumtDuff() {
+		VoUserGroup g = new VoUserGroup("test", 1, 30.423618F, 59.93326F);
+		Assert.assertEquals(g.getLongitudeDelta(), 0.000001, 0.000001F);
 	}
 
 	@Test

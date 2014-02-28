@@ -427,7 +427,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			Message msg = voMessage.getMessage();
 			msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId());
 			msg.userMessage = null == voUserMsg ? null : voUserMsg.getUserMessage();
-			msg.childMsgsNum = voMessage.getChildMessageNum();
+			msg.setChildMsgsNum(voMessage.getChildMessageNum());
 			mlp.addToMessages(msg);
 		}
 		return mlp;
