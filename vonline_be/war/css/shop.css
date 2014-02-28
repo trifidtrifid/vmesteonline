@@ -73,6 +73,9 @@ a {
   padding-top: 20px;
   vertical-align: top;
 }
+.shop {
+  border-left: 1px solid #ccc;
+}
 .main-content {
   margin-right: 250px;
   margin-left: 0;

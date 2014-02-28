@@ -40,6 +40,17 @@ $(document).ready(function(){
         }*/
     });
 
+    $('.dropdown-menu li a').click(function(e){
+        e.preventDefault();
+        $(this).closest('.btn-group').find('.btn-group-text').text($(this).text());
+    });
+
+    $('.nav-list a').click(function(e){
+        e.preventDefault();
+        $(this).closest('ul').find('.active').removeClass('active');
+        $(this).parent().addClass('active');
+    });
+
     $('.modal-order-end .btn-grey').click(function(){
         $('.modal-order-end').modal('hide');
     });

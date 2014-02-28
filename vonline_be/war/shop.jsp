@@ -127,7 +127,7 @@
     </div><!-- /.navbar-header -->
     </div><!-- /.container -->
     </div>
-    <div class="main-container" id="main-container">
+    <div class="main-container shop" id="main-container">
         <div class="main-container-inner">
             <%--<aside class="sidebar" id="sidebar">
                 <script type="text/javascript">
@@ -514,7 +514,6 @@
 <script src="gen-js/ShopService.js" type="text/javascript"></script>
 <!-- -->
 <!-- собственные скрипты  -->
-<script src="js/common.js"></script>
 <script src="js/shop.js"></script>
 
 </body>
