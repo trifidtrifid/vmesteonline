@@ -1295,20 +1295,18 @@ public class ShopServiceImplTest {
 			OrderLine ol41 = si.setOrderLine(upProductsIdl.get(1), 44.0D, "comment41", null);
 			si.confirmOrder();
 			
-			
-			List<ExchangeFieldType> orderFields = Arrays.asList( new ExchangeFieldType[] {
-					ExchangeFieldType.ORDER_DATE, ExchangeFieldType.ORDER_STATUS, ExchangeFieldType.ORDER_PRICE_TYPE, ExchangeFieldType.ORDER_TOTAL_COST, 
-					ExchangeFieldType.ORDER_CREATED, ExchangeFieldType.ORDER_DELIVERY_TYPE, ExchangeFieldType.ORDER_DELIVERY_COST, ExchangeFieldType.ORDER_DELIVERY_ADDRESS, 
-					ExchangeFieldType.ORDER_PAYMENT_TYPE, ExchangeFieldType.ORDER_PAYMENT_STATUS, ExchangeFieldType.ORDER_COMMENT, 
-					ExchangeFieldType.ORDER_USER_ID, ExchangeFieldType.ORDER_USER_NAME
-			});
-			List<ExchangeFieldType> orderLineFIelds = Arrays.asList( new ExchangeFieldType[] {
-					ExchangeFieldType.ORDER_LINE_QUANTITY, ExchangeFieldType.ORDER_LINE_OPRDER_ID, ExchangeFieldType.ORDER_LINE_PRODUCT_ID, 
-					ExchangeFieldType.ORDER_LINE_PRODUCT_NAME, ExchangeFieldType.ORDER_LINE_PRODUCER_ID, ExchangeFieldType.ORDER_LINE_PRODUCER_NAME,
-					ExchangeFieldType.ORDER_LINE_PRICE, ExchangeFieldType.ORDER_LINE_COMMENT, ExchangeFieldType.ORDER_LINE_PACKETS
+			List<ExchangeFieldType> productFields = Arrays.asList( new ExchangeFieldType[] {
+					ExchangeFieldType.TOTAL_PROUCT_ID, ExchangeFieldType.TOTAL_PRODUCT_NAME, ExchangeFieldType.TOTAL_PRODUCER_ID, 
+					ExchangeFieldType.TOTAL_PRODUCER_NAME, 
+					ExchangeFieldType.TOTAL_PRODUCT_MIN_PACK, ExchangeFieldType.TOTAL_ORDERED, ExchangeFieldType.TOTAL_MIN_QUANTITY,
+					ExchangeFieldType.TOTAL_REST, ExchangeFieldType.TOTAL_PREPACK_REQUIRED,
+					ExchangeFieldType.TOTAL_PACK_SIZE,ExchangeFieldType.TOTAL_PACK_QUANTYTY, ExchangeFieldType.TOTAL_DELIVERY_TYPE
 			});
 			
-			DataSet totalOrdersReport = si.getTotalOrdersReport( now + 1000, DeliveryType.SELF_PICKUP, listToMap(orderFields),  listToMap(orderLineFIelds)); 
+			
+			DataSet totalProductsReport = si.getTotalProductsReport( now + 1000, DeliveryType.SELF_PICKUP, listToMap(productFields)); 
+			Assert.assertEquals(totalProductsReport.getDataSize(), 2);
+			
 		} catch (TException e) {
 			e.printStackTrace();
 			fail("Import failed!" + e);

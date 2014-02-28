@@ -1619,9 +1619,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 								
 							pod = prodDescMap.get(producer.getId()).get(product.getId());
 							pod.orderedQuantity += vol.getQuantity();
-							pod.packSize = product.getMinProducerPackGramms();
 							pod.packQuantity = 0 != product.getMinProducerPackGramms() ?
-									(int)(pod.orderedQuantity * 1000 / product.getMinProducerPackGramms()) : 0;
+									1 + (int)(pod.orderedQuantity * 1000 / product.getMinProducerPackGramms()) : 0;
+							
+							pod.restQuantity = ((double)( pod.packQuantity * product.getMinProducerPackGramms() - pod.orderedQuantity * 1000 ))/1000D;
 							continue;
 						} 
 						 
@@ -1630,13 +1631,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 						pod.producerName = producer.getName();
 						pod.productId = product.getId();
 						pod.productName = product.getName();
-						pod.minProducerPackSize = product.getMinProducerPackGramms();
+						pod.minUnitSize = product.getMinProducerPackGramms();
 						pod.orderedQuantity = vol.getQuantity();
 						pod.prepackRequired = product.isPrepackRequired();
 						pod.packSize = product.getMinProducerPackGramms();
 						pod.packQuantity = 0 != product.getMinProducerPackGramms() ? 1 + (int)(pod.orderedQuantity * 1000 / product.getMinProducerPackGramms()) :
 							0;
 						pod.deliveryType = deliveryType;
+						pod.restQuantity = ((double)( pod.packQuantity * product.getMinProducerPackGramms() - pod.orderedQuantity * 1000 ))/1000D;
 					}
 				}
 				
@@ -1740,7 +1742,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 							pod.producerName = producer.getName();
 							pod.productId = product.getId();
 							pod.productName = product.getName();
-							pod.minProducerPackSize = product.getMinProducerPackGramms();
+							pod.minUnitSize = product.getMinProducerPackGramms();
 							pod.orderedQuantity = pqe.getKey();
 							pod.prepackRequired = product.isPrepackRequired();
 							pod.packSize = pqe.getKey();

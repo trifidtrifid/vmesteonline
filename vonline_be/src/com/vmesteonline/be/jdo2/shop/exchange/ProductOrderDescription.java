@@ -9,13 +9,13 @@ public class ProductOrderDescription {
 	pack variants report by delivery type
 	TOTAL_PACK_SIZE,TOTAL_PACK_QUANTYTY, TOTAL_DELIVERY_TYPE*/ 
 	
-	public long producerId;
-	public String producerName;
 	public long productId;
 	public String productName;
-	public double minProducerPackSize;
+	public long producerId;
+	public String producerName;
+	public double minUnitSize;
 	public double orderedQuantity;
-	public double minOrderQuantity;
+	public double minOrderQuantity; 
 	public double restQuantity;
 	public boolean prepackRequired;
 	public double packSize;

@@ -143,9 +143,17 @@ a {
 .shop-right .itogo-right span {
   font-weight: bold;
 }
-.shop-right .delivery-right .input-delivery {
+.shop-right .delivery-right {
   padding-left: 10px;
+}
+.shop-right .delivery-right h3 {
+  font-size: 16px;
+}
+.shop-right .delivery-right .input-delivery {
   display: none;
+}
+.shop-right .delivery-right .input-delivery input {
+  width: 230px;
 }
 .shop-right .delivery-right .input-delivery #delivery-addr {
   margin-left: 0;
@@ -335,6 +343,11 @@ span
 .ace-spinner .spinner-up:hover {
   background-color: #6fb3e0 !important;
 }
+.empty-basket {
+  font-size: 24px;
+  text-align: center;
+  color: #ccc;
+}
 .modal {
   width: 560px;
   left: 50%;
@@ -424,12 +437,14 @@ span
 }
 .modal-order-end .modal-body-list tbody tr td:first-child {
   padding-right: 0;
+  width: 70%;
 }
 .modal-order-end .modal-body-list tbody tr td {
   padding: 5px;
+  width: 10%;
 }
 .modal-order-end .modal-footer {
-  position: static;
+  bottom: 0;
   border: 0;
   padding: 0;
   margin: 0;
