@@ -38,6 +38,7 @@ public class VoUser extends GeoLocation {
 		this.unlikesNum = 0;
 		this.rubrics = new ArrayList<VoRubric>();
 		this.deliveryAddresses = new TreeSet<VoPostalAddress>();
+		this.changePasswordCode = 0;
 	}
 
 	public ShortUserInfo getShortUserInfo() {
@@ -118,6 +119,14 @@ public class VoUser extends GeoLocation {
 
 	public VoPostalAddress getAddress() {
 		return address;
+	}
+
+	public long getChangePasswordCode() {
+		return changePasswordCode;
+	}
+
+	public void setChangePasswordCode(long changePasswordCode) {
+		this.changePasswordCode = changePasswordCode;
 	}
 
 	public void setLocation(long locCode, boolean doSave) throws InvalidOperation {
@@ -272,6 +281,10 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	private int unlikesNum;
+	
+	@Persistent
+	@Unindexed
+	private long changePasswordCode;
 
 	public void addRubric(VoRubric rubric) {
 		rubrics.add(rubric);

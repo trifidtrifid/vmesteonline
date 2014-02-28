@@ -1,5 +1,6 @@
 package com.vmesteonline.be;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.utils.Defaults;
+import com.vmesteonline.be.utils.EMailHelper;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
@@ -101,14 +103,18 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				user.addRubric(rubric);
 			}
 
-			try {
-				user.setLocation(Long.parseLong(locationId), true, pm);
-			} catch (NumberFormatException | InvalidOperation e) {
-				throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
+			if( null==locationId || "".equals(locationId.trim()) ){
+				logger.info("register " + email + " pass " + password + " id " + user.getId() + " Wihout location code and User Group");
+			} else {
+				try {
+					user.setLocation(Long.parseLong(locationId), true, pm);
+				} catch (NumberFormatException | InvalidOperation e) {
+					throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
+				}
+	
+				logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + locationId + " home group: "
+						+ user.getGroups().get(0).getName());
 			}
-
-			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + locationId + " home group: "
-					+ user.getGroups().get(0).getName());
 			return user.getId();
 
 		} finally {
@@ -140,10 +146,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public VoUser getUserByEmail(String email, PersistenceManager pm) {
 
 		Query q = pm.newQuery(VoUser.class);
-
-		q.setFilter("email == emailParam");
-		q.declareParameters("float emailParam");
-		List<VoUser> users = (List<VoUser>) q.execute(email);
+		q.setFilter("email == '"+email+"'");
+		List<VoUser> users = (List<VoUser>) q.execute();
 		if (users.isEmpty())
 			return null;
 		if (users.size() != 1)
@@ -163,4 +167,50 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		return super.getCurrentSession().getSessionAttributes();
 	}
 
+	@Override
+	public boolean checkEmailRegistered(String email) {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			return null!=getUserByEmail(email,pm);
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public void sendChangePasswordCodeRequest(String to, String htmlTemplate) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser vu = getUserByEmail(to,pm);
+			long code = System.currentTimeMillis() % 123456L;
+			vu.setChangePasswordCode( code );
+			pm.makePersistent(vu);
+			
+			EMailHelper.sendSimpleEMail("Во! <info@vmesteonline.ru>", to, "Код для смены пароля на сайте Во!", 
+					htmlTemplate.replace("%code%", ""+code).replace("%name%", vu.getName() + " " +vu.getLastName()));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to send email to '"+to+"'. " +to);
+			
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public void changePasswordOfUser(String email, String confirmCode, String newPassword) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser vu = getUserByEmail(email,pm);
+			if( null!=vu && Long.parseLong(confirmCode) == vu.getChangePasswordCode( )) {
+				vu.setPassword(newPassword);
+				pm.makePersistent(vu);	
+			} else 
+				throw new InvalidOperation(VoError.IncorrectParametrs, "No such code registered for user!");
+			
+		} finally {
+			pm.close();
+		}
+	}
 }
