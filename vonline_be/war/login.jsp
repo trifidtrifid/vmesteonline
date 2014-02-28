@@ -54,18 +54,14 @@
                 result.val("smth happen");
                 result.css('color', 'red');
             }
-
         }
 
         function reg() {
-
-            //var groupSelect = document.getElementById("selectGroup");
-            //var groupId = groupSelect.options[groupSelect.selectedIndex].value;
             if (client.checkEmailRegistered($("#email").val())) {
                 $('.email-alert').css('display','block');
             }else{
-                var userId = client.registerNewUser($("#login").val(), "family", $("#pass")
-                        .val(), $("#email").val());
+                var userId = client.registerNewUser($("#login").val(), "family", $("#pass").val(), $("#email").val());
+                client.login($("#email").val(), $("#pass").val());
                 if ( true ) {
                     document.location.replace("/main.jsp");
                 }
@@ -137,18 +133,7 @@
                     <label for="pass">Пароль</label>
                     <input type="password" id="pass"/>
                 </div>
-                <span class="email-alert">Такой e-mail уже зарегистрирован</span>
-                <%--<div>
-                    <select id="selectGroup">
-                        <%
-                            List<String> codes = UserServiceImpl.getLocationCodesForRegistration();
-                            for (String code : codes) {
-                                out.print("<option value=\"" + code + "\">" + code + "</option>");
-                            }
-                        %>
-
-                    </select>
-                </div>--%>
+                <span class="email-alert">Такой e-mail уже зарегистрирован !</span>
                 <button class="btn-submit btn-sm no-border">Регистрация</button>
             </div>
         </form>

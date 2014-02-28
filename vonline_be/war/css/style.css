@@ -679,7 +679,7 @@ h1 {
   display: inline-block;
 }
 .registration-form .email-alert {
-  color: #dca874;
+  color: #f00;
   display: none;
   text-align: center;
 }
