@@ -28,6 +28,10 @@ public class VoUserAccessBase {
 	@Persistent
 	protected long userId;
 	
+	//category of access to, like SHOP, FORUM etc
+	@Persistent
+	protected long categoryId; 
+	
 	@Persistent
 	protected long accessRights;
 	

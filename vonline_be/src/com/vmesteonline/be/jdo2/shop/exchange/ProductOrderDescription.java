@@ -13,9 +13,9 @@ public class ProductOrderDescription {
 	public String productName;
 	public long producerId;
 	public String producerName;
-	public double minProducerPackSize;
+	public double minUnitSize;
 	public double orderedQuantity;
-	public double minOrderQuantity;
+	public double minOrderQuantity; 
 	public double restQuantity;
 	public boolean prepackRequired;
 	public double packSize;
