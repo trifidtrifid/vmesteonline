@@ -105,6 +105,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 			if( null==locationId || "".equals(locationId.trim()) ){
 				logger.info("register " + email + " pass " + password + " id " + user.getId() + " Wihout location code and User Group");
+				user.setDefaultUserLocation(pm);
+				
 			} else {
 				try {
 					user.setLocation(Long.parseLong(locationId), true, pm);
