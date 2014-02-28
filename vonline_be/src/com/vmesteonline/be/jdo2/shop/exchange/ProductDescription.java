@@ -19,7 +19,8 @@ public class ProductDescription {
 //PRODUCT_ID=300, PRODUCT_NAME,	PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
 //PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, 
 //PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
-//PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID, PRODUCT_MIN_CLN_PACK_G, PRODUCT_MIN_PROD_PACK_G, PRODUCT_PREPACK_REQ, PRODUCT_KNOWN_NAMES
+//PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID, PRODUCT_MIN_CLN_PACK_G, PRODUCT_MIN_PROD_PACK_G, 
+//PRODUCT_PREPACK_REQ, PRODUCT_KNOWN_NAMES, PRODUCT_UNUT_NAME
 
 	public long id;
 	public String name;
@@ -37,10 +38,11 @@ public class ProductDescription {
 	public Map<String, String> optionsMap;
 	public List<String> topicSet;
 	public long producerId;
-	public int minClientPackGramms;
-	public int minProducerPackGramms;
+	public double minClientPack;
+	public double minProducerPack;
 	public boolean prepackRequired;
 	public Set<String> knownNames;
+	public String unitName;
 	
 	public FullProductInfo getFullProductInfo(){
 		Product product = new Product(id, name, shortDescr, weight, imageURL, price);
@@ -54,7 +56,7 @@ public class ProductDescription {
 		List<Long> topics = VoHelper.convertSet(topicSet, new ArrayList<Long>(), new Long(0));
 		List<Long> categoriesSet = VoHelper.convertSet(categories, new ArrayList<Long>(), new Long(0));
 		ProductDetails details = new ProductDetails(categoriesSet, fullDescr, imagesURLset, pricesMap , optionsMap, topics, 
-				producerId, minClientPackGramms, minProducerPackGramms, prepackRequired, knownNames);
+				producerId, minClientPack, minProducerPack, prepackRequired, knownNames, unitName );
 		FullProductInfo fpi = new FullProductInfo(product, details);
 		return fpi;
 	}
