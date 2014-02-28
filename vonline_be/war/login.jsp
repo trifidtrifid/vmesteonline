@@ -33,6 +33,10 @@
             e.preventDefault();
             reg();
         });
+        $('.remember-link').click(function(e){
+            e.preventDefault();
+            client.sendChangePasswordCodeRequest('забыл пароль адресат','%code%%name%');
+        });
 
         function login() {
             var result = $('#result');
@@ -57,13 +61,16 @@
             var protocol = new Thrift.Protocol(transport);
             var client = new com.vmesteonline.be.AuthServiceClient(protocol);
 
-            var groupSelect = document.getElementById("selectGroup");
-            var groupId = groupSelect.options[groupSelect.selectedIndex].value;
-
-            var userId = client.registerNewUser($("#login").val(), "family", $("#pass")
-                    .val(), $("#email").val());
-            if ( true ) {
-                document.location.replace("/main.jsp");
+            //var groupSelect = document.getElementById("selectGroup");
+            //var groupId = groupSelect.options[groupSelect.selectedIndex].value;
+            if (client.checkEmailRegistered($("#email").val())) {
+                alert('E-mail уже занят');
+            }else{
+                var userId = client.registerNewUser($("#login").val(), "family", $("#pass")
+                        .val(), $("#email").val());
+                if ( true ) {
+                    document.location.replace("/main.jsp");
+                }
             }
         }
     });
@@ -111,7 +118,7 @@
                 <div>
                     <label for="password">Пароль</label>
                     <input type="password" id="password"/>
-                    <a href="#">Забыли пароль ?</a>
+                    <a href="#" class="remember-link">Забыли пароль ?</a>
                 </div>
                 <button id="go" class="btn-submit btn-sm no-border">Войти</button>
             </div>
