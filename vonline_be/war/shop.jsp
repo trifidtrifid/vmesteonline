@@ -317,12 +317,12 @@
                 </form>
                 <nav class="shop-menu">
                     <ul>
-                        <li>
+                        <%--<li>
                             <a href="#" class="fa fa-reply-all"></a>
                             <div>Назад</div>
-                        </li>
+                        </li>--%>
                         <c:forEach var="productCategory" items="${productCategories}">
-                            <li data-catid="${productCategory.id}">
+                            <li data-parentid="${productCategory.parentId}" data-catid="${productCategory.id}">
                                 <a href="#" class="fa fa-beer"></a>
                                 <div>${productCategory.name}</div>
                             </li>

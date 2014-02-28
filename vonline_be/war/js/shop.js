@@ -72,9 +72,9 @@ $(document).ready(function(){
     });
 
 
-    //window.history.pushState({'catid': 0}, null,'shop.jsp');
-
 /* функции */
+    var prevParentId = [],
+        parentCounter = 0;
 
     function InitProductDetailPopup(){
         $('.product-link').click(function(e){
@@ -151,21 +151,20 @@ $(document).ready(function(){
     function InitLoadCategory(catID){
         /* замена меню категорий */
 
-        if (catID){
-            window.history.pushState({'catid' : catID },null,catID);
-        } else {
-            //window.history.pushState({'catid': 0 }, null,'shop');
-        }
         var productCategories = client.getProductCategories(catID);
         var categoriesLength = productCategories.length;
         var shopMenu = '';
-        var firstMenuItem = '<li>'+
+        var firstMenuItem = "";
+
+        if (productCategories[0] && productCategories[0].parentId != 0 || productCategories[0] === undefined){
+        firstMenuItem = '<li>'+
             '<a href="#" class="fa fa-reply-all"></a>'+
             '<div>Назад</div>'+
             '</li>';
+        }
 
         for(var i = 0; i < categoriesLength; i++){
-            shopMenu += '<li data-catid="'+ productCategories[i].id +'">'+
+            shopMenu += '<li data-parentid="'+ productCategories[i].parentId +'" data-catid="'+ productCategories[i].id +'">'+
                 '<a href="#" class="fa fa-beer"></a>'+
                 '<div>'+ productCategories[i].name +'</div>'+
                 '</li>';
@@ -235,35 +234,22 @@ $(document).ready(function(){
 
         InitProductDetailPopup();
         InitAddToBasket();
-        SetCategoryClick();
+        InitClickOnCategory()
 
     }
 
     function InitClickOnCategory(){
         $('.shop-menu li a').click(function(e){
             e.preventDefault();
-            if ($(this).parent().index() == 0){
-                window.history.back();
-                //window.history.replaceState($(this).parent().data('catid'), null,$(this).parent().data('catid'));
+            if ($(this).hasClass('fa-reply-all')){
+                InitLoadCategory(prevParentId[--parentCounter]);
             }
             else {
+                prevParentId[parentCounter++] = $(this).parent().data('parentid');
                 InitLoadCategory($(this).parent().data('catid'));
             }
         });
     }
-
-    window.addEventListener('popstate',function(e){
-        //if (e.state){
-        //alert("-- "+e.state.catid);
-        if (e.state && e.state.catid != 1){
-            //alert('1');
-            InitLoadCategory(e.state.catid);
-        }else {
-            //alert('2');
-            //InitLoadCategory(0);
-        }
-    //}
-    });
 
     function InitSpinner(selector){
         selector.ace_spinner({value:1,min:1,max:200,step:1, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
