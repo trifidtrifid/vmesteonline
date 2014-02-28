@@ -35,7 +35,8 @@
         });
         $('.remember-link').click(function(e){
             e.preventDefault();
-            client.sendChangePasswordCodeRequest('забыл пароль адресат','%code%%name%');
+            client.sendChangePasswordCodeRequest('забыл пароль адресат','sdf%code%sdf%name%sdf');
+            //client.changePasswordOfUser('qq@qq.ru','qq','qq');
         });
 
         function login() {
@@ -43,16 +44,13 @@
             try {
                 var accessGranted = client.login($("#uname").val(), $("#password").val());
                 if (accessGranted) {
-                    alert('1');
                     document.location.replace("/main.jsp");
                 } else {
-                    alert('2');
                     result.val(session.error);
                     result.css('color', 'black');
                 }
 
             } catch (ouch) {
-                alert('3');
                 result.val("smth happen");
                 result.css('color', 'red');
             }
@@ -60,17 +58,14 @@
         }
 
         function reg() {
-            var transport = new Thrift.Transport("/thrift/AuthService");
-            var protocol = new Thrift.Protocol(transport);
-            var client = new com.vmesteonline.be.AuthServiceClient(protocol);
 
-            //var groupSelect = document.getElementById("selectGroup");
-            //var groupId = groupSelect.options[groupSelect.selectedIndex].value;
+            var groupSelect = document.getElementById("selectGroup");
+            var groupId = groupSelect.options[groupSelect.selectedIndex].value;
             if (client.checkEmailRegistered($("#email").val())) {
                 $('.email-alert').css('display','block');
             }else{
                 var userId = client.registerNewUser($("#login").val(), "family", $("#pass")
-                        .val(), $("#email").val());
+                        .val(), $("#email").val(),groupId);
                 if ( true ) {
                     document.location.replace("/main.jsp");
                 }
@@ -143,7 +138,7 @@
                     <input type="password" id="pass"/>
                 </div>
                 <span class="email-alert">Такой e-mail уже зарегистрирован</span>
-            <%--<div>
+                <div>
                     <select id="selectGroup">
                         <%
                             List<String> codes = UserServiceImpl.getLocationCodesForRegistration();
@@ -153,7 +148,7 @@
                         %>
 
                     </select>
-                </div>--%>
+                </div>
                 <button class="btn-submit btn-sm no-border">Регистрация</button>
             </div>
         </form>
