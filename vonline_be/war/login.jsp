@@ -59,8 +59,8 @@
 
         function reg() {
 
-            var groupSelect = document.getElementById("selectGroup");
-            var groupId = groupSelect.options[groupSelect.selectedIndex].value;
+            //var groupSelect = document.getElementById("selectGroup");
+            //var groupId = groupSelect.options[groupSelect.selectedIndex].value;
             if (client.checkEmailRegistered($("#email").val())) {
                 $('.email-alert').css('display','block');
             }else{
@@ -138,7 +138,7 @@
                     <input type="password" id="pass"/>
                 </div>
                 <span class="email-alert">Такой e-mail уже зарегистрирован</span>
-                <div>
+                <%--<div>
                     <select id="selectGroup">
                         <%
                             List<String> codes = UserServiceImpl.getLocationCodesForRegistration();
@@ -148,7 +148,7 @@
                         %>
 
                     </select>
-                </div>
+                </div>--%>
                 <button class="btn-submit btn-sm no-border">Регистрация</button>
             </div>
         </form>
