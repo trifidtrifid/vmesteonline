@@ -8,7 +8,7 @@ html {
 }
 body {
   background: #fff;
-  height: 101%;
+  height: 100%;
 }
 a {
   outline: none !important;
@@ -677,6 +677,11 @@ h1 {
 .registration-form input[type="file"],
 .registration-form .captcha {
   display: inline-block;
+}
+.registration-form .email-alert {
+  color: #dca874;
+  display: none;
+  text-align: center;
 }
 #selectGroup {
   margin-right: 15px;

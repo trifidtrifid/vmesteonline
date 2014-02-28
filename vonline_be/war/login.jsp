@@ -43,13 +43,16 @@
             try {
                 var accessGranted = client.login($("#uname").val(), $("#password").val());
                 if (accessGranted) {
+                    alert('1');
                     document.location.replace("/main.jsp");
                 } else {
+                    alert('2');
                     result.val(session.error);
                     result.css('color', 'black');
                 }
 
             } catch (ouch) {
+                alert('3');
                 result.val("smth happen");
                 result.css('color', 'red');
             }
@@ -64,7 +67,7 @@
             //var groupSelect = document.getElementById("selectGroup");
             //var groupId = groupSelect.options[groupSelect.selectedIndex].value;
             if (client.checkEmailRegistered($("#email").val())) {
-                alert('E-mail уже занят');
+                $('.email-alert').css('display','block');
             }else{
                 var userId = client.registerNewUser($("#login").val(), "family", $("#pass")
                         .val(), $("#email").val());
@@ -139,7 +142,8 @@
                     <label for="pass">Пароль</label>
                     <input type="password" id="pass"/>
                 </div>
-                <%--<div>
+                <span class="email-alert">Такой e-mail уже зарегистрирован</span>
+            <%--<div>
                     <select id="selectGroup">
                         <%
                             List<String> codes = UserServiceImpl.getLocationCodesForRegistration();
