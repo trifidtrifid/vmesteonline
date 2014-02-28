@@ -586,7 +586,6 @@ $('.fa-sitemap').click(function(){
         return topicsHeaderArray;
     }
 
-
     function SetGlobalParameters(){
         topics = $('.dd>.dd-list>.topic-item');
         prevTopicsHeight = [];
@@ -959,7 +958,7 @@ function AutoReplaceLinkAndVideo(str) {
             var client = new com.vmesteonline.be.AuthServiceClient(protocol);
             client.logout();
 
-            document.location.replace("login.html");
+            document.location.replace("login.jsp");
         }
     });
 

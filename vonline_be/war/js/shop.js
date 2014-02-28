@@ -6,15 +6,11 @@ $(document).ready(function(){
     /* простые обработчики событий */
     var w = $(window),
         showRight = $('.show-right'),
-        showLeft = $('.show-left'),
         hideRight = $('.hide-right'),
         shopRight = $('.shop-right'),
-        sidebar = $('#sidebar'),
-        showRightTop = (w.height()-showRight.width())/ 2,
-        showLeftTop = (w.height()-showLeft.width())/2;
+        showRightTop = (w.height()-showRight.width())/ 2;
 
     showRight.css('top',showRightTop);
-    showLeft.css('top',showLeftTop);
     $('#sidebar, .shop-right').css('min-height', w.height());
 
     showRight.click(function(){
@@ -23,15 +19,6 @@ $(document).ready(function(){
             $(this).parent().animate({'right':0},200);
         }else{
             hideRight.trigger('click');
-        }
-    });
-    showLeft.click(function(){
-        if (!$(this).hasClass('active')){
-            $(this).animate({'margin-left':'190px'},200).addClass('active');
-            $(this).parent().animate({'marginLeft':0},200);
-        }else{
-            $(this).parent().animate({'marginLeft':'-190px'},200);
-            $(this).animate({'marginLeft':'0'},200).removeClass('active');
         }
     });
 
@@ -46,11 +33,11 @@ $(document).ready(function(){
         }else{
             shopRight.css({'right':'-250px'});
         }
-        if ($(this).width() > 753){
+        /*if ($(this).width() > 753){
             sidebar.css({'marginLeft':'0'});
         }else{
             sidebar.css({'marginLeft':'-190px'});
-        }
+        }*/
     });
 
     $('.modal-order-end .btn-grey').click(function(){

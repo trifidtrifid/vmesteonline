@@ -75,6 +75,7 @@ a {
 }
 .main-content {
   margin-right: 250px;
+  margin-left: 0;
   padding: 10px;
 }
 .shop-right {
@@ -564,74 +565,6 @@ span
     width: 100%;
   }
 }
-/* страница регистрации */
-.registration-form {
-  width: 580px;
-  padding: 0 10px;
-  margin: 30px auto;
-  border: 1px solid #438eb9;
-  border-radius: 2px;
-}
-.registration-form h1 {
-  margin: 0 -10px;
-  padding: 10px;
-  background: #438eb9;
-  color: #fff;
-}
-.registration-form h3 {
-  border-bottom: 1px solid #438eb9;
-  padding-bottom: 5px;
-  margin-bottom: 15px;
-}
-.registration-form .reg-soc a {
-  font-size: 50px;
-  margin: 0 10px;
-}
-.registration-form .reg-soc a:hover {
-  text-decoration: none;
-}
-.registration-form .reg-now>div {
-  margin-bottom: 10px;
-}
-.registration-form .reg-now label {
-  width: 200px;
-}
-.registration-form .reg-now label span {
-  color: #d2322d;
-}
-.registration-form .reg-now label span:before {
-  margin-right: 5px !important;
-}
-.registration-form .reg-now .radio {
-  display: inline-block;
-  vertical-align: baseline;
-  margin: 0;
-}
-.registration-form .reg-now .radio span {
-  color: #000;
-}
-.registration-form .reg-now .form-control {
-  display: inline-block;
-}
-.registration-form .btn-primary {
-  width: 200px;
-  margin: 20px auto;
-  font-size: 20px;
-  display: block;
-}
-.registration-form input[type="text"],
-.registration-form input[type="email"],
-.registration-form input[type="tel"],
-.registration-form input[type="password"] {
-  width: 320px;
-}
-.registration-form #captcha {
-  width: 155px;
-}
-.registration-form input[type="file"],
-.registration-form .captcha {
-  display: inline-block;
-}
 /* блоки при нелогине */
 .nologin-user-short a {
   cursor: default !important;
@@ -690,20 +623,4 @@ span
   width: 150px;
   display: block;
   margin: 5px auto 0;
-}
-/* регистрация для магазина */
-.shop-reg {
-  width: 320px;
-}
-.shop-reg h1 {
-  text-align: center;
-}
-.shop-reg .reg-now label {
-  width: 60px;
-}
-.shop-reg input[type="text"],
-.shop-reg input[type="email"],
-.shop-reg input[type="tel"],
-.shop-reg input[type="password"] {
-  width: 220px;
 }

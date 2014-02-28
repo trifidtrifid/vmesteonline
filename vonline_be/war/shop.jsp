@@ -82,23 +82,7 @@
 
     <div class="navbar-header pull-right" role="navigation">
         <ul class="nav ace-nav">
-            <li>
-                <a class="btn btn-info no-border" href="#">
-                    Сообщения
-                </a>
-            </li>
 
-            <li>
-                <a class="btn btn-info no-border" href="#">
-                    Архив
-                </a>
-            </li>
-
-            <li>
-                <a class="btn btn-info no-border" href="#">
-                    Избранное
-                </a>
-            </li>
             <li class="active">
                 <a class="btn btn-info no-border" href="#">
                     Магазин
@@ -145,7 +129,7 @@
     </div>
     <div class="main-container" id="main-container">
         <div class="main-container-inner">
-            <aside class="sidebar" id="sidebar">
+            <%--<aside class="sidebar" id="sidebar">
                 <script type="text/javascript">
                     try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
                 </script>
@@ -180,7 +164,7 @@
                     </li>
 
                 </ul><!-- /.nav-list -->
-            </aside>
+            </aside>--%>
             <aside class="sidebar shop-right">
                 <div class="show-right">
                     Заказы
