@@ -65,7 +65,7 @@
                 $('.email-alert').css('display','block');
             }else{
                 var userId = client.registerNewUser($("#login").val(), "family", $("#pass")
-                        .val(), $("#email").val(),groupId);
+                        .val(), $("#email").val());
                 if ( true ) {
                     document.location.replace("/main.jsp");
                 }
