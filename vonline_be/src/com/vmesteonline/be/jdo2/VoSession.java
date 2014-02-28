@@ -18,9 +18,15 @@ public class VoSession {
  
 	public VoSession(String sessId, VoUser user) {
 		this.id = sessId;
-		this.name = user.getName();
-		this.lastName = user.getLastName();
-		this.userId = user.getId();
+		if(null!=user) {
+			this.name = user.getName();
+			this.lastName = user.getLastName();
+			this.userId = user.getId();
+		} else {
+			this.userId = 0L;
+			this.name = "Гость";
+			this.lastName = "";
+		}
 		this.curAttrMap = new HashMap<Integer, Long>();
 	}
 	

@@ -89,7 +89,11 @@ public class VoFileAccess extends HttpServlet {
 			if(null==data && extUrl == null){
 				throw new IOException("'data' or 'extUrl' Parameter must be set to upload file.");
 			}
-			resp.getOutputStream().write(StorageHelper.saveImage(""+fname, currentUserId, isPublic, new ByteArrayInputStream(data.getBytes()), pm).getBytes());
+			if( null!=data )
+				resp.getOutputStream().write(StorageHelper.saveImage(""+fname, currentUserId, isPublic, new ByteArrayInputStream(data.getBytes()), pm).getBytes());
+			else 
+				resp.getOutputStream().write(StorageHelper.saveImage( extUrl, currentUserId, isPublic, pm).getBytes());
+			
 		} catch( InvalidOperation e){
 			throw new IOException("Failed to save file:"+e.getMessage(), e);
 		} finally {
