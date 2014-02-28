@@ -28,7 +28,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public static void checkIfAuthorised(String httpSessId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			getSession(httpSessId, pm);
+			VoSession session = getSession(httpSessId, pm);
+			if( 0!=session.getUserId())
+				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
 		} finally {
 			pm.close();
 		}
