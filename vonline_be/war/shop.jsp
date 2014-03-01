@@ -37,7 +37,7 @@
     //out.print(orderDetails.odrerLines.get(0).product.id);
     //out.print(ArrayProductCategory.get(0).logoURLset);
     //out.print(new String( productsListPart.products.get(0).imageURL));
-    //out.print(productsListPart.products.size());
+    //out.print(ArrayProductCategory.get(1).id);
 
     pageContext.setAttribute("productCategories", ArrayProductCategory);
     pageContext.setAttribute("products",productsListPart.products);
@@ -340,7 +340,7 @@
                         </tr>
                         </thead>
                         <c:forEach var="product" items="${products}">
-                            <tr>
+                            <tr data-productid="${product.id}">
                                 <td>
                                     <a href="#" class="product-link">
                                         <img src="${product.imageURL}" alt="картинка"/>

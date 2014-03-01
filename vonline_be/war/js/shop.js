@@ -112,7 +112,17 @@ $(document).ready(function(){
             }
 
             var currentProduct = $(this).closest('tr');
-            var productHtml = '<li>'+
+            var spinnerValue = currentProduct.find('.ace-spinner').spinner('value');
+            if (currentProduct.hasClass('added')){
+                var currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.data('productid') +'"]').find('.ace-spinner');
+                currentSpinner.spinner('value',currentSpinner.spinner('value')+spinnerValue);
+                /*$('.catalog-order li').each(function(){
+                    if ($(this).data('productid') == currentProduct.data('productid')){
+
+                    }
+                });*/
+           }else{
+            var productHtml = '<li data-productid="'+ currentProduct.data('productid') +'">'+
                 '<img src="'+ currentProduct.find('.product-price') +'" alt="картинка"/>'+
                 '<div class="product-right-descr">'+
                 currentProduct.find('.product-link span').text()+
@@ -136,15 +146,16 @@ $(document).ready(function(){
                 '</li>';
 
              $('.catalog-order').append(productHtml);
+              currentProduct.addClass('added');
 
-            var deleteNoInit = $('.catalog-order .delete-product.no-init');
-            InitDeleteProduct(deleteNoInit);
-            deleteNoInit.removeClass('no-init');
+               var deleteNoInit = $('.catalog-order .delete-product.no-init');
+               InitDeleteProduct(deleteNoInit);
+               deleteNoInit.removeClass('no-init');
 
-            var spinnerNoInit = $('.catalog-order .spinner1.no-init');
-            InitSpinner(spinnerNoInit);
-            spinnerNoInit.removeClass('no-init');
-
+               var spinnerNoInit = $('.catalog-order .spinner1.no-init');
+               InitSpinner(spinnerNoInit,spinnerValue);
+               spinnerNoInit.removeClass('no-init');
+           }
         });
     }
 
@@ -178,12 +189,14 @@ $(document).ready(function(){
         var productsList = client.getProducts(0,10,tempCatID).products;
         var productListLength = productsList.length;
         var productsHtml = '';
+        var productDetails;
         for (i = 0; i < productListLength; i++){
-            productsHtml += '<tr>'+
+            productDetails = client.getProductDetails(productsList[i].id);
+            productsHtml += '<tr data-productid="'+ productsList[i].id +'">'+
                 '<td>'+
                 '<a href="#" class="product-link">'+
                 '<img src="'+ productsList[i].imageURL +'" alt="картинка"/>'+
-                '<span>'+ productsList[i].name + ' 2 level'+'</span>'+
+                '<span>'+ productsList[i].name +'<br>'+ productsList[i].shortDescr +'</span>'+
                 '</a>'+
                 '<div class="modal">'+
                 '<div class="modal-body">'+
@@ -207,7 +220,7 @@ $(document).ready(function(){
                 '<div class="product-descr">'+
                 '<h3>'+ productsList[i].name +'</h3>'+
                 '<div class="product-text">'+
-                '${productDetails.fullDescr}'+
+                productDetails.fullDescr+
                 '</div>'+
                 '<div class="modal-footer">'+
                 '<span>Цена: '+ productsList[i].price +'</span>'+
@@ -231,7 +244,6 @@ $(document).ready(function(){
 
         /* подключение событий */
         InitSpinner($('.catalog table .spinner1'));
-
         InitProductDetailPopup();
         InitAddToBasket();
         InitClickOnCategory()
@@ -251,8 +263,8 @@ $(document).ready(function(){
         });
     }
 
-    function InitSpinner(selector){
-        selector.ace_spinner({value:1,min:1,max:200,step:1, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
+    function InitSpinner(selector,spinnerValue){
+        selector.ace_spinner({value:spinnerValue,min:1,max:200,step:1, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
             .on('change', function(){
                 //alert(this.value)
             });
@@ -296,7 +308,7 @@ $(document).ready(function(){
 
 /* --- */
 
-    InitSpinner($('.spinner1'));
+    InitSpinner($('.spinner1'),1);
     InitAddToBasket();
     InitProductDetailPopup();
     // переключение между категориями
@@ -308,7 +320,10 @@ $(document).ready(function(){
         popup.modal();
         var orderList = $('.catalog-order li');
         var productsHtmlModal = "";
+        var i = 0;
+        var spinnerValue = [];
         orderList.each(function(){
+            spinnerValue[i++] = $(this).find('.ace-spinner').spinner('value');
             productsHtmlModal+= '<tr>'+
                 '<td>'+
                 '<div>'+
@@ -318,7 +333,7 @@ $(document).ready(function(){
                 '</td>'+
                 '<td class="td-price">'+ $(this).find('.td-price').text()  +'</td>'+
                 '<td>'+
-                '<input type="text" value="'+ $(this).find('.spinner-1').val() +'" class="input-mini spinner1 no-init" />'+
+                '<input type="text" class="input-mini spinner1 no-init" />'+
                 '</td>'+
                 '<td class="td-summa">'+ $(this).find('.td-summa').text()+
                 '</td>'+
@@ -327,7 +342,10 @@ $(document).ready(function(){
         popup.find('.modal-body-list tbody').html('').append(productsHtmlModal);
 
         var spinnerNoInit = popup.find('.spinner1.no-init');
-        InitSpinner(spinnerNoInit);
+        i = 0;
+        spinnerNoInit.each(function(){
+            InitSpinner($(this),spinnerValue[i++]);
+        });
         spinnerNoInit.removeClass('no-init');
 
         popup.find('.btn-order').click(function(){
