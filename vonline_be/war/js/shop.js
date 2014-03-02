@@ -76,8 +76,8 @@ $(document).ready(function(){
     var prevParentId = [],
         parentCounter = 0;
 
-    function InitProductDetailPopup(){
-        $('.product-link').click(function(e){
+    function InitProductDetailPopup(selector){
+        selector.click(function(e){
             e.preventDefault();
 
             $(this).find('+.modal').modal();
@@ -113,19 +113,49 @@ $(document).ready(function(){
 
             var currentProduct = $(this).closest('tr');
             var spinnerValue = currentProduct.find('.ace-spinner').spinner('value');
+            client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
             if (currentProduct.hasClass('added')){
                 var currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.data('productid') +'"]').find('.ace-spinner');
                 currentSpinner.spinner('value',currentSpinner.spinner('value')+spinnerValue);
-                /*$('.catalog-order li').each(function(){
-                    if ($(this).data('productid') == currentProduct.data('productid')){
-
-                    }
-                });*/
            }else{
-            var productHtml = '<li data-productid="'+ currentProduct.data('productid') +'">'+
-                '<img src="'+ currentProduct.find('.product-price') +'" alt="картинка"/>'+
+                var productDetails = client.getProductDetails(currentProduct.data('productid'));
+                var productHtml = '<li data-productid="'+ currentProduct.data('productid') +'">'+
+                '<a href="#" class="product-link no-init">'+
+                '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" alt="картинка"/>'+
                 '<div class="product-right-descr">'+
                 currentProduct.find('.product-link span').text()+
+                '</div>'+
+                '</a>'+
+                '<div class="modal">'+
+                '<div class="modal-body">'+
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
+                '<div class="product-slider">'+
+                '<div class="slider flexslider">'+
+                '<ul class="slides">'+
+                '<li>'+
+                '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '<div class="carousel flexslider">'+
+                '<ul class="slides">'+
+                '<li>'+
+                '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '</div>'+
+                '<div class="product-descr">'+
+                '<h3>'+ currentProduct.find('.product-link span').text() +'</h3>'+
+                '<div class="product-text">'+
+                productDetails.fullDescr+
+                '</div>'+
+                '<div class="modal-footer">'+
+                '<span>Цена: '+ currentProduct.find('.product-price').text() +'</span>'+
+                '<input type="text" class="input-mini spinner1 no-init" />'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
                 '</div>'+
                 '<table>'+
                 '<thead>'+
@@ -152,9 +182,14 @@ $(document).ready(function(){
                InitDeleteProduct(deleteNoInit);
                deleteNoInit.removeClass('no-init');
 
+               var popupNoInit = $('.catalog-order .product-link.no-init');
+               InitProductDetailPopup(popupNoInit);
+               popupNoInit.removeClass('no-init');
+
                var spinnerNoInit = $('.catalog-order .spinner1.no-init');
                InitSpinner(spinnerNoInit,spinnerValue);
                spinnerNoInit.removeClass('no-init');
+
            }
         });
     }
@@ -244,7 +279,7 @@ $(document).ready(function(){
 
         /* подключение событий */
         InitSpinner($('.catalog table .spinner1'));
-        InitProductDetailPopup();
+        InitProductDetailPopup($('.product-link'));
         InitAddToBasket();
         InitClickOnCategory()
 
@@ -310,7 +345,7 @@ $(document).ready(function(){
 
     InitSpinner($('.spinner1'),1);
     InitAddToBasket();
-    InitProductDetailPopup();
+    InitProductDetailPopup($('.product-link'));
     // переключение между категориями
    InitClickOnCategory();
    InitDeleteProduct($('.delete-product'));
