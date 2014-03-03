@@ -7,6 +7,7 @@
 <%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
 <%@ page import="com.vmesteonline.be.jdo2.VoFileAccessRecord"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
+<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 
 <%@ page import="java.nio.Buffer"%>
 <%@ page import="java.nio.ByteBuffer"%>
@@ -17,6 +18,13 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <%
+    HttpSession sess = request.getSession();
+    pageContext.setAttribute("auth",true);
+    try {
+        AuthServiceImpl.checkIfAuthorised(sess.getId());
+    } catch (InvalidOperation ioe) {
+        pageContext.setAttribute("auth",false);
+    }
 
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
@@ -62,7 +70,14 @@
         document.createElement('nav');
     </script>
     <![endif]-->
-</head> 
+
+        <script type="text/javascript">
+            globalUserAuth = false;
+            <c:if test="${auth}">
+                globalUserAuth = true;
+            </c:if>
+        </script>
+</head>
 <body>
 <div class="container">
     <div class="navbar navbar-default" id="navbar">
@@ -493,6 +508,48 @@
         </div>
     </div>
 
+    <div class="modal modal-auth">
+        <div class="login-forms">
+            <form action="#" class="registration-form login-form">
+                <h1>Вход</h1>
+                <div class="reg-now">
+                    <br>
+                    <div>
+                        <label for="uname">E-mail</label>
+                        <input type="text" id="uname"/>
+                    </div>
+                    <div>
+                        <label for="password">Пароль</label>
+                        <input type="password" id="password"/>
+                        <a href="#" class="remember-link">Забыли пароль ?</a>
+                    </div>
+                    <button id="go" class="btn-submit btn-sm no-border">Войти</button>
+                </div>
+            </form>
+            <form action="#" class="registration-form reg-form">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h1>Регистрация</h1>
+                <div class="reg-now">
+                    <br>
+                    <div>
+                        <label for="login">Логин</label>
+                        <input type="text" id="login"/>
+                    </div>
+                    <div>
+                        <label for="email">E-mail</label>
+                        <input type="email" required="required" id="email"/>
+                    </div>
+                    <div>
+                        <label for="pass">Пароль</label>
+                        <input type="password" id="pass"/>
+                    </div>
+                    <span class="email-alert">Такой e-mail уже зарегистрирован !</span>
+                    <button class="btn-submit btn-sm no-border">Регистрация</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
 <!-- общие библиотеки -->
 <script src="js/jquery-2.0.3.min.js"></script>
@@ -512,8 +569,11 @@
 <script src="js/thrift.js" type="text/javascript"></script>
 <script src="gen-js/shop_types.js" type="text/javascript"></script>
 <script src="gen-js/ShopService.js" type="text/javascript"></script>
+<script src="gen-js/authservice_types.js" type="text/javascript"></script>
+<script src="gen-js/AuthService.js" type="text/javascript"></script>
 <!-- -->
 <!-- собственные скрипты  -->
+<script src="js/login.js"></script>
 <script src="js/shop.js"></script>
 
 </body>

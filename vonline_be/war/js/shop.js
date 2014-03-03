@@ -106,6 +106,11 @@ $(document).ready(function(){
 
     function InitAddToBasket(){
         $('.fa-shopping-cart').click(function(){
+
+            if (!globalUserAuth){
+                $('.modal-auth').modal();
+            }else{
+
             if ($('.additionally-order').hasClass('hide')){
                 $('.additionally-order').removeClass('hide');
                 $('.empty-basket').addClass('hide');
@@ -113,7 +118,7 @@ $(document).ready(function(){
 
             var currentProduct = $(this).closest('tr');
             var spinnerValue = currentProduct.find('.ace-spinner').spinner('value');
-            client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
+            //client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
             if (currentProduct.hasClass('added')){
                 var currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.data('productid') +'"]').find('.ace-spinner');
                 currentSpinner.spinner('value',currentSpinner.spinner('value')+spinnerValue);
@@ -152,7 +157,6 @@ $(document).ready(function(){
                 '</div>'+
                 '<div class="modal-footer">'+
                 '<span>Цена: '+ currentProduct.find('.product-price').text() +'</span>'+
-                '<input type="text" class="input-mini spinner1 no-init" />'+
                 '</div>'+
                 '</div>'+
                 '</div>'+
@@ -191,6 +195,7 @@ $(document).ready(function(){
                spinnerNoInit.removeClass('no-init');
 
            }
+            }
         });
     }
 
@@ -308,11 +313,16 @@ $(document).ready(function(){
 
     function InitSpinnerChange(selector){
         selector.on('change',function(){
-
             var myTable = $(this).closest('tr');
+            var qnty = $(this).val();
+            if ($(this).closest('.modal').length > 0){
+                // значит мы в модальном окне с подробной инфой о продукте
+                myTable.find('td>.ace-spinner').spinner('value',qnty);
+            } else{
+                myTable.find('.modal .ace-spinner').spinner('value',qnty);
+            }
             var price = myTable.find('.td-price').text();
             price = parseInt(price);
-            var qnty = $(this).val();
             myTable.find('.td-summa').text(price*qnty+'р');
             $('.itogo-right span').text(countItogo($('.catalog-order')));
             $('.modal-itogo span').text(countItogo($('.modal-body-list')));

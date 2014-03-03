@@ -4,6 +4,7 @@
 @import 'ace-fonts.css';
 @import 'ace.css';
 @import 'flexslider.css';
+@import 'login.css';
 html {
   height: 100%;
 }
@@ -626,4 +627,17 @@ span
   width: 150px;
   display: block;
   margin: 5px auto 0;
+}
+/* popup логина */
+.modal-auth {
+  width: 643px;
+  overflow: hidden;
+  height: 260px;
+  margin-left: -327px;
+}
+.modal-auth .login-forms {
+  margin: 0;
+}
+.modal-auth .close {
+  margin-right: -5px;
 }

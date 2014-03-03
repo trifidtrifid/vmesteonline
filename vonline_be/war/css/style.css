@@ -3,6 +3,7 @@
 @import 'font-awesome.min.css';
 @import 'ace-fonts.css';
 @import 'ace.css';
+@import 'login.css';
 html {
   height: 100%;
 }
@@ -587,103 +588,4 @@ h1 {
   width: auto;
   padding-right: 10px;
   vertical-align: top;
-}
-/* страница регистрации */
-.login-forms {
-  width: 650px;
-  margin: 30px auto;
-}
-.registration-form {
-  width: 320px;
-  height: 260px;
-  vertical-align: top;
-  display: inline-block;
-  padding: 0 10px;
-  position: relative;
-  border: 1px solid #438eb9;
-  border-radius: 2px;
-}
-.registration-form h1 {
-  margin: 0 -10px;
-  padding: 10px;
-  background: #438eb9;
-  color: #fff;
-  text-align: center;
-}
-.registration-form h3 {
-  border-bottom: 1px solid #438eb9;
-  padding-bottom: 5px;
-  margin-bottom: 15px;
-}
-.registration-form .reg-soc a {
-  font-size: 50px;
-  margin: 0 10px;
-}
-.registration-form .reg-soc a:hover {
-  text-decoration: none;
-}
-.registration-form .reg-now>div {
-  margin-bottom: 10px;
-}
-.registration-form .reg-now a {
-  float: right;
-  margin-right: 15px;
-  padding-top: 3px;
-  color: #ccc;
-}
-.registration-form .reg-now label {
-  width: 60px;
-}
-.registration-form .reg-now label span {
-  color: #d2322d;
-}
-.registration-form .reg-now label span:before {
-  margin-right: 5px !important;
-}
-.registration-form .reg-now .radio {
-  display: inline-block;
-  vertical-align: baseline;
-  margin: 0;
-}
-.registration-form .reg-now .radio span {
-  color: #000;
-}
-.registration-form .reg-now .form-control {
-  display: inline-block;
-}
-.registration-form .btn-submit {
-  width: 140px;
-  background: #438eb9;
-  color: #fff;
-  font-size: 20px;
-  display: block;
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  margin-left: -70px;
-}
-.registration-form .btn-submit:hover {
-  background: #1b6aaa;
-}
-.registration-form input[type="text"],
-.registration-form input[type="email"],
-.registration-form input[type="tel"],
-.registration-form input[type="password"] {
-  width: 220px;
-}
-.registration-form #captcha {
-  width: 155px;
-}
-.registration-form input[type="file"],
-.registration-form .captcha {
-  display: inline-block;
-}
-.registration-form .email-alert {
-  color: #f00;
-  display: none;
-  text-align: center;
-}
-#selectGroup {
-  margin-right: 15px;
-  float: right;
 }
