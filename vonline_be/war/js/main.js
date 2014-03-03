@@ -938,29 +938,7 @@ function AutoReplaceLinkAndVideo(str) {
     }
     SetCreateTopicBtn();
 
-    /* переключения на настройки, профиль и выход */
-    $('.user-menu a').click(function(){
-        var ind = $(this).parent().index();
-        var dynamic = $('.dynamic');
-        if (ind == 0){
-            var settingsHtml = $('.settings-wrap').html();
-            dynamic.html(settingsHtml);
-        }else if (ind == 1){
-            var profileHtml = $('.user-descr-wrap').html();
-            dynamic.html(profileHtml);
-            $('.edit-personal-link').click(function(){
-                var editPersonalHtml = $('.edit-personal-wrap').html();
-                dynamic.html(editPersonalHtml);
-            });
-        } else {
-            var transport = new Thrift.Transport("/thrift/AuthService");
-            var protocol = new Thrift.Protocol(transport);
-            var client = new com.vmesteonline.be.AuthServiceClient(protocol);
-            client.logout();
 
-            document.location.replace("login.jsp");
-        }
-    });
 
 });
 

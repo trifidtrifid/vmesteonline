@@ -122,9 +122,29 @@ $(document).ready(function(){
 
             var currentProduct = $(this).closest('tr');
             var spinnerValue = currentProduct.find('.ace-spinner').spinner('value');
-            //client.createOrder(new Date().getTime()+10000000,'asd',0);
-            //client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
-            if (currentProduct.hasClass('added')){
+                //alert(parseInt(new Date().getTime()/1000));
+                var nowTime = parseInt(new Date().getTime()/1000)+86400;
+                var nowTimeArray = [];
+                nowTimeArray[nowTime] = 1;
+                client.setDates(nowTimeArray);
+                /*var t = client.getDates(0,nowTime);
+                for (var p in t){
+                    alert(t[p]);
+                }*/
+            client.createOrder(nowTime,'asd2',0);
+                /*var orders = client.getOrders(0,nowTime+1000);
+                alert(orders[2].id);*/
+
+
+            var orderLine = client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
+                //alert(orderLine.product.name);
+                var addedProductFlag = 0;
+                $('.catalog-order li').each(function(){
+                    if ($(this).data('productid') == currentProduct.data('productid')){
+                        addedProductFlag = 1;
+                    }
+                });
+            if (addedProductFlag){
                 var currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.data('productid') +'"]').find('.ace-spinner');
                 currentSpinner.spinner('value',currentSpinner.spinner('value')+spinnerValue);
            }else{
@@ -409,8 +429,8 @@ $(document).ready(function(){
         popup.find('.btn-order').click(function(){
             //client.createOrder(new Date().getTime()+10000000,'asd',0);
 
-            // добавление в базу нового города, страны, улицы и т.д
-
+            // добавление в базу нового города, страны, улицы и т.д (если курькером)
+            if ($('.input-delivery').hasClass('active')){
             var countries = userServiceClient.getCounties();
             var countriesLength = countries.length;
             var inputCountry = $('#country-delivery').val();
@@ -484,6 +504,7 @@ $(document).ready(function(){
                 comment: $('#order-comment').val()
             };
             client.setOrderDeliveryAddress(deliveryAddress);
+            }
         })
         }
     });

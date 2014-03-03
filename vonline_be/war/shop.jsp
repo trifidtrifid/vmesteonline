@@ -8,6 +8,8 @@
 <%@ page import="com.vmesteonline.be.jdo2.VoFileAccessRecord"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
+<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
+<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 
 <%@ page import="java.nio.Buffer"%>
 <%@ page import="java.nio.ByteBuffer"%>
@@ -52,6 +54,11 @@
     pageContext.setAttribute("productDetails",productDetails);
     //pageContext.setAttribute("productURL",productURL);
     //pageContext.setAttribute("orderLines",orderLineArray);
+
+    UserServiceImpl userService = new UserServiceImpl(request.getSession());
+    ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+    pageContext.setAttribute("firstName",ShortUserInfo.firstName);
+    pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 
 %>
 
@@ -104,11 +111,13 @@
                 </a>
             </li>
             <li class="user-short light-blue">
+                <c:choose>
+                    <c:when test="${auth}">
                 <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                     <img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />
                     <span class="user-info">
-                        <small>Welcome,</small>
-                        Jason
+                        <small><c:out value="${firstName}"/></small>
+                        <c:out value="${lastName}"/>
                     </span>
                     <i class="icon-caret-down"></i>
                 </a>
@@ -137,6 +146,18 @@
                         </a>
                     </li>
                 </ul>
+                    </c:when>
+                    <c:otherwise>
+                        <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                            <img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />
+                    <span class="user-info">
+                        <small>Привет,</small>
+                        Гость
+                    </span>
+                            <i class="icon-caret-down"></i>
+                        </a>
+                    </c:otherwise>
+                </c:choose>
             </li>
         </ul><!-- /.ace-nav -->
     </div><!-- /.navbar-header -->
@@ -583,6 +604,7 @@
 <!-- -->
 <!-- собственные скрипты  -->
 <script src="js/login.js"></script>
+<script src="js/common.js"></script>
 <script src="js/shop.js"></script>
 
 </body>
