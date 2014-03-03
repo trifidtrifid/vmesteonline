@@ -3,6 +3,10 @@ $(document).ready(function(){
     var protocol = new Thrift.Protocol(transport);
     var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
 
+    transport = new Thrift.Transport("/thrift/UserService");
+    protocol = new Thrift.Protocol(transport);
+    var userServiceClient = new com.vmesteonline.be.UserServiceClient(protocol);
+
     /* простые обработчики событий */
     var w = $(window),
         showRight = $('.show-right'),
@@ -65,9 +69,9 @@ $(document).ready(function(){
 
     $('.radio input').click(function(){
         if ($(this).hasClass('courier-delivery')){
-            $(this).closest('.delivery-right').find('.input-delivery').slideDown();
+            $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
         }else{
-            $(this).closest('.delivery-right').find('.input-delivery').slideUp();
+            $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
         }
     });
 
@@ -118,6 +122,7 @@ $(document).ready(function(){
 
             var currentProduct = $(this).closest('tr');
             var spinnerValue = currentProduct.find('.ace-spinner').spinner('value');
+            //client.createOrder(new Date().getTime()+10000000,'asd',0);
             //client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
             if (currentProduct.hasClass('added')){
                 var currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.data('productid') +'"]').find('.ace-spinner');
@@ -183,7 +188,7 @@ $(document).ready(function(){
               currentProduct.addClass('added');
 
                var deleteNoInit = $('.catalog-order .delete-product.no-init');
-               InitDeleteProduct(deleteNoInit);
+               InitDeleteProduct(deleteNoInit,currentProduct);
                deleteNoInit.removeClass('no-init');
 
                var popupNoInit = $('.catalog-order .product-link.no-init');
@@ -338,7 +343,7 @@ $(document).ready(function(){
         return summa;
     }
 
-    function InitDeleteProduct(selector){
+    function InitDeleteProduct(selector,currentProduct){
         selector.click(function(){
             $(this).closest('li').slideUp(function(){
                 $(this).detach();
@@ -348,6 +353,9 @@ $(document).ready(function(){
                     $('.empty-basket').removeClass('hide');
                 }
             });
+            if (currentProduct){
+                if(currentProduct.hasClass('added')){currentProduct.removeClass('added');}
+            }
         });
     }
 
@@ -361,9 +369,14 @@ $(document).ready(function(){
    InitDeleteProduct($('.delete-product'));
 
     $('.btn-order').click(function(){
+
+        if ($('.input-delivery').hasClass('active') && (!$('#country-delivery').val() || !$('#city-delivery').val() || !$('#street-delivery').val() || !$('#building-delivery').val() || !$('#flat-delivery').val())){
+            $('.alert-delivery').show();
+        }else{
+        $('.alert-delivery').hide();
         var popup = $('.modal-order-end');
         popup.modal();
-        var orderList = $('.catalog-order li');
+        var orderList = $('.catalog-order>li');
         var productsHtmlModal = "";
         var i = 0;
         var spinnerValue = [];
@@ -394,10 +407,85 @@ $(document).ready(function(){
         spinnerNoInit.removeClass('no-init');
 
         popup.find('.btn-order').click(function(){
-            var now = new Date();
-            alert(now);
-            client.createOrder(11211212,"comment",0);
+            //client.createOrder(new Date().getTime()+10000000,'asd',0);
+
+            // добавление в базу нового города, страны, улицы и т.д
+
+            var countries = userServiceClient.getCounties();
+            var countriesLength = countries.length;
+            var inputCountry = $('#country-delivery').val();
+            var country,countryId = 0;
+            for (var i = 0; i < countriesLength; i++){
+                if (countries[i].name == inputCountry){
+                    country = countries[i];
+                    countryId = country.id;
+                }
+            }
+            if (!countryId){
+                country = userServiceClient.createNewCountry(inputCountry);
+                countryId = country.id;
+            }
+
+            var cities = userServiceClient.getCities(countryId);
+            var citiesLength = cities.length;
+            var inputCity = $('#city-delivery').val();
+            var city,cityId = 0;
+            for (i = 0; i < citiesLength; i++){
+                if (cities[i].name == inputCity){
+                    city = cities[i];
+                    cityId = city.id;
+                }
+            }
+            if (!cityId){
+                city = userServiceClient.createNewCity(countryId,inputCity);
+                cityId = city.id;
+            }
+
+            var streets = userServiceClient.getStreets(cityId);
+            var streetsLength = streets.length;
+            var inputStreet = $('#street-delivery').val();
+            var street,streetId = 0;
+            for (i = 0; i < streetsLength; i++){
+                if (streets[i].name == inputCity){
+                    street = streets[i];
+                    streetId = street.id;
+                }
+            }
+            if (!streetId){
+                street = userServiceClient.createNewStreet(cityId,inputStreet);
+                streetId = street.id;
+            }
+
+            var buildings = userServiceClient.getBuildings(streetId);
+            var buildingsLength = buildings.length;
+            var inputBuilding = $('#building-delivery').val();
+            var building,buildingId = 0;
+            for (i = 0; i < buildingsLength; i++){
+                if (buildings[i].fullNo == inputBuilding){
+                    building = buildings[i];
+                    buildingId = building.id;
+                }
+            }
+            if (!buildingId){
+                building = userServiceClient.createNewBuilding(streetId,inputBuilding,0,0);
+                buildingId = building.id;
+            }
+
+
+            // передаем адресс доставки
+            var deliveryAddress = {
+                country : country,
+                city : city,
+                street : street,
+                building : building,
+                staircase : 0,
+                floor: 0,
+                flatNo: parseInt($('#flat-delivery').val()),
+                comment: $('#order-comment').val()
+            };
+            client.setOrderDeliveryAddress(deliveryAddress);
         })
+        }
     });
 
     /* --- */
@@ -441,7 +529,7 @@ $(document).ready(function(){
         }
     });
 
-    var data = [
+    var dataSearch = [
         { label: "anders", category: "" },
         { label: "andreas", category: "" },
         { label: "antal", category: "" },
@@ -454,6 +542,65 @@ $(document).ready(function(){
     ];
     $( "#search" ).catcomplete({
         delay: 0,
-        source: data
+        source: dataSearch
     });
+
+/* автозаполнение адреса доставки  */
+    var addressesBase = userServiceClient.getAddressCatalogue();
+
+    var countries = addressesBase.countries;
+    var countriesLength = countries.length;
+    var countryTags = [];
+    for (var i = 0; i < countriesLength; i++){
+        countryTags[i] = countries[i].name;
+    }
+    var cities = addressesBase.cities;
+    var citiesLength = cities.length;
+    var cityTags = [];
+    for (i = 0; i < citiesLength; i++){
+        cityTags[i] = cities[i].name;
+    }
+    var streets = addressesBase.streets;
+    var streetsLength = streets.length;
+    var streetTags = [];
+    for (i = 0; i < streetsLength; i++){
+        streetTags[i] = streets[i].name;
+    }
+    var buildings = addressesBase.buildings;
+    var buildingsLength = buildings.length;
+    var buildingTags = [];
+    for (i = 0; i < buildingsLength; i++){
+        buildingTags[i] = buildings[i].fullNo;
+    }
+    $( "#country-delivery" ).autocomplete({
+        source: countryTags
+    });
+    $( "#city-delivery" ).autocomplete({
+        source: cityTags
+    });
+    $( "#street-delivery" ).autocomplete({
+        source: streetTags
+    });
+    $( "#building-delivery" ).autocomplete({
+        source: buildingTags
+    });
+
+    /*var dataDeliveryCities = [
+        { label: "Санкт-Петербург", category: "" },
+        { label: "Москва", category: "" },
+        { label: "Казань", category: "" }
+    ];
+    var dataDeliveryStreets = [
+        { label: "Ленинградская", category: "" },
+        { label: "Московский проспект", category: "" },
+        { label: "Шаумяна", category: "" }
+    ];
+    $( "#city-delivery" ).catcomplete({
+        delay: 0,
+        source: dataDeliveryCities
+    });
+    $( "#street-delivery" ).catcomplete({
+        delay: 0,
+        source: dataDeliveryStreets
+    });*/
 });

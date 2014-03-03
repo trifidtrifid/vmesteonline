@@ -307,8 +307,14 @@
                         </div>
                         <div class="input-delivery">
                             <input type="tel" placeholder="Номер телефона"/>
-                            <textarea id="delivery-addr" placeholder="Адрес доставки"></textarea>
+                            <span class="lbl"> Адрес доставки</span>
+                            <input id="country-delivery" type="text" value="Россия" placeholder="Страна"/>
+                            <input id="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
+                            <input id="street-delivery" type="text" placeholder="Улица"/>
+                            <input id="building-delivery" type="text" class="short first" placeholder="Дом"/>
+                            <input id="flat-delivery" type="text" class="short" placeholder="Квартира"/>
                         </div>
+                        <div class="alert-delivery">Введите адрес доставки !</div>
                     </div>
                     <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
                     <button class="btn btn-sm btn-grey no-border">Отменить</button>
@@ -567,10 +573,13 @@
 <script src="js/ace-elements.min.js"></script>
 <!-- файлы thrift -->
 <script src="js/thrift.js" type="text/javascript"></script>
+<script src="gen-js/bedata_types.js" type="text/javascript"></script>
 <script src="gen-js/shop_types.js" type="text/javascript"></script>
 <script src="gen-js/ShopService.js" type="text/javascript"></script>
 <script src="gen-js/authservice_types.js" type="text/javascript"></script>
 <script src="gen-js/AuthService.js" type="text/javascript"></script>
+<script src="gen-js/userservice_types.js" type="text/javascript"></script>
+<script src="gen-js/UserService.js" type="text/javascript"></script>
 <!-- -->
 <!-- собственные скрипты  -->
 <script src="js/login.js"></script>

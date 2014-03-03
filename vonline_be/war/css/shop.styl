@@ -153,10 +153,23 @@ transform()
       font-size 16px
     .input-delivery
       display none
+      .lbl
+        font-size 16px
+        display block
+        margin-bottom 5px
       input
         width 230px
+        margin-bottom 10px
+        &.short
+          width 110px
+          display inline-block
+          &.first
+            margin-right 5px
       #delivery-addr
         margin-left 0
+    .alert-delivery
+      color #ff0000
+      display none
   textarea
     margin 10px
     width 230px

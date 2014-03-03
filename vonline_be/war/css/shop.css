@@ -157,11 +157,28 @@ a {
 .shop-right .delivery-right .input-delivery {
   display: none;
 }
+.shop-right .delivery-right .input-delivery .lbl {
+  font-size: 16px;
+  display: block;
+  margin-bottom: 5px;
+}
 .shop-right .delivery-right .input-delivery input {
   width: 230px;
+  margin-bottom: 10px;
+}
+.shop-right .delivery-right .input-delivery input.short {
+  width: 110px;
+  display: inline-block;
+}
+.shop-right .delivery-right .input-delivery input.short.first {
+  margin-right: 5px;
 }
 .shop-right .delivery-right .input-delivery #delivery-addr {
   margin-left: 0;
+}
+.shop-right .delivery-right .alert-delivery {
+  color: #f00;
+  display: none;
 }
 .shop-right textarea {
   margin: 10px;
