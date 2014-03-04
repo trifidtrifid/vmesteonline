@@ -82,18 +82,9 @@ public class ServiceImpl {
 	protected long getCurrentUserId(PersistenceManager _pm) throws InvalidOperation {
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
-		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
-		try {
-			try {
-				VoSession sess = pm.getObjectById(VoSession.class, sessionStorage.getId());
-				if (sess != null)
-					return sess.getUserId();
-			} catch (Exception e) {
-				throw new InvalidOperation(VoError.NotAuthorized, "can't get current user id");
-			}
-		} finally {
-			if (null == _pm)
-				pm.close();
+		VoSession sess = getCurrentSession(null);
+		if (sess != null && 0 != sess.getUserId()) {
+			return sess.getUserId();
 		}
 		throw new InvalidOperation(VoError.NotAuthorized, "can't get current user id");
 	}
@@ -107,11 +98,12 @@ public class ServiceImpl {
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
 		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
 		try {
-			VoSession sess = pm.getObjectById(VoSession.class, sessionStorage.getId());
+			
+			VoSession sess = getCurrentSession(pm);
 			if (sess != null && 0 != sess.getUserId()) {
 				return pm.getObjectById(VoUser.class, sess.getUserId());
 			}
-			return null;
+			throw new InvalidOperation(VoError.NotAuthorized, "can't get current user id");
 		} finally {
 			if (null == _pm)
 				pm.close();
@@ -130,7 +122,11 @@ public class ServiceImpl {
 		try {
 			return pm.getObjectById(VoSession.class, sessionStorage.getId());
 		} catch (JDOObjectNotFoundException e) {
-			throw new InvalidOperation(VoError.NotAuthorized, "No session found");
+			//throw new InvalidOperation(VoError.NotAuthorized, "No session found");
+			//let's register a session
+			VoSession vs = new VoSession(sessionStorage.getId(), null);
+			pm.makePersistent(vs);
+			return vs;
 		} finally {
 			if (null == _pm)
 				pm.close();

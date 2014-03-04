@@ -26,7 +26,7 @@
 	try {
 	 	AuthServiceImpl.checkIfAuthorised(sess.getId());
 	} catch (InvalidOperation ioe) {
-		response.sendRedirect("/login.html");
+		response.sendRedirect("/login.jsp");
 		return; 
 	}
 

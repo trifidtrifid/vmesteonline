@@ -1,7 +1,6 @@
 package com.vmesteonline.be;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -160,6 +159,58 @@ public class AuthServiceImpTests {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
-
+	}
+	
+	@Test
+	public void testCheckEmailRegistered() {
+		
+		String email = "aaa@bbb.com";
+		assertFalse(asi.checkEmailRegistered(email));
+		try {
+			asi.registerNewUser("testName", "testFamily", "testPassword", email, null);
+		} catch (InvalidOperation e) {
+			e.printStackTrace();
+			assertFalse(true);
+		}
+		assertTrue(asi.checkEmailRegistered(email));
+	}
+	
+	@Test
+	public void testSendChangePasswordCodeRequest() {
+		String email = "brozer@pisem.net";
+		assertFalse(asi.checkEmailRegistered(email));
+		try {
+			long uid = asi.registerNewUser("testName", "testFamily", "testPassword", email, null);
+			asi.sendChangePasswordCodeRequest(email,"%code% %name%");
+			PersistenceManager pm = PMF.getPm();
+			try {
+				VoUser vu = pm.getObjectById(VoUser.class, uid);
+				vu.getChangePasswordCode();
+				
+				try {
+					asi.changePasswordOfUser(email, "1"+vu.getChangePasswordCode(), "111");
+					fail();
+				} catch (Exception e) {
+					assertTrue( e instanceof InvalidOperation);
+					assertEquals( ((InvalidOperation)e).what, VoError.IncorrectParametrs);
+				}
+				asi.changePasswordOfUser(email, ""+vu.getChangePasswordCode(), "111");
+				//InvalidOperation(VoError.IncorrectParametrs, "No such code registered for user!")
+			} finally {
+				pm.close();
+			}
+			pm = PMF.getPm();
+			try {
+				VoUser vu = pm.getObjectById(VoUser.class, uid);
+				assertEquals( vu.getPassword(), "111");
+			} finally {
+				pm.close();
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			assertFalse(true);
+		}
+		assertTrue(asi.checkEmailRegistered(email));
 	}
 }

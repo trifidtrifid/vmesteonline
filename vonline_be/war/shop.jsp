@@ -7,6 +7,9 @@
 <%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
 <%@ page import="com.vmesteonline.be.jdo2.VoFileAccessRecord"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
+<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
+<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
+<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 
 <%@ page import="java.nio.Buffer"%>
 <%@ page import="java.nio.ByteBuffer"%>
@@ -17,19 +20,70 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <%
+    HttpSession sess = request.getSession();
+    pageContext.setAttribute("auth",true);
+    try {
+        AuthServiceImpl.checkIfAuthorised(sess.getId());
+        UserServiceImpl userService = new UserServiceImpl(request.getSession());
+        ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+        pageContext.setAttribute("firstName",ShortUserInfo.firstName);
+        pageContext.setAttribute("lastName",ShortUserInfo.lastName);
+    } catch (InvalidOperation ioe) {
+        pageContext.setAttribute("auth",false);
+    }
 
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
     Shop shop = shopService.getShop(ArrayShops.get(0).id);
 
-    List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(0);
-    ProductListPart productsListPart = shopService.getProducts(0,10,ArrayProductCategory.get(1).id);
-    ProductDetails productDetails = shopService.getProductDetails(productsListPart.products.get(0).id);
+    Cookie cookies [] = request.getCookies ();
+    String cookieName = "catid";
+    String cookieName2 = "arrayPrevCat";
+    Cookie catIdCookie = null;
+    Cookie arrayPrevCat = null;
+    if (cookies != null) {
+        for (int i = 0; i < cookies.length; i++) {
+            //out.print(cookies[i].getName());
+            if (cookies[i].getName().equals (cookieName)) {
+                catIdCookie = cookies[i];
+            }
+            if (cookies[i].getName().equals (cookieName2)) {
+                arrayPrevCat = cookies[i];
+            }
+        }
+    }
+    /*if (arrayPrevCat != null){
+        out.print("==");
+        out.print(arrayPrevCat.getValue());
+        out.print("==");
+    }*/
+    long catId = 0;
+    if (catIdCookie != null){catId = Long.parseLong(catIdCookie.getValue());}
+    //out.print(catIdCookie.getValue());
+    if (catId != 0){
+        pageContext.setAttribute("innerCategoryFlag",true);
+    }
+
+    List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(catId);
+    //out.print("--");
+    //out.print(ArrayProductCategory.size());
+    if (ArrayProductCategory.size() > 0){
+        ProductListPart productsListPart;
+        if (ArrayProductCategory.size() == 1){
+            productsListPart = shopService.getProducts(0,10,ArrayProductCategory.get(0).id);
+        }else{
+            productsListPart = shopService.getProducts(0,10,ArrayProductCategory.get(1).id);
+        }
+        ProductDetails productDetails = shopService.getProductDetails(productsListPart.products.get(0).id);
+        pageContext.setAttribute("products",productsListPart.products);
+        pageContext.setAttribute("productDetails",productDetails);
+    }
+
     //String productURL = new String( productsListPart.products.get(0).imageURL);
 
     /*List<Order> ArrayOrders = shopService.getOrders(0,(int)(System.currentTimeMillis()/1000L)+86400*30);
-    Order order = shopService.getOrder(ArrayOrders.get(1).id);
+    Order order = shopService.getOrder(ArrayOrders.get(2).id);
     OrderDetails orderDetails = shopService.getOrderDetails(order.id);
     List<OrderLine> orderLineArray= orderDetails.odrerLines;*/
 
@@ -37,14 +91,11 @@
     //out.print(orderDetails.odrerLines.get(0).product.id);
     //out.print(ArrayProductCategory.get(0).logoURLset);
     //out.print(new String( productsListPart.products.get(0).imageURL));
-    //out.print(productsListPart.products.size());
+    //out.print(ArrayProductCategory.get(1).id);
 
     pageContext.setAttribute("productCategories", ArrayProductCategory);
-    pageContext.setAttribute("products",productsListPart.products);
-    pageContext.setAttribute("productDetails",productDetails);
     //pageContext.setAttribute("productURL",productURL);
     //pageContext.setAttribute("orderLines",orderLineArray);
-
 %>
 
 <!DOCTYPE html>
@@ -62,7 +113,14 @@
         document.createElement('nav');
     </script>
     <![endif]-->
-</head> 
+
+        <script type="text/javascript">
+            globalUserAuth = false;
+            <c:if test="${auth}">
+                globalUserAuth = true;
+            </c:if>
+        </script>
+</head>
 <body>
 <div class="container">
     <div class="navbar navbar-default" id="navbar">
@@ -82,34 +140,20 @@
 
     <div class="navbar-header pull-right" role="navigation">
         <ul class="nav ace-nav">
-            <li>
-                <a class="btn btn-info no-border" href="#">
-                    Сообщения
-                </a>
-            </li>
 
-            <li>
-                <a class="btn btn-info no-border" href="#">
-                    Архив
-                </a>
-            </li>
-
-            <li>
-                <a class="btn btn-info no-border" href="#">
-                    Избранное
-                </a>
-            </li>
             <li class="active">
                 <a class="btn btn-info no-border" href="#">
                     Магазин
                 </a>
             </li>
             <li class="user-short light-blue">
+                <c:choose>
+                    <c:when test="${auth}">
                 <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                     <img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />
                     <span class="user-info">
-                        <small>Welcome,</small>
-                        Jason
+                        <small><c:out value="${firstName}"/></small>
+                        <c:out value="${lastName}"/>
                     </span>
                     <i class="icon-caret-down"></i>
                 </a>
@@ -138,14 +182,25 @@
                         </a>
                     </li>
                 </ul>
+                    </c:when>
+                    <c:otherwise>
+                        <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                            <img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />
+                    <span class="user-info">
+                        <small>Привет,</small>
+                        Гость
+                    </span>
+                        </a>
+                    </c:otherwise>
+                </c:choose>
             </li>
         </ul><!-- /.ace-nav -->
     </div><!-- /.navbar-header -->
     </div><!-- /.container -->
     </div>
-    <div class="main-container" id="main-container">
+    <div class="main-container shop" id="main-container">
         <div class="main-container-inner">
-            <aside class="sidebar" id="sidebar">
+            <%--<aside class="sidebar" id="sidebar">
                 <script type="text/javascript">
                     try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
                 </script>
@@ -180,7 +235,7 @@
                     </li>
 
                 </ul><!-- /.nav-list -->
-            </aside>
+            </aside>--%>
             <aside class="sidebar shop-right">
                 <div class="show-right">
                     Заказы
@@ -196,7 +251,7 @@
                     </div>
                 </nav>
                 <ul class="catalog-order">
-<%--                    <c:forEach var="orderLine" items="${orderLines}">
+                    <%--<c:forEach var="orderLine" items="${orderLines}">
                         <li>
                             <img src="${orderLine.product.imageURL}" alt="картинка"/>
                             <div class="product-right-descr">
@@ -308,8 +363,14 @@
                         </div>
                         <div class="input-delivery">
                             <input type="tel" placeholder="Номер телефона"/>
-                            <textarea id="delivery-addr" placeholder="Адрес доставки"></textarea>
+                            <span class="lbl"> Адрес доставки</span>
+                            <input id="country-delivery" type="text" value="Россия" placeholder="Страна"/>
+                            <input id="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
+                            <input id="street-delivery" type="text" placeholder="Улица"/>
+                            <input id="building-delivery" type="text" class="short first" placeholder="Дом"/>
+                            <input id="flat-delivery" type="text" class="short" placeholder="Квартира"/>
                         </div>
+                        <div class="alert-delivery">Введите адрес доставки !</div>
                     </div>
                     <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
                     <button class="btn btn-sm btn-grey no-border">Отменить</button>
@@ -333,12 +394,14 @@
                 </form>
                 <nav class="shop-menu">
                     <ul>
-                        <li>
-                            <a href="#" class="fa fa-reply-all"></a>
-                            <div>Назад</div>
-                        </li>
+                        <c:if test="${innerCategoryFlag}">
+                            <li>
+                                <a href="#" class="fa fa-reply-all"></a>
+                                <div>Назад</div>
+                            </li>
+                        </c:if>
                         <c:forEach var="productCategory" items="${productCategories}">
-                            <li data-catid="${productCategory.id}">
+                            <li data-parentid="${productCategory.parentId}" data-catid="${productCategory.id}">
                                 <a href="#" class="fa fa-beer"></a>
                                 <div>${productCategory.name}</div>
                             </li>
@@ -356,7 +419,7 @@
                         </tr>
                         </thead>
                         <c:forEach var="product" items="${products}">
-                            <tr>
+                            <tr data-productid="${product.id}">
                                 <td>
                                     <a href="#" class="product-link">
                                         <img src="${product.imageURL}" alt="картинка"/>
@@ -509,6 +572,48 @@
         </div>
     </div>
 
+    <div class="modal modal-auth">
+        <div class="login-forms">
+            <form action="#" class="registration-form login-form">
+                <h1>Вход</h1>
+                <div class="reg-now">
+                    <br>
+                    <div>
+                        <label for="uname">E-mail</label>
+                        <input type="text" id="uname"/>
+                    </div>
+                    <div>
+                        <label for="password">Пароль</label>
+                        <input type="password" id="password"/>
+                        <a href="#" class="remember-link">Забыли пароль ?</a>
+                    </div>
+                    <button id="go" class="btn-submit btn-sm no-border">Войти</button>
+                </div>
+            </form>
+            <form action="#" class="registration-form reg-form">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h1>Регистрация</h1>
+                <div class="reg-now">
+                    <br>
+                    <div>
+                        <label for="login">Логин</label>
+                        <input type="text" id="login"/>
+                    </div>
+                    <div>
+                        <label for="email">E-mail</label>
+                        <input type="email" required="required" id="email"/>
+                    </div>
+                    <div>
+                        <label for="pass">Пароль</label>
+                        <input type="password" id="pass"/>
+                    </div>
+                    <span class="email-alert">Такой e-mail уже зарегистрирован !</span>
+                    <button class="btn-submit btn-sm no-border">Регистрация</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
 <!-- общие библиотеки -->
 <script src="js/jquery-2.0.3.min.js"></script>
@@ -526,10 +631,16 @@
 <script src="js/ace-elements.min.js"></script>
 <!-- файлы thrift -->
 <script src="js/thrift.js" type="text/javascript"></script>
+<script src="gen-js/bedata_types.js" type="text/javascript"></script>
 <script src="gen-js/shop_types.js" type="text/javascript"></script>
 <script src="gen-js/ShopService.js" type="text/javascript"></script>
+<script src="gen-js/authservice_types.js" type="text/javascript"></script>
+<script src="gen-js/AuthService.js" type="text/javascript"></script>
+<script src="gen-js/userservice_types.js" type="text/javascript"></script>
+<script src="gen-js/UserService.js" type="text/javascript"></script>
 <!-- -->
 <!-- собственные скрипты  -->
+<script src="js/login.js"></script>
 <script src="js/common.js"></script>
 <script src="js/shop.js"></script>
 

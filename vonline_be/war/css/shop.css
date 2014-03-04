@@ -4,12 +4,13 @@
 @import 'ace-fonts.css';
 @import 'ace.css';
 @import 'flexslider.css';
+@import 'login.css';
 html {
   height: 100%;
 }
 body {
   background: #fff;
-  height: 101%;
+  height: 100%;
 }
 a {
   outline: none !important;
@@ -73,8 +74,12 @@ a {
   padding-top: 20px;
   vertical-align: top;
 }
+.shop {
+  border-left: 1px solid #ccc;
+}
 .main-content {
   margin-right: 250px;
+  margin-left: 0;
   padding: 10px;
 }
 .shop-right {
@@ -152,11 +157,28 @@ a {
 .shop-right .delivery-right .input-delivery {
   display: none;
 }
+.shop-right .delivery-right .input-delivery .lbl {
+  font-size: 16px;
+  display: block;
+  margin-bottom: 5px;
+}
 .shop-right .delivery-right .input-delivery input {
   width: 230px;
+  margin-bottom: 10px;
+}
+.shop-right .delivery-right .input-delivery input.short {
+  width: 110px;
+  display: inline-block;
+}
+.shop-right .delivery-right .input-delivery input.short.first {
+  margin-right: 5px;
 }
 .shop-right .delivery-right .input-delivery #delivery-addr {
   margin-left: 0;
+}
+.shop-right .delivery-right .alert-delivery {
+  color: #f00;
+  display: none;
 }
 .shop-right textarea {
   margin: 10px;
@@ -564,74 +586,6 @@ span
     width: 100%;
   }
 }
-/* страница регистрации */
-.registration-form {
-  width: 580px;
-  padding: 0 10px;
-  margin: 30px auto;
-  border: 1px solid #438eb9;
-  border-radius: 2px;
-}
-.registration-form h1 {
-  margin: 0 -10px;
-  padding: 10px;
-  background: #438eb9;
-  color: #fff;
-}
-.registration-form h3 {
-  border-bottom: 1px solid #438eb9;
-  padding-bottom: 5px;
-  margin-bottom: 15px;
-}
-.registration-form .reg-soc a {
-  font-size: 50px;
-  margin: 0 10px;
-}
-.registration-form .reg-soc a:hover {
-  text-decoration: none;
-}
-.registration-form .reg-now>div {
-  margin-bottom: 10px;
-}
-.registration-form .reg-now label {
-  width: 200px;
-}
-.registration-form .reg-now label span {
-  color: #d2322d;
-}
-.registration-form .reg-now label span:before {
-  margin-right: 5px !important;
-}
-.registration-form .reg-now .radio {
-  display: inline-block;
-  vertical-align: baseline;
-  margin: 0;
-}
-.registration-form .reg-now .radio span {
-  color: #000;
-}
-.registration-form .reg-now .form-control {
-  display: inline-block;
-}
-.registration-form .btn-primary {
-  width: 200px;
-  margin: 20px auto;
-  font-size: 20px;
-  display: block;
-}
-.registration-form input[type="text"],
-.registration-form input[type="email"],
-.registration-form input[type="tel"],
-.registration-form input[type="password"] {
-  width: 320px;
-}
-.registration-form #captcha {
-  width: 155px;
-}
-.registration-form input[type="file"],
-.registration-form .captcha {
-  display: inline-block;
-}
 /* блоки при нелогине */
 .nologin-user-short a {
   cursor: default !important;
@@ -691,19 +645,16 @@ span
   display: block;
   margin: 5px auto 0;
 }
-/* регистрация для магазина */
-.shop-reg {
-  width: 320px;
+/* popup логина */
+.modal-auth {
+  width: 643px;
+  overflow: hidden;
+  height: 260px;
+  margin-left: -327px;
 }
-.shop-reg h1 {
-  text-align: center;
+.modal-auth .login-forms {
+  margin: 0;
 }
-.shop-reg .reg-now label {
-  width: 60px;
-}
-.shop-reg input[type="text"],
-.shop-reg input[type="email"],
-.shop-reg input[type="tel"],
-.shop-reg input[type="password"] {
-  width: 220px;
+.modal-auth .close {
+  margin-right: -5px;
 }
