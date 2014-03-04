@@ -42,7 +42,7 @@ public class Defaults {
 	public static String user3pass = "c";
 
 	public static int radiusStarecase = 0;
-	public static int radiusHome = 10;
+	public static int radiusHome = 20;
 	public static int radiusSmall = 200;
 	public static int radiusMedium = 2000;
 	public static int radiusLarge = 5000;

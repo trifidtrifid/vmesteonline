@@ -68,6 +68,8 @@ public class VoMessage extends VoBaseMessage {
 				}
 			}
 
+			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, msg.getGroupId());
+			this.radius = ug.getRadius();
 			try {
 				/* CHeck the recipient */
 				if (0 != msg.getRecipientId()) {
@@ -141,7 +143,7 @@ public class VoMessage extends VoBaseMessage {
 		return latitude;
 	}
 
-	public float getRadius() {
+	public int getRadius() {
 		return radius;
 	}
 
@@ -162,7 +164,7 @@ public class VoMessage extends VoBaseMessage {
 	@Persistent
 	private float latitude;
 	@Persistent
-	private float radius;
+	private int radius;
 
 	@Persistent
 	@Unindexed

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -96,6 +97,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				else
 					voMsgs = subLst;
 			}
+
+			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, groupId);
+			voMsgs = removeNoInGroupMessages(voMsgs, ug.getRadius());
 			voMsgs = removeExtraMessages(voMsgs, length);
 
 			return createMlp(voMsgs, userId, pm);
@@ -118,15 +122,29 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			Query q = pm.newQuery(VoMessage.class);
 			q.setFilter("topicId == " + topicId);
 			List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+
 			MessagesTree tree = new MessagesTree(voMsgs);
 			voMsgs = tree.getTreeMessagesAfter(lastLoadedMsgId, userId);
 
+			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, groupId);
+			voMsgs = removeNoInGroupMessages(voMsgs, ug.getRadius());
 			voMsgs = removeExtraMessages(voMsgs, length);
 			return createMlp(voMsgs, userId, pm);
 		} finally {
 			pm.close();
 		}
 
+	}
+
+	private List<VoMessage> removeNoInGroupMessages(List<VoMessage> list, int radius) {
+
+		ListIterator<VoMessage> it = list.listIterator();
+		while (it.hasNext()) {
+			if (it.next().getRadius() < radius)
+				it.remove();
+
+		}
+		return list;
 	}
 
 	private List<VoMessage> removeExtraMessages(List<VoMessage> list, int length) {

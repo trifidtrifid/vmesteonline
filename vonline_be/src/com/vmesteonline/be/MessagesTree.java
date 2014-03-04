@@ -51,7 +51,7 @@ public class MessagesTree {
 
 				if (isVisibleMessage(voMsg, userId)) {
 					voMsg.setVisibleOffset(items.get(i).level);
-					voMsg.setChildMessageNum(items.get(i).childMsgsNum);
+//					voMsg.setChildMessageNum(items.get(i).childMsgsNum);
 					lst.add(voMsg);
 				}
 			}
@@ -121,7 +121,6 @@ public class MessagesTree {
 		public int compare(VoMessage a, VoMessage b) {
 			return a.getCreatedAt() < b.getCreatedAt() ? 0 : 1;
 		}
-
 	}
 
 	class ItemPosition {

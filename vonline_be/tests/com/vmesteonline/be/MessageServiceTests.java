@@ -402,6 +402,24 @@ public class MessageServiceTests {
 	}
 
 	@Test
+	public void testGetTopicsFromSmallerGroupAnotherUser() {
+
+		try {
+			createTopic(getUserGroupId(Defaults.user1email, Defaults.radiusStarecase));
+
+			asi.login(Defaults.user2email, Defaults.user2pass);
+			long grId = getUserGroupId(Defaults.user2email, Defaults.radiusStarecase);
+			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(0, rTopic.totalSize);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+	}
+
+	@Test
 	public void testGetTopicsFromBiggerGroupSameUser() {
 
 		try {
@@ -417,38 +435,12 @@ public class MessageServiceTests {
 		}
 	}
 
-	@Test
-	public void testGetTopicsFromSmallerGroupSameUser() {
-
-		try {
-			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusMedium);
-			Assert.assertNotNull(grId);
-			Topic tpc = createTopic(grId);
-
-			grId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-
-			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
-			Assert.assertNotNull(rTopic);
-			Assert.assertEquals(1, rTopic.totalSize);
-			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
-			Assert.assertEquals(topicSubject, rTopic.topics.get(0).getSubject());
-			Assert.assertNotNull(rTopic.topics.get(0).userInfo);
-			Assert.assertEquals(Defaults.user1name, rTopic.topics.get(0).userInfo.firstName);
-			Assert.assertEquals(Defaults.user1lastName, rTopic.topics.get(0).userInfo.lastName);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception thrown." + e.getMessage());
-		}
-
-	}
-
 	long getUserGroupId(String email, int radius) {
 		VoUser user = asi.getUserByEmail(email, pm);
-		System.out.print("user " + email + " home address: " + user.getGroups().get(0).getName());
 		for (VoUserGroup ug : user.getGroups()) {
-			if (ug.getRadius() == radius)
+			if (ug.getRadius() == radius) {
 				return ug.getId();
+			}
 		}
 		return 0L;
 	}
