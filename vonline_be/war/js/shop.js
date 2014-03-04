@@ -80,6 +80,56 @@ $(document).ready(function(){
     var prevParentId = [],
         parentCounter = 0;
 
+//    setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
+
+    var prevCatCounter = getCookie('prevCatCounter');
+    if (prevCatCounter !== undefined){
+        parentCounter = parseInt(prevCatCounter);
+    }
+    var arrayPrevCatCookie = getCookie('arrayPrevCat');
+    if (arrayPrevCatCookie !== undefined){
+        prevParentId = arrayPrevCatCookie.split(',');
+        //alert(prevParentId);
+    }
+
+
+    // возвращает cookie с именем name, если есть, если нет, то undefined
+    function getCookie(name) {
+        var matches = document.cookie.match(new RegExp(
+            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+    }
+
+    function setCookie(name, value, options) {
+        options = options || {};
+
+        var expires = options.expires;
+
+        if (typeof expires == "number" && expires) {
+            var d = new Date();
+            d.setTime(d.getTime() + expires*1000);
+            expires = options.expires = d;
+        }
+        if (expires && expires.toUTCString) {
+            options.expires = expires.toUTCString();
+        }
+
+        value = encodeURIComponent(value);
+
+        var updatedCookie = name + "=" + value;
+
+        for(var propName in options) {
+            updatedCookie += "; " + propName;
+            var propValue = options[propName];
+            if (propValue !== true) {
+                updatedCookie += "=" + propValue;
+            }
+        }
+
+        document.cookie = updatedCookie;
+    }
+
     function InitProductDetailPopup(selector){
         selector.click(function(e){
             e.preventDefault();
@@ -249,8 +299,12 @@ $(document).ready(function(){
         $('.shop-menu ul').html(firstMenuItem).append(shopMenu);
 
         /* новый список товаров */
+        /*alert("--"+catID);
         var tempCatID = catID;
-        if (!tempCatID){tempCatID = productCategories[1].id;}
+        if (!tempCatID){alert('1');tempCatID = productCategories[1].id;}
+        if (!tempCatID){tempCatID = productCategories[0].id;}
+        alert("-- "+tempCatID);*/
+        var tempCatID = productCategories[0].id  ;
         var productsList = client.getProducts(0,10,tempCatID).products;
         var productListLength = productsList.length;
         var productsHtml = '';
@@ -319,11 +373,20 @@ $(document).ready(function(){
         $('.shop-menu li a').click(function(e){
             e.preventDefault();
             if ($(this).hasClass('fa-reply-all')){
-                InitLoadCategory(prevParentId[--parentCounter]);
+
+                InitLoadCategory(prevParentId[parentCounter]);
+                parentCounter--;
+                setCookie('catid',prevParentId[parentCounter]);
+                setCookie('arrayPrevCat',prevParentId);
+                setCookie('prevCatCounter',parentCounter);
             }
             else {
-                prevParentId[parentCounter++] = $(this).parent().data('parentid');
+                parentCounter++;
+                prevParentId[parentCounter] = $(this).parent().data('parentid');
                 InitLoadCategory($(this).parent().data('catid'));
+                setCookie('catid',$(this).parent().data('catid'));
+                setCookie('arrayPrevCat',prevParentId);
+                setCookie('prevCatCounter',parentCounter);
             }
         });
     }
@@ -526,7 +589,6 @@ $(document).ready(function(){
     });
 
     $('.day').click(function(){
-        alert('1');
         var madeMenu = '<div class="day-menu">' +
             '<a href="#" class="day-repeat">Повторить</a>'+
             '<a href="#" class="day-add">Добавить</a>'+

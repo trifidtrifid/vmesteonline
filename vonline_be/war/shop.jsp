@@ -24,6 +24,10 @@
     pageContext.setAttribute("auth",true);
     try {
         AuthServiceImpl.checkIfAuthorised(sess.getId());
+        UserServiceImpl userService = new UserServiceImpl(request.getSession());
+        ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+        pageContext.setAttribute("firstName",ShortUserInfo.firstName);
+        pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
     }
@@ -33,13 +37,53 @@
     List<Shop> ArrayShops = shopService.getShops();
     Shop shop = shopService.getShop(ArrayShops.get(0).id);
 
-    List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(0);
-    ProductListPart productsListPart = shopService.getProducts(0,10,ArrayProductCategory.get(1).id);
-    ProductDetails productDetails = shopService.getProductDetails(productsListPart.products.get(0).id);
+    Cookie cookies [] = request.getCookies ();
+    String cookieName = "catid";
+    String cookieName2 = "arrayPrevCat";
+    Cookie catIdCookie = null;
+    Cookie arrayPrevCat = null;
+    if (cookies != null) {
+        for (int i = 0; i < cookies.length; i++) {
+            //out.print(cookies[i].getName());
+            if (cookies[i].getName().equals (cookieName)) {
+                catIdCookie = cookies[i];
+            }
+            if (cookies[i].getName().equals (cookieName2)) {
+                arrayPrevCat = cookies[i];
+            }
+        }
+    }
+    /*if (arrayPrevCat != null){
+        out.print("==");
+        out.print(arrayPrevCat.getValue());
+        out.print("==");
+    }*/
+    long catId = 0;
+    if (catIdCookie != null){catId = Long.parseLong(catIdCookie.getValue());}
+    //out.print(catIdCookie.getValue());
+    if (catId != 0){
+        pageContext.setAttribute("innerCategoryFlag",true);
+    }
+
+    List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(catId);
+    //out.print("--");
+    //out.print(ArrayProductCategory.size());
+    if (ArrayProductCategory.size() > 0){
+        ProductListPart productsListPart;
+        if (ArrayProductCategory.size() == 1){
+            productsListPart = shopService.getProducts(0,10,ArrayProductCategory.get(0).id);
+        }else{
+            productsListPart = shopService.getProducts(0,10,ArrayProductCategory.get(1).id);
+        }
+        ProductDetails productDetails = shopService.getProductDetails(productsListPart.products.get(0).id);
+        pageContext.setAttribute("products",productsListPart.products);
+        pageContext.setAttribute("productDetails",productDetails);
+    }
+
     //String productURL = new String( productsListPart.products.get(0).imageURL);
 
     /*List<Order> ArrayOrders = shopService.getOrders(0,(int)(System.currentTimeMillis()/1000L)+86400*30);
-    Order order = shopService.getOrder(ArrayOrders.get(1).id);
+    Order order = shopService.getOrder(ArrayOrders.get(2).id);
     OrderDetails orderDetails = shopService.getOrderDetails(order.id);
     List<OrderLine> orderLineArray= orderDetails.odrerLines;*/
 
@@ -50,16 +94,8 @@
     //out.print(ArrayProductCategory.get(1).id);
 
     pageContext.setAttribute("productCategories", ArrayProductCategory);
-    pageContext.setAttribute("products",productsListPart.products);
-    pageContext.setAttribute("productDetails",productDetails);
     //pageContext.setAttribute("productURL",productURL);
     //pageContext.setAttribute("orderLines",orderLineArray);
-
-    UserServiceImpl userService = new UserServiceImpl(request.getSession());
-    ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-    pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-    pageContext.setAttribute("lastName",ShortUserInfo.lastName);
-
 %>
 
 <!DOCTYPE html>
@@ -154,7 +190,6 @@
                         <small>Привет,</small>
                         Гость
                     </span>
-                            <i class="icon-caret-down"></i>
                         </a>
                     </c:otherwise>
                 </c:choose>
@@ -216,7 +251,7 @@
                     </div>
                 </nav>
                 <ul class="catalog-order">
-<%--                    <c:forEach var="orderLine" items="${orderLines}">
+                    <%--<c:forEach var="orderLine" items="${orderLines}">
                         <li>
                             <img src="${orderLine.product.imageURL}" alt="картинка"/>
                             <div class="product-right-descr">
@@ -359,10 +394,12 @@
                 </form>
                 <nav class="shop-menu">
                     <ul>
-                        <%--<li>
-                            <a href="#" class="fa fa-reply-all"></a>
-                            <div>Назад</div>
-                        </li>--%>
+                        <c:if test="${innerCategoryFlag}">
+                            <li>
+                                <a href="#" class="fa fa-reply-all"></a>
+                                <div>Назад</div>
+                            </li>
+                        </c:if>
                         <c:forEach var="productCategory" items="${productCategories}">
                             <li data-parentid="${productCategory.parentId}" data-catid="${productCategory.id}">
                                 <a href="#" class="fa fa-beer"></a>
