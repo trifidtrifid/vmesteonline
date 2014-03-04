@@ -139,7 +139,7 @@ public class VoShop {
 
 	@Persistent
 	@Unindexed
-	private SortedMap<Integer, Integer> dates;
+	private Map<Integer, Integer> dates;
 
 	@Persistent
 	@Unindexed
@@ -169,7 +169,9 @@ public class VoShop {
 
 	public SortedMap<Integer, DateType> selectDates(int fromDate, int toDate) {
 		SortedMap<Integer, DateType> selectedDates = new TreeMap<Integer, DateType>();
-		selectedDates.putAll(convertToDateTypeMap(dates.subMap(fromDate, toDate), new TreeMap<Integer, DateType>()));
+		TreeMap<Integer,Integer> sdm = new TreeMap<Integer,Integer>();
+		sdm.putAll(dates);
+		selectedDates.putAll(convertToDateTypeMap(sdm.subMap(fromDate, toDate), new TreeMap<Integer, DateType>()));
 		return selectedDates;
 	}
 
@@ -265,7 +267,7 @@ public class VoShop {
 		return producers;
 	}
 
-	public SortedMap<Integer, Integer> getDates() {
+	public Map<Integer, Integer> getDates() {
 		return dates;
 	}
 
@@ -280,7 +282,9 @@ public class VoShop {
 	}
 
 	public SortedMap<Integer, DateType> getDates(int from, int to) {
-		return convertToDateTypeMap(dates.subMap(from - from % 86400, to + 86400 - to % 86400), new TreeMap<Integer, DateType>());
+		TreeMap<Integer,Integer> sdm = new TreeMap<Integer,Integer>();
+		sdm.putAll(dates);
+		return convertToDateTypeMap(sdm.subMap(from - from % 86400, to + 86400 - to % 86400), new TreeMap<Integer, DateType>());
 	}
 
 	public static Map<Integer, Double> convertFromPaymentTypeMap(Map<PaymentType, Double> in, Map<Integer, Double> out) {

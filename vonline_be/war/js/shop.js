@@ -175,8 +175,8 @@ $(document).ready(function(){
                 //alert(parseInt(new Date().getTime()/1000));
                 var nowTime = parseInt(new Date().getTime()/1000)+86400;
                 var nowTimeArray = [];
-                nowTimeArray[nowTime] = 1;
-                //client.setDates(nowTimeArray);
+                nowTimeArray[nowTime] = com.vmesteonline.be.shop.DateType.NEXT_ORDER;
+                client.setDates(nowTimeArray);
                 //var t = client.getDates(0,nowTime);
                 //alert(t.length);
                 /*for (var p in t){

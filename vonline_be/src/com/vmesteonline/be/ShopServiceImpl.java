@@ -746,7 +746,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			VoShop shop = getCurrentShop(pm);
 			pm.retrieve(shop);
-			Collection<Integer> dateTypes = shop.getDates().subMap(date - date % 86400, date + 86400 - date % 86400).values();
+			TreeMap<Integer,Integer> sdm = new TreeMap<Integer,Integer>();
+			sdm.putAll(shop.getDates());
+			Collection<Integer> dateTypes = sdm.subMap(date - date % 86400, date + 86400 - date % 86400).values();
 			boolean NEXT_ORDERfound = false;
 			for (Integer dt : dateTypes) {
 				if (DateType.NEXT_ORDER.getValue() == dt) {
