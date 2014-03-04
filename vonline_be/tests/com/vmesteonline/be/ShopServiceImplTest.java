@@ -296,10 +296,10 @@ public class ShopServiceImplTest {
 			optionsMap2.put("вкус", "мерзкий");
 
 			productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D), new ProductDetails(categories1,
-					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId, 1000, 3000, true, new HashSet<String>())));
+					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId, 1000, 3000, true, new HashSet<String>(), "стакан")));
 
 			productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D), new ProductDetails(categories2,
-					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id, 1000, 3000, true, new HashSet<String>())));
+					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id, 1000, 3000, true, new HashSet<String>(), "кг")));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
 			// expects to get all of products
@@ -686,10 +686,10 @@ public class ShopServiceImplTest {
 		optionsMap2.put("вкус", "мерзкий");
 
 		productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D), new ProductDetails(categories1,
-				"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId, 1000, 3000, true, new HashSet<String>())));
+				"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId, 1000, 3000, true, new HashSet<String>(),"стакан")));
 
 		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D), new ProductDetails(categories2,
-				"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id, 1000, 3000, true, new HashSet<String>())));
+				"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id, 1000, 3000, true, new HashSet<String>(),"кг")));
 
 		upProductsIdl = si.uploadProducts(productsList, shopId, true);
 

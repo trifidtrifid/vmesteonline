@@ -208,13 +208,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			Product p1 = new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D);
 			ProductDetails p1d = new ProductDetails(categories1,
-					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId, 1000, 5000, false, new HashSet<String>());
+					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId, 1000, 5000, false, new HashSet<String>(),"стакан");
 			
 			productsList.add(new FullProductInfo(p1, p1d));
 
 			Product p2 = new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D);
 			ProductDetails p2d = new ProductDetails(categories2,
-					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id, 2000, 15000, true, new HashSet<String>());
+					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id, 2000, 15000, true, new HashSet<String>(),"кг.");
 			productsList.add(new FullProductInfo(p2, p2d));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
@@ -1621,10 +1621,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 								
 							pod = prodDescMap.get(producer.getId()).get(product.getId());
 							pod.orderedQuantity += vol.getQuantity();
-							pod.packQuantity = 0 != product.getMinProducerPackGramms() ?
-									1 + (int)(pod.orderedQuantity * 1000 / product.getMinProducerPackGramms()) : 0;
+							pod.packQuantity = 0 != product.getMinProducerPack() ?
+									1 + (int)(pod.orderedQuantity / product.getMinProducerPack()) : 0;
 							
-							pod.restQuantity = ((double)( pod.packQuantity * product.getMinProducerPackGramms() - pod.orderedQuantity * 1000 ))/1000D;
+							pod.restQuantity = ((double)( pod.packQuantity * product.getMinProducerPack() - pod.orderedQuantity * 1000 ))/1000D;
 							continue;
 						} 
 						 
@@ -1633,14 +1633,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 						pod.producerName = producer.getName();
 						pod.productId = product.getId();
 						pod.productName = product.getName();
-						pod.minUnitSize = product.getMinProducerPackGramms();
+						pod.minUnitSize = product.getMinProducerPack();
 						pod.orderedQuantity = vol.getQuantity();
 						pod.prepackRequired = product.isPrepackRequired();
-						pod.packSize = product.getMinProducerPackGramms();
-						pod.packQuantity = 0 != product.getMinProducerPackGramms() ? 1 + (int)(pod.orderedQuantity * 1000 / product.getMinProducerPackGramms()) :
+						pod.packSize = product.getMinProducerPack();
+						pod.packQuantity = 0 != product.getMinProducerPack() ? 1 + (int)(pod.orderedQuantity  / product.getMinProducerPack()) :
 							0;
 						pod.deliveryType = deliveryType;
-						pod.restQuantity = ((double)( pod.packQuantity * product.getMinProducerPackGramms() - pod.orderedQuantity * 1000 ))/1000D;
+						pod.restQuantity = ((double)( pod.packQuantity * product.getMinProducerPack() - pod.orderedQuantity  ));
 					}
 				}
 				
@@ -1744,7 +1744,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 							pod.producerName = producer.getName();
 							pod.productId = product.getId();
 							pod.productName = product.getName();
-							pod.minUnitSize = product.getMinProducerPackGramms();
+							pod.minUnitSize = product.getMinProducerPack();
 							pod.orderedQuantity = pqe.getKey();
 							pod.prepackRequired = product.isPrepackRequired();
 							pod.packSize = pqe.getKey();

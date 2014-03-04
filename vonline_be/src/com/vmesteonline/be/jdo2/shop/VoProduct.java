@@ -1,7 +1,6 @@
 package com.vmesteonline.be.jdo2.shop;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,6 +67,7 @@ public class VoProduct {
 		}
 		VoProducer producer = _pm.getObjectById(VoProducer.class, newInfo.details.producerId);
 		producer.getProducts().add(this);
+		this.unitName = newInfo.details.unitName;
 	}
 	
 	public static VoProduct createObject(VoShop shop, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
@@ -121,14 +121,14 @@ public class VoProduct {
 			VoProducer producer = pm.getObjectById(VoProducer.class, details.getProducerId());
 			vp.producer = producer;
 			
-			vp.minClientPackGramms = details.minClientPackGramms;
-			vp.minProducerPackGramms = details.minProducerPackGramms;
+			vp.minClientPack = details.minClientPack;
+			vp.minProducerPack = details.minProducerPack;
 			vp.prepackRequired =details.prepackRequired;
 			vp.knownNames = new HashSet<String>();
 			if( details.knownNames != null ) for (String name : details.knownNames ){
 				vp.knownNames.add(name);
 			}
-			
+			vp.unitName = details.unitName;
 			producer.getProducts().add(vp);
 			pm.makePersistent(vp);
 			pm.makePersistent(producer);
@@ -160,7 +160,8 @@ public class VoProduct {
 		this.categories = new ArrayList<VoProductCategory>();
 		this.shops = new ArrayList<VoShop>();
 		this.knownNames = new HashSet<String>();
-
+		this.unitName = details.unitName;
+		
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
 		try {
@@ -233,6 +234,7 @@ public class VoProduct {
 		productDetails.setFullDescr(fullDescr);
 		productDetails.setTopicSet(ts);
 		productDetails.setImagesURLset(getImagesURLset());
+		productDetails.setUnitName(this.unitName);
 
 		return productDetails;
 	}
@@ -262,7 +264,6 @@ public class VoProduct {
 	private double price;
 
 	@Persistent(mappedBy = "products")
-	/* @ManyToMany */
 	@Unowned
 	private List<VoProductCategory> categories;
 
@@ -296,34 +297,40 @@ public class VoProduct {
 	
 	@Persistent
 	@Unindexed
-	private long minClientPackGramms;
+	private double minClientPack;
 	
 	@Persistent
 	@Unindexed
-	private long minProducerPackGramms;
+	private double minProducerPack;
 	
 	@Persistent
+	@Unindexed
 	private boolean prepackRequired;
 	
 	
 	@Persistent
+	@Unindexed
 	private Set<String> knownNames;
+	
+	@Persistent
+	@Unindexed
+	private String unitName;
 
 	
-	public long getMinClientPackGramms() {
-		return minClientPackGramms;
+	public double getMinClientPack() {
+		return minClientPack;
 	}
 
-	public void setMinClientPackGramms(long minClientPackGramms) {
-		this.minClientPackGramms = minClientPackGramms;
+	public void setMinClientPackGramms(double minClientPack) {
+		this.minClientPack = minClientPack;
 	}
 
-	public long getMinProducerPackGramms() {
-		return minProducerPackGramms;
+	public double getMinProducerPack() {
+		return minProducerPack;
 	}
 
-	public void setMinProducerPackGramms(long minProducerPackGramms) {
-		this.minProducerPackGramms = minProducerPackGramms;
+	public void setMinProducerPackGramms(double minProducerPack) {
+		this.minProducerPack = minProducerPack;
 	}
 
 	public boolean isPrepackRequired() {

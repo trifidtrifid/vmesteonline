@@ -178,20 +178,20 @@ public class AuthServiceImpTests {
 		assertFalse(asi.checkEmailRegistered(email));
 		try {
 			long uid = asi.registerNewUser("testName", "testFamily", "testPassword", email, null);
-			asi.sendChangePasswordCodeRequest(email,"%code% %name%");
+			asi.sendConfirmCode(email, "mailTemplates/changePasswordConfirm.html");
 			PersistenceManager pm = PMF.getPm();
 			try {
 				VoUser vu = pm.getObjectById(VoUser.class, uid);
-				vu.getChangePasswordCode();
+				vu.getConfirmCode();
 				
 				try {
-					asi.changePasswordOfUser(email, "1"+vu.getChangePasswordCode(), "111");
+					asi.confirmRequest(email, "1"+vu.getConfirmCode(), "111");
 					fail();
 				} catch (Exception e) {
 					assertTrue( e instanceof InvalidOperation);
 					assertEquals( ((InvalidOperation)e).what, VoError.IncorrectParametrs);
 				}
-				asi.changePasswordOfUser(email, ""+vu.getChangePasswordCode(), "111");
+				asi.confirmRequest(email, ""+vu.getConfirmCode(), "111");
 				//InvalidOperation(VoError.IncorrectParametrs, "No such code registered for user!")
 			} finally {
 				pm.close();
