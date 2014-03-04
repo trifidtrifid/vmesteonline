@@ -176,17 +176,18 @@ $(document).ready(function(){
                 var nowTime = parseInt(new Date().getTime()/1000)+86400;
                 var nowTimeArray = [];
                 nowTimeArray[nowTime] = 1;
-                client.setDates(nowTimeArray);
-                /*var t = client.getDates(0,nowTime);
-                for (var p in t){
+                //client.setDates(nowTimeArray);
+                //var t = client.getDates(0,nowTime);
+                //alert(t.length);
+                /*for (var p in t){
                     alert(t[p]);
                 }*/
-            client.createOrder(nowTime,'asd2',0);
+            //client.createOrder(nowTime,'asd2',0);
                 /*var orders = client.getOrders(0,nowTime+1000);
                 alert(orders[2].id);*/
 
 
-            var orderLine = client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
+            //var orderLine = client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
                 //alert(orderLine.product.name);
                 var addedProductFlag = 0;
                 $('.catalog-order li').each(function(){
