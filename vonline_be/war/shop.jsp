@@ -510,8 +510,7 @@
 
                     <a href="#" class="back-to-shop shop-trigger">Вернуться в магазин</a>
                     <h1>Заказы</h1>
-
-                    <div class="order-item">
+                    <%--<div class="order-item">
                         <table>
                             <thead>
                             <tr>
@@ -752,7 +751,7 @@
                                 </table>
                             </section>
                         </div>
-                    </div>
+                    </div>--%>
                 </div>
             </div>
             <div class="clear"></div>

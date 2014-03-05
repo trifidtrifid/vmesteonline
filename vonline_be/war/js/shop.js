@@ -160,6 +160,8 @@ $(document).ready(function(){
 
     function AddSingleProductToBasket(currentProduct,spinnerValue){
         var productDetails = client.getProductDetails(currentProduct.data('productid'));
+        var unitName = "";
+        if (productDetails.unitName){unitName = productDetails.unitName;}
         var productHtml = '<li data-productid="'+ currentProduct.data('productid') +'">'+
             '<a href="#" class="product-link no-init">'+
             '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" alt="картинка"/>'+
@@ -208,7 +210,7 @@ $(document).ready(function(){
             '</thead>'+
             '<tr>'+
             '<td class="td-price">'+ currentProduct.find('.product-price').text() +'</td>'+
-            '<td><input type="text" class="input-mini spinner1 no-init" /> '+ productDetails.unitName +'</td>'+
+            '<td><input type="text" class="input-mini spinner1 no-init" /> '+ unitName +'</td>'+
             '<td class="td-summa">'+ currentProduct.find('.product-price').text() +'</td>'+
             '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
             '</tr>'+
@@ -245,12 +247,8 @@ $(document).ready(function(){
     client.setDates(dateArray);
     var datesArray = client.getDates(0,nowTime+100000);
 
-    for (var date in datesArray){
-        alert(date);
-    }
-
-    function InitAddToBasket(){
-        $('.fa-shopping-cart').click(function(){
+    function InitAddToBasket(selector){
+        selector.click(function(){
 
             if (!globalUserAuth){
                 $('.modal-auth').modal();
@@ -276,79 +274,11 @@ $(document).ready(function(){
                     currentSpinner.spinner('value',currentSpinner.spinner('value')+spinnerValue);
                }else{
                     AddSingleProductToBasket(currentProduct,spinnerValue);
-                    /*var productDetails = client.getProductDetails(currentProduct.data('productid'));
-                    var productHtml = '<li data-productid="'+ currentProduct.data('productid') +'">'+
-                    '<a href="#" class="product-link no-init">'+
-                    '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" alt="картинка"/>'+
-                    '<div class="product-right-descr">'+
-                    currentProduct.find('.product-link span').text()+
-                    '</div>'+
-                    '</a>'+
-                    '<div class="modal">'+
-                    '<div class="modal-body">'+
-                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
-                    '<div class="product-slider">'+
-                    '<div class="slider flexslider">'+
-                    '<ul class="slides">'+
-                    '<li>'+
-                    '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
-                    '</li>'+
-                    '</ul>'+
-                    '</div>'+
-                    '<div class="carousel flexslider">'+
-                    '<ul class="slides">'+
-                    '<li>'+
-                    '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
-                    '</li>'+
-                    '</ul>'+
-                    '</div>'+
-                    '</div>'+
-                    '<div class="product-descr">'+
-                    '<h3>'+ currentProduct.find('.product-link span').text() +'</h3>'+
-                    '<div class="product-text">'+
-                    productDetails.fullDescr+
-                    '</div>'+
-                    '<div class="modal-footer">'+
-                    '<span>Цена: '+ currentProduct.find('.product-price').text() +'</span>'+
-                    '</div>'+
-                    '</div>'+
-                    '</div>'+
-                    '</div>'+
-                    '<table>'+
-                    '<thead>'+
-                    '<tr>'+
-                    '<td>Цена(шт)</td>'+
-                    '<td>Кол-во</td>'+
-                    '<td>Сумма</td>'+
-                    '<td></td>'+
-                    '</tr>'+
-                    '</thead>'+
-                    '<tr>'+
-                    '<td class="td-price">'+ currentProduct.find('.product-price').text() +'</td>'+
-                    '<td><input type="text" class="input-mini spinner1 no-init" /> '+ productDetails.unitName +'</td>'+
-                    '<td class="td-summa">'+ currentProduct.find('.product-price').text() +'</td>'+
-                    '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
-                    '</tr>'+
-                    '</table>'+
-                    '</li>';
-
-                 $('.catalog-order').append(productHtml);
-                  currentProduct.addClass('added');
-
-                   var deleteNoInit = $('.catalog-order .delete-product.no-init');
-                   InitDeleteProduct(deleteNoInit,currentProduct);
-                   deleteNoInit.removeClass('no-init');
-
-                   var popupNoInit = $('.catalog-order .product-link.no-init');
-                   InitProductDetailPopup(popupNoInit);
-                   popupNoInit.removeClass('no-init');
-
-                   var spinnerNoInit = $('.catalog-order .spinner1.no-init');
-                   InitSpinner(spinnerNoInit,spinnerValue);
-                   spinnerNoInit.removeClass('no-init');*/
-
                 }
             }
+                if ($(this).closest('.modal').length>0){
+                    $(this).closest('.modal').modal('hide');
+                }
             }
         });
     }
@@ -390,6 +320,8 @@ $(document).ready(function(){
         var productDetails;
         for (i = 0; i < productListLength; i++){
             productDetails = client.getProductDetails(productsList[i].id);
+            var unitName = "";
+            if (productDetails.unitName){unitName = productDetails.unitName;}
             productsHtml += '<tr data-productid="'+ productsList[i].id +'">'+
                 '<td>'+
                 '<a href="#" class="product-link">'+
@@ -423,7 +355,7 @@ $(document).ready(function(){
                 '<div class="modal-footer">'+
                 '<span>Цена: '+ productsList[i].price +'</span>'+
                 '<input type="text" class="input-mini spinner1" /> '+
-                productDetails.unitName+
+                unitName+
                 '<i class="fa fa-shopping-cart"></i>'+
                 '</div>'+
                 '</div>'+
@@ -433,7 +365,7 @@ $(document).ready(function(){
                 '<td class="product-price">'+ productsList[i].price  +'</td>'+
                 '<td>'+
                 '<input type="text" class="input-mini spinner1" /> '+
-                productDetails.unitName+
+                unitName+
                 '</td>'+
                 '<td>'+
                 '<i class="fa fa-shopping-cart"></i>'+
@@ -445,7 +377,7 @@ $(document).ready(function(){
         /* подключение событий */
         InitSpinner($('.catalog table .spinner1'));
         InitProductDetailPopup($('.product-link'));
-        InitAddToBasket();
+        InitAddToBasket($('.fa-shopping-cart'));
         InitClickOnCategory()
 
     }
@@ -526,7 +458,7 @@ $(document).ready(function(){
 /* --- */
 
     InitSpinner($('.spinner1'),1);
-    InitAddToBasket();
+    InitAddToBasket($('.fa-shopping-cart'));
     InitProductDetailPopup($('.product-link'));
     // переключение между категориями
    InitClickOnCategory();
@@ -696,9 +628,6 @@ $(document).ready(function(){
 
     });
 
-
-
-
     //custom autocomplete (category selection)
     $.widget( "custom.catcomplete", $.ui.autocomplete, {
         _renderMenu: function( ul, items ) {
@@ -791,21 +720,194 @@ $(document).ready(function(){
 
     /* shop-orders */
     var shopOrders= $('.shop-orders');
-    shopOrders.find('.plus-minus').click(function(){
-        $(this).closest('.order-item').find('.order-products').slideToggle(200);
-        if ($(this).hasClass('fa-plus')){
-            $(this).removeClass('fa-plus').addClass('fa-minus');
-        }else{
-            $(this).removeClass('fa-minus').addClass('fa-plus');
+    initOrderPlusMinus();
+    function initOrderPlusMinus(){
+        shopOrders.find('.plus-minus').click(function(e){
+            e.preventDefault();
+
+            var orderItem = $(this).closest('.order-item');
+            var orderProducts = orderItem.find('.order-products');
+            var orderDetails = client.getOrderDetails(orderItem.data('orderid'));
+
+            if (orderProducts.find('.catalog').length == 0){
+                orderProducts.append(createOrdersProductHtml(orderDetails));
+
+                InitSpinner(orderProducts.find('.spinner1'),1);
+                InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
+                InitProductDetailPopup(orderProducts.find('.product-link'));
+            }
+
+            orderProducts.slideToggle(200,function(){
+                if ($('.main-content').height() > w.height()){
+                    $('#sidebar, .shop-right').css('height', $('.main-content').height()+45);
+                }
+            });
+            if ($(this).hasClass('fa-plus')){
+                $(this).removeClass('fa-plus').addClass('fa-minus');
+            }else{
+                $(this).removeClass('fa-minus').addClass('fa-plus');
+            }
+        });
+    }
+
+    function createOrdersProductHtml(orderDetails){
+        var ordersProductsHtml = '<section class="catalog">'+
+            '<table>'+
+            '<thead>'+
+            '<tr>'+
+            '<td>Название</td>'+
+            '<td>Цена</td>'+
+            '<td>Количество</td>'+
+            '<td></td>'+
+            '</tr>'+
+        '</thead>';
+        var orderLines = orderDetails.odrerLines;
+        var orderLinedLength = orderLines.length;
+
+        for (var j = 0; j < orderLinedLength; j++){
+            var productDetails = client.getProductDetails(orderLines[j].product.id);
+            var unitName = "";
+            if (productDetails.unitName){unitName = productDetails.unitName;}
+            ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
+                '<td>'+
+                '<a href="#" class="product-link">'+
+                '<img src="'+ orderLines[j].product.imageURL +'" alt="картинка"/>'+
+                '<span>'+
+                orderLines[j].product.name+'<br>'+
+                orderLines[j].product.shortDescr +
+                '</span>'+
+                '</a>'+
+                '<div class="modal">'+
+                '<div class="modal-body">'+
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
+                '<div class="product-slider">'+
+                '<div class="slider flexslider">'+
+                '<ul class="slides">'+
+                '<li>'+
+                '<img src="'+ orderLines[j].product.imageURL +'" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/2.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/3.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/4.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/5.jpg" />'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '<div class="carousel flexslider">'+
+                '<ul class="slides">'+
+                '<li>'+
+                '<img src="'+ orderLines[j].product.imageURL +'" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/2.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/3.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/4.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/5.jpg" />'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '</div>'+
+                '<div class="product-descr">'+
+                '<h3>'+ orderLines[j].product.name +'</h3>'+
+                '<div class="product-text">'+
+                productDetails.fullDescr+
+                '</div>'+
+                '<div class="modal-footer">'+
+                '<span>Цена: '+ orderLines[j].product.price +'</span>'+
+                '<input type="text" class="input-mini spinner1" />'+
+                unitName+
+                '<i class="fa fa-shopping-cart"></i>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '</td>'+
+                '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
+                '<td>'+
+                '<input type="text" class="input-mini spinner1" />'+
+                unitName+
+                '</td>'+
+                '<td>'+
+                '<i class="fa fa-shopping-cart"></i>'+
+                '</td>'+
+                '</tr>';
         }
-    });
+        ordersProductsHtml += '</table>'+
+            '</section>';
+
+        return ordersProductsHtml;
+    }
+
+    function createOrdersHtml(){
+        var ordersHtml = "";
+        var nowTime = parseInt(new Date().getTime()/1000)+86400;
+        var orders = client.getOrders(0,nowTime+1000);
+        var ordersLength = orders.length;
+        for (var i = ordersLength-1; i >= 0 ; i--){
+            console.log(i);
+            var orderDetails = client.getOrderDetails(orders[i].id);
+            ordersHtml += '<div class="order-item" data-orderid="'+ orders[i].id +'">'+
+                '<table>'+
+                    '<thead>'+
+                        '<tr>'+
+                            '<td>N</td>'+
+                            '<td>Дата</td>'+
+                            '<td>Статус заказа</td>'+
+                            '<td>Доставка</td>'+
+                            '<td>Кол-во продуктов</td>'+
+                            '<td>Сумма</td>'+
+                            '<td></td>'+
+                        '</tr>'+
+                    '</thead>'+
+                    '<tbody>'+
+                        '<tr>'+
+                            '<td>Заказ N '+i+'</td>'+
+                            '<td>'+ orders[i].date +'</td>'+
+                            '<td>'+ orders[i].status +'</td>'+
+                            '<td>'+ orderDetails.delivery +'</td>'+
+                            '<td>10</td>'+
+                            '<td>'+ orders[i].totalCost +'</td>'+
+                            '<td><a class="fa fa-plus plus-minus" href="#"></a></td>'+
+                        '</tr>'+
+                    '</tbody>'+
+                '</table>'+
+                '<div class="order-products">'+
+
+                    '</div>'+
+                '<button class="btn btn-sm btn-primary no-border">Повторить</button>'+
+                '<button class="btn btn-sm btn-primary no-border">Добавить в корзину</button>'+
+                '</div>';
+                }
+
+        return ordersHtml;
+    }
+
     $('.shop-trigger').click(function(){
        if($(this).hasClass('back-to-shop')){
           $('.shop-orders').hide();
           $('.shop-products').show();
        }else{
            $('.shop-products').hide();
-           $('.shop-orders').show();
+           $('.shop-orders').append(createOrdersHtml()).show();
+
+           //alert(w.height());
+           if ($('.main-content').height() > w.height()){
+               $('#sidebar, .shop-right').css('height', $('.main-content').height()+45);
+           }
+           initOrderPlusMinus();
        }
     });
 });
