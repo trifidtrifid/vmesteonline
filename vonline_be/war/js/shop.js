@@ -158,6 +158,97 @@ $(document).ready(function(){
         });
     }
 
+    function AddSingleProductToBasket(currentProduct,spinnerValue){
+        var productDetails = client.getProductDetails(currentProduct.data('productid'));
+        var productHtml = '<li data-productid="'+ currentProduct.data('productid') +'">'+
+            '<a href="#" class="product-link no-init">'+
+            '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" alt="картинка"/>'+
+            '<div class="product-right-descr">'+
+            currentProduct.find('.product-link span').text()+
+            '</div>'+
+            '</a>'+
+            '<div class="modal">'+
+            '<div class="modal-body">'+
+            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
+            '<div class="product-slider">'+
+            '<div class="slider flexslider">'+
+            '<ul class="slides">'+
+            '<li>'+
+            '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
+            '</li>'+
+            '</ul>'+
+            '</div>'+
+            '<div class="carousel flexslider">'+
+            '<ul class="slides">'+
+            '<li>'+
+            '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
+            '</li>'+
+            '</ul>'+
+            '</div>'+
+            '</div>'+
+            '<div class="product-descr">'+
+            '<h3>'+ currentProduct.find('.product-link span').text() +'</h3>'+
+            '<div class="product-text">'+
+            productDetails.fullDescr+
+            '</div>'+
+            '<div class="modal-footer">'+
+            '<span>Цена: '+ currentProduct.find('.product-price').text() +'</span>'+
+            '</div>'+
+            '</div>'+
+            '</div>'+
+            '</div>'+
+            '<table>'+
+            '<thead>'+
+            '<tr>'+
+            '<td>Цена(шт)</td>'+
+            '<td>Кол-во</td>'+
+            '<td>Сумма</td>'+
+            '<td></td>'+
+            '</tr>'+
+            '</thead>'+
+            '<tr>'+
+            '<td class="td-price">'+ currentProduct.find('.product-price').text() +'</td>'+
+            '<td><input type="text" class="input-mini spinner1 no-init" /> '+ productDetails.unitName +'</td>'+
+            '<td class="td-summa">'+ currentProduct.find('.product-price').text() +'</td>'+
+            '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
+            '</tr>'+
+            '</table>'+
+            '</li>';
+
+        $('.catalog-order').append(productHtml);
+        currentProduct.addClass('added');
+
+        var deleteNoInit = $('.catalog-order .delete-product.no-init');
+        InitDeleteProduct(deleteNoInit,currentProduct);
+        deleteNoInit.removeClass('no-init');
+
+        var popupNoInit = $('.catalog-order .product-link.no-init');
+        InitProductDetailPopup(popupNoInit);
+        popupNoInit.removeClass('no-init');
+
+        var spinnerNoInit = $('.catalog-order .spinner1.no-init');
+        InitSpinner(spinnerNoInit,spinnerValue);
+        spinnerNoInit.removeClass('no-init');
+    }
+
+    var nowTime = parseInt(new Date().getTime()/1000)+86400;
+    var orders = client.getOrders(0,nowTime+1000);
+    for (var i = 0; i < orders.length; i++){
+        var tempOrder = client.getOrderDetails(orders[i].id);
+        console.log(orders[i].status);
+        if (tempOrder.odrerLines[0]){
+        //console.log("-- "+ i +" "+tempOrder.odrerLines[0].product.name);
+        }
+    }
+    var dateArray = [];
+    dateArray[nowTime] = 1;
+    client.setDates(dateArray);
+    var datesArray = client.getDates(0,nowTime+100000);
+
+    for (var date in datesArray){
+        alert(date);
+    }
+
     function InitAddToBasket(){
         $('.fa-shopping-cart').click(function(){
 
@@ -165,112 +256,99 @@ $(document).ready(function(){
                 $('.modal-auth').modal();
             }else{
 
-            if ($('.additionally-order').hasClass('hide')){
-                $('.additionally-order').removeClass('hide');
-                $('.empty-basket').addClass('hide');
+                var currentProduct = $(this).closest('tr');
+                var spinnerValue = currentProduct.find('.ace-spinner').spinner('value');
+
+                if ($('.additionally-order').hasClass('hide')){
+                    dPicker.trigger('focus').trigger('click',[currentProduct, spinnerValue, 'Event']);
+                }else{
+
+                    var orderLine = client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
+                    //alert(orderLine.product.name);
+                    var addedProductFlag = 0;
+                    $('.catalog-order li').each(function(){
+                        if ($(this).data('productid') == currentProduct.data('productid')){
+                            addedProductFlag = 1;
+                        }
+                    });
+                if (addedProductFlag){
+                    var currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.data('productid') +'"]').find('.ace-spinner');
+                    currentSpinner.spinner('value',currentSpinner.spinner('value')+spinnerValue);
+               }else{
+                    AddSingleProductToBasket(currentProduct,spinnerValue);
+                    /*var productDetails = client.getProductDetails(currentProduct.data('productid'));
+                    var productHtml = '<li data-productid="'+ currentProduct.data('productid') +'">'+
+                    '<a href="#" class="product-link no-init">'+
+                    '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" alt="картинка"/>'+
+                    '<div class="product-right-descr">'+
+                    currentProduct.find('.product-link span').text()+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="modal">'+
+                    '<div class="modal-body">'+
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
+                    '<div class="product-slider">'+
+                    '<div class="slider flexslider">'+
+                    '<ul class="slides">'+
+                    '<li>'+
+                    '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
+                    '</li>'+
+                    '</ul>'+
+                    '</div>'+
+                    '<div class="carousel flexslider">'+
+                    '<ul class="slides">'+
+                    '<li>'+
+                    '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
+                    '</li>'+
+                    '</ul>'+
+                    '</div>'+
+                    '</div>'+
+                    '<div class="product-descr">'+
+                    '<h3>'+ currentProduct.find('.product-link span').text() +'</h3>'+
+                    '<div class="product-text">'+
+                    productDetails.fullDescr+
+                    '</div>'+
+                    '<div class="modal-footer">'+
+                    '<span>Цена: '+ currentProduct.find('.product-price').text() +'</span>'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>'+
+                    '<table>'+
+                    '<thead>'+
+                    '<tr>'+
+                    '<td>Цена(шт)</td>'+
+                    '<td>Кол-во</td>'+
+                    '<td>Сумма</td>'+
+                    '<td></td>'+
+                    '</tr>'+
+                    '</thead>'+
+                    '<tr>'+
+                    '<td class="td-price">'+ currentProduct.find('.product-price').text() +'</td>'+
+                    '<td><input type="text" class="input-mini spinner1 no-init" /> '+ productDetails.unitName +'</td>'+
+                    '<td class="td-summa">'+ currentProduct.find('.product-price').text() +'</td>'+
+                    '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
+                    '</tr>'+
+                    '</table>'+
+                    '</li>';
+
+                 $('.catalog-order').append(productHtml);
+                  currentProduct.addClass('added');
+
+                   var deleteNoInit = $('.catalog-order .delete-product.no-init');
+                   InitDeleteProduct(deleteNoInit,currentProduct);
+                   deleteNoInit.removeClass('no-init');
+
+                   var popupNoInit = $('.catalog-order .product-link.no-init');
+                   InitProductDetailPopup(popupNoInit);
+                   popupNoInit.removeClass('no-init');
+
+                   var spinnerNoInit = $('.catalog-order .spinner1.no-init');
+                   InitSpinner(spinnerNoInit,spinnerValue);
+                   spinnerNoInit.removeClass('no-init');*/
+
+                }
             }
-
-            var currentProduct = $(this).closest('tr');
-            var spinnerValue = currentProduct.find('.ace-spinner').spinner('value');
-                //alert(parseInt(new Date().getTime()/1000));
-                var nowTime = parseInt(new Date().getTime()/1000)+86400;
-                var nowTimeArray = [];
-                nowTimeArray[nowTime] = com.vmesteonline.be.shop.DateType.NEXT_ORDER;
-                client.setDates(nowTimeArray);
-                //var t = client.getDates(0,nowTime);
-                //alert(t.length);
-                /*for (var p in t){
-                    alert(t[p]);
-                }*/
-            //client.createOrder(nowTime,'asd2',0);
-                /*var orders = client.getOrders(0,nowTime+1000);
-                alert(orders[2].id);*/
-
-
-            //var orderLine = client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
-                //alert(orderLine.product.name);
-                var addedProductFlag = 0;
-                $('.catalog-order li').each(function(){
-                    if ($(this).data('productid') == currentProduct.data('productid')){
-                        addedProductFlag = 1;
-                    }
-                });
-            if (addedProductFlag){
-                var currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.data('productid') +'"]').find('.ace-spinner');
-                currentSpinner.spinner('value',currentSpinner.spinner('value')+spinnerValue);
-           }else{
-                var productDetails = client.getProductDetails(currentProduct.data('productid'));
-                var productHtml = '<li data-productid="'+ currentProduct.data('productid') +'">'+
-                '<a href="#" class="product-link no-init">'+
-                '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" alt="картинка"/>'+
-                '<div class="product-right-descr">'+
-                currentProduct.find('.product-link span').text()+
-                '</div>'+
-                '</a>'+
-                '<div class="modal">'+
-                '<div class="modal-body">'+
-                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
-                '<div class="product-slider">'+
-                '<div class="slider flexslider">'+
-                '<ul class="slides">'+
-                '<li>'+
-                '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
-                '</li>'+
-                '</ul>'+
-                '</div>'+
-                '<div class="carousel flexslider">'+
-                '<ul class="slides">'+
-                '<li>'+
-                '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
-                '</li>'+
-                '</ul>'+
-                '</div>'+
-                '</div>'+
-                '<div class="product-descr">'+
-                '<h3>'+ currentProduct.find('.product-link span').text() +'</h3>'+
-                '<div class="product-text">'+
-                productDetails.fullDescr+
-                '</div>'+
-                '<div class="modal-footer">'+
-                '<span>Цена: '+ currentProduct.find('.product-price').text() +'</span>'+
-                '</div>'+
-                '</div>'+
-                '</div>'+
-                '</div>'+
-                '<table>'+
-                '<thead>'+
-                '<tr>'+
-                '<td>Цена(шт)</td>'+
-                '<td>Кол-во</td>'+
-                '<td>Сумма</td>'+
-                '<td></td>'+
-                '</tr>'+
-                '</thead>'+
-                '<tr>'+
-                '<td class="td-price">'+ currentProduct.find('.product-price').text() +'</td>'+
-                '<td><input type="text" class="input-mini spinner1 no-init" /> '+ productDetails.unitName +'</td>'+
-                '<td class="td-summa">'+ currentProduct.find('.product-price').text() +'</td>'+
-                '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
-                '</tr>'+
-                '</table>'+
-                '</li>';
-
-             $('.catalog-order').append(productHtml);
-              currentProduct.addClass('added');
-
-               var deleteNoInit = $('.catalog-order .delete-product.no-init');
-               InitDeleteProduct(deleteNoInit,currentProduct);
-               deleteNoInit.removeClass('no-init');
-
-               var popupNoInit = $('.catalog-order .product-link.no-init');
-               InitProductDetailPopup(popupNoInit);
-               popupNoInit.removeClass('no-init');
-
-               var spinnerNoInit = $('.catalog-order .spinner1.no-init');
-               InitSpinner(spinnerNoInit,spinnerValue);
-               spinnerNoInit.removeClass('no-init');
-
-           }
             }
         });
     }
@@ -493,8 +571,6 @@ $(document).ready(function(){
         spinnerNoInit.removeClass('no-init');
 
         popup.find('.btn-order').click(function(){
-            //client.createOrder(new Date().getTime()+10000000,'asd',0);
-
             // добавление в базу нового города, страны, улицы и т.д (если курькером)
             if ($('.input-delivery').hasClass('active')){
             var countries = userServiceClient.getCounties();
@@ -569,8 +645,12 @@ $(document).ready(function(){
                 flatNo: parseInt($('#flat-delivery').val()),
                 comment: $('#order-comment').val()
             };
+
             client.setOrderDeliveryAddress(deliveryAddress);
             }
+            client.confirmOrder();
+            alert('Ваш заказ принят !');
+            $('.modal-order-end').modal('hide');
         })
         }
     });
@@ -582,22 +662,41 @@ $(document).ready(function(){
         $(this).prev().focus();
     });
 
-    dPicker.click(function(){
+    dPicker.click(function(e,currentProduct,spinnerValue){
+        var nowTime = parseInt(new Date().getTime()/1000)+86400;
+        var datesArray = client.getDates(0,nowTime+100000);
+        for (var date in datesArray){
+            var tempDate = new Date(date*1000);
+            var tempDateItem = [];
+            tempDateItem = tempDate.toLocaleString().split('.');
+            var tempDay = tempDateItem[0];
+            var tempMonth = tempDateItem[1];
+            var tempYear = tempDateItem[2].slice(0,5);
+            //alert(tempYear);
+         //alert(tempDate.toLocaleString());
+         }
         $('.day').each(function(){
             var day = $(this).text();
-            if  (day == '15' || day == "23"){ $(this).addClass('made')}
+            if  (day == tempDay){ $(this).addClass('free-day')}
             if  (day == '7' || day == "13"){ $(this).addClass('soon')}
             if  (day == '26' || day == "30"){ $(this).addClass('prepare')}
         });
+        $('.free-day').click(function(){
+           //client.getOrdersByStatus(0,0,'NEW');
+            var nowTime = parseInt(new Date().getTime()/1000)+86400;
+            // время должно быть не "сейчас" а то что указано в календаре
+            client.createOrder(nowTime,'asd2',0);
+            client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
+            AddSingleProductToBasket(currentProduct,spinnerValue);
+            if ($('.additionally-order').hasClass('hide')){
+                $('.additionally-order').removeClass('hide');
+                $('.empty-basket').addClass('hide');
+            }
+        });
+
     });
 
-    $('.day').click(function(){
-        var madeMenu = '<div class="day-menu">' +
-            '<a href="#" class="day-repeat">Повторить</a>'+
-            '<a href="#" class="day-add">Добавить</a>'+
-            '</div>';
-        $(this).append(madeMenu);
-    });
+
 
 
     //custom autocomplete (category selection)
