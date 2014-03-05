@@ -80,7 +80,7 @@ public class StorageHelper {
 				if( null!=url.getProtocol() && url.getProtocol().toLowerCase().startsWith("http")){
 					HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
 					httpConnection.connect();
-					Map<String, List<String>> headerFields = httpConnection.getHeaderFields();
+					httpConnection.getHeaderFields();
 					contentType = httpConnection.getContentType();
 					is = httpConnection.getInputStream();
 				} else {
@@ -94,7 +94,7 @@ public class StorageHelper {
 				fname = numberToString( (long)(Math.random()*Long.MAX_VALUE));
 			}
 
-			return saveImage(fname, contentType, ownerId, isPublic, is, null );
+			return saveImage(fname, contentType, ownerId, isPublic, is, _pm );
 		}
 	}
 //===================================================================================================================
