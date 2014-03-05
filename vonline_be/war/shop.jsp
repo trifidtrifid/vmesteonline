@@ -241,15 +241,18 @@
                     Заказы
                 </div>
                 <div class="hide-right">×</div>
-                <div class="sidebar-title">Заказы</div>
-                <nav>
-                    <div class="input-group">
-                        <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="dd-mm-yyyy" value="Выберите дату" onblur="if(this.value=='') this.value='Выберите дату';" onfocus="if(this.value=='Выберите дату') this.value='';"/>
-                        <span class="input-group-addon">
-                            <i class="icon-calendar bigger-110"></i>
-                        </span>
-                    </div>
-                </nav>
+                <div class="sidebar-title">
+                    <a href="#" class="go-to-orders shop-trigger">Заказы</a>
+                    <nav>
+                        <div class="input-group">
+                            <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="dd-mm-yyyy" value="Выберите дату" onblur="if(this.value=='') this.value='Выберите дату';" onfocus="if(this.value=='Выберите дату') this.value='';"/>
+                            <%--<span class="input-group-addon">
+                                <i class="icon-calendar bigger-110"></i>
+                            </span>--%>
+                        </div>
+                    </nav>
+                </div>
+
                 <ul class="catalog-order">
                     <%--<c:forEach var="orderLine" items="${orderLines}">
                         <li>
@@ -381,125 +384,376 @@
                 </div>
             </aside>
             <div class="main-content">
-                <nav class="breadcrambs">
-                    <a href="#">Главная</a><span> > </span>
-                    <a href="#">Товары</a><span> > </span>
-                    Я здесь
-                </nav>
-                <form method="post" action="#" class="form-group has-info">
-                    <span class="block input-icon input-icon-right">
-                        <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
-                        <a href="#" class="icon-search icon-on-right bigger-110"></a>
-                    </span>
-                </form>
-                <nav class="shop-menu">
-                    <ul>
-                        <c:if test="${innerCategoryFlag}">
-                            <li>
-                                <a href="#" class="fa fa-reply-all"></a>
-                                <div>Назад</div>
-                            </li>
-                        </c:if>
-                        <c:forEach var="productCategory" items="${productCategories}">
-                            <li data-parentid="${productCategory.parentId}" data-catid="${productCategory.id}">
-                                <a href="#" class="fa fa-beer"></a>
-                                <div>${productCategory.name}</div>
-                            </li>
-                        </c:forEach>
-                    </ul>
-                </nav>
-                <section class="catalog">
-                    <table>
-                        <thead>
-                        <tr>
-                            <td>Название</td>
-                            <td>Цена</td>
-                            <td>Количество</td>
-                            <td></td>
-                        </tr>
-                        </thead>
-                        <c:forEach var="product" items="${products}">
-                            <tr data-productid="${product.id}">
-                                <td>
-                                    <a href="#" class="product-link">
-                                        <img src="${product.imageURL}" alt="картинка"/>
-                                        <span>
-                                        ${product.name} <br>
-                                        ${product.shortDescr}
-                                        </span>
-                                    </a>
-                                    <div class="modal">
-                                        <div class="modal-body">
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                            <div class="product-slider">
-                                                <div class="slider flexslider">
-                                                    <ul class="slides">
-                                                        <li>
-                                                            <img src="${product.imageURL}" />
-                                                        </li>
-                                                        &lt;%&ndash;<li>
-                                                            <img src="i/shop/2.jpg" />
-                                                        </li>
-                                                        <li>
-                                                            <img src="i/shop/3.jpg" />
-                                                        </li>
-                                                        <li>
-                                                            <img src="i/shop/4.jpg" />
-                                                        </li>
-                                                        <li>
-                                                            <img src="i/shop/5.jpg" />
-                                                        </li>&ndash;%&gt;
-                                                        <!-- items mirrored twice, total of 12 -->
-                                                    </ul>
+                <div class="shop-products">
+                    <nav class="breadcrambs">
+                        <a href="#">Главная</a><span> > </span>
+                        <a href="#">Товары</a><span> > </span>
+                        Я здесь
+                    </nav>
+                    <form method="post" action="#" class="form-group has-info">
+                        <span class="block input-icon input-icon-right">
+                            <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
+                            <a href="#" class="icon-search icon-on-right bigger-110"></a>
+                        </span>
+                    </form>
+                    <nav class="shop-menu">
+                        <ul>
+                            <c:if test="${innerCategoryFlag}">
+                                <li>
+                                    <a href="#" class="fa fa-reply-all"></a>
+                                    <div>Назад</div>
+                                </li>
+                            </c:if>
+                            <c:forEach var="productCategory" items="${productCategories}">
+                                <li data-parentid="${productCategory.parentId}" data-catid="${productCategory.id}">
+                                    <a href="#" class="fa fa-beer"></a>
+                                    <div>${productCategory.name}</div>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </nav>
+                    <section class="catalog">
+                        <table>
+                            <thead>
+                            <tr>
+                                <td>Название</td>
+                                <td>Цена</td>
+                                <td>Количество</td>
+                                <td></td>
+                            </tr>
+                            </thead>
+                            <c:forEach var="product" items="${products}">
+                                <tr data-productid="${product.id}">
+                                    <td>
+                                        <a href="#" class="product-link">
+                                            <img src="${product.imageURL}" alt="картинка"/>
+                                            <span>
+                                            ${product.name} <br>
+                                            ${product.shortDescr}
+                                            </span>
+                                        </a>
+                                        <div class="modal">
+                                            <div class="modal-body">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                <div class="product-slider">
+                                                    <div class="slider flexslider">
+                                                        <ul class="slides">
+                                                            <li>
+                                                                <img src="${product.imageURL}" />
+                                                            </li>
+                                                            &lt;%&ndash;<li>
+                                                                <img src="i/shop/2.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/3.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/4.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/5.jpg" />
+                                                            </li>&ndash;%&gt;
+                                                            <!-- items mirrored twice, total of 12 -->
+                                                        </ul>
+                                                    </div>
+                                                    <div class="carousel flexslider">
+                                                        <ul class="slides">
+                                                            <li>
+                                                                <img src="${product.imageURL}" />
+                                                            </li>
+                                                            &lt;%&ndash;<li>
+                                                                <img src="i/shop/2.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/3.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/4.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/5.jpg" />
+                                                            </li>&ndash;%&gt;
+                                                            <!-- items mirrored twice, total of 12 -->
+                                                        </ul>
+                                                    </div>
                                                 </div>
-                                                <div class="carousel flexslider">
-                                                    <ul class="slides">
-                                                        <li>
-                                                            <img src="${product.imageURL}" />
-                                                        </li>
-                                                        &lt;%&ndash;<li>
-                                                            <img src="i/shop/2.jpg" />
-                                                        </li>
-                                                        <li>
-                                                            <img src="i/shop/3.jpg" />
-                                                        </li>
-                                                        <li>
-                                                            <img src="i/shop/4.jpg" />
-                                                        </li>
-                                                        <li>
-                                                            <img src="i/shop/5.jpg" />
-                                                        </li>&ndash;%&gt;
-                                                        <!-- items mirrored twice, total of 12 -->
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="product-descr">
-                                                <h3>${product.name}</h3>
-                                                <div class="product-text">
-                                                    ${productDetails.fullDescr}
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <span>Цена: ${product.price}</span>
-                                                    <input type="text" class="input-mini spinner1" />
-                                                    <i class="fa fa-shopping-cart"></i>
+                                                <div class="product-descr">
+                                                    <h3>${product.name}</h3>
+                                                    <div class="product-text">
+                                                        ${productDetails.fullDescr}
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <span>Цена: ${product.price}</span>
+                                                        <input type="text" class="input-mini spinner1" />
+                                                        ${productDetails.unitName}
+                                                        <i class="fa fa-shopping-cart"></i>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td class="product-price">${product.price}</td>
-                                <td>
-                                    <input type="text" class="input-mini spinner1" />
-                                </td>
-                                <td>
-                                    <i class="fa fa-shopping-cart"></i>
-                                </td>
+                                    </td>
+                                    <td class="product-price">${product.price}</td>
+                                    <td>
+                                        <input type="text" class="input-mini spinner1" />
+                                        ${productDetails.unitName}
+                                    </td>
+                                    <td>
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+
+                        </table>
+                    </section>
+                </div>
+                <div class="shop-orders">
+
+                    <a href="#" class="back-to-shop shop-trigger">Вернуться в магазин</a>
+                    <h1>Заказы</h1>
+
+                    <div class="order-item">
+                        <table>
+                            <thead>
+                            <tr>
+                                <td>Номер заказа</td>
+                                <td>Дата</td>
+                                <td>Статус заказа</td>
+                                <td>Доставка</td>
+                                <td>Кол-во продуктов</td>
+                                <td>Сумма</td>
+                                <td></td>
                             </tr>
-                        </c:forEach>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>N 1</td>
+                                <td>13.02.2014</td>
+                                <td>Выполнен</td>
+                                <td>Самовывоз</td>
+                                <td>10</td>
+                                <td>1000 р.</td>
+                                <td><a class="fa fa-plus plus-minus" href="#"></a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="order-products">
+                            <section class="catalog">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <td>Название</td>
+                                        <td>Цена</td>
+                                        <td>Количество</td>
+                                        <td></td>
+                                    </tr>
+                                    </thead>
+                                    <c:forEach var="product" items="${products}">
+                                        <tr data-productid="${product.id}">
+                                            <td>
+                                                <a href="#" class="product-link">
+                                                    <img src="${product.imageURL}" alt="картинка"/>
+                                            <span>
+                                            ${product.name} <br>
+                                            ${product.shortDescr}
+                                            </span>
+                                                </a>
+                                                <div class="modal">
+                                                    <div class="modal-body">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <div class="product-slider">
+                                                            <div class="slider flexslider">
+                                                                <ul class="slides">
+                                                                    <li>
+                                                                        <img src="${product.imageURL}" />
+                                                                    </li>
+                                                                    &lt;%&ndash;<li>
+                                                                    <img src="i/shop/2.jpg" />
+                                                                </li>
+                                                                    <li>
+                                                                        <img src="i/shop/3.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/4.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/5.jpg" />
+                                                                    </li>&ndash;%&gt;
+                                                                    <!-- items mirrored twice, total of 12 -->
+                                                                </ul>
+                                                            </div>
+                                                            <div class="carousel flexslider">
+                                                                <ul class="slides">
+                                                                    <li>
+                                                                        <img src="${product.imageURL}" />
+                                                                    </li>
+                                                                    &lt;%&ndash;<li>
+                                                                    <img src="i/shop/2.jpg" />
+                                                                </li>
+                                                                    <li>
+                                                                        <img src="i/shop/3.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/4.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/5.jpg" />
+                                                                    </li>&ndash;%&gt;
+                                                                    <!-- items mirrored twice, total of 12 -->
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="product-descr">
+                                                            <h3>${product.name}</h3>
+                                                            <div class="product-text">
+                                                                    ${productDetails.fullDescr}
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <span>Цена: ${product.price}</span>
+                                                                <input type="text" class="input-mini spinner1" />
+                                                                    ${productDetails.unitName}
+                                                                <i class="fa fa-shopping-cart"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="product-price">${product.price}</td>
+                                            <td>
+                                                <input type="text" class="input-mini spinner1" />
+                                                    ${productDetails.unitName}
+                                            </td>
+                                            <td>
+                                                <i class="fa fa-shopping-cart"></i>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
 
-                    </table>
-                </section>
+                                </table>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="order-item">
+                        <table>
+                            <thead>
+                            <tr>
+                                <td>Номер заказа</td>
+                                <td>Дата</td>
+                                <td>Статус заказа</td>
+                                <td>Доставка</td>
+                                <td>Кол-во продуктов</td>
+                                <td>Сумма</td>
+                                <td></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>N 1</td>
+                                <td>13.02.2014</td>
+                                <td>Выполнен</td>
+                                <td>Самовывоз</td>
+                                <td>10</td>
+                                <td>1000 р.</td>
+                                <td><a class="fa fa-plus plus-minus" href="#"></a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="order-products">
+                            <section class="catalog">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <td>Название</td>
+                                        <td>Цена</td>
+                                        <td>Количество</td>
+                                        <td></td>
+                                    </tr>
+                                    </thead>
+                                    <c:forEach var="product" items="${products}">
+                                        <tr data-productid="${product.id}">
+                                            <td>
+                                                <a href="#" class="product-link">
+                                                    <img src="${product.imageURL}" alt="картинка"/>
+                                            <span>
+                                            ${product.name} <br>
+                                            ${product.shortDescr}
+                                            </span>
+                                                </a>
+                                                <div class="modal">
+                                                    <div class="modal-body">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <div class="product-slider">
+                                                            <div class="slider flexslider">
+                                                                <ul class="slides">
+                                                                    <li>
+                                                                        <img src="${product.imageURL}" />
+                                                                    </li>
+                                                                    &lt;%&ndash;<li>
+                                                                    <img src="i/shop/2.jpg" />
+                                                                </li>
+                                                                    <li>
+                                                                        <img src="i/shop/3.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/4.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/5.jpg" />
+                                                                    </li>&ndash;%&gt;
+                                                                    <!-- items mirrored twice, total of 12 -->
+                                                                </ul>
+                                                            </div>
+                                                            <div class="carousel flexslider">
+                                                                <ul class="slides">
+                                                                    <li>
+                                                                        <img src="${product.imageURL}" />
+                                                                    </li>
+                                                                    &lt;%&ndash;<li>
+                                                                    <img src="i/shop/2.jpg" />
+                                                                </li>
+                                                                    <li>
+                                                                        <img src="i/shop/3.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/4.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/5.jpg" />
+                                                                    </li>&ndash;%&gt;
+                                                                    <!-- items mirrored twice, total of 12 -->
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="product-descr">
+                                                            <h3>${product.name}</h3>
+                                                            <div class="product-text">
+                                                                    ${productDetails.fullDescr}
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <span>Цена: ${product.price}</span>
+                                                                <input type="text" class="input-mini spinner1" />
+                                                                    ${productDetails.unitName}
+                                                                <i class="fa fa-shopping-cart"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="product-price">${product.price}</td>
+                                            <td>
+                                                <input type="text" class="input-mini spinner1" />
+                                                    ${productDetails.unitName}
+                                            </td>
+                                            <td>
+                                                <i class="fa fa-shopping-cart"></i>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
 
+                                </table>
+                            </section>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="clear"></div>
         </div>

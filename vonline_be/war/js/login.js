@@ -5,11 +5,11 @@ $(document).ready(function(){
 
     $('.login-form .btn-submit').click(function(e){
         e.preventDefault();
-        login();
+        login($(this));
     });
     $('.reg-form .btn-submit').click(function(e){
         e.preventDefault();
-        reg();
+        reg($(this));
     });
     $('.remember-link').click(function(e){
         e.preventDefault();
@@ -17,12 +17,16 @@ $(document).ready(function(){
         //client.changePasswordOfUser('qq@qq.ru','qq','qq');
     });
 
-    function login() {
+    function login(selector) {
         var result = $('#result');
         try {
             var accessGranted = client.login($("#uname").val(), $("#password").val());
             if (accessGranted) {
-                document.location.replace("/main.jsp");
+                if (selector.closest('.modal-auth').length > 0){
+                    document.location.replace("/shop.jsp");
+                }else{
+                    document.location.replace("/main.jsp");
+                }
             } else {
                 result.val(session.error);
                 result.css('color', 'black');
@@ -34,13 +38,15 @@ $(document).ready(function(){
         }
     }
 
-    function reg() {
+    function reg(selector) {
         if (client.checkEmailRegistered($("#email").val())) {
             $('.email-alert').css('display','block');
         }else{
             var userId = client.registerNewUser($("#login").val(), "family", $("#pass").val(), $("#email").val());
             client.login($("#email").val(), $("#pass").val());
-            if ( true ) {
+            if ( selector.closest('.modal-auth').length > 0) {
+                document.location.replace("/shop.jsp");
+            }else{
                 document.location.replace("/main.jsp");
             }
         }

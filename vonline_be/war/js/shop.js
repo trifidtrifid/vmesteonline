@@ -248,7 +248,7 @@ $(document).ready(function(){
                 '</thead>'+
                 '<tr>'+
                 '<td class="td-price">'+ currentProduct.find('.product-price').text() +'</td>'+
-                '<td><input type="text" class="input-mini spinner1 no-init" /></td>'+
+                '<td><input type="text" class="input-mini spinner1 no-init" /> '+ productDetails.unitName +'</td>'+
                 '<td class="td-summa">'+ currentProduct.find('.product-price').text() +'</td>'+
                 '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
                 '</tr>'+
@@ -344,7 +344,8 @@ $(document).ready(function(){
                 '</div>'+
                 '<div class="modal-footer">'+
                 '<span>Цена: '+ productsList[i].price +'</span>'+
-                '<input type="text" class="input-mini spinner1" />'+
+                '<input type="text" class="input-mini spinner1" /> '+
+                productDetails.unitName+
                 '<i class="fa fa-shopping-cart"></i>'+
                 '</div>'+
                 '</div>'+
@@ -353,7 +354,8 @@ $(document).ready(function(){
                 '</td>'+
                 '<td class="product-price">'+ productsList[i].price  +'</td>'+
                 '<td>'+
-                '<input type="text" class="input-mini spinner1" />'+
+                '<input type="text" class="input-mini spinner1" /> '+
+                productDetails.unitName+
                 '</td>'+
                 '<td>'+
                 '<i class="fa fa-shopping-cart"></i>'+
@@ -687,4 +689,24 @@ $(document).ready(function(){
         delay: 0,
         source: dataDeliveryStreets
     });*/
+
+    /* shop-orders */
+    var shopOrders= $('.shop-orders');
+    shopOrders.find('.plus-minus').click(function(){
+        $(this).closest('.order-item').find('.order-products').slideToggle(200);
+        if ($(this).hasClass('fa-plus')){
+            $(this).removeClass('fa-plus').addClass('fa-minus');
+        }else{
+            $(this).removeClass('fa-minus').addClass('fa-plus');
+        }
+    });
+    $('.shop-trigger').click(function(){
+       if($(this).hasClass('back-to-shop')){
+          $('.shop-orders').hide();
+          $('.shop-products').show();
+       }else{
+           $('.shop-products').hide();
+           $('.shop-orders').show();
+       }
+    });
 });
