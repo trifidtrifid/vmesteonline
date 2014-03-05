@@ -1,7 +1,6 @@
 package com.vmesteonline.be.jdo2.shop;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -33,12 +33,13 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoProduct {
 
-	private VoProduct() {}
+	private VoProduct() {
+	}
 
-	VoProduct( long productId) {
+	VoProduct( long productId ) {
 		this.id = KeyFactory.createKey(VoProduct.class.getSimpleName(), productId);
 	}
-	
+//=====================================================================================================================
 	public void update( FullProductInfo newInfo, long userId, PersistenceManager _pm ) throws InvalidOperation{
 		this.name = newInfo.product.name;
 		this.shortDescr = newInfo.product.shortDescr;
@@ -68,6 +69,37 @@ public class VoProduct {
 		}
 		VoProducer producer = _pm.getObjectById(VoProducer.class, newInfo.details.producerId);
 		producer.getProducts().add(this);
+		this.unitName = newInfo.details.unitName;
+		
+		updateCategoriesList(newInfo, _pm);
+	}
+//=====================================================================================================================
+	private void updateCategoriesList(FullProductInfo newInfo, PersistenceManager _pm) {
+		//remove categories if they not included to new list
+		List<Long> categoriesFromNewList = new ArrayList<Long>();
+		for( VoProductCategory vpc: this.getCategories()){ 
+			if( newInfo.details.categories.contains(vpc.getId()))
+					categoriesFromNewList.add(vpc.getId());
+			else {
+				for( VoProduct vp: vpc.getProducts()){
+					if( vp.getId() == this.getId() ) {
+						vpc.getProducts().remove(vp);
+						break;
+					}
+				}
+			}
+		}
+		for( Long pcid: newInfo.details.categories ){
+			if( !categoriesFromNewList.contains( pcid )){ // if it's an added category for the product
+				VoProductCategory nvpc = _pm.getObjectById(VoProductCategory.class, pcid);
+				nvpc.addProduct(this);
+				this.categories.add(nvpc);
+			}
+		}
+	}
+//=====================================================================================================================	
+	public static VoProduct createObject(VoShop shop, long importId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
+		return createObject(shop, fpi,  _pm);
 	}
 	
 	public static VoProduct createObject(VoShop shop, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
@@ -107,7 +139,15 @@ public class VoProduct {
 			shop.addProduct(vp);
 
 			if(null!=details.getCategories()) for (long categoryId : details.getCategories()) {
-				VoProductCategory vpc = pm.getObjectById(VoProductCategory.class, categoryId);
+				VoProductCategory vpc = /*null;
+				
+				if(relativeCategories){
+					Query q = pm.newQuery(VoProductCategory.class);
+					q.setFilter("importId == " + categoryId);
+					List<VoProductCategory> vpcl = (List<VoProductCategory>) q.execute();
+					vpc = vpcl.size() > 0 ? vpcl.get(0) : null;
+				}
+				if (null == vpc) vpc =*/ pm.getObjectById(VoProductCategory.class, categoryId);
 				vpc.getProducts().add(vp);
 				vp.categories.add(vpc);
 				pm.makePersistent(vpc);
@@ -121,14 +161,14 @@ public class VoProduct {
 			VoProducer producer = pm.getObjectById(VoProducer.class, details.getProducerId());
 			vp.producer = producer;
 			
-			vp.minClientPackGramms = details.minClientPackGramms;
-			vp.minProducerPackGramms = details.minProducerPackGramms;
+			vp.minClientPack = details.minClientPack;
+			vp.minProducerPack = details.minProducerPack;
 			vp.prepackRequired =details.prepackRequired;
 			vp.knownNames = new HashSet<String>();
 			if( details.knownNames != null ) for (String name : details.knownNames ){
 				vp.knownNames.add(name);
 			}
-			
+			vp.unitName = details.unitName;
 			producer.getProducts().add(vp);
 			pm.makePersistent(vp);
 			pm.makePersistent(producer);
@@ -138,11 +178,11 @@ public class VoProduct {
 				pm.close();
 		}
 	}
-
+//=====================================================================================================================
 	public VoProduct(long shopId, FullProductInfo fpi) throws InvalidOperation {
 		this(shopId, fpi, null);
 	}
-
+//=====================================================================================================================
 	public VoProduct(long shopId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
 		Product product = fpi.getProduct();
 		ProductDetails details = fpi.getDetails();
@@ -160,7 +200,8 @@ public class VoProduct {
 		this.categories = new ArrayList<VoProductCategory>();
 		this.shops = new ArrayList<VoShop>();
 		this.knownNames = new HashSet<String>();
-
+		this.unitName = details.unitName;
+		
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
 		try {
@@ -209,7 +250,7 @@ public class VoProduct {
 				pm.close();
 		}
 	}
-
+//=====================================================================================================================
 	public Product getProduct() {
 		return new Product(id.getId(), name, shortDescr, weight, imageURL, price);
 	}
@@ -233,10 +274,11 @@ public class VoProduct {
 		productDetails.setFullDescr(fullDescr);
 		productDetails.setTopicSet(ts);
 		productDetails.setImagesURLset(getImagesURLset());
+		productDetails.setUnitName(this.unitName);
 
 		return productDetails;
 	}
-
+//=====================================================================================================================
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
 	private Key id;
@@ -262,7 +304,6 @@ public class VoProduct {
 	private double price;
 
 	@Persistent(mappedBy = "products")
-	/* @ManyToMany */
 	@Unowned
 	private List<VoProductCategory> categories;
 
@@ -296,34 +337,40 @@ public class VoProduct {
 	
 	@Persistent
 	@Unindexed
-	private long minClientPackGramms;
+	private double minClientPack;
 	
 	@Persistent
 	@Unindexed
-	private long minProducerPackGramms;
+	private double minProducerPack;
 	
 	@Persistent
+	@Unindexed
 	private boolean prepackRequired;
 	
 	
 	@Persistent
+	@Unindexed
 	private Set<String> knownNames;
+	
+	@Persistent
+	@Unindexed
+	private String unitName;
 
 	
-	public long getMinClientPackGramms() {
-		return minClientPackGramms;
+	public double getMinClientPack() {
+		return minClientPack;
 	}
 
-	public void setMinClientPackGramms(long minClientPackGramms) {
-		this.minClientPackGramms = minClientPackGramms;
+	public void setMinClientPackGramms(double minClientPack) {
+		this.minClientPack = minClientPack;
 	}
 
-	public long getMinProducerPackGramms() {
-		return minProducerPackGramms;
+	public double getMinProducerPack() {
+		return minProducerPack;
 	}
 
-	public void setMinProducerPackGramms(long minProducerPackGramms) {
-		this.minProducerPackGramms = minProducerPackGramms;
+	public void setMinProducerPackGramms(double minProducerPack) {
+		this.minProducerPack = minProducerPack;
 	}
 
 	public boolean isPrepackRequired() {
@@ -468,5 +515,41 @@ public class VoProduct {
 		for (Entry<Integer, Double> e : in.entrySet())
 			out.put(PriceType.values()[e.getKey()], e.getValue());
 		return out;
+	}
+
+	public static FullProductInfo updateCategoriesByImportId(long shopId, FullProductInfo fpi, PersistenceManager pm) throws InvalidOperation {
+		FullProductInfo res = new FullProductInfo(fpi);
+		res.details.categories = new ArrayList<Long>();
+		Query q = pm.newQuery(VoProductCategory.class);
+		q.setFilter("importId == importIdParam");
+		q.declareParameters( "long importIdParam");
+		for (Long pc : fpi.details.categories) {
+			 List<VoProductCategory> cl = (List<VoProductCategory>) q. execute( pc );
+			 if( 0 == cl.size() ) 
+				 throw new InvalidOperation(VoError.IncorrectParametrs, "No Category found for Product ID:"+fpi.product.id + " By Category ID:"+pc);
+			 for (VoProductCategory voProductCategory : cl) {
+				for (VoShop vs : voProductCategory.getShops()){
+					if( vs.getId() == shopId ){
+						res.details.categories.add( voProductCategory.getId()) ;
+						break;
+					}
+				} 
+			}
+		}
+		return res;
+	}
+
+	public static VoProduct getByImportedId(long shopId, long importedId, PersistenceManager pm) throws InvalidOperation {
+		Query q = pm.newQuery(VoProduct.class);
+		q.setFilter("importId == importIdParam");
+		q.declareParameters( "long importIdParam");
+		List<VoProduct> cl = (List<VoProduct>) q. execute( importedId );
+		for (VoProduct voProduct : cl) {
+			for( VoShop vs: voProduct.getShops()){
+				if(vs.getId() == shopId )
+					return voProduct;
+			}
+		}
+		return null;
 	}
 }

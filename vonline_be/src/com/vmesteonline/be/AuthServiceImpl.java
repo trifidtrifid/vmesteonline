@@ -1,5 +1,7 @@
 package com.vmesteonline.be;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -180,19 +182,25 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public void sendChangePasswordCodeRequest(String to, String htmlTemplate) throws InvalidOperation, TException {
+	public void sendConfirmCode(String to, String localfileName) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser vu = getUserByEmail(to,pm);
 			long code = System.currentTimeMillis() % 123456L;
-			vu.setChangePasswordCode( code );
+			vu.setConfirmCode( code );
 			pm.makePersistent(vu);
 			
-			EMailHelper.sendSimpleEMail("Во! <info@vmesteonline.ru>", to, "Код для смены пароля на сайте Во!", 
-					htmlTemplate.replace("%code%", ""+code).replace("%name%", vu.getName() + " " +vu.getLastName()));
-			logger.info("Code to change password is: "+code);
+			File localFIle = new File( localfileName );
+			FileInputStream fis = new FileInputStream(localFIle);
+			byte[] content = new byte[(int) localFIle.length()];
+			fis.read( content );
+			fis.close();
 			
-		} catch (IOException e) {
+			EMailHelper.sendSimpleEMail("Во! <info@vmesteonline.ru>", to, "Код для смены пароля на сайте Во!", 
+					new String( content, "UTF-8").replace("%code%", ""+code).replace("%name%", vu.getName() + " " +vu.getLastName()));
+			logger.info("Code to change password is: "+code);
+		
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to send email to '"+to+"'. " +to);
 			
@@ -202,15 +210,29 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public void changePasswordOfUser(String email, String confirmCode, String newPassword) throws InvalidOperation, TException {
+	public void confirmRequest(String email, String confirmCode, String newPassword) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser vu = getUserByEmail(email,pm);
-			if( null!=vu && Long.parseLong(confirmCode) == vu.getChangePasswordCode( )) {
-				vu.setPassword(newPassword);
+			if( null!=vu && Long.parseLong(confirmCode) == vu.getConfirmCode( )) {
+				vu.setEmailConfirmed(true);
+				if( null!=newPassword && !"".equals(newPassword.trim()))
+						vu.setPassword(newPassword);
 				pm.makePersistent(vu);	
 			} else 
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No such code registered for user!");
+			
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public boolean checkIfEmailConfirmed(String email) throws TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser vu = getUserByEmail(email,pm);
+			return null!=vu && vu.isEmailConfirmed();
 			
 		} finally {
 			pm.close();

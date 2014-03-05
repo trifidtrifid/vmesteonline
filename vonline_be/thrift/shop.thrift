@@ -46,10 +46,11 @@ struct ProductDetails {
 	5:map<string,string> optionsMap,
 	6:list<i64> topicSet,
 	7:i64 producerId,
-	9:i32 minClientPackGramms,
-	10:i32 minProducerPackGramms,
+	9:double minClientPack,
+	10:double minProducerPack,
 	11:bool prepackRequired,
 	12:set<string> knownNames,
+	13:string unitName,
 }
 
 struct Product {
@@ -121,7 +122,8 @@ enum ExchangeFieldType {
 	
 	PRODUCT_ID=300, PRODUCT_NAME,	PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
 	PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
-	PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID, PRODUCT_MIN_CLN_PACK_G, PRODUCT_MIN_PROD_PACK_G, PRODUCT_PREPACK_REQ, PRODUCT_KNOWN_NAMES,
+	PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID, PRODUCT_MIN_CLN_PACK, PRODUCT_MIN_PROD_PACK, PRODUCT_PREPACK_REQ, 
+	PRODUCT_KNOWN_NAMES, PRODUCT_UNIT_NAME
 	
 	DATE_TYPE=400, DATE_DATE,
 	
@@ -174,7 +176,7 @@ service ShopService {
 	* Method uploads categories. List in the request should contain relative values of  and return list with updated values of id, parentId
 	* and URLS replaced to local. Any of URL parameter may contain JPEG image data.
 	**/
-	list<ProductCategory> uploadProductCategoies( 1:list<ProductCategory> categories, 2:bool relativeIds, 3:bool cleanShopBeforeUpload )
+	list<ProductCategory> uploadProductCategoies( 1:list<ProductCategory> categories, 2:bool cleanShopBeforeUpload )
 		throws (1:error.InvalidOperation exc),
 	/**
 	* Method returns full orders information. userId and shopId may be used as a filter by defining not 0 value 

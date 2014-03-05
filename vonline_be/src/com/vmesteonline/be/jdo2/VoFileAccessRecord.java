@@ -11,9 +11,10 @@ import com.google.appengine.tools.cloudstorage.GcsFilename;
 @PersistenceCapable
 public class VoFileAccessRecord {
 
-	public VoFileAccessRecord( long userId, boolean isPublic, String fileName) {
-		this.fileName = fileName;
-		this.bucket = ""+(this.userId=userId) + "/" + Math.random()+"/" + (this.isPublic=isPublic);
+	public VoFileAccessRecord( long userId, boolean isPublic, String fileName, String contentType) {
+		this.fileName = ""+(System.currentTimeMillis() % 10000) + fileName.replace("/", "_");
+		this.bucket = ""+(this.userId=userId) + "_" + ((this.isPublic=isPublic) ? "public" : "private");
+		this.contentType = contentType;
 	}
 	
 	public long getId() {
@@ -29,8 +30,13 @@ public class VoFileAccessRecord {
 	}
 
 	public GcsFilename getFileName() {
-		return new GcsFilename(bucket,  fileName);
+		return new GcsFilename(bucket, fileName);
 	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
 
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
@@ -49,5 +55,11 @@ public class VoFileAccessRecord {
 	@Persistent
 	@Unindexed
 	private String fileName;
+	
+	@Persistent
+	@Unindexed
+	private String contentType;
+	
+	
 	
 }
