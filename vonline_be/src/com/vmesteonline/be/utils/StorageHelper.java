@@ -5,14 +5,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.datanucleus.util.Base64;
 
@@ -27,6 +33,8 @@ import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 
 public class StorageHelper {
+	
+	private static Logger logger = Logger.getLogger(StorageHelper.class.getCanonicalName());
 
 		/**
 	 * Used below to determine the size of chucks to read in. Should be > 1kb and
@@ -65,12 +73,20 @@ public class StorageHelper {
 		} else {
 			String fname; 
 			InputStream is = null;
-
+			String contentType = "binary/stream";
+			
 			try { // try to create URL from content
-				URL url;
-				url = new URL(new String(urlOrContent));
-				is = url.openStream();
-				//file name for the same sources will be the same
+				URL url = new URL(new String(urlOrContent));
+				if( null!=url.getProtocol() && url.getProtocol().toLowerCase().startsWith("http")){
+					HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
+					httpConnection.connect();
+					Map<String, List<String>> headerFields = httpConnection.getHeaderFields();
+					contentType = httpConnection.getContentType();
+					is = httpConnection.getInputStream();
+				} else {
+					is = url.openStream();
+					//file name for the same sources will be the same
+				}
 				fname = url.getFile();
 
 			} catch (Exception e) {
@@ -78,13 +94,13 @@ public class StorageHelper {
 				fname = numberToString( (long)(Math.random()*Long.MAX_VALUE));
 			}
 
-			return saveImage(fname, ownerId, isPublic, is, null );
+			return saveImage(fname, contentType, ownerId, isPublic, is, null );
 		}
 	}
 //===================================================================================================================
 
-	public static VoFileAccessRecord createFileAccessRecord( long userId, boolean isPublic, String fileName){
-		return new VoFileAccessRecord(userId, isPublic, fileName);
+	public static VoFileAccessRecord createFileAccessRecord( long userId, boolean isPublic, String fileName, String contentType){
+		return new VoFileAccessRecord(userId, isPublic, fileName, contentType);
 	}
 //===================================================================================================================
 
@@ -123,9 +139,11 @@ public class StorageHelper {
 				output.write(buffer, 0, bytesRead);
 				bytesRead = input.read(buffer);
 			}
+		} catch(Exception e){
+			e.printStackTrace();
 		} finally {
-			input.close();
 			output.close();
+			input.close();
 		}
 	}
 //===================================================================================================================
@@ -144,6 +162,25 @@ public class StorageHelper {
 			pm.close();
 		}
 	}
+
+//===================================================================================================================
+	public static void sendFileResponse(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		long oldFileId = getFileId(req.getRequestURI());
+		PersistenceManager pm = PMF.getPm();
+		try{
+			try {
+				VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+				resp.setStatus(HttpServletResponse.SC_OK, "OK");
+				resp.setContentType( vfar.getContentType());
+				getFile(vfar.getFileName(), resp.getOutputStream());
+			} catch( JDOObjectNotFoundException onfe){
+				resp.setStatus(HttpServletResponse.SC_NOT_FOUND, "Not Found");
+			}
+		} finally {
+			pm.close();
+		}
+	}
+
 //===================================================================================================================
 	
 	private static void getFile(GcsFilename fileName, OutputStream outputStream) throws IOException {
@@ -153,19 +190,27 @@ public class StorageHelper {
 
 	//===================================================================================================================
 
-	public static String saveImage(String fileName, long userId, boolean isPublic, InputStream is, PersistenceManager _pm ) throws IOException {
-		VoFileAccessRecord vfar = createFileAccessRecord(userId, isPublic, fileName);
+	public static String saveImage(String fileName, String contentType, long userId, boolean isPublic, InputStream is, PersistenceManager _pm ) throws IOException {
+		VoFileAccessRecord vfar = createFileAccessRecord(userId, isPublic, fileName, contentType);
 		PersistenceManager pm = null==_pm ?  PMF.getPm() : _pm;
 		try {
 			vfar = pm.makePersistent(vfar);
 		} finally {
 			if(null==_pm) pm.close();
 		}
-		GcsOutputChannel outputChannel = gcsService.createOrReplace( vfar.getFileName(), GcsFileOptions.getDefaultInstance());
-		streamCopy(is, Channels.newOutputStream(outputChannel));
-
-		int liop; //append with '.bin' extension if no extension is set
-		return getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? "bin" : fileName.substring( liop + 1 ));
+		GcsOutputChannel outputChannel = null;
+		try {
+			outputChannel = gcsService.createOrReplace( vfar.getFileName(), GcsFileOptions.getDefaultInstance());
+			streamCopy(is, Channels.newOutputStream(outputChannel));
+			int liop; //append with '.bin' extension if no extension is set
+			String url = getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? "bin" : fileName.substring( liop + 1 ));
+			logger.info("File '"+fileName+"' stored with GSNAme:"+vfar.getFileName()+" with objectID:"+vfar.getId()+" URL:"+url);
+			
+			return url;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IOException("Failed to save file. "+e.getMessage(), e);
+		}
 	}
 //=====================================================================================================================
 

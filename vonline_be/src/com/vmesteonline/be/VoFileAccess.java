@@ -57,8 +57,8 @@ public class VoFileAccess extends HttpServlet {
 
 			} else {
 				if (far.isPublic() || far.getUserId() == serviceImpl.getCurrentUserId(pm)) {
-					resp.setStatus(HttpServletResponse.SC_OK, "OK");
-					StorageHelper.getFile(req.getRequestURI(), resp.getOutputStream());
+					StorageHelper.sendFileResponse(req, resp);
+	
 				} else {
 					resp.setStatus(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 				}
@@ -90,7 +90,7 @@ public class VoFileAccess extends HttpServlet {
 				throw new IOException("'data' or 'extUrl' Parameter must be set to upload file.");
 			}
 			if( null!=data )
-				resp.getOutputStream().write(StorageHelper.saveImage(""+fname, currentUserId, isPublic, new ByteArrayInputStream(data.getBytes()), pm).getBytes());
+				resp.getOutputStream().write(StorageHelper.saveImage(""+fname, "binary/stream", currentUserId, isPublic, new ByteArrayInputStream(data.getBytes()), pm).getBytes());
 			else 
 				resp.getOutputStream().write(StorageHelper.saveImage( extUrl, currentUserId, isPublic, pm).getBytes());
 			

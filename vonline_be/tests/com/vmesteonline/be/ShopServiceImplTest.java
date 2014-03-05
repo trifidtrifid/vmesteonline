@@ -228,7 +228,7 @@ public class ShopServiceImplTest {
 
 			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
 			try {
-				si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId + 1);
+				si.registerProducer(new Producer(1L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId + 1);
 				fail("Created Producer with incorrect shopId");
 			} catch (InvalidOperation ioe) {
 				Assert.assertEquals(ioe.getWhat(), VoError.IncorrectParametrs);
@@ -260,24 +260,24 @@ public class ShopServiceImplTest {
 			HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
 			si.setDates(dates);
 
-			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
-			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
+			long prodId = si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
+			long prod2Id = si.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
 
-			Long rootCatId = si.registerProductCategory(new ProductCategory(0L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet), shopId);
-			Long SecCatId = si.registerProductCategory(new ProductCategory(0L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set), shopId);
-			Long THirdCatId = si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set), shopId);
-			Long THird2CatId = si.registerProductCategory(new ProductCategory(0L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set),
+			Long rootCatId = si.registerProductCategory(new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet), shopId);
+			Long SecCatId = si.registerProductCategory(new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set), shopId);
+			Long THirdCatId = si.registerProductCategory(new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set), shopId);
+			Long THird2CatId = si.registerProductCategory(new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set),
 					shopId);
 
 			ArrayList<FullProductInfo> productsList = new ArrayList<FullProductInfo>();
 
 			ArrayList<Long> categories1 = new ArrayList<Long>();
-			categories1.add(THirdCatId);
-			categories1.add(SecCatId);
+			categories1.add(3L);
+			categories1.add(2L);
 
 			ArrayList<Long> categories2 = new ArrayList<Long>();
-			categories2.add(rootCatId);
-			categories2.add(THird2CatId);
+			categories2.add(1L);
+			categories2.add(4L);
 
 			HashMap<PriceType, Double> pricesMap1 = new HashMap<PriceType, Double>();
 			pricesMap1.put(PriceType.INET, 12.0D);
@@ -333,7 +333,7 @@ public class ShopServiceImplTest {
 
 			ProductDetails product2Details = si.getProductDetails(product2.getId());
 			Assert.assertEquals(product2Details.getFullDescr(), "dsfsdfsdssssf");
-			Assert.assertEquals(product2Details.getCategories(), categories2);
+			Assert.assertEquals(product2Details.getCategories().toArray(), new Long[]{THirdCatId,SecCatId});
 			Assert.assertEquals(product2Details.getImagesURLset(), images2);
 			Assert.assertEquals(product2Details.getTopicSet(), topic2Set);
 			Assert.assertEquals(product2Details.getOptionsMap(), optionsMap2);
@@ -366,7 +366,7 @@ public class ShopServiceImplTest {
 			categories.add(l3cat1);
 			categories.add(l3cat2);
 
-			List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true, true);
+			List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true);
 
 			// check the consistency of IDs
 			// get root category
@@ -653,7 +653,7 @@ public class ShopServiceImplTest {
 		categories.add(l3cat1);
 		categories.add(l3cat2);
 
-		List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true, true);
+		List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true);
 
 		// create producers
 		long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
@@ -664,10 +664,10 @@ public class ShopServiceImplTest {
 		ArrayList<FullProductInfo> productsList = new ArrayList<FullProductInfo>();
 
 		ArrayList<Long> categories1 = new ArrayList<Long>();
-		categories1.add(l3cat1.getId());
+		categories1.add(3L);
 
 		ArrayList<Long> categories2 = new ArrayList<Long>();
-		categories2.add(l3cat2.getId());
+		categories2.add(4L);
 
 		HashMap<PriceType, Double> pricesMap1 = new HashMap<PriceType, Double>();
 		pricesMap1.put(PriceType.RETAIL, 12.0D);

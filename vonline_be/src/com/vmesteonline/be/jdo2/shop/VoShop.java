@@ -241,8 +241,12 @@ public class VoShop {
 		return products;
 	}
 
-	public void clearProducts() {
-		getProducts().clear();
+	public void clearProducts(PersistenceManager pm) {
+		for( VoProduct vp: products ){
+			if( 1==vp.getShops().size() && vp.getShops().get(0).getId() == id.getId() )
+				pm.deletePersistent(vp);
+		}
+		if( products.size() > 0) products.clear();
 	}
 
 	public List<VoProductCategory> getCategories() {
@@ -253,7 +257,11 @@ public class VoShop {
 		categories.add(pc);
 	}
 
-	public void clearCategories() {
+	public void clearCategories( PersistenceManager pm) {
+		for( VoProductCategory vpc: categories ){
+			if( 1==vpc.getShops().size() && vpc.getShops().get(0).getId() == id.getId() )
+				pm.deletePersistent(vpc);
+		}
 		categories.clear();
 	}
 

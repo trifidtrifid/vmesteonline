@@ -1,8 +1,6 @@
 package com.vmesteonline.be.utils;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -136,7 +134,10 @@ public class VoHelper {
 		}
 		return outList;
 	}
-	// ===============================================================================================================
+	/* ===============================================================================================================
+	//Method converts list of I object from list inList to list of O objects using mutation method of O object that 
+	//tooks I objects and has name get<O.simpleName()>*/
+	
 	public static <I,O> List<O> convertMutableSet(List<I> inList, ArrayList<O> outList, O o) throws InvalidOperation {
 		if(null==inList )
 			return null;
