@@ -839,7 +839,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			VoShop shop = getCurrentShop(pm);
 			pm.retrieve(shop);
 
+
 			Collection<DateType> dateTypes = shop.getDates(date,date+1).values();
+
 
 			boolean NEXT_ORDERfound = false;
 			for (DateType dt : dateTypes) {

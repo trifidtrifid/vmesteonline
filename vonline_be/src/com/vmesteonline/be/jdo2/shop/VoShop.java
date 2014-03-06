@@ -173,6 +173,7 @@ public class VoShop {
 		SortedMap<Integer, Integer> selectedDates = new TreeMap<Integer, Integer>();
 		for(int date = fromDate; date<toDate+86400; date+=86400)
 			if( dates.containsKey(date)) selectedDates.put(date, dates.get(date));
+
 		return selectedDates;
 	}
 
