@@ -428,7 +428,7 @@
                                         <a href="#" class="product-link">
                                             <img src="${product.imageURL}" alt="картинка"/>
                                             <span>
-                                            ${product.name} <br>
+                                            <span>${product.name}</span>
                                             ${product.shortDescr}
                                             </span>
                                         </a>
