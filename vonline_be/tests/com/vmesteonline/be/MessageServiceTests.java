@@ -9,7 +9,6 @@ import java.util.TreeMap;
 
 import javax.jdo.PersistenceManager;
 
-import org.apache.thrift.TException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -134,28 +133,6 @@ public class MessageServiceTests {
 		}
 	}
 
-	@Ignore
-	@Test
-	public void testGetChildUnreadMessagesInTopic() {
-		// create locations
-		try {
-			Topic topic = createTopic();
-			Assert.assertNotNull(topic.getId());
-			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic", noLinkedMessages,
-					noTags, 0L);
-			asi.login(Defaults.user2email, Defaults.user2email);
-			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic", noLinkedMessages,
-					noTags, 0L);
-			asi.login(Defaults.user1email, Defaults.user1email);
-			TopicListPart tlp = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
-			Assert.assertEquals(1, tlp.topics.get(0).getChildUnreadMsgs());
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception thrown." + e.getMessage());
-		}
-	}
 
 	@Test
 	public void testGetChildMessagesNumInMessage() {

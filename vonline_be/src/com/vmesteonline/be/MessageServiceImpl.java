@@ -128,12 +128,28 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, groupId);
 			voMsgs = removeNoInGroupMessages(voMsgs, ug.getRadius());
+
 			voMsgs = removeExtraMessages(voMsgs, length);
 			return createMlp(voMsgs, userId, pm);
 		} finally {
 			pm.close();
 		}
 
+	}
+
+	private List<VoMessage> calculateChildMessagesNum(List<VoMessage> list) {
+
+		for (int i = 1; i < list.size(); i++) {
+			VoMessage curMsg = list.get(i-1);
+			VoMessage nextMsg = list.get(i);
+			if(curMsg.getVisibleOffset() > nextMsg.getVisibleOffset()){
+				
+			}else{
+				return 0;
+			}
+			
+		}
+		return list;
 	}
 
 	private List<VoMessage> removeNoInGroupMessages(List<VoMessage> list, int radius) {
