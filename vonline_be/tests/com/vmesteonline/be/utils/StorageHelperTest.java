@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jdo.PersistenceManager;
+
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -26,6 +28,7 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.UserServiceImpl;
+import com.vmesteonline.be.data.PMF;
 
 public class StorageHelperTest extends StorageHelper {
 	
@@ -107,9 +110,15 @@ public class StorageHelperTest extends StorageHelper {
 	
 	@Test 
 	public void testStoreData(){
-		try {
-			String origURL = "http://3.14.by/files/e4000.jpg";
-			String newImageUrl = StorageHelper.saveImage(origURL, asi.getCurrentUserId(), true, null);
+		for(int i=0; i<100; i++) try {
+			String origURL = "http://vomoloko.ru/img/logo.jpg";
+			PersistenceManager pm = PMF.getPm();
+			String newImageUrl;
+			try {
+				newImageUrl = StorageHelper.saveImage(origURL, asi.getCurrentUserId(), true, pm);
+			} finally {
+				pm.close();
+			}
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			StorageHelperTest.getFile(newImageUrl, baos);
@@ -122,6 +131,16 @@ public class StorageHelperTest extends StorageHelper {
 			int read1;
 			while( -1 !=(read1 = is.read()) )
 				Assert.assertEquals(read1, is2.read());
+			
+			//test to save data
+			origURL = "AAAAAAAAAAABBBBBBBBBBBBBCCCCCCCCCCC";
+			newImageUrl = StorageHelper.saveImage(origURL, asi.getCurrentUserId(), true, null);
+			
+			 baos = new ByteArrayOutputStream();
+			StorageHelperTest.getFile(newImageUrl, baos);
+			baos.close();
+			String content = new String(baos.toByteArray());
+			Assert.assertEquals(origURL, content);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

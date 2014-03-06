@@ -158,6 +158,7 @@ public class VoShop {
 	}
 
 	public void setDates(Map<Integer, DateType> newDates) {
+		if(null==dates) dates = new HashMap<Integer, Integer>();
 		for (Entry<Integer, DateType> e : newDates.entrySet()) { // round to the
 																															// begining of the
 																															// day
@@ -167,11 +168,11 @@ public class VoShop {
 		// Integer>()));
 	}
 
-	public SortedMap<Integer, DateType> selectDates(int fromDate, int toDate) {
-		SortedMap<Integer, DateType> selectedDates = new TreeMap<Integer, DateType>();
-		TreeMap<Integer,Integer> sdm = new TreeMap<Integer,Integer>();
-		sdm.putAll(dates);
-		selectedDates.putAll(convertToDateTypeMap(sdm.subMap(fromDate, toDate), new TreeMap<Integer, DateType>()));
+
+	public SortedMap<Integer, Integer> selectDates(int fromDate, int toDate) {
+		SortedMap<Integer, Integer> selectedDates = new TreeMap<Integer, Integer>();
+		for(int date = fromDate; date<toDate+86400; date+=86400)
+			if( dates.containsKey(date)) selectedDates.put(date, dates.get(date));
 		return selectedDates;
 	}
 
@@ -243,8 +244,12 @@ public class VoShop {
 		return products;
 	}
 
-	public void clearProducts() {
-		getProducts().clear();
+	public void clearProducts(PersistenceManager pm) {
+		for( VoProduct vp: products ){
+			if( 1==vp.getShops().size() && vp.getShops().get(0).getId() == id.getId() )
+				pm.deletePersistent(vp);
+		}
+		if( products.size() > 0) products.clear();
 	}
 
 	public List<VoProductCategory> getCategories() {
@@ -255,7 +260,11 @@ public class VoShop {
 		categories.add(pc);
 	}
 
-	public void clearCategories() {
+	public void clearCategories( PersistenceManager pm) {
+		for( VoProductCategory vpc: categories ){
+			if( 1==vpc.getShops().size() && vpc.getShops().get(0).getId() == id.getId() )
+				pm.deletePersistent(vpc);
+		}
 		categories.clear();
 	}
 
@@ -282,9 +291,12 @@ public class VoShop {
 	}
 
 	public SortedMap<Integer, DateType> getDates(int from, int to) {
-		TreeMap<Integer,Integer> sdm = new TreeMap<Integer,Integer>();
-		sdm.putAll(dates);
-		return convertToDateTypeMap(sdm.subMap(from - from % 86400, to + 86400 - to % 86400), new TreeMap<Integer, DateType>());
+
+		SortedMap<Integer, DateType> selectedDates = new TreeMap<Integer, DateType>();
+		for(int date = from - from % 86400; date<to + 86400 - to % 86400; date += 86400)
+			if( dates.containsKey(date)) selectedDates.put(date, DateType.findByValue(dates.get(date)));
+		return selectedDates;
+
 	}
 
 	public static Map<Integer, Double> convertFromPaymentTypeMap(Map<PaymentType, Double> in, Map<Integer, Double> out) {

@@ -4,11 +4,14 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Unique;
 import javax.persistence.OneToMany;
 
 import com.google.appengine.api.datastore.Key;
@@ -22,10 +25,15 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoProductCategory {
 
-	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId) {
-		this(shop, parentId, name, descr, logoURLset, topicSet, ownedId, null);
-	}
 	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId, PersistenceManager _pm) {
+		this(shop, 0, parentId, name, descr, logoURLset, topicSet, ownedId, null);
+	}
+	
+	public VoProductCategory(VoShop shop,long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId) {
+		this(shop, 0, parentId, name, descr, logoURLset, topicSet, ownedId, null);
+	}
+	
+	public VoProductCategory(VoShop shop,long importId, long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId, PersistenceManager _pm) {
 	  
 		this.name = name;
 		this.descr = descr;
@@ -44,6 +52,7 @@ public class VoProductCategory {
 	  shops = new ArrayList<VoShop>();
 	  childs = new ArrayList<VoProductCategory>();
 	  products = new ArrayList<VoProduct>();
+	  this.importId = importId;
 	  
 	  PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;  
 	  try {
@@ -87,6 +96,10 @@ public class VoProductCategory {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key id;
+	
+	@Persistent
+	@Unique
+	private long importId;
 	
 	@Persistent
 	@Unowned
@@ -185,6 +198,10 @@ public class VoProductCategory {
 		return "VoProductCategory [id=" + id + ", parent=" + parent + ", name=" + name + "]";
 	}
 	
+	public List<VoShop> getShops() {
+		return shops;
+	}
+
 	public void update(ProductCategory newCategoryInfo, long userId, PersistenceManager pm) {
 	  
 		this.name = newCategoryInfo.name;
@@ -197,5 +214,23 @@ public class VoProductCategory {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static VoProductCategory getByImportId(Long shopId, long importId, PersistenceManager pm) {
+		//TODO optimize query to fetch categories of the shop if it's possible
+		Query qu = pm.newQuery(VoProductCategory.class);
+		qu.setFilter("importId == "+importId);
+		try {
+			List<VoProductCategory> cl = (List<VoProductCategory>) qu.execute(shopId);
+			for (VoProductCategory voProductCategory : cl) {
+				for( VoShop vs: voProductCategory.getShops()){
+					if(vs.getId() == shopId )
+						return voProductCategory;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
