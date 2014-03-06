@@ -77,7 +77,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		logger = Logger.getLogger(ShopServiceImpl.class);
 		// create fake data for tests
 
-		String LOGO = "http://vomoloko.ru.ru/img/logo.jpg";
+		String LOGO = "http://vomoloko.ru/img/logo.jpg";
 		String DESCR = "Интернет магазин молочной продукции от лучших производителей вологодского края";
 		String NAME = "Во!Молоко";
 		String SESSION_ID = "11111111111111111111111";
@@ -135,6 +135,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				e1.printStackTrace();
 			}
 			asi.login("eml", "pswd");
+			userId = asi.getCurrentUserId();
+			
 			usi = new UserServiceImpl(sessionId);
 			si = new ShopServiceImpl(sessionId);
 			msi = new MessageServiceImpl(sessionId);
@@ -155,7 +157,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress2, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 			Long shopId = si.registerShop(shop);
-			// set current shop
+			// set current shop 
 			si.getShop(shopId);
 			HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
 			si.setDates(dates);
@@ -174,21 +176,21 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			categories.add(l3cat1);
 			categories.add(l3cat2);
 
-			List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true, true);
+			List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true);
 
 			// create producers
-			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
-			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
+			long prodId = si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
+			long prod2Id = si.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
 
 			// Upload products
 
 			ArrayList<FullProductInfo> productsList = new ArrayList<FullProductInfo>();
 
 			ArrayList<Long> categories1 = new ArrayList<Long>();
-			categories1.add(l3cat1.getId());
+			categories1.add(3L);
 
 			ArrayList<Long> categories2 = new ArrayList<Long>();
-			categories2.add(l3cat2.getId());
+			categories2.add(4L);
 
 			HashMap<PriceType, Double> pricesMap1 = new HashMap<PriceType, Double>();
 			pricesMap1.put(PriceType.RETAIL, 12.0D);
@@ -208,13 +210,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			Product p1 = new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D);
 			ProductDetails p1d = new ProductDetails(categories1,
-					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId, 1000, 5000, false, new HashSet<String>(),"стакан");
+					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 5000, false, new HashSet<String>(),"стакан");
 			
 			productsList.add(new FullProductInfo(p1, p1d));
 
 			Product p2 = new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D);
 			ProductDetails p2d = new ProductDetails(categories2,
-					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id, 2000, 15000, true, new HashSet<String>(),"кг.");
+					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 2000, 15000, true, new HashSet<String>(),"кг.");
 			productsList.add(new FullProductInfo(p2, p2d));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
@@ -285,7 +287,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			if (0 == shopId)
 				shopId = getCurrentShopId(pm);
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
-			VoProductCategory voProductCategory = new VoProductCategory(voShop, productCategory.getParentId(), productCategory.getName(),
+			VoProductCategory voProductCategory = new VoProductCategory(voShop, productCategory.getId(), productCategory.getParentId(), productCategory.getName(),
 					productCategory.getDescr(), productCategory.getLogoURLset(), productCategory.getTopicSet(), voShop.getOwnerId(), pm);
 			productCategory.setId(voProductCategory.getId());
 			pm.makePersistent(voShop);
@@ -299,7 +301,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 //======================================================================================================================
 	@Override
 	public long registerProducer(Producer producer, long shopId) throws InvalidOperation {
-		return producer.id = new VoProducer(shopId, producer.getName(), producer.getDescr(), producer.getLogoURL(), producer.getHomeURL()).getId();
+		return producer.id = new VoProducer(shopId, getCurrentUserId(), producer).getId();
 	}
 //======================================================================================================================
 	@Override
@@ -312,12 +314,26 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
 			pm.retrieve(voShop);
 			if (cleanShopBeforeUpload && !voShop.getProducts().isEmpty())
-				voShop.clearProducts();
+				voShop.clearProducts(pm);
 
 			productIds = new ArrayList<Long>();
 			VoProduct voProduct;
 			for (FullProductInfo fpi : products) {
-				voShop.addProduct(voProduct = VoProduct.createObject(voShop, fpi, pm));
+				FullProductInfo fpir = VoProduct.updateCategoriesByImportId(shopId, fpi, pm);
+				VoProducer producer = VoProducer.getByImportId(shopId, fpir.details.producerId, pm);
+				if(null==producer)
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to find Producer:"+fpir.details.producerId+" of product:"+fpi.product.getId());
+				
+				fpir.details.producerId = producer.getId();
+				
+				if( 0!=fpi.product.getId() && null!= 
+						(voProduct = VoProduct.getByImportedId( shopId, fpir.product.id, pm ))){
+					
+					voProduct.update(fpir, getCurrentUserId(), pm);
+					
+				} else  {
+					voShop.addProduct(voProduct = VoProduct.createObject(voShop, fpir, pm));
+				}
 				productIds.add(voProduct.getId());
 			}
 			pm.retrieve(voShop);
@@ -330,46 +346,111 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 		return productIds;
 	}
+//======================================================================================================================
+	private void uploadProducers(ArrayList<Producer> producers, boolean clean) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		
+		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
+		Long userId = super.getCurrentUserId(pm);
+		
+		if (null == shopId || 0 == shopId) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to upload Producers. SHOP ID is not set in session context.");
+		}
+
+		try {
+			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
+			pm.retrieve(voShop);
+			if (clean) {
+				voShop.clearCategories( pm );
+				voShop.clearProducts( pm );
+				logger.debug("All categories removed from " + voShop);
+			}
+			for (Producer pc : producers) {
+				
+				VoProducer vp = VoProducer.getByImportId( shopId, pc.getId(), pm );
+				
+				if( vp != null) {
+					pc.setId(vp.getId());
+					updateProducer(pc,pm);
+					
+				} else {
+					
+					vp = new VoProducer(shopId, userId, pc, pm);
+					voShop.addProducer(vp);
+
+					logger.debug("Producer " + vp + " added to " + voShop);
+				}
+			
+				pm.makePersistent(vp);
+			}
+			pm.makePersistent(voShop);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to upload categories. " + e);
+		} finally {
+			pm.close();
+		}
+	}
+//======================================================================================================================
 
 	@Override
-	public List<ProductCategory> uploadProductCategoies(List<ProductCategory> categories, boolean relativeIds, boolean cleanShopBeforeUpload)
+	public List<ProductCategory> uploadProductCategoies(List<ProductCategory> categories, boolean cleanShopBeforeUpload)
 			throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
 
+		List<ProductCategory> categoriesCreated = new ArrayList<ProductCategory>();
+		
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to upload Product categories. SHOP ID is not set in session context.");
 		}
-		List<ProductCategory> categoriesCreated = new ArrayList<ProductCategory>();
-		Map<Long, Long> idMap = new HashMap<Long, Long>();
 
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
 			pm.retrieve(voShop);
 			if (cleanShopBeforeUpload) {
-				voShop.clearCategories();
+				voShop.clearCategories( pm );
+				voShop.clearProducts( pm );
 				logger.debug("All categories removed from " + voShop);
 			}
 			for (ProductCategory pc : categories) {
-				if (relativeIds && 0 != pc.getParentId()) {
-					if (!idMap.containsKey(pc.getParentId())) {
-						throw new InvalidOperation(VoError.IncorrectParametrs, "parent Id " + pc.getParentId()
-								+ "not found as Id of categories above in a list provided");
-					}
+				
+				VoProductCategory vpc = VoProductCategory.getByImportId( shopId, pc.getId(), pm );
+				
+				VoProductCategory vppc = null;
+				if(0!=pc.getParentId()){ 
+						if( null==(vppc = VoProductCategory.getByImportId( shopId, pc.getParentId(), pm ))) {
+					
+								throw new InvalidOperation(VoError.IncorrectParametrs, "parent Id " + pc.getParentId()
+										+ "not found as Id of categories above in a list provided");
+				
+						} else {
+							pc.setParentId(vppc.getId());
+						}
 				}
-				long parentId = relativeIds && idMap.containsKey(pc.getParentId()) ? idMap.get(pc.getParentId()) : pc.getParentId();
-				logger.debug("Use paret category " + parentId + " to instead of " + pc.getParentId());
-				VoProductCategory vpc = new VoProductCategory(voShop, parentId, pc.getName(), pc.getDescr(), pc.getLogoURLset(), pc.getTopicSet(), 
-						voShop.getOwnerId(), pm);
-				idMap.put(pc.getId(), vpc.getId());
-				categoriesCreated.add(vpc.getProductCategory());
-				voShop.addProductCategory(vpc);
-				pc.setId(vpc.getId());
-				pc.setParentId(parentId);
-				logger.debug("Category " + vpc + " added to " + voShop);
+				
+				if( vpc != null) {
+					pc.setId(vpc.getId());
+					pc.setParentId(vppc.getId());
+					vpc.update(pc, 0, pm);
+				} else {
+					logger.debug("Use parent category " + pc.getParentId());
+					vpc = new VoProductCategory(voShop, 
+							pc.getId(), pc.getParentId(), pc.getName(), pc.getDescr(), pc.getLogoURLset(), pc.getTopicSet(), 
+							voShop.getOwnerId(), pm);
+					
+					voShop.addProductCategory(vpc);
+					pc.setId(vpc.getId());
+					logger.debug("Category " + vpc + " added to " + voShop);
+				}
+			
+				pm.makePersistent(vpc);
+				categoriesCreated.add( vpc.getProductCategory());
 			}
 			pm.makePersistent(voShop);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to upload categories. " + e);
@@ -378,6 +459,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 		return categoriesCreated;
 	}
+	
+	
 //======================================================================================================================
 	@Override
 	public List<Order> getFullOrders(int dateFrom, int dateTo, long userId, long shopId) throws InvalidOperation {
@@ -546,7 +629,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				if (0 == currentProductCategoryId) {
 					Query newQuery = pm.newQuery(VoProductCategory.class);
 					newQuery.setFilter("parent == null");
-					for (VoProductCategory voProductCategory : (List<VoProductCategory>) newQuery.execute()) {
+					List<VoProductCategory> pcl = (List<VoProductCategory>) newQuery.execute();
+					for (VoProductCategory voProductCategory : pcl) {
 						lpc.add(voProductCategory.getProductCategory());
 					}
 				} else {
@@ -592,23 +676,31 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			String key = "VoProductsForCategory:" + shopId + ":" + categoryId;
 			ArrayList<Product> products = ServiceImpl.getObjectFromCache(key);
 			if (null == products) {
-
-				VoProductCategory voPC = pm.getObjectById(VoProductCategory.class, categoryId);
-				if (null != voPC) {
-					SortedSet<Product> pfc = getProductsFromCategory(voPC);
-					products = new ArrayList<Product>();
-					products.addAll(pfc);
-
-					try {
-						putObjectToCache(key, products);
-					} catch (Exception e) {
-						logger.warn("FAiled to put product list ti the cache. " + e.getMessage());
-						e.printStackTrace();
+				List<VoProductCategory> vopcl = new ArrayList<VoProductCategory>();
+				if( categoryId == 0 ){
+					Query q = pm.newQuery(VoProductCategory.class,"parent == null");
+					List<VoProductCategory> vopcla = (List<VoProductCategory>) q.execute();
+					for (VoProductCategory voProductCategory : vopcla) {
+						for ( VoShop vs : voProductCategory.getShops()){
+							vopcl.add(voProductCategory);
+							break;
+						}
 					}
-					products = new ArrayList<Product>();
-					products.addAll(pfc);
 				} else {
-					throw new InvalidOperation(VoError.GeneralError, "No Category found by ID:" + categoryId);
+					vopcl.add( pm.getObjectById(VoProductCategory.class, categoryId));
+				}
+				
+				products = new ArrayList<Product>();
+				
+				for (VoProductCategory voPC : vopcl) {
+					SortedSet<Product> pfc = getProductsFromCategory(voPC);
+					products.addAll(pfc);
+				}
+				try {
+					putObjectToCache(key, products);
+				} catch (Exception e) {
+					logger.warn("FAiled to put product list ti the cache. " + e.getMessage());
+					e.printStackTrace();
 				}
 			}
 			if (offset >= products.size())
@@ -746,12 +838,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			VoShop shop = getCurrentShop(pm);
 			pm.retrieve(shop);
+
 			TreeMap<Integer,Integer> sdm = new TreeMap<Integer,Integer>();
 			sdm.putAll(shop.getDates());
 			Collection<Integer> dateTypes = sdm.subMap(date - date % 86400, date + 86400 - date % 86400).values();
+
 			boolean NEXT_ORDERfound = false;
-			for (Integer dt : dateTypes) {
-				if (DateType.NEXT_ORDER.getValue() == dt) {
+			for (DateType dt : dateTypes) {
+				if (DateType.NEXT_ORDER == dt) {
 					NEXT_ORDERfound = true;
 					break;
 				}
@@ -1244,10 +1338,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
-	// ======================================================================================================================
+	//======================================================================================================================
 	@Override
 	public void updateCategory(ProductCategory newCategoryInfo) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		updateCategory( newCategoryInfo, null);
+	}
+
+	public void updateCategory(ProductCategory newCategoryInfo, PersistenceManager _pm) throws InvalidOperation {
+		PersistenceManager pm = null==_pm ? PMF.getPm() : _pm;
 		try {
 			VoProductCategory vopc = pm.getObjectById(VoProductCategory.class, newCategoryInfo.getId());
 			long cuid = getCurrentUserId(pm);
@@ -1256,14 +1354,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update CAtegory: " + e.getMessage());
 		} finally {
-			pm.close();
+			if(null==_pm) pm.close();
 		}
 	}
 
 	// ======================================================================================================================
-	@Override
-	public void updateProducer(Producer newInfoWithOldId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+	public void updateProducer(Producer newInfoWithOldId, PersistenceManager _pm) throws InvalidOperation {
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		try {
 			VoProducer vopc = pm.getObjectById(VoProducer.class, newInfoWithOldId.getId());
 			long cuid = getCurrentUserId(pm);
@@ -1272,8 +1369,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update shop: " + e.getMessage());
 		} finally {
-			pm.close();
+			if(null==_pm) pm.close();
 		}
+	}
+	
+	@Override
+	public void updateProducer(Producer newInfoWithOldId) throws InvalidOperation {
+		updateProducer(newInfoWithOldId, null);
 	}
 
 	// ======================================================================================================================
@@ -1376,83 +1478,33 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	private void processUpdateProducers(List<ProducerDescription> producerRows) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			Long currentShopId = getCurrentShopId(pm);
-			for (ProducerDescription producerDescription : producerRows) {
-				if (0 != producerDescription.id)
-					updateProducer(producerDescription.getProducer());
-				else
-					producerDescription.id = registerProducer(producerDescription.getProducer(), currentShopId);
-			}
-		} finally {
-			pm.close();
-		}
+		
+		ArrayList<Producer> pcl = new ArrayList<Producer>();
+		VoHelper.convertMutableSet(producerRows, pcl, new Producer());
+		this.uploadProducers(pcl,  false); // do not delete producers
 	}
 
 	// ======================================================================================================================
 	private void processUpdateShops(List<ShopDescription> shopRows) throws InvalidOperation {
-		for (ShopDescription shopDescription : shopRows) {
-			if (0 != shopDescription.id)
-				updateShop(shopDescription.getShop());
-			else
-				shopDescription.id = registerShop(shopDescription.getShop());
-		}
+		ArrayList<Shop> pcl = new ArrayList<Shop>();
+		VoHelper.convertMutableSet(shopRows, pcl, new Shop());
+		logger.warn("SHOPS could not be uploaded, all of them must be created mutualy!");
+		//this.uploadShops(pcl,  false); 
 	}
 
 	// ======================================================================================================================
 
 	protected void processUpdateCategories(List<CategoryDesrciption> caregoryROws) throws InvalidOperation {
-
-		// check if file contains update information for product categories
-		if (0 < caregoryROws.size()) {
-
-			if (caregoryROws.get(0).parentId == 0) { // so looks like it's an new
-																								// category upload
-				// convert presentation
-				ArrayList<ProductCategory> pcl = new ArrayList<ProductCategory>();
-				VoHelper.convertMutableSet(caregoryROws, pcl, new ProductCategory());
-				this.uploadProductCategoies(pcl, true, false); // do not delete
-																												// categories
-
-			} else {
-				for (CategoryDesrciption categoryDesrciption : caregoryROws) {
-					if (0 != categoryDesrciption.id)
-						updateCategory(categoryDesrciption.getProductCategory());
-					else
-						categoryDesrciption.id = registerProductCategory(categoryDesrciption.getProductCategory(), 0);
-				}
-			}
-		}
+			ArrayList<ProductCategory> pcl = new ArrayList<ProductCategory>();
+			VoHelper.convertMutableSet(caregoryROws, pcl, new ProductCategory());
+			this.uploadProductCategoies(pcl,  false); // do not delete categories
 	}
 
-	// ======================================================================================================================
+	//======================================================================================================================
 	private void processUpdateProducts(List<ProductDescription> productROws) throws InvalidOperation {
-		if (0 < productROws.size()) {
-
-			if (productROws.get(0).id==0) { // so looks like it's an new category upload
-				// convert presentation
-				ArrayList<FullProductInfo> pcl = new ArrayList<FullProductInfo>();
-				VoHelper.convertMutableSet(productROws, pcl, new FullProductInfo());
-				this.uploadProducts(pcl, 0, false); // do not delete products
-
-			} else {
-				PersistenceManager pm = PMF.getPm();
-				try {
-					VoShop currentShop = getCurrentShop(pm);
-				
-					for (ProductDescription productDescription : productROws) {
-						if (0 != productDescription.id)
-							updateProduct(productDescription.getFullProductInfo());
-						else {
-							productDescription.id = registerProduct(productDescription.getFullProductInfo(), currentShop, pm);
-						}
-					}
-				} finally {
-					pm.close();
-				}
-			}
-		}
+			ArrayList<FullProductInfo> pcl = new ArrayList<FullProductInfo>();
+			VoHelper.convertMutableSet(productROws, pcl, new FullProductInfo());
+			uploadProducts(pcl, 0, false); // do not delete products
 	}
 //======================================================================================================================
 	@Override

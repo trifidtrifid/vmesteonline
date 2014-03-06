@@ -3,7 +3,6 @@ import org.apache.thrift.protocol.TJSONProtocol;
 
 public class AuthSericeServlet extends VoServlet {
 
-
 	public AuthSericeServlet() {
 		super(new TJSONProtocol.Factory());
 		AuthServiceImpl servImpl = new AuthServiceImpl();

@@ -176,7 +176,7 @@ service ShopService {
 	* Method uploads categories. List in the request should contain relative values of  and return list with updated values of id, parentId
 	* and URLS replaced to local. Any of URL parameter may contain JPEG image data.
 	**/
-	list<ProductCategory> uploadProductCategoies( 1:list<ProductCategory> categories, 2:bool relativeIds, 3:bool cleanShopBeforeUpload )
+	list<ProductCategory> uploadProductCategoies( 1:list<ProductCategory> categories, 2:bool cleanShopBeforeUpload )
 		throws (1:error.InvalidOperation exc),
 	/**
 	* Method returns full orders information. userId and shopId may be used as a filter by defining not 0 value 

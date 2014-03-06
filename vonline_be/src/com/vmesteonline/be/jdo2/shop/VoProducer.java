@@ -3,10 +3,12 @@ package com.vmesteonline.be.jdo2.shop;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -28,35 +30,38 @@ import com.vmesteonline.be.utils.VoHelper;
 @PersistenceCapable
 public class VoProducer {
 
-	public VoProducer(long shopId, Producer producer) throws InvalidOperation {
-		this(shopId, producer.getName(), producer.getDescr(), producer.getLogoURL(), producer.getHomeURL());
+	public VoProducer(long shopId, long userId, Producer producer) throws InvalidOperation {
+		this(shopId, userId, producer, null);
 	}
 
-	public VoProducer(long shopId, String name, String descr,String logoURL, String homeURL) throws InvalidOperation {
-		this.name = name;
-		this.descr = descr;
-		this.homeURL = homeURL;
+	public VoProducer(long shopId, long userId, Producer producer, PersistenceManager _pm)throws InvalidOperation {
+			
+		this.name = producer.getName();
+		this.descr = producer.getDescr();
+		this.homeURL = producer.getHomeURL();
+	
 		this.shops = new HashSet<VoShop>();
 		this.products = new HashSet<VoProduct>();
-		PersistenceManager pm = PMF.getPm();
+		this.importId = producer.id;
+		
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
+		try {
+			this.logoURL = StorageHelper.saveImage(producer.getLogoURL(), userId, true, _pm);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: "+e);
+		}
+		
 		try {
 			pm.makePersistent(this);
 			VoShop voShop = null;
 			try {
 				voShop = pm.getObjectById(VoShop.class, shopId);
-				pm.retrieve(voShop);
+				
 			} catch (JDOObjectNotFoundException e) {
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID=" + shopId + ". " + e);
-			}
-			
-			try {
-				this.logoURL = null;
-				if (null != logoURL && logoURL.length() > 0)
-					this.logoURL = StorageHelper.saveImage(logoURL, voShop.getOwnerId(), true, pm);
-			} catch (IOException e) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, e.getMessage());
 			}
 			
 			shops.add(voShop);
@@ -65,7 +70,7 @@ public class VoProducer {
 			pm.makePersistent(voShop);
 
 		} finally {
-			pm.close();
+			if( _pm == null ) pm.close();
 		}
 	}
 
@@ -76,6 +81,9 @@ public class VoProducer {
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
 	private Key id;
+	
+	@Persistent
+	private long importId;
 
 	@Persistent
 	@Unindexed
@@ -156,12 +164,29 @@ public class VoProducer {
 		this.id = KeyFactory.createKey(this.getClass().getSimpleName(), newInfoWithOldId.id);
 		try {
 			VoHelper.copyIfNotNull(this, "descr", newInfoWithOldId.descr);
-			VoHelper.replaceURL(this, "homeURL", newInfoWithOldId.homeURL, userId, isPublic, pm);
+			VoHelper.copyIfNotNull(this, "homeURL", newInfoWithOldId.homeURL);
 			VoHelper.replaceURL(this, "logoURL", newInfoWithOldId.logoURL, userId, isPublic, pm);
 			VoHelper.copyIfNotNull(this, "name", newInfoWithOldId.name);
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
 			throw new InvalidOperation( VoError.IncorrectParametrs, "Failed to update Producer:"+e.getMessage());
 		}
+	}
+
+	public static VoProducer getByImportId(Long shopId, long importId, PersistenceManager pm) {
+		Query q = pm.newQuery(VoProducer.class);
+		q.setFilter("importId == "+importId);
+		try {
+			List<VoProducer> cl = (List<VoProducer>) q.execute(shopId);
+			for (VoProducer voProducer : cl) {
+				for( VoShop vs: voProducer.getShops()){
+					if(vs.getId() == shopId )
+						return voProducer;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
