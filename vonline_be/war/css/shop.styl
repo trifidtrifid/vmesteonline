@@ -214,19 +214,19 @@ th.next
   &:after
     content "Свободный день"
     margin-left -120px
-.soon
+.special-day
   background-color #5bc0de
   &:after
-    content "Заказ на комплектации"
+    content "Специальная цена"
     margin-left -130px
-.prepare
+.closed-day
   background-color #9baab3
   &:after
-    content "Заказ готов"
+    content "Закрытый день"
     margin-left -60px
 .free-day:after
-.soon:after
-.prepare:after
+.special-day:after
+.closed-day:after
   position absolute
   background-color rgba(0,0,0,.5)
   border-radius main-radius
@@ -234,8 +234,8 @@ th.next
   color #fff
   display none
 .free-day:hover:after
-.soon:hover:after
-.prepare:hover:after
+.special-day:hover:after
+.closed-day:hover:after
   display block
 
 .day-menu

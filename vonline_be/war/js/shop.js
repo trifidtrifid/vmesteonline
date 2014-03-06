@@ -666,7 +666,37 @@ $(document).ready(function(){
         var orders = client.getOrders(0,nowTime+1000);
         var ordersLength = orders.length;
         for (var i = ordersLength-1; i >= 0 ; i--){
-            console.log(i);
+            // форматирование даты
+            var tempDate = new Date(orders[i].date*1000);
+            var tempDateItem = [];
+            tempDateItem = tempDate.toLocaleString().split(' ');
+            // форматирование статуса заказа
+            var orderStatus;
+            switch(orders[i].status){
+                case 0:
+                    orderStatus = "Неизвестен" ;
+                    break
+                case 1:
+                    orderStatus = "Новый" ;
+                    break
+                case 2:
+                    orderStatus = "Подтвержден" ;
+                    break
+                case 3:
+                    orderStatus = "Уже едет" ;
+                    break
+                case 4:
+                    orderStatus = "Доставлен" ;
+                    break
+                case 5:
+                    orderStatus = "Закрыт" ;
+                    break
+                case 6:
+                    orderStatus = "Отменен" ;
+                    break
+            }
+
+
             var orderDetails = client.getOrderDetails(orders[i].id);
             ordersHtml += '<div class="order-item" data-orderid="'+ orders[i].id +'">'+
                 '<table>'+
@@ -684,8 +714,8 @@ $(document).ready(function(){
                 '<tbody>'+
                 '<tr>'+
                 '<td>Заказ N '+i+'</td>'+
-                '<td>'+ orders[i].date +'</td>'+
-                '<td>'+ orders[i].status +'</td>'+
+                '<td>'+ tempDateItem[0] +'</td>'+
+                '<td>'+ orderStatus +'</td>'+
                 '<td>'+ orderDetails.delivery +'</td>'+
                 '<td>10</td>'+
                 '<td>'+ orders[i].totalCost +'</td>'+
@@ -704,19 +734,21 @@ $(document).ready(function(){
         return ordersHtml;
     }
 
-    var nowTime = parseInt(new Date().getTime()/1000)+86400;
-    var orders = client.getOrders(0,nowTime+1000);
-    for (var i = 0; i < orders.length; i++){
-        var tempOrder = client.getOrderDetails(orders[i].id);
-        console.log(orders[i].status);
-        if (tempOrder.odrerLines[0]){
-        //console.log("-- "+ i +" "+tempOrder.odrerLines[0].product.name);
-        }
-    }
+/*----*/
+    var nowTime = parseInt(new Date().getTime()/1000);
+    nowTime -= nowTime%86400;
     var dateArray = [];
+    var day = 3600*24;
     dateArray[nowTime] = 1;
+    dateArray[nowTime+day] = 1;
+    dateArray[nowTime+2*day] = 2;
+    dateArray[nowTime-9*day] = 2;
     client.setDates(dateArray);
-    var datesArray = client.getDates(0,nowTime+100000);
+    var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
+    for (var p in datesArray){
+        console.log(p);
+    }
+/*------*/
 
     function initOrderPlusMinus(selector){
         selector.find('.plus-minus').click(function(e){
@@ -873,29 +905,54 @@ $(document).ready(function(){
     }
 
     dPicker.click(function(e,currentProduct,spinnerValue,orderData){
-        var nowTime = parseInt(new Date().getTime()/1000)+86400;
-        var datesArray = client.getDates(0,nowTime+100000);
+        var nowTime = parseInt(new Date().getTime()/1000);
+        nowTime -= nowTime%86400;
+        var day = 3600*24;
+        var nowDateItem = new Date(nowTime*1000).toLocaleString().split('.');
+        var nowMonth = nowDateItem[1];
+
+        var datesArray = client.getDates(nowTime-30*day,nowTime+30*day);
         for (var date in datesArray){
             var tempDate = new Date(date*1000);
             var tempDateItem = [];
             tempDateItem = tempDate.toLocaleString().split('.');
-            var tempDay = tempDateItem[0];
+            var cleanDay = "";
+            var freeDay = "";
+            var specialDay = "";
+            var closedDay = "";
+            switch(datesArray[date]){
+                case 0:
+                    cleanDay = tempDateItem[0];
+                    break;
+                case 1:
+                    freeDay = tempDateItem[0];
+                    break ;
+                case 2:
+                    specialDay = tempDateItem[0];
+                    break;
+                case 3:
+                    closedDay = tempDateItem[0];
+                    break
+            }
+            //var tempDay = tempDateItem[0];
             var tempMonth = tempDateItem[1];
-            var tempYear = tempDateItem[2].slice(0,5);
-            //alert(tempYear);
-            //alert(tempDate.toLocaleString());
+            //var tempYear = tempDateItem[2].slice(0,5);
+
+            $('.day').each(function(){
+                var day = $(this).text();
+                if (tempMonth == nowMonth){
+                    if  (day == freeDay){ $(this).addClass('free-day');$(this).attr('id',date);}
+                    if  (day == specialDay){ $(this).addClass('special-day');$(this).attr('id',date);}
+                    if  (day == closedDay){ $(this).addClass('closed-day');$(this).attr('id',date);}
+                }
+            });
         }
-        $('.day').each(function(){
-            var day = $(this).text();
-            if  (day == tempDay){ $(this).addClass('free-day')}
-            if  (day == '7' || day == "13"){ $(this).addClass('soon')}
-            if  (day == '26' || day == "30"){ $(this).addClass('prepare')}
-        });
+
         $('.free-day').click(function(){
             // время должно быть не "сейчас" а то что указано в календаре
-            var nowTime = parseInt(new Date().getTime()/1000)+86400;
+            var nowTime = parseInt(new Date().getTime()/1000);
             if (orderData && orderData.itsOrder){
-                addOrdersToBasket(orderData);
+                addOrdersToBasket(orderData,$(this).attr('id'));
             }else{
                 // добавление одного продукта
                 client.createOrder(nowTime,'asd2',0);
@@ -928,13 +985,13 @@ $(document).ready(function(){
         }
     }
 
-    function addOrdersToBasket(orderData){
+    function addOrdersToBasket(orderData,data){
         // добавление целого заказа
         var addType;
         if (orderData.itsAppend){
             addType = 'append';
         }  else{
-            client.createOrder(nowTime,'asd2',0);
+            client.createOrder(data,'asd2',0);
             addType = 'replace';
         }
         $('.catalog-order').html('');
