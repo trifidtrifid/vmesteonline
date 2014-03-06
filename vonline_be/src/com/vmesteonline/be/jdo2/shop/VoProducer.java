@@ -58,18 +58,10 @@ public class VoProducer {
 			VoShop voShop = null;
 			try {
 				voShop = pm.getObjectById(VoShop.class, shopId);
-				pm.retrieve(voShop);
+				
 			} catch (JDOObjectNotFoundException e) {
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID=" + shopId + ". " + e);
-			}
-			
-			try {
-				this.logoURL = null;
-				if (null != logoURL && logoURL.length() > 0)
-					this.logoURL = StorageHelper.saveImage(logoURL, voShop.getOwnerId(), true, pm);
-			} catch (IOException e) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, e.getMessage());
 			}
 			
 			shops.add(voShop);
@@ -172,7 +164,7 @@ public class VoProducer {
 		this.id = KeyFactory.createKey(this.getClass().getSimpleName(), newInfoWithOldId.id);
 		try {
 			VoHelper.copyIfNotNull(this, "descr", newInfoWithOldId.descr);
-			VoHelper.replaceURL(this, "homeURL", newInfoWithOldId.homeURL, userId, isPublic, pm);
+			VoHelper.copyIfNotNull(this, "homeURL", newInfoWithOldId.homeURL);
 			VoHelper.replaceURL(this, "logoURL", newInfoWithOldId.logoURL, userId, isPublic, pm);
 			VoHelper.copyIfNotNull(this, "name", newInfoWithOldId.name);
 		} catch (NoSuchFieldException e) {

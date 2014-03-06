@@ -157,7 +157,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress2, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 			Long shopId = si.registerShop(shop);
-			// set current shop
+			// set current shop 
 			si.getShop(shopId);
 			HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
 			si.setDates(dates);
@@ -179,8 +179,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true);
 
 			// create producers
-			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
-			long prod2Id = si.registerProducer(new Producer(0L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
+			long prodId = si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
+			long prod2Id = si.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
 
 			// Upload products
 
@@ -210,13 +210,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			Product p1 = new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D);
 			ProductDetails p1d = new ProductDetails(categories1,
-					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, prodId, 1000, 5000, false, new HashSet<String>(),"стакан");
+					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 5000, false, new HashSet<String>(),"стакан");
 			
 			productsList.add(new FullProductInfo(p1, p1d));
 
 			Product p2 = new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D);
 			ProductDetails p2d = new ProductDetails(categories2,
-					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, prod2Id, 2000, 15000, true, new HashSet<String>(),"кг.");
+					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 2000, 15000, true, new HashSet<String>(),"кг.");
 			productsList.add(new FullProductInfo(p2, p2d));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
@@ -320,6 +320,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			VoProduct voProduct;
 			for (FullProductInfo fpi : products) {
 				FullProductInfo fpir = VoProduct.updateCategoriesByImportId(shopId, fpi, pm);
+				VoProducer producer = VoProducer.getByImportId(shopId, fpir.details.producerId, pm);
+				if(null==producer)
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to find Producer:"+fpir.details.producerId+" of product:"+fpi.product.getId());
+				
+				fpir.details.producerId = producer.getId();
 				
 				if( 0!=fpi.product.getId() && null!= 
 						(voProduct = VoProduct.getByImportedId( shopId, fpir.product.id, pm ))){
@@ -624,7 +629,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				if (0 == currentProductCategoryId) {
 					Query newQuery = pm.newQuery(VoProductCategory.class);
 					newQuery.setFilter("parent == null");
-					for (VoProductCategory voProductCategory : (List<VoProductCategory>) newQuery.execute()) {
+					List<VoProductCategory> pcl = (List<VoProductCategory>) newQuery.execute();
+					for (VoProductCategory voProductCategory : pcl) {
 						lpc.add(voProductCategory.getProductCategory());
 					}
 				} else {
@@ -670,23 +676,31 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			String key = "VoProductsForCategory:" + shopId + ":" + categoryId;
 			ArrayList<Product> products = ServiceImpl.getObjectFromCache(key);
 			if (null == products) {
-
-				VoProductCategory voPC = pm.getObjectById(VoProductCategory.class, categoryId);
-				if (null != voPC) {
-					SortedSet<Product> pfc = getProductsFromCategory(voPC);
-					products = new ArrayList<Product>();
-					products.addAll(pfc);
-
-					try {
-						putObjectToCache(key, products);
-					} catch (Exception e) {
-						logger.warn("FAiled to put product list ti the cache. " + e.getMessage());
-						e.printStackTrace();
+				List<VoProductCategory> vopcl = new ArrayList<VoProductCategory>();
+				if( categoryId == 0 ){
+					Query q = pm.newQuery(VoProductCategory.class,"parent == null");
+					List<VoProductCategory> vopcla = (List<VoProductCategory>) q.execute();
+					for (VoProductCategory voProductCategory : vopcla) {
+						for ( VoShop vs : voProductCategory.getShops()){
+							vopcl.add(voProductCategory);
+							break;
+						}
 					}
-					products = new ArrayList<Product>();
-					products.addAll(pfc);
 				} else {
-					throw new InvalidOperation(VoError.GeneralError, "No Category found by ID:" + categoryId);
+					vopcl.add( pm.getObjectById(VoProductCategory.class, categoryId));
+				}
+				
+				products = new ArrayList<Product>();
+				
+				for (VoProductCategory voPC : vopcl) {
+					SortedSet<Product> pfc = getProductsFromCategory(voPC);
+					products.addAll(pfc);
+				}
+				try {
+					putObjectToCache(key, products);
+				} catch (Exception e) {
+					logger.warn("FAiled to put product list ti the cache. " + e.getMessage());
+					e.printStackTrace();
 				}
 			}
 			if (offset >= products.size())
@@ -824,10 +838,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			VoShop shop = getCurrentShop(pm);
 			pm.retrieve(shop);
-			Collection<Integer> dateTypes = shop.getDates().subMap(date - date % 86400, date + 86400 - date % 86400).values();
+			Collection<DateType> dateTypes = shop.getDates(date,date+1).values();
 			boolean NEXT_ORDERfound = false;
-			for (Integer dt : dateTypes) {
-				if (DateType.NEXT_ORDER.getValue() == dt) {
+			for (DateType dt : dateTypes) {
+				if (DateType.NEXT_ORDER == dt) {
 					NEXT_ORDERfound = true;
 					break;
 				}
@@ -1470,6 +1484,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	private void processUpdateShops(List<ShopDescription> shopRows) throws InvalidOperation {
 		ArrayList<Shop> pcl = new ArrayList<Shop>();
 		VoHelper.convertMutableSet(shopRows, pcl, new Shop());
+		logger.warn("SHOPS could not be uploaded, all of them must be created mutualy!");
 		//this.uploadShops(pcl,  false); 
 	}
 

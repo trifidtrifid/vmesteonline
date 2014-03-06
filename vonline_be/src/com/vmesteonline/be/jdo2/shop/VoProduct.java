@@ -169,6 +169,7 @@ public class VoProduct {
 				vp.knownNames.add(name);
 			}
 			vp.unitName = details.unitName;
+			vp.importId = product.id;
 			producer.getProducts().add(vp);
 			pm.makePersistent(vp);
 			pm.makePersistent(producer);
@@ -201,6 +202,7 @@ public class VoProduct {
 		this.shops = new ArrayList<VoShop>();
 		this.knownNames = new HashSet<String>();
 		this.unitName = details.unitName;
+		this.importId = product.id;
 		
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
@@ -355,7 +357,9 @@ public class VoProduct {
 	@Persistent
 	@Unindexed
 	private String unitName;
-
+	
+	@Persistent
+	private long importId;
 	
 	public double getMinClientPack() {
 		return minClientPack;
@@ -542,7 +546,7 @@ public class VoProduct {
 	public static VoProduct getByImportedId(long shopId, long importedId, PersistenceManager pm) throws InvalidOperation {
 		Query q = pm.newQuery(VoProduct.class);
 		q.setFilter("importId == importIdParam");
-		q.declareParameters( "long importIdParam");
+		q.declareParameters( "Long importIdParam");
 		List<VoProduct> cl = (List<VoProduct>) q. execute( importedId );
 		for (VoProduct voProduct : cl) {
 			for( VoShop vs: voProduct.getShops()){

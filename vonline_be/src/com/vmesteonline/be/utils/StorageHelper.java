@@ -244,7 +244,7 @@ public class StorageHelper {
 		String[] splits = requestURI.split("/", 3);
 		if (splits.length < 3 || !splits[0].equals("") || !splits[1].equals("file") ||
 				splits[2].length()==0) {
-			throw new IllegalArgumentException("The URL is not formed as expected. " + "Expecting /file/<id>.<extension>");
+			throw new IllegalArgumentException("The URL '"+requestURI+"' is not formed as expected. " + "Expecting /file/<id>.<extension>");
 		}
 		splits = splits[2].split("[.]", 2);
 		if( splits.length < 2 || splits[0].length()<2){

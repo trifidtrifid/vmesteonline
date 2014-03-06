@@ -17,9 +17,14 @@ public class VoHelper {
 	// ===================================================================================================================
 	public static void copyIfNotNull(Object owner, String fieldName, Object objToCopy) throws NoSuchFieldException {
 		if (null != objToCopy) {
-			Field field = owner.getClass().getField(fieldName);
+			Field field = null;
 			try {
-				if (field.isAccessible())
+				field = owner.getClass().getField(fieldName);
+			} catch (SecurityException | NoSuchFieldException e1) {
+				//field is not accessible directly
+			}
+			try {
+				if (null != field && field.isAccessible())
 					field.set(owner, objToCopy);
 				else {
 					Method method = owner.getClass().getMethod("set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1),
