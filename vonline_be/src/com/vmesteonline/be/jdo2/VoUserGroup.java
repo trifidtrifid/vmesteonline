@@ -1,5 +1,7 @@
 package com.vmesteonline.be.jdo2;
 
+import java.math.BigDecimal;
+
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
@@ -10,10 +12,17 @@ import com.vmesteonline.be.Group;
 public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> {
 
 	public VoUserGroup(VoUser user, VoGroup grp) {
-		longitude = user.getLongitude();
-		latitude = user.getLatitude();
+		setLongitude(user.getLongitude());
+		setLatitude(user.getLatitude());
 		radius = grp.getRadius();
 		name = grp.getVisibleName();
+	}
+
+	public VoUserGroup(String visibleName, int radius, BigDecimal longitude, BigDecimal lattitude) {
+		this.radius = radius;
+		this.longitude = longitude.toPlainString();
+		this.latitude = longitude.toPlainString();
+		this.name = visibleName;
 	}
 
 	public int getRadius() {
@@ -23,27 +32,9 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	public void setRadius(int radius) {
 		this.radius = radius;
 	}
-// r / (2pR/360)
-	public float getLongitudeDelta() {
-		return (float) (((float) radius / (float) R) * (180.0 / Math.PI));
-
-	}
-
-	public float getLatitudeDelta() {
-		return (float) ((radius / (R * Math.cos(Math.PI * latitude / 180))) * (180.0 / Math.PI));
-
-	}
 
 	public Group createGroup() {
 		return new Group(getId(), name, name, description, radius);
-	}
-
-	public VoUserGroup(String visibleName, int radius, float longitude, float lattitude) {
-		this.radius = radius;
-		this.longitude = longitude;
-		System.out.print("long " + longitude + " lat " + latitude + " visible name " + visibleName + "\n");
-		this.latitude = lattitude;
-		this.name = visibleName;
 	}
 
 	public String getName() {
@@ -62,20 +53,12 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 		this.description = description;
 	}
 
-	public Float getLongitude() {
-		return longitude;
+	public BigDecimal getLongitude() {
+		return new BigDecimal(longitude);
 	}
 
-	public void setLongitude(float longitude) {
-		this.longitude = longitude;
-	}
-
-	public Float getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(float latitude) {
-		this.latitude = latitude;
+	public void setLongitude(BigDecimal longitude) {
+		this.longitude = longitude.toPlainString();
 	}
 
 	@Persistent
@@ -97,9 +80,8 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 
 	@Override
 	public int compareTo(VoUserGroup that) {
-		return Float.compare(that.latitude, this.latitude) != 0 ? Float.compare(that.latitude, this.latitude) : Float.compare(that.longitude,
-				this.longitude) != 0 ? Float.compare(that.longitude, this.longitude) : Integer.compare(that.radius, this.radius);
+		return that.latitude.compareTo(this.latitude) != 0 ? that.latitude.compareTo(this.latitude)
+				: that.longitude.compareTo(this.longitude) != 0 ? that.longitude.compareTo(this.longitude) : Integer.compare(that.radius, this.radius);
 	}
 
-	private static int R = 6378137;
 }

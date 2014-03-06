@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -45,6 +46,18 @@ public class VoMessage extends VoBaseMessage {
 	public VoMessage() {
 	}
 
+	public void setLongitude(BigDecimal longitude) {
+		this.longitude = longitude.toPlainString();
+	}
+
+	public void setLatitude(BigDecimal latitude) {
+		this.latitude = latitude.toPlainString();
+	}
+
+	public void setRadius(int radius) {
+		this.radius = radius;
+	}
+
 	public VoMessage(Message msg) throws InvalidOperation {
 
 		super(msg);
@@ -70,6 +83,9 @@ public class VoMessage extends VoBaseMessage {
 
 			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, msg.getGroupId());
 			this.radius = ug.getRadius();
+			setLongitude(ug.getLongitude());
+			setLatitude(ug.getLatitude());
+
 			try {
 				/* CHeck the recipient */
 				if (0 != msg.getRecipientId()) {
@@ -81,9 +97,9 @@ public class VoMessage extends VoBaseMessage {
 				if (null == author) {
 					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Author of Message not found by ID=" + msg.getAuthorId());
 				}
-				// todo сделать проверку на права создания сообщений не зависящей от
+				// TODO сделать проверку на права создания сообщений не зависящей от
 				// наличия домашней группы.
-				if (0 == author.getLongitude() || 0 == author.getLatitude())
+				if (author.getLongitude().equals("0") || author.getLatitude().equals("0"))
 					throw new InvalidOperation(com.vmesteonline.be.VoError.GeneralError, "User without HomeGroup must not create a message");
 
 				author.incrementMessages(1);
@@ -135,12 +151,12 @@ public class VoMessage extends VoBaseMessage {
 		this.approvedId = approvedId;
 	}
 
-	public float getLongitude() {
-		return longitude;
+	public BigDecimal getLongitude() {
+		return new BigDecimal(longitude);
 	}
 
-	public float getLatitude() {
-		return latitude;
+	public BigDecimal getLatitude() {
+		return new BigDecimal(latitude);
 	}
 
 	public int getRadius() {
@@ -160,9 +176,9 @@ public class VoMessage extends VoBaseMessage {
 	private long approvedId;
 
 	@Persistent
-	private float longitude;
+	private String longitude;
 	@Persistent
-	private float latitude;
+	private String latitude;
 	@Persistent
 	private int radius;
 

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -83,7 +82,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			q.setFilter("topicId == " + topicId);
 			List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
 			MessagesTree tree = new MessagesTree(voMsgs);
-			voMsgs = tree.getTreeMessagesFirstLevel(userId);
+			// TODO must check if user is in group!
+			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, groupId);
+			voMsgs = tree.getTreeMessagesFirstLevel(new MessagesTree.Filters(userId, ug));
 
 			if (lastLoadedId != 0) {
 				List<VoMessage> subLst = null;
@@ -97,11 +98,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				else
 					voMsgs = subLst;
 			}
-
-			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, groupId);
-			voMsgs = removeNoInGroupMessages(voMsgs, ug.getRadius());
 			voMsgs = removeExtraMessages(voMsgs, length);
-
 			return createMlp(voMsgs, userId, pm);
 		} finally {
 			pm.close();
@@ -124,10 +121,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
 
 			MessagesTree tree = new MessagesTree(voMsgs);
-			voMsgs = tree.getTreeMessagesAfter(lastLoadedMsgId, userId);
-
 			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, groupId);
-			voMsgs = removeNoInGroupMessages(voMsgs, ug.getRadius());
+			voMsgs = tree.getTreeMessagesAfter(lastLoadedMsgId, new MessagesTree.Filters(userId, ug));
 
 			voMsgs = removeExtraMessages(voMsgs, length);
 			return createMlp(voMsgs, userId, pm);
@@ -137,32 +132,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	}
 
-	private List<VoMessage> calculateChildMessagesNum(List<VoMessage> list) {
-
-		for (int i = 1; i < list.size(); i++) {
-			VoMessage curMsg = list.get(i-1);
-			VoMessage nextMsg = list.get(i);
-			if(curMsg.getVisibleOffset() > nextMsg.getVisibleOffset()){
-				
-			}else{
-				return 0;
-			}
-			
-		}
-		return list;
-	}
-
-	private List<VoMessage> removeNoInGroupMessages(List<VoMessage> list, int radius) {
-
-		ListIterator<VoMessage> it = list.listIterator();
-		while (it.hasNext()) {
-			if (it.next().getRadius() < radius)
-				it.remove();
-
-		}
-		return list;
-	}
-
+	//TODO move in createMLP method
 	private List<VoMessage> removeExtraMessages(List<VoMessage> list, int length) {
 		if (list.size() <= length)
 			return list;
@@ -450,6 +420,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	private static MessageListPart createMlp(List<VoMessage> lst, long userId, PersistenceManager pm) throws InvalidOperation {
+		
 		MessageListPart mlp = new MessageListPart();
 		if (lst == null) {
 			logger.warning("try to create MessagePartList from null object");

@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2.postaladdress;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -30,8 +31,9 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 		this.floor = floor;
 		this.flatNo = flatNo;
 		this.comment = comment;
-		float tmp = building.getLongitude() + 0.000001F * staircase;
-		userGroup = new VoUserGroup("Парадная " + staircase, 0, tmp, building.getLatitude());
+		BigDecimal staircaseOffset = new BigDecimal("0.000002");
+		staircaseOffset = staircaseOffset.multiply(new BigDecimal(staircase));
+		userGroup = new VoUserGroup("Парадная " + staircase, 0, staircaseOffset.add(building.getLongitude()), building.getLatitude());
 
 	}
 

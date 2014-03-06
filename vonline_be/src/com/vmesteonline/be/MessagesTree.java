@@ -6,37 +6,56 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.vmesteonline.be.jdo2.VoMessage;
+import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.utils.VoHelper;
 
 public class MessagesTree {
+
+	static public class Filters {
+		public Filters(long uid, VoUserGroup ug) {
+			userId = uid;
+			if (ug != null) {
+				this.radius = ug.getRadius();
+				latitude = ug.getLatitude();
+				longitude = ug.getLongitude();
+			}
+		}
+
+		public long userId;
+		public int radius;
+		float longitude;
+		float latitude;
+
+	}
 
 	public MessagesTree(List<VoMessage> vomsgs) {
 		msgs = vomsgs;
 		items = new ArrayList<ItemPosition>();
-		firstLevel = getLevel(0);
-		parseLevel(firstLevel, 0);
-		for (VoMessage voMsg : firstLevel) {
-			voMsg.setChildMessageNum(getChildsNum(voMsg.getId().getId()));
-		}
 	}
 
-	public void createUserTtree(long userId){
-		
-		
-	}
-	
-	public List<VoMessage> getTreeMessagesFirstLevel(long userId) {
+	public List<VoMessage> getTreeMessagesFirstLevel(Filters filters) throws InvalidOperation {
+		this.filters = filters;
+		parseLevel(getLevel(0), 0);
+
 		List<VoMessage> retList = new ArrayList<VoMessage>();
-		for (VoMessage voMsg : firstLevel) {
-			if (isVisibleMessage(voMsg, userId))
+
+		for (int i = 0; i < items.size(); i++) {
+			if (items.get(i).level == 0) {
+				VoMessage voMsg = getMessage(items.get(i).id);
+				voMsg.setChildMessageNum(items.get(i).childMsgsNum);
 				retList.add(voMsg);
+			}
 		}
+
 		return retList;
 	}
 
 	// эта функция возращает все сообщения от parentId до ближайшего сообщения
 	// 1-го уровня
-
-	public List<VoMessage> getTreeMessagesAfter(long parentId, long userId) throws InvalidOperation {
+	public List<VoMessage> getTreeMessagesAfter(long parentId, Filters filters) throws InvalidOperation {
+		this.filters = filters;
+		items.clear();
+		parseLevel(getLevel(0), 0);
 
 		List<VoMessage> lst = new ArrayList<>();
 		boolean add = false;
@@ -49,11 +68,10 @@ public class MessagesTree {
 				if (voMsg.getParentId() == 0)
 					break;
 
-				if (isVisibleMessage(voMsg, userId)) {
-					voMsg.setVisibleOffset(items.get(i).level);
-//					voMsg.setChildMessageNum(items.get(i).childMsgsNum);
-					lst.add(voMsg);
-				}
+				voMsg.setVisibleOffset(items.get(i).level);
+				voMsg.setChildMessageNum(items.get(i).childMsgsNum);
+				lst.add(voMsg);
+
 			}
 		}
 
@@ -79,20 +97,32 @@ public class MessagesTree {
 
 	// эта функция возращает все сообщения от parentId до ближайшего сообщения
 	// 1-го уровня
-	
+
 	boolean isVisibleMessage(VoMessage voMsg, long userId) {
 		return voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId;
+	}
+
+	boolean isInGroup(VoMessage voMsg) {
+		if (voMsg.getLatitude() + VoHelper.getLatitudeDelta(voMsg.getRadius(), voMsg.getLatitude()) > filters.latitude
+				&& voMsg.getLatitude() - VoHelper.getLatitudeDelta(voMsg.getRadius(), voMsg.getLatitude()) < filters.latitude
+				&& voMsg.getLongitude() + VoHelper.getLongitudeDelta(voMsg.getRadius()) > filters.longitude
+				&& voMsg.getLongitude() - VoHelper.getLongitudeDelta(voMsg.getRadius()) < filters.longitude)
+			return true;
+
+		return false;
 	}
 
 	private int parseLevel(List<VoMessage> levelMsgs, int level) {
 		Collections.sort(levelMsgs, new ByCreateTimeComparator());
 		int childsInSublevels = levelMsgs.size();
 		for (VoMessage voMsg : levelMsgs) {
-			ItemPosition ip = new ItemPosition(voMsg.getId().getId(), voMsg.getParentId(), level);
-			items.add(ip);
-			List<VoMessage> nextLevel = getLevel(voMsg.getId().getId());
-			ip.childMsgsNum = parseLevel(nextLevel, level + 1);
-			childsInSublevels += ip.childMsgsNum;
+			if (isVisibleMessage(voMsg, filters.userId) && isInGroup(voMsg)) {
+				ItemPosition ip = new ItemPosition(voMsg.getId().getId(), voMsg.getParentId(), level);
+				items.add(ip);
+				List<VoMessage> nextLevel = getLevel(voMsg.getId().getId());
+				ip.childMsgsNum = parseLevel(nextLevel, level + 1);
+				childsInSublevels += ip.childMsgsNum;
+			}
 		}
 
 		return childsInSublevels;
@@ -144,4 +174,6 @@ public class MessagesTree {
 
 	protected List<ItemPosition> items;
 	protected List<VoMessage> msgs;
+
+	Filters filters;
 }

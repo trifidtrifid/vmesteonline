@@ -28,7 +28,7 @@ public class VoGeocoder {
 	private static String addressParamName;
 	private static SAXParserFactory factory;
 	private static SAXParser saxParser;
-	
+
 	static {
 		geocogingServerURL = null;
 		try {
@@ -39,64 +39,68 @@ public class VoGeocoder {
 		} catch (MalformedURLException | SAXException | ParserConfigurationException e) {
 			e.printStackTrace();
 			geocogingServerURL = null;
-		} 
+		}
 	}
+
 	public VoGeocoder() {
-		
+
 	}
-	
-	public static Pair<Float,Float> getPosition( VoBuilding building) throws InvalidOperation{
+
+	public static Pair<String, String> getPosition(VoBuilding building) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		try{
+		try {
 			VoStreet street = pm.getObjectById(VoStreet.class, building.getStreet());
-			
-			String address = street.getCity().getCountry().getName() + "," + street.getCity().getName() + "," + street.getName() +
-					","+building.getFullNo();
+
+			String address = street.getCity().getCountry().getName() + "," + street.getCity().getName() + "," + street.getName() + ","
+					+ building.getFullNo();
 			address = URLEncoder.encode(address);
 			try {
-				URL url = new URL(geocogingServerURL + "?" + addressParamName + "="+address);
+				URL url = new URL(geocogingServerURL + "?" + addressParamName + "=" + address);
 				YAMLGecodingHandler handler = new YAMLGecodingHandler();
 				saxParser.parse(url.openStream(), handler);
 				String longLatString = handler.longLatString();
-				if( null!=longLatString){
+				if (null != longLatString) {
 					StringTokenizer st = new StringTokenizer(longLatString, " ");
-					if( st.countTokens() > 1  ){
-						float longitude = Float.parseFloat(st.nextToken());
-						float lattitude = Float.parseFloat(st.nextToken());
-						if( longitude > 0 && lattitude > 0  )
-							return new Pair<Float, Float>(longitude, lattitude);
+					if (st.countTokens() > 1) {
+						String longitude = st.nextToken();
+						String lattitude = st.nextToken();
+						if (!longitude.isEmpty() && !lattitude.isEmpty())
+							return new Pair<String, String>(longitude, lattitude);
 					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new InvalidOperation(VoError.GeneralError, "Failed to get Location: "+e.getMessage());
+				throw new InvalidOperation(VoError.GeneralError, "Failed to get Location: " + e.getMessage());
 			}
 			throw new InvalidOperation(VoError.GeneralError, "Failed to get Location. THere is No data");
 		} finally {
 			pm.close();
 		}
 	}
-	
+
 	private static class YAMLGecodingHandler extends DefaultHandler {
 		boolean doDeadThePos = false;
 		private String longLatString = null;
+
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-			if(qName.equalsIgnoreCase("POS")) 
+			if (qName.equalsIgnoreCase("POS"))
 				doDeadThePos = true;
 		}
 
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
-			if( doDeadThePos) doDeadThePos = false;
+			if (doDeadThePos)
+				doDeadThePos = false;
 		}
 
 		@Override
 		public void characters(char[] ch, int start, int length) throws SAXException {
-			if(doDeadThePos) 
+			if (doDeadThePos)
 				longLatString = new String(ch, start, length);
 		}
-		public String longLatString(){ 
+
+		public String longLatString() {
 			return longLatString;
 		}
 	}

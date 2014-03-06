@@ -20,6 +20,17 @@ public class MessagesTreeTests extends MessagesTree {
 
 	List<VoMessage> lst;
 	int msgCreateTime;
+	int lgDef = 50;
+	int ltDef = 30;
+	int radiusDef = 200;
+
+	VoMessage createVoMsg(long id, long parentId, int radius, float longitude, float latitude) {
+		VoMessage msg = createVoMsg(id, parentId, 0);
+		msg.setRadius(radius);
+		msg.setLongitude(longitude);
+		msg.setLatitude(latitude);
+		return msg;
+	}
 
 	VoMessage createVoMsg(long id, long parentId, long recepientId) {
 		VoMessage msg = new VoMessage();
@@ -29,6 +40,10 @@ public class MessagesTreeTests extends MessagesTree {
 		msg.setAuthorId(KeyFactory.createKey(VoUser.class.getSimpleName(), 1));
 		msgCreateTime += 10;
 		msg.setCreatedAt(msgCreateTime);
+		msg.setRadius(radiusDef);
+		msg.setLongitude(lgDef);
+		msg.setLatitude(ltDef);
+
 		return msg;
 	}
 
@@ -66,7 +81,7 @@ public class MessagesTreeTests extends MessagesTree {
 	public void testGetMessagesWithChildMessagesNum() {
 		MessagesTree t = new MessagesTree(lst);
 		try {
-			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 0);
+			List<VoMessage> msgs = t.getTreeMessagesAfter(1, new MessagesTree.Filters(0, null));
 			Assert.assertEquals(4, msgs.size());
 			Assert.assertEquals(4, msgs.get(0).getId().getId());
 			Assert.assertEquals(0, msgs.get(0).getChildMessageNum());
@@ -107,10 +122,10 @@ public class MessagesTreeTests extends MessagesTree {
 
 		MessagesTree t = new MessagesTree(lst);
 		try {
-			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 0);
+			List<VoMessage> msgs = t.getTreeMessagesAfter(1, new MessagesTree.Filters(0, null));
 			Assert.assertEquals(4, msgs.size());
 
-			msgs = t.getTreeMessagesAfter(1, userId);
+			msgs = t.getTreeMessagesAfter(1, new MessagesTree.Filters(userId, null));
 			Assert.assertEquals(5, msgs.size());
 
 		} catch (InvalidOperation e) {
@@ -121,33 +136,11 @@ public class MessagesTreeTests extends MessagesTree {
 	}
 
 	@Test
-	public void testMessageTreeCreateObject() {
-		MessagesTree t = new MessagesTree(lst);
-		Assert.assertEquals(8, t.items.size());
-		Assert.assertEquals(1, t.items.get(0).id);
-		Assert.assertEquals(0, t.items.get(0).level);
-		Assert.assertEquals(4, t.items.get(0).childMsgsNum);
-
-		Assert.assertEquals(4, t.items.get(1).id);
-		Assert.assertEquals(1, t.items.get(1).level);
-		Assert.assertEquals(0, t.items.get(1).childMsgsNum);
-
-		Assert.assertEquals(5, t.items.get(2).id);
-		Assert.assertEquals(1, t.items.get(2).level);
-		Assert.assertEquals(2, t.items.get(2).childMsgsNum);
-
-		Assert.assertEquals(6, t.items.get(3).id);
-		Assert.assertEquals(2, t.items.get(3).level);
-		Assert.assertEquals(1, t.items.get(3).childMsgsNum);
-
-	}
-
-	@Test
 	public void testGetTreeMessagesAfter() {
 		try {
 			MessagesTree t = new MessagesTree(lst);
 
-			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 0);
+			List<VoMessage> msgs = t.getTreeMessagesAfter(1, new MessagesTree.Filters(0, null));
 			Assert.assertEquals(4, msgs.size());
 			Assert.assertEquals(4, msgs.get(0).getId().getId());
 			Assert.assertEquals(1, msgs.get(0).getVisibleOffset());
@@ -169,7 +162,7 @@ public class MessagesTreeTests extends MessagesTree {
 		try {
 			MessagesTree t = new MessagesTree(lst);
 
-			List<VoMessage> msgs = t.getTreeMessagesAfter(5, 0);
+			List<VoMessage> msgs = t.getTreeMessagesAfter(5, new MessagesTree.Filters(0, null));
 			Assert.assertEquals(2, msgs.size());
 			Assert.assertEquals(6, msgs.get(0).getId().getId());
 			Assert.assertEquals(7, msgs.get(1).getId().getId());
@@ -179,6 +172,8 @@ public class MessagesTreeTests extends MessagesTree {
 			fail("catch exception: " + e.getMessage());
 		}
 	}
+
+
 
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 

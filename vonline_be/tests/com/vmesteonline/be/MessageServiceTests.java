@@ -69,9 +69,9 @@ public class MessageServiceTests {
 		List<Group> userGroups = usi.getUserGroups();
 		Assert.assertTrue(userGroups.size() > 0);
 		Assert.assertTrue(userGroups.get(0) != null);
-		homeGroup = userGroups.get(0);
-		group200m = userGroups.get(1);
-		group2000m = userGroups.get(2);
+		homeGroup = userGroups.get(1);
+		group200m = userGroups.get(2);
+		group2000m = userGroups.get(3);
 	}
 
 	@After
@@ -453,6 +453,50 @@ public class MessageServiceTests {
 			Assert.assertEquals(msg4.getId(), mlp.messages.get(1).getId());
 			Assert.assertEquals(msg5.getId(), mlp.messages.get(2).getId());
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+
+	}
+
+
+	//topic 2000m
+	//-msg1 2000m
+	//--msg2 2000m
+	//--msg3 200m
+	//---msg4 200m
+	//-msg5 200m
+
+	@Test
+	public void testGetFirstLevelMessagesBiggerGroup() {
+		try {
+
+			Topic topic = createTopic(getUserGroupId(Defaults.user1email, 2000));
+			Message msg1 = msi.createMessage(topic.getId(), 0, getUserGroupId(Defaults.user1email, 2000), MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), getUserGroupId(Defaults.user1email, 2000), MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg3 = msi.createMessage(topic.getId(), msg1.getId(), getUserGroupId(Defaults.user1email, 200), MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg4 = msi.createMessage(topic.getId(), msg3.getId(), getUserGroupId(Defaults.user1email, 200), MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg5 = msi.createMessage(topic.getId(), 0, getUserGroupId(Defaults.user1email, 200), MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+
+			Assert.assertTrue(asi.login(Defaults.user2email, Defaults.user2pass));
+
+			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), getUserGroupId(Defaults.user2email, 200), MessageType.BASE, 0, false, 20);
+			Assert.assertNotNull(mlp);
+			Assert.assertEquals(1, mlp.totalSize);
+			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
+
+			mlp = msi.getFirstLevelMessages(topic.getId(), getUserGroupId(Defaults.user2email, 200), MessageType.BASE, 0, false, 20);
+			Assert.assertNotNull(mlp);
+			Assert.assertEquals(2, mlp.totalSize);
+			Assert.assertEquals(msg5.getId(), mlp.messages.get(0).getId());
+
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());

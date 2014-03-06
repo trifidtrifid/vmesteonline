@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2.postaladdress;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,15 +21,15 @@ import com.vmesteonline.be.jdo2.VoUser;
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 public class VoBuilding implements Comparable<VoBuilding> {
 
-	public VoBuilding(VoStreet vs, String fullNo, float longitude, float latitude) throws InvalidOperation {
+	public VoBuilding(VoStreet vs, String fullNo, BigDecimal longitude, BigDecimal latitude) throws InvalidOperation {
 		this.streetId = vs.getId();
 		this.fullNo = fullNo;
 		if (vs.getBuildings().contains(this))
 			throw new InvalidOperation(VoError.GeneralError, "The same Building '" + fullNo + "' already exists in Street " + vs.getName());
 		users = new ArrayList<VoUser>();
 		users = new ArrayList<VoUser>();
-		this.longitude = longitude;
-		this.latitude = latitude;
+		this.longitude = longitude.toPlainString();
+		this.latitude = latitude.toPlainString();
 		vs.addBuilding(this);
 	}
 
@@ -101,25 +102,25 @@ public class VoBuilding implements Comparable<VoBuilding> {
 				.compareTo(that.fullNo);
 	}
 
-	public void setLocation(Float longitude, Float latitude) {
-		this.longitude = longitude;
-		this.latitude = latitude;
+	public void setLocation(BigDecimal longitude, BigDecimal latitude) {
+		this.longitude = longitude.toPlainString();
+		this.latitude = latitude.toPlainString();
 	}
 
 	@Persistent
 	@Unindexed
-	float longitude;
+	String longitude;
 
 	@Persistent
 	@Unindexed
-	float latitude;
+	String latitude;
 
-	public float getLongitude() {
-		return longitude;
+	public BigDecimal getLongitude() {
+		return new BigDecimal(longitude);
 	}
 
-	public float getLatitude() {
-		return latitude;
+	public BigDecimal getLatitude() {
+		return new BigDecimal(longitude);
 	}
 
 }

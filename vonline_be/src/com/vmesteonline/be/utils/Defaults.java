@@ -30,6 +30,8 @@ public class Defaults {
 	public static String user1name = "Aname";
 	public static String user1email = "a";
 	public static String user1pass = "a";
+	public static float zan32k3Long = 59.933146F;
+	public static float zan32k3Lat = 30.423117F;
 
 	public static String user2lastName = "Bfamily";
 	public static String user2name = "Bname";
@@ -113,8 +115,8 @@ public class Defaults {
 			addresses = new VoPostalAddress[] {
 
 					// адресов должно быть минимум три! кол-во юзеров хардкодится выше
-					new VoPostalAddress(new VoBuilding(street, "32/3", 59.933146F, 30.423117F), (byte) 2, (byte) 1, (byte) 5, ""),
-					new VoPostalAddress(new VoBuilding(street, "32/3", 59.933146F, 30.423117F), (byte) 1, (byte) 1, (byte) 50, ""),
+					new VoPostalAddress(new VoBuilding(street, "32/3", zan32k3Long, zan32k3Lat), (byte) 1, (byte) 1, (byte) 5, ""),
+					new VoPostalAddress(new VoBuilding(street, "32/3", zan32k3Long, zan32k3Lat), (byte) 2, (byte) 1, (byte) 50, ""),
 					new VoPostalAddress(new VoBuilding(street, "35", 59.932544F, 30.419684F), (byte) 1, (byte) 11, (byte) 35, ""),
 					new VoPostalAddress(new VoBuilding(street, "6", 59.934177F, 30.404331F), (byte) 1, (byte) 2, (byte) 25, "") };
 

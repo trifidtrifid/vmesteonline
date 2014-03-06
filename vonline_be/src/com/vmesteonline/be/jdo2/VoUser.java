@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +28,7 @@ import com.vmesteonline.be.utils.Defaults;
 @PersistenceCapable
 public class VoUser extends GeoLocation {
 
-	private static VoUserGroup defaultGroup = new VoUserGroup("Мой Город", 10000, 60.0F, 30.0F);
+	private static VoUserGroup defaultGroup = new VoUserGroup("Мой Город", 10000, new BigDecimal("60.0"), new BigDecimal("30.0"));
 
 	public VoUser(String name, String lastName, String email, String password) {
 		this.name = name;

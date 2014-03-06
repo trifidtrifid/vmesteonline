@@ -2,23 +2,21 @@ package com.vmesteonline.be.jdo2;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import javax.annotation.Detainted;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.CurrentAttributeType;
 
-@PersistenceCapable(detachable="true")
-public class VoSession {
- 
+@PersistenceCapable(detachable = "true")
+public class VoSession extends GeoLocation {
+
 	public VoSession(String sessId, VoUser user) {
-		this.id = sessId;
-		if(null!=user) {
+
+		this.id = KeyFactory.createKey(VoSession.class.getSimpleName(), sessId);
+		if (null != user) {
 			this.name = user.getName();
 			this.lastName = user.getLastName();
 			this.userId = user.getId();
@@ -29,15 +27,12 @@ public class VoSession {
 		}
 		this.curAttrMap = new HashMap<Integer, Long>();
 	}
-	
-	public void setId(String s) {
-		id = s;
-	}
 
-	public String getId() {
-		return id;
-	}
-
+	/*
+	 * public void setId(String s) { id = s; }
+	 * 
+	 * public String getId() { return id; }
+	 */
 	public String getName() {
 		return name;
 	}
@@ -54,13 +49,6 @@ public class VoSession {
 		this.lastName = lastName;
 	}
 
-	
-	
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private String id;
-
-	
 	@Persistent
 	@Unindexed
 	private String name;
@@ -73,22 +61,16 @@ public class VoSession {
 	private Long userId;
 
 	@Persistent
-	private float longitude;
-	
-	@Persistent
-	private float latitude;
-
-	@Persistent
 	@Unindexed
 	private int lastActivityTs;
 
 	@Persistent
 	@Unindexed
 	private int lastUpdateTs;
-	
+
 	@Persistent
 	@Unindexed
-	private Map<Integer,Long> curAttrMap;
+	private Map<Integer, Long> curAttrMap;
 
 	public int getLastUpdateTs() {
 		return lastUpdateTs;
@@ -96,22 +78,6 @@ public class VoSession {
 
 	public void setLastUpdateTs(int lastUpdateTs) {
 		this.lastUpdateTs = lastUpdateTs;
-	}
-
-	public float getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(float longitude) {
-		this.longitude = longitude;
-	}
-
-	public float getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(float latitude) {
-		this.latitude = latitude;
 	}
 
 	public int getLastActivityTs() {
@@ -129,23 +95,23 @@ public class VoSession {
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
-	
-	public long getSessionAttribute( CurrentAttributeType type ){
+
+	public long getSessionAttribute(CurrentAttributeType type) {
 		Long val = curAttrMap.get(type.getValue());
 		return val == null ? 0 : val;
 	}
-	
-	public void setSessionAttribute( int key, long value ){
-		curAttrMap.put( key, value );
-	}
-	
-	public void setSessionAttributes( Map<Integer,Long> newAttrMap ){
-		curAttrMap.putAll( newAttrMap);
+
+	public void setSessionAttribute(int key, long value) {
+		curAttrMap.put(key, value);
 	}
 
-	public Map<Integer,Long> getSessionAttributes() {
+	public void setSessionAttributes(Map<Integer, Long> newAttrMap) {
+		curAttrMap.putAll(newAttrMap);
+	}
+
+	public Map<Integer, Long> getSessionAttributes() {
 		return curAttrMap;
-		
+
 	}
 
 	@Override

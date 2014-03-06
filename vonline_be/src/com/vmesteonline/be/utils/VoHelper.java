@@ -14,6 +14,17 @@ import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 
 public class VoHelper {
+
+	public static int earthRadius = 6378137;
+
+	public static float getLongitudeDelta(int radius) {
+		return (float) (((float) radius / (float) earthRadius) * (180.0 / Math.PI));
+	}
+
+	public static float getLatitudeDelta(int radius, float latitude) {
+		return (float) ((radius / (earthRadius * Math.cos(Math.PI * latitude / 180))) * (180.0 / Math.PI));
+	}
+
 	// ===================================================================================================================
 	public static void copyIfNotNull(Object owner, String fieldName, Object objToCopy) throws NoSuchFieldException {
 		if (null != objToCopy) {
@@ -35,7 +46,8 @@ public class VoHelper {
 
 	// ===================================================================================================================
 
-	public static void replaceURL(Object owner, String fieldName, String newUrl, long userId, boolean isPublic, PersistenceManager _pm) throws NoSuchFieldException {
+	public static void replaceURL(Object owner, String fieldName, String newUrl, long userId, boolean isPublic, PersistenceManager _pm)
+			throws NoSuchFieldException {
 		if (null != newUrl) {
 			String oldVal = null;
 			try {
@@ -44,23 +56,23 @@ public class VoHelper {
 					field = owner.getClass().getField(fieldName);
 					if (field.isAccessible())
 						oldVal = field.get(owner).toString();
-				} catch (Exception e){
-					
+				} catch (Exception e) {
+
 					Method method = owner.getClass().getMethod("get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1), new Class[] {});
-					oldVal = (String)method.invoke(owner, new Object[] {});
+					oldVal = (String) method.invoke(owner, new Object[] {});
 				}
 				String newStorageUrl;
 				if (null == oldVal) { // old URL was not set
 					newStorageUrl = StorageHelper.saveImage(newUrl, userId, isPublic, _pm);
 				} else {
-					newStorageUrl =  StorageHelper.replaceImage(newUrl, oldVal, userId, isPublic, _pm);
+					newStorageUrl = StorageHelper.replaceImage(newUrl, oldVal, userId, isPublic, _pm);
 				}
 
-				if( null==field ){
+				if (null == field) {
 					Method method = owner.getClass().getMethod("set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1),
 							new Class[] { newStorageUrl.getClass() });
 					method.invoke(owner, new Object[] { newStorageUrl });
-				} else  
+				} else
 					field.set(owner, newStorageUrl);
 
 			} catch (Exception e) {
@@ -134,24 +146,28 @@ public class VoHelper {
 		}
 		return outList;
 	}
-	/* ===============================================================================================================
-	//Method converts list of I object from list inList to list of O objects using mutation method of O object that 
-	//tooks I objects and has name get<O.simpleName()>*/
-	
-	public static <I,O> List<O> convertMutableSet(List<I> inList, ArrayList<O> outList, O o) throws InvalidOperation {
-		if(null==inList )
+
+	/*
+	 * ============================================================================
+	 * =================================== //Method converts list of I object from
+	 * list inList to list of O objects using mutation method of O object that
+	 * //tooks I objects and has name get<O.simpleName()>
+	 */
+
+	public static <I, O> List<O> convertMutableSet(List<I> inList, ArrayList<O> outList, O o) throws InvalidOperation {
+		if (null == inList)
 			return null;
-		if( 0 == inList.size())
+		if (0 == inList.size())
 			return outList;
 		I i0 = inList.get(0);
 		try {
-			Method method = i0.getClass().getMethod( "get" + o.getClass().getSimpleName(), new Class[] {});
+			Method method = i0.getClass().getMethod("get" + o.getClass().getSimpleName(), new Class[] {});
 			for (I i : inList) {
-				outList.add( (O) method.invoke(i));
+				outList.add((O) method.invoke(i));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Class "+i0.getClass().getSimpleName() +" have no acccesible method get"
+			throw new InvalidOperation(VoError.GeneralError, "Class " + i0.getClass().getSimpleName() + " have no acccesible method get"
 					+ o.getClass().getSimpleName());
 		}
 		return outList;

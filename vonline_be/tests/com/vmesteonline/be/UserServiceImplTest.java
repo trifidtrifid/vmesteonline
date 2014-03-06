@@ -6,19 +6,24 @@ import static org.junit.Assert.fail;
 import java.util.List;
 import java.util.Set;
 
+import javax.jdo.PersistenceManager;
+import javax.servlet.http.HttpSession;
+
 import junit.framework.Assert;
 
 import org.apache.thrift.TException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.vmesteonline.be.ServiceImpl.SessionIdStorage;
+import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.utils.Defaults;
 
-public class UserServiceImplTest {
+public class UserServiceImplTest extends UserServiceImpl  {
 
 	private static final String SESSION_ID = "11111111111111111111111";
 	private static final String COMMENT = "Комент";
@@ -41,6 +46,7 @@ public class UserServiceImplTest {
 		// register and login current user
 		// Initialize USer Service
 		String sessionId = SESSION_ID;
+		super.sessionStorage = new SessionIdStorage(sessionId);
 		asi = new AuthServiceImpl(sessionId);
 		List<String> userLocation = UserServiceImpl.getLocationCodesForRegistration();
 		Assert.assertNotNull(userLocation);
@@ -52,16 +58,74 @@ public class UserServiceImplTest {
 		usi = new UserServiceImpl(sessionId);
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		helper.tearDown();
-		// asi.logout();
+	@Test
+	public void testGetUserAandBVoGroups() {
+
+		try {
+			PersistenceManager pm = PMF.getPm();
+			try {
+				
+				asi.login(Defaults.user1email, Defaults.user1pass);
+				VoUser uA = getCurrentUser(pm);
+				List<VoUserGroup> voUserGroupsA = uA.getGroups();
+				
+				asi.login(Defaults.user2email, Defaults.user2pass);
+				VoUser uB = getCurrentUser(pm);
+				List<VoUserGroup> voUserGroupsB = uB.getGroups();
+
+				Assert.assertEquals(5, voUserGroupsB.size());
+				Assert.assertEquals(0, voUserGroupsB.get(0).getRadius());
+				Assert.assertEquals(20, voUserGroupsB.get(1).getRadius());
+				Assert.assertEquals(200, voUserGroupsB.get(2).getRadius());
+				Assert.assertEquals(2000, voUserGroupsB.get(3).getRadius());
+				Assert.assertEquals(5000, voUserGroupsB.get(4).getRadius());
+
+				Assert.assertEquals(5, voUserGroupsA.size());
+				Assert.assertEquals(0, voUserGroupsA.get(0).getRadius());
+				Assert.assertEquals(20, voUserGroupsA.get(1).getRadius());
+				Assert.assertEquals(200, voUserGroupsA.get(2).getRadius());
+				Assert.assertEquals(2000, voUserGroupsA.get(3).getRadius());
+				Assert.assertEquals(5000, voUserGroupsA.get(4).getRadius());
+
+				Assert.assertEquals(voUserGroupsA.get(0).getLatitude() , voUserGroupsB.get(0).getLatitude());
+				Assert.assertEquals(voUserGroupsA.get(0).getLongitude(), voUserGroupsB.get(0).getLongitude());
+
+			} finally {
+				pm.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
 	}
 
 	@Test
-	public void testMinimumtDuff() {
-		VoUserGroup g = new VoUserGroup("test", 1, 30.423618F, 59.93326F);
-		Assert.assertEquals(g.getLongitudeDelta(), 0.000001, 0.000001F);
+	public void testGetUserAandBGroups() {
+
+		try {
+			asi.login(Defaults.user1email, Defaults.user1pass);
+			List<Group> userAgroups = usi.getUserGroups();
+			asi.login(Defaults.user2email, Defaults.user2pass);
+			List<Group> userBgroups = usi.getUserGroups();
+
+			Assert.assertEquals(5, userAgroups.size());
+			Assert.assertEquals(0, userAgroups.get(0).getRadius());
+			Assert.assertEquals(20, userAgroups.get(1).getRadius());
+			Assert.assertEquals(200, userAgroups.get(2).getRadius());
+			Assert.assertEquals(2000, userAgroups.get(3).getRadius());
+			Assert.assertEquals(5000, userAgroups.get(4).getRadius());
+
+			Assert.assertEquals(5, userBgroups.size());
+			Assert.assertEquals(0, userBgroups.get(0).getRadius());
+			Assert.assertEquals(20, userBgroups.get(1).getRadius());
+			Assert.assertEquals(200, userBgroups.get(2).getRadius());
+			Assert.assertEquals(2000, userBgroups.get(3).getRadius());
+			Assert.assertEquals(5000, userBgroups.get(4).getRadius());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
 	}
 
 	@Test
