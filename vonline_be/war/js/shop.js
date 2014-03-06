@@ -229,7 +229,8 @@ $(document).ready(function(){
         popupNoInit.removeClass('no-init');
 
         var spinnerNoInit = $('.catalog-order .spinner1.no-init');
-        InitSpinner(spinnerNoInit,spinnerValue);
+        var itsBasket = true;
+        InitSpinner(spinnerNoInit,spinnerValue,itsBasket);
         spinnerNoInit.removeClass('no-init');
     }
 
@@ -404,15 +405,15 @@ $(document).ready(function(){
         });
     }
 
-    function InitSpinner(selector,spinnerValue){
+    function InitSpinner(selector,spinnerValue,itsBasket){
         selector.ace_spinner({value:spinnerValue,min:1,max:200,step:1, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
             .on('change', function(){
                 //alert(this.value)
             });
-        InitSpinnerChange(selector);
+        InitSpinnerChange(selector,itsBasket);
     }
 
-    function InitSpinnerChange(selector){
+    function InitSpinnerChange(selector,itsBasket){
         selector.on('change',function(){
             var myTable = $(this).closest('tr');
             var qnty = $(this).val();
@@ -427,6 +428,10 @@ $(document).ready(function(){
             myTable.find('.td-summa').text(price*qnty+'р');
             $('.itogo-right span').text(countItogo($('.catalog-order')));
             $('.modal-itogo span').text(countItogo($('.modal-body-list')));
+
+            if (itsBasket){
+                client.setOrderLine($(this).closest('li').data('productid'),qnty,'sdf',0);
+            }
 
         });
     }
@@ -728,11 +733,17 @@ $(document).ready(function(){
             var orderItem = $(this).closest('.order-item');
             var orderProducts = orderItem.find('.order-products');
             var orderDetails = client.getOrderDetails(orderItem.data('orderid'));
+            var orderLines = orderDetails.odrerLines;
+            var orderLinesLength = orderLines.length;
+            //var order = client.getOrder(orderItem.data('orderid'));
 
             if (orderProducts.find('.catalog').length == 0){
                 orderProducts.append(createOrdersProductHtml(orderDetails));
 
-                InitSpinner(orderProducts.find('.spinner1'),1);
+                for (var i = 0; i < orderLinesLength; i++){
+                    InitSpinner(orderProducts.find('tbody tr:eq('+ i +') .spinner1'),orderLines[i].quantity);
+                }
+
                 InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
                 InitProductDetailPopup(orderProducts.find('.product-link'));
             }
