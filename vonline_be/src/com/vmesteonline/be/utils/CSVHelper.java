@@ -33,7 +33,7 @@ public class CSVHelper {
 		String nextLine, fieldName;
 		List<T> rslt = new ArrayList<T>();
 		
-		String fd = null == fieldDelim ? "," : fieldDelim ;
+		String fd = null == fieldDelim ? ";" : fieldDelim ;
 		String sd = null == setDelim ? "|" : setDelim;
 		String avpd = null == avpDelim ? ":" : avpDelim;
 		

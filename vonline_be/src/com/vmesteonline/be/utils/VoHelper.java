@@ -3,9 +3,11 @@ package com.vmesteonline.be.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.jdo.PersistenceManager;
@@ -162,5 +164,12 @@ public class VoHelper {
 		return outList;
 	}
 	// ===================================================================================================================
-
+	public static <T> Map<Integer,T> listToMap( Collection<T> col ){
+		int i=0;
+		Map<Integer,T> res = new TreeMap<Integer, T>();
+		for (T t : col) {
+			res.put(i++, t);
+		}
+		return res;
+	}
 }

@@ -75,7 +75,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	static {
 
 		logger = Logger.getLogger(ShopServiceImpl.class);
-		// create fake data for tests
+		/*/ create fake data for tests
 
 		String LOGO = "http://vomoloko.ru/img/logo.jpg";
 		String DESCR = "Интернет магазин молочной продукции от лучших производителей вологодского края";
@@ -258,7 +258,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			e.printStackTrace();
 		} catch (TException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 //======================================================================================================================
 	private final class ProdcutNameComparator implements Comparator<Product>, Serializable {
