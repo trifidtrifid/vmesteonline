@@ -75,6 +75,109 @@ $(document).ready(function(){
         }
     });
 
+    //custom autocomplete (category selection)
+    $.widget( "custom.catcomplete", $.ui.autocomplete, {
+        _renderMenu: function( ul, items ) {
+            var that = this,
+                currentCategory = "";
+            $.each( items, function( index, item ) {
+                if ( item.category != currentCategory ) {
+                    ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+                    currentCategory = item.category;
+                }
+                that._renderItemData( ul, item );
+            });
+        }
+    });
+
+    var dataSearch = [
+        { label: "anders", category: "" },
+        { label: "andreas", category: "" },
+        { label: "antal", category: "" },
+        { label: "annhhx10", category: "Products" },
+        { label: "annk K12", category: "Products" },
+        { label: "annttop C13", category: "Products" },
+        { label: "anders andersson", category: "People" },
+        { label: "andreas andersson", category: "People" },
+        { label: "andreas johnson", category: "People" }
+    ];
+    $( "#search" ).catcomplete({
+        delay: 0,
+        source: dataSearch
+    });
+
+    /* автозаполнение адреса доставки  */
+    var addressesBase = userServiceClient.getAddressCatalogue();
+
+    var countries = addressesBase.countries;
+    var countriesLength = countries.length;
+    var countryTags = [];
+    for (var i = 0; i < countriesLength; i++){
+        countryTags[i] = countries[i].name;
+    }
+    var cities = addressesBase.cities;
+    var citiesLength = cities.length;
+    var cityTags = [];
+    for (i = 0; i < citiesLength; i++){
+        cityTags[i] = cities[i].name;
+    }
+    var streets = addressesBase.streets;
+    var streetsLength = streets.length;
+    var streetTags = [];
+    for (i = 0; i < streetsLength; i++){
+        streetTags[i] = streets[i].name;
+    }
+    var buildings = addressesBase.buildings;
+    var buildingsLength = buildings.length;
+    var buildingTags = [];
+    for (i = 0; i < buildingsLength; i++){
+        buildingTags[i] = buildings[i].fullNo;
+    }
+    $( "#country-delivery" ).autocomplete({
+        source: countryTags
+    });
+    $( "#city-delivery" ).autocomplete({
+        source: cityTags
+    });
+    $( "#street-delivery" ).autocomplete({
+        source: streetTags
+    });
+    $( "#building-delivery" ).autocomplete({
+        source: buildingTags
+    });
+
+    /*var dataDeliveryCities = [
+     { label: "Санкт-Петербург", category: "" },
+     { label: "Москва", category: "" },
+     { label: "Казань", category: "" }
+     ];
+     var dataDeliveryStreets = [
+     { label: "Ленинградская", category: "" },
+     { label: "Московский проспект", category: "" },
+     { label: "Шаумяна", category: "" }
+     ];
+     $( "#city-delivery" ).catcomplete({
+     delay: 0,
+     source: dataDeliveryCities
+     });
+     $( "#street-delivery" ).catcomplete({
+     delay: 0,
+     source: dataDeliveryStreets
+     });*/
+
+    var dPicker = $('.date-picker');
+
+    dPicker.datepicker({autoclose:true,language:'ru'}).next().on(ace.click_event, function(){
+        $(this).prev().focus();
+    });
+
+    InitSpinner($('.spinner1'),1);
+    InitAddToBasket($('.fa-shopping-cart'));
+    InitProductDetailPopup($('.product-link'));
+    // переключение между категориями
+    InitClickOnCategory();
+    InitDeleteProduct($('.delete-product'));
+    initOrderPlusMinus($('.shop-orders'));
 
 /* функции */
     var prevParentId = [],
@@ -158,200 +261,128 @@ $(document).ready(function(){
         });
     }
 
-    function AddSingleProductToBasket(currentProduct,spinnerValue){
-        var productDetails = client.getProductDetails(currentProduct.data('productid'));
-        var productHtml = '<li data-productid="'+ currentProduct.data('productid') +'">'+
-            '<a href="#" class="product-link no-init">'+
-            '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" alt="картинка"/>'+
-            '<div class="product-right-descr">'+
-            currentProduct.find('.product-link span').text()+
-            '</div>'+
-            '</a>'+
-            '<div class="modal">'+
-            '<div class="modal-body">'+
-            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
-            '<div class="product-slider">'+
-            '<div class="slider flexslider">'+
-            '<ul class="slides">'+
-            '<li>'+
-            '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
-            '</li>'+
-            '</ul>'+
-            '</div>'+
-            '<div class="carousel flexslider">'+
-            '<ul class="slides">'+
-            '<li>'+
-            '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
-            '</li>'+
-            '</ul>'+
-            '</div>'+
-            '</div>'+
-            '<div class="product-descr">'+
-            '<h3>'+ currentProduct.find('.product-link span').text() +'</h3>'+
-            '<div class="product-text">'+
-            productDetails.fullDescr+
-            '</div>'+
-            '<div class="modal-footer">'+
-            '<span>Цена: '+ currentProduct.find('.product-price').text() +'</span>'+
-            '</div>'+
-            '</div>'+
-            '</div>'+
-            '</div>'+
-            '<table>'+
-            '<thead>'+
-            '<tr>'+
-            '<td>Цена(шт)</td>'+
-            '<td>Кол-во</td>'+
-            '<td>Сумма</td>'+
-            '<td></td>'+
-            '</tr>'+
-            '</thead>'+
-            '<tr>'+
-            '<td class="td-price">'+ currentProduct.find('.product-price').text() +'</td>'+
-            '<td><input type="text" class="input-mini spinner1 no-init" /> '+ productDetails.unitName +'</td>'+
-            '<td class="td-summa">'+ currentProduct.find('.product-price').text() +'</td>'+
-            '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
-            '</tr>'+
-            '</table>'+
-            '</li>';
+    $('.btn-order').click(function(){
 
-        $('.catalog-order').append(productHtml);
-        currentProduct.addClass('added');
+        if ($('.input-delivery').hasClass('active') && (!$('#country-delivery').val() || !$('#city-delivery').val() || !$('#street-delivery').val() || !$('#building-delivery').val() || !$('#flat-delivery').val())){
+            $('.alert-delivery').show();
+        }else{
+            $('.alert-delivery').hide();
+            var popup = $('.modal-order-end');
+            popup.modal();
+            var orderList = $('.catalog-order>li');
+            var productsHtmlModal = "";
+            var i = 0;
+            var spinnerValue = [];
+            orderList.each(function(){
+                spinnerValue[i++] = $(this).find('.ace-spinner').spinner('value');
+                productsHtmlModal+= '<tr>'+
+                    '<td>'+
+                    '<div>'+
+                    '<img src="'+ $(this).find('img').attr('src') +'" alt="картинка"/>'+
+                    '<span>'+ $(this).find('.product-right-descr').text() +'</span>'+
+                    '</div>'+
+                    '</td>'+
+                    '<td class="td-price">'+ $(this).find('.td-price').text()  +'</td>'+
+                    '<td>'+
+                    '<input type="text" class="input-mini spinner1 no-init" />'+
+                    '</td>'+
+                    '<td class="td-summa">'+ $(this).find('.td-summa').text()+
+                    '</td>'+
+                    '</tr>';
+            });
+            popup.find('.modal-body-list tbody').html('').append(productsHtmlModal);
 
-        var deleteNoInit = $('.catalog-order .delete-product.no-init');
-        InitDeleteProduct(deleteNoInit,currentProduct);
-        deleteNoInit.removeClass('no-init');
+            var spinnerNoInit = popup.find('.spinner1.no-init');
+            i = 0;
+            spinnerNoInit.each(function(){
+                InitSpinner($(this),spinnerValue[i++]);
+            });
+            spinnerNoInit.removeClass('no-init');
 
-        var popupNoInit = $('.catalog-order .product-link.no-init');
-        InitProductDetailPopup(popupNoInit);
-        popupNoInit.removeClass('no-init');
-
-        var spinnerNoInit = $('.catalog-order .spinner1.no-init');
-        InitSpinner(spinnerNoInit,spinnerValue);
-        spinnerNoInit.removeClass('no-init');
-    }
-
-    var nowTime = parseInt(new Date().getTime()/1000)+86400;
-    var orders = client.getOrders(0,nowTime+1000);
-    for (var i = 0; i < orders.length; i++){
-        var tempOrder = client.getOrderDetails(orders[i].id);
-        console.log(orders[i].status);
-        if (tempOrder.odrerLines[0]){
-        //console.log("-- "+ i +" "+tempOrder.odrerLines[0].product.name);
-        }
-    }
-    var dateArray = [];
-    dateArray[nowTime] = 1;
-    client.setDates(dateArray);
-    var datesArray = client.getDates(0,nowTime+100000);
-
-    for (var date in datesArray){
-        alert(date);
-    }
-
-    function InitAddToBasket(){
-        $('.fa-shopping-cart').click(function(){
-
-            if (!globalUserAuth){
-                $('.modal-auth').modal();
-            }else{
-
-                var currentProduct = $(this).closest('tr');
-                var spinnerValue = currentProduct.find('.ace-spinner').spinner('value');
-
-                if ($('.additionally-order').hasClass('hide')){
-                    dPicker.trigger('focus').trigger('click',[currentProduct, spinnerValue, 'Event']);
-                }else{
-
-                    var orderLine = client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
-                    //alert(orderLine.product.name);
-                    var addedProductFlag = 0;
-                    $('.catalog-order li').each(function(){
-                        if ($(this).data('productid') == currentProduct.data('productid')){
-                            addedProductFlag = 1;
+            popup.find('.btn-order').click(function(){
+                // добавление в базу нового города, страны, улицы и т.д (если курькером)
+                if ($('.input-delivery').hasClass('active')){
+                    var countries = userServiceClient.getCounties();
+                    var countriesLength = countries.length;
+                    var inputCountry = $('#country-delivery').val();
+                    var country,countryId = 0;
+                    for (var i = 0; i < countriesLength; i++){
+                        if (countries[i].name == inputCountry){
+                            country = countries[i];
+                            countryId = country.id;
                         }
-                    });
-                if (addedProductFlag){
-                    var currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.data('productid') +'"]').find('.ace-spinner');
-                    currentSpinner.spinner('value',currentSpinner.spinner('value')+spinnerValue);
-               }else{
-                    AddSingleProductToBasket(currentProduct,spinnerValue);
-                    /*var productDetails = client.getProductDetails(currentProduct.data('productid'));
-                    var productHtml = '<li data-productid="'+ currentProduct.data('productid') +'">'+
-                    '<a href="#" class="product-link no-init">'+
-                    '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" alt="картинка"/>'+
-                    '<div class="product-right-descr">'+
-                    currentProduct.find('.product-link span').text()+
-                    '</div>'+
-                    '</a>'+
-                    '<div class="modal">'+
-                    '<div class="modal-body">'+
-                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
-                    '<div class="product-slider">'+
-                    '<div class="slider flexslider">'+
-                    '<ul class="slides">'+
-                    '<li>'+
-                    '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
-                    '</li>'+
-                    '</ul>'+
-                    '</div>'+
-                    '<div class="carousel flexslider">'+
-                    '<ul class="slides">'+
-                    '<li>'+
-                    '<img src="'+ currentProduct.find('.product-link img').attr('src') +'" />'+
-                    '</li>'+
-                    '</ul>'+
-                    '</div>'+
-                    '</div>'+
-                    '<div class="product-descr">'+
-                    '<h3>'+ currentProduct.find('.product-link span').text() +'</h3>'+
-                    '<div class="product-text">'+
-                    productDetails.fullDescr+
-                    '</div>'+
-                    '<div class="modal-footer">'+
-                    '<span>Цена: '+ currentProduct.find('.product-price').text() +'</span>'+
-                    '</div>'+
-                    '</div>'+
-                    '</div>'+
-                    '</div>'+
-                    '<table>'+
-                    '<thead>'+
-                    '<tr>'+
-                    '<td>Цена(шт)</td>'+
-                    '<td>Кол-во</td>'+
-                    '<td>Сумма</td>'+
-                    '<td></td>'+
-                    '</tr>'+
-                    '</thead>'+
-                    '<tr>'+
-                    '<td class="td-price">'+ currentProduct.find('.product-price').text() +'</td>'+
-                    '<td><input type="text" class="input-mini spinner1 no-init" /> '+ productDetails.unitName +'</td>'+
-                    '<td class="td-summa">'+ currentProduct.find('.product-price').text() +'</td>'+
-                    '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
-                    '</tr>'+
-                    '</table>'+
-                    '</li>';
+                    }
+                    if (!countryId){
+                        country = userServiceClient.createNewCountry(inputCountry);
+                        countryId = country.id;
+                    }
 
-                 $('.catalog-order').append(productHtml);
-                  currentProduct.addClass('added');
+                    var cities = userServiceClient.getCities(countryId);
+                    var citiesLength = cities.length;
+                    var inputCity = $('#city-delivery').val();
+                    var city,cityId = 0;
+                    for (i = 0; i < citiesLength; i++){
+                        if (cities[i].name == inputCity){
+                            city = cities[i];
+                            cityId = city.id;
+                        }
+                    }
+                    if (!cityId){
+                        city = userServiceClient.createNewCity(countryId,inputCity);
+                        cityId = city.id;
+                    }
 
-                   var deleteNoInit = $('.catalog-order .delete-product.no-init');
-                   InitDeleteProduct(deleteNoInit,currentProduct);
-                   deleteNoInit.removeClass('no-init');
+                    var streets = userServiceClient.getStreets(cityId);
+                    var streetsLength = streets.length;
+                    var inputStreet = $('#street-delivery').val();
+                    var street,streetId = 0;
+                    for (i = 0; i < streetsLength; i++){
+                        if (streets[i].name == inputCity){
+                            street = streets[i];
+                            streetId = street.id;
+                        }
+                    }
+                    if (!streetId){
+                        street = userServiceClient.createNewStreet(cityId,inputStreet);
+                        streetId = street.id;
+                    }
 
-                   var popupNoInit = $('.catalog-order .product-link.no-init');
-                   InitProductDetailPopup(popupNoInit);
-                   popupNoInit.removeClass('no-init');
+                    var buildings = userServiceClient.getBuildings(streetId);
+                    var buildingsLength = buildings.length;
+                    var inputBuilding = $('#building-delivery').val();
+                    var building,buildingId = 0;
+                    for (i = 0; i < buildingsLength; i++){
+                        if (buildings[i].fullNo == inputBuilding){
+                            building = buildings[i];
+                            buildingId = building.id;
+                        }
+                    }
+                    if (!buildingId){
+                        building = userServiceClient.createNewBuilding(streetId,inputBuilding,0,0);
+                        buildingId = building.id;
+                    }
 
-                   var spinnerNoInit = $('.catalog-order .spinner1.no-init');
-                   InitSpinner(spinnerNoInit,spinnerValue);
-                   spinnerNoInit.removeClass('no-init');*/
 
+                    // передаем адресс доставки
+                    var deliveryAddress = {
+                        country : country,
+                        city : city,
+                        street : street,
+                        building : building,
+                        staircase : 0,
+                        floor: 0,
+                        flatNo: parseInt($('#flat-delivery').val()),
+                        comment: $('#order-comment').val()
+                    };
+
+                    client.setOrderDeliveryAddress(deliveryAddress);
                 }
-            }
-            }
-        });
-    }
+                client.confirmOrder();
+                alert('Ваш заказ принят !');
+                $('.modal-order-end').modal('hide');
+            })
+        }
+    });
 
     function InitLoadCategory(catID){
         /* замена меню категорий */
@@ -362,10 +393,10 @@ $(document).ready(function(){
         var firstMenuItem = "";
 
         if (productCategories[0] && productCategories[0].parentId != 0 || productCategories[0] === undefined){
-        firstMenuItem = '<li>'+
-            '<a href="#" class="fa fa-reply-all"></a>'+
-            '<div>Назад</div>'+
-            '</li>';
+            firstMenuItem = '<li>'+
+                '<a href="#" class="fa fa-reply-all"></a>'+
+                '<div>Назад</div>'+
+                '</li>';
         }
 
         for(var i = 0; i < categoriesLength; i++){
@@ -379,10 +410,10 @@ $(document).ready(function(){
 
         /* новый список товаров */
         /*alert("--"+catID);
-        var tempCatID = catID;
-        if (!tempCatID){alert('1');tempCatID = productCategories[1].id;}
-        if (!tempCatID){tempCatID = productCategories[0].id;}
-        alert("-- "+tempCatID);*/
+         var tempCatID = catID;
+         if (!tempCatID){alert('1');tempCatID = productCategories[1].id;}
+         if (!tempCatID){tempCatID = productCategories[0].id;}
+         alert("-- "+tempCatID);*/
         var tempCatID = productCategories[0].id  ;
         var productsList = client.getProducts(0,10,tempCatID).products;
         var productListLength = productsList.length;
@@ -390,11 +421,13 @@ $(document).ready(function(){
         var productDetails;
         for (i = 0; i < productListLength; i++){
             productDetails = client.getProductDetails(productsList[i].id);
+            var unitName = "";
+            if (productDetails.unitName){unitName = productDetails.unitName;}
             productsHtml += '<tr data-productid="'+ productsList[i].id +'">'+
                 '<td>'+
                 '<a href="#" class="product-link">'+
                 '<img src="'+ productsList[i].imageURL +'" alt="картинка"/>'+
-                '<span>'+ productsList[i].name +'<br>'+ productsList[i].shortDescr +'</span>'+
+                '<span><span>'+ productsList[i].name +'</span>'+ productsList[i].shortDescr +'</span>'+
                 '</a>'+
                 '<div class="modal">'+
                 '<div class="modal-body">'+
@@ -423,7 +456,7 @@ $(document).ready(function(){
                 '<div class="modal-footer">'+
                 '<span>Цена: '+ productsList[i].price +'</span>'+
                 '<input type="text" class="input-mini spinner1" /> '+
-                productDetails.unitName+
+                unitName+
                 '<i class="fa fa-shopping-cart"></i>'+
                 '</div>'+
                 '</div>'+
@@ -433,7 +466,7 @@ $(document).ready(function(){
                 '<td class="product-price">'+ productsList[i].price  +'</td>'+
                 '<td>'+
                 '<input type="text" class="input-mini spinner1" /> '+
-                productDetails.unitName+
+                unitName+
                 '</td>'+
                 '<td>'+
                 '<i class="fa fa-shopping-cart"></i>'+
@@ -445,7 +478,7 @@ $(document).ready(function(){
         /* подключение событий */
         InitSpinner($('.catalog table .spinner1'));
         InitProductDetailPopup($('.product-link'));
-        InitAddToBasket();
+        InitAddToBasket($('.fa-shopping-cart'));
         InitClickOnCategory()
 
     }
@@ -472,15 +505,15 @@ $(document).ready(function(){
         });
     }
 
-    function InitSpinner(selector,spinnerValue){
+    function InitSpinner(selector,spinnerValue,itsBasket){
         selector.ace_spinner({value:spinnerValue,min:1,max:200,step:1, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
             .on('change', function(){
                 //alert(this.value)
             });
-        InitSpinnerChange(selector);
+        InitSpinnerChange(selector,itsBasket);
     }
 
-    function InitSpinnerChange(selector){
+    function InitSpinnerChange(selector,itsBasket){
         selector.on('change',function(){
             var myTable = $(this).closest('tr');
             var qnty = $(this).val();
@@ -495,6 +528,9 @@ $(document).ready(function(){
             myTable.find('.td-summa').text(price*qnty+'р');
             $('.itogo-right span').text(countItogo($('.catalog-order')));
             $('.modal-itogo span').text(countItogo($('.modal-body-list')));
+            if (itsBasket){
+                client.setOrderLine($(this).closest('li').data('productid'),qnty,'sdf',0);
+            }
 
         });
     }
@@ -507,7 +543,7 @@ $(document).ready(function(){
         return summa;
     }
 
-    function InitDeleteProduct(selector,currentProduct){
+    function InitDeleteProduct(selector){
         selector.click(function(){
             $(this).closest('li').slideUp(function(){
                 $(this).detach();
@@ -517,152 +553,326 @@ $(document).ready(function(){
                     $('.empty-basket').removeClass('hide');
                 }
             });
-            if (currentProduct){
-                if(currentProduct.hasClass('added')){currentProduct.removeClass('added');}
+            /*if (currentProduct){
+             if(currentProduct.hasClass('added')){currentProduct.removeClass('added');}
+             }*/
+        });
+    }
+
+    function createOrdersProductHtml(orderDetails){
+        var ordersProductsHtml = '<section class="catalog">'+
+            '<table>'+
+            '<thead>'+
+            '<tr>'+
+            '<td>Название</td>'+
+            '<td>Цена</td>'+
+            '<td>Количество</td>'+
+            '<td></td>'+
+            '</tr>'+
+            '</thead>';
+        var orderLines = orderDetails.odrerLines;
+        var orderLinedLength = orderLines.length;
+
+        for (var j = 0; j < orderLinedLength; j++){
+            var productDetails = client.getProductDetails(orderLines[j].product.id);
+            var unitName = "";
+            if (productDetails.unitName){unitName = productDetails.unitName;}
+            ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
+                '<td>'+
+                '<a href="#" class="product-link">'+
+                '<img src="'+ orderLines[j].product.imageURL +'" alt="картинка"/>'+
+                '<span>'+
+                orderLines[j].product.name+'<br>'+
+                orderLines[j].product.shortDescr +
+                '</span>'+
+                '</a>'+
+                '<div class="modal">'+
+                '<div class="modal-body">'+
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
+                '<div class="product-slider">'+
+                '<div class="slider flexslider">'+
+                '<ul class="slides">'+
+                '<li>'+
+                '<img src="'+ orderLines[j].product.imageURL +'" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/2.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/3.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/4.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/5.jpg" />'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '<div class="carousel flexslider">'+
+                '<ul class="slides">'+
+                '<li>'+
+                '<img src="'+ orderLines[j].product.imageURL +'" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/2.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/3.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/4.jpg" />'+
+                '</li>'+
+                '<li>'+
+                '<img src="i/shop/5.jpg" />'+
+                '</li>'+
+                '</ul>'+
+                '</div>'+
+                '</div>'+
+                '<div class="product-descr">'+
+                '<h3>'+ orderLines[j].product.name +'</h3>'+
+                '<div class="product-text">'+
+                productDetails.fullDescr+
+                '</div>'+
+                '<div class="modal-footer">'+
+                '<span>Цена: '+ orderLines[j].product.price +'</span>'+
+                '<input type="text" class="input-mini spinner1" />'+
+                unitName+
+                '<i class="fa fa-shopping-cart"></i>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '</td>'+
+                '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
+                '<td>'+
+                '<input type="text" class="input-mini spinner1" />'+
+                unitName+
+                '</td>'+
+                '<td>'+
+                '<i class="fa fa-shopping-cart"></i>'+
+                '</td>'+
+                '</tr>';
+        }
+        ordersProductsHtml += '</table>'+
+            '</section>';
+
+        return ordersProductsHtml;
+    }
+
+    function createOrdersHtml(){
+        var ordersHtml = "";
+        var nowTime = parseInt(new Date().getTime()/1000)+86400;
+        var orders = client.getOrders(0,nowTime+1000);
+        var ordersLength = orders.length;
+        for (var i = ordersLength-1; i >= 0 ; i--){
+            console.log(i);
+            var orderDetails = client.getOrderDetails(orders[i].id);
+            ordersHtml += '<div class="order-item" data-orderid="'+ orders[i].id +'">'+
+                '<table>'+
+                '<thead>'+
+                '<tr>'+
+                '<td>N</td>'+
+                '<td>Дата</td>'+
+                '<td>Статус заказа</td>'+
+                '<td>Доставка</td>'+
+                '<td>Кол-во продуктов</td>'+
+                '<td>Сумма</td>'+
+                '<td></td>'+
+                '</tr>'+
+                '</thead>'+
+                '<tbody>'+
+                '<tr>'+
+                '<td>Заказ N '+i+'</td>'+
+                '<td>'+ orders[i].date +'</td>'+
+                '<td>'+ orders[i].status +'</td>'+
+                '<td>'+ orderDetails.delivery +'</td>'+
+                '<td>10</td>'+
+                '<td>'+ orders[i].totalCost +'</td>'+
+                '<td><a class="fa fa-plus plus-minus" href="#"></a></td>'+
+                '</tr>'+
+                '</tbody>'+
+                '</table>'+
+                '<div class="order-products">'+
+
+                '</div>'+
+                '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
+                '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить в корзину</button>'+
+                '</div>';
+        }
+
+        return ordersHtml;
+    }
+
+    var nowTime = parseInt(new Date().getTime()/1000)+86400;
+    var orders = client.getOrders(0,nowTime+1000);
+    for (var i = 0; i < orders.length; i++){
+        var tempOrder = client.getOrderDetails(orders[i].id);
+        console.log(orders[i].status);
+        if (tempOrder.odrerLines[0]){
+        //console.log("-- "+ i +" "+tempOrder.odrerLines[0].product.name);
+        }
+    }
+    var dateArray = [];
+    dateArray[nowTime] = 1;
+    client.setDates(dateArray);
+    var datesArray = client.getDates(0,nowTime+100000);
+
+    function initOrderPlusMinus(selector){
+        selector.find('.plus-minus').click(function(e){
+            e.preventDefault();
+
+            var orderItem = $(this).closest('.order-item');
+            var orderProducts = orderItem.find('.order-products');
+            var orderDetails = client.getOrderDetails(orderItem.data('orderid'));
+            var orderLines = orderDetails.odrerLines;
+            var orderLinesLength = orderLines.length;
+            //var order = client.getOrder(orderItem.data('orderid'));
+
+            if (orderProducts.find('.catalog').length == 0){
+                orderProducts.append(createOrdersProductHtml(orderDetails));
+
+                for (var i = 0; i < orderLinesLength; i++){
+                    InitSpinner(orderProducts.find('tbody tr:eq('+ i +') .spinner1'),orderLines[i].quantity);
+                }
+
+                InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
+                InitProductDetailPopup(orderProducts.find('.product-link'));
+            }
+
+            orderProducts.slideToggle(200,function(){
+                if ($('.main-content').height() > w.height()){
+                    $('#sidebar, .shop-right').css('height', $('.main-content').height()+45);
+                }
+            });
+            if ($(this).hasClass('fa-plus')){
+                $(this).removeClass('fa-plus').addClass('fa-minus');
+            }else{
+                $(this).removeClass('fa-minus').addClass('fa-plus');
             }
         });
     }
 
-/* --- */
+    function InitAddToBasket(selector){
+        selector.click(function(){
 
-    InitSpinner($('.spinner1'),1);
-    InitAddToBasket();
-    InitProductDetailPopup($('.product-link'));
-    // переключение между категориями
-   InitClickOnCategory();
-   InitDeleteProduct($('.delete-product'));
+            if (!globalUserAuth){
+                $('.modal-auth').modal();
+            }else{
 
-    $('.btn-order').click(function(){
+                var currentProductSelector = $(this).closest('tr');
+                var spinnerValue = currentProductSelector.find('.ace-spinner').spinner('value');
+                var currentProduct = {
+                    id : currentProductSelector.data('productid'),
+                    imageUrl : currentProductSelector.find('.product-link img').attr('src'),
+                    name : currentProductSelector.find('.product-link span span').text(),
+                    price : currentProductSelector.find('.product-price').text()
+                };
 
-        if ($('.input-delivery').hasClass('active') && (!$('#country-delivery').val() || !$('#city-delivery').val() || !$('#street-delivery').val() || !$('#building-delivery').val() || !$('#flat-delivery').val())){
-            $('.alert-delivery').show();
-        }else{
-        $('.alert-delivery').hide();
-        var popup = $('.modal-order-end');
-        popup.modal();
-        var orderList = $('.catalog-order>li');
-        var productsHtmlModal = "";
-        var i = 0;
-        var spinnerValue = [];
-        orderList.each(function(){
-            spinnerValue[i++] = $(this).find('.ace-spinner').spinner('value');
-            productsHtmlModal+= '<tr>'+
-                '<td>'+
-                '<div>'+
-                '<img src="'+ $(this).find('img').attr('src') +'" alt="картинка"/>'+
-                '<span>'+ $(this).find('.product-right-descr').text() +'</span>'+
-                '</div>'+
-                '</td>'+
-                '<td class="td-price">'+ $(this).find('.td-price').text()  +'</td>'+
-                '<td>'+
-                '<input type="text" class="input-mini spinner1 no-init" />'+
-                '</td>'+
-                '<td class="td-summa">'+ $(this).find('.td-summa').text()+
-                '</td>'+
-                '</tr>';
+                if ($('.additionally-order').hasClass('hide')){
+                    dPicker.trigger('focus').trigger('click',[currentProduct, spinnerValue,0, 'Event']);
+                }else{
+
+                    client.setOrderLine(parseInt(currentProductSelector.data('productid')),parseInt(spinnerValue),'sdf');
+                    var addedProductFlag = 0;
+                    $('.catalog-order li').each(function(){
+                        if ($(this).data('productid') == currentProductSelector.data('productid')){
+                            addedProductFlag = 1;
+                        }
+                    });
+                    if (addedProductFlag){
+                        var currentSpinner = $('.catalog-order li[data-productid="'+ currentProductSelector.data('productid') +'"]').find('.ace-spinner');
+                        var newSpinnerVal = currentSpinner.spinner('value')+spinnerValue;
+                        currentSpinner.spinner('value',newSpinnerVal);
+                        client.setOrderLine(currentProduct.id,newSpinnerVal,'sdf',0);
+                   }else{
+                        AddSingleProductToBasket(currentProduct,spinnerValue);
+                    }
+            }
+                if ($(this).closest('.modal').length>0){
+                    $(this).closest('.modal').modal('hide');
+                }
+            }
         });
-        popup.find('.modal-body-list tbody').html('').append(productsHtmlModal);
+    }
 
-        var spinnerNoInit = popup.find('.spinner1.no-init');
-        i = 0;
-        spinnerNoInit.each(function(){
-            InitSpinner($(this),spinnerValue[i++]);
-        });
+    function AddSingleProductToBasket(currentProduct,spinnerValue){
+        var productDetails = client.getProductDetails(currentProduct.id);
+        var unitName = "";
+        if (productDetails.unitName){unitName = productDetails.unitName;}
+        var productHtml = '<li data-productid="'+ currentProduct.id +'">'+
+            '<a href="#" class="product-link no-init">'+
+            '<img src="'+ currentProduct.imageUrl +'" alt="картинка"/>'+
+            '<div class="product-right-descr">'+
+            currentProduct.name+
+            '</div>'+
+            '</a>'+
+            '<div class="modal">'+
+            '<div class="modal-body">'+
+            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
+            '<div class="product-slider">'+
+            '<div class="slider flexslider">'+
+            '<ul class="slides">'+
+            '<li>'+
+            '<img src="'+ currentProduct.imageUrl +'" />'+
+            '</li>'+
+            '</ul>'+
+            '</div>'+
+            '<div class="carousel flexslider">'+
+            '<ul class="slides">'+
+            '<li>'+
+            '<img src="'+ currentProduct.imageUrl +'" />'+
+            '</li>'+
+            '</ul>'+
+            '</div>'+
+            '</div>'+
+            '<div class="product-descr">'+
+            '<h3>'+ currentProduct.name +'</h3>'+
+            '<div class="product-text">'+
+            productDetails.fullDescr+
+            '</div>'+
+            '<div class="modal-footer">'+
+            '<span>Цена: '+ currentProduct.price +'</span>'+
+            '</div>'+
+            '</div>'+
+            '</div>'+
+            '</div>'+
+            '<table>'+
+            '<thead>'+
+            '<tr>'+
+            '<td>Цена(шт)</td>'+
+            '<td>Кол-во</td>'+
+            '<td>Сумма</td>'+
+            '<td></td>'+
+            '</tr>'+
+            '</thead>'+
+            '<tr>'+
+            '<td class="td-price">'+ currentProduct.price +'</td>'+
+            '<td><input type="text" class="input-mini spinner1 no-init" /> '+ unitName +'</td>'+
+            '<td class="td-summa">'+ currentProduct.price +'</td>'+
+            '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
+            '</tr>'+
+            '</table>'+
+            '</li>';
+
+        $('.catalog-order').append(productHtml);
+        //currentProduct.addClass('added');
+
+        var deleteNoInit = $('.catalog-order .delete-product.no-init');
+        InitDeleteProduct(deleteNoInit);
+        deleteNoInit.removeClass('no-init');
+
+        var popupNoInit = $('.catalog-order .product-link.no-init');
+        InitProductDetailPopup(popupNoInit);
+        popupNoInit.removeClass('no-init');
+
+        var spinnerNoInit = $('.catalog-order .spinner1.no-init');
+        var itsBasket = true;
+        InitSpinner(spinnerNoInit,spinnerValue,itsBasket);
         spinnerNoInit.removeClass('no-init');
+    }
 
-        popup.find('.btn-order').click(function(){
-            // добавление в базу нового города, страны, улицы и т.д (если курькером)
-            if ($('.input-delivery').hasClass('active')){
-            var countries = userServiceClient.getCounties();
-            var countriesLength = countries.length;
-            var inputCountry = $('#country-delivery').val();
-            var country,countryId = 0;
-            for (var i = 0; i < countriesLength; i++){
-                if (countries[i].name == inputCountry){
-                    country = countries[i];
-                    countryId = country.id;
-                }
-            }
-            if (!countryId){
-                country = userServiceClient.createNewCountry(inputCountry);
-                countryId = country.id;
-            }
-
-            var cities = userServiceClient.getCities(countryId);
-            var citiesLength = cities.length;
-            var inputCity = $('#city-delivery').val();
-            var city,cityId = 0;
-            for (i = 0; i < citiesLength; i++){
-                if (cities[i].name == inputCity){
-                    city = cities[i];
-                    cityId = city.id;
-                }
-            }
-            if (!cityId){
-                city = userServiceClient.createNewCity(countryId,inputCity);
-                cityId = city.id;
-            }
-
-            var streets = userServiceClient.getStreets(cityId);
-            var streetsLength = streets.length;
-            var inputStreet = $('#street-delivery').val();
-            var street,streetId = 0;
-            for (i = 0; i < streetsLength; i++){
-                if (streets[i].name == inputCity){
-                    street = streets[i];
-                    streetId = street.id;
-                }
-            }
-            if (!streetId){
-                street = userServiceClient.createNewStreet(cityId,inputStreet);
-                streetId = street.id;
-            }
-
-            var buildings = userServiceClient.getBuildings(streetId);
-            var buildingsLength = buildings.length;
-            var inputBuilding = $('#building-delivery').val();
-            var building,buildingId = 0;
-            for (i = 0; i < buildingsLength; i++){
-                if (buildings[i].fullNo == inputBuilding){
-                    building = buildings[i];
-                    buildingId = building.id;
-                }
-            }
-            if (!buildingId){
-                building = userServiceClient.createNewBuilding(streetId,inputBuilding,0,0);
-                buildingId = building.id;
-            }
-
-
-            // передаем адресс доставки
-            var deliveryAddress = {
-                country : country,
-                city : city,
-                street : street,
-                building : building,
-                staircase : 0,
-                floor: 0,
-                flatNo: parseInt($('#flat-delivery').val()),
-                comment: $('#order-comment').val()
-            };
-
-            client.setOrderDeliveryAddress(deliveryAddress);
-            }
-            client.confirmOrder();
-            alert('Ваш заказ принят !');
-            $('.modal-order-end').modal('hide');
-        })
-        }
-    });
-
-    /* --- */
-    var dPicker = $('.date-picker');
-
-    dPicker.datepicker({autoclose:true,language:'ru'}).next().on(ace.click_event, function(){
-        $(this).prev().focus();
-    });
-
-    dPicker.click(function(e,currentProduct,spinnerValue){
+    dPicker.click(function(e,currentProduct,spinnerValue,orderData){
         var nowTime = parseInt(new Date().getTime()/1000)+86400;
         var datesArray = client.getDates(0,nowTime+100000);
         for (var date in datesArray){
@@ -673,8 +883,8 @@ $(document).ready(function(){
             var tempMonth = tempDateItem[1];
             var tempYear = tempDateItem[2].slice(0,5);
             //alert(tempYear);
-         //alert(tempDate.toLocaleString());
-         }
+            //alert(tempDate.toLocaleString());
+        }
         $('.day').each(function(){
             var day = $(this).text();
             if  (day == tempDay){ $(this).addClass('free-day')}
@@ -682,130 +892,98 @@ $(document).ready(function(){
             if  (day == '26' || day == "30"){ $(this).addClass('prepare')}
         });
         $('.free-day').click(function(){
-           //client.getOrdersByStatus(0,0,'NEW');
-            var nowTime = parseInt(new Date().getTime()/1000)+86400;
             // время должно быть не "сейчас" а то что указано в календаре
-            client.createOrder(nowTime,'asd2',0);
-            client.setOrderLine(parseInt(currentProduct.data('productid')),parseInt(spinnerValue),'sdf');
-            AddSingleProductToBasket(currentProduct,spinnerValue);
+            var nowTime = parseInt(new Date().getTime()/1000)+86400;
+            if (orderData && orderData.itsOrder){
+                addOrdersToBasket(orderData);
+            }else{
+                // добавление одного продукта
+                client.createOrder(nowTime,'asd2',0);
+                client.setOrderLine(currentProduct.id,parseInt(spinnerValue),'sdf');
+                AddSingleProductToBasket(currentProduct,spinnerValue);
+            }
             if ($('.additionally-order').hasClass('hide')){
                 $('.additionally-order').removeClass('hide');
                 $('.empty-basket').addClass('hide');
             }
+
         });
 
     });
 
-
-
-
-    //custom autocomplete (category selection)
-    $.widget( "custom.catcomplete", $.ui.autocomplete, {
-        _renderMenu: function( ul, items ) {
-            var that = this,
-                currentCategory = "";
-            $.each( items, function( index, item ) {
-                if ( item.category != currentCategory ) {
-                    ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
-                    currentCategory = item.category;
-                }
-                that._renderItemData( ul, item );
-            });
+    function addSingleOrderToBasket(orderId,addType){
+        var orderDetails;
+        if (addType == 'replace'){
+            orderDetails = client.getOrderDetails(orderId);
+        }else if (addType == 'append'){
+            orderDetails = client.appendOrder(orderId);
         }
-    });
-
-    var dataSearch = [
-        { label: "anders", category: "" },
-        { label: "andreas", category: "" },
-        { label: "antal", category: "" },
-        { label: "annhhx10", category: "Products" },
-        { label: "annk K12", category: "Products" },
-        { label: "annttop C13", category: "Products" },
-        { label: "anders andersson", category: "People" },
-        { label: "andreas andersson", category: "People" },
-        { label: "andreas johnson", category: "People" }
-    ];
-    $( "#search" ).catcomplete({
-        delay: 0,
-        source: dataSearch
-    });
-
-/* автозаполнение адреса доставки  */
-    var addressesBase = userServiceClient.getAddressCatalogue();
-
-    var countries = addressesBase.countries;
-    var countriesLength = countries.length;
-    var countryTags = [];
-    for (var i = 0; i < countriesLength; i++){
-        countryTags[i] = countries[i].name;
-    }
-    var cities = addressesBase.cities;
-    var citiesLength = cities.length;
-    var cityTags = [];
-    for (i = 0; i < citiesLength; i++){
-        cityTags[i] = cities[i].name;
-    }
-    var streets = addressesBase.streets;
-    var streetsLength = streets.length;
-    var streetTags = [];
-    for (i = 0; i < streetsLength; i++){
-        streetTags[i] = streets[i].name;
-    }
-    var buildings = addressesBase.buildings;
-    var buildingsLength = buildings.length;
-    var buildingTags = [];
-    for (i = 0; i < buildingsLength; i++){
-        buildingTags[i] = buildings[i].fullNo;
-    }
-    $( "#country-delivery" ).autocomplete({
-        source: countryTags
-    });
-    $( "#city-delivery" ).autocomplete({
-        source: cityTags
-    });
-    $( "#street-delivery" ).autocomplete({
-        source: streetTags
-    });
-    $( "#building-delivery" ).autocomplete({
-        source: buildingTags
-    });
-
-    /*var dataDeliveryCities = [
-        { label: "Санкт-Петербург", category: "" },
-        { label: "Москва", category: "" },
-        { label: "Казань", category: "" }
-    ];
-    var dataDeliveryStreets = [
-        { label: "Ленинградская", category: "" },
-        { label: "Московский проспект", category: "" },
-        { label: "Шаумяна", category: "" }
-    ];
-    $( "#city-delivery" ).catcomplete({
-        delay: 0,
-        source: dataDeliveryCities
-    });
-    $( "#street-delivery" ).catcomplete({
-        delay: 0,
-        source: dataDeliveryStreets
-    });*/
-
-    /* shop-orders */
-    var shopOrders= $('.shop-orders');
-    shopOrders.find('.plus-minus').click(function(){
-        $(this).closest('.order-item').find('.order-products').slideToggle(200);
-        if ($(this).hasClass('fa-plus')){
-            $(this).removeClass('fa-plus').addClass('fa-minus');
-        }else{
-            $(this).removeClass('fa-minus').addClass('fa-plus');
+        var orderLines = orderDetails.odrerLines;
+        var orderLinesLength = orderLines.length;
+        for(var i = 0; i < orderLinesLength; i++){
+            var curProd = orderLines[i].product;
+            var spinVal = orderLines[i].quantity;
+            //alert(spinVal);
+            AddSingleProductToBasket(curProd,spinVal);
         }
-    });
-    $('.shop-trigger').click(function(){
+    }
+
+    function addOrdersToBasket(orderData){
+        // добавление целого заказа
+        var addType;
+        if (orderData.itsAppend){
+            addType = 'append';
+        }  else{
+            client.createOrder(nowTime,'asd2',0);
+            addType = 'replace';
+        }
+        $('.catalog-order').html('');
+        addSingleOrderToBasket(orderData.orderId,addType);
+    }
+
+    $('.shop-trigger').click(function(e){
+        e.preventDefault();
+
+        var shopOrders = $('.shop-orders');
+
        if($(this).hasClass('back-to-shop')){
-          $('.shop-orders').hide();
+          shopOrders.hide();
           $('.shop-products').show();
        }else{
            $('.shop-products').hide();
-           $('.shop-orders').show();
+           if (shopOrders.find('.order-item').length == 0){
+               shopOrders.append(createOrdersHtml());
+               initOrderPlusMinus(shopOrders);
+
+               $('.repeat-order-btn').click(function(){
+                   var orderData= {
+                       itsOrder: true,
+                       itsAppend: false,
+                       orderId : $(this).closest('.order-item').data('orderid')
+                   };
+                   dPicker.trigger('focus').trigger('click',[0, 0, orderData, 'Event']);
+
+               });
+               $('.add-order-btn').click(function(){
+                   var orderData= {
+                       itsOrder: true,
+                       itsAppend: true,
+                       orderId : $(this).closest('.order-item').data('orderid')
+                   };
+                   if ($('.additionally-order').hasClass('hide')){
+                       dPicker.trigger('focus').trigger('click',[0, 0, orderData, 'Event']);
+                   }else{
+                       addOrdersToBasket(orderData);
+                   }
+               });
+           }
+           shopOrders.show();
+
+           var mainContent = $('.main-content');
+           if (mainContent.height() > w.height()){
+               $('#sidebar, .shop-right').css('height', mainContent.height()+45);
+           }
        }
     });
+
 });
