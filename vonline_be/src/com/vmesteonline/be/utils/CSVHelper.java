@@ -24,6 +24,10 @@ import com.vmesteonline.be.shop.ExchangeFieldType;
 
 public class CSVHelper {
 
+	public static <T> List<T> loadCSVData(){
+		return null;
+	}
+	
 	public static <T> List<T> loadCSVData( InputStream is, Map<Integer,String> fieldPosMap, T otf) throws IOException{
 		return CSVHelper.loadCSVData( is, fieldPosMap, otf, null,null,null);
 	}
