@@ -1873,4 +1873,19 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
+//======================================================================================================================
+	@Override
+	public List<List<String>> parseCSVfile(String url) throws InvalidOperation, TException {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			StorageHelper.getFile(url, baos);
+			baos.close();
+			return CSVHelper.parseCSV(baos.toByteArray(), null, null, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new InvalidOperation( VoError.IncorrectParametrs, "Failed to read data from URL '"+url+"'");
+		}
+	}
+	
+
 }

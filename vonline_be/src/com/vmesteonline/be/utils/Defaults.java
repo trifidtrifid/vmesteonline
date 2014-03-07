@@ -62,7 +62,7 @@ public class Defaults {
 	public static int radiusMedium = 2000;
 	public static int radiusLarge = 5000;
 
-	private static long userId;
+	private static long userId = 0;
 
 	public static boolean initDefaultData() {
 		
@@ -267,9 +267,25 @@ public class Defaults {
 	// ======================================================================================================================
 	private static void initializeUsers(List<String> locCodes) throws InvalidOperation {
 		AuthServiceImpl asi = new AuthServiceImpl();
-		userId = asi.registerNewUser(user1name, user1lastName, user1pass, user1email, locCodes.get(0));
-		asi.registerNewUser(user2name, user2lastName, user2pass, user2email, locCodes.get(1));
-		asi.registerNewUser(user3name, user3lastName, user3pass, user3email, locCodes.get(2));
+		long user2Id, user3Id;
+		userId = user2Id = user3Id = 0;
+		try {
+			userId = asi.registerNewUser(user1name, user1lastName, user1pass, user1email, locCodes.get(0));
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+		try {
+			user2Id = asi.registerNewUser(user2name, user2lastName, user2pass, user2email, locCodes.get(1));
+		} catch (Exception e1) {
+			
+		}
+		userId = user2Id;
+		try {
+			user3Id = asi.registerNewUser(user3name, user3lastName, user3pass, user3email, locCodes.get(2));
+		} catch (Exception e) {
+			
+		}
+		userId = userId == 0 ? user2Id == 0 ? user3Id : user2Id : userId;
 	}
 
 	// ======================================================================================================================

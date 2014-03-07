@@ -2,6 +2,7 @@ package com.vmesteonline.be;
 
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1316,5 +1317,25 @@ public class ShopServiceImplTest {
 	@Test
 	public void testGetTotalPackReport() {
 
+	}
+	
+//======================================================================================================================
+
+	@Test
+	public void testParseCSVfile() {
+		String csv = " 1; 2;3\n4;5;6;\"7;8\";9";
+		List<List<String>> parseCSVfile;
+		try {
+			String url = StorageHelper.saveImage(csv.getBytes(), userId, true, null);
+			parseCSVfile = si.parseCSVfile(url);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		Assert.assertEquals(parseCSVfile.size(), 2);
+		Assert.assertEquals(parseCSVfile.get(0).size(), 3);
+		Assert.assertEquals(parseCSVfile.get(1).size(), 5);
+		Assert.assertEquals(parseCSVfile.get(1).get(3), "7;8");
+		Assert.assertEquals(parseCSVfile.get(1).get(2), "6");
 	}
 }

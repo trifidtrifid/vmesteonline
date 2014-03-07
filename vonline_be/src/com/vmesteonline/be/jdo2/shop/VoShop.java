@@ -16,6 +16,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Text;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -28,7 +29,6 @@ import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.Shop;
-import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
 @PersistenceCapable
@@ -45,7 +45,7 @@ public class VoShop {
 		PersistenceManager pm = PMF.getPm();
 
 		this.name = name;
-		this.descr = descr;
+		this.descr = new Text(descr);
 		if(postalAddress != null ) this.address = new VoPostalAddress(postalAddress, pm);
 		try {
 			VoHelper.replaceURL(this, "logoURL", logoURL, ownerId, true, pm);
@@ -90,7 +90,7 @@ public class VoShop {
 		for (VoTopic vt : getTopics()) {
 			topicIds.add(vt.getId().getId());
 		}
-		Shop shop = new Shop(id.getId(), name, descr, null==address ? null : address.getPostalAddress(), logoURL, ownerId, 
+		Shop shop = new Shop(id.getId(), name, descr.getValue(), null==address ? null : address.getPostalAddress(), logoURL, ownerId, 
 				topicIds, tags, 
 				convertToDeliveryTypeMap(deliveryCosts, new HashMap<DeliveryType, Double>()),
 				convertToPaymentTypeMap(paymentTypes, new HashMap<PaymentType, Double>()));
@@ -106,7 +106,7 @@ public class VoShop {
 	private String name;
 	@Persistent
 	@Unindexed
-	private String descr;
+	private Text descr;
 	@Persistent
 	@Unindexed
 	@Unowned
@@ -196,11 +196,11 @@ public class VoShop {
 	}
 
 	public String getDescr() {
-		return descr;
+		return descr.getValue();
 	}
 
 	public void setDescr(String descr) {
-		this.descr = descr;
+		this.descr = new Text(descr);
 	}
 
 	public VoPostalAddress getAddress() {

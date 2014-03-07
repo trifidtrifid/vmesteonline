@@ -30,6 +30,43 @@ public class CSVHelper {
 		return CSVHelper.loadCSVData(data, fieldPosMap, otf, null, null, null);
 	}
 
+	public static List<List<String>> parseCSV( byte[] data, String fieldDelim, String setDelim, String avpDelim) throws IOException{
+		List<List<String>> res = new ArrayList<List<String>>();
+		String fd = null == fieldDelim ? ";" : fieldDelim;
+		String sd = null == setDelim ? "|" : setDelim;
+		String avpd = null == avpDelim ? ":" : avpDelim;
+		
+		List<String> lines = readLines(data);
+		for (String nextLine : lines) {
+			ArrayList<String> lineCols = new ArrayList<String>();
+			String[] items = nextLine.split("[" + fd + "]");
+			int delimSkipped = 0;
+			for (int pos = 0; pos < items.length; pos++) {
+
+					String nextItem = items[pos].replaceAll("[\\p{Cc}\\p{Cf}\\p{Co}\\p{Cn}]", "");
+					if (nextItem.trim().startsWith("\"") && !nextItem.trim().endsWith("\"")) {
+						for (pos++; pos < items.length; pos++) {
+							delimSkipped++;
+							nextItem += fd + items[pos];
+							if (items[pos].trim().endsWith("\""))
+								break;
+						}
+					}
+					nextItem = nextItem.trim();
+					if (nextItem.startsWith("\""))
+						nextItem = nextItem.substring(1);
+					if (nextItem.endsWith("\""))
+						nextItem = nextItem.substring(0, nextItem.length() - 1);
+					
+					lineCols.add(nextItem);
+				}
+			if(lineCols.size()>0) 
+				res.add(lineCols);
+		}
+		
+		return res;
+	}
+	
 	public static <T> List<T> loadCSVData(/*InputStream is*/byte[] data, Map<Integer, String> fieldPosMap, T otf, String fieldDelim, String setDelim, String avpDelim)
 			throws IOException {
 		List<T> rslt = new ArrayList<T>();

@@ -100,7 +100,7 @@ public class StorageHelperTest extends StorageHelper {
 		fieldPosMap.put(7, "str");
 		
 		try {
-			List<Result> res = CSVHelper.loadCSVData(new ByteArrayInputStream( input.getBytes()), fieldPosMap, new Result(), null, null, null);
+			List<Result> res = CSVHelper.loadCSVData(input.getBytes(), fieldPosMap, new Result(), null, null, null);
 			Assert.assertTrue(null!=res);
 		} catch (IOException e) {
 			e.printStackTrace();

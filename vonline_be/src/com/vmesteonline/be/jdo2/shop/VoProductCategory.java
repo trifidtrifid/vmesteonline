@@ -15,6 +15,7 @@ import javax.jdo.annotations.Unique;
 import javax.persistence.OneToMany;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Text;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.data.PMF;
@@ -36,7 +37,7 @@ public class VoProductCategory {
 	public VoProductCategory(VoShop shop,long importId, long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId, PersistenceManager _pm) {
 	  
 		this.name = name;
-		this.descr = descr;
+		this.descr = new Text( descr );
 		if( null!=logoURLset){
 			this.logoURLset = new ArrayList<String>();
 			for( String bb: logoURLset) {
@@ -82,7 +83,7 @@ public class VoProductCategory {
 	
 	public ProductCategory getProductCategory( ){
 		ProductCategory pc = new ProductCategory(id.getId(), 
-				null==parent ? 0L : parent.getId(), name, descr, null, null );
+				null==parent ? 0L : parent.getId(), name, descr.getValue(), null, null );
 		
 		List<Long> ts = new ArrayList<Long>();
 		for( VoTopic vt: getTopics())
@@ -111,7 +112,7 @@ public class VoProductCategory {
 	
 	@Persistent
 	@Unindexed
-	private String descr;
+	private Text descr;
   
 	@Persistent
 	@Unindexed
@@ -158,11 +159,11 @@ public class VoProductCategory {
 	}
 
 	public String getDescr() {
-		return descr;
+		return descr.getValue();
 	}
 
 	public void setDescr(String descr) {
-		this.descr = descr;
+		this.descr = new Text(descr);
 	}
 
 	public List<String> getLogoURLset() {
@@ -205,7 +206,7 @@ public class VoProductCategory {
 	public void update(ProductCategory newCategoryInfo, long userId, PersistenceManager pm) {
 	  
 		this.name = newCategoryInfo.name;
-		this.descr = newCategoryInfo.descr;
+		this.descr = new Text(newCategoryInfo.descr);
 		this.logoURLset = new ArrayList<String>();
 		for( String bb: newCategoryInfo.logoURLset) {
 			try {
