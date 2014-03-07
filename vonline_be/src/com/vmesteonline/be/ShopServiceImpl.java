@@ -406,7 +406,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					if (null == (vppc = VoProductCategory.getByImportId(shopId, pc.getParentId(), pm))) {
 
 						throw new InvalidOperation(VoError.IncorrectParametrs, "parent Id " + pc.getParentId()
-								+ "not found as Id of categories above in a list provided");
+								+ " not found as Id of categories above in a list provided");
 
 					} else {
 						pc.setParentId(vppc.getId());
@@ -1459,8 +1459,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 		try {
 			ByteArrayInputStream dataStream = new ByteArrayInputStream(csvData);
-			List<T> infoRows =  null; 
-//			CSVHelper.loadCSVData(); //dataStream, fieldsMap, descriptionObject);
+			List<T> infoRows = CSVHelper.loadCSVData(dataStream, fieldsMap, descriptionObject);
 
 			processor.process(infoRows);
 

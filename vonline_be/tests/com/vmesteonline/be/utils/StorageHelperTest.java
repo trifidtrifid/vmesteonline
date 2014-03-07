@@ -47,7 +47,7 @@ public class StorageHelperTest extends StorageHelper {
 			// Initialize USer Service
 			String sessionId = "11111";
 			try {
-				Defaults.init();
+				Defaults.initDefaultData();
 				asi = new AuthServiceImpl(sessionId);
 				List<String> userLocation = UserServiceImpl.getLocationCodesForRegistration();
 				Assert.assertNotNull(userLocation);

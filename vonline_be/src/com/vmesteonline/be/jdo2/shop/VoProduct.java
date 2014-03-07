@@ -18,6 +18,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Text;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -51,7 +52,7 @@ public class VoProduct {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: "+e);
 		}
 		this.price = newInfo.product.price;
-		this.fullDescr = newInfo.details.fullDescr;
+		this.fullDescr = new Text(newInfo.details.fullDescr);
 		this.imagesURLset = new ArrayList<String>();
 		for (String imgURL : newInfo.details.getImagesURLset())
 			try {
@@ -126,7 +127,7 @@ public class VoProduct {
 				}
 
 			vp.price = product.getPrice();
-			vp.fullDescr = details.getFullDescr();
+			vp.fullDescr = new Text(details.getFullDescr());
 
 			vp.pricesMap = convertFromPriceTypeMap(details.getPricesMap(), new HashMap<Integer, Double>());
 			vp.optionsMap = details.getOptionsMap();
@@ -193,7 +194,7 @@ public class VoProduct {
 		this.weight = product.getWeight();
 
 		this.price = product.getPrice();
-		this.fullDescr = details.getFullDescr();
+		this.fullDescr = new Text(details.getFullDescr());
 
 		this.pricesMap = convertFromPriceTypeMap(details.getPricesMap(), new HashMap<Integer, Double>());
 		this.optionsMap = details.getOptionsMap();
@@ -273,7 +274,7 @@ public class VoProduct {
 			ts.add(vt.getId().getId());
 		}
 		productDetails.setProducerId(producer.getId());
-		productDetails.setFullDescr(fullDescr);
+		productDetails.setFullDescr( fullDescr.getValue());
 		productDetails.setTopicSet(ts);
 		productDetails.setImagesURLset(getImagesURLset());
 		productDetails.setUnitName(this.unitName);
@@ -311,7 +312,7 @@ public class VoProduct {
 
 	@Persistent
 	@Unindexed
-	private String fullDescr;
+	private Text fullDescr;
 
 	@Persistent
 	@Unindexed
@@ -446,11 +447,11 @@ public class VoProduct {
 	}
 
 	public String getFullDescr() {
-		return fullDescr;
+		return fullDescr.getValue();
 	}
 
 	public void setFullDescr(String fullDescr) {
-		this.fullDescr = fullDescr;
+		this.fullDescr = new Text(fullDescr);
 	}
 
 	public List<String> getImagesURLset() {

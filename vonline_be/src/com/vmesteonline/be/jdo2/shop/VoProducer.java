@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Text;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -37,7 +38,7 @@ public class VoProducer {
 	public VoProducer(long shopId, long userId, Producer producer, PersistenceManager _pm)throws InvalidOperation {
 			
 		this.name = producer.getName();
-		this.descr = producer.getDescr();
+		this.descr = new Text( producer.getDescr() );
 		this.homeURL = producer.getHomeURL();
 	
 		this.shops = new HashSet<VoShop>();
@@ -75,7 +76,7 @@ public class VoProducer {
 	}
 
 	public Producer createProducer() {
-		return new Producer(id.getId(), name, descr, logoURL, homeURL);
+		return new Producer(id.getId(), name, descr.getValue(), logoURL, homeURL);
 	}
 
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -91,7 +92,7 @@ public class VoProducer {
 
 	@Persistent
 	@Unindexed
-	private String descr;
+	private Text descr;
 
 	@Persistent
 	@Unindexed
@@ -123,11 +124,11 @@ public class VoProducer {
 	}
 
 	public String getDescr() {
-		return descr;
+		return descr.getValue();
 	}
 
 	public void setDescr(String descr) {
-		this.descr = descr;
+		this.descr = new Text(descr);
 	}
 
 	public String getLogoURL() {

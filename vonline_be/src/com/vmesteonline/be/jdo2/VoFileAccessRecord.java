@@ -12,7 +12,7 @@ import com.google.appengine.tools.cloudstorage.GcsFilename;
 public class VoFileAccessRecord {
 
 	public VoFileAccessRecord( long userId, boolean isPublic, String fileName, String contentType) {
-		this.fileName = ""+(System.currentTimeMillis() % 10000) + fileName.replace("/", "_");
+		this.fileName = ""+(System.currentTimeMillis() % 10000) + fileName.replaceAll("[\\W]|_", "_");
 		this.bucket = ""+(this.userId=userId) + "_" + ((this.isPublic=isPublic) ? "public" : "private");
 		this.contentType = contentType;
 	}

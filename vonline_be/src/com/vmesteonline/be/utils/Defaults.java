@@ -64,9 +64,8 @@ public class Defaults {
 
 	private static long userId;
 
-	public static boolean init() {
-		CSVHelper.ttt(); //dataStream, fieldsMap, descriptionObject);
-
+	public static boolean initDefaultData() {
+		
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
@@ -108,6 +107,8 @@ public class Defaults {
 
 		try {
 			ShopServiceImpl ssi = new ShopServiceImpl("123");
+			AuthServiceImpl asi = new AuthServiceImpl("123");
+			asi.login( user1email, user1pass );
 
 			VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY), CITY), "г. Пушкин, Детскосельский бульвар");
 			PersistenceManager pm = PMF.getPm();
@@ -198,8 +199,8 @@ public class Defaults {
 		// CATEGORY_ID = 200, CATEGORY_PARENT_ID, CATEGORY_NAME,
 		// CATEGORY_DESCRIPTION, CATEGORY_LOGOURLS, CATEGORY_TOPICS
 		List<ExchangeFieldType> fieldsOrder = new ArrayList<ExchangeFieldType>();
-		fieldsOrder.add(ExchangeFieldType.CATEGORY_PARENT_ID);
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_ID);
+		fieldsOrder.add(ExchangeFieldType.CATEGORY_PARENT_ID);
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_NAME);
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_DESCRIPTION);
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_LOGOURLS);

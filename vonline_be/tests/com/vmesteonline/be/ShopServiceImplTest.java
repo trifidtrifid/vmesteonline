@@ -101,7 +101,7 @@ public class ShopServiceImplTest {
 	@Before
 	public void setUp() throws Exception {
 		helper.setUp();
-		Defaults.init();
+		Defaults.initDefaultData();
 		// register and login current user
 		// Initialize USer Service
 		String sessionId = SESSION_ID;
