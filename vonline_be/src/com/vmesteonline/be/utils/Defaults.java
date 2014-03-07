@@ -65,6 +65,7 @@ public class Defaults {
 	private static long userId;
 
 	public static boolean init() {
+		CSVHelper.ttt(); //dataStream, fieldsMap, descriptionObject);
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		defaultRubrics = new ArrayList<VoRubric>();
@@ -104,6 +105,7 @@ public class Defaults {
 
 	// ======================================================================================================================
 	private static void initializeShop() {
+
 		try {
 			ShopServiceImpl ssi = new ShopServiceImpl("123");
 

@@ -1387,6 +1387,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	@Override
 	public DataSet importData(DataSet data) throws InvalidOperation {
+//		CSVHelper.loadCSVData(); //dataStream, fieldsMap, descriptionObject);
 
 		for (ImportElement ie : data.getData()) {
 			switch (ie.getType()) {
@@ -1458,7 +1459,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 		try {
 			ByteArrayInputStream dataStream = new ByteArrayInputStream(csvData);
-			List<T> infoRows = CSVHelper.<T>loadCSVData(dataStream, fieldsMap, descriptionObject);
+			List<T> infoRows =  null; 
+//			CSVHelper.loadCSVData(); //dataStream, fieldsMap, descriptionObject);
 
 			processor.process(infoRows);
 
