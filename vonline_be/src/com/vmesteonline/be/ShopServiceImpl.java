@@ -1451,7 +1451,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 
 		try {
-			List<T> infoRows = CSVHelper.loadCSVData(new ByteArrayInputStream(csvData), fieldsMap, descriptionObject);
+			ByteArrayInputStream dataStream = new ByteArrayInputStream(csvData);
+			List<T> infoRows = CSVHelper.loadCSVData(dataStream, fieldsMap, descriptionObject);
 
 			processor.process(infoRows);
 
