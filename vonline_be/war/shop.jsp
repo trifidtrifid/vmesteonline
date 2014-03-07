@@ -37,20 +37,20 @@
     List<Shop> ArrayShops = shopService.getShops();
     Shop shop = shopService.getShop(ArrayShops.get(0).id);
 
-    Cookie cookies [] = request.getCookies ();
+    Cookie cookies [] = request.getCookies();
     String cookieName = "catid";
     String cookieName2 = "arrayPrevCat";
     Cookie catIdCookie = null;
-    Cookie arrayPrevCat = null;
+    //Cookie arrayPrevCat = null;
     if (cookies != null) {
         for (int i = 0; i < cookies.length; i++) {
             //out.print(cookies[i].getName());
             if (cookies[i].getName().equals (cookieName)) {
                 catIdCookie = cookies[i];
             }
-            if (cookies[i].getName().equals (cookieName2)) {
+            /*if (cookies[i].getName().equals (cookieName2)) {
                 arrayPrevCat = cookies[i];
-            }
+            }*/
         }
     }
     /*if (arrayPrevCat != null){
@@ -58,27 +58,26 @@
         out.print(arrayPrevCat.getValue());
         out.print("==");
     }*/
+
     long catId = 0;
-    if (catIdCookie != null){catId = Long.parseLong(catIdCookie.getValue());}
-    //out.print(catIdCookie.getValue());
-    if (catId != 0){
-        pageContext.setAttribute("innerCategoryFlag",true);
+    try{
+        if (catIdCookie != null){catId = Long.parseLong(catIdCookie.getValue());}
+        if (catId != 0){
+            pageContext.setAttribute("innerCategoryFlag",true);
+        }
+    }catch(Exception e){
+        catId = 0;
     }
+    //out.print(catId);
 
     List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(catId);
-    //out.print("--");
-    //out.print(ArrayProductCategory.size());
-    if (ArrayProductCategory.size() > 0){
-        ProductListPart productsListPart;
-        if (ArrayProductCategory.size() == 1){
-            productsListPart = shopService.getProducts(0,10,ArrayProductCategory.get(0).id);
-        }else{
-            productsListPart = shopService.getProducts(0,10,ArrayProductCategory.get(1).id);
-        }
+    ProductListPart productsListPart = shopService.getProducts(0,10,catId);
+    if (productsListPart.products.size() > 0){
         ProductDetails productDetails = shopService.getProductDetails(productsListPart.products.get(0).id);
         pageContext.setAttribute("products",productsListPart.products);
         pageContext.setAttribute("productDetails",productDetails);
     }
+    pageContext.setAttribute("productCategories", ArrayProductCategory);
 
     //String productURL = new String( productsListPart.products.get(0).imageURL);
 
@@ -93,7 +92,7 @@
     //out.print(new String( productsListPart.products.get(0).imageURL));
     //out.print(ArrayProductCategory.get(1).id);
 
-    pageContext.setAttribute("productCategories", ArrayProductCategory);
+
     //pageContext.setAttribute("productURL",productURL);
     //pageContext.setAttribute("orderLines",orderLineArray);
 %>

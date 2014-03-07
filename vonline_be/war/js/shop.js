@@ -69,8 +69,10 @@ $(document).ready(function(){
 
     $('.radio input').click(function(){
         if ($(this).hasClass('courier-delivery')){
+            client.setOrderDeliveryType(2);
             $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
         }else{
+            client.setOrderDeliveryType(1);
             $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
         }
     });
@@ -170,6 +172,11 @@ $(document).ready(function(){
     dPicker.datepicker({autoclose:true,language:'ru'}).next().on(ace.click_event, function(){
         $(this).prev().focus();
     });
+
+    $('.datepicker').find('.prev').click(function(){
+        //alert('1');
+    })
+
 
     InitSpinner($('.spinner1'),1);
     InitAddToBasket($('.fa-shopping-cart'));
@@ -409,13 +416,7 @@ $(document).ready(function(){
         $('.shop-menu ul').html(firstMenuItem).append(shopMenu);
 
         /* новый список товаров */
-        /*alert("--"+catID);
-         var tempCatID = catID;
-         if (!tempCatID){alert('1');tempCatID = productCategories[1].id;}
-         if (!tempCatID){tempCatID = productCategories[0].id;}
-         alert("-- "+tempCatID);*/
-        var tempCatID = productCategories[0].id  ;
-        var productsList = client.getProducts(0,10,tempCatID).products;
+        var productsList = client.getProducts(0,10,catID).products;
         var productListLength = productsList.length;
         var productsHtml = '';
         var productDetails;
@@ -487,16 +488,18 @@ $(document).ready(function(){
         $('.shop-menu li a').click(function(e){
             e.preventDefault();
             if ($(this).hasClass('fa-reply-all')){
-
                 InitLoadCategory(prevParentId[parentCounter]);
-                parentCounter--;
                 setCookie('catid',prevParentId[parentCounter]);
+                parentCounter--;
                 setCookie('arrayPrevCat',prevParentId);
                 setCookie('prevCatCounter',parentCounter);
+
             }
             else {
                 parentCounter++;
+                //console.log(prevParentId[parentCounter]);
                 prevParentId[parentCounter] = $(this).parent().data('parentid');
+                console.log($(this).parent().data('catid'));
                 InitLoadCategory($(this).parent().data('catid'));
                 setCookie('catid',$(this).parent().data('catid'));
                 setCookie('arrayPrevCat',prevParentId);
@@ -695,9 +698,23 @@ $(document).ready(function(){
                     orderStatus = "Отменен" ;
                     break
             }
-
-
+            // форматирование типа доставки
             var orderDetails = client.getOrderDetails(orders[i].id);
+            var orderDelivery;
+            switch(orderDetails.delivery){
+                case 0:
+                    orderDelivery = "Неизвестно";
+                    break;
+                case 1:
+                    orderDelivery = "Самовывоз";
+                    break;
+                case 2:
+                    orderDelivery = "Курьер рядом";
+                    break;
+                case 3:
+                    orderDelivery = "Курьер далеко";
+                    break
+            }
             ordersHtml += '<div class="order-item" data-orderid="'+ orders[i].id +'">'+
                 '<table>'+
                 '<thead>'+
@@ -716,7 +733,7 @@ $(document).ready(function(){
                 '<td>Заказ N '+i+'</td>'+
                 '<td>'+ tempDateItem[0] +'</td>'+
                 '<td>'+ orderStatus +'</td>'+
-                '<td>'+ orderDetails.delivery +'</td>'+
+                '<td>'+ orderDelivery +'</td>'+
                 '<td>10</td>'+
                 '<td>'+ orders[i].totalCost +'</td>'+
                 '<td><a class="fa fa-plus plus-minus" href="#"></a></td>'+
@@ -746,7 +763,7 @@ $(document).ready(function(){
     client.setDates(dateArray);
     var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
     for (var p in datesArray){
-        console.log(p);
+        //console.log(p);
     }
 /*------*/
 
