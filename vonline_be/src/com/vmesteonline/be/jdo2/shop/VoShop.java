@@ -297,36 +297,54 @@ public class VoShop {
 	}
 
 	public static Map<Integer, Double> convertFromPaymentTypeMap(Map<PaymentType, Double> in, Map<Integer, Double> out) {
+		if(null==in) return out;
+		if(null==out) out = new HashMap<Integer, Double>();
+		
 		for (Entry<PaymentType, Double> e : in.entrySet())
 			out.put(e.getKey().getValue(), e.getValue());
 		return out;
 	}
 
 	public static Map<PaymentType, Double> convertToPaymentTypeMap(Map<Integer, Double> in, Map<PaymentType, Double> out) {
+		if(null==in) return out;
+		if(null==out) out = new HashMap<PaymentType, Double>();
+		
 		for (Entry<Integer, Double> e : in.entrySet())
 			out.put(PaymentType.findByValue(e.getKey()), e.getValue());
 		return out;
 	}
 
 	public static Map<Integer, Double> convertFromDeliveryTypeMap(Map<DeliveryType, Double> in, Map<Integer, Double> out) {
+		if(null==in) return out;
+		if(null==out) out = new HashMap<Integer, Double>();
+		
 		for (Entry<DeliveryType, Double> e : in.entrySet())
 			out.put(e.getKey().getValue(), e.getValue());
 		return out;
 	}
 
 	public static Map<DeliveryType, Double> convertToDeliveryTypeMap(Map<Integer, Double> in, Map<DeliveryType, Double> out) {
+		if(null==in) return out;
+		if(null==out) out = new HashMap<DeliveryType, Double>();
+		
 		for (Entry<Integer, Double> e : in.entrySet())
 			out.put(DeliveryType.findByValue(e.getKey()), e.getValue());
 		return out;
 	}
 
 	public static SortedMap<Integer, Integer> convertFromDateTypeMap(Map<Integer, DateType> in, SortedMap<Integer, Integer> out) {
+		if(null==in) return out;
+		if(null==out) out = new TreeMap<Integer, Integer>();
+		
 		for (Entry<Integer, DateType> e : in.entrySet())
 			out.put(e.getKey(), e.getValue().getValue());
 		return out;
 	}
 
 	public static SortedMap<Integer, DateType> convertToDateTypeMap(Map<Integer, Integer> in, SortedMap<Integer, DateType> out) {
+		if(null==in) return out;
+		if(null==out) out = new TreeMap<Integer, DateType>();
+		
 		for (Entry<Integer, Integer> e : in.entrySet())
 			out.put(e.getKey(), DateType.findByValue(e.getValue()));
 		return out;

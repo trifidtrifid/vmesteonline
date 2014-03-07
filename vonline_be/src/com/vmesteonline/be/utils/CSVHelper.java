@@ -26,11 +26,11 @@ public class CSVHelper {
 
 	private static Logger logger = Logger.getLogger(CSVHelper.class.getCanonicalName());
 
-	public static <T> List<T> loadCSVData(InputStream is, Map<Integer, String> fieldPosMap, T otf) throws IOException {
-		return CSVHelper.loadCSVData(is, fieldPosMap, otf, null, null, null);
+	public static <T> List<T> loadCSVData(/*InputStream is*/byte[] data, Map<Integer, String> fieldPosMap, T otf) throws IOException {
+		return CSVHelper.loadCSVData(data, fieldPosMap, otf, null, null, null);
 	}
 
-	public static <T> List<T> loadCSVData(InputStream is, Map<Integer, String> fieldPosMap, T otf, String fieldDelim, String setDelim, String avpDelim)
+	public static <T> List<T> loadCSVData(/*InputStream is*/byte[] data, Map<Integer, String> fieldPosMap, T otf, String fieldDelim, String setDelim, String avpDelim)
 			throws IOException {
 		List<T> rslt = new ArrayList<T>();
 
@@ -39,7 +39,7 @@ public class CSVHelper {
 		String avpd = null == avpDelim ? ":" : avpDelim;
 
 		String fieldName;
-		List<String> lines = readLines(is);
+		List<String> lines = readLines(data);//is);
 		try {
 			for (String nextLine : lines) {
 				T nextOtf = (T) otf.getClass().getConstructor(new Class[] {}).newInstance(new Object[] {});
@@ -222,14 +222,14 @@ public class CSVHelper {
 	}
 
 	// ====================================================================================================================
-	private static List<String> readLines(InputStream is) throws IOException {
-		byte[] buf = new byte[2 * 1024 * 1024];
-		int read;
+	private static List<String> readLines(byte[] buf) throws IOException {
+		//byte[] buf = new byte[2 * 1024 * 1024];
+		//int read;
 		List<String> lines = new ArrayList<String>();
 		int lastPos = 0, pos = 0;
-		while (-1 != (read = is.read(buf))) {
+		//while (-1 != (read = is.read(buf))) {
 			lastPos = 0;
-			for (pos = 0; pos < read; pos++) {
+			for (pos = 0; pos < buf.length/*read*/; pos++) {
 				char c = (char) buf[pos];
 				if (c == '\n' || c == '\r') {
 					String nl = new String(buf, lastPos, pos - lastPos);
@@ -237,11 +237,11 @@ public class CSVHelper {
 						lines.add(nl);
 
 					// skip emptyLines
-					for (lastPos = pos; lastPos + 1 < read && (buf[lastPos] == '\r' || buf[lastPos] == '\n'); lastPos++)
+					for (lastPos = pos; lastPos + 1 < buf.length/*read*/ && (buf[lastPos] == '\r' || buf[lastPos] == '\n'); lastPos++)
 						pos = lastPos;
 				}
 			}
-		}
+		//}
 		if (lastPos != pos) {
 			String nl = new String(buf, lastPos, pos - lastPos);
 			if (nl.trim().length() > 0)

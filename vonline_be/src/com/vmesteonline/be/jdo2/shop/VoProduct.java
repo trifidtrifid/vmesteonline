@@ -115,15 +115,17 @@ public class VoProduct {
 			vp.weight = product.getWeight();
 			if(null!=product.getImageURL() && product.getImageURL().length() > 0 ) try {
 				vp.imageURL = StorageHelper.saveImage(product.getImageURL(), shop.ownerId, true, _pm);
-			} catch (IOException ie) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
+			} catch (Throwable ie) {
+				ie.printStackTrace();
+				//throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 			}
 			vp.imagesURLset = new ArrayList<String>();
 			if( null!=details.getImagesURLset() ) for (String imgURL : details.getImagesURLset())
 				if(null!=imgURL && imgURL.length() > 0 )try {
 					vp.imagesURLset.add(StorageHelper.saveImage(imgURL,shop.ownerId, true, _pm));
-				} catch (IOException ie) {
-					throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
+				} catch (Throwable ie) {
+					ie.printStackTrace();
+					//throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 				}
 
 			vp.price = product.getPrice();
