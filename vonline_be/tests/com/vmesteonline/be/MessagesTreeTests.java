@@ -1,9 +1,10 @@
 package com.vmesteonline.be;
 
+import static org.junit.Assert.fail;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -20,15 +21,15 @@ public class MessagesTreeTests extends MessagesTree {
 
 	List<VoMessage> lst;
 	int msgCreateTime;
-	int lgDef = 50;
-	int ltDef = 30;
+	String lgDef = "50";
+	String ltDef = "30";
 	int radiusDef = 200;
 
-	VoMessage createVoMsg(long id, long parentId, int radius, float longitude, float latitude) {
+	VoMessage createVoMsg(long id, long parentId, int radius, String longitude, String latitude) {
 		VoMessage msg = createVoMsg(id, parentId, 0);
 		msg.setRadius(radius);
-		msg.setLongitude(longitude);
-		msg.setLatitude(latitude);
+		msg.setLongitude(new BigDecimal(longitude));
+		msg.setLatitude(new BigDecimal(latitude));
 		return msg;
 	}
 
@@ -41,8 +42,8 @@ public class MessagesTreeTests extends MessagesTree {
 		msgCreateTime += 10;
 		msg.setCreatedAt(msgCreateTime);
 		msg.setRadius(radiusDef);
-		msg.setLongitude(lgDef);
-		msg.setLatitude(ltDef);
+		msg.setLongitude(new BigDecimal(lgDef));
+		msg.setLatitude(new BigDecimal(ltDef));
 
 		return msg;
 	}
@@ -172,8 +173,6 @@ public class MessagesTreeTests extends MessagesTree {
 			fail("catch exception: " + e.getMessage());
 		}
 	}
-
-
 
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 

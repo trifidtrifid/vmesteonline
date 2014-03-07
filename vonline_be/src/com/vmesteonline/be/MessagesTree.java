@@ -1,5 +1,6 @@
 package com.vmesteonline.be;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -7,7 +8,6 @@ import java.util.List;
 
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoUserGroup;
-import com.vmesteonline.be.utils.VoHelper;
 
 public class MessagesTree {
 
@@ -23,8 +23,8 @@ public class MessagesTree {
 
 		public long userId;
 		public int radius;
-		float longitude;
-		float latitude;
+		BigDecimal longitude;
+		BigDecimal latitude;
 
 	}
 
@@ -103,13 +103,13 @@ public class MessagesTree {
 	}
 
 	boolean isInGroup(VoMessage voMsg) {
-		if (voMsg.getLatitude() + VoHelper.getLatitudeDelta(voMsg.getRadius(), voMsg.getLatitude()) > filters.latitude
+/*		if (voMsg.getLatitude() + VoHelper.getLatitudeDelta(voMsg.getRadius(), voMsg.getLatitude()) > filters.latitude
 				&& voMsg.getLatitude() - VoHelper.getLatitudeDelta(voMsg.getRadius(), voMsg.getLatitude()) < filters.latitude
 				&& voMsg.getLongitude() + VoHelper.getLongitudeDelta(voMsg.getRadius()) > filters.longitude
 				&& voMsg.getLongitude() - VoHelper.getLongitudeDelta(voMsg.getRadius()) < filters.longitude)
 			return true;
-
-		return false;
+*/
+		return true;
 	}
 
 	private int parseLevel(List<VoMessage> levelMsgs, int level) {

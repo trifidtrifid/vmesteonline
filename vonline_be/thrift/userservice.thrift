@@ -33,7 +33,7 @@ service UserService {
 	bedata.Country createNewCountry( 1:string name) throws (1:error.InvalidOperation exc),
 	bedata.City createNewCity( 1:i64 countryId, 2:string name) throws (1:error.InvalidOperation exc),
 	bedata.Street createNewStreet( 1:i64 cityId, 2:string name) throws (1:error.InvalidOperation exc),
-	bedata.Building createNewBuilding( 1:i64 streetId, 2:string fullNo, 3:double longitude, 4:double lattitude) throws (1:error.InvalidOperation exc),
+	bedata.Building createNewBuilding( 1:i64 streetId, 2:string fullNo, 3:string longitude, 4:string lattitude) throws (1:error.InvalidOperation exc),
 	
 	
 	

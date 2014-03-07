@@ -1,5 +1,6 @@
 package com.vmesteonline.be;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.Set;
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
-import javax.management.openmbean.InvalidOpenTypeException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -396,7 +396,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Building createNewBuilding(long streetId, String fullNo, double longitude, double lattitude) throws InvalidOperation {
+	public Building createNewBuilding(long streetId, String fullNo, String longitude, String lattitude) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no building with the same name
@@ -410,11 +410,11 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				return buildings.get(0).getBuilding();
 			} else {
 				logger.info("VoBuilding '" + fullNo + "'was created.");
-				VoBuilding voBuilding = new VoBuilding(vs, fullNo, (float) longitude, (float) lattitude);
-				if (0 == longitude || 0 == lattitude) { // calculate location
+				VoBuilding voBuilding = new VoBuilding(vs, fullNo, new BigDecimal(longitude), new BigDecimal(lattitude));
+				if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate location
 					try {
-						Pair<Float, Float> position = VoGeocoder.getPosition(voBuilding);
-						voBuilding.setLocation(position.first, position.second);
+						Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
+						voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 					} catch (Exception e) {
 						e.printStackTrace();
 						throw new InvalidOperation(VoError.GeneralError, "FAiled to determine location of the building." + e.getMessage());

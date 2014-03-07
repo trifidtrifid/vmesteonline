@@ -1,5 +1,6 @@
 package com.vmesteonline.be;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +31,7 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.VoUserMessage;
 import com.vmesteonline.be.jdo2.VoUserObject;
 import com.vmesteonline.be.jdo2.VoUserTopic;
+import com.vmesteonline.be.utils.VoHelper;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
 
@@ -132,7 +134,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	}
 
-	//TODO move in createMLP method
+	// TODO move in createMLP method
 	private List<VoMessage> removeExtraMessages(List<VoMessage> list, int length) {
 		if (list.size() <= length)
 			return list;
@@ -156,11 +158,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					VoUser user = getCurrentUser(pm);
 					pm.retrieve(user);
 					VoUserGroup group = user.getGroupById(groupId);
-					float lgd = group.getLongitudeDelta();
-					float ltd = group.getLatitudeDelta();
-					String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= " + (group.getLongitude() + lgd)
-							+ " and longitude >= " + (group.getLongitude() - lgd) + " and lattitude <= " + (group.getLatitude() + ltd) + " and lattitude >= "
-							+ (group.getLatitude() - ltd) + " and radius >= " + group.getRadius() + " order by createTime";
+					float lgd = VoHelper.getLongitudeDelta(group.getRadius());
+					float ltd = VoHelper.getLatitudeDelta(group.getRadius(), group.getLatitude().floatValue());
+
+					String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= "
+							+ group.getLongitude().add(new BigDecimal(lgd)).toPlainString() + " and longitude >= "
+							+ group.getLongitude().subtract(new BigDecimal(lgd)).toPlainString() + " and lattitude <= "
+							+ group.getLongitude().add(new BigDecimal(ltd)).toPlainString() + " and lattitude >= "
+							+ group.getLongitude().subtract(new BigDecimal(ltd)).toPlainString() + " and radius >= " + group.getRadius() + " order by createTime";
 					List<VoTopic> topics = new ArrayList<VoTopic>();
 					try {
 						ResultSet rs = con.executeQuery(req);
@@ -420,7 +425,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	private static MessageListPart createMlp(List<VoMessage> lst, long userId, PersistenceManager pm) throws InvalidOperation {
-		
+
 		MessageListPart mlp = new MessageListPart();
 		if (lst == null) {
 			logger.warning("try to create MessagePartList from null object");

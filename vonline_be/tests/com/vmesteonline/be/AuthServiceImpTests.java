@@ -2,6 +2,7 @@ package com.vmesteonline.be;
 
 import static org.junit.Assert.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -72,14 +73,13 @@ public class AuthServiceImpTests {
 		Assert.assertEquals("Парадная 1", user.getGroups().get(0).getName());
 		Assert.assertEquals(Defaults.zan32k3Long + 0.000002F * 1, user.getGroups().get(0).getLongitude(), 0F);
 		System.out.print("a: " + user.getGroups().get(0).getLongitude());
-		
+
 		user = asi.getUserByEmail(Defaults.user2email, pm);
 		Assert.assertEquals(0, user.getGroups().get(0).getRadius());
 		Assert.assertEquals("Парадная 2", user.getGroups().get(0).getName());
 		Assert.assertEquals(Defaults.zan32k3Long + 0.000002F * 2, user.getGroups().get(0).getLongitude(), 0F);
 		System.out.print("b: " + user.getGroups().get(0).getLongitude());
 
-		
 		user = asi.getUserByEmail(Defaults.user3email, pm);
 		Assert.assertEquals(0, user.getGroups().get(0).getRadius());
 		Assert.assertEquals("Парадная 1", user.getGroups().get(0).getName());
@@ -133,10 +133,10 @@ public class AuthServiceImpTests {
 			assertEquals(userByRet.getName(), user.getName());
 			assertEquals(userByRet.getPassword(), user.getPassword());
 
-			float longitude = postalAddress.getUserHomeGroup().getLongitude();
-			assertEquals(user.getLongitude(), longitude, 0F);
-			float latitude = postalAddress.getUserHomeGroup().getLatitude();
-			assertEquals(user.getLatitude(), latitude, 0F);
+			BigDecimal longitude = postalAddress.getUserHomeGroup().getLongitude();
+			assertEquals(user.getLongitude(), longitude);
+			BigDecimal latitude = postalAddress.getUserHomeGroup().getLatitude();
+			assertEquals(user.getLatitude(), latitude);
 
 			List<VoRubric> rubrics = user.getRubrics();
 			assertEquals(rubrics.isEmpty(), false);
@@ -144,8 +144,8 @@ public class AuthServiceImpTests {
 			List<VoUserGroup> groups = user.getGroups();
 			assertEquals(groups.isEmpty(), false);
 			for (VoUserGroup ug : groups) {
-				assertEquals(ug.getLatitude(), latitude, 0F);
-				assertEquals(ug.getLongitude(), longitude, 0F);
+				assertEquals(ug.getLatitude(), latitude);
+				assertEquals(ug.getLongitude(), longitude);
 			}
 			boolean found = false;
 			for (VoUser hobit : postalAddress.getBuilding().getUsers()) {
@@ -162,10 +162,10 @@ public class AuthServiceImpTests {
 			fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testCheckEmailRegistered() {
-		
+
 		String email = "aaa@bbb.com";
 		assertFalse(asi.checkEmailRegistered(email));
 		try {
@@ -176,7 +176,7 @@ public class AuthServiceImpTests {
 		}
 		assertTrue(asi.checkEmailRegistered(email));
 	}
-	
+
 	@Test
 	public void testSendChangePasswordCodeRequest() {
 		String email = "brozer@pisem.net";
@@ -188,27 +188,28 @@ public class AuthServiceImpTests {
 			try {
 				VoUser vu = pm.getObjectById(VoUser.class, uid);
 				vu.getConfirmCode();
-				
+
 				try {
-					asi.confirmRequest(email, "1"+vu.getConfirmCode(), "111");
+					asi.confirmRequest(email, "1" + vu.getConfirmCode(), "111");
 					fail();
 				} catch (Exception e) {
-					assertTrue( e instanceof InvalidOperation);
-					assertEquals( ((InvalidOperation)e).what, VoError.IncorrectParametrs);
+					assertTrue(e instanceof InvalidOperation);
+					assertEquals(((InvalidOperation) e).what, VoError.IncorrectParametrs);
 				}
-				asi.confirmRequest(email, ""+vu.getConfirmCode(), "111");
-				//InvalidOperation(VoError.IncorrectParametrs, "No such code registered for user!")
+				asi.confirmRequest(email, "" + vu.getConfirmCode(), "111");
+				// InvalidOperation(VoError.IncorrectParametrs,
+				// "No such code registered for user!")
 			} finally {
 				pm.close();
 			}
 			pm = PMF.getPm();
 			try {
 				VoUser vu = pm.getObjectById(VoUser.class, uid);
-				assertEquals( vu.getPassword(), "111");
+				assertEquals(vu.getPassword(), "111");
 			} finally {
 				pm.close();
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			assertFalse(true);

@@ -23,6 +23,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 
 public class VoGeocoderTest {
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+
 	@Before
 	public void setUp() throws Exception {
 		helper.setUp();
@@ -42,21 +43,21 @@ public class VoGeocoderTest {
 			UserServiceImpl.getLocationCodesForRegistration();
 		} catch (InvalidOperation e1) {
 			e1.printStackTrace();
-			fail("Failed! "+e1.getMessage());
+			fail("Failed! " + e1.getMessage());
 			return;
 		}
 		for (VoBuilding voBuilding : vbe) {
 			try {
-				Pair<Float, Float> position = VoGeocoder.getPosition(voBuilding);
+				Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
 				Assert.assertTrue(position != null);
-				Assert.assertTrue(position.first > -90);
-				Assert.assertTrue(position.first < 90);
-				Assert.assertTrue(position.first > -180);
-				Assert.assertTrue(position.first < 180);
-				
+				Assert.assertTrue(Float.valueOf(position.first) > -90);
+				Assert.assertTrue(Float.valueOf(position.first) < 90);
+				Assert.assertTrue(Float.valueOf(position.first) > -180);
+				Assert.assertTrue(Float.valueOf(position.first) < 180);
+
 			} catch (InvalidOperation e) {
 				e.printStackTrace();
-				fail("Failed! "+e.getMessage());
+				fail("Failed! " + e.getMessage());
 			}
 		}
 	}

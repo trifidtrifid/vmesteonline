@@ -130,7 +130,7 @@ public class ShopServiceImplTest {
 		Country country = usi.getCounties().get(0);
 		City city = usi.getCities(country.getId()).get(0);
 		Street street = usi.getStreets(city.getId()).get(0);
-		Building building = usi.createNewBuilding(street.getId(), "17/3", 123.45, 54.321);
+		Building building = usi.createNewBuilding(street.getId(), "17/3", "123.45", "54.321");
 		userAddress2 = new PostalAddress(country, city, street, building, (byte) 1, (byte) 2, 3, "");
 	}
 

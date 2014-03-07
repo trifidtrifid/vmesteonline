@@ -254,7 +254,7 @@ public class UserServiceImplTest extends UserServiceImpl  {
 			Country newCountry = usi.createNewCountry(COUNTRY);
 			City newCity = usi.createNewCity(newCountry.getId(), CITY);
 			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, 0D, 0D);
+			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "0", "0");
 
 			Assert.assertEquals(newBuilding.getFullNo(), BUILDING_NO);
 			Assert.assertEquals(newBuilding.getStreetId(), newStreet.getId());
@@ -283,7 +283,7 @@ public class UserServiceImplTest extends UserServiceImpl  {
 			Country newCountry = usi.createNewCountry(COUNTRY);
 			City newCity = usi.createNewCity(newCountry.getId(), CITY);
 			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, 17D, 53D);
+			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "17", "53");
 			byte floor, flat, staircase;
 
 			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT);
@@ -330,7 +330,7 @@ public class UserServiceImplTest extends UserServiceImpl  {
 			Country newCountry = usi.createNewCountry(COUNTRY);
 			City newCity = usi.createNewCity(newCountry.getId(), CITY);
 			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, 17D, 53D);
+			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "17", "53");
 			byte floor;
 			byte flat;
 			byte staircase;
