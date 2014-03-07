@@ -164,8 +164,8 @@ public class VoOrder {
   @Persistent
   private PaymentStatus paymentStatus;
   
-  @Persistent(mappedBy="order")
-  @Extension(key="comparator-name", value="com.vmesteonline.be.jdo2.shop.VoOrder.OrderLineComparator", vendorName="datanucleus")
+  @Persistent
+  /*@Extension(key="comparator-name", value="com.vmesteonline.be.jdo2.shop.VoOrder.OrderLineComparator", vendorName="datanucleus")*/
   private Map<Long,VoOrderLine> orderLines;
   
   @Persistent

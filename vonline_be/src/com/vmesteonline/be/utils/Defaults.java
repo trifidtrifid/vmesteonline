@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
@@ -25,6 +26,12 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCity;
 import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
+import com.vmesteonline.be.jdo2.shop.VoOrder;
+import com.vmesteonline.be.jdo2.shop.VoOrderLine;
+import com.vmesteonline.be.jdo2.shop.VoProducer;
+import com.vmesteonline.be.jdo2.shop.VoProduct;
+import com.vmesteonline.be.jdo2.shop.VoProductCategory;
+import com.vmesteonline.be.jdo2.shop.VoShop;
 import com.vmesteonline.be.shop.DataSet;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.ExchangeFieldType;
@@ -119,8 +126,19 @@ public class Defaults {
 				pm.makePersistent(street);
 				postalAddress = new VoPostalAddress(new VoBuilding(street, "9А", 0F, 0F), (byte) 1, (byte) 1, (byte) 1,
 						"Угол ул. Железнодоррожная и Детскосельского бульвара", pm).getPostalAddress();
+				
+				VoHelper.forgetAllPersistent(VoOrderLine.class, pm);
+				VoHelper.forgetAllPersistent(VoOrder.class, pm);
+				VoHelper.forgetAllPersistent(VoProduct.class,pm);
+				VoHelper.forgetAllPersistent(VoProductCategory.class, pm);
+				VoHelper.forgetAllPersistent(VoProducer.class, pm);
+				VoHelper.forgetAllPersistent(VoShop.class, pm);
+				
 			} catch (Exception e) {
+				e.printStackTrace();
 				throw new InvalidOperation(VoError.GeneralError, "Failed to create address." + e);
+			} finally {
+				pm.close();
 			}
 
 			List<Long> topicSet = new ArrayList<Long>();

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 
 import com.vmesteonline.be.InvalidOperation;
@@ -171,5 +172,15 @@ public class VoHelper {
 			res.put(i++, t);
 		}
 		return res;
+	}
+//===================================================================================================================
+	public static void forgetAllPersistent(Class cl, PersistenceManager pm){
+		Extent extent = pm.getExtent(cl);
+		for (Object object : extent) {
+			try {
+				pm.deletePersistent(object);
+			} catch (Exception e) {
+			}
+		}
 	}
 }
