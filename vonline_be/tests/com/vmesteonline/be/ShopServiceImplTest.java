@@ -2,6 +2,7 @@ package com.vmesteonline.be;
 
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -101,7 +102,7 @@ public class ShopServiceImplTest {
 	@Before
 	public void setUp() throws Exception {
 		helper.setUp();
-		Defaults.init();
+		Defaults.initDefaultData();
 		// register and login current user
 		// Initialize USer Service
 		String sessionId = SESSION_ID;
@@ -857,8 +858,8 @@ public class ShopServiceImplTest {
 			
 		ImportElement importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", listToMap(fieldsOrder));
 		String imgURL = StorageHelper.saveImage(
-				("Производитель 1, http://yandex.ru/, \"HTTP://ya.ru/logo.gif\", \"Длинный текст описания, с заятыми...\"\n"
-		+ "Производитель 2, http://google.ru/, \"HTTP://google.ru/logo.gif\", \"JОпять и снова, Длинный текст описания, с заятыми...\"\n")
+				("Производитель 1; http://yandex.ru/; \"HTTP://ya.ru/logo.gif\"; \"Длинный текст описания; с заятыми...\"\n"
+		+ "Производитель 2; http://google.ru/; \"HTTP://google.ru/logo.gif\"; \"JОпять и снова; Длинный текст описания; с заятыми...\"\n")
 		.getBytes(), userId, false, null);
 		importData.setUrl(imgURL);
 
@@ -902,8 +903,8 @@ public class ShopServiceImplTest {
 		ImportElement importData = new ImportElement(ImExType.IMPORT_SHOP, "shops.csv", listToMap(fieldsOrder));
 		try {
 			String imgURL = StorageHelper.saveImage(
-					("Магазин %1, Мага зин бытовой техники, http://yandex.st/www/1.807/yaru/i/logo.png, 1 | 2 | tag 3\n"
-							+ "Техношок, Магазин Электроники, http://yandex.st/www/1.807/yaru/i/logo.png,").getBytes(), userId, false, null);
+					("Магазин %1; Магазин бытовой техники; http://yandex.st/www/1.807/yaru/i/logo.png; 1 | 2 | tag 3\n"
+							+ "Техношок; Магазин Электроники; http://yandex.st/www/1.807/yaru/i/logo.png;").getBytes(), userId, false, null);
 			importData.setUrl(imgURL);
 	
 	
@@ -939,10 +940,10 @@ public class ShopServiceImplTest {
 		try {
 		
 			String imgURL = StorageHelper.saveImage(
-					("0, 1, КОпмы, Копьютеры и комплектующие, "
+					("0; 1; КОпмы; Копьютеры и комплектующие; "
 							+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif | "
-							+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif,\n" + "1, 2, Ноутбуки,Ноуты и Планшеты,,,\n"
-							+ "2, 3, Ноуты, ТОлько ноуты,,,\n" + "2, 4, Планшеты,Только планшеты,,,\n" + "1, 5, Переферия,\"Принтеры, мышы, клавы\",,,\n").getBytes(),
+							+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif;\n" + "1; 2; Ноутбуки;Ноуты и Планшеты;;;\n"
+							+ "2; 3; Ноуты; ТОлько ноуты;;;\n" + "2; 4; Планшеты;Только планшеты;;;\n" + "1; 5; Переферия;\"Принтеры; мышы; клавы\";;;\n").getBytes(),
 							userId, false, null);
 			importData.setUrl(imgURL);
 			
@@ -990,10 +991,10 @@ public class ShopServiceImplTest {
 		
 		try {
 			String imgURL = StorageHelper.saveImage(
-					("0, 1, КОпмы, Копьютеры и комплектующие, http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif |http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif,\n" + 
-							"1, 2, Ноутбуки,Ноуты и Планшеты,,,\n" +
-							"2, 3, Ноуты, ТОлько ноуты,,,\n" +
-							"2, 4, Планшеты,Только планшеты,,,\n" + "1, 5, Переферия,\"Принтеры, мышы, клавы\",,,\n").getBytes(),
+					("0; 1; КОпмы; Копьютеры и комплектующие; http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif |http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif;\n" + 
+							"1; 2; Ноутбуки;Ноуты и Планшеты;;;\n" +
+							"2; 3; Ноуты; ТОлько ноуты;;;\n" +
+							"2; 4; Планшеты;Только планшеты;;;\n" + "1; 5; Переферия;\"Принтеры; мышы; клавы\";;;\n").getBytes(),
 							userId, false, null);
 			importData.setUrl(imgURL);
 			
@@ -1008,8 +1009,8 @@ public class ShopServiceImplTest {
 	
 			importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", listToMap(fieldsOrder));
 			imgURL = StorageHelper.saveImage(
-					("1, Производитель 1, http://yandex.ru/, \"HTTP://ya.ru/logo.gif\", \"Длинный текст описания, с заятыми...\"\n"
-							+ "2, Производитель 2, http://google.ru/, \"HTTP://google.ru/logo.gif\", \"JОпять и снова, Длинный текст описания, с заятыми...\"\n")
+					("1; Производитель 1; http://yandex.ru/; \"HTTP://ya.ru/logo.gif\"; \"Длинный текст описания; с заятыми...\"\n"
+							+ "2; Производитель 2; http://google.ru/; \"HTTP://google.ru/logo.gif\"; \"JОпять и снова; Длинный текст описания; с заятыми...\"\n")
 							.getBytes(),
 							userId, false, null);
 			importData.setUrl(imgURL);
@@ -1053,8 +1054,8 @@ public class ShopServiceImplTest {
 
 		importData = new ImportElement(ImExType.IMPORT_PRODUCTS, "product.csv", listToMap(productFieldsOrder));
 		imgURL = StorageHelper.saveImage(
-				("1,KEyboard, Клавистура 101 кнопка, 250.0, http://yandex.st/www/1.808/yaru/i/logo.png, 125.0, 3|4|5 , 123.0, \"цвет:черный|материал:пластик\", 1\n" + 
-					"2,Mouse, Мышь 3 кнопки, 1250.0,, 1125.0, 4, 1123.0, цвет:зеленый, " + 2 + "\n").getBytes(),
+				("1;Keyboard; Клавистура 101 кнопка; 250.0; http://yandex.st/www/1.808/yaru/i/logo.png; 125.0; 3|4|5 ; 123.0; \"цвет:черный|материал:пластик\"; 1\n" + 
+					"2;Mouse; Мышь 3 кнопки; 1250.0;; 1125.0; 4; 1123.0; цвет:зеленый; " + 2 + "\n").getBytes(),
 						userId, false, null);
 		importData.setUrl(imgURL);
 
@@ -1316,5 +1317,25 @@ public class ShopServiceImplTest {
 	@Test
 	public void testGetTotalPackReport() {
 
+	}
+	
+//======================================================================================================================
+
+	@Test
+	public void testParseCSVfile() {
+		String csv = " 1; 2;3\n4;5;6;\"7;8\";9";
+		List<List<String>> parseCSVfile;
+		try {
+			String url = StorageHelper.saveImage(csv.getBytes(), userId, true, null);
+			parseCSVfile = si.parseCSVfile(url);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		Assert.assertEquals(parseCSVfile.size(), 2);
+		Assert.assertEquals(parseCSVfile.get(0).size(), 3);
+		Assert.assertEquals(parseCSVfile.get(1).size(), 5);
+		Assert.assertEquals(parseCSVfile.get(1).get(3), "7;8");
+		Assert.assertEquals(parseCSVfile.get(1).get(2), "6");
 	}
 }

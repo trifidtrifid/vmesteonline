@@ -186,6 +186,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser vu = getUserByEmail(to,pm);
+			if(null==vu)
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Nobody found by email '"+to+"'");
+			
 			long code = System.currentTimeMillis() % 123456L;
 			vu.setConfirmCode( code );
 			pm.makePersistent(vu);

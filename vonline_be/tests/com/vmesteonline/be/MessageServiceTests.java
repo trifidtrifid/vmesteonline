@@ -55,7 +55,7 @@ public class MessageServiceTests {
 	@Before
 	public void setUp() throws Exception {
 		helper.setUp();
-		Assert.assertTrue(Defaults.init());
+		Assert.assertTrue(Defaults.initDefaultData());
 
 		pm = PMF.get().getPersistenceManager();
 		asi = new AuthServiceImpl(sessionId);
