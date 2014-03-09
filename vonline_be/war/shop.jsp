@@ -509,6 +509,9 @@
 
                     <a href="#" class="back-to-shop shop-trigger">Вернуться в магазин</a>
                     <h1>Заказы</h1>
+                    <div class="orders-list">
+                    </div>
+                    <div class="more-orders"><a href="#">Показать еще</a></div>
                     <%--<div class="order-item">
                         <table>
                             <thead>

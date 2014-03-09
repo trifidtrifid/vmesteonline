@@ -227,6 +227,13 @@ th.next,
 .input-group-addon {
   cursor: pointer;
 }
+.order-day {
+  background-color: #bfa6c4;
+}
+.order-day:after {
+  content: "День с заказом";
+  margin-left: -100px;
+}
 .free-day {
   background-color: #62c462;
 }
@@ -248,6 +255,7 @@ th.next,
   content: "Закрытый день";
   margin-left: -60px;
 }
+.order-day:after,
 .free-day:after,
 .special-day:after,
 .closed-day:after {
@@ -258,6 +266,7 @@ th.next,
   color: #fff;
   display: none;
 }
+.order-day:hover:after,
 .free-day:hover:after,
 .special-day:hover:after,
 .closed-day:hover:after {
@@ -376,6 +385,7 @@ span
 }
 .shop-orders .order-item {
   margin-bottom: 20px;
+  overflow: auto;
 }
 .shop-orders .order-item table {
   width: 100%;
@@ -406,6 +416,14 @@ span
 .shop-orders .btn-primary {
   margin: 10px 0 10px 10px;
   float: right;
+}
+.shop-orders .more-orders {
+  text-align: center;
+  margin: 20px 0 0 0;
+  display: none;
+}
+.shop-orders .more-orders a {
+  font-size: 16px;
 }
 .ace-spinner {
   width: 50px !important;

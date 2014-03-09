@@ -209,6 +209,11 @@ th.next
 .input-group-addon
   cursor pointer
 
+.order-day
+  background-color #bfa6c4
+  &:after
+    content "День с заказом"
+    margin-left -100px
 .free-day
   background-color #62c462
   &:after
@@ -224,6 +229,7 @@ th.next
   &:after
     content "Закрытый день"
     margin-left -60px
+.order-day:after
 .free-day:after
 .special-day:after
 .closed-day:after
@@ -233,6 +239,7 @@ th.next
   padding 2px 5px
   color #fff
   display none
+.order-day:hover:after
 .free-day:hover:after
 .special-day:hover:after
 .closed-day:hover:after
@@ -334,6 +341,7 @@ th.next
     margin-top 13px
   .order-item
     margin-bottom 20px
+    overflow auto
     table
       width 100%
       thead
@@ -358,6 +366,13 @@ th.next
   .btn-primary
     margin 10px 0 10px 10px
     float right
+  .more-orders
+    text-align center
+    margin 20px 0 0 0
+    display none
+    a
+      font-size 16px
+
 
 .ace-spinner
   width 50px !important
