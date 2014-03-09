@@ -494,7 +494,7 @@
                                     <td class="product-price">${product.price}</td>
                                     <td>
                                         <input type="text" class="input-mini spinner1" />
-                                        ${productDetails.unitName}
+                                        <span class="unit-name">${productDetails.unitName}</span>
                                     </td>
                                     <td>
                                         <i class="fa fa-shopping-cart"></i>
@@ -509,6 +509,16 @@
 
                     <a href="#" class="back-to-shop shop-trigger">Вернуться в магазин</a>
                     <h1>Заказы</h1>
+                   <%-- <table class="orders-tbl">
+                        <tr>
+                            <td class="td1"></td>
+                            <td class="td2">N</td>
+                            <td class="td3">Дата</td>
+                            <td class="td4">Статус</td>
+                            <td class="td5">Доставка</td>
+                            <td class="td6">Сумма</td>
+                        </tr>
+                    </table>--%>
                     <div class="orders-list">
                     </div>
                     <div class="more-orders"><a href="#">Показать еще</a></div>

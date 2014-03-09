@@ -331,7 +331,13 @@ th.next
           display block
           margin-left 30px
           margin-right 10px
-
+          span
+            margin 0
+        .unit-name
+        .ace-spinner
+          display inline-block
+          vertical-align middle
+          margin 0
 .shop-orders
   display none
   h1
@@ -342,21 +348,6 @@ th.next
   .order-item
     margin-bottom 20px
     overflow auto
-    table
-      width 100%
-      thead
-        td
-          font-size 14px
-          color #ccc
-          background #f9f9f9
-      td
-        text-align center
-        font-size 16px
-        border 1px solid #ccc
-        padding 5px 0
-        &:first-child
-          text-align left
-          padding-left 10px
     .plus-minus
       font-size 24px
       text-decoration none
@@ -364,7 +355,7 @@ th.next
       margin 10px 0 0 0
       display none
   .btn-primary
-    margin 10px 0 10px 10px
+    margin 2px
     float right
   .more-orders
     text-align center
@@ -372,6 +363,33 @@ th.next
     display none
     a
       font-size 16px
+
+.orders-tbl
+  width 100%
+  display block
+  margin-right 100px
+  tr
+    width 100%
+    min-width 715px
+  tbody
+    display block
+  td
+    text-align center
+    font-size 16px
+    border 1px solid #ccc
+    padding 5px 0
+  .td1
+    width 5%
+  .td2
+    width 19%
+  .td3
+    width 19%
+  .td4
+    width 19%
+  .td5
+    width 19%
+  .td6
+    width 19%
 
 
 .ace-spinner
@@ -409,13 +427,20 @@ th.next
         background url(../i/bg_direction_nav.png) no-repeat 0 0
       .flex-direction-nav .flex-next
         background-position 100% 0
+      .slides li
+        text-align center
+      img
+        width auto
+        float none
+        display inline-block
     .slider
       img
         max-width 192px
-        width auto
+        max-height  192px
     .carousel
       img
         max-width 60px
+        max-height 60px
       li
         cursor pointer
   .product-descr
@@ -442,7 +467,7 @@ th.next
       .fa
         display inline-block
         vertical-align middle
-        margin 0 23px
+        margin 0 17px
       span
         font-size 20px
 .modal-order-end

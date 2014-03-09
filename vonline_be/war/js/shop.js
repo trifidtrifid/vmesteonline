@@ -31,19 +31,6 @@ $(document).ready(function(){
         showRight.animate({'right':'-28px'},200).removeClass('active');
     });
 
-    w.resize(function(){
-        if ($(this).width() > 975){
-            shopRight.css({'right':'0'});
-        }else{
-            shopRight.css({'right':'-250px'});
-        }
-        /*if ($(this).width() > 753){
-            sidebar.css({'marginLeft':'0'});
-        }else{
-            sidebar.css({'marginLeft':'-190px'});
-        }*/
-    });
-
     $('.dropdown-menu li a').click(function(e){
         e.preventDefault();
         $(this).closest('.btn-group').find('.btn-group-text').text($(this).text());
@@ -175,7 +162,7 @@ $(document).ready(function(){
 
     $('.datepicker').find('.prev').click(function(){
         //alert('1');
-    })
+    });
 
 
     InitSpinner($('.spinner1'),1);
@@ -455,7 +442,7 @@ $(document).ready(function(){
                 '<div class="modal-footer">'+
                 '<span>Цена: '+ productsList[i].price +'</span>'+
                 '<input type="text" class="input-mini spinner1" /> '+
-                unitName+
+                '<span class="unit-name">'+unitName+'</span>'+
                 '<i class="fa fa-shopping-cart"></i>'+
                 '</div>'+
                 '</div>'+
@@ -664,6 +651,7 @@ $(document).ready(function(){
     function createOrdersHtml(orders,length,offset){
         var ordersHtml = "";
         var ordersLength = orders.length;
+        //alert(ordersLength);
         var lastOrderNumber = 0;
         var listLength = 10;
 
@@ -721,35 +709,22 @@ $(document).ready(function(){
                     break
             }
             ordersHtml += '<div class="order-item" data-orderid="'+ orders[i].id +'">'+
-                '<table>'+
-                '<thead>'+
-                '<tr>'+
-                '<td>N</td>'+
-                '<td>Дата</td>'+
-                '<td>Статус заказа</td>'+
-                '<td>Доставка</td>'+
-                '<td>Кол-во продуктов</td>'+
-                '<td>Сумма</td>'+
-                '<td></td>'+
-                '</tr>'+
-                '</thead>'+
+                '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
+                '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить в корзину</button>'+
+                '<table class="orders-tbl">'+
                 '<tbody>'+
                 '<tr>'+
-                '<td>Заказ N '+i+'</td>'+
-                '<td>'+ tempDateItem[0] + tempDateItem[1] + '</td>'+
-                '<td>'+ orderStatus +'</td>'+
-                '<td>'+ orderDelivery +'</td>'+
-                '<td>10</td>'+
-                '<td>'+ orders[i].totalCost +'</td>'+
-                '<td><a class="fa fa-plus plus-minus" href="#"></a></td>'+
+                '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
+                '<td class="td2">Заказ N '+i+'</td>'+
+                '<td class="td3">'+ tempDateItem[0] + " "+ tempDateItem[1] + '</td>'+
+                '<td class="td4">'+ orderStatus +'</td>'+
+                '<td class="td5">'+ orderDelivery +'</td>'+
+                '<td class="td6">'+ orders[i].totalCost +'</td>'+
                 '</tr>'+
                 '</tbody>'+
                 '</table>'+
                 '<div class="order-products">'+
-
                 '</div>'+
-                '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
-                '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить в корзину</button>'+
                 '</div>';
         }
         var haveMore = ordersLength%listLength;
@@ -934,6 +909,22 @@ $(document).ready(function(){
         spinnerNoInit.removeClass('no-init');
     }
 
+    /*var orderDate = parseInt(new Date().getTime()/1000);
+    orderDate -= orderDate%86400
+    var day = 3600*24;
+    //var orders = client.getOrders(orderDate-day,orderDate+day);
+    var orders = client.getOrders(0,orderDate+30*day);
+    var ordersLength = orders.length;
+    alert(ordersLength);
+    var orderList = [];
+    var counter = 0;
+    for (var i = 0; i < ordersLength; i++){
+        if (orders[i].date = orderDate){
+            orderList[counter++] = orders[i];
+        }
+        console.log(i+ " "+orders[i].date+" "+orderDate+" "+orders[i].id);
+    }*/
+
     dPicker.click(function(e,currentProduct,spinnerValue,orderData){
         if (flagFromBasketClick){
             // клик при добавленни товара в корзину
@@ -996,7 +987,6 @@ $(document).ready(function(){
                     $('.additionally-order').removeClass('hide');
                     $('.empty-basket').addClass('hide');
                 }
-
             });
             flagFromBasketClick = 0;
         }else{
@@ -1025,19 +1015,24 @@ $(document).ready(function(){
 
             $('.order-day').click(function(){
                  var orderDate = parseInt($(this).attr('id'));
+                var day = 3600*24;
                 var orders = client.getOrders(orderDate-day,orderDate+day);
                 var ordersLength = orders.length;
+                //alert(ordersLength);
                 var orderList = [];
                 var counter = 0;
                 for (var i = 0; i < ordersLength; i++){
                     if (orders[i].date = orderDate){
                         orderList[counter++] = orders[i];
                     }
+                    console.log(i+ " "+orders[i].date+" "+orderDate+" "+orders[i].id);
                 }
+                //alert(counter);
                 $('.shop-products').hide();
                 var shopOrdersList = $('.orders-list');
                 shopOrdersList.html('').append(createOrdersHtml(orderList));
                 $('.shop-orders').show();
+                initShowMoreOrders();
                 initOrderPlusMinus(shopOrdersList);
                 initOrderBtns();
             });
@@ -1104,8 +1099,9 @@ $(document).ready(function(){
     function initShowMoreOrders(){
         var offset = 10;
         var length = 10;
-        $('.more-orders').click(function(e){
+        $('.more-orders').one('click',function(e){
             e.preventDefault();
+
             var nowTime = parseInt(new Date().getTime()/1000);
             var day = 3600*24;
             var orders = client.getOrders(0,nowTime+30*day);

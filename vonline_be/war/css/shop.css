@@ -373,6 +373,15 @@ span
   margin-left: 30px;
   margin-right: 10px;
 }
+.catalog table tr td span span {
+  margin: 0;
+}
+.catalog table tr td .unit-name,
+.catalog table tr td .ace-spinner {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+}
 .shop-orders {
   display: none;
 }
@@ -387,24 +396,6 @@ span
   margin-bottom: 20px;
   overflow: auto;
 }
-.shop-orders .order-item table {
-  width: 100%;
-}
-.shop-orders .order-item table thead td {
-  font-size: 14px;
-  color: #ccc;
-  background: #f9f9f9;
-}
-.shop-orders .order-item table td {
-  text-align: center;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  padding: 5px 0;
-}
-.shop-orders .order-item table td:first-child {
-  text-align: left;
-  padding-left: 10px;
-}
 .shop-orders .order-item .plus-minus {
   font-size: 24px;
   text-decoration: none;
@@ -414,7 +405,7 @@ span
   display: none;
 }
 .shop-orders .btn-primary {
-  margin: 10px 0 10px 10px;
+  margin: 2px;
   float: right;
 }
 .shop-orders .more-orders {
@@ -424,6 +415,42 @@ span
 }
 .shop-orders .more-orders a {
   font-size: 16px;
+}
+.orders-tbl {
+  width: 100%;
+  display: block;
+  margin-right: 100px;
+}
+.orders-tbl tr {
+  width: 100%;
+  min-width: 715px;
+}
+.orders-tbl tbody {
+  display: block;
+}
+.orders-tbl td {
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  padding: 5px 0;
+}
+.orders-tbl .td1 {
+  width: 5%;
+}
+.orders-tbl .td2 {
+  width: 19%;
+}
+.orders-tbl .td3 {
+  width: 19%;
+}
+.orders-tbl .td4 {
+  width: 19%;
+}
+.orders-tbl .td5 {
+  width: 19%;
+}
+.orders-tbl .td6 {
+  width: 19%;
 }
 .ace-spinner {
   width: 50px !important;
@@ -468,12 +495,21 @@ span
 .modal .product-slider .flexslider .flex-direction-nav .flex-next {
   background-position: 100% 0;
 }
+.modal .product-slider .flexslider .slides li {
+  text-align: center;
+}
+.modal .product-slider .flexslider img {
+  width: auto;
+  float: none;
+  display: inline-block;
+}
 .modal .product-slider .slider img {
   max-width: 192px;
-  width: auto;
+  max-height: 192px;
 }
 .modal .product-slider .carousel img {
   max-width: 60px;
+  max-height: 60px;
 }
 .modal .product-slider .carousel li {
   cursor: pointer;
@@ -507,7 +543,7 @@ span
 .modal .modal-footer .fa {
   display: inline-block;
   vertical-align: middle;
-  margin: 0 23px;
+  margin: 0 17px;
 }
 .modal .modal-footer span {
   font-size: 20px;
