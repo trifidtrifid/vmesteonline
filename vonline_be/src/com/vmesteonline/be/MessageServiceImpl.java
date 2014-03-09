@@ -91,7 +91,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			if (lastLoadedId != 0) {
 				List<VoMessage> subLst = null;
 				for (int i = 0; i < voMsgs.size() - 1; i++) {
-					if (voMsgs.get(i).getId().getId() == lastLoadedId)
+					if (voMsgs.get(i).getId() == lastLoadedId)
 						subLst = voMsgs.subList(i + 1, voMsgs.size());
 				}
 
@@ -158,14 +158,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					VoUser user = getCurrentUser(pm);
 					pm.retrieve(user);
 					VoUserGroup group = user.getGroupById(groupId);
-					float lgd = VoHelper.getLongitudeDelta(group.getRadius());
-					float ltd = VoHelper.getLatitudeDelta(group.getRadius(), group.getLatitude().floatValue());
 
 					String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= "
-							+ group.getLongitude().add(new BigDecimal(lgd)).toPlainString() + " and longitude >= "
-							+ group.getLongitude().subtract(new BigDecimal(lgd)).toPlainString() + " and lattitude <= "
-							+ group.getLongitude().add(new BigDecimal(ltd)).toPlainString() + " and lattitude >= "
-							+ group.getLongitude().subtract(new BigDecimal(ltd)).toPlainString() + " and radius >= " + group.getRadius() + " order by createTime";
+							+ VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString() + " and longitude >= "
+							+ VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
+							+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
+							+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() + " and radius >= " + group.getRadius()
+							+ " order by createTime";
 					List<VoTopic> topics = new ArrayList<VoTopic>();
 					try {
 						ResultSet rs = con.executeQuery(req);
@@ -176,7 +175,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 							if (addTopic) {
 								topics.add(topic);
 							} else {
-								if (topic.getId().getId() == lastLoadedTopicId) {
+								if (topic.getId() == lastLoadedTopicId) {
 									addTopic = true;
 								}
 							}
@@ -259,14 +258,16 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		try {
 			try {
 				if (0 == topic.getId()) {
-					VoTopic votopic = new VoTopic(topic, true, true, true);
+					VoTopic votopic = new VoTopic(topic);
 					pm.makePersistent(votopic);
-					topic.setId(votopic.getId().getId());
+					topic.setId(votopic.getId());
 					VoUser user = getCurrentUser(pm);
 					VoUserGroup ug = user.getGroupById(votopic.getUserGroupId());
-					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId().getId()
-							+ "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + "," + votopic.getCreatedAt()
-							+ ");");
+					votopic.setLongitude(ug.getLongitude());
+					votopic.setLatitude(ug.getLatitude());
+
+					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId() + ","
+							+ ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + "," + votopic.getCreatedAt() + ");");
 					newTopicNotify(votopic);
 				} else {
 					updateTopic(topic);
@@ -310,18 +311,15 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	/**
-	 * checkUpdates запрашивает наличие обновлений с момента предыдущего запроса,
-	 * который возвращает сервер в ответе, если обновлений нет - в ответ приходит
-	 * новое значение таймстампа формирования ответа на сервере. При наличии
-	 * обновлений возвращается 0
+	 * checkUpdates запрашивает наличие обновлений с момента предыдущего запроса, который возвращает сервер в ответе, если обновлений нет - в ответ
+	 * приходит новое значение таймстампа формирования ответа на сервере. При наличии обновлений возвращается 0
 	 **/
 	@Override
 	public int checkUpdates(int lastRequest) throws InvalidOperation {
 		VoSession sess = getCurrentSession();
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		if (now - sess.getLastActivityTs() > 60) { /*
-																								 * Update last Activity once per
-																								 * minute
+																								 * Update last Activity once per minute
 																								 */
 			sess.setLastActivityTs(now);
 			PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -337,6 +335,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public long postMessage(Message msg) throws InvalidOperation, TException {
 		long userId = getCurrentUserId();
+		System.out.print("post new message from " + userId + "\n");
 		msg.setAuthorId(userId);
 		VoMessage vomsg;
 		if (0 == msg.getId()) {
@@ -356,7 +355,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				pm.close();
 			}
 			newMessageNotify(vomsg);
-			msg.setId(vomsg.getId().getId());
+			msg.setId(vomsg.getId());
 		} else {
 			updateMessage(msg);
 		}
@@ -433,7 +432,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 		mlp.totalSize = lst.size();
 		for (VoMessage voMessage : lst) {
-			VoUserMessage voUserMsg = VoDatastoreHelper.<VoUserMessage> getUserMsg(VoUserMessage.class, userId, voMessage.getId().getId(), pm);
+			VoUserMessage voUserMsg = VoDatastoreHelper.<VoUserMessage> getUserMsg(VoUserMessage.class, userId, voMessage.getId(), pm);
 			Message msg = voMessage.getMessage();
 			msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId());
 			msg.userMessage = null == voUserMsg ? null : voUserMsg.getUserMessage();

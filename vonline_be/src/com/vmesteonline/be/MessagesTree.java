@@ -1,30 +1,29 @@
 package com.vmesteonline.be;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.vmesteonline.be.jdo2.GeoLocation;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.utils.VoHelper;
 
 public class MessagesTree {
 
-	static public class Filters {
+	static public class Filters extends GeoLocation {
 		public Filters(long uid, VoUserGroup ug) {
 			userId = uid;
 			if (ug != null) {
 				this.radius = ug.getRadius();
-				latitude = ug.getLatitude();
-				longitude = ug.getLongitude();
+				setLatitude(ug.getLatitude());
+				setLongitude(ug.getLongitude());
 			}
 		}
 
 		public long userId;
 		public int radius;
-		BigDecimal longitude;
-		BigDecimal latitude;
 
 	}
 
@@ -89,7 +88,7 @@ public class MessagesTree {
 	boolean isFirstLevel(long id) {
 
 		for (VoMessage voMsg : firstLevel) {
-			if (voMsg.getId().getId() == id)
+			if (voMsg.getId() == id)
 				return true;
 		}
 		return false;
@@ -103,25 +102,24 @@ public class MessagesTree {
 	}
 
 	boolean isInGroup(VoMessage voMsg) {
-/*		if (voMsg.getLatitude() + VoHelper.getLatitudeDelta(voMsg.getRadius(), voMsg.getLatitude()) > filters.latitude
-				&& voMsg.getLatitude() - VoHelper.getLatitudeDelta(voMsg.getRadius(), voMsg.getLatitude()) < filters.latitude
-				&& voMsg.getLongitude() + VoHelper.getLongitudeDelta(voMsg.getRadius()) > filters.longitude
-				&& voMsg.getLongitude() - VoHelper.getLongitudeDelta(voMsg.getRadius()) < filters.longitude)
-			return true;
-*/
-		return true;
+
+		if (VoHelper.isInclude(voMsg, voMsg.getRadius(), filters))
+			if (voMsg.getRadius() >= filters.radius)
+				if (voMsg.getMinimunVisibleRadius() <= filters.radius)
+					return true;
+		return false;
 	}
 
 	private int parseLevel(List<VoMessage> levelMsgs, int level) {
 		Collections.sort(levelMsgs, new ByCreateTimeComparator());
-		int childsInSublevels = levelMsgs.size();
+		int childsInSublevels = 0;
 		for (VoMessage voMsg : levelMsgs) {
 			if (isVisibleMessage(voMsg, filters.userId) && isInGroup(voMsg)) {
-				ItemPosition ip = new ItemPosition(voMsg.getId().getId(), voMsg.getParentId(), level);
+				ItemPosition ip = new ItemPosition(voMsg.getId(), voMsg.getParentId(), level);
 				items.add(ip);
-				List<VoMessage> nextLevel = getLevel(voMsg.getId().getId());
+				List<VoMessage> nextLevel = getLevel(voMsg.getId());
 				ip.childMsgsNum = parseLevel(nextLevel, level + 1);
-				childsInSublevels += ip.childMsgsNum;
+				childsInSublevels += ip.childMsgsNum + 1;
 			}
 		}
 
@@ -139,7 +137,7 @@ public class MessagesTree {
 
 	private VoMessage getMessage(long id) throws InvalidOperation {
 		for (VoMessage m : msgs) {
-			if (m.getId().getId() == id)
+			if (m.getId() == id)
 				return m;
 		}
 		throw new InvalidOperation(VoError.GeneralError, "can't find message by tree representation");

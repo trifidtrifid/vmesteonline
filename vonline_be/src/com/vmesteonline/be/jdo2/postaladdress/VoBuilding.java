@@ -120,7 +120,7 @@ public class VoBuilding implements Comparable<VoBuilding> {
 	}
 
 	public BigDecimal getLatitude() {
-		return new BigDecimal(longitude);
+		return new BigDecimal(latitude);
 	}
 
 }

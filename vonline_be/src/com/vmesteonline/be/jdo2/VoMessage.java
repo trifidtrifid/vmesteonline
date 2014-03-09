@@ -1,6 +1,5 @@
 package com.vmesteonline.be.jdo2;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -16,6 +15,7 @@ import com.vmesteonline.be.Message;
 import com.vmesteonline.be.MessageType;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.data.VoDatastoreHelper;
+import com.vmesteonline.be.utils.VoHelper;
 
 /**
  * Created by brozer on 1/12/14.
@@ -32,26 +32,16 @@ public class VoMessage extends VoBaseMessage {
 	 * Construct VoMessage object from MEssage representation
 	 * 
 	 * @param msg
-	 *          Message. if msg.id > 0, then an update would be processed, new
-	 *          VoMessage would be created otherwise
+	 *          Message. if msg.id > 0, then an update would be processed, new VoMessage would be created otherwise
 	 * @param checkConsistency
 	 *          - if set, all parameters would be checked for consistency
 	 * @param updateLinkedCounters
-	 *          - if set, counter of topic and author would be updated according
-	 *          to the posted message parameters
+	 *          - if set, counter of topic and author would be updated according to the posted message parameters
 	 * @throws InvalidOperation
 	 *           if consistency check fails or other exception happens
 	 */
 
 	public VoMessage() {
-	}
-
-	public void setLongitude(BigDecimal longitude) {
-		this.longitude = longitude.toPlainString();
-	}
-
-	public void setLatitude(BigDecimal latitude) {
-		this.latitude = latitude.toPlainString();
 	}
 
 	public void setRadius(int radius) {
@@ -83,8 +73,10 @@ public class VoMessage extends VoBaseMessage {
 
 			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, msg.getGroupId());
 			this.radius = ug.getRadius();
-			setLongitude(ug.getLongitude());
-			setLatitude(ug.getLatitude());
+
+			VoTopic topic = pm.getObjectById(VoTopic.class, msg.getTopicId());
+			setLongitude(topic.getLongitude());
+			setLatitude(topic.getLatitude());
 
 			try {
 				/* CHeck the recipient */
@@ -104,9 +96,10 @@ public class VoMessage extends VoBaseMessage {
 
 				author.incrementMessages(1);
 
+				minimunVisibleRadius = VoHelper.findMinimumGroupRadius(topic, author);
+
 				/*
-				 * Check that all of linked messages exists and has type that is
-				 * required
+				 * Check that all of linked messages exists and has type that is required
 				 */
 				this.links = new HashMap<MessageType, Long>();
 
@@ -151,14 +144,6 @@ public class VoMessage extends VoBaseMessage {
 		this.approvedId = approvedId;
 	}
 
-	public BigDecimal getLongitude() {
-		return new BigDecimal(longitude);
-	}
-
-	public BigDecimal getLatitude() {
-		return new BigDecimal(latitude);
-	}
-
 	public int getRadius() {
 		return radius;
 	}
@@ -176,10 +161,7 @@ public class VoMessage extends VoBaseMessage {
 	private long approvedId;
 
 	@Persistent
-	private String longitude;
-	@Persistent
-	private String latitude;
-	@Persistent
+	@Unindexed
 	private int radius;
 
 	@Persistent
@@ -187,9 +169,18 @@ public class VoMessage extends VoBaseMessage {
 	protected long recipient;
 
 	@Persistent
+	@Unindexed
+	protected int minimunVisibleRadius;
+
+	public int getMinimunVisibleRadius() {
+		return minimunVisibleRadius;
+	}
+
+	@Persistent
 	protected long topicId;
 
 	@Persistent
+	@Unindexed
 	private long parentId;
 
 	protected int visibleOffset;
@@ -220,8 +211,8 @@ public class VoMessage extends VoBaseMessage {
 
 	@Override
 	public String toString() {
-		return "VoMessage [id=" + id + ", type=" + type + ", authorId=" + authorId + ", recipient=" + recipient + ", longitude=" + longitude
-				+ ", latitude=" + latitude + ", radius=" + radius + "]";
+		return "VoMessage [id=" + id + ", type=" + type + ", authorId=" + authorId + ", recipient=" + recipient + ", longitude="
+				+ getLongitude().toPlainString() + ", latitude=" + getLatitude().toPlainString() + ", radius=" + radius + "]";
 	}
 
 }

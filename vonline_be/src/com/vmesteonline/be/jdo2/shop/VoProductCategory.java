@@ -86,7 +86,7 @@ public class VoProductCategory {
 		
 		List<Long> ts = new ArrayList<Long>();
 		for( VoTopic vt: getTopics())
-			ts.add(vt.getId().getId());
+			ts.add(vt.getId());
 		pc.setLogoURLset(getLogoURLset());
 		pc.setTopicSet(ts);
 		

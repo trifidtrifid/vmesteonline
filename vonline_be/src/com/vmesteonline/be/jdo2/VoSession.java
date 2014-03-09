@@ -3,19 +3,24 @@ package com.vmesteonline.be.jdo2;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.CurrentAttributeType;
 
 @PersistenceCapable(detachable = "true")
-public class VoSession extends GeoLocation {
+// extends GeoLocation
+public class VoSession {
 
 	public VoSession(String sessId, VoUser user) {
 
-		this.id = KeyFactory.createKey(VoSession.class.getSimpleName(), sessId);
+		// this.id = KeyFactory.createKey(VoSession.class.getSimpleName(), sessId);
+		id = sessId;
 		if (null != user) {
 			this.name = user.getName();
 			this.lastName = user.getLastName();
@@ -28,11 +33,14 @@ public class VoSession extends GeoLocation {
 		this.curAttrMap = new HashMap<Integer, Long>();
 	}
 
-	/*
-	 * public void setId(String s) { id = s; }
-	 * 
-	 * public String getId() { return id; }
-	 */
+	public void setId(String s) {
+		id = s;
+	}
+
+	public String getId() {
+		return id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -48,6 +56,10 @@ public class VoSession extends GeoLocation {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	protected String id;
 
 	@Persistent
 	@Unindexed
@@ -116,7 +128,9 @@ public class VoSession extends GeoLocation {
 
 	@Override
 	public String toString() {
-		return "VoSession [id=" + id + ", name=" + name + ", lastName=" + lastName + ", userId=" + userId + ", longitude=" + longitude + ", latitude="
-				+ latitude + ", lastActivityTs=" + lastActivityTs + ", lastUpdateTs=" + lastUpdateTs + "]";
+		return "VoSession [id=" + id + ", name=" + name + ", lastName=" + lastName + ", userId=" + userId + ", lastActivityTs=" + lastActivityTs
+				+ ", lastUpdateTs=" + lastUpdateTs + "]";
 	}
 }
+
+// ", longitude=" + getLongitude()+ ", latitude=" + getLatitude() + 

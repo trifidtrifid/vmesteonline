@@ -31,8 +31,10 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 		this.floor = floor;
 		this.flatNo = flatNo;
 		this.comment = comment;
-		BigDecimal staircaseOffset = new BigDecimal("0.000002");
+		BigDecimal staircaseOffset = new BigDecimal("0.0000001");
 		staircaseOffset = staircaseOffset.multiply(new BigDecimal(staircase));
+		
+		System.out.print("offset: " + staircaseOffset.add(building.getLongitude()));
 		userGroup = new VoUserGroup("Парадная " + staircase, 0, staircaseOffset.add(building.getLongitude()), building.getLatitude());
 
 	}

@@ -88,7 +88,7 @@ public class VoShop {
 	public Shop getShop() {
 		List<Long> topicIds = new ArrayList<Long>();
 		for (VoTopic vt : getTopics()) {
-			topicIds.add(vt.getId().getId());
+			topicIds.add(vt.getId());
 		}
 		Shop shop = new Shop(id.getId(), name, descr, null==address ? null : address.getPostalAddress(), logoURL, ownerId, 
 				topicIds, tags, 

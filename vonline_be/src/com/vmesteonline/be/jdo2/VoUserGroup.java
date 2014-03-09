@@ -20,8 +20,8 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 
 	public VoUserGroup(String visibleName, int radius, BigDecimal longitude, BigDecimal lattitude) {
 		this.radius = radius;
-		this.longitude = longitude.toPlainString();
-		this.latitude = longitude.toPlainString();
+		setLongitude(longitude);
+		setLatitude(lattitude);
 		this.name = visibleName;
 	}
 
@@ -53,14 +53,6 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 		this.description = description;
 	}
 
-	public BigDecimal getLongitude() {
-		return new BigDecimal(longitude);
-	}
-
-	public void setLongitude(BigDecimal longitude) {
-		this.longitude = longitude.toPlainString();
-	}
-
 	@Persistent
 	@Unindexed
 	private String description;
@@ -75,13 +67,14 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 
 	@Override
 	public String toString() {
-		return "VoUserGroup [id=" + getId() + ", name=" + name + ", longitude=" + longitude + ", latitude=" + latitude + ", radius=" + radius + "]";
+		return "VoUserGroup [id=" + getId() + ", name=" + name + ", longitude=" + getLongitude() + ", latitude=" + getLatitude() + ", radius=" + radius
+				+ "]";
 	}
 
 	@Override
 	public int compareTo(VoUserGroup that) {
-		return that.latitude.compareTo(this.latitude) != 0 ? that.latitude.compareTo(this.latitude)
-				: that.longitude.compareTo(this.longitude) != 0 ? that.longitude.compareTo(this.longitude) : Integer.compare(that.radius, this.radius);
+		return that.getLatitude().compareTo(this.getLatitude()) != 0 ? that.getLatitude().compareTo(this.getLatitude()) : that.getLongitude().compareTo(
+				this.getLongitude()) != 0 ? that.getLongitude().compareTo(this.getLongitude()) : Integer.compare(that.radius, this.radius);
 	}
 
 }

@@ -7,7 +7,7 @@ import com.vmesteonline.be.jdo2.VoSession;
 
 public class SessionHelper {
 
-	public static Long getUserId(String sessionId) {
+/*	public static Long getUserId(String sessionId) {
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
@@ -19,4 +19,4 @@ public class SessionHelper {
 			pm.close();
 		}
 	}
-}
+*/}

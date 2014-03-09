@@ -9,10 +9,8 @@ import java.util.TreeSet;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
@@ -344,7 +342,7 @@ public class VoUser extends GeoLocation {
 	}
 
 	public String toFullString() {
-		return "VoUser [id=" + getId() + ", address=" + address + ", longitude=" + longitude + ", latitude=" + latitude + ", name=" + name
+		return "VoUser [id=" + getId() + ", address=" + address + ", longitude=" + getLongitude() + ", latitude=" + getLatitude() + ", name=" + name
 				+ ", lastName=" + lastName + ", email=" + email + ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum=" + topicsNum
 				+ ", likesNum=" + likesNum + ", unlikesNum=" + unlikesNum + "]";
 	}

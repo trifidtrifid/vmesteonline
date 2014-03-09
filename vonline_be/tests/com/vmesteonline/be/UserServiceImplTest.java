@@ -3,11 +3,11 @@ package com.vmesteonline.be;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
 import javax.jdo.PersistenceManager;
-import javax.servlet.http.HttpSession;
 
 import junit.framework.Assert;
 
@@ -17,13 +17,13 @@ import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.vmesteonline.be.ServiceImpl.SessionIdStorage;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.utils.Defaults;
+import com.vmesteonline.be.utils.VoHelper;
 
-public class UserServiceImplTest extends UserServiceImpl  {
+public class UserServiceImplTest extends UserServiceImpl {
 
 	private static final String SESSION_ID = "11111111111111111111111";
 	private static final String COMMENT = "Комент";
@@ -41,13 +41,15 @@ public class UserServiceImplTest extends UserServiceImpl  {
 
 	@Before
 	public void setUp() throws Exception {
+
 		helper.setUp();
-		Defaults.init();
+		Assert.assertTrue(Defaults.init());
 		// register and login current user
 		// Initialize USer Service
-		String sessionId = SESSION_ID;
-		super.sessionStorage = new SessionIdStorage(sessionId);
-		asi = new AuthServiceImpl(sessionId);
+		sessionStorage = new SessionIdStorage(SESSION_ID);
+		asi = new AuthServiceImpl(SESSION_ID);
+		usi = new UserServiceImpl(SESSION_ID);
+
 		List<String> userLocation = UserServiceImpl.getLocationCodesForRegistration();
 		Assert.assertNotNull(userLocation);
 		Assert.assertTrue(userLocation.size() > 0);
@@ -55,22 +57,23 @@ public class UserServiceImplTest extends UserServiceImpl  {
 		userId = asi.registerNewUser("fn", "ln", "pswd", "eml", userHomeLocation);
 		Assert.assertTrue(userId > 0);
 		asi.login("eml", "pswd");
-		usi = new UserServiceImpl(sessionId);
 	}
 
 	@Test
 	public void testGetUserAandBVoGroups() {
 
 		try {
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pmA = PMF.getPm();
+			PersistenceManager pmB = PMF.getPm();
+
 			try {
-				
+
 				asi.login(Defaults.user1email, Defaults.user1pass);
-				VoUser uA = getCurrentUser(pm);
+				VoUser uA = getCurrentUser(pmA);
 				List<VoUserGroup> voUserGroupsA = uA.getGroups();
-				
-				asi.login(Defaults.user2email, Defaults.user2pass);
-				VoUser uB = getCurrentUser(pm);
+
+				asi.login(Defaults.user3email, Defaults.user3pass);
+				VoUser uB = getCurrentUser(pmB);
 				List<VoUserGroup> voUserGroupsB = uB.getGroups();
 
 				Assert.assertEquals(5, voUserGroupsB.size());
@@ -87,11 +90,19 @@ public class UserServiceImplTest extends UserServiceImpl  {
 				Assert.assertEquals(2000, voUserGroupsA.get(3).getRadius());
 				Assert.assertEquals(5000, voUserGroupsA.get(4).getRadius());
 
-				Assert.assertEquals(voUserGroupsA.get(0).getLatitude() , voUserGroupsB.get(0).getLatitude());
-				Assert.assertEquals(voUserGroupsA.get(0).getLongitude(), voUserGroupsB.get(0).getLongitude());
+				/*
+				 * Assert.assertEquals(voUserGroupsA.get(0).getLongitude(), new BigDecimal("59.9331461"));
+				 * Assert.assertEquals(voUserGroupsB.get(0).getLongitude(), new BigDecimal("59.9331462"));
+				 */System.out.print("max = " + VoHelper.getLongitudeMax(voUserGroupsA.get(0).getLongitude(), 200).toPlainString() + " origin = "
+						+ voUserGroupsA.get(0).getLongitude() + "\n");
+				System.out.print("lat max = " + VoHelper.getLatitudeMax(voUserGroupsA.get(0).getLatitude(), 200).toPlainString() + " origin = "
+						+ voUserGroupsA.get(0).getLatitude() + "\n");
 
+				System.out.print("delta = " + VoHelper.calculateRadius(voUserGroupsA.get(0), voUserGroupsB.get(0)));
 			} finally {
-				pm.close();
+				pmA.close();
+				pmB.close();
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

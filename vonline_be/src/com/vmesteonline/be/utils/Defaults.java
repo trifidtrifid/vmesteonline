@@ -30,8 +30,8 @@ public class Defaults {
 	public static String user1name = "Aname";
 	public static String user1email = "a";
 	public static String user1pass = "a";
-	public static String zan32k3Long = "59.933146";
-	public static String zan32k3Lat = "30.423117";
+	public static String zan32k3Lat = "59.933146";
+	public static String zan32k3Long = "30.423117";
 
 	public static String user2lastName = "Bfamily";
 	public static String user2name = "Bname";
@@ -119,9 +119,9 @@ public class Defaults {
 							""),
 					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat)), (byte) 2, (byte) 1, (byte) 50,
 							""),
-					new VoPostalAddress(new VoBuilding(street, "35", new BigDecimal("59.932544"), new BigDecimal("30.419684")), (byte) 1, (byte) 11, (byte) 35,
+					new VoPostalAddress(new VoBuilding(street, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544")), (byte) 1, (byte) 11, (byte) 35,
 							""),
-					new VoPostalAddress(new VoBuilding(street, "6", new BigDecimal("59.934177"), new BigDecimal("30.404331")), (byte) 1, (byte) 2, (byte) 25,
+					new VoPostalAddress(new VoBuilding(street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177")), (byte) 1, (byte) 2, (byte) 25,
 							"") };
 
 			for (VoPostalAddress pa : addresses) {

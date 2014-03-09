@@ -84,16 +84,16 @@ public class MessagesTreeTests extends MessagesTree {
 		try {
 			List<VoMessage> msgs = t.getTreeMessagesAfter(1, new MessagesTree.Filters(0, null));
 			Assert.assertEquals(4, msgs.size());
-			Assert.assertEquals(4, msgs.get(0).getId().getId());
+			Assert.assertEquals(4, msgs.get(0).getId());
 			Assert.assertEquals(0, msgs.get(0).getChildMessageNum());
 
-			Assert.assertEquals(5, msgs.get(1).getId().getId());
+			Assert.assertEquals(5, msgs.get(1).getId());
 			Assert.assertEquals(2, msgs.get(1).getChildMessageNum());
 
-			Assert.assertEquals(6, msgs.get(2).getId().getId());
+			Assert.assertEquals(6, msgs.get(2).getId());
 			Assert.assertEquals(1, msgs.get(2).getChildMessageNum());
 
-			Assert.assertEquals(7, msgs.get(3).getId().getId());
+			Assert.assertEquals(7, msgs.get(3).getId());
 			Assert.assertEquals(0, msgs.get(3).getChildMessageNum());
 
 		} catch (InvalidOperation e) {
@@ -143,13 +143,13 @@ public class MessagesTreeTests extends MessagesTree {
 
 			List<VoMessage> msgs = t.getTreeMessagesAfter(1, new MessagesTree.Filters(0, null));
 			Assert.assertEquals(4, msgs.size());
-			Assert.assertEquals(4, msgs.get(0).getId().getId());
+			Assert.assertEquals(4, msgs.get(0).getId());
 			Assert.assertEquals(1, msgs.get(0).getVisibleOffset());
 
-			Assert.assertEquals(5, msgs.get(1).getId().getId());
+			Assert.assertEquals(5, msgs.get(1).getId());
 			Assert.assertEquals(1, msgs.get(1).getVisibleOffset());
 
-			Assert.assertEquals(6, msgs.get(2).getId().getId());
+			Assert.assertEquals(6, msgs.get(2).getId());
 			Assert.assertEquals(2, msgs.get(2).getVisibleOffset());
 
 		} catch (Exception e) {
@@ -165,8 +165,8 @@ public class MessagesTreeTests extends MessagesTree {
 
 			List<VoMessage> msgs = t.getTreeMessagesAfter(5, new MessagesTree.Filters(0, null));
 			Assert.assertEquals(2, msgs.size());
-			Assert.assertEquals(6, msgs.get(0).getId().getId());
-			Assert.assertEquals(7, msgs.get(1).getId().getId());
+			Assert.assertEquals(6, msgs.get(0).getId());
+			Assert.assertEquals(7, msgs.get(1).getId());
 
 		} catch (Exception e) {
 			e.printStackTrace();

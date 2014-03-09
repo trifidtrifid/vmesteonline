@@ -268,7 +268,7 @@ public class VoProduct {
 		productDetails.setOptionsMap(optionsMap);
 		List<Long> ts = new ArrayList<Long>();
 		for (VoTopic vt : getTopicSet()) {
-			ts.add(vt.getId().getId());
+			ts.add(vt.getId());
 		}
 		productDetails.setProducerId(producer.getId());
 		productDetails.setFullDescr(fullDescr);

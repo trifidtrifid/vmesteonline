@@ -16,7 +16,7 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
 public abstract class GeoLocation {
 
-	GeoLocation() {
+	public GeoLocation() {
 	}
 
 	/*
@@ -53,11 +53,11 @@ public abstract class GeoLocation {
 
 	@Persistent
 	@Unindexed
-	protected String longitude;
+	private String longitude;
 
 	@Persistent
 	@Unindexed
-	protected String latitude;
+	private String latitude;
 
 	public static int R = 6378137;
 

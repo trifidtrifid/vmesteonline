@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import com.google.appengine.api.datastore.KeyFactory;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -82,7 +83,7 @@ public class ServiceImpl {
 	protected long getCurrentUserId(PersistenceManager _pm) throws InvalidOperation {
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
-		VoSession sess = getCurrentSession(null);
+		VoSession sess = getCurrentSession(_pm);
 		if (sess != null && 0 != sess.getUserId()) {
 			return sess.getUserId();
 		}
@@ -93,12 +94,12 @@ public class ServiceImpl {
 		return getCurrentUser(null);
 	}
 
-	protected VoUser getCurrentUser(PersistenceManager _pm) throws InvalidOperation {
+	public VoUser getCurrentUser(PersistenceManager _pm) throws InvalidOperation {
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
 		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
 		try {
-			
+
 			VoSession sess = getCurrentSession(pm);
 			if (sess != null && 0 != sess.getUserId()) {
 				return pm.getObjectById(VoUser.class, sess.getUserId());
@@ -121,9 +122,13 @@ public class ServiceImpl {
 		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
 		try {
 			return pm.getObjectById(VoSession.class, sessionStorage.getId());
+
+			// return pm.getObjectById(VoSession.class,
+			// KeyFactory.createKey(VoSession.class.getSimpleName(),
+			// sessionStorage.getId()));
 		} catch (JDOObjectNotFoundException e) {
-			//throw new InvalidOperation(VoError.NotAuthorized, "No session found");
-			//let's register a session
+			// throw new InvalidOperation(VoError.NotAuthorized, "No session found");
+			// let's register a session
 			VoSession vs = new VoSession(sessionStorage.getId(), null);
 			pm.makePersistent(vs);
 			return vs;
