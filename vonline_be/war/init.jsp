@@ -16,7 +16,10 @@
 	<h2>Reset to defaults</h2>
 
 	<%
-		Defaults.init();
+		Defaults.initDefaultData();
+	
+		Defaults.initializeShop();
+	
 	%>
 
 </body>

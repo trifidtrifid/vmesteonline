@@ -36,14 +36,6 @@ import com.vmesteonline.be.shop.PriceType;
 @PersistenceCapable
 public class VoOrder {
 
-	private static final class OrderLineComparator implements Comparator<VoOrderLine> {
-		@Override
-		public int compare(VoOrderLine o1, VoOrderLine o2) {
-			return null == o1.getProduct() ? null == o1.getProduct() ? 0 : 1 :
-				o1.getProduct().getName().compareTo(o1.getProduct().getName());
-		}
-	}
-
 	public PriceType getPriceType() {
 		return priceType;
 	}
@@ -68,7 +60,7 @@ public class VoOrder {
 		this.totalCost = 0D;
 		this.paymentType = PaymentType.CASH;
 		this.paymentStatus = PaymentStatus.WAIT;
-		this.orderLines = new HashMap<Long,VoOrderLine>();
+		this.orderLines = new HashMap<Long,Long>();
 		this.priceType = priceType;
 		this.comment = comment;
 		try{
@@ -90,8 +82,14 @@ public class VoOrder {
 					 new VoOrderLine(this, product, orderLine.getQuantity(), product.getPrice( priceType), orderLine.getComment(),
 								 product.isPrepackRequired() ? orderLine.getPacks() : null );
 				
-			VoOrderLine oldLine = this.orderLines.put( voOrderLine.getProduct().getId(), voOrderLine );
-			this.incrementTotalCost(voOrderLine.getPrice()*voOrderLine.getQuantity() - oldLine.getPrice() * oldLine.getQuantity());
+			Long oldLineId = this.orderLines.put( voOrderLine.getProductId(), voOrderLine.getId().getId() );
+			double priceDec = 0;
+			if( oldLineId != null ){
+				VoOrderLine oldLine = pm.getObjectById(VoOrderLine.class,oldLineId);
+				priceDec = oldLine.getPrice() * oldLine.getQuantity();
+			}
+			
+			this.incrementTotalCost(voOrderLine.getPrice()*voOrderLine.getQuantity() - priceDec);
 			pm.makePersistent( voOrderLine );
 			pm.makePersistent(this);
 		} catch (Exception e) {
@@ -105,20 +103,19 @@ public class VoOrder {
 	public Order getOrder(){
 		return new Order(id.getId(), date, status, priceType, totalCost, user.getId(), user.getName() + " " + user.getLastName());
 	} 
-	public OrderDetails getOrderDetails(){
+	public OrderDetails getOrderDetails(PersistenceManager pm){
 		OrderDetails od = new OrderDetails(createdAt, delivery, deliveryCost, 
 				deliveryTo.getPostalAddress(), paymentType, paymentStatus,
 				new ArrayList<OrderLine>(), comment);
-		SortedSet<VoOrderLine> ols = new TreeSet<VoOrderLine>();
-		if(null!=orderLines) ols.addAll(orderLines.values());
-		for( VoOrderLine vol: ols){
-			od.odrerLines.add(vol.getOrderLine());
+		if(null!=orderLines) 
+			for(Long olid: orderLines.values()){
+				od.odrerLines.add( pm.getObjectById(VoOrderLine.class,olid).getOrderLine(pm));
 		}
 		return od;
 	}
 	
-	public VoOrderLine getOrderLineByProduct( long productId ){
-		return orderLines.get(productId);
+	public VoOrderLine getOrderLineByProduct( long productId, PersistenceManager pm ){
+		return pm.getObjectById(VoOrderLine.class, orderLines.get(productId));
 	} 
 	
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -164,10 +161,8 @@ public class VoOrder {
   @Persistent
   private PaymentStatus paymentStatus;
   
-  @Persistent(mappedBy="order")
-  @OneToMany
-  @Extension(key="comparator-name", value="com.vmesteonline.be.jdo2.shop.VoOrder.OrderLineComparator", vendorName="datanucleus")
-  private Map<Long,VoOrderLine> orderLines;
+  @Persistent
+  private Map<Long,Long> orderLines;
   
   @Persistent
   private PriceType priceType; 
@@ -181,7 +176,8 @@ public class VoOrder {
 	}
 
 	public double addCost(double cost){
-		return totalCost += cost;
+		setTotalCost(totalCost + cost);
+		return getTotalCost();
 	}
 	
 	public void setDate(int date) {
@@ -273,7 +269,7 @@ public class VoOrder {
 		return user;
 	}
 
-	public Map<Long,VoOrderLine> getOrderLines() {
+	public Map<Long,Long> getOrderLines() {
 		return orderLines;
 	}
 

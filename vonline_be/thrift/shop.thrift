@@ -209,6 +209,8 @@ service ShopService {
 		3:map<i32,ExchangeFieldType> productFields ) throws (1:error.InvalidOperation exc),
 	DataSet getTotalPackReport( 1:i32 date, 2:DeliveryType deliveryType,
 		3:map<i32,ExchangeFieldType> packFields ) throws (1:error.InvalidOperation exc),
+		
+	list<list<string>> parseCSVfile( 1:string url ) throws (1:error.InvalidOperation exc),
 
 
 	//frontend functions================================================================================================

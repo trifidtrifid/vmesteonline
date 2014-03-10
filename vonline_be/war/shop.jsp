@@ -37,20 +37,20 @@
     List<Shop> ArrayShops = shopService.getShops();
     Shop shop = shopService.getShop(ArrayShops.get(0).id);
 
-    Cookie cookies [] = request.getCookies ();
+    Cookie cookies [] = request.getCookies();
     String cookieName = "catid";
     String cookieName2 = "arrayPrevCat";
     Cookie catIdCookie = null;
-    Cookie arrayPrevCat = null;
+    //Cookie arrayPrevCat = null;
     if (cookies != null) {
         for (int i = 0; i < cookies.length; i++) {
             //out.print(cookies[i].getName());
             if (cookies[i].getName().equals (cookieName)) {
                 catIdCookie = cookies[i];
             }
-            if (cookies[i].getName().equals (cookieName2)) {
+            /*if (cookies[i].getName().equals (cookieName2)) {
                 arrayPrevCat = cookies[i];
-            }
+            }*/
         }
     }
     /*if (arrayPrevCat != null){
@@ -58,7 +58,9 @@
         out.print(arrayPrevCat.getValue());
         out.print("==");
     }*/
+
     long catId = 0;
+<<<<<<< HEAD
     if (catIdCookie != null){
     	try{
     	catId = Long.parseLong(catIdCookie.getValue());
@@ -69,22 +71,26 @@
     //out.print(catIdCookie.getValue());
     if (catId != 0){
         pageContext.setAttribute("innerCategoryFlag",true);
+=======
+    try{
+        if (catIdCookie != null){catId = Long.parseLong(catIdCookie.getValue());}
+        if (catId != 0){
+            pageContext.setAttribute("innerCategoryFlag",true);
+        }
+    }catch(Exception e){
+        catId = 0;
+>>>>>>> origin/master
     }
+    //out.print(catId);
 
     List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(catId);
-    //out.print("--");
-    //out.print(ArrayProductCategory.size());
-    if (ArrayProductCategory.size() > 0){
-        ProductListPart productsListPart;
-        if (ArrayProductCategory.size() == 1){
-            productsListPart = shopService.getProducts(0,10,ArrayProductCategory.get(0).id);
-        }else{
-            productsListPart = shopService.getProducts(0,10,ArrayProductCategory.get(1).id);
-        }
+    ProductListPart productsListPart = shopService.getProducts(0,10,catId);
+    if (productsListPart.products.size() > 0){
         ProductDetails productDetails = shopService.getProductDetails(productsListPart.products.get(0).id);
         pageContext.setAttribute("products",productsListPart.products);
         pageContext.setAttribute("productDetails",productDetails);
     }
+    pageContext.setAttribute("productCategories", ArrayProductCategory);
 
     //String productURL = new String( productsListPart.products.get(0).imageURL);
 
@@ -99,7 +105,7 @@
     //out.print(new String( productsListPart.products.get(0).imageURL));
     //out.print(ArrayProductCategory.get(1).id);
 
-    pageContext.setAttribute("productCategories", ArrayProductCategory);
+
     //pageContext.setAttribute("productURL",productURL);
     //pageContext.setAttribute("orderLines",orderLineArray);
 %>
@@ -229,6 +235,7 @@
 
                 </ul><!-- /.nav-list -->
             </aside>--%>
+<<<<<<< HEAD
 				<aside class="sidebar shop-right">
 					<div class="show-right">Заказы</div>
 					<div class="hide-right">×</div>
@@ -246,6 +253,27 @@
 					</nav>
 					<ul class="catalog-order">
 						<%--<c:forEach var="orderLine" items="${orderLines}">
+=======
+            <aside class="sidebar shop-right">
+                <div class="show-right">
+                    Заказы
+                </div>
+                <div class="hide-right">×</div>
+                <div class="sidebar-title">
+                    <a href="#" class="go-to-orders shop-trigger">Заказы</a>
+                    <nav>
+                        <div class="input-group">
+                            <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="dd-mm-yyyy" value="Выберите дату" onblur="if(this.value=='') this.value='Выберите дату';" onfocus="if(this.value=='Выберите дату') this.value='';"/>
+                            <%--<span class="input-group-addon">
+                                <i class="icon-calendar bigger-110"></i>
+                            </span>--%>
+                        </div>
+                    </nav>
+                </div>
+
+                <ul class="catalog-order">
+                    <%--<c:forEach var="orderLine" items="${orderLines}">
+>>>>>>> origin/master
                         <li>
                             <img src="${orderLine.product.imageURL}" alt="картинка"/>
                             <div class="product-right-descr">
@@ -336,6 +364,7 @@
                             </tr>
                         </table>
                     </li>--%>
+<<<<<<< HEAD
 					</ul>
 					<div class="additionally-order">
 						<div class="itogo-right">
@@ -470,6 +499,420 @@
 				<div class="clear"></div>
 			</div>
 		</div>
+=======
+                </ul>
+                <div class="additionally-order">
+                    <div class="itogo-right">
+                        Товаров на сумму: <span>333</span> руб.
+                    </div>
+                    <div class="delivery-right">
+                        <h3>Доставка</h3>
+                        <div class="radio">
+                            <label>
+                                <input name="form-field-radio" type="radio" checked="checked" class="ace">
+                                <span class="lbl"> Самовывоз</span>
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label>
+                                <input name="form-field-radio" type="radio" class="ace courier-delivery">
+                                <span class="lbl"> Курьер</span>
+                            </label>
+                        </div>
+                        <div class="input-delivery">
+                            <input type="tel" placeholder="Номер телефона"/>
+                            <span class="lbl"> Адрес доставки</span>
+                            <input id="country-delivery" type="text" value="Россия" placeholder="Страна"/>
+                            <input id="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
+                            <input id="street-delivery" type="text" placeholder="Улица"/>
+                            <input id="building-delivery" type="text" class="short first" placeholder="Дом"/>
+                            <input id="flat-delivery" type="text" class="short" placeholder="Квартира"/>
+                        </div>
+                        <div class="alert-delivery">Введите адрес доставки !</div>
+                    </div>
+                    <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
+                    <button class="btn btn-sm btn-grey no-border">Отменить</button>
+                    <button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>
+                </div>
+                <div class="empty-basket">
+                    Ваша корзина пуста
+                </div>
+            </aside>
+            <div class="main-content">
+                <div class="shop-products">
+                    <nav class="breadcrambs">
+                        <a href="#">Главная</a><span> > </span>
+                        <a href="#">Товары</a><span> > </span>
+                        Я здесь
+                    </nav>
+                    <form method="post" action="#" class="form-group has-info">
+                        <span class="block input-icon input-icon-right">
+                            <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
+                            <a href="#" class="icon-search icon-on-right bigger-110"></a>
+                        </span>
+                    </form>
+                    <nav class="shop-menu">
+                        <ul>
+                            <c:if test="${innerCategoryFlag}">
+                                <li>
+                                    <a href="#" class="fa fa-reply-all"></a>
+                                    <div>Назад</div>
+                                </li>
+                            </c:if>
+                            <c:forEach var="productCategory" items="${productCategories}">
+                                <li data-parentid="${productCategory.parentId}" data-catid="${productCategory.id}">
+                                    <a href="#" class="fa fa-beer"></a>
+                                    <div>${productCategory.name}</div>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </nav>
+                    <section class="catalog">
+                        <table>
+                            <thead>
+                            <tr>
+                                <td>Название</td>
+                                <td>Цена</td>
+                                <td>Количество</td>
+                                <td></td>
+                            </tr>
+                            </thead>
+                            <c:forEach var="product" items="${products}">
+                                <tr data-productid="${product.id}">
+                                    <td>
+                                        <a href="#" class="product-link">
+                                            <img src="${product.imageURL}" alt="картинка"/>
+                                            <span>
+                                            <span>${product.name}</span>
+                                            ${product.shortDescr}
+                                            </span>
+                                        </a>
+                                        <div class="modal">
+                                            <div class="modal-body">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                <div class="product-slider">
+                                                    <div class="slider flexslider">
+                                                        <ul class="slides">
+                                                            <li>
+                                                                <img src="${product.imageURL}" />
+                                                            </li>
+                                                            &lt;%&ndash;<li>
+                                                                <img src="i/shop/2.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/3.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/4.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/5.jpg" />
+                                                            </li>&ndash;%&gt;
+                                                            <!-- items mirrored twice, total of 12 -->
+                                                        </ul>
+                                                    </div>
+                                                    <div class="carousel flexslider">
+                                                        <ul class="slides">
+                                                            <li>
+                                                                <img src="${product.imageURL}" />
+                                                            </li>
+                                                            &lt;%&ndash;<li>
+                                                                <img src="i/shop/2.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/3.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/4.jpg" />
+                                                            </li>
+                                                            <li>
+                                                                <img src="i/shop/5.jpg" />
+                                                            </li>&ndash;%&gt;
+                                                            <!-- items mirrored twice, total of 12 -->
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="product-descr">
+                                                    <h3>${product.name}</h3>
+                                                    <div class="product-text">
+                                                        ${productDetails.fullDescr}
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <span>Цена: ${product.price}</span>
+                                                        <input type="text" class="input-mini spinner1" />
+                                                        ${productDetails.unitName}
+                                                        <i class="fa fa-shopping-cart"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="product-price">${product.price}</td>
+                                    <td>
+                                        <input type="text" class="input-mini spinner1" />
+                                        ${productDetails.unitName}
+                                    </td>
+                                    <td>
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+
+                        </table>
+                    </section>
+                </div>
+                <div class="shop-orders">
+
+                    <a href="#" class="back-to-shop shop-trigger">Вернуться в магазин</a>
+                    <h1>Заказы</h1>
+                    <%--<div class="order-item">
+                        <table>
+                            <thead>
+                            <tr>
+                                <td>Номер заказа</td>
+                                <td>Дата</td>
+                                <td>Статус заказа</td>
+                                <td>Доставка</td>
+                                <td>Кол-во продуктов</td>
+                                <td>Сумма</td>
+                                <td></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>N 1</td>
+                                <td>13.02.2014</td>
+                                <td>Выполнен</td>
+                                <td>Самовывоз</td>
+                                <td>10</td>
+                                <td>1000 р.</td>
+                                <td><a class="fa fa-plus plus-minus" href="#"></a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="order-products">
+                            <section class="catalog">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <td>Название</td>
+                                        <td>Цена</td>
+                                        <td>Количество</td>
+                                        <td></td>
+                                    </tr>
+                                    </thead>
+                                    <c:forEach var="product" items="${products}">
+                                        <tr data-productid="${product.id}">
+                                            <td>
+                                                <a href="#" class="product-link">
+                                                    <img src="${product.imageURL}" alt="картинка"/>
+                                            <span>
+                                            ${product.name} <br>
+                                            ${product.shortDescr}
+                                            </span>
+                                                </a>
+                                                <div class="modal">
+                                                    <div class="modal-body">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <div class="product-slider">
+                                                            <div class="slider flexslider">
+                                                                <ul class="slides">
+                                                                    <li>
+                                                                        <img src="${product.imageURL}" />
+                                                                    </li>
+                                                                    &lt;%&ndash;<li>
+                                                                    <img src="i/shop/2.jpg" />
+                                                                </li>
+                                                                    <li>
+                                                                        <img src="i/shop/3.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/4.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/5.jpg" />
+                                                                    </li>&ndash;%&gt;
+                                                                    <!-- items mirrored twice, total of 12 -->
+                                                                </ul>
+                                                            </div>
+                                                            <div class="carousel flexslider">
+                                                                <ul class="slides">
+                                                                    <li>
+                                                                        <img src="${product.imageURL}" />
+                                                                    </li>
+                                                                    &lt;%&ndash;<li>
+                                                                    <img src="i/shop/2.jpg" />
+                                                                </li>
+                                                                    <li>
+                                                                        <img src="i/shop/3.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/4.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/5.jpg" />
+                                                                    </li>&ndash;%&gt;
+                                                                    <!-- items mirrored twice, total of 12 -->
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="product-descr">
+                                                            <h3>${product.name}</h3>
+                                                            <div class="product-text">
+                                                                    ${productDetails.fullDescr}
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <span>Цена: ${product.price}</span>
+                                                                <input type="text" class="input-mini spinner1" />
+                                                                    ${productDetails.unitName}
+                                                                <i class="fa fa-shopping-cart"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="product-price">${product.price}</td>
+                                            <td>
+                                                <input type="text" class="input-mini spinner1" />
+                                                    ${productDetails.unitName}
+                                            </td>
+                                            <td>
+                                                <i class="fa fa-shopping-cart"></i>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+
+                                </table>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="order-item">
+                        <table>
+                            <thead>
+                            <tr>
+                                <td>Номер заказа</td>
+                                <td>Дата</td>
+                                <td>Статус заказа</td>
+                                <td>Доставка</td>
+                                <td>Кол-во продуктов</td>
+                                <td>Сумма</td>
+                                <td></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>N 1</td>
+                                <td>13.02.2014</td>
+                                <td>Выполнен</td>
+                                <td>Самовывоз</td>
+                                <td>10</td>
+                                <td>1000 р.</td>
+                                <td><a class="fa fa-plus plus-minus" href="#"></a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="order-products">
+                            <section class="catalog">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <td>Название</td>
+                                        <td>Цена</td>
+                                        <td>Количество</td>
+                                        <td></td>
+                                    </tr>
+                                    </thead>
+                                    <c:forEach var="product" items="${products}">
+                                        <tr data-productid="${product.id}">
+                                            <td>
+                                                <a href="#" class="product-link">
+                                                    <img src="${product.imageURL}" alt="картинка"/>
+                                            <span>
+                                            ${product.name} <br>
+                                            ${product.shortDescr}
+                                            </span>
+                                                </a>
+                                                <div class="modal">
+                                                    <div class="modal-body">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <div class="product-slider">
+                                                            <div class="slider flexslider">
+                                                                <ul class="slides">
+                                                                    <li>
+                                                                        <img src="${product.imageURL}" />
+                                                                    </li>
+                                                                    &lt;%&ndash;<li>
+                                                                    <img src="i/shop/2.jpg" />
+                                                                </li>
+                                                                    <li>
+                                                                        <img src="i/shop/3.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/4.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/5.jpg" />
+                                                                    </li>&ndash;%&gt;
+                                                                    <!-- items mirrored twice, total of 12 -->
+                                                                </ul>
+                                                            </div>
+                                                            <div class="carousel flexslider">
+                                                                <ul class="slides">
+                                                                    <li>
+                                                                        <img src="${product.imageURL}" />
+                                                                    </li>
+                                                                    &lt;%&ndash;<li>
+                                                                    <img src="i/shop/2.jpg" />
+                                                                </li>
+                                                                    <li>
+                                                                        <img src="i/shop/3.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/4.jpg" />
+                                                                    </li>
+                                                                    <li>
+                                                                        <img src="i/shop/5.jpg" />
+                                                                    </li>&ndash;%&gt;
+                                                                    <!-- items mirrored twice, total of 12 -->
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="product-descr">
+                                                            <h3>${product.name}</h3>
+                                                            <div class="product-text">
+                                                                    ${productDetails.fullDescr}
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <span>Цена: ${product.price}</span>
+                                                                <input type="text" class="input-mini spinner1" />
+                                                                    ${productDetails.unitName}
+                                                                <i class="fa fa-shopping-cart"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="product-price">${product.price}</td>
+                                            <td>
+                                                <input type="text" class="input-mini spinner1" />
+                                                    ${productDetails.unitName}
+                                            </td>
+                                            <td>
+                                                <i class="fa fa-shopping-cart"></i>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+
+                                </table>
+                            </section>
+                        </div>
+                    </div>--%>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+>>>>>>> origin/master
 
 		<div class="modal modal-order-end">
 			<div class="modal-body">

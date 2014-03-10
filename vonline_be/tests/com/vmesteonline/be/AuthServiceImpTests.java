@@ -36,7 +36,7 @@ public class AuthServiceImpTests {
 	@Before
 	public void setUp() throws Exception {
 		helper.setUp();
-		Defaults.init();
+		Defaults.initDefaultData();
 		pm = PMF.getPm();
 		asi = new AuthServiceImpl(httpSessionId);
 		usi = new UserServiceImpl(httpSessionId);

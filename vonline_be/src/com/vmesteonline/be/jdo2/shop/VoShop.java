@@ -16,6 +16,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Text;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -28,7 +29,6 @@ import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.Shop;
-import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
 @PersistenceCapable
@@ -45,7 +45,7 @@ public class VoShop {
 		PersistenceManager pm = PMF.getPm();
 
 		this.name = name;
-		this.descr = descr;
+		this.setDescr(descr);
 		if(postalAddress != null ) this.address = new VoPostalAddress(postalAddress, pm);
 		try {
 			VoHelper.replaceURL(this, "logoURL", logoURL, ownerId, true, pm);
@@ -66,15 +66,12 @@ public class VoShop {
 
 		try {
 			if( null!=topicSet){
-				this.topics = new ArrayList<VoTopic>();
-				for (long tid : topicSet) {
-					VoTopic vt = pm.getObjectById(VoTopic.class, tid);
-					topics.add(vt);
-				}
+				this.topics = new ArrayList<Long>();
+				topics.addAll(topicSet);
 			}
-			categories = new ArrayList<VoProductCategory>();
+			/*categories = new ArrayList<VoProductCategory>();
 			products = new ArrayList<VoProduct>();
-			producers = new ArrayList<VoProducer>();
+			producers = new ArrayList<VoProducer>();*/
 			dates = new TreeMap<Integer, Integer>();
 			pm.makePersistent(this);
 		} catch (Exception e) {
@@ -87,10 +84,15 @@ public class VoShop {
 
 	public Shop getShop() {
 		List<Long> topicIds = new ArrayList<Long>();
+<<<<<<< HEAD
 		for (VoTopic vt : getTopics()) {
 			topicIds.add(vt.getId());
 		}
 		Shop shop = new Shop(id.getId(), name, descr, null==address ? null : address.getPostalAddress(), logoURL, ownerId, 
+=======
+		topicIds.addAll(getTopics());
+		Shop shop = new Shop(id.getId(), name, descr.getValue(), null==address ? null : address.getPostalAddress(), logoURL, ownerId, 
+>>>>>>> origin/master
 				topicIds, tags, 
 				convertToDeliveryTypeMap(deliveryCosts, new HashMap<DeliveryType, Double>()),
 				convertToPaymentTypeMap(paymentTypes, new HashMap<PaymentType, Double>()));
@@ -106,7 +108,7 @@ public class VoShop {
 	private String name;
 	@Persistent
 	@Unindexed
-	private String descr;
+	private Text descr;
 	@Persistent
 	@Unindexed
 	@Unowned
@@ -120,22 +122,22 @@ public class VoShop {
 
 	@Persistent
 	@Unowned
-	public List<VoTopic> topics;
+	public List<Long> topics;
 
 	@Persistent
 	public List<String> tags;
 
-	@Persistent
+	/*@Persistent
 	@Unowned
-	private List<VoProduct> products;
+	private List<VoProduct> products;*/
 
-	@Persistent
+	/*@Persistent
 	@Unowned
-	private List<VoProductCategory> categories;
+	private List<VoProductCategory> categories;*/
 
-	@Persistent
+	/*@Persistent
 	@Unowned
-	private List<VoProducer> producers;
+	private List<VoProducer> producers;*/
 
 	@Persistent
 	@Unindexed
@@ -168,14 +170,16 @@ public class VoShop {
 		// Integer>()));
 	}
 
+
 	public SortedMap<Integer, Integer> selectDates(int fromDate, int toDate) {
 		SortedMap<Integer, Integer> selectedDates = new TreeMap<Integer, Integer>();
 		for(int date = fromDate; date<toDate+86400; date+=86400)
 			if( dates.containsKey(date)) selectedDates.put(date, dates.get(date));
+
 		return selectedDates;
 	}
 
-	public void addProductCategory(VoProductCategory category) {
+	/*public void addProductCategory(VoProductCategory category) {
 		categories.add(category);
 	}
 
@@ -186,7 +190,7 @@ public class VoShop {
 	public void addProducer(VoProducer producer) {
 		producers.add(producer);
 	}
-
+*/
 	public String getName() {
 		return name;
 	}
@@ -196,11 +200,11 @@ public class VoShop {
 	}
 
 	public String getDescr() {
-		return descr;
+		return descr.getValue();
 	}
 
 	public void setDescr(String descr) {
-		this.descr = descr;
+		this.descr = new Text( descr == null ? "" : descr );
 	}
 
 	public VoPostalAddress getAddress() {
@@ -239,7 +243,7 @@ public class VoShop {
 		return id.getId();
 	}
 
-	public List<VoProduct> getProducts() {
+	/*public List<VoProduct> getProducts() {
 		return products;
 	}
 
@@ -265,15 +269,15 @@ public class VoShop {
 				pm.deletePersistent(vpc);
 		}
 		categories.clear();
-	}
+	}*/
 
-	public List<VoTopic> getTopics() {
+	public List<Long> getTopics() {
 		return topics;
 	}
 
-	public List<VoProducer> getProducers() {
+	/*public List<VoProducer> getProducers() {
 		return producers;
-	}
+	}*/
 
 	public Map<Integer, Integer> getDates() {
 		return dates;
@@ -290,43 +294,63 @@ public class VoShop {
 	}
 
 	public SortedMap<Integer, DateType> getDates(int from, int to) {
+
 		SortedMap<Integer, DateType> selectedDates = new TreeMap<Integer, DateType>();
 		for(int date = from - from % 86400; date<to + 86400 - to % 86400; date += 86400)
 			if( dates.containsKey(date)) selectedDates.put(date, DateType.findByValue(dates.get(date)));
 		return selectedDates;
+
 	}
 
 	public static Map<Integer, Double> convertFromPaymentTypeMap(Map<PaymentType, Double> in, Map<Integer, Double> out) {
+		if(null==in) return out;
+		if(null==out) out = new HashMap<Integer, Double>();
+		
 		for (Entry<PaymentType, Double> e : in.entrySet())
 			out.put(e.getKey().getValue(), e.getValue());
 		return out;
 	}
 
 	public static Map<PaymentType, Double> convertToPaymentTypeMap(Map<Integer, Double> in, Map<PaymentType, Double> out) {
+		if(null==in) return out;
+		if(null==out) out = new HashMap<PaymentType, Double>();
+		
 		for (Entry<Integer, Double> e : in.entrySet())
 			out.put(PaymentType.findByValue(e.getKey()), e.getValue());
 		return out;
 	}
 
 	public static Map<Integer, Double> convertFromDeliveryTypeMap(Map<DeliveryType, Double> in, Map<Integer, Double> out) {
+		if(null==in) return out;
+		if(null==out) out = new HashMap<Integer, Double>();
+		
 		for (Entry<DeliveryType, Double> e : in.entrySet())
 			out.put(e.getKey().getValue(), e.getValue());
 		return out;
 	}
 
 	public static Map<DeliveryType, Double> convertToDeliveryTypeMap(Map<Integer, Double> in, Map<DeliveryType, Double> out) {
+		if(null==in) return out;
+		if(null==out) out = new HashMap<DeliveryType, Double>();
+		
 		for (Entry<Integer, Double> e : in.entrySet())
 			out.put(DeliveryType.findByValue(e.getKey()), e.getValue());
 		return out;
 	}
 
 	public static SortedMap<Integer, Integer> convertFromDateTypeMap(Map<Integer, DateType> in, SortedMap<Integer, Integer> out) {
+		if(null==in) return out;
+		if(null==out) out = new TreeMap<Integer, Integer>();
+		
 		for (Entry<Integer, DateType> e : in.entrySet())
 			out.put(e.getKey(), e.getValue().getValue());
 		return out;
 	}
 
 	public static SortedMap<Integer, DateType> convertToDateTypeMap(Map<Integer, Integer> in, SortedMap<Integer, DateType> out) {
+		if(null==in) return out;
+		if(null==out) out = new TreeMap<Integer, DateType>();
+		
 		for (Entry<Integer, Integer> e : in.entrySet())
 			out.put(e.getKey(), DateType.findByValue(e.getValue()));
 		return out;
@@ -347,10 +371,9 @@ public class VoShop {
 		if (null == (this.tags = newShopWithOldId.tags))
 			this.tags = new ArrayList<String>();
 
-		this.topics = new ArrayList<VoTopic>();
-		for (long tid : newShopWithOldId.topicSet) {
-			VoTopic vt = pm.getObjectById(VoTopic.class, tid);
-			this.topics.add(vt);
+		if( null!=newShopWithOldId.topicSet ){
+			this.topics = new ArrayList<Long>();
+			this.topics.addAll(newShopWithOldId.topicSet);
 		}
 	}
 

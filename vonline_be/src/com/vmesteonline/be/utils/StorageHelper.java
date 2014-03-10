@@ -6,10 +6,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -88,7 +90,7 @@ public class StorageHelper {
 				}
 				fname = url.getFile();
 
-			} catch (Exception e) {
+			} catch (MalformedURLException e) {
 				is = new ByteArrayInputStream(urlOrContent);
 				fname = numberToString((long) (Math.random() * Long.MAX_VALUE));
 			}
@@ -213,10 +215,17 @@ public class StorageHelper {
 		try {
 			outputChannel = gcsService.createOrReplace(vfar.getFileName(), GcsFileOptions.getDefaultInstance());
 			streamCopy(is, Channels.newOutputStream(outputChannel));
+<<<<<<< HEAD
 			int liop; // append with '.bin' extension if no extension is set
 			String url = getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? "bin" : fileName.substring(liop + 1));
 			logger.info("File '" + fileName + "' stored with GSNAme:" + vfar.getFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
 
+=======
+			int liop; //append with '.bin' extension if no extension is set
+			String url = getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? "bin" : fileName.substring( liop + 1 ));
+			logger.log(Level.FINEST,"File '"+fileName+"' stored with GSNAme:"+vfar.getFileName()+" with objectID:"+vfar.getId()+" URL:"+url);
+			
+>>>>>>> origin/master
 			return url;
 		} catch (Exception e) {
 			e.printStackTrace();

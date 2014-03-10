@@ -103,10 +103,19 @@ a {
 .shop-right .sidebar-title {
   font-size: 20px;
   border-top: 1px solid #ccc;
-  padding: 4px 0;
+  padding: 4px 0 7px 0;
   background: #f9f9f9;
   text-align: center;
   color: #2b7dbc;
+}
+.shop-right .sidebar-title .go-to-orders {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+.shop-right nav {
+  display: inline-block;
+  vertical-align: middle;
 }
 .shop-right nav a {
   display: block;
@@ -196,6 +205,7 @@ a {
   padding: 0 2px 5px 2px;
   width: 250px;
   z-index: 11 !important;
+  margin-left: -84px;
 }
 .datepicker table {
   width: 100%;
@@ -217,30 +227,30 @@ th.next,
 .input-group-addon {
   cursor: pointer;
 }
-.made {
+.free-day {
   background-color: #62c462;
 }
-.made:after {
-  content: "Выполненный заказ";
+.free-day:after {
+  content: "Свободный день";
   margin-left: -120px;
 }
-.soon {
+.special-day {
   background-color: #5bc0de;
 }
-.soon:after {
-  content: "Заказ на комплектации";
+.special-day:after {
+  content: "Специальная цена";
   margin-left: -130px;
 }
-.prepare {
+.closed-day {
   background-color: #9baab3;
 }
-.prepare:after {
-  content: "Заказ готов";
+.closed-day:after {
+  content: "Закрытый день";
   margin-left: -60px;
 }
-.made:after,
-.soon:after,
-.prepare:after {
+.free-day:after,
+.special-day:after,
+.closed-day:after {
   position: absolute;
   background-color: rgba(0,0,0,0.5);
   border-radius: 2px;
@@ -248,9 +258,9 @@ th.next,
   color: #fff;
   display: none;
 }
-.made:hover:after,
-.soon:hover:after,
-.prepare:hover:after {
+.free-day:hover:after,
+.special-day:hover:after,
+.closed-day:hover:after {
   display: block;
 }
 .day-menu {
@@ -353,6 +363,49 @@ span
   display: block;
   margin-left: 30px;
   margin-right: 10px;
+}
+.shop-orders {
+  display: none;
+}
+.shop-orders h1 {
+  margin-top: 10px;
+}
+.shop-orders .back-to-shop {
+  float: right;
+  margin-top: 13px;
+}
+.shop-orders .order-item {
+  margin-bottom: 20px;
+}
+.shop-orders .order-item table {
+  width: 100%;
+}
+.shop-orders .order-item table thead td {
+  font-size: 14px;
+  color: #ccc;
+  background: #f9f9f9;
+}
+.shop-orders .order-item table td {
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  padding: 5px 0;
+}
+.shop-orders .order-item table td:first-child {
+  text-align: left;
+  padding-left: 10px;
+}
+.shop-orders .order-item .plus-minus {
+  font-size: 24px;
+  text-decoration: none;
+}
+.shop-orders .order-item .order-products {
+  margin: 10px 0 0 0;
+  display: none;
+}
+.shop-orders .btn-primary {
+  margin: 10px 0 10px 10px;
+  float: right;
 }
 .ace-spinner {
   width: 50px !important;
