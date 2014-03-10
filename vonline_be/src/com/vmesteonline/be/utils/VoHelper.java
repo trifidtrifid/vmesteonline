@@ -5,9 +5,11 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.jdo.PersistenceManager;
@@ -123,9 +125,14 @@ public class VoHelper {
 	// ===================================================================================================================
 	public static void copyIfNotNull(Object owner, String fieldName, Object objToCopy) throws NoSuchFieldException {
 		if (null != objToCopy) {
-			Field field = owner.getClass().getField(fieldName);
+			Field field = null;
 			try {
-				if (field.isAccessible())
+				field = owner.getClass().getField(fieldName);
+			} catch (SecurityException | NoSuchFieldException e1) {
+				//field is not accessible directly
+			}
+			try {
+				if (null != field && field.isAccessible())
 					field.set(owner, objToCopy);
 				else {
 					Method method = owner.getClass().getMethod("set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1),
@@ -266,5 +273,12 @@ public class VoHelper {
 		return outList;
 	}
 	// ===================================================================================================================
-
+	public static <T> Map<Integer,T> listToMap( Collection<T> col ){
+		int i=0;
+		Map<Integer,T> res = new TreeMap<Integer, T>();
+		for (T t : col) {
+			res.put(i++, t);
+		}
+		return res;
+	}
 }

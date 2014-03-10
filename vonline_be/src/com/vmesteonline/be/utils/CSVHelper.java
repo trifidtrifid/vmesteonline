@@ -19,11 +19,14 @@ import java.util.TreeMap;
 import com.google.appengine.labs.repackaged.com.google.common.io.LineReader;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
-import com.vmesteonline.be.jdo2.shop.exchange.OrderLineDescription;
 import com.vmesteonline.be.shop.ExchangeFieldType;
 
 public class CSVHelper {
 
+	public static void ttt(){
+//		return null;
+	}
+	
 	public static <T> List<T> loadCSVData( InputStream is, Map<Integer,String> fieldPosMap, T otf) throws IOException{
 		return CSVHelper.loadCSVData( is, fieldPosMap, otf, null,null,null);
 	}
@@ -33,7 +36,7 @@ public class CSVHelper {
 		String nextLine, fieldName;
 		List<T> rslt = new ArrayList<T>();
 		
-		String fd = null == fieldDelim ? "," : fieldDelim ;
+		String fd = null == fieldDelim ? ";" : fieldDelim ;
 		String sd = null == setDelim ? "|" : setDelim;
 		String avpd = null == avpDelim ? ":" : avpDelim;
 		
