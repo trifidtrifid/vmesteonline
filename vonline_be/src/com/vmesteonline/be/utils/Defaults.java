@@ -69,6 +69,7 @@ public class Defaults {
 	public static int radiusMedium = 2000;
 	public static int radiusLarge = 5000;
 
+	public static String defaultAvatarUrl;
 	private static long userId = 0;
 
 	public static boolean initDefaultData() {
@@ -76,23 +77,16 @@ public class Defaults {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
-			initializeRubrics(pm);
 
+//			defaultAvatarUrl = StorageHelper.saveImage("http://localhost:8888/data/default-avatar.gif", 0, true, pm);
+
+			initializeRubrics(pm);
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations();
-
+			initializeUsers(locCodes);
 			MySQLJDBCConnector con = new MySQLJDBCConnector();
 			con.execute("drop table if exists topic");
 
-			try {
-				initializeUsers(locCodes);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		} catch (InvalidOperation e) {
-			e.printStackTrace();
-			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

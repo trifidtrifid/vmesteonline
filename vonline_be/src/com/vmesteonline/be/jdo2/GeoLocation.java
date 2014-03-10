@@ -17,11 +17,13 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 public abstract class GeoLocation {
 
 	public GeoLocation() {
+		longitude = "0";
+		latitude = "0";
+
 	}
 
 	/*
-	 * GeoLocation(float longitude, float latitude) { this.longitude = longitude;
-	 * this.latitude = latitude; }
+	 * GeoLocation(float longitude, float latitude) { this.longitude = longitude; this.latitude = latitude; }
 	 */
 	public BigDecimal getLongitude() {
 		return new BigDecimal(longitude);

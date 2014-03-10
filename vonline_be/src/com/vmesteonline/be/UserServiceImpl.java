@@ -1,6 +1,5 @@
 package com.vmesteonline.be;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -8,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.jdo.Extent;
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.http.HttpSession;
@@ -295,6 +293,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 		try {
 			VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(url));
+			if (vfar.getUserId() != voUser.getId())
+				throw new InvalidOperation(VoError.IncorrectParametrs, "can't save avatar");
+			
 			Image origImage = ImagesServiceFactory.makeImageFromFilename(vfar.getFileName().toString());
 			Transform resize = ImagesServiceFactory.makeResize(95, 95);
 			String topicAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);

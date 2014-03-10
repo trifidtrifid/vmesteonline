@@ -1,6 +1,5 @@
 package com.vmesteonline.be;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -141,6 +140,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return list.subList(0, length);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation {
 

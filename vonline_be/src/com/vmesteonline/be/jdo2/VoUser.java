@@ -44,7 +44,7 @@ public class VoUser extends GeoLocation {
 	}
 
 	public ShortUserInfo getShortUserInfo() {
-		return new ShortUserInfo(getId(), name, lastName, 0, null);
+		return new ShortUserInfo(getId(), name, lastName, 0, getAvatarTopic());
 	}
 
 	public VoUserGroup getGroupById(long id) throws InvalidOperation {
@@ -296,7 +296,6 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private boolean emailConfirmed;
 
-	
 	@Persistent
 	@Unindexed
 	private String avatarMessage;
@@ -313,7 +312,6 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private String avatarProfileShort;
 
-	
 	public String getAvatarMessage() {
 		return avatarMessage;
 	}

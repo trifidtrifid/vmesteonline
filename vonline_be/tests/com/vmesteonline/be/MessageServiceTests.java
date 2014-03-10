@@ -177,6 +177,7 @@ public class MessageServiceTests {
 			Assert.assertNotNull(rTopic.topics.get(0).userInfo);
 			Assert.assertEquals(Defaults.user1name, rTopic.topics.get(0).userInfo.firstName);
 			Assert.assertEquals(Defaults.user1lastName, rTopic.topics.get(0).userInfo.lastName);
+			Assert.assertEquals("", rTopic.topics.get(0).userInfo.avatar);
 
 		} catch (Exception e) {
 			e.printStackTrace();
