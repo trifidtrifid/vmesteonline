@@ -120,8 +120,12 @@ public class CSVHelper {
 								field.set(nextOtf, Double.parseDouble(nextItem));
 							else if (fo instanceof Integer)
 								field.set(nextOtf, Integer.parseInt(nextItem));
-							else if (fo instanceof Boolean)
+							else if (fo instanceof Boolean){
 								field.set(nextOtf, Boolean.parseBoolean(nextItem));
+								try{
+									field.set(nextOtf, Integer.parseInt(nextItem) != 0);
+								} catch(NumberFormatException nfe){}
+							}
 							else if (fo instanceof Long)
 								field.set(nextOtf, Long.parseLong(nextItem));
 							else if (fo instanceof Float)

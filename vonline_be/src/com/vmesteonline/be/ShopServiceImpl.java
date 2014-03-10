@@ -368,6 +368,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	@Override
 	public List<ProductCategory> uploadProductCategoies(List<ProductCategory> categories, boolean cleanShopBeforeUpload) throws InvalidOperation {
 
+		Map<Long,VoProductCategory> categoresCacheMap = new HashMap<Long, VoProductCategory>();
+		
 		PersistenceManager pm = PMF.getPm();
 
 		List<ProductCategory> categoriesCreated = new ArrayList<ProductCategory>();
@@ -378,40 +380,44 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 
 		try {
+			long impordedId;
+			
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
 			
 			for (ProductCategory pc : categories) {
 
-				VoProductCategory vpc = VoProductCategory.getByImportId(shopId, pc.getId(), pm);
+				VoProductCategory vpc = VoProductCategory.getByImportId(shopId, impordedId = pc.getId(), pm);
 
 				VoProductCategory vppc = null;
 				if (0 != pc.getParentId()) {
-					if (null == (vppc = VoProductCategory.getByImportId(shopId, pc.getParentId(), pm))) {
+					
+					vppc = categoresCacheMap.containsKey(pc.getParentId()) ? categoresCacheMap.get(pc.getParentId()) :
+						VoProductCategory.getByImportId(shopId, pc.getParentId(), pm);
+					
+					if (null == vppc ) {
 						
 						String err = "No category found by shopId:"+shopId+" parentId(importedId):"+pc.getParentId()+
 						"\nCurrent categories are:";
 						
-						for( VoProductCategory pce: pm.getExtent(VoProductCategory.class))
+						for( VoProductCategory pce: pm.getExtent(VoProductCategory.class)){
 							if(pce.getShopId() == shopId && pce.getImportId() == pc.getParentId()){
 								vppc = pce;
-								break;
 							}
+							err += "\n\t"+pce;
+						}
 						
 						if(vppc==null){
 							logger.warn(err);
 							throw new InvalidOperation(VoError.IncorrectParametrs, "parent Id " + pc.getParentId()
 									+ " not found as Id of categories above in a list provided");
 						} else {
-							pm.close();
-							pm = PMF.getPm();
-							vppc = VoProductCategory.getByImportId(shopId, pc.getParentId(), pm);
-	
+							while( null== (vppc = VoProductCategory.getByImportId(shopId, pc.getParentId(), pm)));
 							logger.warn("It sounds like index is broken. Category found by one-by-one search! Because "+err );
 						}
 
-					} else {
-						pc.setParentId(vppc.getId());
-					}
+					} 
+					
+					pc.setParentId(vppc.getId());
 				}
 
 				if (vpc != null) {
@@ -428,6 +434,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				}
 
 				pm.makePersistent(vpc);
+				categoresCacheMap.put(impordedId, vpc);
+				
 				pm.flush();
 				categoriesCreated.add(vpc.getProductCategory());
 			}
