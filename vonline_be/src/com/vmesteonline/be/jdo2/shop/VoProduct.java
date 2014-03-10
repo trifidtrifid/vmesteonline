@@ -20,7 +20,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
@@ -37,11 +36,12 @@ public class VoProduct {
 	private VoProduct() {
 	}
 
-	VoProduct( long productId ) {
+	VoProduct(long productId) {
 		this.id = KeyFactory.createKey(VoProduct.class.getSimpleName(), productId);
 	}
-//=====================================================================================================================
-	public void update( FullProductInfo newInfo, long userId, PersistenceManager _pm ) throws InvalidOperation{
+
+	// =====================================================================================================================
+	public void update(FullProductInfo newInfo, long userId, PersistenceManager _pm) throws InvalidOperation {
 		this.name = newInfo.product.name;
 		this.shortDescr = newInfo.product.shortDescr;
 		this.weight = newInfo.product.weight;
@@ -49,60 +49,55 @@ public class VoProduct {
 			this.imageURL = StorageHelper.saveImage(newInfo.product.getImageURL(), userId, true, _pm);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: "+e);
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: " + e);
 		}
 		this.price = newInfo.product.price;
-		this.fullDescr = new Text(newInfo.details.fullDescr);
+		this.setFullDescr(newInfo.details.fullDescr);
 		this.imagesURLset = new ArrayList<String>();
 		for (String imgURL : newInfo.details.getImagesURLset())
 			try {
-				this.imagesURLset.add(StorageHelper.saveImage(imgURL,userId, true, _pm));
+				this.imagesURLset.add(StorageHelper.saveImage(imgURL, userId, true, _pm));
 			} catch (IOException ie) {
 				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 			}
-		
-		this.pricesMap = convertFromPriceTypeMap(newInfo.details.getPricesMap(), new HashMap<Integer, Double>());;
+
+		this.pricesMap = convertFromPriceTypeMap(newInfo.details.getPricesMap(), new HashMap<Integer, Double>());
+		;
 		this.optionsMap = newInfo.details.optionsMap;
-		this.topicSet = new ArrayList<VoTopic>();
-		for (long topicId : newInfo.details.getTopicSet()) {
-			VoTopic vTopic = _pm.getObjectById(VoTopic.class, topicId);
-			this.topicSet.add(vTopic);
-		}
-		VoProducer producer = _pm.getObjectById(VoProducer.class, newInfo.details.producerId);
-		producer.getProducts().add(this);
+		this.topicSet = new ArrayList<Long>();
+		if (null != newInfo.details.getTopicSet())
+			this.topicSet.addAll(newInfo.details.getTopicSet());
 		this.unitName = newInfo.details.unitName;
-		
+
 		updateCategoriesList(newInfo, _pm);
 	}
-//=====================================================================================================================
+
+	// =====================================================================================================================
 	private void updateCategoriesList(FullProductInfo newInfo, PersistenceManager _pm) {
-		//remove categories if they not included to new list
-		List<Long> categoriesFromNewList = new ArrayList<Long>();
-		for( VoProductCategory vpc: this.getCategories()){ 
-			if( newInfo.details.categories.contains(vpc.getId()))
-					categoriesFromNewList.add(vpc.getId());
-			else {
-				for( VoProduct vp: vpc.getProducts()){
-					if( vp.getId() == this.getId() ) {
-						vpc.getProducts().remove(vp);
-						break;
-					}
-				}
-			}
-		}
-		for( Long pcid: newInfo.details.categories ){
-			if( !categoriesFromNewList.contains( pcid )){ // if it's an added category for the product
-				VoProductCategory nvpc = _pm.getObjectById(VoProductCategory.class, pcid);
-				nvpc.addProduct(this);
-				this.categories.add(nvpc);
-			}
-		}
+		// remove categories if they not included to new list
+		this.categories = new ArrayList<Long>();
+		this.categories.addAll(newInfo.details.getCategories());
+		/*
+		 * List<Long> categoriesFromNewList = new ArrayList<Long>(); for(
+		 * VoProductCategory vpc: this.getCategories()){ if(
+		 * newInfo.details.categories.contains(vpc.getId()))
+		 * categoriesFromNewList.add(vpc.getId()); else { for( VoProduct vp:
+		 * vpc.getProducts()){ if( vp.getId() == this.getId() ) {
+		 * vpc.getProducts().remove(vp); break; } } } } for( Long pcid:
+		 * newInfo.details.categories ){
+		 * 
+		 * if( !categoriesFromNewList.contains( pcid )){ // if it's an added
+		 * category for the product VoProductCategory nvpc =
+		 * _pm.getObjectById(VoProductCategory.class, pcid); nvpc.addProduct(this);
+		 * this.categories.add(nvpc); } }
+		 */
 	}
-//=====================================================================================================================	
+
+	// =====================================================================================================================
 	public static VoProduct createObject(VoShop shop, long importId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
-		return createObject(shop, fpi,  _pm);
+		return createObject(shop, fpi, _pm);
 	}
-	
+
 	public static VoProduct createObject(VoShop shop, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
 		VoProduct vp = new VoProduct();
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
@@ -113,80 +108,64 @@ public class VoProduct {
 			vp.name = product.getName();
 			vp.shortDescr = product.shortDescr;
 			vp.weight = product.getWeight();
-			if(null!=product.getImageURL() && product.getImageURL().length() > 0 ) try {
-				vp.imageURL = StorageHelper.saveImage(product.getImageURL(), shop.ownerId, true, _pm);
-			} catch (Throwable ie) {
-				ie.printStackTrace();
-				//throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
-			}
-			vp.imagesURLset = new ArrayList<String>();
-			if( null!=details.getImagesURLset() ) for (String imgURL : details.getImagesURLset())
-				if(null!=imgURL && imgURL.length() > 0 )try {
-					vp.imagesURLset.add(StorageHelper.saveImage(imgURL,shop.ownerId, true, _pm));
+			if (null != product.getImageURL() && product.getImageURL().length() > 0)
+				try {
+					vp.imageURL = StorageHelper.saveImage(product.getImageURL(), shop.ownerId, true, _pm);
 				} catch (Throwable ie) {
 					ie.printStackTrace();
-					//throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
+					// throw new InvalidOperation(VoError.IncorrectParametrs,
+					// ie.getMessage());
 				}
+			vp.imagesURLset = new ArrayList<String>();
+			if (null != details.getImagesURLset())
+				for (String imgURL : details.getImagesURLset())
+					if (null != imgURL && imgURL.length() > 0)
+						try {
+							vp.imagesURLset.add(StorageHelper.saveImage(imgURL, shop.ownerId, true, _pm));
+						} catch (Throwable ie) {
+							ie.printStackTrace();
+							// throw new InvalidOperation(VoError.IncorrectParametrs,
+							// ie.getMessage());
+						}
 
 			vp.price = product.getPrice();
-			vp.fullDescr = new Text(details.getFullDescr());
+			vp.setFullDescr(details.getFullDescr());
 
 			vp.pricesMap = convertFromPriceTypeMap(details.getPricesMap(), new HashMap<Integer, Double>());
 			vp.optionsMap = details.getOptionsMap();
 
-			vp.categories = new ArrayList<VoProductCategory>();
-			vp.shops = new ArrayList<VoShop>();
-
-			vp.shops.add(shop);
-			pm.makePersistent(vp);
-			shop.addProduct(vp);
-
-			if(null!=details.getCategories()) for (long categoryId : details.getCategories()) {
-				VoProductCategory vpc = /*null;
-				
-				if(relativeCategories){
-					Query q = pm.newQuery(VoProductCategory.class);
-					q.setFilter("importId == " + categoryId);
-					List<VoProductCategory> vpcl = (List<VoProductCategory>) q.execute();
-					vpc = vpcl.size() > 0 ? vpcl.get(0) : null;
-				}
-				if (null == vpc) vpc =*/ pm.getObjectById(VoProductCategory.class, categoryId);
-				vpc.getProducts().add(vp);
-				vp.categories.add(vpc);
-				pm.makePersistent(vpc);
-			}
-
-			vp.topicSet = new ArrayList<VoTopic>();
-			if(null!=details.getTopicSet()) for (long topicId : details.getTopicSet()) {
-				VoTopic vTopic = pm.getObjectById(VoTopic.class, topicId);
-				vp.topicSet.add(vTopic);
-			}
-			VoProducer producer = pm.getObjectById(VoProducer.class, details.getProducerId());
-			vp.producer = producer;
+			vp.shopId = shop.getId();
+						vp.categories = details.getCategories();
+			vp.topicSet = details.getTopicSet();
 			
+			pm.getObjectById(VoProducer.class, details.getProducerId());
+			vp.producerId = details.getProducerId();
+
 			vp.minClientPack = details.minClientPack;
 			vp.minProducerPack = details.minProducerPack;
-			vp.prepackRequired =details.prepackRequired;
+			vp.prepackRequired = details.prepackRequired;
 			vp.knownNames = new HashSet<String>();
-			if( details.knownNames != null ) for (String name : details.knownNames ){
-				vp.knownNames.add(name);
-			}
+			if (details.knownNames != null)
+				for (String name : details.knownNames) {
+					vp.knownNames.add(name);
+				}
 			vp.unitName = details.unitName;
 			vp.importId = product.id;
-			producer.getProducts().add(vp);
+			
 			pm.makePersistent(vp);
-			pm.makePersistent(producer);
 			return vp;
 		} finally {
 			if (null == _pm)
 				pm.close();
-		}
+		} 
 	}
-//=====================================================================================================================
+
+	// =====================================================================================================================
 	public VoProduct(long shopId, FullProductInfo fpi) throws InvalidOperation {
 		this(shopId, fpi, null);
 	}
-//=====================================================================================================================
+
+	// =====================================================================================================================
 	public VoProduct(long shopId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
 		Product product = fpi.getProduct();
 		ProductDetails details = fpi.getDetails();
@@ -196,25 +175,22 @@ public class VoProduct {
 		this.weight = product.getWeight();
 
 		this.price = product.getPrice();
-		this.fullDescr = new Text(details.getFullDescr());
+		this.setFullDescr(details.getFullDescr());
 
 		this.pricesMap = convertFromPriceTypeMap(details.getPricesMap(), new HashMap<Integer, Double>());
 		this.optionsMap = details.getOptionsMap();
 
-		this.categories = new ArrayList<VoProductCategory>();
-		this.shops = new ArrayList<VoShop>();
+		this.categories = new ArrayList<Long>();
+		this.shopId = shopId;
 		this.knownNames = new HashSet<String>();
 		this.unitName = details.unitName;
 		this.importId = product.id;
-		
+
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
 		try {
-			pm.makePersistent(this);
 
 			VoShop shop = pm.getObjectById(VoShop.class, shopId);
-			shop.addProduct(this);
-			shops.add(shop);
 
 			try {
 				this.imageURL = StorageHelper.saveImage(product.getImageURL(), shop.getOwnerId(), true, pm);
@@ -228,24 +204,21 @@ public class VoProduct {
 				} catch (IOException ie) {
 					throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 				}
-			
+
 			for (long categoryId : details.getCategories()) {
-				VoProductCategory vpc = pm.getObjectById(VoProductCategory.class, categoryId);
-				vpc.getProducts().add(this);
-				this.categories.add(vpc);
-				pm.makePersistent(vpc);
+				pm.getObjectById(VoProductCategory.class, categoryId);
+				this.categories.add(categoryId);
 			}
 
-			this.topicSet = new ArrayList<VoTopic>();
+			this.topicSet = new ArrayList<Long>();
 			for (long topicId : details.getTopicSet()) {
-				VoTopic vTopic = pm.getObjectById(VoTopic.class, topicId);
-				this.topicSet.add(vTopic);
+				pm.getObjectById(VoTopic.class, topicId);
+				this.topicSet.add(topicId);
 			}
-			VoProducer producer = pm.getObjectById(VoProducer.class, details.getProducerId());
-			this.producer = producer;
-			producer.getProducts().add(this);
+			pm.getObjectById(VoProducer.class, details.getProducerId());
+			this.producerId = details.getProducerId();
+			
 			pm.makePersistent(this);
-			pm.makePersistent(producer);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -255,7 +228,8 @@ public class VoProduct {
 				pm.close();
 		}
 	}
-//=====================================================================================================================
+
+	// =====================================================================================================================
 	public Product getProduct() {
 		return new Product(id.getId(), name, shortDescr, weight, imageURL, price);
 	}
@@ -264,26 +238,23 @@ public class VoProduct {
 		ProductDetails productDetails = new ProductDetails();
 
 		List<Long> cs = new ArrayList<Long>();
-		for (VoProductCategory pc : getCategories()) {
-			cs.add(pc.getId());
-		}
+		cs.addAll(getCategories());
 		productDetails.setCategories(cs);
 
 		productDetails.setPricesMap(convertToPriceTypeMap(pricesMap, new HashMap<PriceType, Double>()));
 		productDetails.setOptionsMap(optionsMap);
 		List<Long> ts = new ArrayList<Long>();
-		for (VoTopic vt : getTopicSet()) {
-			ts.add(vt.getId().getId());
-		}
-		productDetails.setProducerId(producer.getId());
-		productDetails.setFullDescr( fullDescr.getValue());
+		ts.addAll(getTopicSet());
+		productDetails.setProducerId(producerId);
+		productDetails.setFullDescr(fullDescr.getValue());
 		productDetails.setTopicSet(ts);
 		productDetails.setImagesURLset(getImagesURLset());
 		productDetails.setUnitName(this.unitName);
 
 		return productDetails;
 	}
-//=====================================================================================================================
+
+	// =====================================================================================================================
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
 	private Key id;
@@ -308,9 +279,8 @@ public class VoProduct {
 	@Unindexed
 	private double price;
 
-	@Persistent(mappedBy = "products")
-	@Unowned
-	private List<VoProductCategory> categories;
+	@Persistent
+	private List<Long> categories;
 
 	@Persistent
 	@Unindexed
@@ -329,41 +299,38 @@ public class VoProduct {
 	private Map<String, String> optionsMap;
 
 	@Persistent
-	@Unowned
-	private List<VoTopic> topicSet;
+	@Unindexed
+	private List<Long> topicSet;
 
-	@Persistent(mappedBy = "products")
-	@Unowned
-	private VoProducer producer;
+	@Persistent
+	private long shopId;
 
-	@Persistent(mappedBy = "products")
-	@Unowned
-	private List<VoShop> shops;
-	
+	@Persistent
+	private long producerId;
+
 	@Persistent
 	@Unindexed
 	private double minClientPack;
-	
+
 	@Persistent
 	@Unindexed
 	private double minProducerPack;
-	
+
 	@Persistent
 	@Unindexed
 	private boolean prepackRequired;
-	
-	
+
 	@Persistent
 	@Unindexed
 	private Set<String> knownNames;
-	
+
 	@Persistent
 	@Unindexed
 	private String unitName;
-	
+
 	@Persistent
 	private long importId;
-	
+
 	public double getMinClientPack() {
 		return minClientPack;
 	}
@@ -388,8 +355,8 @@ public class VoProduct {
 		this.prepackRequired = prepackRequired;
 	}
 
-	public List<VoShop> getShops() {
-		return shops;
+	public long getShopId() {
+		return shopId;
 	}
 
 	public Set<String> getKnownNames() {
@@ -431,7 +398,7 @@ public class VoProduct {
 	public double getPrice() {
 		return price;
 	}
-	
+
 	public double getPrice(PriceType priceType) {
 		return pricesMap.containsKey(priceType.getValue()) ? pricesMap.get(priceType.getValue()) : price;
 	}
@@ -440,11 +407,11 @@ public class VoProduct {
 		this.price = price;
 	}
 
-	public List<VoProductCategory> getCategories() {
+	public List<Long> getCategories() {
 		return categories;
 	}
 
-	public void setCategories(List<VoProductCategory> categories) {
+	public void setCategories(List<Long> categories) {
 		this.categories = categories;
 	}
 
@@ -453,7 +420,7 @@ public class VoProduct {
 	}
 
 	public void setFullDescr(String fullDescr) {
-		this.fullDescr = new Text(fullDescr);
+		this.fullDescr = new Text(fullDescr == null ? "" : fullDescr);
 	}
 
 	public List<String> getImagesURLset() {
@@ -480,20 +447,20 @@ public class VoProduct {
 		this.optionsMap = optionsMap;
 	}
 
-	public List<VoTopic> getTopicSet() {
+	public List<Long> getTopicSet() {
 		return topicSet;
 	}
 
-	public void setTopicSet(List<VoTopic> topicSet) {
+	public void setTopicSet(List<Long> topicSet) {
 		this.topicSet = topicSet;
 	}
 
-	public VoProducer getProducer() {
-		return producer;
+	public long getProducer() {
+		return producerId;
 	}
 
-	public void setProducer(VoProducer producer) {
-		this.producer = producer;
+	public void setProducer(Long producer) {
+		this.producerId = producer;
 	}
 
 	public long getId() {
@@ -507,18 +474,20 @@ public class VoProduct {
 
 	public String toFullString() {
 		return "VoProduct [id=" + id + ", name=" + name + ", shortDescr=" + shortDescr + ", weight=" + weight + ", imageURL=" + imageURL + ", price="
-				+ price + ", producer=" + producer + "]";
+				+ price + ", producerId=" + producerId + "]";
 	}
 
 	public static Map<Integer, Double> convertFromPriceTypeMap(Map<PriceType, Double> in, Map<Integer, Double> out) {
-		if( null==in ) return null; 
+		if (null == in)
+			return null;
 		for (Entry<PriceType, Double> e : in.entrySet())
 			out.put(e.getKey().getValue(), e.getValue());
 		return out;
 	}
 
 	public static Map<PriceType, Double> convertToPriceTypeMap(Map<Integer, Double> in, Map<PriceType, Double> out) {
-		if( null==in ) return null;
+		if (null == in)
+			return null;
 		for (Entry<Integer, Double> e : in.entrySet())
 			out.put(PriceType.values()[e.getKey()], e.getValue());
 		return out;
@@ -528,19 +497,16 @@ public class VoProduct {
 		FullProductInfo res = new FullProductInfo(fpi);
 		res.details.categories = new ArrayList<Long>();
 		Query q = pm.newQuery(VoProductCategory.class);
-		q.setFilter("importId == importIdParam");
-		q.declareParameters( "long importIdParam");
+		q.setFilter("importId == importIdParam && shopId == " + shopId);
+		q.declareParameters("long importIdParam");
 		for (Long pc : fpi.details.categories) {
-			 List<VoProductCategory> cl = (List<VoProductCategory>) q. execute( pc );
-			 if( 0 == cl.size() ) 
-				 throw new InvalidOperation(VoError.IncorrectParametrs, "No Category found for Product ID:"+fpi.product.id + " By Category ID:"+pc);
-			 for (VoProductCategory voProductCategory : cl) {
-				for (VoShop vs : voProductCategory.getShops()){
-					if( vs.getId() == shopId ){
-						res.details.categories.add( voProductCategory.getId()) ;
-						break;
-					}
-				} 
+			List<VoProductCategory> cl = (List<VoProductCategory>) q.execute(pc);
+			if (0 == cl.size()){
+				throw new InvalidOperation(VoError.IncorrectParametrs, "No Category found for Product ID:" + fpi.product.id + " By Category ID:" + pc);
+			}
+			for (VoProductCategory voProductCategory : cl) {
+				res.details.categories.add(voProductCategory.getId());
+				break;
 			}
 		}
 		return res;
@@ -548,14 +514,10 @@ public class VoProduct {
 
 	public static VoProduct getByImportedId(long shopId, long importedId, PersistenceManager pm) throws InvalidOperation {
 		Query q = pm.newQuery(VoProduct.class);
-		q.setFilter("importId == importIdParam");
-		q.declareParameters( "Long importIdParam");
-		List<VoProduct> cl = (List<VoProduct>) q. execute( importedId );
+		q.setFilter("importId == " + importedId + " && shopId == " + shopId);
+		List<VoProduct> cl = (List<VoProduct>) q.execute(importedId);
 		for (VoProduct voProduct : cl) {
-			for( VoShop vs: voProduct.getShops()){
-				if(vs.getId() == shopId )
-					return voProduct;
-			}
+			return voProduct;
 		}
 		return null;
 	}

@@ -41,10 +41,10 @@ public class VoFileAccess extends HttpServlet {
 		try {
 			long fileId = StorageHelper.getFileId(req.getRequestURI());
 			VoFileAccessRecord far = pm.getObjectById(VoFileAccessRecord.class, fileId);
-			long currentUserId = serviceImpl.getCurrentUserId(pm);
+			
 			
 			if (null != req.getParameter("delete")) {
-			
+				
 				if (far.getUserId() == serviceImpl.getCurrentUserId(pm)) {
 				
 					StorageHelper.deleteImage(req.getRequestURI(),pm);
@@ -64,7 +64,8 @@ public class VoFileAccess extends HttpServlet {
 				}
 			}
 		} catch (InvalidOperation e){
-			throw new IOException("Failed to process request:"+e.getMessage(),e);
+			e.printStackTrace();
+			throw new IOException("Failed to process request:"+e.why,e);
 		} finally {
 			pm.close();
 		}

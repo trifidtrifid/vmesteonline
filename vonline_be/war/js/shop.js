@@ -190,7 +190,7 @@ $(document).ready(function(){
     var prevParentId = [],
         parentCounter = 0;
 
-//    setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
+    setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 
     var prevCatCounter = getCookie('prevCatCounter');
     if (prevCatCounter !== undefined){

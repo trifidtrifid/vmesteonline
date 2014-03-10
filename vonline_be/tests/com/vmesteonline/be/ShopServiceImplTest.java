@@ -53,7 +53,7 @@ import com.vmesteonline.be.utils.StorageHelper;
 
 public class ShopServiceImplTest {
 
-	private static final String LOGO = "http://www.ru.tele2.ru/img/logo.gif";
+	private static final String LOGO = "http://fi.co/images/FI_logo.png";
 	private static final String DESCR = "TELE2 shop";
 	private static final String NAME = "Во!Магазин";
 	private static final String SESSION_ID = "11111111111111111111111";
@@ -475,7 +475,6 @@ public class ShopServiceImplTest {
 				fail("Order could not be created in this date!");
 			} catch (InvalidOperation e) {
 				Assert.assertEquals(e.what, VoError.ShopNotOrderDate);
-				e.printStackTrace();
 			}
 			long lastOrder = si.createOrder(now + 6 * day, "aaaa", PriceType.RETAIL);
 
@@ -850,6 +849,7 @@ public class ShopServiceImplTest {
 		ds.name = " Producers UPDATE Test";
 
 		List<ExchangeFieldType> fieldsOrder = new ArrayList<ExchangeFieldType>();
+		fieldsOrder.add(ExchangeFieldType.PRODUCER_ID);
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_NAME);
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_LOGOURL);
@@ -858,8 +858,8 @@ public class ShopServiceImplTest {
 			
 		ImportElement importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", listToMap(fieldsOrder));
 		String imgURL = StorageHelper.saveImage(
-				("Производитель 1; http://yandex.ru/; \"HTTP://ya.ru/logo.gif\"; \"Длинный текст описания; с заятыми...\"\n"
-		+ "Производитель 2; http://google.ru/; \"HTTP://google.ru/logo.gif\"; \"JОпять и снова; Длинный текст описания; с заятыми...\"\n")
+				("1; Производитель 1; http://yandex.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"Длинный текст описания; с заятыми...\"\n"
+		+ "2; Производитель 2; http://google.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"JОпять и снова; Длинный текст описания; с заятыми...\"\n")
 		.getBytes(), userId, false, null);
 		importData.setUrl(imgURL);
 
@@ -993,8 +993,7 @@ public class ShopServiceImplTest {
 			String imgURL = StorageHelper.saveImage(
 					("0; 1; КОпмы; Копьютеры и комплектующие; http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif |http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif;\n" + 
 							"1; 2; Ноутбуки;Ноуты и Планшеты;;;\n" +
-							"2; 3; Ноуты; ТОлько ноуты;;;\n" +
-							"2; 4; Планшеты;Только планшеты;;;\n" + "1; 5; Переферия;\"Принтеры; мышы; клавы\";;;\n").getBytes(),
+							"1; 3; Планшеты;Только планшеты;;;\n" + "1; 5; Переферия;\"Принтеры; мышы; клавы\";;;\n").getBytes(),
 							userId, false, null);
 			importData.setUrl(imgURL);
 			
@@ -1009,8 +1008,8 @@ public class ShopServiceImplTest {
 	
 			importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", listToMap(fieldsOrder));
 			imgURL = StorageHelper.saveImage(
-					("1; Производитель 1; http://yandex.ru/; \"HTTP://ya.ru/logo.gif\"; \"Длинный текст описания; с заятыми...\"\n"
-							+ "2; Производитель 2; http://google.ru/; \"HTTP://google.ru/logo.gif\"; \"JОпять и снова; Длинный текст описания; с заятыми...\"\n")
+					("1; Производитель 1; http://yandex.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"Длинный текст описания; с заятыми...\"\n"
+							+ "2; Производитель 2; http://google.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"JОпять и снова; Длинный текст описания; с заятыми...\"\n")
 							.getBytes(),
 							userId, false, null);
 			importData.setUrl(imgURL);
@@ -1024,7 +1023,7 @@ public class ShopServiceImplTest {
 			// set current shop
 			si.getShop(shopId);
 
-			DataSet importData2 = si.importData(ds);
+			/*DataSet importData2 = */si.importData(ds);
 			productCategories = si.getProductCategories(0);
 			productCategories = si.getProductCategories(productCategories.get(0).id);
 
@@ -1054,8 +1053,8 @@ public class ShopServiceImplTest {
 
 		importData = new ImportElement(ImExType.IMPORT_PRODUCTS, "product.csv", listToMap(productFieldsOrder));
 		imgURL = StorageHelper.saveImage(
-				("1;Keyboard; Клавистура 101 кнопка; 250.0; http://yandex.st/www/1.808/yaru/i/logo.png; 125.0; 3|4|5 ; 123.0; \"цвет:черный|материал:пластик\"; 1\n" + 
-					"2;Mouse; Мышь 3 кнопки; 1250.0;; 1125.0; 4; 1123.0; цвет:зеленый; " + 2 + "\n").getBytes(),
+				("1;Keyboard; Клавистура 101 кнопка; 250.0; http://yandex.st/www/1.808/yaru/i/logo.png; 125.0; 2|3 ; 123.0; \"цвет:черный|материал:пластик\"; 1\n" + 
+					"2;Mouse; Мышь 3 кнопки; 1250.0;; 1125.0; 3; 1123.0; цвет:зеленый; " + 2 + "\n").getBytes(),
 						userId, false, null);
 		importData.setUrl(imgURL);
 
@@ -1104,8 +1103,10 @@ public class ShopServiceImplTest {
 				Assert.assertEquals(vo.getOrderLines().size(), 2);
 
 				Object[] ola = vo.getOrderLines().values().toArray();
-				VoOrderLine vol1 = (VoOrderLine) ola[0];
-				VoOrderLine vol2 = (VoOrderLine) ola[1];
+
+				VoOrderLine vol1 = pm.getObjectById(VoOrderLine.class,ola[0]);
+				VoOrderLine vol2 = pm.getObjectById(VoOrderLine.class,ola[1]);
+			
 				si.mergeOrderLinePackets(vol2, vol1);
 
 				Map<Double, Integer> vol1ps = vol1.getPackets();
@@ -1144,8 +1145,9 @@ public class ShopServiceImplTest {
 				Assert.assertEquals(vo.getOrderLines().size(), 2);
 
 				Object[] ola = vo.getOrderLines().values().toArray();
-				VoOrderLine vol1 = (VoOrderLine) ola[0];
-				VoOrderLine vol2 = (VoOrderLine) ola[1];
+
+				VoOrderLine vol1 = pm.getObjectById(VoOrderLine.class,ola[0]);
+				VoOrderLine vol2 = pm.getObjectById(VoOrderLine.class,ola[1]);
 
 				si.mergeOrderLinePackets(vol2, vol1);
 				Map<Double, Integer> vol1ps = vol1.getPackets();

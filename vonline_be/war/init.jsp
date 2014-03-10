@@ -17,6 +17,9 @@
 
 	<%
 		Defaults.initDefaultData();
+	
+		Defaults.initializeShop();
+	
 	%>
 
 </body>

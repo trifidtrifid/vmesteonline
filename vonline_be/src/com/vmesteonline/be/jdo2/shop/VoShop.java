@@ -45,7 +45,7 @@ public class VoShop {
 		PersistenceManager pm = PMF.getPm();
 
 		this.name = name;
-		this.descr = new Text(descr);
+		this.setDescr(descr);
 		if(postalAddress != null ) this.address = new VoPostalAddress(postalAddress, pm);
 		try {
 			VoHelper.replaceURL(this, "logoURL", logoURL, ownerId, true, pm);
@@ -66,15 +66,12 @@ public class VoShop {
 
 		try {
 			if( null!=topicSet){
-				this.topics = new ArrayList<VoTopic>();
-				for (long tid : topicSet) {
-					VoTopic vt = pm.getObjectById(VoTopic.class, tid);
-					topics.add(vt);
-				}
+				this.topics = new ArrayList<Long>();
+				topics.addAll(topicSet);
 			}
-			categories = new ArrayList<VoProductCategory>();
+			/*categories = new ArrayList<VoProductCategory>();
 			products = new ArrayList<VoProduct>();
-			producers = new ArrayList<VoProducer>();
+			producers = new ArrayList<VoProducer>();*/
 			dates = new TreeMap<Integer, Integer>();
 			pm.makePersistent(this);
 		} catch (Exception e) {
@@ -87,9 +84,7 @@ public class VoShop {
 
 	public Shop getShop() {
 		List<Long> topicIds = new ArrayList<Long>();
-		for (VoTopic vt : getTopics()) {
-			topicIds.add(vt.getId().getId());
-		}
+		topicIds.addAll(getTopics());
 		Shop shop = new Shop(id.getId(), name, descr.getValue(), null==address ? null : address.getPostalAddress(), logoURL, ownerId, 
 				topicIds, tags, 
 				convertToDeliveryTypeMap(deliveryCosts, new HashMap<DeliveryType, Double>()),
@@ -120,22 +115,22 @@ public class VoShop {
 
 	@Persistent
 	@Unowned
-	public List<VoTopic> topics;
+	public List<Long> topics;
 
 	@Persistent
 	public List<String> tags;
 
-	@Persistent
+	/*@Persistent
 	@Unowned
-	private List<VoProduct> products;
+	private List<VoProduct> products;*/
 
-	@Persistent
+	/*@Persistent
 	@Unowned
-	private List<VoProductCategory> categories;
+	private List<VoProductCategory> categories;*/
 
-	@Persistent
+	/*@Persistent
 	@Unowned
-	private List<VoProducer> producers;
+	private List<VoProducer> producers;*/
 
 	@Persistent
 	@Unindexed
@@ -177,7 +172,7 @@ public class VoShop {
 		return selectedDates;
 	}
 
-	public void addProductCategory(VoProductCategory category) {
+	/*public void addProductCategory(VoProductCategory category) {
 		categories.add(category);
 	}
 
@@ -188,7 +183,7 @@ public class VoShop {
 	public void addProducer(VoProducer producer) {
 		producers.add(producer);
 	}
-
+*/
 	public String getName() {
 		return name;
 	}
@@ -202,7 +197,7 @@ public class VoShop {
 	}
 
 	public void setDescr(String descr) {
-		this.descr = new Text(descr);
+		this.descr = new Text( descr == null ? "" : descr );
 	}
 
 	public VoPostalAddress getAddress() {
@@ -241,7 +236,7 @@ public class VoShop {
 		return id.getId();
 	}
 
-	public List<VoProduct> getProducts() {
+	/*public List<VoProduct> getProducts() {
 		return products;
 	}
 
@@ -267,15 +262,15 @@ public class VoShop {
 				pm.deletePersistent(vpc);
 		}
 		categories.clear();
-	}
+	}*/
 
-	public List<VoTopic> getTopics() {
+	public List<Long> getTopics() {
 		return topics;
 	}
 
-	public List<VoProducer> getProducers() {
+	/*public List<VoProducer> getProducers() {
 		return producers;
-	}
+	}*/
 
 	public Map<Integer, Integer> getDates() {
 		return dates;
@@ -369,10 +364,9 @@ public class VoShop {
 		if (null == (this.tags = newShopWithOldId.tags))
 			this.tags = new ArrayList<String>();
 
-		this.topics = new ArrayList<VoTopic>();
-		for (long tid : newShopWithOldId.topicSet) {
-			VoTopic vt = pm.getObjectById(VoTopic.class, tid);
-			this.topics.add(vt);
+		if( null!=newShopWithOldId.topicSet ){
+			this.topics = new ArrayList<Long>();
+			this.topics.addAll(newShopWithOldId.topicSet);
 		}
 	}
 
