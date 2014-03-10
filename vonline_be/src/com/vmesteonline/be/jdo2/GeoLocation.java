@@ -1,5 +1,7 @@
 package com.vmesteonline.be.jdo2;
 
+import java.math.BigDecimal;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.InheritanceStrategy;
@@ -14,28 +16,27 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
 public abstract class GeoLocation {
 
-	GeoLocation() {
+	public GeoLocation() {
 	}
 
-	GeoLocation(float longitude, float latitude) {
-		this.longitude = longitude;
-		this.latitude = latitude;
+	/*
+	 * GeoLocation(float longitude, float latitude) { this.longitude = longitude;
+	 * this.latitude = latitude; }
+	 */
+	public BigDecimal getLongitude() {
+		return new BigDecimal(longitude);
 	}
 
-	public Float getLongitude() {
-		return longitude;
+	public void setLongitude(BigDecimal longitude) {
+		this.longitude = longitude.toPlainString();
 	}
 
-	public void setLongitude(Float longitude) {
-		this.longitude = longitude;
+	public BigDecimal getLatitude() {
+		return new BigDecimal(latitude);
 	}
 
-	public Float getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(Float latitude) {
-		this.latitude = latitude;
+	public void setLatitude(BigDecimal latitude) {
+		this.latitude = latitude.toPlainString();
 	}
 
 	public long getId() {
@@ -48,14 +49,14 @@ public abstract class GeoLocation {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key id;
+	protected Key id;
 
 	@Persistent
 	@Unindexed
-	protected float longitude;
+	private String longitude;
 
 	@Persistent
 	@Unindexed
-	protected float latitude;
+	private String latitude;
 
 }

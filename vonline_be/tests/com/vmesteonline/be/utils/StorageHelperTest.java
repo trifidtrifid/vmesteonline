@@ -1,6 +1,6 @@
 package com.vmesteonline.be.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,10 +9,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 
@@ -26,7 +24,6 @@ import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.AuthServiceImpl;
-import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.data.PMF;
 

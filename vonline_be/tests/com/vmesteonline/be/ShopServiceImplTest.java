@@ -131,7 +131,7 @@ public class ShopServiceImplTest {
 		Country country = usi.getCounties().get(0);
 		City city = usi.getCities(country.getId()).get(0);
 		Street street = usi.getStreets(city.getId()).get(0);
-		Building building = usi.createNewBuilding(street.getId(), "17/3", 123.45, 54.321);
+		Building building = usi.createNewBuilding(street.getId(), "17/3", "123.45", "54.321");
 		userAddress2 = new PostalAddress(country, city, street, building, (byte) 1, (byte) 2, 3, "");
 	}
 
@@ -296,11 +296,11 @@ public class ShopServiceImplTest {
 			optionsMap2.put("цвет", "черный");
 			optionsMap2.put("вкус", "мерзкий");
 
-			productsList.add(new FullProductInfo(new Product(1, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D), new ProductDetails(categories1,
-					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 3000, true, new HashSet<String>(), "стакан")));
+			productsList.add(new FullProductInfo(new Product(1, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D,"стакан"), new ProductDetails(categories1,
+					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 3000, true, new HashSet<String>())));
 
-			productsList.add(new FullProductInfo(new Product(2, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D), new ProductDetails(categories2,
-					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 1000, 3000, true, new HashSet<String>(), "кг")));
+			productsList.add(new FullProductInfo(new Product(2, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D,"кг"), new ProductDetails(categories2,
+					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 1000, 3000, true, new HashSet<String>())));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
 			// expects to get all of products
@@ -685,11 +685,11 @@ public class ShopServiceImplTest {
 		optionsMap2.put("цвет", "черный");
 		optionsMap2.put("вкус", "мерзкий");
 
-		productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D), new ProductDetails(categories1,
-				"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 3000, true, new HashSet<String>(),"стакан")));
+		productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D,"стакан"), new ProductDetails(categories1,
+				"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 3000, true, new HashSet<String>())));
 
-		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D), new ProductDetails(categories2,
-				"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 1000, 3000, true, new HashSet<String>(),"кг")));
+		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D,"кг"), new ProductDetails(categories2,
+				"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 1000, 3000, true, new HashSet<String>())));
 
 		upProductsIdl = si.uploadProducts(productsList, shopId, true);
 

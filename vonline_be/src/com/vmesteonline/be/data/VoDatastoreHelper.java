@@ -32,7 +32,6 @@ public class VoDatastoreHelper {
 			return t;
 		} catch (JDOObjectNotFoundException e) {
 			return null;
-
 		}
 
 	}

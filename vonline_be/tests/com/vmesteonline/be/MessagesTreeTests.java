@@ -1,9 +1,10 @@
 package com.vmesteonline.be;
 
+import static org.junit.Assert.fail;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -20,6 +21,17 @@ public class MessagesTreeTests extends MessagesTree {
 
 	List<VoMessage> lst;
 	int msgCreateTime;
+	String lgDef = "50";
+	String ltDef = "30";
+	int radiusDef = 200;
+
+	VoMessage createVoMsg(long id, long parentId, int radius, String longitude, String latitude) {
+		VoMessage msg = createVoMsg(id, parentId, 0);
+		msg.setRadius(radius);
+		msg.setLongitude(new BigDecimal(longitude));
+		msg.setLatitude(new BigDecimal(latitude));
+		return msg;
+	}
 
 	VoMessage createVoMsg(long id, long parentId, long recepientId) {
 		VoMessage msg = new VoMessage();
@@ -29,6 +41,10 @@ public class MessagesTreeTests extends MessagesTree {
 		msg.setAuthorId(KeyFactory.createKey(VoUser.class.getSimpleName(), 1));
 		msgCreateTime += 10;
 		msg.setCreatedAt(msgCreateTime);
+		msg.setRadius(radiusDef);
+		msg.setLongitude(new BigDecimal(lgDef));
+		msg.setLatitude(new BigDecimal(ltDef));
+
 		return msg;
 	}
 
@@ -66,18 +82,18 @@ public class MessagesTreeTests extends MessagesTree {
 	public void testGetMessagesWithChildMessagesNum() {
 		MessagesTree t = new MessagesTree(lst);
 		try {
-			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 0);
+			List<VoMessage> msgs = t.getTreeMessagesAfter(1, new MessagesTree.Filters(0, null));
 			Assert.assertEquals(4, msgs.size());
-			Assert.assertEquals(4, msgs.get(0).getId().getId());
+			Assert.assertEquals(4, msgs.get(0).getId());
 			Assert.assertEquals(0, msgs.get(0).getChildMessageNum());
 
-			Assert.assertEquals(5, msgs.get(1).getId().getId());
+			Assert.assertEquals(5, msgs.get(1).getId());
 			Assert.assertEquals(2, msgs.get(1).getChildMessageNum());
 
-			Assert.assertEquals(6, msgs.get(2).getId().getId());
+			Assert.assertEquals(6, msgs.get(2).getId());
 			Assert.assertEquals(1, msgs.get(2).getChildMessageNum());
 
-			Assert.assertEquals(7, msgs.get(3).getId().getId());
+			Assert.assertEquals(7, msgs.get(3).getId());
 			Assert.assertEquals(0, msgs.get(3).getChildMessageNum());
 
 		} catch (InvalidOperation e) {
@@ -107,10 +123,10 @@ public class MessagesTreeTests extends MessagesTree {
 
 		MessagesTree t = new MessagesTree(lst);
 		try {
-			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 0);
+			List<VoMessage> msgs = t.getTreeMessagesAfter(1, new MessagesTree.Filters(0, null));
 			Assert.assertEquals(4, msgs.size());
 
-			msgs = t.getTreeMessagesAfter(1, userId);
+			msgs = t.getTreeMessagesAfter(1, new MessagesTree.Filters(userId, null));
 			Assert.assertEquals(5, msgs.size());
 
 		} catch (InvalidOperation e) {
@@ -121,41 +137,19 @@ public class MessagesTreeTests extends MessagesTree {
 	}
 
 	@Test
-	public void testMessageTreeCreateObject() {
-		MessagesTree t = new MessagesTree(lst);
-		Assert.assertEquals(8, t.items.size());
-		Assert.assertEquals(1, t.items.get(0).id);
-		Assert.assertEquals(0, t.items.get(0).level);
-		Assert.assertEquals(4, t.items.get(0).childMsgsNum);
-
-		Assert.assertEquals(4, t.items.get(1).id);
-		Assert.assertEquals(1, t.items.get(1).level);
-		Assert.assertEquals(0, t.items.get(1).childMsgsNum);
-
-		Assert.assertEquals(5, t.items.get(2).id);
-		Assert.assertEquals(1, t.items.get(2).level);
-		Assert.assertEquals(2, t.items.get(2).childMsgsNum);
-
-		Assert.assertEquals(6, t.items.get(3).id);
-		Assert.assertEquals(2, t.items.get(3).level);
-		Assert.assertEquals(1, t.items.get(3).childMsgsNum);
-
-	}
-
-	@Test
 	public void testGetTreeMessagesAfter() {
 		try {
 			MessagesTree t = new MessagesTree(lst);
 
-			List<VoMessage> msgs = t.getTreeMessagesAfter(1, 0);
+			List<VoMessage> msgs = t.getTreeMessagesAfter(1, new MessagesTree.Filters(0, null));
 			Assert.assertEquals(4, msgs.size());
-			Assert.assertEquals(4, msgs.get(0).getId().getId());
+			Assert.assertEquals(4, msgs.get(0).getId());
 			Assert.assertEquals(1, msgs.get(0).getVisibleOffset());
 
-			Assert.assertEquals(5, msgs.get(1).getId().getId());
+			Assert.assertEquals(5, msgs.get(1).getId());
 			Assert.assertEquals(1, msgs.get(1).getVisibleOffset());
 
-			Assert.assertEquals(6, msgs.get(2).getId().getId());
+			Assert.assertEquals(6, msgs.get(2).getId());
 			Assert.assertEquals(2, msgs.get(2).getVisibleOffset());
 
 		} catch (Exception e) {
@@ -169,10 +163,10 @@ public class MessagesTreeTests extends MessagesTree {
 		try {
 			MessagesTree t = new MessagesTree(lst);
 
-			List<VoMessage> msgs = t.getTreeMessagesAfter(5, 0);
+			List<VoMessage> msgs = t.getTreeMessagesAfter(5, new MessagesTree.Filters(0, null));
 			Assert.assertEquals(2, msgs.size());
-			Assert.assertEquals(6, msgs.get(0).getId().getId());
-			Assert.assertEquals(7, msgs.get(1).getId().getId());
+			Assert.assertEquals(6, msgs.get(0).getId());
+			Assert.assertEquals(7, msgs.get(1).getId());
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -73,168 +73,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public static Logger logger;
 
 	static {
-
 		logger = Logger.getLogger(ShopServiceImpl.class);
-		/*
-		 * / create fake data for tests
-		 * 
-		 * String LOGO = "http://vomoloko.ru/img/logo.jpg"; String DESCR =
-		 * "Интернет магазин молочной продукции от лучших производителей вологодского края"
-		 * ; String NAME = "Во!Молоко"; String SESSION_ID =
-		 * "11111111111111111111111";
-		 * 
-		 * String PRC1_DESCR = "КОрневая категория"; String ROOT_PRODUCT_CAT1 =
-		 * "Root ProductCat1";
-		 * 
-		 * AuthServiceImpl asi; String userHomeLocation; long userId;
-		 * UserServiceImpl usi; ShopServiceImpl si; MessageServiceImpl msi; String
-		 * TAG = "TAG"; Topic topic; PostalAddress userAddress; PostalAddress
-		 * userAddress2;
-		 * 
-		 * ArrayList<Long> topicSet = new ArrayList<Long>(); ArrayList<String> tags;
-		 * HashMap<DeliveryType, Double> deliveryCosts; HashMap<PaymentType, Double>
-		 * paymentTypes;
-		 * 
-		 * List<String> images = new ArrayList<String>(); List<String> images2 = new
-		 * ArrayList<String>(); List<String> images3 = new ArrayList<String>();
-		 * 
-		 * List<Long> topic2Set = new ArrayList<Long>();
-		 * 
-		 * tags = new ArrayList<String>(); tags.add(TAG);
-		 * 
-		 * deliveryCosts = new HashMap<DeliveryType, Double>();
-		 * deliveryCosts.put(DeliveryType.SELF_PICKUP, 0.0D);
-		 * deliveryCosts.put(DeliveryType.SHORT_RANGE, 11.0D);
-		 * deliveryCosts.put(DeliveryType.LONG_RANGE, 22.0D);
-		 * 
-		 * paymentTypes = new HashMap<PaymentType, Double>();
-		 * paymentTypes.put(PaymentType.CASH, 1.0D);
-		 * paymentTypes.put(PaymentType.CREDIT_CARD, 2.0D);
-		 * paymentTypes.put(PaymentType.TRANSFER, 3.0D);
-		 * 
-		 * // register and login current user // Initialize USer Service String
-		 * sessionId = "1111"; asi = new AuthServiceImpl(sessionId); try {
-		 * List<String> userLocation =
-		 * UserServiceImpl.getLocationCodesForRegistration();
-		 * 
-		 * userHomeLocation = userLocation.get(0); userId = 0; try { userId =
-		 * asi.registerNewUser("fn", "ln", "pswd", "eml", userHomeLocation); } catch
-		 * (InvalidOperation e1) { e1.printStackTrace(); } asi.login("eml", "pswd");
-		 * userId = asi.getCurrentUserId();
-		 * 
-		 * usi = new UserServiceImpl(sessionId); si = new
-		 * ShopServiceImpl(sessionId); msi = new MessageServiceImpl(sessionId);
-		 * 
-		 * userAddress = usi.getUserHomeAddress(); List<Group> userGroups =
-		 * usi.getUserGroups(); long gId = userGroups.get(0).getId();
-		 * 
-		 * topic = msi.createTopic(gId, "AAA", MessageType.BASE, "", new
-		 * HashMap<MessageType, Long>(), new HashMap<Long, String>(),
-		 * usi.getUserRubrics() .get(0).getId(), 0); topicSet.add(topic.getId());
-		 * 
-		 * Country country = usi.getCounties().get(0); City city =
-		 * usi.getCities(country.getId()).get(0); Street street =
-		 * usi.getStreets(city.getId()).get(0); Building building =
-		 * usi.createNewBuilding(street.getId(), "17/3", 123.45, 54.321);
-		 * userAddress2 = new PostalAddress(country, city, street, building, (byte)
-		 * 1, (byte) 2, 3, "");
-		 * 
-		 * Shop shop = new Shop(0L, NAME, DESCR, userAddress2, LOGO, userId,
-		 * topicSet, tags, deliveryCosts, paymentTypes); Long shopId =
-		 * si.registerShop(shop); // set current shop si.getShop(shopId);
-		 * HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
-		 * si.setDates(dates); si.setDates(dates); si.setDates(dates);
-		 * 
-		 * // create categories List<ProductCategory> categories = new
-		 * Vector<ProductCategory>(); ProductCategory rootCat = new
-		 * ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet);
-		 * ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC",
-		 * "Второй уровень", images2, topic2Set); ProductCategory l3cat1 = new
-		 * ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2,
-		 * topic2Set); ProductCategory l3cat2 = new ProductCategory(4L, 2L,
-		 * "THird Level2PC", "Третий уровень2", images3, topic2Set);
-		 * 
-		 * categories.add(rootCat); categories.add(l2Cat); categories.add(l3cat1);
-		 * categories.add(l3cat2);
-		 * 
-		 * List<ProductCategory> uploadProductCategoies =
-		 * si.uploadProductCategoies(categories, true);
-		 * 
-		 * // create producers long prodId = si.registerProducer(new Producer(1L,
-		 * "Производитель1", "Описание производителя", LOGO, "http://google.com"),
-		 * shopId); long prod2Id = si.registerProducer(new Producer(2L,
-		 * "Производитель2", "Описание производителя2", LOGO, "http://google2.com"),
-		 * shopId);
-		 * 
-		 * // Upload products
-		 * 
-		 * ArrayList<FullProductInfo> productsList = new
-		 * ArrayList<FullProductInfo>();
-		 * 
-		 * ArrayList<Long> categories1 = new ArrayList<Long>(); categories1.add(3L);
-		 * 
-		 * ArrayList<Long> categories2 = new ArrayList<Long>(); categories2.add(4L);
-		 * 
-		 * HashMap<PriceType, Double> pricesMap1 = new HashMap<PriceType, Double>();
-		 * pricesMap1.put(PriceType.RETAIL, 12.0D); pricesMap1.put(PriceType.INET,
-		 * 13.0D);
-		 * 
-		 * HashMap<String, String> optionsMap1 = new HashMap<String, String>();
-		 * optionsMap1.put("цвет", "белый"); optionsMap1.put("вкус", "слабый");
-		 * 
-		 * HashMap<PriceType, Double> pricesMap2 = new HashMap<PriceType, Double>();
-		 * pricesMap2.put(PriceType.INET, 14.0D); pricesMap2.put(PriceType.RETAIL,
-		 * 15.0D);
-		 * 
-		 * HashMap<String, String> optionsMap2 = new HashMap<String, String>();
-		 * optionsMap2.put("цвет", "черный"); optionsMap2.put("вкус", "мерзкий");
-		 * 
-		 * Product p1 = new Product(0, "Пролукт 1", "Описание продукта 1", 100D,
-		 * LOGO, 11D); ProductDetails p1d = new ProductDetails(categories1,
-		 * "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 5000,
-		 * false, new HashSet<String>(),"стакан");
-		 * 
-		 * productsList.add(new FullProductInfo(p1, p1d));
-		 * 
-		 * Product p2 = new Product(0, "Пролукт 2", "Описание продукта 2", 200D,
-		 * LOGO, 12D); ProductDetails p2d = new ProductDetails(categories2,
-		 * "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 2000,
-		 * 15000, true, new HashSet<String>(),"кг."); productsList.add(new
-		 * FullProductInfo(p2, p2d));
-		 * 
-		 * List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
-		 * 
-		 * // initialize shop dates dates = new HashMap<Integer, DateType>(); int
-		 * now = (int) (System.currentTimeMillis() / 1000L); int day = 3600 * 24;
-		 * 
-		 * dates.put(now, DateType.NEXT_ORDER); dates.put(now - day,
-		 * DateType.CLEAN); dates.put(now + 2 * day, DateType.SPECIAL_PRICE);
-		 * dates.put(now + 3 * day, DateType.CLOSED); dates.put(now + 6 * day,
-		 * DateType.NEXT_ORDER); dates.put(now + 10 * day, DateType.NEXT_ORDER);
-		 * si.setDates(dates);
-		 * 
-		 * si.createOrder(now + 1000, "aaaaaaaaa", PriceType.RETAIL); long
-		 * canceledOID = si.cancelOrder(); long lastOrder = si.createOrder(now + 6 *
-		 * day, "bbbbbbbbbbbb", PriceType.RETAIL);
-		 * 
-		 * List<Order> orders = si.getOrders(now - 10 * day, now + 10 * day);
-		 * OrderLine newOrderLine = si.setOrderLine(upProductsIdl.get(0), 1.0D,
-		 * null, null);
-		 * 
-		 * si.setOrderLine(upProductsIdl.get(0), 1.0D,null, null); // set the same
-		 * quantity // again si.setOrderLine(upProductsIdl.get(0), 2.0D,null, null);
-		 * // set new quantity si.setOrderLine(upProductsIdl.get(1), 3.0D,null,
-		 * null); // add new product
-		 * 
-		 * orders = si.getOrders(now + 5 * day, now + 7 * day);
-		 * si.removeOrderLine(upProductsIdl.get(0));
-		 * 
-		 * si.createOrder(now + 10 * day, "ccccccccccccc", PriceType.INET); // merge
-		 * an order si.mergeOrder(orders.get(0).getId());
-		 * si.setOrderLine(upProductsIdl.get(0), 2.0D,null, null);
-		 * si.mergeOrder(orders.get(0).getId()); } catch (InvalidOperation e) {
-		 * e.printStackTrace(); } catch (TException e) { e.printStackTrace(); }
-		 */
 	}
 
 	// ======================================================================================================================
@@ -293,7 +132,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			if (0 == shopId)
 				shopId = getCurrentShopId(pm);
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
-			
+
 			productIds = new ArrayList<Long>();
 			VoProduct voProduct;
 			for (FullProductInfo fpi : products) {
@@ -336,7 +175,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
-	
+
 			for (Producer pc : producers) {
 
 				VoProducer vp = VoProducer.getByImportId(shopId, pc.getId(), pm);
@@ -368,6 +207,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	@Override
 	public List<ProductCategory> uploadProductCategoies(List<ProductCategory> categories, boolean cleanShopBeforeUpload) throws InvalidOperation {
 
+		Map<Long,VoProductCategory> categoresCacheMap = new HashMap<Long, VoProductCategory>();
+		
 		PersistenceManager pm = PMF.getPm();
 
 		List<ProductCategory> categoriesCreated = new ArrayList<ProductCategory>();
@@ -378,40 +219,46 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 
 		try {
-			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
+			long impordedId;
 			
+			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
+
 			for (ProductCategory pc : categories) {
 
-				VoProductCategory vpc = VoProductCategory.getByImportId(shopId, pc.getId(), pm);
+				VoProductCategory vpc = VoProductCategory.getByImportId(shopId, impordedId = pc.getId(), pm);
 
 				VoProductCategory vppc = null;
 				if (0 != pc.getParentId()) {
-					if (null == (vppc = VoProductCategory.getByImportId(shopId, pc.getParentId(), pm))) {
+					
+					vppc = categoresCacheMap.containsKey(pc.getParentId()) ? categoresCacheMap.get(pc.getParentId()) :
+						VoProductCategory.getByImportId(shopId, pc.getParentId(), pm);
+					
+					if (null == vppc ) {
 						
 						String err = "No category found by shopId:"+shopId+" parentId(importedId):"+pc.getParentId()+
 						"\nCurrent categories are:";
 						
-						for( VoProductCategory pce: pm.getExtent(VoProductCategory.class))
+						for( VoProductCategory pce: pm.getExtent(VoProductCategory.class)){
 							if(pce.getShopId() == shopId && pce.getImportId() == pc.getParentId()){
+
 								vppc = pce;
-								break;
 							}
+							err += "\n\t"+pce;
+						}
 						
 						if(vppc==null){
+
 							logger.warn(err);
 							throw new InvalidOperation(VoError.IncorrectParametrs, "parent Id " + pc.getParentId()
 									+ " not found as Id of categories above in a list provided");
 						} else {
-							pm.close();
-							pm = PMF.getPm();
-							vppc = VoProductCategory.getByImportId(shopId, pc.getParentId(), pm);
-	
+							while( null== (vppc = VoProductCategory.getByImportId(shopId, pc.getParentId(), pm)));
 							logger.warn("It sounds like index is broken. Category found by one-by-one search! Because "+err );
 						}
 
-					} else {
-						pc.setParentId(vppc.getId());
-					}
+					} 
+					
+					pc.setParentId(vppc.getId());
 				}
 
 				if (vpc != null) {
@@ -428,6 +275,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				}
 
 				pm.makePersistent(vpc);
+				categoresCacheMap.put(impordedId, vpc);
+				
 				pm.flush();
 				categoriesCreated.add(vpc.getProductCategory());
 			}
@@ -588,13 +437,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = getCurrentShopId(pm);
 		try {
-			List<VoProducer> vpl = (List<VoProducer>) pm.newQuery(VoProducer.class, "shopId == "+shopId).execute();
+			List<VoProducer> vpl = (List<VoProducer>) pm.newQuery(VoProducer.class, "shopId == " + shopId).execute();
 			List<Producer> pl = new ArrayList<Producer>();
 			for (VoProducer vp : vpl)
 				pl.add(vp.createProducer());
-				
+
 			return pl;
-				
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getProducers for shopId=" + shopId + "." + e);
@@ -612,13 +461,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			pm.getObjectById(VoShop.class, shopId);
 			List<ProductCategory> lpc = new ArrayList<ProductCategory>();
-			
-			List<VoProductCategory> pcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class, "parentId == "+currentProductCategoryId +" && shopId == "+shopId).execute();
+
+			List<VoProductCategory> pcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class,
+					"parentId == " + currentProductCategoryId + " && shopId == " + shopId).execute();
 			for (VoProductCategory voProductCategory : pcl) {
-					lpc.add(voProductCategory.getProductCategory());
+				lpc.add(voProductCategory.getProductCategory());
 			}
 			return lpc;
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getProductCategories for shopId=" + shopId + " currentProductCategoryId="
@@ -630,12 +480,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	private SortedSet<Product> getProductsFromCategory(Long categoryId, Long shopId, PersistenceManager pm) {
 		SortedSet<Product> rslt = new TreeSet<Product>(new ProdcutNameComparator());
-		List<VoProductCategory> vpcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class, "shopId == "+shopId+" && parentId == "+categoryId).execute();
+		List<VoProductCategory> vpcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class,
+				"shopId == " + shopId + " && parentId == " + categoryId).execute();
 		for (VoProductCategory cat : vpcl) {
 			rslt.addAll(getProductsFromCategory(cat.getId(), shopId, pm));
 		}
-		List<VoProduct> vpl = (List<VoProduct>) pm.newQuery(VoProduct.class, "categories == "+categoryId).execute();
-		
+		List<VoProduct> vpl = (List<VoProduct>) pm.newQuery(VoProduct.class, "categories == " + categoryId).execute();
+
 		for (VoProduct product : vpl) {
 			rslt.add(product.getProduct());
 		}
@@ -654,11 +505,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			String key = "VoProductsForCategory:" + shopId + ":" + categoryId;
 			ArrayList<Product> products = ServiceImpl.getObjectFromCache(key);
-			
+
 			if (null == products) { // no data in cache
-				
+
 				products = new ArrayList<Product>();
-				products.addAll(getProductsFromCategory( categoryId, shopId, pm ));
+				products.addAll(getProductsFromCategory(categoryId, shopId, pm));
 				try {
 					putObjectToCache(key, products);
 				} catch (Exception e) {
@@ -866,8 +717,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	/**
-	 * Method adds all orderLines from order with id set in parameter to current
-	 * order. All Lines with the same product ID would summarized!
+	 * Method adds all orderLines from order with id set in parameter to current order. All Lines with the same product ID would summarized!
 	 **/
 	@Override
 	public OrderDetails appendOrder(long oldOrderId) throws InvalidOperation {
@@ -878,18 +728,18 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				double addCost = 0;
 				VoOrder currentOrder = getCurrentOrder(pm);
 				Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
-				
+
 				if (currentOdrerLines.isEmpty()) {
 					for (Long voOrderLineId : voOrder.getOrderLines().values()) {
-						
+
 						VoOrderLine voOrderLine = pm.getObjectById(VoOrderLine.class, voOrderLineId);
 						VoProduct voProduct = pm.getObjectById(VoProduct.class, voOrderLine.getProductId());
 						double price = voProduct.getPrice(currentOrder.getPriceType());
-						
-						VoOrderLine newOrderLine = new VoOrderLine(currentOrder, voProduct,
-								voOrderLine.getQuantity(), price, voOrderLine.getComment(), voOrderLine.getPackets());
+
+						VoOrderLine newOrderLine = new VoOrderLine(currentOrder, voProduct, voOrderLine.getQuantity(), price, voOrderLine.getComment(),
+								voOrderLine.getPackets());
 						pm.makePersistent(newOrderLine);
-						
+
 						currentOdrerLines.put(voOrderLine.getProductId(), newOrderLine.getId().getId());
 						addCost += voOrderLine.getQuantity() * price;
 					}
@@ -897,34 +747,30 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				} else {
 
 					for (Long voOrderLineId : voOrder.getOrderLines().values()) {
-						
+
 						VoOrderLine voOrderLine = pm.getObjectById(VoOrderLine.class, voOrderLineId);
 						VoProduct voProduct = pm.getObjectById(VoProduct.class, voOrderLine.getProductId());
-						
-						
+
 						double price = voProduct.getPrice(currentOrder.getPriceType());
 						long pid = voOrderLine.getProductId();
 
 						if (currentOdrerLines.containsKey(pid)) {
-							
+
 							VoOrderLine currentOL = pm.getObjectById(VoOrderLine.class, currentOdrerLines.get(pid));
 							currentOL.setQuantity(currentOL.getQuantity() + voOrderLine.getQuantity());
 							VoProduct curProduct = pm.getObjectById(VoProduct.class, currentOL.getProductId());
-							
-							
+
 							// merge packets for prepack product
 							if (curProduct.isPrepackRequired()) {
 								mergeOrderLinePackets(voOrderLine, currentOL);
 							}
 
 						} else {
-							VoOrderLine newOrderLine = new VoOrderLine(currentOrder, pm.getObjectById(VoProduct.class, voOrderLine.getProductId()), voOrderLine.getQuantity(), price, voOrderLine.getComment(), voOrderLine
-									.getPackets());
+							VoOrderLine newOrderLine = new VoOrderLine(currentOrder, pm.getObjectById(VoProduct.class, voOrderLine.getProductId()),
+									voOrderLine.getQuantity(), price, voOrderLine.getComment(), voOrderLine.getPackets());
 							pm.makePersistent(newOrderLine);
-							
-							currentOdrerLines.put(
-									voOrderLine.getProductId(),
-									newOrderLine.getId().getId());
+
+							currentOdrerLines.put(voOrderLine.getProductId(), newOrderLine.getId().getId());
 						}
 						addCost += voOrderLine.getQuantity() * price;
 					}
@@ -979,8 +825,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	/**
-	 * Method adds to current order lines for products that are not included to
-	 * current order
+	 * Method adds to current order lines for products that are not included to current order
 	 **/
 	@Override
 	public OrderDetails mergeOrder(long oldOrderId) throws InvalidOperation {
@@ -992,14 +837,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			if (null != voOrder) {
 				for (Long oldLineId : voOrder.getOrderLines().values()) {
 					VoOrderLine oldLine = pm.getObjectById(VoOrderLine.class, oldLineId);
-					if (!currentOdrerLines.containsKey( oldLine.getProductId())) {
+					if (!currentOdrerLines.containsKey(oldLine.getProductId())) {
 						// there is no such product in the current order
-						VoProduct oldOrderLineProduct = pm.getObjectById( VoProduct.class, oldLine.getProductId());
+						VoProduct oldOrderLineProduct = pm.getObjectById(VoProduct.class, oldLine.getProductId());
 						Double price = oldOrderLineProduct.getPrice(currentOrder.getPriceType());
 						// Product is detached member so the price stored in this object
 						// would be actual
-						VoOrderLine voOrderLine = new VoOrderLine(currentOrder, oldOrderLineProduct, oldLine.getQuantity(), price,
-								oldLine.getComment(), oldLine.getPackets());
+						VoOrderLine voOrderLine = new VoOrderLine(currentOrder, oldOrderLineProduct, oldLine.getQuantity(), price, oldLine.getComment(),
+								oldLine.getPackets());
 						pm.makePersistent(voOrderLine);
 						currentOdrerLines.put(oldLine.getProductId(), voOrderLine.getId().getId());
 						currentOrder.addCost(price * oldLine.getQuantity());
@@ -1031,12 +876,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
 			if (null != voProduct) {
 				double price = voProduct.getPrice(currentOrder.getPriceType());
-				
+
 				VoOrderLine theLine = new VoOrderLine(currentOrder, voProduct, quantity, price, comment, packs);
 				pm.makePersistent(theLine);
-				
+
 				Long oldLineId = currentOdrerLines.put(productId, theLine.getId().getId());
-				if( null!=oldLineId ){
+				if (null != oldLineId) {
 					VoOrderLine oldLine = pm.getObjectById(VoOrderLine.class, oldLineId);
 					currentOrder.addCost(quantity * price - oldLine.getPrice() * oldLine.getQuantity());
 				} else {
@@ -1064,8 +909,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			Long removedLineID = currentOdrerLines.remove(productId);
 			if (null == removedLineID)
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No order line found for product id=" + productId);
-			
-			VoOrderLine removedLine = pm.getObjectById(VoOrderLine.class,removedLineID);
+
+			VoOrderLine removedLine = pm.getObjectById(VoOrderLine.class, removedLineID);
 			currentOrder.addCost(-removedLine.getPrice() * removedLine.getQuantity());
 			pm.makePersistent(currentOrder);
 			return true;
@@ -1152,9 +997,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder = getCurrentOrder(pm);
-			if(null==currentOrder)
-				throw new InvalidOperation(VoError.GeneralError, "No current order set!"); 
-				
+			if (null == currentOrder)
+				throw new InvalidOperation(VoError.GeneralError, "No current order set!");
+
 			currentOrder.setDeliveryTo(new VoPostalAddress(deliveryAddress, pm));
 			pm.makePersistent(currentOrder);
 			return currentOrder.getOrderDetails(pm);
@@ -1205,7 +1050,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				for (Long olid : odrerLines.values()) {
 					// check if update make sense on the current order line for order's
 					// kinda price type
-					VoOrderLine ol = pm.getObjectById(VoOrderLine.class,olid);
+					VoOrderLine ol = pm.getObjectById(VoOrderLine.class, olid);
 					if (newPricesMap.containsKey(ol.getProductId()) && newPricesMap.get(ol.getProductId()).containsKey(voOrder.getPriceType())) {
 						double oldPrice = ol.getPrice(), newPrice = newPricesMap.get(ol.getProductId()).get(voOrder.getPriceType());
 						ol.setPrice(newPrice);
@@ -1469,7 +1314,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 
 		try {
-			//ByteArrayInputStream dataStream = new ByteArrayInputStream(csvData);
+			// ByteArrayInputStream dataStream = new ByteArrayInputStream(csvData);
 			List<T> infoRows = CSVHelper.loadCSVData(csvData, fieldsMap, descriptionObject);
 
 			processor.process(infoRows);
@@ -1602,7 +1447,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					old.productId = vol.getProductId();
 					old.productName = vop.getName();
 					old.producerId = vop.getProducer();
-					
+
 					VoProducer vopr = pm.getObjectById(VoProducer.class, old.producerId);
 					old.producerName = vopr.getName();
 					old.price = vol.getPrice();
@@ -1786,7 +1631,6 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					VoProduct product = pm.getObjectById(VoProduct.class, vopl.getProductId());
 					VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducer());
 
-
 					ProductOrderDescription pod;
 
 					if (!prodDescMap.containsKey(product.getId())) {
@@ -1890,7 +1734,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
-//======================================================================================================================
+	// ======================================================================================================================
 	@Override
 	public List<List<String>> parseCSVfile(String url) throws InvalidOperation, TException {
 		try {
@@ -1900,9 +1744,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			return CSVHelper.parseCSV(baos.toByteArray(), null, null, null);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new InvalidOperation( VoError.IncorrectParametrs, "Failed to read data from URL '"+url+"'");
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read data from URL '" + url + "'");
 		}
 	}
-	
 
 }

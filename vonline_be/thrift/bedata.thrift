@@ -50,6 +50,17 @@ struct ShortUserInfo{
 	5: string avatar,
 }
 
+struct ShortProfile{
+	1: i64 id,
+	2: string firstName,
+	3: string lastName,
+	4: i32 rating
+	5: string avatar,
+	6: string address,
+	7: string balance,
+}
+
+
 struct UserInfo{
 	1: i64 id,
 	2: string firstName,
