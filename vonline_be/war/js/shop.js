@@ -229,9 +229,78 @@ $(document).ready(function(){
         selector.click(function(e){
             e.preventDefault();
 
-            $(this).find('+.modal').modal();
-            var carousel = $(this).find('+.modal').find('.carousel');
-            var slider = $(this).find('+.modal').find('.slider');
+            var tr = $(this).closest('tr');
+            var product= {
+                name : $(this).find('span span').text(),
+                price : tr.find('.product-price').text(),
+                imageURL : $(this).find('img').attr('src')
+            };
+            var productDetails = client.getProductDetails(tr.data('productid'));
+            var popupHtml = "";
+            popupHtml += '<div class="modal-body">'+
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
+                '<div class="product-slider">'+
+                    '<div class="slider flexslider">'+
+                        '<ul class="slides">'+
+                            '<li>'+
+                                '<img src="'+product.imageURL+'" />'+
+                            '</li>'+
+                        '<li>'+
+                            '<img src="i/shop/2.jpg" />'+
+                        '</li>'+
+                            '<li>'+
+                                '<img src="i/shop/3.jpg" />'+
+                            '</li>'+
+                            '<li>'+
+                                '<img src="i/shop/4.jpg" />'+
+                            '</li>'+
+                            '<li>'+
+                                '<img src="i/shop/5.jpg" />'+
+                            '</li>'+
+                        '</ul>'+
+                    '</div>'+
+                    '<div class="carousel flexslider">'+
+                        '<ul class="slides">'+
+                            '<li>'+
+                                '<img src="'+product.imageURL+'" />'+
+                            '</li>'+
+                        '<li>'+
+                            '<img src="i/shop/2.jpg" />'+
+                        '</li>'+
+                            '<li>'+
+                                '<img src="i/shop/3.jpg" />'+
+                            '</li>'+
+                            '<li>'+
+                                '<img src="i/shop/4.jpg" />'+
+                            '</li>'+
+                            '<li>'+
+                                '<img src="i/shop/5.jpg" />'+
+                            '</li>'+
+                        '</ul>'+
+                    '</div>'+
+                '</div>'+
+                '<div class="product-descr">'+
+                    '<h3>'+product.name+'</h3>'+
+                    '<div class="product-text">'+
+                    productDetails.fullDescr+
+                    '</div>'+
+                    '<div class="modal-footer">'+
+                        '<span>Цена: '+product.price+'</span>'+
+                        '<input type="text" class="input-mini spinner1" />'+
+                    productDetails.unitName+
+                        '<i class="fa fa-shopping-cart"></i>'+
+                    '</div>'+
+                '</div>'+
+            '</div>';
+
+            var currentModal = $(this).find('+.modal');
+            if (currentModal.find('.modal-body').length == 0){
+                currentModal.append(popupHtml);
+                InitSpinner(currentModal.find('.spinner1'), tr.find('.ace-spinner').spinner('value'));
+            }
+            currentModal.modal();
+            var carousel = currentModal.find('.carousel');
+            var slider = currentModal.find('.slider');
 
             carousel.flexslider({
                 animation: "slide",
@@ -416,7 +485,19 @@ $(document).ready(function(){
                 '<span><span>'+ productsList[i].name +'</span>'+ productsList[i].shortDescr +'</span>'+
                 '</a>'+
                 '<div class="modal">'+
-                '<div class="modal-body">'+
+                '</div>'+
+                '</td>'+
+                '<td class="product-price">'+ productsList[i].price  +'</td>'+
+                '<td>'+
+                '<input type="text" class="input-mini spinner1" /> '+
+                unitName+" "+productDetails.prepackRequired+
+                '</td>'+
+                '<td>'+
+                '<i class="fa fa-shopping-cart"></i>'+
+                '</td>'+
+                '</tr>';
+
+            /*'<div class="modal-body">'+
                 '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
                 '<div class="product-slider">'+
                 '<div class="slider flexslider">'+
@@ -440,24 +521,24 @@ $(document).ready(function(){
                 productDetails.fullDescr+
                 '</div>'+
                 '<div class="modal-footer">'+
-                '<span>Цена: '+ productsList[i].price +'</span>'+
-                '<input type="text" class="input-mini spinner1" /> '+
-                '<span class="unit-name">'+unitName+'</span>'+
-                '<i class="fa fa-shopping-cart"></i>'+
+                '<span>Цена: '+ productsList[i].price +'</span>';
+            if(productDetails.prepackRequired){
+                productsHtml += '<input type="text" class="input-mini spinner1 prepack-spinner" /> '+
+                    '<span class="unit-name bottom">упаковок</span>'+
+                    '<input type="text" class="input-mini spinner1" /> '+
+                    '<span class="unit-name bottom">'+unitName+'</span>'+
+                    '<a href="#" class="fa fa-plus"></a>'+
+                    div;
+            }else{
+                productsHtml += '<input type="text" class="input-mini spinner1" /> '+
+                    '<span class="unit-name">'+unitName+'</span>';
+            }
+
+            productsHtml += '<i class="fa fa-shopping-cart"></i>'+
                 '</div>'+
                 '</div>'+
-                '</div>'+
-                '</div>'+
-                '</td>'+
-                '<td class="product-price">'+ productsList[i].price  +'</td>'+
-                '<td>'+
-                '<input type="text" class="input-mini spinner1" /> '+
-                unitName+
-                '</td>'+
-                '<td>'+
-                '<i class="fa fa-shopping-cart"></i>'+
-                '</td>'+
-                '</tr>';
+                '</div>'+*/
+
         }
         $('.main-content .catalog table tbody').html("").append(productsHtml);
 
@@ -465,7 +546,7 @@ $(document).ready(function(){
         InitSpinner($('.catalog table .spinner1'));
         InitProductDetailPopup($('.product-link'));
         InitAddToBasket($('.fa-shopping-cart'));
-        InitClickOnCategory()
+        InitClickOnCategory();
 
     }
 
@@ -484,7 +565,7 @@ $(document).ready(function(){
                 parentCounter++;
                 //console.log(prevParentId[parentCounter]);
                 prevParentId[parentCounter] = $(this).parent().data('parentid');
-                console.log($(this).parent().data('catid'));
+                //console.log($(this).parent().data('catid'));
                 InitLoadCategory($(this).parent().data('catid'));
                 setCookie('catid',$(this).parent().data('catid'));
                 setCookie('arrayPrevCat',prevParentId);
@@ -648,15 +729,17 @@ $(document).ready(function(){
         return ordersProductsHtml;
     }
 
-    function createOrdersHtml(orders,length,offset){
+    function createOrdersHtml(orders,itsMoreOrders){
         var ordersHtml = "";
         var ordersLength = orders.length;
         //alert(ordersLength);
         var lastOrderNumber = 0;
         var listLength = 10;
 
-        if(length){listLength = length;}
-        if (offset){ordersLength -= offset;}
+        if (itsMoreOrders){
+            listLength = lengthOrders;
+            ordersLength -= offsetOrders;
+        }
         if (ordersLength > listLength){
             lastOrderNumber = ordersLength - listLength;
         }
@@ -728,8 +811,9 @@ $(document).ready(function(){
                 '</div>';
         }
         var haveMore = ordersLength%listLength;
-        if (haveMore != ordersLength){
-            $('.more-orders').show();
+        if (haveMore && haveMore != ordersLength){
+            //$('.more-orders').show();
+            ordersHtml += '<div class="more-orders"><a href="#">Показать еще</a></div>';
         }else{
             $('.more-orders').hide();
         }
@@ -737,19 +821,21 @@ $(document).ready(function(){
     }
 
 /*----*/
-    var nowTime = parseInt(new Date().getTime()/1000);
+   /* var nowTime = parseInt(new Date().getTime()/1000);
     nowTime -= nowTime%86400;
     var dateArray = [];
     var day = 3600*24;
     dateArray[nowTime] = 1;
     dateArray[nowTime+day] = 1;
     dateArray[nowTime+2*day] = 2;
+    dateArray[nowTime+3*day] = 2;
+    dateArray[nowTime+4*day] = 1;
     dateArray[nowTime-9*day] = 2;
     client.setDates(dateArray);
     var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
     for (var p in datesArray){
-        //console.log(p);
-    }
+        console.log(p);
+    }*/
 /*------*/
 
     function initOrderPlusMinus(selector){
@@ -963,10 +1049,11 @@ $(document).ready(function(){
 
                 $('.day').each(function(){
                     var day = $(this).text();
+                    console.log(tempMonth+" "+nowMonth);
                     if (tempMonth == nowMonth){
-                        if  (day == freeDay){ $(this).addClass('free-day');$(this).attr('id',date);}
-                        if  (day == specialDay){ $(this).addClass('special-day');$(this).attr('id',date);}
-                        if  (day == closedDay){ $(this).addClass('closed-day');$(this).attr('id',date);}
+                        if  (day == freeDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('free-day');$(this).attr('id',date);}
+                        if  (day == specialDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('special-day');$(this).attr('id',date);}
+                        if  (day == closedDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('closed-day');$(this).attr('id',date);}
                     }
                 });
             }
@@ -1014,9 +1101,10 @@ $(document).ready(function(){
             }
 
             $('.order-day').click(function(){
+                initVarForMoreOrders();
                  var orderDate = parseInt($(this).attr('id'));
                 var day = 3600*24;
-                var orders = client.getOrders(orderDate-day,orderDate+day);
+                var orders = client.getOrders(orderDate,orderDate+day);
                 var ordersLength = orders.length;
                 //alert(ordersLength);
                 var orderList = [];
@@ -1025,14 +1113,14 @@ $(document).ready(function(){
                     if (orders[i].date = orderDate){
                         orderList[counter++] = orders[i];
                     }
-                    console.log(i+ " "+orders[i].date+" "+orderDate+" "+orders[i].id);
+                    //console.log(i+ " "+orders[i].date+" "+orderDate+" "+orders[i].id);
                 }
                 //alert(counter);
                 $('.shop-products').hide();
                 var shopOrdersList = $('.orders-list');
                 shopOrdersList.html('').append(createOrdersHtml(orderList));
                 $('.shop-orders').show();
-                initShowMoreOrders();
+                initShowMoreOrders(orderList);
                 initOrderPlusMinus(shopOrdersList);
                 initOrderBtns();
             });
@@ -1096,17 +1184,26 @@ $(document).ready(function(){
         });
     }
 
-    function initShowMoreOrders(){
-        var offset = 10;
-        var length = 10;
-        $('.more-orders').one('click',function(e){
-            e.preventDefault();
+    var offsetOrders = 10;
+    var lengthOrders = 10;
 
-            var nowTime = parseInt(new Date().getTime()/1000);
+    function initVarForMoreOrders(){
+        offsetOrders = 10;
+        lengthOrders = 10;
+    }
+
+    function initShowMoreOrders(orders){
+        $('.more-orders').click(function(e){
+            e.preventDefault();
+            /*var nowTime = parseInt(new Date().getTime()/1000);
             var day = 3600*24;
-            var orders = client.getOrders(0,nowTime+30*day);
-            $('.orders-list').append(createOrdersHtml(orders,length,offset));
-            offset += length;
+            var orders = client.getOrders(0,nowTime+30*day);*/
+            $('.orders-list').find('.more-orders').remove();
+            //initVarForMoreOrders();
+            var itsMoreOrders = true;
+            $('.orders-list').append(createOrdersHtml(orders,itsMoreOrders));
+            initShowMoreOrders(orders);
+            offsetOrders += lengthOrders;
             setSidebarHeight();
         });
     }
@@ -1132,8 +1229,9 @@ $(document).ready(function(){
            var nowTime = parseInt(new Date().getTime()/1000);
            var day = 3600*24;
            var orders = client.getOrders(0,nowTime+30*day);
+           initVarForMoreOrders();
            ordersList.html('').append(createOrdersHtml(orders));
-           initShowMoreOrders();
+           initShowMoreOrders(orders);
            initOrderPlusMinus(ordersList);
            initOrderBtns();
             shopOrders.show();

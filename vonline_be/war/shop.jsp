@@ -39,25 +39,14 @@
 
     Cookie cookies [] = request.getCookies();
     String cookieName = "catid";
-    String cookieName2 = "arrayPrevCat";
     Cookie catIdCookie = null;
-    //Cookie arrayPrevCat = null;
     if (cookies != null) {
         for (int i = 0; i < cookies.length; i++) {
-            //out.print(cookies[i].getName());
             if (cookies[i].getName().equals (cookieName)) {
                 catIdCookie = cookies[i];
             }
-            /*if (cookies[i].getName().equals (cookieName2)) {
-                arrayPrevCat = cookies[i];
-            }*/
         }
     }
-    /*if (arrayPrevCat != null){
-        out.print("==");
-        out.print(arrayPrevCat.getValue());
-        out.print("==");
-    }*/
 
     long catId = 0;
     try{
@@ -73,9 +62,9 @@
     List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(catId);
     ProductListPart productsListPart = shopService.getProducts(0,10,catId);
     if (productsListPart.products.size() > 0){
-        ProductDetails productDetails = shopService.getProductDetails(productsListPart.products.get(0).id);
+        //ProductDetails productDetails = shopService.getProductDetails(productsListPart.products.get(0).id);
         pageContext.setAttribute("products",productsListPart.products);
-        pageContext.setAttribute("productDetails",productDetails);
+        //pageContext.setAttribute("productDetails",productDetails);
     }
     pageContext.setAttribute("productCategories", ArrayProductCategory);
 
@@ -432,7 +421,7 @@
                                             </span>
                                         </a>
                                         <div class="modal">
-                                            <div class="modal-body">
+                                            <%--<div class="modal-body">
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                                                 <div class="product-slider">
                                                     <div class="slider flexslider">
@@ -488,13 +477,13 @@
                                                         <i class="fa fa-shopping-cart"></i>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>--%>
                                         </div>
                                     </td>
                                     <td class="product-price">${product.price}</td>
                                     <td>
                                         <input type="text" class="input-mini spinner1" />
-                                        <span class="unit-name">${productDetails.unitName}</span>
+                                        <%--<span class="unit-name">${productDetails.unitName}</span>--%>
                                     </td>
                                     <td>
                                         <i class="fa fa-shopping-cart"></i>
@@ -521,8 +510,8 @@
                     </table>--%>
                     <div class="orders-list">
                     </div>
-                    <div class="more-orders"><a href="#">Показать еще</a></div>
-                    <%--<div class="order-item">
+                    <%--<div class="more-orders"><a href="#">Показать еще</a></div>
+                    <div class="order-item">
                         <table>
                             <thead>
                             <tr>
