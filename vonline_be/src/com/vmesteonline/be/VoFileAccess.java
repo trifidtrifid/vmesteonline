@@ -42,13 +42,12 @@ public class VoFileAccess extends HttpServlet {
 		try {
 			long fileId = StorageHelper.getFileId(req.getRequestURI());
 			VoFileAccessRecord far = pm.getObjectById(VoFileAccessRecord.class, fileId);
-			long currentUserId = serviceImpl.getCurrentUserId(pm);
-
-			if (null != req.getParameter("delete") && (far.getUserId() == currentUserId)) {
+			
+			if (null != req.getParameter("delete") && (far.getUserId() == serviceImpl.getCurrentUserId(pm))) {
 				StorageHelper.deleteImage(req.getRequestURI(), pm);
 				resp.setStatus(HttpServletResponse.SC_OK);
 				pm.deletePersistent(far);
-			} else if (far.isPublic() || far.getUserId() == currentUserId) {
+			} else if (far.isPublic() || far.getUserId() == serviceImpl.getCurrentUserId(pm)) {
 				StorageHelper.sendFileResponse(req, resp);
 			} else {
 				resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");

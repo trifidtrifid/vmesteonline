@@ -1000,8 +1000,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			if (null == currentOrder)
 				throw new InvalidOperation(VoError.GeneralError, "No current order set!");
 
-			currentOrder.setDeliveryTo(new VoPostalAddress(deliveryAddress, pm));
+			VoPostalAddress adrress = new VoPostalAddress(deliveryAddress, pm);
+			currentOrder.setDeliveryTo(adrress);
 			pm.makePersistent(currentOrder);
+			VoUser currentUser = getCurrentUser(pm);
+			currentUser.addPostalAddress(adrress);
+			pm.makePersistent(currentUser);
 			return currentOrder.getOrderDetails(pm);
 
 		} catch (Exception e) {

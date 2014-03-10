@@ -501,7 +501,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			pm.retrieve(currentUser);
-			currentUser.addPostalAddress(new VoPostalAddress(newAddress, pm), pm);
+			currentUser.addPostalAddress(new VoPostalAddress(newAddress, pm));
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

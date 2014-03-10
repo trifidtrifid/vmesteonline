@@ -3,6 +3,7 @@ package com.vmesteonline.be.utils;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -31,6 +32,7 @@ import com.vmesteonline.be.jdo2.shop.VoProduct;
 import com.vmesteonline.be.jdo2.shop.VoProductCategory;
 import com.vmesteonline.be.jdo2.shop.VoShop;
 import com.vmesteonline.be.shop.DataSet;
+import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.ExchangeFieldType;
 import com.vmesteonline.be.shop.ImExType;
@@ -147,6 +149,16 @@ public class Defaults {
 					"http://vomoloko.ru/img/logo.jpg", userId, topicSet, tags, deliveryCosts, paymentTypes));
 
 			ssi.getShop(shop); // to make it current
+			//set dates
+			int now = (int)(System.currentTimeMillis()/1000L);
+			Map<Integer,DateType> dates = new HashMap<Integer,DateType>();
+			for( int dt = now; dt < now + 86400 * 365; dt +=7*86400 ){
+				dates.put(dt, DateType.NEXT_ORDER);
+				dates.put(dt - 3*86400, DateType.NEXT_ORDER);
+				dates.put(dt - 86400, DateType.SPECIAL_PRICE);
+				dates.put(dt - 4*86400, DateType.SPECIAL_PRICE);
+			}
+			ssi.setDates(dates);
 
 			DataSet ds = new DataSet();
 			ds.date = (int) (System.currentTimeMillis() / 1000L);
