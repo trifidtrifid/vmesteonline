@@ -38,11 +38,8 @@ public class VoProducer {
 	public VoProducer(long shopId, long userId, Producer producer, PersistenceManager _pm)throws InvalidOperation {
 			
 		this.name = producer.getName();
-		this.descr = new Text( producer.getDescr() );
+		this.setDescr( producer.getDescr());
 		this.homeURL = producer.getHomeURL();
-	
-		this.shops = new HashSet<VoShop>();
-		this.products = new HashSet<VoProduct>();
 		this.importId = producer.id;
 		
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
@@ -55,20 +52,17 @@ public class VoProducer {
 		}
 		
 		try {
-			pm.makePersistent(this);
-			VoShop voShop = null;
+
 			try {
-				voShop = pm.getObjectById(VoShop.class, shopId);
+				pm.getObjectById(VoShop.class, shopId);
 				
 			} catch (JDOObjectNotFoundException e) {
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID=" + shopId + ". " + e);
 			}
 			
-			shops.add(voShop);
-			voShop.addProducer(this);
+			this.shopId = shopId;
 			pm.makePersistent(this);
-			pm.makePersistent(voShop);
 
 		} finally {
 			if( _pm == null ) pm.close();
@@ -87,6 +81,9 @@ public class VoProducer {
 	private long importId;
 
 	@Persistent
+	private long shopId;
+	
+	@Persistent
 	@Unindexed
 	private String name;
 
@@ -102,19 +99,6 @@ public class VoProducer {
 	@Unindexed
 	private String homeURL;
 
-	@Persistent
-	@Unowned
-	private Set<VoShop> shops;
-
-	@Persistent(mappedBy = "producer")
-	@OneToMany
-	@Unowned
-	private Set<VoProduct> products;
-
-	public Set<VoProduct> getProducts() {
-		return products;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -128,7 +112,7 @@ public class VoProducer {
 	}
 
 	public void setDescr(String descr) {
-		this.descr = new Text(descr);
+		this.descr = new Text( null == descr ? "" : descr );
 	}
 
 	public String getLogoURL() {
@@ -151,15 +135,17 @@ public class VoProducer {
 		return id.getId();
 	}
 
-	public Set<VoShop> getShops() {
-		return shops;
+	public long getShopId() {
+		return shopId;
 	}
 	
 
 	@Override
 	public String toString() {
-		return "VoProducer [id=" + id + ", name=" + name + "]";
+		return "VoProducer [id=" + id + ", importId=" + importId + ", shopId=" + shopId + ", name=" + name + ", logoURL=" + logoURL + ", homeURL="
+				+ homeURL + "]";
 	}
+	
 
 	public void update(Producer newInfoWithOldId, long userId, boolean isPublic, PersistenceManager pm) throws InvalidOperation {
 		this.id = KeyFactory.createKey(this.getClass().getSimpleName(), newInfoWithOldId.id);
@@ -174,16 +160,13 @@ public class VoProducer {
 		}
 	}
 
-	public static VoProducer getByImportId(Long shopId, long importId, PersistenceManager pm) {
+	public static VoProducer getByImportId(long shopId, long importId, PersistenceManager pm) {
 		Query q = pm.newQuery(VoProducer.class);
-		q.setFilter("importId == "+importId);
+		q.setFilter("importId == "+importId + " && shopId == "+shopId);
 		try {
-			List<VoProducer> cl = (List<VoProducer>) q.execute(shopId);
+			List<VoProducer> cl = (List<VoProducer>) q.execute();
 			for (VoProducer voProducer : cl) {
-				for( VoShop vs: voProducer.getShops()){
-					if(vs.getId() == shopId )
-						return voProducer;
-				}
+				return voProducer;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

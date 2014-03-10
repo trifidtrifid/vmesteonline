@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -20,13 +21,13 @@ import com.vmesteonline.be.shop.OrderLine;
 public class VoOrderLine implements Comparable<VoOrderLine>{
 
 	public VoOrderLine(long productId ){
-		this.product = new VoProduct(productId);
+		this.productId = productId;
 	}
 	public VoOrderLine(VoOrder order, VoProduct product, double quantity, double price, 
 			String comment, Map<Double,Integer> packets) throws InvalidOperation {
 		this.quantity = quantity;
-		this.product = product;
-		this.order = order;
+		this.productId = product.getId();
+		this.orderId = order.getId();
 		this.price = price;
 		this.comment = comment;
 		if( null!=packets && packets.size() > 1 ){
@@ -45,8 +46,8 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 		}
 	}
 
-	public OrderLine getOrderLine() {
-		OrderLine orderLine = new OrderLine(product.getProduct(), quantity, price);
+	public OrderLine getOrderLine( PersistenceManager pm) {
+		OrderLine orderLine = new OrderLine(pm.getObjectById(VoProduct.class, productId).getProduct(), quantity, price);
 		orderLine.product.price = price;
 		if( null!=comment && comment.length() > 0 ) orderLine.setComment(comment);
 		if( packets != null && packets.size() > 1 ) orderLine.setPacks(packets);
@@ -58,11 +59,11 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 	private Key id;
 
 	@Persistent
-	private VoOrder order;
+	private Long orderId;
 
 	@Persistent
 	@Unowned
-	private VoProduct product;
+	private long productId;
 	@Persistent
 	@Unindexed
 	private double quantity;
@@ -80,20 +81,20 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 	@Unindexed
 	private double price;
 
-	public VoOrder getOrder() {
-		return order;
+	public long getOrderId() {
+		return orderId;
 	}
 
-	public void setOrder(VoOrder order) {
-		this.order = order;
+	public void setOrder(Long orderId) {
+		this.orderId = orderId;
 	}
 
-	public VoProduct getProduct() {
-		return product;
+	public long getProductId() {
+		return productId;
 	}
 
-	public void setProduct(VoProduct product) {
-		this.product = product;
+	public void setProduct(long productId) {
+		this.productId = productId;
 	}
 
 	public double getQuantity() {
@@ -114,7 +115,7 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 
 	@Override
 	public String toString() {
-		return "VoOrderLine [order=" + order + ", product=" + product + ", quontity=" + quantity + ", price=" + price + "]";
+		return "VoOrderLine [order=" + orderId + ", product=" + productId + ", quontity=" + quantity + ", price=" + price + "]";
 	}
 
 	public Key getId() {
@@ -130,7 +131,7 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 
 	@Override
 	public int compareTo(VoOrderLine that) {
-		return null == that ? -1 : null == that.product ? null == product ? 0 : -1 : product.getName().compareTo(that.product.getName());
+		return null == that ? -1 : Long.compare( this.productId,  that.productId);
 	}
 	
 	public String getComment() {

@@ -180,6 +180,7 @@ public class VoHelper {
 			try {
 				pm.deletePersistent(object);
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}

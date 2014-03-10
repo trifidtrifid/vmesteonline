@@ -1,10 +1,8 @@
 package com.vmesteonline.be.jdo2.shop;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -12,7 +10,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
-import javax.persistence.OneToMany;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Text;
@@ -37,7 +34,7 @@ public class VoProductCategory {
 	public VoProductCategory(VoShop shop,long importId, long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId, PersistenceManager _pm) {
 	  
 		this.name = name;
-		this.descr = new Text( descr );
+		this.setDescr( descr );
 		if( null!=logoURLset){
 			this.logoURLset = new ArrayList<String>();
 			for( String bb: logoURLset) {
@@ -49,31 +46,24 @@ public class VoProductCategory {
 			}
 		}
 	
-	  topics = new ArrayList<VoTopic>();
-	  shops = new ArrayList<VoShop>();
-	  childs = new ArrayList<VoProductCategory>();
-	  products = new ArrayList<VoProduct>();
-	  this.importId = importId;
+	  topics = new ArrayList<Long>();
+	  this.setShopId(shop.getId());
+	  this.setImportId(importId);
 	  
 	  PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;  
 	  try {
 			if( 0!=parentId ) {
-				VoProductCategory pc = pm.getObjectById(VoProductCategory.class, parentId);
-				this.setParent(pc);
-				pc.getChilds().add(this);
-				pm.makePersistent(pc);
+				pm.getObjectById(VoProductCategory.class, parentId);
 			}
-			pm.makePersistent(this);
-			/*VoShop shop = pm.getObjectById(VoShop.class, shopId);*/
-			shop.addProductCategory(this);
-			shops.add(shop);
+			this.setParentId(parentId);
 			
 			if(null!=topicSet)
 				for( long tid: topicSet){
-					VoTopic vt = pm.getObjectById(VoTopic.class, tid);
-					topics.add(vt); 
+					pm.getObjectById(VoTopic.class, tid);
+					topics.add(tid); 
 				}
 			pm.makePersistent(this);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -81,13 +71,40 @@ public class VoProductCategory {
 		}
 	}
 	
+	public long getImportId() {
+		return importId;
+	}
+
+	public void setImportId(long importId) {
+		this.importId = importId;
+	}
+
+	public long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(long parentId) {
+		this.parentId = parentId;
+	}
+
+	public void setDescr(Text descr) {
+		this.descr = descr;
+	}
+
+	public void setTopics(List<Long> topics) {
+		this.topics = topics;
+	}
+
+	public void setShopId(long shopId) {
+		this.shopId = shopId;
+	}
+
 	public ProductCategory getProductCategory( ){
 		ProductCategory pc = new ProductCategory(id.getId(), 
-				null==parent ? 0L : parent.getId(), name, descr.getValue(), null, null );
+				parentId, name, descr.getValue(), null, null );
 		
 		List<Long> ts = new ArrayList<Long>();
-		for( VoTopic vt: getTopics())
-			ts.add(vt.getId().getId());
+		ts.addAll(getTopics());
 		pc.setLogoURLset(getLogoURLset());
 		pc.setTopicSet(ts);
 		
@@ -104,7 +121,7 @@ public class VoProductCategory {
 	
 	@Persistent
 	@Unowned
-	private VoProductCategory parent;
+	private long parentId;
 	
 	@Persistent
 	@Unindexed
@@ -119,35 +136,22 @@ public class VoProductCategory {
 	private List<String> logoURLset;
   
 	@Persistent
-	@Unowned
-	private List<VoTopic> topics;
-	
-	@Persistent(mappedBy="parent")
-	@OneToMany
-	@Unowned
-	private List<VoProductCategory> childs;
+	private List<Long> topics;
 	
 	@Persistent
-	@Unowned
-	private List<VoProduct> products;
-	
-	@Persistent
-	@Unowned
-	private List<VoShop> shops;
-	
-	public List<VoProduct> getProducts(){
-		return products;
-	} 
+	private long shopId;
+
+	 
 	public long getId(){
 		return id.getId();
 	}
 
-	public VoProductCategory getParent() {
-		return parent;
+	public long getParent() {
+		return parentId;
 	}
 
-	public void setParent(VoProductCategory parent) {
-		this.parent = parent;
+	public void setParentId(Long parent) {
+		this.parentId = parent;
 	}
 
 	public String getName() {
@@ -163,7 +167,7 @@ public class VoProductCategory {
 	}
 
 	public void setDescr(String descr) {
-		this.descr = new Text(descr);
+		this.descr = new Text( null == descr ? "" :descr );
 	}
 
 	public List<String> getLogoURLset() {
@@ -174,39 +178,28 @@ public class VoProductCategory {
 		this.logoURLset = logoURLset;
 	}
 
-	public List<VoTopic> getTopics() {
+	public List<Long> getTopics() {
 		return topics;
 	}
 
-	public void addTopic( VoTopic topic) {
+	public void addTopic( Long topic) {
 		this.topics.add(topic);
 	}
 
-	public List<VoProductCategory> getChilds() {
-		return childs;
-	}
-
-	public void addChild(VoProductCategory child) {
-		this.childs.add(child);
-	}
-
-	public void addProduct(VoProduct product) {
-		this.products.add(product);
-	}
-
+	
 	@Override
 	public String toString() {
-		return "VoProductCategory [id=" + id + ", parent=" + parent + ", name=" + name + "]";
+		return "VoProductCategory [id=" + id + ", importId=" + importId + ", parentId=" + parentId + ", name=" + name + ", shopId=" + shopId + "]";
 	}
 	
-	public List<VoShop> getShops() {
-		return shops;
+	public long getShopId() {
+		return shopId;
 	}
 
 	public void update(ProductCategory newCategoryInfo, long userId, PersistenceManager pm) {
 	  
 		this.name = newCategoryInfo.name;
-		this.descr = new Text(newCategoryInfo.descr);
+		this.setDescr(newCategoryInfo.descr);
 		this.logoURLset = new ArrayList<String>();
 		for( String bb: newCategoryInfo.logoURLset) {
 			try {
@@ -218,20 +211,17 @@ public class VoProductCategory {
 	}
 
 	public static VoProductCategory getByImportId(Long shopId, long importId, PersistenceManager pm) {
-		//TODO optimize query to fetch categories of the shop if it's possible
 		Query qu = pm.newQuery(VoProductCategory.class);
-		qu.setFilter("importId == "+importId);
+		qu.setFilter("importId == "+importId+ " && shopId == "+shopId);
 		try {
-			List<VoProductCategory> cl = (List<VoProductCategory>) qu.execute(shopId);
+			List<VoProductCategory> cl = (List<VoProductCategory>) qu.execute();
 			for (VoProductCategory voProductCategory : cl) {
-				for( VoShop vs: voProductCategory.getShops()){
-					if(vs.getId() == shopId )
 						return voProductCategory;
-				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		return null;
 	}
 }
