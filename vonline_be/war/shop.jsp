@@ -473,7 +473,7 @@
                                     <td class="product-price">${product.price}</td>
                                     <td>
                                         <input type="text" class="input-mini spinner1" />
-                                        <%--<span class="unit-name">${productDetails.unitName}</span>--%>
+                                        <span class="unit-name">${product.unitName}</span>
                                     </td>
                                     <td>
                                         <i class="fa fa-shopping-cart"></i>

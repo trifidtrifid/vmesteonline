@@ -242,6 +242,7 @@ $(document).ready(function(){
             var product= {
                 name : name,
                 price : productSelector.find('.product-price').text(),
+                unitName: productSelector.find('.ace-spinner + span').text(),
                 imageURL : $(this).find('img').attr('src')
             };
             var productDetails = client.getProductDetails(productSelector.data('productid'));
@@ -277,7 +278,7 @@ $(document).ready(function(){
                     '<div class="modal-footer">'+
                         '<span>Цена: '+product.price+'</span>'+
                         '<input type="text" class="input-mini spinner1" />'+
-                     productDetails.unitName;
+                     product.unitName;
 
             if ($(this).closest('tr').length > 0 ){
                 popupHtml += '<i class="fa fa-shopping-cart"></i>';
@@ -484,7 +485,7 @@ $(document).ready(function(){
         for (i = 0; i < productListLength; i++){
             productDetails = client.getProductDetails(productsList[i].id);
             var unitName = "";
-            if (productDetails.unitName){unitName = productDetails.unitName;}
+            if (productsList[i].unitName){unitName = productsList[i].unitName;}
             productsHtml += '<tr data-productid="'+ productsList[i].id +'">'+
                 '<td>'+
                 '<a href="#" class="product-link">'+
@@ -650,7 +651,7 @@ $(document).ready(function(){
         for (var j = 0; j < orderLinedLength; j++){
             var productDetails = client.getProductDetails(orderLines[j].product.id);
             var unitName = "";
-            if (productDetails.unitName){unitName = productDetails.unitName;}
+            if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
             ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
                 '<td>'+
                 '<a href="#" class="product-link">'+
@@ -752,8 +753,6 @@ $(document).ready(function(){
         for (var i = ordersLength-1; i >= lastOrderNumber ; i--){
             // форматирование даты
             var tempDate = new Date(orders[i].date*1000);
-            var tempDateItem = [];
-            tempDateItem = tempDate.toLocaleString().split(' ');
             // форматирование статуса заказа
             var orderStatus;
             switch(orders[i].status){
@@ -804,7 +803,7 @@ $(document).ready(function(){
                 '<tr>'+
                 '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
                 '<td class="td2">Заказ N '+i+'</td>'+
-                '<td class="td3">'+ tempDateItem[0] + '</td>'+
+                '<td class="td3">'+ tempDate.getDate() +"."+tempDate.getMonth()+"."+tempDate.getFullYear()+ '</td>'+
                 '<td class="td4">'+ orderStatus +'</td>'+
                 '<td class="td5">'+ orderDelivery +'<br> ' +
                 orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
@@ -829,11 +828,11 @@ $(document).ready(function(){
     }
 
 /*----*/
-    /*var nowTime = parseInt(new Date().getTime()/1000);
+    var nowTime = parseInt(new Date().getTime()/1000);
     nowTime -= nowTime%86400;
     var dateArray = [];
     var day = 3600*24;
-    dateArray[nowTime] = 1;
+    /*dateArray[nowTime] = 1;
     dateArray[nowTime+day] = 1;
     dateArray[nowTime+2*day] = 2;
     dateArray[nowTime+3*day] = 2;
@@ -841,11 +840,11 @@ $(document).ready(function(){
     dateArray[nowTime+6*day] = 1;
     dateArray[nowTime+9*day] = 1;
     dateArray[nowTime-9*day] = 2;
-    client.setDates(dateArray);
+    client.setDates(dateArray); */
     var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
     for (var p in datesArray){
         console.log(p);
-    }*/
+    }
 /*------*/
 
     function initOrderPlusMinus(selector){
@@ -1011,10 +1010,10 @@ $(document).ready(function(){
     orderDate -= orderDate%86400
     var day = 3600*24;
     //var orders = client.getOrders(orderDate-day,orderDate+day);
-    var orders = client.getOrders(0,orderDate+30*day);
+    var orders = client.getOrders(0,orderDate+60*day);
     var ordersLength = orders.length;
     alert(ordersLength);
-    var orderList = [];
+    /*var orderList = [];
     var counter = 0;
     for (var i = 0; i < ordersLength; i++){
         if (orders[i].date = orderDate){
@@ -1029,38 +1028,40 @@ $(document).ready(function(){
             var nowTime = parseInt(new Date().getTime()/1000);
             nowTime -= nowTime%86400;
             var day = 3600*24;
-            var nowDateItem = new Date(nowTime*1000).toLocaleString().split('.');
-            var nowMonth = nowDateItem[1];
+            //var nowDateItem = new Date(nowTime*1000).toLocaleString().split('.');
+            var nowDateItem = new Date(nowTime*1000);
+            var nowMonth = nowDateItem.getMonth();
 
             var datesArray = client.getDates(nowTime-30*day,nowTime+30*day);
             for (var date in datesArray){
                 var tempDate = new Date(date*1000);
-                var tempDateItem = [];
-                tempDateItem = tempDate.toLocaleString().split('.');
+                //var tempDateItem = [];
+                //var tempDateItem = tempDate;//.toLocaleString().split('.');
                 var cleanDay = "";
                 var freeDay = "";
                 var specialDay = "";
                 var closedDay = "";
                 switch(datesArray[date]){
                     case 0:
-                        cleanDay = tempDateItem[0];
+                        cleanDay = tempDate.getDate();
                         break;
                     case 1:
-                        freeDay = tempDateItem[0];
+                        freeDay = tempDate.getDate();
                         break ;
                     case 2:
-                        specialDay = tempDateItem[0];
+                        specialDay = tempDate.getDate();
                         break;
                     case 3:
-                        closedDay = tempDateItem[0];
+                        closedDay = tempDate.getDate();
                         break
                 }
-                //var tempDay = tempDateItem[0];
-                var tempMonth = tempDateItem[1];
-                //var tempYear = tempDateItem[2].slice(0,5);
+                //var tempDay = tempDate[0];
+                var tempMonth = tempDate.getMonth();
+                //var tempYear = tempDate[2].slice(0,5);
 
                 $('.day').each(function(){
                     var day = $(this).text();
+                    console.log(tempMonth+" "+nowMonth);
                     if (tempMonth == nowMonth){
                         if  (day == freeDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('free-day');$(this).attr('id',date);}
                         if  (day == specialDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('special-day');$(this).attr('id',date);}
