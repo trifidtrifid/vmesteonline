@@ -1101,23 +1101,20 @@ $(document).ready(function(){
             }
 
             $('.order-day').click(function(){
-                initVarForMoreOrders();
                  var orderDate = parseInt($(this).attr('id'));
                 var day = 3600*24;
                 var orders = client.getOrders(orderDate,orderDate+day);
                 var ordersLength = orders.length;
-                //alert(ordersLength);
                 var orderList = [];
                 var counter = 0;
                 for (var i = 0; i < ordersLength; i++){
                     if (orders[i].date = orderDate){
                         orderList[counter++] = orders[i];
                     }
-                    //console.log(i+ " "+orders[i].date+" "+orderDate+" "+orders[i].id);
                 }
-                //alert(counter);
                 $('.shop-products').hide();
                 var shopOrdersList = $('.orders-list');
+                initVarForMoreOrders();
                 shopOrdersList.html('').append(createOrdersHtml(orderList));
                 $('.shop-orders').show();
                 initShowMoreOrders(orderList);
@@ -1141,7 +1138,6 @@ $(document).ready(function(){
         for(var i = 0; i < orderLinesLength; i++){
             var curProd = orderLines[i].product;
             var spinVal = orderLines[i].quantity;
-            //alert(spinVal);
             AddSingleProductToBasket(curProd,spinVal);
         }
     }
@@ -1195,13 +1191,10 @@ $(document).ready(function(){
     function initShowMoreOrders(orders){
         $('.more-orders').click(function(e){
             e.preventDefault();
-            /*var nowTime = parseInt(new Date().getTime()/1000);
-            var day = 3600*24;
-            var orders = client.getOrders(0,nowTime+30*day);*/
-            $('.orders-list').find('.more-orders').remove();
-            //initVarForMoreOrders();
+            var orderList = $('.orders-list');
+            orderList.find('.more-orders').remove();
             var itsMoreOrders = true;
-            $('.orders-list').append(createOrdersHtml(orders,itsMoreOrders));
+            orderList.append(createOrdersHtml(orders,itsMoreOrders));
             initShowMoreOrders(orders);
             offsetOrders += lengthOrders;
             setSidebarHeight();
