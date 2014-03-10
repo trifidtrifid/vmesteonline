@@ -32,6 +32,15 @@ public class MessagesTree {
 		items = new ArrayList<ItemPosition>();
 	}
 
+	public int getTopicChildMessagesCount(Filters filters) throws InvalidOperation {
+		List<VoMessage> msgs = getTreeMessagesFirstLevel(filters);
+		int msgsCnt = 0;
+		for (VoMessage voMessage : msgs) {
+			msgsCnt+= voMessage.getChildMessageNum() + 1;
+		}
+		return msgsCnt;
+	}
+
 	public List<VoMessage> getTreeMessagesFirstLevel(Filters filters) throws InvalidOperation {
 		this.filters = filters;
 		parseLevel(getLevel(0), 0);

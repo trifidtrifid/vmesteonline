@@ -30,7 +30,13 @@ public class VoBuilding implements Comparable<VoBuilding> {
 		users = new ArrayList<VoUser>();
 		this.longitude = longitude.toPlainString();
 		this.latitude = latitude.toPlainString();
+		this.addressString = vs.getName() + ", " + fullNo;
+
 		vs.addBuilding(this);
+	}
+
+	public String getAddressString() {
+		return addressString;
 	}
 
 	public String getFullNo() {
@@ -48,6 +54,10 @@ public class VoBuilding implements Comparable<VoBuilding> {
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
 	private Key id;
+
+	@Persistent
+	@Unindexed
+	private String addressString; // no with letter or other extension if any
 
 	@Persistent
 	@Unindexed

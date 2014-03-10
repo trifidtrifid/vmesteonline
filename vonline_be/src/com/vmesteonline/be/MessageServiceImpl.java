@@ -142,78 +142,85 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation,
-			TException {
+	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation {
 
-		TopicListPart mlp = null;
+		TopicListPart mlp = new TopicListPart();
+		PersistenceManager pm = PMF.get().getPersistenceManager();
 
-		if (!TEST_ON_FAKE_DATA) {
-			mlp = new TopicListPart();
-			PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
 
 			try {
 
+				VoUser user = getCurrentUser(pm);
+				pm.retrieve(user);
+				VoUserGroup group = user.getGroupById(groupId);
+
+				String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= "
+						+ VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString() + " and longitude >= "
+						+ VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
+						+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
+						+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() + " and radius >= " + group.getRadius()
+						+ " order by createTime";
+				List<VoTopic> topics = new ArrayList<VoTopic>();
 				try {
-
-					VoUser user = getCurrentUser(pm);
-					pm.retrieve(user);
-					VoUserGroup group = user.getGroupById(groupId);
-
-					String req = "select `id` from topic where rubricId = " + rubricId + " && longitude <= "
-							+ VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString() + " and longitude >= "
-							+ VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
-							+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
-							+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() + " and radius >= " + group.getRadius()
-							+ " order by createTime";
-					List<VoTopic> topics = new ArrayList<VoTopic>();
-					try {
-						ResultSet rs = con.executeQuery(req);
-						boolean addTopic = 0 == lastLoadedTopicId ? true : false;
-						while (rs.next() && topics.size() < length) {
-							long topicId = rs.getLong(1);
-							VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
-							if (addTopic) {
-								topics.add(topic);
-							} else {
-								if (topic.getId() == lastLoadedTopicId) {
-									addTopic = true;
-								}
+					ResultSet rs = con.executeQuery(req);
+					boolean addTopic = 0 == lastLoadedTopicId ? true : false;
+					while (rs.next() && topics.size() < length) {
+						long topicId = rs.getLong(1);
+						VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
+						if (addTopic) {
+							topics.add(topic);
+						} else {
+							if (topic.getId() == lastLoadedTopicId) {
+								addTopic = true;
 							}
 						}
-					} finally {
-						con.close();
 					}
-
-					if (topics.isEmpty()) {
-						logger.fine("can't find any topics");
-						return mlp;
-					}
-					mlp.totalSize = topics.size();
-					for (VoTopic voTopic : topics) {
-						Topic tpc = voTopic.getTopic();
-
-						VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
-						tpc.usertTopic = null == voUserTopic ? null : voUserTopic.getUserTopic();
-						tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
-						mlp.addToTopics(tpc);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				} finally {
+					con.close();
 				}
 
-			} finally {
-				pm.close();
-			}
-			return mlp;
+				if (topics.isEmpty()) {
+					logger.fine("can't find any topics");
+					return mlp;
+				}
+				mlp.totalSize = topics.size();
+				for (VoTopic voTopic : topics) {
+					Topic tpc = voTopic.getTopic();
 
-		} else {
-			int ss = (int) (groupId % 10);
-			mlp = new TopicListPart(new ArrayList<Topic>(), topicsaa[ss].length);
-			for (int topNo = 0; topNo < length && topNo < topicsaa[ss].length; topNo++) {
-				mlp.addToTopics(topicsaa[ss][topNo]);
+					VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
+					if (voUserTopic == null) {
+						voUserTopic = new VoUserTopic();
+
+						Query q = pm.newQuery(VoMessage.class);
+						q.setFilter("topicId == " + voTopic.getId());
+						List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+						MessagesTree tree = new MessagesTree(voMsgs);
+						voUserTopic.setMessagesCount(tree.getTopicChildMessagesCount(new MessagesTree.Filters(user.getId(), group)));
+
+					} else if (voUserTopic.getLastUpdateMessageCount() != voTopic.getLastUpdate()) {
+						Query q = pm.newQuery(VoMessage.class);
+						q.setFilter("topicId == " + voTopic.getId());
+						List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+						MessagesTree tree = new MessagesTree(voMsgs);
+						voUserTopic.setMessagesCount(tree.getTopicChildMessagesCount(new MessagesTree.Filters(user.getId(), group)));
+
+					}
+
+					tpc.usertTopic = voUserTopic.getUserTopic();
+					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
+					tpc.setMessageNum(voUserTopic.getMessagesCount());
+					mlp.addToTopics(tpc);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+
+		} finally {
+			pm.close();
 		}
 		return mlp;
+
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.vmesteonline.be;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.jdo.Extent;
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.http.HttpSession;
@@ -15,8 +17,13 @@ import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.images.Image;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.Transform;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
@@ -26,6 +33,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
+import com.vmesteonline.be.utils.StorageHelper;
 
 public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
@@ -40,9 +48,26 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		super(sess);
 	}
 
+	// TODO this method is forbidden should be removed. use getShortProfile instead
 	@Override
 	public ShortUserInfo getShortUserInfo() throws InvalidOperation {
 		return getShortUserInfo(getCurrentUserId());
+	}
+
+	@Override
+	public ShortProfile getShortProfile() throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser voUser = getCurrentUser(pm);
+			ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, "", "", "");
+			VoPostalAddress pa = voUser.getAddress();
+			if (pa != null) {
+				sp.setAddress(pa.getBuilding().getAddressString());
+			}
+			return sp;
+		} finally {
+			pm.close();
+		}
 	}
 
 	public static ShortUserInfo getShortUserInfo(long userId) {
@@ -54,6 +79,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.warn("request short user info for absent user " + userId);
+		} finally {
+			pm.close();
 		}
 		return null;
 	}
@@ -260,6 +287,41 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
+	public void updateUserAvatar(String url) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		VoUser voUser = getCurrentUser(pm);
+
+		ImagesService imagesService = ImagesServiceFactory.getImagesService();
+
+		try {
+			VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(url));
+			Image origImage = ImagesServiceFactory.makeImageFromFilename(vfar.getFileName().toString());
+			Transform resize = ImagesServiceFactory.makeResize(95, 95);
+			String topicAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
+
+			resize = ImagesServiceFactory.makeResize(40, 40);
+			String shortProfileAvatarUrl = StorageHelper
+					.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
+
+			resize = ImagesServiceFactory.makeResize(200, 200);
+			String profileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
+
+			voUser.setAvatarTopic(topicAvatarUrl);
+			voUser.setAvatarMessage(topicAvatarUrl);
+			voUser.setAvatarProfileShort(shortProfileAvatarUrl);
+			voUser.setAvatarProfile(profileAvatarUrl);
+
+		} catch (Exception e) {
+			logger.warn("can't get VoFileAccessRecord for file " + url + " " + e.getMessage());
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.IncorrectParametrs, "can't find image");
+		} finally {
+			pm.close();
+		}
+
+	}
+
+	@Override
 	public FullAddressCatalogue getAddressCatalogue() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -296,6 +358,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
+	// TODO this method called only once in test. may be unused?
 	@Override
 	public boolean setUserAddress(PostalAddress newAddress) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();

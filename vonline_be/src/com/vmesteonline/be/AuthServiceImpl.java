@@ -12,7 +12,6 @@ import javax.jdo.Query;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
-import com.google.appengine.api.datastore.KeyFactory;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
@@ -115,7 +114,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 			} else {
 				try {
-					user.setLocation(Long.parseLong(locationId), true, pm);
+					user.setLocation(Long.parseLong(locationId), pm);
 				} catch (NumberFormatException | InvalidOperation e) {
 					throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 				}

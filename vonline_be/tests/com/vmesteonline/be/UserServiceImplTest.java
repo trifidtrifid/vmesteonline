@@ -60,6 +60,33 @@ public class UserServiceImplTest extends UserServiceImpl {
 	}
 
 	@Test
+	public void testGetUserShortProfile() {
+
+		PersistenceManager pm = PMF.getPm();
+		try {
+			asi.login(Defaults.user1email, Defaults.user1pass);
+
+			VoUser voUserA = asi.getCurrentUser(pm);
+			ShortProfile sp = usi.getShortProfile();
+
+			Assert.assertEquals(voUserA.getId(), sp.getId());
+			Assert.assertEquals(Defaults.user1name, sp.getFirstName());
+			Assert.assertEquals(Defaults.user1lastName, sp.getLastName());
+			Assert.assertEquals("Республиканская, 32/3", sp.getAddress());
+			fail("should implement");
+			Assert.assertEquals("", sp.getAvatar());
+			Assert.assertEquals("", sp.getBalance());
+			Assert.assertEquals(0, sp.getRating());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Test
 	public void testGetUserAandBVoGroups() {
 
 		try {

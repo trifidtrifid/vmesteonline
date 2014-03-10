@@ -60,6 +60,8 @@ public class VoHelper {
 
 	}
 
+	// TODO этот метод не используется. Метод принимает 2 координаты, и определяет расстояние между ними. Почему то, этот метод дает погрешность по
+	// сравнению с методом который генерирует дельту
 	public static int calculateRadius(GeoLocation a, GeoLocation b) {
 
 		BigDecimal deltaLat = a.getLongitude().subtract(b.getLongitude()).abs();

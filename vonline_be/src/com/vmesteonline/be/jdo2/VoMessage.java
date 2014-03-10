@@ -78,6 +78,9 @@ public class VoMessage extends VoBaseMessage {
 			setLongitude(topic.getLongitude());
 			setLatitude(topic.getLatitude());
 
+			// вставка времени последнего апдейта
+			topic.setLastUpdate((int)(System.currentTimeMillis() / 1000L));
+
 			try {
 				/* CHeck the recipient */
 				if (0 != msg.getRecipientId()) {
