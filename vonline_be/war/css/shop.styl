@@ -140,14 +140,28 @@ transform()
           background #f2f2f2
         tr
           td
-      img
-        float left
-        width 40px
+      .product-link
+        span
+          float left
+          width 40px
+          text-align center
+          img
+            max-width 40px
+            max-height 40px
+      .ace-spinner
+      .ace-spinner+span
+        display inline-block
+        vertical-align middle
       .product-right-descr
         margin-left 45px
         margin-bottom 10px
         padding-right 20px
         line-height 16px
+      .flexslider
+        li
+          padding 0
+          border 0
+          background 0
   .itogo-right
     padding-left 10px
     font-size 16px
@@ -433,9 +447,13 @@ th.next
         float none
         display inline-block
     .slider
+      li
+        height 192px
+        line-height 192px
       img
         max-width 192px
         max-height  192px
+        vertical-align middle
     .carousel
       img
         max-width 60px

@@ -229,13 +229,23 @@ $(document).ready(function(){
         selector.click(function(e){
             e.preventDefault();
 
-            var tr = $(this).closest('tr');
+            var productSelector,
+                name;
+            if ($(this).closest('tr').length > 0 ){
+                productSelector = $(this).closest('tr');
+                name = $(this).find('span span').text();
+            }else{
+                productSelector = $(this).closest('li');
+                name= $(this).find('.product-right-descr').text()
+            }
+
             var product= {
-                name : $(this).find('span span').text(),
-                price : tr.find('.product-price').text(),
+                name : name,
+                price : productSelector.find('.product-price').text(),
                 imageURL : $(this).find('img').attr('src')
             };
-            var productDetails = client.getProductDetails(tr.data('productid'));
+            var productDetails = client.getProductDetails(productSelector.data('productid'));
+            var imagesSet = productDetails.imagesURLset;
             var popupHtml = "";
             popupHtml += '<div class="modal-body">'+
                 '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
@@ -245,40 +255,20 @@ $(document).ready(function(){
                             '<li>'+
                                 '<img src="'+product.imageURL+'" />'+
                             '</li>'+
-                        '<li>'+
-                            '<img src="i/shop/2.jpg" />'+
-                        '</li>'+
-                            '<li>'+
-                                '<img src="i/shop/3.jpg" />'+
-                            '</li>'+
-                            '<li>'+
-                                '<img src="i/shop/4.jpg" />'+
-                            '</li>'+
-                            '<li>'+
-                                '<img src="i/shop/5.jpg" />'+
-                            '</li>'+
                         '</ul>'+
-                    '</div>'+
-                    '<div class="carousel flexslider">'+
+                    '</div>';
+
+                if(imagesSet.length){
+                    popupHtml += '<div class="carousel flexslider">'+
                         '<ul class="slides">'+
-                            '<li>'+
-                                '<img src="'+product.imageURL+'" />'+
-                            '</li>'+
                         '<li>'+
-                            '<img src="i/shop/2.jpg" />'+
+                        '<img src="'+product.imageURL+'" />'+
                         '</li>'+
-                            '<li>'+
-                                '<img src="i/shop/3.jpg" />'+
-                            '</li>'+
-                            '<li>'+
-                                '<img src="i/shop/4.jpg" />'+
-                            '</li>'+
-                            '<li>'+
-                                '<img src="i/shop/5.jpg" />'+
-                            '</li>'+
                         '</ul>'+
-                    '</div>'+
-                '</div>'+
+                        '</div>';
+                }
+
+                popupHtml += '</div>'+
                 '<div class="product-descr">'+
                     '<h3>'+product.name+'</h3>'+
                     '<div class="product-text">'+
@@ -287,16 +277,20 @@ $(document).ready(function(){
                     '<div class="modal-footer">'+
                         '<span>Цена: '+product.price+'</span>'+
                         '<input type="text" class="input-mini spinner1" />'+
-                    productDetails.unitName+
-                        '<i class="fa fa-shopping-cart"></i>'+
-                    '</div>'+
+                     productDetails.unitName;
+
+            if ($(this).closest('tr').length > 0 ){
+                popupHtml += '<i class="fa fa-shopping-cart"></i>';
+            }
+
+                popupHtml += '</div>'+
                 '</div>'+
             '</div>';
 
             var currentModal = $(this).find('+.modal');
             if (currentModal.find('.modal-body').length == 0){
                 currentModal.append(popupHtml);
-                InitSpinner(currentModal.find('.spinner1'), tr.find('.ace-spinner').spinner('value'));
+                InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'));
             }
             currentModal.modal();
             var carousel = currentModal.find('.carousel');
@@ -323,11 +317,14 @@ $(document).ready(function(){
     }
 
     $('.btn-order').click(function(){
-
-        if ($('.input-delivery').hasClass('active') && (!$('#country-delivery').val() || !$('#city-delivery').val() || !$('#street-delivery').val() || !$('#building-delivery').val() || !$('#flat-delivery').val())){
-            $('.alert-delivery').show();
+        if(!$('#phone-delivery').val()){
+            $('.alert-delivery-phone').show();
+        }else if ($('.input-delivery').hasClass('active') && (!$('#country-delivery').val() || !$('#city-delivery').val() || !$('#street-delivery').val() || !$('#building-delivery').val() || !$('#flat-delivery').val())){
+            $('.alert-delivery-phone').hide();
+            $('.alert-delivery-addr').show();
         }else{
-            $('.alert-delivery').hide();
+            $('.alert-delivery-addr').hide();
+            $('.alert-delivery-phone').hide();
             var popup = $('.modal-order-end');
             popup.modal();
             var orderList = $('.catalog-order>li');
@@ -425,7 +422,8 @@ $(document).ready(function(){
 
 
                     // передаем адресс доставки
-                    var deliveryAddress = {
+                    console.log(country.id+" "+city.id+" "+street.id+" "+building.id+" "+$('#flat-delivery').val()+" "+$('#order-comment').val());
+                    /*var deliveryAddress = new com.vmesteonline.be.PostalAddress(
                         country : country,
                         city : city,
                         street : street,
@@ -434,9 +432,18 @@ $(document).ready(function(){
                         floor: 0,
                         flatNo: parseInt($('#flat-delivery').val()),
                         comment: $('#order-comment').val()
-                    };
+                };*/
+                var deliveryAddress = new com.vmesteonline.be.PostalAddress();
+                    deliveryAddress.country = country;
+                    deliveryAddress.city = city;
+                    deliveryAddress.street = street;
+                    deliveryAddress.building = building;
+                    deliveryAddress.staircase = 0;
+                    deliveryAddress.floor= 0;
+                    deliveryAddress.flatNo = parseInt($('#flat-delivery').val());
+                    deliveryAddress.comment = $('#order-comment').val();
 
-                    client.setOrderDeliveryAddress(deliveryAddress);
+                     client.setOrderDeliveryAddress(deliveryAddress);
                 }
                 client.confirmOrder();
                 alert('Ваш заказ принят !');
@@ -622,9 +629,7 @@ $(document).ready(function(){
                     $('.empty-basket').removeClass('hide');
                 }
             });
-            /*if (currentProduct){
-             if(currentProduct.hasClass('added')){currentProduct.removeClass('added');}
-             }*/
+            client.removeOrderLine($(this).closest('li').data('productid'));
         });
     }
 
@@ -756,7 +761,7 @@ $(document).ready(function(){
                     orderStatus = "Неизвестен" ;
                     break
                 case 1:
-                    orderStatus = "Новый" ;
+                    orderStatus = "Не подтвержден" ;
                     break
                 case 2:
                     orderStatus = "Подтвержден" ;
@@ -791,7 +796,7 @@ $(document).ready(function(){
                     orderDelivery = "Курьер далеко";
                     break
             }
-            ordersHtml += '<div class="order-item" data-orderid="'+ orders[i].id +'">'+
+            ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
                 '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
                 '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить в корзину</button>'+
                 '<table class="orders-tbl">'+
@@ -799,9 +804,12 @@ $(document).ready(function(){
                 '<tr>'+
                 '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
                 '<td class="td2">Заказ N '+i+'</td>'+
-                '<td class="td3">'+ tempDateItem[0] + " "+ tempDateItem[1] + '</td>'+
+                '<td class="td3">'+ tempDateItem[0] + '</td>'+
                 '<td class="td4">'+ orderStatus +'</td>'+
-                '<td class="td5">'+ orderDelivery +'</td>'+
+                '<td class="td5">'+ orderDelivery +'<br> ' +
+                orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
+                orderDetails.deliveryTo.flatNo+
+                '</td>'+
                 '<td class="td6">'+ orders[i].totalCost +'</td>'+
                 '</tr>'+
                 '</tbody>'+
@@ -821,7 +829,7 @@ $(document).ready(function(){
     }
 
 /*----*/
-   /* var nowTime = parseInt(new Date().getTime()/1000);
+    /*var nowTime = parseInt(new Date().getTime()/1000);
     nowTime -= nowTime%86400;
     var dateArray = [];
     var day = 3600*24;
@@ -830,6 +838,8 @@ $(document).ready(function(){
     dateArray[nowTime+2*day] = 2;
     dateArray[nowTime+3*day] = 2;
     dateArray[nowTime+4*day] = 1;
+    dateArray[nowTime+6*day] = 1;
+    dateArray[nowTime+9*day] = 1;
     dateArray[nowTime-9*day] = 2;
     client.setDates(dateArray);
     var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
@@ -886,7 +896,7 @@ $(document).ready(function(){
                 var spinnerValue = currentProductSelector.find('.ace-spinner').spinner('value');
                 var currentProduct = {
                     id : currentProductSelector.data('productid'),
-                    imageUrl : currentProductSelector.find('.product-link img').attr('src'),
+                    imageURL : currentProductSelector.find('.product-link img').attr('src'),
                     name : currentProductSelector.find('.product-link span span').text(),
                     price : currentProductSelector.find('.product-price').text()
                 };
@@ -925,13 +935,33 @@ $(document).ready(function(){
         if (productDetails.unitName){unitName = productDetails.unitName;}
         var productHtml = '<li data-productid="'+ currentProduct.id +'">'+
             '<a href="#" class="product-link no-init">'+
-            '<img src="'+ currentProduct.imageUrl +'" alt="картинка"/>'+
+            '<span><img src="'+ currentProduct.imageURL +'" alt="картинка"/></span>'+
             '<div class="product-right-descr">'+
             currentProduct.name+
             '</div>'+
             '</a>'+
             '<div class="modal">'+
-            '<div class="modal-body">'+
+            '</div>'+
+            '<table>'+
+            '<thead>'+
+            '<tr>'+
+            '<td>Цена(шт)</td>'+
+            '<td>Кол-во</td>'+
+            '<td>Сумма</td>'+
+            '<td></td>'+
+            '</tr>'+
+            '</thead>'+
+            '<tr>'+
+            '<td class="td-price">'+ currentProduct.price +'</td>'+
+            '<td><input type="text" class="input-mini spinner1 no-init" /><span>'+ unitName +'</span></td>'+
+            '<td class="td-summa">'+ currentProduct.price +'</td>'+
+            '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
+            '</tr>'+
+            '</table>'+
+            '</li>';
+
+
+        /*'<div class="modal-body">'+
             '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
             '<div class="product-slider">'+
             '<div class="slider flexslider">'+
@@ -958,25 +988,7 @@ $(document).ready(function(){
             '<span>Цена: '+ currentProduct.price +'</span>'+
             '</div>'+
             '</div>'+
-            '</div>'+
-            '</div>'+
-            '<table>'+
-            '<thead>'+
-            '<tr>'+
-            '<td>Цена(шт)</td>'+
-            '<td>Кол-во</td>'+
-            '<td>Сумма</td>'+
-            '<td></td>'+
-            '</tr>'+
-            '</thead>'+
-            '<tr>'+
-            '<td class="td-price">'+ currentProduct.price +'</td>'+
-            '<td><input type="text" class="input-mini spinner1 no-init" /> '+ unitName +'</td>'+
-            '<td class="td-summa">'+ currentProduct.price +'</td>'+
-            '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
-            '</tr>'+
-            '</table>'+
-            '</li>';
+            '</div>';*/
 
         $('.catalog-order').append(productHtml);
         //currentProduct.addClass('added');
@@ -1049,7 +1061,6 @@ $(document).ready(function(){
 
                 $('.day').each(function(){
                     var day = $(this).text();
-                    console.log(tempMonth+" "+nowMonth);
                     if (tempMonth == nowMonth){
                         if  (day == freeDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('free-day');$(this).attr('id',date);}
                         if  (day == specialDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('special-day');$(this).attr('id',date);}
@@ -1156,14 +1167,15 @@ $(document).ready(function(){
     }
 
     function initOrderBtns(){
-
         $('.repeat-order-btn').click(function(){
             var orderData= {
                 itsOrder: true,
                 itsAppend: false,
                 orderId : $(this).closest('.order-item').data('orderid')
             };
+            flagFromBasketClick = 1;
             dPicker.trigger('focus').trigger('click',[0, 0, orderData, 'Event']);
+            flagFromBasketClick = 0;
 
         });
         $('.add-order-btn').click(function(){
@@ -1196,6 +1208,8 @@ $(document).ready(function(){
             var itsMoreOrders = true;
             orderList.append(createOrdersHtml(orders,itsMoreOrders));
             initShowMoreOrders(orders);
+            initOrderPlusMinus($('.orders-no-init'));
+            $('.orders-no-init').removeClass('orders-no-init');
             offsetOrders += lengthOrders;
             setSidebarHeight();
         });
@@ -1225,7 +1239,8 @@ $(document).ready(function(){
            initVarForMoreOrders();
            ordersList.html('').append(createOrdersHtml(orders));
            initShowMoreOrders(orders);
-           initOrderPlusMinus(ordersList);
+           initOrderPlusMinus($('.orders-no-init'));
+           $('.orders-no-init').removeClass('orders-no-init');
            initOrderBtns();
             shopOrders.show();
            setSidebarHeight();

@@ -140,15 +140,30 @@ a {
 .shop-right .catalog-order li table thead td {
   background: #f2f2f2;
 }
-.shop-right .catalog-order li img {
+.shop-right .catalog-order li .product-link span {
   float: left;
   width: 40px;
+  text-align: center;
+}
+.shop-right .catalog-order li .product-link span img {
+  max-width: 40px;
+  max-height: 40px;
+}
+.shop-right .catalog-order li .ace-spinner,
+.shop-right .catalog-order li .ace-spinner+span {
+  display: inline-block;
+  vertical-align: middle;
 }
 .shop-right .catalog-order li .product-right-descr {
   margin-left: 45px;
   margin-bottom: 10px;
   padding-right: 20px;
   line-height: 16px;
+}
+.shop-right .catalog-order li .flexslider li {
+  padding: 0;
+  border: 0;
+  background: 0;
 }
 .shop-right .itogo-right {
   padding-left: 10px;
@@ -502,9 +517,14 @@ span
   float: none;
   display: inline-block;
 }
+.modal .product-slider .slider li {
+  height: 192px;
+  line-height: 192px;
+}
 .modal .product-slider .slider img {
   max-width: 192px;
   max-height: 192px;
+  vertical-align: middle;
 }
 .modal .product-slider .carousel img {
   max-width: 60px;
