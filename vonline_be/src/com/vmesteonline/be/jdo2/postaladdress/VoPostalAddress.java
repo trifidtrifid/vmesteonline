@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2.postaladdress;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -17,35 +18,28 @@ import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoUserGroup;
 
 @PersistenceCapable
 public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
 	public VoPostalAddress(VoBuilding building, byte staircase, byte floor, byte flatNo, String comment) {
-		this(building, staircase, floor, flatNo, comment, null);
+
+		this.building = building;
+		this.staircase = staircase;
+		this.floor = floor;
+		this.flatNo = flatNo;
+		this.comment = comment;
+		BigDecimal staircaseOffset = new BigDecimal("0.0000001");
+		staircaseOffset = staircaseOffset.multiply(new BigDecimal(staircase));
+		
+		System.out.print("offset: " + staircaseOffset.add(building.getLongitude()));
+		userGroup = new VoUserGroup("Парадная " + staircase, 0, staircaseOffset.add(building.getLongitude()), building.getLatitude());
+
 	}
 
-	public VoPostalAddress(VoBuilding building, byte staircase, byte floor, byte flatNo, String comment, PersistenceManager _pm) {
-		// TODO lets check that the address is not created yet
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-		try {
-			/*
-			 * Query q = pm.newQuery(VoPostalAddress.class);
-			 * q.setFilter("building == :key");
-			 * q.setFilter("staircase == "+staircase); q.setFilter("floor == "+floor);
-			 * q.setFilter("flatNo == "+flatNo); List<VoPostalAddress> pal =
-			 * q.execute(building.getId());
-			 */
-			this.building = building;
-			this.staircase = staircase;
-			this.floor = floor;
-			this.flatNo = flatNo;
-			this.comment = comment;
-			// pm.makePersistent(this);
-		} finally {
-			if (null == _pm)
-				pm.close();
-		}
+	public VoUserGroup getUserHomeGroup() {
+		return userGroup;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,8 +86,8 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	public String toString() {
 		return "VoPostalAddress [id=" + id + ", building=" + building + ", staircase=" + staircase + ", floor=" + floor + ", flatNo=" + flatNo + "]";
 	}
-	
-		@Override
+
+	@Override
 	public int compareTo(VoPostalAddress that) {
 		return null == that.building ? this.building == null ? 0 : -1 : null == this.building ? 1 : Long.compare(this.building.getId().getId(),
 				that.building.getId().getId()) != 0 ? Long.compare(this.building.getId().getId(), that.building.getId().getId()) : Integer.compare(flatNo,
@@ -115,6 +109,7 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	public PostalAddress getPostalAddress() {
 		return getPostalAddress(null);
 	}
+
 	public PostalAddress getPostalAddress(PersistenceManager _pm) {
 		Key streetKey = building.getStreet();
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
@@ -123,18 +118,20 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 			return new PostalAddress(voStreet.getCity().getCountry().getCountry(), voStreet.getCity().getCity(), voStreet.getStreet(),
 					building.getBuilding(), staircase, floor, flatNo, comment);
 		} finally {
-			if(_pm ==null) pm.close();
+			if (_pm == null)
+				pm.close();
 		}
 	}
-	
-	public String getAddressText( PersistenceManager _pm ){
-		PersistenceManager pm = null==_pm ? PMF.getPm() : _pm;
+
+	public String getAddressText(PersistenceManager _pm) {
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		try {
 			PostalAddress pa = getPostalAddress(pm);
-			return pa.getCity().getName() + " " + pa.getStreet().getName() + " д." + building.getFullNo() +" кв."+
-					flatNo + " [э." + floor + " п. "+staircase+"]";
+			return pa.getCity().getName() + " " + pa.getStreet().getName() + " д." + building.getFullNo() + " кв." + flatNo + " [э." + floor + " п. "
+					+ staircase + "]";
 		} finally {
-			if( null==_pm )pm.close();
+			if (null == _pm)
+				pm.close();
 		}
 	}
 
@@ -179,5 +176,9 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
 	@Persistent
 	private String comment;
+
+	@Persistent
+	@Unowned
+	private VoUserGroup userGroup;
 
 }

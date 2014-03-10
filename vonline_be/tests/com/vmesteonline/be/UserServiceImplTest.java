@@ -3,20 +3,27 @@ package com.vmesteonline.be;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+
+import javax.jdo.PersistenceManager;
 
 import junit.framework.Assert;
 
 import org.apache.thrift.TException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.utils.Defaults;
+import com.vmesteonline.be.utils.VoHelper;
 
-public class UserServiceImplTest {
+public class UserServiceImplTest extends UserServiceImpl {
 
 	private static final String SESSION_ID = "11111111111111111111111";
 	private static final String COMMENT = "Комент";
@@ -25,8 +32,7 @@ public class UserServiceImplTest {
 	private static final String CITY = "Saint-Petersburg";
 	private static final String COUNTRY = "Russia";
 
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
-			new LocalDatastoreServiceTestConfig());
+	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
 	private AuthServiceImpl asi;
 	private String userHomeLocation;
@@ -35,28 +41,129 @@ public class UserServiceImplTest {
 
 	@Before
 	public void setUp() throws Exception {
-		helper.setUp();
 
+		helper.setUp();
+		Assert.assertTrue(Defaults.initDefaultData());
 		// register and login current user
 		// Initialize USer Service
-		String sessionId = SESSION_ID;
-		asi = new AuthServiceImpl(sessionId);
-		List<String> userLocation = UserServiceImpl
-				.getLocationCodesForRegistration();
+		sessionStorage = new SessionIdStorage(SESSION_ID);
+		asi = new AuthServiceImpl(SESSION_ID);
+		usi = new UserServiceImpl(SESSION_ID);
+
+		List<String> userLocation = UserServiceImpl.getLocationCodesForRegistration();
 		Assert.assertNotNull(userLocation);
 		Assert.assertTrue(userLocation.size() > 0);
 		userHomeLocation = userLocation.get(0);
-		userId = asi.registerNewUser("fn", "ln", "pswd", "eml",
-				userHomeLocation);
+		userId = asi.registerNewUser("fn", "ln", "pswd", "eml", userHomeLocation);
 		Assert.assertTrue(userId > 0);
 		asi.login("eml", "pswd");
-		usi = new UserServiceImpl(sessionId);
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		helper.tearDown();
-		// asi.logout();
+	@Test
+	public void testGetUserShortProfile() {
+
+		PersistenceManager pm = PMF.getPm();
+		try {
+			asi.login(Defaults.user1email, Defaults.user1pass);
+
+			VoUser voUserA = asi.getCurrentUser(pm);
+			ShortProfile sp = usi.getShortProfile();
+
+			Assert.assertEquals(voUserA.getId(), sp.getId());
+			Assert.assertEquals(Defaults.user1name, sp.getFirstName());
+			Assert.assertEquals(Defaults.user1lastName, sp.getLastName());
+			Assert.assertEquals("Республиканская, 32/3", sp.getAddress());
+			fail("should implement");
+			Assert.assertEquals("", sp.getAvatar());
+			Assert.assertEquals("", sp.getBalance());
+			Assert.assertEquals(0, sp.getRating());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Test
+	public void testGetUserAandBVoGroups() {
+
+		try {
+			PersistenceManager pmA = PMF.getPm();
+			PersistenceManager pmB = PMF.getPm();
+
+			try {
+
+				asi.login(Defaults.user1email, Defaults.user1pass);
+				VoUser uA = getCurrentUser(pmA);
+				List<VoUserGroup> voUserGroupsA = uA.getGroups();
+
+				asi.login(Defaults.user3email, Defaults.user3pass);
+				VoUser uB = getCurrentUser(pmB);
+				List<VoUserGroup> voUserGroupsB = uB.getGroups();
+
+				Assert.assertEquals(5, voUserGroupsB.size());
+				Assert.assertEquals(0, voUserGroupsB.get(0).getRadius());
+				Assert.assertEquals(20, voUserGroupsB.get(1).getRadius());
+				Assert.assertEquals(200, voUserGroupsB.get(2).getRadius());
+				Assert.assertEquals(2000, voUserGroupsB.get(3).getRadius());
+				Assert.assertEquals(5000, voUserGroupsB.get(4).getRadius());
+
+				Assert.assertEquals(5, voUserGroupsA.size());
+				Assert.assertEquals(0, voUserGroupsA.get(0).getRadius());
+				Assert.assertEquals(20, voUserGroupsA.get(1).getRadius());
+				Assert.assertEquals(200, voUserGroupsA.get(2).getRadius());
+				Assert.assertEquals(2000, voUserGroupsA.get(3).getRadius());
+				Assert.assertEquals(5000, voUserGroupsA.get(4).getRadius());
+
+				/*
+				 * Assert.assertEquals(voUserGroupsA.get(0).getLongitude(), new BigDecimal("59.9331461"));
+				 * Assert.assertEquals(voUserGroupsB.get(0).getLongitude(), new BigDecimal("59.9331462"));
+				 */System.out.print("max = " + VoHelper.getLongitudeMax(voUserGroupsA.get(0).getLongitude(), 200).toPlainString() + " origin = "
+						+ voUserGroupsA.get(0).getLongitude() + "\n");
+				System.out.print("lat max = " + VoHelper.getLatitudeMax(voUserGroupsA.get(0).getLatitude(), 200).toPlainString() + " origin = "
+						+ voUserGroupsA.get(0).getLatitude() + "\n");
+
+				System.out.print("delta = " + VoHelper.calculateRadius(voUserGroupsA.get(0), voUserGroupsB.get(0)));
+			} finally {
+				pmA.close();
+				pmB.close();
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetUserAandBGroups() {
+
+		try {
+			asi.login(Defaults.user1email, Defaults.user1pass);
+			List<Group> userAgroups = usi.getUserGroups();
+			asi.login(Defaults.user2email, Defaults.user2pass);
+			List<Group> userBgroups = usi.getUserGroups();
+
+			Assert.assertEquals(5, userAgroups.size());
+			Assert.assertEquals(0, userAgroups.get(0).getRadius());
+			Assert.assertEquals(20, userAgroups.get(1).getRadius());
+			Assert.assertEquals(200, userAgroups.get(2).getRadius());
+			Assert.assertEquals(2000, userAgroups.get(3).getRadius());
+			Assert.assertEquals(5000, userAgroups.get(4).getRadius());
+
+			Assert.assertEquals(5, userBgroups.size());
+			Assert.assertEquals(0, userBgroups.get(0).getRadius());
+			Assert.assertEquals(20, userBgroups.get(1).getRadius());
+			Assert.assertEquals(200, userBgroups.get(2).getRadius());
+			Assert.assertEquals(2000, userBgroups.get(3).getRadius());
+			Assert.assertEquals(5000, userBgroups.get(4).getRadius());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
 	}
 
 	@Test
@@ -185,8 +292,7 @@ public class UserServiceImplTest {
 			Country newCountry = usi.createNewCountry(COUNTRY);
 			City newCity = usi.createNewCity(newCountry.getId(), CITY);
 			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(),
-					BUILDING_NO, 0D, 0D);
+			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "0", "0");
 
 			Assert.assertEquals(newBuilding.getFullNo(), BUILDING_NO);
 			Assert.assertEquals(newBuilding.getStreetId(), newStreet.getId());
@@ -215,29 +321,24 @@ public class UserServiceImplTest {
 			Country newCountry = usi.createNewCountry(COUNTRY);
 			City newCity = usi.createNewCity(newCountry.getId(), CITY);
 			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(),
-					BUILDING_NO, 17D, 53D);
+			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "17", "53");
 			byte floor, flat, staircase;
 
-			PostalAddress newAddress = new PostalAddress(newCountry, newCity,
-					newStreet, newBuilding, staircase = 1, floor = 2, flat = 3,
-					COMMENT);
+			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT);
 			boolean created = usi.addUserAddress(newAddress);
 			Assert.assertTrue(created);
 			Set<PostalAddress> userAddresses = usi.getUserAddresses();
 			PostalAddress found = null;
 			int addressCount = userAddresses.size();
 			for (PostalAddress pa : userAddresses) {
-				if (pa.getFloor() == floor && pa.getFlatNo() == flat
-						&& staircase == pa.getStaircase())
+				if (pa.getFloor() == floor && pa.getFlatNo() == flat && staircase == pa.getStaircase())
 					if (found != null)
 						fail("Adsress dublicate detected!");
 					else
 						found = pa;
 			}
 			Assert.assertNotNull(found);
-			Assert.assertEquals(found.getBuilding().getId(),
-					newBuilding.getId());
+			Assert.assertEquals(found.getBuilding().getId(), newBuilding.getId());
 			Assert.assertEquals(found.getStreet().getId(), newStreet.getId());
 			Assert.assertEquals(found.getCity().getId(), newCity.getId());
 			Assert.assertEquals(found.getCountry().getId(), newCountry.getId());
@@ -247,15 +348,11 @@ public class UserServiceImplTest {
 			int nextAddressCount = usi.getUserAddresses().size();
 			Assert.assertEquals(addressCount, nextAddressCount);
 
-			created = usi.addUserAddress(new PostalAddress(newCountry, newCity,
-					newStreet, newBuilding, staircase = 1, floor = 2, flat = 3,
-					COMMENT));
+			created = usi.addUserAddress(new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT));
 			int next2AddressCount = usi.getUserAddresses().size();
 			Assert.assertEquals(addressCount, next2AddressCount);
 
-			created = usi.addUserAddress(new PostalAddress(newCountry, newCity,
-					newStreet, newBuilding, staircase = 1, floor = 2, flat = 4,
-					COMMENT));
+			created = usi.addUserAddress(new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 4, COMMENT));
 			int next3AddressCount = usi.getUserAddresses().size();
 			Assert.assertEquals(addressCount + 1, next3AddressCount);
 
@@ -271,21 +368,18 @@ public class UserServiceImplTest {
 			Country newCountry = usi.createNewCountry(COUNTRY);
 			City newCity = usi.createNewCity(newCountry.getId(), CITY);
 			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(),
-					BUILDING_NO, 17D, 53D);
+			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "17", "53");
 			byte floor;
-			byte flat; 
+			byte flat;
 			byte staircase;
+			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT);
 
-			PostalAddress newAddress = new PostalAddress(newCountry, newCity,
-					newStreet, newBuilding, staircase = 1, floor = 2, flat = 3,
-					COMMENT);
 			boolean created = usi.setUserAddress(newAddress);
 			PostalAddress userHomeAddress = usi.getUserHomeAddress();
 			Assert.assertTrue(userHomeAddress.equals(newAddress));
-		} catch (TException e) {
+		} catch (InvalidOperation e) {
 			e.printStackTrace();
-			fail(e.getMessage());
+			fail("Exception " + e.getMessage());
 		}
 	}
 }

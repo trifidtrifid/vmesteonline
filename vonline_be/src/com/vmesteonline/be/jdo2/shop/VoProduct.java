@@ -78,18 +78,12 @@ public class VoProduct {
 		this.categories = new ArrayList<Long>();
 		this.categories.addAll(newInfo.details.getCategories());
 		/*
-		 * List<Long> categoriesFromNewList = new ArrayList<Long>(); for(
-		 * VoProductCategory vpc: this.getCategories()){ if(
-		 * newInfo.details.categories.contains(vpc.getId()))
-		 * categoriesFromNewList.add(vpc.getId()); else { for( VoProduct vp:
-		 * vpc.getProducts()){ if( vp.getId() == this.getId() ) {
-		 * vpc.getProducts().remove(vp); break; } } } } for( Long pcid:
-		 * newInfo.details.categories ){
+		 * List<Long> categoriesFromNewList = new ArrayList<Long>(); for( VoProductCategory vpc: this.getCategories()){ if(
+		 * newInfo.details.categories.contains(vpc.getId())) categoriesFromNewList.add(vpc.getId()); else { for( VoProduct vp: vpc.getProducts()){ if(
+		 * vp.getId() == this.getId() ) { vpc.getProducts().remove(vp); break; } } } } for( Long pcid: newInfo.details.categories ){
 		 * 
-		 * if( !categoriesFromNewList.contains( pcid )){ // if it's an added
-		 * category for the product VoProductCategory nvpc =
-		 * _pm.getObjectById(VoProductCategory.class, pcid); nvpc.addProduct(this);
-		 * this.categories.add(nvpc); } }
+		 * if( !categoriesFromNewList.contains( pcid )){ // if it's an added category for the product VoProductCategory nvpc =
+		 * _pm.getObjectById(VoProductCategory.class, pcid); nvpc.addProduct(this); this.categories.add(nvpc); } }
 		 */
 	}
 
@@ -135,9 +129,9 @@ public class VoProduct {
 			vp.optionsMap = details.getOptionsMap();
 
 			vp.shopId = shop.getId();
-						vp.categories = details.getCategories();
+			vp.categories = details.getCategories();
 			vp.topicSet = details.getTopicSet();
-			
+
 			pm.getObjectById(VoProducer.class, details.getProducerId());
 			vp.producerId = details.getProducerId();
 
@@ -151,13 +145,13 @@ public class VoProduct {
 				}
 			vp.unitName = product.unitName;
 			vp.importId = product.id;
-			
+
 			pm.makePersistent(vp);
 			return vp;
 		} finally {
 			if (null == _pm)
 				pm.close();
-		} 
+		}
 	}
 
 	// =====================================================================================================================
@@ -217,7 +211,7 @@ public class VoProduct {
 			}
 			pm.getObjectById(VoProducer.class, details.getProducerId());
 			this.producerId = details.getProducerId();
-			
+
 			pm.makePersistent(this);
 
 		} catch (Exception e) {
@@ -500,7 +494,7 @@ public class VoProduct {
 		q.declareParameters("long importIdParam");
 		for (Long pc : fpi.details.categories) {
 			List<VoProductCategory> cl = (List<VoProductCategory>) q.execute(pc);
-			if (0 == cl.size()){
+			if (0 == cl.size()) {
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No Category found for Product ID:" + fpi.product.id + " By Category ID:" + pc);
 			}
 			for (VoProductCategory voProductCategory : cl) {

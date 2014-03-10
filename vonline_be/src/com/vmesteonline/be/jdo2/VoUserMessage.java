@@ -11,7 +11,7 @@ public class VoUserMessage extends VoUserObject {
 	}
 
 	public VoUserMessage(VoUser user, VoMessage message, boolean likes, boolean unlikes, boolean read) {
-		super(user.getId(), message.getId().getId(), likes, unlikes, read);
+		super(user.getId(), message.getId(), likes, unlikes, read);
 	}
 
 	public VoUserMessage(long userId, long messageId) {

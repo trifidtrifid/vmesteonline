@@ -2,6 +2,8 @@ package com.vmesteonline.be.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -15,8 +17,112 @@ import javax.jdo.PersistenceManager;
 
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
+import com.vmesteonline.be.jdo2.GeoLocation;
 
 public class VoHelper {
+
+	public static BigDecimal earthRadius = new BigDecimal(6378137);
+
+	// (180.0 / Math.PI) = 57,29577952383886
+	public static BigDecimal degInRad = new BigDecimal("57.29577952");
+
+	// (Pi * R) / 180
+	private static BigDecimal piR = new BigDecimal("111319.4907932736");
+
+	// (dLat * Math.cos(Math.PI * latitude/180) * PI * R) / (180 ) - в метрах по широте
+	// (dLong * Pi * R) / 180 - в метрах по долготе
+
+	public static boolean isInclude(GeoLocation a, int radius, GeoLocation b) {
+
+		if (VoHelper.getLongitudeMax(a.getLongitude(), radius).compareTo(b.getLongitude()) >= 0)
+			if (VoHelper.getLongitudeMin(a.getLongitude(), radius).compareTo(b.getLongitude()) <= 0)
+				if (VoHelper.getLatitudeMax(a.getLatitude(), radius).compareTo(b.getLatitude()) >= 0)
+					if (VoHelper.getLatitudeMin(a.getLatitude(), radius).compareTo(b.getLatitude()) <= 0)
+						return true;
+		return false;
+	}
+
+	public static int findMinimumGroupRadius(GeoLocation a, GeoLocation b) {
+
+		if (!isInclude(a, Defaults.radiusStarecase, b)) {
+			if (!isInclude(a, Defaults.radiusHome, b)) {
+				if (!isInclude(a, Defaults.radiusSmall, b)) {
+					if (!isInclude(a, Defaults.radiusMedium, b)) {
+						if (!isInclude(a, Defaults.radiusLarge, b)) {
+							return 100000;
+						} else
+							return Defaults.radiusLarge;
+					} else
+						return Defaults.radiusMedium;
+				} else
+					return Defaults.radiusSmall;
+			} else
+				return Defaults.radiusHome;
+		} else
+			return Defaults.radiusStarecase;
+
+	}
+
+	// TODO этот метод не используется. Метод принимает 2 координаты, и определяет расстояние между ними. Почему то, этот метод дает погрешность по
+	// сравнению с методом который генерирует дельту
+	public static int calculateRadius(GeoLocation a, GeoLocation b) {
+
+		BigDecimal deltaLat = a.getLongitude().subtract(b.getLongitude()).abs();
+		BigDecimal deltaLong = a.getLatitude().subtract(b.getLatitude()).abs();
+
+		int rLat = deltaLong.multiply(piR).intValue();
+
+		BigDecimal avgLat = a.getLatitude().add(b.getLatitude());
+		avgLat = avgLat.divide(new BigDecimal(2));
+		BigDecimal cos = new BigDecimal(Math.cos(Math.PI * avgLat.doubleValue() / 180D));
+
+		int rLong = deltaLat.multiply(cos).multiply(piR).intValue();
+
+		int maxRadius = rLong > rLat ? rLong : rLat;
+		if (maxRadius == 0 && (a.getLongitude().compareTo(b.getLongitude()) != 0 || a.getLatitude().compareTo(b.getLatitude()) != 0))
+			return Defaults.radiusHome;
+
+		return maxRadius;
+	}
+
+	// (radius/earthRadius) * (180.0 / Math.PI)
+	public static BigDecimal getLongitudeMax(BigDecimal longitude, int radius) {
+		BigDecimal tmp = getLongDelta(radius);
+		return longitude.add(tmp).setScale(7, RoundingMode.HALF_UP);
+	}
+
+	public static BigDecimal getLongitudeMin(BigDecimal longitude, int radius) {
+		BigDecimal tmp = getLongDelta(radius);
+		return longitude.subtract(tmp).setScale(7, RoundingMode.HALF_UP);
+	}
+
+	private static BigDecimal getLongDelta(int radius) {
+		BigDecimal r = new BigDecimal(radius);
+		BigDecimal tmp = r.divide(earthRadius, 10, RoundingMode.HALF_UP);
+		tmp = tmp.multiply(degInRad);
+		return tmp;
+	}
+
+	// (radius / (earthRadius * Math.cos(Math.PI * latitude/180)) * (180.0 / Math.PI);
+	public static BigDecimal getLatitudeMin(BigDecimal latitude, int radius) {
+		BigDecimal tmp = getLatDelta(latitude, radius);
+		return latitude.subtract(tmp).setScale(7, RoundingMode.HALF_UP);
+	}
+
+	public static BigDecimal getLatitudeMax(BigDecimal latitude, int radius) {
+		BigDecimal tmp = getLatDelta(latitude, radius);
+		return latitude.add(tmp).setScale(7, RoundingMode.HALF_UP);
+	}
+
+	private static BigDecimal getLatDelta(BigDecimal latitude, int radius) {
+		double cosVal = Math.cos(Math.PI * latitude.doubleValue() / 180D);
+		BigDecimal r = new BigDecimal(radius);
+		BigDecimal tmp = earthRadius.multiply(new BigDecimal(cosVal));
+		tmp = r.divide(tmp, 10, RoundingMode.HALF_UP);
+		tmp = tmp.multiply(degInRad);
+		return tmp;
+	}
+
 	// ===================================================================================================================
 	public static void copyIfNotNull(Object owner, String fieldName, Object objToCopy) throws NoSuchFieldException {
 		if (null != objToCopy) {
@@ -43,7 +149,8 @@ public class VoHelper {
 
 	// ===================================================================================================================
 
-	public static void replaceURL(Object owner, String fieldName, String newUrl, long userId, boolean isPublic, PersistenceManager _pm) throws NoSuchFieldException {
+	public static void replaceURL(Object owner, String fieldName, String newUrl, long userId, boolean isPublic, PersistenceManager _pm)
+			throws NoSuchFieldException {
 		if (null != newUrl) {
 			String oldVal = null;
 			try {
@@ -52,23 +159,23 @@ public class VoHelper {
 					field = owner.getClass().getField(fieldName);
 					if (field.isAccessible())
 						oldVal = field.get(owner).toString();
-				} catch (Exception e){
-					
+				} catch (Exception e) {
+
 					Method method = owner.getClass().getMethod("get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1), new Class[] {});
-					oldVal = (String)method.invoke(owner, new Object[] {});
+					oldVal = (String) method.invoke(owner, new Object[] {});
 				}
 				String newStorageUrl;
 				if (null == oldVal) { // old URL was not set
 					newStorageUrl = StorageHelper.saveImage(newUrl, userId, isPublic, _pm);
 				} else {
-					newStorageUrl =  StorageHelper.replaceImage(newUrl, oldVal, userId, isPublic, _pm);
+					newStorageUrl = StorageHelper.replaceImage(newUrl, oldVal, userId, isPublic, _pm);
 				}
 
-				if( null==field ){
+				if (null == field) {
 					Method method = owner.getClass().getMethod("set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1),
 							new Class[] { newStorageUrl.getClass() });
 					method.invoke(owner, new Object[] { newStorageUrl });
-				} else  
+				} else
 					field.set(owner, newStorageUrl);
 
 			} catch (Exception e) {
@@ -142,24 +249,26 @@ public class VoHelper {
 		}
 		return outList;
 	}
-	/* ===============================================================================================================
-	//Method converts list of I object from list inList to list of O objects using mutation method of O object that 
-	//tooks I objects and has name get<O.simpleName()>*/
-	
-	public static <I,O> List<O> convertMutableSet(List<I> inList, ArrayList<O> outList, O o) throws InvalidOperation {
-		if(null==inList )
+
+	/*
+	 * ============================================================================ =================================== //Method converts list of I
+	 * object from list inList to list of O objects using mutation method of O object that //tooks I objects and has name get<O.simpleName()>
+	 */
+
+	public static <I, O> List<O> convertMutableSet(List<I> inList, ArrayList<O> outList, O o) throws InvalidOperation {
+		if (null == inList)
 			return null;
-		if( 0 == inList.size())
+		if (0 == inList.size())
 			return outList;
 		I i0 = inList.get(0);
 		try {
-			Method method = i0.getClass().getMethod( "get" + o.getClass().getSimpleName(), new Class[] {});
+			Method method = i0.getClass().getMethod("get" + o.getClass().getSimpleName(), new Class[] {});
 			for (I i : inList) {
-				outList.add( (O) method.invoke(i));
+				outList.add((O) method.invoke(i));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Class "+i0.getClass().getSimpleName() +" have no acccesible method get"
+			throw new InvalidOperation(VoError.GeneralError, "Class " + i0.getClass().getSimpleName() + " have no acccesible method get"
 					+ o.getClass().getSimpleName());
 		}
 		return outList;

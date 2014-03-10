@@ -27,4 +27,4 @@ testDatabasePassword=
 testDatabaseUser=vonline
 testInstanceName=psyched-edge-414\:vonline-cloud-sql
 testIsConfigured=true
-validationExclusions=src/com/vmesteonline/be/jdo2/VoUser.java
+validationExclusions=src/com/vmesteonline/be/jdo2/VoUser.java|src/com/vmesteonline/be/MessageServiceImpl.java

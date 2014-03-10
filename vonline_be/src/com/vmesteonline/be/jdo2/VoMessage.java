@@ -9,12 +9,14 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Message;
 import com.vmesteonline.be.MessageType;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.data.VoDatastoreHelper;
+import com.vmesteonline.be.utils.VoHelper;
 
 /**
  * Created by brozer on 1/12/14.
@@ -31,18 +33,20 @@ public class VoMessage extends VoBaseMessage {
 	 * Construct VoMessage object from MEssage representation
 	 * 
 	 * @param msg
-	 *          Message. if msg.id > 0, then an update would be processed, new
-	 *          VoMessage would be created otherwise
+	 *          Message. if msg.id > 0, then an update would be processed, new VoMessage would be created otherwise
 	 * @param checkConsistency
 	 *          - if set, all parameters would be checked for consistency
 	 * @param updateLinkedCounters
-	 *          - if set, counter of topic and author would be updated according
-	 *          to the posted message parameters
+	 *          - if set, counter of topic and author would be updated according to the posted message parameters
 	 * @throws InvalidOperation
 	 *           if consistency check fails or other exception happens
 	 */
 
 	public VoMessage() {
+	}
+
+	public void setRadius(int radius) {
+		this.radius = radius;
 	}
 
 	public VoMessage(Message msg) throws InvalidOperation {
@@ -68,6 +72,16 @@ public class VoMessage extends VoBaseMessage {
 				}
 			}
 
+			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, KeyFactory.createKey(VoUserGroup.class.getSimpleName(), msg.getGroupId()));
+			this.radius = ug.getRadius();
+
+			VoTopic topic = pm.getObjectById(VoTopic.class, msg.getTopicId());
+			setLongitude(topic.getLongitude());
+			setLatitude(topic.getLatitude());
+
+			// вставка времени последнего апдейта
+			topic.setLastUpdate((int) (System.currentTimeMillis() / 1000L));
+
 			try {
 				/* CHeck the recipient */
 				if (0 != msg.getRecipientId()) {
@@ -79,16 +93,17 @@ public class VoMessage extends VoBaseMessage {
 				if (null == author) {
 					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Author of Message not found by ID=" + msg.getAuthorId());
 				}
-				// todo сделать проверку на права создания сообщений не зависящей от
+				// TODO сделать проверку на права создания сообщений не зависящей от
 				// наличия домашней группы.
-				if (0 == author.getLongitude() || 0 == author.getLatitude())
+				if (author.getLongitude().equals("0") || author.getLatitude().equals("0"))
 					throw new InvalidOperation(com.vmesteonline.be.VoError.GeneralError, "User without HomeGroup must not create a message");
 
 				author.incrementMessages(1);
 
+				minimunVisibleRadius = VoHelper.findMinimumGroupRadius(topic, author);
+
 				/*
-				 * Check that all of linked messages exists and has type that is
-				 * required
+				 * Check that all of linked messages exists and has type that is required
 				 */
 				this.links = new HashMap<MessageType, Long>();
 
@@ -133,15 +148,7 @@ public class VoMessage extends VoBaseMessage {
 		this.approvedId = approvedId;
 	}
 
-	public float getLongitude() {
-		return longitude;
-	}
-
-	public float getLatitude() {
-		return latitude;
-	}
-
-	public float getRadius() {
+	public int getRadius() {
 		return radius;
 	}
 
@@ -158,20 +165,26 @@ public class VoMessage extends VoBaseMessage {
 	private long approvedId;
 
 	@Persistent
-	private float longitude;
-	@Persistent
-	private float latitude;
-	@Persistent
-	private float radius;
+	@Unindexed
+	private int radius;
 
 	@Persistent
 	@Unindexed
 	protected long recipient;
 
 	@Persistent
+	@Unindexed
+	protected int minimunVisibleRadius;
+
+	public int getMinimunVisibleRadius() {
+		return minimunVisibleRadius;
+	}
+
+	@Persistent
 	protected long topicId;
 
 	@Persistent
+	@Unindexed
 	private long parentId;
 
 	protected int visibleOffset;
@@ -202,8 +215,8 @@ public class VoMessage extends VoBaseMessage {
 
 	@Override
 	public String toString() {
-		return "VoMessage [id=" + id + ", type=" + type + ", authorId=" + authorId + ", recipient=" + recipient + ", longitude=" + longitude
-				+ ", latitude=" + latitude + ", radius=" + radius + "]";
+		return "VoMessage [id=" + id + ", type=" + type + ", authorId=" + authorId + ", recipient=" + recipient + ", longitude="
+				+ getLongitude().toPlainString() + ", latitude=" + getLatitude().toPlainString() + ", radius=" + radius + "]";
 	}
 
 }

@@ -1,9 +1,5 @@
 package com.vmesteonline.be.jdo2;
 
-import java.util.List;
-import java.util.Vector;
-
-import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
@@ -11,14 +7,12 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Message;
 import com.vmesteonline.be.Topic;
-import com.vmesteonline.be.VoError;
-import com.vmesteonline.be.utils.Pair;
 
 @PersistenceCapable
 public class VoTopic extends VoBaseMessage {
 	// id, message, messageNum, viewers, usersNum, lastUpdate, likes, unlikes,
 	// rubricId
-	public VoTopic(Topic topic, boolean checkConsistacy, boolean updateLInkedObjects, boolean makePersistant) throws InvalidOperation {
+	public VoTopic(Topic topic) throws InvalidOperation {
 
 		super(topic.getMessage());
 		subject = topic.getSubject().getBytes();
@@ -51,11 +45,11 @@ public class VoTopic extends VoBaseMessage {
 
 	public Topic getTopic() {
 
-		Message msg = new Message(id.getId(), 0L, type, getId().getId(), 0L, authorId.getId(), createdAt, editedAt, new String(content), likesNum,
-				unlikesNum, links, tags, null, 0, null);
+		Message msg = new Message(id.getId(), 0L, type, getId(), 0L, authorId.getId(), createdAt, editedAt, new String(content), likesNum, unlikesNum,
+				links, tags, null, 0, null);
 
-		return new Topic(getId().getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(),
-				getUnlikes(), null, null);
+		return new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(),
+				null, null);
 	}
 
 	public int getMessageNum() {

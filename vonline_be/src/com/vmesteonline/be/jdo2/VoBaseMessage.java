@@ -17,7 +17,7 @@ import com.vmesteonline.be.MessageType;
 
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
-public abstract class VoBaseMessage {
+public abstract class VoBaseMessage extends GeoLocation {
 
 	public VoBaseMessage(Message msg) {
 		// super(msg.getLikesNum(), msg.getUnlikesNum());
@@ -42,10 +42,10 @@ public abstract class VoBaseMessage {
 	public VoBaseMessage() {
 	}
 
-	public Key getId() {
+/*	public Key getId() {
 		return id;
 	}
-
+*/
 	public Key getAuthorId() {
 		return authorId;
 	}
@@ -58,10 +58,10 @@ public abstract class VoBaseMessage {
 		this.type = type;
 	}
 
-	public void setId(Key key) {
+/*	public void setId(Key key) {
 		this.id = key;
 	}
-
+*/
 	public byte[] getContent() {
 		return content;
 	}
@@ -126,10 +126,10 @@ public abstract class VoBaseMessage {
 		this.unlikesNum = unlikes;
 	}
 
-	@PrimaryKey
+/*	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	protected Key id;
-
+*/
 	@Persistent
 	@Unindexed
 	protected byte[] content;

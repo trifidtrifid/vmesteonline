@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -8,10 +9,8 @@ import java.util.TreeSet;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
@@ -27,8 +26,8 @@ import com.vmesteonline.be.utils.Defaults;
 @PersistenceCapable
 public class VoUser extends GeoLocation {
 
-	private static VoUserGroup defaultGroup = new VoUserGroup(new VoGroup("Мой Город", 10000), 60.0F, 30.0F);
-	
+	private static VoUserGroup defaultGroup = new VoUserGroup("Мой Город", 10000, new BigDecimal("60.0"), new BigDecimal("30.0"));
+
 	public VoUser(String name, String lastName, String email, String password) {
 		this.name = name;
 		this.lastName = lastName;
@@ -132,30 +131,18 @@ public class VoUser extends GeoLocation {
 		this.confirmCode = confirmCode;
 	}
 
-	public void setLocation(long locCode, boolean doSave) throws InvalidOperation {
-		setLocation(locCode, doSave, null);
-	}
-
-	public void setLocation(long locCode, boolean doSave, PersistenceManager _pm) throws InvalidOperation {
+	public void setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
 		Key addressKey = VoPostalAddress.getKeyValue(locCode);
-		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
 		try {
-			VoPostalAddress userAddress;
-			try {
-				userAddress = pm.getObjectById(VoPostalAddress.class, addressKey);
-			} catch (JDOObjectNotFoundException eonf) {
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Location not found by CODE=" + locCode);
-			}
+			VoPostalAddress userAddress = pm.getObjectById(VoPostalAddress.class, addressKey);
 			setCurrentPostalAddress(userAddress, pm);
-		} finally {
-			if (null == _pm)
-				pm.close();
+		} catch (JDOObjectNotFoundException eonf) {
+			throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Location not found by CODE=" + locCode);
 		}
 	}
 
 	/**
-	 * MEthod set current postal address of the user and register user in the
-	 * building
+	 * MEthod set current postal address of the user and register user in the building
 	 * 
 	 * @param userAddress
 	 *          newUSer postal address
@@ -163,7 +150,7 @@ public class VoUser extends GeoLocation {
 	 *          - PersistenceManager to manage the objects
 	 */
 
-	// todo should test removing
+	// TODO should test removing
 	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) {
 		VoBuilding building = null;
 
@@ -182,7 +169,7 @@ public class VoUser extends GeoLocation {
 		this.address = userAddress;
 		if (null != building) {
 			pm.retrieve(building);
-			VoUserGroup home = building.getUserGroup();
+			VoUserGroup home = userAddress.getUserHomeGroup();
 			this.setLatitude(home.getLatitude());
 			this.setLongitude(home.getLongitude());
 			if (null != groups && !groups.isEmpty()) {
@@ -206,9 +193,10 @@ public class VoUser extends GeoLocation {
 		pm.makePersistent(this);
 		pm.makePersistent(building);
 	}
-//*****
+
+	// *****
 	public void setDefaultUserLocation(PersistenceManager pm) {
-		
+
 		VoBuilding building = null;
 		if (null != this.getAddress()) { // location already set, so user should
 																			// be removed first
@@ -220,10 +208,10 @@ public class VoUser extends GeoLocation {
 		groups.add(defaultGroup);
 		this.setLatitude(defaultGroup.getLatitude());
 		this.setLongitude(defaultGroup.getLongitude());
-		
+
 		pm.makePersistent(this);
 	}
-	
+
 	public void addPostalAddress(VoPostalAddress pa) {
 		PersistenceManagerFactory pmf = PMF.get();
 		PersistenceManager pm = pmf.getPersistenceManager();
@@ -238,20 +226,10 @@ public class VoUser extends GeoLocation {
 		deliveryAddresses.add(pa);
 	}
 
-	public void setCurrentPostalAddress(VoPostalAddress pa) {
-		PersistenceManagerFactory pmf = PMF.get();
-		PersistenceManager pm = pmf.getPersistenceManager();
-		try {
-			setCurrentPostalAddress(pa, pm);
-		} finally {
-			pm.close();
-		}
-	}
-
 	public Set<VoPostalAddress> getAddresses() {
 		return deliveryAddresses;
 	}
-	
+
 	public boolean isEmailConfirmed() {
 		return emailConfirmed;
 	}
@@ -259,8 +237,6 @@ public class VoUser extends GeoLocation {
 	public void setEmailConfirmed(boolean emailConfirmed) {
 		this.emailConfirmed = emailConfirmed;
 	}
-
-
 
 	@Persistent
 	@Unindexed
@@ -311,14 +287,80 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	private int unlikesNum;
-	
+
 	@Persistent
 	@Unindexed
 	private long confirmCode;
-	
+
 	@Persistent
 	@Unindexed
 	private boolean emailConfirmed;
+
+	
+	@Persistent
+	@Unindexed
+	private String avatarMessage;
+
+	@Persistent
+	@Unindexed
+	private String avatarTopic;
+
+	@Persistent
+	@Unindexed
+	private String avatarProfile;
+
+	@Persistent
+	@Unindexed
+	private String avatarProfileShort;
+
+	
+	public String getAvatarMessage() {
+		return avatarMessage;
+	}
+
+	public void setAvatarMessage(String avatarMessage) {
+		this.avatarMessage = avatarMessage;
+	}
+
+	public String getAvatarTopic() {
+		return avatarTopic;
+	}
+
+	public void setAvatarTopic(String avatarTopic) {
+		this.avatarTopic = avatarTopic;
+	}
+
+	public String getAvatarProfile() {
+		return avatarProfile;
+	}
+
+	public void setAvatarProfile(String avatarProfile) {
+		this.avatarProfile = avatarProfile;
+	}
+
+	public String getAvatarProfileShort() {
+		return avatarProfileShort;
+	}
+
+	public void setAvatarProfileShort(String avatarProfileShort) {
+		this.avatarProfileShort = avatarProfileShort;
+	}
+
+	public int getTopicsNum() {
+		return topicsNum;
+	}
+
+	public void setTopicsNum(int topicsNum) {
+		this.topicsNum = topicsNum;
+	}
+
+	public int getUnlikesNum() {
+		return unlikesNum;
+	}
+
+	public void setUnlikesNum(int unlikesNum) {
+		this.unlikesNum = unlikesNum;
+	}
 
 	public void addRubric(VoRubric rubric) {
 		rubrics.add(rubric);
@@ -328,7 +370,6 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private String mobilePhone;
 
-	
 	public String getMobilePhone() {
 		return mobilePhone;
 	}
@@ -343,7 +384,7 @@ public class VoUser extends GeoLocation {
 	}
 
 	public String toFullString() {
-		return "VoUser [id=" + getId() + ", address=" + address + ", longitude=" + longitude + ", latitude=" + latitude + ", name=" + name
+		return "VoUser [id=" + getId() + ", address=" + address + ", longitude=" + getLongitude() + ", latitude=" + getLatitude() + ", name=" + name
 				+ ", lastName=" + lastName + ", email=" + email + ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum=" + topicsNum
 				+ ", likesNum=" + likesNum + ", unlikesNum=" + unlikesNum + "]";
 	}
