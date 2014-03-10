@@ -9,8 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,12 +74,7 @@ public class StorageHelper {
 				if (null != url.getProtocol() && url.getProtocol().toLowerCase().startsWith("http")) {
 					HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
 					httpConnection.connect();
-<<<<<<< HEAD
-					// TODO delete unused variables
-					Map<String, List<String>> headerFields = httpConnection.getHeaderFields();
-=======
 					httpConnection.getHeaderFields();
->>>>>>> master
 					contentType = httpConnection.getContentType();
 					is = httpConnection.getInputStream();
 				} else {
@@ -95,11 +88,7 @@ public class StorageHelper {
 				fname = numberToString((long) (Math.random() * Long.MAX_VALUE));
 			}
 
-<<<<<<< HEAD
-			return saveImage(fname, contentType, ownerId, isPublic, is, null);
-=======
-			return saveImage(fname, contentType, ownerId, isPublic, is, _pm );
->>>>>>> master
+			return saveImage(fname, contentType, ownerId, isPublic, is, _pm);
 		}
 	}
 
@@ -215,17 +204,9 @@ public class StorageHelper {
 		try {
 			outputChannel = gcsService.createOrReplace(vfar.getFileName(), GcsFileOptions.getDefaultInstance());
 			streamCopy(is, Channels.newOutputStream(outputChannel));
-<<<<<<< HEAD
 			int liop; // append with '.bin' extension if no extension is set
 			String url = getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? "bin" : fileName.substring(liop + 1));
-			logger.info("File '" + fileName + "' stored with GSNAme:" + vfar.getFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
-
-=======
-			int liop; //append with '.bin' extension if no extension is set
-			String url = getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? "bin" : fileName.substring( liop + 1 ));
-			logger.log(Level.FINEST,"File '"+fileName+"' stored with GSNAme:"+vfar.getFileName()+" with objectID:"+vfar.getId()+" URL:"+url);
-			
->>>>>>> origin/master
+			logger.log(Level.FINEST, "File '" + fileName + "' stored with GSNAme:" + vfar.getFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
 			return url;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -266,14 +247,8 @@ public class StorageHelper {
 	// ===================================================================================================================
 	public static long getFileId(String requestURI) {
 		String[] splits = requestURI.split("/", 3);
-<<<<<<< HEAD
 		if (splits.length < 3 || !splits[0].equals("") || !splits[1].equals("file") || splits[2].length() == 0) {
-			throw new IllegalArgumentException("The URL is not formed as expected. " + "Expecting /file/<id>.<extension>");
-=======
-		if (splits.length < 3 || !splits[0].equals("") || !splits[1].equals("file") ||
-				splits[2].length()==0) {
-			throw new IllegalArgumentException("The URL '"+requestURI+"' is not formed as expected. " + "Expecting /file/<id>.<extension>");
->>>>>>> master
+			throw new IllegalArgumentException("The URL '" + requestURI + "' is not formed as expected. " + "Expecting /file/<id>.<extension>");
 		}
 		splits = splits[2].split("[.]", 2);
 		if (splits.length < 2 || splits[0].length() < 2) {

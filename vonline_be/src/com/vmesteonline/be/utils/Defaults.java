@@ -1,28 +1,19 @@
 package com.vmesteonline.be.utils;
 
-<<<<<<< HEAD
-import java.math.BigDecimal;
-=======
 import java.io.IOException;
->>>>>>> master
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
 import com.vmesteonline.be.AuthServiceImpl;
-import com.vmesteonline.be.Country;
 import com.vmesteonline.be.InvalidOperation;
-<<<<<<< HEAD
-=======
 import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.ShopServiceImpl;
-import com.vmesteonline.be.UserServiceImpl;
->>>>>>> master
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
@@ -45,7 +36,6 @@ import com.vmesteonline.be.shop.ExchangeFieldType;
 import com.vmesteonline.be.shop.ImExType;
 import com.vmesteonline.be.shop.ImportElement;
 import com.vmesteonline.be.shop.PaymentType;
-import com.vmesteonline.be.shop.ProductCategory;
 import com.vmesteonline.be.shop.Shop;
 
 @SuppressWarnings("unchecked")
@@ -82,29 +72,13 @@ public class Defaults {
 	private static long userId = 0;
 
 	public static boolean initDefaultData() {
-		
+
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
 			initializeRubrics(pm);
 
-<<<<<<< HEAD
-			defaultGroups = new ArrayList<VoGroup>();
-			q = pm.newQuery(VoGroup.class);
-			q.setFilter("subscribedByDefault == true");
-			List<VoGroup> defGroups = (List<VoGroup>) q.execute();
-			if (defGroups.isEmpty())
-
-				for (VoGroup dg : new VoGroup[] { new VoGroup("Мой подъзд", radiusStarecase, true), new VoGroup("Мой дом", radiusHome, true),
-						new VoGroup("Соседи", radiusSmall, true), new VoGroup("Пешая доступность", radiusMedium, true),
-						new VoGroup("Быстро Доехать", radiusLarge, true) }) {
-					defaultGroups.add(dg);
-					pm.makePersistent(dg);
-				}
-=======
 			initializeGroups(pm);
->>>>>>> master
-
 			List<String> locCodes = initializeTestLocations();
 
 			MySQLJDBCConnector con = new MySQLJDBCConnector();
@@ -134,7 +108,7 @@ public class Defaults {
 		try {
 			ShopServiceImpl ssi = new ShopServiceImpl("123");
 			AuthServiceImpl asi = new AuthServiceImpl("123");
-			asi.login( user1email, user1pass );
+			asi.login(user1email, user1pass);
 
 			VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY), CITY), "г. Пушкин, Детскосельский бульвар");
 			PersistenceManager pm = PMF.getPm();
@@ -143,16 +117,16 @@ public class Defaults {
 
 			try {
 				pm.makePersistent(street);
-				postalAddress = new VoPostalAddress(new VoBuilding(street, "9А", 0F, 0F), (byte) 1, (byte) 1, (byte) 1,
-						"Угол ул. Железнодоррожная и Детскосельского бульвара", pm).getPostalAddress();
-				
+				postalAddress = new VoPostalAddress(new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0")), (byte) 1, (byte) 1, (byte) 1,
+						"Угол ул. Железнодоррожная и Детскосельского бульвара").getPostalAddress();
+
 				VoHelper.forgetAllPersistent(VoShop.class, pm);
 				VoHelper.forgetAllPersistent(VoProducer.class, pm);
 				VoHelper.forgetAllPersistent(VoProductCategory.class, pm);
-				VoHelper.forgetAllPersistent(VoProduct.class,pm);
+				VoHelper.forgetAllPersistent(VoProduct.class, pm);
 				VoHelper.forgetAllPersistent(VoOrderLine.class, pm);
 				VoHelper.forgetAllPersistent(VoOrder.class, pm);
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.GeneralError, "Failed to create address." + e);
@@ -195,10 +169,8 @@ public class Defaults {
 		ImportElement importData;
 		String imgURL;
 		/*
-		 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT,
-		 * PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
-		 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL,
-		 * PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
+		 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
+		 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
 		 * PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
 		 */
 		List<ExchangeFieldType> productFieldsOrder = new ArrayList<ExchangeFieldType>();
@@ -225,7 +197,7 @@ public class Defaults {
 		productFieldsOrder.add(ExchangeFieldType.PRODUCT_UNIT_NAME);
 
 		importData = new ImportElement(ImExType.IMPORT_PRODUCTS, "product.csv", VoHelper.listToMap(productFieldsOrder));
-		importData.setUrl( StorageHelper.saveImage("http://localhost:8888/data/products_1000_sheksna.csv",userId, false, null) );
+		importData.setUrl(StorageHelper.saveImage("http://localhost:8888/data/products_1000_sheksna.csv", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -244,7 +216,7 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
 
 		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl( StorageHelper.saveImage("http://localhost:8888/data/product_categories.csv",userId, false, null) );
+		importData.setUrl(StorageHelper.saveImage("http://localhost:8888/data/product_categories.csv", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -263,7 +235,7 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
 
 		importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl( StorageHelper.saveImage("http://localhost:8888/data/producers.csv",userId, false, null) );
+		importData.setUrl(StorageHelper.saveImage("http://localhost:8888/data/producers.csv", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -294,8 +266,9 @@ public class Defaults {
 		List<VoGroup> defGroups = (List<VoGroup>) q.execute();
 		if (defGroups.isEmpty())
 
-			for (VoGroup dg : new VoGroup[] { new VoGroup("Мой дом", 0, true), new VoGroup("Соседи", radiusSmall, true),
-					new VoGroup("Пешая доступность", radiusMedium, true), new VoGroup("Быстро Доехать", radiusLarge, true) }) {
+			for (VoGroup dg : new VoGroup[] { new VoGroup("Мой подъзд", radiusStarecase, true), new VoGroup("Мой дом", radiusHome, true),
+					new VoGroup("Соседи", radiusSmall, true), new VoGroup("Пешая доступность", radiusMedium, true),
+					new VoGroup("Быстро Доехать", radiusLarge, true) }) {
 				defaultGroups.add(dg);
 				pm.makePersistent(dg);
 			}
@@ -309,18 +282,18 @@ public class Defaults {
 		try {
 			userId = asi.registerNewUser(user1name, user1lastName, user1pass, user1email, locCodes.get(0));
 		} catch (Exception e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 		try {
 			user2Id = asi.registerNewUser(user2name, user2lastName, user2pass, user2email, locCodes.get(1));
 		} catch (Exception e1) {
-			
+
 		}
 		userId = user2Id;
 		try {
 			user3Id = asi.registerNewUser(user3name, user3lastName, user3pass, user3email, locCodes.get(2));
 		} catch (Exception e) {
-			
+
 		}
 		userId = userId == 0 ? user2Id == 0 ? user3Id : user2Id : userId;
 	}

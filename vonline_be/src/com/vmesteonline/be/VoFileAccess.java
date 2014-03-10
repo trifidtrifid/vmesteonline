@@ -42,23 +42,7 @@ public class VoFileAccess extends HttpServlet {
 		try {
 			long fileId = StorageHelper.getFileId(req.getRequestURI());
 			VoFileAccessRecord far = pm.getObjectById(VoFileAccessRecord.class, fileId);
-<<<<<<< HEAD
 			long currentUserId = serviceImpl.getCurrentUserId(pm);
-=======
-			
-			
-			if (null != req.getParameter("delete")) {
-				
-				if (far.getUserId() == serviceImpl.getCurrentUserId(pm)) {
-				
-					StorageHelper.deleteImage(req.getRequestURI(),pm);
-					resp.setStatus(HttpServletResponse.SC_OK, "Deleted");
-					pm.deletePersistent(far);
-
-				} else {
-					resp.setStatus(HttpServletResponse.SC_FORBIDDEN, "Access denied");
-				}
->>>>>>> origin/master
 
 			if (null != req.getParameter("delete") && (far.getUserId() == currentUserId)) {
 				StorageHelper.deleteImage(req.getRequestURI(), pm);
@@ -69,17 +53,11 @@ public class VoFileAccess extends HttpServlet {
 			} else {
 				resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 			}
-<<<<<<< HEAD
 
 		} catch (InvalidOperation e) {
 			resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.why);
 			logger.warn("Failed to process request:" + e.getMessage() + " ");
 			e.printStackTrace();
-=======
-		} catch (InvalidOperation e){
-			e.printStackTrace();
-			throw new IOException("Failed to process request:"+e.why,e);
->>>>>>> origin/master
 		} finally {
 			pm.close();
 		}

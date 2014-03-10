@@ -59,6 +59,4 @@ public abstract class GeoLocation {
 	@Unindexed
 	private String latitude;
 
-	public static int R = 6378137;
-
 }

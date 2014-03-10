@@ -2,6 +2,7 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
@@ -18,6 +19,7 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 		name = grp.getVisibleName();
 	}
 
+	
 	public VoUserGroup(String visibleName, int radius, BigDecimal longitude, BigDecimal lattitude) {
 		this.radius = radius;
 		setLongitude(longitude);

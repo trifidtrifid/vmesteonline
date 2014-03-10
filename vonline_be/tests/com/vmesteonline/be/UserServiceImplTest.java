@@ -43,7 +43,7 @@ public class UserServiceImplTest extends UserServiceImpl {
 	public void setUp() throws Exception {
 
 		helper.setUp();
-		Assert.assertTrue(Defaults.init());
+		Assert.assertTrue(Defaults.initDefaultData());
 		// register and login current user
 		// Initialize USer Service
 		sessionStorage = new SessionIdStorage(SESSION_ID);

@@ -9,6 +9,7 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Message;
@@ -71,7 +72,7 @@ public class VoMessage extends VoBaseMessage {
 				}
 			}
 
-			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, msg.getGroupId());
+			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, KeyFactory.createKey(VoUserGroup.class.getSimpleName(), msg.getGroupId()));
 			this.radius = ug.getRadius();
 
 			VoTopic topic = pm.getObjectById(VoTopic.class, msg.getTopicId());
@@ -79,7 +80,7 @@ public class VoMessage extends VoBaseMessage {
 			setLatitude(topic.getLatitude());
 
 			// вставка времени последнего апдейта
-			topic.setLastUpdate((int)(System.currentTimeMillis() / 1000L));
+			topic.setLastUpdate((int) (System.currentTimeMillis() / 1000L));
 
 			try {
 				/* CHeck the recipient */

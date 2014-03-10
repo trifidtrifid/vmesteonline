@@ -46,7 +46,8 @@ public class VoShop {
 
 		this.name = name;
 		this.setDescr(descr);
-		if(postalAddress != null ) this.address = new VoPostalAddress(postalAddress, pm);
+		if (postalAddress != null)
+			this.address = new VoPostalAddress(postalAddress, pm);
 		try {
 			VoHelper.replaceURL(this, "logoURL", logoURL, ownerId, true, pm);
 		} catch (NoSuchFieldException e1) {
@@ -65,13 +66,13 @@ public class VoShop {
 			this.paymentTypes.put(PaymentType.CASH.getValue(), 0D);
 
 		try {
-			if( null!=topicSet){
+			if (null != topicSet) {
 				this.topics = new ArrayList<Long>();
 				topics.addAll(topicSet);
 			}
-			/*categories = new ArrayList<VoProductCategory>();
-			products = new ArrayList<VoProduct>();
-			producers = new ArrayList<VoProducer>();*/
+			/*
+			 * categories = new ArrayList<VoProductCategory>(); products = new ArrayList<VoProduct>(); producers = new ArrayList<VoProducer>();
+			 */
 			dates = new TreeMap<Integer, Integer>();
 			pm.makePersistent(this);
 		} catch (Exception e) {
@@ -84,18 +85,10 @@ public class VoShop {
 
 	public Shop getShop() {
 		List<Long> topicIds = new ArrayList<Long>();
-<<<<<<< HEAD
-		for (VoTopic vt : getTopics()) {
-			topicIds.add(vt.getId());
-		}
-		Shop shop = new Shop(id.getId(), name, descr, null==address ? null : address.getPostalAddress(), logoURL, ownerId, 
-=======
 		topicIds.addAll(getTopics());
-		Shop shop = new Shop(id.getId(), name, descr.getValue(), null==address ? null : address.getPostalAddress(), logoURL, ownerId, 
->>>>>>> origin/master
-				topicIds, tags, 
-				convertToDeliveryTypeMap(deliveryCosts, new HashMap<DeliveryType, Double>()),
-				convertToPaymentTypeMap(paymentTypes, new HashMap<PaymentType, Double>()));
+		Shop shop = new Shop(id.getId(), name, descr.getValue(), null == address ? null : address.getPostalAddress(), logoURL, ownerId, topicIds, tags,
+				convertToDeliveryTypeMap(deliveryCosts, new HashMap<DeliveryType, Double>()), convertToPaymentTypeMap(paymentTypes,
+						new HashMap<PaymentType, Double>()));
 		return shop;
 	}
 
@@ -127,17 +120,23 @@ public class VoShop {
 	@Persistent
 	public List<String> tags;
 
-	/*@Persistent
-	@Unowned
-	private List<VoProduct> products;*/
+	/*
+	 * @Persistent
+	 * 
+	 * @Unowned private List<VoProduct> products;
+	 */
 
-	/*@Persistent
-	@Unowned
-	private List<VoProductCategory> categories;*/
+	/*
+	 * @Persistent
+	 * 
+	 * @Unowned private List<VoProductCategory> categories;
+	 */
 
-	/*@Persistent
-	@Unowned
-	private List<VoProducer> producers;*/
+	/*
+	 * @Persistent
+	 * 
+	 * @Unowned private List<VoProducer> producers;
+	 */
 
 	@Persistent
 	@Unindexed
@@ -160,7 +159,8 @@ public class VoShop {
 	}
 
 	public void setDates(Map<Integer, DateType> newDates) {
-		if(null==dates) dates = new HashMap<Integer, Integer>();
+		if (null == dates)
+			dates = new HashMap<Integer, Integer>();
 		for (Entry<Integer, DateType> e : newDates.entrySet()) { // round to the
 																															// begining of the
 																															// day
@@ -170,27 +170,22 @@ public class VoShop {
 		// Integer>()));
 	}
 
-
 	public SortedMap<Integer, Integer> selectDates(int fromDate, int toDate) {
 		SortedMap<Integer, Integer> selectedDates = new TreeMap<Integer, Integer>();
-		for(int date = fromDate; date<toDate+86400; date+=86400)
-			if( dates.containsKey(date)) selectedDates.put(date, dates.get(date));
+		for (int date = fromDate; date < toDate + 86400; date += 86400)
+			if (dates.containsKey(date))
+				selectedDates.put(date, dates.get(date));
 
 		return selectedDates;
 	}
 
-	/*public void addProductCategory(VoProductCategory category) {
-		categories.add(category);
-	}
-
-	public void addProduct(VoProduct product) {
-		products.add(product);
-	}
-
-	public void addProducer(VoProducer producer) {
-		producers.add(producer);
-	}
-*/
+	/*
+	 * public void addProductCategory(VoProductCategory category) { categories.add(category); }
+	 * 
+	 * public void addProduct(VoProduct product) { products.add(product); }
+	 * 
+	 * public void addProducer(VoProducer producer) { producers.add(producer); }
+	 */
 	public String getName() {
 		return name;
 	}
@@ -204,7 +199,7 @@ public class VoShop {
 	}
 
 	public void setDescr(String descr) {
-		this.descr = new Text( descr == null ? "" : descr );
+		this.descr = new Text(descr == null ? "" : descr);
 	}
 
 	public VoPostalAddress getAddress() {
@@ -243,41 +238,27 @@ public class VoShop {
 		return id.getId();
 	}
 
-	/*public List<VoProduct> getProducts() {
-		return products;
-	}
-
-	public void clearProducts(PersistenceManager pm) {
-		for( VoProduct vp: products ){
-			if( 1==vp.getShops().size() && vp.getShops().get(0).getId() == id.getId() )
-				pm.deletePersistent(vp);
-		}
-		if( products.size() > 0) products.clear();
-	}
-
-	public List<VoProductCategory> getCategories() {
-		return categories;
-	}
-
-	public void addCategory(VoProductCategory pc) {
-		categories.add(pc);
-	}
-
-	public void clearCategories( PersistenceManager pm) {
-		for( VoProductCategory vpc: categories ){
-			if( 1==vpc.getShops().size() && vpc.getShops().get(0).getId() == id.getId() )
-				pm.deletePersistent(vpc);
-		}
-		categories.clear();
-	}*/
+	/*
+	 * public List<VoProduct> getProducts() { return products; }
+	 * 
+	 * public void clearProducts(PersistenceManager pm) { for( VoProduct vp: products ){ if( 1==vp.getShops().size() && vp.getShops().get(0).getId() ==
+	 * id.getId() ) pm.deletePersistent(vp); } if( products.size() > 0) products.clear(); }
+	 * 
+	 * public List<VoProductCategory> getCategories() { return categories; }
+	 * 
+	 * public void addCategory(VoProductCategory pc) { categories.add(pc); }
+	 * 
+	 * public void clearCategories( PersistenceManager pm) { for( VoProductCategory vpc: categories ){ if( 1==vpc.getShops().size() &&
+	 * vpc.getShops().get(0).getId() == id.getId() ) pm.deletePersistent(vpc); } categories.clear(); }
+	 */
 
 	public List<Long> getTopics() {
 		return topics;
 	}
 
-	/*public List<VoProducer> getProducers() {
-		return producers;
-	}*/
+	/*
+	 * public List<VoProducer> getProducers() { return producers; }
+	 */
 
 	public Map<Integer, Integer> getDates() {
 		return dates;
@@ -296,61 +277,74 @@ public class VoShop {
 	public SortedMap<Integer, DateType> getDates(int from, int to) {
 
 		SortedMap<Integer, DateType> selectedDates = new TreeMap<Integer, DateType>();
-		for(int date = from - from % 86400; date<to + 86400 - to % 86400; date += 86400)
-			if( dates.containsKey(date)) selectedDates.put(date, DateType.findByValue(dates.get(date)));
+		for (int date = from - from % 86400; date < to + 86400 - to % 86400; date += 86400)
+			if (dates.containsKey(date))
+				selectedDates.put(date, DateType.findByValue(dates.get(date)));
 		return selectedDates;
 
 	}
 
 	public static Map<Integer, Double> convertFromPaymentTypeMap(Map<PaymentType, Double> in, Map<Integer, Double> out) {
-		if(null==in) return out;
-		if(null==out) out = new HashMap<Integer, Double>();
-		
+		if (null == in)
+			return out;
+		if (null == out)
+			out = new HashMap<Integer, Double>();
+
 		for (Entry<PaymentType, Double> e : in.entrySet())
 			out.put(e.getKey().getValue(), e.getValue());
 		return out;
 	}
 
 	public static Map<PaymentType, Double> convertToPaymentTypeMap(Map<Integer, Double> in, Map<PaymentType, Double> out) {
-		if(null==in) return out;
-		if(null==out) out = new HashMap<PaymentType, Double>();
-		
+		if (null == in)
+			return out;
+		if (null == out)
+			out = new HashMap<PaymentType, Double>();
+
 		for (Entry<Integer, Double> e : in.entrySet())
 			out.put(PaymentType.findByValue(e.getKey()), e.getValue());
 		return out;
 	}
 
 	public static Map<Integer, Double> convertFromDeliveryTypeMap(Map<DeliveryType, Double> in, Map<Integer, Double> out) {
-		if(null==in) return out;
-		if(null==out) out = new HashMap<Integer, Double>();
-		
+		if (null == in)
+			return out;
+		if (null == out)
+			out = new HashMap<Integer, Double>();
+
 		for (Entry<DeliveryType, Double> e : in.entrySet())
 			out.put(e.getKey().getValue(), e.getValue());
 		return out;
 	}
 
 	public static Map<DeliveryType, Double> convertToDeliveryTypeMap(Map<Integer, Double> in, Map<DeliveryType, Double> out) {
-		if(null==in) return out;
-		if(null==out) out = new HashMap<DeliveryType, Double>();
-		
+		if (null == in)
+			return out;
+		if (null == out)
+			out = new HashMap<DeliveryType, Double>();
+
 		for (Entry<Integer, Double> e : in.entrySet())
 			out.put(DeliveryType.findByValue(e.getKey()), e.getValue());
 		return out;
 	}
 
 	public static SortedMap<Integer, Integer> convertFromDateTypeMap(Map<Integer, DateType> in, SortedMap<Integer, Integer> out) {
-		if(null==in) return out;
-		if(null==out) out = new TreeMap<Integer, Integer>();
-		
+		if (null == in)
+			return out;
+		if (null == out)
+			out = new TreeMap<Integer, Integer>();
+
 		for (Entry<Integer, DateType> e : in.entrySet())
 			out.put(e.getKey(), e.getValue().getValue());
 		return out;
 	}
 
 	public static SortedMap<Integer, DateType> convertToDateTypeMap(Map<Integer, Integer> in, SortedMap<Integer, DateType> out) {
-		if(null==in) return out;
-		if(null==out) out = new TreeMap<Integer, DateType>();
-		
+		if (null == in)
+			return out;
+		if (null == out)
+			out = new TreeMap<Integer, DateType>();
+
 		for (Entry<Integer, Integer> e : in.entrySet())
 			out.put(e.getKey(), DateType.findByValue(e.getValue()));
 		return out;
@@ -358,48 +352,42 @@ public class VoShop {
 
 	public void update(Shop newShopWithOldId, long userId, boolean isPublic, PersistenceManager pm) throws InvalidOperation, IOException {
 		try {
-			VoHelper.copyIfNotNull(this, "name", newShopWithOldId.name) ;
-			VoHelper.copyIfNotNull(this, "descr", newShopWithOldId.descr) ;
+			VoHelper.copyIfNotNull(this, "name", newShopWithOldId.name);
+			VoHelper.copyIfNotNull(this, "descr", newShopWithOldId.descr);
 			VoHelper.replaceURL(this, "logoURL", newShopWithOldId.logoURL, userId, isPublic, pm);
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
 		}
-		
-		if( 0!=newShopWithOldId.ownerId  ) this.ownerId = newShopWithOldId.ownerId ;
+
+		if (0 != newShopWithOldId.ownerId)
+			this.ownerId = newShopWithOldId.ownerId;
 		this.address = new VoPostalAddress(newShopWithOldId.getAddress(), pm);
-		
+
 		if (null == (this.tags = newShopWithOldId.tags))
 			this.tags = new ArrayList<String>();
 
-		if( null!=newShopWithOldId.topicSet ){
+		if (null != newShopWithOldId.topicSet) {
 			this.topics = new ArrayList<Long>();
 			this.topics.addAll(newShopWithOldId.topicSet);
 		}
 	}
 
 	/*
-	 * public static class DateMap<T extends Serializable> extends
-	 * TreeMap<Integer, T> implements Serializable {
+	 * public static class DateMap<T extends Serializable> extends TreeMap<Integer, T> implements Serializable {
 	 * 
 	 * private static int DAY = 86400;
 	 * 
-	 * @Override public boolean containsKey(Object key) { if( key instanceof
-	 * Integer ) return super.containsKey(((Integer)key).intValue() -
+	 * @Override public boolean containsKey(Object key) { if( key instanceof Integer ) return super.containsKey(((Integer)key).intValue() -
 	 * ((Integer)key).intValue() % DAY); return super.containsKey(key); }
 	 * 
-	 * @Override public T get(Object key) { if( key instanceof Integer ) return
-	 * super.get(((Integer)key).intValue() - ((Integer)key).intValue() % DAY);
+	 * @Override public T get(Object key) { if( key instanceof Integer ) return super.get(((Integer)key).intValue() - ((Integer)key).intValue() % DAY);
 	 * return super.get(key); }
 	 * 
-	 * @Override public void putAll(Map<? extends Integer, ? extends T> map) { for
-	 * (Entry<? extends Integer, ? extends T> entry : map.entrySet()) {
-	 * put(entry.getKey(), entry.getValue()); //rounded in overloadad method above
-	 * } super.putAll(map); }
+	 * @Override public void putAll(Map<? extends Integer, ? extends T> map) { for (Entry<? extends Integer, ? extends T> entry : map.entrySet()) {
+	 * put(entry.getKey(), entry.getValue()); //rounded in overloadad method above } super.putAll(map); }
 	 * 
-	 * @Override public T put(Integer key, T value) { return super.put(key - key %
-	 * DAY, value); }
+	 * @Override public T put(Integer key, T value) { return super.put(key - key % DAY, value); }
 	 * 
-	 * @Override public Integer ceilingKey(Integer key) { return
-	 * super.ceilingKey(key - key % DAY ); } }
+	 * @Override public Integer ceilingKey(Integer key) { return super.ceilingKey(key - key % DAY ); } }
 	 */
 }
