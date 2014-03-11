@@ -764,21 +764,22 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 							if (curProduct.isPrepackRequired()) {
 								mergeOrderLinePackets(voOrderLine, currentOL);
 							}
+							pm.makePersistent(currentOL);
 
 						} else {
 							VoOrderLine newOrderLine = new VoOrderLine(currentOrder, pm.getObjectById(VoProduct.class, voOrderLine.getProductId()),
 									voOrderLine.getQuantity(), price, voOrderLine.getComment(), voOrderLine.getPackets());
+							
 							pm.makePersistent(newOrderLine);
 
 							currentOdrerLines.put(voOrderLine.getProductId(), newOrderLine.getId().getId());
 						}
 						addCost += voOrderLine.getQuantity() * price;
 					}
-
 				}
 				currentOrder.addCost(addCost);
 				pm.makePersistent(currentOrder);
-				return voOrder.getOrderDetails(pm);// addCost;
+				return currentOrder.getOrderDetails(pm);// addCost;
 			}
 			throw new InvalidOperation(VoError.GeneralError, "Order not found by ID:" + oldOrderId);
 		} catch (Exception e) {

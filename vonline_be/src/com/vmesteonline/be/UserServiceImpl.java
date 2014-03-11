@@ -473,7 +473,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				return buildings.get(0).getBuilding();
 			} else {
 				logger.info("VoBuilding '" + fullNo + "'was created.");
-				VoBuilding voBuilding = new VoBuilding(vs, fullNo, new BigDecimal(longitude), new BigDecimal(lattitude));
+				VoBuilding voBuilding = new VoBuilding(vs, fullNo, 
+						new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
+						new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude));
 				if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate location
 					try {
 						Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
