@@ -1093,8 +1093,8 @@ $(document).ready(function(){
             var nowTime = parseInt(new Date().getTime()/1000);
             nowTime -= nowTime%86400;
             var day = 3600*24;
-            var nowDateItem = new Date(nowTime*1000).toLocaleString().split('.');
-            var nowMonth = nowDateItem[1];
+            var nowDateItem = new Date(nowTime*1000);//.toLocaleString().split('.');
+            var nowMonth = nowDateItem.getMonth();
 
             //var datesArray = client.getDates(nowTime-30*day,nowTime+30*day);
             var orders = client.getOrders(nowTime-30*day,nowTime+30*day);
@@ -1102,11 +1102,11 @@ $(document).ready(function(){
 
             for (var i = 0; i < ordersLength; i++){
                 var orderDateLabel = orders[i].date;
-                var orderDate = new Date(orderDateLabel*1000).toLocaleString().split('.');
-                var day = orderDate[0];
+                var orderDate = new Date(orderDateLabel*1000);//.toLocaleString().split('.');
+                var day = orderDate.getDate();
                 var ordersCount = 0;
                 $('.day').each(function(){
-                  if ($(this).text() == day){
+                  if ($(this).text() == day && !$(this).hasClass('old') && !$(this).hasClass('new')){
                       $(this).addClass('order-day').attr('id',orders[i].date);
                   }
                 });
