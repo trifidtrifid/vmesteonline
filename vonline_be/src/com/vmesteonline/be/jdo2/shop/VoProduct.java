@@ -231,18 +231,16 @@ public class VoProduct {
 	public ProductDetails getProductDetails() {
 		ProductDetails productDetails = new ProductDetails();
 
-		List<Long> cs = new ArrayList<Long>();
-		cs.addAll(getCategories());
-		productDetails.setCategories(cs);
-
+		productDetails.setCategories(getCategories());
 		productDetails.setPricesMap(convertToPriceTypeMap(pricesMap, new HashMap<PriceType, Double>()));
 		productDetails.setOptionsMap(optionsMap);
-		List<Long> ts = new ArrayList<Long>();
-		ts.addAll(getTopicSet());
 		productDetails.setProducerId(producerId);
 		productDetails.setFullDescr(fullDescr.getValue());
-		productDetails.setTopicSet(ts);
+		productDetails.setTopicSet(getTopicSet());
 		productDetails.setImagesURLset(getImagesURLset());
+		productDetails.setPrepackRequired(prepackRequired);
+		productDetails.setKnownNames(knownNames);
+		productDetails.setMinClientPack(minClientPack);
 
 		return productDetails;
 	}
