@@ -330,7 +330,7 @@ th.next
         text-align center
         &:first-child
           text-align left
-          width 70%
+          width 60%
           padding-left 5px
         img
           width 20px
@@ -341,6 +341,7 @@ th.next
           cursor pointer
           &:hover
             color #2a6496
+            text-decoration none
         span
           display block
           margin-left 30px
@@ -420,12 +421,12 @@ th.next
   color #ccc
 
 .modal
-  width 560px
+  width 600px
   left 50%
-  margin-left -285px
+  margin-left -300px
   background #fff
   top 20%
-  max-height 288px
+  height 288px
   overflow-y auto
   .close
     outline none
@@ -472,9 +473,10 @@ th.next
       position static
     .modal-footer
       position absolute
-      bottom 20px
+      height 60px
+      top 205px
       right 10px
-      width 330px
+      width 370px
       background #fff
       text-align left
       padding 0
@@ -487,26 +489,56 @@ th.next
         margin 0 17px
       span
         font-size 20px
+      &.with-prepack
+        span
+        .ace-spinner
+        .fa
+          margin 0 10px
+        >span
+          margin 0
+          width 130px
+        .prepack-item
+          display inline-block
+          vertical-align middle
+          span
+            display block
+            font-size 12px
+            text-align center
+          .fa-plus
+            font-size 20px
+            position relative
+            left -8px
+          .fa-plus:hover
+            text-decoration none
+    .prepack-list
+      float right
+      margin-right 69px
+      .prepack-line
+        margin-top 5px
+      .close
+        color #a44451
+        opacity .5
+        position relative
+        top: -10px
+        &:hover
+          opacity 1
 .modal-order-end
   max-height 312px
   .modal-body-list
     max-height 148px
-    display block
     overflow auto
+    width 100%
     tbody
       width 100%
-      display block
       tr
         width 100%
-        display block
         td:first-child
           padding-right 0
-          width 70%
+          width 60%
         td
           padding 5px
           width 10%
   .modal-footer
-    //position static
     bottom 0
     border 0
     padding 0

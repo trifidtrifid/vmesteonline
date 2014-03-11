@@ -242,7 +242,7 @@ $(document).ready(function(){
             var product= {
                 name : name,
                 price : productSelector.find('.product-price').text(),
-                unitName: productSelector.find('.ace-spinner + span').text(),
+                unitName: productSelector.find('.unit-name').text(),
                 imageURL : $(this).find('img').attr('src')
             };
             var productDetails = client.getProductDetails(productSelector.data('productid'));
@@ -275,16 +275,26 @@ $(document).ready(function(){
                     '<div class="product-text">'+
                     productDetails.fullDescr+
                     '</div>'+
-                    '<div class="modal-footer">'+
+                    '<div class="modal-footer with-prepack">'+
                         '<span>Цена: '+product.price+'</span>'+
+                        '<div class="prepack-item">'+
+                        '<input type="text" class="input-mini spinner1 prepack" />'+
+                        '<span>упаковок</span>'+
+                        '</div>'+
+                        '<div class="prepack-item">по</div>'+
+                        '<div class="prepack-item">'+
                         '<input type="text" class="input-mini spinner1" />'+
-                     product.unitName;
+                        '<span>'+ product.unitName +'</span>'+
+                        '</div>'+
+                        '<div class="prepack-item"><a href="#" title="Добавить" class="fa fa-plus prepack-open"></a></div>';
+
 
             if ($(this).closest('tr').length > 0 ){
-                popupHtml += '<i class="fa fa-shopping-cart"></i>';
+                popupHtml += '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>';
             }
 
-                popupHtml += '</div>'+
+                popupHtml += '<div class="prepack-list"></div>'+
+                    '</div>'+
                 '</div>'+
             '</div>';
 
@@ -292,6 +302,40 @@ $(document).ready(function(){
             if (currentModal.find('.modal-body').length == 0){
                 currentModal.append(popupHtml);
                 InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'));
+                InitAddToBasket(currentModal.find('.fa-shopping-cart'));
+                $('.prepack-open').click(function(e){
+                    e.preventDefault();
+
+                    var prepackHtml = '<div class="prepack-line no-init">' +
+                        '<div class="prepack-item">'+
+                        '<input type="text" class="input-mini spinner1 prepack" />'+
+                        '<span>упаковок</span>'+
+                        '</div>'+
+                        '<div class="prepack-item">по</div>'+
+                        '<div class="prepack-item">'+
+                        '<input type="text" class="input-mini spinner1" />'+
+                        '<span>'+ $(this).closest('.prepack-item').prev().find('span').text() +'</span>'+
+                        '</div>'+
+                        '<div class="prepack-item">'+
+                        '<a href="#" class="close" title="Удалить">×</a>'+
+                        '</div>'+
+                        '</div>';
+                    $(this).closest('.modal-footer').find('.prepack-list').append(prepackHtml);
+                    var currentPrepackLine = $('.prepack-line.no-init');
+                    InitSpinner(currentPrepackLine.find('.spinner1'), 1);
+                    currentPrepackLine.removeClass('no-init');
+
+                    var oldHeight = $(this).closest('.modal').height();
+                    $(this).closest('.modal').height(oldHeight + 53);
+
+                    $('.close').click(function(){
+                        $(this).closest('.prepack-line').slideUp(function(){
+                            var oldHeight = $(this).closest('.modal').height();
+                            $(this).closest('.modal').height(oldHeight - 53);
+                            $(this).remove();
+                        })
+                    })
+                });
             }
             currentModal.modal();
             var carousel = currentModal.find('.carousel');
@@ -318,7 +362,7 @@ $(document).ready(function(){
     }
 
     $('.btn-order').click(function(){
-        if(!$('#phone-delivery').val()){
+        if($('.input-delivery').hasClass('active') && !$('#phone-delivery').val()){
             $('.alert-delivery-phone').show();
         }else if ($('.input-delivery').hasClass('active') && (!$('#country-delivery').val() || !$('#city-delivery').val() || !$('#street-delivery').val() || !$('#building-delivery').val() || !$('#flat-delivery').val())){
             $('.alert-delivery-phone').hide();
@@ -345,6 +389,7 @@ $(document).ready(function(){
                     '<td>'+
                     '<input type="text" class="input-mini spinner1 no-init" />'+
                     '</td>'+
+                    '<td>'+ 'ед' +'</td>'+
                     '<td class="td-summa">'+ $(this).find('.td-summa').text()+
                     '</td>'+
                     '</tr>';
@@ -423,7 +468,7 @@ $(document).ready(function(){
 
 
                     // передаем адресс доставки
-                    console.log(country.id+" "+city.id+" "+street.id+" "+building.id+" "+$('#flat-delivery').val()+" "+$('#order-comment').val());
+                    //console.log(country.id+" "+city.id+" "+street.id+" "+building.id+" "+$('#flat-delivery').val()+" "+$('#order-comment').val());
                     /*var deliveryAddress = new com.vmesteonline.be.PostalAddress(
                         country : country,
                         city : city,
@@ -498,55 +543,12 @@ $(document).ready(function(){
                 '<td class="product-price">'+ productsList[i].price  +'</td>'+
                 '<td>'+
                 '<input type="text" class="input-mini spinner1" /> '+
-                unitName+" "+productDetails.prepackRequired+
                 '</td>'+
+                '<td>'+ '<span class="unit-name">'+ unitName +'</span> '+productDetails.prepackRequired +'</td>'+
                 '<td>'+
-                '<i class="fa fa-shopping-cart"></i>'+
+                '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
                 '</td>'+
                 '</tr>';
-
-            /*'<div class="modal-body">'+
-                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
-                '<div class="product-slider">'+
-                '<div class="slider flexslider">'+
-                '<ul class="slides">'+
-                '<li>'+
-                '<img src="'+ productsList[i].imageURL +'" />'+
-                '</li>'+
-                '</ul>'+
-                '</div>'+
-                '<div class="carousel flexslider">'+
-                '<ul class="slides">'+
-                '<li>'+
-                '<img src="'+ productsList[i].imageURL +'" />'+
-                '</li>'+
-                '</ul>'+
-                '</div>'+
-                '</div>'+
-                '<div class="product-descr">'+
-                '<h3>'+ productsList[i].name +'</h3>'+
-                '<div class="product-text">'+
-                productDetails.fullDescr+
-                '</div>'+
-                '<div class="modal-footer">'+
-                '<span>Цена: '+ productsList[i].price +'</span>';
-            if(productDetails.prepackRequired){
-                productsHtml += '<input type="text" class="input-mini spinner1 prepack-spinner" /> '+
-                    '<span class="unit-name bottom">упаковок</span>'+
-                    '<input type="text" class="input-mini spinner1" /> '+
-                    '<span class="unit-name bottom">'+unitName+'</span>'+
-                    '<a href="#" class="fa fa-plus"></a>'+
-                    div;
-            }else{
-                productsHtml += '<input type="text" class="input-mini spinner1" /> '+
-                    '<span class="unit-name">'+unitName+'</span>';
-            }
-
-            productsHtml += '<i class="fa fa-shopping-cart"></i>'+
-                '</div>'+
-                '</div>'+
-                '</div>'+*/
-
         }
         $('.main-content .catalog table tbody').html("").append(productsHtml);
 
@@ -640,8 +642,9 @@ $(document).ready(function(){
             '<thead>'+
             '<tr>'+
             '<td>Название</td>'+
-            '<td>Цена</td>'+
+            '<td>Цена (руб)</td>'+
             '<td>Количество</td>'+
+            '<td>Ед.изм</td>'+
             '<td></td>'+
             '</tr>'+
             '</thead>';
@@ -650,6 +653,7 @@ $(document).ready(function(){
 
         for (var j = 0; j < orderLinedLength; j++){
             var productDetails = client.getProductDetails(orderLines[j].product.id);
+            var imagesSet = productDetails.imagesURLset;
             var unitName = "";
             if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
             ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
@@ -670,40 +674,19 @@ $(document).ready(function(){
                 '<li>'+
                 '<img src="'+ orderLines[j].product.imageURL +'" />'+
                 '</li>'+
-                '<li>'+
-                '<img src="i/shop/2.jpg" />'+
-                '</li>'+
-                '<li>'+
-                '<img src="i/shop/3.jpg" />'+
-                '</li>'+
-                '<li>'+
-                '<img src="i/shop/4.jpg" />'+
-                '</li>'+
-                '<li>'+
-                '<img src="i/shop/5.jpg" />'+
-                '</li>'+
                 '</ul>'+
-                '</div>'+
-                '<div class="carousel flexslider">'+
-                '<ul class="slides">'+
-                '<li>'+
-                '<img src="'+ orderLines[j].product.imageURL +'" />'+
-                '</li>'+
-                '<li>'+
-                '<img src="i/shop/2.jpg" />'+
-                '</li>'+
-                '<li>'+
-                '<img src="i/shop/3.jpg" />'+
-                '</li>'+
-                '<li>'+
-                '<img src="i/shop/4.jpg" />'+
-                '</li>'+
-                '<li>'+
-                '<img src="i/shop/5.jpg" />'+
-                '</li>'+
-                '</ul>'+
-                '</div>'+
-                '</div>'+
+                '</div>';
+
+            if(imagesSet.length){
+                ordersProductsHtml += '<div class="carousel flexslider">'+
+                    '<ul class="slides">'+
+                    '<li>'+
+                    '<img src="'+ orderLines[j].product.imageURL +'" />'+
+                    '</li>'+
+                    '</ul>'+
+                    '</div>';
+            }
+                ordersProductsHtml += '</div>'+
                 '<div class="product-descr">'+
                 '<h3>'+ orderLines[j].product.name +'</h3>'+
                 '<div class="product-text">'+
@@ -713,7 +696,7 @@ $(document).ready(function(){
                 '<span>Цена: '+ orderLines[j].product.price +'</span>'+
                 '<input type="text" class="input-mini spinner1" />'+
                 unitName+
-                '<i class="fa fa-shopping-cart"></i>'+
+                '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
                 '</div>'+
                 '</div>'+
                 '</div>'+
@@ -722,10 +705,10 @@ $(document).ready(function(){
                 '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
                 '<td>'+
                 '<input type="text" class="input-mini spinner1" />'+
-                unitName+
                 '</td>'+
+                '<td>'+unitName+'</td>'+
                 '<td>'+
-                '<i class="fa fa-shopping-cart"></i>'+
+                '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
                 '</td>'+
                 '</tr>';
         }
@@ -843,7 +826,7 @@ $(document).ready(function(){
     client.setDates(dateArray); */
     var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
     for (var p in datesArray){
-        console.log(p);
+        //console.log(p);
     }
 /*------*/
 
@@ -944,7 +927,7 @@ $(document).ready(function(){
             '<table>'+
             '<thead>'+
             '<tr>'+
-            '<td>Цена(шт)</td>'+
+            '<td>Цена (руб)</td>'+
             '<td>Кол-во</td>'+
             '<td>Сумма</td>'+
             '<td></td>'+
@@ -1061,7 +1044,6 @@ $(document).ready(function(){
 
                 $('.day').each(function(){
                     var day = $(this).text();
-                    console.log(tempMonth+" "+nowMonth);
                     if (tempMonth == nowMonth){
                         if  (day == freeDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('free-day');$(this).attr('id',date);}
                         if  (day == specialDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('special-day');$(this).attr('id',date);}

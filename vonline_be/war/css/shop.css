@@ -368,7 +368,7 @@ span
 }
 .catalog table tr td:first-child {
   text-align: left;
-  width: 70%;
+  width: 60%;
   padding-left: 5px;
 }
 .catalog table tr td img {
@@ -382,6 +382,7 @@ span
 }
 .catalog table tr td .fa:hover {
   color: #2a6496;
+  text-decoration: none;
 }
 .catalog table tr td span {
   display: block;
@@ -483,12 +484,12 @@ span
   color: #ccc;
 }
 .modal {
-  width: 560px;
+  width: 600px;
   left: 50%;
-  margin-left: -285px;
+  margin-left: -300px;
   background: #fff;
   top: 20%;
-  max-height: 288px;
+  height: 288px;
   overflow-y: auto;
 }
 .modal .close {
@@ -549,9 +550,10 @@ span
 }
 .modal .modal-footer {
   position: absolute;
-  bottom: 20px;
+  height: 60px;
+  top: 205px;
   right: 10px;
-  width: 330px;
+  width: 370px;
   background: #fff;
   text-align: left;
   padding: 0;
@@ -567,25 +569,65 @@ span
 .modal .modal-footer span {
   font-size: 20px;
 }
+.modal .modal-footer.with-prepack span,
+.modal .modal-footer.with-prepack .ace-spinner,
+.modal .modal-footer.with-prepack .fa {
+  margin: 0 10px;
+}
+.modal .modal-footer.with-prepack >span {
+  margin: 0;
+  width: 130px;
+}
+.modal .modal-footer.with-prepack .prepack-item {
+  display: inline-block;
+  vertical-align: middle;
+}
+.modal .modal-footer.with-prepack .prepack-item span {
+  display: block;
+  font-size: 12px;
+  text-align: center;
+}
+.modal .modal-footer.with-prepack .prepack-item .fa-plus {
+  font-size: 20px;
+  position: relative;
+  left: -8px;
+}
+.modal .modal-footer.with-prepack .prepack-item .fa-plus:hover {
+  text-decoration: none;
+}
+.modal .prepack-list {
+  float: right;
+  margin-right: 69px;
+}
+.modal .prepack-list .prepack-line {
+  margin-top: 5px;
+}
+.modal .prepack-list .close {
+  color: #a44451;
+  opacity: 0.5;
+  position: relative;
+  top: -10px;
+}
+.modal .prepack-list .close:hover {
+  opacity: 1;
+}
 .modal-order-end {
   max-height: 312px;
 }
 .modal-order-end .modal-body-list {
   max-height: 148px;
-  display: block;
   overflow: auto;
+  width: 100%;
 }
 .modal-order-end .modal-body-list tbody {
   width: 100%;
-  display: block;
 }
 .modal-order-end .modal-body-list tbody tr {
   width: 100%;
-  display: block;
 }
 .modal-order-end .modal-body-list tbody tr td:first-child {
   padding-right: 0;
-  width: 70%;
+  width: 60%;
 }
 .modal-order-end .modal-body-list tbody tr td {
   padding: 5px;

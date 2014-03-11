@@ -395,8 +395,9 @@
                             <thead>
                             <tr>
                                 <td>Название</td>
-                                <td>Цена</td>
+                                <td>Цена (руб)</td>
                                 <td>Количество</td>
+                                <td>Ед.изм</td>
                                 <td></td>
                             </tr>
                             </thead>
@@ -411,72 +412,17 @@
                                             </span>
                                         </a>
                                         <div class="modal">
-                                            <%--<div class="modal-body">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                                <div class="product-slider">
-                                                    <div class="slider flexslider">
-                                                        <ul class="slides">
-                                                            <li>
-                                                                <img src="${product.imageURL}" />
-                                                            </li>
-                                                            &lt;%&ndash;<li>
-                                                                <img src="i/shop/2.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/3.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/4.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/5.jpg" />
-                                                            </li>&ndash;%&gt;
-                                                            <!-- items mirrored twice, total of 12 -->
-                                                        </ul>
-                                                    </div>
-                                                    <div class="carousel flexslider">
-                                                        <ul class="slides">
-                                                            <li>
-                                                                <img src="${product.imageURL}" />
-                                                            </li>
-                                                            &lt;%&ndash;<li>
-                                                                <img src="i/shop/2.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/3.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/4.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/5.jpg" />
-                                                            </li>&ndash;%&gt;
-                                                            <!-- items mirrored twice, total of 12 -->
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="product-descr">
-                                                    <h3>${product.name}</h3>
-                                                    <div class="product-text">
-                                                        ${productDetails.fullDescr}
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <span>Цена: ${product.price}</span>
-                                                        <input type="text" class="input-mini spinner1" />
-                                                        ${productDetails.unitName}
-                                                        <i class="fa fa-shopping-cart"></i>
-                                                    </div>
-                                                </div>
-                                            </div>--%>
                                         </div>
                                     </td>
                                     <td class="product-price">${product.price}</td>
                                     <td>
                                         <input type="text" class="input-mini spinner1" />
+                                    </td>
+                                    <td>
                                         <span class="unit-name">${product.unitName}</span>
                                     </td>
                                     <td>
-                                        <i class="fa fa-shopping-cart"></i>
+                                        <a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -512,44 +458,20 @@
 					aria-hidden="true">×</button>
 				<h3>Ваш заказ :</h3>
 				<section class="catalog">
-					<table>
-						<thead>
-							<tr>
-								<td>Название</td>
-								<td>Цена</td>
-								<td>Количество</td>
-								<td>Сумма</td>
-							</tr>
-						</thead>
-					</table>
+					<%--<table>
+					</table>--%>
 					<table class="modal-body-list">
-						<tr>
-							<td><a href="#" class="product-link"> <img
-									src="i/shop/1.jpg" alt="картинка" /> <span>100г Вкусный
-										обед рагу с индейкой и кроликом Whiskas Вискас</span>
-							</a></td>
-							<td class="td-price">111р</td>
-							<td><input type="text" class="input-mini spinner1" /></td>
-							<td class="td-summa">111р</td>
-						</tr>
-						<tr>
-							<td><a href="#" class="product-link"> <img
-									src="i/shop/1.jpg" alt="картинка" /> <span>100г Вкусный
-										обед рагу с индейкой и кроликом Whiskas Вискас</span>
-							</a></td>
-							<td class="td-price">111р.</td>
-							<td><input type="text" class="input-mini spinner1" /></td>
-							<td class="td-summa">111р</td>
-						</tr>
-						<tr>
-							<td><a href="#" class="product-link"> <img
-									src="i/shop/1.jpg" alt="картинка" /> <span>100г Вкусный
-										обед рагу с индейкой и кроликом Whiskas Вискас</span>
-							</a></td>
-							<td class="td-price">111р.</td>
-							<td><input type="text" class="input-mini spinner1" /></td>
-							<td class="td-summa">111р</td>
-						</tr>
+                        <thead>
+                            <tr>
+                                <td>Название</td>
+                                <td>Цена(руб)</td>
+                                <td>Количество</td>
+                                <td>Ед.изм</td>
+                                <td>Сумма</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
 					</table>
 				</section>
 			</div>
