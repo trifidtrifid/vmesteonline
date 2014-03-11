@@ -14,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.PMF;
@@ -23,7 +24,8 @@ import com.vmesteonline.be.utils.Defaults;
 
 public class MessageServiceTests {
 
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig(),
+			new LocalBlobstoreServiceTestConfig());
 	public static String sessionId = "11111111111111111111111";
 
 	AuthServiceImpl asi;

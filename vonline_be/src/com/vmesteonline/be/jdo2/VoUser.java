@@ -41,6 +41,11 @@ public class VoUser extends GeoLocation {
 		this.deliveryAddresses = new TreeSet<VoPostalAddress>();
 		this.confirmCode = 0;
 		this.emailConfirmed = false;
+		this.avatarMessage = Defaults.defaultAvatarTopicUrl;
+		this.avatarTopic = Defaults.defaultAvatarTopicUrl;
+		this.avatarProfile = Defaults.defaultAvatarProfileUrl;
+		this.avatarProfileShort = Defaults.defaultAvatarShortProfileUrl;
+
 	}
 
 	public ShortUserInfo getShortUserInfo() {

@@ -295,7 +295,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(url));
 			if (vfar.getUserId() != voUser.getId())
 				throw new InvalidOperation(VoError.IncorrectParametrs, "can't save avatar");
-			
+
 			Image origImage = ImagesServiceFactory.makeImageFromFilename(vfar.getFileName().toString());
 			Transform resize = ImagesServiceFactory.makeResize(95, 95);
 			String topicAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
@@ -311,7 +311,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			voUser.setAvatarMessage(topicAvatarUrl);
 			voUser.setAvatarProfileShort(shortProfileAvatarUrl);
 			voUser.setAvatarProfile(profileAvatarUrl);
-
+			pm.makePersistent(voUser);
 		} catch (Exception e) {
 			logger.warn("can't get VoFileAccessRecord for file " + url + " " + e.getMessage());
 			e.printStackTrace();

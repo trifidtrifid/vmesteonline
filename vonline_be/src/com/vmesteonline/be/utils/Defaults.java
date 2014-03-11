@@ -10,6 +10,10 @@ import java.util.TreeMap;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
+import com.google.appengine.api.images.Image;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.Transform;
 import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.PostalAddress;
@@ -17,6 +21,7 @@ import com.vmesteonline.be.ShopServiceImpl;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
@@ -69,7 +74,11 @@ public class Defaults {
 	public static int radiusMedium = 2000;
 	public static int radiusLarge = 5000;
 
-	public static String defaultAvatarUrl;
+	public static String defaultAvatarTopicUrl;
+	public static String defaultAvatarMessageUrl;
+	public static String defaultAvatarProfileUrl;
+	public static String defaultAvatarShortProfileUrl;
+
 	private static long userId = 0;
 
 	public static boolean initDefaultData() {
@@ -77,8 +86,16 @@ public class Defaults {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
-
-//			defaultAvatarUrl = StorageHelper.saveImage("http://localhost:8888/data/default-avatar.gif", 0, true, pm);
+			String defaultAvatarUrl = StorageHelper.saveImage("http://localhost:8888/data/default-avatar.gif", 0, true, pm);
+			ImagesService imagesService = ImagesServiceFactory.getImagesService();
+			VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(defaultAvatarUrl));
+			Image origImage = ImagesServiceFactory.makeImageFromFilename(vfar.getFileName().toString());
+			Transform resize = ImagesServiceFactory.makeResize(95, 95);
+			defaultAvatarTopicUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), 0, true, pm);
+			resize = ImagesServiceFactory.makeResize(40, 40);
+			defaultAvatarShortProfileUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), 0, true, pm);
+			resize = ImagesServiceFactory.makeResize(200, 200);
+			defaultAvatarProfileUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), 0, true, pm);
 
 			initializeRubrics(pm);
 			initializeGroups(pm);
