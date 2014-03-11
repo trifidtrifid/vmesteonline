@@ -559,6 +559,9 @@ span
   padding: 0;
   padding-top: 15px;
 }
+.modal .modal-footer .fa-shopping-cart {
+  float: right;
+}
 .modal .modal-footer span,
 .modal .modal-footer .ace-spinner,
 .modal .modal-footer .fa {
@@ -569,31 +572,37 @@ span
 .modal .modal-footer span {
   font-size: 20px;
 }
+.modal .modal-footer >span {
+  margin: 0 !important;
+  width: 130px;
+}
+.modal .modal-footer .prepack-item {
+  display: inline-block;
+  vertical-align: middle;
+}
+.modal .modal-footer .prepack-item span {
+  font-size: 12px;
+  margin-left: 0;
+}
+.modal .modal-footer .prepack-item .fa-plus {
+  font-size: 20px;
+  position: relative;
+  left: -8px;
+}
+.modal .modal-footer .prepack-item .fa-plus:hover {
+  text-decoration: none;
+}
 .modal .modal-footer.with-prepack span,
 .modal .modal-footer.with-prepack .ace-spinner,
 .modal .modal-footer.with-prepack .fa {
   margin: 0 10px;
 }
-.modal .modal-footer.with-prepack >span {
-  margin: 0;
-  width: 130px;
-}
-.modal .modal-footer.with-prepack .prepack-item {
-  display: inline-block;
-  vertical-align: middle;
+.modal .modal-footer.with-prepack .fa-shopping-cart {
+  margin-top: 8px;
 }
 .modal .modal-footer.with-prepack .prepack-item span {
   display: block;
-  font-size: 12px;
   text-align: center;
-}
-.modal .modal-footer.with-prepack .prepack-item .fa-plus {
-  font-size: 20px;
-  position: relative;
-  left: -8px;
-}
-.modal .modal-footer.with-prepack .prepack-item .fa-plus:hover {
-  text-decoration: none;
 }
 .modal .prepack-list {
   float: right;
