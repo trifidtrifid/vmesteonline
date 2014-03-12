@@ -149,8 +149,7 @@ a {
   max-width: 40px;
   max-height: 40px;
 }
-.shop-right .catalog-order li .ace-spinner,
-.shop-right .catalog-order li .ace-spinner+span {
+.shop-right .catalog-order li .ace-spinner {
   display: inline-block;
   vertical-align: middle;
 }
@@ -164,6 +163,9 @@ a {
   padding: 0;
   border: 0;
   background: 0;
+}
+.shop-right .catalog-order li .unit-name {
+  display: none;
 }
 .shop-right .itogo-right {
   padding-left: 10px;
