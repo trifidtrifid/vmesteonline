@@ -277,9 +277,10 @@ public class VoShop {
 	public SortedMap<Integer, DateType> getDates(int from, int to) {
 
 		SortedMap<Integer, DateType> selectedDates = new TreeMap<Integer, DateType>();
-		for (int date = from - from % 86400; date < to + 86400 - to % 86400; date += 86400)
-			if (dates.containsKey(date))
-				selectedDates.put(date, DateType.findByValue(dates.get(date)));
+		if( null!=dates) 
+			for (int date = from - from % 86400; date < to + 86400 - to % 86400; date += 86400)
+				if (dates.containsKey(date))
+					selectedDates.put(date, DateType.findByValue(dates.get(date)));
 		return selectedDates;
 
 	}

@@ -3,6 +3,7 @@ package com.vmesteonline.be.utils;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -36,6 +37,7 @@ import com.vmesteonline.be.jdo2.shop.VoProduct;
 import com.vmesteonline.be.jdo2.shop.VoProductCategory;
 import com.vmesteonline.be.jdo2.shop.VoShop;
 import com.vmesteonline.be.shop.DataSet;
+import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.ExchangeFieldType;
 import com.vmesteonline.be.shop.ImExType;
@@ -74,10 +76,10 @@ public class Defaults {
 	public static int radiusMedium = 2000;
 	public static int radiusLarge = 5000;
 
-	public static String defaultAvatarTopicUrl;
-	public static String defaultAvatarMessageUrl;
-	public static String defaultAvatarProfileUrl;
-	public static String defaultAvatarShortProfileUrl;
+	public static String defaultAvatarTopicUrl = "/data/da.gif";
+	public static String defaultAvatarMessageUrl = "/data/da.gif";
+	public static String defaultAvatarProfileUrl = "/data/da.gif";
+	public static String defaultAvatarShortProfileUrl = "/data/da.gif";
 
 	private static long userId = 0;
 
@@ -86,17 +88,6 @@ public class Defaults {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
-			String defaultAvatarUrl = StorageHelper.saveImage("http://localhost:8888/data/default-avatar.gif", 0, true, pm);
-			ImagesService imagesService = ImagesServiceFactory.getImagesService();
-			VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(defaultAvatarUrl));
-			Image origImage = ImagesServiceFactory.makeImageFromFilename(vfar.getFileName().toString());
-			Transform resize = ImagesServiceFactory.makeResize(95, 95);
-			defaultAvatarTopicUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), 0, true, pm);
-			resize = ImagesServiceFactory.makeResize(40, 40);
-			defaultAvatarShortProfileUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), 0, true, pm);
-			resize = ImagesServiceFactory.makeResize(200, 200);
-			defaultAvatarProfileUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), 0, true, pm);
-
 			initializeRubrics(pm);
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations();
@@ -158,6 +149,16 @@ public class Defaults {
 					"http://vomoloko.ru/img/logo.jpg", userId, topicSet, tags, deliveryCosts, paymentTypes));
 
 			ssi.getShop(shop); // to make it current
+			// set dates
+			int now = (int) (System.currentTimeMillis() / 1000L);
+			Map<Integer, DateType> dates = new HashMap<Integer, DateType>();
+			for (int dt = now; dt < now + 86400 * 365; dt += 7 * 86400) {
+				dates.put(dt, DateType.NEXT_ORDER);
+				dates.put(dt - 3 * 86400, DateType.NEXT_ORDER);
+				dates.put(dt - 86400, DateType.SPECIAL_PRICE);
+				dates.put(dt - 4 * 86400, DateType.SPECIAL_PRICE);
+			}
+			ssi.setDates(dates);
 
 			DataSet ds = new DataSet();
 			ds.date = (int) (System.currentTimeMillis() / 1000L);

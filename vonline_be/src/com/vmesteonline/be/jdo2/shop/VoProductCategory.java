@@ -212,7 +212,7 @@ public class VoProductCategory {
 
 	public static VoProductCategory getByImportId(Long shopId, long importId, PersistenceManager pm) {
 		Query qu = pm.newQuery(VoProductCategory.class);
-		qu.setFilter("importId == " + importId + " && shopId == " + shopId);
+		qu.setFilter("importId == "+importId+ " && shopId == "+shopId);
 		try {
 			List<VoProductCategory> cl = (List<VoProductCategory>) qu.execute();
 			for (VoProductCategory voProductCategory : cl) {

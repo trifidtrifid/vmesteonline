@@ -50,7 +50,6 @@ struct ProductDetails {
 	10:double minProducerPack,
 	11:bool prepackRequired,
 	12:set<string> knownNames,
-	13:string unitName,
 }
 
 struct Product {
@@ -60,6 +59,7 @@ struct Product {
 	4:double weight,
 	5:string imageURL,
 	6:double price,
+	7:string unitName,
 }
 
 struct FullProductInfo {

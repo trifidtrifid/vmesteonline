@@ -3,7 +3,6 @@ package com.vmesteonline.be;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -73,8 +72,7 @@ public class UserServiceImplTest extends UserServiceImpl {
 			Assert.assertEquals(Defaults.user1name, sp.getFirstName());
 			Assert.assertEquals(Defaults.user1lastName, sp.getLastName());
 			Assert.assertEquals("Республиканская, 32/3", sp.getAddress());
-			fail("should implement");
-			Assert.assertEquals("", sp.getAvatar());
+			Assert.assertEquals("/data/da.gif", sp.getAvatar());
 			Assert.assertEquals("", sp.getBalance());
 			Assert.assertEquals(0, sp.getRating());
 
@@ -86,6 +84,33 @@ public class UserServiceImplTest extends UserServiceImpl {
 		}
 	}
 
+	@Test
+	public void testGetUsyerInfo() {
+
+		PersistenceManager pm = PMF.getPm();
+		try {
+			asi.login(Defaults.user1email, Defaults.user1pass);
+
+			VoUser voUserA = asi.getCurrentUser(pm);
+			UserInfo ui = usi.getUserInfo();
+
+			Assert.assertEquals(voUserA.getId(), ui.getId());
+			Assert.assertEquals(Defaults.user1name, ui.getFirstName());
+			Assert.assertEquals(Defaults.user1lastName, ui.getLastName());
+//			Assert.assertEquals(Defaults.user1lastName, ui.());
+
+			//			Assert.assertEquals("Республиканская, 32/3", ui.getAddress());
+//			fail("should implement");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		} finally {
+			pm.close();
+		}
+	}
+
+	
 	@Test
 	public void testGetUserAandBVoGroups() {
 

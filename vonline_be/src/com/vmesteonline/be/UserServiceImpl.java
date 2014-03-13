@@ -57,7 +57,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser voUser = getCurrentUser(pm);
-			ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, "", "", "");
+			ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, voUser.getAvatarMessage(), "", "");
 			VoPostalAddress pa = voUser.getAddress();
 			if (pa != null) {
 				sp.setAddress(pa.getBuilding().getAddressString());
@@ -502,7 +502,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			pm.retrieve(currentUser);
-			currentUser.addPostalAddress(new VoPostalAddress(newAddress, pm), pm);
+			currentUser.addPostalAddress(new VoPostalAddress(newAddress, pm));
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

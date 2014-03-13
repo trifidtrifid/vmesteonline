@@ -14,7 +14,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import com.google.appengine.api.datastore.KeyFactory;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -178,17 +177,6 @@ public class ServiceImpl {
 			pm.close();
 		}
 	}
-
-	/*
-	 * public Map<Integer, Long> getCurrentAttributes() throws InvalidOperation,
-	 * TException { return getCurrentAttributes(null); } public Map<Integer, Long>
-	 * getCurrentAttributes(PersistenceManager _pm) throws InvalidOperation,
-	 * TException { PersistenceManager pm = null == _pm ?
-	 * PMF.get().getPersistenceManager() : _pm; try { VoSession currentSession =
-	 * getCurrentSession(pm); pm.retrieve(currentSession); return
-	 * currentSession.getSessionAttributes(); } finally { if(null==_pm)
-	 * pm.close(); } }
-	 */
 
 	public Long getSessionAttribute(CurrentAttributeType type) throws InvalidOperation {
 		return getSessionAttribute(null);

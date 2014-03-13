@@ -18,15 +18,6 @@
             }
         });
 
-        w.resize(function(){
-            if ($(this).width() > 753){
-                sidebar.css({'marginLeft':'0'});
-                $('.main-content').css('margin-left','190px');
-            }else{
-                sidebar.css({'marginLeft':'-190px'});
-                $('.main-content').css('margin-left','0');
-            }
-        });
 
         $('.dropdown-menu li a').click(function(e){
             e.preventDefault();

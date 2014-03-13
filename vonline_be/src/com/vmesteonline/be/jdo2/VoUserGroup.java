@@ -2,7 +2,6 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 
-import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
