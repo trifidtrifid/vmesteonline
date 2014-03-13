@@ -167,7 +167,8 @@ $(document).ready(function(){
         createOrdersHtml: createOrdersHtml,
         initShowMoreOrders: initShowMoreOrders,
         initOrderPlusMinus: initOrderPlusMinus,
-        initOrderBtns: initOrderBtns
+        initOrderBtns: initOrderBtns,
+        setSidebarHeight: setSidebarHeight
     };
 
     dPicker.datepicker('setVarOrderDates',datepickerFunc);
@@ -970,8 +971,6 @@ $(document).ready(function(){
                     break
             }
             ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
-                '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
-                '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить в корзину</button>'+
                 '<table class="orders-tbl">'+
                 '<tbody>'+
                 '<tr>'+
@@ -984,6 +983,10 @@ $(document).ready(function(){
                 orderDetails.deliveryTo.flatNo+
                 '</td>'+
                 '<td class="td6">'+ orders[i].totalCost +'</td>'+
+                '<td class="td7">'+
+                '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
+                '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить в корзину</button>'+
+                '</td>'+
                 '</tr>'+
                 '</tbody>'+
                 '</table>'+
@@ -1249,8 +1252,8 @@ $(document).ready(function(){
         addSingleOrderToBasket(orderData.orderId,addType);
     }
 
-    function initOrderBtns(){
-        $('.repeat-order-btn').click(function(){
+    function initOrderBtns(selector){
+        selector.find('.repeat-order-btn').click(function(){
             var orderData= {
                 itsOrder: true,
                 itsAppend: false,
@@ -1261,7 +1264,7 @@ $(document).ready(function(){
             dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[0, 0, orderData, 'Event']).datepicker('triggerFlagBasket');
             flagFromBasketClick = 0;
         });
-        $('.add-order-btn').click(function(){
+        selector.find('.add-order-btn').click(function(){
             var orderData= {
                 itsOrder: true,
                 itsAppend: true,
@@ -1293,8 +1296,10 @@ $(document).ready(function(){
             var itsMoreOrders = true;
             orderList.append(createOrdersHtml(orders,itsMoreOrders));
             initShowMoreOrders(orders);
-            initOrderPlusMinus($('.orders-no-init'));
-            $('.orders-no-init').removeClass('orders-no-init');
+            var ordersNoInit = $('.orders-no-init');
+            initOrderPlusMinus(ordersNoInit);
+            initOrderBtns(ordersNoInit);
+            ordersNoInit.removeClass('orders-no-init');
             offsetOrders += lengthOrders;
             setSidebarHeight();
         });
@@ -1331,9 +1336,10 @@ $(document).ready(function(){
            ordersList.html('').append(createOrdersHtml(orders));
            InitProductDetailPopup($('.product-link'));
            initShowMoreOrders(orders);
-           initOrderPlusMinus($('.orders-no-init'));
-           $('.orders-no-init').removeClass('orders-no-init');
-           initOrderBtns();
+           var ordersNoInit = $('.orders-no-init');
+           initOrderPlusMinus(ordersNoInit);
+           initOrderBtns(ordersNoInit);
+           ordersNoInit.removeClass('orders-no-init');
             shopOrders.show();
            setSidebarHeight();
        }
