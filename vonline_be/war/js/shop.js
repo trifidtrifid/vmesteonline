@@ -1,3 +1,4 @@
+
 $(document).ready(function(){
     var transport = new Thrift.Transport("/thrift/ShopService");
     var protocol = new Thrift.Protocol(transport);
@@ -156,12 +157,24 @@ $(document).ready(function(){
 
     var dPicker = $('.date-picker');
 
-    dPicker.datepicker({autoclose:true,language:'ru'}).next().on(ace.click_event, function(){
+    dPicker.datepicker({
+        autoclose:true,
+        //onRender: SetFreeDates()
+        language:'ru'
+    }).next().on(ace.click_event, function(){
         $(this).prev().focus();
     });
 
-    $('.datepicker').find('.prev').click(function(){
-    });
+    var datepickerFunc = {
+        AddSingleProductToBasket: AddSingleProductToBasket,
+        initVarForMoreOrders: initVarForMoreOrders,
+        createOrdersHtml: createOrdersHtml,
+        initShowMoreOrders: initShowMoreOrders,
+        initOrderPlusMinus: initOrderPlusMinus,
+        initOrderBtns: initOrderBtns
+    };
+
+    dPicker.datepicker('setVarOrderDates',datepickerFunc);
 
 
     InitSpinner($('.spinner1'),1);
@@ -258,6 +271,9 @@ $(document).ready(function(){
             };
             var productDetails = client.getProductDetails(productSelector.data('productid'));
             var imagesSet = productDetails.imagesURLset;
+            var options = productDetails.optionsMap;
+
+            console.log("---------");
             var popupHtml = "";
             popupHtml += '<div class="modal-body">'+
                 '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
@@ -284,7 +300,12 @@ $(document).ready(function(){
                 '<div class="product-descr">'+
                     '<h3>'+product.name+'</h3>'+
                     '<div class="product-text">'+
-                    productDetails.fullDescr+
+                    '<div class="product-options">';
+                    for(var p in options){
+                        popupHtml += '<div>'+p+" "+options[p]+'</div>';
+                    }
+                    popupHtml += '</div>'+
+                        productDetails.fullDescr+
                     '</div>';
 
                     if (productDetails.prepackRequired){
@@ -645,7 +666,7 @@ $(document).ready(function(){
                 '<td>'+
                 '<input type="text" class="input-mini spinner1" /> '+
                 '</td>'+
-                '<td>'+ '<span class="unit-name">'+ unitName +'</span> '+productDetails.prepackRequired +'</td>'+
+                '<td>'+ '<span class="unit-name">'+ unitName +'</span></td>'+
                 '<td>'+
                 '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
                 '</td>'+
@@ -692,7 +713,7 @@ $(document).ready(function(){
         InitSpinnerChange(selector,itsBasket);
     }
 
-    var currentOrderId = {};
+    //var currentOrderId = {};
 
     function InitSpinnerChange(selector,itsBasket){
         selector.on('change',function(){
@@ -1091,7 +1112,8 @@ $(document).ready(function(){
                 if ($('.additionally-order').hasClass('hide')){
                     // если это первый товар в корзине
                     flagFromBasketClick = 1;
-                    dPicker.trigger('focus').trigger('click',[currentProduct, qnty,0,packs, 'Event']);
+                    dPicker.datepicker('setVarFreeDays',currentProduct, qnty,0,packs,AddSingleProductToBasket,AddOrdersToBasket);
+                    dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[currentProduct, qnty,0,packs, 'Event']);//.datepicker('triggerFlagBasket');
                 }else{
                     // если в корзине уже что-то есть
                     client.setOrderLine(parseInt(currentProductSelector.data('productid')),qnty,'sdf',packs);
@@ -1182,124 +1204,16 @@ $(document).ready(function(){
         console.log(i+ " "+orders[i].date+" "+orderDate+" "+orders[i].id);
     }*/
 
-    dPicker.click(function(e,currentProduct,spinnerValue,orderData,packs){
+    dPicker.click(function(){
         if (flagFromBasketClick){
             // клик при добавленни товара в корзину
-            var nowTime = parseInt(new Date().getTime()/1000);
-            nowTime -= nowTime%86400;
-            var day = 3600*24;
-            //var nowDateItem = new Date(nowTime*1000).toLocaleString().split('.');
-            var nowDateItem = new Date(nowTime*1000);
-            var nowMonth = nowDateItem.getMonth();
-
-            var datesArray = client.getDates(nowTime-30*day,nowTime+30*day);
-            for (var date in datesArray){
-                var tempDate = new Date(date*1000);
-                //var tempDateItem = [];
-                //var tempDateItem = tempDate;//.toLocaleString().split('.');
-                var cleanDay = "";
-                var freeDay = "";
-                var specialDay = "";
-                var closedDay = "";
-                switch(datesArray[date]){
-                    case 0:
-                        cleanDay = tempDate.getDate();
-                        break;
-                    case 1:
-                        freeDay = tempDate.getDate();
-                        break ;
-                    case 2:
-                        specialDay = tempDate.getDate();
-                        break;
-                    case 3:
-                        closedDay = tempDate.getDate();
-                        break
-                }
-                //var tempDay = tempDate[0];
-                var tempMonth = tempDate.getMonth();
-                //var tempYear = tempDate[2].slice(0,5);
-
-                $('.day').each(function(){
-                    var day = $(this).text();
-                    if (tempMonth == nowMonth){
-                        if  (day == freeDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('free-day');$(this).attr('id',date);}
-                        if  (day == specialDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('special-day');$(this).attr('id',date);}
-                        if  (day == closedDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('closed-day');$(this).attr('id',date);}
-                    }
-                });
-            }
-
-            $('.free-day').click(function(){
-                // время должно быть не "сейчас" а то что указано в календаре
-                //var nowTime = parseInt(new Date().getTime()/1000);
-                var dateLabel = parseInt($(this).attr('id'));
-                if (orderData && orderData.itsOrder){
-                    addOrdersToBasket(orderData,$(this).attr('id'));
-                }else{
-                    // добавление одного продукта
-                    currentOrderId = client.createOrder(dateLabel,'asd2',0);
-                    var productDetails = client.getProductDetails(currentProduct.id);
-                    //alert(packs);
-                    for (p in packs){
-                        console.log(p+" "+packs[p]);
-                    }
-                    client.setOrderLine(currentProduct.id,parseInt(spinnerValue),'sdf',packs);
-                    AddSingleProductToBasket(currentProduct,spinnerValue,currentProduct.unitName);
-                }
-                if ($('.additionally-order').hasClass('hide')){
-                    $('.additionally-order').removeClass('hide');
-                    $('.empty-basket').addClass('hide');
+            dPicker.on('hide',function(){
+                if (flagFromBasketClick){
+                    $(this).datepicker('triggerFlagBasket');
+                    flagFromBasketClick = 0;
                 }
             });
-            flagFromBasketClick = 0;
-        }else{
-            // просто клик - показваем даты с заказами
-            var nowTime = parseInt(new Date().getTime()/1000);
-            nowTime -= nowTime%86400;
-            var day = 3600*24;
-            var nowDateItem = new Date(nowTime*1000);//.toLocaleString().split('.');
-            var nowMonth = nowDateItem.getMonth();
-
-            //var datesArray = client.getDates(nowTime-30*day,nowTime+30*day);
-            var orders = client.getOrders(nowTime-30*day,nowTime+30*day);
-            var ordersLength = orders.length;
-
-            for (var i = 0; i < ordersLength; i++){
-                var orderDateLabel = orders[i].date;
-                var orderDate = new Date(orderDateLabel*1000);//.toLocaleString().split('.');
-                var day = orderDate.getDate();
-                var ordersCount = 0;
-                $('.day').each(function(){
-                  if ($(this).text() == day && !$(this).hasClass('old') && !$(this).hasClass('new')){
-                      $(this).addClass('order-day').attr('id',orders[i].date);
-                  }
-                });
-            }
-
-            $('.order-day').click(function(){
-                 var orderDate = parseInt($(this).attr('id'));
-                var day = 3600*24;
-                var orders = client.getOrders(orderDate,orderDate+day);
-                var ordersLength = orders.length;
-                var orderList = [];
-                var counter = 0;
-                for (var i = 0; i < ordersLength; i++){
-                    if (orders[i].date = orderDate){
-                        orderList[counter++] = orders[i];
-                    }
-                }
-                $('.shop-products').hide();
-                var shopOrdersList = $('.orders-list');
-                initVarForMoreOrders();
-                shopOrdersList.html('').append(createOrdersHtml(orderList));
-                $('.shop-orders').show();
-                initShowMoreOrders(orderList);
-                initOrderPlusMinus(shopOrdersList);
-                initOrderBtns();
-            });
-
         }
-
     });
 
     function addSingleOrderToBasket(orderId,addType){
@@ -1318,7 +1232,7 @@ $(document).ready(function(){
         }
     }
 
-    function addOrdersToBasket(orderData,data){
+    function AddOrdersToBasket(orderData,data){
         // добавление целого заказа
         var addType;
         if (orderData.itsAppend){
@@ -1339,7 +1253,8 @@ $(document).ready(function(){
                 orderId : $(this).closest('.order-item').data('orderid')
             };
             flagFromBasketClick = 1;
-            dPicker.trigger('focus').trigger('click',[0, 0, orderData, 'Event']);
+            dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,AddSingleProductToBasket,AddOrdersToBasket);
+            dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[0, 0, orderData, 'Event']).datepicker('triggerFlagBasket');
             flagFromBasketClick = 0;
 
         });
@@ -1352,7 +1267,7 @@ $(document).ready(function(){
             if ($('.additionally-order').hasClass('hide')){
                 dPicker.trigger('focus').trigger('click',[0, 0, orderData, 'Event']);
             }else{
-                addOrdersToBasket(orderData);
+                AddOrdersToBasket(orderData);
             }
         });
     }
@@ -1406,7 +1321,7 @@ $(document).ready(function(){
            $('.shop-products').hide();
            var nowTime = parseInt(new Date().getTime()/1000);
            var day = 3600*24;
-           var orders = client.getOrders(0,nowTime+30*day);
+           var orders = client.getOrders(0,nowTime+90*day);
            initVarForMoreOrders();
            ordersList.html('').append(createOrdersHtml(orders));
            InitProductDetailPopup($('.product-link'));

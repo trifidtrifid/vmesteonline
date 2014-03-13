@@ -486,12 +486,12 @@ span
   color: #ccc;
 }
 .modal {
-  width: 600px;
+  width: 660px;
   left: 50%;
-  margin-left: -300px;
+  margin-left: -330px;
   background: #fff;
   top: 20%;
-  height: 288px;
+  height: 388px;
   overflow-y: auto;
 }
 .modal .close {
@@ -543,8 +543,13 @@ span
   margin-top: 0;
 }
 .modal .product-text {
-  height: 170px;
+  height: 270px;
   overflow: auto;
+}
+.modal .product-options {
+  font-size: 10px;
+  color: #ccc;
+  margin-bottom: 10px;
 }
 .modal .modal-body {
   padding: 10px;
@@ -553,9 +558,9 @@ span
 .modal .modal-footer {
   position: absolute;
   height: 60px;
-  top: 205px;
+  top: 305px;
   right: 10px;
-  width: 370px;
+  width: 430px;
   background: #fff;
   text-align: left;
   padding: 0;

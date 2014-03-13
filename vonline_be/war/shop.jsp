@@ -529,27 +529,29 @@
 	<!-- общие библиотеки -->
 	<script src="js/jquery-2.0.3.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
+    <!-- файлы thrift -->
+    <script src="js/thrift.js" type="text/javascript"></script>
+    <script src="gen-js/bedata_types.js" type="text/javascript"></script>
+    <script src="gen-js/shop_types.js" type="text/javascript"></script>
+    <script src="gen-js/ShopService.js" type="text/javascript"></script>
+    <script src="gen-js/authservice_types.js" type="text/javascript"></script>
+    <script src="gen-js/AuthService.js" type="text/javascript"></script>
+    <script src="gen-js/userservice_types.js" type="text/javascript"></script>
+    <script src="gen-js/UserService.js" type="text/javascript"></script>
+    <!-- -->
 
 	<!-- конкретные плагины -->
 	<script src="js/jquery-ui-1.10.3.full.min.js"></script>
 	<script src="js/fuelux/fuelux.spinner.min.js"></script>
-	<script src="js/date-time/bootstrap-datepicker.min.js"></script>
-	<script src="js/date-time/locales/bootstrap-datepicker.ru.js"></script>
+	<script src="js/date-time/bootstrap-datepicker.js"></script>
+    <script src="js/date-time/locales/bootstrap-datepicker.ru.js"></script>
+	<%--<script src="js/date-time/bootstrap-datepicker.js"></script>--%>
+
 	<script src="js/jquery.flexslider-min.js"></script>
 
 	<!-- -->
 	<script src="js/ace-extra.min.js"></script>
 	<script src="js/ace-elements.min.js"></script>
-	<!-- файлы thrift -->
-	<script src="js/thrift.js" type="text/javascript"></script>
-	<script src="gen-js/bedata_types.js" type="text/javascript"></script>
-	<script src="gen-js/shop_types.js" type="text/javascript"></script>
-	<script src="gen-js/ShopService.js" type="text/javascript"></script>
-	<script src="gen-js/authservice_types.js" type="text/javascript"></script>
-	<script src="gen-js/AuthService.js" type="text/javascript"></script>
-	<script src="gen-js/userservice_types.js" type="text/javascript"></script>
-	<script src="gen-js/UserService.js" type="text/javascript"></script>
-	<!-- -->
 	<!-- собственные скрипты  -->
 	<script src="js/login.js"></script>
 	<script src="js/common.js"></script>
