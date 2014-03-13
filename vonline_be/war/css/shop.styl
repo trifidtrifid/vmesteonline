@@ -372,7 +372,8 @@ th.next
       display none
   .btn-primary
     margin 2px
-    float right
+    //float right
+    display inline-block
   .more-orders
     text-align center
     margin 20px 0 0 0
@@ -381,13 +382,9 @@ th.next
 
 .orders-tbl
   width 100%
-  display block
-  margin-right 100px
   tr
     width 100%
     min-width 715px
-  tbody
-    display block
   td
     text-align center
     font-size 16px
@@ -396,16 +393,47 @@ th.next
   .td1
     width 5%
   .td2
-    width 19%
+    width 12%
   .td3
-    width 19%
+    width 10%
   .td4
-    width 19%
+    width 14%
   .td5
-    width 19%
+    width 27%
   .td6
-    width 19%
+    width 7%
+  .td7
+    width 230px
+    border 0
 
+.orders-tbl-wrap
+  //margin-right 240px
+  margin-bottom 10px
+  background #f2f2f2
+  table
+    width 100%
+    border 0
+    td
+      text-align center
+      font-size 16px
+      border 1px solid #ccc
+      padding 5px 0
+  .td1
+    width 5%
+  .td2
+    width 12%
+  .td3
+    width 10%
+  .td4
+    width 14%
+  .td5
+    width 27%
+  .td6
+    width 7%
+  .td7
+    width 230px
+    border 1px solid #fff
+    background #fff
 
 .ace-spinner
   width 50px !important
@@ -524,7 +552,7 @@ th.next
             text-align center
     .prepack-list
       float right
-      margin-right 69px
+      margin-right 129px
       .prepack-line
         margin-top 5px
       .close
@@ -688,7 +716,6 @@ th.next
     display block
     margin 5px auto 0
 
-
 /* popup логина */
 .modal-auth
   width 643px
@@ -699,3 +726,26 @@ th.next
     margin 0
   .close
     margin-right -5px
+
+/* backoffice */
+.backoffice .main-content
+  margin-left 200px
+  margin-right 0
+
+.backoffice
+  .plus-minus
+    font-size 24px
+    &:hover
+      text-decoration none
+  .order-products
+    display none
+.import
+  .form-import
+    margin-bottom 10px
+.export
+  .export-btn
+    margin-top 15px;
+
+.import
+.export
+  display none

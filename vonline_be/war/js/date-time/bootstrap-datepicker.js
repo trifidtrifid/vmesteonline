@@ -175,7 +175,7 @@
         });
     }
 
-    function initOrderDay(initVarForMoreOrders,createOrdersHtml,initShowMoreOrders,initOrderPlusMinus,initOrderBtns){
+    function initOrderDay(initVarForMoreOrders,createOrdersHtml,initShowMoreOrders,initOrderPlusMinus,initOrderBtns,setSidebarHeight){
         $('.order-day').click(function(){
             var orderDate = parseInt($(this).attr('id'));
             var day = 3600*24;
@@ -195,7 +195,8 @@
             $('.shop-orders').show();
             initShowMoreOrders(orderList);
             initOrderPlusMinus(shopOrdersList);
-            initOrderBtns();
+            initOrderBtns(shopOrdersList);
+            setSidebarHeight();
         });
     }
 
@@ -668,7 +669,7 @@
                 initFreeDay(this.currentProduct,this.spinnerValue,this.orderData,this.packs,this.AddSingleProductToBasket,this.AddOrdersToBasket);
             }else{
                 SetOrderDates();
-               initOrderDay(this.initVarForMoreOrders,this.createOrdersHtml,this.initShowMoreOrders,this.initOrderPlusMinus,this.initOrderBtns)
+               initOrderDay(this.initVarForMoreOrders,this.createOrdersHtml,this.initShowMoreOrders,this.initOrderPlusMinus,this.initOrderBtns,this.setSidebarHeight)
             }
 		},
 
@@ -997,6 +998,7 @@
             this.initShowMoreOrders = datepickerFunc.initShowMoreOrders;
             this.initOrderPlusMinus = datepickerFunc.initOrderPlusMinus;
             this.initOrderBtns = datepickerFunc.initOrderBtns;
+            this.setSidebarHeight = datepickerFunc.setSidebarHeight;
         }
 	};
 

@@ -47,33 +47,16 @@
     }catch(Exception e){
         catId = 0;
     }
-    //out.print(catId);
 
     List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(catId);
     ProductListPart productsListPart = shopService.getProducts(0,10,catId);
     if (productsListPart.products.size() > 0){
-        //ProductDetails productDetails = shopService.getProductDetails(productsListPart.products.get(0).id);
         pageContext.setAttribute("products",productsListPart.products);
-        //pageContext.setAttribute("productDetails",productDetails);
     }
     pageContext.setAttribute("productCategories", ArrayProductCategory);
 
     //String productURL = new String( productsListPart.products.get(0).imageURL);
-
-    /*List<Order> ArrayOrders = shopService.getOrders(0,(int)(System.currentTimeMillis()/1000L)+86400*30);
-    Order order = shopService.getOrder(ArrayOrders.get(2).id);
-    OrderDetails orderDetails = shopService.getOrderDetails(order.id);
-    List<OrderLine> orderLineArray= orderDetails.odrerLines;*/
-
-    //out.print(orderDetails.odrerLines.size());
-    //out.print(orderDetails.odrerLines.get(0).product.id);
-    //out.print(ArrayProductCategory.get(0).logoURLset);
-    //out.print(new String( productsListPart.products.get(0).imageURL));
     //out.print(ArrayProductCategory.get(1).id);
-
-
-    //pageContext.setAttribute("productURL",productURL);
-    //pageContext.setAttribute("orderLines",orderLineArray);
 %>
 
 <!DOCTYPE html>
@@ -423,7 +406,8 @@
 
                     <a href="#" class="back-to-shop shop-trigger">Вернуться в магазин</a>
                     <h1>Заказы</h1>
-                   <%-- <table class="orders-tbl">
+                    <div class="orders-tbl-wrap">
+                    <table>
                         <tr>
                             <td class="td1"></td>
                             <td class="td2">N</td>
@@ -431,8 +415,10 @@
                             <td class="td4">Статус</td>
                             <td class="td5">Доставка</td>
                             <td class="td6">Сумма</td>
+                            <td class="td7"></td>
                         </tr>
-                    </table>--%>
+                    </table>
+                    </div>
                     <div class="orders-list">
                     </div>
                 </div>
