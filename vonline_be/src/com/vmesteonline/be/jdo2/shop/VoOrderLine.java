@@ -30,7 +30,7 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 		this.orderId = order.getId();
 		this.price = price;
 		this.comment = comment;
-		if( null!=packets && packets.size() > 1 ){
+		if( null!=packets && packets.size() > 0 ){
 			if(product.isPrepackRequired()){
 				this.packets = packets;
 				//CHECK THAP PACKETS QONTITY MATCH the total quantity
@@ -50,7 +50,7 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 		OrderLine orderLine = new OrderLine(pm.getObjectById(VoProduct.class, productId).getProduct(), quantity, price);
 		orderLine.product.price = price;
 		if( null!=comment && comment.length() > 0 ) orderLine.setComment(comment);
-		if( packets != null && packets.size() > 1 ) orderLine.setPacks(packets);
+		if( packets != null && packets.size() > 0 ) orderLine.setPacks(packets);
 		return orderLine;
 	}
 
