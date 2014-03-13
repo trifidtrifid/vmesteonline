@@ -74,7 +74,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 				VoSession sess = new VoSession(sessionStorage.getId(), u);
 				/*
-				 * sess.setLatitude(u.getLatitude()); sess.setLongitude(u.getLongitude());
+				 * sess.setLatitude(u.getLatitude());
+				 * sess.setLongitude(u.getLongitude());
 				 */pm.makePersistent(sess);
 				return true;
 			} else
@@ -107,9 +108,11 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				user.addRubric(rubric);
 			}
 
-/*			UserServiceImpl usi = new UserServiceImpl(sessionStorage.getId());
-			usi.updateUserAvatar(Defaults.defaultAvatarUrl);
-*/			if (null == locationId || "".equals(locationId.trim())) {
+			/*
+			 * UserServiceImpl usi = new
+			 * UserServiceImpl(sessionStorage.getId());
+			 * usi.updateUserAvatar(Defaults.defaultAvatarUrl);
+			 */if (null == locationId || "".equals(locationId.trim())) {
 				logger.info("register " + email + " pass " + password + " id " + user.getId() + " Wihout location code and User Group");
 				user.setDefaultUserLocation(pm);
 			} else {
