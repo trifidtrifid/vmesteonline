@@ -32,8 +32,9 @@ struct ProductCategory {
 	2:i64 parentId,
 	3:string name,
 	4:string descr,
-	5:list<string> logoURLset
-	6:list<i64> topicSet
+	5:list<string> logoURLset,
+	6:list<i64> topicSet,
+	7:i32 productCount,
 }
 
 enum PriceType { RETAIL=0, INET=1, VIP=2, SPECIAL=3 }

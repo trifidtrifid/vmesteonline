@@ -465,7 +465,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			List<VoProductCategory> pcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class,
 					"parentId == " + currentProductCategoryId + " && shopId == " + shopId).execute();
 			for (VoProductCategory voProductCategory : pcl) {
-				lpc.add(voProductCategory.getProductCategory());
+				if(voProductCategory.getProductCount()>0) 
+					lpc.add(voProductCategory.getProductCategory());
 			}
 			return lpc;
 
