@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.VoUserGroup;
 
 public class ServiceImpl {
 
@@ -90,50 +91,47 @@ public class ServiceImpl {
 	}
 
 	protected VoUser getCurrentUser() throws InvalidOperation {
-		return getCurrentUser(null);
-	}
-
-	public VoUser getCurrentUser(PersistenceManager _pm) throws InvalidOperation {
-		if (null == sessionStorage)
-			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
-		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-
-			VoSession sess = getCurrentSession(pm);
-			if (sess != null && 0 != sess.getUserId()) {
-				return pm.getObjectById(VoUser.class, sess.getUserId());
-			}
-			throw new InvalidOperation(VoError.NotAuthorized, "can't get current user id");
+			return getCurrentUser(pm);
 		} finally {
-			if (null == _pm)
-				pm.close();
+			pm.close();
 		}
 	}
 
-	protected VoSession getCurrentSession() throws InvalidOperation {
-		return getCurrentSession(null);
-	}
-
-	protected VoSession getCurrentSession(PersistenceManager _pm) throws InvalidOperation {
-
+	public VoUser getCurrentUser(PersistenceManager pm) throws InvalidOperation {
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
-		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
+
+		VoSession sess = getCurrentSession(pm);
+		if (sess != null && 0 != sess.getUserId()) {
+			return pm.getObjectById(VoUser.class, sess.getUserId());
+		}
+		throw new InvalidOperation(VoError.NotAuthorized, "can't get current user id");
+	}
+
+
+
+	protected VoSession getCurrentSession() throws InvalidOperation {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			return getCurrentSession(pm);
+		} finally {
+			pm.close();
+		}
+
+	}
+
+	protected VoSession getCurrentSession(PersistenceManager pm) throws InvalidOperation {
+		if (null == sessionStorage)
+			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
+
 		try {
 			return pm.getObjectById(VoSession.class, sessionStorage.getId());
-
-			// return pm.getObjectById(VoSession.class,
-			// KeyFactory.createKey(VoSession.class.getSimpleName(),
-			// sessionStorage.getId()));
 		} catch (JDOObjectNotFoundException e) {
-			// throw new InvalidOperation(VoError.NotAuthorized, "No session found");
-			// let's register a session
 			VoSession vs = new VoSession(sessionStorage.getId(), null);
 			pm.makePersistent(vs);
 			return vs;
-		} finally {
-			if (null == _pm)
-				pm.close();
 		}
 	}
 

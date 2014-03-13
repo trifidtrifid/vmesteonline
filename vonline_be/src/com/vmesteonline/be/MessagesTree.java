@@ -5,12 +5,25 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
+
 import com.vmesteonline.be.jdo2.GeoLocation;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class MessagesTree {
+
+	@SuppressWarnings("unchecked")
+	public static MessagesTree createMessageTree(long topicId, PersistenceManager pm) {
+
+		Query q = pm.newQuery(VoMessage.class);
+		q.setFilter("topicId == " + topicId);
+		List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+		MessagesTree tree = new MessagesTree(voMsgs);
+		return tree;
+	}
 
 	static public class Filters extends GeoLocation {
 		public Filters(long uid, VoUserGroup ug) {
@@ -36,7 +49,7 @@ public class MessagesTree {
 		List<VoMessage> msgs = getTreeMessagesFirstLevel(filters);
 		int msgsCnt = 0;
 		for (VoMessage voMessage : msgs) {
-			msgsCnt+= voMessage.getChildMessageNum() + 1;
+			msgsCnt += voMessage.getChildMessageNum() + 1;
 		}
 		return msgsCnt;
 	}
@@ -103,13 +116,6 @@ public class MessagesTree {
 		return false;
 	}
 
-	// эта функция возращает все сообщения от parentId до ближайшего сообщения
-	// 1-го уровня
-
-	boolean isVisibleMessage(VoMessage voMsg, long userId) {
-		return voMsg.getRecipient() == 0 || voMsg.getRecipient() == userId || voMsg.getAuthorId().getId() == userId;
-	}
-
 	boolean isInGroup(VoMessage voMsg) {
 
 		if (VoHelper.isInclude(voMsg, voMsg.getRadius(), filters))
@@ -123,7 +129,7 @@ public class MessagesTree {
 		Collections.sort(levelMsgs, new ByCreateTimeComparator());
 		int childsInSublevels = 0;
 		for (VoMessage voMsg : levelMsgs) {
-			if (isVisibleMessage(voMsg, filters.userId) && isInGroup(voMsg)) {
+			if (voMsg.isVisibleFor(filters.userId) && isInGroup(voMsg)) {
 				ItemPosition ip = new ItemPosition(voMsg.getId(), voMsg.getParentId(), level);
 				items.add(ip);
 				List<VoMessage> nextLevel = getLevel(voMsg.getId());
