@@ -659,6 +659,7 @@ span
   width: auto;
   padding-right: 10px;
   font-size: 20px;
+  top: 230px;
 }
 .modal-order-end .modal-footer .btn {
   float: right;

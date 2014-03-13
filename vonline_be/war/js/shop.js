@@ -157,11 +157,7 @@ $(document).ready(function(){
 
     var dPicker = $('.date-picker');
 
-    dPicker.datepicker({
-        autoclose:true,
-        //onRender: SetFreeDates()
-        language:'ru'
-    }).next().on(ace.click_event, function(){
+    dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
         $(this).prev().focus();
     });
 
@@ -175,7 +171,6 @@ $(document).ready(function(){
     };
 
     dPicker.datepicker('setVarOrderDates',datepickerFunc);
-
 
     InitSpinner($('.spinner1'),1);
     InitAddToBasket($('.fa-shopping-cart'));
@@ -1217,28 +1212,37 @@ $(document).ready(function(){
     });
 
     function addSingleOrderToBasket(orderId,addType){
-        var orderDetails;
+        var orderDetails,
+            curProd,
+            spinVal,i;
         if (addType == 'replace'){
             orderDetails = client.getOrderDetails(orderId);
+            var orderLines = orderDetails.odrerLines;
+            var orderLinesLength = orderLines.length;
+            for(i = 0; i < orderLinesLength; i++){
+                curProd = orderLines[i].product;
+                spinVal = orderLines[i].quantity;
+                var packs = orderLines[i].packs;
+                client.setOrderLine(curProd.id,spinVal,"asd",packs);
+            }
         }else if (addType == 'append'){
             orderDetails = client.appendOrder(orderId);
         }
-        var orderLines = orderDetails.odrerLines;
-        var orderLinesLength = orderLines.length;
-        for(var i = 0; i < orderLinesLength; i++){
-            var curProd = orderLines[i].product;
-            var spinVal = orderLines[i].quantity;
+        orderLines = orderDetails.odrerLines;
+        orderLinesLength = orderLines.length;
+        for(i = 0; i < orderLinesLength; i++){
+            curProd = orderLines[i].product;
+            spinVal = orderLines[i].quantity;
             AddSingleProductToBasket(curProd,spinVal,curProd.unitName);
         }
     }
 
-    function AddOrdersToBasket(orderData,data){
+    function AddOrdersToBasket(orderData){
         // добавление целого заказа
         var addType;
         if (orderData.itsAppend){
             addType = 'append';
-        }  else{
-            currentOrderId = client.createOrder(data,'asd2',0);
+        }else{
             addType = 'replace';
         }
         $('.catalog-order').html('');
@@ -1256,7 +1260,6 @@ $(document).ready(function(){
             dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,AddSingleProductToBasket,AddOrdersToBasket);
             dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[0, 0, orderData, 'Event']).datepicker('triggerFlagBasket');
             flagFromBasketClick = 0;
-
         });
         $('.add-order-btn').click(function(){
             var orderData= {
@@ -1265,7 +1268,9 @@ $(document).ready(function(){
                 orderId : $(this).closest('.order-item').data('orderid')
             };
             if ($('.additionally-order').hasClass('hide')){
-                dPicker.trigger('focus').trigger('click',[0, 0, orderData, 'Event']);
+                flagFromBasketClick = 1;
+                dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,AddSingleProductToBasket,AddOrdersToBasket);
+                dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[0, 0, orderData, 'Event']);
             }else{
                 AddOrdersToBasket(orderData);
             }
