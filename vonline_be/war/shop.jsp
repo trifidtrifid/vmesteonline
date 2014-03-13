@@ -395,8 +395,9 @@
                             <thead>
                             <tr>
                                 <td>Название</td>
-                                <td>Цена</td>
+                                <td>Цена (руб)</td>
                                 <td>Количество</td>
+                                <td>Ед.изм</td>
                                 <td></td>
                             </tr>
                             </thead>
@@ -411,72 +412,17 @@
                                             </span>
                                         </a>
                                         <div class="modal">
-                                            <%--<div class="modal-body">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                                <div class="product-slider">
-                                                    <div class="slider flexslider">
-                                                        <ul class="slides">
-                                                            <li>
-                                                                <img src="${product.imageURL}" />
-                                                            </li>
-                                                            &lt;%&ndash;<li>
-                                                                <img src="i/shop/2.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/3.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/4.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/5.jpg" />
-                                                            </li>&ndash;%&gt;
-                                                            <!-- items mirrored twice, total of 12 -->
-                                                        </ul>
-                                                    </div>
-                                                    <div class="carousel flexslider">
-                                                        <ul class="slides">
-                                                            <li>
-                                                                <img src="${product.imageURL}" />
-                                                            </li>
-                                                            &lt;%&ndash;<li>
-                                                                <img src="i/shop/2.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/3.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/4.jpg" />
-                                                            </li>
-                                                            <li>
-                                                                <img src="i/shop/5.jpg" />
-                                                            </li>&ndash;%&gt;
-                                                            <!-- items mirrored twice, total of 12 -->
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="product-descr">
-                                                    <h3>${product.name}</h3>
-                                                    <div class="product-text">
-                                                        ${productDetails.fullDescr}
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <span>Цена: ${product.price}</span>
-                                                        <input type="text" class="input-mini spinner1" />
-                                                        ${productDetails.unitName}
-                                                        <i class="fa fa-shopping-cart"></i>
-                                                    </div>
-                                                </div>
-                                            </div>--%>
                                         </div>
                                     </td>
                                     <td class="product-price">${product.price}</td>
                                     <td>
                                         <input type="text" class="input-mini spinner1" />
+                                    </td>
+                                    <td>
                                         <span class="unit-name">${product.unitName}</span>
                                     </td>
                                     <td>
-                                        <i class="fa fa-shopping-cart"></i>
+                                        <a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -512,44 +458,20 @@
 					aria-hidden="true">×</button>
 				<h3>Ваш заказ :</h3>
 				<section class="catalog">
-					<table>
-						<thead>
-							<tr>
-								<td>Название</td>
-								<td>Цена</td>
-								<td>Количество</td>
-								<td>Сумма</td>
-							</tr>
-						</thead>
-					</table>
+					<%--<table>
+					</table>--%>
 					<table class="modal-body-list">
-						<tr>
-							<td><a href="#" class="product-link"> <img
-									src="i/shop/1.jpg" alt="картинка" /> <span>100г Вкусный
-										обед рагу с индейкой и кроликом Whiskas Вискас</span>
-							</a></td>
-							<td class="td-price">111р</td>
-							<td><input type="text" class="input-mini spinner1" /></td>
-							<td class="td-summa">111р</td>
-						</tr>
-						<tr>
-							<td><a href="#" class="product-link"> <img
-									src="i/shop/1.jpg" alt="картинка" /> <span>100г Вкусный
-										обед рагу с индейкой и кроликом Whiskas Вискас</span>
-							</a></td>
-							<td class="td-price">111р.</td>
-							<td><input type="text" class="input-mini spinner1" /></td>
-							<td class="td-summa">111р</td>
-						</tr>
-						<tr>
-							<td><a href="#" class="product-link"> <img
-									src="i/shop/1.jpg" alt="картинка" /> <span>100г Вкусный
-										обед рагу с индейкой и кроликом Whiskas Вискас</span>
-							</a></td>
-							<td class="td-price">111р.</td>
-							<td><input type="text" class="input-mini spinner1" /></td>
-							<td class="td-summa">111р</td>
-						</tr>
+                        <thead>
+                            <tr>
+                                <td>Название</td>
+                                <td>Цена(руб)</td>
+                                <td>Количество</td>
+                                <td>Ед.изм</td>
+                                <td>Сумма</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
 					</table>
 				</section>
 			</div>
@@ -607,27 +529,29 @@
 	<!-- общие библиотеки -->
 	<script src="js/jquery-2.0.3.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
+    <!-- файлы thrift -->
+    <script src="js/thrift.js" type="text/javascript"></script>
+    <script src="gen-js/bedata_types.js" type="text/javascript"></script>
+    <script src="gen-js/shop_types.js" type="text/javascript"></script>
+    <script src="gen-js/ShopService.js" type="text/javascript"></script>
+    <script src="gen-js/authservice_types.js" type="text/javascript"></script>
+    <script src="gen-js/AuthService.js" type="text/javascript"></script>
+    <script src="gen-js/userservice_types.js" type="text/javascript"></script>
+    <script src="gen-js/UserService.js" type="text/javascript"></script>
+    <!-- -->
 
 	<!-- конкретные плагины -->
 	<script src="js/jquery-ui-1.10.3.full.min.js"></script>
 	<script src="js/fuelux/fuelux.spinner.min.js"></script>
-	<script src="js/date-time/bootstrap-datepicker.min.js"></script>
-	<script src="js/date-time/locales/bootstrap-datepicker.ru.js"></script>
+	<script src="js/date-time/bootstrap-datepicker.js"></script>
+    <script src="js/date-time/locales/bootstrap-datepicker.ru.js"></script>
+	<%--<script src="js/date-time/bootstrap-datepicker.js"></script>--%>
+
 	<script src="js/jquery.flexslider-min.js"></script>
 
 	<!-- -->
 	<script src="js/ace-extra.min.js"></script>
 	<script src="js/ace-elements.min.js"></script>
-	<!-- файлы thrift -->
-	<script src="js/thrift.js" type="text/javascript"></script>
-	<script src="gen-js/bedata_types.js" type="text/javascript"></script>
-	<script src="gen-js/shop_types.js" type="text/javascript"></script>
-	<script src="gen-js/ShopService.js" type="text/javascript"></script>
-	<script src="gen-js/authservice_types.js" type="text/javascript"></script>
-	<script src="gen-js/AuthService.js" type="text/javascript"></script>
-	<script src="gen-js/userservice_types.js" type="text/javascript"></script>
-	<script src="gen-js/UserService.js" type="text/javascript"></script>
-	<!-- -->
 	<!-- собственные скрипты  -->
 	<script src="js/login.js"></script>
 	<script src="js/common.js"></script>
