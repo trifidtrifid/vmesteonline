@@ -46,7 +46,20 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		super(sess);
 	}
 
-	// TODO this method is forbidden should be removed. use getShortProfile instead
+	@Override
+	public void updateUserInfo(UserInfo userInfo) throws InvalidOperation {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateUserContacts(UserContacts contacts) throws InvalidOperation {
+		// TODO Auto-generated method stub
+
+	}
+
+	// TODO this method is forbidden should be removed. use getShortProfile
+	// instead
 	@Override
 	public ShortUserInfo getShortUserInfo() throws InvalidOperation {
 		return getShortUserInfo(getCurrentUserId());
@@ -301,11 +314,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			String topicAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
 
 			resize = ImagesServiceFactory.makeResize(40, 40);
-			String shortProfileAvatarUrl = StorageHelper
-					.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
+			String shortProfileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(),
+					true, pm);
 
 			resize = ImagesServiceFactory.makeResize(200, 200);
-			String profileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
+			String profileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true,
+					pm);
 
 			voUser.setAvatarTopic(topicAvatarUrl);
 			voUser.setAvatarMessage(topicAvatarUrl);
@@ -474,8 +488,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				return buildings.get(0).getBuilding();
 			} else {
 				logger.info("VoBuilding '" + fullNo + "'was created.");
-				VoBuilding voBuilding = new VoBuilding(vs, fullNo, new BigDecimal(longitude), new BigDecimal(lattitude));
-				if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate location
+				VoBuilding voBuilding = new VoBuilding(vs, fullNo, new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
+						new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude));
+				if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate
+																	// location
 					try {
 						Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
 						voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));

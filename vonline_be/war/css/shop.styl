@@ -149,7 +149,6 @@ transform()
             max-width 40px
             max-height 40px
       .ace-spinner
-      .ace-spinner+span
         display inline-block
         vertical-align middle
       .product-right-descr
@@ -162,6 +161,8 @@ transform()
           padding 0
           border 0
           background 0
+      .unit-name
+        display none
   .itogo-right
     padding-left 10px
     font-size 16px
@@ -330,7 +331,7 @@ th.next
         text-align center
         &:first-child
           text-align left
-          width 70%
+          width 60%
           padding-left 5px
         img
           width 20px
@@ -341,6 +342,7 @@ th.next
           cursor pointer
           &:hover
             color #2a6496
+            text-decoration none
         span
           display block
           margin-left 30px
@@ -420,12 +422,12 @@ th.next
   color #ccc
 
 .modal
-  width 560px
+  width 660px
   left 50%
-  margin-left -285px
+  margin-left -330px
   background #fff
   top 20%
-  max-height 288px
+  height 388px
   overflow-y auto
   .close
     outline none
@@ -465,20 +467,27 @@ th.next
     h3
       margin-top 0
     .product-text
-      height 170px
+      height 270px
       overflow auto
+    .product-options
+      font-size 10px
+      color #ccc
+      margin-bottom 10px
     .modal-body
       padding 10px
       position static
     .modal-footer
       position absolute
-      bottom 20px
+      height 60px
+      top 305px
       right 10px
-      width 330px
+      width 430px
       background #fff
       text-align left
       padding 0
       padding-top 15px
+      .fa-shopping-cart
+        float right
       span
       .ace-spinner
       .fa
@@ -487,26 +496,61 @@ th.next
         margin 0 17px
       span
         font-size 20px
+      >span
+        margin 0 !important
+        width 130px
+      .prepack-item
+        display inline-block
+        vertical-align middle
+        span
+          font-size 12px
+          margin-left 0
+        .fa-plus
+          font-size 20px
+          position relative
+          left -8px
+        .fa-plus:hover
+          text-decoration none
+      &.with-prepack
+        span
+        .ace-spinner
+        .fa
+          margin 0 10px
+        .fa-shopping-cart
+          margin-top 8px
+        .prepack-item
+          span
+            display block
+            text-align center
+    .prepack-list
+      float right
+      margin-right 69px
+      .prepack-line
+        margin-top 5px
+      .close
+        color #a44451
+        opacity .5
+        position relative
+        top: -10px
+        &:hover
+          opacity 1
 .modal-order-end
   max-height 312px
   .modal-body-list
     max-height 148px
-    display block
     overflow auto
+    width 100%
     tbody
       width 100%
-      display block
       tr
         width 100%
-        display block
         td:first-child
           padding-right 0
-          width 70%
+          width 60%
         td
           padding 5px
           width 10%
   .modal-footer
-    //position static
     bottom 0
     border 0
     padding 0
