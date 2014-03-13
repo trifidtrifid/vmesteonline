@@ -140,14 +140,29 @@ transform()
           background #f2f2f2
         tr
           td
-      img
-        float left
-        width 40px
+      .product-link
+        span
+          float left
+          width 40px
+          text-align center
+          img
+            max-width 40px
+            max-height 40px
+      .ace-spinner
+        display inline-block
+        vertical-align middle
       .product-right-descr
         margin-left 45px
         margin-bottom 10px
         padding-right 20px
         line-height 16px
+      .flexslider
+        li
+          padding 0
+          border 0
+          background 0
+      .unit-name
+        display none
   .itogo-right
     padding-left 10px
     font-size 16px
@@ -209,6 +224,11 @@ th.next
 .input-group-addon
   cursor pointer
 
+.order-day
+  background-color #bfa6c4
+  &:after
+    content "День с заказом"
+    margin-left -100px
 .free-day
   background-color #62c462
   &:after
@@ -224,6 +244,7 @@ th.next
   &:after
     content "Закрытый день"
     margin-left -60px
+.order-day:after
 .free-day:after
 .special-day:after
 .closed-day:after
@@ -233,6 +254,7 @@ th.next
   padding 2px 5px
   color #fff
   display none
+.order-day:hover:after
 .free-day:hover:after
 .special-day:hover:after
 .closed-day:hover:after
@@ -309,7 +331,7 @@ th.next
         text-align center
         &:first-child
           text-align left
-          width 70%
+          width 60%
           padding-left 5px
         img
           width 20px
@@ -320,11 +342,18 @@ th.next
           cursor pointer
           &:hover
             color #2a6496
+            text-decoration none
         span
           display block
           margin-left 30px
           margin-right 10px
-
+          span
+            margin 0
+        .unit-name
+        .ace-spinner
+          display inline-block
+          vertical-align middle
+          margin 0
 .shop-orders
   display none
   h1
@@ -334,21 +363,7 @@ th.next
     margin-top 13px
   .order-item
     margin-bottom 20px
-    table
-      width 100%
-      thead
-        td
-          font-size 14px
-          color #ccc
-          background #f9f9f9
-      td
-        text-align center
-        font-size 16px
-        border 1px solid #ccc
-        padding 5px 0
-        &:first-child
-          text-align left
-          padding-left 10px
+    overflow auto
     .plus-minus
       font-size 24px
       text-decoration none
@@ -356,8 +371,41 @@ th.next
       margin 10px 0 0 0
       display none
   .btn-primary
-    margin 10px 0 10px 10px
+    margin 2px
     float right
+  .more-orders
+    text-align center
+    margin 20px 0 0 0
+    a
+      font-size 16px
+
+.orders-tbl
+  width 100%
+  display block
+  margin-right 100px
+  tr
+    width 100%
+    min-width 715px
+  tbody
+    display block
+  td
+    text-align center
+    font-size 16px
+    border 1px solid #ccc
+    padding 5px 0
+  .td1
+    width 5%
+  .td2
+    width 19%
+  .td3
+    width 19%
+  .td4
+    width 19%
+  .td5
+    width 19%
+  .td6
+    width 19%
+
 
 .ace-spinner
   width 50px !important
@@ -374,12 +422,12 @@ th.next
   color #ccc
 
 .modal
-  width 560px
+  width 660px
   left 50%
-  margin-left -285px
+  margin-left -330px
   background #fff
   top 20%
-  max-height 288px
+  height 388px
   overflow-y auto
   .close
     outline none
@@ -394,13 +442,24 @@ th.next
         background url(../i/bg_direction_nav.png) no-repeat 0 0
       .flex-direction-nav .flex-next
         background-position 100% 0
+      .slides li
+        text-align center
+      img
+        width auto
+        float none
+        display inline-block
     .slider
+      li
+        height 192px
+        line-height 192px
       img
         max-width 192px
-        width auto
+        max-height  192px
+        vertical-align middle
     .carousel
       img
         max-width 60px
+        max-height 60px
       li
         cursor pointer
   .product-descr
@@ -408,48 +467,90 @@ th.next
     h3
       margin-top 0
     .product-text
-      height 170px
+      height 270px
       overflow auto
+    .product-options
+      font-size 10px
+      color #ccc
+      margin-bottom 10px
     .modal-body
       padding 10px
       position static
     .modal-footer
       position absolute
-      bottom 20px
+      height 60px
+      top 305px
       right 10px
-      width 330px
+      width 430px
       background #fff
       text-align left
       padding 0
       padding-top 15px
+      .fa-shopping-cart
+        float right
       span
       .ace-spinner
       .fa
         display inline-block
         vertical-align middle
-        margin 0 23px
+        margin 0 17px
       span
         font-size 20px
+      >span
+        margin 0 !important
+        width 130px
+      .prepack-item
+        display inline-block
+        vertical-align middle
+        span
+          font-size 12px
+          margin-left 0
+        .fa-plus
+          font-size 20px
+          position relative
+          left -8px
+        .fa-plus:hover
+          text-decoration none
+      &.with-prepack
+        span
+        .ace-spinner
+        .fa
+          margin 0 10px
+        .fa-shopping-cart
+          margin-top 8px
+        .prepack-item
+          span
+            display block
+            text-align center
+    .prepack-list
+      float right
+      margin-right 69px
+      .prepack-line
+        margin-top 5px
+      .close
+        color #a44451
+        opacity .5
+        position relative
+        top: -10px
+        &:hover
+          opacity 1
 .modal-order-end
   max-height 312px
   .modal-body-list
     max-height 148px
-    display block
     overflow auto
+    width 100%
     tbody
       width 100%
-      display block
       tr
         width 100%
-        display block
         td:first-child
           padding-right 0
-          width 70%
+          width 60%
         td
           padding 5px
           width 10%
   .modal-footer
-    //position static
     bottom 0
     border 0
     padding 0

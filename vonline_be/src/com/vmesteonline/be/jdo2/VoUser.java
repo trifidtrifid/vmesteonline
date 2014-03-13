@@ -188,7 +188,7 @@ public class VoUser extends GeoLocation {
 		} else {
 			groups = new ArrayList<VoUserGroup>();
 		}
-		addPostalAddress(userAddress, pm);
+		addPostalAddress(userAddress);
 
 		pm.makePersistent(this);
 		pm.makePersistent(building);
@@ -213,19 +213,9 @@ public class VoUser extends GeoLocation {
 	}
 
 	public void addPostalAddress(VoPostalAddress pa) {
-		PersistenceManagerFactory pmf = PMF.get();
-		PersistenceManager pm = pmf.getPersistenceManager();
-		try {
-			addPostalAddress(pa, pm);
-		} finally {
-			pm.close();
-		}
-	}
-
-	public void addPostalAddress(VoPostalAddress pa, PersistenceManager pm) {
 		deliveryAddresses.add(pa);
 	}
-
+	
 	public Set<VoPostalAddress> getAddresses() {
 		return deliveryAddresses;
 	}

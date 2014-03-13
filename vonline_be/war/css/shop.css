@@ -140,15 +140,32 @@ a {
 .shop-right .catalog-order li table thead td {
   background: #f2f2f2;
 }
-.shop-right .catalog-order li img {
+.shop-right .catalog-order li .product-link span {
   float: left;
   width: 40px;
+  text-align: center;
+}
+.shop-right .catalog-order li .product-link span img {
+  max-width: 40px;
+  max-height: 40px;
+}
+.shop-right .catalog-order li .ace-spinner {
+  display: inline-block;
+  vertical-align: middle;
 }
 .shop-right .catalog-order li .product-right-descr {
   margin-left: 45px;
   margin-bottom: 10px;
   padding-right: 20px;
   line-height: 16px;
+}
+.shop-right .catalog-order li .flexslider li {
+  padding: 0;
+  border: 0;
+  background: 0;
+}
+.shop-right .catalog-order li .unit-name {
+  display: none;
 }
 .shop-right .itogo-right {
   padding-left: 10px;
@@ -227,6 +244,13 @@ th.next,
 .input-group-addon {
   cursor: pointer;
 }
+.order-day {
+  background-color: #bfa6c4;
+}
+.order-day:after {
+  content: "День с заказом";
+  margin-left: -100px;
+}
 .free-day {
   background-color: #62c462;
 }
@@ -248,6 +272,7 @@ th.next,
   content: "Закрытый день";
   margin-left: -60px;
 }
+.order-day:after,
 .free-day:after,
 .special-day:after,
 .closed-day:after {
@@ -258,6 +283,7 @@ th.next,
   color: #fff;
   display: none;
 }
+.order-day:hover:after,
 .free-day:hover:after,
 .special-day:hover:after,
 .closed-day:hover:after {
@@ -344,7 +370,7 @@ span
 }
 .catalog table tr td:first-child {
   text-align: left;
-  width: 70%;
+  width: 60%;
   padding-left: 5px;
 }
 .catalog table tr td img {
@@ -358,11 +384,21 @@ span
 }
 .catalog table tr td .fa:hover {
   color: #2a6496;
+  text-decoration: none;
 }
 .catalog table tr td span {
   display: block;
   margin-left: 30px;
   margin-right: 10px;
+}
+.catalog table tr td span span {
+  margin: 0;
+}
+.catalog table tr td .unit-name,
+.catalog table tr td .ace-spinner {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
 }
 .shop-orders {
   display: none;
@@ -376,24 +412,7 @@ span
 }
 .shop-orders .order-item {
   margin-bottom: 20px;
-}
-.shop-orders .order-item table {
-  width: 100%;
-}
-.shop-orders .order-item table thead td {
-  font-size: 14px;
-  color: #ccc;
-  background: #f9f9f9;
-}
-.shop-orders .order-item table td {
-  text-align: center;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  padding: 5px 0;
-}
-.shop-orders .order-item table td:first-child {
-  text-align: left;
-  padding-left: 10px;
+  overflow: auto;
 }
 .shop-orders .order-item .plus-minus {
   font-size: 24px;
@@ -404,8 +423,51 @@ span
   display: none;
 }
 .shop-orders .btn-primary {
-  margin: 10px 0 10px 10px;
+  margin: 2px;
   float: right;
+}
+.shop-orders .more-orders {
+  text-align: center;
+  margin: 20px 0 0 0;
+}
+.shop-orders .more-orders a {
+  font-size: 16px;
+}
+.orders-tbl {
+  width: 100%;
+  display: block;
+  margin-right: 100px;
+}
+.orders-tbl tr {
+  width: 100%;
+  min-width: 715px;
+}
+.orders-tbl tbody {
+  display: block;
+}
+.orders-tbl td {
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  padding: 5px 0;
+}
+.orders-tbl .td1 {
+  width: 5%;
+}
+.orders-tbl .td2 {
+  width: 19%;
+}
+.orders-tbl .td3 {
+  width: 19%;
+}
+.orders-tbl .td4 {
+  width: 19%;
+}
+.orders-tbl .td5 {
+  width: 19%;
+}
+.orders-tbl .td6 {
+  width: 19%;
 }
 .ace-spinner {
   width: 50px !important;
@@ -424,12 +486,12 @@ span
   color: #ccc;
 }
 .modal {
-  width: 560px;
+  width: 660px;
   left: 50%;
-  margin-left: -285px;
+  margin-left: -330px;
   background: #fff;
   top: 20%;
-  max-height: 288px;
+  height: 388px;
   overflow-y: auto;
 }
 .modal .close {
@@ -450,12 +512,26 @@ span
 .modal .product-slider .flexslider .flex-direction-nav .flex-next {
   background-position: 100% 0;
 }
+.modal .product-slider .flexslider .slides li {
+  text-align: center;
+}
+.modal .product-slider .flexslider img {
+  width: auto;
+  float: none;
+  display: inline-block;
+}
+.modal .product-slider .slider li {
+  height: 192px;
+  line-height: 192px;
+}
 .modal .product-slider .slider img {
   max-width: 192px;
-  width: auto;
+  max-height: 192px;
+  vertical-align: middle;
 }
 .modal .product-slider .carousel img {
   max-width: 60px;
+  max-height: 60px;
 }
 .modal .product-slider .carousel li {
   cursor: pointer;
@@ -467,8 +543,13 @@ span
   margin-top: 0;
 }
 .modal .product-text {
-  height: 170px;
+  height: 270px;
   overflow: auto;
+}
+.modal .product-options {
+  font-size: 10px;
+  color: #ccc;
+  margin-bottom: 10px;
 }
 .modal .modal-body {
   padding: 10px;
@@ -476,43 +557,93 @@ span
 }
 .modal .modal-footer {
   position: absolute;
-  bottom: 20px;
+  height: 60px;
+  top: 305px;
   right: 10px;
-  width: 330px;
+  width: 430px;
   background: #fff;
   text-align: left;
   padding: 0;
   padding-top: 15px;
+}
+.modal .modal-footer .fa-shopping-cart {
+  float: right;
 }
 .modal .modal-footer span,
 .modal .modal-footer .ace-spinner,
 .modal .modal-footer .fa {
   display: inline-block;
   vertical-align: middle;
-  margin: 0 23px;
+  margin: 0 17px;
 }
 .modal .modal-footer span {
   font-size: 20px;
+}
+.modal .modal-footer >span {
+  margin: 0 !important;
+  width: 130px;
+}
+.modal .modal-footer .prepack-item {
+  display: inline-block;
+  vertical-align: middle;
+}
+.modal .modal-footer .prepack-item span {
+  font-size: 12px;
+  margin-left: 0;
+}
+.modal .modal-footer .prepack-item .fa-plus {
+  font-size: 20px;
+  position: relative;
+  left: -8px;
+}
+.modal .modal-footer .prepack-item .fa-plus:hover {
+  text-decoration: none;
+}
+.modal .modal-footer.with-prepack span,
+.modal .modal-footer.with-prepack .ace-spinner,
+.modal .modal-footer.with-prepack .fa {
+  margin: 0 10px;
+}
+.modal .modal-footer.with-prepack .fa-shopping-cart {
+  margin-top: 8px;
+}
+.modal .modal-footer.with-prepack .prepack-item span {
+  display: block;
+  text-align: center;
+}
+.modal .prepack-list {
+  float: right;
+  margin-right: 69px;
+}
+.modal .prepack-list .prepack-line {
+  margin-top: 5px;
+}
+.modal .prepack-list .close {
+  color: #a44451;
+  opacity: 0.5;
+  position: relative;
+  top: -10px;
+}
+.modal .prepack-list .close:hover {
+  opacity: 1;
 }
 .modal-order-end {
   max-height: 312px;
 }
 .modal-order-end .modal-body-list {
   max-height: 148px;
-  display: block;
   overflow: auto;
+  width: 100%;
 }
 .modal-order-end .modal-body-list tbody {
   width: 100%;
-  display: block;
 }
 .modal-order-end .modal-body-list tbody tr {
   width: 100%;
-  display: block;
 }
 .modal-order-end .modal-body-list tbody tr td:first-child {
   padding-right: 0;
-  width: 70%;
+  width: 60%;
 }
 .modal-order-end .modal-body-list tbody tr td {
   padding: 5px;

@@ -67,7 +67,7 @@ public class VoProduct {
 		this.topicSet = new ArrayList<Long>();
 		if (null != newInfo.details.getTopicSet())
 			this.topicSet.addAll(newInfo.details.getTopicSet());
-		this.unitName = newInfo.details.unitName;
+		this.unitName = newInfo.product.unitName;
 
 		updateCategoriesList(newInfo, _pm);
 	}
@@ -143,7 +143,7 @@ public class VoProduct {
 				for (String name : details.knownNames) {
 					vp.knownNames.add(name);
 				}
-			vp.unitName = details.unitName;
+			vp.unitName = product.unitName;
 			vp.importId = product.id;
 
 			pm.makePersistent(vp);
@@ -177,7 +177,7 @@ public class VoProduct {
 		this.categories = new ArrayList<Long>();
 		this.shopId = shopId;
 		this.knownNames = new HashSet<String>();
-		this.unitName = details.unitName;
+		this.unitName = product.unitName;
 		this.importId = product.id;
 
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
@@ -225,25 +225,22 @@ public class VoProduct {
 
 	// =====================================================================================================================
 	public Product getProduct() {
-		return new Product(id.getId(), name, shortDescr, weight, imageURL, price);
+		return new Product(id.getId(), name, shortDescr, weight, imageURL, price, unitName);
 	}
 
 	public ProductDetails getProductDetails() {
 		ProductDetails productDetails = new ProductDetails();
 
-		List<Long> cs = new ArrayList<Long>();
-		cs.addAll(getCategories());
-		productDetails.setCategories(cs);
-
+		productDetails.setCategories(getCategories());
 		productDetails.setPricesMap(convertToPriceTypeMap(pricesMap, new HashMap<PriceType, Double>()));
 		productDetails.setOptionsMap(optionsMap);
-		List<Long> ts = new ArrayList<Long>();
-		ts.addAll(getTopicSet());
 		productDetails.setProducerId(producerId);
 		productDetails.setFullDescr(fullDescr.getValue());
-		productDetails.setTopicSet(ts);
+		productDetails.setTopicSet(getTopicSet());
 		productDetails.setImagesURLset(getImagesURLset());
-		productDetails.setUnitName(this.unitName);
+		productDetails.setPrepackRequired(prepackRequired);
+		productDetails.setKnownNames(knownNames);
+		productDetails.setMinClientPack(minClientPack);
 
 		return productDetails;
 	}
