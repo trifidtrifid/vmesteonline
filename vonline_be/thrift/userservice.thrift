@@ -29,8 +29,14 @@ service UserService {
 //для отображения информации о пользователе на странице профайла. 
 	bedata.UserInfo getUserInfo() throws (1:error.InvalidOperation exc),
 
+//для изменения информации о пользователе на странице профайла. 
+	void updateUserInfo(1:bedata.UserInfo userInfo) throws (1:error.InvalidOperation exc),
+
 //для отображения контактов пользователя на странице профайла. 
 	bedata.UserContacts getUserContacts() throws (1:error.InvalidOperation exc),
+
+//для изменения контактов пользователя на странице профайла. 
+	void updateUserContacts(1:bedata.UserContacts contacts) throws (1:error.InvalidOperation exc),
 	
 //для обновления пользовательского аватара в профайле. 
 	void updateUserAvatar(1:string url) throws (1:error.InvalidOperation exc),
