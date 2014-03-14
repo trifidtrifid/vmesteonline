@@ -330,7 +330,7 @@ span
 }
 .shop-menu {
   overflow: auto;
-  margin-bottom: 10px;
+  min-height: 55px;
 }
 .shop-menu ul {
   margin-left: 0;
@@ -338,15 +338,13 @@ span
 .shop-menu ul li {
   list-style: none;
   float: left;
+  margin-bottom: 10px;
+  display: inline-block;
   margin-left: 5px;
-  width: 80px;
+  width: 110px;
   text-align: center;
   line-height: 14px;
   font-size: 11px;
-}
-.shop-menu ul li:first-child {
-  margin-left: 0;
-  width: 50px;
 }
 .shop-menu ul li.active a {
   color: #2a6496;
@@ -357,6 +355,10 @@ span
 }
 .shop-menu ul li a:hover {
   text-decoration: none;
+}
+.shop-menu ul li a span {
+  font-size: 14px;
+  display: block;
 }
 .catalog table {
   width: 100%;

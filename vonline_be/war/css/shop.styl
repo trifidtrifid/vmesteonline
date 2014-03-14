@@ -295,20 +295,19 @@ th.next
 
 .shop-menu
   overflow auto
-  margin-bottom 10px
+  min-height 55px
   ul
     margin-left 0
     li
       list-style none
       float left
+      margin-bottom 10px
+      display inline-block
       margin-left 5px
-      width 80px
+      width 110px
       text-align center
       line-height 14px
       font-size 11px
-      &:first-child
-        margin-left 0
-        width 50px
       &.active
         a
           color #2a6496
@@ -317,6 +316,9 @@ th.next
         font-size 24px
         &:hover
           text-decoration none
+        span
+          font-size 14px
+          display block
 
 .catalog
   table

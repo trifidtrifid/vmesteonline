@@ -624,15 +624,19 @@ $(document).ready(function(){
 
         if (productCategories[0] && productCategories[0].parentId != 0 || productCategories[0] === undefined){
             firstMenuItem = '<li>'+
-                '<a href="#" class="fa fa-reply-all"></a>'+
-                '<div>Назад</div>'+
+                '<a href="#">'+
+                    '<i class="fa fa-reply-all"></i>'+
+                    '<span>Назад</span>'+
+                '</a>'+
                 '</li>';
         }
 
         for(var i = 0; i < categoriesLength; i++){
             shopMenu += '<li data-parentid="'+ productCategories[i].parentId +'" data-catid="'+ productCategories[i].id +'">'+
-                '<a href="#" class="fa fa-beer"></a>'+
-                '<div>'+ productCategories[i].name +'</div>'+
+                '<a href="#">'+
+                '<i class="fa fa-beer"></i>'+
+                '<span>'+ productCategories[i].name +'</span>'+
+                '</a>'+
                 '</li>';
         }
 

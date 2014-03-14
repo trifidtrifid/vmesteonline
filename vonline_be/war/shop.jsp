@@ -365,14 +365,18 @@
                         <ul>
                             <c:if test="${innerCategoryFlag}">
                                 <li>
-                                    <a href="#" class="fa fa-reply-all"></a>
-                                    <div>Назад</div>
+                                    <a href="#">
+                                    <i class="fa fa-reply-all"></i>
+                                    <span>Назад</span>
+                                    </a>
                                 </li>
                             </c:if>
                             <c:forEach var="productCategory" items="${productCategories}">
                                 <li data-parentid="${productCategory.parentId}" data-catid="${productCategory.id}">
-                                    <a href="#" class="fa fa-beer"></a>
-                                    <div>${productCategory.name}</div>
+                                    <a href="#">
+                                        <i class="fa fa-beer"></i>
+                                        <span>${productCategory.name}</span>
+                                    </a>
                                 </li>
                             </c:forEach>
                         </ul>
