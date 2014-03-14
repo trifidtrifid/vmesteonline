@@ -1155,19 +1155,11 @@ $(document).ready(function(){
             '<div class="modal">'+
             '</div>'+
             '<table>'+
-            '<thead>'+
-            '<tr>'+
-            '<td>Цена (руб)</td>'+
-            '<td>Кол-во</td>'+
-            '<td>Сумма</td>'+
-            '<td></td>'+
-            '</tr>'+
-            '</thead>'+
             '<tr>'+
             '<td class="td-price">'+ currentProduct.price +'</td>'+
             '<td><input type="text" class="input-mini spinner1 no-init" /><span class="unit-name">'+ unitName +'</span></td>'+
             '<td class="td-summa">'+ currentProduct.price +'</td>'+
-            '<td><a href="#" class="delete-product no-init">Удалить</a></td>'+
+            '<td><a href="#" class="delete-product no-init">×</a></td>'+
             '</tr>'+
             '</table>'+
             '</li>';

@@ -132,8 +132,9 @@ transform()
     max-height 320px
     overflow-y auto
     margin-left 0
+    border-top 1px solid #ccc
     li
-      padding 8px 0 8px 5px
+      padding 8px 5px 5px 5px
       display block
       background #f9f9f9
       list-style none
@@ -148,20 +149,21 @@ transform()
           td
       .product-link
         span
-          float left
-          width 40px
-          text-align center
-          img
-            max-width 40px
-            max-height 40px
+          display none
       .ace-spinner
         display inline-block
         vertical-align middle
       .product-right-descr
-        margin-left 45px
-        margin-bottom 10px
+        margin-left 10px
+        margin-bottom 5px
         padding-right 20px
+        font-size 16px
         line-height 16px
+      .delete-product
+        font-size 24px
+        color #ff0000
+        &:hover
+          text-decoration none
       .flexslider
         li
           padding 0

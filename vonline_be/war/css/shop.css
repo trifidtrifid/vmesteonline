@@ -130,9 +130,10 @@ a {
   max-height: 320px;
   overflow-y: auto;
   margin-left: 0;
+  border-top: 1px solid #ccc;
 }
 .shop-right .catalog-order li {
-  padding: 8px 0 8px 5px;
+  padding: 8px 5px 5px 5px;
   display: block;
   background: #f9f9f9;
   list-style: none;
@@ -147,23 +148,25 @@ a {
   background: #f2f2f2;
 }
 .shop-right .catalog-order li .product-link span {
-  float: left;
-  width: 40px;
-  text-align: center;
-}
-.shop-right .catalog-order li .product-link span img {
-  max-width: 40px;
-  max-height: 40px;
+  display: none;
 }
 .shop-right .catalog-order li .ace-spinner {
   display: inline-block;
   vertical-align: middle;
 }
 .shop-right .catalog-order li .product-right-descr {
-  margin-left: 45px;
-  margin-bottom: 10px;
+  margin-left: 10px;
+  margin-bottom: 5px;
   padding-right: 20px;
+  font-size: 16px;
   line-height: 16px;
+}
+.shop-right .catalog-order li .delete-product {
+  font-size: 24px;
+  color: #f00;
+}
+.shop-right .catalog-order li .delete-product:hover {
+  text-decoration: none;
 }
 .shop-right .catalog-order li .flexslider li {
   padding: 0;
