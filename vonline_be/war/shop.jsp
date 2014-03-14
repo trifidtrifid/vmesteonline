@@ -1,23 +1,12 @@
-<%@page import="com.vmesteonline.be.utils.SessionHelper"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ServiceImpl"%>
-<%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
-<%@ page import="com.vmesteonline.be.jdo2.VoFileAccessRecord"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-
-<%@ page import="java.nio.Buffer"%>
-<%@ page import="java.nio.ByteBuffer"%>
-<%@ page import="java.nio.ByteOrder"%>
-<%@ page import="java.nio.CharBuffer"%>
 <%@ page import="com.vmesteonline.be.shop.*"%>
-
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <%
 	HttpSession sess = request.getSession();

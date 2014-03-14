@@ -3,9 +3,11 @@ package com.vmesteonline.be;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jdo.Extent;
 import javax.jdo.JDOObjectNotFoundException;
@@ -327,7 +329,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 
 			Extent<VoCountry> vocs = pm.getExtent(VoCountry.class);
-			Set<Country> cl = new HashSet<Country>();
+			Set<Country> cl = new TreeSet<Country>();
 			for (VoCountry voc : vocs) {
 				cl.add(voc.getCountry());
 			}

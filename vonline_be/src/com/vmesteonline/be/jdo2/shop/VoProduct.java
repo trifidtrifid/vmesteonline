@@ -75,8 +75,19 @@ public class VoProduct {
 	// =====================================================================================================================
 	private void updateCategoriesList(FullProductInfo newInfo, PersistenceManager _pm) {
 		// remove categories if they not included to new list
+		for( Long opcid: this.categories){
+			VoProductCategory pcat = _pm.getObjectById(VoProductCategory.class, opcid);
+			pcat.updateProductCount(-1,_pm);
+			_pm.makePersistent(pcat);
+		}
 		this.categories = new ArrayList<Long>();
 		this.categories.addAll(newInfo.details.getCategories());
+		for( Long opcid: this.categories){
+			VoProductCategory pcat = _pm.getObjectById(VoProductCategory.class, opcid);
+			pcat.updateProductCount(1,_pm);
+			_pm.makePersistent(pcat);
+		}
+		
 		/*
 		 * List<Long> categoriesFromNewList = new ArrayList<Long>(); for( VoProductCategory vpc: this.getCategories()){ if(
 		 * newInfo.details.categories.contains(vpc.getId())) categoriesFromNewList.add(vpc.getId()); else { for( VoProduct vp: vpc.getProducts()){ if(
@@ -130,6 +141,11 @@ public class VoProduct {
 
 			vp.shopId = shop.getId();
 			vp.categories = details.getCategories();
+			for (Long cid : vp.categories) {
+				VoProductCategory pcat = pm.getObjectById(VoProductCategory.class, cid);
+				pcat.updateProductCount(1,pm);
+				pm.makePersistent(pcat);
+			}
 			vp.topicSet = details.getTopicSet();
 
 			pm.getObjectById(VoProducer.class, details.getProducerId());
@@ -200,7 +216,9 @@ public class VoProduct {
 				}
 
 			for (long categoryId : details.getCategories()) {
-				pm.getObjectById(VoProductCategory.class, categoryId);
+				VoProductCategory pcat = pm.getObjectById(VoProductCategory.class, categoryId);
+				pcat.updateProductCount(1,pm);
+				pm.makePersistent(pcat);
 				this.categories.add(categoryId);
 			}
 

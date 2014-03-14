@@ -19,7 +19,7 @@ public class CategoryDesrciption {
 	public List<String> topicSet;
 	
 	public ProductCategory getProductCategory(){
-		return new ProductCategory(id, parentId, name, descr, logoUrls, VoHelper.convertSet(topicSet, new ArrayList<Long>(), new Long(0)));
+		return new ProductCategory(id, parentId, name, descr, logoUrls, VoHelper.convertSet(topicSet, new ArrayList<Long>(), new Long(0)), 0);
 	}
 	//CATEGORY_ID = 200, CATEGORY_PARENT_NAME, CATEGORY_NAME, CATEGORY_DESCRIPTION, CATEGORY_LOGOURLS, CATEGORY_TOPICS
 }
