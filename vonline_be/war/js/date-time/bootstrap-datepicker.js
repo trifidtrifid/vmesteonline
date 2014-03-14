@@ -130,21 +130,23 @@
         var nowDateItem = new Date(nowTime*1000);
         var nowMonth = nowDateItem.getMonth();
 
-        var orders = client.getOrders(nowTime-30*day,nowTime+30*day);
-        var ordersLength = orders.length;
+        if (globalUserAuth){
+            var orders = client.getOrders(nowTime-30*day,nowTime+30*day);
+            var ordersLength = orders.length;
 
-        for (var i = 0; i < ordersLength; i++){
-            var orderDateLabel = orders[i].date;
-            var orderDate = new Date(orderDateLabel*1000);
-            var dayStr = orderDate.getDate();
-            var tempMonth = orderDate.getMonth();
-            $('.day').each(function(){
-                if (tempMonth == nowMonth){
-                    if ($(this).text() == dayStr && !$(this).hasClass('old') && !$(this).hasClass('new')){
-                        $(this).addClass('order-day').attr('id',orders[i].date);
+            for (var i = 0; i < ordersLength; i++){
+                var orderDateLabel = orders[i].date;
+                var orderDate = new Date(orderDateLabel*1000);
+                var dayStr = orderDate.getDate();
+                var tempMonth = orderDate.getMonth();
+                $('.day').each(function(){
+                    if (tempMonth == nowMonth){
+                        if ($(this).text() == dayStr && !$(this).hasClass('old') && !$(this).hasClass('new')){
+                            $(this).addClass('order-day').attr('id',orders[i].date);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 

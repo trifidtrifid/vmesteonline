@@ -1,4 +1,3 @@
-
 $(document).ready(function(){
     var transport = new Thrift.Transport("/thrift/ShopService");
     var protocol = new Thrift.Protocol(transport);
@@ -154,7 +153,6 @@ $(document).ready(function(){
      delay: 0,
      source: dataDeliveryStreets
      });*/
-
     var dPicker = $('.date-picker');
 
     dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
@@ -1328,20 +1326,24 @@ $(document).ready(function(){
               setSidebarHeight();
           });
        }else{
-           $('.shop-products').hide();
-           var nowTime = parseInt(new Date().getTime()/1000);
-           var day = 3600*24;
-           var orders = client.getOrders(0,nowTime+90*day);
-           initVarForMoreOrders();
-           ordersList.html('').append(createOrdersHtml(orders));
-           InitProductDetailPopup($('.product-link'));
-           initShowMoreOrders(orders);
-           var ordersNoInit = $('.orders-no-init');
-           initOrderPlusMinus(ordersNoInit);
-           initOrderBtns(ordersNoInit);
-           ordersNoInit.removeClass('orders-no-init');
-            shopOrders.show();
-           setSidebarHeight();
+           if (!globalUserAuth){
+               $('.modal-auth').modal();
+           }else{
+               $('.shop-products').hide();
+               var nowTime = parseInt(new Date().getTime()/1000);
+               var day = 3600*24;
+               var orders = client.getOrders(0,nowTime+90*day);
+               initVarForMoreOrders();
+               ordersList.html('').append(createOrdersHtml(orders));
+               InitProductDetailPopup($('.product-link'));
+               initShowMoreOrders(orders);
+               var ordersNoInit = $('.orders-no-init');
+               initOrderPlusMinus(ordersNoInit);
+               initOrderBtns(ordersNoInit);
+               ordersNoInit.removeClass('orders-no-init');
+                shopOrders.show();
+               setSidebarHeight();
+           }
        }
     });
 
