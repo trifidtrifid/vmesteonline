@@ -51,6 +51,7 @@ public class VoProductCategory {
 		topics = new ArrayList<Long>();
 		this.setShopId(shop.getId());
 		this.setImportId(importId);
+		this.productCount = 0;
 
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
 		try {
@@ -102,8 +103,25 @@ public class VoProductCategory {
 		this.shopId = shopId;
 	}
 
+	public long getProductCount() {
+		return productCount;
+	}
+	
+	public void updateProductCount(int delta, PersistenceManager pm ) {
+		setProductCount(productCount+delta);
+		if( 0!=parentId ) {
+			VoProductCategory parentCat = pm.getObjectById(VoProductCategory.class, parentId);
+			parentCat.updateProductCount(delta, pm);
+			pm.makePersistent(parentCat);
+		}
+	}
+
+	public void setProductCount(int productCount) {
+		this.productCount = productCount;
+	}
+
 	public ProductCategory getProductCategory() {
-		ProductCategory pc = new ProductCategory(id.getId(), parentId, name, descr.getValue(), null, null);
+		ProductCategory pc = new ProductCategory(id.getId(), parentId, name, descr.getValue(), null, null, productCount);
 
 		List<Long> ts = new ArrayList<Long>();
 		ts.addAll(getTopics());
@@ -142,6 +160,11 @@ public class VoProductCategory {
 
 	@Persistent
 	private long shopId;
+	
+	@Persistent
+	@Unindexed
+	private int productCount;
+	
 
 	public long getId() {
 		return id.getId();

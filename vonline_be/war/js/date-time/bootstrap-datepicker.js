@@ -45,7 +45,7 @@
                 strMonth = "Feb";
                 break;
             case 'Март':
-                strMonth = "Mart";
+                strMonth = "March";
                 break;
             case 'Апрель':
                 strMonth = "Apr";
@@ -154,12 +154,14 @@
             //var nowTime = parseInt(new Date().getTime()/1000);
             var dateLabel = parseInt($(this).attr('id'));
             if (orderData && orderData.itsOrder){
-                AddOrdersToBasket(orderData,$(this).attr('id'));
+                if ($('.additionally-order').hasClass('hide') || orderData.itsAppend == false){
+                    currentOrderId = client.createOrder(dateLabel,'asd',0);
+                }
+                AddOrdersToBasket(orderData);
             }else{
                 // добавление одного продукта
                 currentOrderId = client.createOrder(dateLabel,'asd2',0);
                 var productDetails = client.getProductDetails(currentProduct.id);
-                //alert(packs);
                 for (p in packs){
                     console.log(p+" "+packs[p]);
                 }
@@ -173,7 +175,7 @@
         });
     }
 
-    function initOrderDay(initVarForMoreOrders,createOrdersHtml,initShowMoreOrders,initOrderPlusMinus,initOrderBtns){
+    function initOrderDay(initVarForMoreOrders,createOrdersHtml,initShowMoreOrders,initOrderPlusMinus,initOrderBtns,setSidebarHeight){
         $('.order-day').click(function(){
             var orderDate = parseInt($(this).attr('id'));
             var day = 3600*24;
@@ -193,7 +195,8 @@
             $('.shop-orders').show();
             initShowMoreOrders(orderList);
             initOrderPlusMinus(shopOrdersList);
-            initOrderBtns();
+            initOrderBtns(shopOrdersList);
+            setSidebarHeight();
         });
     }
 
@@ -296,7 +299,7 @@
 		this.todayBtn = (options.todayBtn||this.element.data('date-today-btn')||false);
 		this.todayHighlight = (options.todayHighlight||this.element.data('date-today-highlight')||false);
 
-		this.calendarWeeks = false;
+        this.calendarWeeks = false;
 		if ('calendarWeeks' in options) {
 			this.calendarWeeks = options.calendarWeeks;
 		} else if ('dateCalendarWeeks' in this.element.data()) {
@@ -308,13 +311,13 @@
 							return parseInt(val) + 1;
 						});
 
-		this.weekStart = ((options.weekStart||this.element.data('date-weekstart')||dates[this.language].weekStart||0) % 7);
+        this.weekStart = ((options.weekStart||this.element.data('date-weekstart')||dates[this.language].weekStart||0) % 7);
 		this.weekEnd = ((this.weekStart + 6) % 7);
 		this.startDate = -Infinity;
 		this.endDate = Infinity;
 		this.daysOfWeekDisabled = [];
-		this.setStartDate(options.startDate||this.element.data('date-startdate'));
-		this.setEndDate(options.endDate||this.element.data('date-enddate'));
+        this.setStartDate(options.startDate||this.element.data('date-startdate'));
+        this.setEndDate(options.endDate||this.element.data('date-enddate'));
 		this.setDaysOfWeekDisabled(options.daysOfWeekDisabled||this.element.data('date-days-of-week-disabled'));
 		this.fillDow();
 		this.fillMonths();
@@ -324,7 +327,8 @@
 		if(this.isInline) {
 			this.show();
 		}
-	};
+
+    };
 
 	Datepicker.prototype = {
 		constructor: Datepicker,
@@ -470,7 +474,7 @@
 				this.startDate = DPGlobal.parseDate(this.startDate, this.format, this.language);
 			}
 			this.update();
-			this.updateNavArrows();
+            this.updateNavArrows();
 		},
 
 		setEndDate: function(endDate){
@@ -664,10 +668,9 @@
                 SetFreeDates();
                 initFreeDay(this.currentProduct,this.spinnerValue,this.orderData,this.packs,this.AddSingleProductToBasket,this.AddOrdersToBasket);
             }else{
-               SetOrderDates();
-               initOrderDay(this.initVarForMoreOrders,this.createOrdersHtml,this.initShowMoreOrders,this.initOrderPlusMinus,this.initOrderBtns)
+                SetOrderDates();
+               initOrderDay(this.initVarForMoreOrders,this.createOrdersHtml,this.initShowMoreOrders,this.initOrderPlusMinus,this.initOrderBtns,this.setSidebarHeight)
             }
-
 		},
 
 		updateNavArrows: function() {
@@ -995,6 +998,7 @@
             this.initShowMoreOrders = datepickerFunc.initShowMoreOrders;
             this.initOrderPlusMinus = datepickerFunc.initOrderPlusMinus;
             this.initOrderBtns = datepickerFunc.initOrderBtns;
+            this.setSidebarHeight = datepickerFunc.setSidebarHeight;
         }
 	};
 

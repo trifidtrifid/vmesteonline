@@ -157,11 +157,7 @@ $(document).ready(function(){
 
     var dPicker = $('.date-picker');
 
-    dPicker.datepicker({
-        autoclose:true,
-        //onRender: SetFreeDates()
-        language:'ru'
-    }).next().on(ace.click_event, function(){
+    dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
         $(this).prev().focus();
     });
 
@@ -171,11 +167,11 @@ $(document).ready(function(){
         createOrdersHtml: createOrdersHtml,
         initShowMoreOrders: initShowMoreOrders,
         initOrderPlusMinus: initOrderPlusMinus,
-        initOrderBtns: initOrderBtns
+        initOrderBtns: initOrderBtns,
+        setSidebarHeight: setSidebarHeight
     };
 
     dPicker.datepicker('setVarOrderDates',datepickerFunc);
-
 
     InitSpinner($('.spinner1'),1);
     InitAddToBasket($('.fa-shopping-cart'));
@@ -975,8 +971,6 @@ $(document).ready(function(){
                     break
             }
             ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
-                '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
-                '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить в корзину</button>'+
                 '<table class="orders-tbl">'+
                 '<tbody>'+
                 '<tr>'+
@@ -989,6 +983,10 @@ $(document).ready(function(){
                 orderDetails.deliveryTo.flatNo+
                 '</td>'+
                 '<td class="td6">'+ orders[i].totalCost +'</td>'+
+                '<td class="td7">'+
+                '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
+                '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить в корзину</button>'+
+                '</td>'+
                 '</tr>'+
                 '</tbody>'+
                 '</table>'+
@@ -1217,36 +1215,45 @@ $(document).ready(function(){
     });
 
     function addSingleOrderToBasket(orderId,addType){
-        var orderDetails;
+        var orderDetails,
+            curProd,
+            spinVal,i;
         if (addType == 'replace'){
             orderDetails = client.getOrderDetails(orderId);
+            var orderLines = orderDetails.odrerLines;
+            var orderLinesLength = orderLines.length;
+            for(i = 0; i < orderLinesLength; i++){
+                curProd = orderLines[i].product;
+                spinVal = orderLines[i].quantity;
+                var packs = orderLines[i].packs;
+                client.setOrderLine(curProd.id,spinVal,"asd",packs);
+            }
         }else if (addType == 'append'){
             orderDetails = client.appendOrder(orderId);
         }
-        var orderLines = orderDetails.odrerLines;
-        var orderLinesLength = orderLines.length;
-        for(var i = 0; i < orderLinesLength; i++){
-            var curProd = orderLines[i].product;
-            var spinVal = orderLines[i].quantity;
+        orderLines = orderDetails.odrerLines;
+        orderLinesLength = orderLines.length;
+        for(i = 0; i < orderLinesLength; i++){
+            curProd = orderLines[i].product;
+            spinVal = orderLines[i].quantity;
             AddSingleProductToBasket(curProd,spinVal,curProd.unitName);
         }
     }
 
-    function AddOrdersToBasket(orderData,data){
+    function AddOrdersToBasket(orderData){
         // добавление целого заказа
         var addType;
         if (orderData.itsAppend){
             addType = 'append';
-        }  else{
-            currentOrderId = client.createOrder(data,'asd2',0);
+        }else{
             addType = 'replace';
         }
         $('.catalog-order').html('');
         addSingleOrderToBasket(orderData.orderId,addType);
     }
 
-    function initOrderBtns(){
-        $('.repeat-order-btn').click(function(){
+    function initOrderBtns(selector){
+        selector.find('.repeat-order-btn').click(function(){
             var orderData= {
                 itsOrder: true,
                 itsAppend: false,
@@ -1256,16 +1263,17 @@ $(document).ready(function(){
             dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,AddSingleProductToBasket,AddOrdersToBasket);
             dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[0, 0, orderData, 'Event']).datepicker('triggerFlagBasket');
             flagFromBasketClick = 0;
-
         });
-        $('.add-order-btn').click(function(){
+        selector.find('.add-order-btn').click(function(){
             var orderData= {
                 itsOrder: true,
                 itsAppend: true,
                 orderId : $(this).closest('.order-item').data('orderid')
             };
             if ($('.additionally-order').hasClass('hide')){
-                dPicker.trigger('focus').trigger('click',[0, 0, orderData, 'Event']);
+                flagFromBasketClick = 1;
+                dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,AddSingleProductToBasket,AddOrdersToBasket);
+                dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[0, 0, orderData, 'Event']);
             }else{
                 AddOrdersToBasket(orderData);
             }
@@ -1288,8 +1296,10 @@ $(document).ready(function(){
             var itsMoreOrders = true;
             orderList.append(createOrdersHtml(orders,itsMoreOrders));
             initShowMoreOrders(orders);
-            initOrderPlusMinus($('.orders-no-init'));
-            $('.orders-no-init').removeClass('orders-no-init');
+            var ordersNoInit = $('.orders-no-init');
+            initOrderPlusMinus(ordersNoInit);
+            initOrderBtns(ordersNoInit);
+            ordersNoInit.removeClass('orders-no-init');
             offsetOrders += lengthOrders;
             setSidebarHeight();
         });
@@ -1326,9 +1336,10 @@ $(document).ready(function(){
            ordersList.html('').append(createOrdersHtml(orders));
            InitProductDetailPopup($('.product-link'));
            initShowMoreOrders(orders);
-           initOrderPlusMinus($('.orders-no-init'));
-           $('.orders-no-init').removeClass('orders-no-init');
-           initOrderBtns();
+           var ordersNoInit = $('.orders-no-init');
+           initOrderPlusMinus(ordersNoInit);
+           initOrderBtns(ordersNoInit);
+           ordersNoInit.removeClass('orders-no-init');
             shopOrders.show();
            setSidebarHeight();
        }
