@@ -554,8 +554,8 @@ span
   left: 50%;
   margin-left: -330px;
   background: #fff;
-  top: 20%;
-  height: 388px;
+  top: 10%;
+  height: 250px;
   overflow-y: auto;
 }
 .modal .close {
@@ -607,11 +607,11 @@ span
   margin-top: 0;
 }
 .modal .product-text {
-  height: 270px;
+  height: 90px;
   overflow: auto;
 }
 .modal .product-options {
-  font-size: 10px;
+  font-size: 12px;
   color: #ccc;
   margin-bottom: 10px;
 }
@@ -622,7 +622,7 @@ span
 .modal .modal-footer {
   position: absolute;
   height: 60px;
-  top: 305px;
+  top: 125px;
   right: 10px;
   width: 430px;
   background: #fff;
@@ -675,6 +675,14 @@ span
 .modal .modal-footer.with-prepack .prepack-item span {
   display: block;
   text-align: center;
+}
+.modal .modal-footer .full-descr {
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+.modal .product-fullDescr {
+  display: none;
+  max-height: 276px;
 }
 .modal .prepack-list {
   float: right;

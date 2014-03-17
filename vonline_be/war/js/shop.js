@@ -292,6 +292,7 @@ $(document).ready(function(){
         }
     }
 
+
     function InitProductDetailPopup(selector){
         try{
         selector.click(function(e){
@@ -318,6 +319,12 @@ $(document).ready(function(){
             var productDetails = client.getProductDetails(productSelector.data('productid'));
             var imagesSet = productDetails.imagesURLset;
             var options = productDetails.optionsMap;
+            var currentModal = $(this).find('+.modal');
+
+            if(imagesSet.length){
+                var oldHeight = currentModal.height();
+                currentModal.height(oldHeight + 25);
+            }
 
             var popupHtml = "";
             popupHtml += '<div class="modal-body">'+
@@ -349,9 +356,9 @@ $(document).ready(function(){
                     for(var p in options){
                         popupHtml += '<div>'+p+" "+options[p]+'</div>';
                     }
-                    popupHtml += '</div>'+
-                        productDetails.fullDescr+
-                    '</div>';
+                    popupHtml += '</div>';
+                        /*productDetails.fullDescr+
+                    '</div>';*/
 
                     if (productDetails.prepackRequired){
                         popupHtml += '<div class="modal-footer with-prepack">'+
@@ -381,12 +388,13 @@ $(document).ready(function(){
                 popupHtml += '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>';
             }
 
-                popupHtml += '<div class="prepack-list"></div>'+
+                popupHtml += '<a href="#" class="btn btn-primary btn-sm no-border full-descr">Подробное описание</a>'+
+                    '<div class="prepack-list"></div>'+
+                    "<div class='product-fullDescr'>"+ productDetails.fullDescr +"</div>"+
                     '</div>'+
                 '</div>'+
             '</div>';
 
-            var currentModal = $(this).find('+.modal');
             if (currentModal.find('.modal-body').length == 0){
                 // если еще не открывали popup
                 currentModal.append(popupHtml);
@@ -522,6 +530,21 @@ $(document).ready(function(){
 
                     initRemovePrepackLine($('.prepack-item .close'),productId,productSelector);
                 });
+                $('.full-descr').click(function(){
+                    var fullDescr = $('.product-fullDescr');
+                    var oldHeight,fullDescrHeight;
+                    oldHeight = $(this).closest('.modal').height();
+                    if(fullDescr.css('display') == 'none'){
+                        fullDescr.show(function(){
+                            fullDescrHeight = $(this).closest('.modal').find('.product-fullDescr').height();
+                            $(this).closest('.modal').height(oldHeight + fullDescrHeight+10);
+                        });
+                    }else{
+                        fullDescrHeight = $(this).closest('.modal').find('.product-fullDescr').height();
+                        $(this).closest('.modal').height(oldHeight - fullDescrHeight-10);
+                        fullDescr.hide();
+                    }
+                });
             }
             currentModal.modal();
             var carousel = currentModal.find('.carousel');
@@ -544,6 +567,7 @@ $(document).ready(function(){
                 slideshow: false,
                 sync: carousel
             });
+
         });
         }catch(e){
             alert(e+" Функция InitProductDetailPopup");
