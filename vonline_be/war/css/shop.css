@@ -84,13 +84,13 @@ a {
   border-left: 1px solid #ccc;
 }
 .main-content {
-  margin-right: 250px;
+  margin-right: 380px;
   margin-left: 0;
   padding: 10px;
 }
 .shop-right {
   float: right;
-  width: 250px;
+  width: 380px;
   border: 0;
   border-left: 1px solid #ccc;
   padding-bottom: 20px;
@@ -117,12 +117,14 @@ a {
 .shop-right .sidebar-title .go-to-orders {
   display: inline-block;
   vertical-align: middle;
-  margin-right: 4px;
+  margin-right: 10px;
 }
 .shop-right nav {
   display: inline-block;
   vertical-align: middle;
+  width: 70%;
 }
+.shop-right nav .input-group,
 .shop-right nav a {
   display: block;
 }
@@ -136,19 +138,33 @@ a {
   padding: 8px 5px 5px 5px;
   display: block;
   background: #f9f9f9;
+  overflow: auto;
   list-style: none;
   font-size: 12px;
   border-bottom: 1px solid #ccc;
+  line-height: 32px;
 }
 .shop-right .catalog-order li table {
-  width: 100%;
+  width: 180px;
+  float: right;
   text-align: center;
+  line-height: 16px;
 }
 .shop-right .catalog-order li table thead td {
   background: #f2f2f2;
 }
+.shop-right .catalog-order li .product-link {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 16px;
+  max-width: 180px;
+}
 .shop-right .catalog-order li .product-link span {
   display: none;
+}
+.shop-right .catalog-order li .product-link .product-right-descr {
+  display: inline-block;
+  vertical-align: middle;
 }
 .shop-right .catalog-order li .ace-spinner {
   display: inline-block;
@@ -191,6 +207,7 @@ a {
 }
 .shop-right .delivery-right .input-delivery {
   display: none;
+  padding-right: 10px;
 }
 .shop-right .delivery-right .input-delivery .lbl {
   font-size: 16px;
@@ -198,11 +215,11 @@ a {
   margin-bottom: 5px;
 }
 .shop-right .delivery-right .input-delivery input {
-  width: 230px;
+  width: 100%;
   margin-bottom: 10px;
 }
 .shop-right .delivery-right .input-delivery input.short {
-  width: 110px;
+  width: 175px;
   display: inline-block;
 }
 .shop-right .delivery-right .input-delivery input.short.first {
@@ -217,19 +234,19 @@ a {
 }
 .shop-right textarea {
   margin: 10px;
-  width: 230px;
+  width: 358px;
   height: 80px;
   font-family: Tahoma, Arial;
   font-size: 14px;
   color: #858585;
 }
 .shop-right .btn-grey {
-  margin-left: 30px;
-  margin-right: 20px;
+  margin-left: 190px;
+  margin-right: 10px;
 }
 .datepicker {
   padding: 0 2px 5px 2px;
-  width: 250px;
+  width: 350px;
   z-index: 11 !important;
   margin-left: -84px;
 }

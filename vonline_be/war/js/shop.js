@@ -1005,7 +1005,7 @@ $(document).ready(function(){
         }catch(e){
             alert(e+" Функция countItogo");
         }
-        return summa;
+        return summa.toFixed(1);
     }
 
     function InitDeleteProduct(selector){
@@ -1353,14 +1353,6 @@ $(document).ready(function(){
         try{
         var productDetails = client.getProductDetails(currentProduct.id);
         var productHtml = '<li data-productid="'+ currentProduct.id +'">'+
-            '<a href="#" class="product-link no-init">'+
-            '<span><img src="'+ currentProduct.imageURL +'" alt="картинка"/></span>'+
-            '<div class="product-right-descr">'+
-            currentProduct.name+
-            '</div>'+
-            '</a>'+
-            '<div class="modal">'+
-            '</div>'+
             '<table>'+
             '<tr>'+
             '<td class="td-price product-price">'+ currentProduct.price +'</td>'+
@@ -1369,6 +1361,14 @@ $(document).ready(function(){
             '<td><a href="#" class="delete-product no-init">×</a></td>'+
             '</tr>'+
             '</table>'+
+            '<a href="#" class="product-link no-init">'+
+            '<span><img src="'+ currentProduct.imageURL +'" alt="картинка"/></span>'+
+            '<div class="product-right-descr">'+
+            currentProduct.name+
+            '</div>'+
+            '</a>'+
+            '<div class="modal">'+
+            '</div>'+
             '</li>';
         }catch(e){
             alert(e+" Функция AddSingleProductToBasket");
