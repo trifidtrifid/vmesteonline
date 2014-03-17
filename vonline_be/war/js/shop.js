@@ -255,7 +255,6 @@ $(document).ready(function(){
     function initRemovePrepackLine(selector, productId,productSelector){
         try{
         selector.click(function(){
-            alert('1');
             if (currentOrderId){
                 // если мы уже создали заказ
             var orderDetails = client.getOrderDetails(currentOrderId);
@@ -367,7 +366,7 @@ $(document).ready(function(){
                             '<span>'+ product.unitName +'</span>'+
                             '</div>';
                     }
-            popupHtml += "<div class='error-info error-prepack'></div>"
+            popupHtml += "<div class='error-info error-prepack'></div>";
 
             if ($(this).closest('tr').length > 0 ){
                 // если этот popup не в корзине, то добавляем возможность добавить в корзину
@@ -383,62 +382,68 @@ $(document).ready(function(){
             if (currentModal.find('.modal-body').length == 0){
                 // если еще не открывали popup
                 currentModal.append(popupHtml);
-                if (($(this).closest('tr').length == 0 || $(this).closest('.order-products').length > 0) && productDetails.prepackRequired){
-                    // если мы в корзине или на странице заказов и при этом у этого продукта есть prepack
-                    // то генерируем все prepack lines
-                    var orderId = currentOrderId;
-                    var productId = $(this).closest('li').data('productid');
-                    var unitName = $(this).closest('li').find('.unit-name').text();
-                    if ($(this).closest('.order-products').length > 0){
-                        // если это заказы
-                        productId = $(this).closest('tr').data('productid');
-                        orderId = $(this).closest('.order-item').data('orderid');
-                        unitName = $(this).closest('tr').find('.unit-name').text();
-                    }
-                    var orderDetails = client.getOrderDetails(orderId);
-                    var orderLinesLength = orderDetails.odrerLines.length;
-                    var packs;
-                    for (var i = 0; i < orderLinesLength; i++){
-                        if (orderDetails.odrerLines[i].product.id == productId){
-                            packs = orderDetails.odrerLines[i].packs;
+                if ($(this).closest('tr').length == 0 || $(this).closest('.order-products').length > 0){
+                    // если мы в корзине или на странице заказов
+                    if (productDetails.prepackRequired){
+                        // и при этом у этого продукта есть prepack
+                        // то генерируем все prepack lines
+                        var orderId = currentOrderId;
+                        var productId = $(this).closest('li').data('productid');
+                        var unitName = $(this).closest('li').find('.unit-name').text();
+                        if ($(this).closest('.order-products').length > 0){
+                            // если это заказы
+                            productId = $(this).closest('tr').data('productid');
+                            orderId = $(this).closest('.order-item').data('orderid');
+                            unitName = $(this).closest('tr').find('.unit-name').text();
                         }
-                    }
-
-                    var counter = 0;
-                    var prepackHtml;
-
-                    for(var p in packs){
-                        if (counter == 0){
-                            // если самая первая линия
-                            InitSpinner(currentModal.find('.packs .spinner1'),packs[p],1);
-                            InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),parseInt(p),1);
-                        }else{
-                            // если другая линия
-                            prepackHtml = '<div class="prepack-line no-init">' +
-                                '<div class="prepack-item packs">'+
-                                '<input type="text" class="input-mini spinner1 prepack" />'+
-                                '<span>упаковок</span>'+
-                                '</div>'+
-                                '<div class="prepack-item">по</div>'+
-                                '<div class="prepack-item">'+
-                                '<input type="text" class="input-mini spinner1" />'+
-                                '<span>'+ unitName +'</span>'+
-                                '</div>'+
-                                '<div class="prepack-item">'+
-                                '<a href="#" class="close" title="Удалить">×</a>'+
-                                '</div>'+
-                            '</div>';
-                            currentModal.find('.prepack-list').append(prepackHtml);
-                            InitSpinner(currentModal.find('.no-init .packs .spinner1'),packs[p],1);
-                            InitSpinner(currentModal.find('.no-init .prepack-item:not(".packs") .spinner1'),parseInt(p),1);
-
-                            //initRemovePrepackLine(currentModal.find('.prepack-line.no-init .close'),productId,productSelector);
-                            currentModal.find('.prepack-line.no-init').removeClass('no-init');
-                            currentModal.height(currentModal.height() + 53);
+                        var orderDetails = client.getOrderDetails(orderId);
+                        var orderLinesLength = orderDetails.odrerLines.length;
+                        var packs;
+                        for (var i = 0; i < orderLinesLength; i++){
+                            if (orderDetails.odrerLines[i].product.id == productId){
+                                packs = orderDetails.odrerLines[i].packs;
+                            }
                         }
-                        counter++;
+
+                        var counter = 0;
+                        var prepackHtml;
+
+                        for(var p in packs){
+                            if (counter == 0){
+                                // если самая первая линия
+                                InitSpinner(currentModal.find('.packs .spinner1'),packs[p],1);
+                                InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),parseInt(p),1);
+                            }else{
+                                // если другая линия
+                                prepackHtml = '<div class="prepack-line no-init">' +
+                                    '<div class="prepack-item packs">'+
+                                    '<input type="text" class="input-mini spinner1 prepack" />'+
+                                    '<span>упаковок</span>'+
+                                    '</div>'+
+                                    '<div class="prepack-item">по</div>'+
+                                    '<div class="prepack-item">'+
+                                    '<input type="text" class="input-mini spinner1" />'+
+                                    '<span>'+ unitName +'</span>'+
+                                    '</div>'+
+                                    '<div class="prepack-item">'+
+                                    '<a href="#" class="close" title="Удалить">×</a>'+
+                                    '</div>'+
+                                '</div>';
+                                currentModal.find('.prepack-list').append(prepackHtml);
+                                InitSpinner(currentModal.find('.no-init .packs .spinner1'),packs[p],1);
+                                InitSpinner(currentModal.find('.no-init .prepack-item:not(".packs") .spinner1'),parseInt(p),1);
+
+                                currentModal.find('.prepack-line.no-init').removeClass('no-init');
+                                currentModal.height(currentModal.height() + 53);
+                            }
+                            counter++;
+                        }
+                    }else{
+                        //если обычный товар
+                        InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),1);
                     }
                 }else{
+                    // если не в корзине
                     if (productDetails.prepackRequired){
                         InitSpinner(currentModal.find('.prepack-item.packs .spinner1'), 1);
                         InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'), productSelector.find('.ace-spinner').spinner('value'));
@@ -537,6 +542,20 @@ $(document).ready(function(){
         }
     }
 
+    $('.ace-spinner').click(function(e){
+        // popup для disabled spinner
+       var target = e.target;
+        if ($(target).hasClass('spinner1')){
+            if ($(target).attr('disabled') == 'disabled'){
+                ($(this).closest('tr').length > 0) ? $(this).closest('tr').find('.product-link').trigger('click'):$(this).closest('li').find('.product-link').trigger('click');
+            }
+        }else if($(target).hasClass('spinner-buttons')){
+            if ($(target).prev().attr('disabled') == 'disabled'){
+                ($(this).closest('tr').length > 0) ? $(this).closest('tr').find('.product-link').trigger('click'):$(this).closest('li').find('.product-link').trigger('click');
+            }
+        }
+    });
+
     $('.btn-order').click(function(){
         try{
         if($('.input-delivery').hasClass('active') && !$('#phone-delivery').val()){
@@ -555,7 +574,10 @@ $(document).ready(function(){
             var spinnerValue = [];
             orderList.each(function(){
                 spinnerValue[i++] = $(this).find('.ace-spinner').spinner('value');
-                productsHtmlModal+= '<tr>'+
+                var productDetails = client.getProductDetails($(this).data('productid'));
+                var disableClass;
+                (productDetails.prepackRequired)? disableClass='class="prepack-disable"': disableClass='';
+                productsHtmlModal+= '<tr data-productid="'+ $(this).data('productid') +'">'+
                     '<td>'+
                     '<div>'+
                     '<img src="'+ $(this).find('img').attr('src') +'" alt="картинка"/>'+
@@ -563,7 +585,7 @@ $(document).ready(function(){
                     '</div>'+
                     '</td>'+
                     '<td class="td-price">'+ $(this).find('.td-price').text()  +'</td>'+
-                    '<td>'+
+                    '<td '+ disableClass +'>'+
                     '<input type="text" class="input-mini spinner1 no-init" />'+
                     '</td>'+
                     '<td>'+ 'ед' +'</td>'+
@@ -572,6 +594,7 @@ $(document).ready(function(){
                     '</tr>';
             });
             popup.find('.modal-body-list tbody').html('').append(productsHtmlModal);
+            $('.modal-itogo span').text(countItogo($('.modal-body-list')));
 
             var spinnerNoInit = popup.find('.spinner1.no-init');
             i = 0;
@@ -579,6 +602,7 @@ $(document).ready(function(){
                 InitSpinner($(this),spinnerValue[i++]);
             });
             spinnerNoInit.removeClass('no-init');
+            $('.prepack-disable').find('.ace-spinner').spinner('disable');
 
             popup.find('.btn-order').click(function(){
                 // добавление в базу нового города, страны, улицы и т.д (если курькером)
@@ -783,14 +807,49 @@ $(document).ready(function(){
     }catch(e){
         alert(e+" Функция InitSpinner");
     }
-        InitSpinnerChange(selector,itsBasket);
+        if (selector.closest('.modal-order-end').length > 0){
+            InitSpinnerChangeInFinal(selector);
+        }else{
+            InitSpinnerChange(selector,itsBasket);
+        }
     }
 
-    //var currentOrderId = {};
-    /*$('.spinner-buttons').hover(function(e){
-        e.preventDefault();
-        alert('1');
-    });*/
+    function InitSpinnerChangeInFinal(selector){
+        selector.on('change',function(e){
+            var productSelector = $(this).closest('tr');
+            var price = productSelector.find('.td-price').text();
+            var qnty = $(this).val();
+            price = parseFloat(price);
+            $('.catalog-order>li').each(function(){
+               if ($(this).data('productid') == productSelector.data('productid')){
+                  $(this).find('.ace-spinner').spinner('value',qnty);
+                  $(this).find('.td-summa').text((price*qnty).toFixed(1));
+               }
+            });
+            var productDetails = client.getProductDetails(productSelector.data('productid'));
+            var packs=[];
+            if (productDetails.prepackRequired){
+                var orderDetails = client.getOrderDetails(currentOrderId);
+                var orderLines = orderDetails.odrerLines;
+                var orderLinesLength = orderDetails.odrerLines.length;
+                for (var i = 0; i < orderLinesLength ; i++){
+                    if (orderLines[i].product.id == productSelector.data('productid')){
+                        packs = orderLines[i].packs;
+                        break;
+                    }
+                }
+                // а здесь нам нужно менять packs, если меняем его внутри modal-order-end
+                // но пока такой логики нет
+                // может быть так и оставим
+            }else{
+                packs = 0;
+            }
+            client.setOrderLine(productSelector.data('productid'),qnty,'asd',packs);
+            productSelector.find('.td-summa').text((price*qnty).toFixed(1));
+
+            $('.itogo-right span,.modal-itogo span').text(countItogo($('.modal-body-list')));
+        });
+    }
 
     function InitSpinnerChange(selector,itsBasket){
         try{
@@ -803,8 +862,9 @@ $(document).ready(function(){
             }
             var qnty = $(this).val();
             if ($(this).closest('.modal').length > 0 && !itsBasket){
-                // значит мы в модальном окне с подробной инфой о продукте
-                // и автом. считаем spinner для этого продукта в таблице
+                // если мы не в корзине и
+                // в модальном окне с подробной инфой о продукте
+                // автом. считаем spinner для этого продукта в таблице
                 if ($(this).closest('.modal-footer').hasClass('with-prepack')){
                     // если продукт с prepack
                        if ($(this).closest('.modal-footer').find('.prepack-line').length == 0 &&
@@ -825,7 +885,7 @@ $(document).ready(function(){
                 }
             } else if(!itsBasket){
                 // значит мы в таблице продуктов и нам нужно автом. поменять значение
-                // spinner у соотв. модального окна
+                // spinner у соотв. модального окна и посчитать сумму
                 var productDetails = client.getProductDetails(productSelector.data('productid'));
                 if (productDetails.prepackRequired){
                     productSelector.find('.modal .prepack-item:not(".packs") .ace-spinner').spinner('value',qnty);
@@ -835,8 +895,8 @@ $(document).ready(function(){
                 }
             }
             var price = productSelector.find('.td-price').text();
-            price = parseInt(price);
-            productSelector.find('.td-summa').text(price*qnty+'р');
+            price = parseFloat(price);
+            productSelector.find('.td-summa').text((price*qnty).toFixed(1));
             $('.itogo-right span').text(countItogo($('.catalog-order')));
             $('.modal-itogo span').text(countItogo($('.modal-body-list')));
             var packs;
@@ -885,8 +945,8 @@ $(document).ready(function(){
                                 packs[tempQntyVal]=tempPacksVal;
                             });
                         }
-                        productSelector.find('td>.ace-spinner').spinner('value',qnty);
                     }
+                    productSelector.find('td>.ace-spinner').spinner('value',qnty);
                 } else{
                     qnty = productSelector.find('td .ace-spinner').spinner('value');
                     for(var p in packs){
@@ -914,7 +974,7 @@ $(document).ready(function(){
         try{
         var summa = 0;
         sel.find('.td-summa').each(function(){
-            summa += parseInt($(this).text());
+            summa += parseFloat($(this).text());
         });
         }catch(e){
             alert(e+" Функция countItogo");
@@ -1262,8 +1322,6 @@ $(document).ready(function(){
     function AddSingleProductToBasket(currentProduct,spinnerValue,unitName){
         try{
         var productDetails = client.getProductDetails(currentProduct.id);
-       /* var unitName = "";
-        if (productDetails.unitName){unitName = productDetails.unitName;}*/
         var productHtml = '<li data-productid="'+ currentProduct.id +'">'+
             '<a href="#" class="product-link no-init">'+
             '<span><img src="'+ currentProduct.imageURL +'" alt="картинка"/></span>'+
@@ -1275,9 +1333,9 @@ $(document).ready(function(){
             '</div>'+
             '<table>'+
             '<tr>'+
-            '<td class="td-price">'+ currentProduct.price +'</td>'+
+            '<td class="td-price product-price">'+ currentProduct.price +'</td>'+
             '<td><input type="text" class="input-mini spinner1 no-init" /><span class="unit-name">'+ unitName +'</span></td>'+
-            '<td class="td-summa">'+ currentProduct.price +'</td>'+
+            '<td class="td-summa">'+ (currentProduct.price*spinnerValue).toFixed(1) +'</td>'+
             '<td><a href="#" class="delete-product no-init">×</a></td>'+
             '</tr>'+
             '</table>'+
@@ -1286,8 +1344,9 @@ $(document).ready(function(){
             alert(e+" Функция AddSingleProductToBasket");
         }
 
-        $('.catalog-order').append(productHtml);
-        //currentProduct.addClass('added');
+        var catalogOrder = $('.catalog-order');
+        catalogOrder.append(productHtml);
+        $('.itogo-right span').text(countItogo(catalogOrder));
 
         var deleteNoInit = $('.catalog-order .delete-product.no-init');
         InitDeleteProduct(deleteNoInit);
@@ -1298,7 +1357,7 @@ $(document).ready(function(){
         popupNoInit.removeClass('no-init');
 
         var spinnerNoInit = $('.catalog-order .spinner1.no-init');
-        var itsBasket = true;
+        var itsBasket = 1;
         InitSpinner(spinnerNoInit,spinnerValue,itsBasket);
         spinnerNoInit.removeClass('no-init');
 

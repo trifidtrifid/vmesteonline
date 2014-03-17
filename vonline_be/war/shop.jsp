@@ -301,7 +301,7 @@
                 </ul>
                 <div class="additionally-order">
                     <div class="itogo-right">
-                        Товаров на сумму: <span>333</span> руб.
+                        Товаров на сумму: <span></span> руб.
                     </div>
                     <div class="delivery-right">
                         <h3>Доставка</h3>
