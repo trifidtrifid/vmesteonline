@@ -34,6 +34,7 @@
     var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
 
     function getNowDate(){
+        try {
         var strDate = $('.datepicker-days .switch').text().split(" ");
         var strMonth="";
         var year = strDate[1];
@@ -75,10 +76,14 @@
                 strMonth = "Dec";
                 break;
         }
+        } catch(e){
+           alert(e + ' Функция getNowDate');
+        }
         return (Date.parse('15 '+strMonth+" "+year));
     }
 
     function SetFreeDates(){
+        try{
 
         var nowTime = parseInt(getNowDate()/1000);
         nowTime -= nowTime%86400;
@@ -120,10 +125,14 @@
             });
 
         }
+        }catch(e){
+            alert(e + ' Функция SetFreeDates');
+        }
         //console.log('---------');
     }
 
     function SetOrderDates(){
+        try{
         var nowTime = parseInt(getNowDate()/1000);
         nowTime -= nowTime%86400;
         var day = 3600*24;
@@ -148,9 +157,13 @@
                 });
             }
         }
+        }catch(e){
+            alert(e + ' Функция SetOrderDates');
+        }
     }
 
     function initFreeDay(currentProduct,spinnerValue,orderData,packs,AddSingleProductToBasket,AddOrdersToBasket){
+        try{
         $('.free-day').click(function(){
             // время должно быть не "сейчас" а то что указано в календаре
             //var nowTime = parseInt(new Date().getTime()/1000);
@@ -175,9 +188,13 @@
                 $('.empty-basket').addClass('hide');
             };
         });
+        }catch(e){
+            alert(e + ' Функция initFreeDay');
+        }
     }
 
     function initOrderDay(initVarForMoreOrders,createOrdersHtml,initShowMoreOrders,initOrderPlusMinus,initOrderBtns,setSidebarHeight){
+        try{
         $('.order-day').click(function(){
             var orderDate = parseInt($(this).attr('id'));
             var day = 3600*24;
@@ -200,10 +217,14 @@
             initOrderBtns(shopOrdersList);
             setSidebarHeight();
         });
+        }catch(e){
+            alert(e + ' Функция initOrderDay');
+        }
     }
 
 	// Picker object
 
+    try{
 	var Datepicker = function(element, options) {
 		var that = this;
 
@@ -1217,5 +1238,8 @@
 						'</div>';
 
 	$.fn.datepicker.DPGlobal = DPGlobal;
+    }catch(e){
+        alert(e + ' DatePicker');
+    }
 
 }( window.jQuery );

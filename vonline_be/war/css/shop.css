@@ -642,6 +642,7 @@ span
   font-size: 20px;
   position: relative;
   left: -8px;
+  top: -8px;
 }
 .modal .modal-footer .prepack-item .fa-plus:hover {
   text-decoration: none;
@@ -673,6 +674,17 @@ span
 }
 .modal .prepack-list .close:hover {
   opacity: 1;
+}
+.modal .error-prepack {
+  display: none;
+  color: #f00;
+  position: absolute;
+  bottom: -50px;
+  right: 5px;
+  width: 119px;
+  height: 50px;
+  font-size: 10px;
+  line-height: 10px;
 }
 .modal-order-end {
   max-height: 312px;
