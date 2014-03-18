@@ -536,7 +536,9 @@
 	<script src="js/ace-extra.min.js"></script>
 	<script src="js/ace-elements.min.js"></script>
 	<!-- собственные скрипты  -->
+<%--
 	<script src="js/login.js"></script>
+--%>
 	<script src="js/common.js"></script>
 	<script src="js/shop.js"></script>
 

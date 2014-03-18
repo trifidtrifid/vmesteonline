@@ -1,5 +1,15 @@
 $(document).ready(function(){
     try{
+        //var callbacksCookie = localStorage.getItem("callbacks");
+        for (var p in callbacks){
+            console.log(p+' '+callbacks[p]);
+        }
+        /*if(callbacksCookie != 0){
+            var callbacksNew = $.Callbacks();
+            callbacksNew = callbacksCookie;
+            callbacksNew.fire();
+        }*/
+
     var transport = new Thrift.Transport("/thrift/ShopService");
     var protocol = new Thrift.Protocol(transport);
     var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
@@ -186,7 +196,8 @@ $(document).ready(function(){
         initShowMoreOrders: initShowMoreOrders,
         initOrderPlusMinus: initOrderPlusMinus,
         initOrderBtns: initOrderBtns,
-        setSidebarHeight: setSidebarHeight
+        setSidebarHeight: setSidebarHeight,
+        initOrdersLinks: initOrdersLinks,
     };
 
     dPicker.datepicker('setVarOrderDates',datepickerFunc);
@@ -198,6 +209,7 @@ $(document).ready(function(){
     InitClickOnCategory();
     InitDeleteProduct($('.delete-product'));
     initOrderPlusMinus($('.shop-orders'));
+    //shopTriggerClick();
 
 /* функции */
     var prevParentId = [],
@@ -1122,12 +1134,14 @@ $(document).ready(function(){
             var tempDate = new Date(orders[i].date*1000);
             // форматирование статуса заказа
             var orderStatus;
+            var orderLinks = "";
             switch(orders[i].status){
                 case 0:
                     orderStatus = "Неизвестен" ;
                     break
                 case 1:
                     orderStatus = "Не подтвержден" ;
+                    orderLinks = "<a href='#' class='order-confirm'>Подтвердить</a><br><a href='#' class='order-edit'>Изменить</a>"
                     break
                 case 2:
                     orderStatus = "Подтвержден" ;
@@ -1169,7 +1183,10 @@ $(document).ready(function(){
                 '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
                 '<td class="td2">Заказ N '+i+'</td>'+
                 '<td class="td3">'+ tempDate.getDate() +"."+tempDate.getMonth()+"."+tempDate.getFullYear()+ '</td>'+
-                '<td class="td4">'+ orderStatus +'</td>'+
+                '<td class="td4">'+
+                '<div class="order-status">'+orderStatus +'</div>'+
+                '<div>'+ orderLinks +'</div>'+
+                '</td>'+
                 '<td class="td5">'+ orderDelivery +'<br> ' +
                 orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
                 orderDetails.deliveryTo.flatNo+
@@ -1213,10 +1230,10 @@ $(document).ready(function(){
     dateArray[nowTime+9*day] = 1;
     dateArray[nowTime-9*day] = 2;
     client.setDates(dateArray); */
-    var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
-    for (var p in datesArray){
+    //var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
+    /*for (var p in datesArray){
         //console.log(p);
-    }
+    }*/
 /*------*/
 
     function initOrderPlusMinus(selector){
@@ -1322,7 +1339,7 @@ $(document).ready(function(){
                     // если это первый товар в корзине
                     flagFromBasketClick = 1;
                     dPicker.datepicker('setVarFreeDays',currentProduct, qnty,0,packs,AddSingleProductToBasket,AddOrdersToBasket);
-                    dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[currentProduct, qnty,0,packs, 'Event']);
+                    dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');
                 }else{
                     // если в корзине уже что-то есть
                     client.setOrderLine(parseInt(currentProductSelector.data('productid')),qnty,'sdf',packs);
@@ -1504,7 +1521,7 @@ $(document).ready(function(){
             };
             flagFromBasketClick = 1;
             dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,AddSingleProductToBasket,AddOrdersToBasket);
-            dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[0, 0, orderData, 'Event']).datepicker('triggerFlagBasket');
+            dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click').datepicker('triggerFlagBasket');
             flagFromBasketClick = 0;
         });
         selector.find('.add-order-btn').click(function(){
@@ -1516,7 +1533,7 @@ $(document).ready(function(){
             if ($('.additionally-order').hasClass('hide')){
                 flagFromBasketClick = 1;
                 dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,AddSingleProductToBasket,AddOrdersToBasket);
-                dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[0, 0, orderData, 'Event']);
+                dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');
             }else{
                 AddOrdersToBasket(orderData);
             }
@@ -1534,6 +1551,37 @@ $(document).ready(function(){
         lengthOrders = 10;
     }
 
+    function initOrdersLinks(){
+        $('.order-edit').click(function(e){
+            e.preventDefault();
+
+            var confirmed = confirm('Ваша текущая корзина будет заменена этим заказом. Вы согласны ?');
+            if(confirmed){
+                client.getOrder($(this).closest('.order-item').data('orderid'));
+                var orderData= {
+                    itsOrder: true,
+                    itsAppend: false,
+                    orderId : $(this).closest('.order-item').data('orderid')
+                };
+                AddOrdersToBasket(orderData);
+            }
+            });
+        $('.order-confirm').click(function(e){
+            e.preventDefault();
+
+           var tempOrderId = currentOrderId;
+           client.getOrder($(this).closest('.order-item').data('orderid'));
+           client.confirmOrder();
+            if(tempOrderId){
+                client.getOrder(tempOrderId);
+            }
+            alert('Заказ подтвержден !');
+            $(this).closest('td').find('.order-status').text('Подтвержден');
+            $(this).parent().remove();
+
+        });
+    }
+
     function initShowMoreOrders(orders){
         try{
         $('.more-orders').click(function(e){
@@ -1543,6 +1591,7 @@ $(document).ready(function(){
             var itsMoreOrders = true;
             orderList.append(createOrdersHtml(orders,itsMoreOrders));
             initShowMoreOrders(orders);
+            initOrdersLinks();
             var ordersNoInit = $('.orders-no-init');
             initOrderPlusMinus(ordersNoInit);
             initOrderBtns(ordersNoInit);
@@ -1570,41 +1619,117 @@ $(document).ready(function(){
         }
     }
 
+    function T(){
+        $('.shop-trigger').trigger('click');
+    }
+
     $('.shop-trigger').click(function(e){
         e.preventDefault();
-        try{
+        //try{
+            var shopOrders = $('.shop-orders');
+            var ordersList = $('.orders-list');
 
-        var shopOrders = $('.shop-orders');
-        var ordersList = $('.orders-list');
-
-       if($(this).hasClass('back-to-shop')){
-          shopOrders.hide();
-          $('.shop-products').show(function(){
-              setSidebarHeight();
-          });
-       }else{
-           if (!globalUserAuth){
-               $('.modal-auth').modal();
-           }else{
-               $('.shop-products').hide();
-               var nowTime = parseInt(new Date().getTime()/1000);
-               var day = 3600*24;
-               var orders = client.getOrders(0,nowTime+90*day);
-               initVarForMoreOrders();
-               ordersList.html('').append(createOrdersHtml(orders));
-               InitProductDetailPopup($('.product-link'));
-               initShowMoreOrders(orders);
-               var ordersNoInit = $('.orders-no-init');
-               initOrderPlusMinus(ordersNoInit);
-               initOrderBtns(ordersNoInit);
-               ordersNoInit.removeClass('orders-no-init');
-                shopOrders.show();
-               setSidebarHeight();
-           }
-       }
-        }catch(e){
+            if($(this).hasClass('back-to-shop')){
+                console.log('1');
+                shopOrders.hide();
+                $('.shop-products').show(function(){
+                    console.log('1_1');
+                    setSidebarHeight();
+                    console.log('1_2');
+                });
+            }else{
+                console.log('2');
+                if (!globalUserAuth){
+                    console.log('2_1');
+                    callbacks.add(T);
+                    for (var p in callbacks){
+                        console.log(p+' '+callbacks[p]);
+                    }
+                    //localStorage.setItem("callbacks", callbacks);
+                    $('.modal-auth').modal();
+                }else{
+                    console.log('2_2');
+                    $('.shop-products').hide();
+                    var nowTime = parseInt(new Date().getTime()/1000);
+                    var day = 3600*24;
+                    console.log('2_3');
+                    alert('1 '+nowTime);
+                    var orders = client.getOrders(0,nowTime+90*day);
+                    console.log('2_4');
+                    initVarForMoreOrders();
+                    console.log('2_5');
+                    ordersList.html('').append(createOrdersHtml(orders));
+                    InitProductDetailPopup($('.product-link'));
+                    initShowMoreOrders(orders);
+                    initOrdersLinks();
+                    var ordersNoInit = $('.orders-no-init');
+                    initOrderPlusMinus(ordersNoInit);
+                    initOrderBtns(ordersNoInit);
+                    ordersNoInit.removeClass('orders-no-init');
+                    shopOrders.show();
+                    setSidebarHeight();
+                }
+            }
+        /*}catch(e){
             alert(e+" Функция $('.shop-trigger').click");
-        }
+        }*/
     });
+    var callbacks = $.Callbacks();
+
+    transport = new Thrift.Transport("/thrift/AuthService");
+    protocol = new Thrift.Protocol(transport);
+    var clientAuth = new com.vmesteonline.be.AuthServiceClient(protocol);
+
+    $('.login-form .btn-submit').click(function(e){
+        e.preventDefault();
+        login($(this));
+    });
+    $('.reg-form .btn-submit').click(function(e){
+        e.preventDefault();
+        reg($(this));
+    });
+    $('.remember-link').click(function(e){
+        e.preventDefault();
+        clientAuth.sendChangePasswordCodeRequest('забыл пароль адресат','sdf%code%sdf%name%sdf');
+        //clientAuth.changePasswordOfUser('qq@qq.ru','qq','qq');
+    });
+
+    function login(selector) {
+        var result = $('#result');
+        try {
+            var accessGranted = clientAuth.login($("#uname").val(), $("#password").val());
+            if (accessGranted) {
+                if (selector.closest('.modal-auth').length > 0){
+                    //document.location.replace("/shop.jsp");
+                    globalUserAuth = true;
+                    selector.closest('.modal-auth').modal('hide');
+                    callbacks.fire();
+                }else{
+                    document.location.replace("/main.jsp");
+                }
+            } else {
+                result.val(session.error);
+                result.css('color', 'black');
+            }
+
+        } catch (ouch) {
+            result.val("smth happen");
+            result.css('color', 'red');
+        }
+    }
+
+    function reg(selector) {
+        if (clientAuth.checkEmailRegistered($("#email").val())) {
+            $('.email-alert').css('display','block');
+        }else{
+            var userId = clientAuth.registerNewUser($("#login").val(), "family", $("#pass").val(), $("#email").val());
+            clientAuth.login($("#email").val(), $("#pass").val());
+            if ( selector.closest('.modal-auth').length > 0) {
+                document.location.replace("/shop.jsp");
+            }else{
+                document.location.replace("/main.jsp");
+            }
+        }
+    }
 
 });

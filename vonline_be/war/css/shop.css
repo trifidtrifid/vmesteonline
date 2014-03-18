@@ -450,6 +450,10 @@ span
   margin: 10px 0 0 0;
   display: none;
 }
+.shop-orders .order-item .order-edit,
+.shop-orders .order-item .order-confirm {
+  font-size: 12px;
+}
 .shop-orders .btn-primary {
   margin: 2px;
   display: inline-block;
