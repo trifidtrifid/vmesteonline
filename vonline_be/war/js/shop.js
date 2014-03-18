@@ -59,13 +59,21 @@ $(document).ready(function(){
         $('.modal-login').modal();
     });
 
+    var triggerDelivery = 0;
     $('.radio input').click(function(){
+        var itogoRight = $('.itogo-right span');
+        var res,currentSumma = parseFloat(itogoRight.text());
         if ($(this).hasClass('courier-delivery')){
             client.setOrderDeliveryType(2);
             $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
+            res = (currentSumma+parseFloat($('.delivery-price').text())).toFixed(1);
+            itogoRight.text(res);
+            triggerDelivery = 1;
         }else{
             client.setOrderDeliveryType(1);
             $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
+            res = (currentSumma-parseFloat($('.delivery-price').text())).toFixed(1);
+            if (triggerDelivery){itogoRight.text(res); triggerDelivery = 0;}
         }
     });
     }catch(e){
@@ -284,6 +292,7 @@ $(document).ready(function(){
         }
     }
 
+
     function InitProductDetailPopup(selector){
         try{
         selector.click(function(e){
@@ -310,6 +319,12 @@ $(document).ready(function(){
             var productDetails = client.getProductDetails(productSelector.data('productid'));
             var imagesSet = productDetails.imagesURLset;
             var options = productDetails.optionsMap;
+            var currentModal = $(this).find('+.modal');
+
+            if(imagesSet.length){
+                var oldHeight = currentModal.height();
+                currentModal.height(oldHeight + 25);
+            }
 
             var popupHtml = "";
             popupHtml += '<div class="modal-body">'+
@@ -341,9 +356,9 @@ $(document).ready(function(){
                     for(var p in options){
                         popupHtml += '<div>'+p+" "+options[p]+'</div>';
                     }
-                    popupHtml += '</div>'+
-                        productDetails.fullDescr+
-                    '</div>';
+                    popupHtml += '</div>';
+                        /*productDetails.fullDescr+
+                    '</div>';*/
 
                     if (productDetails.prepackRequired){
                         popupHtml += '<div class="modal-footer with-prepack">'+
@@ -373,12 +388,13 @@ $(document).ready(function(){
                 popupHtml += '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>';
             }
 
-                popupHtml += '<div class="prepack-list"></div>'+
+                popupHtml += '<a href="#" class="btn btn-primary btn-sm no-border full-descr">Подробное описание</a>'+
+                    '<div class="prepack-list"></div>'+
+                    "<div class='product-fullDescr'>"+ productDetails.fullDescr +"</div>"+
                     '</div>'+
                 '</div>'+
             '</div>';
 
-            var currentModal = $(this).find('+.modal');
             if (currentModal.find('.modal-body').length == 0){
                 // если еще не открывали popup
                 currentModal.append(popupHtml);
@@ -514,6 +530,21 @@ $(document).ready(function(){
 
                     initRemovePrepackLine($('.prepack-item .close'),productId,productSelector);
                 });
+                $('.full-descr').click(function(){
+                    var fullDescr = $('.product-fullDescr');
+                    var oldHeight,fullDescrHeight;
+                    oldHeight = $(this).closest('.modal').height();
+                    if(fullDescr.css('display') == 'none'){
+                        fullDescr.show(function(){
+                            fullDescrHeight = $(this).closest('.modal').find('.product-fullDescr').height();
+                            $(this).closest('.modal').height(oldHeight + fullDescrHeight+10);
+                        });
+                    }else{
+                        fullDescrHeight = $(this).closest('.modal').find('.product-fullDescr').height();
+                        $(this).closest('.modal').height(oldHeight - fullDescrHeight-10);
+                        fullDescr.hide();
+                    }
+                });
             }
             currentModal.modal();
             var carousel = currentModal.find('.carousel');
@@ -536,6 +567,7 @@ $(document).ready(function(){
                 slideshow: false,
                 sync: carousel
             });
+
         });
         }catch(e){
             alert(e+" Функция InitProductDetailPopup");
@@ -695,12 +727,27 @@ $(document).ready(function(){
                 client.confirmOrder();
                 alert('Ваш заказ принят !');
                 $('.modal-order-end').modal('hide');
+                cleanBasket();
             })
         }
         }catch(e){
             alert(e+" Функция $('.btn-order').click");
         }
     });
+
+    $('.btn-cancel').click(function(){
+       var quest = confirm('Вы действительно хотите отменить заказ ? Ваша корзина вновь станет пустой.');
+        if (quest){
+            cleanBasket();
+            client.cancelOrder();
+        }
+    });
+
+    function cleanBasket(){
+        $('.additionally-order').addClass('hide');
+        $('.empty-basket').removeClass('hide');
+        $('.catalog-order').html('');
+    }
 
     function InitLoadCategory(catID){
         try{
@@ -976,10 +1023,13 @@ $(document).ready(function(){
         sel.find('.td-summa').each(function(){
             summa += parseFloat($(this).text());
         });
+        if($('.input-delivery').hasClass('active')){
+            summa += parseFloat($('.delivery-price').text());
+        }
         }catch(e){
             alert(e+" Функция countItogo");
         }
-        return summa;
+        return summa.toFixed(1);
     }
 
     function InitDeleteProduct(selector){
@@ -1272,7 +1322,7 @@ $(document).ready(function(){
                     // если это первый товар в корзине
                     flagFromBasketClick = 1;
                     dPicker.datepicker('setVarFreeDays',currentProduct, qnty,0,packs,AddSingleProductToBasket,AddOrdersToBasket);
-                    dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[currentProduct, qnty,0,packs, 'Event']);//.datepicker('triggerFlagBasket');
+                    dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[currentProduct, qnty,0,packs, 'Event']);
                 }else{
                     // если в корзине уже что-то есть
                     client.setOrderLine(parseInt(currentProductSelector.data('productid')),qnty,'sdf',packs);
@@ -1284,7 +1334,8 @@ $(document).ready(function(){
                     });
                     if (addedProductFlag){
                         // если такой товар уже есть
-                        currentSpinner = $('.catalog-order li[data-productid="'+ currentProductSelector.data('productid') +'"]').find('.ace-spinner');
+                        var basketProductSelector = $('.catalog-order li[data-productid="'+ currentProductSelector.data('productid') +'"]');
+                        currentSpinner = basketProductSelector.find('.ace-spinner');
                         var newSpinnerVal = currentSpinner.spinner('value')+qnty;
                         currentSpinner.spinner('value',newSpinnerVal);
                         /* повтор функции заменить потом
@@ -1296,6 +1347,9 @@ $(document).ready(function(){
                         }
                         /* ---- */
                         client.setOrderLine(currentProduct.id,newSpinnerVal,'sdf',packs);
+                        var newSumma = (newSpinnerVal*parseFloat(basketProductSelector.find('.td-price').text())).toFixed(1);
+                        basketProductSelector.find('.td-summa').text(newSumma);
+                        $('.itogo-right span').text(countItogo($('.catalog-order')));
                    }else{
                         // если такого товара еще нет
                         AddSingleProductToBasket(currentProduct,qnty,currentProduct.unitName);
@@ -1323,14 +1377,6 @@ $(document).ready(function(){
         try{
         var productDetails = client.getProductDetails(currentProduct.id);
         var productHtml = '<li data-productid="'+ currentProduct.id +'">'+
-            '<a href="#" class="product-link no-init">'+
-            '<span><img src="'+ currentProduct.imageURL +'" alt="картинка"/></span>'+
-            '<div class="product-right-descr">'+
-            currentProduct.name+
-            '</div>'+
-            '</a>'+
-            '<div class="modal">'+
-            '</div>'+
             '<table>'+
             '<tr>'+
             '<td class="td-price product-price">'+ currentProduct.price +'</td>'+
@@ -1339,6 +1385,14 @@ $(document).ready(function(){
             '<td><a href="#" class="delete-product no-init">×</a></td>'+
             '</tr>'+
             '</table>'+
+            '<a href="#" class="product-link no-init">'+
+            '<span><img src="'+ currentProduct.imageURL +'" alt="картинка"/></span>'+
+            '<div class="product-right-descr">'+
+            currentProduct.name+
+            '</div>'+
+            '</a>'+
+            '<div class="modal">'+
+            '</div>'+
             '</li>';
         }catch(e){
             alert(e+" Функция AddSingleProductToBasket");

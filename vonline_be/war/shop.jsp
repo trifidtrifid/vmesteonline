@@ -314,7 +314,7 @@
                         <div class="radio">
                             <label>
                                 <input name="form-field-radio" type="radio" class="ace courier-delivery">
-                                <span class="lbl"> Курьер</span>
+                                <span class="lbl"> Курьер(<span class="delivery-price">500</span> руб)</span>
                             </label>
                         </div>
                         <div class="input-delivery">
@@ -330,7 +330,7 @@
                         <div class="alert-delivery alert-delivery-addr">Введите адрес доставки !</div>
                     </div>
                     <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
-                    <button class="btn btn-sm btn-grey no-border">Отменить</button>
+                    <button class="btn btn-sm btn-grey no-border btn-cancel">Отменить</button>
                     <button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>
                 </div>
                 <div class="empty-basket">
