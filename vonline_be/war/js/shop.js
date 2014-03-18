@@ -1,15 +1,5 @@
 $(document).ready(function(){
     try{
-        //var callbacksCookie = localStorage.getItem("callbacks");
-        for (var p in callbacks){
-            console.log(p+' '+callbacks[p]);
-        }
-        /*if(callbacksCookie != 0){
-            var callbacksNew = $.Callbacks();
-            callbacksNew = callbacksCookie;
-            callbacksNew.fire();
-        }*/
-
     var transport = new Thrift.Transport("/thrift/ShopService");
     var protocol = new Thrift.Protocol(transport);
     var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
@@ -1276,15 +1266,21 @@ $(document).ready(function(){
     }
 
     var flagFromBasketClick = 0;
+    var selectorForCallbacks;
+
+    function BasketTrigger(selector){
+        selector.trigger('click');
+    }
 
     function InitAddToBasket(selector){
         try{
         selector.click(function(e){
             e.preventDefault();
             var errorPrepack = false;
-
             if (!globalUserAuth){
                 // если пользователь не залогинен
+                selectorForCallbacks = $(this);
+                callbacks.add(BasketTrigger);
                 $('.modal-auth').modal();
             }else{
                 // если пользователь залогинен
@@ -1619,45 +1615,31 @@ $(document).ready(function(){
         }
     }
 
-    function T(){
-        $('.shop-trigger').trigger('click');
+    function GoToOrdersTrigger(){
+        $('.go-to-orders').trigger('click');
     }
 
     $('.shop-trigger').click(function(e){
         e.preventDefault();
-        //try{
+        try{
             var shopOrders = $('.shop-orders');
             var ordersList = $('.orders-list');
 
             if($(this).hasClass('back-to-shop')){
-                console.log('1');
                 shopOrders.hide();
                 $('.shop-products').show(function(){
-                    console.log('1_1');
                     setSidebarHeight();
-                    console.log('1_2');
                 });
             }else{
-                console.log('2');
                 if (!globalUserAuth){
-                    console.log('2_1');
-                    callbacks.add(T);
-                    for (var p in callbacks){
-                        console.log(p+' '+callbacks[p]);
-                    }
-                    //localStorage.setItem("callbacks", callbacks);
+                    callbacks.add(GoToOrdersTrigger);
                     $('.modal-auth').modal();
                 }else{
-                    console.log('2_2');
                     $('.shop-products').hide();
                     var nowTime = parseInt(new Date().getTime()/1000);
                     var day = 3600*24;
-                    console.log('2_3');
-                    alert('1 '+nowTime);
                     var orders = client.getOrders(0,nowTime+90*day);
-                    console.log('2_4');
                     initVarForMoreOrders();
-                    console.log('2_5');
                     ordersList.html('').append(createOrdersHtml(orders));
                     InitProductDetailPopup($('.product-link'));
                     initShowMoreOrders(orders);
@@ -1670,9 +1652,9 @@ $(document).ready(function(){
                     setSidebarHeight();
                 }
             }
-        /*}catch(e){
+        }catch(e){
             alert(e+" Функция $('.shop-trigger').click");
-        }*/
+        }
     });
     var callbacks = $.Callbacks();
 
@@ -1694,6 +1676,36 @@ $(document).ready(function(){
         //clientAuth.changePasswordOfUser('qq@qq.ru','qq','qq');
     });
 
+    function AuthRealTime(selector){
+        globalUserAuth = true;
+        selector.closest('.modal-auth').modal('hide');
+        // ставим shopID
+        var shops = client.getShops();
+        client.getShop(shops[0].id);
+
+        //$('.user-info').html('');
+        var shortUserInfo = userServiceClient.getShortUserInfo();
+        var shortUserInfoHtml =  '<small>'+ shortUserInfo.firstName +'</small>'+ shortUserInfo.lastName;
+        $('.user-info').html(shortUserInfoHtml).after('<i class="icon-caret-down"></i>');
+        var dropdown = '<ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">'+
+            '<li><a href="#"> <i class="icon-cog"></i> Настройки'+
+            '</a></li>'+
+            '<li><a href="#"> <i class="icon-user"></i> Профиль'+
+            '</a></li>'+
+            '<li class="divider"></li>'+
+            '<li><a href="#"> <i class="icon-off"></i> Выход'+
+            '</a></li>'+
+        '</ul>';
+        $('.user-short .dropdown-toggle').append(dropdown);
+
+        $('.dropdown-toggle').click(function(){
+           $(this).find('.user-menu').toggle();
+        });
+
+        callbacks.fire(selectorForCallbacks);
+        callbacks.empty();
+    }
+
     function login(selector) {
         var result = $('#result');
         try {
@@ -1701,9 +1713,7 @@ $(document).ready(function(){
             if (accessGranted) {
                 if (selector.closest('.modal-auth').length > 0){
                     //document.location.replace("/shop.jsp");
-                    globalUserAuth = true;
-                    selector.closest('.modal-auth').modal('hide');
-                    callbacks.fire();
+                    AuthRealTime(selector);
                 }else{
                     document.location.replace("/main.jsp");
                 }
@@ -1725,7 +1735,8 @@ $(document).ready(function(){
             var userId = clientAuth.registerNewUser($("#login").val(), "family", $("#pass").val(), $("#email").val());
             clientAuth.login($("#email").val(), $("#pass").val());
             if ( selector.closest('.modal-auth').length > 0) {
-                document.location.replace("/shop.jsp");
+                //document.location.replace("/shop.jsp");
+                AuthRealTime(selector);
             }else{
                 document.location.replace("/main.jsp");
             }
