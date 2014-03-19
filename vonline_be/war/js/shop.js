@@ -129,10 +129,17 @@ $(document).ready(function(){
     var countriesLength = countries.length;
     var countryTags = [],
         countryId = [];
+
     for (var i = 0; i < countriesLength; i++){
         countryTags[i] = countries[i].name;
         countryId[i] = countries[i].id;
     }
+    // временная тема, так как три России в пробном варианте
+    countryTags.shift();
+    countryTags.shift();
+    countryId.shift();
+    countryId.shift();
+    countriesLength = countryTags.length;
 
     $('#city-delivery').focus(function(){
         var prevField = $('#country-delivery').val();
@@ -141,14 +148,17 @@ $(document).ready(function(){
             for (var i = 0; i < countriesLength; i++){
                 if (prevField == countryTags[i]){
                     cities = userServiceClient.getCities(countryId[i]);
+                    break;
                 }
             }
-            userServiceClient.getCities();
         }
-        if (!cities){cities = addressesBase.cities;}
+        if (!cities){
+            cities = addressesBase.cities;
+        }
         var citiesLength = cities.length;
         var cityTags = [];
         for (i = 0; i < citiesLength; i++){
+            alert(cities[i].name+" "+cities[i].id);
             cityTags[i] = cities[i].name;
         }
 
@@ -161,6 +171,7 @@ $(document).ready(function(){
     var streetTags = [];
     for (i = 0; i < streetsLength; i++){
         streetTags[i] = streets[i].name;
+        alert(streets[i].name+" "+streets[i].cityId);
     }
     var buildings = addressesBase.buildings;
     var buildingsLength = buildings.length;
@@ -213,7 +224,7 @@ $(document).ready(function(){
         initOrderPlusMinus: initOrderPlusMinus,
         initOrderBtns: initOrderBtns,
         setSidebarHeight: setSidebarHeight,
-        initOrdersLinks: initOrdersLinks,
+        initOrdersLinks: initOrdersLinks
     };
 
     dPicker.datepicker('setVarOrderDates',datepickerFunc);
@@ -675,7 +686,7 @@ $(document).ready(function(){
             $('.prepack-disable').find('.ace-spinner').spinner('disable');
 
             popup.find('.btn-order').click(function(){
-                // добавление в базу нового города, страны, улицы и т.д (если курькером)
+                // добавление в базу нового города, страны, улицы и т.д (если курьером)
                 if ($('.input-delivery').hasClass('active')){
                     var countries = userServiceClient.getCounties();
                     var countriesLength = countries.length;
