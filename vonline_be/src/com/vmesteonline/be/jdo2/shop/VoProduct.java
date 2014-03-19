@@ -49,7 +49,7 @@ public class VoProduct {
 			this.imageURL = StorageHelper.saveImage(newInfo.product.getImageURL(), userId, true, _pm);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: " + e);
+			//setImageURL(null);
 		}
 		this.price = newInfo.product.price;
 		this.setFullDescr(newInfo.details.fullDescr);
@@ -58,7 +58,8 @@ public class VoProduct {
 			try {
 				this.imagesURLset.add(StorageHelper.saveImage(imgURL, userId, true, _pm));
 			} catch (IOException ie) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
+				ie.printStackTrace();
+				//throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
 			}
 
 		this.pricesMap = convertFromPriceTypeMap(newInfo.details.getPricesMap(), new HashMap<Integer, Double>());

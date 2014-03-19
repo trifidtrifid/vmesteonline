@@ -71,12 +71,16 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			if (u.getPassword().equals(password)) {
 
 				logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
-
-				VoSession sess = new VoSession(sessionStorage.getId(), u);
+				VoSession currentSession = getCurrentSession();
+				if(null==currentSession) 
+					currentSession = new VoSession(sessionStorage.getId(), u);
+				else 
+					currentSession.setUser(u);
 				/*
 				 * sess.setLatitude(u.getLatitude());
 				 * sess.setLongitude(u.getLongitude());
-				 */pm.makePersistent(sess);
+				 */
+				pm.makePersistent(currentSession);
 				return true;
 			} else
 				logger.info("incorrect password " + email + " pass " + password);
