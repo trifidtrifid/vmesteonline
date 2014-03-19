@@ -314,7 +314,7 @@
                         <div class="radio">
                             <label>
                                 <input name="form-field-radio" type="radio" class="ace courier-delivery">
-                                <span class="lbl"> Курьер(<span class="delivery-price">500</span> руб)</span>
+                                <span class="lbl"> Курьер<%--(<span class="delivery-price">500</span> руб)--%></span>
                             </label>
                         </div>
                         <div class="input-delivery">

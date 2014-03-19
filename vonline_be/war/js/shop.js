@@ -70,12 +70,17 @@ $(document).ready(function(){
             $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
             orderDetails = client.getOrderDetails(currentOrderId);
             //res = (currentSumma+parseFloat($('.delivery-price').text())).toFixed(1);
+            console.log(orderDetails.deliveryCost);
             res = (currentSumma+orderDetails.deliveryCost).toFixed(1);
             itogoRight.text(res);
             triggerDelivery = 1;
         }else{
+            orderDetails = client.getOrderDetails(currentOrderId);
             client.setOrderDeliveryType(1);
             $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
+            var order = client.getOrder(currentOrderId);
+            console.log(currentSumma+" "+" "+ orderDetails +" "+orderDetails.deliveryCost);
+            //res = order.totalCost;
             res = (currentSumma-orderDetails.deliveryCost).toFixed(1);
             //res = (currentSumma-parseFloat($('.delivery-price').text())).toFixed(1);
             if (triggerDelivery){itogoRight.text(res); triggerDelivery = 0;}
