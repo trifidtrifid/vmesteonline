@@ -175,7 +175,15 @@
         }
     }
 
-    function initFreeDay(currentProduct,spinnerValue,orderData,packs,AddSingleProductToBasket,AddOrdersToBasket){
+    function AdditionallyOrderToggle(){
+        var additionallyOrder = $('.additionally-order');
+        if (additionallyOrder.hasClass('hide')){
+            additionallyOrder.removeClass('hide');
+            $('.empty-basket').addClass('hide');
+        }
+    }
+
+    function initFreeDay(currentProduct,spinnerValue,orderData,packs,AddSingleProductToBasket,AddOrdersToBasket,AddProductToBasketCommon){
         try{
         $('.free-day').click(function(){
             //var nowTime = parseInt(new Date().getTime()/1000);
@@ -195,10 +203,7 @@
                 client.setOrderLine(currentProduct.id,parseInt(spinnerValue),'sdf',packs);
                 AddSingleProductToBasket(currentProduct,spinnerValue,currentProduct.unitName);
             }
-            if ($('.additionally-order').hasClass('hide')){
-                $('.additionally-order').removeClass('hide');
-                $('.empty-basket').addClass('hide');
-            };
+            AdditionallyOrderToggle();
         });
 
         $('.free-day-with-order').click(function(){
@@ -220,14 +225,9 @@
                     AddOrdersToBasket(orderData);
                 }else{
                     // если добавление одного продукта
-                    //var productDetails = client.getProductDetails(currentProduct.id);
-                    client.setOrderLine(currentProduct.id,parseInt(spinnerValue),'sdf',packs);
-                    AddSingleProductToBasket(currentProduct,spinnerValue,currentProduct.unitName);
+                    AddProductToBasketCommon(currentProduct,packs);
                 }
-                if ($('.additionally-order').hasClass('hide')){
-                    $('.additionally-order').removeClass('hide');
-                    $('.empty-basket').addClass('hide');
-                };
+                AdditionallyOrderToggle();
             });
         }catch(e){
             alert(e + ' Функция initFreeDay');
@@ -731,7 +731,7 @@
 			yearCont.html(html);
             if (this.flagBasket){
                 SetFreeDates();
-                initFreeDay(this.currentProduct,this.spinnerValue,this.orderData,this.packs,this.AddSingleProductToBasket,this.AddOrdersToBasket);
+                initFreeDay(this.currentProduct,this.spinnerValue,this.orderData,this.packs,this.AddSingleProductToBasket,this.AddOrdersToBasket,this.AddProductToBasketCommon);
             }else{
                 SetOrderDates();
                initOrderDay(this.initVarForMoreOrders,this.createOrdersHtml,this.initShowMoreOrders,this.initOrderPlusMinus,this.initOrderBtns,this.setSidebarHeight,this.initOrdersLinks)
@@ -1048,13 +1048,14 @@
             if(this.flagBasket){this.flagBasket = false}else{this.flagBasket = true}
         },
 
-        setVarFreeDays: function(currentProduct,spinnerValue,orderData,packs,AddSingleProductToBasket,AddOrdersToBasket){
+        setVarFreeDays: function(currentProduct,spinnerValue,orderData,packs,AddSingleProductToBasket,AddOrdersToBasket,AddProductToBasketCommon){
             this.currentProduct = currentProduct;
             this.spinnerValue = spinnerValue;
             this.orderData = orderData;
             this.packs = packs;
             this.AddSingleProductToBasket = AddSingleProductToBasket;
             this.AddOrdersToBasket = AddOrdersToBasket;
+            this.AddProductToBasketCommon = AddProductToBasketCommon;
         },
 
         setVarOrderDates: function(datepickerFunc){
