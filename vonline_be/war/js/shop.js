@@ -1076,13 +1076,10 @@ $(document).ready(function(){
                 if ($('.catalog-order li').length == 0){
                     $('.additionally-order').addClass('hide');
                     $('.empty-basket').removeClass('hide');
+                    client.deleteOrder();
                 }
             });
             client.removeOrderLine($(this).closest('li').data('productid'));
-            if ($(this).closest('.catalog-order').find('li').length == 0){
-                // если продуктов в корзине больше нет то удаляем текущий заказ
-                client.deleteOrder();
-            }
         });
         }catch(e){
             alert(e+" Функция InitDeleteProduct");
@@ -1693,6 +1690,9 @@ $(document).ready(function(){
             alert(e+" Функция $('.shop-trigger').click");
         }
     });
+
+// логин
+
     var callbacks = $.Callbacks();
 
     transport = new Thrift.Transport("/thrift/AuthService");
