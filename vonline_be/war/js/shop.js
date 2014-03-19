@@ -63,16 +63,21 @@ $(document).ready(function(){
     $('.radio input').click(function(){
         var itogoRight = $('.itogo-right span');
         var res,currentSumma = parseFloat(itogoRight.text());
+        var orderDetails = 0;
         if ($(this).hasClass('courier-delivery')){
+            //если доставка курьером
             client.setOrderDeliveryType(2);
             $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
-            res = (currentSumma+parseFloat($('.delivery-price').text())).toFixed(1);
+            orderDetails = client.getOrderDetails(currentOrderId);
+            //res = (currentSumma+parseFloat($('.delivery-price').text())).toFixed(1);
+            res = (currentSumma+orderDetails.deliveryCost).toFixed(1);
             itogoRight.text(res);
             triggerDelivery = 1;
         }else{
             client.setOrderDeliveryType(1);
             $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
-            res = (currentSumma-parseFloat($('.delivery-price').text())).toFixed(1);
+            res = (currentSumma-orderDetails.deliveryCost).toFixed(1);
+            //res = (currentSumma-parseFloat($('.delivery-price').text())).toFixed(1);
             if (triggerDelivery){itogoRight.text(res); triggerDelivery = 0;}
         }
     });
@@ -117,16 +122,35 @@ $(document).ready(function(){
 
     var countries = addressesBase.countries;
     var countriesLength = countries.length;
-    var countryTags = [];
+    var countryTags = [],
+        countryId = [];
     for (var i = 0; i < countriesLength; i++){
         countryTags[i] = countries[i].name;
+        countryId[i] = countries[i].id;
     }
-    var cities = addressesBase.cities;
-    var citiesLength = cities.length;
-    var cityTags = [];
-    for (i = 0; i < citiesLength; i++){
-        cityTags[i] = cities[i].name;
-    }
+
+    $('#city-delivery').focus(function(){
+        var prevField = $('#country-delivery').val();
+        var cities;
+        if(prevField){
+            for (var i = 0; i < countriesLength; i++){
+                if (prevField == countryTags[i]){
+                    cities = userServiceClient.getCities(countryId[i]);
+                }
+            }
+            userServiceClient.getCities();
+        }
+        if (!cities){cities = addressesBase.cities;}
+        var citiesLength = cities.length;
+        var cityTags = [];
+        for (i = 0; i < citiesLength; i++){
+            cityTags[i] = cities[i].name;
+        }
+
+        $( "#city-delivery" ).autocomplete({
+            source: cityTags
+        });
+    });
     var streets = addressesBase.streets;
     var streetsLength = streets.length;
     var streetTags = [];
@@ -141,9 +165,6 @@ $(document).ready(function(){
     }
     $( "#country-delivery" ).autocomplete({
         source: countryTags
-    });
-    $( "#city-delivery" ).autocomplete({
-        source: cityTags
     });
     $( "#street-delivery" ).autocomplete({
         source: streetTags
@@ -825,7 +846,7 @@ $(document).ready(function(){
         }
 
         /* подключение событий */
-        initProductsSpinner
+        initProductsSpinner();
         InitProductDetailPopup($('.product-link'));
         InitAddToBasket($('.fa-shopping-cart'));
         InitClickOnCategory();
@@ -1058,6 +1079,10 @@ $(document).ready(function(){
                 }
             });
             client.removeOrderLine($(this).closest('li').data('productid'));
+            if ($(this).closest('.catalog-order').find('li').length == 0){
+                // если продуктов в корзине больше нет то удаляем текущий заказ
+                client.deleteOrder();
+            }
         });
         }catch(e){
             alert(e+" Функция InitDeleteProduct");

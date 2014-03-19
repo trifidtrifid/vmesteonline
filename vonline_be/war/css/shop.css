@@ -287,6 +287,13 @@ th.next,
   content: "Свободный день";
   margin-left: -120px;
 }
+.free-day-with-order {
+  background-color: #c4b855;
+}
+.free-day-with-order:after {
+  content: "Свободный день с заказом";
+  margin-left: -150px;
+}
 .special-day {
   background-color: #5bc0de;
 }
@@ -303,6 +310,7 @@ th.next,
 }
 .order-day:after,
 .free-day:after,
+.free-day-with-order:after,
 .special-day:after,
 .closed-day:after {
   position: absolute;
@@ -314,6 +322,7 @@ th.next,
 }
 .order-day:hover:after,
 .free-day:hover:after,
+.free-day-with-order:hover:after,
 .special-day:hover:after,
 .closed-day:hover:after {
   display: block;

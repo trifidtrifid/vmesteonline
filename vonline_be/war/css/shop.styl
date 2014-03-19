@@ -260,6 +260,11 @@ th.next
   &:after
     content "Свободный день"
     margin-left -120px
+.free-day-with-order
+  background-color #C4B855
+  &:after
+    content "Свободный день с заказом"
+    margin-left -150px
 .special-day
   background-color #5bc0de
   &:after
@@ -272,6 +277,7 @@ th.next
     margin-left -60px
 .order-day:after
 .free-day:after
+.free-day-with-order:after
 .special-day:after
 .closed-day:after
   position absolute
@@ -282,6 +288,7 @@ th.next
   display none
 .order-day:hover:after
 .free-day:hover:after
+.free-day-with-order:hover:after
 .special-day:hover:after
 .closed-day:hover:after
   display block
