@@ -97,6 +97,17 @@ public class AuthServiceImpTests {
 	}
 
 	@Test
+	public void testLoginSuccess() {
+		try {
+			asi.login(Defaults.user1email, Defaults.user1pass);
+			AuthServiceImpl.checkIfAuthorised(httpSessionId);
+		} catch (InvalidOperation e) {
+			fail("user a with pass a should be valid");
+		}
+
+	}
+
+	@Test
 	public void testGetSessionNotAuthorized() {
 		try {
 			AuthServiceImpl.checkIfAuthorised("ttemptySession");

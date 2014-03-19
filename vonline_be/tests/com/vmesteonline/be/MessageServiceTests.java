@@ -20,6 +20,11 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.messageservice.Message;
+import com.vmesteonline.be.messageservice.MessageListPart;
+import com.vmesteonline.be.messageservice.MessageType;
+import com.vmesteonline.be.messageservice.Topic;
+import com.vmesteonline.be.messageservice.TopicListPart;
 import com.vmesteonline.be.utils.Defaults;
 
 public class MessageServiceTests {

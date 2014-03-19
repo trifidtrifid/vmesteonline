@@ -17,7 +17,6 @@ import javax.jdo.Query;
 import org.apache.thrift.TException;
 
 import com.google.appengine.api.datastore.KeyFactory;
-import com.vmesteonline.be.MessageService.Iface;
 import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
@@ -32,6 +31,16 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.VoUserMessage;
 import com.vmesteonline.be.jdo2.VoUserObject;
 import com.vmesteonline.be.jdo2.VoUserTopic;
+import com.vmesteonline.be.messageservice.GroupUpdates;
+import com.vmesteonline.be.messageservice.Message;
+import com.vmesteonline.be.messageservice.MessageListPart;
+import com.vmesteonline.be.messageservice.MessageService.Iface;
+import com.vmesteonline.be.messageservice.MessageType;
+import com.vmesteonline.be.messageservice.Topic;
+import com.vmesteonline.be.messageservice.TopicListPart;
+import com.vmesteonline.be.messageservice.UserMessage;
+import com.vmesteonline.be.messageservice.UserOpinion;
+import com.vmesteonline.be.messageservice.UserTopic;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {

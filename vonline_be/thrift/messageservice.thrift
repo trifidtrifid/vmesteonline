@@ -1,6 +1,6 @@
 include "bedata.thrift"
 include "error.thrift"
-namespace * com.vmesteonline.be
+namespace * com.vmesteonline.be.messageservice
 
 enum MessageType { BASE=1, DIALOG=2, SHOP=3, NEWS=4 }
 

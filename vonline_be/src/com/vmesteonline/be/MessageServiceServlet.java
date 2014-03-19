@@ -3,6 +3,8 @@ package com.vmesteonline.be;
 import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 
+import com.vmesteonline.be.messageservice.MessageService;
+
 public class MessageServiceServlet extends VoServlet {
 
     public MessageServiceServlet() throws InvalidOperation {

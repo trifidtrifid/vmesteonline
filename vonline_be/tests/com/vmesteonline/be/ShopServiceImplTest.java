@@ -2,7 +2,6 @@ package com.vmesteonline.be;
 
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,6 +27,8 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.shop.VoOrder;
 import com.vmesteonline.be.jdo2.shop.VoOrderLine;
+import com.vmesteonline.be.messageservice.MessageType;
+import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.shop.DataSet;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
@@ -176,14 +177,14 @@ public class ShopServiceImplTest {
 			// set current shop
 			si.getShop(shopId);
 
-			ProductCategory rootCategory = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet);
+			ProductCategory rootCategory = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
 			Long rootCatId = si.registerProductCategory(rootCategory, shopId);
 
-			ProductCategory secCategory = new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set);
+			ProductCategory secCategory = new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
 			Long SecCatId = si.registerProductCategory(secCategory, shopId);
 
-			ProductCategory thirdCategory = new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set);
-			ProductCategory third2Category = new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set);
+			ProductCategory thirdCategory = new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
+			ProductCategory third2Category = new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0);
 
 			si.registerProductCategory(thirdCategory, shopId);
 			si.registerProductCategory(third2Category, shopId);
@@ -264,10 +265,12 @@ public class ShopServiceImplTest {
 			long prodId = si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
 			long prod2Id = si.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
 
-			Long rootCatId = si.registerProductCategory(new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet), shopId);
-			Long SecCatId = si.registerProductCategory(new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set), shopId);
-			Long THirdCatId = si.registerProductCategory(new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set), shopId);
-			Long THird2CatId = si.registerProductCategory(new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set),
+			Long rootCatId = si.registerProductCategory(new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0), shopId);
+			Long SecCatId = si.registerProductCategory(new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set, 0),
+					shopId);
+			Long THirdCatId = si.registerProductCategory(new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set, 0),
+					shopId);
+			Long THird2CatId = si.registerProductCategory(new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0),
 					shopId);
 
 			ArrayList<FullProductInfo> productsList = new ArrayList<FullProductInfo>();
@@ -296,10 +299,10 @@ public class ShopServiceImplTest {
 			optionsMap2.put("цвет", "черный");
 			optionsMap2.put("вкус", "мерзкий");
 
-			productsList.add(new FullProductInfo(new Product(1, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D,"стакан"), new ProductDetails(categories1,
-					"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 3000, true, new HashSet<String>())));
+			productsList.add(new FullProductInfo(new Product(1, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан"), new ProductDetails(
+					categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 3000, true, new HashSet<String>())));
 
-			productsList.add(new FullProductInfo(new Product(2, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D,"кг"), new ProductDetails(categories2,
+			productsList.add(new FullProductInfo(new Product(2, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг"), new ProductDetails(categories2,
 					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 1000, 3000, true, new HashSet<String>())));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
@@ -334,7 +337,7 @@ public class ShopServiceImplTest {
 
 			ProductDetails product2Details = si.getProductDetails(product2.getId());
 			Assert.assertEquals(product2Details.getFullDescr(), "dsfsdfsdssssf");
-			Assert.assertEquals(product2Details.getCategories(), Arrays.asList( new Long[]{rootCatId, THird2CatId}));
+			Assert.assertEquals(product2Details.getCategories(), Arrays.asList(new Long[] { rootCatId, THird2CatId }));
 			Assert.assertEquals(product2Details.getImagesURLset(), images2);
 			Assert.assertEquals(product2Details.getTopicSet(), topic2Set);
 			Assert.assertEquals(product2Details.getOptionsMap(), optionsMap2);
@@ -357,10 +360,10 @@ public class ShopServiceImplTest {
 
 			// create categories
 			List<ProductCategory> categories = new Vector<ProductCategory>();
-			ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet);
-			ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set);
-			ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set);
-			ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set);
+			ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
+			ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
+			ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
+			ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0);
 
 			categories.add(rootCat);
 			categories.add(l2Cat);
@@ -643,10 +646,10 @@ public class ShopServiceImplTest {
 
 		// create categories
 		List<ProductCategory> categories = new Vector<ProductCategory>();
-		ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet);
-		ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set);
-		ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set);
-		ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set);
+		ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
+		ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
+		ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
+		ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0);
 
 		categories.add(rootCat);
 		categories.add(l2Cat);
@@ -685,10 +688,10 @@ public class ShopServiceImplTest {
 		optionsMap2.put("цвет", "черный");
 		optionsMap2.put("вкус", "мерзкий");
 
-		productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D,"стакан"), new ProductDetails(categories1,
-				"dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 3000, true, new HashSet<String>())));
+		productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан"), new ProductDetails(
+				categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 3000, true, new HashSet<String>())));
 
-		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D,"кг"), new ProductDetails(categories2,
+		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг"), new ProductDetails(categories2,
 				"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 1000, 3000, true, new HashSet<String>())));
 
 		upProductsIdl = si.uploadProducts(productsList, shopId, true);
@@ -855,16 +858,17 @@ public class ShopServiceImplTest {
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_LOGOURL);
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_DESCRIPTION);
 		try {
-			
-		ImportElement importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", listToMap(fieldsOrder));
-		String imgURL = StorageHelper.saveImage(
-				("1; Производитель 1; http://yandex.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"Длинный текст описания; с заятыми...\"\n"
-		+ "2; Производитель 2; http://google.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"JОпять и снова; Длинный текст описания; с заятыми...\"\n")
-		.getBytes(), userId, false, null);
-		importData.setUrl(imgURL);
 
-		ds.addToData(importData);
-		
+			ImportElement importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", listToMap(fieldsOrder));
+			String imgURL = StorageHelper
+					.saveImage(
+							("1; Производитель 1; http://yandex.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"Длинный текст описания; с заятыми...\"\n"
+									+ "2; Производитель 2; http://google.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"JОпять и снова; Длинный текст описания; с заятыми...\"\n")
+									.getBytes(), userId, false, null);
+			importData.setUrl(imgURL);
+
+			ds.addToData(importData);
+
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 
 			Long id = si.registerShop(shop);
@@ -879,14 +883,15 @@ public class ShopServiceImplTest {
 		}
 	}
 
-	public static <T> Map<Integer,T> listToMap( Collection<T> col ){
-		int i=0;
-		Map<Integer,T> res = new TreeMap<Integer, T>();
+	public static <T> Map<Integer, T> listToMap(Collection<T> col) {
+		int i = 0;
+		Map<Integer, T> res = new TreeMap<Integer, T>();
 		for (T t : col) {
 			res.put(i++, t);
 		}
 		return res;
 	}
+
 	// =====================================================================================================================
 	@Test
 	public void testDataImportShopsTest() {
@@ -902,17 +907,15 @@ public class ShopServiceImplTest {
 
 		ImportElement importData = new ImportElement(ImExType.IMPORT_SHOP, "shops.csv", listToMap(fieldsOrder));
 		try {
-			String imgURL = StorageHelper.saveImage(
-					("Магазин %1; Магазин бытовой техники; http://yandex.st/www/1.807/yaru/i/logo.png; 1 | 2 | tag 3\n"
-							+ "Техношок; Магазин Электроники; http://yandex.st/www/1.807/yaru/i/logo.png;").getBytes(), userId, false, null);
+			String imgURL = StorageHelper.saveImage(("Магазин %1; Магазин бытовой техники; http://yandex.st/www/1.807/yaru/i/logo.png; 1 | 2 | tag 3\n"
+					+ "Техношок; Магазин Электроники; http://yandex.st/www/1.807/yaru/i/logo.png;").getBytes(), userId, false, null);
 			importData.setUrl(imgURL);
-	
-	
+
 			ds.addToData(importData);
 
 			DataSet importData2 = si.importData(ds);
 			List<Shop> shops = si.getShops();
-			//Assert.assertEquals(shops.size(), 2);
+			// Assert.assertEquals(shops.size(), 2);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Import failed!" + e);
@@ -938,16 +941,14 @@ public class ShopServiceImplTest {
 
 		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", listToMap(fieldsOrder));
 		try {
-		
-			String imgURL = StorageHelper.saveImage(
-					("0; 1; КОпмы; Копьютеры и комплектующие; "
-							+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif | "
-							+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif;\n" + "1; 2; Ноутбуки;Ноуты и Планшеты;;;\n"
-							+ "2; 3; Ноуты; ТОлько ноуты;;;\n" + "2; 4; Планшеты;Только планшеты;;;\n" + "1; 5; Переферия;\"Принтеры; мышы; клавы\";;;\n").getBytes(),
-							userId, false, null);
+
+			String imgURL = StorageHelper.saveImage(("0; 1; КОпмы; Копьютеры и комплектующие; "
+					+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif | "
+					+ "http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif;\n" + "1; 2; Ноутбуки;Ноуты и Планшеты;;;\n"
+					+ "2; 3; Ноуты; ТОлько ноуты;;;\n" + "2; 4; Планшеты;Только планшеты;;;\n" + "1; 5; Переферия;\"Принтеры; мышы; клавы\";;;\n").getBytes(),
+					userId, false, null);
 			importData.setUrl(imgURL);
-			
-	
+
 			ds.addToData(importData);
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
@@ -988,34 +989,34 @@ public class ShopServiceImplTest {
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
 
 		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", listToMap(fieldsOrder));
-		
+
 		try {
-			String imgURL = StorageHelper.saveImage(
-					("0; 1; КОпмы; Копьютеры и комплектующие; http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif |http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif;\n" + 
-							"1; 2; Ноутбуки;Ноуты и Планшеты;;;\n" +
-							"1; 3; Планшеты;Только планшеты;;;\n" + "1; 5; Переферия;\"Принтеры; мышы; клавы\";;;\n").getBytes(),
-							userId, false, null);
+			String imgURL = StorageHelper
+					.saveImage(
+							("0; 1; КОпмы; Копьютеры и комплектующие; http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_128.gif |http://www.radionetplus.narod.ru/mini/images/radionetplus_ru_mini_130.gif;\n"
+									+ "1; 2; Ноутбуки;Ноуты и Планшеты;;;\n" + "1; 3; Планшеты;Только планшеты;;;\n" + "1; 5; Переферия;\"Принтеры; мышы; клавы\";;;\n")
+									.getBytes(), userId, false, null);
 			importData.setUrl(imgURL);
-			
+
 			ds.addToData(importData);
-	
+
 			fieldsOrder = new ArrayList<ExchangeFieldType>();
 			fieldsOrder.add(ExchangeFieldType.PRODUCER_ID);
 			fieldsOrder.add(ExchangeFieldType.PRODUCER_NAME);
 			fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
 			fieldsOrder.add(ExchangeFieldType.PRODUCER_LOGOURL);
 			fieldsOrder.add(ExchangeFieldType.PRODUCER_DESCRIPTION);
-	
+
 			importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", listToMap(fieldsOrder));
-			imgURL = StorageHelper.saveImage(
-					("1; Производитель 1; http://yandex.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"Длинный текст описания; с заятыми...\"\n"
-							+ "2; Производитель 2; http://google.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"JОпять и снова; Длинный текст описания; с заятыми...\"\n")
-							.getBytes(),
-							userId, false, null);
+			imgURL = StorageHelper
+					.saveImage(
+							("1; Производитель 1; http://yandex.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"Длинный текст описания; с заятыми...\"\n"
+									+ "2; Производитель 2; http://google.ru/; \"http://fast.ulmart.ru/good_small_pics2/255807s.jpg\"; \"JОпять и снова; Длинный текст описания; с заятыми...\"\n")
+									.getBytes(), userId, false, null);
 			importData.setUrl(imgURL);
-			
+
 			ds.addToData(importData);
-	
+
 			List<ProductCategory> productCategories = null;
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
@@ -1023,43 +1024,39 @@ public class ShopServiceImplTest {
 			// set current shop
 			si.getShop(shopId);
 
-			/*DataSet importData2 = */si.importData(ds);
+			/* DataSet importData2 = */si.importData(ds);
 			productCategories = si.getProductCategories(0);
 			productCategories = si.getProductCategories(productCategories.get(0).id);
 
-			
-		DataSet ds2 = new DataSet();
-		ds2.date = (int) (System.currentTimeMillis() / 1000L);
-		ds2.name = "Products";
+			DataSet ds2 = new DataSet();
+			ds2.date = (int) (System.currentTimeMillis() / 1000L);
+			ds2.name = "Products";
 
-		/*
-		 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT,
-		 * PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
-		 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL,
-		 * PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
-		 * PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
-		 */
-		List<ExchangeFieldType> productFieldsOrder = new ArrayList<ExchangeFieldType>();
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_ID);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_NAME);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_SHORT_DESCRIPTION);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_WEIGHT);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_IMAGEURL);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_CATEGORY_IDS);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_RETAIL);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_OPIONSAVP);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRODUCER_ID);
+			/*
+			 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
+			 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
+			 * PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
+			 */
+			List<ExchangeFieldType> productFieldsOrder = new ArrayList<ExchangeFieldType>();
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_ID);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_NAME);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_SHORT_DESCRIPTION);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_WEIGHT);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_IMAGEURL);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_CATEGORY_IDS);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_RETAIL);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_OPIONSAVP);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRODUCER_ID);
 
-		importData = new ImportElement(ImExType.IMPORT_PRODUCTS, "product.csv", listToMap(productFieldsOrder));
-		imgURL = StorageHelper.saveImage(
-				("1;Keyboard; Клавистура 101 кнопка; 250.0; http://yandex.st/www/1.808/yaru/i/logo.png; 125.0; 2|3 ; 123.0; \"цвет:черный|материал:пластик\"; 1\n" + 
-					"2;Mouse; Мышь 3 кнопки; 1250.0;; 1125.0; 3; 1123.0; цвет:зеленый; " + 2 + "\n").getBytes(),
-						userId, false, null);
-		importData.setUrl(imgURL);
+			importData = new ImportElement(ImExType.IMPORT_PRODUCTS, "product.csv", listToMap(productFieldsOrder));
+			imgURL = StorageHelper
+					.saveImage(
+							("1;Keyboard; Клавистура 101 кнопка; 250.0; http://yandex.st/www/1.808/yaru/i/logo.png; 125.0; 2|3 ; 123.0; \"цвет:черный|материал:пластик\"; 1\n"
+									+ "2;Mouse; Мышь 3 кнопки; 1250.0;; 1125.0; 3; 1123.0; цвет:зеленый; " + 2 + "\n").getBytes(), userId, false, null);
+			importData.setUrl(imgURL);
 
-		ds2.addToData(importData);
-
+			ds2.addToData(importData);
 
 			/* DataSet importData2 = */si.importData(ds2);
 
@@ -1074,7 +1071,7 @@ public class ShopServiceImplTest {
 			e.printStackTrace();
 			fail("Import failed!" + e);
 		}
-	} 
+	}
 
 	// =====================================================================================================================
 	@Test
@@ -1104,9 +1101,9 @@ public class ShopServiceImplTest {
 
 				Object[] ola = vo.getOrderLines().values().toArray();
 
-				VoOrderLine vol1 = pm.getObjectById(VoOrderLine.class,ola[0]);
-				VoOrderLine vol2 = pm.getObjectById(VoOrderLine.class,ola[1]);
-			
+				VoOrderLine vol1 = pm.getObjectById(VoOrderLine.class, ola[0]);
+				VoOrderLine vol2 = pm.getObjectById(VoOrderLine.class, ola[1]);
+
 				si.mergeOrderLinePackets(vol2, vol1);
 
 				Map<Double, Integer> vol1ps = vol1.getPackets();
@@ -1146,8 +1143,8 @@ public class ShopServiceImplTest {
 
 				Object[] ola = vo.getOrderLines().values().toArray();
 
-				VoOrderLine vol1 = pm.getObjectById(VoOrderLine.class,ola[0]);
-				VoOrderLine vol2 = pm.getObjectById(VoOrderLine.class,ola[1]);
+				VoOrderLine vol1 = pm.getObjectById(VoOrderLine.class, ola[0]);
+				VoOrderLine vol2 = pm.getObjectById(VoOrderLine.class, ola[1]);
 
 				si.mergeOrderLinePackets(vol2, vol1);
 				Map<Double, Integer> vol1ps = vol1.getPackets();
@@ -1165,7 +1162,7 @@ public class ShopServiceImplTest {
 		}
 	}
 
-		// ======================================================================================================================
+	// ======================================================================================================================
 	@Test
 	public void testGetTotalOrdersReport() {
 		try {
@@ -1180,78 +1177,73 @@ public class ShopServiceImplTest {
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
 			Long order1ID = si.getSessionAttribute(CurrentAttributeType.ORDER, null);
 			// Check merge lines of the same product
-			Map<Double,Integer> packets = new HashMap<Double, Integer>();
+			Map<Double, Integer> packets = new HashMap<Double, Integer>();
 			packets.put(11D, 1);
 			packets.put(12D, 2);
 			OrderLine ol1 = si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment11", packets);
 			OrderLine ol2 = si.setOrderLine(upProductsIdl.get(1), 2.0D, "comment12", null);
-			
+
 			si.confirmOrder();
-			
+
 			long order2ID = si.createOrder(now + 1000, "22aaaa", PriceType.INET);
 			OrderLine ol21 = si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment21", packets);
 			si.confirmOrder();
-			
+
 			long order3ID = si.createOrder(now + 1000, "33aaaa", PriceType.INET);
 			OrderLine ol31 = si.setOrderLine(upProductsIdl.get(1), 33.0D, "comment31", null);
 			si.setOrderDeliveryType(DeliveryType.LONG_RANGE);
 			si.confirmOrder();
-			
+
 			long order4ID = si.createOrder(now + 1001, "44aaaa", PriceType.INET);
 			OrderLine ol41 = si.setOrderLine(upProductsIdl.get(1), 44.0D, "comment41", null);
 			si.confirmOrder();
-			
-			
-			List<ExchangeFieldType> orderFields = Arrays.asList( new ExchangeFieldType[] {
-					ExchangeFieldType.ORDER_DATE, ExchangeFieldType.ORDER_STATUS, ExchangeFieldType.ORDER_PRICE_TYPE, ExchangeFieldType.ORDER_TOTAL_COST, 
-					ExchangeFieldType.ORDER_CREATED, ExchangeFieldType.ORDER_DELIVERY_TYPE, ExchangeFieldType.ORDER_DELIVERY_COST, ExchangeFieldType.ORDER_DELIVERY_ADDRESS, 
-					ExchangeFieldType.ORDER_PAYMENT_TYPE, ExchangeFieldType.ORDER_PAYMENT_STATUS, ExchangeFieldType.ORDER_COMMENT, 
-					ExchangeFieldType.ORDER_USER_ID, ExchangeFieldType.ORDER_USER_NAME
-			});
-			List<ExchangeFieldType> orderLineFIelds = Arrays.asList( new ExchangeFieldType[] {
-					ExchangeFieldType.ORDER_LINE_QUANTITY, ExchangeFieldType.ORDER_LINE_OPRDER_ID, ExchangeFieldType.ORDER_LINE_PRODUCT_ID, 
-					ExchangeFieldType.ORDER_LINE_PRODUCT_NAME, ExchangeFieldType.ORDER_LINE_PRODUCER_ID, ExchangeFieldType.ORDER_LINE_PRODUCER_NAME,
-					ExchangeFieldType.ORDER_LINE_PRICE, ExchangeFieldType.ORDER_LINE_COMMENT, ExchangeFieldType.ORDER_LINE_PACKETS
-			});
-			
-			DataSet totalOrdersReport = si.getTotalOrdersReport( now + 1000, DeliveryType.SELF_PICKUP, 
-					listToMap(orderFields),  listToMap(orderLineFIelds)); 
-			
+
+			List<ExchangeFieldType> orderFields = Arrays.asList(new ExchangeFieldType[] { ExchangeFieldType.ORDER_DATE, ExchangeFieldType.ORDER_STATUS,
+					ExchangeFieldType.ORDER_PRICE_TYPE, ExchangeFieldType.ORDER_TOTAL_COST, ExchangeFieldType.ORDER_CREATED,
+					ExchangeFieldType.ORDER_DELIVERY_TYPE, ExchangeFieldType.ORDER_DELIVERY_COST, ExchangeFieldType.ORDER_DELIVERY_ADDRESS,
+					ExchangeFieldType.ORDER_PAYMENT_TYPE, ExchangeFieldType.ORDER_PAYMENT_STATUS, ExchangeFieldType.ORDER_COMMENT,
+					ExchangeFieldType.ORDER_USER_ID, ExchangeFieldType.ORDER_USER_NAME });
+			List<ExchangeFieldType> orderLineFIelds = Arrays.asList(new ExchangeFieldType[] { ExchangeFieldType.ORDER_LINE_QUANTITY,
+					ExchangeFieldType.ORDER_LINE_OPRDER_ID, ExchangeFieldType.ORDER_LINE_PRODUCT_ID, ExchangeFieldType.ORDER_LINE_PRODUCT_NAME,
+					ExchangeFieldType.ORDER_LINE_PRODUCER_ID, ExchangeFieldType.ORDER_LINE_PRODUCER_NAME, ExchangeFieldType.ORDER_LINE_PRICE,
+					ExchangeFieldType.ORDER_LINE_COMMENT, ExchangeFieldType.ORDER_LINE_PACKETS });
+
+			DataSet totalOrdersReport = si.getTotalOrdersReport(now + 1000, DeliveryType.SELF_PICKUP, listToMap(orderFields), listToMap(orderLineFIelds));
+
 			Assert.assertTrue(totalOrdersReport != null);
-			Assert.assertEquals(totalOrdersReport.data.size(), 3); //two order lines and one orders
-			Assert.assertEquals(totalOrdersReport.data.get(0).getType(), ImExType.EXPORT_ORDER_LINES); //lines of the first order 
-			Assert.assertEquals(totalOrdersReport.data.get(1).getType(), ImExType.EXPORT_ORDER_LINES); //lines of the second order
-			Assert.assertEquals(totalOrdersReport.data.get(2).getType(), ImExType.EXPORT_ORDERS); //orders
-			Assert.assertEquals(totalOrdersReport.data.get(2).getFieldsDataSize(), 2); //two orders
-			//check content of order 1
+			Assert.assertEquals(totalOrdersReport.data.size(), 3); // two order lines and one orders
+			Assert.assertEquals(totalOrdersReport.data.get(0).getType(), ImExType.EXPORT_ORDER_LINES); // lines of the first order
+			Assert.assertEquals(totalOrdersReport.data.get(1).getType(), ImExType.EXPORT_ORDER_LINES); // lines of the second order
+			Assert.assertEquals(totalOrdersReport.data.get(2).getType(), ImExType.EXPORT_ORDERS); // orders
+			Assert.assertEquals(totalOrdersReport.data.get(2).getFieldsDataSize(), 2); // two orders
+			// check content of order 1
 			Assert.assertEquals(totalOrdersReport.data.get(0).getFieldsData().size(), 2);
 			List<String> o1l1 = totalOrdersReport.data.get(0).getFieldsData().get(0);
-			//upProductsIdl.get(0), 1.0D, "comment11", null
+			// upProductsIdl.get(0), 1.0D, "comment11", null
 			Assert.assertEquals(o1l1.size(), 9);
-			Assert.assertEquals(o1l1.get(0), ""+35.0D);
-			Assert.assertEquals(o1l1.get(1), ""+order1ID);
-			Assert.assertEquals(o1l1.get(2), ""+upProductsIdl.get(0));
+			Assert.assertEquals(o1l1.get(0), "" + 35.0D);
+			Assert.assertEquals(o1l1.get(1), "" + order1ID);
+			Assert.assertEquals(o1l1.get(2), "" + upProductsIdl.get(0));
 			Assert.assertEquals(o1l1.get(3), "Пролукт 1");
 			Assert.assertEquals(o1l1.get(5), "Производитель1");
-			Assert.assertEquals(o1l1.get(6), ""+1.0D * 12.0D);
+			Assert.assertEquals(o1l1.get(6), "" + 1.0D * 12.0D);
 			Assert.assertEquals(o1l1.get(7), "comment11");
 			Assert.assertEquals(o1l1.get(8), "11.0:1|12.0:2");
-			
-			//check order 1 description
+
+			// check order 1 description
 			List<String> o1d = totalOrdersReport.data.get(2).getFieldsData().get(0);
 			Assert.assertEquals(o1d.size(), 13);
-			Assert.assertEquals(o1d.get(0), ""+ (now + 1000));
+			Assert.assertEquals(o1d.get(0), "" + (now + 1000));
 			Assert.assertEquals(o1d.get(1), OrderStatus.CONFIRMED.name());
 			Assert.assertEquals(o1d.get(2), PriceType.RETAIL.name());
-			Assert.assertEquals(o1d.get(3), ""+450.0D);
+			Assert.assertEquals(o1d.get(3), "" + 450.0D);
 			Assert.assertEquals(o1d.get(5), DeliveryType.SELF_PICKUP.name());
-			Assert.assertEquals(o1d.get(6), ""+0.0D);
+			Assert.assertEquals(o1d.get(6), "" + 0.0D);
 			Assert.assertEquals(o1d.get(8), PaymentType.CASH.name());
 			Assert.assertEquals(o1d.get(9), PaymentStatus.WAIT.name());
 			Assert.assertEquals(o1d.get(10), "aaaa");
-			Assert.assertEquals(o1d.get(11), ""+userId);
+			Assert.assertEquals(o1d.get(11), "" + userId);
 			Assert.assertEquals(o1d.get(12), "fn ln");
-			
 
 		} catch (TException e) {
 			e.printStackTrace();
@@ -1275,39 +1267,36 @@ public class ShopServiceImplTest {
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
 			Long order1ID = si.getSessionAttribute(CurrentAttributeType.ORDER, null);
 			// Check merge lines of the same product
-			Map<Double,Integer> packets = new HashMap<Double, Integer>();
+			Map<Double, Integer> packets = new HashMap<Double, Integer>();
 			packets.put(11D, 1);
 			packets.put(12D, 2);
 			OrderLine ol1 = si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment11", packets);
 			OrderLine ol2 = si.setOrderLine(upProductsIdl.get(1), 2.0D, "comment12", null);
-			
+
 			si.confirmOrder();
-			
+
 			long order2ID = si.createOrder(now + 1000, "22aaaa", PriceType.INET);
 			OrderLine ol21 = si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment21", packets);
 			si.confirmOrder();
-			
+
 			long order3ID = si.createOrder(now + 1000, "33aaaa", PriceType.INET);
 			OrderLine ol31 = si.setOrderLine(upProductsIdl.get(1), 33.0D, "comment31", null);
 			si.setOrderDeliveryType(DeliveryType.LONG_RANGE);
 			si.confirmOrder();
-			
+
 			long order4ID = si.createOrder(now + 1001, "44aaaa", PriceType.INET);
 			OrderLine ol41 = si.setOrderLine(upProductsIdl.get(1), 44.0D, "comment41", null);
 			si.confirmOrder();
-			
-			List<ExchangeFieldType> productFields = Arrays.asList( new ExchangeFieldType[] {
-					ExchangeFieldType.TOTAL_PROUCT_ID, ExchangeFieldType.TOTAL_PRODUCT_NAME, ExchangeFieldType.TOTAL_PRODUCER_ID, 
-					ExchangeFieldType.TOTAL_PRODUCER_NAME, 
+
+			List<ExchangeFieldType> productFields = Arrays.asList(new ExchangeFieldType[] { ExchangeFieldType.TOTAL_PROUCT_ID,
+					ExchangeFieldType.TOTAL_PRODUCT_NAME, ExchangeFieldType.TOTAL_PRODUCER_ID, ExchangeFieldType.TOTAL_PRODUCER_NAME,
 					ExchangeFieldType.TOTAL_PRODUCT_MIN_PACK, ExchangeFieldType.TOTAL_ORDERED, ExchangeFieldType.TOTAL_MIN_QUANTITY,
-					ExchangeFieldType.TOTAL_REST, ExchangeFieldType.TOTAL_PREPACK_REQUIRED,
-					ExchangeFieldType.TOTAL_PACK_SIZE,ExchangeFieldType.TOTAL_PACK_QUANTYTY, ExchangeFieldType.TOTAL_DELIVERY_TYPE
-			});
-			
-			
-			DataSet totalProductsReport = si.getTotalProductsReport( now + 1000, DeliveryType.SELF_PICKUP, listToMap(productFields)); 
+					ExchangeFieldType.TOTAL_REST, ExchangeFieldType.TOTAL_PREPACK_REQUIRED, ExchangeFieldType.TOTAL_PACK_SIZE,
+					ExchangeFieldType.TOTAL_PACK_QUANTYTY, ExchangeFieldType.TOTAL_DELIVERY_TYPE });
+
+			DataSet totalProductsReport = si.getTotalProductsReport(now + 1000, DeliveryType.SELF_PICKUP, listToMap(productFields));
 			Assert.assertEquals(totalProductsReport.getDataSize(), 3);
-			
+
 		} catch (TException e) {
 			e.printStackTrace();
 			fail("Import failed!" + e);
@@ -1320,8 +1309,8 @@ public class ShopServiceImplTest {
 	public void testGetTotalPackReport() {
 
 	}
-	
-//======================================================================================================================
+
+	// ======================================================================================================================
 
 	@Test
 	public void testParseCSVfile() {

@@ -2,7 +2,7 @@ package com.vmesteonline.be.jdo2;
 
 import javax.jdo.annotations.PersistenceCapable;
 
-import com.vmesteonline.be.UserTopic;
+import com.vmesteonline.be.messageservice.UserTopic;
 
 @PersistenceCapable
 public class VoUserTopic extends VoUserObject {

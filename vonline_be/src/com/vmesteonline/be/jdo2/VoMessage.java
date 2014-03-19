@@ -13,10 +13,10 @@ import javax.jdo.annotations.Persistent;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
-import com.vmesteonline.be.Message;
-import com.vmesteonline.be.MessageType;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.data.VoDatastoreHelper;
+import com.vmesteonline.be.messageservice.Message;
+import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.utils.VoHelper;
 
 /**

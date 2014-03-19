@@ -31,7 +31,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public static void checkIfAuthorised(String httpSessId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
+
 			VoSession session = getSession(httpSessId, pm);
+
 			if (0 == session.getUserId())
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
 		} finally {
@@ -42,8 +44,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public static VoSession getSession(String sessId, PersistenceManager pm) throws InvalidOperation {
 
 		try {
-			VoSession sess = null;
-			sess = PMF.get().getPersistenceManager().getObjectById(VoSession.class, sessId);
+			VoSession sess = pm.getObjectById(VoSession.class, sessId);
 			if (sess == null)
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find active session for " + sessId);
 			return sess;
@@ -73,9 +74,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
 
 				VoSession sess = new VoSession(sessionStorage.getId(), u);
-				/*
-				 * sess.setLatitude(u.getLatitude()); sess.setLongitude(u.getLongitude());
-				 */pm.makePersistent(sess);
+
+				//sess.setLatitude(u.getLatitude());
+				//sess.setLongitude(u.getLongitude());
+				pm.makePersistent(sess);
+				logger.info("successfully login");
+
 				return true;
 			} else
 				logger.info("incorrect password " + email + " pass " + password);
