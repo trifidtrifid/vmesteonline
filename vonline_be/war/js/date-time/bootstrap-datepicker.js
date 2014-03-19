@@ -91,7 +91,7 @@
         var nowDateItem = new Date(nowTime*1000);
         var nowMonth = nowDateItem.getMonth();
 
-        var datesArray = client.getDates(nowTime-20*day,nowTime+20*day);
+        var datesArray = client.getDates(nowTime-32*day,nowTime+32*day);
         for (var date in datesArray){
             var tempDate = new Date(date*1000);
             var cleanDay = "";
@@ -113,12 +113,25 @@
                     break
             }
             var tempMonth = tempDate.getMonth();
-            //console.log(tempMonth+" "+nowMonth);
-
+            var orders,order = 0;
+            if(freeDay){
+               orders = client.getOrders(date,parseInt(date)+day);
+                if (orders.length > 0){
+                   order = orders[0];
+                }
+            }
             $('.day').each(function(){
                 var day = $(this).text();
                 if (tempMonth == nowMonth){
-                    if  (day == freeDay && !$(this).hasClass('old') && !$(this).hasClass('new')){$(this).addClass('free-day');$(this).attr('id',date);}
+                    if  (day == freeDay && !$(this).hasClass('old') && !$(this).hasClass('new')){
+                        if(order){
+                            $(this).addClass('free-day-with-order');
+                            $(this).attr('data-orderid',order.id);
+                        } else{
+                            $(this).addClass('free-day');
+                        }
+                        $(this).attr('id',date);
+                    }
                     if  (day == specialDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('special-day');$(this).attr('id',date);}
                     if  (day == closedDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('closed-day');$(this).attr('id',date);}
                 }
@@ -165,7 +178,6 @@
     function initFreeDay(currentProduct,spinnerValue,orderData,packs,AddSingleProductToBasket,AddOrdersToBasket){
         try{
         $('.free-day').click(function(){
-            // время должно быть не "сейчас" а то что указано в календаре
             //var nowTime = parseInt(new Date().getTime()/1000);
             var dateLabel = parseInt($(this).attr('id'));
             if (orderData && orderData.itsOrder){
@@ -188,12 +200,41 @@
                 $('.empty-basket').addClass('hide');
             };
         });
+
+        $('.free-day-with-order').click(function(){
+                //var nowTime = parseInt(new Date().getTime()/1000);
+                //var dateLabel = parseInt($(this).attr('id'));
+                currentOrderId = client.getOrder($(this).data('orderid'));
+                var currentOrderData= {
+                    itsOrder: true,
+                    itsAppend: false,
+                    orderId : $(this).data('orderid')
+                };
+                AddOrdersToBasket(currentOrderData);
+
+                if (orderData && orderData.itsOrder){
+                    // если мы добавляем заказ
+                    /*if ($('.additionally-order').hasClass('hide') || orderData.itsAppend == false){
+                     currentOrderId = client.getOrder($(this).data('orderid'));
+                     }*/
+                    AddOrdersToBasket(orderData);
+                }else{
+                    // если добавление одного продукта
+                    //var productDetails = client.getProductDetails(currentProduct.id);
+                    client.setOrderLine(currentProduct.id,parseInt(spinnerValue),'sdf',packs);
+                    AddSingleProductToBasket(currentProduct,spinnerValue,currentProduct.unitName);
+                }
+                if ($('.additionally-order').hasClass('hide')){
+                    $('.additionally-order').removeClass('hide');
+                    $('.empty-basket').addClass('hide');
+                };
+            });
         }catch(e){
             alert(e + ' Функция initFreeDay');
         }
     }
 
-    function initOrderDay(initVarForMoreOrders,createOrdersHtml,initShowMoreOrders,initOrderPlusMinus,initOrderBtns,setSidebarHeight){
+    function initOrderDay(initVarForMoreOrders,createOrdersHtml,initShowMoreOrders,initOrderPlusMinus,initOrderBtns,setSidebarHeight,initOrdersLinks){
         try{
         $('.order-day').click(function(){
             var orderDate = parseInt($(this).attr('id'));
@@ -216,6 +257,7 @@
             initOrderPlusMinus(shopOrdersList);
             initOrderBtns(shopOrdersList);
             setSidebarHeight();
+            initOrdersLinks();
         });
         }catch(e){
             alert(e + ' Функция initOrderDay');
@@ -692,7 +734,7 @@
                 initFreeDay(this.currentProduct,this.spinnerValue,this.orderData,this.packs,this.AddSingleProductToBasket,this.AddOrdersToBasket);
             }else{
                 SetOrderDates();
-               initOrderDay(this.initVarForMoreOrders,this.createOrdersHtml,this.initShowMoreOrders,this.initOrderPlusMinus,this.initOrderBtns,this.setSidebarHeight)
+               initOrderDay(this.initVarForMoreOrders,this.createOrdersHtml,this.initShowMoreOrders,this.initOrderPlusMinus,this.initOrderBtns,this.setSidebarHeight,this.initOrdersLinks)
             }
 		},
 
@@ -1022,6 +1064,7 @@
             this.initOrderPlusMinus = datepickerFunc.initOrderPlusMinus;
             this.initOrderBtns = datepickerFunc.initOrderBtns;
             this.setSidebarHeight = datepickerFunc.setSidebarHeight;
+            this.initOrdersLinks = datepickerFunc.initOrdersLinks;
         }
 	};
 

@@ -53,6 +53,5 @@
                 document.location.replace("login.jsp");
             }
         });
-
     });
 

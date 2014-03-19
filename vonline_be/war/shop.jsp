@@ -314,7 +314,7 @@
                         <div class="radio">
                             <label>
                                 <input name="form-field-radio" type="radio" class="ace courier-delivery">
-                                <span class="lbl"> Курьер(<span class="delivery-price">500</span> руб)</span>
+                                <span class="lbl"> Курьер<%--(<span class="delivery-price">500</span> руб)--%></span>
                             </label>
                         </div>
                         <div class="input-delivery">
@@ -536,7 +536,9 @@
 	<script src="js/ace-extra.min.js"></script>
 	<script src="js/ace-elements.min.js"></script>
 	<!-- собственные скрипты  -->
+<%--
 	<script src="js/login.js"></script>
+--%>
 	<script src="js/common.js"></script>
 	<script src="js/shop.js"></script>
 

@@ -63,16 +63,26 @@ $(document).ready(function(){
     $('.radio input').click(function(){
         var itogoRight = $('.itogo-right span');
         var res,currentSumma = parseFloat(itogoRight.text());
+        var orderDetails = 0;
         if ($(this).hasClass('courier-delivery')){
+            //если доставка курьером
             client.setOrderDeliveryType(2);
             $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
-            res = (currentSumma+parseFloat($('.delivery-price').text())).toFixed(1);
+            orderDetails = client.getOrderDetails(currentOrderId);
+            //res = (currentSumma+parseFloat($('.delivery-price').text())).toFixed(1);
+            console.log(orderDetails.deliveryCost);
+            res = (currentSumma+orderDetails.deliveryCost).toFixed(1);
             itogoRight.text(res);
             triggerDelivery = 1;
         }else{
+            orderDetails = client.getOrderDetails(currentOrderId);
             client.setOrderDeliveryType(1);
             $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
-            res = (currentSumma-parseFloat($('.delivery-price').text())).toFixed(1);
+            var order = client.getOrder(currentOrderId);
+            console.log(currentSumma+" "+" "+ orderDetails +" "+orderDetails.deliveryCost);
+            //res = order.totalCost;
+            res = (currentSumma-orderDetails.deliveryCost).toFixed(1);
+            //res = (currentSumma-parseFloat($('.delivery-price').text())).toFixed(1);
             if (triggerDelivery){itogoRight.text(res); triggerDelivery = 0;}
         }
     });
@@ -117,16 +127,35 @@ $(document).ready(function(){
 
     var countries = addressesBase.countries;
     var countriesLength = countries.length;
-    var countryTags = [];
+    var countryTags = [],
+        countryId = [];
     for (var i = 0; i < countriesLength; i++){
         countryTags[i] = countries[i].name;
+        countryId[i] = countries[i].id;
     }
-    var cities = addressesBase.cities;
-    var citiesLength = cities.length;
-    var cityTags = [];
-    for (i = 0; i < citiesLength; i++){
-        cityTags[i] = cities[i].name;
-    }
+
+    $('#city-delivery').focus(function(){
+        var prevField = $('#country-delivery').val();
+        var cities;
+        if(prevField){
+            for (var i = 0; i < countriesLength; i++){
+                if (prevField == countryTags[i]){
+                    cities = userServiceClient.getCities(countryId[i]);
+                }
+            }
+            userServiceClient.getCities();
+        }
+        if (!cities){cities = addressesBase.cities;}
+        var citiesLength = cities.length;
+        var cityTags = [];
+        for (i = 0; i < citiesLength; i++){
+            cityTags[i] = cities[i].name;
+        }
+
+        $( "#city-delivery" ).autocomplete({
+            source: cityTags
+        });
+    });
     var streets = addressesBase.streets;
     var streetsLength = streets.length;
     var streetTags = [];
@@ -141,9 +170,6 @@ $(document).ready(function(){
     }
     $( "#country-delivery" ).autocomplete({
         source: countryTags
-    });
-    $( "#city-delivery" ).autocomplete({
-        source: cityTags
     });
     $( "#street-delivery" ).autocomplete({
         source: streetTags
@@ -186,18 +212,21 @@ $(document).ready(function(){
         initShowMoreOrders: initShowMoreOrders,
         initOrderPlusMinus: initOrderPlusMinus,
         initOrderBtns: initOrderBtns,
-        setSidebarHeight: setSidebarHeight
+        setSidebarHeight: setSidebarHeight,
+        initOrdersLinks: initOrdersLinks,
     };
 
     dPicker.datepicker('setVarOrderDates',datepickerFunc);
 
-    InitSpinner($('.spinner1'),1);
+
+    initProductsSpinner();
     InitAddToBasket($('.fa-shopping-cart'));
     InitProductDetailPopup($('.product-link'));
     // переключение между категориями
     InitClickOnCategory();
     InitDeleteProduct($('.delete-product'));
     initOrderPlusMinus($('.shop-orders'));
+    //shopTriggerClick();
 
 /* функции */
     var prevParentId = [],
@@ -292,6 +321,14 @@ $(document).ready(function(){
         }
     }
 
+    function initProductsSpinner(){
+        $('.catalog table .spinner1').each(function(){
+            var productId = $(this).closest('tr').data('productid');
+            var productDetails = client.getProductDetails(productId);
+            InitSpinner($(this),productDetails.minClientPack,0,productDetails.minClientPack);
+            $(this).attr('data-step',productDetails.minClientPack);
+        });
+    }
 
     function InitProductDetailPopup(selector){
         try{
@@ -428,7 +465,7 @@ $(document).ready(function(){
                             if (counter == 0){
                                 // если самая первая линия
                                 InitSpinner(currentModal.find('.packs .spinner1'),packs[p],1);
-                                InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),parseInt(p),1);
+                                InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),parseInt(p),1,productSelector.find('.spinner1').data('step'));
                             }else{
                                 // если другая линия
                                 prepackHtml = '<div class="prepack-line no-init">' +
@@ -438,7 +475,7 @@ $(document).ready(function(){
                                     '</div>'+
                                     '<div class="prepack-item">по</div>'+
                                     '<div class="prepack-item">'+
-                                    '<input type="text" class="input-mini spinner1" />'+
+                                    '<input type="text" data-step="'+ productSelector.find('.spinner1').data('step') +'" class="input-mini spinner1" />'+
                                     '<span>'+ unitName +'</span>'+
                                     '</div>'+
                                     '<div class="prepack-item">'+
@@ -447,7 +484,7 @@ $(document).ready(function(){
                                 '</div>';
                                 currentModal.find('.prepack-list').append(prepackHtml);
                                 InitSpinner(currentModal.find('.no-init .packs .spinner1'),packs[p],1);
-                                InitSpinner(currentModal.find('.no-init .prepack-item:not(".packs") .spinner1'),parseInt(p),1);
+                                InitSpinner(currentModal.find('.no-init .prepack-item:not(".packs") .spinner1'),parseInt(p),1,productSelector.find('.spinner1').data('step'));
 
                                 currentModal.find('.prepack-line.no-init').removeClass('no-init');
                                 currentModal.height(currentModal.height() + 53);
@@ -456,15 +493,15 @@ $(document).ready(function(){
                         }
                     }else{
                         //если обычный товар
-                        InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),1);
+                        InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),1,productSelector.find('.spinner1').data('step'));
                     }
                 }else{
                     // если не в корзине
                     if (productDetails.prepackRequired){
                         InitSpinner(currentModal.find('.prepack-item.packs .spinner1'), 1);
-                        InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'), productSelector.find('.ace-spinner').spinner('value'));
+                        InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'), productSelector.find('.ace-spinner').spinner('value'),0,productSelector.find('.spinner1').data('step'));
                     }else{
-                        InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'));
+                        InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),0,productDetails.minClientPack);
                     }
                     InitAddToBasket(currentModal.find('.fa-shopping-cart'));
                 }
@@ -490,7 +527,8 @@ $(document).ready(function(){
                     var itsBasket;
                     ($(this).closest('tr').length == 0) ? itsBasket = 1 : itsBasket = 0;
 
-                    InitSpinner(currentPrepackLine.find('.spinner1'), 1,itsBasket);
+                    InitSpinner(currentPrepackLine.find('.prepack-item.packs .spinner1'), 1,itsBasket);
+                    InitSpinner(currentPrepackLine.find('.prepack-item:not(".packs").spinner1'), 1,itsBasket,productSelector.find('.spinner1').data('step'));
 
                     if ($(this).closest('tr').length == 0){
                         //если мы в корзине
@@ -618,7 +656,7 @@ $(document).ready(function(){
                     '</td>'+
                     '<td class="td-price">'+ $(this).find('.td-price').text()  +'</td>'+
                     '<td '+ disableClass +'>'+
-                    '<input type="text" class="input-mini spinner1 no-init" />'+
+                    '<input type="text" data-step="'+ $(this).find('td .spinner1').data('step') +'" class="input-mini spinner1 no-init" />'+
                     '</td>'+
                     '<td>'+ 'ед' +'</td>'+
                     '<td class="td-summa">'+ $(this).find('.td-summa').text()+
@@ -631,7 +669,7 @@ $(document).ready(function(){
             var spinnerNoInit = popup.find('.spinner1.no-init');
             i = 0;
             spinnerNoInit.each(function(){
-                InitSpinner($(this),spinnerValue[i++]);
+                InitSpinner($(this),spinnerValue[i++],0,$(this).data('step'));
             });
             spinnerNoInit.removeClass('no-init');
             $('.prepack-disable').find('.ace-spinner').spinner('disable');
@@ -813,7 +851,7 @@ $(document).ready(function(){
         }
 
         /* подключение событий */
-        InitSpinner($('.catalog table .spinner1'));
+        initProductsSpinner();
         InitProductDetailPopup($('.product-link'));
         InitAddToBasket($('.fa-shopping-cart'));
         InitClickOnCategory();
@@ -848,12 +886,14 @@ $(document).ready(function(){
         }
     }
 
-    function InitSpinner(selector,spinnerValue,itsBasket){
+    function InitSpinner(selector,spinnerValue,itsBasket,spinnerStep){
         try{
-        selector.ace_spinner({value:spinnerValue,min:1,max:200,step:1, btn_up_class:'btn-info' , btn_down_class:'btn-info'});
-    }catch(e){
-        alert(e+" Функция InitSpinner");
-    }
+            var step = 1;
+            if (spinnerStep){step = spinnerStep}
+            selector.ace_spinner({value:spinnerValue,min:1,max:200,step:step, btn_up_class:'btn-info' , btn_down_class:'btn-info'});
+        }catch(e){
+            alert(e+" Функция InitSpinner");
+        }
         if (selector.closest('.modal-order-end').length > 0){
             InitSpinnerChangeInFinal(selector);
         }else{
@@ -1041,6 +1081,7 @@ $(document).ready(function(){
                 if ($('.catalog-order li').length == 0){
                     $('.additionally-order').addClass('hide');
                     $('.empty-basket').removeClass('hide');
+                    client.deleteOrder();
                 }
             });
             client.removeOrderLine($(this).closest('li').data('productid'));
@@ -1085,7 +1126,7 @@ $(document).ready(function(){
                 '</td>'+
                 '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
                 '<td>'+
-                '<input type="text" class="input-mini spinner1" />'+
+                '<input type="text" data-step="'+ productDetails.minClientPack +'" class="input-mini spinner1" />'+
                 '</td>'+
                 '<td><span class="unit-name">'+unitName+'</span></td>'+
                 '<td>'+
@@ -1122,12 +1163,14 @@ $(document).ready(function(){
             var tempDate = new Date(orders[i].date*1000);
             // форматирование статуса заказа
             var orderStatus;
+            var orderLinks = "";
             switch(orders[i].status){
                 case 0:
                     orderStatus = "Неизвестен" ;
                     break
                 case 1:
                     orderStatus = "Не подтвержден" ;
+                    orderLinks = "<a href='#' class='order-confirm'>Подтвердить</a><br><a href='#' class='order-edit'>Изменить</a>"
                     break
                 case 2:
                     orderStatus = "Подтвержден" ;
@@ -1169,7 +1212,10 @@ $(document).ready(function(){
                 '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
                 '<td class="td2">Заказ N '+i+'</td>'+
                 '<td class="td3">'+ tempDate.getDate() +"."+tempDate.getMonth()+"."+tempDate.getFullYear()+ '</td>'+
-                '<td class="td4">'+ orderStatus +'</td>'+
+                '<td class="td4">'+
+                '<div class="order-status">'+orderStatus +'</div>'+
+                '<div>'+ orderLinks +'</div>'+
+                '</td>'+
                 '<td class="td5">'+ orderDelivery +'<br> ' +
                 orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
                 orderDetails.deliveryTo.flatNo+
@@ -1213,10 +1259,10 @@ $(document).ready(function(){
     dateArray[nowTime+9*day] = 1;
     dateArray[nowTime-9*day] = 2;
     client.setDates(dateArray); */
-    var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
-    for (var p in datesArray){
+    //var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
+    /*for (var p in datesArray){
         //console.log(p);
-    }
+    }*/
 /*------*/
 
     function initOrderPlusMinus(selector){
@@ -1235,7 +1281,7 @@ $(document).ready(function(){
                 orderProducts.append(createOrdersProductHtml(orderDetails));
 
                 for (var i = 0; i < orderLinesLength; i++){
-                    InitSpinner(orderProducts.find('tbody tr:eq('+ i +') .spinner1'),orderLines[i].quantity);
+                    InitSpinner(orderProducts.find('tbody tr:eq('+ i +') .spinner1'),orderLines[i].quantity,0,orderProducts.find('tbody tr:eq('+ i +') .spinner1').data('step'));
                 }
 
                 InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
@@ -1259,15 +1305,21 @@ $(document).ready(function(){
     }
 
     var flagFromBasketClick = 0;
+    var selectorForCallbacks;
+
+    function BasketTrigger(selector){
+        selector.trigger('click');
+    }
 
     function InitAddToBasket(selector){
         try{
         selector.click(function(e){
             e.preventDefault();
             var errorPrepack = false;
-
             if (!globalUserAuth){
                 // если пользователь не залогинен
+                selectorForCallbacks = $(this);
+                callbacks.add(BasketTrigger);
                 $('.modal-auth').modal();
             }else{
                 // если пользователь залогинен
@@ -1322,7 +1374,7 @@ $(document).ready(function(){
                     // если это первый товар в корзине
                     flagFromBasketClick = 1;
                     dPicker.datepicker('setVarFreeDays',currentProduct, qnty,0,packs,AddSingleProductToBasket,AddOrdersToBasket);
-                    dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[currentProduct, qnty,0,packs, 'Event']);
+                    dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');
                 }else{
                     // если в корзине уже что-то есть
                     client.setOrderLine(parseInt(currentProductSelector.data('productid')),qnty,'sdf',packs);
@@ -1380,7 +1432,7 @@ $(document).ready(function(){
             '<table>'+
             '<tr>'+
             '<td class="td-price product-price">'+ currentProduct.price +'</td>'+
-            '<td><input type="text" class="input-mini spinner1 no-init" /><span class="unit-name">'+ unitName +'</span></td>'+
+            '<td><input type="text" data-step="'+ productDetails.minClientPack +'" class="input-mini spinner1 no-init" /><span class="unit-name">'+ unitName +'</span></td>'+
             '<td class="td-summa">'+ (currentProduct.price*spinnerValue).toFixed(1) +'</td>'+
             '<td><a href="#" class="delete-product no-init">×</a></td>'+
             '</tr>'+
@@ -1412,7 +1464,7 @@ $(document).ready(function(){
 
         var spinnerNoInit = $('.catalog-order .spinner1.no-init');
         var itsBasket = 1;
-        InitSpinner(spinnerNoInit,spinnerValue,itsBasket);
+        InitSpinner(spinnerNoInit,spinnerValue,itsBasket,productDetails.minClientPack);
         spinnerNoInit.removeClass('no-init');
 
     }
@@ -1504,7 +1556,7 @@ $(document).ready(function(){
             };
             flagFromBasketClick = 1;
             dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,AddSingleProductToBasket,AddOrdersToBasket);
-            dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[0, 0, orderData, 'Event']).datepicker('triggerFlagBasket');
+            dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click').datepicker('triggerFlagBasket');
             flagFromBasketClick = 0;
         });
         selector.find('.add-order-btn').click(function(){
@@ -1516,7 +1568,7 @@ $(document).ready(function(){
             if ($('.additionally-order').hasClass('hide')){
                 flagFromBasketClick = 1;
                 dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,AddSingleProductToBasket,AddOrdersToBasket);
-                dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click',[0, 0, orderData, 'Event']);
+                dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');
             }else{
                 AddOrdersToBasket(orderData);
             }
@@ -1534,6 +1586,37 @@ $(document).ready(function(){
         lengthOrders = 10;
     }
 
+    function initOrdersLinks(){
+        $('.order-edit').click(function(e){
+            e.preventDefault();
+
+            var confirmed = confirm('Ваша текущая корзина будет заменена этим заказом. Вы согласны ?');
+            if(confirmed){
+                client.getOrder($(this).closest('.order-item').data('orderid'));
+                var orderData= {
+                    itsOrder: true,
+                    itsAppend: false,
+                    orderId : $(this).closest('.order-item').data('orderid')
+                };
+                AddOrdersToBasket(orderData);
+            }
+            });
+        $('.order-confirm').click(function(e){
+            e.preventDefault();
+
+           var tempOrderId = currentOrderId;
+           client.getOrder($(this).closest('.order-item').data('orderid'));
+           client.confirmOrder();
+            if(tempOrderId){
+                client.getOrder(tempOrderId);
+            }
+            alert('Заказ подтвержден !');
+            $(this).closest('td').find('.order-status').text('Подтвержден');
+            $(this).parent().remove();
+
+        });
+    }
+
     function initShowMoreOrders(orders){
         try{
         $('.more-orders').click(function(e){
@@ -1543,6 +1626,7 @@ $(document).ready(function(){
             var itsMoreOrders = true;
             orderList.append(createOrdersHtml(orders,itsMoreOrders));
             initShowMoreOrders(orders);
+            initOrdersLinks();
             var ordersNoInit = $('.orders-no-init');
             initOrderPlusMinus(ordersNoInit);
             initOrderBtns(ordersNoInit);
@@ -1570,41 +1654,135 @@ $(document).ready(function(){
         }
     }
 
+    function GoToOrdersTrigger(){
+        $('.go-to-orders').trigger('click');
+    }
+
     $('.shop-trigger').click(function(e){
         e.preventDefault();
         try{
+            var shopOrders = $('.shop-orders');
+            var ordersList = $('.orders-list');
 
-        var shopOrders = $('.shop-orders');
-        var ordersList = $('.orders-list');
-
-       if($(this).hasClass('back-to-shop')){
-          shopOrders.hide();
-          $('.shop-products').show(function(){
-              setSidebarHeight();
-          });
-       }else{
-           if (!globalUserAuth){
-               $('.modal-auth').modal();
-           }else{
-               $('.shop-products').hide();
-               var nowTime = parseInt(new Date().getTime()/1000);
-               var day = 3600*24;
-               var orders = client.getOrders(0,nowTime+90*day);
-               initVarForMoreOrders();
-               ordersList.html('').append(createOrdersHtml(orders));
-               InitProductDetailPopup($('.product-link'));
-               initShowMoreOrders(orders);
-               var ordersNoInit = $('.orders-no-init');
-               initOrderPlusMinus(ordersNoInit);
-               initOrderBtns(ordersNoInit);
-               ordersNoInit.removeClass('orders-no-init');
-                shopOrders.show();
-               setSidebarHeight();
-           }
-       }
+            if($(this).hasClass('back-to-shop')){
+                shopOrders.hide();
+                $('.shop-products').show(function(){
+                    setSidebarHeight();
+                });
+            }else{
+                if (!globalUserAuth){
+                    callbacks.add(GoToOrdersTrigger);
+                    $('.modal-auth').modal();
+                }else{
+                    $('.shop-products').hide();
+                    var nowTime = parseInt(new Date().getTime()/1000);
+                    var day = 3600*24;
+                    var orders = client.getOrders(0,nowTime+90*day);
+                    initVarForMoreOrders();
+                    ordersList.html('').append(createOrdersHtml(orders));
+                    InitProductDetailPopup($('.product-link'));
+                    initShowMoreOrders(orders);
+                    initOrdersLinks();
+                    var ordersNoInit = $('.orders-no-init');
+                    initOrderPlusMinus(ordersNoInit);
+                    initOrderBtns(ordersNoInit);
+                    ordersNoInit.removeClass('orders-no-init');
+                    shopOrders.show();
+                    setSidebarHeight();
+                }
+            }
         }catch(e){
             alert(e+" Функция $('.shop-trigger').click");
         }
     });
+
+// логин
+
+    var callbacks = $.Callbacks();
+
+    transport = new Thrift.Transport("/thrift/AuthService");
+    protocol = new Thrift.Protocol(transport);
+    var clientAuth = new com.vmesteonline.be.AuthServiceClient(protocol);
+
+    $('.login-form .btn-submit').click(function(e){
+        e.preventDefault();
+        login($(this));
+    });
+    $('.reg-form .btn-submit').click(function(e){
+        e.preventDefault();
+        reg($(this));
+    });
+    $('.remember-link').click(function(e){
+        e.preventDefault();
+        clientAuth.sendChangePasswordCodeRequest('забыл пароль адресат','sdf%code%sdf%name%sdf');
+        //clientAuth.changePasswordOfUser('qq@qq.ru','qq','qq');
+    });
+
+    function AuthRealTime(selector){
+        globalUserAuth = true;
+        selector.closest('.modal-auth').modal('hide');
+        // ставим shopID
+        var shops = client.getShops();
+        client.getShop(shops[0].id);
+
+        //$('.user-info').html('');
+        var shortUserInfo = userServiceClient.getShortUserInfo();
+        var shortUserInfoHtml =  '<small>'+ shortUserInfo.firstName +'</small>'+ shortUserInfo.lastName;
+        $('.user-info').html(shortUserInfoHtml).after('<i class="icon-caret-down"></i>');
+        var dropdown = '<ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">'+
+            '<li><a href="#"> <i class="icon-cog"></i> Настройки'+
+            '</a></li>'+
+            '<li><a href="#"> <i class="icon-user"></i> Профиль'+
+            '</a></li>'+
+            '<li class="divider"></li>'+
+            '<li><a href="#"> <i class="icon-off"></i> Выход'+
+            '</a></li>'+
+        '</ul>';
+        $('.user-short .dropdown-toggle').append(dropdown);
+
+        $('.dropdown-toggle').click(function(){
+           $(this).find('.user-menu').toggle();
+        });
+
+        callbacks.fire(selectorForCallbacks);
+        callbacks.empty();
+    }
+
+    function login(selector) {
+        var result = $('#result');
+        try {
+            var accessGranted = clientAuth.login($("#uname").val(), $("#password").val());
+            if (accessGranted) {
+                if (selector.closest('.modal-auth').length > 0){
+                    //document.location.replace("/shop.jsp");
+                    AuthRealTime(selector);
+                }else{
+                    document.location.replace("/main.jsp");
+                }
+            } else {
+                result.val(session.error);
+                result.css('color', 'black');
+            }
+
+        } catch (ouch) {
+            result.val("smth happen");
+            result.css('color', 'red');
+        }
+    }
+
+    function reg(selector) {
+        if (clientAuth.checkEmailRegistered($("#email").val())) {
+            $('.email-alert').css('display','block');
+        }else{
+            var userId = clientAuth.registerNewUser($("#login").val(), "family", $("#pass").val(), $("#email").val());
+            clientAuth.login($("#email").val(), $("#pass").val());
+            if ( selector.closest('.modal-auth').length > 0) {
+                //document.location.replace("/shop.jsp");
+                AuthRealTime(selector);
+            }else{
+                document.location.replace("/main.jsp");
+            }
+        }
+    }
 
 });

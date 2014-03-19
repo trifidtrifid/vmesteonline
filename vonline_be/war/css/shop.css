@@ -53,6 +53,9 @@ a {
   padding: 0 8px;
   font-size: 16px;
 }
+.user-menu li {
+  text-align: left;
+}
 .nav-list > li > a {
   padding: 8px 10px 10px 16px;
   height: auto;
@@ -284,6 +287,13 @@ th.next,
   content: "Свободный день";
   margin-left: -120px;
 }
+.free-day-with-order {
+  background-color: #c4b855;
+}
+.free-day-with-order:after {
+  content: "Свободный день с заказом";
+  margin-left: -150px;
+}
 .special-day {
   background-color: #5bc0de;
 }
@@ -300,6 +310,7 @@ th.next,
 }
 .order-day:after,
 .free-day:after,
+.free-day-with-order:after,
 .special-day:after,
 .closed-day:after {
   position: absolute;
@@ -311,6 +322,7 @@ th.next,
 }
 .order-day:hover:after,
 .free-day:hover:after,
+.free-day-with-order:hover:after,
 .special-day:hover:after,
 .closed-day:hover:after {
   display: block;
@@ -449,6 +461,10 @@ span
 .shop-orders .order-item .order-products {
   margin: 10px 0 0 0;
   display: none;
+}
+.shop-orders .order-item .order-edit,
+.shop-orders .order-item .order-confirm {
+  font-size: 12px;
 }
 .shop-orders .btn-primary {
   margin: 2px;
