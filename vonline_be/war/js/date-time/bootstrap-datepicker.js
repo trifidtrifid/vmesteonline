@@ -209,7 +209,8 @@
         $('.free-day-with-order').click(function(){
                 //var nowTime = parseInt(new Date().getTime()/1000);
                 //var dateLabel = parseInt($(this).attr('id'));
-                currentOrderId = client.getOrder($(this).data('orderid'));
+                var order = client.getOrder($(this).data('orderid'));
+                currentOrderId = order.id;
                 var currentOrderData= {
                     itsOrder: true,
                     itsAppend: false,

@@ -59,38 +59,7 @@ $(document).ready(function(){
         $('.modal-login').modal();
     });
 
-    var triggerDelivery = 0;
-    $('.radio input').click(function(){
-        var itogoRight = $('.itogo-right span');
-        var res,currentSumma = parseFloat(itogoRight.text());
-        var orderDetails = 0;
-        if ($(this).hasClass('courier-delivery')){
-            //если доставка курьером
-            client.setOrderDeliveryType(2);
-            $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
-            orderDetails = client.getOrderDetails(currentOrderId);
-            //res = (currentSumma+parseFloat($('.delivery-price').text())).toFixed(1);
-            console.log(orderDetails.deliveryCost);
-            res = (currentSumma+orderDetails.deliveryCost).toFixed(1);
-            itogoRight.text(res);
-            triggerDelivery = 1;
-        }else{
-            orderDetails = client.getOrderDetails(currentOrderId);
-            client.setOrderDeliveryType(1);
-            $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
-            var order = client.getOrder(currentOrderId);
-            console.log(currentSumma+" "+" "+ orderDetails +" "+orderDetails.deliveryCost);
-            //res = order.totalCost;
-            res = (currentSumma-orderDetails.deliveryCost).toFixed(1);
-            //res = (currentSumma-parseFloat($('.delivery-price').text())).toFixed(1);
-            if (triggerDelivery){itogoRight.text(res); triggerDelivery = 0;}
-        }
-    });
-    }catch(e){
-        alert(e + ' Ошибка в простых обработчиках');
-    }
-
-    //custom autocomplete (category selection)
+     //custom autocomplete (category selection)
     try{
     $.widget( "custom.catcomplete", $.ui.autocomplete, {
         _renderMenu: function( ul, items ) {
@@ -321,6 +290,32 @@ $(document).ready(function(){
         }catch(e){
             alert(e+" Функция setCookie");
         }
+    }
+
+    var triggerDelivery = 0;
+    $('.radio input').click(function(){
+        var itogoRight = $('.itogo-right span');
+        var res,currentSumma = parseFloat(itogoRight.text());
+        var orderDetails = 0;
+        if ($(this).hasClass('courier-delivery')){
+            //если доставка курьером
+            client.setOrderDeliveryType(2);
+            $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
+            //orderDetails = client.getOrderDetails(currentOrderId);
+            //res = (currentSumma+orderDetails.deliveryCost).toFixed(1);
+            itogoRight.text(countItogo($('.catalog-order')));
+            triggerDelivery = 1;
+        }else{
+            //orderDetails = client.getOrderDetails(currentOrderId);
+            client.setOrderDeliveryType(1);
+            $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
+            var order = client.getOrder(currentOrderId);
+            //res = (currentSumma-orderDetails.deliveryCost).toFixed(1);
+            if (triggerDelivery){itogoRight.text(countItogo($('.catalog-order'))); triggerDelivery = 0;}
+        }
+    });
+    }catch(e){
+        alert(e + ' Ошибка в простых обработчиках');
     }
 
     function initRemovePrepackLine(selector, productId,productSelector){
@@ -698,7 +693,7 @@ $(document).ready(function(){
                     '</tr>';
             });
             popup.find('.modal-body-list tbody').html('').append(productsHtmlModal);
-            $('.modal-itogo span').text(countItogo($('.modal-body-list')));
+            $('.modal-itogo span').text($('.itogo-right span').text());
 
             var spinnerNoInit = popup.find('.spinner1.no-init');
             i = 0;
@@ -924,7 +919,7 @@ $(document).ready(function(){
         try{
             var step = 1;
             if (spinnerStep){step = spinnerStep}
-            selector.ace_spinner({value:spinnerValue,min:1,max:200,step:step, btn_up_class:'btn-info' , btn_down_class:'btn-info'});
+            selector.ace_spinner({value:spinnerValue,min:step,max:100000,step:step, btn_up_class:'btn-info' , btn_down_class:'btn-info'});
         }catch(e){
             alert(e+" Функция InitSpinner");
         }
@@ -1097,9 +1092,8 @@ $(document).ready(function(){
         sel.find('.td-summa').each(function(){
             summa += parseFloat($(this).text());
         });
-        if($('.input-delivery').hasClass('active')){
-            summa += parseFloat($('.delivery-price').text());
-        }
+        var orderDetails = client.getOrderDetails(currentOrderId);
+        summa += orderDetails.deliveryCost;
         }catch(e){
             alert(e+" Функция countItogo");
         }
@@ -1386,7 +1380,6 @@ $(document).ready(function(){
     function InitAddToBasket(selector){
         try{
         selector.click(function(e){
-            alert('1');
             e.preventDefault();
             var errorPrepack = false;
             if (!globalUserAuth){
