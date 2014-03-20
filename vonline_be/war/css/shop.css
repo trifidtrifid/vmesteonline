@@ -288,7 +288,7 @@ th.next,
   margin-left: -120px;
 }
 .free-day-with-order {
-  background-color: #c4b855;
+  background-color: #eee827;
 }
 .free-day-with-order:after {
   content: "Свободный день с заказом";
@@ -574,6 +574,9 @@ span
   height: 250px;
   overflow-y: auto;
 }
+.modal.modal-with-prepack {
+  height: 265px;
+}
 .modal .close {
   outline: none;
 }
@@ -668,6 +671,7 @@ span
 .modal .modal-footer .prepack-item {
   display: inline-block;
   vertical-align: middle;
+  line-height: 16px;
 }
 .modal .modal-footer .prepack-item span {
   font-size: 12px;

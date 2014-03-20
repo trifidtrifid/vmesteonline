@@ -261,7 +261,7 @@ th.next
     content "Свободный день"
     margin-left -120px
 .free-day-with-order
-  background-color #C4B855
+  background-color #eee827
   &:after
     content "Свободный день с заказом"
     margin-left -150px
@@ -496,6 +496,8 @@ th.next
   //height 388px
   height 250px
   overflow-y auto
+  &.modal-with-prepack
+    height 265px
   .close
     outline none
   .product-slider
@@ -571,6 +573,7 @@ th.next
       .prepack-item
         display inline-block
         vertical-align middle
+        line-height 16px
         span
           font-size 12px
           margin-left 0
