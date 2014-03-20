@@ -13,9 +13,11 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
 import com.vmesteonline.be.AuthServiceImpl;
+import com.vmesteonline.be.FullAddressCatalogue;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.ShopServiceImpl;
+import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
@@ -162,15 +164,21 @@ public class Defaults {
 			AuthServiceImpl asi = new AuthServiceImpl("123");
 			asi.login(user1email, user1pass);
 
-			VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY), CITY), "г. Пушкин, Детскосельский бульвар");
 			PersistenceManager pm = PMF.getPm();
-
 			PostalAddress postalAddress;
 
 			try {
+	
+				VoCity vocity = pm.getExtent(VoCity.class).iterator().next();
+				VoStreet street = new VoStreet( vocity, "г. Пушкин, Детскосельский бульвар");
+				VoBuilding building = new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0"));
+				VoPostalAddress voPostalAddress = new VoPostalAddress(building, (byte) 1, (byte) 1, (byte) 1,
+						"Угол ул. Железнодоррожная и Детскосельского бульвара");
 				pm.makePersistent(street);
-				postalAddress = new VoPostalAddress(new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0")), (byte) 1, (byte) 1, (byte) 1,
-						"Угол ул. Железнодоррожная и Детскосельского бульвара").getPostalAddress();
+				pm.makePersistent(building);
+				pm.makePersistent(voPostalAddress);
+				
+				postalAddress = voPostalAddress.getPostalAddress(pm);
 
 				VoHelper.forgetAllPersistent(VoShop.class, pm);
 				VoHelper.forgetAllPersistent(VoProducer.class, pm);
