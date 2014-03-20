@@ -703,8 +703,8 @@ span
   margin-bottom: 10px;
 }
 .modal .product-fullDescr {
-  display: none;
-  max-height: 276px;
+  max-height: 320px;
+  overflow: auto;
   line-height: 22px;
 }
 .modal .prepack-list {

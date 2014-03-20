@@ -51,6 +51,8 @@ $(document).ready(function(){
         $('.modal-order-end').modal('hide');
     });
 
+
+
     if ($('.catalog-order li').length == 0){
         $('.additionally-order').addClass('hide');
     }
@@ -417,6 +419,7 @@ $(document).ready(function(){
                     InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),parseInt(p),1,productSelector.find('.spinner1').data('step'));
                 }
             }else{
+                if (packs[p] != 0){
                 // если другая линия
                 prepackHtml = '<div class="prepack-line no-init">' +
                     '<div class="prepack-item packs">'+
@@ -441,6 +444,7 @@ $(document).ready(function(){
                 currentPrepackLine.removeClass('no-init');
                 modalHeight += 53;
                 currentModal.height(modalHeight);
+                }
             }
             counter++;
         }
@@ -552,6 +556,7 @@ $(document).ready(function(){
             '</div>';
 
             var spinnerStep = productSelector.find('td>.ace-spinner .spinner1').data('step');
+            var fullDescrHeight;
             if (currentModal.find('.modal-body').length == 0){
                 // если еще не открывали popup
                 currentModal.append(popupHtml);
@@ -642,19 +647,19 @@ $(document).ready(function(){
                     $(this).closest('.modal').height(oldHeight + 53);
 
                 });
-                $('.full-descr').click(function(){
+
+                currentModal.find('.full-descr').click(function(){
                     var fullDescr = $('.product-fullDescr');
-                    var oldHeight,fullDescrHeight;
+                    var oldHeight;
                     oldHeight = $(this).closest('.modal').height();
                     if(fullDescr.css('display') == 'none'){
-                        fullDescr.show(function(){
-                            fullDescrHeight = $(this).closest('.modal').find('.product-fullDescr').height();
-                            $(this).closest('.modal').height(oldHeight + fullDescrHeight+10);
-                        });
+                        $(this).closest('.modal').height(oldHeight + fullDescrHeight+10);
+                        fullDescr.show(200);
                     }else{
-                        fullDescrHeight = $(this).closest('.modal').find('.product-fullDescr').height();
-                        $(this).closest('.modal').height(oldHeight - fullDescrHeight-10);
-                        fullDescr.hide();
+                        //fullDescrHeight = $(this).closest('.modal').find('.product-fullDescr').height();
+                        fullDescr.hide(200,function(){
+                            $(this).closest('.modal').height(oldHeight - fullDescrHeight-10);
+                        });
                     }
                 });
             }else{
@@ -668,6 +673,8 @@ $(document).ready(function(){
                 }
             }
             currentModal.modal();
+            fullDescrHeight = currentModal.find('.product-fullDescr').height();
+            currentModal.find('.product-fullDescr').hide();
 
             var carousel = currentModal.find('.carousel');
             var slider = currentModal.find('.slider');
