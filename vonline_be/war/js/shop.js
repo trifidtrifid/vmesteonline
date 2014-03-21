@@ -420,7 +420,7 @@ $(document).ready(function(){
             var catalogOrder = $('.catalog-order');
 
             catalogOrderLi.each(function(){
-                InitDeleteProduct($(this).find('.delete-product'));
+                //InitDeleteProduct($(this).find('.delete-product'));
                 InitProductDetailPopup($(this).find('.product-link'));
 
                 var productId = $(this).data('productid');
