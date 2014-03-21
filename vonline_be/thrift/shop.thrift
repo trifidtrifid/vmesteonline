@@ -249,6 +249,7 @@ service ShopService {
 	i64 createOrder(1:i32 date, 2:string comment, 3:PriceType priceType) throws (1:error.InvalidOperation exc),
 	void updateOrder( 1:i64 orderId, 2:i32 date, 3:string comment) throws (1:error.InvalidOperation exc),
 	i64 cancelOrder() throws (1:error.InvalidOperation exc),
+	i64 deleteOrder() throws (1:error.InvalidOperation exc),
 	i64 confirmOrder() throws (1:error.InvalidOperation exc),
 	/**
 	* Method adds all orderLines from order with id set in parameter to current order. 

@@ -20,16 +20,20 @@ public class VoSession {
 
 		// this.id = KeyFactory.createKey(VoSession.class.getSimpleName(), sessId);
 		id = sessId;
+		setUser(user);
+		curAttrMap = new HashMap<Integer, Long>();
+	}
+
+	public void setUser(VoUser user) {
 		if (null != user) {
-			this.name = user.getName();
-			this.lastName = user.getLastName();
-			this.userId = user.getId();
+			setName(user.getName());
+			setLastName(user.getLastName());
+			setUserId(user.getId());
 		} else {
-			this.userId = 0L;
-			this.name = "Гость";
-			this.lastName = "";
+			setName("");
+			setLastName("Гость");
+			setName("");
 		}
-		this.curAttrMap = new HashMap<Integer, Long>();
 	}
 
 	public void setId(String s) {
@@ -99,7 +103,7 @@ public class VoSession {
 		this.lastActivityTs = lastActivityTs;
 	}
 
-	public Long getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 
@@ -113,6 +117,7 @@ public class VoSession {
 	}
 
 	public void setSessionAttribute(int key, long value) {
+		if(null==curAttrMap) curAttrMap = new HashMap<Integer, Long>();
 		curAttrMap.put(key, value);
 	}
 

@@ -177,14 +177,14 @@ public class ShopServiceImplTest {
 			// set current shop
 			si.getShop(shopId);
 
-			ProductCategory rootCategory = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
+			ProductCategory rootCategory = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet,0);
 			Long rootCatId = si.registerProductCategory(rootCategory, shopId);
 
-			ProductCategory secCategory = new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
+			ProductCategory secCategory = new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set,0);
 			Long SecCatId = si.registerProductCategory(secCategory, shopId);
 
-			ProductCategory thirdCategory = new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
-			ProductCategory third2Category = new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0);
+			ProductCategory thirdCategory = new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set,0);
+			ProductCategory third2Category = new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set,0);
 
 			si.registerProductCategory(thirdCategory, shopId);
 			si.registerProductCategory(third2Category, shopId);
@@ -265,12 +265,10 @@ public class ShopServiceImplTest {
 			long prodId = si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
 			long prod2Id = si.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
 
-			Long rootCatId = si.registerProductCategory(new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0), shopId);
-			Long SecCatId = si.registerProductCategory(new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set, 0),
-					shopId);
-			Long THirdCatId = si.registerProductCategory(new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set, 0),
-					shopId);
-			Long THird2CatId = si.registerProductCategory(new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0),
+			Long rootCatId = si.registerProductCategory(new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet,0), shopId);
+			Long SecCatId = si.registerProductCategory(new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set,0), shopId);
+			Long THirdCatId = si.registerProductCategory(new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set,0), shopId);
+			Long THird2CatId = si.registerProductCategory(new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set,0),
 					shopId);
 
 			ArrayList<FullProductInfo> productsList = new ArrayList<FullProductInfo>();
@@ -360,10 +358,10 @@ public class ShopServiceImplTest {
 
 			// create categories
 			List<ProductCategory> categories = new Vector<ProductCategory>();
-			ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
-			ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
-			ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
-			ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0);
+			ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet,0);
+			ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set,0);
+			ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set,0);
+			ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set,0);
 
 			categories.add(rootCat);
 			categories.add(l2Cat);
@@ -646,10 +644,10 @@ public class ShopServiceImplTest {
 
 		// create categories
 		List<ProductCategory> categories = new Vector<ProductCategory>();
-		ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
-		ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
-		ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
-		ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0);
+		ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet,0);
+		ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set,0);
+		ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set,0);
+		ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set,0);
 
 		categories.add(rootCat);
 		categories.add(l2Cat);

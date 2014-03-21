@@ -21,10 +21,24 @@
         pageContext.setAttribute("auth",false);
     }
 
+
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
     Shop shop = shopService.getShop(ArrayShops.get(0).id);
+    pageContext.setAttribute("logoURL", shop.logoURL);
+
+    OrderDetails currentOrderDetails;
+    try{
+        Order order = shopService.getOrder(0);
+        currentOrderDetails = shopService.getOrderDetails(order.id);
+        List<OrderLine> orderLines = currentOrderDetails.odrerLines;
+        pageContext.setAttribute("orderLines", orderLines);
+        //out.print(order.id);
+    } catch(InvalidOperation ioe){
+        currentOrderDetails = null;
+        //out.print('2');
+    }
 
     Cookie cookies [] = request.getCookies();
     String cookieName = "catid";
@@ -57,6 +71,7 @@
 
     //String productURL = new String( productsListPart.products.get(0).imageURL);
     //out.print(ArrayProductCategory.get(1).id);
+
 %>
 
 <!DOCTYPE html>
@@ -94,9 +109,11 @@
 
 			<div class="navbar-container" id="navbar-container">
 				<div class="navbar-header pull-left">
-					<a href="#" class="navbar-brand"> <small> <i
-							class="icon-leaf"></i> Ace Admin
-					</small>
+					<a href="#" class="navbar-brand">
+                        <%--<small>
+                            <i class="icon-leaf"></i> Ace Admin
+					    </small>--%>
+                            <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
 					<!-- /.brand -->
 				</div>
@@ -148,42 +165,6 @@
 		</div>
 		<div class="main-container shop" id="main-container">
 			<div class="main-container-inner">
-				<%--<aside class="sidebar" id="sidebar">
-                <script type="text/javascript">
-                    try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
-                </script>
-                <div class="show-left">
-                    Меню
-                </div>
-                <ul class="nav nav-list">
-                    <li>
-                        <a href="index.html">
-                            <span class="menu-text"> Главная </span>
-                        </a>
-                    </li>
-                    <li class="active">
-                        <a href="index.html">
-                            <span class="menu-text"> Товары/Заказы </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.html">
-                            <span class="menu-text"> Новости </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.html">
-                            <span class="menu-text"> Форум </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.html">
-                            <span class="menu-text"> Настройки </span>
-                        </a>
-                    </li>
-
-                </ul><!-- /.nav-list -->
-            </aside>--%>
 
             <aside class="sidebar shop-right">
                 <div class="show-right">
@@ -203,8 +184,24 @@
                 </div>
 
                 <ul class="catalog-order">
-                    <%--<c:forEach var="orderLine" items="${orderLines}">
-                        <li>
+                    <c:forEach var="orderLine" items="${orderLines}">
+                        <li data-productid="'+ currentProduct.id +'">
+                            <table>
+                                <tr>
+                                    <td class="td-price product-price">${orderLine.product.price}</td>
+                                    <td><input type="text" data-step="'+ productDetails.minClientPack +'" class="input-mini spinner1 no-init" /><span class="unit-name">${orderLine.product.unitName}</span></td>
+                                    <td class="td-summa">${orderLine.price*orderLine.quantity}</td>
+                                    <td><a href="#" class="delete-product no-init">×</a></td>
+                                </tr>
+                            </table>
+                            <a href="#" class="product-link no-init">
+                                <span><img src="${orderLine.product.imageURL}" alt="картинка"/></span>
+                                <div class="product-right-descr"> ${orderLine.product.name}</div>
+                            </a>
+                            <div class="modal">
+                            </div>
+                        </li>
+<%--                        <li>
                             <img src="${orderLine.product.imageURL}" alt="картинка"/>
                             <div class="product-right-descr">
                                 ${orderLine.product.name}  <br>
@@ -226,8 +223,8 @@
                                     <td><a href="#" class="delete-product">Удалить</a></td>
                                 </tr>
                             </table>
-                        </li>
-                    </c:forEach>--%>
+                        </li>--%>
+                    </c:forEach>
 						<%--<li>
                         <img src="i/shop/1.jpg" alt="картинка"/>
                         <div class="product-right-descr">
@@ -297,7 +294,7 @@
                 </ul>
                 <div class="additionally-order">
                     <div class="itogo-right">
-                        Товаров на сумму: <span>333</span> руб.
+                        Товаров на сумму: <span></span> руб.
                     </div>
                     <div class="delivery-right">
                         <h3>Доставка</h3>
@@ -310,10 +307,11 @@
                         <div class="radio">
                             <label>
                                 <input name="form-field-radio" type="radio" class="ace courier-delivery">
-                                <span class="lbl"> Курьер</span>
+                                <span class="lbl"> Курьер<%--(<span class="delivery-price">500</span> руб)--%></span>
                             </label>
                         </div>
                         <div class="input-delivery">
+                            <span class="lbl">Стоимость доставки : <span class="delivery-cost"></span> руб</span>
                             <input id="phone-delivery" type="tel" placeholder="Номер телефона"/>
                             <div class="alert-delivery alert-delivery-phone">Введите номер телефона !</div>
                             <span class="lbl"> Адрес доставки</span>
@@ -326,7 +324,7 @@
                         <div class="alert-delivery alert-delivery-addr">Введите адрес доставки !</div>
                     </div>
                     <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
-                    <button class="btn btn-sm btn-grey no-border">Отменить</button>
+                    <button class="btn btn-sm btn-grey no-border btn-cancel">Отменить</button>
                     <button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>
                 </div>
                 <div class="empty-basket">
@@ -350,14 +348,18 @@
                         <ul>
                             <c:if test="${innerCategoryFlag}">
                                 <li>
-                                    <a href="#" class="fa fa-reply-all"></a>
-                                    <div>Назад</div>
+                                    <a href="#">
+                                    <i class="fa fa-reply-all"></i>
+                                    <span>Назад</span>
+                                    </a>
                                 </li>
                             </c:if>
                             <c:forEach var="productCategory" items="${productCategories}">
                                 <li data-parentid="${productCategory.parentId}" data-catid="${productCategory.id}">
-                                    <a href="#" class="fa fa-beer"></a>
-                                    <div>${productCategory.name}</div>
+                                    <a href="#">
+                                        <i class="fa fa-beer"></i>
+                                        <span>${productCategory.name}</span>
+                                    </a>
                                 </li>
                             </c:forEach>
                         </ul>
@@ -528,7 +530,9 @@
 	<script src="js/ace-extra.min.js"></script>
 	<script src="js/ace-elements.min.js"></script>
 	<!-- собственные скрипты  -->
+<%--
 	<script src="js/login.js"></script>
+--%>
 	<script src="js/common.js"></script>
 	<script src="js/shop.js"></script>
 

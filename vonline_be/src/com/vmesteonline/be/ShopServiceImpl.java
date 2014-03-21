@@ -263,7 +263,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 				if (vpc != null) {
 					pc.setId(vpc.getId());
-					pc.setParentId(vppc.getId());
+					pc.setParentId( null==vppc ? 0 : vppc.getId());
 					vpc.update(pc, 0, pm);
 				} else {
 					logger.debug("Use parent category " + pc.getParentId());
@@ -700,6 +700,23 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
+//======================================================================================================================
+	@Override
+	public long deleteOrder() throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoOrder currentOrder = getCurrentOrder(pm);
+			if( null!=currentOrder.getOrderLines()  && 0!=currentOrder.getOrderLines().size()){
+				throw new InvalidOperation( VoError.IncorrectParametrs, "Only an ampry order could be deleted!");
+			}
+			// unset current order
+			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0, pm);
+			pm.deletePersistent(currentOrder);
+			return 0;
+		} finally {
+			pm.close();
+		}
+	}
 	// ======================================================================================================================
 	@Override
 	public long confirmOrder() throws InvalidOperation {

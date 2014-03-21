@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
@@ -16,15 +17,22 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
 import com.vmesteonline.be.AuthServiceImpl;
+import com.vmesteonline.be.FullAddressCatalogue;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.ShopServiceImpl;
+import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
+import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoRubric;
+import com.vmesteonline.be.jdo2.VoTopic;
+import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.jdo2.VoUserTopic;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoCity;
 import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
@@ -88,6 +96,11 @@ public class Defaults {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
+			clearRubrics(pm);
+			clearGroups(pm);		
+			clearLocations(pm);
+			clearUsers(pm);
+			
 			initializeRubrics(pm);
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations();
@@ -104,23 +117,69 @@ public class Defaults {
 		return true;
 	}
 
+//======================================================================================================================
+	private static void deletePersistentAll(PersistenceManager pm, Class pc){
+		Extent ext = pm.getExtent(pc);
+		for (Object i : ext) {
+			try {
+				pm.deletePersistent(i);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	//======================================================================================================================
+
+	private static void clearUsers(PersistenceManager pm) {
+			deletePersistentAll(pm, VoUserTopic.class);
+			deletePersistentAll(pm, VoUserGroup.class);
+			deletePersistentAll(pm, VoTopic.class);
+			deletePersistentAll(pm, VoMessage.class);
+			deletePersistentAll(pm, VoUser.class);
+	}
+//======================================================================================================================
+
+	private static void clearLocations(PersistenceManager pm) {
+			deletePersistentAll(pm,VoPostalAddress.class);
+			deletePersistentAll(pm,VoBuilding.class);
+			deletePersistentAll(pm,VoStreet.class);
+			deletePersistentAll(pm,VoCity.class);
+			deletePersistentAll(pm,VoCountry.class);
+	}
+	//======================================================================================================================
+
+	private static void clearGroups(PersistenceManager pm) {
+		deletePersistentAll(pm,VoGroup.class);
+		deletePersistentAll(pm,VoUserGroup.class);	
+	}
+//======================================================================================================================
+	private static void clearRubrics(PersistenceManager pm) {
+		deletePersistentAll(pm, VoRubric.class);
+	}
+
 	// ======================================================================================================================
 	public static void initializeShop() {
 
 		try {
 			ShopServiceImpl ssi = new ShopServiceImpl("123");
-			AuthServiceImpl asi = new AuthServiceImpl("123");
-			asi.login(user1email, user1pass);
+			//AuthServiceImpl asi = new AuthServiceImpl("123");
+			//asi.login(user1email, user1pass);
 
-			VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY), CITY), "г. Пушкин, Детскосельский бульвар");
 			PersistenceManager pm = PMF.getPm();
-
 			PostalAddress postalAddress;
 
 			try {
+	
+				VoCity vocity = pm.getExtent(VoCity.class).iterator().next();
+				VoStreet street = new VoStreet( vocity, "г. Пушкин, Детскосельский бульвар");
+				VoBuilding building = new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0"));
+				VoPostalAddress voPostalAddress = new VoPostalAddress(building, (byte) 1, (byte) 1, (byte) 1,
+						"Угол ул. Железнодоррожная и Детскосельского бульвара");
 				pm.makePersistent(street);
-				postalAddress = new VoPostalAddress(new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0")), (byte) 1, (byte) 1, (byte) 1,
-						"Угол ул. Железнодоррожная и Детскосельского бульвара").getPostalAddress();
+				pm.makePersistent(building);
+				pm.makePersistent(voPostalAddress);
+				
+				postalAddress = voPostalAddress.getPostalAddress(pm);
 
 				VoHelper.forgetAllPersistent(VoShop.class, pm);
 				VoHelper.forgetAllPersistent(VoProducer.class, pm);

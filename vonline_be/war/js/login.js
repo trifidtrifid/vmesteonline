@@ -1,3 +1,4 @@
+
 $(document).ready(function(){
     var transport = new Thrift.Transport("/thrift/AuthService");
     var protocol = new Thrift.Protocol(transport);

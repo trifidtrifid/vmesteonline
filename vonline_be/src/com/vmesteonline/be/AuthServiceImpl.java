@@ -33,8 +33,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		try {
 
 			VoSession session = getSession(httpSessId, pm);
-
-			if (0 == session.getUserId())
+			if (null == session || 0 == session.getUserId())
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
 		} finally {
 			pm.close();
@@ -72,14 +71,16 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			if (u.getPassword().equals(password)) {
 
 				logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
-
-				VoSession sess = new VoSession(sessionStorage.getId(), u);
-
-				//sess.setLatitude(u.getLatitude());
-				//sess.setLongitude(u.getLongitude());
-				pm.makePersistent(sess);
-				logger.info("successfully login");
-
+				VoSession currentSession = getCurrentSession();
+				if(null==currentSession) 
+					currentSession = new VoSession(sessionStorage.getId(), u);
+				else 
+					currentSession.setUser(u);
+				/*
+				 * sess.setLatitude(u.getLatitude());
+				 * sess.setLongitude(u.getLongitude());
+				 */
+				pm.makePersistent(currentSession);
 				return true;
 			} else
 				logger.info("incorrect password " + email + " pass " + password);

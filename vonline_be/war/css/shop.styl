@@ -38,6 +38,12 @@ transform()
   max-width 1240px
   min-height 100%
 
+.navbar
+  a.navbar-brand
+    padding 0
+  img
+    height 45px
+
 .ace-nav>li
     a
       padding 11px 12px 0 12px
@@ -58,6 +64,9 @@ transform()
   line-height inherit
   padding 0 8px
   font-size 16px
+
+.user-menu li
+  text-align left
 
 .nav-list > li > a
   padding 8px 10px 10px 16px
@@ -88,13 +97,14 @@ transform()
   border-left 1px solid #ccc
 
 .main-content
-  margin-right 250px
+  margin-right 380px
   margin-left 0
   padding 10px
 
 .shop-right
   float right
-  width 250px
+  width 380px
+  //width 30%
   border 0
   border-left 1px solid #ccc
   padding-bottom 20px
@@ -116,46 +126,61 @@ transform()
     .go-to-orders
       display inline-block
       vertical-align middle
-      margin-right 4px
+      margin-right 10px
   nav
     display inline-block
     vertical-align middle
+    width 70%
+    .input-group
     a
       display block
   .catalog-order
     max-height 320px
     overflow-y auto
     margin-left 0
+    border-top 1px solid #ccc
     li
-      padding 8px 0 8px 5px
+      padding 8px 5px 5px 5px
       display block
       background #f9f9f9
+      overflow auto
       list-style none
       font-size 12px
       border-bottom 1px solid #ccc
+      line-height 32px;
       table
-        width 100%
+        width 180px
+        float right
         text-align center
+        line-height 16px
         thead td
           background #f2f2f2
         tr
           td
       .product-link
+        display inline-block
+        vertical-align middle
+        line-height 16px
+        max-width 180px
         span
-          float left
-          width 40px
-          text-align center
-          img
-            max-width 40px
-            max-height 40px
+          display none
+        .product-right-descr
+          display inline-block
+          vertical-align middle
       .ace-spinner
         display inline-block
         vertical-align middle
       .product-right-descr
-        margin-left 45px
-        margin-bottom 10px
+        margin-left 10px
+        margin-bottom 5px
         padding-right 20px
+        font-size 16px
         line-height 16px
+      .delete-product
+        font-size 24px
+        color #ff0000
+        &:hover
+          text-decoration none
       .flexslider
         li
           padding 0
@@ -174,15 +199,16 @@ transform()
       font-size 16px
     .input-delivery
       display none
+      padding-right 10px
       .lbl
         font-size 16px
         display block
         margin-bottom 5px
       input
-        width 230px
+        width 100%
         margin-bottom 10px
         &.short
-          width 110px
+          width 175px
           display inline-block
           &.first
             margin-right 5px
@@ -193,18 +219,18 @@ transform()
       display none
   textarea
     margin 10px
-    width 230px
+    width 358px
     height 80px
     font-family Tahoma,Arial
     font-size 14px
     color rgb(133, 133, 133)
   .btn-grey
-    margin-left 30px
-    margin-right 20px
+    margin-left 190px
+    margin-right 10px
 
 .datepicker
   padding 0 2px 5px 2px
-  width 250px
+  width 350px
   z-index 11 !important
   margin-left -84px
   table
@@ -234,6 +260,11 @@ th.next
   &:after
     content "Свободный день"
     margin-left -120px
+.free-day-with-order
+  background-color #eee827
+  &:after
+    content "Свободный день с заказом"
+    margin-left -150px
 .special-day
   background-color #5bc0de
   &:after
@@ -246,6 +277,7 @@ th.next
     margin-left -60px
 .order-day:after
 .free-day:after
+.free-day-with-order:after
 .special-day:after
 .closed-day:after
   position absolute
@@ -256,6 +288,7 @@ th.next
   display none
 .order-day:hover:after
 .free-day:hover:after
+.free-day-with-order:hover:after
 .special-day:hover:after
 .closed-day:hover:after
   display block
@@ -289,20 +322,19 @@ th.next
 
 .shop-menu
   overflow auto
-  margin-bottom 10px
+  min-height 55px
   ul
     margin-left 0
     li
       list-style none
       float left
+      margin-bottom 10px
+      display inline-block
       margin-left 5px
-      width 80px
+      width 110px
       text-align center
       line-height 14px
       font-size 11px
-      &:first-child
-        margin-left 0
-        width 50px
       &.active
         a
           color #2a6496
@@ -311,6 +343,9 @@ th.next
         font-size 24px
         &:hover
           text-decoration none
+        span
+          font-size 14px
+          display block
 
 .catalog
   table
@@ -370,6 +405,9 @@ th.next
     .order-products
       margin 10px 0 0 0
       display none
+    .order-edit
+    .order-confirm
+      font-size 12px
   .btn-primary
     margin 2px
     //float right
@@ -438,7 +476,7 @@ th.next
 .ace-spinner
   width 50px !important
   .input-mini
-    width 30px
+    width 40px
     padding 5px 2px
   .spinner-down:hover
   .spinner-up:hover
@@ -454,9 +492,12 @@ th.next
   left 50%
   margin-left -330px
   background #fff
-  top 20%
-  height 388px
+  top 10%
+  //height 388px
+  height 250px
   overflow-y auto
+  &.modal-with-prepack
+    height 265px
   .close
     outline none
   .product-slider
@@ -472,6 +513,7 @@ th.next
         background-position 100% 0
       .slides li
         text-align center
+        line-height 180px
       img
         width auto
         float none
@@ -495,11 +537,12 @@ th.next
     h3
       margin-top 0
     .product-text
-      height 270px
+      height 90px
       overflow auto
     .product-options
-      font-size 10px
-      color #ccc
+      font-size 12px
+      line-height 18px
+      color #656565
       margin-bottom 10px
     .modal-body
       padding 10px
@@ -507,7 +550,7 @@ th.next
     .modal-footer
       position absolute
       height 60px
-      top 305px
+      top 125px
       right 10px
       width 430px
       background #fff
@@ -516,6 +559,9 @@ th.next
       padding-top 15px
       .fa-shopping-cart
         float right
+        font-size 24px
+        &:hover
+          text-decoration none
       span
       .ace-spinner
       .fa
@@ -530,6 +576,7 @@ th.next
       .prepack-item
         display inline-block
         vertical-align middle
+        line-height 16px
         span
           font-size 12px
           margin-left 0
@@ -537,6 +584,7 @@ th.next
           font-size 20px
           position relative
           left -8px
+          top -8px
         .fa-plus:hover
           text-decoration none
       &.with-prepack
@@ -550,6 +598,14 @@ th.next
           span
             display block
             text-align center
+      .full-descr
+        margin-top 15px
+        margin-bottom 10px
+    .product-fullDescr
+      //display none
+      max-height 320px;
+      overflow auto
+      line-height 22px
     .prepack-list
       float right
       margin-right 129px
@@ -562,10 +618,21 @@ th.next
         top: -10px
         &:hover
           opacity 1
+  .error-prepack
+    display none
+    color #ff0000
+    position absolute
+    bottom -50px
+    right 5px
+    width 119px
+    height 50px
+    font-size 10px
+    line-height 10px
 .modal-order-end
-  max-height 312px
+  height 360px
   .modal-body-list
-    max-height 148px
+    max-height 200px
+    display block
     overflow auto
     width 100%
     tbody
@@ -588,7 +655,7 @@ th.next
     width auto
     padding-right 10px
     font-size 20px
-    top 230px
+    top 280px
     .btn
       float right
       margin 5px
@@ -599,6 +666,11 @@ th.next
       span
         margin 0
         vertical-align baseline
+  .delivery-in-modal
+    position absolute
+    bottom 50px
+    left 10px
+    font-size 16px
 
 .sidebar#sidebar
   height 100%
