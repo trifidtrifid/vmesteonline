@@ -653,6 +653,10 @@ span
 }
 .modal .modal-footer .fa-shopping-cart {
   float: right;
+  font-size: 24px;
+}
+.modal .modal-footer .fa-shopping-cart:hover {
+  text-decoration: none;
 }
 .modal .modal-footer span,
 .modal .modal-footer .ace-spinner,
@@ -781,6 +785,12 @@ span
 .modal-order-end .modal-footer .modal-itogo span {
   margin: 0;
   vertical-align: baseline;
+}
+.modal-order-end .delivery-in-modal {
+  position: absolute;
+  bottom: 50px;
+  left: 10px;
+  font-size: 16px;
 }
 .sidebar#sidebar {
   height: 100%;

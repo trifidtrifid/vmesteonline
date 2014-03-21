@@ -21,11 +21,24 @@
         pageContext.setAttribute("auth",false);
     }
 
+
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
     Shop shop = shopService.getShop(ArrayShops.get(0).id);
     pageContext.setAttribute("logoURL", shop.logoURL);
+
+    OrderDetails currentOrderDetails;
+    try{
+        Order order = shopService.getOrder(0);
+        currentOrderDetails = shopService.getOrderDetails(order.id);
+        List<OrderLine> orderLines = currentOrderDetails.odrerLines;
+        pageContext.setAttribute("orderLines", orderLines);
+        //out.print(order.id);
+    } catch(InvalidOperation ioe){
+        currentOrderDetails = null;
+        //out.print('2');
+    }
 
     Cookie cookies [] = request.getCookies();
     String cookieName = "catid";
@@ -152,42 +165,6 @@
 		</div>
 		<div class="main-container shop" id="main-container">
 			<div class="main-container-inner">
-				<%--<aside class="sidebar" id="sidebar">
-                <script type="text/javascript">
-                    try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
-                </script>
-                <div class="show-left">
-                    Меню
-                </div>
-                <ul class="nav nav-list">
-                    <li>
-                        <a href="index.html">
-                            <span class="menu-text"> Главная </span>
-                        </a>
-                    </li>
-                    <li class="active">
-                        <a href="index.html">
-                            <span class="menu-text"> Товары/Заказы </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.html">
-                            <span class="menu-text"> Новости </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.html">
-                            <span class="menu-text"> Форум </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.html">
-                            <span class="menu-text"> Настройки </span>
-                        </a>
-                    </li>
-
-                </ul><!-- /.nav-list -->
-            </aside>--%>
 
             <aside class="sidebar shop-right">
                 <div class="show-right">
@@ -207,8 +184,24 @@
                 </div>
 
                 <ul class="catalog-order">
-                    <%--<c:forEach var="orderLine" items="${orderLines}">
-                        <li>
+                    <c:forEach var="orderLine" items="${orderLines}">
+                        <li data-productid="'+ currentProduct.id +'">
+                            <table>
+                                <tr>
+                                    <td class="td-price product-price">${orderLine.product.price}</td>
+                                    <td><input type="text" data-step="'+ productDetails.minClientPack +'" class="input-mini spinner1 no-init" /><span class="unit-name">${orderLine.product.unitName}</span></td>
+                                    <td class="td-summa">${orderLine.price*orderLine.quantity}</td>
+                                    <td><a href="#" class="delete-product no-init">×</a></td>
+                                </tr>
+                            </table>
+                            <a href="#" class="product-link no-init">
+                                <span><img src="${orderLine.product.imageURL}" alt="картинка"/></span>
+                                <div class="product-right-descr"> ${orderLine.product.name}</div>
+                            </a>
+                            <div class="modal">
+                            </div>
+                        </li>
+<%--                        <li>
                             <img src="${orderLine.product.imageURL}" alt="картинка"/>
                             <div class="product-right-descr">
                                 ${orderLine.product.name}  <br>
@@ -230,8 +223,8 @@
                                     <td><a href="#" class="delete-product">Удалить</a></td>
                                 </tr>
                             </table>
-                        </li>
-                    </c:forEach>--%>
+                        </li>--%>
+                    </c:forEach>
 						<%--<li>
                         <img src="i/shop/1.jpg" alt="картинка"/>
                         <div class="product-right-descr">

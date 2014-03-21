@@ -412,10 +412,10 @@ $(document).ready(function(){
                 // если самая первая линия
                 if(!isFirstModal){
                     currentModal.find('.packs .ace-spinner').spinner('value',packs[p]);
-                    currentModal.find('.prepack-item:not(".packs") .ace-spinner').spinner('value',parseInt(p));
+                    currentModal.find('.prepack-item:not(".packs") .ace-spinner').spinner('value',p);
                 }else{
                     InitSpinner(currentModal.find('.packs .spinner1'),packs[p],1);
-                    InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),parseInt(p),1,productSelector.find('.spinner1').data('step'));
+                    InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),p,1,productSelector.find('.spinner1').data('step'));
                 }
             }else{
                 if (packs[p] != 0){
@@ -436,7 +436,7 @@ $(document).ready(function(){
                     '</div>';
                 currentModal.find('.prepack-list').append(prepackHtml);
                 InitSpinner(currentModal.find('.no-init .packs .spinner1'),packs[p],1);
-                InitSpinner(currentModal.find('.no-init .prepack-item:not(".packs") .spinner1'),parseInt(p),1,productSelector.find('td>.ace-spinner .spinner1').data('step'));
+                InitSpinner(currentModal.find('.no-init .prepack-item:not(".packs") .spinner1'),p,1,productSelector.find('td>.ace-spinner .spinner1').data('step'));
                 var currentPrepackLine = currentModal.find('.prepack-line.no-init');
                 initRemovePrepackLine(currentPrepackLine,productId,productSelector);
 
@@ -540,12 +540,9 @@ $(document).ready(function(){
                             '<span>'+ product.unitName +'</span>'+
                             '</div>';
                     }
-            popupHtml += "<div class='error-info error-prepack'></div>";
+            popupHtml += "<div class='error-info error-prepack'></div>"+
+                '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>';
 
-            if ($(this).closest('tr').length > 0 ){
-                // если этот popup не в корзине, то добавляем возможность добавить в корзину
-                popupHtml += '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>';
-            }
 
                 popupHtml += '<div class="prepack-list"></div><br>'+
                     '<a href="#" class="btn btn-primary btn-sm no-border full-descr">Подробное описание</a>'+
@@ -646,7 +643,6 @@ $(document).ready(function(){
                     $(this).closest('.modal').height(oldHeight + 53);
 
                 });
-
                 currentModal.find('.full-descr').click(function(){
                     var fullDescr = $('.product-fullDescr');
                     var oldHeight;
@@ -661,6 +657,12 @@ $(document).ready(function(){
                         });
                     }
                 });
+                if($(this).closest('.catalog-order').length > 0){
+                    //если это popup для корзины
+                    currentModal.find('.fa-shopping-cart').click(function(){
+                       currentModal.modal('hide');
+                    });
+                }
             }else{
                 //если popup уже открывали
                 if ($(this).closest('tr').length == 0 || $(this).closest('.order-products').length > 0){
@@ -733,7 +735,7 @@ $(document).ready(function(){
             var i = 0;
             var spinnerValue = [];
             orderList.each(function(){
-                spinnerValue[i++] = $(this).find('.ace-spinner').spinner('value');
+                spinnerValue[i++] = $(this).find('td>.ace-spinner').spinner('value');
                 var productDetails = client.getProductDetails($(this).data('productid'));
                 var disableClass;
                 (productDetails.prepackRequired)? disableClass='class="prepack-disable"': disableClass='';
@@ -748,12 +750,20 @@ $(document).ready(function(){
                     '<td '+ disableClass +'>'+
                     '<input type="text" data-step="'+ $(this).find('td .spinner1').data('step') +'" class="input-mini spinner1 no-init" />'+
                     '</td>'+
-                    '<td>'+ 'ед' +'</td>'+
+                    '<td>'+ $(this).find('td .unit-name').text() +'</td>'+
                     '<td class="td-summa">'+ $(this).find('.td-summa').text()+
                     '</td>'+
                     '</tr>';
             });
             popup.find('.modal-body-list tbody').html('').append(productsHtmlModal);
+            var inputDelivery = $('.input-delivery');
+
+            if(inputDelivery.hasClass('active')){
+                popup.find('.modal-footer').before('<div class="delivery-in-modal">Стоимость доставки: <span class="delivery-cost">'+ inputDelivery.find('.delivery-cost').text() +'</span> руб</div>');
+            }else{
+                popup.find('.delivery-in-modal').hide();
+            }
+
             $('.modal-itogo span').text($('.itogo-right span').text());
 
             var spinnerNoInit = popup.find('.spinner1.no-init');
@@ -1461,7 +1471,7 @@ $(document).ready(function(){
                         for(var p1 in packs){
                             oldPacksQnty = 0;
                             for (var p2 in orderPacks){
-                                if(parseInt(p1) == parseInt(p2)){
+                                if(parseFloat(p1).toFixed(1) == parseFloat(p2).toFixed(1)){
                                     // если в корзине товар, где prepackLine с таким же кол-м товара (то оставляем эту линию, но увеличиваем соответственно кол-во упаковок)
                                     oldPacksQnty = orderPacks[p2];
                                     newPacksQnty = oldPacksQnty + packs[p1];
@@ -1555,7 +1565,7 @@ $(document).ready(function(){
                     price : currentProductSelector.find('.product-price').text(),
                     unitName : currentProductSelector.find('.unit-name').text(),
                     prepackLine : currentProductSelector.find('.prepack-line'),
-                    qnty : parseInt(spinnerValue),
+                    qnty : spinnerValue,
                     packVal : 1,
                     quantVal :  currentProductSelector.find('td .spinner1').data('step')
                     //btnSelector: $(this)
@@ -1568,7 +1578,7 @@ $(document).ready(function(){
                     if (currentProductSelector.find('.modal-body').length > 0){
                         // если пользватель открывал модальное окно с инфой о продукте
                         var packVal = currentProductSelector.find('.packs:eq(0) .ace-spinner').spinner('value');
-                        var quantVal = parseInt(currentProductSelector.find('.prepack-item:not(".packs") .ace-spinner').eq(0).spinner('value'));
+                        var quantVal = currentProductSelector.find('.prepack-item:not(".packs") .ace-spinner').eq(0).spinner('value');
                         currentProduct.packVal = packVal;
                         currentProduct.quantVal = quantVal;
                         currentProduct.qnty = packVal*quantVal;
@@ -1576,10 +1586,10 @@ $(document).ready(function(){
                       if(currentProduct.prepackLine.length != 0){
                           // если линий более чем одна
                           var oldQuantVal = 0;
-                          var firstQuantVal = parseInt($('.modal-footer.with-prepack>.prepack-item:not(".packs") .ace-spinner').spinner('value'));
+                          var firstQuantVal = $('.modal-footer.with-prepack>.prepack-item:not(".packs") .ace-spinner').spinner('value');
                           currentProduct.prepackLine.each(function(){
                               packVal = $(this).find('.packs .ace-spinner').spinner('value');
-                              quantVal = parseInt($(this).find('.prepack-item:not(".packs") .ace-spinner').spinner('value'));
+                              quantVal = $(this).find('.prepack-item:not(".packs") .ace-spinner').spinner('value');
                               if (quantVal == oldQuantVal || quantVal == firstQuantVal){
                                   currentProductSelector.find('.error-prepack').text('Товар не возможно добавить: вы создали две линни с одинаковым количеством продукта').show();
                                   errorPrepack = true;

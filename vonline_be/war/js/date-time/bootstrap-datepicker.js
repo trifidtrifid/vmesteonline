@@ -200,7 +200,7 @@
                 for (p in packs){
                     console.log(p+" "+packs[p]);
                 }
-                client.setOrderLine(currentProduct.id,parseInt(spinnerValue),'sdf',packs);
+                client.setOrderLine(currentProduct.id,spinnerValue,'sdf',packs);
                 AddSingleProductToBasket(currentProduct,spinnerValue,currentProduct.unitName);
             }
             AdditionallyOrderToggle();
