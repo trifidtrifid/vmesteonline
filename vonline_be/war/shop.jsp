@@ -185,11 +185,11 @@
 
                 <ul class="catalog-order">
                     <c:forEach var="orderLine" items="${orderLines}">
-                        <li data-productid="'+ currentProduct.id +'">
+                        <li data-productid="${orderLine.product.id}">
                             <table>
                                 <tr>
                                     <td class="td-price product-price">${orderLine.product.price}</td>
-                                    <td><input type="text" data-step="'+ productDetails.minClientPack +'" class="input-mini spinner1 no-init" /><span class="unit-name">${orderLine.product.unitName}</span></td>
+                                    <td><input type="text" class="input-mini spinner1" /><span class="unit-name">${orderLine.product.unitName}</span></td>
                                     <td class="td-summa">${orderLine.price*orderLine.quantity}</td>
                                     <td><a href="#" class="delete-product no-init">×</a></td>
                                 </tr>
@@ -201,96 +201,7 @@
                             <div class="modal">
                             </div>
                         </li>
-<%--                        <li>
-                            <img src="${orderLine.product.imageURL}" alt="картинка"/>
-                            <div class="product-right-descr">
-                                ${orderLine.product.name}  <br>
-                                ${orderLine.product.shortDescr}
-                            </div>
-                            <table>
-                                <thead>
-                                <tr>
-                                    <td>Цена(шт)</td>
-                                    <td>Кол-во</td>
-                                    <td>Сумма</td>
-                                    <td></td>
-                                </tr>
-                                </thead>
-                                <tr>
-                                    <td class="td-price">${orderLine.product.price}</td>
-                                    <td><input type="text" class="input-mini spinner1" /></td>
-                                    <td class="td-summa">${orderLine.product.price}</td>
-                                    <td><a href="#" class="delete-product">Удалить</a></td>
-                                </tr>
-                            </table>
-                        </li>--%>
                     </c:forEach>
-						<%--<li>
-                        <img src="i/shop/1.jpg" alt="картинка"/>
-                        <div class="product-right-descr">
-                            100г Вкусный обед рагу с индейкой и кроликом Whiskas Вискас
-                        </div>
-                        <table>
-                            <thead>
-                            <tr>
-                                <td>Цена(шт)</td>
-                                <td>Кол-во</td>
-                                <td>Сумма</td>
-                                <td></td>
-                            </tr>
-                            </thead>
-                            <tr>
-                                <td class="td-price">111р.</td>
-                                <td><input type="text" class="input-mini spinner1" /></td>
-                                <td class="td-summa">111р.</td>
-                                <td><a href="#" class="delete-product">Удалить</a></td>
-                            </tr>
-                        </table>
-                    </li>
-                    <li>
-                        <img src="i/shop/1.jpg" alt="картинка"/>
-                        <div class="product-right-descr">
-                            100г Вкусный обед рагу с индейкой и кроликом Whiskas Вискас
-                        </div>
-                        <table>
-                            <thead>
-                            <tr>
-                                <td>Цена(шт)</td>
-                                <td>Кол-во</td>
-                                <td>Сумма</td>
-                                <td></td>
-                            </tr>
-                            </thead>
-                            <tr>
-                                <td class="td-price">111р.</td>
-                                <td><input type="text" class="input-mini spinner1" /></td>
-                                <td class="td-summa">111р.</td>
-                                <td><a href="#" class="delete-product">Удалить</a></td>
-                            </tr>
-                        </table>
-                    </li>
-                    <li>
-                        <img src="i/shop/1.jpg" alt="картинка"/>
-                        <div class="product-right-descr">
-                            100г Вкусный обед рагу с индейкой и кроликом Whiskas Вискас
-                        </div>
-                        <table>
-                            <thead>
-                            <tr>
-                                <td>Цена(шт)</td>
-                                <td>Кол-во</td>
-                                <td>Сумма</td>
-                                <td></td>
-                            </tr>
-                            </thead>
-                            <tr>
-                                <td class="td-price">111р.</td>
-                                <td><input type="text" class="input-mini spinner1" /></td>
-                                <td class="td-summa">111р.</td>
-                                <td><a href="#" class="delete-product">Удалить</a></td>
-                            </tr>
-                        </table>
-                    </li>--%>
                 </ul>
                 <div class="additionally-order">
                     <div class="itogo-right">
@@ -307,7 +218,7 @@
                         <div class="radio">
                             <label>
                                 <input name="form-field-radio" type="radio" class="ace courier-delivery">
-                                <span class="lbl"> Курьер<%--(<span class="delivery-price">500</span> руб)--%></span>
+                                <span class="lbl"> Курьер </span>
                             </label>
                         </div>
                         <div class="input-delivery">

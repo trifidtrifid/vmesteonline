@@ -225,6 +225,7 @@ $(document).ready(function(){
 
 
     initProductsSpinner();
+    initBasketInReload();
     InitAddToBasket($('.fa-shopping-cart'));
     InitProductDetailPopup($('.product-link'));
     // переключение между категориями
@@ -378,6 +379,64 @@ $(document).ready(function(){
             InitSpinner($(this),productDetails.minClientPack,0,productDetails.minClientPack);
             $(this).attr('data-step',productDetails.minClientPack);
         });
+    }
+
+/*    function initBasketSpinnerInReload(){
+        if(('.catalog-order li').length > 0){
+            // если в корзине что-то есть
+            var order = client.getOrder(0);
+            currentOrderId = order.id;
+            var orderDetails = client.getOrderDetails(currentOrderId);
+            var orderLines = orderDetails.odrerLines;
+            var orderLinesLength = orderLines.length;
+            var itsBasket = 1;
+            var productDetails;
+            $('.catalog-order li').each(function(){
+                var productId = $(this).data('productid');
+                alert(productId);
+                for(var i = 0; i < orderLinesLength; i++){
+                   if (orderLines[i].product.id == productId){
+                       alert('3');
+                       productDetails = client.getProductDetails(productId);
+                       InitSpinner($(this).find('td .spinner1'),orderLines[i].quantity,itsBasket,productDetails.minClientPack);
+                       $(this).attr('data-step',productDetails.minClientPack);
+                       break;
+                   }
+                }
+            });
+        }
+    }*/
+
+    function initBasketInReload(){
+        var catalogOrderLi = $('.catalog-order li');
+        if(catalogOrderLi.length > 0){
+            var order = client.getOrder(0);
+            currentOrderId = order.id;
+            var orderDetails = client.getOrderDetails(currentOrderId);
+            var orderLines = orderDetails.odrerLines;
+            var orderLinesLength = orderLines.length;
+            var itsBasket = 1;
+            var productDetails;
+            var catalogOrder = $('.catalog-order');
+
+            catalogOrderLi.each(function(){
+                InitDeleteProduct($(this).find('.delete-product'));
+                InitProductDetailPopup($(this).find('.product-link'));
+
+                var productId = $(this).data('productid');
+                for(var i = 0; i < orderLinesLength; i++){
+                    if (orderLines[i].product.id == productId){
+                        productDetails = client.getProductDetails(productId);
+                        InitSpinner($(this).find('td .spinner1'),orderLines[i].quantity,itsBasket,productDetails.minClientPack);
+                        $(this).find('td .spinner1').attr('data-step',productDetails.minClientPack);
+                        break;
+                    }
+                }
+
+            });
+            $('.itogo-right span').text(countItogo(catalogOrder));
+            $('.empty-basket').hide();
+        }
     }
 
     function initPrepackRequiredInModal(linkSelector,currentModal,productSelector,isFirstModal){
@@ -1141,11 +1200,12 @@ $(document).ready(function(){
                     }
                 } else{
                     qnty = productSelector.find('td .ace-spinner').spinner('value');
+                    packsVal = 0;
                     for(var p in packs){
                         packsVal = packs[p];
                     }
                     packs = [];
-                    packs[qnty]=packsVal;
+                    if(packsVal){ packs[qnty]=packsVal}
                     if(productSelector.find('.modal-body').length > 0){
                         // если мы уже инициировали окно
                         // нужно поменять спиннер этого popup
