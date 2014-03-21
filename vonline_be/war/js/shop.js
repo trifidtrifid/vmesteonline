@@ -1505,13 +1505,14 @@ $(document).ready(function(){
             // если такой товар уже есть
             var basketProductSelector = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]');
             var currentSpinner = basketProductSelector.find('td>.ace-spinner');
-            var newSpinnerVal = currentSpinner.spinner('value')+currentProduct.qnty;
+            //var newSpinnerVal = currentSpinner.spinner('value')+currentProduct.qnty;
+            var newSpinnerVal = currentProduct.qnty;
             currentSpinner.spinner('value',newSpinnerVal);
-            /* повтор функции заменить потом
-             *  сейчас ошибка в setOrderLine при попытке добавить еще таких же продуктов с prepack
-             * */
+            /* здесь комментарии хранят код, к-й добавляет добавляемое кол-во к тому, что уже есть в корзине,
+                а не заменяет
+            */
             var newPacks;
-            if (packs){
+/*            if (packs){
                 var orderDetails = client.getOrderDetails(currentOrderId);
                 var orderLines = orderDetails.odrerLines;
                 var orderLinesLength = orderLines.length;
@@ -1582,10 +1583,7 @@ $(document).ready(function(){
                     }
                 }
 
-                /*for(var p in newPacks){
-                    alert(p+" "+newPacks[p]);
-                }*/
-            }
+            }*/
 
             client.setOrderLine(currentProduct.id,newSpinnerVal,'sdf',newPacks);
             var newSumma = (newSpinnerVal*parseFloat(basketProductSelector.find('.td-price').text())).toFixed(1);
