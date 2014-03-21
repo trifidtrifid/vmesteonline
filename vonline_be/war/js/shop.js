@@ -547,7 +547,7 @@ $(document).ready(function(){
                 popupHtml += '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>';
             }
 
-                popupHtml += '<div class="prepack-list"></div>'+
+                popupHtml += '<div class="prepack-list"></div><br>'+
                     '<a href="#" class="btn btn-primary btn-sm no-border full-descr">Подробное описание</a>'+
                     "<div class='product-fullDescr'>"+ productDetails.fullDescr +"</div>"+
                     '</div>'+
@@ -1426,7 +1426,9 @@ $(document).ready(function(){
         $('.catalog-order li').each(function(){
             if ($(this).data('productid') == currentProduct.id){
                 addedProductFlag = 1;
-                $(this).find('td>.ace-spinner').spinner('disable');
+                if(packs){
+                    $(this).find('td>.ace-spinner').spinner('disable');
+                }
             }
         });
         if (addedProductFlag){

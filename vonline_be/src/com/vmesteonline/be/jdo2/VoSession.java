@@ -104,7 +104,7 @@ public class VoSession {
 		this.lastActivityTs = lastActivityTs;
 	}
 
-	public Long getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 

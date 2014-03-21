@@ -263,7 +263,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 				if (vpc != null) {
 					pc.setId(vpc.getId());
-					pc.setParentId(vppc.getId());
+					pc.setParentId( null==vppc ? 0 : vppc.getId());
 					vpc.update(pc, 0, pm);
 				} else {
 					logger.debug("Use parent category " + pc.getParentId());
