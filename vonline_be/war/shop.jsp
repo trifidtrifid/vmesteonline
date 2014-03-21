@@ -318,6 +318,7 @@
                             </label>
                         </div>
                         <div class="input-delivery">
+                            <span class="lbl">Стоимость доставки : <span class="delivery-cost"></span> руб</span>
                             <input id="phone-delivery" type="tel" placeholder="Номер телефона"/>
                             <div class="alert-delivery alert-delivery-phone">Введите номер телефона !</div>
                             <span class="lbl"> Адрес доставки</span>

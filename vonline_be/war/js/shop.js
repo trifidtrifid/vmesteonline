@@ -297,22 +297,21 @@ $(document).ready(function(){
     var triggerDelivery = 0;
     $('.radio input').click(function(){
         var itogoRight = $('.itogo-right span');
-        var res,currentSumma = parseFloat(itogoRight.text());
         var orderDetails = 0;
         if ($(this).hasClass('courier-delivery')){
             //если доставка курьером
             client.setOrderDeliveryType(2);
             $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
-            //orderDetails = client.getOrderDetails(currentOrderId);
-            //res = (currentSumma+orderDetails.deliveryCost).toFixed(1);
+            orderDetails = client.getOrderDetails(currentOrderId);
+            if (orderDetails.deliveryCost){
+                $('.delivery-cost').text(orderDetails.deliveryCost);
+            }
             itogoRight.text(countItogo($('.catalog-order')));
             triggerDelivery = 1;
         }else{
-            //orderDetails = client.getOrderDetails(currentOrderId);
             client.setOrderDeliveryType(1);
             $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
             var order = client.getOrder(currentOrderId);
-            //res = (currentSumma-orderDetails.deliveryCost).toFixed(1);
             if (triggerDelivery){itogoRight.text(countItogo($('.catalog-order'))); triggerDelivery = 0;}
         }
     });
