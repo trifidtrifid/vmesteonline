@@ -33,7 +33,7 @@
     var protocol = new Thrift.Protocol(transport);
     var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
 
-    function getNowDate(){
+    function getMetaDate(){
         try {
         var strDate = $('.datepicker-days .switch').text().split(" ");
         var strMonth="";
@@ -77,7 +77,7 @@
                 break;
         }
         } catch(e){
-           alert(e + ' Функция getNowDate');
+           alert(e + ' Функция getMetaDate');
         }
         return (Date.parse('15 '+strMonth+" "+year));
     }
@@ -85,13 +85,14 @@
     function SetFreeDates(){
         try{
 
-        var nowTime = parseInt(getNowDate()/1000);
-        nowTime -= nowTime%86400;
+        var metaTime = parseInt(getMetaDate()/1000);
+        metaTime -= metaTime%86400;
         var day = 3600*24;
-        var nowDateItem = new Date(nowTime*1000);
-        var nowMonth = nowDateItem.getMonth();
+        var currentDateItem = new Date(metaTime*1000);
+        var currentMonth = currentDateItem.getMonth();
+        var today = new Date().getDate();
 
-        var datesArray = client.getDates(nowTime-32*day,nowTime+32*day);
+        var datesArray = client.getDates(metaTime-32*day,metaTime+32*day);
         for (var date in datesArray){
             var tempDate = new Date(date*1000);
             var cleanDay = "";
@@ -122,21 +123,33 @@
             }
             $('.day').each(function(){
                 var day = $(this).text();
-                if (tempMonth == nowMonth){
-                    if  (day == freeDay && !$(this).hasClass('old') && !$(this).hasClass('new')){
-                        if(order){
-                            $(this).addClass('free-day-with-order');
-                            $(this).attr('data-orderid',order.id);
-                        } else{
-                            $(this).addClass('free-day');
+                if (tempMonth == currentMonth){
+                    // если это текущий месяц календаря
+                    if(day > today){
+                        // показываем даты только если они в будущем
+                        if  (day == freeDay && !$(this).hasClass('old') && !$(this).hasClass('new')){
+                            if(order){
+                                // если свободный день с заказом
+                                $(this).addClass('mark-day free-day day-with-order');
+                                $(this).attr('data-orderid',order.id);
+                            } else{
+                                // если обычный свободный день
+                                $(this).addClass('mark-day free-day');
+                            }
+                            $(this).attr('id',date);
+
                         }
-                        $(this).attr('id',date);
+                        if  (day == specialDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('mark-day special-day');$(this).attr('id',date);}
+                        if  (day == closedDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('mark-day closed-day');$(this).attr('id',date);}
                     }
-                    if  (day == specialDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('special-day');$(this).attr('id',date);}
-                    if  (day == closedDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('closed-day');$(this).attr('id',date);}
                 }
             });
-
+            var firstMarkDay = $('.mark-day:eq(0)');
+            if (!firstMarkDay.hasClass('.closed-day')){
+                // если ближайший к сегодня marked day является не closed-day, то очищаем его
+                // если же ближайший close day, то все остается как есть
+                firstMarkDay.removeClass('free-day day-with-order special-day');
+            }
         }
         }catch(e){
             alert(e + ' Функция SetFreeDates');
@@ -146,14 +159,14 @@
 
     function SetOrderDates(){
         try{
-        var nowTime = parseInt(getNowDate()/1000);
-        nowTime -= nowTime%86400;
+        var metaTime = parseInt(getMetaDate()/1000);
+        metaTime -= metaTime%86400;
         var day = 3600*24;
-        var nowDateItem = new Date(nowTime*1000);
-        var nowMonth = nowDateItem.getMonth();
+        var currentDateItem = new Date(metaTime*1000);
+        var currentMonth = currentDateItem.getMonth();
 
         if (globalUserAuth){
-            var orders = client.getOrders(nowTime-30*day,nowTime+30*day);
+            var orders = client.getOrders(metaTime-30*day,metaTime+30*day);
             var ordersLength = orders.length;
 
             for (var i = 0; i < ordersLength; i++){
@@ -162,7 +175,7 @@
                 var dayStr = orderDate.getDate();
                 var tempMonth = orderDate.getMonth();
                 $('.day').each(function(){
-                    if (tempMonth == nowMonth){
+                    if (tempMonth == currentMonth){
                         if ($(this).text() == dayStr && !$(this).hasClass('old') && !$(this).hasClass('new')){
                             $(this).addClass('order-day').attr('id',orders[i].date);
                         }
@@ -186,7 +199,7 @@
     function initFreeDay(currentProduct,spinnerValue,orderData,packs,AddSingleProductToBasket,AddOrdersToBasket,AddProductToBasketCommon){
         try{
         $('.free-day').click(function(){
-            //var nowTime = parseInt(new Date().getTime()/1000);
+            //var metaTime = parseInt(new Date().getTime()/1000);
             var dateLabel = parseInt($(this).attr('id'));
             if (orderData && orderData.itsOrder){
                 if ($('.additionally-order').hasClass('hide') || orderData.itsAppend == false){
@@ -206,8 +219,8 @@
             AdditionallyOrderToggle();
         });
 
-        $('.free-day-with-order').click(function(){
-                //var nowTime = parseInt(new Date().getTime()/1000);
+        $('.day-with-order').click(function(){
+                //var metaTime = parseInt(new Date().getTime()/1000);
                 //var dateLabel = parseInt($(this).attr('id'));
                 var order = client.getOrder($(this).data('orderid'));
                 currentOrderId = order.id;

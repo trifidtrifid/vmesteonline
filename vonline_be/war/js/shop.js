@@ -230,7 +230,7 @@ $(document).ready(function(){
     InitProductDetailPopup($('.product-link'));
     // переключение между категориями
     InitClickOnCategory();
-    InitDeleteProduct($('.delete-product'));
+    //InitDeleteProduct($('.delete-product'));
     initOrderPlusMinus($('.shop-orders'));
     //shopTriggerClick();
 
@@ -420,8 +420,10 @@ $(document).ready(function(){
             var catalogOrder = $('.catalog-order');
 
             catalogOrderLi.each(function(){
-                //InitDeleteProduct($(this).find('.delete-product'));
+                InitDeleteProduct($(this).find('.delete-product'));
                 InitProductDetailPopup($(this).find('.product-link'));
+                var newTdSumma = parseFloat($(this).find('.td-summa').text()).toFixed(1);
+                $(this).find('.td-summa').text(newTdSumma);
 
                 var productId = $(this).data('productid');
                 for(var i = 0; i < orderLinesLength; i++){
