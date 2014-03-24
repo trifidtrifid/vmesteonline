@@ -16,6 +16,7 @@ import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.shop.OrderLine;
+import com.vmesteonline.be.utils.VoHelper;
 
 @PersistenceCapable
 public class VoOrderLine implements Comparable<VoOrderLine>{
@@ -38,7 +39,7 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 				for (Entry<Double, Integer> pe : packets.entrySet()) {
 					tq += pe.getKey() * pe.getValue();
 				}
-				if( tq != quantity )
+				if( VoHelper.roundDouble( tq, 5 ) != quantity )
 					throw new InvalidOperation(VoError.IncorrectParametrs, "Total quantity("+quantity+") of '"+product.getName()+"' does not meet summary of packets ("+tq+")!");
 			} else { 
 				throw new InvalidOperation(VoError.IncorrectParametrs, "Not prepacked product '"+product.getName()+"' can't have packets set, but provided "+packets.size()+"!");
