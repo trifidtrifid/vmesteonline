@@ -1,5 +1,7 @@
 package com.vmesteonline.be.access;
 
+import java.util.Set;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -33,7 +35,7 @@ public class VoUserAccessBase {
 	protected long categoryId; 
 	
 	@Persistent
-	protected long accessRights;
+	protected Set<String> methodNames;
 	
 	//the first 16 bits should be used as a general access permission flags
 	//second 16 bits - as a functionality specific

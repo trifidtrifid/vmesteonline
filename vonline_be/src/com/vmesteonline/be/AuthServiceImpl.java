@@ -2,8 +2,11 @@ package com.vmesteonline.be;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -12,6 +15,7 @@ import javax.jdo.Query;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
+import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
@@ -248,4 +252,23 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			pm.close();
 		}
 	}
+
+//======================================================================================================================
+	
+	private static final Set<String> publicMethods = new HashSet<String>( Arrays.asList( new String[] {
+			
+		"methodName"
+		
+	})); 
+	@Override
+	public boolean isPublicMethod(String method) {
+		return true;//publicMethods.contains(method);
+	}
+//======================================================================================================================
+	
+	@Override
+	public long categoryId() {
+		return ServiceCategoryID.AUTH_SI.ordinal();
+	}
+
 }

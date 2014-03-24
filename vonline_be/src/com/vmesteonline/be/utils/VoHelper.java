@@ -293,4 +293,10 @@ public class VoHelper {
 			}
 		}
 	}
+//===================================================================================================================
+	public static double roundDouble(double quantity, int scale) {
+		BigDecimal valOfQuantity = BigDecimal.valueOf( quantity );
+		valOfQuantity = valOfQuantity.setScale(scale,BigDecimal.ROUND_HALF_UP);
+		return valOfQuantity.doubleValue();
+	}
 }

@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
@@ -17,6 +19,7 @@ import org.apache.thrift.TException;
 
 import com.google.appengine.api.datastore.KeyFactory;
 import com.vmesteonline.be.MessageService.Iface;
+import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
@@ -608,5 +611,23 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.MessageServceImpl");
+
+//======================================================================================================================
+	
+	private static final Set<String> publicMethods = new HashSet<String>( Arrays.asList( new String[] {
+			
+		"allMethods are public"
+		
+	})); 
+	@Override
+	public boolean isPublicMethod(String method) {
+		return true;//publicMethods.contains(method);
+	}
+//======================================================================================================================
+	
+	@Override
+	public long categoryId() {
+		return ServiceCategoryID.MESSAGE_SI.ordinal();
+	}
 
 }

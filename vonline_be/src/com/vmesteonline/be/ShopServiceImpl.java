@@ -4,7 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -12,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -26,6 +29,8 @@ import javax.jdo.Transaction;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
+import com.google.api.client.util.Sets;
+import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
@@ -71,6 +76,7 @@ import com.vmesteonline.be.utils.VoHelper;
 public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable {
 
 	public static Logger logger;
+	private static int QUANTITY_SCALE = 5;
 
 	static {
 		logger = Logger.getLogger(ShopServiceImpl.class);
@@ -643,7 +649,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			throw new InvalidOperation(VoError.GeneralError, "Not found");
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to getOrderDetails Id=" + orderId + ". " + e);
+			throw new InvalidOperation(VoError.GeneralError, "Order not found by ID:" + orderId );
 		} finally {
 			pm.close();
 		}
@@ -895,8 +901,19 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
 			if (null != voProduct) {
 				double price = voProduct.getPrice(currentOrder.getPriceType());
-
-				VoOrderLine theLine = new VoOrderLine(currentOrder, voProduct, quantity, price, comment, packs);
+				
+				Map<Double, Integer> packsRounded;
+				if(null==packs) 
+					packsRounded = null;
+				else {
+					quantity = VoHelper.roundDouble(quantity, QUANTITY_SCALE);
+					packsRounded = new HashMap<Double, Integer>(); 
+					for(Entry<Double, Integer> e:  packs.entrySet()){
+						packsRounded.put(  VoHelper.roundDouble(e.getKey(), QUANTITY_SCALE), e.getValue());
+					}
+				}
+				
+				VoOrderLine theLine = new VoOrderLine(currentOrder, voProduct, quantity, price, comment, packsRounded);
 				pm.makePersistent(theLine);
 
 				Long oldLineId = currentOdrerLines.put(productId, theLine.getId().getId());
@@ -1770,5 +1787,23 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read data from URL '" + url + "'");
 		}
 	}
-
+//======================================================================================================================
+	
+	private static final Set<String> publicMethods = new HashSet<String>( Arrays.asList( new String[] {
+			
+		"getShops","getDates","getShop","getProducers","getProductCategories","getProducts","getProductDetails","getOrders",
+		"getOrdersByStatus","getOrder","getOrderDetails","createOrder","updateOrder","cancelOrder","deleteOrder","confirmOrder",
+		"appendOrder","mergeOrder","setOrderLine","removeOrderLine","setOrderDeliveryType","setOrderPaymentType","setOrderDeliveryAddress"
+		
+	})); 
+	@Override
+	public boolean isPublicMethod(String method) {
+		return true;//publicMethods.contains(method);
+	}
+//======================================================================================================================
+	
+	@Override
+	public long categoryId() {
+		return ServiceCategoryID.SHOP_SI.ordinal();
+	}
 }

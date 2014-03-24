@@ -3,6 +3,7 @@ package com.vmesteonline.be;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +25,7 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
+import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoRubric;
@@ -551,5 +553,22 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
-
+	
+	//======================================================================================================================
+			
+			private static final Set<String> publicMethods = new HashSet<String>( Arrays.asList( new String[] {
+					
+				"allMethods are public"
+				
+			})); 
+			@Override
+			public boolean isPublicMethod(String method) {
+				return true;//publicMethods.contains(method);
+			}
+		//======================================================================================================================
+			
+			@Override
+			public long categoryId() {
+				return ServiceCategoryID.USER_SI.ordinal();
+			}
 }

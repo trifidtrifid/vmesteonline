@@ -74,7 +74,7 @@ public class VoSession {
 	private String lastName;
 
 	@Persistent
-	private Long userId;
+	private long userId;
 
 	@Persistent
 	@Unindexed
