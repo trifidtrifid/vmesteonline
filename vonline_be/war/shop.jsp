@@ -225,9 +225,20 @@
                             <span class="lbl">Стоимость доставки : <span class="delivery-cost"></span> руб</span>
                             <input id="phone-delivery" type="tel" placeholder="Номер телефона"/>
                             <div class="alert-delivery alert-delivery-phone">Введите номер телефона !</div>
+                            <div class="btn-group delivery-dropdown">
+                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                    <span class="btn-group-text">Выбрать адрес</span>
+                                    <span class="icon-caret-down icon-on-right"></span>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-blue">
+                                    <li class="divider"></li>
+                                    <li><a href="#" class="delivery-add-address">Добавить адрес ...</a></li>
+                                </ul>
+                            </div>
                             <span class="lbl"> Адрес доставки</span>
                             <input id="country-delivery" type="text" value="Россия" placeholder="Страна"/>
-                            <input id="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
+                            <input id="city-delivery" type="text" placeholder="Город"/>
                             <input id="street-delivery" type="text" placeholder="Улица"/>
                             <input id="building-delivery" type="text" class="short first" placeholder="Дом"/>
                             <input id="flat-delivery" type="text" class="short" placeholder="Квартира"/>

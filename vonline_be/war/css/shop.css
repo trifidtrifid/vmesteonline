@@ -231,6 +231,14 @@ a {
 .shop-right .delivery-right .input-delivery #delivery-addr {
   margin-left: 0;
 }
+.shop-right .delivery-right .input-delivery .delivery-dropdown {
+  float: right;
+  margin-top: -5px;
+}
+.shop-right .delivery-right .input-delivery .delivery-dropdown .dropdown-menu {
+  left: -233px;
+  width: 360px;
+}
 .shop-right .delivery-right .alert-delivery {
   color: #f00;
   display: none;

@@ -94,6 +94,7 @@ $(document).ready(function(){
     });
 
     /* автозаполнение адреса доставки  */
+
     var addressesBase = userServiceClient.getAddressCatalogue();
 
     var countries = addressesBase.countries;
@@ -110,34 +111,6 @@ $(document).ready(function(){
         countryTags[i] = countries[i].name;
         countryId[i] = countries[i].id;
     }
-
-    // временная тема, так как три России в пробном варианте
-    /*countryTags.shift();
-    countryTags.shift();
-    countryId.shift();
-    countryId.shift();
-    countriesLength = countryTags.length;*/
-      /*  var counter = 0,tempFlag = 1;
-        var newCountryTags = [];
-        for(i = 0; i < countriesLength-1; i++){
-            console.log(countryTags[i]);
-            for(var j = i+1; j < countriesLength; j++){
-                tempFlag = 0;
-                if(countryTags[i]==countryTags[j]){
-                    tempFlag = 1;
-                    console.log('break');
-                    break;
-                }
-            }
-            if (!tempFlag){
-                console.log('add');
-                newCountryTags[counter] = countryTags[i];
-                tempFlag = 0;
-                counter++;
-            }
-        }
-        newCountryTags.push(countryTags[countriesLength-1]);
-        countryTags = newCountryTags;*/
 
     $( "#country-delivery" ).autocomplete({
         source: countryTags
@@ -219,49 +192,12 @@ $(document).ready(function(){
             });
         });
 
-
-    /*var streets = addressesBase.streets;
-    var streetsLength = streets.length;
-    var streetTags = [];
-    for (i = 0; i < streetsLength; i++){
-        streetTags[i] = streets[i].name;
-        //alert(streets[i].name+" "+streets[i].cityId);
-    }
-    var buildings = addressesBase.buildings;
-    var buildingsLength = buildings.length;
-    var buildingTags = [];
-    for (i = 0; i < buildingsLength; i++){
-        buildingTags[i] = buildings[i].fullNo;
-    }
-
-    $( "#street-delivery" ).autocomplete({
-        source: streetTags
-    });
-    $( "#building-delivery" ).autocomplete({
-        source: buildingTags
-    });*/
     }catch(e){
             alert(e+ " Ошибка autocomplete")
     }
 
-    /*var dataDeliveryCities = [
-     { label: "Санкт-Петербург", category: "" },
-     { label: "Москва", category: "" },
-     { label: "Казань", category: "" }
-     ];
-     var dataDeliveryStreets = [
-     { label: "Ленинградская", category: "" },
-     { label: "Московский проспект", category: "" },
-     { label: "Шаумяна", category: "" }
-     ];
-     $( "#city-delivery" ).catcomplete({
-     delay: 0,
-     source: dataDeliveryCities
-     });
-     $( "#street-delivery" ).catcomplete({
-     delay: 0,
-     source: dataDeliveryStreets
-     });*/
+    /* --- --- */
+
     var dPicker = $('.date-picker');
 
     dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
@@ -353,6 +289,22 @@ $(document).ready(function(){
         }
     }
 
+    function writeAddress(address){
+        if(address){
+            $('#country-delivery').val(address.country.name);
+            $('#city-delivery').val(address.city.name);
+            $('#street-delivery').val(address.street.name);
+            $('#building-delivery').val(address.building.fullNo);
+            $('#flat-delivery').val(address.flatNo);
+        }else{
+            $('#country-delivery').val('');
+            $('#city-delivery').val('');
+            $('#street-delivery').val('');
+            $('#building-delivery').val('');
+            $('#flat-delivery').val('');
+        }
+    }
+
     var triggerDelivery = 0;
     $('.radio input').click(function(){
         var itogoRight = $('.itogo-right span');
@@ -360,6 +312,33 @@ $(document).ready(function(){
         if ($(this).hasClass('courier-delivery')){
             //если доставка курьером
             client.setOrderDeliveryType(2);
+            var homeAddress = userServiceClient.getUserHomeAddress();
+            if(homeAddress){
+                writeAddress(homeAddress);
+            }
+            var userAddresses = userServiceClient.getUserAddresses();
+            if(userAddresses){
+                var userAddressesHtml = "";
+                var userAddressesLength = userAddresses.length;
+                for(var i = 0; i < userAddressesLength; i++){
+                    userAddressesHtml += '<li><a href="#">'+
+                        userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
+                        '</a></li>';
+                }
+
+                $('.delivery-dropdown .dropdown-menu').prepend(userAddressesHtml);
+                $('.delivery-dropdown .dropdown-menu a:not(".delivery-add-address")').click(function(e){
+                    e.preventDefault();
+                    var ind = $(this).parent().index();
+                    writeAddress(userAddresses[ind]);
+                });
+                $('.delivery-add-address').click(function(e){
+                    e.preventDefault();
+                    writeAddress();
+                    $('.delivery-dropdown .btn-group-text').text('Выбрать адрес');
+                });
+            }
+
             $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
             orderDetails = client.getOrderDetails(currentOrderId);
             if (orderDetails.deliveryCost){
