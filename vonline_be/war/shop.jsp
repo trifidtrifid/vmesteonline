@@ -133,8 +133,7 @@
 									</span> <i class="icon-caret-down"></i>
 									</a>
 
-									<ul
-										class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+									<ul	class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
 										<li><a href="#"> <i class="icon-cog"></i> Настройки
 										</a></li>
 
@@ -176,9 +175,6 @@
                     <nav>
                         <div class="input-group">
                             <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="dd-mm-yyyy" value="Выберите дату" onblur="if(this.value=='') this.value='Выберите дату';" onfocus="if(this.value=='Выберите дату') this.value='';"/>
-                            <%--<span class="input-group-addon">
-                                <i class="icon-calendar bigger-110"></i>
-                            </span>--%>
                         </div>
                     </nav>
                 </div>

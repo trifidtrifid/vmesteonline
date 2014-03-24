@@ -1206,10 +1206,9 @@ $(document).ready(function(){
                         var errorPrepack = $('.error-prepack');
                         errorPrepack.text('Товар не возможно добавить: вы создали две линни с одинаковым количеством продукта');
                         $(this).closest('.modal-footer').find('.prepack-line').each(function(){
-                            tempPacksVal = $(this).find('.packs .ace-spinner').spinner('value').toFixed(1);
+                            tempPacksVal = $(this).find('.packs .ace-spinner').spinner('value');
                             tempQntyVal = $(this).find('.prepack-item:not(".packs") .ace-spinner').spinner('value').toFixed(1);
                             qnty += tempPacksVal*tempQntyVal;
-                            qnty = qnty.toFixed(1);
                             if(tempQntyVal != firstQntyVal && tempQntyVal != oldTempQntyVal){
                                 errorPrepack.hide();
                                 errorFlag = false;
@@ -1219,6 +1218,7 @@ $(document).ready(function(){
                             }
                             oldTempQntyVal = tempQntyVal;
                         });
+                        qnty = qnty.toFixed(1);
 
                         if ($(this).closest('.packs').length > 0){
                             // если меняем кол-во упаковок (то просто меняем старую запись )
@@ -1260,7 +1260,7 @@ $(document).ready(function(){
                         alert(p+" "+packs[p]);
                     }*/
                     client.setOrderLine(productId,qnty,'sdf',packs);
-                    alert('2');
+                    //alert('2');
                     var price = productSelector.find('.td-price').text();
                     price = parseFloat(price);
                     productSelector.find('.td-summa').text((price*qnty).toFixed(1));

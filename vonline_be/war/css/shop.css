@@ -983,6 +983,20 @@ span
 .backoffice .order-products {
   display: none;
 }
+.backoffice .back-orders-top .form-group {
+  margin-right: 565px;
+}
+.backoffice .back-orders-top .btn-group,
+.backoffice .back-orders-top .input-group {
+  float: right;
+  margin-left: 10px;
+}
+.backoffice .back-orders-top .input-group {
+  display: inline-block;
+}
+.backoffice .back-orders-top .dropdown-toggle {
+  height: 34px;
+}
 .import .form-import {
   margin-bottom: 10px;
 }
