@@ -198,7 +198,7 @@
 
     function initFreeDay(currentProduct,spinnerValue,orderData,packs,AddSingleProductToBasket,AddOrdersToBasket,AddProductToBasketCommon){
         try{
-        $('.free-day').click(function(){
+        $('.free-day:not(".day-with-order")').click(function(){
             //var metaTime = parseInt(new Date().getTime()/1000);
             var dateLabel = parseInt($(this).attr('id'));
             if (orderData && orderData.itsOrder){
@@ -224,12 +224,16 @@
                 //var dateLabel = parseInt($(this).attr('id'));
                 var order = client.getOrder($(this).data('orderid'));
                 currentOrderId = order.id;
+                alert(currentOrderId);
                 var currentOrderData= {
                     itsOrder: true,
                     itsAppend: false,
                     orderId : $(this).data('orderid')
                 };
                 AddOrdersToBasket(currentOrderData);
+            order = client.getOrder(0);
+            currentOrderId = order.id;
+            alert(currentOrderId);
 
                 if (orderData && orderData.itsOrder){
                     // если мы добавляем заказ

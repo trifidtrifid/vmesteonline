@@ -1313,6 +1313,8 @@ $(document).ready(function(){
                 if ($('.catalog-order li').length == 0){
                     $('.additionally-order').addClass('hide');
                     $('.empty-basket').removeClass('hide');
+                    var order = client.getOrder(0);
+                    alert(order.id);
                     client.deleteOrder();
                 }
             });
@@ -1563,6 +1565,7 @@ $(document).ready(function(){
         });
         if (addedProductFlag){
             // если такой товар уже есть
+            alert('1');
             var basketProductSelector = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]');
             var currentSpinner = basketProductSelector.find('td>.ace-spinner');
             //var newSpinnerVal = currentSpinner.spinner('value')+currentProduct.qnty;
@@ -1651,6 +1654,7 @@ $(document).ready(function(){
             $('.itogo-right span').text(countItogo($('.catalog-order')));
         }else{
             // если такого товара еще нет
+            alert('2');
             AddSingleProductToBasket(currentProduct,currentProduct.qnty,currentProduct.unitName);
             client.setOrderLine(currentProduct.id,currentProduct.qnty,'sdf',packs);
             /* повтор функции заменить потом --- */
