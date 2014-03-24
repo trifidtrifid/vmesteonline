@@ -90,7 +90,11 @@
         var day = 3600*24;
         var currentDateItem = new Date(metaTime*1000);
         var currentMonth = currentDateItem.getMonth();
-        var today = new Date().getDate();
+        var currentYear = currentDateItem.getFullYear();
+        var now = new Date();
+        var today = now.getDate();
+        var nowMonth = now.getMonth();
+        var nowYear = now.getFullYear();
 
         var datesArray = client.getDates(metaTime-32*day,metaTime+32*day);
         for (var date in datesArray){
@@ -125,7 +129,7 @@
                 var day = $(this).text();
                 if (tempMonth == currentMonth){
                     // если это текущий месяц календаря
-                    if(day > today){
+                    if((day > today && currentMonth == nowMonth && currentYear >= nowYear) || (currentMonth > nowMonth && currentYear >= nowYear)){
                         // показываем даты только если они в будущем
                         if  (day == freeDay && !$(this).hasClass('old') && !$(this).hasClass('new')){
                             if(order){
@@ -222,18 +226,13 @@
         $('.day-with-order').click(function(){
                 //var metaTime = parseInt(new Date().getTime()/1000);
                 //var dateLabel = parseInt($(this).attr('id'));
-                var order = client.getOrder($(this).data('orderid'));
-                currentOrderId = order.id;
-                alert(currentOrderId);
                 var currentOrderData= {
                     itsOrder: true,
                     itsAppend: false,
                     orderId : $(this).data('orderid')
                 };
+                client.getOrder(currentOrderData.orderId);
                 AddOrdersToBasket(currentOrderData);
-            order = client.getOrder(0);
-            currentOrderId = order.id;
-            alert(currentOrderId);
 
                 if (orderData && orderData.itsOrder){
                     // если мы добавляем заказ
