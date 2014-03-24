@@ -360,6 +360,7 @@ $(document).ready(function(){
     function initRemovePrepackLine(selector,productId,productSelector){
         try{
         selector.click(function(){
+            alert('remove');
 
             var currentSpinnerVal = parseFloat($(this).closest('.prepack-line').find('.prepack-item:not(".packs") .ace-spinner').spinner('value')).toFixed(1);
             var setFlag = true,
@@ -512,7 +513,7 @@ $(document).ready(function(){
                     currentModal.find('.packs .ace-spinner').spinner('value',packs[p]);
                     currentModal.find('.prepack-item:not(".packs") .ace-spinner').spinner('value',p);
                 }else{
-                    InitSpinner(currentModal.find('.packs .spinner1'),packs[p],1);
+                    InitSpinner(currentModal.find('.packs .spinner1'),packs[p],1,1);
                     InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),p,1,productSelector.find('.spinner1').data('step'));
                 }
             }else{
@@ -536,7 +537,7 @@ $(document).ready(function(){
                 InitSpinner(currentModal.find('.no-init .packs .spinner1'),packs[p],1);
                 InitSpinner(currentModal.find('.no-init .prepack-item:not(".packs") .spinner1'),p,1,productSelector.find('td>.ace-spinner .spinner1').data('step'));
                 var currentPrepackLine = currentModal.find('.prepack-line.no-init');
-                initRemovePrepackLine(currentPrepackLine,productId,productSelector);
+                initRemovePrepackLine(currentPrepackLine.find('.prepack-item .close'),productId,productSelector);
 
                 currentPrepackLine.removeClass('no-init');
                 modalHeight += 53;
@@ -1088,7 +1089,8 @@ $(document).ready(function(){
         try{
             var step = 1;
             if (spinnerStep){step = spinnerStep}
-            selector.ace_spinner({value:spinnerValue,min:step,max:100000,step:step, btn_up_class:'btn-info' , btn_down_class:'btn-info'});
+            // делаем +spinnerValue для строгого преобразования к числу
+            selector.ace_spinner({value:+spinnerValue,min:step,max:100000,step:step, btn_up_class:'btn-info' , btn_down_class:'btn-info'});
         }catch(e){
             alert(e+" Функция InitSpinner");
         }
@@ -1097,6 +1099,9 @@ $(document).ready(function(){
         }else{
             InitSpinnerChange(selector,itsBasket);
         }
+       /* $('.spinner-up').click(function(){
+            alert('111');
+        })*/
     }
 
     function InitSpinnerChangeInFinal(selector){
@@ -1139,6 +1144,9 @@ $(document).ready(function(){
     function InitSpinnerChange(selector,itsBasket){
         try{
         selector.on('change',function(e){
+            var currentValue = $(this).closest('.ace-spinner').spinner('value');
+            $(this).closest('.ace-spinner').spinner('value',+currentValue.toFixed(1));
+
             var productSelector;
             if (itsBasket){
                 productSelector = $(this).closest('li');
@@ -1207,7 +1215,7 @@ $(document).ready(function(){
                         errorPrepack.text('Товар не возможно добавить: вы создали две линни с одинаковым количеством продукта');
                         $(this).closest('.modal-footer').find('.prepack-line').each(function(){
                             tempPacksVal = $(this).find('.packs .ace-spinner').spinner('value');
-                            tempQntyVal = $(this).find('.prepack-item:not(".packs") .ace-spinner').spinner('value').toFixed(1);
+                            tempQntyVal = $(this).find('.prepack-item:not(".packs") .ace-spinner').spinner('value');
                             qnty += tempPacksVal*tempQntyVal;
                             if(tempQntyVal != firstQntyVal && tempQntyVal != oldTempQntyVal){
                                 errorPrepack.hide();
@@ -1230,7 +1238,8 @@ $(document).ready(function(){
                             packs = firstPack;
                             $(this).closest('.modal-footer').find('.prepack-line').each(function(){
                                 tempPacksVal = $(this).find('.packs .ace-spinner').spinner('value');
-                                tempQntyVal = $(this).find('.prepack-item:not(".packs") .ace-spinner').spinner('value').toFixed(1);
+                                tempQntyVal = $(this).find('.prepack-item:not(".packs") .ace-spinner').spinner('value');
+                                tempQntyVal = parseFloat(tempQntyVal).toFixed(1);
                                 packs[tempQntyVal]=tempPacksVal;
                             });
                         }
@@ -1268,7 +1277,6 @@ $(document).ready(function(){
                     $('.modal-itogo span').text(countItogo($('.modal-body-list')));
                 }
             }
-
         });
         }catch(e){
             alert(e+" Функция InitSpinnerChange");
