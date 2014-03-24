@@ -43,7 +43,7 @@ $(document).ready(function(){
         if (client.checkEmailRegistered($("#email").val())) {
             $('.email-alert').css('display','block');
         }else{
-            var userId = client.registerNewUser($("#login").val(), "family", $("#pass").val(), $("#email").val());
+            var userId = client.registerNewUser($("#login").val(), "", $("#pass").val(), $("#email").val());
             client.login($("#email").val(), $("#pass").val());
             if ( selector.closest('.modal-auth').length > 0) {
                 document.location.replace("/shop.jsp");

@@ -44,10 +44,10 @@ public class VoOrder {
 		this.priceType = priceType;
 	}
 
-	public VoOrder(VoUser user, long shopId, int date, PriceType priceType, String comment, PersistenceManager _pm) throws InvalidOperation{
+	public VoOrder(VoUser user, VoShop shop, int date, PriceType priceType, String comment, PersistenceManager _pm) throws InvalidOperation{
 		this.user = user;
 		this.date = date;
-		this.shopId = shopId;
+		this.shopId = shop.getId();
 		this.createdAt = (int)(System.currentTimeMillis()/1000L);
 		if( date < createdAt )
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Date for order must be in the future, but provided ("+date+") in the past: "+ new Date(date*1000));
@@ -56,7 +56,7 @@ public class VoOrder {
 		this.status = OrderStatus.NEW;
 		this.delivery = DeliveryType.SELF_PICKUP;
 		this.deliveryCost = 0D;
-		this.deliveryTo = user.getAddress();
+		this.deliveryTo = shop.getAddress();
 		this.totalCost = 0D;
 		this.paymentType = PaymentType.CASH;
 		this.paymentStatus = PaymentStatus.WAIT;
@@ -105,8 +105,9 @@ public class VoOrder {
 	} 
 	public OrderDetails getOrderDetails(PersistenceManager pm){
 		OrderDetails od = new OrderDetails(createdAt, delivery, deliveryCost, 
-				deliveryTo.getPostalAddress(), paymentType, paymentStatus,
-				new ArrayList<OrderLine>(), comment);
+				null == deliveryTo ? null : deliveryTo.getPostalAddress(),
+						paymentType, paymentStatus, new ArrayList<OrderLine>(), comment);
+		
 		if(null!=orderLines) 
 			for(Long olid: orderLines.values()){
 				od.odrerLines.add( pm.getObjectById(VoOrderLine.class,olid).getOrderLine(pm));
