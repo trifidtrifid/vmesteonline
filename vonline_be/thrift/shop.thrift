@@ -47,10 +47,9 @@ struct ProductDetails {
 	5:map<string,string> optionsMap,
 	6:list<i64> topicSet,
 	7:i64 producerId,
-	9:double minClientPack,
-	10:double minProducerPack,
-	11:bool prepackRequired,
-	12:set<string> knownNames,
+	9:double minProducerPack,
+	10:bool prepackRequired,
+	11:set<string> knownNames,
 }
 
 struct Product {
@@ -61,6 +60,7 @@ struct Product {
 	5:string imageURL,
 	6:double price,
 	7:string unitName,
+	8:double minClientPack,
 }
 
 struct FullProductInfo {
