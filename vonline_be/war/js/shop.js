@@ -1020,7 +1020,7 @@ $(document).ready(function(){
                 '</td>'+
                 '<td class="product-price">'+ productsList[i].price  +'</td>'+
                 '<td>'+
-                '<input type="text" class="input-mini spinner1" /> '+
+                '<input type="text" data-step="'+ productsList[i].minClientPack +'" class="input-mini spinner1" /> '+
                 '</td>'+
                 '<td>'+ '<span class="unit-name">'+ unitName +'</span></td>'+
                 '<td>'+
@@ -1301,7 +1301,7 @@ $(document).ready(function(){
         var orderDetails = client.getOrderDetails(currentOrderId);
         summa += orderDetails.deliveryCost;
         }catch(e){
-            alert(e+" Функция countItogo");
+            //alert(e+" Функция countItogo");
         }
         return summa.toFixed(1);
     }
@@ -2043,7 +2043,7 @@ $(document).ready(function(){
     });
     $('.remember-link').click(function(e){
         e.preventDefault();
-        clientAuth.sendChangePasswordCodeRequest('забыл пароль адресат','sdf%code%sdf%name%sdf');
+        //clientAuth.sendChangePasswordCodeRequest('забыл пароль адресат','sdf%code%sdf%name%sdf');
         //clientAuth.changePasswordOfUser('qq@qq.ru','qq','qq');
     });
 
