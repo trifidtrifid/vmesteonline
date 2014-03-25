@@ -234,7 +234,7 @@
                             </div>
                             <span class="lbl"> Адрес доставки</span>
                             <input id="country-delivery" type="text" value="Россия" placeholder="Страна"/>
-                            <input id="city-delivery" type="text" placeholder="Город"/>
+                            <input id="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
                             <input id="street-delivery" type="text" placeholder="Улица"/>
                             <input id="building-delivery" type="text" class="short first" placeholder="Дом"/>
                             <input id="flat-delivery" type="text" class="short" placeholder="Квартира"/>
