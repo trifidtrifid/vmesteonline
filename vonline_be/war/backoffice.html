@@ -78,6 +78,42 @@
 
             <div class="main-content">
                 <div class="back-orders back-tab">
+                    <div class="back-orders-top">
+                        <div class="btn-group status-dropdown">
+                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                <span class="btn-group-text">Фильтр по статусу заказа</span>
+                                <span class="icon-caret-down icon-on-right"></span>
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-blue">
+                                <li><a href="#">Подтвержден</a></li>
+                                <li><a href="#">Не подтвержден</a></li>
+                                <li><a href="#">Отменен</a></li>
+                            </ul>
+                        </div>
+                        <div class="btn-group type-delivery-dropdown">
+                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                <span class="btn-group-text">Фильтр по типу доставки</span>
+                                <span class="icon-caret-down icon-on-right"></span>
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-blue">
+                                <li><a href="#">Самовыврз</a></li>
+                                <li><a href="#">Курьер рядом</a></li>
+                                <li><a href="#">Курьер далеко</a></li>
+                            </ul>
+                        </div>
+                        <div class="input-group">
+                            <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
+                        </div>
+                        <form method="post" action="#" class="form-group has-info">
+                            <span class="block input-icon input-icon-right">
+                                <input id="search" type="text" class="form-control width-100" value="Поиск по имени клиента или номеру телефона" onblur="if(this.value=='') this.value='Поиск по имени клиента или номеру телефона';" onfocus="if(this.value=='Поиск по имени клиента или номеру телефона') this.value='';"/>
+                                <a href="#" class="icon-search icon-on-right bigger-110"></a>
+                            </span>
+                        </form>
+
+                    </div>
                     <div class="order-item" data-orderid="5660285859790848">
                         <table class="orders-tbl">
                             <tbody>
