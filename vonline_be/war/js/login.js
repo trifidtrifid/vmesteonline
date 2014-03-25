@@ -23,6 +23,7 @@ $(document).ready(function(){
         try {
             var accessGranted = client.login($("#uname").val(), $("#password").val());
             if (accessGranted) {
+                $('.login-error').hide();
                 if (selector.closest('.modal-auth').length > 0){
                     document.location.replace("/shop.jsp");
                 }else{
@@ -34,8 +35,7 @@ $(document).ready(function(){
             }
 
         } catch (ouch) {
-            result.val("smth happen");
-            result.css('color', 'red');
+            $('.login-error').show();
         }
     }
 

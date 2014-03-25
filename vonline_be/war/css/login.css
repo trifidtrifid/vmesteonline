@@ -1,8 +1,4 @@
-@import 'bootstrap.min.css';
-@import 'font-awesome-original.css';
-@import 'font-awesome.min.css';
-@import 'ace-fonts.css';
-@import 'ace.css';
+@import 'common.css';
 /* страница регистрации */
 .login-forms {
   width: 650px;

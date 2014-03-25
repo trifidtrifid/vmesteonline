@@ -392,7 +392,8 @@
 							<label for="password">Пароль</label> <input type="password"
 								id="password" /> <a href="#" class="remember-link">Забыли
 								пароль ?</a>
-						</div>
+                            <div class="error-info login-error">Вы ввели неккоректный e-mail или пароль</div>
+                        </div>
 						<button id="go" class="btn-submit btn-sm no-border">Войти</button>
 					</div>
 				</form>
