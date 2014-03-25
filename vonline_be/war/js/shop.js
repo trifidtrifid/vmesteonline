@@ -321,8 +321,14 @@ $(document).ready(function(){
             //если доставка курьером
             client.setOrderDeliveryType(2);
             var userAddresses = userServiceClient.getUserAddresses();
+            /*var userContacts = userServiceClient.getUserContacts();
+            alert(userContacts.homeAddress+" "+userContacts.mobilePhone);*/
+            var userPhone = userServiceClient.getUserContacts().mobilePhone;
+            if(userPhone){
+               $('#phone-delivery').val(userPhone);
+            }
             if(userAddresses.length > 0){
-                var homeAddress = userServiceClient.getUserHomeAddress();
+                var homeAddress = userServiceClient.getUserContacts().homeAddress;
                  if(homeAddress){
                     writeAddress(homeAddress);
                  }
@@ -418,38 +424,10 @@ $(document).ready(function(){
 
     function initProductsSpinner(){
         $('.catalog table .spinner1').each(function(){
-            var productId = $(this).closest('tr').data('productid');
-            var productDetails = client.getProductDetails(productId);
-            InitSpinner($(this),productDetails.minClientPack,0,productDetails.minClientPack);
-            $(this).attr('data-step',productDetails.minClientPack);
+            var minClientPack = $(this).data('step');
+            InitSpinner($(this),minClientPack,0,minClientPack);
         });
     }
-
-/*    function initBasketSpinnerInReload(){
-        if(('.catalog-order li').length > 0){
-            // если в корзине что-то есть
-            var order = client.getOrder(0);
-            currentOrderId = order.id;
-            var orderDetails = client.getOrderDetails(currentOrderId);
-            var orderLines = orderDetails.odrerLines;
-            var orderLinesLength = orderLines.length;
-            var itsBasket = 1;
-            var productDetails;
-            $('.catalog-order li').each(function(){
-                var productId = $(this).data('productid');
-                alert(productId);
-                for(var i = 0; i < orderLinesLength; i++){
-                   if (orderLines[i].product.id == productId){
-                       alert('3');
-                       productDetails = client.getProductDetails(productId);
-                       InitSpinner($(this).find('td .spinner1'),orderLines[i].quantity,itsBasket,productDetails.minClientPack);
-                       $(this).attr('data-step',productDetails.minClientPack);
-                       break;
-                   }
-                }
-            });
-        }
-    }*/
 
     function initBasketInReload(){
         var catalogOrderLi = $('.catalog-order li');
@@ -460,7 +438,6 @@ $(document).ready(function(){
             var orderLines = orderDetails.odrerLines;
             var orderLinesLength = orderLines.length;
             var itsBasket = 1;
-            var productDetails;
             var catalogOrder = $('.catalog-order');
 
             catalogOrderLi.each(function(){
@@ -472,9 +449,10 @@ $(document).ready(function(){
                 var productId = $(this).data('productid');
                 for(var i = 0; i < orderLinesLength; i++){
                     if (orderLines[i].product.id == productId){
-                        productDetails = client.getProductDetails(productId);
-                        InitSpinner($(this).find('td .spinner1'),orderLines[i].quantity,itsBasket,productDetails.minClientPack);
-                        $(this).find('td .spinner1').attr('data-step',productDetails.minClientPack);
+                        //productDetails = client.getProductDetails(productId);
+                        var minClientPack = $(this).find('td .spinner1').data('step');
+                        InitSpinner($(this).find('td .spinner1'),orderLines[i].quantity,itsBasket,minClientPack);
+                        //$(this).find('td .spinner1').attr('data-step',productDetails.minClientPack);
                         break;
                     }
                 }
@@ -677,7 +655,7 @@ $(document).ready(function(){
                         InitSpinner(currentModal.find('.prepack-item.packs .spinner1'), 1);
                         InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'), productSelector.find('.ace-spinner').spinner('value'),0,spinnerStep);
                     }else{
-                        InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),0,productDetails.minClientPack);
+                        InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),0,spinnerStep);
                     }
                     InitAddToBasket(currentModal.find('.fa-shopping-cart'));
                 }
@@ -1364,8 +1342,8 @@ $(document).ready(function(){
         var orderLinedLength = orderLines.length;
 
         for (var j = 0; j < orderLinedLength; j++){
-            var productDetails = client.getProductDetails(orderLines[j].product.id);
-            var imagesSet = productDetails.imagesURLset;
+            //var productDetails = client.getProductDetails(orderLines[j].product.id);
+            //var imagesSet = productDetails.imagesURLset;
             var unitName = "";
             if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
             ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
@@ -1382,7 +1360,7 @@ $(document).ready(function(){
                 '</td>'+
                 '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
                 '<td>'+
-                '<input type="text" data-step="'+ productDetails.minClientPack +'" class="input-mini spinner1" />'+
+                '<input type="text" data-step="'+  orderLines[j].product.minClientPack +'" class="input-mini spinner1" />'+
                 '</td>'+
                 '<td><span class="unit-name">'+unitName+'</span></td>'+
                 '<td>'+
@@ -1704,7 +1682,8 @@ $(document).ready(function(){
                     imageURL : currentProductSelector.find('.product-link img').attr('src'),
                     name : currentProductSelector.find('.product-link span span').text(),
                     price : currentProductSelector.find('.product-price').text(),
-                    unitName : currentProductSelector.find('.unit-name').text(),
+                    unitName :currentProductSelector.find('.unit-name').text(),
+                    step :  currentProductSelector.find('.spinner1').data('step'),
                     prepackLine : currentProductSelector.find('.prepack-line'),
                     qnty : spinnerValue,
                     packVal : 1,
@@ -1782,7 +1761,7 @@ $(document).ready(function(){
             '<table>'+
             '<tr>'+
             '<td class="td-price product-price">'+ currentProduct.price +'</td>'+
-            '<td><input type="text" data-step="'+ productDetails.minClientPack +'" class="input-mini spinner1 no-init" /><span class="unit-name">'+ unitName +'</span></td>'+
+            '<td><input type="text" data-step="'+ currentProduct.step +'" class="input-mini spinner1 no-init" /><span class="unit-name">'+ unitName +'</span></td>'+
             '<td class="td-summa">'+ (currentProduct.price*spinnerValue).toFixed(1) +'</td>'+
             '<td><a href="#" class="delete-product no-init">×</a></td>'+
             '</tr>'+
@@ -1814,7 +1793,7 @@ $(document).ready(function(){
 
         var spinnerNoInit = $('.catalog-order .spinner1.no-init');
         var itsBasket = 1;
-        InitSpinner(spinnerNoInit,spinnerValue,itsBasket,productDetails.minClientPack);
+        InitSpinner(spinnerNoInit,spinnerValue,itsBasket,currentProduct.step);
         spinnerNoInit.removeClass('no-init');
 
     }

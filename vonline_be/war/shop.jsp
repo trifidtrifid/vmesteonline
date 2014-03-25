@@ -185,7 +185,7 @@
                             <table>
                                 <tr>
                                     <td class="td-price product-price">${orderLine.product.price}</td>
-                                    <td><input type="text" class="input-mini spinner1" /><span class="unit-name">${orderLine.product.unitName}</span></td>
+                                    <td><input type="text" class="input-mini spinner1" data-step="${orderLine.product.minClientPack}" /><span class="unit-name">${orderLine.product.unitName}</span></td>
                                     <td class="td-summa">${orderLine.price*orderLine.quantity}</td>
                                     <td><a href="#" class="delete-product no-init">×</a></td>
                                 </tr>
@@ -308,7 +308,7 @@
                                     </td>
                                     <td class="product-price">${product.price}</td>
                                     <td>
-                                        <input type="text" class="input-mini spinner1" />
+                                        <input type="text" class="input-mini spinner1" data-step="${product.minClientPack}" />
                                     </td>
                                     <td>
                                         <span class="unit-name">${product.unitName}</span>
