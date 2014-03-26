@@ -36,7 +36,7 @@ $(document).ready(function(){
             $('.login-form').height('320px');
         }else{
             $('.login-error').hide();
-            var resourcefileName = "asd";
+            var resourcefileName = "mailTemplates/changePasswordConfirm.html";
             client.sendConfirmCode(to,resourcefileName);
         }
     });
