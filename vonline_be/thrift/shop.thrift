@@ -159,6 +159,18 @@ struct DataSet {
 	4:list<ImportElement> data,
 }
 
+
+struct IdName {
+	1:i64 id,
+	2:string name,
+}
+
+struct IdNameChilds {
+	1:i64 id,
+	2:string name,
+	3:list<IdName> childs,
+}
+
 service ShopService {
 	
 	//backend functions=================================================================================================
@@ -231,6 +243,7 @@ service ShopService {
 	**/ 
 	ProductListPart getProducts(1:i32 offset, 2:i32 length, 3:i64 categoryId ) throws (1:error.InvalidOperation exc),
 	ProductDetails getProductDetails( 1:i64 productId ) throws (1:error.InvalidOperation exc),
+	list<IdNameChilds> getProductsByCategories(1:i64 shopId) throws (1:error.InvalidOperation exc),
 	
 	/**
 	Order operations use shopId that must be set by AuthService.setCurrentAttribute or by calling method getShop

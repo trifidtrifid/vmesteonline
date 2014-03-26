@@ -29,6 +29,11 @@ import javax.jdo.Transaction;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
+
+
+
+
+
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
@@ -53,6 +58,8 @@ import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.ExchangeFieldType;
 import com.vmesteonline.be.shop.FullProductInfo;
+import com.vmesteonline.be.shop.IdName;
+import com.vmesteonline.be.shop.IdNameChilds;
 import com.vmesteonline.be.shop.ImExType;
 import com.vmesteonline.be.shop.ImportElement;
 import com.vmesteonline.be.shop.Order;
@@ -115,6 +122,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					pm);
 			productCategory.setId(voProductCategory.getId());
 			pm.makePersistent(voShop);
+			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(shopId));
+			
 			return voProductCategory.getId();
 		} catch (JDOObjectNotFoundException onfe) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No Vo Shop found by ID=" + shopId);
@@ -159,6 +168,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				}
 				productIds.add(voProduct.getId());
 			}
+			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(shopId));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to load Products. " + e);
@@ -287,6 +298,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				categoriesCreated.add(vpc.getProductCategory());
 			}
 			pm.makePersistent(voShop);
+			
+			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(shopId));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -510,7 +523,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = getCurrentShopId(pm);
 		try {
-			String key = "VoProductsForCategory:" + shopId + ":" + categoryId;
+			String key = getProcutsOfCategoryCacheKey(categoryId, shopId);
 			ArrayList<Product> products = ServiceImpl.getObjectFromCache(key);
 
 			if (null == products) { // no data in cache
@@ -535,6 +548,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		} finally {
 			pm.close();
 		}
+	}
+
+	private static String getProcutsOfCategoryCacheKey(long categoryId, Long shopId) {
+		return "VoProductsForCategory:" + shopId + ":" + categoryId;
 	}
 
 	// ======================================================================================================================
@@ -1203,7 +1220,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			pm.close();
 		}
 	}
-
+ 
 	// ======================================================================================================================
 	@Override
 	public void updateProduct(FullProductInfo newInfoWithOldId) throws InvalidOperation {
@@ -1212,6 +1229,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			VoProduct vop = pm.getObjectById(VoProduct.class, newInfoWithOldId.getProduct().getId());
 			long cuid = getCurrentUserId(pm);
 			vop.update(newInfoWithOldId, cuid, pm);
+			for( Long catId: vop.getCategories())
+				removeObjectFromCache(ShopServiceImpl.getProcutsOfCategoryCacheKey(catId, vop.getShopId()));
+			
+			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(vop.getShopId()));
 			pm.makePersistent(vop);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update product: " + e.getMessage());
@@ -1249,6 +1270,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			long cuid = getCurrentUserId(pm);
 			vopc.update(newCategoryInfo, cuid, pm);
 			pm.makePersistent(vopc);
+			
+			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(vopc.getShopId()));
+			
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update CAtegory: " + e.getMessage());
 		} finally {
@@ -1428,6 +1452,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			VoShop shop = _shop == null ? getCurrentShop(pm) : _shop;
 			VoProduct product = VoProduct.createObject(shop, fpi, pm);
+			for( Long catId: product.getCategories())
+				removeObjectFromCache(ShopServiceImpl.getProcutsOfCategoryCacheKey(catId, product.getShopId()));
+			
+			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(shop.getId()));
+			
 			return product.getId();
 		} finally {
 			if (_pm == null)
@@ -1797,7 +1826,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	"getShops", "getDates", "getShop", "getProducers", "getProductCategories", "getProducts", "getProductDetails", "getOrders", "getOrdersByStatus",
 			"getOrder", "getOrderDetails", "createOrder", "updateOrder", "cancelOrder", "deleteOrder", "confirmOrder", "appendOrder", "mergeOrder",
-			"setOrderLine", "removeOrderLine", "setOrderDeliveryType", "setOrderPaymentType", "setOrderDeliveryAddress"
+			"setOrderLine", "removeOrderLine", "setOrderDeliveryType", "setOrderPaymentType", "setOrderDeliveryAddress", "getProductsByCategories"
 
 	}));
 
@@ -1811,5 +1840,48 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	@Override
 	public long categoryId() {
 		return ServiceCategoryID.SHOP_SI.ordinal();
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IdNameChilds> getProductsByCategories(long shopId) throws InvalidOperation {
+		
+		ArrayList<IdNameChilds> catwithProcuts = getObjectFromCache( createShopProductsByCategoryKey(shopId));
+		
+		if( null == catwithProcuts) {
+			catwithProcuts = new ArrayList<IdNameChilds>(); 
+			Map<Long,List<IdName>> cpm = new TreeMap<Long,List<IdName>>();
+			PersistenceManager pm = PMF.getPm();
+			try {
+				if( 0 == shopId )
+						shopId = getCurrentShopId(pm);
+				List<VoProduct> products = (List<VoProduct>) pm.newQuery(VoProduct.class, "shopId=="+shopId ).execute();
+				for (VoProduct voProduct : products) {
+					for(Long catId : voProduct.getCategories()){
+						if(!cpm.containsKey(catId)){
+							cpm.put(catId, new ArrayList<IdName>());
+						}
+						cpm.get(catId).add( new IdName( voProduct.getId(), voProduct.getName()));
+					}
+				}
+				//Load all categories and filter them by products
+				List<VoProductCategory> vpcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class, "shopId=="+shopId).execute();
+				for (VoProductCategory voProductCategory : vpcl) {
+					long nextCatId = voProductCategory.getId();
+					if(cpm.containsKey(nextCatId)){
+						catwithProcuts.add( new IdNameChilds(nextCatId, voProductCategory.getName(), cpm.get(nextCatId)));
+					}
+				}
+			} finally {
+				pm.close();
+			}
+			putObjectToCache( createShopProductsByCategoryKey(shopId), catwithProcuts );
+		}
+		return catwithProcuts;
+	}
+
+	private static Object createShopProductsByCategoryKey(long shopId) {
+		return "createShopProductsByCategoryKey"+shopId;
 	}
 }
