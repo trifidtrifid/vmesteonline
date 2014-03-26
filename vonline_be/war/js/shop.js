@@ -103,103 +103,103 @@ $(document).ready(function(){
     });
 
     /* автозаполнение адреса доставки  */
+        function initAutocompleteAddress(){ var addressesBase = userServiceClient.getAddressCatalogue();
 
-    var addressesBase = userServiceClient.getAddressCatalogue();
+            var countries = addressesBase.countries;
+            var countriesLength = countries.length;
+            var countryTags = [],
+                countryId = [],
+                cityTags = [],
+                cityId = [],
+                streetTags = [],
+                streetId = [];
 
-    var countries = addressesBase.countries;
-    var countriesLength = countries.length;
-    var countryTags = [],
-        countryId = [],
-        cityTags = [],
-        cityId = [],
-        streetTags = [],
-        streetId = [];
-
-    for (var i = 0; i < countriesLength; i++){
-        //alert(countries[i].name);
-        countryTags[i] = countries[i].name;
-        countryId[i] = countries[i].id;
-    }
-
-    $( "#country-delivery" ).autocomplete({
-        source: countryTags
-    });
-    $('#city-delivery').focus(function(){
-        var prevField = $('#country-delivery').val();
-        var cities;
-        if(prevField){
             for (var i = 0; i < countriesLength; i++){
-                if (prevField == countryTags[i]){
-                    cities = userServiceClient.getCities(countryId[i]);
-                    break;
-                }
+                //alert(countries[i].name);
+                countryTags[i] = countries[i].name;
+                countryId[i] = countries[i].id;
             }
-        }
-        if (!cities){
-            cities = addressesBase.cities;
-        }
-        var citiesLength = cities.length;
-        var cityTags = [];
-        for (i = 0; i < citiesLength; i++){
-            cityTags[i] = cities[i].name;
-        }
 
-        $(this).autocomplete({
-            source: cityTags
-        });
-    });
-
-    $( "#street-delivery" ).focus(function(){
-        var prevField = $('#city-delivery').val();
-        var streets;
-        var citiesLength = addressesBase.cities.length;
-        if(prevField){
-            for (var i = 0; i < citiesLength; i++){
-                if (prevField == cityTags[i]){
-                    streets = userServiceClient.getStreets(cityId[i]);
-                    break;
-                }
-            }
-        }
-        if (!streets){
-            streets = addressesBase.streets;
-        }
-        var streetsLength = streets.length;
-        var streetTags = [];
-        for (i = 0; i < streetsLength; i++){
-            streetTags[i] = streets[i].name;
-        }
-
-        $(this).autocomplete({
-            source: streetTags
-        });
-    });
-
-    $( "#building-delivery" ).focus(function(){
-            var prevField = $('#street-delivery').val();
-            var buildings;
-        var streetLength = addressesBase.streets.length;
-        if(prevField){
-                for (var i = 0; i < streetLength; i++){
-                    if (prevField == streetTags[i]){
-                        buildings = userServiceClient.getBuildings(streetId[i]);
-                        break;
+            $( "#country-delivery" ).autocomplete({
+                source: countryTags
+            });
+            $('#city-delivery').focus(function(){
+                var prevField = $('#country-delivery').val();
+                var cities;
+                if(prevField){
+                    for (var i = 0; i < countriesLength; i++){
+                        if (prevField == countryTags[i]){
+                            cities = userServiceClient.getCities(countryId[i]);
+                            break;
+                        }
                     }
                 }
-            }
-            if (!buildings){
-                buildings = addressesBase.buildings;
-            }
-            var buildingsLength = buildings.length;
-            var buildingsTags = [];
-            for (i = 0; i < buildingsLength; i++){
-                buildingsTags[i] = buildings[i].fullNo;
-            }
+                if (!cities){
+                    cities = addressesBase.cities;
+                }
+                var citiesLength = cities.length;
+                var cityTags = [];
+                for (i = 0; i < citiesLength; i++){
+                    cityTags[i] = cities[i].name;
+                }
 
-            $(this).autocomplete({
-                source: buildingsTags
+                $(this).autocomplete({
+                    source: cityTags
+                });
             });
-        });
+
+            $( "#street-delivery" ).focus(function(){
+                var prevField = $('#city-delivery').val();
+                var streets;
+                var citiesLength = addressesBase.cities.length;
+                if(prevField){
+                    for (var i = 0; i < citiesLength; i++){
+                        if (prevField == cityTags[i]){
+                            streets = userServiceClient.getStreets(cityId[i]);
+                            break;
+                        }
+                    }
+                }
+                if (!streets){
+                    streets = addressesBase.streets;
+                }
+                var streetsLength = streets.length;
+                var streetTags = [];
+                for (i = 0; i < streetsLength; i++){
+                    streetTags[i] = streets[i].name;
+                }
+
+                $(this).autocomplete({
+                    source: streetTags
+                });
+            });
+
+            $( "#building-delivery" ).focus(function(){
+                var prevField = $('#street-delivery').val();
+                var buildings;
+                var streetLength = addressesBase.streets.length;
+                if(prevField){
+                    for (var i = 0; i < streetLength; i++){
+                        if (prevField == streetTags[i]){
+                            buildings = userServiceClient.getBuildings(streetId[i]);
+                            break;
+                        }
+                    }
+                }
+                if (!buildings){
+                    buildings = addressesBase.buildings;
+                }
+                var buildingsLength = buildings.length;
+                var buildingsTags = [];
+                for (i = 0; i < buildingsLength; i++){
+                    buildingsTags[i] = buildings[i].fullNo;
+                }
+
+                $(this).autocomplete({
+                    source: buildingsTags
+                });
+            });
+        }
 
     }catch(e){
             alert(e+ " Ошибка autocomplete")
@@ -230,6 +230,7 @@ $(document).ready(function(){
     initProductsSpinner();
 
     var triggerDelivery = 0;
+    var autocompleteAddressFlag = 1;
     initRadioBtnClick();
 
     initBasketInReload();
@@ -317,7 +318,6 @@ $(document).ready(function(){
         }
     }
 
-
     function initRadioBtnClick(){
         $('.radio input').click(function(){
             var itogoRight = $('.itogo-right span');
@@ -325,35 +325,41 @@ $(document).ready(function(){
             if ($(this).hasClass('courier-delivery')){
                 //если доставка курьером
                 client.setOrderDeliveryType(2);
-                var userAddresses = userServiceClient.getUserAddresses();
-                var userPhone = userServiceClient.getUserContacts().mobilePhone;
-                if(userPhone){
-                    $('#phone-delivery').val(userPhone);
-                }
-                if(userAddresses.length > 0){
-                    var homeAddress = userServiceClient.getUserContacts().homeAddress;
-                    if(homeAddress){
-                        writeAddress(homeAddress);
+                if (autocompleteAddressFlag){
+                    initAutocompleteAddress();
+
+                    var userAddresses = userServiceClient.getUserAddresses();
+                    var userPhone = userServiceClient.getUserContacts().mobilePhone;
+                    if(userPhone){
+                        $('#phone-delivery').val(userPhone);
                     }
-                    var userAddressesHtml = "";
-                    var userAddressesLength = userAddresses.length;
-                    for(var i = 0; i < userAddressesLength; i++){
-                        userAddressesHtml += '<li><a href="#">'+
-                            userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
-                            '</a></li>';
+                    if(userAddresses.length > 0){
+                        var homeAddress = userServiceClient.getUserContacts().homeAddress;
+                        if(homeAddress){
+                            writeAddress(homeAddress);
+                        }
+                        var userAddressesHtml = "";
+                        var userAddressesLength = userAddresses.length;
+                        for(var i = 0; i < userAddressesLength; i++){
+                            userAddressesHtml += '<li><a href="#">'+
+                                userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
+                                '</a></li>';
+                        }
+
+                        $('.delivery-dropdown .dropdown-menu').prepend(userAddressesHtml);
+                        $('.delivery-dropdown .dropdown-menu a:not(".delivery-add-address")').click(function(e){
+                            e.preventDefault();
+                            var ind = $(this).parent().index();
+                            writeAddress(userAddresses[ind]);
+                        });
+                        $('.delivery-add-address').click(function(e){
+                            e.preventDefault();
+                            writeAddress();
+                            $('.delivery-dropdown .btn-group-text').text('Выбрать адрес');
+                        });
                     }
 
-                    $('.delivery-dropdown .dropdown-menu').prepend(userAddressesHtml);
-                    $('.delivery-dropdown .dropdown-menu a:not(".delivery-add-address")').click(function(e){
-                        e.preventDefault();
-                        var ind = $(this).parent().index();
-                        writeAddress(userAddresses[ind]);
-                    });
-                    $('.delivery-add-address').click(function(e){
-                        e.preventDefault();
-                        writeAddress();
-                        $('.delivery-dropdown .btn-group-text').text('Выбрать адрес');
-                    });
+                    autocompleteAddressFlag = 0;
                 }
 
                 $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
@@ -366,7 +372,7 @@ $(document).ready(function(){
             }else{
                 client.setOrderDeliveryType(1);
                 $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
-                var order = client.getOrder(currentOrderId);
+                //var order = client.getOrder(currentOrderId);
                 if (triggerDelivery){itogoRight.text(countItogo($('.catalog-order'))); triggerDelivery = 0;}
             }
         });
@@ -764,6 +770,7 @@ $(document).ready(function(){
                 }
             }else{
                 //если popup уже открывали
+                alert('1');
                 if ($(this).closest('tr').length == 0 || $(this).closest('.order-products').length > 0){
                     // если мы в корзине или на странице заказов
                     if (productDetails.prepackRequired){
@@ -1991,6 +1998,8 @@ $(document).ready(function(){
                     var day = 3600*24;
                     var orders = client.getOrders(0,nowTime+90*day);
                     initVarForMoreOrders();
+                    // если всегда делать createOrdersHtml, то странциа заказов будет обновляться в реальном времени
+                    // а так можно оптимизировать и не делать createOrderHtml каждый раз при перезагрузке
                     ordersList.html('').append(createOrdersHtml(orders));
                     InitProductDetailPopup($('.product-link'));
                     initShowMoreOrders(orders);
