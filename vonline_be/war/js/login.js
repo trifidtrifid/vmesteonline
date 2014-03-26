@@ -14,8 +14,46 @@ $(document).ready(function(){
     });
     $('.remember-link').click(function(e){
         e.preventDefault();
-        client.sendChangePasswordCodeRequest('забыл пароль адресат','sdf%code%sdf%name%sdf');
-        //client.changePasswordOfUser('qq@qq.ru','qq','qq');
+        var setNewPassword = $('.set-new-password');
+        if(setNewPassword.css('display')=='none'){
+            $('.login-form .btn-submit').hide();
+            setNewPassword.slideDown();
+            $('.login-form').height('290px');
+        }else{
+            setNewPassword.slideUp(function(){
+                $('.login-form .btn-submit').show();
+                $('.login-error').hide();
+            });
+            $('.login-form').height('258px');
+        }
+    });
+    $('.sendConfirmCode').click(function(e){
+        e.preventDefault();
+
+        var to = $('#uname').val();
+        if (!to){
+            $('.login-error').text('Введите пожалуйста e-mail').show();
+            $('.login-form').height('320px');
+        }else{
+            $('.login-error').hide();
+            var resourcefileName = "asd";
+            client.sendConfirmCode(to,resourcefileName);
+        }
+    });
+    $('.useConfirmCode').click(function(e){
+        e.preventDefault();
+
+        var email = $('#uname').val();
+        var confirmCode = $('#confirmCode').val();
+        var newPassword = $('#password').val();
+        try{
+            client.confirmRequest(email,confirmCode,newPassword);
+            client.login($('.login-form .btn-submit'));
+        }catch(e){
+            $('.login-error').text('Неверный код подтверждения !').show();
+            $('.login-form').height('320px');
+
+        }
     });
 
     function login(selector) {
@@ -35,7 +73,7 @@ $(document).ready(function(){
             }
 
         } catch (ouch) {
-            $('.login-error').show();
+            $('.login-error').text('Вы ввели неккоректный e-mail или пароль').show();
         }
     }
 

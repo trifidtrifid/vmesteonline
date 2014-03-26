@@ -33,7 +33,19 @@
                     <label for="password">Пароль</label>
                     <input type="password" id="password"/>
                     <a href="#" class="remember-link">Забыли пароль ?</a>
-                    <div class="error-info login-error">Вы ввели неккоректный e-mail или пароль</div>
+                    <div class="error-info login-error"></div>
+                </div>
+                <div class="set-new-password">
+                    <div>
+                        <label for="password">Новый пароль</label>
+                        <input type="password" id="newPassword"/>
+                    </div>
+                    <div>
+                        <label for="confirmCode">Код</label>
+                        <input type="text" id="confirmCode"/>
+                    </div>
+                    <button class="btn btn-primary btn-sm no-border useConfirmCode">Подтвердить</button>
+                    <button class="btn btn-primary btn-sm no-border sendConfirmCode">Получить код</button>
                 </div>
                 <button id="go" class="btn-submit btn-sm no-border">Войти</button>
             </div>
