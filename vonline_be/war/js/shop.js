@@ -770,7 +770,6 @@ $(document).ready(function(){
                 }
             }else{
                 //если popup уже открывали
-                alert('1');
                 if ($(this).closest('tr').length == 0 || $(this).closest('.order-products').length > 0){
                     // если мы в корзине или на странице заказов
                     if (productDetails.prepackRequired){
@@ -1245,7 +1244,6 @@ $(document).ready(function(){
                  alert(p+" "+packs[p]);
                  }*/
                 client.setOrderLine(productId,qnty,'sdf',packs);
-                //alert('2');
                 var price = productSelector.find('.td-price').text();
                 price = parseFloat(price);
                 productSelector.find('.td-summa').text((price*qnty).toFixed(1));

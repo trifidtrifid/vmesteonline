@@ -31,6 +31,7 @@
         });
         /* --- */
         /* переключения на настройки, профиль и выход */
+
         $('.user-menu a').click(function(e){
             e.preventDefault();
 
@@ -42,7 +43,6 @@
                 dynamic.load("ajax-profile.jsp .dynamic",function(){
                     $('.edit-personal-link').click(function(e){
                         e.preventDefault();
-
                         dynamic.load("ajax-editPersonal.jsp .dynamic");
                     });
                 });

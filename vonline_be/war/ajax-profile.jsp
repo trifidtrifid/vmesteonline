@@ -31,6 +31,10 @@
 	}
 
     UserServiceImpl userService = new UserServiceImpl(request.getSession());
+    AuthServiceImpl authService = new AuthServiceImpl();
+    boolean ifEmailConfirmed = authService.checkIfEmailConfirmed(userService.getUserContacts().email);
+    pageContext.setAttribute("ifEmailConfirmed",ifEmailConfirmed);
+    //out.print(ifEmailConfirmed);
 
     List<Group> Groups = userService.getUserGroups();
     List<Rubric> Rubrics = userService.getUserRubrics();
@@ -222,6 +226,13 @@
                                 <h1>Иван Грозный</h1>
                                 <a class="edit-personal-link" href="#">Редактировать</a>
                             </div>
+                            <c:if test="${!ifEmailConfirmed}">
+                                <form class="account-no-confirm">
+                                    <input id="search" type="text" class="form-control" value="Введите код подтверждения" onblur="if(this.value=='') this.value='Введите код подтверждения';" onfocus="if(this.value=='Введите код подтверждения') this.value='';"/>
+                                    <input type="submit" value="Отправить" class="btn btn-primary btn-sm no-border">
+                                    <button class="btn btn-primary btn-sm no-border repeat-confirm-code">Получить код повторно</button>
+                                </form>
+                            </c:if>
                             <div class="user-body">
                                 <div><span>статус:</span> настроение хорошее</div>
                                 <div><span>Адрес проживания:</span> ул.Коссмонавтов 34</div>
@@ -237,79 +248,6 @@
                             </div>
                         </div>
                     </section>
-<%--                    <section class="edit-personal">
-                        <h3>Редактировать профиль</h3>
-                        <div class="tabbable">
-                            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
-                                <li class="active">
-                                    <a data-toggle="tab" href="#main">Основное</a>
-                                </li>
-
-                                <li class="">
-                                    <a data-toggle="tab" href="#contacts">Контакты</a>
-                                </li>
-
-                                <li class="">
-                                    <a data-toggle="tab" href="#interests">Интересы</a>
-                                </li>
-                            </ul>
-
-                            <div class="tab-content">
-                                <div id="main" class="tab-pane active">
-                                    <div>
-                                        <label for="edit-name">Имя</label>
-                                        <input id="edit-name" type="text"/>
-                                    </div>
-                                    <div>
-                                        <label for="edit-surname">Фамилия</label>
-                                        <input id="edit-surname" type="text"/>
-                                    </div>
-                                    <div>
-                                        <label for="form-field-select-5">Должность</label>
-
-                                        <select class="form-control" id="form-field-select-5">
-                                            <option value="">&nbsp;</option>
-                                            <option value="AL">Гончар</option>
-                                            <option value="AK">Копьеносец</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label for="form-field-select-2">Дата рождения</label>
-
-                                        <select class="form-control" id="form-field-select-2">
-                                            <option value="">&nbsp;</option>
-                                            <option value="AL">Никому</option>
-                                            <option value="AK">Васе</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div id="contacts" class="tab-pane">
-                                    <div>
-                                        <label for="edit-email">E-mail</label>
-                                        <input id="edit-email" type="text"/>
-                                    </div>
-                                    <div>
-                                        <label for="edit-phone">Телефон</label>
-                                        <input id="edit-phone" type="text"/>
-                                    </div>
-                                </div>
-
-                                <div id="interests" class="tab-pane">
-                                    <div>
-                                        <label for="edit-about">О себе</label>
-                                        <textarea name="edit-about" id="edit-about" cols="30" rows="5"></textarea>
-                                    </div>
-                                    <div>
-                                        <label for="edit-interests">Интересы</label>
-                                        <textarea name="edit-interests" id="edit-interests" cols="30" rows="5"></textarea>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <a class="btn btn-primary no-border" href="#">Сохранить</a>
-                    </section>--%>
                 </div>
             </div>
         </div>
