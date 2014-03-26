@@ -31,18 +31,20 @@
         });
         /* --- */
         /* переключения на настройки, профиль и выход */
-        $('.user-menu a').click(function(){
+        $('.user-menu a').click(function(e){
+            e.preventDefault();
+
             var ind = $(this).parent().index();
             var dynamic = $('.dynamic');
             if (ind == 0){
-                var settingsHtml = $('.settings-wrap').html();
-                dynamic.html(settingsHtml);
+                dynamic.load("ajax-settings.jsp .dynamic");
             }else if (ind == 1){
-                var profileHtml = $('.user-descr-wrap').html();
-                dynamic.html(profileHtml);
-                $('.edit-personal-link').click(function(){
-                    var editPersonalHtml = $('.edit-personal-wrap').html();
-                    dynamic.html(editPersonalHtml);
+                dynamic.load("ajax-profile.jsp .dynamic",function(){
+                    $('.edit-personal-link').click(function(e){
+                        e.preventDefault();
+
+                        dynamic.load("ajax-editPersonal.jsp .dynamic");
+                    });
                 });
             } else {
                 var transport = new Thrift.Transport("/thrift/AuthService");

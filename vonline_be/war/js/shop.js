@@ -367,13 +367,13 @@ $(document).ready(function(){
                 if (orderDetails.deliveryCost){
                     $('.delivery-cost').text(orderDetails.deliveryCost);
                 }
-                itogoRight.text(countItogo($('.catalog-order')));
+                itogoRight.text(countAmount($('.catalog-order')));
                 triggerDelivery = 1;
             }else{
                 client.setOrderDeliveryType(1);
                 $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
                 //var order = client.getOrder(currentOrderId);
-                if (triggerDelivery){itogoRight.text(countItogo($('.catalog-order'))); triggerDelivery = 0;}
+                if (triggerDelivery){itogoRight.text(countAmount($('.catalog-order'))); triggerDelivery = 0;}
             }
         });
     }
@@ -416,7 +416,7 @@ $(document).ready(function(){
                     productSelector.find('td>.ace-spinner').spinner('value',qnty);
                     productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
                     client.setOrderLine(productId,qnty,'asd',packs);
-                    $('.itogo-right span').text(countItogo($('.catalog-order')));
+                    $('.itogo-right span').text(countAmount($('.catalog-order')));
                 }
             }
             $(this).closest('.prepack-line').slideUp(function(){
@@ -476,7 +476,7 @@ $(document).ready(function(){
             }else if (orderDetails.delivery == 2){
                 $('.radio .courier-delivery').trigger('click');
             }
-            $('.itogo-right span').text(countItogo(catalogOrder));
+            $('.itogo-right span').text(countAmount(catalogOrder));
             $('.empty-basket').hide();
         }
     }
@@ -737,7 +737,7 @@ $(document).ready(function(){
                             client.setOrderLine(productId,qnty,'sdf',packs);
                             productSelector.find('td>.ace-spinner').spinner('value',qnty);
                             productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
-                            $('.itogo-right span').text(countItogo($('.catalog-order')));
+                            $('.itogo-right span').text(countAmount($('.catalog-order')));
                         }
                         productSelector.find('td .ace-spinner').spinner('disable');
                     }
@@ -1146,7 +1146,7 @@ $(document).ready(function(){
             client.setOrderLine(productSelector.data('productid'),qnty,'asd',packs);
             productSelector.find('.td-summa').text((price*qnty).toFixed(1));
 
-            $('.itogo-right span,.modal-itogo span').text(countItogo($('.modal-body-list')));
+            $('.itogo-right span,.modal-itogo span').text(countAmount($('.modal-body-list')));
         });
     }
 
@@ -1249,8 +1249,8 @@ $(document).ready(function(){
                 var price = productSelector.find('.td-price').text();
                 price = parseFloat(price);
                 productSelector.find('.td-summa').text((price*qnty).toFixed(1));
-                $('.itogo-right span').text(countItogo($('.catalog-order')));
-                $('.modal-itogo span').text(countItogo($('.modal-body-list')));
+                $('.itogo-right span').text(countAmount($('.catalog-order')));
+                $('.modal-itogo span').text(countAmount($('.modal-body-list')));
             }
 
     })
@@ -1314,7 +1314,7 @@ $(document).ready(function(){
         }
     }
 
-    function countItogo(sel){
+    function countAmount(sel){
         try{
         var summa = 0;
         sel.find('.td-summa').each(function(){
@@ -1323,7 +1323,7 @@ $(document).ready(function(){
         var orderDetails = client.getOrderDetails(currentOrderId);
         summa += orderDetails.deliveryCost;
         }catch(e){
-            //alert(e+" Функция countItogo");
+            //alert(e+" Функция countAmount");
         }
         return summa.toFixed(1);
     }
@@ -1333,7 +1333,7 @@ $(document).ready(function(){
         selector.click(function(){
             $(this).closest('li').slideUp(function(){
                 $(this).detach();
-                $('.itogo-right span').text(countItogo($('.catalog-order')));
+                $('.itogo-right span').text(countAmount($('.catalog-order')));
                 if ($('.catalog-order li').length == 0){
                     $('.additionally-order').addClass('hide');
                     $('.empty-basket').removeClass('hide');
@@ -1654,7 +1654,7 @@ $(document).ready(function(){
             client.setOrderLine(currentProduct.id,newSpinnerVal,'sdf',packs);
             var newSumma = (newSpinnerVal*parseFloat(basketProductSelector.find('.td-price').text())).toFixed(1);
             basketProductSelector.find('.td-summa').text(newSumma);
-            $('.itogo-right span').text(countItogo($('.catalog-order')));
+            $('.itogo-right span').text(countAmount($('.catalog-order')));
         }else{
             // если такого товара еще нет
             AddSingleProductToBasket(currentProduct,currentProduct.qnty,currentProduct.unitName);
@@ -1786,7 +1786,7 @@ $(document).ready(function(){
 
         var catalogOrder = $('.catalog-order');
         catalogOrder.append(productHtml);
-        $('.itogo-right span').text(countItogo(catalogOrder));
+        $('.itogo-right span').text(countAmount(catalogOrder));
 
         var deleteNoInit = $('.catalog-order .delete-product.no-init');
         InitDeleteProduct(deleteNoInit);

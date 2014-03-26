@@ -122,7 +122,7 @@
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
-						<li class="active"><a class="btn btn-info no-border" href="#">
+						<li class="active"><a class="btn btn-info no-border" href="shop.jsp">
 								Магазин </a></li>
 						<li class="user-short light-blue"><c:choose>
 								<c:when test="${auth}">
@@ -162,7 +162,7 @@
 			</div>
 			<!-- /.container -->
 		</div>
-		<div class="main-container shop" id="main-container">
+		<div class="main-container shop dynamic" id="main-container">
 			<div class="main-container-inner">
 
             <aside class="sidebar shop-right">
@@ -423,8 +423,8 @@
 
 	</div>
 	<!-- общие библиотеки -->
-	<script src="js/jquery-2.0.3.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+	<script src="js/lib/jquery-2.0.3.min.js"></script>
+	<script src="js/lib/bootstrap.min.js"></script>
     <!-- файлы thrift -->
     <script src="js/thrift.js" type="text/javascript"></script>
     <script src="gen-js/bedata_types.js" type="text/javascript"></script>
@@ -437,17 +437,17 @@
     <!-- -->
 
 	<!-- конкретные плагины -->
-	<script src="js/jquery-ui-1.10.3.full.min.js"></script>
-	<script src="js/fuelux/fuelux.spinner.min.js"></script>
-	<script src="js/date-time/bootstrap-datepicker.js"></script>
-    <script src="js/date-time/locales/bootstrap-datepicker.ru.js"></script>
-	<%--<script src="js/date-time/bootstrap-datepicker.js"></script>--%>
+	<script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
+	<script src="js/lib/fuelux/fuelux.spinner.min.js"></script>
+	<script src="js/lib/date-time/bootstrap-datepicker.js"></script>
+    <script src="js/lib/date-time/locales/bootstrap-datepicker.ru.js"></script>
+	<%--<script src="js/lib/date-time/bootstrap-datepicker.js"></script>--%>
 
-	<script src="js/jquery.flexslider-min.js"></script>
+	<script src="js/lib/jquery.flexslider-min.js"></script>
 
 	<!-- -->
-	<script src="js/ace-extra.min.js"></script>
-	<script src="js/ace-elements.min.js"></script>
+	<script src="js/lib/ace-extra.min.js"></script>
+	<script src="js/lib/ace-elements.min.js"></script>
 	<!-- собственные скрипты  -->
 <%--
 	<script src="js/login.js"></script>

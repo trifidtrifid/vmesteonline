@@ -55,7 +55,7 @@
   <title>Главная</title>
   <link rel="stylesheet" href="css/style.css"/>
 
-<script src="js/jquery-2.0.3.min.js"></script>
+<script src="js/lib/jquery-2.0.3.min.js"></script>
     <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -681,21 +681,21 @@
 
 
 <!-- общие библиотеки -->
-<script src="js/bootstrap.min.js"></script>
-<script src="js/ace-extra.min.js"></script>
-<script src="js/ace-elements.min.js"></script>
+<script src="js/lib/bootstrap.min.js"></script>
+<script src="js/lib/ace-extra.min.js"></script>
+<script src="js/lib/ace-elements.min.js"></script>
 
 <!-- конкретные плагины -->
 
     <!-- библиотеки для wysiwig редактора  -->
-<script src="js/jquery-ui-1.10.3.custom.min.js"></script>
-<script src="js/markdown/markdown.min.js"></script>
-<script src="js/markdown/bootstrap-markdown.min.js"></script>
-<script src="js/jquery.hotkeys.min.js"></script>
-<script src="js/bootstrap-wysiwyg.min.js"></script>
-<script src="js/bootbox.min.js"></script>
+<script src="js/lib/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="js/lib/markdown/markdown.min.js"></script>
+<script src="js/lib/markdown/bootstrap-markdown.min.js"></script>
+<script src="js/lib/jquery.hotkeys.min.js"></script>
+<script src="js/lib/bootstrap-wysiwyg.min.js"></script>
+<script src="js/lib/bootbox.min.js"></script>
     <!-- -->
-<script src="js/jquery.scrollTo.min.js"></script>
+<script src="js/lib/jquery.scrollTo.min.js"></script>
 
 <!-- -->
 <!-- файлы thrift -->
