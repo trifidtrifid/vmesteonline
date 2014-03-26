@@ -34,6 +34,8 @@
 
         $('.user-menu a').click(function(e){
             e.preventDefault();
+            $(this).closest('.user-menu').hide();
+            e.stopPropagation();
 
             var ind = $(this).parent().index();
             var dynamic = $('.dynamic');
