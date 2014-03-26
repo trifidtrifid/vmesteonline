@@ -228,6 +228,10 @@ $(document).ready(function(){
 
 
     initProductsSpinner();
+
+    var triggerDelivery = 0;
+    initRadioBtnClick();
+
     initBasketInReload();
     InitAddToBasket($('.fa-shopping-cart'));
     InitProductDetailPopup($('.product-link'));
@@ -313,60 +317,61 @@ $(document).ready(function(){
         }
     }
 
-    var triggerDelivery = 0;
-    $('.radio input').click(function(){
-        var itogoRight = $('.itogo-right span');
-        var orderDetails = 0;
-        if ($(this).hasClass('courier-delivery')){
-            //если доставка курьером
-            client.setOrderDeliveryType(2);
-            var userAddresses = userServiceClient.getUserAddresses();
-            /*var userContacts = userServiceClient.getUserContacts();
-            alert(userContacts.homeAddress+" "+userContacts.mobilePhone);*/
-            var userPhone = userServiceClient.getUserContacts().mobilePhone;
-            if(userPhone){
-               $('#phone-delivery').val(userPhone);
-            }
-            if(userAddresses.length > 0){
-                var homeAddress = userServiceClient.getUserContacts().homeAddress;
-                 if(homeAddress){
-                    writeAddress(homeAddress);
-                 }
-                var userAddressesHtml = "";
-                var userAddressesLength = userAddresses.length;
-                for(var i = 0; i < userAddressesLength; i++){
-                    userAddressesHtml += '<li><a href="#">'+
-                        userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
-                        '</a></li>';
+
+    function initRadioBtnClick(){
+        $('.radio input').click(function(){
+            var itogoRight = $('.itogo-right span');
+            var orderDetails = 0;
+            if ($(this).hasClass('courier-delivery')){
+                //если доставка курьером
+                client.setOrderDeliveryType(2);
+                var userAddresses = userServiceClient.getUserAddresses();
+                var userPhone = userServiceClient.getUserContacts().mobilePhone;
+                if(userPhone){
+                    $('#phone-delivery').val(userPhone);
+                }
+                if(userAddresses.length > 0){
+                    var homeAddress = userServiceClient.getUserContacts().homeAddress;
+                    if(homeAddress){
+                        writeAddress(homeAddress);
+                    }
+                    var userAddressesHtml = "";
+                    var userAddressesLength = userAddresses.length;
+                    for(var i = 0; i < userAddressesLength; i++){
+                        userAddressesHtml += '<li><a href="#">'+
+                            userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
+                            '</a></li>';
+                    }
+
+                    $('.delivery-dropdown .dropdown-menu').prepend(userAddressesHtml);
+                    $('.delivery-dropdown .dropdown-menu a:not(".delivery-add-address")').click(function(e){
+                        e.preventDefault();
+                        var ind = $(this).parent().index();
+                        writeAddress(userAddresses[ind]);
+                    });
+                    $('.delivery-add-address').click(function(e){
+                        e.preventDefault();
+                        writeAddress();
+                        $('.delivery-dropdown .btn-group-text').text('Выбрать адрес');
+                    });
                 }
 
-                $('.delivery-dropdown .dropdown-menu').prepend(userAddressesHtml);
-                $('.delivery-dropdown .dropdown-menu a:not(".delivery-add-address")').click(function(e){
-                    e.preventDefault();
-                    var ind = $(this).parent().index();
-                    writeAddress(userAddresses[ind]);
-                });
-                $('.delivery-add-address').click(function(e){
-                    e.preventDefault();
-                    writeAddress();
-                    $('.delivery-dropdown .btn-group-text').text('Выбрать адрес');
-                });
+                $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
+                orderDetails = client.getOrderDetails(currentOrderId);
+                if (orderDetails.deliveryCost){
+                    $('.delivery-cost').text(orderDetails.deliveryCost);
+                }
+                itogoRight.text(countItogo($('.catalog-order')));
+                triggerDelivery = 1;
+            }else{
+                client.setOrderDeliveryType(1);
+                $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
+                var order = client.getOrder(currentOrderId);
+                if (triggerDelivery){itogoRight.text(countItogo($('.catalog-order'))); triggerDelivery = 0;}
             }
+        });
+    }
 
-            $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
-            orderDetails = client.getOrderDetails(currentOrderId);
-            if (orderDetails.deliveryCost){
-                $('.delivery-cost').text(orderDetails.deliveryCost);
-            }
-            itogoRight.text(countItogo($('.catalog-order')));
-            triggerDelivery = 1;
-        }else{
-            client.setOrderDeliveryType(1);
-            $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
-            var order = client.getOrder(currentOrderId);
-            if (triggerDelivery){itogoRight.text(countItogo($('.catalog-order'))); triggerDelivery = 0;}
-        }
-    });
     }catch(e){
         //alert(e + ' Ошибка в простых обработчиках');
     }
@@ -414,6 +419,7 @@ $(document).ready(function(){
                 $(this).remove();
                 if (counterForSetFlag <= 2){
                     $('.error-prepack').hide();
+                    productSelector.find('td>.ace-spinner').spinner('enable');
                 }
             });
         })
@@ -449,15 +455,21 @@ $(document).ready(function(){
                 var productId = $(this).data('productid');
                 for(var i = 0; i < orderLinesLength; i++){
                     if (orderLines[i].product.id == productId){
-                        //productDetails = client.getProductDetails(productId);
                         var minClientPack = $(this).find('td .spinner1').data('step');
                         InitSpinner($(this).find('td .spinner1'),orderLines[i].quantity,itsBasket,minClientPack);
-                        //$(this).find('td .spinner1').attr('data-step',productDetails.minClientPack);
+                        if( getPacksLength(orderLines[i].packs) > 1 ){
+                            $(this).find('td .ace-spinner').spinner('disable');
+                        }
                         break;
                     }
                 }
 
             });
+            if(orderDetails.delivery == 1){
+                $('.radio input:not(".courier-delivery")').trigger('click');
+            }else if (orderDetails.delivery == 2){
+                $('.radio .courier-delivery').trigger('click');
+            }
             $('.itogo-right span').text(countItogo(catalogOrder));
             $('.empty-basket').hide();
         }
@@ -492,44 +504,47 @@ $(document).ready(function(){
         (currentModal.height > 265) ? modalHeight = currentModal.height : modalHeight = 265;
         for(var p in packs){
             //alert(p+" "+packs[p]);
-            if (counter == 0){
-                // если самая первая линия
-                if(!isFirstModal){
-                    currentModal.find('.packs .ace-spinner').spinner('value',packs[p]);
-                    currentModal.find('.prepack-item:not(".packs") .ace-spinner').spinner('value',p);
+            if (p && packs[p]){
+                // чтобы предотвратить вывод удаленных линий, где packs[p]=0
+                if (counter == 0){
+                    // если самая первая линия
+                    if(!isFirstModal){
+                        currentModal.find('.packs .ace-spinner').spinner('value',packs[p]);
+                        currentModal.find('.prepack-item:not(".packs") .ace-spinner').spinner('value',p);
+                    }else{
+                        InitSpinner(currentModal.find('.packs .spinner1'),packs[p],1,1);
+                        InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),p,1,productSelector.find('.spinner1').data('step'));
+                    }
                 }else{
-                    InitSpinner(currentModal.find('.packs .spinner1'),packs[p],1,1);
-                    InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),p,1,productSelector.find('.spinner1').data('step'));
-                }
-            }else{
-                if (packs[p] != 0){
-                // если другая линия
-                prepackHtml = '<div class="prepack-line no-init">' +
-                    '<div class="prepack-item packs">'+
-                    '<input type="text" class="input-mini spinner1 prepack" />'+
-                    '<span>упаковок</span>'+
-                    '</div>'+
-                    '<div class="prepack-item">по</div>'+
-                    '<div class="prepack-item">'+
-                    '<input type="text" data-step="'+ productSelector.find('.spinner1').data('step') +'" class="input-mini spinner1" />'+
-                    '<span>'+ unitName +'</span>'+
-                    '</div>'+
-                    '<div class="prepack-item">'+
-                    '<a href="#" class="close" title="Удалить">×</a>'+
-                    '</div>'+
-                    '</div>';
-                currentModal.find('.prepack-list').append(prepackHtml);
-                InitSpinner(currentModal.find('.no-init .packs .spinner1'),packs[p],1);
-                InitSpinner(currentModal.find('.no-init .prepack-item:not(".packs") .spinner1'),p,1,productSelector.find('td>.ace-spinner .spinner1').data('step'));
-                var currentPrepackLine = currentModal.find('.prepack-line.no-init');
-                initRemovePrepackLine(currentPrepackLine.find('.prepack-item .close'),productId,productSelector);
+                    if (packs[p] != 0){
+                    // если другая линия
+                    prepackHtml = '<div class="prepack-line no-init">' +
+                        '<div class="prepack-item packs">'+
+                        '<input type="text" class="input-mini spinner1 prepack" />'+
+                        '<span>упаковок</span>'+
+                        '</div>'+
+                        '<div class="prepack-item">по</div>'+
+                        '<div class="prepack-item">'+
+                        '<input type="text" data-step="'+ productSelector.find('.spinner1').data('step') +'" class="input-mini spinner1" />'+
+                        '<span>'+ unitName +'</span>'+
+                        '</div>'+
+                        '<div class="prepack-item">'+
+                        '<a href="#" class="close" title="Удалить">×</a>'+
+                        '</div>'+
+                        '</div>';
+                    currentModal.find('.prepack-list').append(prepackHtml);
+                    InitSpinner(currentModal.find('.no-init .packs .spinner1'),packs[p],1);
+                    InitSpinner(currentModal.find('.no-init .prepack-item:not(".packs") .spinner1'),p,1,productSelector.find('td>.ace-spinner .spinner1').data('step'));
+                    var currentPrepackLine = currentModal.find('.prepack-line.no-init');
+                    initRemovePrepackLine(currentPrepackLine.find('.prepack-item .close'),productId,productSelector);
 
-                currentPrepackLine.removeClass('no-init');
-                modalHeight += 53;
-                currentModal.height(modalHeight);
+                    currentPrepackLine.removeClass('no-init');
+                    modalHeight += 53;
+                    currentModal.height(modalHeight);
+                    }
                 }
+                counter++;
             }
-            counter++;
         }
     }
 
@@ -669,7 +684,7 @@ $(document).ready(function(){
                         '</div>'+
                         '<div class="prepack-item">по</div>'+
                         '<div class="prepack-item">'+
-                        '<input type="text" class="input-mini spinner1" />'+
+                        '<input type="text" data-step="'+ spinnerStep +'" class="input-mini spinner1" />'+
                         '<span>'+ $(this).closest('.prepack-item').prev().find('span').text() +'</span>'+
                         '</div>'+
                         '<div class="prepack-item">'+
@@ -693,13 +708,13 @@ $(document).ready(function(){
                         var packs,qnty;
                         var reCount = true;
                         for (var i = 0; i < orderLinesLength; i++){
-                            var tempPacks = orderDetails.odrerLines[i].packs;
-                            if (tempPacks && tempPacks[parseFloat(spinnerStep).toFixed(1)]){
-                                reCount = false;
-                                productSelector.find('.error-prepack').text('Товар не возможно добавить: вы создали две линни с одинаковым количеством продукта').show();
-                            }
                             if (orderDetails.odrerLines[i].product.id == productId){
                                 // если это наш продукт в заказе
+                                var tempPacks = orderDetails.odrerLines[i].packs;
+                                if (tempPacks && tempPacks[parseFloat(spinnerStep).toFixed(1)]){
+                                    reCount = false;
+                                    productSelector.find('.error-prepack').text('Товар не возможно добавить: вы создали две линни с одинаковым количеством продукта').show();
+                                }
                                 packs = tempPacks;
                                 qnty = orderDetails.odrerLines[i].quantity;
                             }
@@ -1089,9 +1104,6 @@ $(document).ready(function(){
             }
 
         }
-       /* $('.spinner-up').click(function(){
-            alert('111');
-        })*/
     }
 
     function InitSpinnerChangeInFinal(selector){
@@ -1209,7 +1221,10 @@ $(document).ready(function(){
                     packsVal = packs[p];
                 }
                 packs = [];
-                if(packsVal){ packs[qnty]=packsVal}
+                if(packsVal){
+                    packs[qnty]=packsVal
+                    qnty = qnty*packsVal;
+                }
                 if(productSelector.find('.modal-body').length > 0){
                     // если мы уже инициировали окно
                     // нужно поменять спиннер этого popup
@@ -1479,26 +1494,6 @@ $(document).ready(function(){
         return ordersHtml;
     }
 
-/*----*/
-    var nowTime = parseInt(new Date().getTime()/1000);
-    nowTime -= nowTime%86400;
-    var dateArray = [];
-    var day = 3600*24;
-    /*dateArray[nowTime] = 1;
-    dateArray[nowTime+day] = 1;
-    dateArray[nowTime+2*day] = 2;
-    dateArray[nowTime+3*day] = 2;
-    dateArray[nowTime+4*day] = 1;
-    dateArray[nowTime+6*day] = 1;
-    dateArray[nowTime+9*day] = 1;
-    dateArray[nowTime-9*day] = 2;
-    client.setDates(dateArray); */
-    //var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
-    /*for (var p in datesArray){
-        //console.log(p);
-    }*/
-/*------*/
-
     function initOrderPlusMinus(selector){
         try{
         selector.find('.plus-minus').click(function(e){
@@ -1548,7 +1543,10 @@ $(document).ready(function(){
     function getPacksLength(packs){
         var counter = 0;
         for(var p in packs){
+            //alert(p+" "+packs[p]);
+            if(p && packs[p]){
             counter++;
+            }
         }
         return counter;
     }
@@ -1797,21 +1795,6 @@ $(document).ready(function(){
         spinnerNoInit.removeClass('no-init');
 
     }
-
-    /*var orderDate = parseInt(new Date().getTime()/1000);
-    orderDate -= orderDate%86400
-    var day = 3600*24;
-    //var orders = client.getOrders(orderDate-day,orderDate+day);
-    var orders = client.getOrders(0,orderDate+60*day);
-    var ordersLength = orders.length;
-    /*var orderList = [];
-    var counter = 0;
-    for (var i = 0; i < ordersLength; i++){
-        if (orders[i].date = orderDate){
-            orderList[counter++] = orders[i];
-        }
-        console.log(i+ " "+orders[i].date+" "+orderDate+" "+orders[i].id);
-    }*/
 
     dPicker.click(function(){
         try{
@@ -2113,5 +2096,40 @@ $(document).ready(function(){
             }
         }
     }
+
+    /*----*/
+    /*var nowTime = parseInt(new Date().getTime()/1000);
+    nowTime -= nowTime%86400;
+    var dateArray = [];
+    var day = 3600*24;
+    dateArray[nowTime] = 1;
+    dateArray[nowTime+day] = 1;
+    dateArray[nowTime+2*day] = 2;
+    dateArray[nowTime+3*day] = 2;
+    dateArray[nowTime+4*day] = 1;
+    dateArray[nowTime+6*day] = 1;
+    dateArray[nowTime+9*day] = 1;
+    dateArray[nowTime-9*day] = 2;
+    client.setDates(dateArray);
+    //var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
+    for (var p in datesArray){
+        //console.log(p);
+    }*/
+    /*------*/
+
+    /*var orderDate = parseInt(new Date().getTime()/1000);
+     orderDate -= orderDate%86400
+     var day = 3600*24;
+     //var orders = client.getOrders(orderDate-day,orderDate+day);
+     var orders = client.getOrders(0,orderDate+60*day);
+     var ordersLength = orders.length;
+     /*var orderList = [];
+     var counter = 0;
+     for (var i = 0; i < ordersLength; i++){
+     if (orders[i].date = orderDate){
+     orderList[counter++] = orders[i];
+     }
+     console.log(i+ " "+orders[i].date+" "+orderDate+" "+orders[i].id);
+     }*/
 
 });

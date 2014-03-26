@@ -232,6 +232,8 @@
                     orderId : $(this).data('orderid')
                 };
                 client.getOrder(currentOrderData.orderId);
+                currentOrderId = currentOrderData.orderId;
+                var orderDetails = client.getOrderDetails(currentOrderId);
                 AddOrdersToBasket(currentOrderData);
 
                 if (orderData && orderData.itsOrder){
@@ -243,6 +245,11 @@
                 }else{
                     // если добавление одного продукта
                     AddProductToBasketCommon(currentProduct,packs);
+                }
+                if(orderDetails.delivery == 1){
+                    $('.radio input:not(".courier-delivery")').trigger('click');
+                }else if (orderDetails.delivery == 2){
+                    $('.radio .courier-delivery').trigger('click');
                 }
                 AdditionallyOrderToggle();
             });
