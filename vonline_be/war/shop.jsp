@@ -124,7 +124,8 @@
 
 						<li class="active"><a class="btn btn-info no-border" href="shop.jsp">
 								Магазин </a></li>
-						<li class="user-short light-blue"><c:choose>
+						<li class="user-short light-blue">
+                            <c:choose>
 								<c:when test="${auth}">
 									<a data-toggle="dropdown" href="#" class="dropdown-toggle">
 										<img class="nav-user-photo" src="i/avatars/user.jpg"
@@ -132,29 +133,29 @@
 													value="${firstName}" /></small> <c:out value="${lastName}" />
 									</span> <i class="icon-caret-down"></i>
 									</a>
-
-									<ul	class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-										<li><a href="#"> <i class="icon-cog"></i> Настройки
-										</a></li>
-
-										<li><a href="#"> <i class="icon-user"></i> Профиль
-										</a></li>
-
-										<li class="divider"></li>
-
-										<li><a href="#"> <i class="icon-off"></i> Выход
-										</a></li>
-									</ul>
 								</c:when>
 								<c:otherwise>
-									<a data-toggle="dropdown" href="#" class="dropdown-toggle">
+									<a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
 										<img class="nav-user-photo" src="i/avatars/user.jpg"
 										alt="Jason's Photo" /> <span class="user-info"> <small>Привет,</small>
 											Гость
 									</span>
 									</a>
 								</c:otherwise>
-							</c:choose></li>
+							</c:choose>
+                            <ul	class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                                <li><a href="#"> <i class="icon-cog"></i> Настройки
+                                </a></li>
+
+                                <li><a href="#"> <i class="icon-user"></i> Профиль
+                                </a></li>
+
+                                <li class="divider"></li>
+
+                                <li><a href="#"> <i class="icon-off"></i> Выход
+                                </a></li>
+                            </ul>
+                        </li>
 					</ul>
 					<!-- /.ace-nav -->
 				</div>

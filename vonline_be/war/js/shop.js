@@ -2023,6 +2023,14 @@ $(document).ready(function(){
     protocol = new Thrift.Protocol(transport);
     var clientAuth = new com.vmesteonline.be.AuthServiceClient(protocol);
 
+    $('.user-short').click(function(){
+        if ($(this).hasClass('no-login')){
+            $(this).find('.user-menu').hide();
+        }else{
+            $(this).find('.user-menu').toggle();
+        }
+    });
+
     $('.login-form .btn-submit').click(function(e){
         e.preventDefault();
         login($(this));
@@ -2044,24 +2052,12 @@ $(document).ready(function(){
         var shops = client.getShops();
         client.getShop(shops[0].id);
 
-        //$('.user-info').html('');
         var shortUserInfo = userServiceClient.getShortUserInfo();
         var shortUserInfoHtml =  '<small>'+ shortUserInfo.firstName +'</small>'+ shortUserInfo.lastName;
         $('.user-info').html(shortUserInfoHtml).after('<i class="icon-caret-down"></i>');
-        var dropdown = '<ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">'+
-            '<li><a href="#"> <i class="icon-cog"></i> Настройки'+
-            '</a></li>'+
-            '<li><a href="#"> <i class="icon-user"></i> Профиль'+
-            '</a></li>'+
-            '<li class="divider"></li>'+
-            '<li><a href="#"> <i class="icon-off"></i> Выход'+
-            '</a></li>'+
-        '</ul>';
-        $('.user-short .dropdown-toggle').append(dropdown);
 
-        $('.dropdown-toggle').click(function(){
-           $(this).find('.user-menu').toggle();
-        });
+        var dropdownToggle = $('.dropdown-toggle');
+        dropdownToggle.removeClass('no-login');
 
         callbacks.fire(selectorForCallbacks);
         callbacks.empty();
