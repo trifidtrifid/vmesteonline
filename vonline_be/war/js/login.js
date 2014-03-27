@@ -16,15 +16,16 @@ $(document).ready(function(){
         e.preventDefault();
         var setNewPassword = $('.set-new-password');
         if(setNewPassword.css('display')=='none'){
+            $('label[for="password"]').html('<b>Новый пароль</b>');
             $('.login-form .btn-submit').hide();
             setNewPassword.slideDown();
-            $('.login-form').height('290px');
         }else{
             setNewPassword.slideUp(function(){
                 $('.login-form .btn-submit').show();
                 $('.login-error').hide();
+                $('label[for="password"]').html('Пароль');
+                $('.login-form').height('258px');
             });
-            $('.login-form').height('258px');
         }
     });
     $('.sendConfirmCode').click(function(e){
@@ -32,13 +33,14 @@ $(document).ready(function(){
 
         var to = $('#uname').val();
         if (!to){
-            $('.login-error').text('Введите пожалуйста e-mail').show();
-            $('.login-form').height('320px');
+            $('.login-error').text('Введите пожалуйста e-mail').removeClass('login-good').show();
         }else{
-            $('.login-error').hide();
+            $('.login-error').text('На ваш e-mail отправлен код').addClass('login-good').show();
             var resourcefileName = "mailTemplates/changePasswordConfirm.html";
             client.sendConfirmCode(to,resourcefileName);
         }
+        $('.login-form').height('280px');
+
     });
     $('.useConfirmCode').click(function(e){
         e.preventDefault();
@@ -50,8 +52,8 @@ $(document).ready(function(){
             client.confirmRequest(email,confirmCode,newPassword);
             client.login($('.login-form .btn-submit'));
         }catch(e){
-            $('.login-error').text('Неверный код подтверждения !').show();
-            $('.login-form').height('320px');
+            $('.login-error').text('Неверный код подтверждения !').removeClass('login-good').show();
+            $('.login-form').height('280px');
 
         }
     });
