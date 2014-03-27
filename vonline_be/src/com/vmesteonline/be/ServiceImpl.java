@@ -47,6 +47,19 @@ public class ServiceImpl {
 		}
 		return rslt;
 	}
+	
+	@SuppressWarnings("unchecked")
+	protected static <T> T removeObjectFromCache(Object key) {
+		T rslt = null;
+		if (null != cache && cache.containsKey(key)) {
+			try {
+				rslt = (T) cache.remove(key);
+			} catch (ClassCastException cce) {
+				logger.error("CACHE:FAiled to remove object by key " + key + ". " + cce);
+			}
+		}
+		return rslt;
+	}
 
 	@SuppressWarnings("unchecked")
 	protected static <T extends Serializable> void putObjectToCache(Object key, T value) {
