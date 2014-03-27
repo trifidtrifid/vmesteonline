@@ -1993,6 +1993,7 @@ $(document).ready(function(){
                 }else{
                     $('.shop-products').hide();
                     var nowTime = parseInt(new Date().getTime()/1000);
+                    nowTime -= nowTime%86400;
                     var day = 3600*24;
                     var orders = client.getOrders(0,nowTime+90*day);
                     initVarForMoreOrders();
