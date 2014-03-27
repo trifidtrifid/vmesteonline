@@ -373,4 +373,22 @@ $(document).ready(function(){
         $(this).parent().addClass('active');
     });
 
+    /* import */
+    $('.form-import input').click(function(){
+        var importElement = {
+            type: 'type',
+            filename: 'filename',
+            fieldsMap: 'fieldsMap',
+            url: 'url',
+            fieldsData: 'fieldsData'
+        };
+        var data = {
+            id: 1,
+            name: "name",
+            date: 11111111111,
+            data: importElement
+        };
+        //client.importData(data);
+    });
+
 });

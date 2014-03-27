@@ -66,7 +66,7 @@
                     <label for="pass">Пароль</label>
                     <input type="password" id="pass"/>
                 </div>
-                <span class="email-alert">Такой e-mail уже зарегистрирован !</span>
+                <span class="email-alert"></span>
                 <button class="btn-submit btn-sm no-border">Регистрация</button>
             </div>
         </form>

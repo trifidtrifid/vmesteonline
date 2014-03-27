@@ -78,8 +78,11 @@ $(document).ready(function(){
     }
 
     function reg(selector) {
-        if (client.checkEmailRegistered($("#email").val())) {
-            $('.email-alert').css('display','block');
+        if($('#login').val()=="" || $('#email').val()=="" || $('#pass').val()==""){
+            $('.email-alert').text('Вы заполнили не все поля !').css('display','block');
+        }
+        else if (client.checkEmailRegistered($("#email").val())) {
+            $('.email-alert').text('Такой e-mail уже зарегистрирован !').css('display','block');
         }else{
             var userId = client.registerNewUser($("#login").val(), "", $("#pass").val(), $("#email").val());
             client.login($("#email").val(), $("#pass").val());
@@ -90,4 +93,10 @@ $(document).ready(function(){
             }
         }
     }
+    $('#email').keypress(function(){
+        var emailAlert = $('.email-alert');
+       if (emailAlert.css('display') == 'block'){
+           emailAlert.hide();
+       }
+    });
 });
