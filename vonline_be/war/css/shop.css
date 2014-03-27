@@ -431,6 +431,9 @@ span
   color: #2a6496;
   text-decoration: none;
 }
+.catalog table tr td .product-link {
+  margin-left: 0;
+}
 .catalog table tr td span {
   display: block;
   margin-left: 30px;
@@ -977,6 +980,11 @@ span
 }
 .backoffice .order-products {
   display: none;
+}
+.backoffice .order-products .product-link {
+  text-decoration: none;
+  color: #000;
+  cursor: default;
 }
 .backoffice .back-orders-top .form-group {
   margin-right: 565px;

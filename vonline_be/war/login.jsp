@@ -32,10 +32,18 @@
                 <div>
                     <label for="password">Пароль</label>
                     <input type="password" id="password"/>
+                    <div class="set-new-password">
+                        <div>
+                            <label for="confirmCode">Код</label>
+                            <input type="text" id="confirmCode"/>
+                        </div>
+                        <button class="btn btn-primary btn-sm no-border useConfirmCode">Подтвердить</button>
+                        <button class="btn btn-primary btn-sm no-border sendConfirmCode">Получить код</button>
+                    </div>
                     <a href="#" class="remember-link">Забыли пароль ?</a>
                     <div class="error-info login-error"></div>
                 </div>
-                <div class="set-new-password">
+<%--                <div class="set-new-password">
                     <div>
                         <label for="password">Новый пароль</label>
                         <input type="password" id="newPassword"/>
@@ -46,7 +54,7 @@
                     </div>
                     <button class="btn btn-primary btn-sm no-border useConfirmCode">Подтвердить</button>
                     <button class="btn btn-primary btn-sm no-border sendConfirmCode">Получить код</button>
-                </div>
+                </div>--%>
                 <button id="go" class="btn-submit btn-sm no-border">Войти</button>
             </div>
         </form>
@@ -66,7 +74,7 @@
                     <label for="pass">Пароль</label>
                     <input type="password" id="pass"/>
                 </div>
-                <span class="email-alert">Такой e-mail уже зарегистрирован !</span>
+                <span class="email-alert"></span>
                 <button class="btn-submit btn-sm no-border">Регистрация</button>
             </div>
         </form>

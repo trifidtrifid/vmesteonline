@@ -97,6 +97,7 @@
 .registration-form .set-new-password {
   display: none;
   clear: right;
+  margin-top: 4px;
 }
 .registration-form .set-new-password .btn {
   margin-top: 10px;
