@@ -1183,7 +1183,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		Long shopId = getCurrentShopId(pm);
 		try {
 			Query pcq = pm.newQuery(VoOrder.class);
-			pcq.setFilter("shopId == " + shopId + " && user == " + getCurrentUserId(pm) + " && date >= " + dateFrom + " && status == '" + status + "'");
+			pcq.setFilter("shopId == " + shopId + " && date >= " + dateFrom + 
+					(status != OrderStatus.UNKNOWN ? " && status == '" + status + "'": ""));
 			List<VoOrder> ps = (List<VoOrder>) pcq.execute(dateFrom);
 			List<Order> lo = new ArrayList<Order>();
 			for (VoOrder p : ps) {
