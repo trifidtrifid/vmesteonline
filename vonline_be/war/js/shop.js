@@ -99,7 +99,13 @@ $(document).ready(function(){
     ];*/
     $( "#search" ).catcomplete({
         delay: 0,
-        source: dataSearch
+        source: dataSearch,
+        select: function(event,ui){
+            alert(ui.item['label']);
+            /*for (var p in ui.item){
+                alert(p+" "+ui.item[p]);
+            }*/
+        }
     });
 
     /* автозаполнение адреса доставки  */
