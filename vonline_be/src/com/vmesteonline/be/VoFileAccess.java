@@ -1,13 +1,25 @@
 package com.vmesteonline.be;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.List;
 
 import javax.jdo.PersistenceManager;
+import javax.mail.Part;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 
 import com.vmesteonline.be.data.PMF;
@@ -75,20 +87,65 @@ public class VoFileAccess extends HttpServlet {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			long currentUserId = serviceImpl.getCurrentUserId(pm);
-			boolean isPublic = null != req.getParameter("public");
-			String fname = req.getParameter("fname");
-			String extUrl = req.getParameter("extUrl");
-			String data = req.getParameter("data");
-
-			if (null != data)
-				resp.getOutputStream().write(
-						StorageHelper.saveImage(fname, "binary/stream", currentUserId, isPublic, new ByteArrayInputStream(data.getBytes()), pm).getBytes());
-			else if (extUrl != null)
-				resp.getOutputStream().write(StorageHelper.saveImage(extUrl, currentUserId, isPublic, pm).getBytes());
-
-			throw new IOException("'data' or 'extUrl' Parameter must be set to upload file.");
-
-		} catch (InvalidOperation e) {
+			boolean isPublic = false;
+			String extURL = null;
+			String fname = "fileName";
+			String contentType = "binary/stream";
+			
+      ServletFileUpload upload = new ServletFileUpload();
+      FileItemIterator iterator = upload.getItemIterator(req);
+      byte[] fileData = null;
+      byte[] fieldCOntentBuf = new byte[8096];
+      
+      while(iterator.hasNext()) {
+      	FileItemStream item = iterator.next();
+          if (item.isFormField()) {
+              // Process regular form field (input type="text|radio|checkbox|etc", select, etc).
+              String fieldname = item.getFieldName();
+              
+              int read = item.openStream().read(fieldCOntentBuf);
+              String fieldvalue = read > 0 ? new String(fieldCOntentBuf,0,read) : "";
+              
+              if( "extURL".equalsIgnoreCase(fieldname)){
+              	extURL = fieldvalue;
+              } else if( "public".equalsIgnoreCase(fieldname)){
+                isPublic = true;
+              } else if( "fname".equalsIgnoreCase(fieldname)){
+              	fname = fieldvalue;
+              } 
+          } else {
+              String fieldname = item.getFieldName();
+              if("data".equalsIgnoreCase(fieldname)){
+              	InputStream is = item.openStream();
+              	fname = item.getName();
+              	contentType = item.getContentType();
+              	byte[] buf = new byte[8096];
+              	int read;
+              	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+              	while(-1!= (read = is.read(buf)))
+              		baos.write(buf, 0, read );
+              	baos.close();
+              	fileData = baos.toByteArray();	
+              }
+          }
+      }
+      
+     
+		
+      if( null!=fileData ){
+      	resp.getOutputStream().write(
+						StorageHelper.saveImage(fname, contentType, currentUserId, isPublic, new ByteArrayInputStream(fileData), pm).getBytes());
+      } else if (extURL != null ){
+      	resp.getOutputStream().write(StorageHelper.saveImage(extURL, currentUserId, isPublic, pm).getBytes());
+      } else {
+      	throw new IOException("File data or 'extUrl' parameter must be set to upload file.");
+      }
+        
+    } catch (FileUploadException e) {
+    	resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
+			logger.warn("Failed to save file:" + e.getMessage() + " ");
+			e.printStackTrace();
+    } catch (InvalidOperation e) {
 			resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.why);
 			logger.warn("Failed to save file:" + e.getMessage() + " ");
 			e.printStackTrace();

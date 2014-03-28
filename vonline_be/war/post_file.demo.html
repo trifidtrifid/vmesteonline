@@ -1,0 +1,19 @@
+<html>
+<body><p>Post a local file</p>
+<p>
+<form action="/file/" method="post" enctype="multipart/form-data">
+    <input type="file" name="data"/> 
+    <input type="hidden" name="public"/> <!-- Be sure that you gona make file accessible for everyone -->
+    <input type="submit" />
+</form>
+</p>
+<br/>
+<p>Post a file from remote source</p>
+<form action="/file/" method="post" enctype="multipart/form-data">
+    <p>URL to upload: <input type="input" name="extUrl"/></p>
+    <input type="hidden" name="public"/> <!-- Be sure that you gona make file accessible for everyone -->
+    <input type="submit" />
+</form>
+</p>
+</body>
+</html>
