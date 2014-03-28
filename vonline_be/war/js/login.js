@@ -19,6 +19,8 @@ $(document).ready(function(){
             $('label[for="password"]').html('<b>Новый пароль</b>');
             $('.login-form .btn-submit').hide();
             setNewPassword.slideDown();
+            $(this).text('Вспомнил пароль !');
+            $('.login-error').hide();
         }else{
             setNewPassword.slideUp(function(){
                 $('.login-form .btn-submit').show();
@@ -26,6 +28,7 @@ $(document).ready(function(){
                 $('label[for="password"]').html('Пароль');
                 $('.login-form').height('258px');
             });
+            $(this).text('Забыли пароль ?');
         }
     });
     $('.sendConfirmCode').click(function(e){
@@ -48,13 +51,17 @@ $(document).ready(function(){
         var email = $('#uname').val();
         var confirmCode = $('#confirmCode').val();
         var newPassword = $('#password').val();
+        var loginError = $('.login-error');
+
         try{
             client.confirmRequest(email,confirmCode,newPassword);
-            client.login($('.login-form .btn-submit'));
+            loginError.hide();
         }catch(e){
-            $('.login-error').text('Неверный код подтверждения !').removeClass('login-good').show();
+            loginError.text('Неверный код подтверждения !').removeClass('login-good').show();
             $('.login-form').height('280px');
-
+        }
+        if(loginError.css('display') == 'none'){
+            login($('.login-form .btn-submit'));
         }
     });
 
@@ -75,7 +82,7 @@ $(document).ready(function(){
             }
 
         } catch (ouch) {
-            $('.login-error').text('Вы ввели неккоректный e-mail или пароль').show();
+            $('.login-error').text('Вы ввели неккоректный e-mail или пароль').removeClass('login-good').show();
         }
     }
 
