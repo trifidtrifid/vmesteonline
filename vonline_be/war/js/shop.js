@@ -480,11 +480,13 @@ $(document).ready(function(){
             $(this).closest('.prepack-line').slideUp(function(){
                 var oldHeight = $(this).closest('.modal').height();
                 $(this).closest('.modal').height(oldHeight - 53);
-                $(this).remove();
                 if (counterForSetFlag <= 2){
                     $('.error-prepack').hide();
+                }
+                if ($(this).closest('.prepack-list').find('.prepack-line').length == 1){
                     productSelector.find('td>.ace-spinner').spinner('enable');
                 }
+                $(this).remove();
             });
         })
         }catch(e){
