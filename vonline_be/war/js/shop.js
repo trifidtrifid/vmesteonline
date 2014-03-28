@@ -139,14 +139,14 @@ $(document).ready(function(){
 
     $('.form-group').submit(function(e){
         e.preventDefault();
-        var searchWord = $('#search').val();
+        var searchWord = $('#search').val().toLowerCase();
         var productsListPart = client.getProducts(0,10,0);
         var products = productsListPart.products;
         var productsLength = products.length;
         var searchedProducts = [];
         var counter = 0;
         for (var i = 0; i < productsLength; i++){
-            if(products[i].name.indexOf(searchWord) != -1){
+            if(products[i].name.toLowerCase().indexOf(searchWord) != -1){
                 searchedProducts[counter++] = products[i];
             }
         }

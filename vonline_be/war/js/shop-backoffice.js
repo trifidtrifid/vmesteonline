@@ -1,17 +1,3 @@
-/*var control = document.getElementById("file");
-control.addEventListener("change", function(event) {
-    // Когда происходит изменение элементов управления, значит появились новые файлы
-    var i = 0,
-        files = control.files,
-        len = files.length;
-
-    for (; i < len; i++) {
-        console.log("Filename: " + files[i].name);
-        console.log("Type: " + files[i].type);
-        console.log("Size: " + files[i].size + " bytes");
-    }
-
-}, false);*/
 $(document).ready(function(){
     var transport = new Thrift.Transport("/thrift/ShopService");
     var protocol = new Thrift.Protocol(transport);
@@ -25,7 +11,7 @@ $(document).ready(function(){
     var nowTime = parseInt(new Date().getTime()/1000);
     nowTime -= nowTime%86400;
     var day = 3600*24;
-    var orders = client.getOrders(0,nowTime+180*day);
+    var orders = client.getOrdersByStatus(0,nowTime+180*day,0);
     $('.orders-list').append(createOrdersHtml(orders));
 
     var ordersNoInit = $('.orders-no-init');
@@ -111,7 +97,7 @@ $(document).ready(function(){
         var nowTime = parseInt(new Date().getTime()/1000);
         nowTime -= nowTime%86400;
         var day = 3600*24;
-        var orders = client.getOrders(0,nowTime+180*day);
+        var orders = client.getOrdersByStatus(0,nowTime+180*day,0);
         var ordersLength = orders.length;
         var orderDetails,
             newOrders = [],
@@ -244,7 +230,7 @@ $(document).ready(function(){
             var ordersHtml = "";
             var ordersLength = orders.length;
             var lastOrderNumber = 0;
-            var listLength = 10;
+            var listLength = 100;
 
             if (itsMoreOrders){
                 listLength = lengthOrders;
@@ -300,6 +286,7 @@ $(document).ready(function(){
                         orderDelivery = "Курьер далеко";
                         break
                 }
+                if (orderDetails.deliveryTo){
                 ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
                     '<table class="orders-tbl">'+
                     '<tbody>'+
@@ -324,14 +311,15 @@ $(document).ready(function(){
                     '<div class="order-products">'+
                     '</div>'+
                     '</div>';
+                }
             }
-            var haveMore = ordersLength%listLength;
+            /*var haveMore = ordersLength%listLength;
             if (haveMore && haveMore != ordersLength){
                 //$('.more-orders').show();
                 ordersHtml += '<div class="more-orders"><a href="#">Показать еще</a></div>';
             }else{
                 $('.more-orders').hide();
-            }
+            }*/
         }catch(e){
             alert(e+" Функция createOrdersHtml");
         }
@@ -387,18 +375,20 @@ $(document).ready(function(){
         $(this).parent().addClass('active');
     });
 
+    /* ----------------------- Поиск -----------------------------------*/
     var clients = [];
     var counter = 0;
     $('.back-orders .order-item').each(function(){
-        clients[counter++] =  $(this).find('.td8.user-name').text();
+        clients[counter++] =  $(this).find('.user-name').text();
     });
     var clientLength = clients.length;
     var clientsNoRepeat = [],
         repeatFlag = 0;
     counter = 0;
     for(var i = 0; i < clientLength-1 ;i++){
+        repeatFlag = 0;
         for(var j = i+1; j < clientLength; j++){
-          if(clients[i]==clients[j]){
+          if(clients[i] == clients[j]){
              repeatFlag = 1;
           }
         }
@@ -412,7 +402,7 @@ $(document).ready(function(){
         $(this).autocomplete({
             source: clientsNoRepeat,
             select: function(event,ui){
-                var orders = client.getOrders(0,nowTime+180*day);
+                var orders = client.getOrdersByStatus(0,nowTime+180*day,0);
                 var ordersLength = orders.length;
                 var filterOrders = [];
                 counter = 0;
@@ -425,6 +415,7 @@ $(document).ready(function(){
             }
         });
     });
+    /* ------------------------------- Конец Поиск ----------------------------------------- */
     /* import */
 
 /*    $('.form-import').submit(function(e){
