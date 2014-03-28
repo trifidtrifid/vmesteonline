@@ -249,7 +249,7 @@ a {
   color: #858585;
 }
 .shop-right .btn-grey {
-  margin-left: 190px;
+  margin-left: 186px;
   margin-right: 10px;
 }
 .datepicker {
@@ -817,6 +817,7 @@ span
     z-index: 10;
     padding: 0 0 20px 0;
     border-bottom: 1px solid #ccc;
+    overflow: auto;
   }
   .shop-right:before {
     display: none;
