@@ -647,7 +647,7 @@ $(document).ready(function(){
             if (productDetails.prepackRequired){
                 currentModal.addClass('modal-with-prepack');
             }
-
+            var spinnerStep = productSelector.find('td>.ace-spinner .spinner1').data('step');
             var popupHtml = "";
             popupHtml += '<div class="modal-body">'+
                 '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
@@ -691,7 +691,7 @@ $(document).ready(function(){
                             '</div>'+
                             '<div class="prepack-item">по</div>'+
                             '<div class="prepack-item">'+
-                            '<input type="text" class="input-mini spinner1" />'+
+                            '<input type="text" data-step="'+ spinnerStep +'" class="input-mini spinner1" />'+
                             '<span>'+ product.unitName +'</span>'+
                             '</div>'+
                             '<div class="prepack-item"><a href="#" title="Добавить" class="fa fa-plus prepack-open"></a></div>';
@@ -714,7 +714,7 @@ $(document).ready(function(){
                 '</div>'+
             '</div>';
 
-            var spinnerStep = productSelector.find('td>.ace-spinner .spinner1').data('step');
+
             var fullDescrHeight;
             if (currentModal.find('.modal-body').length == 0){
                 // если еще не открывали popup
@@ -740,6 +740,7 @@ $(document).ready(function(){
                 }
                 currentModal.find('.prepack-open').click(function(e){
                     e.preventDefault();
+                    var spinnerStep = $(this).parent().prev().find('.spinner1').data('step');
 
                     var prepackHtml = '<div class="prepack-line no-init">' +
                         '<div class="prepack-item packs">'+
@@ -1649,9 +1650,9 @@ $(document).ready(function(){
         $('.catalog-order li').each(function(){
             if ($(this).data('productid') == currentProduct.id){
                 addedProductFlag = 1;
-                if(packs){
+                /*if(packs){
                     $(this).find('td>.ace-spinner').spinner('disable');
-                }
+                }*/
             }
         });
         if (addedProductFlag){
@@ -1737,6 +1738,8 @@ $(document).ready(function(){
 
             }*/
 
+            (getPacksLength(packs) <= 1) ? currentSpinner.spinner('enable'):currentSpinner.spinner('disable');
+
             client.setOrderLine(currentProduct.id,newSpinnerVal,'sdf',packs);
             var newSumma = (newSpinnerVal*parseFloat(basketProductSelector.find('.td-price').text())).toFixed(1);
             basketProductSelector.find('.td-summa').text(newSumma);
@@ -1773,7 +1776,7 @@ $(document).ready(function(){
                     name : currentProductSelector.find('.product-link span span').text(),
                     price : currentProductSelector.find('.product-price').text(),
                     unitName :currentProductSelector.find('.unit-name').text(),
-                    minClientPack :  currentProductSelector.find('.spinner1').data('step'),
+                    minClientPack :  currentProductSelector.find('td>.ace-spinner .spinner1').data('step'),
                     prepackLine : currentProductSelector.find('.prepack-line'),
                     qnty : spinnerValue,
                     packVal : 1,
