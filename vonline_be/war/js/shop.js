@@ -24,7 +24,7 @@ $(document).ready(function(){
 
     showRight.click(function(){
         if (!$(this).hasClass('active')){
-            $(this).animate({'right':'222px'},200).addClass('active');
+            $(this).animate({'right':'352px'},200).addClass('active');
             $(this).parent().animate({'right':0},200);
         }else{
             hideRight.trigger('click');
@@ -32,7 +32,7 @@ $(document).ready(function(){
     });
 
     hideRight.click(function(){
-        $(this).parent().animate({'right':'-250px'},200);
+        $(this).parent().animate({'right':'-380px'},200);
         showRight.animate({'right':'-28px'},200).removeClass('active');
     });
 
