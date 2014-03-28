@@ -1,3 +1,17 @@
+/*var control = document.getElementById("file");
+control.addEventListener("change", function(event) {
+    // Когда происходит изменение элементов управления, значит появились новые файлы
+    var i = 0,
+        files = control.files,
+        len = files.length;
+
+    for (; i < len; i++) {
+        console.log("Filename: " + files[i].name);
+        console.log("Type: " + files[i].type);
+        console.log("Size: " + files[i].size + " bytes");
+    }
+
+}, false);*/
 $(document).ready(function(){
     var transport = new Thrift.Transport("/thrift/ShopService");
     var protocol = new Thrift.Protocol(transport);
@@ -374,7 +388,27 @@ $(document).ready(function(){
     });
 
     /* import */
-    $('.form-import input').click(function(){
+
+    $('.form-import').submit(function(e){
+        e.preventDefault();
+        var path = $('#file').val();
+        alert(path);
+        path = path.split("\\");
+        var pathLength = path.length;
+        var fname = path[pathLength-1];
+
+        $.post(
+            "http://localhost:8888/file/",
+            {
+              fname: fname,
+              extUrl: path
+            },
+            function(data, textStatus, jqXHR){
+
+            }
+        );
+    });
+/*    $('.form-import input').click(function(){
         var importElement = {
             type: 'type',
             filename: 'filename',
@@ -389,6 +423,6 @@ $(document).ready(function(){
             data: importElement
         };
         //client.importData(data);
-    });
+    });*/
 
 });

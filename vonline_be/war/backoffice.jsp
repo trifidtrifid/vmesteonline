@@ -270,7 +270,8 @@
                 <div class="import back-tab">
                     <h2>Здесь вы можете загрузить список продуктов в магазин</h2>
                     <form class="form-import" action="#">
-                        <input type="file">
+                        <input id="file" type="file" >
+                        <input type="submit" class="btn btn-primary btn-sm no-border" value="Загрузить">
                     </form>
                     <section class="catalog">
                         <table>

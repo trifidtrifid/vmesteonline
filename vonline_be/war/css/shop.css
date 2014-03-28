@@ -1003,6 +1003,9 @@ span
 .import .form-import {
   margin-bottom: 10px;
 }
+.import .form-import input[type="submit"] {
+  margin-top: 10px;
+}
 .export .export-btn {
   margin-top: 15px;
 }
