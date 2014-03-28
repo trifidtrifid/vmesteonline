@@ -106,6 +106,7 @@ $(document).ready(function(){
         delay: 0,
         source: dataSearch,
         select: function(event,ui){
+            //event.preventDefault();
             var productsListPart = client.getProducts(0,10,0);
             var products = productsListPart.products;
             var productsLength = products.length;
@@ -134,6 +135,28 @@ $(document).ready(function(){
                 alert(p+" "+ui.item[p]);
             }*/
         }
+    });
+
+    $('.form-group').submit(function(e){
+        e.preventDefault();
+        var searchWord = $('#search').val();
+        var productsListPart = client.getProducts(0,10,0);
+        var products = productsListPart.products;
+        var productsLength = products.length;
+        var searchedProducts = [];
+        var counter = 0;
+        for (var i = 0; i < productsLength; i++){
+            if(products[i].name.indexOf(searchWord) != -1){
+                searchedProducts[counter++] = products[i];
+            }
+        }
+        $('.main-content .catalog table tbody').html("").append(createProductsTableHtml(searchedProducts));
+
+        /* подключение событий */
+        initProductsSpinner();
+        InitProductDetailPopup($('.product-link'));
+        InitAddToBasket($('.fa-shopping-cart'));
+        InitClickOnCategory();
     });
 
     /* автозаполнение адреса доставки  */
@@ -1027,6 +1050,36 @@ $(document).ready(function(){
         $('.catalog-order').html('');
     }
 
+    function createProductsTableHtml(productsList){
+        var productListLength = productsList.length;
+        var productsHtml = '';
+        var productDetails;
+        for (i = 0; i < productListLength; i++){
+            productDetails = client.getProductDetails(productsList[i].id);
+            var unitName = "";
+            if (productsList[i].unitName){unitName = productsList[i].unitName;}
+            productsHtml += '<tr data-productid="'+ productsList[i].id +'">'+
+                '<td>'+
+                '<a href="#" class="product-link">'+
+                '<img src="'+ productsList[i].imageURL +'" alt="картинка"/>'+
+                '<span><span>'+ productsList[i].name +'</span>'+ productsList[i].shortDescr +'</span>'+
+                '</a>'+
+                '<div class="modal">'+
+                '</div>'+
+                '</td>'+
+                '<td class="product-price">'+ productsList[i].price  +'</td>'+
+                '<td>'+
+                '<input type="text" data-step="'+ productsList[i].minClientPack +'" class="input-mini spinner1" /> '+
+                '</td>'+
+                '<td>'+ '<span class="unit-name">'+ unitName +'</span></td>'+
+                '<td>'+
+                '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
+                '</td>'+
+                '</tr>';
+        }
+        return productsHtml;
+    }
+
     function InitLoadCategory(catID){
         try{
         /* замена меню категорий */
@@ -1058,7 +1111,7 @@ $(document).ready(function(){
 
         /* новый список товаров */
         var productsList = client.getProducts(0,10,catID).products;
-        var productListLength = productsList.length;
+        /*var productListLength = productsList.length;
         var productsHtml = '';
         var productDetails;
         for (i = 0; i < productListLength; i++){
@@ -1083,8 +1136,8 @@ $(document).ready(function(){
                 '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
                 '</td>'+
                 '</tr>';
-        }
-        $('.main-content .catalog table tbody').html("").append(productsHtml);
+        }*/
+        $('.main-content .catalog table tbody').html("").append(createProductsTableHtml(productsList));
 
         }catch(e){
             alert(e+" Функция InitLoadCategory");
