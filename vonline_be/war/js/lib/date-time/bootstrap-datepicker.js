@@ -218,7 +218,7 @@
                     console.log(p+" "+packs[p]);
                 }
                 client.setOrderLine(currentProduct.id,spinnerValue,'sdf',packs);
-                AddSingleProductToBasket(currentProduct,spinnerValue,currentProduct.unitName);
+                AddSingleProductToBasket(currentProduct,spinnerValue);
             }
             AdditionallyOrderToggle();
         });

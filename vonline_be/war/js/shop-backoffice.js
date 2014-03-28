@@ -306,7 +306,7 @@ $(document).ready(function(){
                     '<tr>'+
                     '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
                     '<td class="td2">Заказ N '+i+'</td>'+
-                    '<td class="td8">'+
+                    '<td class="td8 user-name">'+
                     orders[i].userName +
                     '</td>'+
                     '<td class="td3">'+ tempDate.getDate() +"."+tempDate.getMonth()+"."+tempDate.getFullYear()+ '</td>'+
@@ -387,9 +387,47 @@ $(document).ready(function(){
         $(this).parent().addClass('active');
     });
 
+    var clients = [];
+    var counter = 0;
+    $('.back-orders .order-item').each(function(){
+        clients[counter++] =  $(this).find('.td8.user-name').text();
+    });
+    var clientLength = clients.length;
+    var clientsNoRepeat = [],
+        repeatFlag = 0;
+    counter = 0;
+    for(var i = 0; i < clientLength-1 ;i++){
+        for(var j = i+1; j < clientLength; j++){
+          if(clients[i]==clients[j]){
+             repeatFlag = 1;
+          }
+        }
+        if(!repeatFlag){
+            clientsNoRepeat[counter++] = clients[i];
+        }
+    }
+    clientsNoRepeat[counter] = clients[clientLength-1];
+
+    $('#back-search').focus(function(){
+        $(this).autocomplete({
+            source: clientsNoRepeat,
+            select: function(event,ui){
+                var orders = client.getOrders(0,nowTime+180*day);
+                var ordersLength = orders.length;
+                var filterOrders = [];
+                counter = 0;
+                for(var i = 0; i < ordersLength; i++){
+                    if(orders[i].userName == ui.item['label']){
+                        filterOrders[counter++] = orders[i];
+                    }
+                }
+                $('.orders-list').html("").append(createOrdersHtml(filterOrders));
+            }
+        });
+    });
     /* import */
 
-    $('.form-import').submit(function(e){
+/*    $('.form-import').submit(function(e){
         e.preventDefault();
         var path = $('#file').val();
         alert(path);
@@ -407,7 +445,8 @@ $(document).ready(function(){
 
             }
         );
-    });
+    });*/
+
 /*    $('.form-import input').click(function(){
         var importElement = {
             type: 'type',

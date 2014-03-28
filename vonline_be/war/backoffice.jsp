@@ -208,7 +208,7 @@
                         </div>
                         <form method="post" action="#" class="form-group has-info">
                             <span class="block input-icon input-icon-right">
-                                <input id="search" type="text" class="form-control width-100" value="Поиск по имени клиента или номеру телефона" onblur="if(this.value=='') this.value='Поиск по имени клиента или номеру телефона';" onfocus="if(this.value=='Поиск по имени клиента или номеру телефона') this.value='';"/>
+                                <input id="back-search" type="text" class="form-control width-100" value="Поиск по имени клиента или номеру телефона" onblur="if(this.value=='') this.value='Поиск по имени клиента или номеру телефона';" onfocus="if(this.value=='Поиск по имени клиента или номеру телефона') this.value='';"/>
                                 <a href="#" class="icon-search icon-on-right bigger-110"></a>
                             </span>
                         </form>
@@ -269,9 +269,10 @@
                 </div>
                 <div class="import back-tab">
                     <h2>Здесь вы можете загрузить список продуктов в магазин</h2>
-                    <form class="form-import" action="#">
-                        <input id="file" type="file" >
-                        <input type="submit" class="btn btn-primary btn-sm no-border" value="Загрузить">
+                    <form action="/file/" method="post" enctype="multipart/form-data"  class="form-import">
+                        <input type="file" name="data"/>
+                        <input type="hidden" name="public"/> <!-- Be sure that you gona make file accessible for everyone -->
+                        <input type="submit" />
                     </form>
                     <section class="catalog">
                         <table>

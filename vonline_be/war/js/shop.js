@@ -75,14 +75,19 @@ $(document).ready(function(){
         }
     });
 
-    var categories = client.getProductCategories(0);
-    var products = client.getProducts(0,10,0);
-    var productsLength = products.length;
-        var dataSearch = [];
-        for(i = 0; i < productsLength; i++){
-            dataSearch[i]={
-                label : products.products[i].name,
-                category: ""
+        var shopArray = client.getShops();
+        var currentShop = client.getShop(shopArray[0].id);
+        var arr = client.getProductsByCategories(currentShop.id);
+        var arrLength = arr.length;
+        var counter = 0,
+            dataSearch = [];
+        for(var i = 0; i < arrLength ;i++){
+            var childLength = arr[i].childs.length;
+            for(var j = 0; j < childLength; j++){
+                dataSearch[counter++]={
+                    label : arr[i].childs[j].name,
+                    category: arr[i].name
+                }
             }
         }
 
@@ -101,7 +106,30 @@ $(document).ready(function(){
         delay: 0,
         source: dataSearch,
         select: function(event,ui){
-            alert(ui.item['label']);
+            var productsListPart = client.getProducts(0,10,0);
+            var products = productsListPart.products;
+            var productsLength = products.length;
+            var packs = [];
+            for(var i = 0; i < productsLength; i++){
+                 if(products[i].name == ui.item['label']){
+                     products[i].qnty = products[i].minClientPack;
+                     products[i].prepackLine = [];
+                     var productDetails = client.getProductDetails(products[i].id);
+                     if(productDetails.prepackRequired){
+                         packs[products[i].minClientPack] = 1;
+                     }
+                     if(currentOrderId){
+                         // если в корзине уже что-то есть
+                         AddProductToBasketCommon(products[i],packs);
+                     }else{
+                         // если первый товар в корзине
+                         flagFromBasketClick = 1;
+                         dPicker.datepicker('setVarFreeDays',products[i], products[i].qnty,0,packs,AddSingleProductToBasket,AddOrdersToBasket,AddProductToBasketCommon);
+                         dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');
+                     }
+                 }
+            }
+
             /*for (var p in ui.item){
                 alert(p+" "+ui.item[p]);
             }*/
@@ -109,7 +137,8 @@ $(document).ready(function(){
     });
 
     /* автозаполнение адреса доставки  */
-        function initAutocompleteAddress(){ var addressesBase = userServiceClient.getAddressCatalogue();
+        function initAutocompleteAddress(){
+            var addressesBase = userServiceClient.getAddressCatalogue();
 
             var countries = addressesBase.countries;
             var countriesLength = countries.length;
@@ -515,8 +544,8 @@ $(document).ready(function(){
         var modalHeight;
         (currentModal.height > 265) ? modalHeight = currentModal.height : modalHeight = 265;
         for(var p in packs){
-            //alert(p+" "+packs[p]);
             if (p && packs[p]){
+                //alert(p+" "+packs[p]);
                 // чтобы предотвратить вывод удаленных линий, где packs[p]=0
                 if (counter == 0){
                     // если самая первая линия
@@ -1661,14 +1690,13 @@ $(document).ready(function(){
             $('.itogo-right span').text(countAmount($('.catalog-order')));
         }else{
             // если такого товара еще нет
-            AddSingleProductToBasket(currentProduct,currentProduct.qnty,currentProduct.unitName);
+            AddSingleProductToBasket(currentProduct,currentProduct.qnty);
+
             client.setOrderLine(currentProduct.id,currentProduct.qnty,'sdf',packs);
-            /* повтор функции заменить потом --- */
             if(currentProduct.prepackLine.length != 0){
                 currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]').find('td>.ace-spinner');
                 currentSpinner.spinner('disable');
             }
-            /* ---- */
         }
     }
 
@@ -1692,7 +1720,7 @@ $(document).ready(function(){
                     name : currentProductSelector.find('.product-link span span').text(),
                     price : currentProductSelector.find('.product-price').text(),
                     unitName :currentProductSelector.find('.unit-name').text(),
-                    step :  currentProductSelector.find('.spinner1').data('step'),
+                    minClientPack :  currentProductSelector.find('.spinner1').data('step'),
                     prepackLine : currentProductSelector.find('.prepack-line'),
                     qnty : spinnerValue,
                     packVal : 1,
@@ -1763,14 +1791,14 @@ $(document).ready(function(){
         }
     }
 
-    function AddSingleProductToBasket(currentProduct,spinnerValue,unitName){
+    function AddSingleProductToBasket(currentProduct,spinnerValue){
         try{
         var productDetails = client.getProductDetails(currentProduct.id);
         var productHtml = '<li data-productid="'+ currentProduct.id +'">'+
             '<table>'+
             '<tr>'+
             '<td class="td-price product-price">'+ currentProduct.price +'</td>'+
-            '<td><input type="text" data-step="'+ currentProduct.step +'" class="input-mini spinner1 no-init" /><span class="unit-name">'+ unitName +'</span></td>'+
+            '<td><input type="text" data-step="'+ currentProduct.minClientPack +'" class="input-mini spinner1 no-init" /><span class="unit-name">'+ currentProduct.unitName +'</span></td>'+
             '<td class="td-summa">'+ (currentProduct.price*spinnerValue).toFixed(1) +'</td>'+
             '<td><a href="#" class="delete-product no-init">×</a></td>'+
             '</tr>'+
@@ -1802,7 +1830,7 @@ $(document).ready(function(){
 
         var spinnerNoInit = $('.catalog-order .spinner1.no-init');
         var itsBasket = 1;
-        InitSpinner(spinnerNoInit,spinnerValue,itsBasket,currentProduct.step);
+        InitSpinner(spinnerNoInit,spinnerValue,itsBasket,currentProduct.minClientPack);
         spinnerNoInit.removeClass('no-init');
 
     }
@@ -1846,7 +1874,7 @@ $(document).ready(function(){
         for(i = 0; i < orderLinesLength; i++){
             curProd = orderLines[i].product;
             spinVal = orderLines[i].quantity;
-            AddSingleProductToBasket(curProd,spinVal,curProd.unitName);
+            AddSingleProductToBasket(curProd,spinVal);
         }
         }catch(e){
             alert(e+" Функция addSingleOrderToBasket");
