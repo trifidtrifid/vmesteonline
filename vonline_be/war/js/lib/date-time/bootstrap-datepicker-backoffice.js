@@ -149,7 +149,12 @@
             var shopOrdersList = $('.orders-list');
             shopOrdersList.html('').append(createOrdersHtml(orderList));
 
-            initOrderPlusMinus(shopOrdersList);
+            //initOrderPlusMinus(shopOrdersList);
+
+            var ordersNoInit = $('.orders-no-init');
+            initOrderPlusMinus(ordersNoInit);
+            ordersNoInit.removeClass('orders-no-init');
+
             setSidebarHeight();
         });
         }catch(e){

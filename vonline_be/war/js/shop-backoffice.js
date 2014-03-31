@@ -192,7 +192,7 @@ $(document).ready(function(){
                     '<tbody>'+
                     '<tr>'+
                     '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
-                    '<td class="td2">Заказ N '+i+'</td>'+
+                    '<td class="td2">'+i+'. Заказ '+orders[i].id +'</td>'+
                     '<td class="td8 user-name">'+
                     orders[i].userName +
                     '</td>'+
@@ -307,9 +307,7 @@ $(document).ready(function(){
 
         $('.orders-list').html("").append(createOrdersHtml(newOrders));
 
-        var ordersNoInit = $('.orders-no-init');
-        initOrderPlusMinus(ordersNoInit);
-        ordersNoInit.removeClass('orders-no-init');
+        initPlusMinus();
 
         statusFilterFlag = 1;
     });
@@ -416,13 +414,17 @@ $(document).ready(function(){
 
         $('.orders-list').html("").append(createOrdersHtml(newOrders));
 
-        var ordersNoInit = $('.orders-no-init');
-        initOrderPlusMinus(ordersNoInit);
-        ordersNoInit.removeClass('orders-no-init');
+        initPlusMinus();
 
         deliveryFilterFlag = 1;
 
     });
+
+    function initPlusMinus(){
+        var ordersNoInit = $('.orders-no-init');
+        initOrderPlusMinus(ordersNoInit);
+        ordersNoInit.removeClass('orders-no-init');
+    }
 
     function filterByStatus(orders){
         var counter = 0,
@@ -479,7 +481,6 @@ $(document).ready(function(){
         if(dateFilterFlag){
             filterOrders = filterByDate(filterOrders);
         }
-
         searchFilterFlag = 1;
         return filterOrders;
     }
@@ -502,6 +503,7 @@ $(document).ready(function(){
             source: clientsNoRepeat,
             select: function(event,ui){
                 $('.orders-list').html("").append(createOrdersHtml(searchByWord(ui.item['label'])));
+                initPlusMinus();
             }
         });
     });
@@ -511,6 +513,7 @@ $(document).ready(function(){
 
         var searchWord = $('#back-search').val();
         $('.orders-list').html("").append(createOrdersHtml(searchByWord(searchWord)));
+        initPlusMinus();
     });
 
     /* ------------------------------- Конец Поиск ---------------------------- */
