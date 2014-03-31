@@ -579,7 +579,7 @@ $(document).ready(function(){
                         currentModal.find('.prepack-item:not(".packs") .ace-spinner').spinner('value',p);
                     }else{
                         InitSpinner(currentModal.find('.packs .spinner1'),packs[p],1,1);
-                        InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),p,1,productSelector.find('.spinner1').data('step'));
+                        InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),p,1,(productSelector.find('td>.ace-spinner .spinner1').data('step')));
                     }
                 }else{
                     if (packs[p] != 0){
@@ -729,6 +729,10 @@ $(document).ready(function(){
                     }else{
                         //если обычный товар
                         InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),1,productSelector.find('td>.ace-spinner .spinner1').data('step'));
+                    }
+                    if($(this).closest('.order-products').length > 0){
+                        // если на странице истории заказов, то нужно инициализировать AddToBasket
+                        InitAddToBasket(currentModal.find('.fa-shopping-cart'));
                     }
                 }else{
                     // если не в корзине
@@ -1471,13 +1475,21 @@ $(document).ready(function(){
                 '</td>'+
                 '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
                 '<td>'+
-                '<input type="text" data-step="'+  orderLines[j].product.minClientPack +'" class="input-mini spinner1" />'+
+                '<input type="text"';
+
+                if (orderLines[j].packs && getPacksLength(orderLines[j].packs) > 1){
+                    ordersProductsHtml += 'disabled="disabled"';
+                }
+
+                ordersProductsHtml += ' data-step="'+  orderLines[j].product.minClientPack +'" class="input-mini spinner1" />'+
                 '</td>'+
                 '<td><span class="unit-name">'+unitName+'</span></td>'+
                 '<td>'+
                 '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
                 '</td>'+
                 '</tr>';
+
+
 
         }
         ordersProductsHtml += '</table>'+
@@ -1751,7 +1763,7 @@ $(document).ready(function(){
             AddSingleProductToBasket(currentProduct,currentProduct.qnty);
 
             client.setOrderLine(currentProduct.id,currentProduct.qnty,'sdf',packs);
-            if(currentProduct.prepackLine.length != 0){
+            if(currentProduct.prepackLine.length != 0 || (packs && getPacksLength(packs) > 0)){
                 currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]').find('td>.ace-spinner');
                 currentSpinner.spinner('disable');
             }
@@ -1783,21 +1795,22 @@ $(document).ready(function(){
                     qnty : spinnerValue,
                     packVal : 1,
                     quantVal :  currentProductSelector.find('td .spinner1').data('step')
-                    //btnSelector: $(this)
                 };
                 var productDetails = client.getProductDetails(currentProduct.id);
                 var packs = [];
                 if (productDetails.prepackRequired){
                    // если это товар с prepackRequired
                     currentProduct.quantVal = spinnerValue;
+
                     if (currentProductSelector.find('.modal-body').length > 0){
-                        // если пользватель открывал модальное окно с инфой о продукте
+                        // если пользватель открывал модальное окно(в таблице продуктов) с инфой о продукте
                         var packVal = currentProductSelector.find('.packs:eq(0) .ace-spinner').spinner('value');
                         var quantVal = currentProductSelector.find('.prepack-item:not(".packs") .ace-spinner').eq(0).spinner('value');
                         currentProduct.packVal = packVal;
                         currentProduct.quantVal = quantVal;
                         currentProduct.qnty = packVal*quantVal;
                         packs[quantVal] = packVal; // если только одна линия с упаковкой
+
                       if(currentProduct.prepackLine.length != 0){
                           // если линий более чем одна
                           var oldQuantVal = 0;
@@ -1814,10 +1827,26 @@ $(document).ready(function(){
                               oldQuantVal = quantVal;
                           });
                       }
+
                     }else{
-                        // если не открывал модальное окно
-                        packs[currentProduct.qnty] = 1; // значаение packs по умолчанию
-                        currentProduct.packsQnty = 1;
+                        // если не открывал модальное окно в таблице продуктов
+                        if($(this).closest('.order-item').length > 0){
+                            // если мы на странице истории заказов
+                            // (то нужно вытащить packs из заказа)
+                            var orderId = $(this).closest('.order-item').data('orderid');
+                            var orderDetails = client.getOrderDetails(orderId);
+                            var orderLines = orderDetails.odrerLines;
+                            var orderLinesLength = orderLines.length;
+                            for(var i = 0; i < orderLinesLength; i++){
+                                if(orderLines[i].product.id == $(this).closest('tr').data('productid')){
+                                    packs = orderLines[i].packs;
+                                }
+                            }
+                        }else{
+                            // если мы странице продуктов
+                            packs[currentProduct.qnty] = 1; // значаение packs по умолчанию
+                            currentProduct.packsQnty = 1;
+                        }
                     }
                 }else{
                     // если обычный товар
