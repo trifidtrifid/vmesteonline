@@ -32,6 +32,14 @@
         /* --- */
         /* переключения на настройки, профиль и выход */
 
+        var transport = new Thrift.Transport("/thrift/AuthService");
+        var protocol = new Thrift.Protocol(transport);
+        var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
+
+        transport = new Thrift.Transport("/thrift/UserService");
+        protocol = new Thrift.Protocol(transport);
+        var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
+
         $('.user-menu a').click(function(e){
             e.preventDefault();
             $(this).closest('.user-menu').hide();
@@ -47,12 +55,34 @@
                         e.preventDefault();
                         dynamic.load("ajax-editPersonal.jsp .dynamic");
                     });
+
+                    $('.sendConfirmCode').click(function(e){
+                        e.preventDefault();
+                        var to = userClient.getUserContacts().email;
+                        $('.confirm-info').text('На ваш e-mail отправлен код').addClass('login-good').show();
+                        var resourcefileName = "mailTemplates/changePasswordConfirm.html";
+                        authClient.sendConfirmCode(to,resourcefileName);
+                    });
+
+                    $('.useConfirmCode').click(function(e){
+                        e.preventDefault();
+                        var email = userClient.getUserContacts().email;
+                        var confirmCode = $('#confirmCode').val();
+                        var confirmInfo = $('.confirm-info');
+                        try{
+                            authClient.confirmRequest(email,confirmCode);
+                            confirmInfo.text('Код принят !').addClass('login-good').show();
+                            function closeConfirm(){
+                                $('.account-no-confirm').slideUp();
+                            }
+                            setTimeout(closeConfirm,4000);
+                        }catch(e){
+                            confirmInfo.text('Неверный код подтверждения !').removeClass('login-good').show();
+                        }
+                    });
                 });
             } else {
-                var transport = new Thrift.Transport("/thrift/AuthService");
-                var protocol = new Thrift.Protocol(transport);
-                var client = new com.vmesteonline.be.AuthServiceClient(protocol);
-                client.logout();
+                authClient.logout();
 
                 document.location.replace("login.jsp");
             }

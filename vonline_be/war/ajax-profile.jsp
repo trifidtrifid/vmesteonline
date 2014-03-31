@@ -228,9 +228,10 @@
                             </div>
                             <c:if test="${!ifEmailConfirmed}">
                                 <form class="account-no-confirm">
-                                    <input id="search" type="text" class="form-control" value="Введите код подтверждения" onblur="if(this.value=='') this.value='Введите код подтверждения';" onfocus="if(this.value=='Введите код подтверждения') this.value='';"/>
-                                    <input type="submit" value="Отправить" class="btn btn-primary btn-sm no-border">
-                                    <button class="btn btn-primary btn-sm no-border repeat-confirm-code">Получить код повторно</button>
+                                    <input id="confirmCode" type="text" class="form-control" value="Введите код подтверждения" onblur="if(this.value=='') this.value='Введите код подтверждения';" onfocus="if(this.value=='Введите код подтверждения') this.value='';"/>
+                                    <input type="submit" value="Подтвердить" class="btn btn-primary btn-sm no-border useConfirmCode">
+                                    <button class="btn btn-primary btn-sm no-border sendConfirmCode">Получить код повторно</button>
+                                    <div class="confirm-info"></div>
                                 </form>
                             </c:if>
                             <div class="user-body">

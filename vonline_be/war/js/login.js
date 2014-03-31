@@ -102,6 +102,7 @@ $(document).ready(function(){
             }
         }
     }
+
     $('#email').keypress(function(){
         var emailAlert = $('.email-alert');
        if (emailAlert.css('display') == 'block'){
