@@ -179,9 +179,10 @@
             <div class="main-content">
                 <div class="back-orders back-tab">
                     <div class="back-orders-top">
+                        <a href="#" class="btn btn-grey btn-sm no-border reset-filters">Сбросить</a>
                         <div class="btn-group status-dropdown">
                             <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                                <span class="btn-group-text">Фильтр по статусу заказа</span>
+                                <span class="btn-group-text">Статус заказа</span>
                                 <span class="icon-caret-down icon-on-right"></span>
                             </button>
 
@@ -193,7 +194,7 @@
                         </div>
                         <div class="btn-group type-delivery-dropdown">
                             <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                                <span class="btn-group-text">Фильтр по типу доставки</span>
+                                <span class="btn-group-text">Тип доставки</span>
                                 <span class="icon-caret-down icon-on-right"></span>
                             </button>
 
@@ -206,7 +207,7 @@
                         <div class="input-group">
                             <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                         </div>
-                        <form method="post" action="#" class="form-group has-info">
+                        <form method="post" action="#" class="form-group has-info search-form">
                             <span class="block input-icon input-icon-right">
                                 <input id="back-search" type="text" class="form-control width-100" value="Поиск по имени клиента или номеру телефона" onblur="if(this.value=='') this.value='Поиск по имени клиента или номеру телефона';" onfocus="if(this.value=='Поиск по имени клиента или номеру телефона') this.value='';"/>
                                 <a href="#" class="icon-search icon-on-right bigger-110"></a>
@@ -269,9 +270,9 @@
                 </div>
                 <div class="import back-tab">
                     <h2>Здесь вы можете загрузить список продуктов в магазин</h2>
-                    <form action="/file/" method="post" enctype="multipart/form-data"  class="form-import">
-                        <input type="file" name="data"/>
-                        <input type="hidden" name="public"/> <!-- Be sure that you gona make file accessible for everyone -->
+                    <form action="/file/" method="post"  class="form-import"> <%--enctype="multipart/form-data"--%>
+                        <input id="import-data" type="file" name="data"/>
+                        <input id="import-public" type="hidden" name="public"/> <!-- Be sure that you gona make file accessible for everyone -->
                         <input type="submit" />
                     </form>
                     <section class="catalog">

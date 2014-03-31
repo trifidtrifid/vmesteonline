@@ -1,3 +1,11 @@
+/*
+* делаю переменные глобальными, чтобы они были видны в файле datepicker
+* */
+var deliveryFilterFlag= 0,
+    statusFilterFlag = 0,
+    dateFilterFlag = 0,
+    searchFilterFlag = 0;
+
 $(document).ready(function(){
     var transport = new Thrift.Transport("/thrift/ShopService");
     var protocol = new Thrift.Protocol(transport);
@@ -11,129 +19,21 @@ $(document).ready(function(){
     var nowTime = parseInt(new Date().getTime()/1000);
     nowTime -= nowTime%86400;
     var day = 3600*24;
-    var orders = client.getOrdersByStatus(0,nowTime+180*day,0);
-    $('.orders-list').append(createOrdersHtml(orders));
 
-    var ordersNoInit = $('.orders-no-init');
-    initOrderPlusMinus(ordersNoInit);
-    ordersNoInit.removeClass('orders-no-init');
-    var deliveryFilterFlag= 0,
-        statusFilterFlag = 0;
-
-    function getStatusTypeByText(statusText){
-        var statusType;
-
-        switch (statusText){
-            case "Подтвержден":
-                statusType = 2;
-                break;
-            case "Не подтвержден":
-                statusType = 1;
-                break;
-            case "Отменен":
-                statusType = 6;
-                break;
-        }
-
-        return statusType;
-    }
-
-    $('.status-dropdown .dropdown-menu li').click(function(e){
-        e.preventDefault();
-
-        var statusText = $(this).find('a').text();
-        var statusType = getStatusTypeByText(statusText);
-
-        var nowTime = parseInt(new Date().getTime()/1000);
-        nowTime -= nowTime%86400;
-        var day = 3600*24;
-        var newOrders = client.getOrdersByStatus(0,nowTime + 180*day,statusType);
-        var newOrdersLength = newOrders.length;
-        var ordersInFilter = [],
-            counter = 0;
-        if(deliveryFilterFlag){
-           var deliveryText = $('.type-delivery-dropdown .btn-group-text').text();
-           var deliveryType = getDeliveryTypeByText(deliveryText);
-            for (var i = 0; i < newOrdersLength; i++){
-                var orderDetails = client.getOrderDetails(newOrders[i].id);
-                if (deliveryType == orderDetails.delivery){
-                    ordersInFilter[counter++] = client.getOrder(newOrders[i].id);
-                }
-            }
-            newOrders = ordersInFilter;
-        }
-
-        $('.orders-list').html("").append(createOrdersHtml(newOrders));
-        var ordersNoInit = $('.orders-no-init');
-        initOrderPlusMinus(ordersNoInit);
-        ordersNoInit.removeClass('orders-no-init');
-
-        statusFilterFlag = 1;
-    });
-
-    function getDeliveryTypeByText(deliveryText){
-        var deliveryType;
-
-        switch (deliveryText){
-            case "Самовывоз":
-                deliveryType = "1";
-                break;
-            case "Курьер рядом":
-                deliveryType = "2";
-                break;
-            case "Курьер далеко":
-                deliveryType = "3";
-                break;
-        }
-        return deliveryType;
-    }
-
-    $('.type-delivery-dropdown .dropdown-menu li').click(function(e){
-        e.preventDefault();
-
-       var deliveryText = $(this).find('a').text();
-       var deliveryType = getDeliveryTypeByText(deliveryText);
-
-        var nowTime = parseInt(new Date().getTime()/1000);
-        nowTime -= nowTime%86400;
-        var day = 3600*24;
+    function showAllOrders(){
         var orders = client.getOrdersByStatus(0,nowTime+180*day,0);
-        var ordersLength = orders.length;
-        var orderDetails,
-            newOrders = [],
-            counter = 0,
-            ordersInFilter=[];
-
-
-        for(var i = 0; i < ordersLength; i++){
-            orderDetails = client.getOrderDetails(orders[i].id);
-            if (orderDetails.delivery == deliveryType){
-                newOrders[counter++] = orders[i];
-            }
-        }
-        var newOrdersLength = newOrders.length;
-        counter = 0;
-
-        if(statusFilterFlag){
-            var statusText = $('.status-dropdown .btn-group-text').text();
-            var statusType = getStatusTypeByText(statusText);
-            for (i = 0; i < newOrdersLength; i++){
-                if (statusType == newOrders[i].status){
-                    ordersInFilter[counter++] = client.getOrder(newOrders[i].id);
-                }
-            }
-            newOrders = ordersInFilter;
-        }
-
-        $('.orders-list').html("").append(createOrdersHtml(newOrders));
+        $('.orders-list').html("").append(createOrdersHtml(orders));
 
         var ordersNoInit = $('.orders-no-init');
         initOrderPlusMinus(ordersNoInit);
         ordersNoInit.removeClass('orders-no-init');
 
-        deliveryFilterFlag = 1;
-
-    });
+        deliveryFilterFlag = 0;
+        statusFilterFlag = 0;
+        dateFilterFlag = 0;
+        searchFilterFlag = 0;
+    }
+    showAllOrders();
 
     function initOrderPlusMinus(selector){
         selector.find('.plus-minus').click(function(e){
@@ -336,10 +236,329 @@ $(document).ready(function(){
     var datepickerFunc = {
         createOrdersHtml: createOrdersHtml,
         initOrderPlusMinus: initOrderPlusMinus,
-        setSidebarHeight: setSidebarHeight
+        setSidebarHeight: setSidebarHeight,
+        filterByStatus: filterByStatus,
+        filterByDelivery: filterByDelivery,
+        filterBySearch: filterBySearch
     };
 
     dPicker.datepicker('setVarOrderDates',datepickerFunc);
+
+
+    $('.reset-filters').click(function(){
+        showAllOrders();
+        $('.type-delivery-dropdown .btn-group-text').text('Тип доставки');
+        $('.status-dropdown .btn-group-text').text('Статус заказа');
+        $('#back-search').val('Поиск по имени клиента или номеру телефона');
+        dPicker.val('Фильтр по дате');
+    });
+
+    function getStatusTypeByText(statusText){
+        var statusType;
+
+        switch (statusText){
+            case "Подтвержден":
+                statusType = 2;
+                break;
+            case "Не подтвержден":
+                statusType = 1;
+                break;
+            case "Отменен":
+                statusType = 6;
+                break;
+        }
+
+        return statusType;
+    }
+    function getDeliveryTypeByText(deliveryText){
+        var deliveryType;
+
+        switch (deliveryText){
+            case "Самовывоз":
+                deliveryType = "1";
+                break;
+            case "Курьер рядом":
+                deliveryType = "2";
+                break;
+            case "Курьер далеко":
+                deliveryType = "3";
+                break;
+        }
+        return deliveryType;
+    }
+
+    $('.status-dropdown .dropdown-menu li').click(function(e){
+        e.preventDefault();
+
+        var statusText = $(this).find('a').text();
+        var statusType = getStatusTypeByText(statusText);
+
+        var newOrders = client.getOrdersByStatus(0,nowTime + 180*day,statusType);
+
+        if(deliveryFilterFlag){
+            newOrders = filterByDelivery(newOrders);
+        }
+        if(searchFilterFlag){
+            newOrders = filterBySearch(newOrders,$('#back-search').val());
+        }
+        if(dateFilterFlag){
+            newOrders = filterByDate(newOrders);
+        }
+
+        $('.orders-list').html("").append(createOrdersHtml(newOrders));
+
+        var ordersNoInit = $('.orders-no-init');
+        initOrderPlusMinus(ordersNoInit);
+        ordersNoInit.removeClass('orders-no-init');
+
+        statusFilterFlag = 1;
+    });
+
+    function filterByDelivery(orders){
+        var ordersInFilter = [],
+            counter = 0;
+        var ordersLength = orders.length;
+
+        var deliveryText = $('.type-delivery-dropdown .btn-group-text').text();
+        var deliveryType = getDeliveryTypeByText(deliveryText);
+
+        for (var i = 0; i < ordersLength; i++){
+            var orderDetails = client.getOrderDetails(orders[i].id);
+            if (deliveryType == orderDetails.delivery){
+                ordersInFilter[counter++] = orders[i];
+            }
+        }
+
+        return ordersInFilter;
+    }
+
+    function getMetaDate(){
+        try {
+            var strDate = dPicker.val().split("-");
+            var strMonth="";
+            var year = strDate[2];
+            switch(strDate[1]){
+                case '01':
+                    strMonth = "Jan";
+                    break;
+                case '02':
+                    strMonth = "Feb";
+                    break;
+                case '03':
+                    strMonth = "March";
+                    break;
+                case '04':
+                    strMonth = "Apr";
+                    break;
+                case '05':
+                    strMonth = "May";
+                    break;
+                case '06':
+                    strMonth = "June";
+                    break;
+                case '07':
+                    strMonth = "July";
+                    break;
+                case '08':
+                    strMonth = "Aug";
+                    break;
+                case '09':
+                    strMonth = "Sen";
+                    break;
+                case '10':
+                    strMonth = "Oct";
+                    break;
+                case '11':
+                    strMonth = "Nov";
+                    break;
+                case '12':
+                    strMonth = "Dec";
+                    break;
+            }
+        } catch(e){
+            alert(e + ' Функция getMetaDate');
+        }
+        return (Date.parse(strDate[0]+" "+strMonth+" "+year));
+    }
+
+    function filterByDate(orders){
+        var orderDate = parseInt(getMetaDate()/1000);
+        orderDate -= orderDate%86400;
+        orderDate += day;
+
+        var ordersLength = orders.length;
+        var orderList = [];
+        var counter = 0;
+        for (var i = 0; i < ordersLength; i++){
+            if (orders[i].date == orderDate){
+                orderList[counter++] = orders[i];
+            }
+        }
+
+        return orderList;
+    }
+
+    $('.type-delivery-dropdown .dropdown-menu li').click(function(e){
+        e.preventDefault();
+
+        var orders = client.getOrdersByStatus(0,nowTime+180*day,0);
+        var newOrders = filterByDelivery(orders);
+
+        if(statusFilterFlag){
+            newOrders = filterByStatus(newOrders);
+        }
+        if(searchFilterFlag){
+            newOrders = filterBySearch(newOrders,$('#back-search').val());
+        }
+        if(dateFilterFlag){
+            newOrders = filterByDate(newOrders);
+        }
+
+        $('.orders-list').html("").append(createOrdersHtml(newOrders));
+
+        var ordersNoInit = $('.orders-no-init');
+        initOrderPlusMinus(ordersNoInit);
+        ordersNoInit.removeClass('orders-no-init');
+
+        deliveryFilterFlag = 1;
+
+    });
+
+    function filterByStatus(orders){
+        var counter = 0,
+            ordersInFilter=[];
+        var ordersLength = orders.length;
+
+        var statusText = $('.status-dropdown .btn-group-text').text();
+        var statusType = getStatusTypeByText(statusText);
+
+        for (i = 0; i < ordersLength; i++){
+            if (statusType == orders[i].status){
+                ordersInFilter[counter++] = orders[i];
+            }
+        }
+        return ordersInFilter;
+    }
+
+    /* ----------------------- Поиск -----------------------------------*/
+/* создаем массив из имен клиентов, без повторений */
+    var clients = [];
+    var counter = 0;
+    $('.back-orders .order-item').each(function(){
+        clients[counter++] =  $(this).find('.user-name').text();
+    });
+    var clientLength = clients.length;
+    var clientsNoRepeat = [],
+        repeatFlag = 0;
+    counter = 0;
+    for(var i = 0; i < clientLength-1 ;i++){
+        repeatFlag = 0;
+        for(var j = i+1; j < clientLength; j++){
+          if(clients[i] == clients[j]){
+             repeatFlag = 1;
+          }
+        }
+        if(!repeatFlag){
+            clientsNoRepeat[counter++] = clients[i];
+        }
+    }
+    clientsNoRepeat[counter] = clients[clientLength-1];
+/* --- */
+
+    function searchByWord(word){
+        var orders = client.getOrdersByStatus(0,nowTime+180*day,0);
+
+        var filterOrders = filterBySearch(orders,word);
+
+        if(statusFilterFlag){
+            filterOrders = filterByStatus(filterOrders);
+        }
+        if(deliveryFilterFlag){
+            filterOrders = filterByDelivery(filterOrders);
+        }
+        if(dateFilterFlag){
+            filterOrders = filterByDate(filterOrders);
+        }
+
+        searchFilterFlag = 1;
+        return filterOrders;
+    }
+
+    function filterBySearch(orders,word){
+        var ordersLength = orders.length;
+        var filterOrders = [];
+        counter = 0;
+        for(var i = 0; i < ordersLength; i++){
+            if(orders[i].userName.toLowerCase() == word.toLowerCase()){
+                filterOrders[counter++] = orders[i];
+            }
+        }
+
+        return filterOrders;
+    }
+
+    $('#back-search').focus(function(){
+        $(this).autocomplete({
+            source: clientsNoRepeat,
+            select: function(event,ui){
+                $('.orders-list').html("").append(createOrdersHtml(searchByWord(ui.item['label'])));
+            }
+        });
+    });
+
+    $('.search-form').submit(function(e){
+        e.preventDefault();
+
+        var searchWord = $('#back-search').val();
+        $('.orders-list').html("").append(createOrdersHtml(searchByWord(searchWord)));
+    });
+
+    /* ------------------------------- Конец Поиск ---------------------------- */
+
+    /* import */
+
+    $('.form-import').submit(function(e){
+        e.preventDefault();
+
+        var path = $('#import-data').val();
+        var data = path;
+        var importPublic = $('#import-public').val();
+        path = path.split("\\");
+        var pathLength = path.length;
+        var fname = path[pathLength-1];
+
+        /*$.post(
+            "/file/",
+            {
+              fname: fname,
+              data: data,
+              public: importPublic
+            },
+            function(data, textStatus, jqXHR){
+               alert('1');
+            }
+        );*/
+
+            $.ajax({
+                type: "POST",
+                url: "/file/",
+                contentType: 'multipart/form-data',
+                //processData: false,
+                //data: "data="+data,
+                data: {
+                    fname: fname,
+                    data: data,
+                    public: importPublic
+                },
+                success: function(html) {
+                    alert('1');
+                }
+            });
+
+    });
+
+   /* import */
+
 
     function setSidebarHeight(){
         try{
@@ -374,85 +593,5 @@ $(document).ready(function(){
         $(this).closest('ul').find('.active').removeClass('active');
         $(this).parent().addClass('active');
     });
-
-    /* ----------------------- Поиск -----------------------------------*/
-    var clients = [];
-    var counter = 0;
-    $('.back-orders .order-item').each(function(){
-        clients[counter++] =  $(this).find('.user-name').text();
-    });
-    var clientLength = clients.length;
-    var clientsNoRepeat = [],
-        repeatFlag = 0;
-    counter = 0;
-    for(var i = 0; i < clientLength-1 ;i++){
-        repeatFlag = 0;
-        for(var j = i+1; j < clientLength; j++){
-          if(clients[i] == clients[j]){
-             repeatFlag = 1;
-          }
-        }
-        if(!repeatFlag){
-            clientsNoRepeat[counter++] = clients[i];
-        }
-    }
-    clientsNoRepeat[counter] = clients[clientLength-1];
-
-    $('#back-search').focus(function(){
-        $(this).autocomplete({
-            source: clientsNoRepeat,
-            select: function(event,ui){
-                var orders = client.getOrdersByStatus(0,nowTime+180*day,0);
-                var ordersLength = orders.length;
-                var filterOrders = [];
-                counter = 0;
-                for(var i = 0; i < ordersLength; i++){
-                    if(orders[i].userName == ui.item['label']){
-                        filterOrders[counter++] = orders[i];
-                    }
-                }
-                $('.orders-list').html("").append(createOrdersHtml(filterOrders));
-            }
-        });
-    });
-    /* ------------------------------- Конец Поиск ----------------------------------------- */
-    /* import */
-
-/*    $('.form-import').submit(function(e){
-        e.preventDefault();
-        var path = $('#file').val();
-        alert(path);
-        path = path.split("\\");
-        var pathLength = path.length;
-        var fname = path[pathLength-1];
-
-        $.post(
-            "http://localhost:8888/file/",
-            {
-              fname: fname,
-              extUrl: path
-            },
-            function(data, textStatus, jqXHR){
-
-            }
-        );
-    });*/
-
-/*    $('.form-import input').click(function(){
-        var importElement = {
-            type: 'type',
-            filename: 'filename',
-            fieldsMap: 'fieldsMap',
-            url: 'url',
-            fieldsData: 'fieldsData'
-        };
-        var data = {
-            id: 1,
-            name: "name",
-            date: 11111111111,
-            data: importElement
-        };
-        //client.importData(data);
-    });*/
 
 });

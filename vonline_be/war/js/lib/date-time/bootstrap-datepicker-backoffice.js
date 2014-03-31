@@ -121,7 +121,7 @@
         }
     }
 
-    function initOrderDay(createOrdersHtml,initOrderPlusMinus,setSidebarHeight){
+    function initOrderDay(createOrdersHtml,initOrderPlusMinus,setSidebarHeight,filterByStatus,filterByDelivery,filterBySearch){
         try{
         $('.order-day').click(function(){
             var orderDate = parseInt($(this).attr('id'));
@@ -131,14 +131,24 @@
             var orderList = [];
             var counter = 0;
             for (var i = 0; i < ordersLength; i++){
-                if (orders[i].date = orderDate){
+                if (orders[i].date == orderDate){
                     orderList[counter++] = orders[i];
                 }
             }
-            $('.shop-products').hide();
+            if(statusFilterFlag){
+                orderList = filterByStatus(orderList);
+            }
+            if(deliveryFilterFlag){
+                orderList = filterByDelivery(orderList);
+            }
+            if(searchFilterFlag){
+                orderList = filterBySearch(orderList,$('#back-search').val());
+            }
+
+            dateFilterFlag = 1;
             var shopOrdersList = $('.orders-list');
             shopOrdersList.html('').append(createOrdersHtml(orderList));
-            $('.shop-orders').show();
+
             initOrderPlusMinus(shopOrdersList);
             setSidebarHeight();
         });
@@ -612,7 +622,7 @@
 			}
 			yearCont.html(html);
                 SetOrderDates();
-               initOrderDay(this.createOrdersHtml,this.initOrderPlusMinus,this.setSidebarHeight)
+               initOrderDay(this.createOrdersHtml,this.initOrderPlusMinus,this.setSidebarHeight,this.filterByStatus,this.filterByDelivery,this.filterBySearch)
 	},
 
 		updateNavArrows: function() {
@@ -925,6 +935,9 @@
             this.createOrdersHtml = datepickerFunc.createOrdersHtml;
             this.initOrderPlusMinus = datepickerFunc.initOrderPlusMinus;
             this.setSidebarHeight = datepickerFunc.setSidebarHeight;
+            this.filterByStatus = datepickerFunc.filterByStatus;
+            this.filterByDelivery = datepickerFunc.filterByDelivery;
+            this.filterBySearch = datepickerFunc.filterBySearch;
         }
 	};
 
