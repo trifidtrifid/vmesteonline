@@ -59,9 +59,9 @@
                     $('.sendConfirmCode').click(function(e){
                         e.preventDefault();
                         var to = userClient.getUserContacts().email;
-                        $('.confirm-info').text('На ваш e-mail отправлен код').addClass('login-good').show();
                         var resourcefileName = "mailTemplates/changePasswordConfirm.html";
                         authClient.sendConfirmCode(to,resourcefileName);
+                        $('.confirm-info').text('На ваш e-mail отправлен код').addClass('login-good').show();
                     });
 
                     $('.useConfirmCode').click(function(e){

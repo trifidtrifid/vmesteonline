@@ -38,9 +38,13 @@ $(document).ready(function(){
         if (!to){
             $('.login-error').text('Введите пожалуйста e-mail').removeClass('login-good').show();
         }else{
-            $('.login-error').text('На ваш e-mail отправлен код').addClass('login-good').show();
             var resourcefileName = "mailTemplates/changePasswordConfirm.html";
-            client.sendConfirmCode(to,resourcefileName);
+            try{
+                client.sendConfirmCode(to,resourcefileName);
+                $('.login-error').text('На ваш e-mail отправлен код').addClass('login-good').show();
+            }catch(e){
+                $('.login-error').text('Такой e-mail не зарегистрирован').removeClass('login-good').show();
+            }
         }
         $('.login-form').height('280px');
 
