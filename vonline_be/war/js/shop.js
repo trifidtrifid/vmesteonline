@@ -1884,7 +1884,7 @@ $(document).ready(function(){
         }
     }
 
-    function AddSingleProductToBasket(currentProduct,spinnerValue){
+    function AddSingleProductToBasket(currentProduct,spinnerValue,spinnerDisable){
         try{
         var productDetails = client.getProductDetails(currentProduct.id);
         var productHtml = '<li data-productid="'+ currentProduct.id +'">'+
@@ -1924,6 +1924,7 @@ $(document).ready(function(){
         var spinnerNoInit = $('.catalog-order .spinner1.no-init');
         var itsBasket = 1;
         InitSpinner(spinnerNoInit,spinnerValue,itsBasket,currentProduct.minClientPack);
+        if (spinnerDisable){spinnerNoInit.closest('.ace-spinner').spinner('disable');}
         spinnerNoInit.removeClass('no-init');
 
     }
@@ -1964,10 +1965,15 @@ $(document).ready(function(){
         }
         orderLines = orderDetails.odrerLines;
         orderLinesLength = orderLines.length;
+        var spinnerDisable;
         for(i = 0; i < orderLinesLength; i++){
             curProd = orderLines[i].product;
             spinVal = orderLines[i].quantity;
-            AddSingleProductToBasket(curProd,spinVal);
+            spinnerDisable = false;
+            if(orderLines[i].packs && getPacksLength(orderLines[i].packs) > 1){
+                spinnerDisable = true;
+            }
+            AddSingleProductToBasket(curProd,spinVal,spinnerDisable);
         }
         }catch(e){
             alert(e+" Функция addSingleOrderToBasket");

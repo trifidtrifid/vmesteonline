@@ -241,6 +241,9 @@
                     /*if ($('.additionally-order').hasClass('hide') || orderData.itsAppend == false){
                      currentOrderId = client.getOrder($(this).data('orderid'));
                      }*/
+                    if(orderData.orderId == currentOrderId){
+                        orderData.itsAppend = false;
+                    }
                     AddOrdersToBasket(orderData);
                 }else{
                     // если добавление одного продукта
