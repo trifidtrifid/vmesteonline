@@ -1562,13 +1562,19 @@ $(document).ready(function(){
                     orderDelivery = "Курьер далеко";
                     break
             }
+            var orderDay = tempDate.getDate();
+            orderDay = (orderDay < 10)? "0" + orderDay: orderDay;
+
+            var orderMonth = tempDate.getMonth()+1;
+            orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
+
             ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
                 '<table class="orders-tbl">'+
                 '<tbody>'+
                 '<tr>'+
                 '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
                 '<td class="td2">'+i+'. Заказ '+orders[i].id+'</td>'+
-                '<td class="td3">'+ tempDate.getDate() +"."+tempDate.getMonth()+"."+tempDate.getFullYear()+ '</td>'+
+                '<td class="td3">'+ orderDay +"."+orderMonth+"."+tempDate.getFullYear()+ '</td>'+
                 '<td class="td4">'+
                 '<div class="order-status">'+orderStatus +'</div>'+
                 '<div>'+ orderLinks +'</div>'+

@@ -187,6 +187,13 @@ $(document).ready(function(){
                         break
                 }
                 if (orderDetails.deliveryTo){
+
+                    var orderDay = tempDate.getDate();
+                    orderDay = (orderDay < 10)? "0" + orderDay: orderDay;
+
+                    var orderMonth = tempDate.getMonth()+1;
+                    orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
+
                 ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
                     '<table class="orders-tbl">'+
                     '<tbody>'+
@@ -196,7 +203,7 @@ $(document).ready(function(){
                     '<td class="td8 user-name">'+
                     orders[i].userName +
                     '</td>'+
-                    '<td class="td3">'+ tempDate.getDate() +"."+tempDate.getMonth()+"."+tempDate.getFullYear()+ '</td>'+
+                    '<td class="td3">'+ orderDay +"."+orderMonth+"."+tempDate.getFullYear()+ '</td>'+
                     '<td class="td4">'+
                     '<div class="order-status">'+orderStatus +'</div>'+
                     '</td>'+
