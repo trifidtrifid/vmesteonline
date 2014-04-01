@@ -59,6 +59,22 @@
   width: 170px;
   display: inline-block;
 }
+.short.form-control {
+  width: 75px !important;
+}
+.datepicker-simple {
+  width: 470px !important;
+}
+.datepicker-simple th.next {
+  text-align: right !important;
+}
+.datepicker-simple th.dow {
+  text-align: center !important;
+}
+.datepicker-simple .year,
+.datepicker-simple .month {
+  margin: 0 5px;
+}
 @media all and (max-width: 1024px) {
   .user-descr .ava-area {
     width: 120px;

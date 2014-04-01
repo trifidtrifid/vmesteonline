@@ -537,34 +537,34 @@ $(document).ready(function(){
         var pathLength = path.length;
         var fname = path[pathLength-1];
 
-        /*$.post(
-            "/file/",
-            {
-              fname: fname,
-              data: data,
-              public: importPublic
-            },
-            function(data, textStatus, jqXHR){
-               alert('1');
-            }
-        );*/
+        var fd = new FormData();
+        var input = $('.form-import #import-data');
+        fd.append( 'data', input[0].files[0]);
 
-            $.ajax({
-                type: "POST",
-                url: "/file/",
-                contentType: 'multipart/form-data',
-                //processData: false,
-                //data: "data="+data,
-                data: {
-                    fname: fname,
-                    data: data,
-                    public: importPublic
-                },
-                success: function(html) {
-                    alert('1');
+        $.ajax({
+            type: "POST",
+            url: "/file/",
+            cache: false,
+            processData: false,
+            //contentType: 'multipart/form-data',
+            contentType: false,
+            data: fd,
+            /*data: {
+                fname: fname,
+                data: data,
+                public: importPublic
+            },*/
+            success: function(html) {
+                var dataCSV = client.parseCSVfile(html);
+                var dataCSVLength = dataCSV.length;
+                for(var i = 0; i < dataCSVLength; i++){
+                    var dataCSVLength2 = dataCSV[i].length;
+                    for(var j = 0; j < dataCSVLength2; j++){
+                        console.log(dataCSV[i][j]);
+                    }
                 }
-            });
-
+            }
+        });
     });
 
    /* import */

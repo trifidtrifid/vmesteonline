@@ -22,7 +22,7 @@
 .settings .tab-pane .form-control,
 .edit-personal .tab-pane .form-control {
   display: inline-block;
-  width: 200px;
+  width: 233px;
   margin: 0 0 10px 0;
 }
 .settings .tab-pane .subs-group,
@@ -40,7 +40,7 @@
 .settings textarea,
 .edit-personal textarea {
   margin-bottom: 10px;
-  width: 200px;
+  width: 233px;
 }
 .create-topic-wrap,
 .edit-personal-wrap,

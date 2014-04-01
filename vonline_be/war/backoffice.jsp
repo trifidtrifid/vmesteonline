@@ -270,7 +270,7 @@
                 </div>
                 <div class="import back-tab">
                     <h2>Здесь вы можете загрузить список продуктов в магазин</h2>
-                    <form action="/file/" method="post"  class="form-import"> <%--enctype="multipart/form-data"--%>
+                    <form action="/file/" method="post"  class="form-import" enctype="multipart/form-data"> <%--enctype="multipart/form-data"--%>
                         <input id="import-data" type="file" name="data"/>
                         <input id="import-public" type="hidden" name="public"/> <!-- Be sure that you gona make file accessible for everyone -->
                         <input type="submit" />

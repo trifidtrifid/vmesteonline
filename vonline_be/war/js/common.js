@@ -40,6 +40,51 @@
         protocol = new Thrift.Protocol(transport);
         var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
 
+        function SetJSForEditPersonal(){
+             $('#date-picker-birthday').datepickerSimple({startView: 2, viewMode: 2,autoclose:true, language:'ru'});
+
+            $('.save-changes').click(function(e){
+                e.preventDefault();
+
+
+            });
+        }
+
+        function SetJSForProfile(){
+
+            $('.edit-personal-link').click(function(e){
+                e.preventDefault();
+                $('.dynamic').load("ajax-editPersonal.jsp .dynamic",function(){
+                    SetJSForEditPersonal();
+                });
+            });
+
+            $('.sendConfirmCode').click(function(e){
+                e.preventDefault();
+                var to = userClient.getUserContacts().email;
+                var resourcefileName = "mailTemplates/changePasswordConfirm.html";
+                authClient.sendConfirmCode(to,resourcefileName);
+                $('.confirm-info').text('На ваш e-mail отправлен код').addClass('login-good').show();
+            });
+
+            $('.useConfirmCode').click(function(e){
+                e.preventDefault();
+                var email = userClient.getUserContacts().email;
+                var confirmCode = $('#confirmCode').val();
+                var confirmInfo = $('.confirm-info');
+                try{
+                    authClient.confirmRequest(email,confirmCode);
+                    confirmInfo.text('Код принят !').addClass('login-good').show();
+                    function closeConfirm(){
+                        $('.account-no-confirm').slideUp();
+                    }
+                    setTimeout(closeConfirm,4000);
+                }catch(e){
+                    confirmInfo.text('Неверный код подтверждения !').removeClass('login-good').show();
+                }
+            });
+        }
+
         $('.user-menu a').click(function(e){
             e.preventDefault();
             $(this).closest('.user-menu').hide();
@@ -51,35 +96,7 @@
                 dynamic.load("ajax-settings.jsp .dynamic");
             }else if (ind == 1){
                 dynamic.load("ajax-profile.jsp .dynamic",function(){
-                    $('.edit-personal-link').click(function(e){
-                        e.preventDefault();
-                        dynamic.load("ajax-editPersonal.jsp .dynamic");
-                    });
-
-                    $('.sendConfirmCode').click(function(e){
-                        e.preventDefault();
-                        var to = userClient.getUserContacts().email;
-                        var resourcefileName = "mailTemplates/changePasswordConfirm.html";
-                        authClient.sendConfirmCode(to,resourcefileName);
-                        $('.confirm-info').text('На ваш e-mail отправлен код').addClass('login-good').show();
-                    });
-
-                    $('.useConfirmCode').click(function(e){
-                        e.preventDefault();
-                        var email = userClient.getUserContacts().email;
-                        var confirmCode = $('#confirmCode').val();
-                        var confirmInfo = $('.confirm-info');
-                        try{
-                            authClient.confirmRequest(email,confirmCode);
-                            confirmInfo.text('Код принят !').addClass('login-good').show();
-                            function closeConfirm(){
-                                $('.account-no-confirm').slideUp();
-                            }
-                            setTimeout(closeConfirm,4000);
-                        }catch(e){
-                            confirmInfo.text('Неверный код подтверждения !').removeClass('login-good').show();
-                        }
-                    });
+                    SetJSForProfile();
                 });
             } else {
                 authClient.logout();
