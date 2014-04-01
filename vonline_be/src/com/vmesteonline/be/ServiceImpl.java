@@ -14,14 +14,17 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import com.google.appengine.api.datastore.KeyFactory;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.VoUserGroup;
 
 public class ServiceImpl {
 
-	protected enum ServiceCategoryID { BASE_SI, AUTH_SI, USER_SI, MESSAGE_SI, SHOP_SI};
+	protected enum ServiceCategoryID {
+		BASE_SI, AUTH_SI, USER_SI, MESSAGE_SI, SHOP_SI
+	};
+
 	private static Cache cache;
 	public static Logger logger;
 
@@ -47,7 +50,7 @@ public class ServiceImpl {
 		}
 		return rslt;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected static <T> T removeObjectFromCache(Object key) {
 		T rslt = null;
@@ -91,7 +94,13 @@ public class ServiceImpl {
 	}
 
 	public long getCurrentUserId() throws InvalidOperation {
-		return getCurrentUserId(null);
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			return getCurrentUserId(pm);
+		} finally {
+			pm.close();
+		}
+
 	}
 
 	protected long getCurrentUserId(PersistenceManager _pm) throws InvalidOperation {
@@ -105,50 +114,45 @@ public class ServiceImpl {
 	}
 
 	protected VoUser getCurrentUser() throws InvalidOperation {
-		return getCurrentUser(null);
-	}
-
-	public VoUser getCurrentUser(PersistenceManager _pm) throws InvalidOperation {
-		if (null == sessionStorage)
-			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
-		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-
-			VoSession sess = getCurrentSession(pm);
-			if (sess != null && 0 != sess.getUserId()) {
-				return pm.getObjectById(VoUser.class, sess.getUserId());
-			}
-			throw new InvalidOperation(VoError.NotAuthorized, "can't get current user id");
+			return getCurrentUser(pm);
 		} finally {
-			if (null == _pm)
-				pm.close();
+			pm.close();
 		}
 	}
 
-	protected VoSession getCurrentSession() throws InvalidOperation {
-		return getCurrentSession(null);
-	}
-
-	protected VoSession getCurrentSession(PersistenceManager _pm) throws InvalidOperation {
-
+	public VoUser getCurrentUser(PersistenceManager pm) throws InvalidOperation {
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
-		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
+
+		VoSession sess = getCurrentSession(pm);
+		if (sess != null && 0 != sess.getUserId()) {
+			return pm.getObjectById(VoUser.class, sess.getUserId());
+		}
+		throw new InvalidOperation(VoError.NotAuthorized, "can't get current user id");
+	}
+
+	protected VoSession getCurrentSession() throws InvalidOperation {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			return getCurrentSession(pm);
+		} finally {
+			pm.close();
+		}
+
+	}
+
+	protected VoSession getCurrentSession(PersistenceManager pm) throws InvalidOperation {
+		if (null == sessionStorage)
+			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
+
 		try {
 			return pm.getObjectById(VoSession.class, sessionStorage.getId());
-
-			// return pm.getObjectById(VoSession.class,
-			// KeyFactory.createKey(VoSession.class.getSimpleName(),
-			// sessionStorage.getId()));
 		} catch (JDOObjectNotFoundException e) {
-			// throw new InvalidOperation(VoError.NotAuthorized, "No session found");
-			// let's register a session
 			VoSession vs = new VoSession(sessionStorage.getId(), null);
 			pm.makePersistent(vs);
 			return vs;
-		} finally {
-			if (null == _pm)
-				pm.close();
 		}
 	}
 
@@ -171,11 +175,9 @@ public class ServiceImpl {
 
 	public void setCurrentAttribute(int key, long value, PersistenceManager _pm) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-
-		VoSession currentSession = getCurrentSession(pm);
-		currentSession.setSessionAttribute(key, value);
-
 		try {
+			VoSession currentSession = getCurrentSession(pm);
+			currentSession.setSessionAttribute(key, value);
 			pm.makePersistent(currentSession);
 		} finally {
 			pm.close();
@@ -184,51 +186,42 @@ public class ServiceImpl {
 
 	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		VoSession currentSession = getCurrentSession(pm);
-		currentSession.setSessionAttributes(typeValueMap);
 		try {
+			VoSession currentSession = getCurrentSession(pm);
+			currentSession.setSessionAttributes(typeValueMap);
 			pm.makePersistent(currentSession);
 		} finally {
 			pm.close();
 		}
 	}
 
-	/*
-	 * public Map<Integer, Long> getCurrentAttributes() throws InvalidOperation,
-	 * TException { return getCurrentAttributes(null); } public Map<Integer, Long>
-	 * getCurrentAttributes(PersistenceManager _pm) throws InvalidOperation,
-	 * TException { PersistenceManager pm = null == _pm ?
-	 * PMF.get().getPersistenceManager() : _pm; try { VoSession currentSession =
-	 * getCurrentSession(pm); pm.retrieve(currentSession); return
-	 * currentSession.getSessionAttributes(); } finally { if(null==_pm)
-	 * pm.close(); } }
-	 */
-
 	public Long getSessionAttribute(CurrentAttributeType type) throws InvalidOperation {
-		return getSessionAttribute(null);
-	}
-
-	public Long getSessionAttribute(CurrentAttributeType type, PersistenceManager _pm) throws InvalidOperation {
-		PersistenceManager pm = null == _pm ? PMF.get().getPersistenceManager() : _pm;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			VoSession currentSession = getCurrentSession(pm);
-			return currentSession.getSessionAttribute(type);
+			return getSessionAttribute(null);
 		} finally {
-			if (null == _pm)
-				pm.close();
+			pm.close();
 		}
 	}
-/**
- * Method return true if method should have public access through Thrift interface, false to check access by USer ID
- * @param method
- * @return true if method is public
- */
+
+	public Long getSessionAttribute(CurrentAttributeType type, PersistenceManager pm) throws InvalidOperation {
+		VoSession currentSession = getCurrentSession(pm);
+		return currentSession.getSessionAttribute(type);
+	}
+
+	/**
+	 * Method return true if method should have public access through Thrift interface, false to check access by USer ID
+	 * 
+	 * @param method
+	 * @return true if method is public
+	 */
 	public boolean isPublicMethod(String method) {
 		return false;
 	}
 
 	/**
 	 * Method returns an identification of category for access and must be overwritten in all of child classes
+	 * 
 	 * @return
 	 */
 	public long categoryId() {

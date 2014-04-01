@@ -12,6 +12,10 @@ import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
+import com.google.appengine.api.images.Image;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.Transform;
 import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.FullAddressCatalogue;
 import com.vmesteonline.be.InvalidOperation;
@@ -21,6 +25,7 @@ import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoRubric;
@@ -79,6 +84,11 @@ public class Defaults {
 	public static int radiusMedium = 2000;
 	public static int radiusLarge = 5000;
 
+	public static String defaultAvatarTopicUrl = "/data/da.gif";
+	public static String defaultAvatarMessageUrl = "/data/da.gif";
+	public static String defaultAvatarProfileUrl = "/data/da.gif";
+	public static String defaultAvatarShortProfileUrl = "/data/da.gif";
+
 	private static long userId = 0;
 
 	public static boolean initDefaultData() {
@@ -94,19 +104,10 @@ public class Defaults {
 			initializeRubrics(pm);
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations();
-
+			initializeUsers(locCodes);
 			MySQLJDBCConnector con = new MySQLJDBCConnector();
 			con.execute("drop table if exists topic");
 
-			try {
-				initializeUsers(locCodes);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		} catch (InvalidOperation e) {
-			e.printStackTrace();
-			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -207,14 +208,14 @@ public class Defaults {
 					"http://vomoloko.ru/img/logo.jpg", userId, topicSet, tags, deliveryCosts, paymentTypes));
 
 			ssi.getShop(shop); // to make it current
-			//set dates
-			int now = (int)(System.currentTimeMillis()/1000L);
-			Map<Integer,DateType> dates = new HashMap<Integer,DateType>();
-			for( int dt = now; dt < now + 86400 * 365; dt +=7*86400 ){
+			// set dates
+			int now = (int) (System.currentTimeMillis() / 1000L);
+			Map<Integer, DateType> dates = new HashMap<Integer, DateType>();
+			for (int dt = now; dt < now + 86400 * 365; dt += 7 * 86400) {
 				dates.put(dt, DateType.NEXT_ORDER);
-				dates.put(dt - 3*86400, DateType.NEXT_ORDER);
+				dates.put(dt - 3 * 86400, DateType.NEXT_ORDER);
 				dates.put(dt - 86400, DateType.SPECIAL_PRICE);
-				dates.put(dt - 4*86400, DateType.SPECIAL_PRICE);
+				dates.put(dt - 4 * 86400, DateType.SPECIAL_PRICE);
 			}
 			ssi.setDates(dates);
 

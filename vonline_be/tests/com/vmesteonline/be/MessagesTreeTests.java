@@ -78,6 +78,7 @@ public class MessagesTreeTests extends MessagesTree {
 		helper.tearDown();
 	}
 
+
 	@Test
 	public void testGetMessagesWithChildMessagesNum() {
 		MessagesTree t = new MessagesTree(lst);

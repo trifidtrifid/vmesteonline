@@ -1,6 +1,5 @@
 package com.vmesteonline.be;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +10,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.jdo.Extent;
-import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.http.HttpSession;
@@ -52,7 +50,20 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		super(sess);
 	}
 
-	// TODO this method is forbidden should be removed. use getShortProfile instead
+	@Override
+	public void updateUserInfo(UserInfo userInfo) throws InvalidOperation {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateUserContacts(UserContacts contacts) throws InvalidOperation {
+		// TODO Auto-generated method stub
+
+	}
+
+	// TODO this method is forbidden should be removed. use getShortProfile
+	// instead
 	@Override
 	public ShortUserInfo getShortUserInfo() throws InvalidOperation {
 		return getShortUserInfo(getCurrentUserId());
@@ -63,7 +74,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser voUser = getCurrentUser(pm);
-			ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, "", "", "");
+			ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, voUser.getAvatarMessage(), "", "");
 			VoPostalAddress pa = voUser.getAddress();
 			if (pa != null) {
 				sp.setAddress(pa.getBuilding().getAddressString());
@@ -299,22 +310,26 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 		try {
 			VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(url));
+			if (vfar.getUserId() != voUser.getId())
+				throw new InvalidOperation(VoError.IncorrectParametrs, "can't save avatar");
+
 			Image origImage = ImagesServiceFactory.makeImageFromFilename(vfar.getFileName().toString());
 			Transform resize = ImagesServiceFactory.makeResize(95, 95);
 			String topicAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
 
 			resize = ImagesServiceFactory.makeResize(40, 40);
-			String shortProfileAvatarUrl = StorageHelper
-					.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
+			String shortProfileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(),
+					true, pm);
 
 			resize = ImagesServiceFactory.makeResize(200, 200);
-			String profileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
+			String profileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true,
+					pm);
 
 			voUser.setAvatarTopic(topicAvatarUrl);
 			voUser.setAvatarMessage(topicAvatarUrl);
 			voUser.setAvatarProfileShort(shortProfileAvatarUrl);
 			voUser.setAvatarProfile(profileAvatarUrl);
-
+			pm.makePersistent(voUser);
 		} catch (Exception e) {
 			logger.warn("can't get VoFileAccessRecord for file " + url + " " + e.getMessage());
 			e.printStackTrace();
@@ -477,10 +492,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				return buildings.get(0).getBuilding();
 			} else {
 				logger.info("VoBuilding '" + fullNo + "'was created.");
-				VoBuilding voBuilding = new VoBuilding(vs, fullNo, 
-						new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
+				VoBuilding voBuilding = new VoBuilding(vs, fullNo, new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
 						new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude));
-				if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate location
+				if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate
+																	// location
 					try {
 						Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
 						voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));

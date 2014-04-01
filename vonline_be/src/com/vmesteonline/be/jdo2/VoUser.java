@@ -8,7 +8,6 @@ import java.util.TreeSet;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
@@ -18,7 +17,6 @@ import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.VoError;
-import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.utils.Defaults;
@@ -41,10 +39,15 @@ public class VoUser extends GeoLocation {
 		this.deliveryAddresses = new TreeSet<VoPostalAddress>();
 		this.confirmCode = 0;
 		this.emailConfirmed = false;
+		this.avatarMessage = Defaults.defaultAvatarTopicUrl;
+		this.avatarTopic = Defaults.defaultAvatarTopicUrl;
+		this.avatarProfile = Defaults.defaultAvatarProfileUrl;
+		this.avatarProfileShort = Defaults.defaultAvatarShortProfileUrl;
+
 	}
 
 	public ShortUserInfo getShortUserInfo() {
-		return new ShortUserInfo(getId(), name, lastName, 0, null);
+		return new ShortUserInfo(getId(), name, lastName, 0, getAvatarTopic());
 	}
 
 	public VoUserGroup getGroupById(long id) throws InvalidOperation {
@@ -286,7 +289,6 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private boolean emailConfirmed;
 
-	
 	@Persistent
 	@Unindexed
 	private String avatarMessage;
@@ -303,7 +305,6 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private String avatarProfileShort;
 
-	
 	public String getAvatarMessage() {
 		return avatarMessage;
 	}

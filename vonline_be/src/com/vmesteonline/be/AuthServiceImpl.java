@@ -35,8 +35,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public static void checkIfAuthorised(String httpSessId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
+
 			VoSession session = getSession(httpSessId, pm);
-			if (null==session || 0 == session.getUserId())
+			if (null == session || 0 == session.getUserId())
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
 		} finally {
 			pm.close();
@@ -46,8 +47,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public static VoSession getSession(String sessId, PersistenceManager pm) throws InvalidOperation {
 
 		try {
-			VoSession sess = null;
-			sess = PMF.get().getPersistenceManager().getObjectById(VoSession.class, sessId);
+			VoSession sess = pm.getObjectById(VoSession.class, sessId);
 			if (sess == null)
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find active session for " + sessId);
 			return sess;
@@ -116,10 +116,13 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				user.addRubric(rubric);
 			}
 
+			/*
+			 * UserServiceImpl usi = new UserServiceImpl(sessionStorage.getId()); usi.updateUserAvatar(Defaults.defaultAvatarUrl);
+			 */
+
 			if (null == locationId || "".equals(locationId.trim())) {
 				logger.info("register " + email + " pass " + password + " id " + user.getId() + " Wihout location code and User Group");
 				user.setDefaultUserLocation(pm);
-
 			} else {
 				try {
 					user.setLocation(Long.parseLong(locationId), pm);
@@ -196,10 +199,10 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public void sendConfirmCode(String to, String localfileName) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoUser vu = getUserByEmail(to,pm);
-			if(null==vu)
-				throw new InvalidOperation(VoError.IncorrectParametrs, "Nobody found by email '"+to+"'");
-			
+			VoUser vu = getUserByEmail(to, pm);
+			if (null == vu)
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Nobody found by email '" + to + "'");
+
 			long code = System.currentTimeMillis() % 123456L;
 			vu.setConfirmCode(code);
 			pm.makePersistent(vu);

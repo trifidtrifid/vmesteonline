@@ -5,8 +5,8 @@ import javax.jdo.annotations.Persistent;
 
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
-import com.vmesteonline.be.Message;
-import com.vmesteonline.be.Topic;
+import com.vmesteonline.be.messageservice.Message;
+import com.vmesteonline.be.messageservice.Topic;
 
 @PersistenceCapable
 public class VoTopic extends VoBaseMessage {

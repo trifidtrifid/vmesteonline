@@ -1,9 +1,6 @@
 package com.vmesteonline.be;
 
-import static org.junit.Assert.*;
-
-import java.util.HashMap;
-import java.util.List;
+import static org.junit.Assert.fail;
 
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;

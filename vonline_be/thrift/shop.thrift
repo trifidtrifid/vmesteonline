@@ -171,6 +171,11 @@ struct IdNameChilds {
 	3:list<IdName> childs,
 }
 
+struct MatrixAsList {
+	1:i32 rowCount,
+	2:list<string> elems
+}
+
 service ShopService {
 	
 	//backend functions=================================================================================================
@@ -223,7 +228,7 @@ service ShopService {
 	DataSet getTotalPackReport( 1:i32 date, 2:DeliveryType deliveryType,
 		3:map<i32,ExchangeFieldType> packFields ) throws (1:error.InvalidOperation exc),
 		
-	list<list<string>> parseCSVfile( 1:string url ) throws (1:error.InvalidOperation exc),
+	MatrixAsList parseCSVfile( 1:string url ) throws (1:error.InvalidOperation exc),
 
 
 	//frontend functions================================================================================================

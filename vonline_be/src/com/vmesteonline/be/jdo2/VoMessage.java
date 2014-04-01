@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -12,10 +13,10 @@ import javax.jdo.annotations.Persistent;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
-import com.vmesteonline.be.Message;
-import com.vmesteonline.be.MessageType;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.data.VoDatastoreHelper;
+import com.vmesteonline.be.messageservice.Message;
+import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.utils.VoHelper;
 
 /**
@@ -49,6 +50,7 @@ public class VoMessage extends VoBaseMessage {
 		this.radius = radius;
 	}
 
+	// TODO do smthing with this. constructor should not be like this. create factory or smth else
 	public VoMessage(Message msg) throws InvalidOperation {
 
 		super(msg);
@@ -135,6 +137,10 @@ public class VoMessage extends VoBaseMessage {
 		}
 	}
 
+	public boolean isVisibleFor(long userId) {
+		return getRecipient() == 0 || getRecipient() == userId || getAuthorId().getId() == userId;
+	}
+
 	public Message getMessage() {
 		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
 				getUnlikes(), links, tags, null, visibleOffset, null);
@@ -219,4 +225,12 @@ public class VoMessage extends VoBaseMessage {
 				+ getLongitude().toPlainString() + ", latitude=" + getLatitude().toPlainString() + ", radius=" + radius + "]";
 	}
 
+	public static class ComparatorByCreateDate implements Comparator<VoMessage> {
+
+		@Override
+		public int compare(VoMessage o1, VoMessage o2) {
+			return Integer.compare(o1.getCreatedAt(), o2.getCreatedAt());
+		}
+
+	}
 }

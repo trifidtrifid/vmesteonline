@@ -8,13 +8,12 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.CurrentAttributeType;
 
-@PersistenceCapable(detachable = "true")
-// extends GeoLocation
+//extends GeoLocation
+
+@PersistenceCapable
 public class VoSession {
 
 	public VoSession(String sessId, VoUser user) {

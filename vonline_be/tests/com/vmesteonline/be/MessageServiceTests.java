@@ -14,16 +14,23 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.messageservice.Message;
+import com.vmesteonline.be.messageservice.MessageListPart;
+import com.vmesteonline.be.messageservice.MessageType;
+import com.vmesteonline.be.messageservice.Topic;
+import com.vmesteonline.be.messageservice.TopicListPart;
 import com.vmesteonline.be.utils.Defaults;
 
 public class MessageServiceTests {
 
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig(),
+			new LocalBlobstoreServiceTestConfig());
 	public static String sessionId = "11111111111111111111111";
 
 	AuthServiceImpl asi;
@@ -177,6 +184,7 @@ public class MessageServiceTests {
 			Assert.assertNotNull(rTopic.topics.get(0).userInfo);
 			Assert.assertEquals(Defaults.user1name, rTopic.topics.get(0).userInfo.firstName);
 			Assert.assertEquals(Defaults.user1lastName, rTopic.topics.get(0).userInfo.lastName);
+//			Assert.assertEquals("", rTopic.topics.get(0).userInfo.avatar);
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -2,18 +2,16 @@ package com.vmesteonline.be.jdo2;
 
 import java.util.Map;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.vmesteonline.be.Message;
-import com.vmesteonline.be.MessageType;
+import com.vmesteonline.be.messageservice.Message;
+import com.vmesteonline.be.messageservice.MessageType;
 
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
