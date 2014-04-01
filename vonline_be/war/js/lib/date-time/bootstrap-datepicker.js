@@ -200,6 +200,17 @@
         }
     }
 
+    function getPacksLength(packs){
+        var counter = 0;
+        for(var p in packs){
+            //alert(p+" "+packs[p]);
+            if(p && packs[p]){
+                counter++;
+            }
+        }
+        return counter;
+    }
+
     function initFreeDay(currentProduct,spinnerValue,orderData,packs,AddSingleProductToBasket,AddOrdersToBasket,AddProductToBasketCommon){
         try{
         $('.free-day:not(".day-with-order")').click(function(){
@@ -219,6 +230,10 @@
                 }
                 client.setOrderLine(currentProduct.id,spinnerValue,'sdf',packs);
                 AddSingleProductToBasket(currentProduct,spinnerValue);
+                if(currentProduct.prepackLine.length != 0 || (packs && getPacksLength(packs) > 0)){
+                    var currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]').find('td>.ace-spinner');
+                    currentSpinner.spinner('disable');
+                }
             }
             AdditionallyOrderToggle();
         });
