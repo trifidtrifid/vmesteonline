@@ -556,7 +556,8 @@ $(document).ready(function(){
             },*/
             success: function(html) {
                 var dataCSV = client.parseCSVfile(html);
-                alert('Полученные данные после parseCSV: '+dataCSV+" Длина массива: "+dataCSV.length);
+                alert(dataCSV[0]);
+                //alert('Полученные данные после parseCSV: '+dataCSV+" Длина массива: "+dataCSV.length);
                 var dataCSVLength = dataCSV.length;
                 for(var i = 0; i < dataCSVLength; i++){
                     var dataCSVLength2 = dataCSV[i].length;
