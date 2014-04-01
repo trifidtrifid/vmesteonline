@@ -217,8 +217,8 @@
                         </div>
                         <div class="input-delivery">
                             <span class="lbl">Стоимость доставки : <span class="delivery-cost"></span> руб</span>
-                            <input id="phone-delivery" type="tel" placeholder="Номер телефона"/>
-                            <div class="alert-delivery alert-delivery-phone">Введите номер телефона !</div>
+                            <input id="phone-delivery" type="tel" required="required" placeholder="Номер телефона"/>
+                            <div class="alert-delivery alert-delivery-phone"></div>
                             <div class="btn-group delivery-dropdown">
                                 <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
                                     <span class="btn-group-text">Выбрать адрес</span>
