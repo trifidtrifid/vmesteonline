@@ -1,5 +1,5 @@
 
-<%@page import="com.vmesteonline.be.utils.SessionHelper"%>
+<%--<%@page import="com.vmesteonline.be.utils.SessionHelper"%>--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
@@ -215,9 +215,9 @@
                                         <input id="edit-surname" value="<c:out value="${userInfo.lastName}"/>" type="text"/>
                                     </div>
                                     <div>
-                                        <label for="form-field-select-5">Должность</label>
+                                        <label for="edit-biz">Должность</label>
 
-                                        <select class="form-control" id="form-field-select-5">
+                                        <select class="form-control" id="edit-biz">
                                             <option value="">&nbsp;</option>
                                             <option value="AL">Гончар</option>
                                             <option value="AK">Копьеносец</option>
@@ -256,6 +256,7 @@
                             </div>
                         </div>
                         <a class="btn btn-primary save-changes no-border" href="#">Сохранить</a>
+                        <span class="save-status">Сохранено</span>
                     </section>
                 </div>
             </div>

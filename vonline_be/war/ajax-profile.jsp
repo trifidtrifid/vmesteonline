@@ -1,5 +1,5 @@
 
-<%@page import="com.vmesteonline.be.utils.SessionHelper"%>
+<%--<%@page import="com.vmesteonline.be.utils.SessionHelper"%>--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
@@ -50,7 +50,6 @@
     UserContacts userContacts = userService.getUserContacts();
     pageContext.setAttribute("userContacts",userContacts);
 %>
-
 <!DOCTYPE html>
 <html>
 <head>
