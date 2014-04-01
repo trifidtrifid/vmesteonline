@@ -682,6 +682,8 @@ Thrift.Protocol.prototype = {
 
         var r = {};
         r.etype = Thrift.Protocol.RType[list.shift()];
+        if( undefined == r.etype )
+        	r.etype = Thrift.Protocol.RType[list.shift()];
         r.size = list.shift();
 
         this.rpos.push(this.rstack.length);

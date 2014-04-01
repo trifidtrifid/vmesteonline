@@ -18,8 +18,6 @@
  * limitations under the License.
  * ========================================================= */
 
- var currentOrderId; // глобальная переменаная, чтобы была видна в shop.js
-
 !function( $ ) {
 
 	function UTCDate(){
@@ -29,291 +27,13 @@
 		var today = new Date();
 		return UTCDate(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
 	}
-    var transport = new Thrift.Transport("/thrift/ShopService");
-    var protocol = new Thrift.Protocol(transport);
-    var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
-
-    function getMetaDate(){
-        try {
-        var strDate = $('.datepicker-days .switch').text().split(" ");
-        var strMonth="";
-        var year = strDate[1];
-        switch(strDate[0]){
-            case 'Январь':
-                strMonth = "Jan";
-                break;
-            case 'Февраль':
-                strMonth = "Feb";
-                break;
-            case 'Март':
-                strMonth = "March";
-                break;
-            case 'Апрель':
-                strMonth = "Apr";
-                break;
-            case 'Май':
-                strMonth = "May";
-                break;
-            case 'Июнь':
-                strMonth = "June";
-                break;
-            case 'Июль':
-                strMonth = "July";
-                break;
-            case 'Август':
-                strMonth = "Aug";
-                break;
-            case 'Сентябрь':
-                strMonth = "Sen";
-                break;
-            case 'Октябрь':
-                strMonth = "Oct";
-                break;
-            case 'Ноябрь':
-                strMonth = "Nov";
-                break;
-            case 'Декабрь':
-                strMonth = "Dec";
-                break;
-        }
-        } catch(e){
-           alert(e + ' Функция getMetaDate');
-        }
-        return (Date.parse('15 '+strMonth+" "+year));
-    }
-
-    function SetFreeDates(){
-        try{
-
-        var metaTime = parseInt(getMetaDate()/1000);
-        metaTime -= metaTime%86400;
-        var day = 3600*24;
-        var currentDateItem = new Date(metaTime*1000);
-        var currentMonth = currentDateItem.getMonth();
-        var currentYear = currentDateItem.getFullYear();
-        var now = new Date();
-        var today = now.getDate();
-        var nowMonth = now.getMonth();
-        var nowYear = now.getFullYear();
-
-        var datesArray = client.getDates(metaTime-32*day,metaTime+32*day);
-        for (var date in datesArray){
-            var tempDate = new Date(date*1000);
-            var cleanDay = "";
-            var freeDay = "";
-            var specialDay = "";
-            var closedDay = "";
-            switch(datesArray[date]){
-                case 0:
-                    cleanDay = tempDate.getDate();
-                    break;
-                case 1:
-                    freeDay = tempDate.getDate();
-                    break ;
-                case 2:
-                    specialDay = tempDate.getDate();
-                    break;
-                case 3:
-                    closedDay = tempDate.getDate();
-                    break
-            }
-            var tempMonth = tempDate.getMonth();
-            var orders,order = 0;
-            if(freeDay){
-               orders = client.getOrders(date,parseInt(date)+day);
-                if (orders.length > 0){
-                   order = orders[0];
-                }
-            }
-            $('.day').each(function(){
-                var day = $(this).text();
-                if (tempMonth == currentMonth){
-                    // если это текущий месяц календаря
-                    if((day > today && currentMonth == nowMonth && currentYear >= nowYear) || (currentMonth > nowMonth && currentYear >= nowYear)){
-                        // показываем даты только если они в будущем
-                        if  (day == freeDay && !$(this).hasClass('old') && !$(this).hasClass('new')){
-                            if(order){
-                                // если свободный день с заказом
-                                $(this).addClass('mark-day free-day day-with-order');
-                                $(this).attr('data-orderid',order.id);
-                            } else{
-                                // если обычный свободный день
-                                $(this).addClass('mark-day free-day');
-                            }
-                            $(this).attr('id',date);
-
-                        }
-                        if  (day == specialDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('mark-day special-day');$(this).attr('id',date);}
-                        if  (day == closedDay && !$(this).hasClass('old') && !$(this).hasClass('new')){ $(this).addClass('mark-day closed-day');$(this).attr('id',date);}
-                    }
-                }
-            });
-            var firstMarkDay = $('.mark-day:eq(0)');
-            if (!firstMarkDay.hasClass('.closed-day')){
-                // если ближайший к сегодня marked day является не closed-day, то очищаем его
-                // если же ближайший close day, то все остается как есть
-                firstMarkDay.removeClass('free-day day-with-order special-day');
-            }
-        }
-        }catch(e){
-            alert(e + ' Функция SetFreeDates');
-        }
-        //console.log('---------');
-    }
-
-    function SetOrderDates(){
-        try{
-        var metaTime = parseInt(getMetaDate()/1000);
-        metaTime -= metaTime%86400;
-        var day = 3600*24;
-        var currentDateItem = new Date(metaTime*1000);
-        var currentMonth = currentDateItem.getMonth();
-
-        if (globalUserAuth){
-            var orders = client.getOrders(metaTime-30*day,metaTime+30*day);
-            var ordersLength = orders.length;
-
-            for (var i = 0; i < ordersLength; i++){
-                var orderDateLabel = orders[i].date;
-                var orderDate = new Date(orderDateLabel*1000);
-                var dayStr = orderDate.getDate();
-                var tempMonth = orderDate.getMonth();
-                $('.day').each(function(){
-                    if (tempMonth == currentMonth){
-                        if ($(this).text() == dayStr && !$(this).hasClass('old') && !$(this).hasClass('new')){
-                            $(this).addClass('order-day').attr('id',orders[i].date);
-                        }
-                    }
-                });
-            }
-        }
-        }catch(e){
-            alert(e + ' Функция SetOrderDates');
-        }
-    }
-
-    function AdditionallyOrderToggle(){
-        var additionallyOrder = $('.additionally-order');
-        if (additionallyOrder.hasClass('hide')){
-            additionallyOrder.removeClass('hide');
-            $('.empty-basket').addClass('hide');
-        }
-    }
-
-    function getPacksLength(packs){
-        var counter = 0;
-        for(var p in packs){
-            //alert(p+" "+packs[p]);
-            if(p && packs[p]){
-                counter++;
-            }
-        }
-        return counter;
-    }
-
-    function initFreeDay(currentProduct,spinnerValue,orderData,packs,AddSingleProductToBasket,AddOrdersToBasket,AddProductToBasketCommon){
-        try{
-        $('.free-day:not(".day-with-order")').click(function(){
-            //var metaTime = parseInt(new Date().getTime()/1000);
-            var dateLabel = parseInt($(this).attr('id'));
-            if (orderData && orderData.itsOrder){
-                if ($('.additionally-order').hasClass('hide') || orderData.itsAppend == false){
-                    currentOrderId = client.createOrder(dateLabel,'asd',0);
-                }
-                AddOrdersToBasket(orderData);
-            }else{
-                // добавление одного продукта
-                currentOrderId = client.createOrder(dateLabel,'asd2',0);
-                var productDetails = client.getProductDetails(currentProduct.id);
-                for (p in packs){
-                    console.log(p+" "+packs[p]);
-                }
-                client.setOrderLine(currentProduct.id,spinnerValue,'sdf',packs);
-                AddSingleProductToBasket(currentProduct,spinnerValue);
-                if(currentProduct.prepackLine.length != 0 || (packs && getPacksLength(packs) > 0)){
-                    var currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]').find('td>.ace-spinner');
-                    currentSpinner.spinner('disable');
-                }
-            }
-            AdditionallyOrderToggle();
-        });
-
-        $('.day-with-order').click(function(){
-                //var metaTime = parseInt(new Date().getTime()/1000);
-                //var dateLabel = parseInt($(this).attr('id'));
-                var currentOrderData= {
-                    itsOrder: true,
-                    itsAppend: false,
-                    orderId : $(this).data('orderid')
-                };
-                client.getOrder(currentOrderData.orderId);
-                currentOrderId = currentOrderData.orderId;
-                var orderDetails = client.getOrderDetails(currentOrderId);
-                AddOrdersToBasket(currentOrderData);
-
-                if (orderData && orderData.itsOrder){
-                    // если мы добавляем заказ
-                    /*if ($('.additionally-order').hasClass('hide') || orderData.itsAppend == false){
-                     currentOrderId = client.getOrder($(this).data('orderid'));
-                     }*/
-                    if(orderData.orderId == currentOrderId){
-                        orderData.itsAppend = false;
-                    }
-                    AddOrdersToBasket(orderData);
-                }else{
-                    // если добавление одного продукта
-                    AddProductToBasketCommon(currentProduct,packs);
-                }
-                if(orderDetails.delivery == 1){
-                    $('.radio input:not(".courier-delivery")').trigger('click');
-                }else if (orderDetails.delivery == 2){
-                    $('.radio .courier-delivery').trigger('click');
-                }
-                AdditionallyOrderToggle();
-            });
-        }catch(e){
-            alert(e + ' Функция initFreeDay');
-        }
-    }
-
-    function initOrderDay(initVarForMoreOrders,createOrdersHtml,initShowMoreOrders,initOrderPlusMinus,initOrderBtns,setSidebarHeight,initOrdersLinks){
-        try{
-        $('.order-day').click(function(){
-            var orderDate = parseInt($(this).attr('id'));
-            var day = 3600*24;
-            var orders = client.getOrders(orderDate,orderDate+day);
-            var ordersLength = orders.length;
-            var orderList = [];
-            var counter = 0;
-            for (var i = 0; i < ordersLength; i++){
-                if (orders[i].date = orderDate){
-                    orderList[counter++] = orders[i];
-                }
-            }
-            $('.shop-products').hide();
-            var shopOrdersList = $('.orders-list');
-            initVarForMoreOrders();
-            shopOrdersList.html('').append(createOrdersHtml(orderList));
-            $('.shop-orders').show();
-            initShowMoreOrders(orderList);
-            initOrderPlusMinus(shopOrdersList);
-            initOrderBtns(shopOrdersList);
-            setSidebarHeight();
-            initOrdersLinks();
-        });
-        }catch(e){
-            alert(e + ' Функция initOrderDay');
-        }
-    }
 
 	// Picker object
 
-    try{
-	var Datepicker = function(element, options) {
+	var DatepickerSimple = function(element, options) {
 		var that = this;
 
 		this.element = $(element);
-		this.flagBasket = options.flagBasket||false;
 		this.language = options.language||this.element.data('date-language')||"en";
 		this.language = this.language in dates ? this.language : this.language.split('-')[0]; //Check if "de-DE" style date is available, if not language should fallback to 2 letter code eg "de"
 		this.language = this.language in dates ? this.language : "en";
@@ -406,7 +126,7 @@
 		this.todayBtn = (options.todayBtn||this.element.data('date-today-btn')||false);
 		this.todayHighlight = (options.todayHighlight||this.element.data('date-today-highlight')||false);
 
-        this.calendarWeeks = false;
+		this.calendarWeeks = false;
 		if ('calendarWeeks' in options) {
 			this.calendarWeeks = options.calendarWeeks;
 		} else if ('dateCalendarWeeks' in this.element.data()) {
@@ -418,13 +138,13 @@
 							return parseInt(val) + 1;
 						});
 
-        this.weekStart = ((options.weekStart||this.element.data('date-weekstart')||dates[this.language].weekStart||0) % 7);
+		this.weekStart = ((options.weekStart||this.element.data('date-weekstart')||dates[this.language].weekStart||0) % 7);
 		this.weekEnd = ((this.weekStart + 6) % 7);
 		this.startDate = -Infinity;
 		this.endDate = Infinity;
 		this.daysOfWeekDisabled = [];
-        this.setStartDate(options.startDate||this.element.data('date-startdate'));
-        this.setEndDate(options.endDate||this.element.data('date-enddate'));
+		this.setStartDate(options.startDate||this.element.data('date-startdate'));
+		this.setEndDate(options.endDate||this.element.data('date-enddate'));
 		this.setDaysOfWeekDisabled(options.daysOfWeekDisabled||this.element.data('date-days-of-week-disabled'));
 		this.fillDow();
 		this.fillMonths();
@@ -434,11 +154,10 @@
 		if(this.isInline) {
 			this.show();
 		}
+	};
 
-    };
-
-	Datepicker.prototype = {
-		constructor: Datepicker,
+	DatepickerSimple.prototype = {
+		constructor: DatepickerSimple,
 
 		_events: [],
 		_attachEvents: function(){
@@ -581,7 +300,7 @@
 				this.startDate = DPGlobal.parseDate(this.startDate, this.format, this.language);
 			}
 			this.update();
-            this.updateNavArrows();
+			this.updateNavArrows();
 		},
 
 		setEndDate: function(endDate){
@@ -771,13 +490,6 @@
 				year += 1;
 			}
 			yearCont.html(html);
-            if (this.flagBasket){
-                SetFreeDates();
-                initFreeDay(this.currentProduct,this.spinnerValue,this.orderData,this.packs,this.AddSingleProductToBasket,this.AddOrdersToBasket,this.AddProductToBasketCommon);
-            }else{
-                SetOrderDates();
-               initOrderDay(this.initVarForMoreOrders,this.createOrdersHtml,this.initShowMoreOrders,this.initOrderPlusMinus,this.initOrderBtns,this.setSidebarHeight,this.initOrdersLinks)
-            }
 		},
 
 		updateNavArrows: function() {
@@ -1084,34 +796,10 @@
 			//this.picker.find('>div').hide().filter('.datepicker-'+DPGlobal.modes[this.viewMode].clsName).show();
 			this.picker.find('>div').hide().filter('.datepicker-'+DPGlobal.modes[this.viewMode].clsName).css('display', 'block');
 			this.updateNavArrows();
-		},
-
-        triggerFlagBasket: function(){
-            if(this.flagBasket){this.flagBasket = false}else{this.flagBasket = true}
-        },
-
-        setVarFreeDays: function(currentProduct,spinnerValue,orderData,packs,AddSingleProductToBasket,AddOrdersToBasket,AddProductToBasketCommon){
-            this.currentProduct = currentProduct;
-            this.spinnerValue = spinnerValue;
-            this.orderData = orderData;
-            this.packs = packs;
-            this.AddSingleProductToBasket = AddSingleProductToBasket;
-            this.AddOrdersToBasket = AddOrdersToBasket;
-            this.AddProductToBasketCommon = AddProductToBasketCommon;
-        },
-
-        setVarOrderDates: function(datepickerFunc){
-            this.initVarForMoreOrders = datepickerFunc.initVarForMoreOrders;
-            this.createOrdersHtml = datepickerFunc.createOrdersHtml;
-            this.initShowMoreOrders = datepickerFunc.initShowMoreOrders;
-            this.initOrderPlusMinus = datepickerFunc.initOrderPlusMinus;
-            this.initOrderBtns = datepickerFunc.initOrderBtns;
-            this.setSidebarHeight = datepickerFunc.setSidebarHeight;
-            this.initOrdersLinks = datepickerFunc.initOrdersLinks;
-        }
+		}
 	};
 
-	$.fn.datepicker = function ( option ) {
+	$.fn.datepickerSimple = function ( option ) {
 		var args = Array.apply(null, arguments);
 		args.shift();
 		return this.each(function () {
@@ -1119,7 +807,7 @@
 				data = $this.data('datepicker'),
 				options = typeof option == 'object' && option;
 			if (!data) {
-				$this.data('datepicker', (data = new Datepicker(this, $.extend({}, $.fn.datepicker.defaults,options))));
+				$this.data('datepicker', (data = new DatepickerSimple(this, $.extend({}, $.fn.datepickerSimple.defaults,options))));
 			}
 			if (typeof option == 'string' && typeof data[option] == 'function') {
 				data[option].apply(data, args);
@@ -1127,10 +815,10 @@
 		});
 	};
 
-	$.fn.datepicker.defaults = {
+	$.fn.datepickerSimple.defaults = {
 	};
-	$.fn.datepicker.Constructor = Datepicker;
-	var dates = $.fn.datepicker.dates = {
+	$.fn.datepickerSimple.Constructor = DatepickerSimple;
+	var dates = $.fn.datepickerSimple.dates = {
 		en: {
 			days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 			daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -1191,13 +879,13 @@
 							date.setUTCDate(date.getUTCDate() + dir);
 							break;
 						case 'm':
-							date = Datepicker.prototype.moveMonth.call(Datepicker.prototype, date, dir);
+							date = DatepickerSimple.prototype.moveMonth.call(DatepickerSimple.prototype, date, dir);
 							break;
 						case 'w':
 							date.setUTCDate(date.getUTCDate() + dir * 7);
 							break;
 						case 'y':
-							date = Datepicker.prototype.moveYear.call(Datepicker.prototype, date, dir);
+							date = DatepickerSimple.prototype.moveYear.call(DatepickerSimple.prototype, date, dir);
 							break;
 					}
 				}
@@ -1299,7 +987,7 @@
 		contTemplate: '<tbody><tr><td colspan="7"></td></tr></tbody>',
 		footTemplate: '<tfoot><tr><th colspan="7" class="today"></th></tr></tfoot>'
 	};
-	DPGlobal.template = '<div class="datepicker">'+
+	DPGlobal.template = '<div class="datepicker datepicker-simple">'+
 							'<div class="datepicker-days">'+
 								'<table class=" table-condensed">'+
 									DPGlobal.headTemplate+
@@ -1323,9 +1011,6 @@
 							'</div>'+
 						'</div>';
 
-	$.fn.datepicker.DPGlobal = DPGlobal;
-    }catch(e){
-        alert(e + ' DatePicker');
-    }
+	$.fn.datepickerSimple.DPGlobal = DPGlobal;
 
 }( window.jQuery );

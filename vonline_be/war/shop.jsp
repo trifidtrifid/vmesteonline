@@ -438,6 +438,7 @@
 	<script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
 	<script src="js/lib/fuelux/fuelux.spinner.min.js"></script>
 	<script src="js/lib/date-time/bootstrap-datepicker.js"></script>
+	<script src="js/lib/date-time/bootstrap-datepicker-simple.js"></script>
     <script src="js/lib/date-time/locales/bootstrap-datepicker.ru.js"></script>
 	<%--<script src="js/lib/date-time/bootstrap-datepicker.js"></script>--%>
 

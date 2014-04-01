@@ -5,19 +5,13 @@
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ServiceImpl"%>
-<%@ page import="com.vmesteonline.be.MessageService"%>
-<%@ page import="com.vmesteonline.be.Group"%>
-<%@ page import="com.vmesteonline.be.Rubric"%>
-<%@ page import="com.vmesteonline.be.TopicListPart"%>
-<%@ page import="com.vmesteonline.be.MessageListPart"%>
-<%@ page import="com.vmesteonline.be.Topic"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.Message"%>
-<%@ page import="com.vmesteonline.be.MessageType"%>
-<%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
+<%@ page import="com.vmesteonline.be.ShortProfile"%>
+<%@ page import="com.vmesteonline.be.UserInfo"%>
+<%@ page import="com.vmesteonline.be.UserContacts"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
-<%@ page import="com.vmesteonline.be.InvalidOperation"%>    
+<%@ page import="com.vmesteonline.be.InvalidOperation"%>
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
@@ -32,20 +26,16 @@
 
     UserServiceImpl userService = new UserServiceImpl(request.getSession());
 
-    List<Group> Groups = userService.getUserGroups();
-    List<Rubric> Rubrics = userService.getUserRubrics();
     ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-    MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
-    //MessageType mesType = MessageType.BASE;
-
-    TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
-    //out.print(ShortUserInfo.firstName);
-
-    pageContext.setAttribute("groups",Groups);
-    pageContext.setAttribute("rubrics",Rubrics);
-    pageContext.setAttribute("topics",Topics.topics);
     pageContext.setAttribute("firstName",ShortUserInfo.firstName);
     pageContext.setAttribute("lastName",ShortUserInfo.lastName);
+
+    UserInfo UserInfo = userService.getUserInfo();
+    pageContext.setAttribute("userInfo",UserInfo);
+    ShortProfile shortProfile = userService.getShortProfile();
+    pageContext.setAttribute("shortProfile",shortProfile);
+    UserContacts userContacts = userService.getUserContacts();
+    pageContext.setAttribute("userContacts",userContacts);
 %>
 
 <!DOCTYPE html>
@@ -218,11 +208,11 @@
                                 <div id="main" class="tab-pane active">
                                     <div>
                                         <label for="edit-name">Имя</label>
-                                        <input id="edit-name" type="text"/>
+                                        <input id="edit-name" value="<c:out value="${userInfo.firstName}"/>" type="text"/>
                                     </div>
                                     <div>
                                         <label for="edit-surname">Фамилия</label>
-                                        <input id="edit-surname" type="text"/>
+                                        <input id="edit-surname" value="<c:out value="${userInfo.lastName}"/>" type="text"/>
                                     </div>
                                     <div>
                                         <label for="form-field-select-5">Должность</label>
@@ -234,24 +224,21 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="form-field-select-2">Дата рождения</label>
 
-                                        <select class="form-control" id="form-field-select-2">
-                                            <option value="">&nbsp;</option>
-                                            <option value="AL">Никому</option>
-                                            <option value="AK">Васе</option>
-                                        </select>
+                                        <label for="date-picker-birthday">Дата рождения</label>
+                                        <input class="form-control date-picker" id="date-picker-birthday" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" value="Выберите дату"/>
+
                                     </div>
                                 </div>
 
                                 <div id="contacts" class="tab-pane">
                                     <div>
                                         <label for="edit-email">E-mail</label>
-                                        <input id="edit-email" type="text"/>
+                                        <input id="edit-email" value="<c:out value="${userContacts.email}"/>" type="text"/>
                                     </div>
                                     <div>
                                         <label for="edit-phone">Телефон</label>
-                                        <input id="edit-phone" type="text"/>
+                                        <input id="edit-phone" value="<c:out value="${userContacts.mobilePhone}"/>" type="text"/>
                                     </div>
                                 </div>
 
@@ -268,7 +255,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a class="btn btn-primary no-border" href="#">Сохранить</a>
+                        <a class="btn btn-primary save-changes no-border" href="#">Сохранить</a>
                     </section>
                 </div>
             </div>

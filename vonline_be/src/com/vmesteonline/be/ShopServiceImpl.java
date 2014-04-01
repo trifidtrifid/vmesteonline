@@ -34,6 +34,8 @@ import org.apache.thrift.TException;
 
 
 
+
+
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
@@ -62,6 +64,7 @@ import com.vmesteonline.be.shop.IdName;
 import com.vmesteonline.be.shop.IdNameChilds;
 import com.vmesteonline.be.shop.ImExType;
 import com.vmesteonline.be.shop.ImportElement;
+import com.vmesteonline.be.shop.MatrixAsList;
 import com.vmesteonline.be.shop.Order;
 import com.vmesteonline.be.shop.OrderDetails;
 import com.vmesteonline.be.shop.OrderLine;
@@ -1809,12 +1812,19 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	@Override
-	public List<List<String>> parseCSVfile(String url) throws InvalidOperation, TException {
+	
+	public MatrixAsList parseCSVfile(String url) throws InvalidOperation, TException {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			StorageHelper.getFile(url, baos);
 			baos.close();
-			return CSVHelper.parseCSV(baos.toByteArray(), null, null, null);
+			List<List<String>> matrix = CSVHelper.parseCSV(baos.toByteArray(), null, null, null);
+			ArrayList list = new ArrayList();
+			for( int row = 0; row < matrix.size(); row ++){
+				list.addAll(matrix.get(row));
+			}
+			MatrixAsList mal = new MatrixAsList(matrix.size(), list);
+			return mal;
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read data from URL '" + url + "'");

@@ -1203,7 +1203,6 @@ $(document).ready(function(){
             }else{
                 InitSpinnerChange(selector);
             }
-
         }
     }
 

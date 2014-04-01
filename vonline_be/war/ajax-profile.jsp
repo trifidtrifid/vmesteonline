@@ -5,16 +5,10 @@
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ServiceImpl"%>
-<%@ page import="com.vmesteonline.be.MessageService"%>
-<%@ page import="com.vmesteonline.be.Group"%>
-<%@ page import="com.vmesteonline.be.Rubric"%>
-<%@ page import="com.vmesteonline.be.TopicListPart"%>
-<%@ page import="com.vmesteonline.be.MessageListPart"%>
-<%@ page import="com.vmesteonline.be.Topic"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.Message"%>
-<%@ page import="com.vmesteonline.be.MessageType"%>
-<%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
+<%@ page import="com.vmesteonline.be.ShortProfile"%>
+<%@ page import="com.vmesteonline.be.UserInfo"%>
+<%@ page import="com.vmesteonline.be.UserContacts"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>    
@@ -36,20 +30,25 @@
     pageContext.setAttribute("ifEmailConfirmed",ifEmailConfirmed);
     //out.print(ifEmailConfirmed);
 
-    List<Group> Groups = userService.getUserGroups();
+    /*List<Group> Groups = userService.getUserGroups();
     List<Rubric> Rubrics = userService.getUserRubrics();
-    ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-    MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
-    //MessageType mesType = MessageType.BASE;
-
-    TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
-    //out.print(ShortUserInfo.firstName);
-
     pageContext.setAttribute("groups",Groups);
     pageContext.setAttribute("rubrics",Rubrics);
     pageContext.setAttribute("topics",Topics.topics);
+    MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
+    TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
+    */
+
+    ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
     pageContext.setAttribute("firstName",ShortUserInfo.firstName);
     pageContext.setAttribute("lastName",ShortUserInfo.lastName);
+
+    UserInfo UserInfo = userService.getUserInfo();
+    pageContext.setAttribute("userInfo",UserInfo);
+    ShortProfile shortProfile = userService.getShortProfile();
+    pageContext.setAttribute("shortProfile",shortProfile);
+    UserContacts userContacts = userService.getUserContacts();
+    pageContext.setAttribute("userContacts",userContacts);
 %>
 
 <!DOCTYPE html>
@@ -211,7 +210,7 @@
                                 <a class="fa fa-star-half-o" href="#"></a>
                                 <a class="fa fa-star-o" href="#"></a>
                             </div>
-                            <div>Класс С</div>
+                            <div>Рейтинг: <c:out value="${shortProfile.rating}"/></div>
                         </div>
                         <div class="soc-accounts">
                             <div>Подключить аккаунт:</div>
@@ -223,7 +222,7 @@
                         <div class="text-area">
                             <div class="user-head" >
                                 <span class="confirm-alert">Аккаунт не подтвержден !</span>
-                                <h1>Иван Грозный</h1>
+                                <h1><c:out value="${userInfo.firstName}"/> <c:out value="${userInfo.lastName}"/></h1>
                                 <a class="edit-personal-link" href="#">Редактировать</a>
                             </div>
                             <c:if test="${!ifEmailConfirmed}">
@@ -235,13 +234,13 @@
                                 </form>
                             </c:if>
                             <div class="user-body">
-                                <div><span>статус:</span> настроение хорошее</div>
-                                <div><span>Адрес проживания:</span> ул.Коссмонавтов 34</div>
-                                <div><span>День рождения:</span> 23.07.2000</div>
-                                <div><span>Семейное положение:</span> холост</div>
+                                <div><span>статус:</span> <c:out value="${shortProfile.balance}"/></div>
+                                <div><span>Адрес проживания:</span> <c:out value="${shortProfile.address}"/></div>
+                                <div><span>День рождения:</span> <c:out value="${userInfo.birthday}"/></div>
+                                <div><span>Семейное положение:</span> <c:out value="${userInfo.relations}"/></div>
                                 <h3>Контактная информация</h3>
-                                <div><span>Телефон:</span> 8-911-3333333</div>
-                                <div><span>Email:</span> asdf@sdf.ru</div>
+                                <div><span>Телефон:</span> <c:out value="${userContacts.mobilePhone}"/></div>
+                                <div><span>Email:</span> <c:out value="${userContacts.email}"/></div>
                                 <h3>Интересы</h3>
                                 <div>футбол</div>
                                 <div>пиво</div>
