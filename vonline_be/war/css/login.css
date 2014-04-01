@@ -1,8 +1,4 @@
-@import 'bootstrap.min.css';
-@import 'font-awesome-original.css';
-@import 'font-awesome.min.css';
-@import 'ace-fonts.css';
-@import 'ace.css';
+@import 'common.css';
 /* страница регистрации */
 .login-forms {
   width: 650px;
@@ -97,6 +93,21 @@
   color: #f00;
   display: none;
   text-align: center;
+}
+.registration-form .set-new-password {
+  display: none;
+  clear: right;
+  margin-top: 4px;
+}
+.registration-form .set-new-password .btn {
+  margin-top: 10px;
+  float: right;
+  margin-right: 14px;
+}
+.registration-form .set-new-password #go2 {
+  position: static;
+  width: 100px;
+  float: right;
 }
 #selectGroup {
   margin-right: 15px;

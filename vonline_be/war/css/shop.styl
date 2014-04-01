@@ -1,10 +1,6 @@
-@import 'bootstrap.min.css'
-@import 'font-awesome-original.css'
-@import 'font-awesome.min.css'
-@import 'ace-fonts.css'
-@import 'ace.css'
-@import 'flexslider.css'
-@import 'login.css'
+//@import 'common.css'
+@import 'lib/flexslider.css'
+@import 'login.css' // with common.css
 
 main-radius = 2px
 second-radius = 1px
@@ -64,6 +60,9 @@ transform()
   line-height inherit
   padding 0 8px
   font-size 16px
+
+/*.user-short .no-login+.user-menu
+  display none*/
 
 .user-menu li
   text-align left
@@ -214,6 +213,12 @@ transform()
             margin-right 5px
       #delivery-addr
         margin-left 0
+      .delivery-dropdown
+        float right
+        margin-top -5px
+        .dropdown-menu
+          left -233px
+          width 360px
     .alert-delivery
       color #ff0000
       display none
@@ -225,7 +230,7 @@ transform()
     font-size 14px
     color rgb(133, 133, 133)
   .btn-grey
-    margin-left 190px
+    margin-left 186px
     margin-right 10px
 
 .datepicker
@@ -260,7 +265,7 @@ th.next
   &:after
     content "Свободный день"
     margin-left -120px
-.free-day-with-order
+.day-with-order
   background-color #eee827
   &:after
     content "Свободный день с заказом"
@@ -277,7 +282,7 @@ th.next
     margin-left -60px
 .order-day:after
 .free-day:after
-.free-day-with-order:after
+.day-with-order:after
 .special-day:after
 .closed-day:after
   position absolute
@@ -288,7 +293,7 @@ th.next
   display none
 .order-day:hover:after
 .free-day:hover:after
-.free-day-with-order:hover:after
+.day-with-order:hover:after
 .special-day:hover:after
 .closed-day:hover:after
   display block
@@ -378,6 +383,8 @@ th.next
           &:hover
             color #2a6496
             text-decoration none
+        .product-link
+          margin-left 0
         span
           display block
           margin-left 30px
@@ -619,8 +626,6 @@ th.next
         &:hover
           opacity 1
   .error-prepack
-    display none
-    color #ff0000
     position absolute
     bottom -50px
     right 5px
@@ -686,10 +691,11 @@ th.next
   .shop-right
     position fixed
     height 100%
-    right -250px
+    right -380px
     z-index 10
     padding 0 0 20px 0
     border-bottom 1px solid #ccc
+    overflow auto
     &:before
       display none
     .show-right
@@ -811,9 +817,27 @@ th.next
       text-decoration none
   .order-products
     display none
+    .product-link
+      text-decoration none
+      color #000000
+      cursor default
+  .back-orders-top
+    .form-group
+      margin-right 565px
+    .btn-group
+    .input-group
+    .reset-filters
+      float right
+      margin-left 10px
+    .input-group
+      display inline-block
+    .dropdown-toggle
+      height 34px
 .import
   .form-import
     margin-bottom 10px
+    input[type="submit"]
+      margin-top 10px
 .export
   .export-btn
     margin-top 15px;

@@ -45,6 +45,7 @@ public class VoProduct {
 		this.name = newInfo.product.name;
 		this.shortDescr = newInfo.product.shortDescr;
 		this.weight = newInfo.product.weight;
+		this.minClientPack = newInfo.product.minClientPack;
 		try {
 			this.imageURL = StorageHelper.saveImage(newInfo.product.getImageURL(), userId, true, _pm);
 		} catch (IOException e) {
@@ -114,6 +115,7 @@ public class VoProduct {
 			vp.name = product.getName();
 			vp.shortDescr = product.shortDescr;
 			vp.weight = product.getWeight();
+		
 			if (null != product.getImageURL() && product.getImageURL().length() > 0)
 				try {
 					vp.imageURL = StorageHelper.saveImage(product.getImageURL(), shop.ownerId, true, _pm);
@@ -152,7 +154,7 @@ public class VoProduct {
 			pm.getObjectById(VoProducer.class, details.getProducerId());
 			vp.producerId = details.getProducerId();
 
-			vp.minClientPack = details.minClientPack;
+			vp.minClientPack = product.minClientPack;
 			vp.minProducerPack = details.minProducerPack;
 			vp.prepackRequired = details.prepackRequired;
 			vp.knownNames = new HashSet<String>();
@@ -196,7 +198,10 @@ public class VoProduct {
 		this.knownNames = new HashSet<String>();
 		this.unitName = product.unitName;
 		this.importId = product.id;
-
+		this.minClientPack = product.minClientPack;
+		this.minProducerPack = details.minProducerPack;
+		this.prepackRequired = details.prepackRequired;
+		
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
 		try {
@@ -244,7 +249,7 @@ public class VoProduct {
 
 	// =====================================================================================================================
 	public Product getProduct() {
-		return new Product(id.getId(), name, shortDescr, weight, imageURL, price, unitName);
+		return new Product(id.getId(), name, shortDescr, weight, imageURL, price, unitName, minClientPack);
 	}
 
 	public ProductDetails getProductDetails() {
@@ -259,7 +264,6 @@ public class VoProduct {
 		productDetails.setImagesURLset(getImagesURLset());
 		productDetails.setPrepackRequired(prepackRequired);
 		productDetails.setKnownNames(knownNames);
-		productDetails.setMinClientPack(minClientPack);
 
 		return productDetails;
 	}

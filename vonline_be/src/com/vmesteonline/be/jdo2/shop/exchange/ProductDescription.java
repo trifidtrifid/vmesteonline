@@ -45,7 +45,7 @@ public class ProductDescription {
 	public String unitName;
 	
 	public FullProductInfo getFullProductInfo(){
-		Product product = new Product(id, name, shortDescr, weight, imageURL, price, unitName);
+		Product product = new Product(id, name, shortDescr, weight, imageURL, price, unitName,minClientPack);
 		
 		Map<PriceType, Double> pricesMap = new HashMap<PriceType, Double>();
 		if( null != priceRetail ) pricesMap.put(PriceType.RETAIL, priceRetail);
@@ -56,7 +56,7 @@ public class ProductDescription {
 		List<Long> topics = VoHelper.convertSet(topicSet, new ArrayList<Long>(), new Long(0));
 		List<Long> categoriesSet = VoHelper.convertSet(categories, new ArrayList<Long>(), new Long(0));
 		ProductDetails details = new ProductDetails(categoriesSet, fullDescr, imagesURLset, pricesMap , optionsMap, topics, 
-				producerId, minClientPack, minProducerPack, prepackRequired, knownNames );
+				producerId, minProducerPack, prepackRequired, knownNames );
 		FullProductInfo fpi = new FullProductInfo(product, details);
 		return fpi;
 	}

@@ -1,9 +1,4 @@
-@import 'bootstrap.min.css';
-@import 'font-awesome-original.css';
-@import 'font-awesome.min.css';
-@import 'ace-fonts.css';
-@import 'ace.css';
-@import 'flexslider.css';
+@import 'lib/flexslider.css';
 @import 'login.css';
 html {
   height: 100%;
@@ -53,6 +48,8 @@ a {
   padding: 0 8px;
   font-size: 16px;
 }
+/*.user-short .no-login+.user-menu
+  display none*/
 .user-menu li {
   text-align: left;
 }
@@ -231,6 +228,14 @@ a {
 .shop-right .delivery-right .input-delivery #delivery-addr {
   margin-left: 0;
 }
+.shop-right .delivery-right .input-delivery .delivery-dropdown {
+  float: right;
+  margin-top: -5px;
+}
+.shop-right .delivery-right .input-delivery .delivery-dropdown .dropdown-menu {
+  left: -233px;
+  width: 360px;
+}
 .shop-right .delivery-right .alert-delivery {
   color: #f00;
   display: none;
@@ -244,7 +249,7 @@ a {
   color: #858585;
 }
 .shop-right .btn-grey {
-  margin-left: 190px;
+  margin-left: 186px;
   margin-right: 10px;
 }
 .datepicker {
@@ -287,10 +292,10 @@ th.next,
   content: "Свободный день";
   margin-left: -120px;
 }
-.free-day-with-order {
+.day-with-order {
   background-color: #eee827;
 }
-.free-day-with-order:after {
+.day-with-order:after {
   content: "Свободный день с заказом";
   margin-left: -150px;
 }
@@ -310,7 +315,7 @@ th.next,
 }
 .order-day:after,
 .free-day:after,
-.free-day-with-order:after,
+.day-with-order:after,
 .special-day:after,
 .closed-day:after {
   position: absolute;
@@ -322,7 +327,7 @@ th.next,
 }
 .order-day:hover:after,
 .free-day:hover:after,
-.free-day-with-order:hover:after,
+.day-with-order:hover:after,
 .special-day:hover:after,
 .closed-day:hover:after {
   display: block;
@@ -425,6 +430,9 @@ span
 .catalog table tr td .fa:hover {
   color: #2a6496;
   text-decoration: none;
+}
+.catalog table tr td .product-link {
+  margin-left: 0;
 }
 .catalog table tr td span {
   display: block;
@@ -728,8 +736,6 @@ span
   opacity: 1;
 }
 .modal .error-prepack {
-  display: none;
-  color: #f00;
   position: absolute;
   bottom: -50px;
   right: 5px;
@@ -807,10 +813,11 @@ span
   .shop-right {
     position: fixed;
     height: 100%;
-    right: -250px;
+    right: -380px;
     z-index: 10;
     padding: 0 0 20px 0;
     border-bottom: 1px solid #ccc;
+    overflow: auto;
   }
   .shop-right:before {
     display: none;
@@ -975,8 +982,31 @@ span
 .backoffice .order-products {
   display: none;
 }
+.backoffice .order-products .product-link {
+  text-decoration: none;
+  color: #000;
+  cursor: default;
+}
+.backoffice .back-orders-top .form-group {
+  margin-right: 565px;
+}
+.backoffice .back-orders-top .btn-group,
+.backoffice .back-orders-top .input-group,
+.backoffice .back-orders-top .reset-filters {
+  float: right;
+  margin-left: 10px;
+}
+.backoffice .back-orders-top .input-group {
+  display: inline-block;
+}
+.backoffice .back-orders-top .dropdown-toggle {
+  height: 34px;
+}
 .import .form-import {
   margin-bottom: 10px;
+}
+.import .form-import input[type="submit"] {
+  margin-top: 10px;
 }
 .export .export-btn {
   margin-top: 15px;

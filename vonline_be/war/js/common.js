@@ -31,24 +31,58 @@
         });
         /* --- */
         /* переключения на настройки, профиль и выход */
-        $('.user-menu a').click(function(){
+
+        var transport = new Thrift.Transport("/thrift/AuthService");
+        var protocol = new Thrift.Protocol(transport);
+        var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
+
+        transport = new Thrift.Transport("/thrift/UserService");
+        protocol = new Thrift.Protocol(transport);
+        var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
+
+        $('.user-menu a').click(function(e){
+            e.preventDefault();
+            $(this).closest('.user-menu').hide();
+            e.stopPropagation();
+
             var ind = $(this).parent().index();
             var dynamic = $('.dynamic');
             if (ind == 0){
-                var settingsHtml = $('.settings-wrap').html();
-                dynamic.html(settingsHtml);
+                dynamic.load("ajax-settings.jsp .dynamic");
             }else if (ind == 1){
-                var profileHtml = $('.user-descr-wrap').html();
-                dynamic.html(profileHtml);
-                $('.edit-personal-link').click(function(){
-                    var editPersonalHtml = $('.edit-personal-wrap').html();
-                    dynamic.html(editPersonalHtml);
+                dynamic.load("ajax-profile.jsp .dynamic",function(){
+                    $('.edit-personal-link').click(function(e){
+                        e.preventDefault();
+                        dynamic.load("ajax-editPersonal.jsp .dynamic");
+                    });
+
+                    $('.sendConfirmCode').click(function(e){
+                        e.preventDefault();
+                        var to = userClient.getUserContacts().email;
+                        var resourcefileName = "mailTemplates/changePasswordConfirm.html";
+                        authClient.sendConfirmCode(to,resourcefileName);
+                        $('.confirm-info').text('На ваш e-mail отправлен код').addClass('login-good').show();
+                    });
+
+                    $('.useConfirmCode').click(function(e){
+                        e.preventDefault();
+                        var email = userClient.getUserContacts().email;
+                        var confirmCode = $('#confirmCode').val();
+                        var confirmInfo = $('.confirm-info');
+                        try{
+                            authClient.confirmRequest(email,confirmCode);
+                            confirmInfo.text('Код принят !').addClass('login-good').show();
+                            function closeConfirm(){
+                                $('.account-no-confirm').slideUp();
+                            }
+                            setTimeout(closeConfirm,4000);
+                        }catch(e){
+                            confirmInfo.text('Неверный код подтверждения !').removeClass('login-good').show();
+                        }
+                    });
                 });
             } else {
-                var transport = new Thrift.Transport("/thrift/AuthService");
-                var protocol = new Thrift.Protocol(transport);
-                var client = new com.vmesteonline.be.AuthServiceClient(protocol);
-                client.logout();
+                authClient.logout();
 
                 document.location.replace("login.jsp");
             }

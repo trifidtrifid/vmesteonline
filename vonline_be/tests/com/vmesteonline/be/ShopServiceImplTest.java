@@ -34,6 +34,7 @@ import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.ExchangeFieldType;
 import com.vmesteonline.be.shop.FullProductInfo;
+import com.vmesteonline.be.shop.IdNameChilds;
 import com.vmesteonline.be.shop.ImExType;
 import com.vmesteonline.be.shop.ImportElement;
 import com.vmesteonline.be.shop.Order;
@@ -177,14 +178,14 @@ public class ShopServiceImplTest {
 			// set current shop
 			si.getShop(shopId);
 
-			ProductCategory rootCategory = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet,0);
+			ProductCategory rootCategory = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
 			Long rootCatId = si.registerProductCategory(rootCategory, shopId);
 
-			ProductCategory secCategory = new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set,0);
+			ProductCategory secCategory = new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
 			Long SecCatId = si.registerProductCategory(secCategory, shopId);
 
-			ProductCategory thirdCategory = new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set,0);
-			ProductCategory third2Category = new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set,0);
+			ProductCategory thirdCategory = new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
+			ProductCategory third2Category = new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0);
 
 			si.registerProductCategory(thirdCategory, shopId);
 			si.registerProductCategory(third2Category, shopId);
@@ -262,13 +263,15 @@ public class ShopServiceImplTest {
 			HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
 			si.setDates(dates);
 
-			long prodId = si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
+			/* long prodId = */si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
 			long prod2Id = si.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
 
-			Long rootCatId = si.registerProductCategory(new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet,0), shopId);
-			Long SecCatId = si.registerProductCategory(new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set,0), shopId);
-			Long THirdCatId = si.registerProductCategory(new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set,0), shopId);
-			Long THird2CatId = si.registerProductCategory(new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set,0),
+			Long rootCatId = si.registerProductCategory(new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0), shopId);
+			Long SecCatId = si.registerProductCategory(new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set, 0),
+					shopId);
+			Long THirdCatId = si.registerProductCategory(new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set, 0),
+					shopId);
+			Long THird2CatId = si.registerProductCategory(new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0),
 					shopId);
 
 			ArrayList<FullProductInfo> productsList = new ArrayList<FullProductInfo>();
@@ -297,11 +300,11 @@ public class ShopServiceImplTest {
 			optionsMap2.put("цвет", "черный");
 			optionsMap2.put("вкус", "мерзкий");
 
-			productsList.add(new FullProductInfo(new Product(1, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан"), new ProductDetails(
-					categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 3000, true, new HashSet<String>())));
+			productsList.add(new FullProductInfo(new Product(1, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан", 1000), new ProductDetails(
+					categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 3000, true, new HashSet<String>())));
 
-			productsList.add(new FullProductInfo(new Product(2, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг"), new ProductDetails(categories2,
-					"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 1000, 3000, true, new HashSet<String>())));
+			productsList.add(new FullProductInfo(new Product(2, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000), new ProductDetails(
+					categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 3000, true, new HashSet<String>())));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
 			// expects to get all of products
@@ -358,17 +361,17 @@ public class ShopServiceImplTest {
 
 			// create categories
 			List<ProductCategory> categories = new Vector<ProductCategory>();
-			ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet,0);
-			ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set,0);
-			ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set,0);
-			ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set,0);
+			ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
+			ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
+			ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
+			ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0);
 
 			categories.add(rootCat);
 			categories.add(l2Cat);
 			categories.add(l3cat1);
 			categories.add(l3cat2);
 
-			List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true);
+			/* List<ProductCategory> uploadProductCategoies = */si.uploadProductCategoies(categories, true);
 
 			// check the consistency of IDs
 			// get root category
@@ -437,7 +440,7 @@ public class ShopServiceImplTest {
 
 			Long shopId = si.registerShop(shop);
 			Long shop2Id = si.registerShop(shop2);
-			Long shop3Id = si.registerShop(shop3);
+			/* Long shop3Id = */si.registerShop(shop3);
 
 			// set current shop
 			List<Shop> shops = si.getShops();
@@ -644,21 +647,21 @@ public class ShopServiceImplTest {
 
 		// create categories
 		List<ProductCategory> categories = new Vector<ProductCategory>();
-		ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet,0);
-		ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set,0);
-		ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set,0);
-		ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set,0);
+		ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
+		ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
+		ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
+		ProductCategory l3cat2 = new ProductCategory(4L, 2L, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0);
 
 		categories.add(rootCat);
 		categories.add(l2Cat);
 		categories.add(l3cat1);
 		categories.add(l3cat2);
 
-		List<ProductCategory> uploadProductCategoies = si.uploadProductCategoies(categories, true);
+		/* List<ProductCategory> uploadProductCategoies = */si.uploadProductCategoies(categories, true);
 
 		// create producers
-		long prodId = si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
-		long prod2Id = si.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
+		si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
+		si.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
 
 		// Upload products
 
@@ -686,11 +689,11 @@ public class ShopServiceImplTest {
 		optionsMap2.put("цвет", "черный");
 		optionsMap2.put("вкус", "мерзкий");
 
-		productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан"), new ProductDetails(
-				categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 1000, 3000, true, new HashSet<String>())));
+		productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан", 1000), new ProductDetails(
+				categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 3000, true, new HashSet<String>())));
 
-		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг"), new ProductDetails(categories2,
-				"dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 1000, 3000, true, new HashSet<String>())));
+		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000), new ProductDetails(
+				categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 3000, true, new HashSet<String>())));
 
 		upProductsIdl = si.uploadProducts(productsList, shopId, true);
 
@@ -870,9 +873,9 @@ public class ShopServiceImplTest {
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 
 			Long id = si.registerShop(shop);
-			Shop savedShop = si.getShop(id);
+			/* Shop savedShop = */si.getShop(id);
 
-			DataSet importData2 = si.importData(ds);
+			/* DataSet importData2 = */si.importData(ds);
 			List<Producer> producers = si.getProducers();
 			Assert.assertEquals(producers.size(), 2);
 		} catch (Exception e) {
@@ -911,8 +914,8 @@ public class ShopServiceImplTest {
 
 			ds.addToData(importData);
 
-			DataSet importData2 = si.importData(ds);
-			List<Shop> shops = si.getShops();
+			/* DataSet importData2 = */si.importData(ds);
+			/* List<Shop> shops = */si.getShops();
 			// Assert.assertEquals(shops.size(), 2);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -954,7 +957,7 @@ public class ShopServiceImplTest {
 			// set current shop
 			si.getShop(shopId);
 
-			DataSet importData2 = si.importData(ds);
+			/* DataSet importData2 = */si.importData(ds);
 			List<ProductCategory> productCategories = si.getProductCategories(0);
 			Assert.assertEquals(productCategories.size(), 1);
 			productCategories = si.getProductCategories(productCategories.get(0).getId());
@@ -1072,6 +1075,7 @@ public class ShopServiceImplTest {
 	}
 
 	// =====================================================================================================================
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testMergeOrderLinePackets() {
 		try {
@@ -1086,8 +1090,8 @@ public class ShopServiceImplTest {
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
 
 			// Check merge lines of the same product
-			OrderLine ol1 = si.setOrderLine(upProductsIdl.get(0), 1.0D, null, null);
-			OrderLine ol2 = si.setOrderLine(upProductsIdl.get(1), 1.0D, null, null);
+			/* OrderLine ol1 = */si.setOrderLine(upProductsIdl.get(0), 1.0D, null, null);
+			/* OrderLine ol2 = */si.setOrderLine(upProductsIdl.get(1), 1.0D, null, null);
 			PersistenceManager pm = PMF.getPm();
 			try {
 				Query q = pm.newQuery(VoOrder.class);
@@ -1178,22 +1182,23 @@ public class ShopServiceImplTest {
 			Map<Double, Integer> packets = new HashMap<Double, Integer>();
 			packets.put(11D, 1);
 			packets.put(12D, 2);
-			OrderLine ol1 = si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment11", packets);
-			OrderLine ol2 = si.setOrderLine(upProductsIdl.get(1), 2.0D, "comment12", null);
-
+			/*OrderLine ol1 = */si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment11", packets);
+			/*OrderLine ol2 = */si.setOrderLine(upProductsIdl.get(1), 2.0D, "comment12", null);
+			
 			si.confirmOrder();
-
-			long order2ID = si.createOrder(now + 1000, "22aaaa", PriceType.INET);
-			OrderLine ol21 = si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment21", packets);
+			
+			/*long order2ID = */si.createOrder(now + 1000, "22aaaa", PriceType.INET);
+			/*OrderLine ol21 = */si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment21", packets);
 			si.confirmOrder();
-
-			long order3ID = si.createOrder(now + 1000, "33aaaa", PriceType.INET);
-			OrderLine ol31 = si.setOrderLine(upProductsIdl.get(1), 33.0D, "comment31", null);
+			
+			/*long order3ID = */si.createOrder(now + 1000, "33aaaa", PriceType.INET);
+			/*OrderLine ol31 = */si.setOrderLine(upProductsIdl.get(1), 33.0D, "comment31", null);
 			si.setOrderDeliveryType(DeliveryType.LONG_RANGE);
 			si.confirmOrder();
+			
+			/*long order4ID = */si.createOrder(now + 1001, "44aaaa", PriceType.INET);
+			/*OrderLine ol41 = */si.setOrderLine(upProductsIdl.get(1), 44.0D, "comment41", null);
 
-			long order4ID = si.createOrder(now + 1001, "44aaaa", PriceType.INET);
-			OrderLine ol41 = si.setOrderLine(upProductsIdl.get(1), 44.0D, "comment41", null);
 			si.confirmOrder();
 
 			List<ExchangeFieldType> orderFields = Arrays.asList(new ExchangeFieldType[] { ExchangeFieldType.ORDER_DATE, ExchangeFieldType.ORDER_STATUS,
@@ -1263,27 +1268,28 @@ public class ShopServiceImplTest {
 			Long shopId = si.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
-			Long order1ID = si.getSessionAttribute(CurrentAttributeType.ORDER, null);
+			/*Long order1ID = */si.getSessionAttribute(CurrentAttributeType.ORDER, null);
 			// Check merge lines of the same product
 			Map<Double, Integer> packets = new HashMap<Double, Integer>();
 			packets.put(11D, 1);
 			packets.put(12D, 2);
-			OrderLine ol1 = si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment11", packets);
-			OrderLine ol2 = si.setOrderLine(upProductsIdl.get(1), 2.0D, "comment12", null);
-
+			/*OrderLine ol1 = */si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment11", packets);
+			/*OrderLine ol2 = */si.setOrderLine(upProductsIdl.get(1), 2.0D, "comment12", null);
+			
 			si.confirmOrder();
-
-			long order2ID = si.createOrder(now + 1000, "22aaaa", PriceType.INET);
-			OrderLine ol21 = si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment21", packets);
+			
+			/*long order2ID = */si.createOrder(now + 1000, "22aaaa", PriceType.INET);
+			/*OrderLine ol21 = */si.setOrderLine(upProductsIdl.get(0), 35.0D, "comment21", packets);
 			si.confirmOrder();
-
-			long order3ID = si.createOrder(now + 1000, "33aaaa", PriceType.INET);
-			OrderLine ol31 = si.setOrderLine(upProductsIdl.get(1), 33.0D, "comment31", null);
+			
+			/*long order3ID = */si.createOrder(now + 1000, "33aaaa", PriceType.INET);
+			/*OrderLine ol31 = */si.setOrderLine(upProductsIdl.get(1), 33.0D, "comment31", null);
 			si.setOrderDeliveryType(DeliveryType.LONG_RANGE);
 			si.confirmOrder();
+			
+			/*long order4ID = */si.createOrder(now + 1001, "44aaaa", PriceType.INET);
+			/*OrderLine ol41 = */si.setOrderLine(upProductsIdl.get(1), 44.0D, "comment41", null);
 
-			long order4ID = si.createOrder(now + 1001, "44aaaa", PriceType.INET);
-			OrderLine ol41 = si.setOrderLine(upProductsIdl.get(1), 44.0D, "comment41", null);
 			si.confirmOrder();
 
 			List<ExchangeFieldType> productFields = Arrays.asList(new ExchangeFieldType[] { ExchangeFieldType.TOTAL_PROUCT_ID,
@@ -1327,4 +1333,27 @@ public class ShopServiceImplTest {
 		Assert.assertEquals(parseCSVfile.get(1).get(3), "7;8");
 		Assert.assertEquals(parseCSVfile.get(1).get(2), "6");
 	}
+
+	@Test
+	public void testGetProductsByCategories() {
+
+		int now = (int) (System.currentTimeMillis() / 1000L);
+		int day = 3600 * 24;
+		List<Long> upProductsIdl;
+
+		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+		try {
+			Long shopId = si.registerShop(shop);
+			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
+			List<IdNameChilds> productsByCategories = si.getProductsByCategories(shopId);
+
+			Assert.assertEquals(productsByCategories.size(), 4);
+
+		} catch (InvalidOperation e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 }

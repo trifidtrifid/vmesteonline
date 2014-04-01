@@ -1,6 +1,7 @@
 package org.apache.thrift;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
 import org.apache.thrift.protocol.TMessage;
@@ -9,11 +10,13 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolUtil;
 import org.apache.thrift.protocol.TType;
 
+import com.vmesteonline.be.access.VoTAccessValidator;
 import com.vmesteonline.be.access.VoUserAccessBase;
 
 public abstract class TBaseProcessor<I> implements TProcessor {
   private final I iface;
   private final Map<String,ProcessFunction<I, ? extends TBase>> processMap;
+  private VoTAccessValidator accessValidator;
 
   protected TBaseProcessor(I iface, Map<String, ProcessFunction<I, ? extends TBase>> processFunctionMap) {
     this.iface = iface;
@@ -45,7 +48,10 @@ public abstract class TBaseProcessor<I> implements TProcessor {
     return true;
   }
   
+  public void setAccessValidator( VoTAccessValidator v ){
+  	this.accessValidator = v;
+  }
   protected boolean checkAccessRights( String functionName ){
-  	return true;
+  	return null == accessValidator ? true : accessValidator.checkAccessRights(functionName);
   };
 }

@@ -21,6 +21,10 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 
 public class ServiceImpl {
 
+	protected enum ServiceCategoryID {
+		BASE_SI, AUTH_SI, USER_SI, MESSAGE_SI, SHOP_SI
+	};
+
 	private static Cache cache;
 	public static Logger logger;
 
@@ -42,6 +46,19 @@ public class ServiceImpl {
 				rslt = (T) cache.get(key);
 			} catch (ClassCastException cce) {
 				logger.error("CACHE:FAiled to get object by key " + key + ". " + cce);
+			}
+		}
+		return rslt;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected static <T> T removeObjectFromCache(Object key) {
+		T rslt = null;
+		if (null != cache && cache.containsKey(key)) {
+			try {
+				rslt = (T) cache.remove(key);
+			} catch (ClassCastException cce) {
+				logger.error("CACHE:FAiled to remove object by key " + key + ". " + cce);
 			}
 		}
 		return rslt;
@@ -190,5 +207,24 @@ public class ServiceImpl {
 	public Long getSessionAttribute(CurrentAttributeType type, PersistenceManager pm) throws InvalidOperation {
 		VoSession currentSession = getCurrentSession(pm);
 		return currentSession.getSessionAttribute(type);
+	}
+
+	/**
+	 * Method return true if method should have public access through Thrift interface, false to check access by USer ID
+	 * 
+	 * @param method
+	 * @return true if method is public
+	 */
+	public boolean isPublicMethod(String method) {
+		return false;
+	}
+
+	/**
+	 * Method returns an identification of category for access and must be overwritten in all of child classes
+	 * 
+	 * @return
+	 */
+	public long categoryId() {
+		return ServiceCategoryID.BASE_SI.ordinal();
 	}
 }
