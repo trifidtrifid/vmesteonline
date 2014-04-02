@@ -282,8 +282,17 @@
                             <li><a href="#">Производители</a></li>
                         </ul>
                     </div>
+
                     <div class="import-checklist">
                         <div class="checklist products-checklist">
+
+                            <div class="checkbox check-all">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> check all</span>
+                                </label>
+                            </div>
+
                             <div class="checkbox" data-exchange="300">
                                 <label>
                                     <input name="form-field-checkbox" type="checkbox" class="ace">

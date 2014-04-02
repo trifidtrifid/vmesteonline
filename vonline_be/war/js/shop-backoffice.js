@@ -655,7 +655,7 @@ $(document).ready(function(){
 
         var fieldsMap = [];
         var filedsCounter = 0;
-        $('.checkbox.active').each(function(){
+        $('.checkbox.active:not(".check-all")').each(function(){
             fieldsMap[filedsCounter++] = parseInt($(this).data('exchange'));
         });
         var importElement = new com.vmesteonline.be.shop.ImportElement;
@@ -679,7 +679,13 @@ $(document).ready(function(){
     /* export */
 
     $('.check-all').click(function(){
-        var tab = $('#orders');
+        //var tab = $('#orders');
+        var tab = $(this).closest('.back-tab');//('#orders');
+
+        if(tab.hasClass('export')){
+            tab = $(this).closest('.tab-pane');
+        }
+
         tab.find('.checkbox').addClass('active');
         tab.find('.checkbox:not(".check-all") input').attr('checked','checked');
     });
