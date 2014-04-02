@@ -888,11 +888,22 @@ $(document).ready(function(){
         }
     });
 
+    function isValidPhone(myPhone) {
+        //return /^\+\d{2}\(\d{3}\)\d{3}-\d{2}-\d{2}$/.test(myPhone);
+        //return /^8\-(?:\(\d{4}\)\-\d{6}|\(\d{3}\)\-\d{3}\-\d{2}\-\d{2})$/.test(myPhone);
+        //return /^((((\(\d{3}\))|(\d{3}-))\d{3}-\d{4})|(\+?\d{1,3}((-| |\.)(\(\d{1,4}\)(-| |\.|^)?)?\d{1,8}){1,5}))(( )?(x|ext)\d{1,5}){0,1}$/.test(myPhone);
+        return /^(\+?\d+)?\s*(\(\d+\))?[\s-]*([\d-]*)$/.test(myPhone);
+    }
+
     $('.btn-order').click(function(){
         try{
-        if($('.input-delivery').hasClass('active') && !$('#phone-delivery').val()){
-            $('.alert-delivery-phone').show();
-        }else if ($('.input-delivery').hasClass('active') && (!$('#country-delivery').val() || !$('#city-delivery').val() || !$('#street-delivery').val() || !$('#building-delivery').val() || !$('#flat-delivery').val())){
+            var inputDelivery = $('.input-delivery');
+            var phoneDelivery = $('#phone-delivery');
+        if(inputDelivery.hasClass('active') && !phoneDelivery.val()){
+            $('.alert-delivery-phone').text('Введите номер телефона !').show();
+        }else if(!isValidPhone(phoneDelivery.val())){
+            $('.alert-delivery-phone').text('Не корректный номер телефона !').show();
+        }else if (inputDelivery.hasClass('active') && (!$('#country-delivery').val() || !$('#city-delivery').val() || !$('#street-delivery').val() || !$('#building-delivery').val() || !$('#flat-delivery').val())){
             $('.alert-delivery-phone').hide();
             $('.alert-delivery-addr').show();
         }else{
@@ -926,7 +937,6 @@ $(document).ready(function(){
                     '</tr>';
             });
             popup.find('.modal-body-list tbody').html('').append(productsHtmlModal);
-            var inputDelivery = $('.input-delivery');
 
             if(inputDelivery.hasClass('active')){
                 popup.find('.modal-footer').before('<div class="delivery-in-modal">Стоимость доставки: <span class="delivery-cost">'+ inputDelivery.find('.delivery-cost').text() +'</span> руб</div>');
@@ -1032,6 +1042,12 @@ $(document).ready(function(){
 
                      client.setOrderDeliveryAddress(deliveryAddress);
                 }
+
+                // сохранение телефона
+                var userContacts = userServiceClient.getUserContacts();
+                userContacts.mobilePhone = $('#phone-delivery').val();
+                userServiceClient.updateUserContacts(userContacts);
+
                 client.confirmOrder();
                 alert('Ваш заказ принят !');
                 $('.modal-order-end').modal('hide');

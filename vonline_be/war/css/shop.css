@@ -1003,10 +1003,18 @@ span
   height: 34px;
 }
 .import .form-import {
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 .import .form-import input[type="submit"] {
   margin-top: 10px;
+}
+.import .products-checklist,
+.import .categories-checklist,
+.import .producers-checklist {
+  display: none;
+}
+.import .import-btn {
+  margin-bottom: 10px;
 }
 .export .export-btn {
   margin-top: 15px;

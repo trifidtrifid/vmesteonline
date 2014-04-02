@@ -45,6 +45,41 @@
 
             $('.save-changes').click(function(e){
                 e.preventDefault();
+                if ($('#main').hasClass('active')){
+
+                     var newName = $('#edit-name').val();
+                     var newSurname = $('#edit-surname').val();
+                     var newBiz = $('#edit-biz option:selected').text();
+                     var newBirth = $('#date-picker-birthday').val();
+                     var userInfo = userClient.getUserInfo();
+
+                    userInfo.firstName = newName;
+                     userInfo.lastName = newSurname;
+                     userInfo.birthday = newBirth;
+
+                     userClient.updateUserInfo(userInfo);
+                    //userInfo = userClient.getUserInfo();
+
+                }else if($('#contacts').hasClass('active')){
+
+                    var newEmail = $('#edit-email').val();
+                    var newPhone = $('#edit-phone').val();
+                    var userContacts = userClient.getUserContacts();
+
+                    userContacts.email = newEmail;
+                    userContacts.mobilePhone = newPhone;
+
+                    userClient.updateUserContacts(userContacts);
+
+                }else if($('#interests').hasClass('active')){
+
+                }
+
+                $('.save-status').addClass('active');
+                function hideSaveStatus(){
+                    $('.save-status').removeClass('active')
+                }
+                setTimeout(hideSaveStatus,2000);
 
 
             });
