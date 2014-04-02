@@ -513,6 +513,9 @@ public class VoProduct {
 		Query q = pm.newQuery(VoProductCategory.class);
 		q.setFilter("importId == importIdParam && shopId == " + shopId);
 		q.declareParameters("long importIdParam");
+		if(null == fpi.details || null == fpi.details.categories || fpi.details.categories.size() == 0 )
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No Category set for product " + fpi.product.id);
+		
 		for (Long pc : fpi.details.categories) {
 			List<VoProductCategory> cl = (List<VoProductCategory>) q.execute(pc);
 			if (0 == cl.size()) {
