@@ -233,10 +233,14 @@ $(document).ready(function(){
         return ordersHtml;
     }
 
-    var dPicker = $('.date-picker');
+    var dPicker = $('#date-picker-1');
+    var dPickerExport = $('#date-picker-2');
 
     globalUserAuth = true;
-    dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
+    /*dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
+        $(this).prev().focus();
+    });*/
+    dPickerExport.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
         $(this).prev().focus();
     });
 
@@ -250,6 +254,7 @@ $(document).ready(function(){
     };
 
     dPicker.datepicker('setVarOrderDates',datepickerFunc);
+    dPickerExport.datepicker('setVarOrderDates',datepickerFunc);
 
 
     $('.reset-filters').click(function(){
@@ -671,6 +676,11 @@ $(document).ready(function(){
 
    /* import */
 
+    /* export */
+
+
+
+    /* export */
 
     function setSidebarHeight(){
         try{

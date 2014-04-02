@@ -205,7 +205,7 @@
                             </ul>
                         </div>
                         <div class="input-group">
-                            <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
+                            <input class="form-control date-picker" id="date-picker-1" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                         </div>
                         <form method="post" action="#" class="form-group has-info search-form">
                             <span class="block input-icon input-icon-right">
@@ -371,6 +371,23 @@
                     <div class="tab-content">
                         <div id="orders" class="tab-pane in active">
                             <p>Отчет о Заказах</p>
+
+                            <div class="btn-group import-dropdown">
+                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                    <span class="btn-group-text">Тип доставки</span>
+                                    <span class="icon-caret-down icon-on-right"></span>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-blue">
+                                    <li><a href="#">Самовывоз</a></li>
+                                    <li><a href="#">Курьер рядом</a></li>
+                                    <li><a href="#">Курьер далеко</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="input-group">
+                                <input class="form-control date-picker" id="date-picker-2" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
+                            </div>
 
                             <div class="order-item" data-orderid="5660285859790848">
                                 <table class="orders-tbl">

@@ -1019,6 +1019,10 @@ span
 .export .export-btn {
   margin-top: 15px;
 }
+.export .input-group {
+  display: inline-block;
+  margin-bottom: 10px;
+}
 .import,
 .export {
   display: none;
