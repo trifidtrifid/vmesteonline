@@ -1016,6 +1016,10 @@ span
 .import .import-btn {
   margin-bottom: 10px;
 }
+.import #import-data {
+  display: inline-block;
+  vertical-align: middle;
+}
 .export .export-btn {
   margin-top: 15px;
 }

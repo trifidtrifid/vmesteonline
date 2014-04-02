@@ -427,7 +427,7 @@
                     <form action="/file/" method="post"  class="form-import" enctype="multipart/form-data"> <%--enctype="multipart/form-data"--%>
                         <input id="import-data" type="file" name="data"/>
                         <input id="import-public" type="hidden" name="public"/> <!-- Be sure that you gona make file accessible for everyone -->
-                        <input type="submit" value="Загрузить" />
+                        <input class="btn btn-primary btn-sm no-border" type="submit" value="Загрузить" />
                     </form>
 
                     <div>
