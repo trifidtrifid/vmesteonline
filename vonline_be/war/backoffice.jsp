@@ -302,6 +302,114 @@
                                     <span class="lbl"> PRODUCT_SHORT_DESCRIPTION</span>
                                 </label>
                             </div>
+                            <div class="checkbox" data-exchange="303">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_WEIGHT</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="304">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_IMAGEURL</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="305">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_PRICE</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="306">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_CATEGORY_IDS</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="307">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_FULL_DESCRIPTION</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="308">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_IMAGE_URLS</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="309">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_PRICE_RETAIL</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="310">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_PRICE_INET</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="311">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_PRICE_VIP</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="312">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_PRICE_SPECIAL</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="313">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_OPIONSAVP</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="314">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_TOPICS</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="315">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_PRODUCER_ID</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="316">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_MIN_CLN_PACK</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="317">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_MIN_PROD_PACK</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="318">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_PREPACK_REQ</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="319">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_KNOWN_NAMES</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="320">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_UNIT_NAME</span>
+                                </label>
+                            </div>
                         </div>
                         <div class="checklist categories-checklist"></div>
                         <div class="checklist producers-checklist"></div>
@@ -372,7 +480,7 @@
                         <div id="orders" class="tab-pane in active">
                             <p>Отчет о Заказах</p>
 
-                            <div class="btn-group import-dropdown">
+                            <div class="btn-group export-delivery-dropdown">
                                 <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
                                     <span class="btn-group-text">Тип доставки</span>
                                     <span class="icon-caret-down icon-on-right"></span>
@@ -389,7 +497,165 @@
                                 <input class="form-control date-picker" id="date-picker-2" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                             </div>
 
-                            <div class="order-item" data-orderid="5660285859790848">
+                            <div class="checkbox check-all">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> check all</span>
+                                </label>
+                            </div>
+
+                            <div class="export-orders-checklist">
+                                <div class="checkbox"  data-exchange="1000">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_ID</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1001">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_DATE</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1002">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_STATUS</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1003">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_PRICE_TYPE</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1004">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_TOTAL_COST</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1005">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_CREATED</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1006">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_DELIVERY_TYPE</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1007">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_DELIVERY_COST</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1008">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_DELIVERY_ADDRESS</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1009">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_PAYMENT_TYPE</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1010">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_PAYMENT_STATUS</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1011">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_COMMENT</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1012">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_USER_ID</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1013">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_USER_NAME</span>
+                                    </label>
+                                </div>
+                            </div>
+
+
+                            <div class="export-orderLine-checklist">
+                                <div class="checkbox"  data-exchange="1100">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_LINE_ID</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1101">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_LINE_QUANTITY</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1102">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_LINE_OPRDER_ID</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1103">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_LINE_PRODUCT_ID</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1104">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_LINE_PRODUCT_NAME</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1105">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_LINE_PRODUCER_ID</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1106">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_LINE_PRODUCER_NAME</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1107">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_LINE_PRICE</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1108">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_LINE_COMMENT</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="1109">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> ORDER_LINE_PACKETS</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                           <%-- <div class="order-item" data-orderid="5660285859790848">
                                 <table class="orders-tbl">
                                     <tbody>
                                     <tr>
@@ -529,7 +795,8 @@
                                         </table>
                                     </section>
                                 </div>
-                            </div>
+                            </div>--%>
+
                             <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
                         </div>
 

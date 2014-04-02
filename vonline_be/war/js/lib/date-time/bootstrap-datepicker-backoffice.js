@@ -35,7 +35,7 @@
 
     function getMetaDate(){
         try {
-        var strDate = $('.datepicker-days .switch').text().split(" ");
+        var strDate = $('.datepicker:eq(0)').find('.datepicker-days .switch').text().split(" ");
         var strMonth="";
         var year = strDate[1];
         switch(strDate[0]){
@@ -124,6 +124,10 @@
     function initOrderDay(createOrdersHtml,initOrderPlusMinus,setSidebarHeight,filterByStatus,filterByDelivery,filterBySearch){
         try{
         $('.order-day').click(function(){
+            if($('#sidebar .nav-list li:eq(2)').hasClass('active')){
+                // если мы на вкладке export кликаем на дату в календаре
+               $('#date-picker-2').attr('data-selectOrderDate',$(this).attr('id'));
+            }
             var orderDate = parseInt($(this).attr('id'));
             var day = 3600*24;
             var orders = client.getOrdersByStatus(orderDate,orderDate+day,0);

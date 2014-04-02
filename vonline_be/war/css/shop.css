@@ -1023,6 +1023,23 @@ span
   display: inline-block;
   margin-bottom: 10px;
 }
+.export .report-links {
+  line-height: 34px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: 15px;
+}
+.export .report-links a {
+  display: inline-block;
+  margin: 0 0 0 10px;
+  vertical-align: middle;
+}
+.export .export-orders-checklist,
+.export .export-orderLine-checklist {
+  display: inline-block;
+  width: 49%;
+  vertical-align: top;
+}
 .import,
 .export {
   display: none;

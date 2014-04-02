@@ -237,9 +237,9 @@ $(document).ready(function(){
     var dPickerExport = $('#date-picker-2');
 
     globalUserAuth = true;
-    /*dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
+    dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
         $(this).prev().focus();
-    });*/
+    });
     dPickerExport.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
         $(this).prev().focus();
     });
@@ -674,13 +674,63 @@ $(document).ready(function(){
 
     });
 
-   /* import */
+   /* /import */
 
     /* export */
 
+    $('.check-all').click(function(){
+        var tab = $('#orders');
+        tab.find('.checkbox').addClass('active');
+        tab.find('.checkbox:not(".check-all") input').attr('checked','checked');
+    });
+       $('.export-btn').click(function(e){
+           e.preventDefault();
 
+          var tabs = $('.export .nav-tabs').find('li');
+          var currentInd = 0;
+          tabs.each(function(){
+              if ($(this).hasClass('active')){
+                  currentInd = $(this).index();
+              }
+          });
+           var deliveryText = $('.export-delivery-dropdown .btn-group-text').text();
+           var deliveryType = getDeliveryTypeByText(deliveryText);
 
-    /* export */
+           var selectOrderDate = $('#date-picker-2').data('selectorderdate');
+           var dataSet,linksHtml;
+
+           switch (currentInd){
+               case 0:
+
+                   var fieldsOrderMap = [];
+                   var filedsOrderCounter = 0;
+                   $('.export-orders-checklist .checkbox.active').each(function(){
+                       fieldsOrderMap[filedsOrderCounter++] = parseInt($(this).data('exchange'));
+                   });
+
+                   var fieldsOrderLineMap = [];
+                   var filedsOrderLineCounter = 0;
+                   $('.export-orderLine-checklist .checkbox.active').each(function(){
+                       fieldsOrderLineMap[filedsOrderLineCounter++] = parseInt($(this).data('exchange'));
+                   });
+
+                   dataSet = client.getTotalOrdersReport(selectOrderDate,deliveryType,fieldsOrderMap,fieldsOrderLineMap);
+
+                   linksHtml = '<div class="report-links"><a href="'+ dataSet.data[1].fileName +'">Скачать отчет о заказах</a>'+
+                       '<a href="'+ dataSet.data[0].fileName +'">Скачать отчет об orderLines</a></div>';
+
+                   break;
+               case 1:
+                   dataSet = client.getTotalProductsReport(selectOrderDate,deliveryType);
+                   break;
+               case 2:
+                   dataSet = client.getTotalPackReport(selectOrderDate,deliveryType);
+                   break;
+           }
+           $(this).after(linksHtml);
+       });
+
+    /* /export */
 
     function setSidebarHeight(){
         try{
