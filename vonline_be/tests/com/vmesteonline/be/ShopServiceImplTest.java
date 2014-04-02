@@ -37,6 +37,7 @@ import com.vmesteonline.be.shop.FullProductInfo;
 import com.vmesteonline.be.shop.IdNameChilds;
 import com.vmesteonline.be.shop.ImExType;
 import com.vmesteonline.be.shop.ImportElement;
+import com.vmesteonline.be.shop.MatrixAsList;
 import com.vmesteonline.be.shop.Order;
 import com.vmesteonline.be.shop.OrderDetails;
 import com.vmesteonline.be.shop.OrderLine;
@@ -1319,7 +1320,7 @@ public class ShopServiceImplTest {
 	@Test
 	public void testParseCSVfile() {
 		String csv = " 1; 2;3\n4;5;6;\"7;8\";9";
-		List<List<String>> parseCSVfile;
+		MatrixAsList parseCSVfile;
 		try {
 			String url = StorageHelper.saveImage(csv.getBytes(), userId, true, null);
 			parseCSVfile = si.parseCSVfile(url);
@@ -1327,11 +1328,10 @@ public class ShopServiceImplTest {
 			e.printStackTrace();
 			return;
 		}
-		Assert.assertEquals(parseCSVfile.size(), 2);
-		Assert.assertEquals(parseCSVfile.get(0).size(), 3);
-		Assert.assertEquals(parseCSVfile.get(1).size(), 5);
-		Assert.assertEquals(parseCSVfile.get(1).get(3), "7;8");
-		Assert.assertEquals(parseCSVfile.get(1).get(2), "6");
+		Assert.assertEquals(parseCSVfile.rowCount, 3);
+		Assert.assertEquals(parseCSVfile.elems.get(0), 1);
+		Assert.assertEquals(parseCSVfile.elems.get(3), 4);
+		Assert.assertEquals(parseCSVfile.elems.get(8), 9);
 	}
 
 	@Test
