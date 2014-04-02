@@ -270,11 +270,52 @@
                 </div>
                 <div class="import back-tab">
                     <h2>Здесь вы можете загрузить список продуктов в магазин</h2>
+                    <div class="btn-group import-dropdown">
+                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                            <span class="btn-group-text">Тип импортируемых данных</span>
+                            <span class="icon-caret-down icon-on-right"></span>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-blue">
+                            <li><a href="#">Продукты</a></li>
+                            <li><a href="#">Категории продуктов</a></li>
+                            <li><a href="#">Производители</a></li>
+                        </ul>
+                    </div>
+                    <div class="import-checklist">
+                        <div class="checklist products-checklist">
+                            <div class="checkbox" data-exchange="300">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_ID</span>
+                                </label>
+                            </div>
+                            <div class="checkbox"  data-exchange="301">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_NAME</span>
+                                </label>
+                            </div>
+                            <div class="checkbox" data-exchange="302">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> PRODUCT_SHORT_DESCRIPTION</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="checklist categories-checklist"></div>
+                        <div class="checklist producers-checklist"></div>
+                    </div>
+
                     <form action="/file/" method="post"  class="form-import" enctype="multipart/form-data"> <%--enctype="multipart/form-data"--%>
                         <input id="import-data" type="file" name="data"/>
                         <input id="import-public" type="hidden" name="public"/> <!-- Be sure that you gona make file accessible for everyone -->
-                        <input type="submit" />
+                        <input type="submit" value="Загрузить" />
                     </form>
+
+                    <div>
+                        <a class="btn btn-primary btn-sm no-border import-btn" href="#">Импортировать</a>
+                    </div>
                     <section class="catalog">
                         <table>
                             <thead>

@@ -526,7 +526,10 @@ $(document).ready(function(){
     /* ------------------------------- Конец Поиск ---------------------------- */
 
     /* import */
+    var dataCSV = [],
+        elems, rowCount,colCount;
 
+    var fileUrl;
     $('.form-import').submit(function(e){
         e.preventDefault();
 
@@ -555,18 +558,115 @@ $(document).ready(function(){
                 public: importPublic
             },*/
             success: function(html) {
-                var dataCSV = client.parseCSVfile(html);
-                alert(dataCSV[0]);
-                //alert('Полученные данные после parseCSV: '+dataCSV+" Длина массива: "+dataCSV.length);
-                var dataCSVLength = dataCSV.length;
-                for(var i = 0; i < dataCSVLength; i++){
-                    var dataCSVLength2 = dataCSV[i].length;
-                    for(var j = 0; j < dataCSVLength2; j++){
-                        console.log(dataCSV[i][j]);
+                fileUrl = html;
+                var matrixAsList = client.parseCSVfile(fileUrl);
+                elems = matrixAsList.elems;
+                rowCount = matrixAsList.rowCount;
+                var dataCSVLength = elems.length;
+                colCount = dataCSVLength/rowCount;
+                var counter = 0;
+
+                for(var i = 0; i < rowCount; i++){
+                    dataCSV[i] = [];
+                    for(var j = 0; j < colCount; j++){
+                        dataCSV[i][j] = elems[counter++];
+                     //   console.log(dataCSV[i][j]);
                     }
                 }
             }
         });
+    });
+
+    $('.checkbox .lbl').click(function(){
+        $(this).closest('.checkbox').toggleClass('active');
+    });
+
+    $('.import-dropdown .dropdown-menu li').click(function(){
+       var ind = $(this).index();
+       var currentChecklist;
+       switch (ind){
+           case(0):
+               currentChecklist = $('.products-checklist');
+               break;
+           case(1):
+               currentChecklist = $('.categories-checklist');
+               break;
+           case(2):
+               currentChecklist = $('.producers-checklist');
+               break;
+       }
+        $('.checklist').hide();
+        currentChecklist.slideDown();
+    });
+
+    var dataCSVShow;
+    var constColProductsCount = 21;
+    var checkboxCount = $('.import-checklist .products-checklist').find('.checkbox').length;
+    $('.import-btn').click(function(e){
+        e.preventDefault();
+
+        dataCSVShow = dataCSV;
+        var colCountLocal = colCount;
+            for(var i = 0; i < rowCount; i++){
+                // временная мера, для тестирования
+                // убирает из массива столбцы которые пока не задействованы
+                dataCSVShow[i].splice(checkboxCount,constColProductsCount-checkboxCount);
+                colCountLocal = dataCSVShow[i].length;
+            }
+
+            var counterRemove = 0;
+            for(var j = 0; j < colCountLocal; j++){
+                // формируем массив для вывода на странице
+                var associateCheckbox = $('.import-checklist .products-checklist').find('.checkbox:eq('+ j +')');
+                //alert(j+" "+associateCheckbox.hasClass('active'));
+
+                if(!associateCheckbox.hasClass('active')){
+                    for(i = 0; i < rowCount; i++){
+                        dataCSVShow[i].splice(j-counterRemove,1);
+                    }
+                    counterRemove++;
+                }
+            }
+        /*for(i = 0; i < rowCount; i++){
+            alert(dataCSVShow[i].length);
+        }*/
+
+        var importType = $('.import-dropdown .btn-group-text').text();
+        var ImExType;// = com.vmesteonline.be.shop.ImExType;
+        /*for(var p in ImExType){
+            alert(p+" "+ImExType[p]);
+        }*/
+        switch (importType){
+            case 'Продукты':
+                ImExType = com.vmesteonline.be.shop.ImExType.IMPORT_PRODUCTS;
+                break;
+            case 'Категории продуктов':
+                ImExType = com.vmesteonline.be.shop.ImExType.IMPORT_CATEGORIES;
+                break;
+            case 'Производители':
+                ImExType = com.vmesteonline.be.shop.ImExType.IMPORT_PRODUCERS;
+                break;
+        }
+
+        var fieldsMap = [];
+        var filedsCounter = 0;
+        $('.checkbox.active').each(function(){
+            fieldsMap[filedsCounter++] = parseInt($(this).data('exchange'));
+        });
+        var importElement = new com.vmesteonline.be.shop.ImportElement;
+        importElement.type = ImExType;
+        importElement.filename = 'filename';
+        importElement.fieldsMap = fieldsMap;
+        importElement.url = fileUrl;
+        var temp = [];
+        temp[0] = importElement;
+
+        var dataSet = new com.vmesteonline.be.shop.DataSet;
+        dataSet.name = "name";
+        dataSet.date = nowTime;
+        dataSet.data = temp;
+        client.importData(dataSet);
+
     });
 
    /* import */
