@@ -1477,13 +1477,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		ds.date = date;
 		ds.id = 0;
 		ds.name = "TotalOrdersReport";
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop shop = getCurrentShop(pm);
 			// import get all of orders for the shop by date
 			Query q = pm.newQuery(VoOrder.class);
-			q.setFilter("shopId == " + shop.getId() + " && date == " + date
-					+ (deliveryType == DeliveryType.UNKNOWN ? "" : " && delivery == '" + deliveryType.toString() + "'"));
+			q.setFilter("shopId == " + shop.getId() + (0 == date ? "" : " && date == " + date)
+					+ (deliveryType == DeliveryType.UNKNOWN || null == deliveryType ? "" : " && delivery == '" + deliveryType.toString() + "'"));
 
 			List<VoOrder> olist = (List<VoOrder>) q.execute();
 
@@ -1503,7 +1504,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				od.createdDate = voOrder.getCreatedAt();
 				od.deliveryType = voOrder.getDelivery();
 				od.deliveryCost = voOrder.getDeliveryCost();
-				od.deliveryAddress = voOrder.getDeliveryTo().getAddressText(pm);
+				VoPostalAddress deliveryTo = voOrder.getDeliveryTo();
+				od.deliveryAddress = deliveryTo == null ? null : deliveryTo.getAddressText(pm);
 				od.paymentType = voOrder.getPaymentType();
 				od.paymentStatus = voOrder.getPaymentStatus();
 				od.comment = voOrder.getComment();
@@ -1512,7 +1514,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				od.userName = user.getName() + " " + user.getLastName();
 
 				ArrayList<OrderLineDescription> oldl = new ArrayList<OrderLineDescription>();
-				for (Long volId : voOrder.getOrderLines().values()) {
+				if(null!=voOrder.getOrderLines())
+					for (Long volId : voOrder.getOrderLines().values()) {
 					VoOrderLine vol = pm.getObjectById(VoOrderLine.class, volId);
 					VoProduct vop = pm.getObjectById(VoProduct.class, vol.getProductId());
 					OrderLineDescription old = new OrderLineDescription();
@@ -1562,10 +1565,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			return ds;
 
-		} catch (Exception e) {
-			throw new InvalidOperation(VoError.GeneralError, "Failed to export data. " + e.getMessage());
+		} catch (InvalidOperation ei) {
+			throw new InvalidOperation(VoError.GeneralError, "Failed to export data. " + ei.why);
 
-		} finally {
+		} catch (Exception e) {
+			throw new InvalidOperation(VoError.GeneralError, "Failed to export data. " + e);
+
+		}finally {
 			pm.close();
 		}
 	}
