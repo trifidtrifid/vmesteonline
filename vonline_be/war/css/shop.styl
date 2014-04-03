@@ -849,13 +849,39 @@ th.next
     .import-btn
       margin-bottom 10px
     .import-field-dropdown
+      display block
+      width 100%
       .btn
-        padding 0
+        width 100%
+        padding 5px
         border 0
         font-size 12px
-    table
+    .import-table
+      overflow-x auto
+      overflow-y visible
       margin-bottom 10px
+      &.y-overflow-hidden
+        overflow-y hidden
+      .full-text
+        display none
+        position absolute
+        z-index 2
+        text-align justify
+        width 400px
+        background #fff
+        padding 10px
+        border 1px solid #000
+        border-radius 3px
+        .close
+          float right
+          position relative
+          opacity .8
+          font-size 16px
+          margin -13px -10px 0 0
+    table
       td
+        text-align center
+        position relative
         border 1px solid #000
     .confirm-info
       display inline-block

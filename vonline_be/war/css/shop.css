@@ -1021,15 +1021,45 @@ span
 .import .import-show .import-btn {
   margin-bottom: 10px;
 }
+.import .import-show .import-field-dropdown {
+  display: block;
+  width: 100%;
+}
 .import .import-show .import-field-dropdown .btn {
-  padding: 0;
+  width: 100%;
+  padding: 5px;
   border: 0;
   font-size: 12px;
 }
-.import .import-show table {
+.import .import-show .import-table {
+  overflow-x: auto;
+  overflow-y: visible;
   margin-bottom: 10px;
 }
+.import .import-show .import-table.y-overflow-hidden {
+  overflow-y: hidden;
+}
+.import .import-show .import-table .full-text {
+  display: none;
+  position: absolute;
+  z-index: 2;
+  text-align: justify;
+  width: 400px;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 3px;
+}
+.import .import-show .import-table .full-text .close {
+  float: right;
+  position: relative;
+  opacity: 0.8;
+  font-size: 16px;
+  margin: -13px -10px 0 0;
+}
 .import .import-show table td {
+  text-align: center;
+  position: relative;
   border: 1px solid #000;
 }
 .import .import-show .confirm-info {

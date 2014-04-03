@@ -432,6 +432,10 @@
                     <div class="error-info"></div>
 
                     <div class="import-show">
+                        <h3>Поставьте соответствие данных и столбцов</h3>
+                        <div class="import-table">
+
+                        </div>
                         <div>
                             <a class="btn btn-primary btn-sm no-border import-btn" href="#">Импортировать</a>
                             <span class="confirm-info"></span>

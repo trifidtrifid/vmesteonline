@@ -626,7 +626,30 @@ $(document).ready(function(){
                     '</tbody>' +
                     '</table>';
 
-                $('.import-show').prepend(importHtml).show();
+                $('.import-table').prepend(importHtml).parent().show();
+
+                var importHeight = $('.import-table table').height();
+                $('.show-full-text').click(function(e){
+                    e.preventDefault();
+                   $(this).parent().find('.full-text').show();
+                    //$('.import-table').removeClass('y-overflow-hidden');
+                });
+                $('.full-text .close').click(function(e){
+                    e.preventDefault();
+
+                   $(this).parent().hide();
+                    //$('.import-table').addClass('y-overflow-hidden');
+                    $('.import-table table').height(importHeight);
+                });
+
+                $('.import-field-dropdown .dropdown-menu').find('li a').click(function(e){
+                    e.preventDefault();
+
+                   var fieldName = $(this).parent().text();
+                   var fieldType = $(this).parent().data('fieldtype');
+                    var currentDropdown = $(this).closest('.import-field-dropdown');
+                    currentDropdown.find('.btn-group-text').text(fieldName).parent().attr('data-fieldtype',fieldType);
+                });
             }
         });
 
@@ -673,10 +696,19 @@ $(document).ready(function(){
 
         function createImportLine(dataCSVrow,colCount){
             var importLine = "";
+            var cont = "",fullText;
 
             for(var i = 0; i < colCount; i++){
+                cont = dataCSVrow[i];
+                if (cont.length > 30){
+                   fullText = cont;
+                   cont = cont.slice(0,30);
+                   cont += " <a class='show-full-text' href='#'>...</a>"+
+                       '<div class="full-text"><a href="#" class="close">×</a>'+ fullText +'</div>';
+                }
+                //console.log(dataCSVrow[i].length);
                 importLine += '<td>'+
-                    dataCSVrow[i]+
+                    cont +
                     '</td>';
             }
 
@@ -712,34 +744,32 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         currentChecklist.slideDown();*/
     });
 
-  /*  var dataCSVShow;
-    var constColProductsCount = 21;
-    var checkboxCount = $('.import-checklist .products-checklist').find('.checkbox').length;*/
     $('.import-btn').click(function(e){
         e.preventDefault();
 
-        /*dataCSVShow = dataCSV;
-        var colCountLocal = colCount;
-            for(var i = 0; i < rowCount; i++){
-                // временная мера, для тестирования
-                // убирает из массива столбцы которые пока не задействованы
-                dataCSVShow[i].splice(checkboxCount,constColProductsCount-checkboxCount);
-                colCountLocal = dataCSVShow[i].length;
+        var dropdowns = $('.import-field-dropdown');
+        var dropdownLength = dropdowns.length;
+        var repeatDropdown = "";
+        var haveRepeat = false;
+        dropdowns.each(function(){
+            if(!haveRepeat){
+                var ind = $(this).parent().index();
+                var dropdownName = $(this).find('.btn-group-text').text();
+                 for(var i = ind+1; i < dropdownLength; i++){
+                     if (dropdownName == dropdowns.eq(i).find('.btn-group-text').text()){
+                         repeatDropdown = dropdownName;
+                         haveRepeat = true;
+                         break;
+                     }
+                 }
             }
+         });
 
-            var counterRemove = 0;
-            for(var j = 0; j < colCountLocal; j++){
-                // формируем массив для вывода на странице
-                var associateCheckbox = $('.import-checklist .products-checklist').find('.checkbox:eq('+ j +')');
-                //alert(j+" "+associateCheckbox.hasClass('active'));
-
-                if(!associateCheckbox.hasClass('active')){
-                    for(i = 0; i < rowCount; i++){
-                        dataCSVShow[i].splice(j-counterRemove,1);
-                    }
-                    counterRemove++;
-                }
-            }*/
+        var confirmInfo = $('.confirm-info');
+        if(haveRepeat){
+            confirmInfo.text('Вы указали два столбца с одинаковым занчением : ' + repeatDropdown ).show();
+        }else{
+            confirmInfo.hide();
 
         var importType = $('.import-dropdown .btn-group-text').text();
         var ImExType;
@@ -780,16 +810,19 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
         try{
             client.importData(dataSet);
-            $('.confirm-info').text('Данные успешно импортированы.').addClass('info-good').show();
+            confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
 
         }catch(e){
-            $('.confirm-info').text('Ошибка импорта.').show();
+            confirmInfo.text('Ошибка импорта.').show();
+
         }
 
         function hideConfirm(){
             $('.confirm-info').hide();
         }
         setTimeout(hideConfirm,3000);
+
+        }
 
     });
 
