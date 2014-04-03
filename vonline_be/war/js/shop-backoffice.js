@@ -502,7 +502,7 @@ $(document).ready(function(){
         var filterOrders = [];
         counter = 0;
         for(var i = 0; i < ordersLength; i++){
-            if(orders[i].userName.toLowerCase() == word.toLowerCase()){
+            if(orders[i].userName.toLowerCase().indexOf(word.toLowerCase()) != -1){
                 filterOrders[counter++] = orders[i];
             }
         }
@@ -632,15 +632,10 @@ $(document).ready(function(){
                     counterRemove++;
                 }
             }
-        /*for(i = 0; i < rowCount; i++){
-            alert(dataCSVShow[i].length);
-        }*/
 
         var importType = $('.import-dropdown .btn-group-text').text();
         var ImExType;// = com.vmesteonline.be.shop.ImExType;
-        /*for(var p in ImExType){
-            alert(p+" "+ImExType[p]);
-        }*/
+
         switch (importType){
             case 'Продукты':
                 ImExType = com.vmesteonline.be.shop.ImExType.IMPORT_PRODUCTS;

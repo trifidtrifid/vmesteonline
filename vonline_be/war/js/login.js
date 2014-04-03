@@ -78,7 +78,7 @@ $(document).ready(function(){
                 if (selector.closest('.modal-auth').length > 0){
                     document.location.replace("/shop.jsp");
                 }else{
-                    document.location.replace("/main.jsp");
+                    document.location.replace("/shop.jsp");
                 }
             } else {
                 result.val(session.error);
@@ -102,7 +102,7 @@ $(document).ready(function(){
             if ( selector.closest('.modal-auth').length > 0) {
                 document.location.replace("/shop.jsp");
             }else{
-                document.location.replace("/main.jsp");
+                document.location.replace("/shop.jsp");
             }
         }
     }
