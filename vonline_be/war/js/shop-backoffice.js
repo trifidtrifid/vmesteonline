@@ -808,51 +808,62 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         tab.find('.checkbox').addClass('active');
         tab.find('.checkbox:not(".check-all") input').attr('checked','checked');
     });
+
        $('.export-btn').click(function(e){
            e.preventDefault();
-
-          var tabs = $('.export .nav-tabs').find('li');
-          var currentInd = 0;
-          tabs.each(function(){
-              if ($(this).hasClass('active')){
-                  currentInd = $(this).index();
-              }
-          });
            var deliveryText = $('.export-delivery-dropdown .btn-group-text').text();
-           var deliveryType = getDeliveryTypeByText(deliveryText);
-
            var selectOrderDate = $('#date-picker-2').data('selectorderdate');
-           var dataSet,linksHtml;
+           if(deliveryText == 'Тип доставки'){
+              $('.error-info').text('Пожалуйста, укажите тип доставки.').show();
+           }else if(!selectOrderDate){
+               $('.error-info').text('Пожалуйста, укажите дату с заказом.').show();
+           }else{
 
-           switch (currentInd){
-               case 0:
+              var tabs = $('.export .nav-tabs').find('li');
+              var currentInd = 0;
+              tabs.each(function(){
+                  if ($(this).hasClass('active')){
+                      currentInd = $(this).index();
+                  }
+              });
 
-                   var fieldsOrderMap = [];
-                   var filedsOrderCounter = 0;
-                   $('.export-orders-checklist .checkbox.active').each(function(){
-                       fieldsOrderMap[filedsOrderCounter++] = parseInt($(this).data('exchange'));
-                   });
+               var deliveryType = getDeliveryTypeByText(deliveryText);
 
-                   var fieldsOrderLineMap = [];
-                   var filedsOrderLineCounter = 0;
-                   $('.export-orderLine-checklist .checkbox.active').each(function(){
-                       fieldsOrderLineMap[filedsOrderLineCounter++] = parseInt($(this).data('exchange'));
-                   });
+               var dataSet,linksHtml;
 
-                   dataSet = client.getTotalOrdersReport(selectOrderDate,deliveryType,fieldsOrderMap,fieldsOrderLineMap);
+               switch (currentInd){
+                   case 0:
 
-                   linksHtml = '<div class="report-links"><a href="'+ dataSet.data[1].fileName +'">Скачать отчет о заказах</a>'+
-                       '<a href="'+ dataSet.data[0].fileName +'">Скачать отчет об orderLines</a></div>';
+                       var fieldsOrderMap = [];
+                       var filedsOrderCounter = 0;
+                       $('.export-orders-checklist .checkbox.active').each(function(){
+                           fieldsOrderMap[filedsOrderCounter++] = parseInt($(this).data('exchange'));
+                       });
 
-                   break;
-               case 1:
-                   dataSet = client.getTotalProductsReport(selectOrderDate,deliveryType);
-                   break;
-               case 2:
-                   dataSet = client.getTotalPackReport(selectOrderDate,deliveryType);
-                   break;
+                       var fieldsOrderLineMap = [];
+                       var filedsOrderLineCounter = 0;
+                       $('.export-orderLine-checklist .checkbox.active').each(function(){
+                           fieldsOrderLineMap[filedsOrderLineCounter++] = parseInt($(this).data('exchange'));
+                       });
+
+                       dataSet = client.getTotalOrdersReport(selectOrderDate,deliveryType,fieldsOrderMap,fieldsOrderLineMap);
+                       /*var fieldsData = dataSet.data[0].fieldsData;
+                       var fieldsData2 = dataSet.data[1].fieldsData;
+                       alert(fieldsData[0].length);*/
+
+                       linksHtml = '<div class="report-links"><a href="'+ dataSet.data[1].fileName +'">Скачать отчет о заказах</a>'+
+                           '<a href="'+ dataSet.data[0].fileName +'">Скачать отчет об orderLines</a></div>';
+
+                       break;
+                   case 1:
+                       dataSet = client.getTotalProductsReport(selectOrderDate,deliveryType);
+                       break;
+                   case 2:
+                       dataSet = client.getTotalPackReport(selectOrderDate,deliveryType);
+                       break;
+               }
+               $(this).after(linksHtml);
            }
-           $(this).after(linksHtml);
        });
 
     /* /export */

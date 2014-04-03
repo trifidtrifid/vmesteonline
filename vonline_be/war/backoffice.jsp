@@ -509,6 +509,7 @@
                             <div class="input-group">
                                 <input class="form-control date-picker" id="date-picker-2" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                             </div>
+                            <div class="error-info"></div>
 
                             <div class="checkbox check-all">
                                 <label>
