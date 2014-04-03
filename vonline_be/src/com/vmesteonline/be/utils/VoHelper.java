@@ -18,6 +18,7 @@ import javax.jdo.PersistenceManager;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.GeoLocation;
+import com.vmesteonline.be.shop.MatrixAsList;
 
 public class VoHelper {
 
@@ -299,4 +300,21 @@ public class VoHelper {
 		valOfQuantity = valOfQuantity.setScale(scale,BigDecimal.ROUND_HALF_UP);
 		return valOfQuantity.doubleValue();
 	}
+
+	//===================================================================================================================
+	public static MatrixAsList matrixToList( List < List <String> > matrix ){
+		List<String> list = new ArrayList<String>();
+		for( int row = 0; row < matrix.size(); row ++)
+			list.addAll(matrix.get(row));
+		return new MatrixAsList(matrix.size(), list);
+	}
+	//===================================================================================================================	
+	public static List < List <String> > listToMatrix( MatrixAsList mas ){
+		List < List <String> > matrix = new ArrayList<List<String>>();
+		int rowLen = mas.getElemsSize() / mas.rowCount;
+		for( int row = 0; row < mas.rowCount; row ++ ){
+			matrix.add(new ArrayList<String>( mas.elems.subList(row * rowLen, row * (rowLen + 1))));
+		}
+		return matrix;
+	} 
 }
