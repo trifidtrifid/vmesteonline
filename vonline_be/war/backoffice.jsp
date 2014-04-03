@@ -433,6 +433,31 @@
                     <div>
                         <a class="btn btn-primary btn-sm no-border import-btn" href="#">Импортировать</a>
                     </div>
+                    <table>
+                        <tr>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                            <td>вася</td>
+                        </tr>
+                    </table>
                     <section class="catalog">
                         <table>
                             <thead>
