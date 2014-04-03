@@ -1544,7 +1544,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 				CSVHelper.writeCSVData(lbaos, CSVHelper.getFieldsMap(odInstance, ExchangeFieldType.ORDER_LINE_ID, orderLineFIelds), oldl, lfieldsData);
 
-				ordersLinesIE.setFieldsData(lfieldsData);
+				ordersLinesIE.setFieldsData(VoHelper.matrixToList(lfieldsData));
 				lbaos.close();
 				byte[] fileData = lbaos.toByteArray();
 
@@ -1556,7 +1556,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			ImportElement ordersIE = new ImportElement(ImExType.EXPORT_ORDERS, "orders.csv", orderFields);
 
 			CSVHelper.writeCSVData(baos, CSVHelper.getFieldsMap(oInstance, ExchangeFieldType.ORDER_ID, orderFields), odl, fieldsData);
-			ordersIE.setFieldsData(fieldsData);
+			ordersIE.setFieldsData( VoHelper.matrixToList(fieldsData) );
 			baos.close();
 			byte[] fileData = baos.toByteArray();
 			ordersIE.setUrl(StorageHelper.saveImage(fileData, shop.getOwnerId(), false, pm));
@@ -1660,13 +1660,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				fbaos.write(baos.toByteArray());
 				ffl.addAll(fl);
 
-				pIE.setFieldsData(fl);
+				pIE.setFieldsData(VoHelper.matrixToList(fl));
 				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), shop.getOwnerId(), false, pm));
 
 				ds.addToData(pIE);
 			}
 			fbaos.close();
-			fpIE.setFieldsData(ffl);
+			fpIE.setFieldsData(VoHelper.matrixToList(ffl));
 			fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), shop.getOwnerId(), false, pm));
 
 			ds.addToData(fpIE);
@@ -1790,13 +1790,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			fbaos.write(baos.toByteArray());
 			ffl.addAll(fl);
 
-			pIE.setFieldsData(fl);
+			pIE.setFieldsData(VoHelper.matrixToList(fl));
 			pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), userId, false, pm));
 
 			ds.addToData(pIE);
 		}
 		fbaos.close();
-		fpIE.setFieldsData(ffl);
+		fpIE.setFieldsData(VoHelper.matrixToList(ffl));
 		fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), userId, false, pm));
 
 		ds.addToData(fpIE);
