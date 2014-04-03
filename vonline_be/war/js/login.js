@@ -36,14 +36,14 @@ $(document).ready(function(){
 
         var to = $('#uname').val();
         if (!to){
-            $('.login-error').text('Введите пожалуйста e-mail').removeClass('login-good').show();
+            $('.login-error').text('Введите пожалуйста e-mail').removeClass('info-good').show();
         }else{
             var resourcefileName = "mailTemplates/changePasswordConfirm.html";
             try{
                 client.sendConfirmCode(to,resourcefileName);
-                $('.login-error').text('На ваш e-mail отправлен код').addClass('login-good').show();
+                $('.login-error').text('На ваш e-mail отправлен код').addClass('info-good').show();
             }catch(e){
-                $('.login-error').text('Такой e-mail не зарегистрирован').removeClass('login-good').show();
+                $('.login-error').text('Такой e-mail не зарегистрирован').removeClass('info-good').show();
             }
         }
         $('.login-form').height('280px');
@@ -61,7 +61,7 @@ $(document).ready(function(){
             client.confirmRequest(email,confirmCode,newPassword);
             loginError.hide();
         }catch(e){
-            loginError.text('Неверный код подтверждения !').removeClass('login-good').show();
+            loginError.text('Неверный код подтверждения !').removeClass('info-good').show();
             $('.login-form').height('280px');
         }
         if(loginError.css('display') == 'none'){
@@ -86,7 +86,7 @@ $(document).ready(function(){
             }
 
         } catch (ouch) {
-            $('.login-error').text('Вы ввели неккоректный e-mail или пароль').removeClass('login-good').show();
+            $('.login-error').text('Вы ввели неккоректный e-mail или пароль').removeClass('info-good').show();
         }
     }
 

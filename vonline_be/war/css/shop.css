@@ -1004,6 +1004,8 @@ span
 }
 .import .form-import {
   margin: 10px 0;
+  display: inline-block;
+  margin-left: 20px;
 }
 .import .form-import input[type="submit"] {
   margin-top: 10px;
@@ -1013,8 +1015,26 @@ span
 .import .producers-checklist {
   display: none;
 }
-.import .import-btn {
+.import .import-show {
+  display: none;
+}
+.import .import-show .import-btn {
   margin-bottom: 10px;
+}
+.import .import-show .import-field-dropdown .btn {
+  padding: 0;
+  border: 0;
+  font-size: 12px;
+}
+.import .import-show table {
+  margin-bottom: 10px;
+}
+.import .import-show table td {
+  border: 1px solid #000;
+}
+.import .import-show .confirm-info {
+  display: inline-block;
+  margin-left: 10px;
 }
 .import #import-data {
   display: inline-block;

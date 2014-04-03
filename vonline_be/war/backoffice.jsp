@@ -283,7 +283,7 @@
                         </ul>
                     </div>
 
-                    <div class="import-checklist">
+<%--                    <div class="import-checklist">
                         <div class="checklist products-checklist">
 
                             <div class="checkbox check-all">
@@ -422,43 +422,22 @@
                         </div>
                         <div class="checklist categories-checklist"></div>
                         <div class="checklist producers-checklist"></div>
-                    </div>
+                    </div>--%>
 
                     <form action="/file/" method="post"  class="form-import" enctype="multipart/form-data"> <%--enctype="multipart/form-data"--%>
                         <input id="import-data" type="file" name="data"/>
                         <input id="import-public" type="hidden" name="public"/> <!-- Be sure that you gona make file accessible for everyone -->
                         <input class="btn btn-primary btn-sm no-border" type="submit" value="Загрузить" />
                     </form>
+                    <div class="error-info"></div>
 
-                    <div>
-                        <a class="btn btn-primary btn-sm no-border import-btn" href="#">Импортировать</a>
+                    <div class="import-show">
+                        <div>
+                            <a class="btn btn-primary btn-sm no-border import-btn" href="#">Импортировать</a>
+                            <span class="confirm-info"></span>
+                        </div>
                     </div>
-                    <table>
-                        <tr>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                            <td>вася</td>
-                        </tr>
-                    </table>
-                    <section class="catalog">
+<%--                    <section class="catalog">
                         <table>
                             <thead>
                             <tr>
@@ -494,7 +473,7 @@
 
 
                             </tbody></table>
-                    </section>
+                    </section>--%>
                 </div>
                 <div class="export back-tab tabbable">
                     <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">

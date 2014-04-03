@@ -99,7 +99,7 @@
                 var to = userClient.getUserContacts().email;
                 var resourcefileName = "mailTemplates/changePasswordConfirm.html";
                 authClient.sendConfirmCode(to,resourcefileName);
-                $('.confirm-info').text('На ваш e-mail отправлен код').addClass('login-good').show();
+                $('.confirm-info').text('На ваш e-mail отправлен код').addClass('info-good').show();
             });
 
             $('.useConfirmCode').click(function(e){
@@ -109,13 +109,13 @@
                 var confirmInfo = $('.confirm-info');
                 try{
                     authClient.confirmRequest(email,confirmCode);
-                    confirmInfo.text('Код принят !').addClass('login-good').show();
+                    confirmInfo.text('Код принят !').addClass('info-good').show();
                     function closeConfirm(){
                         $('.account-no-confirm').slideUp();
                     }
                     setTimeout(closeConfirm,4000);
                 }catch(e){
-                    confirmInfo.text('Неверный код подтверждения !').removeClass('login-good').show();
+                    confirmInfo.text('Неверный код подтверждения !').removeClass('info-good').show();
                 }
             });
         }

@@ -537,8 +537,12 @@ $(document).ready(function(){
     var fileUrl;
     $('.form-import').submit(function(e){
         e.preventDefault();
-
         var path = $('#import-data').val();
+        if($('.import-dropdown .btn-group-text').text() == 'Тип импортируемых данных'){
+           $('.import').find('.error-info').text('Пожалуйста, укажите тип импортируемых данных.').show();
+        }else if(!path){
+            $('.import').find('.error-info').text('Пожалуйста, выберите файл.').show();
+        }else{
         var data = path;
         var importPublic = $('#import-public').val();
         path = path.split("\\");
@@ -578,16 +582,120 @@ $(document).ready(function(){
                      //   console.log(dataCSV[i][j]);
                     }
                 }
+
+                // формирование таблицы для вывода на экран
+                var importType = $('.import-dropdown .btn-group-text').text();
+                var dropdownColArray = [];
+                var dropdownColArrayFieldType = [];
+                var ExField = com.vmesteonline.be.shop.ExchangeFieldType;
+                counter = 0;
+
+                switch (importType){
+                    case "Продукты" :
+                        for(var p in ExField){
+                            if (ExField[p] >= 300 && ExField[p] < 330  ){
+                                dropdownColArray[counter] = p;
+                                dropdownColArrayFieldType[counter++] = ExField[p];
+                            }
+                        }
+                        break;
+                    case "Категории продуктов" :
+                        for(var p in ExField){
+                            if (ExField[p] >= 200 && ExField[p] < 230  ){
+                                dropdownColArray[counter] = p;
+                                dropdownColArrayFieldType[counter++] = ExField[p];
+                            }
+                        }
+                        break;
+                    case "Производители" :
+                        for(var p in ExField){
+                            if (ExField[p] >= 100 && ExField[p] < 130  ){
+                                dropdownColArray[counter] = p;
+                                dropdownColArrayFieldType[counter++] = ExField[p];
+                            }
+                        }
+                        break;
+                }
+                var importHtml = '<table><thead>' +
+                    '<tr>' +
+                    createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType)+
+                    '</tr>'+
+                    '</thead>' +
+                    '<tbody>'+
+                    createImportTable(dataCSV,dropdownColArray.length)+
+                    '</tbody>' +
+                    '</table>';
+
+                $('.import-show').prepend(importHtml).show();
             }
         });
+
+        }
+    });
+
+    function createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType){
+
+        var importDropdownLine = "";
+        var importDropdownLineLength = dropdownColArray.length;
+
+        var importDropdownMenu = "";
+        for(var i = 0; i < importDropdownLineLength; i++){
+            importDropdownMenu += '<li data-fieldtype="'+ dropdownColArrayFieldType[i] +'"><a href="#">'+ dropdownColArray[i] +'</a></li>';
+        }
+
+        for(i = 0; i < importDropdownLineLength; i++){
+        importDropdownLine += '<td>' +
+            '<div class="btn-group import-field-dropdown">'+
+            '<button data-toggle="dropdown" data-fieldtype="'+ dropdownColArrayFieldType[i] +'" class="btn btn-info btn-sm dropdown-toggle no-border">'+
+            '<span class="btn-group-text">'+ dropdownColArray[i] +'</span>'+
+            '<span class="icon-caret-down icon-on-right"></span>'+
+            '</button>'+
+            '<ul class="dropdown-menu dropdown-blue">'+
+            importDropdownMenu+
+            '</ul>'+
+            '</div>'+
+            '</td>';
+        }
+
+        return importDropdownLine;
+
+    }
+
+    function createImportTable(dataCSV,colCount){
+        var importTable = "";
+        var dataCSVLength = dataCSV.length;
+
+        for(var i = 0; i < dataCSVLength; i++){
+            importTable += '<tr>'+
+                createImportLine(dataCSV[i],colCount)+
+            '</tr>';
+        }
+
+        function createImportLine(dataCSVrow,colCount){
+            var importLine = "";
+
+            for(var i = 0; i < colCount; i++){
+                importLine += '<td>'+
+                    dataCSVrow[i]+
+                    '</td>';
+            }
+
+            return importLine;
+        }
+        return importTable;
+    }
+
+    $('#import-data').click(function(){
+        $('.import').find('.error-info').hide();
     });
 
     $('.checkbox .lbl').click(function(){
         $(this).closest('.checkbox').toggleClass('active');
     });
 
-    $('.import-dropdown .dropdown-menu li').click(function(){
-       var ind = $(this).index();
+$('.import-dropdown .dropdown-menu li').click(function(){
+    $('.import').find('.error-info').hide();
+       /*var ind = $(this).index();
        var currentChecklist;
        switch (ind){
            case(0):
@@ -601,16 +709,16 @@ $(document).ready(function(){
                break;
        }
         $('.checklist').hide();
-        currentChecklist.slideDown();
+        currentChecklist.slideDown();*/
     });
 
-    var dataCSVShow;
+  /*  var dataCSVShow;
     var constColProductsCount = 21;
-    var checkboxCount = $('.import-checklist .products-checklist').find('.checkbox').length;
+    var checkboxCount = $('.import-checklist .products-checklist').find('.checkbox').length;*/
     $('.import-btn').click(function(e){
         e.preventDefault();
 
-        dataCSVShow = dataCSV;
+        /*dataCSVShow = dataCSV;
         var colCountLocal = colCount;
             for(var i = 0; i < rowCount; i++){
                 // временная мера, для тестирования
@@ -631,10 +739,10 @@ $(document).ready(function(){
                     }
                     counterRemove++;
                 }
-            }
+            }*/
 
         var importType = $('.import-dropdown .btn-group-text').text();
-        var ImExType;// = com.vmesteonline.be.shop.ImExType;
+        var ImExType;
 
         switch (importType){
             case 'Продукты':
@@ -649,10 +757,14 @@ $(document).ready(function(){
         }
 
         var fieldsMap = [];
-        var filedsCounter = 0;
-        $('.checkbox.active:not(".check-all")').each(function(){
-            fieldsMap[filedsCounter++] = parseInt($(this).data('exchange'));
+        var fieldsCounter = 0;
+        $('.import .import-field-dropdown').each(function(){
+            fieldsMap[fieldsCounter++] = parseInt($(this).find('.btn').data('fieldtype'));
         });
+        /*$('.checkbox.active:not(".check-all")').each(function(){
+            fieldsMap[fieldsCounter++] = parseInt($(this).data('exchange'));
+        });*/
+
         var importElement = new com.vmesteonline.be.shop.ImportElement;
         importElement.type = ImExType;
         importElement.filename = 'filename';
@@ -665,7 +777,19 @@ $(document).ready(function(){
         dataSet.name = "name";
         dataSet.date = nowTime;
         dataSet.data = temp;
-        client.importData(dataSet);
+
+        try{
+            client.importData(dataSet);
+            $('.confirm-info').text('Данные успешно импортированы.').addClass('info-good').show();
+
+        }catch(e){
+            $('.confirm-info').text('Ошибка импорта.').show();
+        }
+
+        function hideConfirm(){
+            $('.confirm-info').hide();
+        }
+        setTimeout(hideConfirm,3000);
 
     });
 
