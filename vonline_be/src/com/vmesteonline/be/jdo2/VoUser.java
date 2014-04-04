@@ -2,7 +2,7 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -239,8 +239,7 @@ public class VoUser extends GeoLocation {
 
 	@Persistent
 	@Unindexed
-	@Unowned
-	private Calendar birthday;
+	private long birthday;
 
 	@Persistent
 	@Unindexed
