@@ -12,7 +12,7 @@ var Rubrics = client.getUserRubrics();
 
 transport = new Thrift.Transport("/thrift/MessageService");
 protocol = new Thrift.Protocol(transport);
-client = new com.vmesteonline.be.thrift.messageservice.MessageServiceClient(protocol);
+client = new com.vmesteonline.be.messageservice.MessageServiceClient(protocol);
 
     /* глобальные переменные */
     var topics,
