@@ -162,8 +162,8 @@ public class Defaults {
 
 		try {
 			ShopServiceImpl ssi = new ShopServiceImpl("123");
-			//AuthServiceImpl asi = new AuthServiceImpl("123");
-			//asi.login(user1email, user1pass);
+			AuthServiceImpl asi = new AuthServiceImpl("123");
+			asi.login(user1email, user1pass);
 
 			PersistenceManager pm = PMF.getPm();
 			PostalAddress postalAddress;
