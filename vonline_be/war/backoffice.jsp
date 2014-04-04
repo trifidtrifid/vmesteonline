@@ -609,7 +609,6 @@
                                 </div>
                             </div>
 
-
                             <div class="export-orderLine-checklist">
                                 <div class="checkbox"  data-exchange="1100">
                                     <label>
@@ -816,6 +815,10 @@
                             </div>--%>
 
                             <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
+
+                            <div class="export-table">
+
+                            </div>
                         </div>
 
                         <div id="products" class="tab-pane">

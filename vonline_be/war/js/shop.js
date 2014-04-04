@@ -1,3 +1,7 @@
+// глобальные переменные для callback полсе логина в реальном времени
+var callbacks = $.Callbacks();
+var selectorForCallbacks;
+
 $(document).ready(function(){
     try{
     var transport = new Thrift.Transport("/thrift/ShopService");
@@ -1663,7 +1667,6 @@ $(document).ready(function(){
     }
 
     var flagFromBasketClick = 0;
-    var selectorForCallbacks;
 
     function BasketTrigger(selector){
         selector.trigger('click');
@@ -1800,7 +1803,8 @@ $(document).ready(function(){
                 // если пользователь не залогинен
                 selectorForCallbacks = $(this);
                 callbacks.add(BasketTrigger);
-                $('.modal-auth').modal();
+                //$('.modal-auth').modal();
+                openModalAuth();
             }else{
                 // если пользователь залогинен
                 var currentProductSelector = $(this).closest('tr');
@@ -2137,7 +2141,8 @@ $(document).ready(function(){
             }else{
                 if (!globalUserAuth){
                     callbacks.add(GoToOrdersTrigger);
-                    $('.modal-auth').modal();
+                    //$('.modal-auth').modal();
+                    openModalAuth();
                 }else{
                     $('.shop-products').hide();
                     var nowTime = parseInt(new Date().getTime()/1000);
@@ -2164,124 +2169,19 @@ $(document).ready(function(){
         }
     });
 
-// логин
+    function openModalAuth(){
+        var modalAuth = $('.modal-auth');
+        modalAuth.load('login.jsp .container',function(){
+            var closeHtml = '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
+            modalAuth.find('.reg-form').prepend(closeHtml);
 
-    var callbacks = $.Callbacks();
+            $.ajax({
+                url: 'js/login.js',
+                dataType: 'script'
+            });
 
-    transport = new Thrift.Transport("/thrift/AuthService");
-    protocol = new Thrift.Protocol(transport);
-    var clientAuth = new com.vmesteonline.be.AuthServiceClient(protocol);
-
-    $('.user-short').click(function(){
-        if ($(this).hasClass('no-login')){
-            $(this).find('.user-menu').hide();
-        }else{
-            $(this).find('.user-menu').toggle();
-        }
-    });
-
-    $('.login-form .btn-submit').click(function(e){
-        e.preventDefault();
-        login($(this));
-    });
-    $('.reg-form .btn-submit').click(function(e){
-        e.preventDefault();
-        reg($(this));
-    });
-    $('.remember-link').click(function(e){
-        e.preventDefault();
-        //clientAuth.sendChangePasswordCodeRequest('забыл пароль адресат','sdf%code%sdf%name%sdf');
-        //clientAuth.changePasswordOfUser('qq@qq.ru','qq','qq');
-    });
-
-    function AuthRealTime(selector){
-        globalUserAuth = true;
-        selector.closest('.modal-auth').modal('hide');
-        // ставим shopID
-        var shops = client.getShops();
-        client.getShop(shops[0].id);
-
-        var shortUserInfo = userServiceClient.getShortUserInfo();
-        var shortUserInfoHtml =  '<small>'+ shortUserInfo.firstName +'</small>'+ shortUserInfo.lastName;
-        $('.user-info').html(shortUserInfoHtml).after('<i class="icon-caret-down"></i>');
-
-        var dropdownToggle = $('.dropdown-toggle');
-        dropdownToggle.removeClass('no-login');
-
-        callbacks.fire(selectorForCallbacks);
-        callbacks.empty();
+        }).modal();
     }
 
-    function login(selector) {
-        var result = $('#result');
-        try {
-            var accessGranted = clientAuth.login($("#uname").val(), $("#password").val());
-            if (accessGranted) {
-                $('.login-error').hide();
-                if (selector.closest('.modal-auth').length > 0){
-                    //document.location.replace("/shop.jsp");
-                    AuthRealTime(selector);
-                }else{
-                    document.location.replace("/main.jsp");
-                }
-            } else {
-                result.val(session.error);
-                result.css('color', 'black');
-            }
-
-        } catch (ouch) {
-            $('.login-error').show();
-        }
-    }
-
-    function reg(selector) {
-        if (clientAuth.checkEmailRegistered($("#email").val())) {
-            $('.email-alert').css('display','block');
-        }else{
-            var userId = clientAuth.registerNewUser($("#login").val(), "", $("#pass").val(), $("#email").val());
-            clientAuth.login($("#email").val(), $("#pass").val());
-            if ( selector.closest('.modal-auth').length > 0) {
-                //document.location.replace("/shop.jsp");
-                AuthRealTime(selector);
-            }else{
-                document.location.replace("/main.jsp");
-            }
-        }
-    }
-
-    /*----*/
-    /*var nowTime = parseInt(new Date().getTime()/1000);
-    nowTime -= nowTime%86400;
-    var dateArray = [];
-    var day = 3600*24;
-    dateArray[nowTime] = 1;
-    dateArray[nowTime+day] = 1;
-    dateArray[nowTime+2*day] = 2;
-    dateArray[nowTime+3*day] = 2;
-    dateArray[nowTime+4*day] = 1;
-    dateArray[nowTime+6*day] = 1;
-    dateArray[nowTime+9*day] = 1;
-    dateArray[nowTime-9*day] = 2;
-    client.setDates(dateArray);
-    //var datesArray = client.getDates(nowTime-10*day,nowTime+10*day);
-    for (var p in datesArray){
-        //console.log(p);
-    }*/
-    /*------*/
-
-    /*var orderDate = parseInt(new Date().getTime()/1000);
-     orderDate -= orderDate%86400
-     var day = 3600*24;
-     //var orders = client.getOrders(orderDate-day,orderDate+day);
-     var orders = client.getOrders(0,orderDate+60*day);
-     var ordersLength = orders.length;
-     /*var orderList = [];
-     var counter = 0;
-     for (var i = 0; i < ordersLength; i++){
-     if (orders[i].date = orderDate){
-     orderList[counter++] = orders[i];
-     }
-     console.log(i+ " "+orders[i].date+" "+orderDate+" "+orders[i].id);
-     }*/
 
 });

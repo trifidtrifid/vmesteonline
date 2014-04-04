@@ -697,6 +697,7 @@ $(document).ready(function(){
         function createImportLine(dataCSVrow,colCount){
             var importLine = "";
             var cont = "",fullText;
+            //alert(dataCSVrow.length+" "+colCount);
 
             for(var i = 0; i < colCount; i++){
                 cont = dataCSVrow[i];
@@ -869,23 +870,62 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
                        var fieldsOrderMap = [];
                        var filedsOrderCounter = 0;
-                       $('.export-orders-checklist .checkbox.active').each(function(){
+                       var ordersCheckbox =  $('.export-orders-checklist .checkbox.active');
+                       var headColOrderArray = [];
+                       counter = 0;
+
+                       ordersCheckbox.each(function(){
                            fieldsOrderMap[filedsOrderCounter++] = parseInt($(this).data('exchange'));
+                           headColOrderArray[counter++] = $(this).find('.lbl').text();
                        });
 
                        var fieldsOrderLineMap = [];
                        var filedsOrderLineCounter = 0;
-                       $('.export-orderLine-checklist .checkbox.active').each(function(){
+                       var orderLineCheckbox =  $('.export-orderLine-checklist .checkbox.active');
+                       var headColOrderLineArray = [];
+                       counter = 0;
+
+                       orderLineCheckbox.each(function(){
                            fieldsOrderLineMap[filedsOrderLineCounter++] = parseInt($(this).data('exchange'));
+                           headColOrderLineArray[counter++] = $(this).find('.lbl').text();
                        });
 
                        dataSet = client.getTotalOrdersReport(selectOrderDate,deliveryType,fieldsOrderMap,fieldsOrderLineMap);
-                       /*var fieldsData = dataSet.data[0].fieldsData;
-                       var fieldsData2 = dataSet.data[1].fieldsData;
-                       alert(fieldsData[0].length);*/
 
-                       linksHtml = '<div class="report-links"><a href="'+ dataSet.data[1].fileName +'">Скачать отчет о заказах</a>'+
-                           '<a href="'+ dataSet.data[0].fileName +'">Скачать отчет об orderLines</a></div>';
+                       var tablesCount = dataSet.data.length;  // кол-во таблиц в нашем отчете
+
+                       var exportData = [],
+                           fieldsData,rowCount,colCount,
+                           reportTable;
+                       for(var z = 0 ; z < tablesCount; z++){
+                           // формирование данных экспорта для каждой таблицы
+                           exportData = [];
+                           fieldsData = dataSet.data[z].fieldsData;
+                           rowCount = fieldsData.rowCount;
+                           colCount = fieldsData.elems.length/rowCount;
+                           counter = 0;
+                           for(var i = 0; i < rowCount; i++){
+                               exportData[i] = [];
+                               for(var j = 0; j < colCount; j++){
+                                   exportData[i][j] = fieldsData.elems[counter++];
+                               }
+                           }
+
+                           reportTable = '<table>' +
+                               '<thead>' +
+                               '<tr>' +
+                               createExportHeadLine(headColOrderArray)+
+                               '</tr>'+
+                               '</thead>'+
+                               '<tbody>' +
+                               createExportTable(exportData,colCount)+
+                               '</tbody>'+
+                               '</table>';
+
+                           reportTable += '<div class="report-link"><a href="'+ dataSet.data[z].fileName +'">Скачать отчет</a>';
+
+                           $('.export-table').append(reportTable);
+                       }
 
                        break;
                    case 1:
@@ -898,6 +938,53 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                $(this).after(linksHtml);
            }
        });
+
+    function createExportHeadLine(headColArray){
+
+        var exportHeadLine = "";
+        var exportHeadLineLength = headColArray.length;
+
+        for(i = 0; i < exportHeadLineLength; i++){
+            exportHeadLine += '<td>' +
+                headColArray[i]+
+                '</td>';
+        }
+
+        return exportHeadLine;
+
+    }
+
+    function createExportTable(exportData,colCount){
+        var exportTable = "";
+        var exportDataLength = exportData.length;
+
+        for(var i = 0; i < exportDataLength; i++){
+            exportTable += '<tr>'+
+                createExportLine(exportData[i],colCount)+
+                '</tr>';
+        }
+
+        function createExportLine(exportDatarow,colCount){
+            var exportLine = "";
+            var cont = "",fullText;
+
+            for(var i = 0; i < colCount; i++){
+                cont = exportDatarow[i];
+                if (cont.length > 30){
+                    fullText = cont;
+                    cont = cont.slice(0,30);
+                    cont += " <a class='show-full-text' href='#'>...</a>"+
+                        '<div class="full-text"><a href="#" class="close">×</a>'+ fullText +'</div>';
+                }
+                exportLine += '<td>'+
+                    cont +
+                    '</td>';
+            }
+
+            return exportLine;
+        }
+        return exportTable;
+    }
 
     /* /export */
 

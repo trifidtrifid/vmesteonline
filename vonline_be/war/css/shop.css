@@ -957,13 +957,18 @@ span
 }
 /* popup логина */
 .modal-auth {
-  width: 643px;
+  width: 644px;
   overflow: hidden;
-  height: 260px;
+  height: 290px;
   margin-left: -327px;
+  background: none;
 }
 .modal-auth .login-forms {
   margin: 0;
+}
+.modal-auth .login-forms form {
+  background: #fff;
+  height: 270px;
 }
 .modal-auth .close {
   margin-right: -5px;
@@ -1077,13 +1082,13 @@ span
   display: inline-block;
   margin-bottom: 10px;
 }
-.export .report-links {
+.export .report-link {
   line-height: 34px;
   display: inline-block;
   vertical-align: middle;
   margin-top: 15px;
 }
-.export .report-links a {
+.export .report-link a {
   display: inline-block;
   margin: 0 0 0 10px;
   vertical-align: middle;
