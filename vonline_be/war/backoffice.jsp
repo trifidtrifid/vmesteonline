@@ -432,6 +432,10 @@
                     <div class="error-info"></div>
 
                     <div class="import-show">
+                        <h3>Поставьте соответствие данных и столбцов</h3>
+                        <div class="import-table">
+
+                        </div>
                         <div>
                             <a class="btn btn-primary btn-sm no-border import-btn" href="#">Импортировать</a>
                             <span class="confirm-info"></span>
@@ -509,6 +513,7 @@
                             <div class="input-group">
                                 <input class="form-control date-picker" id="date-picker-2" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                             </div>
+                            <div class="error-info"></div>
 
                             <div class="checkbox check-all">
                                 <label>
@@ -603,7 +608,6 @@
                                     </label>
                                 </div>
                             </div>
-
 
                             <div class="export-orderLine-checklist">
                                 <div class="checkbox"  data-exchange="1100">
@@ -811,6 +815,10 @@
                             </div>--%>
 
                             <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
+
+                            <div class="export-table">
+
+                            </div>
                         </div>
 
                         <div id="products" class="tab-pane">

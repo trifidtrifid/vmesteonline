@@ -957,13 +957,18 @@ span
 }
 /* popup логина */
 .modal-auth {
-  width: 643px;
+  width: 644px;
   overflow: hidden;
-  height: 260px;
+  height: 290px;
   margin-left: -327px;
+  background: none;
 }
 .modal-auth .login-forms {
   margin: 0;
+}
+.modal-auth .login-forms form {
+  background: #fff;
+  height: 270px;
 }
 .modal-auth .close {
   margin-right: -5px;
@@ -1021,15 +1026,45 @@ span
 .import .import-show .import-btn {
   margin-bottom: 10px;
 }
+.import .import-show .import-field-dropdown {
+  display: block;
+  width: 100%;
+}
 .import .import-show .import-field-dropdown .btn {
-  padding: 0;
+  width: 100%;
+  padding: 5px;
   border: 0;
   font-size: 12px;
 }
-.import .import-show table {
+.import .import-show .import-table {
+  overflow-x: auto;
+  overflow-y: visible;
   margin-bottom: 10px;
 }
+.import .import-show .import-table.y-overflow-hidden {
+  overflow-y: hidden;
+}
+.import .import-show .import-table .full-text {
+  display: none;
+  position: absolute;
+  z-index: 2;
+  text-align: justify;
+  width: 400px;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 3px;
+}
+.import .import-show .import-table .full-text .close {
+  float: right;
+  position: relative;
+  opacity: 0.8;
+  font-size: 16px;
+  margin: -13px -10px 0 0;
+}
 .import .import-show table td {
+  text-align: center;
+  position: relative;
   border: 1px solid #000;
 }
 .import .import-show .confirm-info {
@@ -1047,13 +1082,13 @@ span
   display: inline-block;
   margin-bottom: 10px;
 }
-.export .report-links {
+.export .report-link {
   line-height: 34px;
   display: inline-block;
   vertical-align: middle;
   margin-top: 15px;
 }
-.export .report-links a {
+.export .report-link a {
   display: inline-block;
   margin: 0 0 0 10px;
   vertical-align: middle;

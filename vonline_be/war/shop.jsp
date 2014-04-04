@@ -63,7 +63,7 @@
     }
 
     List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(catId);
-    ProductListPart productsListPart = shopService.getProducts(0,10,catId);
+    ProductListPart productsListPart = shopService.getProducts(0,30,catId);
     if (productsListPart.products.size() > 0){
         pageContext.setAttribute("products",productsListPart.products);
     }
@@ -378,7 +378,7 @@
 		</div>
 
 		<div class="modal modal-auth">
-			<div class="login-forms">
+<%--			<div class="login-forms">
 				<form action="#" class="registration-form login-form">
 					<h1>Вход</h1>
 					<div class="reg-now">
@@ -416,7 +416,7 @@
 						<button class="btn-submit btn-sm no-border">Регистрация</button>
 					</div>
 				</form>
-			</div>
+			</div>--%>
 		</div>
 
 	</div>

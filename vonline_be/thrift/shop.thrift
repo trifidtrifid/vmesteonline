@@ -144,12 +144,17 @@ enum ExchangeFieldType {
 enum ImExType { IMPORT_SHOP = 10, IMPORT_PRODUCERS, IMPORT_CATEGORIES, IMPORT_PRODUCTS, 
 	EXPORT_ORDERS=20, EXPORT_ORDER_LINES, EXPORT_TOTAL_PRODUCT, EXPORT_TOTAL_PACK  }
 
+struct MatrixAsList {
+	1:i32 rowCount,
+	2:list<string> elems
+}
+
 struct ImportElement {
 	1:ImExType type,
 	2:string fileName,
 	3:map<i32,ExchangeFieldType> fieldsMap,
 	4:optional string url,
-	5:optional list<list<string>> fieldsData, //returned in response if empty in request
+	5:optional MatrixAsList fieldsData, //returned in response if empty in request
 }
 
 struct DataSet {
@@ -169,11 +174,6 @@ struct IdNameChilds {
 	1:i64 id,
 	2:string name,
 	3:list<IdName> childs,
-}
-
-struct MatrixAsList {
-	1:i32 rowCount,
-	2:list<string> elems
 }
 
 service ShopService {

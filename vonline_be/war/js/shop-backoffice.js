@@ -626,7 +626,30 @@ $(document).ready(function(){
                     '</tbody>' +
                     '</table>';
 
-                $('.import-show').prepend(importHtml).show();
+                $('.import-table').prepend(importHtml).parent().show();
+
+                var importHeight = $('.import-table table').height();
+                $('.show-full-text').click(function(e){
+                    e.preventDefault();
+                   $(this).parent().find('.full-text').show();
+                    //$('.import-table').removeClass('y-overflow-hidden');
+                });
+                $('.full-text .close').click(function(e){
+                    e.preventDefault();
+
+                   $(this).parent().hide();
+                    //$('.import-table').addClass('y-overflow-hidden');
+                    $('.import-table table').height(importHeight);
+                });
+
+                $('.import-field-dropdown .dropdown-menu').find('li a').click(function(e){
+                    e.preventDefault();
+
+                   var fieldName = $(this).parent().text();
+                   var fieldType = $(this).parent().data('fieldtype');
+                    var currentDropdown = $(this).closest('.import-field-dropdown');
+                    currentDropdown.find('.btn-group-text').text(fieldName).parent().attr('data-fieldtype',fieldType);
+                });
             }
         });
 
@@ -673,10 +696,20 @@ $(document).ready(function(){
 
         function createImportLine(dataCSVrow,colCount){
             var importLine = "";
+            var cont = "",fullText;
+            //alert(dataCSVrow.length+" "+colCount);
 
             for(var i = 0; i < colCount; i++){
+                cont = dataCSVrow[i];
+                if (cont.length > 30){
+                   fullText = cont;
+                   cont = cont.slice(0,30);
+                   cont += " <a class='show-full-text' href='#'>...</a>"+
+                       '<div class="full-text"><a href="#" class="close">×</a>'+ fullText +'</div>';
+                }
+                //console.log(dataCSVrow[i].length);
                 importLine += '<td>'+
-                    dataCSVrow[i]+
+                    cont +
                     '</td>';
             }
 
@@ -712,34 +745,32 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         currentChecklist.slideDown();*/
     });
 
-  /*  var dataCSVShow;
-    var constColProductsCount = 21;
-    var checkboxCount = $('.import-checklist .products-checklist').find('.checkbox').length;*/
     $('.import-btn').click(function(e){
         e.preventDefault();
 
-        /*dataCSVShow = dataCSV;
-        var colCountLocal = colCount;
-            for(var i = 0; i < rowCount; i++){
-                // временная мера, для тестирования
-                // убирает из массива столбцы которые пока не задействованы
-                dataCSVShow[i].splice(checkboxCount,constColProductsCount-checkboxCount);
-                colCountLocal = dataCSVShow[i].length;
+        var dropdowns = $('.import-field-dropdown');
+        var dropdownLength = dropdowns.length;
+        var repeatDropdown = "";
+        var haveRepeat = false;
+        dropdowns.each(function(){
+            if(!haveRepeat){
+                var ind = $(this).parent().index();
+                var dropdownName = $(this).find('.btn-group-text').text();
+                 for(var i = ind+1; i < dropdownLength; i++){
+                     if (dropdownName == dropdowns.eq(i).find('.btn-group-text').text()){
+                         repeatDropdown = dropdownName;
+                         haveRepeat = true;
+                         break;
+                     }
+                 }
             }
+         });
 
-            var counterRemove = 0;
-            for(var j = 0; j < colCountLocal; j++){
-                // формируем массив для вывода на странице
-                var associateCheckbox = $('.import-checklist .products-checklist').find('.checkbox:eq('+ j +')');
-                //alert(j+" "+associateCheckbox.hasClass('active'));
-
-                if(!associateCheckbox.hasClass('active')){
-                    for(i = 0; i < rowCount; i++){
-                        dataCSVShow[i].splice(j-counterRemove,1);
-                    }
-                    counterRemove++;
-                }
-            }*/
+        var confirmInfo = $('.confirm-info');
+        if(haveRepeat){
+            confirmInfo.text('Вы указали два столбца с одинаковым занчением : ' + repeatDropdown ).show();
+        }else{
+            confirmInfo.hide();
 
         var importType = $('.import-dropdown .btn-group-text').text();
         var ImExType;
@@ -780,16 +811,19 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
         try{
             client.importData(dataSet);
-            $('.confirm-info').text('Данные успешно импортированы.').addClass('info-good').show();
+            confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
 
         }catch(e){
-            $('.confirm-info').text('Ошибка импорта.').show();
+            confirmInfo.text('Ошибка импорта.').show();
+
         }
 
         function hideConfirm(){
             $('.confirm-info').hide();
         }
         setTimeout(hideConfirm,3000);
+
+        }
 
     });
 
@@ -808,52 +842,149 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         tab.find('.checkbox').addClass('active');
         tab.find('.checkbox:not(".check-all") input').attr('checked','checked');
     });
+
        $('.export-btn').click(function(e){
            e.preventDefault();
-
-          var tabs = $('.export .nav-tabs').find('li');
-          var currentInd = 0;
-          tabs.each(function(){
-              if ($(this).hasClass('active')){
-                  currentInd = $(this).index();
-              }
-          });
            var deliveryText = $('.export-delivery-dropdown .btn-group-text').text();
-           var deliveryType = getDeliveryTypeByText(deliveryText);
-
            var selectOrderDate = $('#date-picker-2').data('selectorderdate');
-           var dataSet,linksHtml;
+           if(deliveryText == 'Тип доставки'){
+              $('.error-info').text('Пожалуйста, укажите тип доставки.').show();
+           }else if(!selectOrderDate){
+               $('.error-info').text('Пожалуйста, укажите дату с заказом.').show();
+           }else{
 
-           switch (currentInd){
-               case 0:
+              var tabs = $('.export .nav-tabs').find('li');
+              var currentInd = 0;
+              tabs.each(function(){
+                  if ($(this).hasClass('active')){
+                      currentInd = $(this).index();
+                  }
+              });
 
-                   var fieldsOrderMap = [];
-                   var filedsOrderCounter = 0;
-                   $('.export-orders-checklist .checkbox.active').each(function(){
-                       fieldsOrderMap[filedsOrderCounter++] = parseInt($(this).data('exchange'));
-                   });
+               var deliveryType = getDeliveryTypeByText(deliveryText);
 
-                   var fieldsOrderLineMap = [];
-                   var filedsOrderLineCounter = 0;
-                   $('.export-orderLine-checklist .checkbox.active').each(function(){
-                       fieldsOrderLineMap[filedsOrderLineCounter++] = parseInt($(this).data('exchange'));
-                   });
+               var dataSet,linksHtml;
 
-                   dataSet = client.getTotalOrdersReport(selectOrderDate,deliveryType,fieldsOrderMap,fieldsOrderLineMap);
+               switch (currentInd){
+                   case 0:
 
-                   linksHtml = '<div class="report-links"><a href="'+ dataSet.data[1].fileName +'">Скачать отчет о заказах</a>'+
-                       '<a href="'+ dataSet.data[0].fileName +'">Скачать отчет об orderLines</a></div>';
+                       var fieldsOrderMap = [];
+                       var filedsOrderCounter = 0;
+                       var ordersCheckbox =  $('.export-orders-checklist .checkbox.active');
+                       var headColOrderArray = [];
+                       counter = 0;
 
-                   break;
-               case 1:
-                   dataSet = client.getTotalProductsReport(selectOrderDate,deliveryType);
-                   break;
-               case 2:
-                   dataSet = client.getTotalPackReport(selectOrderDate,deliveryType);
-                   break;
+                       ordersCheckbox.each(function(){
+                           fieldsOrderMap[filedsOrderCounter++] = parseInt($(this).data('exchange'));
+                           headColOrderArray[counter++] = $(this).find('.lbl').text();
+                       });
+
+                       var fieldsOrderLineMap = [];
+                       var filedsOrderLineCounter = 0;
+                       var orderLineCheckbox =  $('.export-orderLine-checklist .checkbox.active');
+                       var headColOrderLineArray = [];
+                       counter = 0;
+
+                       orderLineCheckbox.each(function(){
+                           fieldsOrderLineMap[filedsOrderLineCounter++] = parseInt($(this).data('exchange'));
+                           headColOrderLineArray[counter++] = $(this).find('.lbl').text();
+                       });
+
+                       dataSet = client.getTotalOrdersReport(selectOrderDate,deliveryType,fieldsOrderMap,fieldsOrderLineMap);
+
+                       var tablesCount = dataSet.data.length;  // кол-во таблиц в нашем отчете
+
+                       var exportData = [],
+                           fieldsData,rowCount,colCount,
+                           reportTable;
+                       for(var z = 0 ; z < tablesCount; z++){
+                           // формирование данных экспорта для каждой таблицы
+                           exportData = [];
+                           fieldsData = dataSet.data[z].fieldsData;
+                           rowCount = fieldsData.rowCount;
+                           colCount = fieldsData.elems.length/rowCount;
+                           counter = 0;
+                           for(var i = 0; i < rowCount; i++){
+                               exportData[i] = [];
+                               for(var j = 0; j < colCount; j++){
+                                   exportData[i][j] = fieldsData.elems[counter++];
+                               }
+                           }
+
+                           reportTable = '<table>' +
+                               '<thead>' +
+                               '<tr>' +
+                               createExportHeadLine(headColOrderArray)+
+                               '</tr>'+
+                               '</thead>'+
+                               '<tbody>' +
+                               createExportTable(exportData,colCount)+
+                               '</tbody>'+
+                               '</table>';
+
+                           reportTable += '<div class="report-link"><a href="'+ dataSet.data[z].fileName +'">Скачать отчет</a>';
+
+                           $('.export-table').append(reportTable);
+                       }
+
+                       break;
+                   case 1:
+                       dataSet = client.getTotalProductsReport(selectOrderDate,deliveryType);
+                       break;
+                   case 2:
+                       dataSet = client.getTotalPackReport(selectOrderDate,deliveryType);
+                       break;
+               }
+               $(this).after(linksHtml);
            }
-           $(this).after(linksHtml);
        });
+
+    function createExportHeadLine(headColArray){
+
+        var exportHeadLine = "";
+        var exportHeadLineLength = headColArray.length;
+
+        for(i = 0; i < exportHeadLineLength; i++){
+            exportHeadLine += '<td>' +
+                headColArray[i]+
+                '</td>';
+        }
+
+        return exportHeadLine;
+
+    }
+
+    function createExportTable(exportData,colCount){
+        var exportTable = "";
+        var exportDataLength = exportData.length;
+
+        for(var i = 0; i < exportDataLength; i++){
+            exportTable += '<tr>'+
+                createExportLine(exportData[i],colCount)+
+                '</tr>';
+        }
+
+        function createExportLine(exportDatarow,colCount){
+            var exportLine = "";
+            var cont = "",fullText;
+
+            for(var i = 0; i < colCount; i++){
+                cont = exportDatarow[i];
+                if (cont.length > 30){
+                    fullText = cont;
+                    cont = cont.slice(0,30);
+                    cont += " <a class='show-full-text' href='#'>...</a>"+
+                        '<div class="full-text"><a href="#" class="close">×</a>'+ fullText +'</div>';
+                }
+                exportLine += '<td>'+
+                    cont +
+                    '</td>';
+            }
+
+            return exportLine;
+        }
+        return exportTable;
+    }
 
     /* /export */
 

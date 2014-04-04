@@ -76,7 +76,8 @@ $(document).ready(function(){
             if (accessGranted) {
                 $('.login-error').hide();
                 if (selector.closest('.modal-auth').length > 0){
-                    document.location.replace("/shop.jsp");
+                    //document.location.replace("/shop.jsp");
+                    AuthRealTime(selector);
                 }else{
                     document.location.replace("/shop.jsp");
                 }
@@ -100,7 +101,8 @@ $(document).ready(function(){
             var userId = client.registerNewUser($("#login").val(), "", $("#pass").val(), $("#email").val());
             client.login($("#email").val(), $("#pass").val());
             if ( selector.closest('.modal-auth').length > 0) {
-                document.location.replace("/shop.jsp");
+                //document.location.replace("/shop.jsp");
+                AuthRealTime(selector);
             }else{
                 document.location.replace("/shop.jsp");
             }
@@ -113,4 +115,32 @@ $(document).ready(function(){
            emailAlert.hide();
        }
     });
+
+    function AuthRealTime(selector){
+        var transport = new Thrift.Transport("/thrift/ShopService");
+        var protocol = new Thrift.Protocol(transport);
+        var shopClient = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
+
+        transport = new Thrift.Transport("/thrift/UserService");
+        protocol = new Thrift.Protocol(transport);
+        var userServiceClient = new com.vmesteonline.be.UserServiceClient(protocol);
+
+        globalUserAuth = true;
+
+        selector.closest('.modal-auth').modal('hide');
+        // ставим shopID
+        var shops = shopClient.getShops();
+        shopClient.getShop(shops[0].id);
+
+        var shortUserInfo = userServiceClient.getShortUserInfo();
+        var shortUserInfoHtml =  '<small>'+ shortUserInfo.firstName +'</small>'+ shortUserInfo.lastName;
+        $('.user-info').html(shortUserInfoHtml).after('<i class="icon-caret-down"></i>');
+
+        var dropdownToggle = $('.dropdown-toggle');
+        dropdownToggle.removeClass('no-login');
+
+        // callbacks
+        callbacks.fire(selectorForCallbacks);
+        callbacks.empty();
+    }
 });
