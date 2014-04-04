@@ -2175,6 +2175,7 @@ $(document).ready(function(){
             var closeHtml = '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
             modalAuth.find('.reg-form').prepend(closeHtml);
 
+            // запускаем скрипты логина через ajax
             $.ajax({
                 url: 'js/login.js',
                 dataType: 'script'
