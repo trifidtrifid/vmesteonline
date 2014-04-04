@@ -47,7 +47,8 @@ public class VoProduct {
 		this.weight = newInfo.product.weight;
 		this.minClientPack = newInfo.product.minClientPack;
 		try {
-			this.imageURL = StorageHelper.saveImage(newInfo.product.getImageURL(), userId, true, _pm);
+			String imageURL2 = newInfo.product.getImageURL();
+			this.imageURL = null == imageURL2 ? null : StorageHelper.saveImage(imageURL2, userId, true, _pm);
 		} catch (IOException e) {
 			e.printStackTrace();
 			//setImageURL(null);

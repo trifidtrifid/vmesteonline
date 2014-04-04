@@ -53,6 +53,7 @@ import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.StorageHelper;
+import com.vmesteonline.be.utils.VoHelper;
 
 public class ShopServiceImplTest {
 
@@ -1219,10 +1220,10 @@ public class ShopServiceImplTest {
 			Assert.assertEquals(totalOrdersReport.data.get(0).getType(), ImExType.EXPORT_ORDER_LINES); // lines of the first order
 			Assert.assertEquals(totalOrdersReport.data.get(1).getType(), ImExType.EXPORT_ORDER_LINES); // lines of the second order
 			Assert.assertEquals(totalOrdersReport.data.get(2).getType(), ImExType.EXPORT_ORDERS); // orders
-			Assert.assertEquals(totalOrdersReport.data.get(2).getFieldsDataSize(), 2); // two orders
+			Assert.assertEquals(VoHelper.listToMatrix( totalOrdersReport.data.get(2).getFieldsData()).size(), 2); // two orders
 			// check content of order 1
-			Assert.assertEquals(totalOrdersReport.data.get(0).getFieldsData().size(), 2);
-			List<String> o1l1 = totalOrdersReport.data.get(0).getFieldsData().get(0);
+			Assert.assertEquals(VoHelper.listToMatrix(totalOrdersReport.data.get(0).getFieldsData()).size(), 2);
+			List<String> o1l1 = VoHelper.listToMatrix( totalOrdersReport.data.get(0).getFieldsData()).get(0);
 			// upProductsIdl.get(0), 1.0D, "comment11", null
 			Assert.assertEquals(o1l1.size(), 9);
 			Assert.assertEquals(o1l1.get(0), "" + 35.0D);
@@ -1235,7 +1236,7 @@ public class ShopServiceImplTest {
 			Assert.assertEquals(o1l1.get(8), "11.0:1|12.0:2");
 
 			// check order 1 description
-			List<String> o1d = totalOrdersReport.data.get(2).getFieldsData().get(0);
+			List<String> o1d = VoHelper.listToMatrix( totalOrdersReport.data.get(2).getFieldsData() ).get(0);
 			Assert.assertEquals(o1d.size(), 13);
 			Assert.assertEquals(o1d.get(0), "" + (now + 1000));
 			Assert.assertEquals(o1d.get(1), OrderStatus.CONFIRMED.name());
