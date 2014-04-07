@@ -863,29 +863,17 @@ th.next
     .import-table
       overflow-x auto
       overflow-y visible
+      //position relative
       margin-bottom 10px
       &.y-overflow-hidden
         overflow-y hidden
-      .full-text
-        display none
-        position absolute
-        z-index 2
-        text-align justify
-        width 400px
-        background #fff
-        padding 10px
-        border 1px solid #000
-        border-radius 3px
-        .close
-          float right
-          position relative
-          opacity .8
-          font-size 16px
-          margin -13px -10px 0 0
+      .btn-group
+        position static !important
     table
+      min-width 100%
       td
         text-align center
-        position relative
+        //position relative
         border 1px solid #000
   #import-data
     display inline-block
@@ -911,6 +899,7 @@ th.next
     .export-single-table
       overflow-y auto
     table
+      min-width 100%
       margin 20px 0 0 0
       thead td
         background #6fb3e0
@@ -921,6 +910,22 @@ th.next
   .export-btn-line
     margin-top 15px
 
+.full-text
+  display none
+  position absolute
+  z-index 2
+  text-align justify
+  width 400px
+  background #fff
+  padding 10px
+  border 1px solid #000
+  border-radius 3px
+  .close
+    float right
+    position relative
+    opacity .8
+    font-size 16px
+    margin -13px -10px 0 0
 
 .confirm-info
   display inline-block

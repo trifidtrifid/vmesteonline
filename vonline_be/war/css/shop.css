@@ -1044,27 +1044,14 @@ span
 .import .import-show .import-table.y-overflow-hidden {
   overflow-y: hidden;
 }
-.import .import-show .import-table .full-text {
-  display: none;
-  position: absolute;
-  z-index: 2;
-  text-align: justify;
-  width: 400px;
-  background: #fff;
-  padding: 10px;
-  border: 1px solid #000;
-  border-radius: 3px;
+.import .import-show .import-table .btn-group {
+  position: static !important;
 }
-.import .import-show .import-table .full-text .close {
-  float: right;
-  position: relative;
-  opacity: 0.8;
-  font-size: 16px;
-  margin: -13px -10px 0 0;
+.import .import-show table {
+  min-width: 100%;
 }
 .import .import-show table td {
   text-align: center;
-  position: relative;
   border: 1px solid #000;
 }
 .import #import-data {
@@ -1095,6 +1082,7 @@ span
   overflow-y: auto;
 }
 .export .export-table table {
+  min-width: 100%;
   margin: 20px 0 0 0;
 }
 .export .export-table table thead td {
@@ -1107,6 +1095,24 @@ span
 }
 .export .export-btn-line {
   margin-top: 15px;
+}
+.full-text {
+  display: none;
+  position: absolute;
+  z-index: 2;
+  text-align: justify;
+  width: 400px;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 3px;
+}
+.full-text .close {
+  float: right;
+  position: relative;
+  opacity: 0.8;
+  font-size: 16px;
+  margin: -13px -10px 0 0;
 }
 .confirm-info {
   display: inline-block;

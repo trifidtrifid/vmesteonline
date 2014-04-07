@@ -574,6 +574,7 @@ $(document).ready(function(){
                 var dataCSVLength = elems.length;
                 colCount = dataCSVLength/rowCount;
                 var counter = 0;
+                dataCSV = [];
 
                 for(var i = 0; i < rowCount; i++){
                     dataCSV[i] = [];
@@ -627,18 +628,14 @@ $(document).ready(function(){
 
                 $('.import-table').html("").prepend(importHtml).parent().show();
 
-                var importHeight = $('.import-table table').height();
-                $('.show-full-text').click(function(e){
-                    e.preventDefault();
-                   $(this).parent().find('.full-text').show();
-                    //$('.import-table').removeClass('y-overflow-hidden');
-                });
-                $('.full-text .close').click(function(e){
-                    e.preventDefault();
+                initShowFullText();
+                initCloseFullText();
 
-                   $(this).parent().hide();
-                    //$('.import-table').addClass('y-overflow-hidden');
-                    $('.import-table table').height(importHeight);
+                $('.import-field-dropdown .dropdown-toggle').click(function(e){
+                    e.preventDefault();
+                    var coordX = e.pageX-130;
+                    var coordY = e.pageY-30;
+                    $(this).parent().find('.dropdown-menu').css({'left':coordX,'top':coordY});
                 });
 
                 $('.import-field-dropdown .dropdown-menu').find('li a').click(function(e){
@@ -654,6 +651,28 @@ $(document).ready(function(){
 
         }
     });
+
+    function initShowFullText(){
+        $('.show-full-text').click(function(e){
+            e.preventDefault();
+            if($(this).closest('.export-table').length > 0){
+                var coordX = e.pageX-330;
+                var coordY = e.pageY-90;
+            }else{
+                coordX = e.pageX-130;
+                coordY = e.pageY-30;
+            }
+            $('.full-text').hide();
+            $(this).parent().find('.full-text').css({'left':coordX,'top':coordY}).show();
+        });
+    }
+
+    function initCloseFullText(){
+        $('.full-text .close').click(function(e){
+            e.preventDefault();
+            $(this).parent().hide();
+        });
+    }
 
     function createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType){
 
@@ -750,7 +769,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
             }
          });
 
-        var confirmInfo = $('.confirm-info');
+        var confirmInfo = $(this).closest('.back-tab').find('.confirm-info');
         if(haveRepeat){
             confirmInfo.text('Вы указали два столбца с одинаковым занчением : ' + repeatDropdown ).show();
         }else{
@@ -885,6 +904,8 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
                            break;
                    }
+                   initShowFullText();
+                   initCloseFullText();
                }catch(e){
                    currentTab.find('.confirm-info').text('Ошибка экспорта.').show();
                }
