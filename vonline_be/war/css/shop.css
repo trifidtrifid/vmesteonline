@@ -1067,16 +1067,9 @@ span
   position: relative;
   border: 1px solid #000;
 }
-.import .import-show .confirm-info {
-  display: inline-block;
-  margin-left: 10px;
-}
 .import #import-data {
   display: inline-block;
   vertical-align: middle;
-}
-.export .export-btn {
-  margin-top: 15px;
 }
 .export .input-group {
   display: inline-block;
@@ -1086,7 +1079,6 @@ span
   line-height: 34px;
   display: inline-block;
   vertical-align: middle;
-  margin-top: 15px;
 }
 .export .report-link a {
   display: inline-block;
@@ -1098,6 +1090,27 @@ span
   display: inline-block;
   width: 49%;
   vertical-align: top;
+}
+.export .export-table .export-single-table {
+  overflow-y: auto;
+}
+.export .export-table table {
+  margin: 20px 0 0 0;
+}
+.export .export-table table thead td {
+  background: #6fb3e0;
+  color: #fff;
+}
+.export .export-table table td {
+  border: 1px solid #000;
+  text-align: center;
+}
+.export .export-btn-line {
+  margin-top: 15px;
+}
+.confirm-info {
+  display: inline-block;
+  margin-left: 10px;
 }
 .import,
 .export {

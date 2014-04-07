@@ -511,7 +511,7 @@
                             </div>
 
                             <div class="input-group">
-                                <input class="form-control date-picker" id="date-picker-2" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
+                                <input class="form-control date-picker datepicker-export" id="date-picker-2" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                             </div>
                             <div class="error-info"></div>
 
@@ -672,149 +672,10 @@
                                 </div>
                             </div>
 
-                           <%-- <div class="order-item" data-orderid="5660285859790848">
-                                <table class="orders-tbl">
-                                    <tbody>
-                                    <tr>
-                                        <td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>
-                                        <td class="td2">Заказ N 124</td>
-                                        <td class="td3">30.3.2014</td>
-                                        <td class="td4">Подтвержден</td>
-                                        <td class="td5">Курьер рядом<br> Санкт-Петербург, e e, кв.12</td>
-                                        <td class="td6">198</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <div class="order-products">
-                                    <section class="catalog">
-                                        <table>
-                                            <thead>
-                                            <tr>
-                                                <td>Название</td>
-                                                <td>Цена (руб)</td>
-                                                <td>Количество</td>
-                                                <td>Ед.изм</td>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr data-productid="5435985487724544">
-                                                <td>
-                                                    <a href="#" class="product-link">
-                                                        <img src="/file/FVAAAAAAAA=.jpg" alt="картинка">
-                                                <span>
-                                                    <span>Молоко 3,2%</span>
-                                                    Молоко питьевое пастеризованное 2%, 1л, ГОСТ Р 52090
-                                                </span>
-                                                    </a>
-                                                    <div class="modal"></div>
-                                                </td>
-                                                <td class="product-price">48</td>
-                                                <td>
-                                                    <input type="text" class="input-mini spinner1" />
-                                                </td>
-                                                <td><span class="unit-name">пак</span></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </section>
-                                </div>
+                            <div class="export-btn-line">
+                                <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
+                                <span class="confirm-info"></span>
                             </div>
-                            <div class="order-item" data-orderid="5660285859790848">
-                                <table class="orders-tbl">
-                                    <tbody>
-                                    <tr>
-                                        <td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>
-                                        <td class="td2">Заказ N 124</td>
-                                        <td class="td3">30.3.2014</td>
-                                        <td class="td4">Подтвержден</td>
-                                        <td class="td5">Курьер рядом<br> Санкт-Петербург, e e, кв.12</td>
-                                        <td class="td6">198</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <div class="order-products">
-                                    <section class="catalog">
-                                        <table>
-                                            <thead>
-                                            <tr>
-                                                <td>Название</td>
-                                                <td>Цена (руб)</td>
-                                                <td>Количество</td>
-                                                <td>Ед.изм</td>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr data-productid="5435985487724544">
-                                                <td>
-                                                    <a href="#" class="product-link">
-                                                        <img src="/file/FVAAAAAAAA=.jpg" alt="картинка">
-                                                <span>
-                                                    <span>Молоко 3,2%</span>
-                                                    Молоко питьевое пастеризованное 2%, 1л, ГОСТ Р 52090
-                                                </span>
-                                                    </a>
-                                                    <div class="modal"></div>
-                                                </td>
-                                                <td class="product-price">48</td>
-                                                <td>
-                                                    <input type="text" class="input-mini spinner1" />
-                                                </td>
-                                                <td><span class="unit-name">пак</span></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </section>
-                                </div>
-                            </div>
-                            <div class="order-item" data-orderid="5660285859790848">
-                                <table class="orders-tbl">
-                                    <tbody>
-                                    <tr>
-                                        <td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>
-                                        <td class="td2">Заказ N 124</td>
-                                        <td class="td3">30.3.2014</td>
-                                        <td class="td4">Подтвержден</td>
-                                        <td class="td5">Курьер рядом<br> Санкт-Петербург, e e, кв.12</td>
-                                        <td class="td6">198</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <div class="order-products">
-                                    <section class="catalog">
-                                        <table>
-                                            <thead>
-                                            <tr>
-                                                <td>Название</td>
-                                                <td>Цена (руб)</td>
-                                                <td>Количество</td>
-                                                <td>Ед.изм</td>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr data-productid="5435985487724544">
-                                                <td>
-                                                    <a href="#" class="product-link">
-                                                        <img src="/file/FVAAAAAAAA=.jpg" alt="картинка">
-                                                <span>
-                                                    <span>Молоко 3,2%</span>
-                                                    Молоко питьевое пастеризованное 2%, 1л, ГОСТ Р 52090
-                                                </span>
-                                                    </a>
-                                                    <div class="modal"></div>
-                                                </td>
-                                                <td class="product-price">48</td>
-                                                <td>
-                                                    <input type="text" class="input-mini spinner1" />
-                                                </td>
-                                                <td><span class="unit-name">пак</span></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </section>
-                                </div>
-                            </div>--%>
-
-                            <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
 
                             <div class="export-table">
 
@@ -823,89 +684,154 @@
 
                         <div id="products" class="tab-pane">
                             <p>Отчет о продуктах</p>
-                            <section class="catalog">
-                                <table>
-                                    <thead>
-                                    <tr>
-                                        <td>Название</td>
-                                        <td>Цена (руб)</td>
-                                        <td>Количество</td>
-                                        <td>Ед.изм</td>
-                                    </tr>
-                                    </thead>
 
-                                    <tbody>
+                            <div class="btn-group export-delivery-dropdown">
+                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                    <span class="btn-group-text">Тип доставки</span>
+                                    <span class="icon-caret-down icon-on-right"></span>
+                                </button>
 
-                                    <tr data-productid="6139672929501184">
-                                        <td>
-                                            <a href="#" class="product-link">
-                                                <img src="" alt="картинка">
-                                            <span>
-                                            <span>Творог 5% весовой</span>
-                                            Творог 5% на развес, ГОСТ Р 52096
-                                            </span>
-                                            </a>
-                                            <div class="modal">
-                                            </div>
-                                        </td>
-                                        <td class="product-price">38.0</td>
-                                        <td>
-                                            <input type="text" class="input-mini spinner1 spinner-input form-control" maxlength="3">
-                                        </td>
-                                        <td>
-                                            <span class="unit-name">гр</span>
-                                        </td>
-                                    </tr>
-                                    <tr data-productid="6139672929501184">
-                                        <td>
-                                            <a href="#" class="product-link">
-                                                <img src="" alt="картинка">
-                                            <span>
-                                            <span>Творог 5% весовой</span>
-                                            Творог 5% на развес, ГОСТ Р 52096
-                                            </span>
-                                            </a>
-                                            <div class="modal">
-                                            </div>
-                                        </td>
-                                        <td class="product-price">38.0</td>
-                                        <td>
-                                            <input type="text" class="input-mini spinner1 spinner-input form-control" maxlength="3">
-                                        </td>
-                                        <td>
-                                            <span class="unit-name">гр</span>
-                                        </td>
-                                    </tr>
-                                    <tr data-productid="6139672929501184">
-                                        <td>
-                                            <a href="#" class="product-link">
-                                                <img src="" alt="картинка">
-                                            <span>
-                                            <span>Творог 5% весовой</span>
-                                            Творог 5% на развес, ГОСТ Р 52096
-                                            </span>
-                                            </a>
-                                            <div class="modal">
-                                            </div>
-                                        </td>
-                                        <td class="product-price">38.0</td>
-                                        <td>
-                                            <input type="text" class="input-mini spinner1 spinner-input form-control" maxlength="3">
-                                        </td>
-                                        <td>
-                                            <span class="unit-name">гр</span>
-                                        </td>
-                                    </tr>
+                                <ul class="dropdown-menu dropdown-blue">
+                                    <li><a href="#">Самовывоз</a></li>
+                                    <li><a href="#">Курьер рядом</a></li>
+                                    <li><a href="#">Курьер далеко</a></li>
+                                </ul>
+                            </div>
 
+                            <div class="input-group">
+                                <input class="form-control date-picker datepicker-export" id="date-picker-3" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
+                            </div>
+                            <div class="error-info"></div>
 
-                                    </tbody></table>
-                            </section>
-                            <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
+                            <div class="checkbox check-all">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> check all</span>
+                                </label>
+                            </div>
+
+                            <div class="export-products-checklist">
+                                <div class="checkbox"  data-exchange="2000">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_PROUCT_ID</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="2001">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_PRODUCT_NAME</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="2002">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_PRODUCER_ID</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="2003">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_PRODUCER_NAME</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="2004">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_PRODUCT_MIN_PACK</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="2005">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_ORDERED</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="2006">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_MIN_QUANTITY</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="2007">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_REST</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="2008">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_PREPACK_REQUIRED</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="export-btn-line">
+                                <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
+                                <span class="confirm-info"></span>
+                            </div>
+
+                            <div class="export-table">
+
+                            </div>
                         </div>
 
                         <div id="pack" class="tab-pane">
                             <p>Отчет об упаковках</p>
-                            <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
+                            <div class="btn-group export-delivery-dropdown">
+                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                    <span class="btn-group-text">Тип доставки</span>
+                                    <span class="icon-caret-down icon-on-right"></span>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-blue">
+                                    <li><a href="#">Самовывоз</a></li>
+                                    <li><a href="#">Курьер рядом</a></li>
+                                    <li><a href="#">Курьер далеко</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="input-group">
+                                <input class="form-control date-picker datepicker-export" id="date-picker-4" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
+                            </div>
+                            <div class="error-info"></div>
+
+                            <div class="checkbox check-all">
+                                <label>
+                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                    <span class="lbl"> check all</span>
+                                </label>
+                            </div>
+
+                            <div class="export-packs-checklist">
+                                <div class="checkbox"  data-exchange="2009">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_PACK_SIZE</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="2010">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_PACK_QUANTYTY</span>
+                                    </label>
+                                </div>
+                                <div class="checkbox"  data-exchange="2011">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"> TOTAL_DELIVERY_TYPE</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="export-btn-line">
+                                <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
+                                <span class="confirm-info"></span>
+                            </div>
+
+                            <div class="export-table">
+                            </div>
                         </div>
                     </div>
                 </div>

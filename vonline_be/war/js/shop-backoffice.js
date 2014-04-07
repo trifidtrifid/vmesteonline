@@ -234,7 +234,7 @@ $(document).ready(function(){
     }
 
     var dPicker = $('#date-picker-1');
-    var dPickerExport = $('#date-picker-2');
+    var dPickerExport = $('.datepicker-export');
 
     globalUserAuth = true;
     dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
@@ -579,7 +579,6 @@ $(document).ready(function(){
                     dataCSV[i] = [];
                     for(var j = 0; j < colCount; j++){
                         dataCSV[i][j] = elems[counter++];
-                     //   console.log(dataCSV[i][j]);
                     }
                 }
 
@@ -626,7 +625,7 @@ $(document).ready(function(){
                     '</tbody>' +
                     '</table>';
 
-                $('.import-table').prepend(importHtml).parent().show();
+                $('.import-table').html("").prepend(importHtml).parent().show();
 
                 var importHeight = $('.import-table table').height();
                 $('.show-full-text').click(function(e){
@@ -701,13 +700,13 @@ $(document).ready(function(){
 
             for(var i = 0; i < colCount; i++){
                 cont = dataCSVrow[i];
-                if (cont.length > 30){
+                if (cont && cont.length > 30){
+                    // урезаем длинный текст
                    fullText = cont;
                    cont = cont.slice(0,30);
                    cont += " <a class='show-full-text' href='#'>...</a>"+
                        '<div class="full-text"><a href="#" class="close">×</a>'+ fullText +'</div>';
                 }
-                //console.log(dataCSVrow[i].length);
                 importLine += '<td>'+
                     cont +
                     '</td>';
@@ -728,21 +727,6 @@ $(document).ready(function(){
 
 $('.import-dropdown .dropdown-menu li').click(function(){
     $('.import').find('.error-info').hide();
-       /*var ind = $(this).index();
-       var currentChecklist;
-       switch (ind){
-           case(0):
-               currentChecklist = $('.products-checklist');
-               break;
-           case(1):
-               currentChecklist = $('.categories-checklist');
-               break;
-           case(2):
-               currentChecklist = $('.producers-checklist');
-               break;
-       }
-        $('.checklist').hide();
-        currentChecklist.slideDown();*/
     });
 
     $('.import-btn').click(function(e){
@@ -845,12 +829,13 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
        $('.export-btn').click(function(e){
            e.preventDefault();
-           var deliveryText = $('.export-delivery-dropdown .btn-group-text').text();
-           var selectOrderDate = $('#date-picker-2').data('selectorderdate');
+           var currentTab = $(this).closest('.tab-pane');
+           var deliveryText = currentTab.find('.export-delivery-dropdown .btn-group-text').text();
+           var selectOrderDate = currentTab.find('.datepicker-export').data('selectorderdate');
            if(deliveryText == 'Тип доставки'){
-              $('.error-info').text('Пожалуйста, укажите тип доставки.').show();
+               currentTab.find('.error-info').text('Пожалуйста, укажите тип доставки.').show();
            }else if(!selectOrderDate){
-               $('.error-info').text('Пожалуйста, укажите дату с заказом.').show();
+               currentTab.find('.error-info').text('Пожалуйста, укажите дату с заказом.').show();
            }else{
 
               var tabs = $('.export .nav-tabs').find('li');
@@ -863,81 +848,122 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
                var deliveryType = getDeliveryTypeByText(deliveryText);
 
-               var dataSet,linksHtml;
+               var dataSet;
 
-               switch (currentInd){
-                   case 0:
+               try{
+                   switch (currentInd){
+                       case 0:
+                           var exportFieldsOrder = getExportFields('orders');
 
-                       var fieldsOrderMap = [];
-                       var filedsOrderCounter = 0;
-                       var ordersCheckbox =  $('.export-orders-checklist .checkbox.active');
-                       var headColOrderArray = [];
-                       counter = 0;
+                           var exportFieldsOrderLine = getExportFields('orderLine');
 
-                       ordersCheckbox.each(function(){
-                           fieldsOrderMap[filedsOrderCounter++] = parseInt($(this).data('exchange'));
-                           headColOrderArray[counter++] = $(this).find('.lbl').text();
-                       });
+                           dataSet = client.getTotalOrdersReport(selectOrderDate,deliveryType,exportFieldsOrder.fieldsMap,exportFieldsOrderLine.fieldsMap);
 
-                       var fieldsOrderLineMap = [];
-                       var filedsOrderLineCounter = 0;
-                       var orderLineCheckbox =  $('.export-orderLine-checklist .checkbox.active');
-                       var headColOrderLineArray = [];
-                       counter = 0;
+                           var tablesCount = dataSet.data.length;  // кол-во таблиц в нашем отчете
 
-                       orderLineCheckbox.each(function(){
-                           fieldsOrderLineMap[filedsOrderLineCounter++] = parseInt($(this).data('exchange'));
-                           headColOrderLineArray[counter++] = $(this).find('.lbl').text();
-                       });
+                           drawExportTables(dataSet,tablesCount,exportFieldsOrder,exportFieldsOrderLine);
 
-                       dataSet = client.getTotalOrdersReport(selectOrderDate,deliveryType,fieldsOrderMap,fieldsOrderLineMap);
+                           break;
+                       case 1:
+                           var exportFields = getExportFields('products');
 
-                       var tablesCount = dataSet.data.length;  // кол-во таблиц в нашем отчете
+                           dataSet = client.getTotalProductsReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
 
-                       var exportData = [],
-                           fieldsData,rowCount,colCount,
-                           reportTable;
-                       for(var z = 0 ; z < tablesCount; z++){
-                           // формирование данных экспорта для каждой таблицы
-                           exportData = [];
-                           fieldsData = dataSet.data[z].fieldsData;
-                           rowCount = fieldsData.rowCount;
-                           colCount = fieldsData.elems.length/rowCount;
-                           counter = 0;
-                           for(var i = 0; i < rowCount; i++){
-                               exportData[i] = [];
-                               for(var j = 0; j < colCount; j++){
-                                   exportData[i][j] = fieldsData.elems[counter++];
-                               }
-                           }
+                           tablesCount = 1;  // кол-во таблиц в нашем отчете
 
-                           reportTable = '<table>' +
-                               '<thead>' +
-                               '<tr>' +
-                               createExportHeadLine(headColOrderArray)+
-                               '</tr>'+
-                               '</thead>'+
-                               '<tbody>' +
-                               createExportTable(exportData,colCount)+
-                               '</tbody>'+
-                               '</table>';
+                           drawExportTables(dataSet,tablesCount,exportFields);
 
-                           reportTable += '<div class="report-link"><a href="'+ dataSet.data[z].fileName +'">Скачать отчет</a>';
+                           break;
+                       case 2:
+                           exportFields = getExportFields('packs');
 
-                           $('.export-table').append(reportTable);
-                       }
+                           dataSet = client.getTotalPackReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
 
-                       break;
-                   case 1:
-                       dataSet = client.getTotalProductsReport(selectOrderDate,deliveryType);
-                       break;
-                   case 2:
-                       dataSet = client.getTotalPackReport(selectOrderDate,deliveryType);
-                       break;
+                           tablesCount = 1;  // кол-во таблиц в нашем отчете
+
+                           drawExportTables(dataSet,tablesCount,exportFields);
+
+                           break;
+                   }
+               }catch(e){
+                   currentTab.find('.confirm-info').text('Ошибка экспорта.').show();
                }
-               $(this).after(linksHtml);
            }
        });
+
+    function getExportFields(exportType){
+        var fieldsMap = [];
+        var fieldsCounter = 0;
+        var currentCheckbox;
+        var headColArray = [];
+        counter = 0;
+
+        switch (exportType){
+            case 'orders':
+                currentCheckbox =  $('.export-orders-checklist .checkbox.active');
+                break;
+            case 'orderLine':
+                currentCheckbox =  $('.export-orderLine-checklist .checkbox.active');
+                break;
+            case 'products':
+                currentCheckbox =  $('.export-products-checklist .checkbox.active');
+                break;
+            case "packs":
+                currentCheckbox =  $('.export-packs-checklist .checkbox.active');
+                break;
+        }
+
+        currentCheckbox.each(function(){
+            fieldsMap[fieldsCounter++] = parseInt($(this).data('exchange'));
+            headColArray[counter++] = $(this).find('.lbl').text();
+        });
+
+        return {fieldsMap: fieldsMap,headColArray: headColArray }
+    };
+
+    function drawExportTables(dataSet,tablesCount,exportFields,exportFieldsOrderLine){
+
+        var currentExportTable = $('.tab-pane.active').find('.export-table');
+        currentExportTable.html("");
+        var exportData = [];
+        for(var z = tablesCount-1 ; z >= 0; z--){
+            // формирование данных экспорта для каждой таблицы
+            exportData = [];
+            var fieldsData = dataSet.data[z].fieldsData;
+            var rowCount = fieldsData.rowCount;
+            // округляем до наибольшего целого
+            var colCount = Math.ceil(fieldsData.elems.length/rowCount);
+            var counter = 0;
+            for(var i = 0; i < rowCount; i++){
+                exportData[i] = [];
+                for(var j = 0; j < colCount; j++){
+                    exportData[i][j] = fieldsData.elems[counter++];
+                }
+            }
+
+             var headColArray = exportFields.headColArray;
+            if(exportFieldsOrderLine){
+                (z == tablesCount-1) ? headColArray = exportFields.headColArray: headColArray = exportFieldsOrderLine.headColArray;
+            }
+
+
+            var reportTable = '<div class="export-single-table"><table>' +
+                '<thead>' +
+                '<tr>' +
+                createExportHeadLine(headColArray)+
+                '</tr>'+
+                '</thead>'+
+                '<tbody>' +
+                createExportTable(exportData,colCount)+
+                '</tbody>'+
+                '</table></div>';
+
+            reportTable += '<div class="report-link"><a href="'+ dataSet.data[z].fileName +'">Скачать отчет</a>';
+
+            currentExportTable.append(reportTable);
+        }
+
+    }
 
     function createExportHeadLine(headColArray){
 
@@ -959,6 +985,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         var exportDataLength = exportData.length;
 
         for(var i = 0; i < exportDataLength; i++){
+            console.log(exportData[i]);
             exportTable += '<tr>'+
                 createExportLine(exportData[i],colCount)+
                 '</tr>';
@@ -970,7 +997,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
             for(var i = 0; i < colCount; i++){
                 cont = exportDatarow[i];
-                if (cont.length > 30){
+                if (cont && cont.length > 30){
                     fullText = cont;
                     cont = cont.slice(0,30);
                     cont += " <a class='show-full-text' href='#'>...</a>"+

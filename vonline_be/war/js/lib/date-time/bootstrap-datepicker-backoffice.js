@@ -126,7 +126,7 @@
         $('.order-day').click(function(){
             if($('#sidebar .nav-list li:eq(2)').hasClass('active')){
                 // если мы на вкладке export кликаем на дату в календаре
-               $('#date-picker-2').attr('data-selectOrderDate',$(this).attr('id'));
+                $('.tab-pane.active').find('.datepicker-export').attr('data-selectOrderDate',$(this).attr('id'));
             }
             var orderDate = parseInt($(this).attr('id'));
             var day = 3600*24;
