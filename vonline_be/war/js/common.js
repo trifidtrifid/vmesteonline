@@ -122,7 +122,7 @@
 
         $('.user-menu a').click(function(e){
             e.preventDefault();
-            $(this).closest('.user-menu').hide();
+            $(this).closest('.user-short').removeClass('open');
             e.stopPropagation();
 
             var ind = $(this).parent().index();

@@ -378,45 +378,6 @@
 		</div>
 
 		<div class="modal modal-auth">
-<%--			<div class="login-forms">
-				<form action="#" class="registration-form login-form">
-					<h1>Вход</h1>
-					<div class="reg-now">
-						<br>
-						<div>
-							<label for="uname">E-mail</label> <input type="text" id="uname" />
-						</div>
-						<div>
-							<label for="password">Пароль</label> <input type="password"
-								id="password" /> <a href="#" class="remember-link">Забыли
-								пароль ?</a>
-                            <div class="error-info login-error">Вы ввели неккоректный e-mail или пароль</div>
-                        </div>
-						<button id="go" class="btn-submit btn-sm no-border">Войти</button>
-					</div>
-				</form>
-				<form action="#" class="registration-form reg-form">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-hidden="true">×</button>
-					<h1>Регистрация</h1>
-					<div class="reg-now">
-						<br>
-						<div>
-							<label for="login">Логин</label> <input type="text" id="login" />
-						</div>
-						<div>
-							<label for="email">E-mail</label> <input type="email"
-								required="required" id="email" />
-						</div>
-						<div>
-							<label for="pass">Пароль</label> <input type="password" id="pass" />
-						</div>
-						<span class="email-alert">Такой e-mail уже зарегистрирован
-							!</span>
-						<button class="btn-submit btn-sm no-border">Регистрация</button>
-					</div>
-				</form>
-			</div>--%>
 		</div>
 
 	</div>

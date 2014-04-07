@@ -1,23 +1,17 @@
 
-<%@page import="com.vmesteonline.be.utils.SessionHelper"%>
+<%--<%@page import="com.vmesteonline.be.utils.SessionHelper"%>--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ServiceImpl"%>
-<%@ page import="com.vmesteonline.be.MessageService"%>
-<%@ page import="com.vmesteonline.be.Group"%>
-<%@ page import="com.vmesteonline.be.Rubric"%>
-<%@ page import="com.vmesteonline.be.TopicListPart"%>
-<%@ page import="com.vmesteonline.be.MessageListPart"%>
-<%@ page import="com.vmesteonline.be.Topic"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.Message"%>
-<%@ page import="com.vmesteonline.be.MessageType"%>
-<%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
+<%@ page import="com.vmesteonline.be.ShortProfile"%>
+<%@ page import="com.vmesteonline.be.UserInfo"%>
+<%@ page import="com.vmesteonline.be.UserContacts"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
-<%@ page import="com.vmesteonline.be.InvalidOperation"%>    
+<%@ page import="com.vmesteonline.be.InvalidOperation"%>
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
@@ -32,18 +26,18 @@
 
     UserServiceImpl userService = new UserServiceImpl(request.getSession());
 
-    List<Group> Groups = userService.getUserGroups();
-    List<Rubric> Rubrics = userService.getUserRubrics();
+    //List<Group> Groups = userService.getUserGroups();
+    //List<Rubric> Rubrics = userService.getUserRubrics();
     ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-    MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
+    //MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
     //MessageType mesType = MessageType.BASE;
 
-    TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
+    //TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
     //out.print(ShortUserInfo.firstName);
 
-    pageContext.setAttribute("groups",Groups);
+    /*pageContext.setAttribute("groups",Groups);
     pageContext.setAttribute("rubrics",Rubrics);
-    pageContext.setAttribute("topics",Topics.topics);
+    pageContext.setAttribute("topics",Topics.topics);*/
     pageContext.setAttribute("firstName",ShortUserInfo.firstName);
     pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 %>
