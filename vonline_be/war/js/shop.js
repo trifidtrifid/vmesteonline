@@ -309,14 +309,13 @@ $(document).ready(function(){
     // переключение между категориями
     InitClickOnCategory();
     initOrderPlusMinus($('.shop-orders'));
-    //shopTriggerClick();
 
 /* функции */
-    var prevParentId = [],
-        parentCounter = 0;
 
     // common
     //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
+    var prevParentId = [],
+        parentCounter = 0;
 
     var prevCatCounter = getCookie('prevCatCounter');
     if (prevCatCounter !== undefined){
