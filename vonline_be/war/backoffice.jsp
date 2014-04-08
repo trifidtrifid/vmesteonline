@@ -381,14 +381,27 @@
                                 </label>
                             </div>
 
-                            <div class="export-orders-checklist">
-                                <div class="checkbox"  data-exchange="1000">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_ID</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1001">
+                            <%--<c:forEach var="rubric" items="${}">
+                                <li><a href="#" data-rubricid="${rubric.id}"> <span
+                                        class="menu-text">${rubric.visibleName}</span> <b>(3)</b>
+                                </a></li>
+                            </c:forEach>--%>
+
+                            <div class="export-orders-checklist"> <%
+
+                                for( int val = ExchangeFieldType.ORDER_ID.getValue(); val < ExchangeFieldType.ORDER_LINE_ID.getValue(); val ++ ){
+                                    ExchangeFieldType value = ExchangeFieldType.findByValue(val);
+                                    if(null!=value){%>
+                                    
+                                    <div class="checkbox"  data-exchange="<%=value.getValue()%>">
+                                        <label>
+                                            <input name="form-field-checkbox" type="checkbox" class="ace">
+                                            <span class="lbl"><%=value.name()%> </span>
+                                        </label>
+                                    </div>
+                                <%}}%>
+                            </div>
+                                <%--<div class="checkbox"  data-exchange="1001">
                                     <label>
                                         <input name="form-field-checkbox" type="checkbox" class="ace">
                                         <span class="lbl"> ORDER_DATE</span>
@@ -466,7 +479,7 @@
                                         <span class="lbl"> ORDER_USER_NAME</span>
                                     </label>
                                 </div>
-                            </div>
+                            </div>--%>
 
                             <div class="export-orderLine-checklist">
                                 <div class="checkbox"  data-exchange="1100">
