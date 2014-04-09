@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+  <title>Оформление</title>
+  <link rel="stylesheet" href="css/shop.css"/>
+
+<script src="js/lib/jquery-2.0.3.min.js"></script>
+    <!--[if lt IE 9]>
+    <script>
+        document.createElement('header');
+        document.createElement('section');
+        document.createElement('footer');
+        document.createElement('aside');
+        document.createElement('nav');
+    </script>
+    <![endif]-->
+</head>
+<body>
+<div class="container">
+    <div class="main-container" id="main-container">
+        <div class="main-container-inner">
+            <div class="main-content">
+                <div class="dynamic">
+                    <section class="confirm-order">
+                        <div class="order-date">Заказ на <span></span></div>
+
+                        <div class="catalog">
+
+                        </div>
+
+                        <div class="itogo-right">
+                            Товаров на сумму: <span></span> руб.
+                        </div>
+
+                        <div class="additionally-order">
+                            <div class="delivery-right">
+                                <h3>Доставка</h3>
+                                <div class="radio">
+                                    <label>
+                                        <input name="form-field-radio" type="radio" checked="checked" class="ace">
+                                        <span class="lbl"> Самовывоз</span>
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input name="form-field-radio" type="radio" class="ace courier-delivery">
+                                        <span class="lbl"> Курьер </span>
+                                    </label>
+                                </div>
+                                <div class="input-delivery">
+                                    <span class="lbl">Стоимость доставки : <span class="delivery-cost"></span> руб</span>
+                                    <!--<input id="phone-delivery" type="tel" required="required" placeholder="Номер телефона"/>-->
+                                    <div class="alert-delivery alert-delivery-phone"></div>
+                                    <div class="btn-group delivery-dropdown">
+                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                            <span class="btn-group-text">Выбрать адрес</span>
+                                            <span class="icon-caret-down icon-on-right"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-blue">
+                                            <li class="divider"></li>
+                                            <li><a href="#" class="delivery-add-address">Добавить адрес ...</a></li>
+                                        </ul>
+                                    </div>
+                                    <span class="lbl"> Адрес доставки</span>
+                                    <!--<input id="country-delivery" type="text" value="Россия" placeholder="Страна"/>
+                                    <input id="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
+                                    <input id="street-delivery" type="text" placeholder="Улица"/>
+                                    <input id="building-delivery" type="text" class="short first" placeholder="Дом"/>
+                                    <input id="flat-delivery" type="text" class="short" placeholder="Квартира"/>-->
+                                </div>
+                                <!--<div class="alert-delivery alert-delivery-addr">Введите адрес доставки !</div>-->
+                            </div>
+                            <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
+                            <button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>
+                            <button class="btn btn-sm btn-grey no-border btn-cancel">Отменить</button>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+
+</html>

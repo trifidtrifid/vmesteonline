@@ -192,7 +192,7 @@ a {
   margin-left: 10px;
   margin-bottom: 5px;
   padding-right: 20px;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 16px;
 }
 .shop-right .catalog-order li .delete-product {
@@ -209,62 +209,6 @@ a {
 }
 .shop-right .catalog-order li .unit-name {
   display: none;
-}
-.shop-right .itogo-right {
-  padding-left: 10px;
-  font-size: 16px;
-}
-.shop-right .itogo-right span {
-  font-weight: bold;
-}
-.shop-right .delivery-right {
-  padding-left: 10px;
-}
-.shop-right .delivery-right h3 {
-  font-size: 16px;
-}
-.shop-right .delivery-right .input-delivery {
-  display: none;
-  padding-right: 10px;
-}
-.shop-right .delivery-right .input-delivery .lbl {
-  font-size: 16px;
-  display: block;
-  margin-bottom: 5px;
-}
-.shop-right .delivery-right .input-delivery input {
-  width: 100%;
-  margin-bottom: 10px;
-}
-.shop-right .delivery-right .input-delivery input.short {
-  width: 175px;
-  display: inline-block;
-}
-.shop-right .delivery-right .input-delivery input.short.first {
-  margin-right: 5px;
-}
-.shop-right .delivery-right .input-delivery #delivery-addr {
-  margin-left: 0;
-}
-.shop-right .delivery-right .input-delivery .delivery-dropdown {
-  float: right;
-  margin-top: -5px;
-}
-.shop-right .delivery-right .input-delivery .delivery-dropdown .dropdown-menu {
-  left: -233px;
-  width: 360px;
-}
-.shop-right .delivery-right .alert-delivery {
-  color: #f00;
-  display: none;
-}
-.shop-right textarea {
-  margin: 10px;
-  width: 358px;
-  height: 80px;
-  font-family: Tahoma, Arial;
-  font-size: 14px;
-  color: #858585;
 }
 .shop-right .btn-grey {
   margin-left: 186px;
@@ -990,6 +934,75 @@ span
 }
 .modal-auth .close {
   margin-right: -5px;
+}
+/* оформление заказа */
+.confirm-order {
+  font-size: 16px;
+}
+.confirm-order .order-date {
+  padding: 15px 0 0 10px;
+  font-weight: bold;
+}
+.confirm-order .itogo-right {
+  float: right;
+  padding-left: 10px;
+  font-size: 16px;
+}
+.confirm-order .itogo-right span {
+  font-weight: bold;
+}
+.confirm-order .delivery-right {
+  padding-left: 10px;
+}
+.confirm-order .delivery-right h3 {
+  font-size: 16px;
+}
+.confirm-order .delivery-right .input-delivery {
+  padding-right: 10px;
+}
+.confirm-order .delivery-right .input-delivery .lbl {
+  font-size: 16px;
+  display: block;
+  margin-bottom: 5px;
+}
+.confirm-order .delivery-right .input-delivery input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.confirm-order .delivery-right .input-delivery input.short {
+  width: 175px;
+  display: inline-block;
+}
+.confirm-order .delivery-right .input-delivery input.short.first {
+  margin-right: 5px;
+}
+.confirm-order .delivery-right .input-delivery #delivery-addr {
+  margin-left: 0;
+}
+.confirm-order .delivery-right .input-delivery .delivery-dropdown {
+  float: right;
+  margin-top: -5px;
+}
+.confirm-order .delivery-right .input-delivery .delivery-dropdown .dropdown-menu {
+  left: -233px;
+  width: 360px;
+}
+.confirm-order .delivery-right .alert-delivery {
+  color: #f00;
+  display: none;
+}
+.confirm-order .additionally-order .btn {
+  float: right;
+  margin-left: 10px;
+}
+.confirm-order textarea {
+  margin: 10px;
+  width: 100%;
+  display: block;
+  height: 80px;
+  font-family: Tahoma, Arial;
+  font-size: 14px;
+  color: #858585;
 }
 /* backoffice */
 .backoffice .main-content {

@@ -191,7 +191,7 @@ transform()
         margin-left 10px
         margin-bottom 5px
         padding-right 20px
-        font-size 14px
+        font-size 12px
         line-height 16px
       .delete-product
         font-size 24px
@@ -205,48 +205,6 @@ transform()
           background 0
       .unit-name
         display none
-  .itogo-right
-    padding-left 10px
-    font-size 16px
-    span
-      font-weight bold
-  .delivery-right
-    padding-left 10px
-    h3
-      font-size 16px
-    .input-delivery
-      display none
-      padding-right 10px
-      .lbl
-        font-size 16px
-        display block
-        margin-bottom 5px
-      input
-        width 100%
-        margin-bottom 10px
-        &.short
-          width 175px
-          display inline-block
-          &.first
-            margin-right 5px
-      #delivery-addr
-        margin-left 0
-      .delivery-dropdown
-        float right
-        margin-top -5px
-        .dropdown-menu
-          left -233px
-          width 360px
-    .alert-delivery
-      color #ff0000
-      display none
-  textarea
-    margin 10px
-    width 358px
-    height 80px
-    font-family Tahoma,Arial
-    font-size 14px
-    color rgb(133, 133, 133)
   .btn-grey
     margin-left 186px
     margin-right 10px
@@ -826,6 +784,60 @@ th.next
       height 270px
   .close
     margin-right -5px
+
+/* оформление заказа */
+.confirm-order
+  font-size 16px
+  .order-date
+    padding 15px 0 0 10px
+    font-weight bold
+  .itogo-right
+    float right
+    padding-left 10px
+    font-size 16px
+    span
+      font-weight bold
+  .delivery-right
+    padding-left 10px
+    h3
+      font-size 16px
+    .input-delivery
+      padding-right 10px
+      .lbl
+        font-size 16px
+        display block
+        margin-bottom 5px
+      input
+        width 100%
+        margin-bottom 10px
+        &.short
+          width 175px
+          display inline-block
+          &.first
+            margin-right 5px
+      #delivery-addr
+        margin-left 0
+      .delivery-dropdown
+        float right
+        margin-top -5px
+        .dropdown-menu
+          left -233px
+          width 360px
+    .alert-delivery
+      color #ff0000
+      display none
+  .additionally-order
+    .btn
+      float right
+      margin-left 10px
+  textarea
+    margin 10px
+    width 100%
+    display block
+    height 80px
+    font-family Tahoma,Arial
+    font-size 14px
+    color rgb(133, 133, 133)
 
 /* backoffice */
 .backoffice .main-content
