@@ -1,7 +1,8 @@
 define(
     'shop-spinner',
-    ['jquery','shop-common'],
-    function( $,commonModule ){
+    ['jquery','ace_spinner','shop-initThrift','shop-common'],
+    function( $,aceSpinner,thriftModule,commonModule ){
+        alert('spinner '+commonModule);
 
         function InitSpinner(selector,spinnerValue,itsBasket,spinnerStep){
             try{
@@ -35,10 +36,10 @@ define(
                         $(this).find('.td-summa').text((price*qnty).toFixed(1));
                     }
                 });
-                var productDetails = client.getProductDetails(productSelector.data('productid'));
+                var productDetails = thriftModule.client.getProductDetails(productSelector.data('productid'));
                 var packs=[];
                 if (productDetails.prepackRequired){
-                    var orderDetails = client.getOrderDetails(currentOrderId);
+                    var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
                     var orderLines = orderDetails.odrerLines;
                     var orderLinesLength = orderDetails.odrerLines.length;
                     for (var i = 0; i < orderLinesLength ; i++){
@@ -53,7 +54,7 @@ define(
                 }else{
                     packs = 0;
                 }
-                client.setOrderLine(productSelector.data('productid'),qnty,'asd',packs);
+                thriftModule.client.setOrderLine(productSelector.data('productid'),qnty,'asd',packs);
                 productSelector.find('.td-summa').text((price*qnty).toFixed(1));
 
                 $('.itogo-right span,.modal-itogo span').text(commonModule.countAmount($('.modal-body-list')));
@@ -67,7 +68,7 @@ define(
                 var qnty = $(this).val();
                 var packs;
                 var productSelector = $(this).closest('li');
-                var orderDetails = client.getOrderDetails(currentOrderId);
+                var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
                 var orderLinesLength = orderDetails.odrerLines.length;
                 var productId = $(this).closest('li').data('productid');
                 for (var i = 0; i < orderLinesLength; i++){
@@ -154,7 +155,7 @@ define(
                     /* for (var p in packs){
                      alert(p+" "+packs[p]);
                      }*/
-                    client.setOrderLine(productId,qnty,'sdf',packs);
+                    thriftModule.client.setOrderLine(productId,qnty,'sdf',packs);
                     var price = productSelector.find('.td-price').text();
                     price = parseFloat(price);
                     productSelector.find('.td-summa').text((price*qnty).toFixed(1));
@@ -209,7 +210,7 @@ define(
                     } else{
                         // значит мы в таблице продуктов и нам нужно автом. поменять значение
                         // spinner у соотв. модального окна и посчитать сумму
-                        var productDetails = client.getProductDetails(productSelector.data('productid'));
+                        var productDetails = thriftModule.client.getProductDetails(productSelector.data('productid'));
                         if (productDetails.prepackRequired){
                             productSelector.find('.modal .prepack-item:not(".packs") .ace-spinner').spinner('value',qnty);
                             productSelector.find('.modal .prepack-item.packs .ace-spinner').spinner('value',1);
@@ -237,7 +238,7 @@ define(
 
                     if ($(this).closest('.catalog-order').length > 0){
                         // если мы в корзине, то нужно менять packs и делать setOrderLine
-                        var orderDetails = client.getOrderDetails(currentOrderId);
+                        var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
                         var orderLinesLength = orderDetails.odrerLines.length;
                         var packs,qnty;
                         for (var i = 0; i < orderLinesLength; i++){
@@ -256,7 +257,7 @@ define(
                             qnty = (qnty - quantVal*packVal).toFixed(1);
                             productSelector.find('td>.ace-spinner').spinner('value',qnty);
                             productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
-                            client.setOrderLine(productId,qnty,'asd',packs);
+                            thriftModule.client.setOrderLine(productId,qnty,'asd',packs);
                             $('.itogo-right span').text(countAmount($('.catalog-order')));
                         }
                     }
@@ -280,6 +281,7 @@ define(
         function initProductsSpinner(){
             $('.catalog table .spinner1').each(function(){
                 var minClientPack = $(this).data('step');
+
                 InitSpinner($(this),minClientPack,0,minClientPack);
             });
         }
@@ -295,7 +297,7 @@ define(
                 orderId = linkSelector.closest('.order-item').data('orderid');
                 unitName = linkSelector.closest('tr').find('.unit-name').text();
             }
-            var orderDetails = client.getOrderDetails(orderId);
+            var orderDetails = thriftModule.client.getOrderDetails(orderId);
             var orderLinesLength = orderDetails.odrerLines.length;
             var packs;
             for (var i = 0; i < orderLinesLength; i++){
@@ -338,7 +340,7 @@ define(
                                 '<span>'+ unitName +'</span>'+
                                 '</div>'+
                                 '<div class="prepack-item">'+
-                                '<a href="#" class="close" title="Удалить">×</a>'+
+                                '<a href="#" class="close" title="Удалить">?</a>'+
                                 '</div>'+
                                 '</div>';
                             currentModal.find('.prepack-list').append(prepackHtml);
@@ -370,5 +372,15 @@ define(
                 }
             }
         });
+
+        return {
+            InitSpinner: InitSpinner,
+            InitSpinnerChangeInFinal: InitSpinnerChangeInFinal,
+            InitSpinnerChangeInBasket: InitSpinnerChangeInBasket,
+            InitSpinnerChange: InitSpinnerChange,
+            initRemovePrepackLine: initRemovePrepackLine,
+            initProductsSpinner: initProductsSpinner,
+            initPrepackRequiredInModal: initPrepackRequiredInModal
+        }
     }
 );

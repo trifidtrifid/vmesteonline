@@ -1,8 +1,9 @@
 define(
     'shop-delivery',
-    ['jquery','shop-search','shop-common'],
-    function( $, searchModule, commonModule ){
+    ['jquery','shop-initThrift','shop-search','shop-common'],
+    function( $,thriftModule, searchModule, commonModule ){
 
+        alert('delivery '+ searchModule+" "+commonModule );
         var autocompleteAddressFlag = 1;
         var triggerDelivery = 0;
 
@@ -28,17 +29,17 @@ define(
                 var orderDetails = 0;
                 if ($(this).hasClass('courier-delivery')){
                     //если доставка курьером
-                    client.setOrderDeliveryType(2);
+                    thriftModule.client.setOrderDeliveryType(2);
                     if (autocompleteAddressFlag){
                         searchModule.initAutocompleteAddress();
 
-                        var userAddresses = userServiceClient.getUserAddresses();
-                        var userPhone = userServiceClient.getUserContacts().mobilePhone;
+                        var userAddresses = thriftModule.userServiceClient.getUserAddresses();
+                        var userPhone = thriftModule.userServiceClient.getUserContacts().mobilePhone;
                         if(userPhone){
                             $('#phone-delivery').val(userPhone);
                         }
                         if(userAddresses.length > 0){
-                            var homeAddress = userServiceClient.getUserContacts().homeAddress;
+                            var homeAddress = thriftModule.userServiceClient.getUserContacts().homeAddress;
                             if(homeAddress){
                                 writeAddress(homeAddress);
                             }
@@ -67,18 +68,23 @@ define(
                     }
 
                     $(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
-                    orderDetails = client.getOrderDetails(currentOrderId);
+                    orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
                     if (orderDetails.deliveryCost){
                         $('.delivery-cost').text(orderDetails.deliveryCost);
                     }
                     itogoRight.text(commonModule.countAmount($('.catalog-order')));
                     triggerDelivery = 1;
                 }else{
-                    client.setOrderDeliveryType(1);
+                    thriftModule.client.setOrderDeliveryType(1);
                     $(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
                     if (triggerDelivery){itogoRight.text(commonModule.countAmount($('.catalog-order'))); triggerDelivery = 0;}
                 }
             });
+        }
+
+        return {
+            writeAddress: writeAddress,
+            initRadioBtnClick: initRadioBtnClick
         }
     }
 );

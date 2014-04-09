@@ -1,8 +1,9 @@
 define(
-    'shop-addProduct',
-    ['jquery','shop-common','shop-orders','initDatepicker','shop-basket','shop-spinner'],
-    function( $,commonModule,ordersModule,datepickerModule,basketModule,spinnerModule ){
+    'shop-addProduct2',
+    ['jquery','shop-initThrift','shop-common','shop-orders','initDatepicker','shop-basket','shop-spinner'],
+    function( $,thriftModule,commonModule,ordersModule,datepickerModule,basketModule,spinnerModule ){
 
+        alert('addProduct2 '+ commonModule+" "+ordersModule+" "+datepickerModule+" "+basketModule+" "+spinnerModule);
         var flagFromBasketClick = 0;
 
         var callbacks = $.Callbacks();
@@ -30,7 +31,7 @@ define(
                  */
                 var newPacks;
                 /*            if (packs){
-                 var orderDetails = client.getOrderDetails(currentOrderId);
+                 var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
                  var orderLines = orderDetails.odrerLines;
                  var orderLinesLength = orderLines.length;
                  var orderPacks;
@@ -103,7 +104,7 @@ define(
 
                 (commonModule.getPacksLength(packs) <= 1) ? currentSpinner.spinner('enable'):currentSpinner.spinner('disable');
 
-                client.setOrderLine(currentProduct.id,newSpinnerVal,'sdf',packs);
+                thriftModule.client.setOrderLine(currentProduct.id,newSpinnerVal,'sdf',packs);
                 var newSumma = (newSpinnerVal*parseFloat(basketProductSelector.find('.td-price').text())).toFixed(1);
                 basketProductSelector.find('.td-summa').text(newSumma);
                 $('.itogo-right span').text(commonModule.countAmount($('.catalog-order')));
@@ -111,7 +112,7 @@ define(
                 // если такого товара еще нет
                 AddSingleProductToBasket(currentProduct,currentProduct.qnty);
 
-                client.setOrderLine(currentProduct.id,currentProduct.qnty,'sdf',packs);
+                thriftModule.client.setOrderLine(currentProduct.id,currentProduct.qnty,'sdf',packs);
                 if(currentProduct.prepackLine.length != 0 || (packs && commonModule.getPacksLength(packs) > 0)){
                     currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]').find('td>.ace-spinner');
                     currentSpinner.spinner('disable');
@@ -146,7 +147,7 @@ define(
                             packVal : 1,
                             quantVal :  currentProductSelector.find('td .spinner1').data('step')
                         };
-                        var productDetails = client.getProductDetails(currentProduct.id);
+                        var productDetails = thriftModule.client.getProductDetails(currentProduct.id);
                         var packs = [];
                         if (productDetails.prepackRequired){
                             // если это товар с prepackRequired
@@ -184,7 +185,7 @@ define(
                                     // если мы на странице истории заказов
                                     // (то нужно вытащить packs из заказа)
                                     var orderId = $(this).closest('.order-item').data('orderid');
-                                    var orderDetails = client.getOrderDetails(orderId);
+                                    var orderDetails = thriftModule.client.getOrderDetails(orderId);
                                     var orderLines = orderDetails.odrerLines;
                                     var orderLinesLength = orderLines.length;
                                     for(var i = 0; i < orderLinesLength; i++){
@@ -234,7 +235,7 @@ define(
 
         function AddSingleProductToBasket(currentProduct,spinnerValue,spinnerDisable){
             try{
-                var productDetails = client.getProductDetails(currentProduct.id);
+                var productDetails = thriftModule.client.getProductDetails(currentProduct.id);
                 var productHtml = '<li data-productid="'+ currentProduct.id +'">'+
                     '<table>'+
                     '<tr>'+
@@ -275,6 +276,15 @@ define(
             if (spinnerDisable){spinnerNoInit.closest('.ace-spinner').spinner('disable');}
             spinnerNoInit.removeClass('no-init');
 
+        }
+
+        return{
+            flagFromBasketClick: flagFromBasketClick,
+            callbacks: callbacks,
+            AddProductToBasketCommon: AddProductToBasketCommon,
+            InitAddToBasket: InitAddToBasket,
+            BasketTrigger: BasketTrigger,
+            AddSingleProductToBasket: AddSingleProductToBasket
         }
     }
 );

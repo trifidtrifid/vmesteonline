@@ -1,7 +1,10 @@
 define(
     'shop-orders',
-    ['jquery','shop-common','shop-spinner','shop-addProduct','initDatepicker'],
-    function( $,commonModule,spinnerModule,addProduct, datepickerModule ){
+    ['jquery','shop-initThrift','shop-basket','shop-common','shop-spinner','initDatepicker'],
+    function( $,thriftModule,basketModule,commonModule,spinnerModule, datepickerModule ){
+
+        alert('orders '+basketModule+" "+commonModule+" "+spinnerModule+" "+datepickerModule);
+
         function createOrdersProductHtml(orderDetails){
             try{
                 var ordersProductsHtml = '<section class="catalog">'+
@@ -19,7 +22,7 @@ define(
                 var orderLinedLength = orderLines.length;
 
                 for (var j = 0; j < orderLinedLength; j++){
-                    //var productDetails = client.getProductDetails(orderLines[j].product.id);
+                    //var productDetails = thriftModule.client.getProductDetails(orderLines[j].product.id);
                     //var imagesSet = productDetails.imagesURLset;
                     var unitName = "";
                     if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
@@ -108,7 +111,7 @@ define(
                             break
                     }
                     // форматирование типа доставки
-                    var orderDetails = client.getOrderDetails(orders[i].id);
+                    var orderDetails = thriftModule.client.getOrderDetails(orders[i].id);
                     var orderDelivery;
                     switch(orderDetails.delivery){
                         case 0:
@@ -170,43 +173,46 @@ define(
             return ordersHtml;
         }
 
+
         function initOrderPlusMinus(selector){
-            try{
-                selector.find('.plus-minus').click(function(e){
-                    e.preventDefault();
+                try{
+                    selector.find('.plus-minus').click(function(e){
+                        e.preventDefault();
 
-                    var orderItem = $(this).closest('.order-item');
-                    var orderProducts = orderItem.find('.order-products');
-                    var orderDetails = client.getOrderDetails(orderItem.data('orderid'));
-                    var orderLines = orderDetails.odrerLines;
-                    var orderLinesLength = orderLines.length;
+                        var orderItem = $(this).closest('.order-item');
+                        var orderProducts = orderItem.find('.order-products');
+                        var orderDetails = thriftModule.client.getOrderDetails(orderItem.data('orderid'));
+                        var orderLines = orderDetails.odrerLines;
+                        var orderLinesLength = orderLines.length;
 
-                    if (orderProducts.find('.catalog').length == 0){
-                        orderProducts.append(createOrdersProductHtml(orderDetails));
+                        if (orderProducts.find('.catalog').length == 0){
+                            orderProducts.append(createOrdersProductHtml(orderDetails));
 
-                        for (var i = 0; i < orderLinesLength; i++){
-                            spinnerModule.InitSpinner(orderProducts.find('tbody tr:eq('+ i +') .spinner1'),orderLines[i].quantity,0,orderProducts.find('tbody tr:eq('+ i +') .spinner1').data('step'));
+                            for (var i = 0; i < orderLinesLength; i++){
+                                spinnerModule.InitSpinner(orderProducts.find('tbody tr:eq('+ i +') .spinner1'),orderLines[i].quantity,0,orderProducts.find('tbody tr:eq('+ i +') .spinner1').data('step'));
+                            }
+
+                            basketModule.InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
+                            commonModule.InitProductDetailPopup(orderProducts.find('.product-link'));
                         }
 
-                        addProduct.InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
-                        commonModule.InitProductDetailPopup(orderProducts.find('.product-link'));
-                    }
-
-                    orderProducts.slideToggle(200,function(){
-                        if ($('.main-content').height() > w.height()){
-                            $('#sidebar, .shop-right').css('height', $('.main-content').height()+45);
+                        orderProducts.slideToggle(200,function(){
+                            if ($('.main-content').height() > $(window).height()){
+                                $('#sidebar, .shop-right').css('height', $('.main-content').height()+45);
+                            }
+                        });
+                        if ($(this).hasClass('fa-plus')){
+                            $(this).removeClass('fa-plus').addClass('fa-minus');
+                        }else{
+                            $(this).removeClass('fa-minus').addClass('fa-plus');
                         }
                     });
-                    if ($(this).hasClass('fa-plus')){
-                        $(this).removeClass('fa-plus').addClass('fa-minus');
-                    }else{
-                        $(this).removeClass('fa-minus').addClass('fa-plus');
-                    }
-                });
-            }catch(e){
-                alert(e+" Функция initOrderPlusMinus");
+                }catch(e){
+                    alert(e+" Функция initOrderPlusMinus");
+                }
             }
-        }
+
+
 
         function addSingleOrderToBasket(orderId,addType){
             try{
@@ -214,17 +220,17 @@ define(
                     curProd,
                     spinVal,i;
                 if (addType == 'replace'){
-                    orderDetails = client.getOrderDetails(orderId);
+                    orderDetails = thriftModule.client.getOrderDetails(orderId);
                     var orderLines = orderDetails.odrerLines;
                     var orderLinesLength = orderLines.length;
                     for(i = 0; i < orderLinesLength; i++){
                         curProd = orderLines[i].product;
                         spinVal = orderLines[i].quantity;
                         var packs = orderLines[i].packs;
-                        client.setOrderLine(curProd.id,spinVal,"asd",packs);
+                        thriftModule.client.setOrderLine(curProd.id,spinVal,"asd",packs);
                     }
                 }else if (addType == 'append'){
-                    orderDetails = client.appendOrder(orderId);
+                    orderDetails = thriftModule.client.appendOrder(orderId);
                 }
                 orderLines = orderDetails.odrerLines;
                 orderLinesLength = orderLines.length;
@@ -236,7 +242,7 @@ define(
                     if(orderLines[i].packs && commonModule.getPacksLength(orderLines[i].packs) > 1){
                         spinnerDisable = true;
                     }
-                    addProduct.AddSingleProductToBasket(curProd,spinVal,spinnerDisable);
+                    basketModule.AddSingleProductToBasket(curProd,spinVal,spinnerDisable);
                 }
             }catch(e){
                 alert(e+" Функция addSingleOrderToBasket");
@@ -267,10 +273,10 @@ define(
                         itsAppend: false,
                         orderId : $(this).closest('.order-item').data('orderid')
                     };
-                    addProduct.flagFromBasketClick = 1;
-                    datepickerModule.dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,addProduct.AddSingleProductToBasket,AddOrdersToBasket,addProduct.AddProductToBasketCommon);
+                    basketModule.flagFromBasketClick = 1;
+                    datepickerModule.dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,basketModule.AddSingleProductToBasket,AddOrdersToBasket,basketModule.AddProductToBasketCommon);
                     datepickerModule.dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click').datepicker('triggerFlagBasket');
-                    addProduct.flagFromBasketClick = 0;
+                    basketModule.flagFromBasketClick = 0;
                 });
                 selector.find('.add-order-btn').click(function(){
                     var orderData= {
@@ -279,8 +285,8 @@ define(
                         orderId : $(this).closest('.order-item').data('orderid')
                     };
                     if ($('.additionally-order').hasClass('hide')){
-                        addProduct.flagFromBasketClick = 1;
-                        datepickerModule.dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,addProduct.AddSingleProductToBasket,AddOrdersToBasket,addProduct.AddProductToBasketCommon);
+                        basketModule.flagFromBasketClick = 1;
+                        datepickerModule.dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,basketModule.AddSingleProductToBasket,AddOrdersToBasket,basketModule.AddProductToBasketCommon);
                         datepickerModule.dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');
                     }else{
                         AddOrdersToBasket(orderData);
@@ -305,7 +311,7 @@ define(
 
                 var confirmed = confirm('Ваша текущая корзина будет заменена этим заказом. Вы согласны ?');
                 if(confirmed){
-                    client.getOrder($(this).closest('.order-item').data('orderid'));
+                    thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
                     var orderData= {
                         itsOrder: true,
                         itsAppend: false,
@@ -318,10 +324,10 @@ define(
                 e.preventDefault();
 
                 var tempOrderId = currentOrderId;
-                client.getOrder($(this).closest('.order-item').data('orderid'));
-                client.confirmOrder();
+                thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
+                thriftModule.client.confirmOrder();
                 if(tempOrderId){
-                    client.getOrder(tempOrderId);
+                    thriftModule.client.getOrder(tempOrderId);
                 }
                 alert('Заказ подтвержден !');
                 $(this).closest('td').find('.order-status').text('Подтвержден');
@@ -354,6 +360,19 @@ define(
 
         function GoToOrdersTrigger(){
             $('.go-to-orders').trigger('click');
+        }
+
+        return{
+            createOrdersProductHtml: createOrdersProductHtml,
+            createOrdersHtml: createOrdersHtml,
+            initOrderPlusMinus: initOrderPlusMinus,
+            addSingleOrderToBasket: addSingleOrderToBasket,
+            AddOrdersToBasket: AddOrdersToBasket,
+            initOrderBtns: initOrderBtns,
+            initVarForMoreOrders: initVarForMoreOrders,
+            initOrdersLinks: initOrdersLinks,
+            initShowMoreOrders: initShowMoreOrders,
+            GoToOrdersTrigger: GoToOrdersTrigger
         }
     }
 );

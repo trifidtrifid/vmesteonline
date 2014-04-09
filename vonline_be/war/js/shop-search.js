@@ -1,7 +1,8 @@
 define(
     'shop-search',
-    ['jquery','shop-addProduct','initDatepicker','shop-orders','shop-category','shop-common','shop-spinner'],
-    function( $,addProduct,datepickerModule,ordersModule,categoryModule,commonModule,spinnerModule ){
+    ['jquery','jquery_ui','shop-initThrift','shop-basket','initDatepicker','shop-orders','shop-category','shop-common','shop-spinner'],
+    function( $,jquery_ui,thriftModule,basketModule,datepickerModule,ordersModule,categoryModule,commonModule,spinnerModule ){
+        alert('search '+basketModule+" "+datepickerModule+" "+ordersModule+" "+categoryModule+" "+commonModule+" "+spinnerModule);
         try{
             $.widget( "custom.catcomplete", $.ui.autocomplete, {
                 _renderMenu: function( ul, items ) {
@@ -17,9 +18,9 @@ define(
                 }
             });
 
-            var shopArray = client.getShops();
-            var currentShop = client.getShop(shopArray[0].id);
-            var arr = client.getProductsByCategories(currentShop.id);
+            var shopArray = thriftModule.client.getShops();
+            var currentShop = thriftModule.client.getShop(shopArray[0].id);
+            var arr = thriftModule.client.getProductsByCategories(currentShop.id);
             var arrLength = arr.length;
             var counter = 0,
                 dataSearch = [];
@@ -38,7 +39,7 @@ define(
                 source: dataSearch,
                 select: function(event,ui){
                     //event.preventDefault();
-                    var productsListPart = client.getProducts(0,10,0);
+                    var productsListPart = thriftModule.client.getProducts(0,10,0);
                     var products = productsListPart.products;
                     var productsLength = products.length;
                     var packs = [];
@@ -46,17 +47,17 @@ define(
                         if(products[i].name == ui.item['label']){
                             products[i].qnty = products[i].minClientPack;
                             products[i].prepackLine = [];
-                            var productDetails = client.getProductDetails(products[i].id);
+                            var productDetails = thriftModule.client.getProductDetails(products[i].id);
                             if(productDetails.prepackRequired){
                                 packs[products[i].minClientPack] = 1;
                             }
                             if(currentOrderId){
                                 // если в корзине уже что-то есть
-                                addProduct.AddProductToBasketCommon(products[i],packs);
+                                basketModule.AddProductToBasketCommon(products[i],packs);
                             }else{
                                 // если первый товар в корзине
-                                addProduct.flagFromBasketClick = 1;
-                                datepickerModule.dPicker.datepicker('setVarFreeDays',products[i], products[i].qnty,0,packs,addProduct.AddSingleProductToBasket,ordersModule.AddOrdersToBasket,addProduct.AddProductToBasketCommon);
+                                basketModule.flagFromBasketClick = 1;
+                                datepickerModule.dPicker.datepicker('setVarFreeDays',products[i], products[i].qnty,0,packs,basketModule.AddSingleProductToBasket,ordersModule.AddOrdersToBasket,basketModule.AddProductToBasketCommon);
                                 datepickerModule.dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');
                             }
                         }
@@ -71,7 +72,7 @@ define(
             $('.form-group').submit(function(e){
                 e.preventDefault();
                 var searchWord = $('#search').val().toLowerCase();
-                var productsListPart = client.getProducts(0,10,0);
+                var productsListPart = thriftModule.client.getProducts(0,10,0);
                 var products = productsListPart.products;
                 var productsLength = products.length;
                 var searchedProducts = [];
@@ -86,13 +87,13 @@ define(
                 /* подключение событий */
                 spinnerModule.initProductsSpinner();
                 commonModule.InitProductDetailPopup($('.product-link'));
-                addProduct.InitAddToBasket($('.fa-shopping-cart'));
+                basketModule.InitAddToBasket($('.fa-shopping-cart'));
                 categoryModule.InitClickOnCategory();
             });
 
             /* автозаполнение адреса доставки  */
             function initAutocompleteAddress(){
-                var addressesBase = userServiceClient.getAddressCatalogue();
+                var addressesBase = thriftModule.userServiceClient.getAddressCatalogue();
 
                 var countries = addressesBase.countries;
                 var countriesLength = countries.length;
@@ -118,7 +119,7 @@ define(
                     if(prevField){
                         for (var i = 0; i < countriesLength; i++){
                             if (prevField == countryTags[i]){
-                                cities = userServiceClient.getCities(countryId[i]);
+                                cities = thriftModule.userServiceClient.getCities(countryId[i]);
                                 break;
                             }
                         }
@@ -144,7 +145,7 @@ define(
                     if(prevField){
                         for (var i = 0; i < citiesLength; i++){
                             if (prevField == cityTags[i]){
-                                streets = userServiceClient.getStreets(cityId[i]);
+                                streets = thriftModule.userServiceClient.getStreets(cityId[i]);
                                 break;
                             }
                         }
@@ -170,7 +171,7 @@ define(
                     if(prevField){
                         for (var i = 0; i < streetLength; i++){
                             if (prevField == streetTags[i]){
-                                buildings = userServiceClient.getBuildings(streetId[i]);
+                                buildings = thriftModule.userServiceClient.getBuildings(streetId[i]);
                                 break;
                             }
                         }
@@ -190,8 +191,12 @@ define(
                 });
             }
 
+
         }catch(e){
             alert(e+ " Ошибка autocomplete")
+        }
+        return {
+            initAutocompleteAddress: initAutocompleteAddress
         }
 
     }

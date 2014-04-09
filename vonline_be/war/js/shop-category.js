@@ -1,14 +1,26 @@
 define(
     'shop-category',
-    ['jquery','shop-spinner','shop-common','shop-addProduct'],
-    function( $,spinnerModule,commonModule,addProduct ){
+    ['jquery','shop-initThrift','shop-spinner','shop-common','shop-basket'],
+    function( $,thriftModule,spinnerModule,commonModule,basketModule ){
+        alert('category '+basketModule+" "+commonModule+" "+spinnerModule);
+        var prevParentId = [],
+            parentCounter = 0;
+
+        var prevCatCounter = commonModule.getCookie('prevCatCounter');
+        if (prevCatCounter !== undefined){
+            parentCounter = parseInt(prevCatCounter);
+        }
+        var arrayPrevCatCookie = commonModule.getCookie('arrayPrevCat');
+        if (arrayPrevCatCookie !== undefined){
+            prevParentId = arrayPrevCatCookie.split(',');
+        }
 
         function createProductsTableHtml(productsList){
             var productListLength = productsList.length;
             var productsHtml = '';
             var productDetails;
             for (i = 0; i < productListLength; i++){
-                productDetails = client.getProductDetails(productsList[i].id);
+                productDetails = thriftModule.client.getProductDetails(productsList[i].id);
                 var unitName = "";
                 if (productsList[i].unitName){unitName = productsList[i].unitName;}
                 productsHtml += '<tr data-productid="'+ productsList[i].id +'">'+
@@ -37,7 +49,7 @@ define(
             try{
                 /* замена меню категорий */
 
-                var productCategories = client.getProductCategories(catID);
+                var productCategories = thriftModule.client.getProductCategories(catID);
                 var categoriesLength = productCategories.length;
                 var shopMenu = '';
                 var firstMenuItem = "";
@@ -63,7 +75,7 @@ define(
                 $('.shop-menu ul').html(firstMenuItem).append(shopMenu);
 
                 /* новый список товаров */
-                var productsList = client.getProducts(0,10,catID).products;
+                var productsList = thriftModule.client.getProducts(0,10,catID).products;
                 $('.main-content .catalog table tbody').html("").append(createProductsTableHtml(productsList));
 
             }catch(e){
@@ -73,7 +85,7 @@ define(
             /* подключение событий */
             spinnerModule.initProductsSpinner();
             commonModule.InitProductDetailPopup($('.product-link'));
-            addProduct.InitAddToBasket($('.fa-shopping-cart'));
+            basketModule.InitAddToBasket($('.fa-shopping-cart'));
             InitClickOnCategory();
 
         }
@@ -83,27 +95,33 @@ define(
                 $('.shop-menu li a').click(function(e){
                     e.preventDefault();
                     if ($(this).hasClass('fa-reply-all')){
-                        InitLoadCategory(prevParentId[commonModule.parentCounter]);
-                        commonModule.setCookie('catid',commonModule.prevParentId[commonModule.parentCounter]);
-                        commonModule.parentCounter--;
-                        commonModule.setCookie('arrayPrevCat',commonModule.prevParentId);
-                        commonModule.setCookie('prevCatCounter',commonModule.parentCounter);
+                        InitLoadCategory(prevParentId[parentCounter]);
+                        commonModule.setCookie('catid',prevParentId[parentCounter]);
+                        parentCounter--;
+                        commonModule.setCookie('arrayPrevCat',prevParentId);
+                        commonModule.setCookie('prevCatCounter',parentCounter);
 
                     }
                     else {
-                        commonModule.parentCounter++;
+                        parentCounter++;
                         //console.log(prevParentId[parentCounter]);
-                        commonModule.prevParentId[commonModule.parentCounter] = $(this).parent().data('parentid');
+                        prevParentId[parentCounter] = $(this).parent().data('parentid');
                         //console.log($(this).parent().data('catid'));
                         InitLoadCategory($(this).parent().data('catid'));
                         commonModule.setCookie('catid',$(this).parent().data('catid'));
-                        commonModule.setCookie('arrayPrevCat',commonModule.prevParentId);
-                        commonModule.setCookie('prevCatCounter',commonModule.parentCounter);
+                        commonModule.setCookie('arrayPrevCat',prevParentId);
+                        commonModule.setCookie('prevCatCounter',parentCounter);
                     }
                 });
             }catch(e){
                 alert(e+" Функция InitClickOnCategory");
             }
+        }
+
+        return {
+            createProductsTableHtml: createProductsTableHtml,
+            InitLoadCategory: InitLoadCategory,
+            InitClickOnCategory: InitClickOnCategory
         }
     }
 );

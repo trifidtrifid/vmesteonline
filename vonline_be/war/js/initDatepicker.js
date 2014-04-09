@@ -1,8 +1,8 @@
 define(
     'initDatepicker',
     ['jquery','shop-addProduct','shop-orders','shop-common'],
-    function( $, addProduct, ordersModule , commonModule ){
-        var dPicker = $('.date-picker');
+    function( $,addProduct, ordersModule , commonModule ){
+       /* var dPicker = $('.date-picker');
 
         dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
             $(this).prev().focus();
@@ -37,5 +37,10 @@ define(
             }
         });
 
+        return{
+            dPicker: dPicker,
+            datepickerFunc: datepickerFunc
+        }
+     */
     }
 );

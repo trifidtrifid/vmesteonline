@@ -1,31 +1,44 @@
 require.config({
     baseUrl: "/js",
     paths: {
-        "jquery"   : "/lib/jquery-2.0.3.min"
-        /*"calendar" : "zeitproject.calendar",
-        "formatter": "/utils/formatter",
-        "tooltip"  : "/controls/zeitproject.tooltip",
-        "tiptip"   : "/controls/jquery.tiptip.min" */   }
+        "jquery"   : "lib/jquery-2.0.3.min",
+        "ace_spinner": "lib/fuelux/fuelux.spinner.min",
+        "bootstrap": "lib/bootstrap.min",
+        "ace_extra": "lib/ace-extra.min",
+        "ace_elements": "lib/ace-elements.min",
+        "jquery_ui": "lib/jquery-ui-1.10.3.full.min"/*,
+        "datepicker": "lib/date-time/bootstrap-datepicker",
+        "datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru"*/
+    },
+    shim:{
+      'ace_spinner':{
+         deps: ['jquery',"bootstrap","ace_extra","ace_elements","jquery_ui"],
+         exports: 'ace_spinner'
+      },
+      'jquery_ui':{
+          deps: ['jquery'],
+          exports: 'jquery_ui'
+      }/*,
+      'datepicker':{
+          deps: ['jquery',"bootstrap"],
+          exports: 'datepicker'
+      },
+    'datepicker-ru':{
+        deps: ['jquery','datepicker'],
+        exports: 'datepicker-ru'
+    }*/
+
+    }
 });
 
-require(["jquery", "util","shop-search"], function($, util,calendar) {
+/*require(["jquery",'shop-initThrift','shop-common','shop-spinner','shop-addProduct','shop-category','shop-orders','shop-delivery'],
+    function($,thriftModule,commonModule,spinnerModule,addProduct,categoryModule,ordersModule,deliveryModule) {*/
+require(["jquery",'shop-modules'],
+    function($,modules) {
     // глобальные переменные для callback полсе логина в реальном времени
 
-
-    try{
-        var transport = new Thrift.Transport("/thrift/ShopService");
-        var protocol = new Thrift.Protocol(transport);
-        var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
-
-        transport = new Thrift.Transport("/thrift/UserService");
-        protocol = new Thrift.Protocol(transport);
-        var userServiceClient = new com.vmesteonline.be.UserServiceClient(protocol);
-    }catch(e){
-        alert(e + " Ошибка иниицализации thrift");
-    }
-
-
     /* простые обработчики событий */
+        //alert('app '+commonModule+" "+spinnerModule+" "+addProduct+" "+categoryModule+" "+ordersModule+" "+deliveryModule);
     try{
         var w = $(window),
             showRight = $('.show-right'),
@@ -34,7 +47,7 @@ require(["jquery", "util","shop-search"], function($, util,calendar) {
             showRightTop = (w.height()-showRight.width())/ 2;
 
         showRight.css('top',showRightTop);
-        $('.shop-right').css('min-height', w.height()-45);
+        shopRight.css('min-height', w.height()-45);
 
         showRight.click(function(){
             if (!$(this).hasClass('active')){
@@ -76,16 +89,17 @@ require(["jquery", "util","shop-search"], function($, util,calendar) {
         //alert(e + ' Ошибка в простых обработчиках');
     }
 
-    initProductsSpinner();
+        modules.spinnerModule.initProductsSpinner();
 
    /* var triggerDelivery = 0;
     var autocompleteAddressFlag = 1;*/
-    initRadioBtnClick();
+    modules.deliveryModule.initRadioBtnClick();
 
-    initBasketInReload();
-    InitAddToBasket($('.fa-shopping-cart'));
-    InitProductDetailPopup($('.product-link'));
+        modules.commonModule.initBasketInReload();
+        modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
+        modules.commonModule.InitProductDetailPopup($('.product-link'));
     // переключение между категориями
-    InitClickOnCategory();
-    initOrderPlusMinus($('.shop-orders'));
-}); 
+        modules.categoryModule.InitClickOnCategory();
+        modules.ordersModule.initOrderPlusMinus($('.shop-orders'));
+
+});

@@ -1,19 +1,11 @@
 define(
     'shop-common',
-    ['jquery','shop-basket','shop-spinner','shop-addProduct','shop-orders'],
-    function( $ , basketModule,spinnerModule,addProduct,ordersModule ){
-        //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
-        var prevParentId = [],
-            parentCounter = 0;
+    ['jquery','shop-initThrift','shop-basket','shop-spinner','shop-orders'],
+    function( $ ,thriftModule,basketModule,spinnerModule,ordersModule ){
 
-        var prevCatCounter = getCookie('prevCatCounter');
-        if (prevCatCounter !== undefined){
-            parentCounter = parseInt(prevCatCounter);
-        }
-        var arrayPrevCatCookie = getCookie('arrayPrevCat');
-        if (arrayPrevCatCookie !== undefined){
-            prevParentId = arrayPrevCatCookie.split(',');
-        }
+        alert('common'+ basketModule+" "+spinnerModule+" "+basketModule+" "+ordersModule);
+        //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
+
         // возвращает cookie с именем name, если есть, если нет, то undefined
         function getCookie(name) {
             try{
@@ -63,9 +55,9 @@ define(
         function initBasketInReload(){
             var catalogOrderLi = $('.catalog-order li');
             if(catalogOrderLi.length > 0){
-                var order = client.getOrder(0);
+                var order = thriftModule.client.getOrder(0);
                 currentOrderId = order.id;
-                var orderDetails = client.getOrderDetails(currentOrderId);
+                var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
                 var orderLines = orderDetails.odrerLines;
                 var orderLinesLength = orderLines.length;
                 var itsBasket = 1;
@@ -123,7 +115,7 @@ define(
                         unitName: productSelector.find('.unit-name').text(),
                         imageURL : $(this).find('img').attr('src')
                     };
-                    var productDetails = client.getProductDetails(productSelector.data('productid'));
+                    var productDetails = thriftModule.client.getProductDetails(productSelector.data('productid'));
                     var imagesSet = productDetails.imagesURLset;
                     var options = productDetails.optionsMap;
                     var currentModal = $(this).find('+.modal');
@@ -218,7 +210,7 @@ define(
                             }
                             if($(this).closest('.order-products').length > 0){
                                 // если на странице истории заказов, то нужно инициализировать AddToBasket
-                                addProduct.InitAddToBasket(currentModal.find('.fa-shopping-cart'));
+                                basketModule.InitAddToBasket(currentModal.find('.fa-shopping-cart'));
                             }
                         }else{
                             // если не в корзине
@@ -228,7 +220,7 @@ define(
                             }else{
                                 spinnerModule.InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),0,spinnerStep);
                             }
-                            addProduct.InitAddToBasket(currentModal.find('.fa-shopping-cart'));
+                            basketModule.InitAddToBasket(currentModal.find('.fa-shopping-cart'));
                         }
                         currentModal.find('.prepack-open').click(function(e){
                             e.preventDefault();
@@ -259,7 +251,7 @@ define(
                             if ($(this).closest('tr').length == 0){
                                 //если мы в корзине
                                 // нужно сделать setOrderLine
-                                var orderDetails = client.getOrderDetails(currentOrderId);
+                                var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
                                 var orderLinesLength = orderDetails.odrerLines.length;
                                 productId = $(this).closest('li').data('productid');
                                 var packs,qnty;
@@ -285,7 +277,7 @@ define(
                                     /*for(var p in packs){
                                      alert(p+" "+packs[p]);
                                      }*/
-                                    client.setOrderLine(productId,qnty,'sdf',packs);
+                                    thriftModule.client.setOrderLine(productId,qnty,'sdf',packs);
                                     productSelector.find('td>.ace-spinner').spinner('value',qnty);
                                     productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
                                     $('.itogo-right span').text(countAmount($('.catalog-order')));
@@ -366,7 +358,7 @@ define(
                 sel.find('.td-summa').each(function(){
                     summa += parseFloat($(this).text());
                 });
-                var orderDetails = client.getOrderDetails(currentOrderId);
+                var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
                 summa += orderDetails.deliveryCost;
             }catch(e){
                 //alert(e+" Функция countAmount");
@@ -390,7 +382,7 @@ define(
 
                 var mainContent = $('.main-content');
 
-                if (mainContent.height() > w.height()){
+                if (mainContent.height() > $(window).height()){
                     $('.shop-right').css('height', mainContent.height()+45);
                 }else{
                     $('.shop-right').css('height', '100%');
@@ -421,7 +413,7 @@ define(
                         var nowTime = parseInt(new Date().getTime()/1000);
                         nowTime -= nowTime%86400;
                         var day = 3600*24;
-                        var orders = client.getOrders(0,nowTime+90*day);
+                        var orders = thriftModule.client.getOrders(0,nowTime+90*day);
                         ordersModule.initVarForMoreOrders();
                         // если всегда делать createOrdersHtml, то странциа заказов будет обновляться в реальном времени
                         // а так можно оптимизировать и не делать createOrderHtml каждый раз при перезагрузке
@@ -455,6 +447,17 @@ define(
                 });
 
             }).modal();
+        }
+
+        return{
+            getCookie: getCookie,
+            setCookie: setCookie,
+            initBasketInReload: initBasketInReload,
+            InitProductDetailPopup: InitProductDetailPopup,
+            countAmount: countAmount,
+            getPacksLength: getPacksLength,
+            setSidebarHeight: setSidebarHeight,
+            openModalAuth: openModalAuth
         }
     }
 );
