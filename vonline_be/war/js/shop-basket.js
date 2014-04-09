@@ -2,7 +2,6 @@ define(
     'shop-basket',
     ['jquery','shop-initThrift','shop-spinner','shop-common','shop-orders','initDatepicker'],
     function( $,thriftModule,spinnerModule,commonModule,ordersModule,datePickerModule ){
-        alert('basket '+commonModule+" "+spinnerModule);
 
         function isValidPhone(myPhone) {
             //return /^\+\d{2}\(\d{3}\)\d{3}-\d{2}-\d{2}$/.test(myPhone);
@@ -73,7 +72,7 @@ define(
                     popup.find('.btn-order').click(function(){
                         // добавление в базу нового города, страны, улицы и т.д (если курьером)
                         if ($('.input-delivery').hasClass('active')){
-                            var countries = thriftModule.userServiceClient.getCounties();
+                            var countries = thriftModule.userClient.getCounties();
                             var countriesLength = countries.length;
                             var inputCountry = $('#country-delivery').val();
                             var country,countryId = 0;
@@ -84,11 +83,11 @@ define(
                                 }
                             }
                             if (!countryId){
-                                country = thriftModule.userServiceClient.createNewCountry(inputCountry);
+                                country = thriftModule.userClient.createNewCountry(inputCountry);
                                 countryId = country.id;
                             }
 
-                            var cities = thriftModule.userServiceClient.getCities(countryId);
+                            var cities = thriftModule.userClient.getCities(countryId);
                             var citiesLength = cities.length;
                             var inputCity = $('#city-delivery').val();
                             var city,cityId = 0;
@@ -99,11 +98,11 @@ define(
                                 }
                             }
                             if (!cityId){
-                                city = thriftModule.userServiceClient.createNewCity(countryId,inputCity);
+                                city = thriftModule.userClient.createNewCity(countryId,inputCity);
                                 cityId = city.id;
                             }
 
-                            var streets = thriftModule.userServiceClient.getStreets(cityId);
+                            var streets = thriftModule.userClient.getStreets(cityId);
                             var streetsLength = streets.length;
                             var inputStreet = $('#street-delivery').val();
                             var street,streetId = 0;
@@ -114,11 +113,11 @@ define(
                                 }
                             }
                             if (!streetId){
-                                street = thriftModule.userServiceClient.createNewStreet(cityId,inputStreet);
+                                street = thriftModule.userClient.createNewStreet(cityId,inputStreet);
                                 streetId = street.id;
                             }
 
-                            var buildings = thriftModule.userServiceClient.getBuildings(streetId);
+                            var buildings = thriftModule.userClient.getBuildings(streetId);
                             var buildingsLength = buildings.length;
                             var inputBuilding = $('#building-delivery').val();
                             var building,buildingId = 0;
@@ -129,7 +128,7 @@ define(
                                 }
                             }
                             if (!buildingId){
-                                building = thriftModule.userServiceClient.createNewBuilding(streetId,inputBuilding,0,0);
+                                building = thriftModule.userClient.createNewBuilding(streetId,inputBuilding,0,0);
                                 buildingId = building.id;
                             }
 
@@ -160,9 +159,9 @@ define(
                         }
 
                         // сохранение телефона
-                        var userContacts = thriftModule.userServiceClient.getUserContacts();
+                        var userContacts = thriftModule.userClient.getUserContacts();
                         userContacts.mobilePhone = $('#phone-delivery').val();
-                        thriftModule.userServiceClient.updateUserContacts(userContacts);
+                        thriftModule.userClient.updateUserContacts(userContacts);
 
                         thriftModule.client.confirmOrder();
                         alert('Ваш заказ принят !');
@@ -209,7 +208,7 @@ define(
         }
 
         /*--------------------------------------*/
-
+        /* addProduct */
         var flagFromBasketClick = 0;
 
         var callbacks = $.Callbacks();

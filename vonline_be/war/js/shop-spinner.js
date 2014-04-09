@@ -2,7 +2,6 @@ define(
     'shop-spinner',
     ['jquery','ace_spinner','shop-initThrift','shop-common'],
     function( $,aceSpinner,thriftModule,commonModule ){
-        alert('spinner '+commonModule);
 
         function InitSpinner(selector,spinnerValue,itsBasket,spinnerStep){
             try{

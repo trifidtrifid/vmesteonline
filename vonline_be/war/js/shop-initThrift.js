@@ -8,11 +8,16 @@ define(
 
         transport = new Thrift.Transport("/thrift/UserService");
         protocol = new Thrift.Protocol(transport);
-        var userServiceClient = new com.vmesteonline.be.UserServiceClient(protocol);
+        var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
+
+        transport = new Thrift.Transport("/thrift/AuthService");
+        protocol = new Thrift.Protocol(transport);
+        var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
 
         return {
             client: client,
-            userServiceClient: userServiceClient
+            userClient: userClient,
+            authClient: authClient
         }
 
     }

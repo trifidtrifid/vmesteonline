@@ -3,8 +3,6 @@ define(
     ['jquery','shop-initThrift','shop-basket','shop-common','shop-spinner','initDatepicker'],
     function( $,thriftModule,basketModule,commonModule,spinnerModule, datepickerModule ){
 
-        alert('orders '+basketModule+" "+commonModule+" "+spinnerModule+" "+datepickerModule);
-
         function createOrdersProductHtml(orderDetails){
             try{
                 var ordersProductsHtml = '<section class="catalog">'+
@@ -192,6 +190,8 @@ define(
                                 spinnerModule.InitSpinner(orderProducts.find('tbody tr:eq('+ i +') .spinner1'),orderLines[i].quantity,0,orderProducts.find('tbody tr:eq('+ i +') .spinner1').data('step'));
                             }
 
+                            var basketModule = require('shop-basket');
+                            var commonModule = require('shop-common');
                             basketModule.InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
                             commonModule.InitProductDetailPopup(orderProducts.find('.product-link'));
                         }

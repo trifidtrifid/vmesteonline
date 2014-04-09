@@ -3,7 +3,6 @@ define(
     ['jquery','shop-initThrift','shop-basket','shop-spinner','shop-orders'],
     function( $ ,thriftModule,basketModule,spinnerModule,ordersModule ){
 
-        alert('common'+ basketModule+" "+spinnerModule+" "+basketModule+" "+ordersModule);
         //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 
         // возвращает cookie с именем name, если есть, если нет, то undefined

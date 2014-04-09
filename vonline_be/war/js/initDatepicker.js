@@ -1,7 +1,7 @@
 define(
     'initDatepicker',
-    ['jquery','shop-addProduct','shop-orders','shop-common'],
-    function( $,addProduct, ordersModule , commonModule ){
+    ['jquery','shop-basket','shop-orders','shop-common'],
+    function( $,basketModule, ordersModule , commonModule ){
        /* var dPicker = $('.date-picker');
 
         dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
@@ -9,7 +9,7 @@ define(
         });
 
         var datepickerFunc = {
-            AddSingleProductToBasket: addProduct.AddSingleProductToBasket,
+            AddSingleProductToBasket: basketModule.AddSingleProductToBasket,
             initVarForMoreOrders: ordersModule.initVarForMoreOrders,
             createOrdersHtml: ordersModule.createOrdersHtml,
             initShowMoreOrders: ordersModule.initShowMoreOrders,
@@ -23,12 +23,12 @@ define(
 
         dPicker.click(function(){
             try{
-                if (addProduct.flagFromBasketClick){
+                if (basketModule.flagFromBasketClick){
                     // клик при добавленни товара в корзину
                     dPicker.on('hide',function(){
-                        if (addProduct.flagFromBasketClick){
+                        if (basketModule.flagFromBasketClick){
                             $(this).datepicker('triggerFlagBasket');
-                            addProduct.flagFromBasketClick = 0;
+                            basketModule.flagFromBasketClick = 0;
                         }
                     });
                 }

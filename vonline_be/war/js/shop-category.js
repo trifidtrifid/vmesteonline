@@ -2,7 +2,7 @@ define(
     'shop-category',
     ['jquery','shop-initThrift','shop-spinner','shop-common','shop-basket'],
     function( $,thriftModule,spinnerModule,commonModule,basketModule ){
-        alert('category '+basketModule+" "+commonModule+" "+spinnerModule);
+
         var prevParentId = [],
             parentCounter = 0;
 

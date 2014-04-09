@@ -2,7 +2,7 @@ define(
     'shop-search',
     ['jquery','jquery_ui','shop-initThrift','shop-basket','initDatepicker','shop-orders','shop-category','shop-common','shop-spinner'],
     function( $,jquery_ui,thriftModule,basketModule,datepickerModule,ordersModule,categoryModule,commonModule,spinnerModule ){
-        alert('search '+basketModule+" "+datepickerModule+" "+ordersModule+" "+categoryModule+" "+commonModule+" "+spinnerModule);
+
         try{
             $.widget( "custom.catcomplete", $.ui.autocomplete, {
                 _renderMenu: function( ul, items ) {
@@ -93,7 +93,7 @@ define(
 
             /* автозаполнение адреса доставки  */
             function initAutocompleteAddress(){
-                var addressesBase = thriftModule.userServiceClient.getAddressCatalogue();
+                var addressesBase = thriftModule.userClient.getAddressCatalogue();
 
                 var countries = addressesBase.countries;
                 var countriesLength = countries.length;
@@ -119,7 +119,7 @@ define(
                     if(prevField){
                         for (var i = 0; i < countriesLength; i++){
                             if (prevField == countryTags[i]){
-                                cities = thriftModule.userServiceClient.getCities(countryId[i]);
+                                cities = thriftModule.userClient.getCities(countryId[i]);
                                 break;
                             }
                         }
@@ -145,7 +145,7 @@ define(
                     if(prevField){
                         for (var i = 0; i < citiesLength; i++){
                             if (prevField == cityTags[i]){
-                                streets = thriftModule.userServiceClient.getStreets(cityId[i]);
+                                streets = thriftModule.userClient.getStreets(cityId[i]);
                                 break;
                             }
                         }
@@ -171,7 +171,7 @@ define(
                     if(prevField){
                         for (var i = 0; i < streetLength; i++){
                             if (prevField == streetTags[i]){
-                                buildings = thriftModule.userServiceClient.getBuildings(streetId[i]);
+                                buildings = thriftModule.userClient.getBuildings(streetId[i]);
                                 break;
                             }
                         }
@@ -193,7 +193,7 @@ define(
 
 
         }catch(e){
-            alert(e+ " Ошибка autocomplete")
+            alert(e+ " Ошибка shop-search")
         }
         return {
             initAutocompleteAddress: initAutocompleteAddress

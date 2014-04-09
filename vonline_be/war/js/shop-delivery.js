@@ -3,7 +3,6 @@ define(
     ['jquery','shop-initThrift','shop-search','shop-common'],
     function( $,thriftModule, searchModule, commonModule ){
 
-        alert('delivery '+ searchModule+" "+commonModule );
         var autocompleteAddressFlag = 1;
         var triggerDelivery = 0;
 
@@ -33,13 +32,13 @@ define(
                     if (autocompleteAddressFlag){
                         searchModule.initAutocompleteAddress();
 
-                        var userAddresses = thriftModule.userServiceClient.getUserAddresses();
-                        var userPhone = thriftModule.userServiceClient.getUserContacts().mobilePhone;
+                        var userAddresses = thriftModule.userClient.getUserAddresses();
+                        var userPhone = thriftModule.userClient.getUserContacts().mobilePhone;
                         if(userPhone){
                             $('#phone-delivery').val(userPhone);
                         }
                         if(userAddresses.length > 0){
-                            var homeAddress = thriftModule.userServiceClient.getUserContacts().homeAddress;
+                            var homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
                             if(homeAddress){
                                 writeAddress(homeAddress);
                             }

@@ -739,7 +739,7 @@
 <script src="js/lib/ace-extra.min.js"></script>
 <script src="js/lib/ace-elements.min.js"></script>
 <script src="js/common.js"></script>
-<script src="js/shop-backoffice.js"></script>
+<script src="js/backoffice.js"></script>
 
 </body>
 </html>

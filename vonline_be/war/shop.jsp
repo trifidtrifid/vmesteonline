@@ -412,8 +412,8 @@
 <%--
 	<script src="js/login.js"></script>
 --%>
-	<script src="js/common.js"></script>
-    <script type="text/javascript" data-main="js/app.js" src="js/require.js"></script>
+	<%--<script src="js/common.js"></script>--%>
+    <script type="text/javascript" data-main="js/shop.js" src="js/require.js"></script>
 
     <%--<script src="js/shop.js"></script>--%>
 
