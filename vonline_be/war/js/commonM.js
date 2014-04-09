@@ -28,7 +28,7 @@ define(
             $(this).closest('.btn-group').find('.btn-group-text').text($(this).text());
         });
 
-        $('.nav-list a').click(function(e){
+        $('.nav-list a,.navbar .nav a').click(function(e){
             e.preventDefault();
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');

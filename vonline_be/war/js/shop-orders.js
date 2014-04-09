@@ -171,7 +171,6 @@ define(
             return ordersHtml;
         }
 
-
         function initOrderPlusMinus(selector){
                 try{
                     selector.find('.plus-minus').click(function(e){
@@ -211,8 +210,6 @@ define(
                     alert(e+" Функция initOrderPlusMinus");
                 }
             }
-
-
 
         function addSingleOrderToBasket(orderId,addType){
             try{

@@ -95,6 +95,24 @@ a {
   border-left: 1px solid #ccc;
   padding-bottom: 20px;
   right: 0;
+/*.sidebar-title
+    font-size 20px
+    border-top 1px solid #ccc
+    padding 4px 0 7px 0
+    background #f9f9f9
+    text-align center
+    color #2b7dbc
+    .go-to-orders
+      display inline-block
+      vertical-align middle
+      margin-right 10px
+  nav
+    display inline-block
+    vertical-align middle
+    width 70%
+    .input-group
+    a
+      display block*/
 }
 .shop-right:before {
   border: 0;
@@ -106,27 +124,29 @@ a {
 .shop-right .hide-right {
   display: none;
 }
-.shop-right .sidebar-title {
-  font-size: 20px;
-  border-top: 1px solid #ccc;
-  padding: 4px 0 7px 0;
-  background: #f9f9f9;
+.shop-right .tabs-days {
   text-align: center;
-  color: #2b7dbc;
 }
-.shop-right .sidebar-title .go-to-orders {
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 10px;
-}
-.shop-right nav {
-  display: inline-block;
-  vertical-align: middle;
-  width: 70%;
-}
-.shop-right nav .input-group,
-.shop-right nav a {
+.shop-right .tabs-days .nav span {
   display: block;
+}
+.shop-right .tabs-days .tab-content {
+  padding: 0;
+  padding-bottom: 10px;
+  background: #fff;
+}
+.shop-right .tabs-days .basket-head {
+  padding: 15px 0 15px 15px;
+  text-align: left;
+}
+.shop-right .tabs-days .basket-head .amount {
+  font-size: 16px;
+  float: right;
+  margin-right: 15px;
+}
+.shop-right .tabs-days .basket-bottom .btn {
+  float: right;
+  margin: 15px 10px 0 0;
 }
 .shop-right .catalog-order {
   max-height: 320px;
@@ -157,24 +177,22 @@ a {
   display: inline-block;
   vertical-align: middle;
   line-height: 16px;
-  max-width: 180px;
+  max-width: 129px;
 }
 .shop-right .catalog-order li .product-link span {
   display: none;
-}
-.shop-right .catalog-order li .product-link .product-right-descr {
-  display: inline-block;
-  vertical-align: middle;
 }
 .shop-right .catalog-order li .ace-spinner {
   display: inline-block;
   vertical-align: middle;
 }
 .shop-right .catalog-order li .product-right-descr {
+  display: inline-block;
+  vertical-align: middle;
   margin-left: 10px;
   margin-bottom: 5px;
   padding-right: 20px;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 16px;
 }
 .shop-right .catalog-order li .delete-product {

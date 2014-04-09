@@ -979,7 +979,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                 '</tbody>'+
                 '</table></div>';
 
-            reportTable += '<div class="report-link"><a href="'+ dataSet.data[z].fileName +'">Скачать отчет</a>';
+            reportTable += '<div class="report-link"><a href="'+ dataSet.data[z].url +'">Скачать отчет</a>';
 
             currentExportTable.append(reportTable);
         }

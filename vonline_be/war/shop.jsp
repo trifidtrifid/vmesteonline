@@ -119,8 +119,10 @@
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
-						<li class="active"><a class="btn btn-info no-border" href="shop.jsp">
+						<li class="active back-to-shop shop-trigger"><a class="btn btn-info no-border" href="shop.jsp">
 								Магазин </a></li>
+                        <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
+                            Заказы </a></li>
 						<li class="user-short light-blue">
                             <c:choose>
 								<c:when test="${auth}">
@@ -169,35 +171,120 @@
                 </div>
                 <div class="hide-right">×</div>
                 <div class="sidebar-title">
-                    <a href="#" class="go-to-orders shop-trigger">Заказы</a>
-                    <nav>
+                    <%--<a href="#" class="go-to-orders shop-trigger">Заказы</a>--%>
+                    <%--<nav>
                         <div class="input-group">
                             <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="dd-mm-yyyy" value="Выберите дату" onblur="if(this.value=='') this.value='Выберите дату';" onfocus="if(this.value=='Выберите дату') this.value='';"/>
                         </div>
-                    </nav>
+                    </nav>--%>
                 </div>
 
-                <ul class="catalog-order">
-                    <c:forEach var="orderLine" items="${orderLines}">
-                        <li data-productid="${orderLine.product.id}">
-                            <table>
-                                <tr>
-                                    <td class="td-price product-price">${orderLine.product.price}</td>
-                                    <td><input type="text" class="input-mini spinner1" data-step="${orderLine.product.minClientPack}" /><span class="unit-name">${orderLine.product.unitName}</span></td>
-                                    <td class="td-summa">${orderLine.price*orderLine.quantity}</td>
-                                    <td><a href="#" class="delete-product no-init">×</a></td>
-                                </tr>
-                            </table>
-                            <a href="#" class="product-link no-init">
-                                <span><img src="${orderLine.product.imageURL}" alt="картинка"/></span>
-                                <div class="product-right-descr"> ${orderLine.product.name}</div>
+                <%--<div class="tabbable tabs-right tabs-days">
+                    <ul class="nav nav-tabs" id="myTab3">
+                        <li class="active">
+                            <a data-toggle="tab" href="#day1">
+                                ПН
+                                <span>31.01</span>
                             </a>
-                            <div class="modal">
-                            </div>
                         </li>
-                    </c:forEach>
-                </ul>
-                <div class="additionally-order">
+
+                        <li class="">
+                            <a data-toggle="tab" href="#day2">
+                                ВТ
+                                <span>02.02</span>
+                            </a>
+                        </li>
+
+                        <li class="">
+                            <a data-toggle="tab" href="#day3">
+                                СР
+                                <span>10.02</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div id="day1" class="tab-pane active">
+                            <div class="basket-head">
+                                <a href="#" class="basket-refresh">Обновить</a>
+                                <div class="amount">Итого: <span></span></div>
+                            </div>
+                            <ul class="catalog-order">
+                                <c:forEach var="orderLine" items="${orderLines}">
+                                    <li data-productid="${orderLine.product.id}">
+                                        <table>
+                                            <tr>
+                                                <td class="td-price product-price">${orderLine.product.price}</td>
+                                                <td><input type="text" class="input-mini spinner1" data-step="${orderLine.product.minClientPack}" /><span class="unit-name">${orderLine.product.unitName}</span></td>
+                                                <td class="td-summa">${orderLine.price*orderLine.quantity}</td>
+                                                <td><a href="#" class="delete-product no-init">×</a></td>
+                                            </tr>
+                                        </table>
+                                        <a href="#" class="product-link no-init">
+                                            <span><img src="${orderLine.product.imageURL}" alt="картинка"/></span>
+                                            <div class="product-right-descr"> ${orderLine.product.name}</div>
+                                        </a>
+                                        <div class="modal">
+                                        </div>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                            <div class="basket-bottom">
+                                <a href="#" class="btn btn-sm btn-primary no-border">Оформить</a>
+                                <a href="#" class="btn btn-sm btn-cancel no-border">Отменить</a>
+                            </div>
+                        </div>
+
+                        <div id="day2" class="tab-pane">
+                            <ul class="catalog-order">
+                                <c:forEach var="orderLine" items="${orderLines}">
+                                    <li data-productid="${orderLine.product.id}">
+                                        <table>
+                                            <tr>
+                                                <td class="td-price product-price">${orderLine.product.price}</td>
+                                                <td><input type="text" class="input-mini spinner1" data-step="${orderLine.product.minClientPack}" /><span class="unit-name">${orderLine.product.unitName}</span></td>
+                                                <td class="td-summa">${orderLine.price*orderLine.quantity}</td>
+                                                <td><a href="#" class="delete-product no-init">×</a></td>
+                                            </tr>
+                                        </table>
+                                        <a href="#" class="product-link no-init">
+                                            <span><img src="${orderLine.product.imageURL}" alt="картинка"/></span>
+                                            <div class="product-right-descr"> ${orderLine.product.name}</div>
+                                        </a>
+                                        <div class="modal">
+                                        </div>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+
+                        <div id="day3" class="tab-pane">
+                            <ul class="catalog-order">
+                                <c:forEach var="orderLine" items="${orderLines}">
+                                    <li data-productid="${orderLine.product.id}">
+                                        <table>
+                                            <tr>
+                                                <td class="td-price product-price">${orderLine.product.price}</td>
+                                                <td><input type="text" class="input-mini spinner1" data-step="${orderLine.product.minClientPack}" /><span class="unit-name">${orderLine.product.unitName}</span></td>
+                                                <td class="td-summa">${orderLine.price*orderLine.quantity}</td>
+                                                <td><a href="#" class="delete-product no-init">×</a></td>
+                                            </tr>
+                                        </table>
+                                        <a href="#" class="product-link no-init">
+                                            <span><img src="${orderLine.product.imageURL}" alt="картинка"/></span>
+                                            <div class="product-right-descr"> ${orderLine.product.name}</div>
+                                        </a>
+                                        <div class="modal">
+                                        </div>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                    </div>
+                </div>--%>
+
+
+<%--                <div class="additionally-order">
                     <div class="itogo-right">
                         Товаров на сумму: <span></span> руб.
                     </div>
@@ -242,10 +329,10 @@
                     <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
                     <button class="btn btn-sm btn-grey no-border btn-cancel">Отменить</button>
                     <button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>
-                </div>
-                <div class="empty-basket">
+                </div>--%>
+                <%--<div class="empty-basket">
                     Ваша корзина пуста
-                </div>
+                </div>--%>
             </aside>
             <div class="main-content">
                 <div class="shop-products">

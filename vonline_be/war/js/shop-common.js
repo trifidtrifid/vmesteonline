@@ -399,6 +399,8 @@ define(
 
                 if($(this).hasClass('back-to-shop')){
                     shopOrders.hide();
+                    $('.nav li.active').Class('active');
+                    $('.nav li:eq(0)').addClass('active');
                     $('.shop-products').show(function(){
                         setSidebarHeight();
                     });
