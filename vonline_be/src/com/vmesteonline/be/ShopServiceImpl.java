@@ -1003,8 +1003,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
 
-			DeliveryType oldDelivery;
-			if (deliveryType != (oldDelivery = currentOrder.getDelivery())) {
+			VoPostalAddress oldDeliveryTo = currentOrder.getDeliveryTo();
+			VoPostalAddress newDeliveryTo = null == pa ? null : new VoPostalAddress(pa, pm);
+			
+			
+			if (deliveryType != currentOrder.getDelivery() || //type changed 
+					deliveryType != DeliveryType.SELF_PICKUP && oldDeliveryTo.getId() != newDeliveryTo.getId()) { //or address changed
+				
 				VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId(pm));
 
 				Map<Integer, Double> deliveryCosts = voShop.getDeliveryCosts();
@@ -1019,7 +1024,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 						if(null!=voUSer && null!=voUSer.getAddress())
 							currentOrder.setDeliveryTo(voUSer.getAddress());
 					}
-					currentOrder.addCost(voShop.getDeliveryCosts().get(deliveryType.getValue()) - voShop.getDeliveryCosts().get(oldDelivery.getValue()));
+					updateDeliveryCost(currentOrder, oldDeliveryTo, pm);
 					pm.makePersistent(currentOrder);
 
 				} else {
