@@ -63,6 +63,7 @@ public class VoOrder {
 		this.orderLines = new HashMap<Long,Long>();
 		this.priceType = priceType;
 		this.comment = comment;
+		this.weightGramm = 0;
 		try{
 			pm.makePersistent(this);
 		} catch (Exception ex){
@@ -106,7 +107,7 @@ public class VoOrder {
 	public OrderDetails getOrderDetails(PersistenceManager pm){
 		OrderDetails od = new OrderDetails(createdAt, delivery, deliveryCost, 
 				null == deliveryTo ? null : deliveryTo.getPostalAddress(),
-						paymentType, paymentStatus, new ArrayList<OrderLine>(), comment);
+						paymentType, paymentStatus, new ArrayList<OrderLine>(), comment, weightGramm);
 		
 		if(null!=orderLines) 
 			for(Long olid: orderLines.values()){
@@ -171,6 +172,19 @@ public class VoOrder {
   @Persistent
   @Unindexed 
   private String comment;
+
+  @Persistent
+  @Unindexed 
+  private Integer weightGramm;
+
+  
+  public void setWeightGramm(Integer weightGramm) {
+		this.weightGramm = weightGramm;
+	}
+
+	public Integer getWeightGramm() {
+		return weightGramm;
+	}
 
 	public int getDate() {
 		return date;

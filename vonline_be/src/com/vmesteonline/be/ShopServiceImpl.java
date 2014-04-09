@@ -36,6 +36,12 @@ import org.apache.thrift.TException;
 
 
 
+
+
+
+
+
+
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
@@ -210,7 +216,6 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 					logger.debug("Producer " + vp + " added to " + voShop);
 				}
-
 				pm.makePersistent(vp);
 			}
 
@@ -711,11 +716,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	@Override
-	public long cancelOrder() throws InvalidOperation {
+	public long cancelOrder(long orderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder = getCurrentOrder(pm);
-
+			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			
 			currentOrder.setStatus(OrderStatus.CANCELED);
 			// unset current order
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0, pm);
@@ -728,10 +733,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	@Override
-	public long deleteOrder() throws InvalidOperation {
+	public long deleteOrder(long orderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder = getCurrentOrder(pm);
+			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
 			if (null != currentOrder.getOrderLines() && 0 != currentOrder.getOrderLines().size()) {
 				throw new InvalidOperation(VoError.IncorrectParametrs, "Only an ampry order could be deleted!");
 			}
@@ -746,10 +751,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	@Override
-	public long confirmOrder() throws InvalidOperation {
+	public long confirmOrder( long orderId ) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder = getCurrentOrder(pm);
+			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
 			currentOrder.setStatus(OrderStatus.CONFIRMED);
 			// unset current order
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0);
@@ -766,13 +771,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	 * order. All Lines with the same product ID would summarized!
 	 **/
 	@Override
-	public OrderDetails appendOrder(long oldOrderId) throws InvalidOperation {
+	public OrderDetails appendOrder(long orderId, long oldOrderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
 			if (null != voOrder) {
 				double addCost = 0;
-				VoOrder currentOrder = getCurrentOrder(pm);
+				VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+				
 				Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 
 				if (currentOdrerLines.isEmpty()) {
@@ -876,10 +882,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	 * current order
 	 **/
 	@Override
-	public OrderDetails mergeOrder(long oldOrderId) throws InvalidOperation {
+	public OrderDetails mergeOrder(long orderId, long oldOrderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder = getCurrentOrder(pm);
+			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
 			if (null != voOrder) {
@@ -912,44 +919,48 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	@Override
-	public OrderLine setOrderLine(long productId, double quantity, String comment, Map<Double, Integer> packs) throws InvalidOperation {
+	public OrderLine setOrderLine(long orderId, long productId, double quantity, String comment, Map<Double, Integer> packs) throws InvalidOperation {
 		if (0 == quantity) {
-			removeOrderLine(productId);
+			removeOrderLine(orderId, productId);
 			return null;
 		}
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder = getCurrentOrder(pm);
+			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
-			if (null != voProduct) {
-				double price = voProduct.getPrice(currentOrder.getPriceType());
+	
+			double price = voProduct.getPrice(currentOrder.getPriceType());
 
-				Map<Double, Integer> packsRounded;
-				if (null == packs)
-					packsRounded = null;
-				else {
-					quantity = VoHelper.roundDouble(quantity, QUANTITY_SCALE);
-					packsRounded = new HashMap<Double, Integer>();
-					for (Entry<Double, Integer> e : packs.entrySet()) {
-						packsRounded.put(VoHelper.roundDouble(e.getKey(), QUANTITY_SCALE), e.getValue());
-					}
+			Map<Double, Integer> packsRounded;
+			if (null == packs)
+				packsRounded = null;
+			else {
+				quantity = VoHelper.roundDouble(quantity, QUANTITY_SCALE);
+				packsRounded = new HashMap<Double, Integer>();
+				for (Entry<Double, Integer> e : packs.entrySet()) {
+					packsRounded.put(VoHelper.roundDouble(e.getKey(), QUANTITY_SCALE), e.getValue());
 				}
-
-				VoOrderLine theLine = new VoOrderLine(currentOrder, voProduct, quantity, price, comment, packsRounded);
-				pm.makePersistent(theLine);
-
-				Long oldLineId = currentOdrerLines.put(productId, theLine.getId().getId());
-				if (null != oldLineId) {
-					VoOrderLine oldLine = pm.getObjectById(VoOrderLine.class, oldLineId);
-					currentOrder.addCost(quantity * price - oldLine.getPrice() * oldLine.getQuantity());
-				} else {
-					currentOrder.addCost(quantity * price);
-				}
-				pm.makePersistent(currentOrder);
-				return theLine.getOrderLine(pm);
 			}
-			throw new InvalidOperation(VoError.GeneralError, "PRoduct not found by ID:" + productId);
+
+			VoOrderLine theLine = new VoOrderLine(currentOrder, voProduct, quantity, price, comment, packsRounded);
+			pm.makePersistent(theLine);
+
+			int weightDiff;
+			Long oldLineId = currentOdrerLines.put(productId, theLine.getId().getId());
+			if (null != oldLineId) {
+				VoOrderLine oldLine = pm.getObjectById(VoOrderLine.class, oldLineId);
+				currentOrder.addCost(quantity * price - oldLine.getPrice() * oldLine.getQuantity());
+				weightDiff = (int)(( quantity - oldLine.getQuantity() )* voProduct.getWeight()); 
+			} else {
+				currentOrder.addCost(quantity * price);
+				weightDiff = (int) (quantity * voProduct.getWeight());
+			}
+			currentOrder.setWeightGramm( currentOrder.getWeightGramm() + weightDiff );
+			pm.makePersistent(currentOrder);
+			return theLine.getOrderLine(pm);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to addOrderLine Id=" + productId + ". " + e);
@@ -960,17 +971,21 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	@Override
-	public boolean removeOrderLine(long productId) throws InvalidOperation {
+	public boolean removeOrderLine(long orderId, long productId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder = getCurrentOrder(pm);
+			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 			Long removedLineID = currentOdrerLines.remove(productId);
 			if (null == removedLineID)
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No order line found for product id=" + productId);
 
 			VoOrderLine removedLine = pm.getObjectById(VoOrderLine.class, removedLineID);
+			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
+			
 			currentOrder.addCost(-removedLine.getPrice() * removedLine.getQuantity());
+			currentOrder.setWeightGramm( currentOrder.getWeightGramm() - (int)(removedLine.getQuantity() * voProduct.getWeight()));
 			pm.makePersistent(currentOrder);
 			return true;
 		} catch (Exception e) {
@@ -983,10 +998,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	@Override
-	public OrderDetails setOrderDeliveryType(DeliveryType deliveryType) throws InvalidOperation {
+	public OrderDetails setOrderDeliveryType(long orderId, DeliveryType deliveryType, PostalAddress pa) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder = getCurrentOrder(pm);
+			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+
 			DeliveryType oldDelivery;
 			if (deliveryType != (oldDelivery = currentOrder.getDelivery())) {
 				VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId(pm));
@@ -995,12 +1011,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				if (deliveryCosts.containsKey(deliveryType.getValue())) {
 
 					currentOrder.setDeliveryCost(deliveryCosts.get(deliveryType.getValue()));
-					VoUser voUSer = getCurrentUser(pm);
 					currentOrder.setDelivery(deliveryType);
 					if (deliveryType == DeliveryType.SELF_PICKUP) {
 						currentOrder.setDeliveryTo(voShop.getAddress());
 					} else {
-						currentOrder.setDeliveryTo(voUSer.getAddress());
+						VoUser voUSer = currentOrder.getUser();
+						if(null!=voUSer && null!=voUSer.getAddress())
+							currentOrder.setDeliveryTo(voUSer.getAddress());
 					}
 					currentOrder.addCost(voShop.getDeliveryCosts().get(deliveryType.getValue()) - voShop.getDeliveryCosts().get(oldDelivery.getValue()));
 					pm.makePersistent(currentOrder);
@@ -1017,13 +1034,158 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			pm.close();
 		}
 	}
+	// ======================================================================================================================
+	// Calculate delivery costs according to:
+	// One user can have several orders that should be delivered together and pay only once
+	// delivery cost depend on distance, address substring and weight
+	private double updateDeliveryCost(VoOrder order, VoPostalAddress oldAddress, PersistenceManager pm) throws InvalidOperation {
+		
+		double newDeliveryCost = 0;
+		
+		//check if update required
+		if( null == order.getDeliveryTo() &&  null == oldAddress || 
+				order.getDeliveryTo().getId() == oldAddress.getId() ) //nothing changed
+			return order.getDeliveryCost();
+		
+		
+		//collect all orders of the same user and the same date and shop 
+		List<VoOrder> orders = (List<VoOrder>) pm.newQuery(VoOrder.class, "shopId==" + order.getShopId() + 
+				" && date == " + order.getDate() +
+				" && user == " + order.getUser().getId()).execute();
+		
+		if( null==orders || 0==orders.size()) {
+			throw new InvalidOperation(VoError.GeneralError, "Failed to Calculate Delivery cost. No order Found but at least one must exists!");
+		}
+		//orders that stores the delivery cost of old and new delivery group
+		VoOrder voOrderWithDelivery = null, voOrderWithDeliverySet = null;
+		VoOrder voOldOrderWithDelivery = null, voOldOrderWithDeliverySet = null;
+		
+		int totalWeight = 0, totalOldWeight = 0;
+		
+		for (VoOrder voOrder : orders) { //collect all of orders for new and for and address
+			
+			double orderDeliveryCost = voOrder.getDeliveryCost();
+			
+			if( DeliveryType.SELF_PICKUP != voOrder.getDelivery()){ //it never happens
+				if( orderDeliveryCost != 0 ){ //update delivery cost and total cost
+					voOrder.setDeliveryCost(0);
+					voOrder.setTotalCost( voOrder.addCost( -orderDeliveryCost ));
+					pm.makePersistent(voOrder);
+				} 
+	
+			//combine delivery to new address
+			} else if( null != voOrder.getDeliveryTo() && null!= order.getDeliveryTo() &&
+					voOrder.getDeliveryTo().getId() == order.getDeliveryTo().getId() ){ 
+			
+				totalWeight += voOrder.getWeightGramm();
+				if(null == voOrderWithDelivery) 
+					voOrderWithDelivery = voOrder; //remember an order to set delivery cost to if no one set
+				if( 0 != voOrder.getDeliveryCost() ) 
+					if( null==voOrderWithDeliverySet )
+						voOrderWithDeliverySet = voOrder; //remember an order with delivery cost is set to update it
+					else //it's the second order with delivery set, so it should be removed
+						voOrder.setDeliveryCost(0.0D);
+						
+
+			//old delivery group 
+			} else if( null != voOrder.getDeliveryTo() && null!= oldAddress && 
+					null!= oldAddress && voOrder.getDeliveryTo().getId() == oldAddress.getId() ){ 
+				
+				totalOldWeight += voOrder.getWeightGramm();
+				
+				if(null == voOldOrderWithDelivery) 
+					voOldOrderWithDelivery = voOrder; //remember an order to set delivery cost to if no one set
+				if(0 != voOrder.getDeliveryCost() ) 
+					if( null!=voOldOrderWithDeliverySet )//it never could happens, but it better to check
+						voOrder.setDeliveryCost(0.0D);
+					else
+						voOldOrderWithDeliverySet = voOrder; //remember an order with delivery cost is set to update it
+			}
+		} 
+		
+		//update cost of delivery to new address 
+		if( null == voOrderWithDeliverySet )  //no orders with delivery cost was set so the first one would be used to charge delivery fee
+			voOrderWithDeliverySet = voOrderWithDelivery;
+		
+		VoShop voShop = pm.getObjectById(VoShop.class, order.getShopId());
+		
+		if( DeliveryType.SELF_PICKUP != order.getDelivery() )
+			newDeliveryCost = setDeliveryGroupDeliveryCost(voOrderWithDeliverySet, voShop, totalWeight);
+		else
+			newDeliveryCost = 0;
+		
+		if( null != oldAddress )
+			setDeliveryGroupDeliveryCost(voOldOrderWithDeliverySet, voShop, totalWeight);
+		
+		return newDeliveryCost;
+	}
+
+//======================================================================================================================
+	
+	private double setDeliveryGroupDeliveryCost(VoOrder order, VoShop voShop, int totalWeight) {
+		
+		Double newDeliveryCost = voShop.getDeliveryCosts().get( order.getDelivery().getValue() );
+		if( null == newDeliveryCost )
+			newDeliveryCost = 0D;
+		
+		 VoPostalAddress deliveryTo = order.getDeliveryTo();
+		 
+		//get delivery cost by address mask if set
+		Map<DeliveryType, String> dam = voShop.getDeliveryAddressMasksText();
+		if( null!=dam && null!=voShop.getDeliveryCosts() ){ //look for delivery cost by address mask
+			String addressString = deliveryTo.toString();
+			
+			//sort the map by DelivertType to math cheapest delivery first
+			SortedMap<DeliveryType, String> sm = new TreeMap<DeliveryType, String>(dam);
+			
+			for( Entry<DeliveryType, String> dame: sm.entrySet()) {
+				if( addressString.matches( dame.getValue() )){
+					Double ndc = voShop.getDeliveryCosts().get(dame.getKey());
+					if( null!=ndc) { //if there is a cost set for this kind of delivery 
+						newDeliveryCost = ndc; 
+						break;
+					}
+				}
+			}
+			
+		} else {//check if there is a delivery cost by range is set
+			VoPostalAddress shopAddress; 
+			
+			if(deliveryTo != null && null!=(shopAddress = voShop.getAddress())){
+				Map<Integer, Double> dcbd = voShop.getDeliveryCostByDistance();
+				if( null != dcbd ) {
+				
+					//sort the map by DelivertType to math cheapest delivery first
+					SortedMap<Integer, Double> sm = new TreeMap<Integer, Double>(dcbd);
+					SortedMap<Integer, Double> minDistMap = sm.headMap( shopAddress.getDistance( deliveryTo ).intValue() );
+					if( minDistMap.size() > 0 ) {
+					//get the cost of the biggest distance that is less then distance between the shop and delivery to address
+						newDeliveryCost += minDistMap.get( minDistMap.lastKey());
+					}
+				}
+			}
+		}
+		//calculate change of cost depend on weight
+		Map<Integer, Integer> dbwi = voShop.getDeliveryByWeightIncrement();
+		if( null!=dbwi ){
+			SortedMap<Integer,Integer> dbwis = new TreeMap<Integer,Integer>();
+			SortedMap<Integer, Integer> headMap = dbwis.headMap(totalWeight);
+			if( 0 != headMap.size() ) {
+				//increment the cost to value of how much times repeated the value 
+				newDeliveryCost += headMap.get( headMap.lastKey() ) * ( totalWeight / headMap.lastKey()); 
+			}
+		}
+		order.setDeliveryCost(newDeliveryCost);
+		return newDeliveryCost;
+	}
 
 	// ======================================================================================================================
 	@Override
-	public boolean setOrderPaymentType(PaymentType paymentType) throws InvalidOperation {
+	public boolean setOrderPaymentType(long orderId, PaymentType paymentType) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder = getCurrentOrder(pm);
+			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+
 			VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId(pm));
 			PaymentType oldPaymentType = currentOrder.getPaymentType();
 
@@ -1052,15 +1214,15 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	@Override
-	public OrderDetails setOrderDeliveryAddress(PostalAddress deliveryAddress) throws InvalidOperation {
+	public OrderDetails setOrderDeliveryAddress(long orderId, PostalAddress deliveryAddress) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder = getCurrentOrder(pm);
-			if (null == currentOrder)
-				throw new InvalidOperation(VoError.GeneralError, "No current order set!");
+			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
 
 			VoPostalAddress adrress = new VoPostalAddress(deliveryAddress, pm);
+			VoPostalAddress oldAddress = currentOrder.getDeliveryTo();
 			currentOrder.setDeliveryTo(adrress);
+			updateDeliveryCost( currentOrder, oldAddress, pm);
 			pm.makePersistent(currentOrder);
 			VoUser currentUser = getCurrentUser(pm);
 			currentUser.addPostalAddress(adrress);
@@ -1080,7 +1242,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public void setOrderPaymentStatus(long orderId, PaymentStatus newStatus) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder = getCurrentOrder(pm);
+			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
 			currentOrder.setPaymentStatus(newStatus);
 			pm.makePersistent(currentOrder);
 		} catch (Exception e) {
@@ -1901,4 +2063,54 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	private static Object createShopProductsByCategoryKey(long shopId) {
 		return "createShopProductsByCategoryKey"+shopId;
 	}
+	
+	// ======================================================================================================================
+
+	
+	@Override
+	public void setShopDeliveryByWeightIncrement(long shopId, Map<Integer, Integer> deliveryByWeightIncrement) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoShop theShop = 0 == shopId ? getCurrentShop( pm ) : pm.getObjectById(VoShop.class, shopId );
+			theShop.setDeliveryByWeightIncrement(deliveryByWeightIncrement);
+			pm.makePersistent(theShop);
+			
+		} catch ( JDOObjectNotFoundException onfe ) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
+		} finally {
+			pm.close();
+		}
+	}
+	// ======================================================================================================================
+
+	@Override
+	public void setShopDeliveryCostByDistance(long shopId, Map<Integer, Double> deliveryCostByDistance) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoShop theShop = 0 == shopId ? getCurrentShop( pm ) : pm.getObjectById(VoShop.class, shopId );
+			theShop.setDeliveryCostByDistance(deliveryCostByDistance);
+			pm.makePersistent(theShop);
+			
+		} catch ( JDOObjectNotFoundException onfe ) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
+		} finally {
+			pm.close();
+		}
+	}
+	// ======================================================================================================================
+
+	@Override
+	public void setShopDeliveryTypeAddressMasks(long shopId, Map<DeliveryType, String> deliveryTypeAddressMasks) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoShop theShop = 0 == shopId ? getCurrentShop( pm ) : pm.getObjectById(VoShop.class, shopId );
+			theShop.setDeliveryAddressMasksText(deliveryTypeAddressMasks);
+			pm.makePersistent(theShop);
+			
+		} catch ( JDOObjectNotFoundException onfe ) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
+		} finally {
+			pm.close();
+		}	
+	}	
 }

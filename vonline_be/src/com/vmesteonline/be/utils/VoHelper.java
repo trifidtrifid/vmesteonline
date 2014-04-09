@@ -304,8 +304,13 @@ public class VoHelper {
 	//===================================================================================================================
 	public static MatrixAsList matrixToList( List < List <String> > matrix ){
 		List<String> list = new ArrayList<String>();
-		for( int row = 0; row < matrix.size(); row ++)
-			list.addAll(matrix.get(row));
+		
+		for( int row = 0; row < matrix.size(); row ++) {
+			List<String> rowVal = matrix.get(row);
+			for (String val : rowVal) {
+				list.add( null == val ? "" : val);
+			}
+		}
 		return new MatrixAsList(matrix.size(), list);
 	}
 	//===================================================================================================================	

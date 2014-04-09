@@ -250,7 +250,7 @@ public class VoProduct {
 
 	// =====================================================================================================================
 	public Product getProduct() {
-		return new Product(id.getId(), name, shortDescr, weight, imageURL, price, unitName, minClientPack);
+		return new Product(id.getId(), name, shortDescr, weight, imageURL, price, unitName, minClientPack, shopId);
 	}
 
 	public ProductDetails getProductDetails() {
