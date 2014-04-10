@@ -124,9 +124,9 @@ define(
             var ind = $(this).parent().index();
             var dynamic = $('.dynamic');
             if (ind == 0){
-                dynamic.load("ajax-settings.jsp .dynamic");
+                dynamic.load("ajax/ajax-settings.jsp .dynamic");
             }else if (ind == 1){
-                dynamic.load("ajax-profile.jsp .dynamic",function(){
+                dynamic.load("ajax/ajax-profile.jsp .dynamic",function(){
                     SetJSForProfile();
                 });
             } else {

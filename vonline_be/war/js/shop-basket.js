@@ -252,7 +252,7 @@ define(
                         spinnerStep[counter++] = $(this).data('step');
                     });
 
-                    $('.dynamic').load('ajax-confirmOrder.html .dynamic',function(){
+                    $('.dynamic').load('ajax/ajax-confirmOrder.html .dynamic',function(){
                          $('.order-date span').text(orderDay+'.'+orderMonth+' ('+ orderWeekDay +')');
                          $('.itogo-right span').text(amount);
 
