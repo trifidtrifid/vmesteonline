@@ -482,7 +482,19 @@
                             </div>--%>
 
                             <div class="export-orderLine-checklist">
-                                <div class="checkbox"  data-exchange="1100">
+                                <%for( int val = ExchangeFieldType.ORDER_LINE_ID.getValue(); val < ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val ++ ){
+                                ExchangeFieldType value = ExchangeFieldType.findByValue(val);
+                                if(null!=value){%>
+
+                                <div class="checkbox"  data-exchange="<%=value.getValue()%>">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"><%=value.name()%> </span>
+                                    </label>
+                                </div>
+                                <%}}%>
+
+                                <%--<div class="checkbox"  data-exchange="1100">
                                     <label>
                                         <input name="form-field-checkbox" type="checkbox" class="ace">
                                         <span class="lbl"> ORDER_LINE_ID</span>
@@ -541,7 +553,7 @@
                                         <input name="form-field-checkbox" type="checkbox" class="ace">
                                         <span class="lbl"> ORDER_LINE_PACKETS</span>
                                     </label>
-                                </div>
+                                </div>--%>
                             </div>
 
                             <div class="export-btn-line">
@@ -583,7 +595,19 @@
                             </div>
 
                             <div class="export-products-checklist">
-                                <div class="checkbox"  data-exchange="2000">
+                                <%for( int val = ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val < ExchangeFieldType.TOTAL_PACK_SIZE.getValue(); val ++ ){
+                                    ExchangeFieldType value = ExchangeFieldType.findByValue(val);
+                                    if(null!=value){%>
+
+                                <div class="checkbox"  data-exchange="<%=value.getValue()%>">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"><%=value.name()%> </span>
+                                    </label>
+                                </div>
+                                <%}}%>
+
+                                <%--<div class="checkbox"  data-exchange="2000">
                                     <label>
                                         <input name="form-field-checkbox" type="checkbox" class="ace">
                                         <span class="lbl"> TOTAL_PROUCT_ID</span>
@@ -636,7 +660,7 @@
                                         <input name="form-field-checkbox" type="checkbox" class="ace">
                                         <span class="lbl"> TOTAL_PREPACK_REQUIRED</span>
                                     </label>
-                                </div>
+                                </div>--%>
                             </div>
 
                             <div class="export-btn-line">
@@ -677,7 +701,19 @@
                             </div>
 
                             <div class="export-packs-checklist">
-                                <div class="checkbox"  data-exchange="2009">
+                                <%for( int val = ExchangeFieldType.TOTAL_PACK_SIZE.getValue(); val <= ExchangeFieldType.TOTAL_DELIVERY_TYPE.getValue(); val ++ ){
+                                    ExchangeFieldType value = ExchangeFieldType.findByValue(val);
+                                    if(null!=value){%>
+
+                                <div class="checkbox"  data-exchange="<%=value.getValue()%>">
+                                    <label>
+                                        <input name="form-field-checkbox" type="checkbox" class="ace">
+                                        <span class="lbl"><%=value.name()%> </span>
+                                    </label>
+                                </div>
+                                <%}}%>
+
+                                <%--<div class="checkbox"  data-exchange="2009">
                                     <label>
                                         <input name="form-field-checkbox" type="checkbox" class="ace">
                                         <span class="lbl"> TOTAL_PACK_SIZE</span>
@@ -694,7 +730,7 @@
                                         <input name="form-field-checkbox" type="checkbox" class="ace">
                                         <span class="lbl"> TOTAL_DELIVERY_TYPE</span>
                                     </label>
-                                </div>
+                                </div>--%>
                             </div>
 
                             <div class="export-btn-line">

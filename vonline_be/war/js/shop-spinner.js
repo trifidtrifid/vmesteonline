@@ -67,7 +67,8 @@ define(
                 var qnty = $(this).val();
                 var packs;
                 var productSelector = $(this).closest('li');
-                var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
+                var orderId = $(this).closest('.tab-pane').data('orderid');
+                var orderDetails = thriftModule.client.getOrderDetails(orderId);
                 var orderLinesLength = orderDetails.odrerLines.length;
                 var productId = $(this).closest('li').data('productid');
                 for (var i = 0; i < orderLinesLength; i++){
@@ -237,7 +238,8 @@ define(
 
                     if ($(this).closest('.catalog-order').length > 0){
                         // если мы в корзине, то нужно менять packs и делать setOrderLine
-                        var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
+                        var orderId = $(this).closest('.tab-pane').data('orderid');
+                        var orderDetails = thriftModule.client.getOrderDetails(orderId);
                         var orderLinesLength = orderDetails.odrerLines.length;
                         var packs,qnty;
                         for (var i = 0; i < orderLinesLength; i++){
@@ -287,7 +289,7 @@ define(
 
         function initPrepackRequiredInModal(linkSelector,currentModal,productSelector,isFirstModal){
 
-            var orderId = currentOrderId;
+            var orderId = $(this).closest('.tab-pane').data('orderid');
             var productId = linkSelector.closest('li').data('productid');
             var unitName = linkSelector.closest('li').find('.unit-name').text();
             if (linkSelector.closest('.order-products').length > 0){

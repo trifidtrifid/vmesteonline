@@ -51,7 +51,7 @@ define(
                             if(productDetails.prepackRequired){
                                 packs[products[i].minClientPack] = 1;
                             }
-                            if(currentOrderId){
+                            if($('.tabs-days').length > 0){
                                 // если в корзине уже что-то есть
                                 basketModule.AddProductToBasketCommon(products[i],packs);
                             }else{

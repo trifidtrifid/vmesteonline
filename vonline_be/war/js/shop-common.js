@@ -55,8 +55,7 @@ define(
             var catalogOrderLi = $('.catalog-order li');
             if(catalogOrderLi.length > 0){
                 var order = thriftModule.client.getOrder(0);
-                currentOrderId = order.id;
-                var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
+                var orderDetails = thriftModule.client.getOrderDetails(order.id);
                 var orderLines = orderDetails.odrerLines;
                 var orderLinesLength = orderLines.length;
                 var itsBasket = 1;
@@ -250,7 +249,8 @@ define(
                             if ($(this).closest('tr').length == 0){
                                 //если мы в корзине
                                 // нужно сделать setOrderLine
-                                var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
+                                var orderId = $(this).closest('.tab-pane').data('orderid');
+                                var orderDetails = thriftModule.client.getOrderDetails(orderId);
                                 var orderLinesLength = orderDetails.odrerLines.length;
                                 productId = $(this).closest('li').data('productid');
                                 var packs,qnty;
@@ -357,7 +357,8 @@ define(
                 sel.find('.td-summa').each(function(){
                     summa += parseFloat($(this).text());
                 });
-                var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
+                var orderId = sel.closest('.tab-pane').data('orderid');
+                var orderDetails = thriftModule.client.getOrderDetails(orderId);
                 summa += orderDetails.deliveryCost;
             }catch(e){
                 //alert(e+" Функция countAmount");

@@ -320,12 +320,8 @@ define(
             $('.order-confirm').click(function(e){
                 e.preventDefault();
 
-                var tempOrderId = currentOrderId;
                 thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
                 thriftModule.client.confirmOrder();
-                if(tempOrderId){
-                    thriftModule.client.getOrder(tempOrderId);
-                }
                 alert('Заказ подтвержден !');
                 $(this).closest('td').find('.order-status').text('Подтвержден');
                 $(this).parent().remove();
