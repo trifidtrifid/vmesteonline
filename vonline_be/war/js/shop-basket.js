@@ -245,10 +245,24 @@ define(
                     var currentTab = $('.tab-pane.active');
                     var commonModule = require('shop-common');
                     var amount = commonModule.countAmount(currentTab.find('.catalog-order'));
+                    var catalogHtml = currentTab.find('.catalog-order').html();
+                    var spinnerValue = [], spinnerStep = [], counter = 0;
+                    currentTab.find('.catalog-order td .spinner1').each(function(){
+                        spinnerValue[counter] = $(this).closest('.ace-spinner').spinner('value');
+                        spinnerStep[counter++] = $(this).data('step');
+                    });
 
                     $('.dynamic').load('ajax-confirmOrder.html .dynamic',function(){
                          $('.order-date span').text(orderDay+'.'+orderMonth+' ('+ orderWeekDay +')');
                          $('.itogo-right span').text(amount);
+
+                        $('.confirm-order .catalog-confirm').html(catalogHtml);
+                        var counter = 0;
+                        $('.confirm-order .catalog-confirm td .ace-spinner').each(function(){
+                            $(this).spinner('value',spinnerValue[counter++]);
+                            //spinnerModule.InitSpinner($(this),spinnerValue[counter],1,spinnerStep[counter++]);
+                        });
+
                     });
                    /* try{
                         var inputDelivery = $('.input-delivery');
