@@ -45,7 +45,8 @@ public class ProductDescription {
 	public String unitName;
 	
 	public FullProductInfo getFullProductInfo(){
-		Product product = new Product(id, name, shortDescr, weight, imageURL, price, unitName,minClientPack);
+	//the last argument is the Shop id but it is unknown here
+		Product product = new Product(id, name, shortDescr, weight, imageURL, price, unitName,minClientPack,0); 
 		
 		Map<PriceType, Double> pricesMap = new HashMap<PriceType, Double>();
 		if( null != priceRetail ) pricesMap.put(PriceType.RETAIL, priceRetail);

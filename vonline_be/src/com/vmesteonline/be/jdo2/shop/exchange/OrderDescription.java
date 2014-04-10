@@ -21,6 +21,7 @@ public class OrderDescription {
 	public PaymentType paymentType;
 	public PaymentStatus paymentStatus;
 	public String comment;
+	public int weight;
 	public long userId;
 	public String userName;
 	

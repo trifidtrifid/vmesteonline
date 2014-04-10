@@ -116,6 +116,30 @@ public class VoBuilding implements Comparable<VoBuilding> {
 		this.longitude = longitude.toPlainString();
 		this.latitude = latitude.toPlainString();
 	}
+	
+	
+	private static double coordToRad(String coord){
+		return Double.parseDouble(coord) * Math.PI / 180.0D;
+	}
+
+	//Calculate distance between two buildings if all off coordinates are defined
+	
+	public Double getDistance( VoBuilding that ){
+		
+		if( null == longitude || null == latitude || 
+				null == that || null == that.longitude || null == that.latitude)
+			return null;
+		
+		double lat1 = coordToRad(this.latitude);
+		double lat2 = coordToRad(that.latitude);
+		double dLat = lat2-lat1;
+		double dLon = coordToRad(that.longitude)-coordToRad(this.longitude);
+		
+		double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+		        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+		double c = 2.0 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+		return 6371.0D * c;
+	}
 
 	@Persistent
 	@Unindexed

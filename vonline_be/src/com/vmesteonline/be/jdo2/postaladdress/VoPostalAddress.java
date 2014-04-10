@@ -155,6 +155,12 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 		return comment;
 	}
 
+	public Double getDistance( VoPostalAddress that){
+		if( null == this.getBuilding() || null == that.getBuilding() )
+			return null;
+		return this.getBuilding().getDistance(that.getBuilding());
+	}
+	
 	private static long valueMask = 26051976L;
 
 	@PrimaryKey

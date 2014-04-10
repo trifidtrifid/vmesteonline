@@ -70,9 +70,6 @@ public class VoShop {
 				this.topics = new ArrayList<Long>();
 				topics.addAll(topicSet);
 			}
-			/*
-			 * categories = new ArrayList<VoProductCategory>(); products = new ArrayList<VoProduct>(); producers = new ArrayList<VoProducer>();
-			 */
 			dates = new TreeMap<Integer, Integer>();
 			pm.makePersistent(this);
 		} catch (Exception e) {
@@ -120,24 +117,6 @@ public class VoShop {
 	@Persistent
 	public List<String> tags;
 
-	/*
-	 * @Persistent
-	 * 
-	 * @Unowned private List<VoProduct> products;
-	 */
-
-	/*
-	 * @Persistent
-	 * 
-	 * @Unowned private List<VoProductCategory> categories;
-	 */
-
-	/*
-	 * @Persistent
-	 * 
-	 * @Unowned private List<VoProducer> producers;
-	 */
-
 	@Persistent
 	@Unindexed
 	private Map<Integer, Integer> dates;
@@ -146,9 +125,61 @@ public class VoShop {
 	@Unindexed
 	private Map<Integer, Double> deliveryCosts;
 
+	//Defines a text that describes delivery conditions for customer
+	@Persistent
+	@Unindexed
+	private Map<DeliveryType, String> deliveryConditionsText;
+	
+	@Persistent
+	@Unindexed
+	private Map<DeliveryType, String> deliveryAddressMasksText;
+	
+	@Persistent
+	@Unindexed
+	private Map<Integer, Integer> deliveryByWeightIncrement;
+	
+	@Persistent
+	@Unindexed
+	private Map<Integer, Double> deliveryCostByDistance;
+	
 	@Persistent
 	@Unindexed
 	private Map<Integer, Double> paymentTypes;
+	
+	
+	public Map<DeliveryType, String> getDeliveryConditionsText() {
+		return deliveryConditionsText;
+	}
+
+	public void setDeliveryConditionsText(Map<DeliveryType, String> deliveryConditionsText) {
+		this.deliveryConditionsText = deliveryConditionsText;
+	}
+
+	public Map<DeliveryType, String> getDeliveryAddressMasksText() {
+		return deliveryAddressMasksText;
+	}
+
+	public void setDeliveryAddressMasksText(Map<DeliveryType, String> deliveryAddressMasksText) {
+		this.deliveryAddressMasksText = deliveryAddressMasksText;
+	}
+
+	public void setDescr(Text descr) {
+		this.descr = descr;
+	}
+
+	public void setTopics(List<Long> topics) {
+		this.topics = topics;
+	}
+
+
+	public void setDeliveryCosts(Map<Integer, Double> deliveryCosts) {
+		this.deliveryCosts = deliveryCosts;
+	}
+
+	public void setPaymentTypes(Map<Integer, Double> paymentTypes) {
+		this.paymentTypes = paymentTypes;
+	}
+	
 
 	public Map<Integer, Double> getPaymentTypes() {
 		return paymentTypes;
@@ -156,6 +187,22 @@ public class VoShop {
 
 	public Map<Integer, Double> getDeliveryCosts() {
 		return deliveryCosts;
+	}
+
+	public Map<Integer, Integer> getDeliveryByWeightIncrement() {
+		return deliveryByWeightIncrement;
+	}
+
+	public void setDeliveryByWeightIncrement(Map<Integer, Integer> deliveryByWeightIncrement) {
+		this.deliveryByWeightIncrement = deliveryByWeightIncrement;
+	}
+
+	public Map<Integer, Double> getDeliveryCostByDistance() {
+		return deliveryCostByDistance;
+	}
+
+	public void setDeliveryCostByDistance(Map<Integer, Double> deliveryCostByDistance) {
+		this.deliveryCostByDistance = deliveryCostByDistance;
 	}
 
 	public void setDates(Map<Integer, DateType> newDates) {
@@ -166,8 +213,6 @@ public class VoShop {
 																															// day
 			dates.put(e.getKey() - e.getKey() % 86400, e.getValue().getValue());
 		}
-		// getDates().putAll( convertFromDateTypeMap(newDates, new TreeMap<Integer,
-		// Integer>()));
 	}
 
 	public SortedMap<Integer, Integer> selectDates(int fromDate, int toDate) {
@@ -391,4 +436,5 @@ public class VoShop {
 	 * 
 	 * @Override public Integer ceilingKey(Integer key) { return super.ceilingKey(key - key % DAY ); } }
 	 */
+	
 }

@@ -52,7 +52,18 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@Override
 	public void updateUserInfo(UserInfo userInfo) throws InvalidOperation {
-		// TODO Auto-generated method stub
+
+		/*
+		 * 4: i32 rating 5: string avatar, 6: string birthday, 7: string relations,
+		 */
+
+		PersistenceManager pm = PMF.getPm();
+		VoUser user = getCurrentUser(pm);
+		user.setName(userInfo.firstName);
+		user.setLastName(userInfo.lastName);
+		user.setLastName(userInfo.lastName);
+		pm.makePersistent(user);
+		// user.(userInfo.lastName);
 
 	}
 
@@ -318,12 +329,11 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			String topicAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
 
 			resize = ImagesServiceFactory.makeResize(40, 40);
-			String shortProfileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(),
-					true, pm);
+			String shortProfileAvatarUrl = StorageHelper
+					.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
 
 			resize = ImagesServiceFactory.makeResize(200, 200);
-			String profileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true,
-					pm);
+			String profileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
 
 			voUser.setAvatarTopic(topicAvatarUrl);
 			voUser.setAvatarMessage(topicAvatarUrl);
@@ -495,7 +505,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				VoBuilding voBuilding = new VoBuilding(vs, fullNo, new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
 						new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude));
 				if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate
-																	// location
+					// location
 					try {
 						Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
 						voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
@@ -568,22 +578,24 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
-	
-	//======================================================================================================================
-			
-			private static final Set<String> publicMethods = new HashSet<String>( Arrays.asList( new String[] {
-					
-				"allMethods are public"
-				
-			})); 
-			@Override
-			public boolean isPublicMethod(String method) {
-				return true;//publicMethods.contains(method);
-			}
-		//======================================================================================================================
-			
-			@Override
-			public long categoryId() {
-				return ServiceCategoryID.USER_SI.ordinal();
-			}
+
+	// ======================================================================================================================
+
+	private static final Set<String> publicMethods = new HashSet<String>(Arrays.asList(new String[] {
+
+	"allMethods are public"
+
+	}));
+
+	@Override
+	public boolean isPublicMethod(String method) {
+		return true;// publicMethods.contains(method);
+	}
+
+	// ======================================================================================================================
+
+	@Override
+	public long categoryId() {
+		return ServiceCategoryID.USER_SI.ordinal();
+	}
 }

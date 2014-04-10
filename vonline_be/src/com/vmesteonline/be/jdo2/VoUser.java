@@ -2,6 +2,7 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -218,7 +219,7 @@ public class VoUser extends GeoLocation {
 	public void addPostalAddress(VoPostalAddress pa) {
 		deliveryAddresses.add(pa);
 	}
-	
+
 	public Set<VoPostalAddress> getAddresses() {
 		return deliveryAddresses;
 	}
@@ -235,6 +236,10 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	@Unowned
 	private VoPostalAddress address;
+
+	@Persistent
+	@Unindexed
+	private long birthday;
 
 	@Persistent
 	@Unindexed
