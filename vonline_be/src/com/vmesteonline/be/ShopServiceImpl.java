@@ -1005,7 +1005,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			VoPostalAddress oldDeliveryTo = currentOrder.getDeliveryTo();
 			VoPostalAddress newDeliveryTo = null == pa ? null : new VoPostalAddress(pa, pm);
-			
+			if( deliveryType != DeliveryType.SELF_PICKUP && null == newDeliveryTo )
+				newDeliveryTo = currentOrder.getUser().getAddress(); //Home address as default
 			
 			if (deliveryType != currentOrder.getDelivery() || //type changed 
 					deliveryType != DeliveryType.SELF_PICKUP && oldDeliveryTo.getId() != newDeliveryTo.getId()) { //or address changed

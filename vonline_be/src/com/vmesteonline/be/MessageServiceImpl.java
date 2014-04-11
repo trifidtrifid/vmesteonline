@@ -336,13 +336,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	 **/
 	@Override
 	public int checkUpdates(int lastRequest) throws InvalidOperation {
-		VoSession sess = getCurrentSession();
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		VoSession sess = getCurrentSession(pm);
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		if (now - sess.getLastActivityTs() > 60) { /*
 																								 * Update last Activity once per minute
 																								 */
 			sess.setLastActivityTs(now);
-			PersistenceManager pm = PMF.get().getPersistenceManager();
 			try {
 				pm.makePersistent(sess);
 			} finally {

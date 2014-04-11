@@ -308,8 +308,13 @@ public class VoHelper {
 		for( int row = 0; row < matrix.size(); row ++) {
 			List<String> rowVal = matrix.get(row);
 			for (String val : rowVal) {
-				list.add( null == val ? "" : val);
+				if( !list.add( null == val ? "" : val)) {
+					throw new RuntimeException( "Implemetation ERROR! Collection must support add method without check of elemnts uniqueless!");
+				}
 			}
+		}
+		if( list.size() % matrix.size() != 0 ){
+			throw new RuntimeException( "Implemetation ERROR! Matrix must be square!");
 		}
 		return new MatrixAsList(matrix.size(), list);
 	}
@@ -318,7 +323,7 @@ public class VoHelper {
 		List < List <String> > matrix = new ArrayList<List<String>>();
 		int rowLen = mas.getElemsSize() / mas.rowCount;
 		for( int row = 0; row < mas.rowCount; row ++ ){
-			matrix.add(new ArrayList<String>( mas.elems.subList(row * rowLen, row * (rowLen + 1))));
+			matrix.add(new ArrayList<String>( mas.elems.subList(row * rowLen, (row + 1) * rowLen )));
 		}
 		return matrix;
 	} 
