@@ -49,7 +49,7 @@
                                     </label>
                                 </div>
                                 <div class="input-delivery">
-                                    <span class="lbl">Стоимость доставки : <span class="delivery-cost"></span> руб</span>
+                                    <span class="lbl">Стоимость доставки : <span class="delivery-cost">0</span> руб</span>
                                     <!--<input id="phone-delivery" type="tel" required="required" placeholder="Номер телефона"/>-->
                                     <div class="alert-delivery alert-delivery-phone"></div>
                                     <div class="btn-group delivery-dropdown">
@@ -63,14 +63,17 @@
                                             <li><a href="#" class="delivery-add-address">Добавить адрес ...</a></li>
                                         </ul>
                                     </div>
-                                    <span class="lbl"> Адрес доставки</span>
-                                    <!--<input id="country-delivery" type="text" value="Россия" placeholder="Страна"/>
-                                    <input id="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
-                                    <input id="street-delivery" type="text" placeholder="Улица"/>
-                                    <input id="building-delivery" type="text" class="short first" placeholder="Дом"/>
-                                    <input id="flat-delivery" type="text" class="short" placeholder="Квартира"/>-->
+                                    <span class="lbl"> Адрес доставки: <span class="delivery-address"></span></span>
+                                    <div class="address-input">
+                                        <input id="country-delivery" type="text" value="Россия" placeholder="Страна"/>
+                                        <input id="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
+                                        <input id="street-delivery" type="text" placeholder="Улица"/>
+                                        <input id="building-delivery" type="text" class="short first" placeholder="Дом"/>
+                                        <input id="flat-delivery" type="text" class="short" placeholder="Квартира"/>
+                                        <a class="btn btn-sm btn-primary no-border add-address" href="#">Добавить</a>
+                                    </div>
                                 </div>
-                                <!--<div class="alert-delivery alert-delivery-addr">Введите адрес доставки !</div>-->
+                                <div class="alert-delivery alert-delivery-addr"></div>
                             </div>
                             <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
                             <button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>

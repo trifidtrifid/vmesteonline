@@ -1,11 +1,13 @@
 define(
     'shop-category',
-    ['jquery','shop-initThrift','shop-spinner','shop-common','shop-basket'],
-    function( $,thriftModule,spinnerModule,commonModule,basketModule ){
+    ['jquery','shop-initThrift','shop-basket','shop-common','shop-spinner'],
+    function( $,thriftModule,basketModule,commonModule,spinnerModule ){
 
         var prevParentId = [],
             parentCounter = 0;
 
+        //var commonModule = require('shop-common');
+        if(commonModule){
         var prevCatCounter = commonModule.getCookie('prevCatCounter');
         if (prevCatCounter !== undefined){
             parentCounter = parseInt(prevCatCounter);
@@ -13,6 +15,7 @@ define(
         var arrayPrevCatCookie = commonModule.getCookie('arrayPrevCat');
         if (arrayPrevCatCookie !== undefined){
             prevParentId = arrayPrevCatCookie.split(',');
+        }
         }
 
         function createProductsTableHtml(productsList){
@@ -84,6 +87,8 @@ define(
 
             /* подключение событий */
             spinnerModule.initProductsSpinner();
+            var commonModule = require('shop-common');
+            var basketModule = require('shop-basket');
             commonModule.InitProductDetailPopup($('.product-link'));
             basketModule.InitAddToBasket($('.fa-shopping-cart'));
             InitClickOnCategory();
@@ -94,6 +99,7 @@ define(
             try{
                 $('.shop-menu li a').click(function(e){
                     e.preventDefault();
+                    var commonModule = require('shop-common');
                     if ($(this).hasClass('fa-reply-all')){
                         InitLoadCategory(prevParentId[parentCounter]);
                         commonModule.setCookie('catid',prevParentId[parentCounter]);

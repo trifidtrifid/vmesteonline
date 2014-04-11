@@ -166,7 +166,7 @@ define(
                     $('.more-orders').hide();
                 }
             }catch(e){
-                alert(e+" Функция createOrdersHtml");
+                //alert(e+" Функция createOrdersHtml");
             }
             return ordersHtml;
         }
