@@ -35,16 +35,17 @@ define(
                     var orderId = currentTab.data('orderid');
                     var currentProductList;
 
-                    ($(this).closest('.confirm-order').length) ? currentProductList = $(this).closest('.confirm-order li'):
-                        currentProductList = $(this).closest('.catalog-order li');
-
                     $(this).closest('li').slideUp(function(){
                         $(this).detach();
                         var commonModule = require('shop-common');
                         currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order')));
+
+                        ($(this).closest('.confirm-order').length) ? currentProductList = $(this).closest('.confirm-order li'):
+                            currentProductList = $(this).closest('.catalog-order li');
+
                         if (currentProductList.length == 0){
-                            $('.additionally-order').addClass('hide');
-                            $('.empty-basket').removeClass('hide');
+                            //$('.empty-basket').removeClass('hide');
+                            currentTab.closest('.tabs-days').hide().remove();
                             thriftModule.client.deleteOrder(orderId);
                         }
                     });
@@ -174,6 +175,22 @@ define(
             }
         }
 
+        function initCancel(){
+            $('.btn-cancel').click(function(){
+                var quest = confirm('Вы действительно хотите отменить заказ ?');
+                if (quest){
+                    cleanBasket();
+                    var orderId = $('.tab-pane.active').data('orderid');
+                    thriftModule.client.cancelOrder(orderId);
+
+                    if($(this).closest('.confirm-order').length > 0){
+                        $('.back-to-shop').trigger('click');
+                    }
+
+                }
+            });
+        }
+
         function addTabToBasketHtml(nextDateStr,orderId){
 
             var orderDay = nextDateStr.getDate();
@@ -236,14 +253,7 @@ define(
 
                 $('.shop-right').append(html);
 
-                $('.btn-cancel').click(function(){
-                    var quest = confirm('Вы действительно хотите отменить заказ ?');
-                    if (quest){
-                        cleanBasket();
-                        var orderId = $(this).closest('.tab-pane').data('orderid');
-                        thriftModule.client.cancelOrder(); // Вставить ордер айди
-                    }
-                });
+                initCancel();
 
                 $('.btn-order').click(function(){
                     var currentTab = $('.tab-pane.active');
@@ -280,6 +290,8 @@ define(
                         var shopAddress = shop.address;
                         SetShopAddress(shopAddress);
                         initRadioBtnClick(shopAddress);
+
+                        initCancel();
 
                         }).show();
 
