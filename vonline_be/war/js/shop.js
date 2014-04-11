@@ -6,6 +6,7 @@ require.config({
         "bootstrap": "lib/bootstrap.min",
         "ace_extra": "lib/ace-extra.min",
         "ace_elements": "lib/ace-elements.min",
+        "flexslider": "lib/jquery.flexslider-min",
         "jquery_ui": "lib/jquery-ui-1.10.3.full.min"/*,
         "datepicker": "lib/date-time/bootstrap-datepicker",
         "datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru"*/
@@ -18,7 +19,11 @@ require.config({
       'jquery_ui':{
           deps: ['jquery'],
           exports: 'jquery_ui'
-      }/*,
+      },
+        'flexslider':{
+            deps: ['jquery'],
+            exports: 'flexslider'
+        }/*,
       'datepicker':{
           deps: ['jquery',"bootstrap"],
           exports: 'datepicker'
@@ -93,13 +98,13 @@ require(["jquery",'shop-modules','commonM',"ace_elements","ace_extra","bootstrap
 
    /* var triggerDelivery = 0;
     var autocompleteAddressFlag = 1;*/
-        modules.deliveryModule.initRadioBtnClick();
+        //modules.deliveryModule.initRadioBtnClick();
 
         modules.shopCommonModule.initBasketInReload();
+        modules.categoryModule.InitClickOnCategory();
         modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
         modules.shopCommonModule.InitProductDetailPopup($('.product-link'));
     // переключение между категориями
-        modules.categoryModule.InitClickOnCategory();
         modules.ordersModule.initOrderPlusMinus($('.shop-orders'));
 
         commonM.init();

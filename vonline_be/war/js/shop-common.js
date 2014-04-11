@@ -1,7 +1,7 @@
 define(
     'shop-common',
-    ['jquery','shop-initThrift','shop-basket','shop-spinner','shop-orders'],
-    function( $ ,thriftModule,basketModule,spinnerModule,ordersModule ){
+    ['jquery','flexslider','shop-initThrift','shop-basket','shop-spinner','shop-orders'],
+    function( $ ,flexsliderModule,thriftModule,basketModule,spinnerModule,ordersModule ){
 
         //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 
@@ -357,7 +357,8 @@ define(
                 sel.find('.td-summa').each(function(){
                     summa += parseFloat($(this).text());
                 });
-                var orderId = sel.closest('.tab-pane').data('orderid');
+                var orderId = $('.tab-pane.active').data('orderid');
+
                 var orderDetails = thriftModule.client.getOrderDetails(orderId);
                 summa += orderDetails.deliveryCost;
             }catch(e){
@@ -394,13 +395,15 @@ define(
 
         $('.shop-trigger').click(function(e){
             e.preventDefault();
-            try{
+            //try{
                 var shopOrders = $('.shop-orders');
                 var ordersList = $('.orders-list');
 
                 if($(this).hasClass('back-to-shop')){
                     shopOrders.hide();
-                    $('.nav li.active').Class('active');
+                    $('.shop-confirm').hide();
+                    $('.main-container-inner').show();
+                    $('.nav li.active').addClass('active');
                     $('.nav li:eq(0)').addClass('active');
                     $('.shop-products').show(function(){
                         setSidebarHeight();
@@ -412,10 +415,13 @@ define(
                         openModalAuth();
                     }else{
                         $('.shop-products').hide();
+                        $('.shop-confirm').hide();
+                        $('.main-container-inner').show();
                         var nowTime = parseInt(new Date().getTime()/1000);
                         nowTime -= nowTime%86400;
                         var day = 3600*24;
                         var orders = thriftModule.client.getOrders(0,nowTime+90*day);
+                        var ordersModule = require('shop-orders');
                         ordersModule.initVarForMoreOrders();
                         // если всегда делать createOrdersHtml, то странциа заказов будет обновляться в реальном времени
                         // а так можно оптимизировать и не делать createOrderHtml каждый раз при перезагрузке
@@ -431,9 +437,9 @@ define(
                         setSidebarHeight();
                     }
                 }
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция $('.shop-trigger').click");
-            }
+            }*/
         });
 
         function openModalAuth(){

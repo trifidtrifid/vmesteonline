@@ -1,14 +1,13 @@
 define(
     'shop-modules',
-    ["jquery",'shop-initThrift','shop-common','shop-spinner','shop-basket','shop-category','shop-orders','shop-delivery'],
-    function($,thriftModule,commonModule,spinnerModule,basketModule,categoryModule,ordersModule,deliveryModule) {
+    ["jquery",'shop-initThrift','shop-common','shop-spinner','shop-category','shop-basket','shop-orders'],
+    function($,thriftModule,commonModule,spinnerModule,categoryModule,basketModule,ordersModule) {
         return {
             shopCommonModule: commonModule,
             spinnerModule: spinnerModule,
-            basketModule: basketModule,
             categoryModule: categoryModule,
-            ordersModule: ordersModule,
-            deliveryModule: deliveryModule,
+            basketModule: basketModule,
+            ordersModule: ordersModule
         }
     }
 );

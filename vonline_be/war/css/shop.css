@@ -125,6 +125,7 @@ a {
   display: none;
 }
 .shop-right .tabs-days {
+  margin-top: 110px;
   text-align: center;
 }
 .shop-right .tabs-days .nav span {
@@ -134,6 +135,7 @@ a {
   padding: 0;
   padding-bottom: 10px;
   background: #fff;
+  position: static;
 }
 .shop-right .tabs-days .basket-head {
   padding: 15px 0 15px 15px;
@@ -396,6 +398,9 @@ span
 .catalog table tr td .product-link {
   margin-left: 0;
 }
+.catalog table tr td .product-link span span {
+  display: none;
+}
 .catalog table tr td span {
   display: block;
   margin-left: 30px;
@@ -599,6 +604,7 @@ span
 .modal .product-text {
   height: 90px;
   overflow: auto;
+  text-align: left;
 }
 .modal .product-options {
   font-size: 12px;
@@ -943,50 +949,50 @@ span
   padding: 15px 0 15px 10px;
   font-weight: bold;
 }
-.confirm-order .catalog-confirm li {
+.confirm-order .catalog-confirm >li {
   list-style-type: none;
   border-bottom: 1px solid #ccc;
   overflow: auto;
   padding: 10px 0 10px 10px;
 }
-.confirm-order .catalog-confirm li:first-child {
+.confirm-order .catalog-confirm >li:first-child {
   border-top: 1px solid #ccc;
 }
-.confirm-order .catalog-confirm li table {
+.confirm-order .catalog-confirm >li table {
   float: right;
   width: 60%;
   height: 40px;
 }
-.confirm-order .catalog-confirm li table td {
+.confirm-order .catalog-confirm >li table td {
   width: 25%;
   text-align: center;
 }
-.confirm-order .catalog-confirm li table td .ace-spinner {
+.confirm-order .catalog-confirm >li table td .ace-spinner {
   vertical-align: middle;
 }
-.confirm-order .catalog-confirm li table td .unit-name {
+.confirm-order .catalog-confirm >li table td .unit-name {
   display: inline-block;
   vertical-align: middle;
   margin-left: 15px;
 }
-.confirm-order .catalog-confirm li table td .delete-product {
+.confirm-order .catalog-confirm >li table td .delete-product {
   font-size: 24px;
   color: #f00;
 }
-.confirm-order .catalog-confirm li table td .delete-product:hover {
+.confirm-order .catalog-confirm >li table td .delete-product:hover {
   text-decoration: none;
 }
-.confirm-order .catalog-confirm li .product-link span {
+.confirm-order .catalog-confirm >li .product-link span {
   display: inline-block;
   vertical-align: middle;
   width: 40px;
   text-align: center;
 }
-.confirm-order .catalog-confirm li .product-link img {
+.confirm-order .catalog-confirm >li .product-link img {
   max-width: 40px;
   max-height: 40px;
 }
-.confirm-order .catalog-confirm li .product-link .product-right-descr {
+.confirm-order .catalog-confirm >li .product-link .product-right-descr {
   display: inline-block;
   vertical-align: middle;
   margin-left: 40px;
@@ -1030,10 +1036,19 @@ span
 .confirm-order .delivery-right .input-delivery .delivery-dropdown {
   float: right;
   margin-top: -5px;
+  display: none;
 }
 .confirm-order .delivery-right .input-delivery .delivery-dropdown .dropdown-menu {
   left: -233px;
   width: 360px;
+}
+.confirm-order .delivery-right .input-delivery .address-input {
+  width: 360px;
+  margin: 10px 0;
+  display: none;
+}
+.confirm-order .delivery-right .input-delivery .address-input .btn {
+  margin-bottom: 10px;
 }
 .confirm-order .delivery-right .alert-delivery {
   color: #f00;

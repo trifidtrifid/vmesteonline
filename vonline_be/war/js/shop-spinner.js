@@ -12,7 +12,7 @@ define(
             }catch(e){
                 alert(e+" Функция InitSpinner");
             }
-            if (selector.closest('.modal-order-end').length > 0){
+            if (selector.closest('.catalog-confirm').length > 0){
                 InitSpinnerChangeInFinal(selector);
             }else{
                 if (itsBasket){
@@ -25,8 +25,9 @@ define(
 
         function InitSpinnerChangeInFinal(selector){
             selector.on('change',function(e){
-                var productSelector = $(this).closest('tr');
+                var productSelector = $(this).closest('li');
                 var price = productSelector.find('.td-price').text();
+                var orderid = $('.tab-pane.active').data('orderid');
                 var qnty = $(this).val();
                 price = parseFloat(price);
                 $('.catalog-order>li').each(function(){
@@ -38,7 +39,7 @@ define(
                 var productDetails = thriftModule.client.getProductDetails(productSelector.data('productid'));
                 var packs=[];
                 if (productDetails.prepackRequired){
-                    var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
+                    var orderDetails = thriftModule.client.getOrderDetails(orderid);
                     var orderLines = orderDetails.odrerLines;
                     var orderLinesLength = orderDetails.odrerLines.length;
                     for (var i = 0; i < orderLinesLength ; i++){
@@ -53,10 +54,11 @@ define(
                 }else{
                     packs = 0;
                 }
-                thriftModule.client.setOrderLine(productSelector.data('productid'),qnty,'asd',packs);
+                thriftModule.client.setOrderLine(orderid,productSelector.data('productid'),qnty,'asd',packs);
                 productSelector.find('.td-summa').text((price*qnty).toFixed(1));
 
-                $('.itogo-right span,.modal-itogo span').text(commonModule.countAmount($('.modal-body-list')));
+                var commonModule = require('shop-common');
+                $('.itogo-right span,.amount span').text(commonModule.countAmount($('.catalog-confirm')));
             });
         }
 
@@ -155,12 +157,14 @@ define(
                     /* for (var p in packs){
                      alert(p+" "+packs[p]);
                      }*/
-                    thriftModule.client.setOrderLine(productId,qnty,'sdf',packs);
+                    thriftModule.client.setOrderLine(orderId,productId,qnty,'sdf',packs);
                     var price = productSelector.find('.td-price').text();
                     price = parseFloat(price);
                     productSelector.find('.td-summa').text((price*qnty).toFixed(1));
-                    $('.itogo-right span').text(commonModule.countAmount($('.catalog-order')));
-                    $('.modal-itogo span').text(commonModule.countAmount($('.modal-body-list')));
+                    var commonModule = require('shop-common');
+                    var currentPane = $(this).closest('.tab-pane');
+                    currentPane.find('.amount span').text(commonModule.countAmount(currentPane.find('.catalog-order')));
+                    //$('.modal-itogo span').text(commonModule.countAmount($('.modal-body-list')));
                 }
 
             })
@@ -258,7 +262,7 @@ define(
                             qnty = (qnty - quantVal*packVal).toFixed(1);
                             productSelector.find('td>.ace-spinner').spinner('value',qnty);
                             productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
-                            thriftModule.client.setOrderLine(productId,qnty,'asd',packs);
+                            thriftModule.client.setOrderLine(orderId,productId,qnty,'asd',packs);
                             $('.itogo-right span').text(countAmount($('.catalog-order')));
                         }
                     }
@@ -289,7 +293,7 @@ define(
 
         function initPrepackRequiredInModal(linkSelector,currentModal,productSelector,isFirstModal){
 
-            var orderId = $(this).closest('.tab-pane').data('orderid');
+            var orderId = linkSelector.closest('.tab-pane').data('orderid');
             var productId = linkSelector.closest('li').data('productid');
             var unitName = linkSelector.closest('li').find('.unit-name').text();
             if (linkSelector.closest('.order-products').length > 0){
