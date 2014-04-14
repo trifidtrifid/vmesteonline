@@ -227,16 +227,16 @@
                                         <span></span>
                                         <a href="#">редактировать</a>
                                     </div>--%>
-                                        <div class="form-edit-wrap hide">
-                                            <div class="form-edit">
-                                                <input class="country-delivery" type="text" value="Россия" placeholder="Страна"/>
-                                                <input class="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
-                                                <input class="street-delivery" type="text" placeholder="Улица"/>
-                                                <input class="building-delivery short first" type="text" placeholder="Дом"/>
-                                                <input class="flat-delivery short" type="text" placeholder="Квартира"/>
-                                                <a class="btn btn-primary btn-sm no-border save-new-addr" href="#">Сохранить</a>
-                                            </div>
+                                    <div class="form-edit-wrap hide">
+                                        <div class="form-edit">
+                                            <input id="country-delivery" type="text" value="Россия" placeholder="Страна"/>
+                                            <input id="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
+                                            <input id="street-delivery" type="text" placeholder="Улица"/>
+                                            <input id="building-delivery" type="text" class="short first" placeholder="Дом"/>
+                                            <input id="flat-delivery" type="text" class="short" placeholder="Квартира"/>
+                                            <a class="btn btn-primary btn-sm no-border" href="#">Сохранить</a>
                                         </div>
+                                    </div>
                                     <a class="btn btn-primary btn-sm no-border add-user-address" href="#">Добавить</a>
                                 </div>
                             </div>

@@ -59,7 +59,7 @@ define(
 
             var currentOrders = thriftModule.client.getOrdersByStatus(nowTime,nowTime+90*day,1);
             var currentOrdersLength = currentOrders.length;
-            for(var i = 0; i < currentOrdersLength; i++){
+            /*for(var i = 0; i < currentOrdersLength; i++){
                 var orderid = currentOrders[i].id;
                 basketModule.addTabToBasketHtml(new Date(currentOrders[i].date*1000),orderid);
                 var orderDetails = thriftModule.client.getOrderDetails(orderid);
@@ -69,7 +69,7 @@ define(
                     //currentProduct,spinnerValue,spinnerDisable
                     basketModule.AddSingleProductToBasket(orderLines[j].product,orderLines[j].quantity);
                 }
-            }
+            }*/
             /*var catalogOrderLi = $('.catalog-order li');
             if(catalogOrderLi.length > 0){
                 var order = thriftModule.client.getOrder(0);
