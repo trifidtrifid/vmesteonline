@@ -131,7 +131,7 @@ define(
                 }
                 $('.user-addresses').prepend(userAddressesHtml);
 
-                initEditAddress($('.edit-user-addr'),userAddresses);
+                initEditAddress($('.edit-user-addr').parent(),userAddresses);
 
                 var formEditHtml = $('.form-edit-wrap').html();
 
@@ -142,11 +142,14 @@ define(
                     if(currentForm.length == 0){
                         $(this).after(formEditHtml);
                         WriteAddress(currentForm);
-                    }
-                    if(currentForm.css('display') == 'block'){
-                        currentForm.slideUp(200);
-                    }else{
+                        currentForm = $(this).find('+.form-edit');
                         currentForm.slideDown(200);
+                    }else{
+                        if(currentForm.css('display') == 'block'){
+                            currentForm.slideUp(200);
+                        }else{
+                            currentForm.slideDown(200);
+                        }
                     }
                     initSaveNewAddr(currentForm,userAddresses);
                 });
@@ -155,7 +158,6 @@ define(
 
         function WriteAddress(selector,address){
             if(address){
-                alert(address.country.name);
                 selector.find('.country-delivery').val(address.country.name);
                 selector.find('.city-delivery').val(address.city.name);
                 selector.find('.street-delivery').val(address.street.name);
