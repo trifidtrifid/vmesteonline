@@ -52,7 +52,25 @@ define(
         }
 
         function initBasketInReload(){
-            var catalogOrderLi = $('.catalog-order li');
+
+            var nowTime = parseInt(new Date().getTime()/1000);
+            nowTime -= nowTime%86400;
+            var day = 3600*24;
+
+            var currentOrders = thriftModule.client.getOrdersByStatus(nowTime,nowTime+90*day,1);
+            var currentOrdersLength = currentOrders.length;
+            for(var i = 0; i < currentOrdersLength; i++){
+                var orderid = currentOrders[i].id;
+                basketModule.addTabToBasketHtml(new Date(currentOrders[i].date*1000),orderid);
+                var orderDetails = thriftModule.client.getOrderDetails(orderid);
+                var orderLines = orderDetails.odrerLines;
+                var orderLinesLength = orderDetails.odrerLines.length;
+                for(var j = 0; j < orderLinesLength; j++){
+                    //currentProduct,spinnerValue,spinnerDisable
+                    basketModule.AddSingleProductToBasket(orderLines[j].product,orderLines[j].quantity);
+                }
+            }
+            /*var catalogOrderLi = $('.catalog-order li');
             if(catalogOrderLi.length > 0){
                 var order = thriftModule.client.getOrder(0);
                 var orderDetails = thriftModule.client.getOrderDetails(order.id);
@@ -87,7 +105,7 @@ define(
                 }
                 $('.itogo-right span').text(countAmount(catalogOrder));
                 $('.empty-basket').hide();
-            }
+            }*/
         }
 
         function InitProductDetailPopup(selector){

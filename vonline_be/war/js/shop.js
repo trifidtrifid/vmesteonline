@@ -7,7 +7,8 @@ require.config({
         "ace_extra": "lib/ace-extra.min",
         "ace_elements": "lib/ace-elements.min",
         "flexslider": "lib/jquery.flexslider-min",
-        "jquery_ui": "lib/jquery-ui-1.10.3.full.min"/*,
+        "jquery_ui": "lib/jquery-ui-1.10.3.full.min",
+        "datepicker-simple": "lib/date-time/bootstrap-datepicker-simple"/*,
         "datepicker": "lib/date-time/bootstrap-datepicker",
         "datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru"*/
     },
@@ -23,11 +24,11 @@ require.config({
         'flexslider':{
             deps: ['jquery'],
             exports: 'flexslider'
-        }/*,
-      'datepicker':{
+        },
+      'datepicker-simple':{
           deps: ['jquery',"bootstrap"],
-          exports: 'datepicker'
-      },
+          exports: 'datepicker-simple'
+      }/*,
     'datepicker-ru':{
         deps: ['jquery','datepicker'],
         exports: 'datepicker-ru'
@@ -90,6 +91,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             $('.modal-login').modal();
         });
 
+
     }catch(e){
         //alert(e + ' Ошибка в простых обработчиках');
     }
@@ -100,7 +102,9 @@ require(["jquery",'shop-modules','commonM','loginModule'],
     var autocompleteAddressFlag = 1;*/
         //modules.deliveryModule.initRadioBtnClick();
 
+        if(globalUserAuth){
         modules.shopCommonModule.initBasketInReload();
+        }
         modules.categoryModule.InitClickOnCategory();
         modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
         modules.shopCommonModule.InitProductDetailPopup($('.product-link'));

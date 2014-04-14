@@ -1,6 +1,6 @@
 define(
     'commonM',
-    ['jquery','shop-initThrift'],
+    ['jquery','shop-initThrift','datepicker-simple'],
     function( $,thriftModule ){
 
         function init(){
@@ -37,7 +37,7 @@ define(
         /* переключения на настройки, профиль и выход */
 
         function SetJSForEditPersonal(){
-            //$('#date-picker-birthday').datepickerSimple({startView: 2, viewMode: 2,autoclose:true, language:'ru'});
+            $('#date-picker-birthday').datepickerSimple({startView: 2, viewMode: 2,autoclose:true, language:'ru'});
 
             $('.save-changes').click(function(e){
                 e.preventDefault();
@@ -138,9 +138,9 @@ define(
                 document.location.replace("login.jsp");
             }
         });
-            $('.user-short').click(function(){
-                $(this).addClass('open');
-            })
+            $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
+                $(this).parent().addClass('open');
+            });
         }
 
         return {

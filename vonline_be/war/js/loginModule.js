@@ -1,7 +1,7 @@
 define(
     'loginModule',
-    ['jquery','shop-initThrift','shop-basket'],
-    function( $,thriftModule,basketModule ){
+    ['jquery','shop-initThrift','shop-basket','shop-common'],
+    function( $,thriftModule,basketModule, commonModule ){
         function initLogin(){
 
     $('.login-form .btn-submit').click(function(e){
@@ -131,10 +131,13 @@ define(
 
         var dropdownToggle = $('.dropdown-toggle');
         dropdownToggle.removeClass('no-login');
+        $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
+            $(this).parent().addClass('open');
+        });
 
         // callbacks
+        commonModule.initBasketInReload();
         var basketModule = require('shop-basket');
-        alert("1 "+basketModule.callbacks.has(basketModule.BasketTrigger));
         basketModule.callbacks.fire(basketModule.selectorForCallbacks);
         basketModule.callbacks.empty();
     }
