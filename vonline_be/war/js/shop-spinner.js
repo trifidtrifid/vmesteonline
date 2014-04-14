@@ -8,7 +8,7 @@ define(
                 var step = 1;
                 if (spinnerStep){step = spinnerStep}
                 // делаем +spinnerValue для строгого преобразования к числу
-                selector.ace_spinner({value:+spinnerValue,min:step,max:100000,step:step, btn_up_class:'btn-info' , btn_down_class:'btn-info'});
+                selector.ace_spinner({value:+spinnerValue,min:step,max:100000,step:step,on_sides: true, btn_up_class:'btn-info' , btn_down_class:'btn-info'});
             }catch(e){
                 alert(e+" Функция InitSpinner");
             }

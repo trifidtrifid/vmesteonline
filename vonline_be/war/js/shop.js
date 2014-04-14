@@ -38,12 +38,11 @@ require.config({
 
 /*require(["jquery",'shop-initThrift','shop-common','shop-spinner','shop-addProduct','shop-category','shop-orders','shop-delivery'],
     function($,thriftModule,commonModule,spinnerModule,addProduct,categoryModule,ordersModule,deliveryModule) {*/
-require(["jquery",'shop-modules','commonM',"ace_elements","ace_extra","bootstrap"],
-    function($,modules,commonM) {
-    // глобальные переменные для callback полсе логина в реальном времени
-
+require(["jquery",'shop-modules','commonM','loginModule'],
+    function($,modules,commonM,loginModule) {
     /* простые обработчики событий */
         //alert('app '+commonModule+" "+spinnerModule+" "+addProduct+" "+categoryModule+" "+ordersModule+" "+deliveryModule);
+        loginModule.initLogin();
     try{
         var w = $(window),
             showRight = $('.show-right'),
@@ -90,6 +89,7 @@ require(["jquery",'shop-modules','commonM',"ace_elements","ace_extra","bootstrap
         $('.login-link').click(function(){
             $('.modal-login').modal();
         });
+
     }catch(e){
         //alert(e + ' Ошибка в простых обработчиках');
     }
@@ -109,5 +109,9 @@ require(["jquery",'shop-modules','commonM',"ace_elements","ace_extra","bootstrap
 
         commonM.init();
 
-
+        window.onerror = function(message, source, lineno) {
+            alert("Ошибка:"+message +"\n" +
+            "файл:" + source + "\n" +
+            "строка:" + lineno);
+        };
     });

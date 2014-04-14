@@ -28,7 +28,7 @@ define(
             $(this).closest('.btn-group').find('.btn-group-text').text($(this).text());
         });
 
-        $('.nav-list a,.navbar .nav a').click(function(e){
+        $('.nav-list a,.navbar .nav a:not(".dropdown-toggle")').click(function(e){
             e.preventDefault();
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
@@ -37,7 +37,7 @@ define(
         /* переключения на настройки, профиль и выход */
 
         function SetJSForEditPersonal(){
-            $('#date-picker-birthday').datepickerSimple({startView: 2, viewMode: 2,autoclose:true, language:'ru'});
+            //$('#date-picker-birthday').datepickerSimple({startView: 2, viewMode: 2,autoclose:true, language:'ru'});
 
             $('.save-changes').click(function(e){
                 e.preventDefault();
@@ -85,9 +85,11 @@ define(
 
             $('.edit-personal-link').click(function(e){
                 e.preventDefault();
-                $('.dynamic').load("ajax-editPersonal.jsp .dynamic",function(){
+                $('.page').hide();
+
+                $('.shop-editPersonal').load("ajax/ajax-editPersonal.jsp .dynamic",function(){
                     SetJSForEditPersonal();
-                });
+                }).show();
             });
 
             $('.sendConfirmCode').click(function(e){
@@ -118,17 +120,18 @@ define(
 
         $('.user-menu a').click(function(e){
             e.preventDefault();
+            $('.navbar .nav .active').removeClass('active');
+
             $(this).closest('.user-short').removeClass('open');
             e.stopPropagation();
 
             var ind = $(this).parent().index();
-            var dynamic = $('.dynamic');
+            //var dynamic = $('.dynamic');
             if (ind == 0){
-                dynamic.load("ajax/ajax-settings.jsp .dynamic");
-            }else if (ind == 1){
-                dynamic.load("ajax/ajax-profile.jsp .dynamic",function(){
+                $('.page').hide();
+                $('.shop-profile').load("ajax/ajax-profile.jsp .dynamic",function(){
                     SetJSForProfile();
-                });
+                }).show();
             } else {
                 thriftModule.authClient.logout();
 

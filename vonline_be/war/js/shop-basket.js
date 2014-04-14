@@ -35,15 +35,16 @@ define(
                     var orderId = currentTab.data('orderid');
                     var currentProductList;
 
+                    ($(this).closest('.confirm-order').length) ? currentProductList = $(this).closest('.confirm-order li'):
+                        currentProductList = selector.closest('.catalog-order').find('li');
+
                     $(this).closest('li').slideUp(function(){
                         $(this).detach();
                         var commonModule = require('shop-common');
                         currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order')));
 
-                        ($(this).closest('.confirm-order').length) ? currentProductList = $(this).closest('.confirm-order li'):
-                            currentProductList = $(this).closest('.catalog-order li');
 
-                        if (currentProductList.length == 0){
+                        if (currentProductList.length == 1){
                             //$('.empty-basket').removeClass('hide');
                             currentTab.closest('.tabs-days').hide().remove();
                             thriftModule.client.deleteOrder(orderId);
@@ -182,11 +183,6 @@ define(
                     cleanBasket();
                     var orderId = $('.tab-pane.active').data('orderid');
                     thriftModule.client.cancelOrder(orderId);
-
-                    if($(this).closest('.confirm-order').length > 0){
-                        $('.back-to-shop').trigger('click');
-                    }
-
                 }
             });
         }
@@ -266,7 +262,7 @@ define(
                         spinnerStep[counter++] = $(this).data('step');
                     });
 
-                    $('.main-container-inner').hide();
+                    $('.page').hide();
                     $('.shop-confirm').load('ajax/ajax-confirmOrder.html .dynamic',function(){
                          $('.order-date span').text(orderDay+'.'+orderMonth+' ('+ orderWeekDay +')');
                          $('.itogo-right span').text(amount);
@@ -291,7 +287,29 @@ define(
                         SetShopAddress(shopAddress);
                         initRadioBtnClick(shopAddress);
 
-                        initCancel();
+                        $('.confirm-order .btn-order').click(function(){
+                             var phoneDelivery = $('#phone-delivery');
+                            if(!phoneDelivery.val()){
+
+                                $('.alert-delivery-phone').text('Введите номер телефона !').show();
+
+                            }else if(!isValidPhone(phoneDelivery.val())){
+
+                                $('.alert-delivery-phone').text('Не корректный номер телефона !').show();
+
+                            }else{
+
+                            var orderId = $('.tab-pane.active').data('orderid');
+                            thriftModule.client.confirmOrder(orderId);
+
+                            alert('Ваш заказ принят !');
+                            cleanBasket();
+                            }
+                        });
+
+                        $('.confirm-order .btn-cancel').click(function(){
+                            $('.back-to-shop').trigger('click');
+                        });
 
                         }).show();
 
@@ -901,7 +919,9 @@ define(
             AddProductToBasketCommon: AddProductToBasketCommon,
             InitAddToBasket: InitAddToBasket,
             BasketTrigger: BasketTrigger,
-            AddSingleProductToBasket: AddSingleProductToBasket
+            AddSingleProductToBasket: AddSingleProductToBasket,
+            callbacks: callbacks,
+            selectorForCallbacks: selectorForCallbacks
         }
 
     }

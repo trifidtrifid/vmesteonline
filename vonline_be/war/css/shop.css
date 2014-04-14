@@ -179,21 +179,15 @@ a {
   display: inline-block;
   vertical-align: middle;
   line-height: 16px;
-  max-width: 129px;
+  max-width: 119px;
 }
 .shop-right .catalog-order li .product-link span {
   display: none;
 }
-.shop-right .catalog-order li .ace-spinner {
-  display: inline-block;
-  vertical-align: middle;
-}
 .shop-right .catalog-order li .product-right-descr {
   display: inline-block;
   vertical-align: middle;
-  margin-left: 10px;
   margin-bottom: 5px;
-  padding-right: 20px;
   font-size: 12px;
   line-height: 16px;
 }
@@ -411,8 +405,6 @@ span
 }
 .catalog table tr td .unit-name,
 .catalog table tr td .ace-spinner {
-  display: inline-block;
-  vertical-align: middle;
   margin: 0;
 }
 .shop-orders {
@@ -451,6 +443,15 @@ span
 }
 .shop-orders .more-orders a {
   font-size: 16px;
+}
+.ace-spinner {
+  display: inline-block;
+  vertical-align: middle;
+}
+.ace-spinner i {
+  font-size: 14px;
+  position: relative;
+  top: -2px;
 }
 .orders-tbl {
   width: 100%;
@@ -525,7 +526,7 @@ span
   background: #fff;
 }
 .ace-spinner {
-  width: 50px !important;
+  width: 90px !important;
 }
 .ace-spinner .input-mini {
   width: 40px;
@@ -1007,9 +1008,13 @@ span
 }
 .confirm-order .delivery-right {
   padding-left: 10px;
+  margin-top: 40px;
 }
 .confirm-order .delivery-right h3 {
   font-size: 16px;
+}
+.confirm-order .delivery-right #phone-delivery {
+  width: 250px;
 }
 .confirm-order .delivery-right .input-delivery {
   padding-right: 10px;
