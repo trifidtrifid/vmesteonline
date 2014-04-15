@@ -85,7 +85,7 @@ public class UserServiceImplTest extends UserServiceImpl {
 	}
 
 	@Test
-	public void testGetUsyerInfo() {
+	public void testGetUserInfo() {
 
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -97,10 +97,10 @@ public class UserServiceImplTest extends UserServiceImpl {
 			Assert.assertEquals(voUserA.getId(), ui.getId());
 			Assert.assertEquals(Defaults.user1name, ui.getFirstName());
 			Assert.assertEquals(Defaults.user1lastName, ui.getLastName());
-//			Assert.assertEquals(Defaults.user1lastName, ui.());
+			// Assert.assertEquals(Defaults.user1lastName, ui.());
 
-			//			Assert.assertEquals("Республиканская, 32/3", ui.getAddress());
-//			fail("should implement");
+			// Assert.assertEquals("Республиканская, 32/3", ui.getAddress());
+			// fail("should implement");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -110,7 +110,64 @@ public class UserServiceImplTest extends UserServiceImpl {
 		}
 	}
 
-	
+	@Test
+	public void testUpdateUserInfo() {
+
+		PersistenceManager pm = PMF.getPm();
+		try {
+			asi.login(Defaults.user1email, Defaults.user1pass);
+
+			UserInfo ui = new UserInfo();
+			ui.birthday = "1984-07-18";
+			ui.firstName = "FirstName";
+			ui.lastName = "LastName";
+			ui.relations = RelationsType.MARRIED;
+			usi.updateUserInfo(ui);
+
+			UserInfo uiBack = usi.getUserInfo();
+
+			Assert.assertEquals(ui.birthday, uiBack.birthday);
+			Assert.assertEquals(ui.firstName, uiBack.firstName);
+			Assert.assertEquals(ui.lastName, uiBack.lastName);
+			Assert.assertEquals(ui.relations, uiBack.relations);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Test
+	public void testUpdateUserContacts() {
+
+		PersistenceManager pm = PMF.getPm();
+		try {
+			asi.login(Defaults.user1email, Defaults.user1pass);
+
+			UserContacts uc = new UserContacts();
+			uc.email = "z@z";
+			uc.mobilePhone = "7921336";
+			usi.updateUserContacts(uc);
+
+			UserContacts ucBack = usi.getUserContacts();
+
+			Assert.assertEquals(uc.email, ucBack.email);
+			Assert.assertEquals(uc.mobilePhone, ucBack.mobilePhone);
+
+			VoUser u = asi.getCurrentUser(pm);
+			Assert.assertEquals(u.getEmail(), ucBack.email);
+			Assert.assertEquals(u.isEmailConfirmed(), false);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		} finally {
+			pm.close();
+		}
+	}
+
 	@Test
 	public void testGetUserAandBVoGroups() {
 

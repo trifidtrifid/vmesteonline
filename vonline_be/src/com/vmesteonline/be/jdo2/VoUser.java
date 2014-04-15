@@ -16,7 +16,9 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.RelationsType;
 import com.vmesteonline.be.ShortUserInfo;
+import com.vmesteonline.be.UserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
@@ -44,11 +46,24 @@ public class VoUser extends GeoLocation {
 		this.avatarTopic = Defaults.defaultAvatarTopicUrl;
 		this.avatarProfile = Defaults.defaultAvatarProfileUrl;
 		this.avatarProfileShort = Defaults.defaultAvatarShortProfileUrl;
+		this.relations = RelationsType.UNKNOWN;
 
+	}
+
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+
+	public void setRelations(RelationsType relations) {
+		this.relations = relations;
 	}
 
 	public ShortUserInfo getShortUserInfo() {
 		return new ShortUserInfo(getId(), name, lastName, 0, getAvatarTopic());
+	}
+
+	public UserInfo getUserInfo() {
+		return new UserInfo(getId(), name, lastName, 0, getAvatarProfile(), birthday, relations);
 	}
 
 	public VoUserGroup getGroupById(long id) throws InvalidOperation {
@@ -239,8 +254,9 @@ public class VoUser extends GeoLocation {
 
 	@Persistent
 	@Unindexed
-	private long birthday;
+	private String birthday;
 
+	
 	@Persistent
 	@Unindexed
 	@Unowned
@@ -365,6 +381,10 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	private String mobilePhone;
+
+	@Persistent
+	@Unindexed
+	RelationsType relations;
 
 	public String getMobilePhone() {
 		return mobilePhone;

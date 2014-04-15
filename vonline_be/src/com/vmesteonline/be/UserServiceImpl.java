@@ -53,23 +53,28 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public void updateUserInfo(UserInfo userInfo) throws InvalidOperation {
 
-		/*
-		 * 4: i32 rating 5: string avatar, 6: string birthday, 7: string relations,
-		 */
-
 		PersistenceManager pm = PMF.getPm();
 		VoUser user = getCurrentUser(pm);
 		user.setName(userInfo.firstName);
 		user.setLastName(userInfo.lastName);
-		user.setLastName(userInfo.lastName);
+		user.setRelations(userInfo.relations);
+		user.setBirthday(userInfo.birthday);
 		pm.makePersistent(user);
-		// user.(userInfo.lastName);
 
 	}
 
 	@Override
 	public void updateUserContacts(UserContacts contacts) throws InvalidOperation {
-		// TODO Auto-generated method stub
+
+		PersistenceManager pm = PMF.getPm();
+		VoUser user = getCurrentUser(pm);
+		if (!contacts.email.equals(user.getEmail())) {
+			user.setEmail(contacts.email);
+			user.setEmailConfirmed(false);
+		}
+		user.setMobilePhone(contacts.mobilePhone);
+
+		pm.makePersistent(user);
 
 	}
 
@@ -237,7 +242,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser u = getCurrentUser(pm);
-			UserInfo ui = new UserInfo(u.getId(), u.getName(), u.getLastName(), 0, "avatar path", "birthday", "relations");
+			UserInfo ui = u.getUserInfo();
 			return ui;
 		} finally {
 			pm.close();
