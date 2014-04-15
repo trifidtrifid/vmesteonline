@@ -143,8 +143,6 @@
 								</c:otherwise>
 							</c:choose>
                             <ul	class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                                <li><a href="#"> <i class="icon-cog"></i> Настройки
-                                </a></li>
 
                                 <li><a href="#"> <i class="icon-user"></i> Профиль
                                 </a></li>
@@ -163,7 +161,7 @@
 			<!-- /.container -->
 		</div>
 		<div class="main-container shop dynamic" id="main-container">
-			<div class="main-container-inner">
+			<div class="page main-container-inner">
 
             <aside class="sidebar shop-right">
                 <div class="show-right">
@@ -409,7 +407,7 @@
                 </div>
                 <div class="shop-orders">
 
-                    <a href="#" class="back-to-shop shop-trigger">Вернуться в магазин</a>
+                    <%--<a href="#" class="back-to-shop shop-trigger">Вернуться в магазин</a>--%>
                     <h1>Заказы</h1>
                     <div class="orders-tbl-wrap">
                     <table>
@@ -427,10 +425,13 @@
                     <div class="orders-list">
                     </div>
                 </div>
+
             </div>
             <div class="clear"></div>
         </div>
-            <div class="shop-confirm"></div>
+            <div class="page shop-confirm"></div>
+            <div class="page shop-profile"></div>
+            <div class="page shop-editPersonal"></div>
     </div>
 
 		<div class="modal modal-order-end">

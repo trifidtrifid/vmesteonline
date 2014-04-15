@@ -83,10 +83,16 @@
 
 <!-- файлы thrift  -->
 <script src="js/thrift.js" type="text/javascript"></script>
+<script src="gen-js/bedata_types.js" type="text/javascript"></script>
+<script src="gen-js/shop_types.js" type="text/javascript"></script>
+<script src="gen-js/ShopService.js" type="text/javascript"></script>
 <script src="gen-js/authservice_types.js" type="text/javascript"></script>
 <script src="gen-js/AuthService.js" type="text/javascript"></script>
+<script src="gen-js/userservice_types.js" type="text/javascript"></script>
+<script src="gen-js/UserService.js" type="text/javascript"></script>
 <!-- --- -->
-<script type="text/javascript" src="js/login.js"></script>
+<%--<script type="text/javascript" src="js/login.js"></script>--%>
+<script type="text/javascript" data-main="js/shop.js" src="js/require.js"></script>
 
 </body>
 </html>
