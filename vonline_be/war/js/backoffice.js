@@ -851,11 +851,11 @@ $('.import-dropdown .dropdown-menu li').click(function(){
            var currentTab = $(this).closest('.tab-pane');
            var deliveryText = currentTab.find('.export-delivery-dropdown .btn-group-text').text();
            var selectOrderDate = currentTab.find('.datepicker-export').data('selectorderdate');
-           if(deliveryText == 'Тип доставки'){
-               currentTab.find('.error-info').text('Пожалуйста, укажите тип доставки.').show();
-           }else if(!selectOrderDate){
+           if(!selectOrderDate){
                currentTab.find('.error-info').text('Пожалуйста, укажите дату с заказом.').show();
            }else{
+               currentTab.find('.error-info').hide();
+               currentTab.find('.confirm-info').hide();
 
               var tabs = $('.export .nav-tabs').find('li');
               var currentInd = 0;
@@ -865,7 +865,8 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                   }
               });
 
-               var deliveryType = getDeliveryTypeByText(deliveryText);
+               var deliveryType;
+               (deliveryText != 'Тип доставки') ? deliveryType = getDeliveryTypeByText(deliveryText):deliveryType=0;
 
                var dataSet;
 

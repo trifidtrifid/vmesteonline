@@ -203,7 +203,9 @@
                     <section class="user-descr">
                         <div class="text-area">
                             <div class="user-head" >
-                                <span class="confirm-alert">Аккаунт не подтвержден !</span>
+                                <c:if test="${!ifEmailConfirmed}">
+                                    <span class="confirm-alert">Аккаунт не подтвержден !</span>
+                                </c:if>
                                 <h1><c:out value="${userInfo.firstName}"/> <c:out value="${userInfo.lastName}"/></h1>
                                 <a class="edit-personal-link" href="#">Редактировать</a>
                             </div>
@@ -235,6 +237,7 @@
                                                 <input class="building-delivery short first" type="text" placeholder="Дом"/>
                                                 <input class="flat-delivery short" type="text" placeholder="Квартира"/>
                                                 <a class="btn btn-primary btn-sm no-border save-new-addr" href="#">Сохранить</a>
+                                                <div class="error-info"></div>
                                             </div>
                                         </div>
                                     <a class="btn btn-primary btn-sm no-border add-user-address" href="#">Добавить</a>

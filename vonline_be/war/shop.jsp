@@ -127,17 +127,19 @@
                             <c:choose>
 								<c:when test="${auth}">
 									<a data-toggle="dropdown" href="#" class="dropdown-toggle">
-										<img class="nav-user-photo" src="i/avatars/user.jpg"
-										alt="Jason's Photo" /> <span class="user-info"> <small><c:out
-													value="${firstName}" /></small> <c:out value="${lastName}" />
-									</span> <i class="icon-caret-down"></i>
+										<%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
+                                        <span class="user-info">
+                                            <c:out value="${firstName}" />
+                                            <c:out value="${lastName}" />
+									    </span>
+                                            <i class="icon-caret-down"></i>
 									</a>
 								</c:when>
 								<c:otherwise>
 									<a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
-										<img class="nav-user-photo" src="i/avatars/user.jpg"
-										alt="Jason's Photo" /> <span class="user-info"> <small>Привет,</small>
-											Гость
+										<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />
+                                        <span class="user-info">
+                                            Привет,	Гость
 									</span>
 									</a>
 								</c:otherwise>

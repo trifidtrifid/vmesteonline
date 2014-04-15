@@ -215,7 +215,9 @@ define(
             try{
                 var orderDetails,
                     curProd,
-                    spinVal,i;
+                    spinVal, i,
+                    oldOrderId = $('.tab-pane.active').data('orderid');
+
                 if (addType == 'replace'){
                     orderDetails = thriftModule.client.getOrderDetails(orderId);
                     var orderLines = orderDetails.odrerLines;
@@ -224,10 +226,11 @@ define(
                         curProd = orderLines[i].product;
                         spinVal = orderLines[i].quantity;
                         var packs = orderLines[i].packs;
-                        thriftModule.client.setOrderLine(curProd.id,spinVal,"asd",packs);
+                        thriftModule.client.setOrderLine(oldOrderId,curProd.id,spinVal,"asd",packs);
                     }
                 }else if (addType == 'append'){
-                    orderDetails = thriftModule.client.appendOrder(orderId);
+                    alert(orderId+" "+oldOrderId);
+                    orderDetails = thriftModule.client.appendOrder(oldOrderId,orderId);
                 }
                 orderLines = orderDetails.odrerLines;
                 orderLinesLength = orderLines.length;
@@ -239,6 +242,7 @@ define(
                     if(orderLines[i].packs && commonModule.getPacksLength(orderLines[i].packs) > 1){
                         spinnerDisable = true;
                     }
+                    var basketModule = require('shop-basket');
                     basketModule.AddSingleProductToBasket(curProd,spinVal,spinnerDisable);
                 }
             }catch(e){
@@ -270,10 +274,11 @@ define(
                         itsAppend: false,
                         orderId : $(this).closest('.order-item').data('orderid')
                     };
-                    basketModule.flagFromBasketClick = 1;
+                    AddOrdersToBasket(orderData);
+                    /*basketModule.flagFromBasketClick = 1;
                     datepickerModule.dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,basketModule.AddSingleProductToBasket,AddOrdersToBasket,basketModule.AddProductToBasketCommon);
                     datepickerModule.dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click').datepicker('triggerFlagBasket');
-                    basketModule.flagFromBasketClick = 0;
+                    basketModule.flagFromBasketClick = 0;*/
                 });
                 selector.find('.add-order-btn').click(function(){
                     var orderData= {
