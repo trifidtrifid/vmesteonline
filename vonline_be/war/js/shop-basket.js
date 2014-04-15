@@ -236,7 +236,6 @@ define(
                     '<div class="tab-content">'+
                     '<div id="day'+orderDay+orderMonth+'" data-orderid="'+ orderId +'" class="tab-pane active">'+
                     '<div class="basket-head">'+
-                        '<a href="#" class="basket-refresh">Обновить</a>'+
                         '<div class="amount">Итого: <span></span></div>'+
                     '</div>'+
                     '<ul class="catalog-order">'+
@@ -417,7 +416,6 @@ define(
                 tabDays.find('.nav-tabs').append(html);
                 html = '<div id="day'+orderId+'" data-orderid="'+ orderId +'" class="tab-pane active">'+
                     '<div class="basket-head">'+
-                    '<a href="#" class="basket-refresh">Обновить</a>'+
                     '<div class="amount">Итого: <span></span></div>'+
                     '</div>'+
                     '<ul class="catalog-order">'+

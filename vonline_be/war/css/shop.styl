@@ -51,10 +51,17 @@ transform()
       a
         border-bottom-color #2b7dbc
 
-.ace-nav>.user-short a
-  border none
-  padding 3px 8px
-  font-size 14px
+.ace-nav>.user-short
+  line-height 30px
+  .user-info
+    vertical-align middle
+    max-width 300px !important
+  a
+    border none
+    padding 3px 8px
+    font-size 14px
+    i
+      vertical-align bottom
 
 .ace-nav>.user-short>a
   line-height inherit
@@ -144,8 +151,9 @@ transform()
       background #fff
       position static
     .basket-head
-      padding 15px 0 15px 15px
+      padding 12px 0 12px 15px
       text-align left
+      overflow auto
       .amount
         font-size 16px
         float right
@@ -160,7 +168,7 @@ transform()
     margin-left 0
     border-top 1px solid #ccc
     li
-      padding 8px 5px 5px 5px
+      padding 8px 5px 2px 5px
       display block
       background #f9f9f9
       overflow auto

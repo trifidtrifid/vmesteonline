@@ -38,10 +38,20 @@ a {
 .ace-nav>li.active a {
   border-bottom-color: #2b7dbc;
 }
+.ace-nav>.user-short {
+  line-height: 30px;
+}
+.ace-nav>.user-short .user-info {
+  vertical-align: middle;
+  max-width: 300px !important;
+}
 .ace-nav>.user-short a {
   border: none;
   padding: 3px 8px;
   font-size: 14px;
+}
+.ace-nav>.user-short a i {
+  vertical-align: bottom;
 }
 .ace-nav>.user-short>a {
   line-height: inherit;
@@ -138,8 +148,9 @@ a {
   position: static;
 }
 .shop-right .tabs-days .basket-head {
-  padding: 15px 0 15px 15px;
+  padding: 12px 0 12px 15px;
   text-align: left;
+  overflow: auto;
 }
 .shop-right .tabs-days .basket-head .amount {
   font-size: 16px;
@@ -157,7 +168,7 @@ a {
   border-top: 1px solid #ccc;
 }
 .shop-right .catalog-order li {
-  padding: 8px 5px 5px 5px;
+  padding: 8px 5px 2px 5px;
   display: block;
   background: #f9f9f9;
   overflow: auto;
