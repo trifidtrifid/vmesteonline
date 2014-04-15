@@ -1016,17 +1016,21 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				Map<Integer, Double> deliveryCosts = voShop.getDeliveryCosts();
 				if (deliveryCosts.containsKey(deliveryType.getValue())) {
 
-					currentOrder.setDeliveryCost(deliveryCosts.get(deliveryType.getValue()));
+					//currentOrder.setDeliveryCost(deliveryCosts.get(deliveryType.getValue()));
 					currentOrder.setDelivery(deliveryType);
+					
 					if (deliveryType == DeliveryType.SELF_PICKUP) {
 						currentOrder.setDeliveryTo(voShop.getAddress());
-					} else {
+					} else if(null==newDeliveryTo) {
 						VoUser voUSer = currentOrder.getUser();
 						if(null!=voUSer && null!=voUSer.getAddress())
 							currentOrder.setDeliveryTo(voUSer.getAddress());
+					} else {
+						currentOrder.setDeliveryTo(newDeliveryTo);
 					}
-					updateDeliveryCost(currentOrder, oldDeliveryTo, pm);
+					
 					pm.makePersistent(currentOrder);
+					updateDeliveryCost(currentOrder, oldDeliveryTo, pm);
 
 				} else {
 					logger.warn("" + voShop + " have no cost for delivery " + deliveryType.name() + " delivery type will not been changed");
@@ -1072,7 +1076,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			
 			double orderDeliveryCost = voOrder.getDeliveryCost();
 			
-			if( DeliveryType.SELF_PICKUP != voOrder.getDelivery()){ //it never happens
+			if( DeliveryType.SELF_PICKUP == voOrder.getDelivery()){ //it never happens?
 				if( orderDeliveryCost != 0 ){ //update delivery cost and total cost
 					voOrder.setDeliveryCost(0);
 					voOrder.setTotalCost( voOrder.addCost( -orderDeliveryCost ));
@@ -1101,6 +1105,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				
 				if(null == voOldOrderWithDelivery) 
 					voOldOrderWithDelivery = voOrder; //remember an order to set delivery cost to if no one set
+				
 				if(0 != voOrder.getDeliveryCost() ) 
 					if( null!=voOldOrderWithDeliverySet )//it never could happens, but it better to check
 						voOrder.setDeliveryCost(0.0D);
@@ -1120,8 +1125,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		else
 			newDeliveryCost = 0;
 		
-		if( null != oldAddress )
-			setDeliveryGroupDeliveryCost(voOldOrderWithDeliverySet, voShop, totalWeight);
+			
+		if( null != oldAddress && null != voOldOrderWithDelivery )
+			setDeliveryGroupDeliveryCost(voOldOrderWithDeliverySet == null ? voOldOrderWithDelivery : voOldOrderWithDeliverySet, voShop, totalWeight);
 		
 		return newDeliveryCost;
 	}

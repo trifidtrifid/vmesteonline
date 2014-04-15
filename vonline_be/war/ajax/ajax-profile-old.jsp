@@ -40,7 +40,6 @@
     */
 
     ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-    //set<PostalAddress> userAddresses = userService.getUserAddresses();
     pageContext.setAttribute("firstName",ShortUserInfo.firstName);
     pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 
@@ -201,6 +200,24 @@
                 </nav>
                 <div class="dynamic">
                     <section class="user-descr">
+                        <div class="ava-area">
+                            <img src="i/avatars/clint.jpg" alt="картинка"/>
+                            <div class="user-rating">
+                                <a href="#" class="fa fa-star"></a>
+                                <a class="fa fa-star" href="#"></a>
+                                <a class="fa fa-star" href="#"></a>
+                                <a class="fa fa-star-half-o" href="#"></a>
+                                <a class="fa fa-star-o" href="#"></a>
+                            </div>
+                            <div>Рейтинг: <c:out value="${shortProfile.rating}"/></div>
+                        </div>
+                        <div class="soc-accounts">
+                            <div>Подключить аккаунт:</div>
+                            <a class="fa fa-vk" href="#"></a>
+                            <a class="fa fa-facebook-square" href="#"></a>
+                            <a class="fa fa-google-plus-square" href="#"></a>
+                            <a class="fa fa-twitter-square" href="#"></a>
+                        </div>
                         <div class="text-area">
                             <div class="user-head" >
                                 <span class="confirm-alert">Аккаунт не подтвержден !</span>
@@ -216,29 +233,17 @@
                                 </form>
                             </c:if>
                             <div class="user-body">
+                                <div><span>статус:</span> <c:out value="${shortProfile.balance}"/></div>
                                 <div><span>Адрес проживания:</span> <c:out value="${shortProfile.address}"/></div>
                                 <div><span>День рождения:</span> <c:out value="${userInfo.birthday}"/></div>
+                                <div><span>Семейное положение:</span> <c:out value="${userInfo.relations}"/></div>
                                 <h3>Контактная информация</h3>
                                 <div><span>Телефон:</span> <c:out value="${userContacts.mobilePhone}"/></div>
                                 <div><span>Email:</span> <c:out value="${userContacts.email}"/></div>
-                                <h3>Мои адреса</h3>
-                                <div class="user-addresses">
-                                    <%--<div class="user-address-item">
-                                        <span></span>
-                                        <a href="#">редактировать</a>
-                                    </div>--%>
-                                        <div class="form-edit-wrap hide">
-                                            <div class="form-edit">
-                                                <input class="country-delivery" type="text" value="Россия" placeholder="Страна"/>
-                                                <input class="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
-                                                <input class="street-delivery" type="text" placeholder="Улица"/>
-                                                <input class="building-delivery short first" type="text" placeholder="Дом"/>
-                                                <input class="flat-delivery short" type="text" placeholder="Квартира"/>
-                                                <a class="btn btn-primary btn-sm no-border save-new-addr" href="#">Сохранить</a>
-                                            </div>
-                                        </div>
-                                    <a class="btn btn-primary btn-sm no-border add-user-address" href="#">Добавить</a>
-                                </div>
+                                <h3>Интересы</h3>
+                                <div>футбол</div>
+                                <div>пиво</div>
+                                <div>балет</div>
                             </div>
                         </div>
                     </section>

@@ -27,7 +27,7 @@ public class VoRubric {
 	}
 	
 	public VoRubric(String visibleName, String name, String description) {
-		this(visibleName, name, description,false);
+		this(visibleName, name, description,false); 
 	}
 
 	public String getVisibleName() {
