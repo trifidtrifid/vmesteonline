@@ -422,7 +422,7 @@ public class UserServiceImplTest extends UserServiceImpl {
 			
 			usi.updateUserContacts( new UserContacts(UserStatus.CONFIRMED, null, "8(812)123-45-67","a@b.com"));
 			usi.updateUserContacts( new UserContacts(UserStatus.CONFIRMED, newAddress, null,null));
-			usi.updateUserContacts( new UserContacts(UserStatus.CONFIRMED, newAddress, "+7 812 123-45-67"," AAA BBB <a@b.com>"));
+			usi.updateUserContacts( new UserContacts(UserStatus.CONFIRMED, newAddress, "+7 812 123-45-67"," a@b.com"));
 			
 			
 //			Assert.assertTrue(userHomeAddress.equals(newAddress));

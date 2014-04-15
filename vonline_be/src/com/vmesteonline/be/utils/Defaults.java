@@ -202,8 +202,8 @@ public class Defaults {
 			List<String> tags = new ArrayList<String>();
 			Map<DeliveryType, Double> deliveryCosts = new TreeMap<DeliveryType, Double>();
 			deliveryCosts.put(DeliveryType.SELF_PICKUP, 0D);
-			deliveryCosts.put(DeliveryType.SHORT_RANGE, 150.0D);
-			deliveryCosts.put(DeliveryType.LONG_RANGE, 200.0D);
+			deliveryCosts.put(DeliveryType.SHORT_RANGE, 100.0D);
+			deliveryCosts.put(DeliveryType.LONG_RANGE, 150.0D);
 
 			Map<PaymentType, Double> paymentTypes = new TreeMap<PaymentType, Double>();
 
@@ -221,7 +221,16 @@ public class Defaults {
 				dates.put(dt - 4 * 86400, DateType.SPECIAL_PRICE);
 			}
 			ssi.setDates(dates);
-
+			
+			Map<Integer, Integer> deliveryByWeightIncrement = new HashMap<Integer, Integer>();
+			deliveryByWeightIncrement.put( 15000, 50); //50 rub each 10 kg
+			ssi.setShopDeliveryByWeightIncrement(shop, deliveryByWeightIncrement );
+			
+			Map<DeliveryType, String> deliveryTypeAddressMasks = new HashMap<DeliveryType, String>();
+			deliveryTypeAddressMasks.put(DeliveryType.SHORT_RANGE, ".*(Пушкин|Павловск|Шушары|Колпино).*");
+			deliveryTypeAddressMasks.put(DeliveryType.LONG_RANGE, ".*");
+			ssi.setShopDeliveryTypeAddressMasks(shop, deliveryTypeAddressMasks ); 
+			
 			DataSet ds = new DataSet();
 			ds.date = (int) (System.currentTimeMillis() / 1000L);
 			ds.name = "Producer, Categories, Products";

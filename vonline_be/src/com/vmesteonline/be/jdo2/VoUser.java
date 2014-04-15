@@ -185,9 +185,11 @@ public class VoUser extends GeoLocation {
 				}
 			} else {
 				groups = new ArrayList<VoUserGroup>();
-				for (VoGroup grp : Defaults.defaultGroups) {
-					if (!grp.isHome())
-						groups.add(new VoUserGroup(this, grp));
+				if(null!=Defaults.defaultGroups){
+					for (VoGroup grp : Defaults.defaultGroups) {
+						if (!grp.isHome())
+							groups.add(new VoUserGroup(this, grp));
+					}
 				}
 			}
 		} else {

@@ -43,6 +43,8 @@ import org.apache.thrift.TException;
 
 
 
+
+
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
@@ -721,11 +723,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
-			
 			currentOrder.setStatus(OrderStatus.CANCELED);
 			// unset current order
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0, pm);
 			pm.makePersistent(currentOrder);
+			//recalculate delivery cost for all other orders that gona be delivered to the same address for the user
+			updateDeliveryCost(pm.getObjectById(VoShop.class, currentOrder.getShopId()), currentOrder, null, pm);
 			return currentOrder.getId();
 		} finally {
 			pm.close();
@@ -958,7 +961,18 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				currentOrder.addCost(quantity * price);
 				weightDiff = (int) (quantity * voProduct.getWeight());
 			}
-			currentOrder.setWeightGramm( currentOrder.getWeightGramm() + weightDiff );
+			VoShop voShop = pm.getObjectById(VoShop.class, currentOrder.getShopId());
+			Map<Integer, Integer> deliveryByWeightIncrement = voShop.getDeliveryByWeightIncrement();
+			Integer oldWeight = currentOrder.getWeightGramm();
+			currentOrder.setWeightGramm( oldWeight + weightDiff );
+			
+			if( null!=deliveryByWeightIncrement && DeliveryType.SELF_PICKUP != currentOrder.getDelivery()  &&
+					//check if order line breaks the weight step 
+					increaseDeliveryForWeight(voShop, oldWeight ) != increaseDeliveryForWeight(voShop, weightDiff + oldWeight )){ 
+					
+				updateDeliveryCost(voShop, currentOrder, null, pm);
+			}
+			
 			pm.makePersistent(currentOrder);
 			return theLine.getOrderLine(pm);
 
@@ -1052,6 +1066,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		
 		//check if update required
 		if( null == order.getDeliveryTo() &&  null == oldAddress || 
+				null != order.getDeliveryTo() &&  null != oldAddress &&
 				order.getDeliveryTo().getId() == oldAddress.getId() ) //nothing changed
 			return order.getDeliveryCost();
 		
@@ -1059,7 +1074,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		//collect all orders of the same user and the same date and shop 
 		List<VoOrder> orders = (List<VoOrder>) pm.newQuery(VoOrder.class, "shopId==" + order.getShopId() + 
 				" && date == " + order.getDate() +
-				" && user == " + order.getUser().getId()).execute();
+				" && user == " + order.getUser().getId() +
+				" && ( status == " + OrderStatus.NEW + " || status == " + OrderStatus.CONFIRMED ).execute();
 		
 		if( null==orders || 0==orders.size()) {
 			throw new InvalidOperation(VoError.GeneralError, "Failed to Calculate Delivery cost. No order Found but at least one must exists!");
@@ -1126,20 +1142,20 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		
 		
 		if( DeliveryType.SELF_PICKUP != order.getDelivery() )
-			newDeliveryCost = setDeliveryGroupDeliveryCost(voOrderWithDeliverySet, shop, totalWeight);
+			newDeliveryCost = setDeliveryGroupDeliveryCost(voOrderWithDeliverySet, shop, totalWeight, pm);
 		else
 			newDeliveryCost = 0;
 		
 			
 		if( null != oldAddress && null != voOldOrderWithDelivery )
-			setDeliveryGroupDeliveryCost(voOldOrderWithDeliverySet == null ? voOldOrderWithDelivery : voOldOrderWithDeliverySet, shop, totalOldWeight);
+			setDeliveryGroupDeliveryCost(voOldOrderWithDeliverySet == null ? voOldOrderWithDelivery : voOldOrderWithDeliverySet, shop, totalOldWeight, pm);
 		
 		return newDeliveryCost;
 	}
 
 //======================================================================================================================
 	
-	private double setDeliveryGroupDeliveryCost(VoOrder order, VoShop voShop, int totalWeight) {
+	private double setDeliveryGroupDeliveryCost(VoOrder order, VoShop voShop, int totalWeight, PersistenceManager pm) {
 		
 		Map<Integer, Double> deliveryCosts = voShop.getDeliveryCosts(); //use as a base cost
 		Double newDeliveryCost = null == deliveryCosts ? 0.0D : 
@@ -1153,16 +1169,17 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		//get delivery cost by address mask if set
 		Map<DeliveryType, String> dam = voShop.getDeliveryAddressMasksText();
 		if( null!=dam && null!=deliveryCosts ){ //look for delivery cost by address mask
-			String addressString = deliveryTo.toString();
+			String addressString = deliveryTo.getAddressText(pm);
 			
 			//sort the map by DelivertType to math cheapest delivery first
 			SortedMap<DeliveryType, String> sm = new TreeMap<DeliveryType, String>(dam);
 			
 			for( Entry<DeliveryType, String> dame: sm.entrySet()) {
 				if( addressString.matches( dame.getValue() )){
-					Double ndc = deliveryCosts.get(dame.getKey());
+					Double ndc = deliveryCosts.get(dame.getKey().getValue());
 					if( null!=ndc) { //if there is a cost set for this kind of delivery 
 						newDeliveryCost = ndc; 
+						order.setDelivery(dame.getKey());
 						break;
 					}
 				}
@@ -1187,18 +1204,23 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 		
 		//calculate change of cost depend on weight
-		Map<Integer, Integer> dbwi = voShop.getDeliveryByWeightIncrement();
-		if( null!=dbwi ){
-			SortedMap<Integer,Integer> dbwis = new TreeMap<Integer,Integer>();
-			SortedMap<Integer, Integer> headMap = dbwis.headMap(totalWeight);
-			if( 0 != headMap.size() ) {
-				//increment the cost to value of how much times repeated the value 
-				newDeliveryCost += headMap.get( headMap.lastKey() ) * ( totalWeight / headMap.lastKey()); 
-			}
-		}
+		newDeliveryCost += increaseDeliveryForWeight(voShop, totalWeight);
 		order.setDeliveryCost(newDeliveryCost);
 		order.addCost(newDeliveryCost);
 		return newDeliveryCost;
+	}
+//======================================================================================================================
+	private Double increaseDeliveryForWeight(VoShop voShop, int totalWeight) {
+		Map<Integer, Integer> dbwi = voShop.getDeliveryByWeightIncrement();
+		if( null!=dbwi ){
+			SortedMap<Integer,Integer> dbwis = new TreeMap<Integer,Integer>(dbwi);
+			SortedMap<Integer, Integer> headMap = dbwis.headMap(totalWeight);
+			if( 0 != headMap.size() ) {
+				//increment the cost to value of how much times repeated the value 
+				return (double) (headMap.get( headMap.lastKey() ) * ( totalWeight / headMap.lastKey())); 
+			}
+		}
+		return 0D;
 	}
 
 	// ======================================================================================================================
