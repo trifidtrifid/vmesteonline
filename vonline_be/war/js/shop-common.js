@@ -57,7 +57,7 @@ define(
             nowTime -= nowTime%86400;
             var day = 3600*24;
 
-            var currentOrders = thriftModule.client.getOrdersByStatus(nowTime,nowTime+90*day,1);
+            var currentOrders = thriftModule.client.getMyOrdersByStatus(nowTime,nowTime+90*day,1);
             var currentOrdersLength = currentOrders.length;
             for(var i = 0; i < currentOrdersLength; i++){
                 var orderid = currentOrders[i].id;

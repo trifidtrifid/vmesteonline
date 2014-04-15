@@ -235,6 +235,7 @@
                                                 <input class="building-delivery short first" type="text" placeholder="Дом"/>
                                                 <input class="flat-delivery short" type="text" placeholder="Квартира"/>
                                                 <a class="btn btn-primary btn-sm no-border save-new-addr" href="#">Сохранить</a>
+                                                <div class="error-info"></div>
                                             </div>
                                         </div>
                                     <a class="btn btn-primary btn-sm no-border add-user-address" href="#">Добавить</a>
