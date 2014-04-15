@@ -1373,7 +1373,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			Query pcq = pm.newQuery(VoOrder.class);
 			List<VoOrder> ps;
-			if( 0==userId){
+			if( 0!=userId){
 				pcq.setFilter("user == :key && shopId == " + shopId + " && date >= " + dateFrom + 
 						(status != OrderStatus.UNKNOWN ? " && status == '" + status + "'": ""));
 				ps = (List<VoOrder>) pcq.execute(userId, dateFrom);
