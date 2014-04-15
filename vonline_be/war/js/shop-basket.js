@@ -439,7 +439,9 @@ define(
                 }
             });
 
-            activeOrder.find('.btn-order').click(function(){
+            activeOrder.find('.btn-order').click(function(e){
+                e.preventDefault();
+
                 var currentTab = $('.tab-pane.active');
                 var commonModule = require('shop-common');
                 var amount = commonModule.countAmount(currentTab.find('.catalog-order'));
@@ -458,6 +460,11 @@ define(
                     var confirmOrder = $('.confirm-order .catalog-confirm');
                     confirmOrder.html(catalogHtml);
                     var counter = 0;
+
+                    var userPhone = thriftModule.userClient.getUserContacts().mobilePhone;
+                    if(userPhone){
+                        $('#phone-delivery').val(userPhone);
+                    }
 
                     confirmOrder.find('td .ace-spinner').each(function(){
                         $(this).after('<input type="text" class="input-mini spinner1 spinner-input form-control no-init" maxlength="3">');
@@ -485,10 +492,16 @@ define(
 
                             $('.alert-delivery-phone').text('Не корректный номер телефона !').show();
 
-                        }else{
+                        }else if(!$('.input-delivery .delivery-address .error-info').length){
+
+                            $('.alert-delivery-phone').hide();
 
                             var orderId = $('.tab-pane.active').data('orderid');
                             thriftModule.client.confirmOrder(orderId);
+
+                            var userContacts = thriftModule.userClient.getUserContacts();
+                            userContacts.mobilePhone = phoneDelivery.val();
+                            thriftModule.userClient.updateUserContacts(userContacts);
 
                             alert('Ваш заказ принят !');
                             cleanBasket();
@@ -515,7 +528,8 @@ define(
 
         function AddProductToBasketCommon(currentProduct,packs){
             var addedProductFlag = 0;
-            var orderId = $(this).closest('.tab-pane').data('orderid');
+            var currentTab = $('.tab-pane.active');
+            var orderId = currentTab.data('orderid');
 
             $('.catalog-order li').each(function(){
                 if ($(this).data('productid') == currentProduct.id){
@@ -613,7 +627,6 @@ define(
                 thriftModule.client.setOrderLine(orderId,currentProduct.id,newSpinnerVal,'sdf',packs);
                 var newSumma = (newSpinnerVal*parseFloat(basketProductSelector.find('.td-price').text())).toFixed(1);
                 basketProductSelector.find('.td-summa').text(newSumma);
-                var currentTab = $('.tab-pane.active');
                 currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order')));
             }else{
                 // если такого товара еще нет
@@ -635,9 +648,9 @@ define(
                     '<table>'+
                     '<tr>'+
                     '<td class="td-price product-price">'+ currentProduct.price +'</td>'+
-                    '<td><input type="text" data-step="'+ currentProduct.minClientPack +'" class="input-mini spinner1 no-init" /><span class="unit-name">'+ currentProduct.unitName +'</span></td>'+
+                    '<td class="td-spinner"><input type="text" data-step="'+ currentProduct.minClientPack +'" class="input-mini spinner1 no-init" /><span class="unit-name">'+ currentProduct.unitName +'</span></td>'+
                     '<td class="td-summa">'+ (currentProduct.price*spinnerValue).toFixed(1) +'</td>'+
-                    '<td><a href="#" class="delete-product no-init">×</a></td>'+
+                    '<td class="td-close"><a href="#" class="delete-product no-init">×</a></td>'+
                     '</tr>'+
                     '</table>'+
                     '<a href="#" class="product-link no-init">'+
@@ -739,29 +752,42 @@ define(
 
                 if ($(this).hasClass('courier-delivery')){
                     //если доставка курьером
+                    //thriftModule.client.setOrderDeliveryType(orderId,2);
+
                     var homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
+                    var userAddresses = thriftModule.userClient.getUserAddresses();
+                    var myAddress;
+                    (homeAddress) ? myAddress = homeAddress : myAddress = userAddresses[0];
 
-                    $('.input-delivery .delivery-address').text(homeAddress.country.name + ", " + homeAddress.city.name + ", "
-                        + homeAddress.street.name + " " + homeAddress.building.fullNo + ", кв. " + homeAddress.flatNo);
+                    if(myAddress){
+                        $('.input-delivery .delivery-address').text(myAddress.country.name + ", " + myAddress.city.name + ", "
+                            + myAddress.street.name + " " + myAddress.building.fullNo + ", кв. " + myAddress.flatNo);
 
-                    var homeAddressPostal = new com.vmesteonline.be.PostalAddress();
-                    homeAddressPostal.country = homeAddress.country;
-                    homeAddressPostal.city = homeAddress.city;
-                    homeAddressPostal.street = homeAddress.street;
-                    homeAddressPostal.building = homeAddress.building;
-                    homeAddressPostal.flatNo = homeAddress.flatNo;
-                    homeAddressPostal.staircase = 0;
-                    homeAddressPostal.floor= 0;
-                    homeAddressPostal.comment = 'sdf';
+                        /*var homeAddressPostal = new com.vmesteonline.be.PostalAddress();
+                        homeAddressPostal.country = homeAddress.country;
+                        homeAddressPostal.city = homeAddress.city;
+                        homeAddressPostal.street = homeAddress.street;
+                        homeAddressPostal.building = homeAddress.building;
+                        homeAddressPostal.flatNo = homeAddress.flatNo;
+                        homeAddressPostal.staircase = 0;
+                        homeAddressPostal.floor= 0;
+                        homeAddressPostal.comment = 'sdf';*/
 
-                    thriftModule.client.setOrderDeliveryType(orderId,2);
+                        //thriftModule.client.setOrderDeliveryAddress(orderId,myAddress);
+
+                    }else{
+
+                        $('.input-delivery .delivery-address').html("<span class='error-info'>У вас не указано ни одного адреса доставки.</span>");
+                        $('.input-delivery .delivery-address .error-info').show();
+
+                    }
+
+                    itogoRight.text(commonModule.countAmount($('.confirm-order')));
 
                     orderDetails = thriftModule.client.getOrderDetails(orderId);
                     if (orderDetails.deliveryCost){
                         $('.delivery-cost').text(orderDetails.deliveryCost);
                     }
-
-                    itogoRight.text(commonModule.countAmount($('.confirm-order')));
 
                     $('.delivery-dropdown').show();
 
@@ -771,14 +797,9 @@ define(
 
                     triggerDelivery = 1;
 
-                    if (autocompleteAddressFlag){
+                    //if (autocompleteAddressFlag){
                         searchModule.initAutocompleteAddress();
 
-                        var userAddresses = thriftModule.userClient.getUserAddresses();
-                        var userPhone = thriftModule.userClient.getUserContacts().mobilePhone;
-                        if(userPhone){
-                            $('#phone-delivery').val(userPhone);
-                        }
                         if(userAddresses.length > 0){
                             homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
                             if(homeAddress){
@@ -799,116 +820,117 @@ define(
                                 writeAddress(userAddresses[ind]);
                                 thriftModule.client.setOrderDeliveryAddress(orderId,userAddresses[ind]);
                             });
-                            $('.delivery-add-address').click(function(e){
-                                e.preventDefault();
-                                //writeAddress();
-                                $('.address-input').show();
-                                $('.delivery-dropdown .btn-group-text').text('Выбрать адрес');
-                            });
-                            $('.add-address').click(function(e){
-                                e.preventDefault();
 
-                                if (!$('#country-delivery').val() || !$('#city-delivery').val() || !$('#street-delivery').val() || !$('#building-delivery').val() || !$('#flat-delivery').val()){
-                                    $('.alert-delivery-phone').hide();
-                                    $('.alert-delivery-addr').text('Введите полный адресс доставки !').show();
-                                }else{
-                                    $('.alert-delivery-addr').hide();
-                                    var address = {};
-                                    address.country = {};
-                                    address.country.name = $('#country-delivery').val();
-                                    address.city= {};
-                                    address.city.name = $('#city-delivery').val();
-                                    address.street = {};
-                                    address.street.name = $('#street-delivery').val();
-                                    address.building = {};
-                                    address.building.fullNo = $('#building-delivery').val();
-                                    address.flatNo = $('#flat-delivery').val();
-                                    writeAddress(address);
-                                    $('.address-input').slideUp();
-
-                                    // добавление в базу нового города, страны, улицы и т.д (если курьером)
-                                        var countries = thriftModule.userClient.getCounties();
-                                        var countriesLength = countries.length;
-                                        var inputCountry = address.country.name;
-                                        var country,countryId = 0;
-                                        for (var i = 0; i < countriesLength; i++){
-                                            if (countries[i].name == inputCountry){
-                                                country = countries[i];
-                                                countryId = country.id;
-                                            }
-                                        }
-                                        if (!countryId){
-                                            country = thriftModule.userClient.createNewCountry(inputCountry);
-                                            countryId = country.id;
-                                        }
-
-                                        var cities = thriftModule.userClient.getCities(countryId);
-                                        var citiesLength = cities.length;
-                                        var inputCity = address.city.name;
-                                        var city,cityId = 0;
-                                        for (i = 0; i < citiesLength; i++){
-                                            if (cities[i].name == inputCity){
-                                                city = cities[i];
-                                                cityId = city.id;
-                                            }
-                                        }
-                                        if (!cityId){
-                                            city = thriftModule.userClient.createNewCity(countryId,inputCity);
-                                            cityId = city.id;
-                                        }
-
-                                        var streets = thriftModule.userClient.getStreets(cityId);
-                                        var streetsLength = streets.length;
-                                        var inputStreet = address.street.name;
-                                        var street,streetId = 0;
-                                        for (i = 0; i < streetsLength; i++){
-                                            if (streets[i].name == inputCity){
-                                                street = streets[i];
-                                                streetId = street.id;
-                                            }
-                                        }
-                                        if (!streetId){
-                                            street = thriftModule.userClient.createNewStreet(cityId,inputStreet);
-                                            streetId = street.id;
-                                        }
-
-                                        var buildings = thriftModule.userClient.getBuildings(streetId);
-                                        var buildingsLength = buildings.length;
-                                        var inputBuilding = address.building.fullNo;
-                                        var building,buildingId = 0;
-                                        for (i = 0; i < buildingsLength; i++){
-                                            if (buildings[i].fullNo == inputBuilding){
-                                                building = buildings[i];
-                                                buildingId = building.id;
-                                            }
-                                        }
-                                        if (!buildingId){
-                                            building = thriftModule.userClient.createNewBuilding(streetId,inputBuilding,0,0);
-                                            buildingId = building.id;
-                                        }
-
-
-                                        // передаем адресс доставки
-                                        //console.log(country.id+" "+city.id+" "+street.id+" "+building.id+" "+$('#flat-delivery').val()+" "+$('#order-comment').val());
-
-                                        var deliveryAddress = new com.vmesteonline.be.PostalAddress();
-                                        deliveryAddress.country = country;
-                                        deliveryAddress.city = city;
-                                        deliveryAddress.street = street;
-                                        deliveryAddress.building = building;
-                                        deliveryAddress.staircase = 0;
-                                        deliveryAddress.floor= 0;
-                                        deliveryAddress.flatNo = parseInt(address.flatNo);
-                                        deliveryAddress.comment = $('#order-comment').val();
-
-                                        thriftModule.userClient.setUserAddress(deliveryAddress);
-                                        thriftModule.client.setOrderDeliveryAddress(orderId,deliveryAddress);
-                                }
-
-                            });
-                        }
+                       // }
                         autocompleteAddressFlag = 0;
                     }
+                    $('.delivery-add-address').click(function(e){
+                        e.preventDefault();
+                        $('.address-input').show();
+                        $('.delivery-dropdown .btn-group-text').text('Выбрать адрес');
+                    });
+
+                    $('.add-address').click(function(e){
+                        e.preventDefault();
+
+                        if (!$('#country-delivery').val() || !$('#city-delivery').val() || !$('#street-delivery').val() || !$('#building-delivery').val() || !$('#flat-delivery').val()){
+                            $('.alert-delivery-phone').hide();
+                            $('.alert-delivery-addr').text('Введите полный адресс доставки !').show();
+                        }else{
+                            $('.alert-delivery-addr').hide();
+                            var address = {};
+                            address.country = {};
+                            address.country.name = $('#country-delivery').val();
+                            address.city= {};
+                            address.city.name = $('#city-delivery').val();
+                            address.street = {};
+                            address.street.name = $('#street-delivery').val();
+                            address.building = {};
+                            address.building.fullNo = $('#building-delivery').val();
+                            address.flatNo = $('#flat-delivery').val();
+                            writeAddress(address);
+                            $('.address-input').slideUp();
+
+                            // добавление в базу нового города, страны, улицы и т.д (если курьером)
+                            var countries = thriftModule.userClient.getCounties();
+                            var countriesLength = countries.length;
+                            var inputCountry = address.country.name;
+                            var country,countryId = 0;
+                            for (var i = 0; i < countriesLength; i++){
+                                if (countries[i].name == inputCountry){
+                                    country = countries[i];
+                                    countryId = country.id;
+                                }
+                            }
+                            if (!countryId){
+                                country = thriftModule.userClient.createNewCountry(inputCountry);
+                                countryId = country.id;
+                            }
+
+                            var cities = thriftModule.userClient.getCities(countryId);
+                            var citiesLength = cities.length;
+                            var inputCity = address.city.name;
+                            var city,cityId = 0;
+                            for (i = 0; i < citiesLength; i++){
+                                if (cities[i].name == inputCity){
+                                    city = cities[i];
+                                    cityId = city.id;
+                                }
+                            }
+                            if (!cityId){
+                                city = thriftModule.userClient.createNewCity(countryId,inputCity);
+                                cityId = city.id;
+                            }
+
+                            var streets = thriftModule.userClient.getStreets(cityId);
+                            var streetsLength = streets.length;
+                            var inputStreet = address.street.name;
+                            var street,streetId = 0;
+                            for (i = 0; i < streetsLength; i++){
+                                if (streets[i].name == inputCity){
+                                    street = streets[i];
+                                    streetId = street.id;
+                                }
+                            }
+                            if (!streetId){
+                                street = thriftModule.userClient.createNewStreet(cityId,inputStreet);
+                                streetId = street.id;
+                            }
+
+                            var buildings = thriftModule.userClient.getBuildings(streetId);
+                            var buildingsLength = buildings.length;
+                            var inputBuilding = address.building.fullNo;
+                            var building,buildingId = 0;
+                            for (i = 0; i < buildingsLength; i++){
+                                if (buildings[i].fullNo == inputBuilding){
+                                    building = buildings[i];
+                                    buildingId = building.id;
+                                }
+                            }
+                            if (!buildingId){
+                                building = thriftModule.userClient.createNewBuilding(streetId,inputBuilding,0,0);
+                                buildingId = building.id;
+                            }
+
+
+                            // передаем адресс доставки
+                            //console.log(country.id+" "+city.id+" "+street.id+" "+building.id+" "+$('#flat-delivery').val()+" "+$('#order-comment').val());
+
+                            var deliveryAddress = new com.vmesteonline.be.PostalAddress();
+                            deliveryAddress.country = country;
+                            deliveryAddress.city = city;
+                            deliveryAddress.street = street;
+                            deliveryAddress.building = building;
+                            deliveryAddress.staircase = 0;
+                            deliveryAddress.floor= 0;
+                            deliveryAddress.flatNo = parseInt(address.flatNo);
+                            deliveryAddress.comment = $('#order-comment').val();
+
+                            thriftModule.userClient.addUserAddress(deliveryAddress);
+                            thriftModule.client.setOrderDeliveryAddress(orderId,deliveryAddress);
+                        }
+
+                    });
 
                     /*$(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
                     orderDetails = thriftModule.client.getOrderDetails(orderId);

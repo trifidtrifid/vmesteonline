@@ -184,7 +184,12 @@ transform()
         thead td
           background #f2f2f2
         tr
-          td
+          .td-spinner
+            text-align right
+          .td-summa
+            width 35px
+          .td-close
+            width 19px
       .product-link
         display inline-block
         vertical-align middle
@@ -429,17 +434,17 @@ th.next
   .td1
     width 5%
   .td2
-    width 12%
+    width 18%
   .td3
     width 10%
   .td4
     width 14%
   .td5
-    width 27%
+    width 21%
   .td6
     width 7%
   .td7
-    width 230px
+    width 186px
     border 0
 
 .orders-tbl-wrap
@@ -457,17 +462,17 @@ th.next
   .td1
     width 5%
   .td2
-    width 12%
+    width 18%
   .td3
     width 10%
   .td4
     width 14%
   .td5
-    width 27%
+    width 21%
   .td6
     width 7%
   .td7
-    width 230px
+    width 186px
     border 1px solid #fff
     background #fff
 
@@ -822,7 +827,6 @@ th.next
         td
           width 25%
           text-align center
-          //padding-top 5px
           .ace-spinner
             vertical-align middle
           .unit-name
@@ -834,6 +838,8 @@ th.next
             color #ff0000
             &:hover
               text-decoration none
+          &.td-spinner
+            text-align left
       .product-link
         span
           display inline-block
@@ -867,7 +873,7 @@ th.next
         display block
         margin-bottom 5px
       input
-        width 100%
+        width 175px
         margin-bottom 10px
         &.short
           width 175px
@@ -884,7 +890,7 @@ th.next
           left -233px
           width 360px
       .address-input
-        width 360px
+        //width 360px
         margin 10px 0
         display none
         .btn
@@ -892,8 +898,13 @@ th.next
     .alert-delivery
       color #ff0000
       display none
+      font-size 14px
   .additionally-order
-    .btn
+    .add-address
+      margin-left 10px
+      margin-top 7px
+    .btn-order
+    .btn-cancel
       float right
       margin-left 10px
   textarea

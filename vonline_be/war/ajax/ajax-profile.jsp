@@ -203,7 +203,9 @@
                     <section class="user-descr">
                         <div class="text-area">
                             <div class="user-head" >
-                                <span class="confirm-alert">Аккаунт не подтвержден !</span>
+                                <c:if test="${!ifEmailConfirmed}">
+                                    <span class="confirm-alert">Аккаунт не подтвержден !</span>
+                                </c:if>
                                 <h1><c:out value="${userInfo.firstName}"/> <c:out value="${userInfo.lastName}"/></h1>
                                 <a class="edit-personal-link" href="#">Редактировать</a>
                             </div>

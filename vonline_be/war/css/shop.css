@@ -186,6 +186,15 @@ a {
 .shop-right .catalog-order li table thead td {
   background: #f2f2f2;
 }
+.shop-right .catalog-order li table tr .td-spinner {
+  text-align: right;
+}
+.shop-right .catalog-order li table tr .td-summa {
+  width: 35px;
+}
+.shop-right .catalog-order li table tr .td-close {
+  width: 19px;
+}
 .shop-right .catalog-order li .product-link {
   display: inline-block;
   vertical-align: middle;
@@ -481,7 +490,7 @@ span
   width: 5%;
 }
 .orders-tbl .td2 {
-  width: 12%;
+  width: 18%;
 }
 .orders-tbl .td3 {
   width: 10%;
@@ -490,13 +499,13 @@ span
   width: 14%;
 }
 .orders-tbl .td5 {
-  width: 27%;
+  width: 21%;
 }
 .orders-tbl .td6 {
   width: 7%;
 }
 .orders-tbl .td7 {
-  width: 230px;
+  width: 186px;
   border: 0;
 }
 .orders-tbl-wrap {
@@ -517,7 +526,7 @@ span
   width: 5%;
 }
 .orders-tbl-wrap .td2 {
-  width: 12%;
+  width: 18%;
 }
 .orders-tbl-wrap .td3 {
   width: 10%;
@@ -526,13 +535,13 @@ span
   width: 14%;
 }
 .orders-tbl-wrap .td5 {
-  width: 27%;
+  width: 21%;
 }
 .orders-tbl-wrap .td6 {
   width: 7%;
 }
 .orders-tbl-wrap .td7 {
-  width: 230px;
+  width: 186px;
   border: 1px solid #fff;
   background: #fff;
 }
@@ -994,6 +1003,9 @@ span
 .confirm-order .catalog-confirm >li table td .delete-product:hover {
   text-decoration: none;
 }
+.confirm-order .catalog-confirm >li table td.td-spinner {
+  text-align: left;
+}
 .confirm-order .catalog-confirm >li .product-link span {
   display: inline-block;
   vertical-align: middle;
@@ -1036,7 +1048,7 @@ span
   margin-bottom: 5px;
 }
 .confirm-order .delivery-right .input-delivery input {
-  width: 100%;
+  width: 175px;
   margin-bottom: 10px;
 }
 .confirm-order .delivery-right .input-delivery input.short {
@@ -1059,7 +1071,6 @@ span
   width: 360px;
 }
 .confirm-order .delivery-right .input-delivery .address-input {
-  width: 360px;
   margin: 10px 0;
   display: none;
 }
@@ -1069,8 +1080,14 @@ span
 .confirm-order .delivery-right .alert-delivery {
   color: #f00;
   display: none;
+  font-size: 14px;
 }
-.confirm-order .additionally-order .btn {
+.confirm-order .additionally-order .add-address {
+  margin-left: 10px;
+  margin-top: 7px;
+}
+.confirm-order .additionally-order .btn-order,
+.confirm-order .additionally-order .btn-cancel {
   float: right;
   margin-left: 10px;
 }

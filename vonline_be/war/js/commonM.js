@@ -110,6 +110,7 @@ define(
                     confirmInfo.text('Код принят !').addClass('info-good').show();
                     function closeConfirm(){
                         $('.account-no-confirm').slideUp();
+                        $('.confirm-alert').hide();
                     }
                     setTimeout(closeConfirm,4000);
                 }catch(e){
