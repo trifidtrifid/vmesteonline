@@ -58,19 +58,58 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		 */
 
 		PersistenceManager pm = PMF.getPm();
-		VoUser user = getCurrentUser(pm);
-		user.setName(userInfo.firstName);
-		user.setLastName(userInfo.lastName);
-		user.setLastName(userInfo.lastName);
-		pm.makePersistent(user);
-		// user.(userInfo.lastName);
-
+		try {
+			VoUser user = getCurrentUser(pm);
+			user.setName(userInfo.firstName);
+			user.setLastName(userInfo.lastName);
+			user.setLastName(userInfo.lastName);
+			pm.makePersistent(user);
+		} finally {
+			pm.close();
+		}
 	}
 
+	private static String emailreg = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+	private static String phonereg ="[\\d-.()+ ]{7,21}";
+	
 	@Override
 	public void updateUserContacts(UserContacts contacts) throws InvalidOperation {
-		// TODO Auto-generated method stub
-
+		
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser user = getCurrentUser(pm);
+			if( null!=contacts.getMobilePhone()) 
+				if(contacts.getMobilePhone().matches(phonereg)) 
+					user.setMobilePhone(contacts.getMobilePhone());
+				else 
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Phone format '"+contacts.getMobilePhone()+"'. Should have format like 79219876543, +7(821)1234567, etc");
+			
+			if( null!=contacts.getEmail() && !contacts.getEmail().trim().equalsIgnoreCase(user.getEmail())){
+				if(contacts.getEmail().matches(emailreg)) {
+					user.setEmail(contacts.getEmail());
+					user.setEmailConfirmed(false);
+				} else 
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Email format '"+contacts.getEmail()+"'. ");
+			}
+			if( null != contacts.getHomeAddress() ){
+				VoPostalAddress pa = new VoPostalAddress(contacts.getHomeAddress(),pm);
+				
+				if( user.getAddress() == null || pa.getId() != user.getAddress().getId() ){
+						try {
+							user.setLocation( pa.getAddressCode(), pm);
+						} catch (InvalidOperation e) {
+							e.printStackTrace();
+							throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect."+e.why);
+						} catch (Exception e) {
+							e.printStackTrace();
+							throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect."+e.getMessage());
+						}
+				} 
+			}
+			pm.makePersistent(user);
+		} finally {
+			pm.close();
+		}
 	}
 
 	// TODO this method is forbidden should be removed. use getShortProfile

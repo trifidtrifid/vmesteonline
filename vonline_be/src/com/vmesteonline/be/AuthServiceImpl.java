@@ -20,6 +20,7 @@ import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.EMailHelper;
 
@@ -130,8 +131,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 					throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 				}
 
+				List<VoUserGroup> groups = user.getGroups();
 				logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + locationId + " home group: "
-						+ user.getGroups().get(0).getName());
+						+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
 			}
 			return user.getId();
 

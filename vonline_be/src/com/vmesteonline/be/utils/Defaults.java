@@ -16,6 +16,7 @@ import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
+import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.FullAddressCatalogue;
 import com.vmesteonline.be.InvalidOperation;
@@ -25,6 +26,7 @@ import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.GeoLocation;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoMessage;
@@ -36,6 +38,7 @@ import com.vmesteonline.be.jdo2.VoUserTopic;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoCity;
 import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
+import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.jdo2.shop.VoOrder;
@@ -389,8 +392,15 @@ public class Defaults {
 							""),
 					new VoPostalAddress(new VoBuilding(street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177"), pm), (byte) 1, (byte) 2, (byte) 25,
 							"") };
+			
 
 			for (VoPostalAddress pa : addresses) {
+				try {
+					Pair<String, String> position = VoGeocoder.getPosition(pa.getBuilding());
+					pa.getBuilding().setLocation( new BigDecimal(position.first), new BigDecimal(position.second));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				pm.makePersistent(pa);
 				locations.add("" + pa.getAddressCode());
 			}

@@ -42,6 +42,7 @@ import org.apache.thrift.TException;
 
 
 
+
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
@@ -1005,38 +1006,35 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			VoPostalAddress oldDeliveryTo = currentOrder.getDeliveryTo();
 			VoPostalAddress newDeliveryTo = null == pa ? null : new VoPostalAddress(pa, pm);
+			
 			if( deliveryType != DeliveryType.SELF_PICKUP && null == newDeliveryTo )
 				newDeliveryTo = currentOrder.getUser().getAddress(); //Home address as default
 			
+			//look if something significant is changed
 			if (deliveryType != currentOrder.getDelivery() || //type changed 
 					deliveryType != DeliveryType.SELF_PICKUP && oldDeliveryTo.getId() != newDeliveryTo.getId()) { //or address changed
 				
 				VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId(pm));
 
-				Map<Integer, Double> deliveryCosts = voShop.getDeliveryCosts();
-				if (deliveryCosts.containsKey(deliveryType.getValue())) {
-
-					//currentOrder.setDeliveryCost(deliveryCosts.get(deliveryType.getValue()));
-					currentOrder.setDelivery(deliveryType);
+				currentOrder.setDelivery(deliveryType);
+				
+				if (deliveryType == DeliveryType.SELF_PICKUP) {
+					currentOrder.setDeliveryTo(voShop.getAddress());
 					
-					if (deliveryType == DeliveryType.SELF_PICKUP) {
-						currentOrder.setDeliveryTo(voShop.getAddress());
-					} else if(null==newDeliveryTo) {
-						VoUser voUSer = currentOrder.getUser();
-						if(null!=voUSer && null!=voUSer.getAddress())
-							currentOrder.setDeliveryTo(voUSer.getAddress());
-					} else {
-						currentOrder.setDeliveryTo(newDeliveryTo);
-					}
-					
-					pm.makePersistent(currentOrder);
-					updateDeliveryCost(currentOrder, oldDeliveryTo, pm);
-
+				} else if( null!=newDeliveryTo ) {
+					currentOrder.setDeliveryTo(newDeliveryTo);
+						
 				} else {
-					logger.warn("" + voShop + " have no cost for delivery " + deliveryType.name() + " delivery type will not been changed");
+					throw new InvalidOperation(VoError.IncorrectParametrs, "No delivery to address set and the user has no Home addreee defined to usse as delivery to");
+					
 				}
+				
+				pm.makePersistent(currentOrder); //save changes before analyze all orders of the user
+				updateDeliveryCost(voShop, currentOrder, oldDeliveryTo, pm);
+
 			}
 			return currentOrder.getOrderDetails(pm);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to setOrderDeliveryType=" + deliveryType.name() + ". " + e);
@@ -1048,7 +1046,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	// Calculate delivery costs according to:
 	// One user can have several orders that should be delivered together and pay only once
 	// delivery cost depend on distance, address substring and weight
-	private double updateDeliveryCost(VoOrder order, VoPostalAddress oldAddress, PersistenceManager pm) throws InvalidOperation {
+	private double updateDeliveryCost(VoShop shop, VoOrder order, VoPostalAddress oldAddress, PersistenceManager pm) throws InvalidOperation {
 		
 		double newDeliveryCost = 0;
 		
@@ -1072,45 +1070,53 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		
 		int totalWeight = 0, totalOldWeight = 0;
 		
-		for (VoOrder voOrder : orders) { //collect all of orders for new and for and address
+		for (VoOrder nextOrder : orders) { //collect total weight of orders for new and for old address and select an order to apply delivery cost to.
 			
-			double orderDeliveryCost = voOrder.getDeliveryCost();
+			double orderDeliveryCost = nextOrder.getDeliveryCost();
 			
-			if( DeliveryType.SELF_PICKUP == voOrder.getDelivery()){ //it never happens?
+			if( DeliveryType.SELF_PICKUP == nextOrder.getDelivery()){ 
+				
 				if( orderDeliveryCost != 0 ){ //update delivery cost and total cost
-					voOrder.setDeliveryCost(0);
-					voOrder.setTotalCost( voOrder.addCost( -orderDeliveryCost ));
-					pm.makePersistent(voOrder);
+					nextOrder.setDeliveryCost(0);
+					nextOrder.addCost( -orderDeliveryCost );
+					pm.makePersistent(nextOrder);
+					continue;
 				} 
 	
 			//combine delivery to new address
-			} else if( null != voOrder.getDeliveryTo() && null!= order.getDeliveryTo() &&
-					voOrder.getDeliveryTo().getId() == order.getDeliveryTo().getId() ){ 
+			} else if( null != nextOrder.getDeliveryTo() && null!= order.getDeliveryTo() &&
+					nextOrder.getDeliveryTo().getId() == order.getDeliveryTo().getId() ){ 
 			
-				totalWeight += voOrder.getWeightGramm();
+				totalWeight += nextOrder.getWeightGramm();
+				
 				if(null == voOrderWithDelivery) 
-					voOrderWithDelivery = voOrder; //remember an order to set delivery cost to if no one set
-				if( 0 != voOrder.getDeliveryCost() ) 
+					voOrderWithDelivery = nextOrder; //remember an order to set delivery cost to if no one set
+				
+				if( 0 != nextOrder.getDeliveryCost() ) 
 					if( null==voOrderWithDeliverySet )
-						voOrderWithDeliverySet = voOrder; //remember an order with delivery cost is set to update it
-					else //it's the second order with delivery set, so it should be removed
-						voOrder.setDeliveryCost(0.0D);
+						voOrderWithDeliverySet = nextOrder; //remember an order with delivery cost is already set to update it
+					else {//it's the second order with delivery set, so it should be removed
+						nextOrder.setDeliveryCost(0.0D);
+						nextOrder.addCost( -orderDeliveryCost );
+					}
 						
 
 			//old delivery group 
-			} else if( null != voOrder.getDeliveryTo() && null!= oldAddress && 
-					null!= oldAddress && voOrder.getDeliveryTo().getId() == oldAddress.getId() ){ 
+			} else if( null != nextOrder.getDeliveryTo() && null!= oldAddress && 
+					null!= oldAddress && nextOrder.getDeliveryTo().getId() == oldAddress.getId() ){ 
 				
-				totalOldWeight += voOrder.getWeightGramm();
+				totalOldWeight += nextOrder.getWeightGramm();
 				
 				if(null == voOldOrderWithDelivery) 
-					voOldOrderWithDelivery = voOrder; //remember an order to set delivery cost to if no one set
+					voOldOrderWithDelivery = nextOrder; //remember an order to set delivery cost to if no one set
 				
-				if(0 != voOrder.getDeliveryCost() ) 
-					if( null!=voOldOrderWithDeliverySet )//it never could happens, but it better to check
-						voOrder.setDeliveryCost(0.0D);
-					else
-						voOldOrderWithDeliverySet = voOrder; //remember an order with delivery cost is set to update it
+				if(0 != nextOrder.getDeliveryCost() ) 
+					if( null!=voOldOrderWithDeliverySet ){//it never could happens, but it better to check
+						nextOrder.setDeliveryCost(0.0D);
+						nextOrder.addCost( -orderDeliveryCost );
+						
+					} else
+						voOldOrderWithDeliverySet = nextOrder; //remember an order with delivery cost is set to update it
 			}
 		} 
 		
@@ -1118,16 +1124,15 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		if( null == voOrderWithDeliverySet )  //no orders with delivery cost was set so the first one would be used to charge delivery fee
 			voOrderWithDeliverySet = voOrderWithDelivery;
 		
-		VoShop voShop = pm.getObjectById(VoShop.class, order.getShopId());
 		
 		if( DeliveryType.SELF_PICKUP != order.getDelivery() )
-			newDeliveryCost = setDeliveryGroupDeliveryCost(voOrderWithDeliverySet, voShop, totalWeight);
+			newDeliveryCost = setDeliveryGroupDeliveryCost(voOrderWithDeliverySet, shop, totalWeight);
 		else
 			newDeliveryCost = 0;
 		
 			
 		if( null != oldAddress && null != voOldOrderWithDelivery )
-			setDeliveryGroupDeliveryCost(voOldOrderWithDeliverySet == null ? voOldOrderWithDelivery : voOldOrderWithDeliverySet, voShop, totalWeight);
+			setDeliveryGroupDeliveryCost(voOldOrderWithDeliverySet == null ? voOldOrderWithDelivery : voOldOrderWithDeliverySet, shop, totalOldWeight);
 		
 		return newDeliveryCost;
 	}
@@ -1136,7 +1141,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	
 	private double setDeliveryGroupDeliveryCost(VoOrder order, VoShop voShop, int totalWeight) {
 		
-		Double newDeliveryCost = voShop.getDeliveryCosts().get( order.getDelivery().getValue() );
+		Map<Integer, Double> deliveryCosts = voShop.getDeliveryCosts(); //use as a base cost
+		Double newDeliveryCost = null == deliveryCosts ? 0.0D : 
+			deliveryCosts.get( order.getDelivery().getValue() );
+		
 		if( null == newDeliveryCost )
 			newDeliveryCost = 0D;
 		
@@ -1144,7 +1152,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		 
 		//get delivery cost by address mask if set
 		Map<DeliveryType, String> dam = voShop.getDeliveryAddressMasksText();
-		if( null!=dam && null!=voShop.getDeliveryCosts() ){ //look for delivery cost by address mask
+		if( null!=dam && null!=deliveryCosts ){ //look for delivery cost by address mask
 			String addressString = deliveryTo.toString();
 			
 			//sort the map by DelivertType to math cheapest delivery first
@@ -1152,7 +1160,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			
 			for( Entry<DeliveryType, String> dame: sm.entrySet()) {
 				if( addressString.matches( dame.getValue() )){
-					Double ndc = voShop.getDeliveryCosts().get(dame.getKey());
+					Double ndc = deliveryCosts.get(dame.getKey());
 					if( null!=ndc) { //if there is a cost set for this kind of delivery 
 						newDeliveryCost = ndc; 
 						break;
@@ -1177,6 +1185,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				}
 			}
 		}
+		
 		//calculate change of cost depend on weight
 		Map<Integer, Integer> dbwi = voShop.getDeliveryByWeightIncrement();
 		if( null!=dbwi ){
@@ -1188,6 +1197,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			}
 		}
 		order.setDeliveryCost(newDeliveryCost);
+		order.addCost(newDeliveryCost);
 		return newDeliveryCost;
 	}
 
@@ -1233,9 +1243,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			VoPostalAddress adrress = new VoPostalAddress(deliveryAddress, pm);
 			VoPostalAddress oldAddress = currentOrder.getDeliveryTo();
+			
 			currentOrder.setDeliveryTo(adrress);
-			updateDeliveryCost( currentOrder, oldAddress, pm);
 			pm.makePersistent(currentOrder);
+			
+			updateDeliveryCost( pm.getObjectById(VoShop.class, currentOrder.getShopId()), 
+					currentOrder, oldAddress, pm);
+			
 			VoUser currentUser = getCurrentUser(pm);
 			currentUser.addPostalAddress(adrress);
 			pm.makePersistent(currentUser);
