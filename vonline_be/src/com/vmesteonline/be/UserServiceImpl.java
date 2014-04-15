@@ -503,7 +503,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			} else {
 				logger.info("VoBuilding '" + fullNo + "'was created.");
 				VoBuilding voBuilding = new VoBuilding(vs, fullNo, new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
-						new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude));
+						new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude), pm);
 				if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate
 					// location
 					try {

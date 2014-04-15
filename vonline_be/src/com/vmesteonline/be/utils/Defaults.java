@@ -172,7 +172,7 @@ public class Defaults {
 	
 				VoCity vocity = pm.getExtent(VoCity.class).iterator().next();
 				VoStreet street = new VoStreet( vocity, "г. Пушкин, Детскосельский бульвар");
-				VoBuilding building = new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0"));
+				VoBuilding building = new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0"),pm);
 				VoPostalAddress voPostalAddress = new VoPostalAddress(building, (byte) 1, (byte) 1, (byte) 1,
 						"Угол ул. Железнодоррожная и Детскосельского бульвара");
 				pm.makePersistent(street);
@@ -381,13 +381,13 @@ public class Defaults {
 			addresses = new VoPostalAddress[] {
 
 					// адресов должно быть минимум три! кол-во юзеров хардкодится выше
-					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat)), (byte) 1, (byte) 1, (byte) 5,
+					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 1, (byte) 1, (byte) 5,
 							""),
-					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat)), (byte) 2, (byte) 1, (byte) 50,
+					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 2, (byte) 1, (byte) 50,
 							""),
-					new VoPostalAddress(new VoBuilding(street, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544")), (byte) 1, (byte) 11, (byte) 35,
+					new VoPostalAddress(new VoBuilding(street, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544"), pm), (byte) 1, (byte) 11, (byte) 35,
 							""),
-					new VoPostalAddress(new VoBuilding(street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177")), (byte) 1, (byte) 2, (byte) 25,
+					new VoPostalAddress(new VoBuilding(street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177"), pm), (byte) 1, (byte) 2, (byte) 25,
 							"") };
 
 			for (VoPostalAddress pa : addresses) {

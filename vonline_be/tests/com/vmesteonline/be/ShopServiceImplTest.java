@@ -1,8 +1,9 @@
 package com.vmesteonline.be;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +27,10 @@ import org.junit.Test;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.postaladdress.VoCity;
+import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
+import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
+import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.shop.VoOrder;
 import com.vmesteonline.be.jdo2.shop.VoOrderLine;
 import com.vmesteonline.be.messageservice.MessageType;
@@ -1200,29 +1205,8 @@ public class ShopServiceImplTest {
 			Long shopId = si.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
-			Long order1ID = si.getSessionAttribute(CurrentAttributeType.ORDER, null);
-			// Check merge lines of the same product
-			Map<Double, Integer> packets = new HashMap<Double, Integer>();
-			packets.put(11D, 1);
-			packets.put(12D, 2);
-			/*OrderLine ol1 = */si.setOrderLine(0,upProductsIdl.get(0), 35.0D, "comment11", packets);
-			/*OrderLine ol2 = */si.setOrderLine(0,upProductsIdl.get(1), 2.0D, "comment12", null);
 			
-			si.confirmOrder(0);
-			
-			/*long order2ID = */si.createOrder(now + 1000, "22aaaa", PriceType.INET);
-			/*OrderLine ol21 = */si.setOrderLine(0,upProductsIdl.get(0), 35.0D, "comment21", packets);
-			si.confirmOrder(0);
-			
-			/*long order3ID = */si.createOrder(now + 1000, "33aaaa", PriceType.INET);
-			/*OrderLine ol31 = */si.setOrderLine(0,upProductsIdl.get(1), 33.0D, "comment31", null);
-			si.setOrderDeliveryType(0,DeliveryType.LONG_RANGE,null);
-			si.confirmOrder(0);
-			
-			/*long order4ID = */si.createOrder(now + 1001, "44aaaa", PriceType.INET);
-			/*OrderLine ol41 = */si.setOrderLine(0,upProductsIdl.get(1), 44.0D, "comment41", null);
-
-			si.confirmOrder(0);
+			Long order1ID = createFourOrders(now, upProductsIdl);
 
 			List<ExchangeFieldType> orderFields = Arrays.asList(new ExchangeFieldType[] { ExchangeFieldType.ORDER_DATE, ExchangeFieldType.ORDER_STATUS,
 					ExchangeFieldType.ORDER_PRICE_TYPE, ExchangeFieldType.ORDER_TOTAL_COST, ExchangeFieldType.ORDER_CREATED,
@@ -1277,6 +1261,34 @@ public class ShopServiceImplTest {
 		}
 	}
 
+	private Long createFourOrders(int now, List<Long> upProductsIdl) throws InvalidOperation {
+		
+		Long order1ID = si.getSessionAttribute(CurrentAttributeType.ORDER, null);
+		// Check merge lines of the same product
+		Map<Double, Integer> packets = new HashMap<Double, Integer>();
+		packets.put(11D, 1);
+		packets.put(12D, 2);
+		/*OrderLine ol1 = */si.setOrderLine(0,upProductsIdl.get(0), 35.0D, "comment11", packets);
+		/*OrderLine ol2 = */si.setOrderLine(0,upProductsIdl.get(1), 2.0D, "comment12", null);
+		
+		si.confirmOrder(0);
+		
+		/*long order2ID = */si.createOrder(now + 1000, "22aaaa", PriceType.INET);
+		/*OrderLine ol21 = */si.setOrderLine(0,upProductsIdl.get(0), 35.0D, "comment21", packets);
+		si.confirmOrder(0);
+		
+		/*long order3ID = */si.createOrder(now + 1000, "33aaaa", PriceType.INET);
+		/*OrderLine ol31 = */si.setOrderLine(0,upProductsIdl.get(1), 33.0D, "comment31", null);
+		si.setOrderDeliveryType(0,DeliveryType.LONG_RANGE,null);
+		si.confirmOrder(0);
+		
+		/*long order4ID = */si.createOrder(now + 1001, "44aaaa", PriceType.INET);
+		/*OrderLine ol41 = */si.setOrderLine(0,upProductsIdl.get(1), 44.0D, "comment41", null);
+
+		si.confirmOrder(0);
+		return order1ID;
+	}
+
 	// ======================================================================================================================
 
 	@Test
@@ -1291,29 +1303,7 @@ public class ShopServiceImplTest {
 			Long shopId = si.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
-			/*Long order1ID = */si.getSessionAttribute(CurrentAttributeType.ORDER, null);
-			// Check merge lines of the same product
-			Map<Double, Integer> packets = new HashMap<Double, Integer>();
-			packets.put(11D, 1);
-			packets.put(12D, 2);
-			/*OrderLine ol1 = */si.setOrderLine(0,upProductsIdl.get(0), 35.0D, "comment11", packets);
-			/*OrderLine ol2 = */si.setOrderLine(0,upProductsIdl.get(1), 2.0D, "comment12", null);
-			
-			si.confirmOrder(0);
-			
-			/*long order2ID = */si.createOrder(now + 1000, "22aaaa", PriceType.INET);
-			/*OrderLine ol21 = */si.setOrderLine(0,upProductsIdl.get(0), 35.0D, "comment21", packets);
-			si.confirmOrder(0);
-			
-			/*long order3ID = */si.createOrder(now + 1000, "33aaaa", PriceType.INET);
-			/*OrderLine ol31 = */si.setOrderLine(0,upProductsIdl.get(1), 33.0D, "comment31", null);
-			si.setOrderDeliveryType(0,DeliveryType.LONG_RANGE,null);
-			si.confirmOrder(0);
-			
-			/*long order4ID = */si.createOrder(now + 1001, "44aaaa", PriceType.INET);
-			/*OrderLine ol41 = */si.setOrderLine(0,upProductsIdl.get(1), 44.0D, "comment41", null);
-
-			si.confirmOrder(0);
+			/*Long order1ID = */createFourOrders(now, upProductsIdl);
 
 			List<ExchangeFieldType> productFields = Arrays.asList(new ExchangeFieldType[] { ExchangeFieldType.TOTAL_PROUCT_ID,
 					ExchangeFieldType.TOTAL_PRODUCT_NAME, ExchangeFieldType.TOTAL_PRODUCER_ID, ExchangeFieldType.TOTAL_PRODUCER_NAME,
@@ -1334,7 +1324,147 @@ public class ShopServiceImplTest {
 
 	@Test
 	public void testGetTotalPackReport() {
+		try {
 
+			int now = (int) (System.currentTimeMillis() / 1000L);
+			int day = 3600 * 24;
+			List<Long> upProductsIdl;
+
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Long shopId = si.registerShop(shop);
+
+			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
+			/*Long order1ID = */createFourOrders(now, upProductsIdl);
+
+			List<ExchangeFieldType> productFields = Arrays.asList(new ExchangeFieldType[] { ExchangeFieldType.TOTAL_PROUCT_ID,
+					ExchangeFieldType.TOTAL_PRODUCT_NAME, ExchangeFieldType.TOTAL_PRODUCER_ID, ExchangeFieldType.TOTAL_PRODUCER_NAME,
+					ExchangeFieldType.TOTAL_PRODUCT_MIN_PACK, ExchangeFieldType.TOTAL_ORDERED, ExchangeFieldType.TOTAL_MIN_QUANTITY,
+					ExchangeFieldType.TOTAL_REST, ExchangeFieldType.TOTAL_PREPACK_REQUIRED, ExchangeFieldType.TOTAL_PACK_SIZE,
+					ExchangeFieldType.TOTAL_PACK_QUANTYTY, ExchangeFieldType.TOTAL_DELIVERY_TYPE });
+
+			DataSet totalProductsReport = si.getTotalPackReport(now + 1000, DeliveryType.SELF_PICKUP, listToMap(productFields));
+			Assert.assertEquals(totalProductsReport.getDataSize(), 3);
+
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Import failed!" + e);
+		}
+	}
+//======================================================================================================================
+
+	@Test
+	public void testCalculateTheDistance() {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			
+			createAddress("площадь Карла Фаберже", "6"); //650m from the shop
+			createAddress("Косыгина", "4"); //2 km from the shop
+			createAddress("Водопроводная", "74"); //5 km from the shop
+			
+			VoPostalAddress pa0 = null;
+			for( VoPostalAddress pa : pm.getExtent(VoPostalAddress.class)){
+				if( null != pa0 ){
+					Assert.assertEquals( pa.getDistance(pa0), pa0.getDistance(pa));
+					Assert.assertTrue( pa.getDistance(pa0) >= 0 );
+					Assert.assertTrue( pa.getDistance(pa0) < 20000 );
+					if( pa.getBuilding().toString().equals(pa0.getBuilding().toString()) )
+						Assert.assertTrue(  0 == pa.getDistance(pa0));
+					else
+						Assert.assertTrue(  0 != pa.getDistance(pa0));
+					
+					System.out.println("Distance between "+pm.getObjectById(VoStreet.class, pa0.getBuilding().getStreetId()).getName() 
+							+ " "+pa0.getBuilding().getFullNo() +" and "+pm.getObjectById(VoStreet.class, pa.getBuilding().getStreetId()).getName() 
+							+ " "+pa.getBuilding().getFullNo() + " is " + pa.getDistance(pa0) + "km");
+				}
+				pa0 = pa;
+			}
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Import failed!" + e);
+		} finally {
+			pm.close();
+		}
+	}
+//======================================================================================================================
+
+	@Test
+	public void testDeliveryDependOnRange() throws InvalidOperation{
+		try{
+			int now = (int) (System.currentTimeMillis() / 1000L);
+			int day = 3600 * 24;
+			List<Long> upProductsIdl;
+	
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Long shopId = si.registerShop(shop);
+			Map<Integer, Double> deliveryCostByDistance = new HashMap<Integer, Double>();
+			deliveryCostByDistance.put(0, 100.0D); 
+			deliveryCostByDistance.put(5, 150.0D);
+			deliveryCostByDistance.put(10, 200.0D);
+			si.setShopDeliveryCostByDistance(shopId, deliveryCostByDistance );
+			
+			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
+			
+			Long order1ID = createFourOrders(now, upProductsIdl);
+			
+			List<Order> orders = si.getOrders(now+1000, now+1005);
+			PostalAddress pa0 = createAddress("площадь Карла Фаберже", "6"); //650m from the shop
+			PostalAddress pa2 = createAddress("Косыгина", "4"); //2 km from the shop
+			PostalAddress pa5 = createAddress("Водопроводная", "74"); //5 km from the shop
+			
+			si.setOrderDeliveryType(order1ID, DeliveryType.SHORT_RANGE, pa0);
+			assertEquals(""+si.getOrderDetails(order1ID).getDeliveryCost(), ""+100.0D);
+			
+			si.setOrderDeliveryType(order1ID, DeliveryType.SHORT_RANGE, pa2);
+			assertEquals(""+si.getOrderDetails(order1ID).getDeliveryCost(), ""+100.0D);
+			
+			si.setOrderDeliveryType(order1ID, DeliveryType.SHORT_RANGE, pa5);
+			assertEquals(""+si.getOrderDetails(order1ID).getDeliveryCost(), ""+150.0D);
+			
+			
+	} catch (Exception e) {
+		e.printStackTrace();
+		fail("Import failed!" + e);
+	} 
+	}
+//======================================================================================================================
+
+	private PostalAddress createAddress(String streetName, String buuildingNAme) throws InvalidOperation, TException {
+		
+		PersistenceManager pm = PMF.getPm();
+		try {
+			
+			VoCity city = pm.getObjectById(VoCity.class, usi.getCities(usi.getCounties().get(0).getId()).get(0).getId());
+			VoStreet voStreet = new VoStreet( city, streetName );
+			VoBuilding voBuilding = new VoBuilding(voStreet, buuildingNAme, new BigDecimal("0"), new BigDecimal("0"),pm);
+			VoPostalAddress voPostalAddress = new VoPostalAddress( voBuilding, (byte)1, (byte)1, (byte)1, "");
+			pm.makePersistent(voPostalAddress);
+			
+			return voPostalAddress.getPostalAddress();
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Test
+	public void testDeliveryDependOnWeight(){
+		
+	}
+//======================================================================================================================
+
+	@Test
+	public void testDeliveryDependOnAddressMask() {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			
+		
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Import failed!" + e);
+		} finally {
+			pm.close();
+		}
 	}
 
 	// ======================================================================================================================
@@ -1355,6 +1485,7 @@ public class ShopServiceImplTest {
 		Assert.assertEquals(parseCSVfile.elems.get(3), "4");
 		Assert.assertEquals(parseCSVfile.elems.get(8), "9");
 	}
+//======================================================================================================================
 
 	@Test
 	public void testGetProductsByCategories() {

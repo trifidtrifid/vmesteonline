@@ -78,7 +78,7 @@ public class MessagesTree {
 		items.clear();
 		parseLevel(getLevel(0), 0);
 
-		List<VoMessage> lst = new ArrayList<>();
+		List<VoMessage> lst = new ArrayList<VoMessage>();
 		boolean add = false;
 		for (int i = 0; i < items.size(); i++) {
 			if (items.get(i).id == parentId) {

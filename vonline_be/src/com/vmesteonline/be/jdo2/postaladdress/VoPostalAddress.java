@@ -23,9 +23,9 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 @PersistenceCapable
 public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
-	public VoPostalAddress(VoBuilding building, byte staircase, byte floor, byte flatNo, String comment) {
+	public VoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, byte flatNo, String comment) {
 
-		this.building = building;
+		this.building = voBuilding;
 		this.staircase = staircase;
 		this.floor = floor;
 		this.flatNo = flatNo;
@@ -33,8 +33,8 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 		BigDecimal staircaseOffset = new BigDecimal("0.0000001");
 		staircaseOffset = staircaseOffset.multiply(new BigDecimal(staircase));
 		
-		System.out.print("offset: " + staircaseOffset.add(building.getLongitude()));
-		userGroup = new VoUserGroup("Парадная " + staircase, 0, staircaseOffset.add(building.getLongitude()), building.getLatitude());
+		System.out.print("offset: " + staircaseOffset.add(voBuilding.getLongitude()));
+		userGroup = new VoUserGroup("Парадная " + staircase, 0, staircaseOffset.add(voBuilding.getLongitude()), voBuilding.getLatitude());
 
 	}
 
