@@ -1356,13 +1356,32 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	// ======================================================================================================================
 	@Override
 	public List<Order> getOrdersByStatus(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
+		return getOrdersByStatus( 0, dateFrom, dateTo, status);
+	}
+
+	// ======================================================================================================================
+
+	@Override
+	public List<Order> getMyOrdersByStatus(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
+		return getOrdersByStatus( getCurrentUserId(), dateFrom, dateTo, status);
+	}
+	// ======================================================================================================================
+	
+	private List<Order> getOrdersByStatus(long userId, int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = getCurrentShopId(pm);
 		try {
 			Query pcq = pm.newQuery(VoOrder.class);
-			pcq.setFilter("shopId == " + shopId + " && date >= " + dateFrom + 
-					(status != OrderStatus.UNKNOWN ? " && status == '" + status + "'": ""));
-			List<VoOrder> ps = (List<VoOrder>) pcq.execute(dateFrom);
+			List<VoOrder> ps;
+			if( 0!=userId){
+				pcq.setFilter("user == :key && shopId == " + shopId + " && date >= " + dateFrom + 
+						(status != OrderStatus.UNKNOWN ? " && status == '" + status + "'": ""));
+				ps = (List<VoOrder>) pcq.execute(userId, dateFrom);
+			} else  {
+				pcq.setFilter("shopId == " + shopId + " && date >= " + dateFrom + 
+						(status != OrderStatus.UNKNOWN ? " && status == '" + status + "'": ""));
+				ps = (List<VoOrder>) pcq.execute(dateFrom);
+			}
 			List<Order> lo = new ArrayList<Order>();
 			for (VoOrder p : ps) {
 				if (p.getDate() < dateTo)
@@ -1376,7 +1395,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		} finally {
 			pm.close();
 		}
-	}
+	} 
 
 	// ======================================================================================================================
 	@Override

@@ -174,12 +174,14 @@ public class VoUser extends GeoLocation {
 		if (null != building) {
 			pm.retrieve(building);
 			VoUserGroup home = userAddress.getUserHomeGroup();
-			this.setLatitude(home.getLatitude());
-			this.setLongitude(home.getLongitude());
-			if (null != groups && !groups.isEmpty()) {
-				for (VoUserGroup ug : groups) {
-					ug.setLatitude(home.getLatitude());
-					ug.setLongitude(home.getLongitude());
+			if(null!=home){
+				this.setLatitude(home.getLatitude());
+				this.setLongitude(home.getLongitude());
+				if (null != groups && !groups.isEmpty()) {
+					for (VoUserGroup ug : groups) {
+						ug.setLatitude(home.getLatitude());
+						ug.setLongitude(home.getLongitude());
+					}
 				}
 			} else {
 				groups = new ArrayList<VoUserGroup>();
