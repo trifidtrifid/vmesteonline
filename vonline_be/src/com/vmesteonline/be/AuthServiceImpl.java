@@ -75,7 +75,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			if (u.getPassword().equals(password)) {
 
 				logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
-				VoSession currentSession = getCurrentSession();
+				VoSession currentSession = getCurrentSession(pm);
 				if(null==currentSession) 
 					currentSession = new VoSession(sessionStorage.getId(), u);
 				else 
@@ -182,7 +182,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	@Override
 	public Map<Integer, Long> getCurrentAttributes() throws InvalidOperation {
-		return super.getCurrentSession().getSessionAttributes();
+		return getCurrentSessionAttributes();
 	}
 
 	@Override

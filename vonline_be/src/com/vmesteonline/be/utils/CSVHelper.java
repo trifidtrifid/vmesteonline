@@ -194,6 +194,7 @@ public class CSVHelper {
 			fieldNames.addAll(sortedFields.values());
 		}
 
+		int maxLineLength = 0;
 		try {
 			for (T objectToWrite : listToRead) {
 				String lineStr = "";
@@ -208,6 +209,7 @@ public class CSVHelper {
 					fieldNames.clear();
 					fieldNames.addAll(Arrays.asList(objectToWrite.getClass().getFields()));
 				}
+				int lineLength = 0;
 				for (Object value : fieldNames) {
 					lineStr += fd;
 					String outStr = "";
@@ -230,14 +232,24 @@ public class CSVHelper {
 						} else {
 							outStr = fieldToWrite.toString().contains(fd) ? "\"" + fieldToWrite.toString() + "\"" : "" + fieldToWrite;
 						}
-						if (nextFieldsLine != null)
+						if (nextFieldsLine != null) {
 							nextFieldsLine.add(outStr);
+							lineLength++;
+						}
 
 						lineStr += outStr;
 					}
 				}
+				if( lineLength > maxLineLength ) maxLineLength = lineLength;
+				
 				os.write((lineStr.substring(fd.length()) + "\n").getBytes());
 			}
+			//arrange all lines to be the same size
+			if(null!=fieldsToFill)
+				for( List< String > line : fieldsToFill ){
+					while(line.size() < maxLineLength)
+						line.add(null);	
+				} 
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IOException("Failed to write CSV:" + e.getMessage(), e);
@@ -264,26 +276,29 @@ public class CSVHelper {
 
 	// ====================================================================================================================
 	private static List<String> readLines(byte[] buf) throws IOException {
-		//byte[] buf = new byte[2 * 1024 * 1024];
-		//int read;
+
 		List<String> lines = new ArrayList<String>();
 		int lastPos = 0, pos = 0;
-		//while (-1 != (read = is.read(buf))) {
 			lastPos = 0;
-			for (pos = 0; pos < buf.length/*read*/; pos++) {
-				char c = (char) buf[pos];
-				if (c == '\n' || c == '\r') {
-					String nl = new String(buf, lastPos, pos - lastPos);
-					if (nl.trim().length() > 0)
-						lines.add(nl);
+			if( buf.length > 0 ) 
+				do {
+					char c;
+					if (pos == buf.length || (c = (char) buf[pos] ) == '\n' || c == '\r' ) {
+						
+						String nl = new String(buf, lastPos, pos - lastPos);
+						if (nl.trim().length() > 0)
+							lines.add(nl);
+	
+						// skip emptyLines
+						for (lastPos = pos; lastPos + 1 < buf.length/*read*/ && (buf[lastPos] == '\r' || buf[lastPos] == '\n'); lastPos++)
+							pos = lastPos;
+					}
+					if( pos++ == buf.length) 
+						break;
+					
+				} while (true); 
 
-					// skip emptyLines
-					for (lastPos = pos; lastPos + 1 < buf.length/*read*/ && (buf[lastPos] == '\r' || buf[lastPos] == '\n'); lastPos++)
-						pos = lastPos;
-				}
-			}
-		//}
-		if (lastPos != pos) {
+		if (lastPos != pos && lastPos < buf.length) {
 			String nl = new String(buf, lastPos, pos - lastPos);
 			if (nl.trim().length() > 0)
 				lines.add(nl);

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
@@ -21,18 +23,27 @@ import com.vmesteonline.be.jdo2.VoUser;
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 public class VoBuilding implements Comparable<VoBuilding> {
 
-	public VoBuilding(VoStreet vs, String fullNo, BigDecimal longitude, BigDecimal latitude) throws InvalidOperation {
+	public VoBuilding(VoStreet vs, String fullNo, BigDecimal longitude, BigDecimal latitude, PersistenceManager pm) throws InvalidOperation {
+		Query q = pm.newQuery(VoBuilding.class, "streetId == :key && fullNo == '"+fullNo+"'");
+		List<VoBuilding> bgsl = (List<VoBuilding>)q.execute(vs.getId());
 		this.streetId = vs.getId();
 		this.fullNo = fullNo;
-		if (vs.getBuildings().contains(this))
-			throw new InvalidOperation(VoError.GeneralError, "The same Building '" + fullNo + "' already exists in Street " + vs.getName());
-		users = new ArrayList<VoUser>();
-		users = new ArrayList<VoUser>();
-		this.longitude = longitude.toPlainString();
-		this.latitude = latitude.toPlainString();
-		this.addressString = vs.getName() + ", " + fullNo;
-
-		vs.addBuilding(this);
+		
+		if( 0==bgsl.size() ){
+			users = new ArrayList<VoUser>();
+			this.longitude = longitude.toPlainString();
+			this.latitude = latitude.toPlainString();
+			this.addressString = vs.getName() + ", " + fullNo;
+			vs.addBuilding(this);
+			
+		} else {
+			VoBuilding oldbg = bgsl.get(0);
+			this.id = oldbg.getId();
+			users = oldbg.getUsers();
+			this.longitude = oldbg.getLongitude().toPlainString();
+			this.latitude = oldbg.getLatitude().toPlainString();
+			this.addressString = oldbg.getAddressString();
+		}
 	}
 
 	public String getAddressString() {
@@ -60,7 +71,6 @@ public class VoBuilding implements Comparable<VoBuilding> {
 	private String addressString; // no with letter or other extension if any
 
 	@Persistent
-	@Unindexed
 	private String fullNo; // no with letter or other extension if any
 
 	@Persistent
@@ -122,7 +132,7 @@ public class VoBuilding implements Comparable<VoBuilding> {
 		return Double.parseDouble(coord) * Math.PI / 180.0D;
 	}
 
-	//Calculate distance between two buildings if all off coordinates are defined
+	//Calculate distance in kilometers between two buildings if all off coordinates are defined
 	
 	public Double getDistance( VoBuilding that ){
 		

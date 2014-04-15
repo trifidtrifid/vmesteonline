@@ -70,7 +70,7 @@ public class VoOrder {
 			ex.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to create order. "+ex.getMessage());
 		} finally {
-			if( _pm != null) pm.close();
+			if( _pm == null) pm.close();
 		}
 	}
 	

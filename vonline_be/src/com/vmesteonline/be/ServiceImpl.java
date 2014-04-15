@@ -106,9 +106,16 @@ public class ServiceImpl {
 	protected long getCurrentUserId(PersistenceManager _pm) throws InvalidOperation {
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
-		VoSession sess = getCurrentSession(_pm);
-		if (sess != null && 0 != sess.getUserId()) {
-			return sess.getUserId();
+		
+		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
+		try {
+			
+			VoSession sess = getCurrentSession(_pm);
+			if (sess != null && 0 != sess.getUserId()) {
+				return sess.getUserId();
+			}
+		} finally {
+			if(null==_pm) pm.close();
 		}
 		throw new InvalidOperation(VoError.NotAuthorized, "can't get current user id");
 	}
@@ -123,6 +130,9 @@ public class ServiceImpl {
 	}
 
 	public VoUser getCurrentUser(PersistenceManager pm) throws InvalidOperation {
+		if(null==pm)
+			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No PM set, but Persistance Object returned.");
+		
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
 
@@ -140,15 +150,27 @@ public class ServiceImpl {
 		} finally {
 			pm.close();
 		}
-
 	}
+	
+	public Map<Integer, Long> getCurrentSessionAttributes() throws InvalidOperation{
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			return getCurrentSession(pm).getSessionAttributes();
+		} finally {
+			pm.close();
+		}
+	}
+	
 
 	protected VoSession getCurrentSession(PersistenceManager pm) throws InvalidOperation {
+		if(null==pm)
+			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No PM set, but Persistance Object returned.");
+		
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
 
 		try {
-			return pm.getObjectById(VoSession.class, sessionStorage.getId());
+			return pm.getObjectById(VoSession.class, sessionStorage.getId()); 
 		} catch (JDOObjectNotFoundException e) {
 			VoSession vs = new VoSession(sessionStorage.getId(), null);
 			pm.makePersistent(vs);
@@ -174,13 +196,14 @@ public class ServiceImpl {
 	}
 
 	public void setCurrentAttribute(int key, long value, PersistenceManager _pm) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		try {
 			VoSession currentSession = getCurrentSession(pm);
 			currentSession.setSessionAttribute(key, value);
 			pm.makePersistent(currentSession);
 		} finally {
-			pm.close();
+			if(null==_pm) 
+				pm.close();
 		}
 	}
 
@@ -204,9 +227,14 @@ public class ServiceImpl {
 		}
 	}
 
-	public Long getSessionAttribute(CurrentAttributeType type, PersistenceManager pm) throws InvalidOperation {
-		VoSession currentSession = getCurrentSession(pm);
-		return currentSession.getSessionAttribute(type);
+	public Long getSessionAttribute(CurrentAttributeType type, PersistenceManager _pm) throws InvalidOperation {
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+		try {
+			VoSession currentSession = getCurrentSession(pm);
+			return currentSession.getSessionAttribute(type);
+		} finally {
+			if(null==_pm) pm.close();
+		}
 	}
 
 	/**
