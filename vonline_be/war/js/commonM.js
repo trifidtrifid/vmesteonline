@@ -173,6 +173,8 @@ define(
         }
 
         function initSaveNewAddr(selector,userAddresses){
+            alert('t');
+
             selector.find('.save-new-addr').click(function(){
                 var currentForm = $(this).closest('.form-edit');
                 currentForm.slideUp();
@@ -251,9 +253,11 @@ define(
                 deliveryAddress.comment = $('#order-comment').val();
 
                 if(!currentForm.prev().hasClass('add-user-address')){
+                    alert('1');
                 currentForm.prev().find('span').text(country.name + ", " + city.name + ", "
                     + street.name + " " + building.fullNo + ", кв. " + deliveryAddress.flatNo);
                 }else{
+                    alert('2');
                     var ind = $('.user-address-item').length;
                     var newAddressesHtml ='<div class="user-address-item no-init" data-index="'+ ind +'">'+
                         '<span>'+
@@ -267,6 +271,8 @@ define(
                     var noInit = $('.user-address-item.no-init');
                     initEditAddress(noInit,userAddresses);
                     noInit.removeClass('no-init');
+
+                    //thriftModule.userClient.addUserAddress(userAddresses);
                 }
 
                 //thriftModule.client.setOrderDeliveryAddress(deliveryAddress);
@@ -284,6 +290,7 @@ define(
                     currentAddrItem.after(formEditHtml);
                     var ind = currentAddrItem.data('index');
                     WriteAddress(currentAddrItem.find('+.form-edit'),userAddresses[ind]);
+                    alert('111');
                     initSaveNewAddr(currentAddrItem,userAddresses);
                 }
                 currentAddrItem.find('+.form-edit').slideToggle(200);
