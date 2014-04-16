@@ -92,7 +92,7 @@ define(
             });
 
             /* автозаполнение адреса доставки  */
-            function initAutocompleteAddress(){
+            function initAutocompleteAddress(selector){
                 var addressesBase = thriftModule.userClient.getAddressCatalogue();
 
                 var countries = addressesBase.countries;
@@ -110,11 +110,11 @@ define(
                     countryId[i] = countries[i].id;
                 }
 
-                $( "#country-delivery" ).autocomplete({
+                selector.find(".country-delivery").autocomplete({
                     source: countryTags
                 });
-                $('#city-delivery').focus(function(){
-                    var prevField = $('#country-delivery').val();
+                selector.find('.city-delivery').focus(function(){
+                    var prevField = selector.find(".country-delivery" ).val();
                     var cities;
                     if(prevField){
                         for (var i = 0; i < countriesLength; i++){
@@ -138,8 +138,8 @@ define(
                     });
                 });
 
-                $( "#street-delivery" ).focus(function(){
-                    var prevField = $('#city-delivery').val();
+                selector.find(".street-delivery").focus(function(){
+                    var prevField = selector.find('.city-delivery').val();
                     var streets;
                     var citiesLength = addressesBase.cities.length;
                     if(prevField){
@@ -164,8 +164,8 @@ define(
                     });
                 });
 
-                $( "#building-delivery" ).focus(function(){
-                    var prevField = $('#street-delivery').val();
+                selector.find(".building-delivery").focus(function(){
+                    var prevField = selector.find(".street-delivery").val();
                     var buildings;
                     var streetLength = addressesBase.streets.length;
                     if(prevField){

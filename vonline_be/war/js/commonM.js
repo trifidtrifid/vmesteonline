@@ -1,7 +1,7 @@
 define(
     'commonM',
-    ['jquery','shop-initThrift','datepicker-simple'],
-    function( $,thriftModule,datepicker ){
+    ['jquery','shop-initThrift','shop-search'],
+    function( $,thriftModule,searchModule ){
 
         function init(){
         /* простые обработчики событий */
@@ -155,6 +155,9 @@ define(
                     WriteAddress(currentForm);
                     currentForm = $(this).find('+.form-edit');
                     currentForm.slideDown(200);
+
+                    initSaveNewAddr(currentForm);
+                    searchModule.initAutocompleteAddress(currentForm);
                 }else{
                     if(currentForm.css('display') == 'block'){
                         currentForm.slideUp(200);
@@ -163,7 +166,7 @@ define(
                     }
                 }
 
-                initSaveNewAddr(currentForm,userAddresses);
+
             });
         }
 
@@ -183,7 +186,7 @@ define(
              }
         }
 
-        function initSaveNewAddr(selector,userAddresses){
+        function initSaveNewAddr(selector){
             selector.find('.save-new-addr').click(function(e){
                 e.preventDefault();
                 var currentForm = $(this).closest('.form-edit');
@@ -252,7 +255,6 @@ define(
                 }
                 if (!buildingId){
                     building = thriftModule.userClient.createNewBuilding(streetId,inputBuilding,0,0);
-                    buildingId = building.id;
                 }
 
 
@@ -286,6 +288,9 @@ define(
 
                     thriftModule.userClient.addUserAddress(deliveryAddress);
                     var userAddresses = thriftModule.userClient.getUserAddresses();
+                    /*for(var i = 0 ; i < userAddresses.length; i++){
+                        console.log(userAddresses[i].street.name);
+                    }*/
 
                     var noInit = $('.user-address-item.no-init');
                     initEditAddress(noInit,userAddresses,deliveryAddress);
@@ -302,17 +307,26 @@ define(
             var formEditHtml = $('.form-edit-wrap').html();
 
             selector.find('.edit-user-addr').click(function(e){
+
                 e.preventDefault();
                 $('.form-edit-wrap').remove();
                 var currAddr = currentAddress;
                 var currentAddrItem = $(this).closest('.user-address-item');
+
                 if(currentAddrItem.find('+.form-edit').length == 0){
+
                     currentAddrItem.after(formEditHtml);
+                    var currentForm = currentAddrItem.find('+.form-edit');
+
                     var ind = currentAddrItem.data('index');
                     if(!currentAddress){currAddr = userAddresses[ind];}
-                    WriteAddress(currentAddrItem.find('+.form-edit'),currAddr);//userAddresses[ind]
-                    initSaveNewAddr(currentAddrItem.find('+.form-edit'),userAddresses);
+
+                    WriteAddress(currentForm,currAddr);//userAddresses[ind]
+                    initSaveNewAddr(currentForm);
+                    searchModule.initAutocompleteAddress(currentForm);
+
                 }
+
                 currentAddrItem.find('+.form-edit').slideToggle(200);
             });
         }
