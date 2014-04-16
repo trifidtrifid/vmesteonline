@@ -18,6 +18,7 @@ define(
         }
         }
 
+
         function createProductsTableHtml(productsList){
             var productListLength = productsList.length;
             var productsHtml = '';
@@ -80,6 +81,8 @@ define(
                 /* новый список товаров */
                 var productsList = thriftModule.client.getProducts(0,10,catID).products;
                 $('.main-content .catalog table tbody').html("").append(createProductsTableHtml(productsList));
+                var commonModule = require('shop-common');
+                commonModule.markAddedProduct();
 
             }catch(e){
                 alert(e+" Функция InitLoadCategory");
@@ -110,9 +113,7 @@ define(
                     }
                     else {
                         parentCounter++;
-                        //console.log(prevParentId[parentCounter]);
                         prevParentId[parentCounter] = $(this).parent().data('parentid');
-                        //console.log($(this).parent().data('catid'));
                         InitLoadCategory($(this).parent().data('catid'));
                         commonModule.setCookie('catid',$(this).parent().data('catid'));
                         commonModule.setCookie('arrayPrevCat',prevParentId);
@@ -127,7 +128,7 @@ define(
         return {
             createProductsTableHtml: createProductsTableHtml,
             InitLoadCategory: InitLoadCategory,
-            InitClickOnCategory: InitClickOnCategory
+            InitClickOnCategory: InitClickOnCategory,
         }
     }
 );

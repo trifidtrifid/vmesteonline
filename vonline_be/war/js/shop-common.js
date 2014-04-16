@@ -70,6 +70,7 @@ define(
                     basketModule.AddSingleProductToBasket(orderLines[j].product,orderLines[j].quantity);
                 }
             }
+            markAddedProduct();
             /*var catalogOrderLi = $('.catalog-order li');
             if(catalogOrderLi.length > 0){
                 var order = thriftModule.client.getOrder(0);
@@ -389,6 +390,39 @@ define(
             return summa.toFixed(1);
         }
 
+        function markAddedProduct(){
+            var productsInTable = $('.catalog tr');
+            var productsInBasket = $('.tabs-days .tab-content .catalog-order li');
+            var basketLength = productsInBasket.length;
+            var addedProductId;
+
+            productsInTable.each(function(){
+                for(var i = 0; i < basketLength; i++){
+                    addedProductId = productsInBasket.eq(i).data('productid');
+                    if($(this).data('productid') == addedProductId){
+                        $(this).addClass('added');
+                    }
+                }
+            });
+
+        }
+
+        function remarkAddedProduct(){
+            var addedProducts= $('.catalog tr.added');
+            var productsInBasket = $('.tabs-days .tab-content .catalog-order li');
+            var basketLength = productsInBasket.length;
+            var addedProductId;
+
+            addedProducts.each(function(){
+                for(var i = 0; i < basketLength; i++){
+                    addedProductId = productsInBasket.eq(i).data('productid');
+                    if($(this).data('productid') == addedProductId){
+                        $(this).removeClass('added');
+                    }
+                }
+            });
+        }
+
         function getPacksLength(packs){
             var counter = 0;
             for(var p in packs){
@@ -489,7 +523,9 @@ define(
             countAmount: countAmount,
             getPacksLength: getPacksLength,
             setSidebarHeight: setSidebarHeight,
-            openModalAuth: openModalAuth
+            openModalAuth: openModalAuth,
+            markAddedProduct: markAddedProduct,
+            remarkAddedProduct: remarkAddedProduct
         }
     }
 );

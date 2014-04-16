@@ -13,6 +13,8 @@ define(
 
         function cleanBasket(){
             //$('.catalog-order').html('');
+            var commonModule = require('shop-common');
+            commonModule.remarkAddedProduct();
             if($('.tab-pane').length > 1){
                 // если есть другие заказы, то каркас оставляем
                 var currentTabDay = $('.tabs-days').find('.nav li.active');
@@ -36,21 +38,44 @@ define(
                     var currentTab = $('.tab-pane.active');
                     var orderId = currentTab.data('orderid');
                     var currentProductList;
+                    var inConfirm;
 
-                    ($(this).closest('.confirm-order').length) ? currentProductList = $(this).closest('.catalog-confirm').find('li'):
+                    ($(this).closest('.confirm-order').length) ? inConfirm = true : inConfirm = false;
+                    (inConfirm) ? currentProductList = $(this).closest('.catalog-confirm').find('li'):
                         currentProductList = selector.closest('.catalog-order').find('li');
+
                     $(this).closest('li').slideUp(function(){
-                        $(this).detach();
+                        var productId = $(this).data('productid');
+
+                        $('.catalog').find('.added').each(function(){
+                           if ($(this).data('productid') == productId){
+                               $(this).removeClass('added');
+                           }
+                        });
+
                         var commonModule = require('shop-common');
+                        if(inConfirm){
+                            // если на странице конфирма, то обновляем и корзину на главной
+                            $('.tabs-days .tab-content .catalog-order').find('li').each(function(){
+                                if($(this).data('productid') == productId){
+                                    $(this).css('display','none').detach();
+                                }
+                            });
+
+                            $('.itogo-right span').text(commonModule.countAmount(currentTab.find('.catalog-order')));
+                        }
+
+                        $(this).detach();
                         currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order')));
 
-
                         if (currentProductList.length == 1){
-                            //$('.empty-basket').removeClass('hide');
+                            // если это был последний товар в корзине
                             currentTab.closest('.tabs-days').hide().remove();
                             thriftModule.client.deleteOrder(orderId);
                         }
                     });
+
+
                     thriftModule.client.removeOrderLine(orderId,$(this).closest('li').data('productid'));
                 });
             }catch(e){
@@ -80,6 +105,8 @@ define(
                     }else{
                         // если пользователь залогинен
                         var currentProductSelector = $(this).closest('tr');
+                        currentProductSelector.addClass('added');
+
                         var spinnerValue = currentProductSelector.find('td>.ace-spinner').spinner('value');
                         var currentProduct = {
                             id : currentProductSelector.data('productid'),
@@ -178,7 +205,8 @@ define(
         }
 
         function initCancel(selector){
-            selector.find('.btn-cancel').click(function(){
+            selector.find('.btn-cancel').click(function(e){
+                e.preventDefault();
                 var quest = confirm('Вы действительно хотите отменить заказ ?');
                 if (quest){
                     cleanBasket();
@@ -429,7 +457,9 @@ define(
 
             var activeOrder = $('.tabs-days .tab-pane.active');
 
-            activeOrder.find('.btn-cancel').click(function(){
+            activeOrder.find('.btn-cancel').click(function(e){
+                e.preventDefault();
+
                 var quest = confirm('Вы действительно хотите отменить заказ ?');
                 if (quest){
                     cleanBasket();
@@ -646,7 +676,7 @@ define(
 
         function AddSingleProductToBasket(currentProduct,spinnerValue,spinnerDisable){
             try{
-                var productDetails = thriftModule.client.getProductDetails(currentProduct.id);
+                //var productDetails = thriftModule.client.getProductDetails(currentProduct.id);
                 var productHtml = '<li data-productid="'+ currentProduct.id +'">'+
                     '<table>'+
                     '<tr>'+
