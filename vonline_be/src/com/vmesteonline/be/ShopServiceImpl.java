@@ -1075,7 +1075,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		List<VoOrder> orders = (List<VoOrder>) pm.newQuery(VoOrder.class, "shopId==" + order.getShopId() + 
 				" && date == " + order.getDate() +
 				" && user == " + order.getUser().getId() +
-				" && ( status == " + OrderStatus.NEW + " || status == " + OrderStatus.CONFIRMED ).execute();
+				" && ( status == " + OrderStatus.NEW + " || status == " + OrderStatus.CONFIRMED + ")" ).execute();
 		
 		if( null==orders || 0==orders.size()) {
 			throw new InvalidOperation(VoError.GeneralError, "Failed to Calculate Delivery cost. No order Found but at least one must exists!");
@@ -2007,22 +2007,23 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		for (Entry<Long, SortedMap<Double, ProductOrderDescription>> podme : prodDescMap.entrySet()) {
 
 			SortedMap<Double, ProductOrderDescription> podm = podme.getValue();
-
-			ImportElement pIE = new ImportElement(ImExType.EXPORT_TOTAL_PRODUCT, "product_" + podme.getKey() + ".csv", packFields);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			List<List<String>> fl = new ArrayList<List<String>>();
-			List<ProductOrderDescription> podl = new ArrayList<ProductOrderDescription>();
-			podl.addAll(podm.values());
-
-			CSVHelper.writeCSVData(baos, CSVHelper.getFieldsMap(pod, ExchangeFieldType.TOTAL_PROUCT_ID, packFields), podl, fl);
-			baos.close();
-			fbaos.write(baos.toByteArray());
-			ffl.addAll(fl);
-
-			pIE.setFieldsData(VoHelper.matrixToList(fl));
-			pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), userId, false, pm));
-
-			ds.addToData(pIE);
+			if(podm.size()>0){
+				ImportElement pIE = new ImportElement(ImExType.EXPORT_TOTAL_PRODUCT, "product_" + podme.getKey() + ".csv", packFields);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				List<List<String>> fl = new ArrayList<List<String>>();
+				List<ProductOrderDescription> podl = new ArrayList<ProductOrderDescription>();
+				podl.addAll(podm.values());
+	
+				CSVHelper.writeCSVData(baos, CSVHelper.getFieldsMap(pod, ExchangeFieldType.TOTAL_PROUCT_ID, packFields), podl, fl);
+				baos.close();
+				fbaos.write(baos.toByteArray());
+				ffl.addAll(fl);
+	
+				pIE.setFieldsData(VoHelper.matrixToList(fl));
+				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), userId, false, pm));
+	
+				ds.addToData(pIE);
+			}
 		}
 		fbaos.close();
 		fpIE.setFieldsData(VoHelper.matrixToList(ffl));

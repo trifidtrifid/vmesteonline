@@ -100,10 +100,10 @@ public class Defaults {
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
 			clearRubrics(pm);
-			clearGroups(pm);		
+			clearGroups(pm);
 			clearLocations(pm);
 			clearUsers(pm);
-			
+
 			initializeRubrics(pm);
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations();
@@ -120,8 +120,8 @@ public class Defaults {
 		return true;
 	}
 
-//======================================================================================================================
-	private static void deletePersistentAll(PersistenceManager pm, Class pc){
+	// ======================================================================================================================
+	private static void deletePersistentAll(PersistenceManager pm, Class pc) {
 		Extent ext = pm.getExtent(pc);
 		for (Object i : ext) {
 			try {
@@ -131,31 +131,35 @@ public class Defaults {
 			}
 		}
 	}
-	//======================================================================================================================
+
+	// ======================================================================================================================
 
 	private static void clearUsers(PersistenceManager pm) {
-			deletePersistentAll(pm, VoUserTopic.class);
-			deletePersistentAll(pm, VoUserGroup.class);
-			deletePersistentAll(pm, VoTopic.class);
-			deletePersistentAll(pm, VoMessage.class);
-			deletePersistentAll(pm, VoUser.class);
+		deletePersistentAll(pm, VoUserTopic.class);
+		deletePersistentAll(pm, VoUserGroup.class);
+		deletePersistentAll(pm, VoTopic.class);
+		deletePersistentAll(pm, VoMessage.class);
+		deletePersistentAll(pm, VoUser.class);
 	}
-//======================================================================================================================
+
+	// ======================================================================================================================
 
 	private static void clearLocations(PersistenceManager pm) {
-			deletePersistentAll(pm,VoPostalAddress.class);
-			deletePersistentAll(pm,VoBuilding.class);
-			deletePersistentAll(pm,VoStreet.class);
-			deletePersistentAll(pm,VoCity.class);
-			deletePersistentAll(pm,VoCountry.class);
+		deletePersistentAll(pm, VoPostalAddress.class);
+		deletePersistentAll(pm, VoBuilding.class);
+		deletePersistentAll(pm, VoStreet.class);
+		deletePersistentAll(pm, VoCity.class);
+		deletePersistentAll(pm, VoCountry.class);
 	}
-	//======================================================================================================================
+
+	// ======================================================================================================================
 
 	private static void clearGroups(PersistenceManager pm) {
-		deletePersistentAll(pm,VoGroup.class);
-		deletePersistentAll(pm,VoUserGroup.class);	
+		deletePersistentAll(pm, VoGroup.class);
+		deletePersistentAll(pm, VoUserGroup.class);
 	}
-//======================================================================================================================
+
+	// ======================================================================================================================
 	private static void clearRubrics(PersistenceManager pm) {
 		deletePersistentAll(pm, VoRubric.class);
 	}
@@ -172,16 +176,16 @@ public class Defaults {
 			PostalAddress postalAddress;
 
 			try {
-	
+
 				VoCity vocity = pm.getExtent(VoCity.class).iterator().next();
-				VoStreet street = new VoStreet( vocity, "г. Пушкин, Детскосельский бульвар");
-				VoBuilding building = new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0"),pm);
+				VoStreet street = new VoStreet(vocity, "г. Пушкин, Детскосельский бульвар");
+				VoBuilding building = new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0"), pm);
 				VoPostalAddress voPostalAddress = new VoPostalAddress(building, (byte) 1, (byte) 1, (byte) 1,
 						"Угол ул. Железнодоррожная и Детскосельского бульвара");
 				pm.makePersistent(street);
 				pm.makePersistent(building);
 				pm.makePersistent(voPostalAddress);
-				
+
 				postalAddress = voPostalAddress.getPostalAddress(pm);
 
 				VoHelper.forgetAllPersistent(VoShop.class, pm);
@@ -221,16 +225,16 @@ public class Defaults {
 				dates.put(dt - 4 * 86400, DateType.SPECIAL_PRICE);
 			}
 			ssi.setDates(dates);
-			
+
 			Map<Integer, Integer> deliveryByWeightIncrement = new HashMap<Integer, Integer>();
-			deliveryByWeightIncrement.put( 15000, 50); //50 rub each 10 kg
-			ssi.setShopDeliveryByWeightIncrement(shop, deliveryByWeightIncrement );
-			
+			deliveryByWeightIncrement.put(15000, 50); // 50 rub each 10 kg
+			ssi.setShopDeliveryByWeightIncrement(shop, deliveryByWeightIncrement);
+
 			Map<DeliveryType, String> deliveryTypeAddressMasks = new HashMap<DeliveryType, String>();
 			deliveryTypeAddressMasks.put(DeliveryType.SHORT_RANGE, ".*(Пушкин|Павловск|Шушары|Колпино).*");
 			deliveryTypeAddressMasks.put(DeliveryType.LONG_RANGE, ".*");
-			ssi.setShopDeliveryTypeAddressMasks(shop, deliveryTypeAddressMasks ); 
-			
+			ssi.setShopDeliveryTypeAddressMasks(shop, deliveryTypeAddressMasks);
+
 			DataSet ds = new DataSet();
 			ds.date = (int) (System.currentTimeMillis() / 1000L);
 			ds.name = "Producer, Categories, Products";
@@ -252,8 +256,10 @@ public class Defaults {
 		ImportElement importData;
 		String imgURL;
 		/*
-		 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
-		 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
+		 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT,
+		 * PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
+		 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL,
+		 * PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
 		 * PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
 		 */
 		List<ExchangeFieldType> productFieldsOrder = new ArrayList<ExchangeFieldType>();
@@ -393,20 +399,19 @@ public class Defaults {
 			addresses = new VoPostalAddress[] {
 
 					// адресов должно быть минимум три! кол-во юзеров хардкодится выше
-					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 1, (byte) 1, (byte) 5,
-							""),
-					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 2, (byte) 1, (byte) 50,
-							""),
-					new VoPostalAddress(new VoBuilding(street, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544"), pm), (byte) 1, (byte) 11, (byte) 35,
-							""),
-					new VoPostalAddress(new VoBuilding(street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177"), pm), (byte) 1, (byte) 2, (byte) 25,
-							"") };
-			
+					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 1, (byte) 1,
+							(byte) 5, ""),
+					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 2, (byte) 1,
+							(byte) 50, ""),
+					new VoPostalAddress(new VoBuilding(street, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544"), pm), (byte) 1, (byte) 11,
+							(byte) 35, ""),
+					new VoPostalAddress(new VoBuilding(street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177"), pm), (byte) 1, (byte) 2,
+							(byte) 25, "") };
 
 			for (VoPostalAddress pa : addresses) {
 				try {
 					Pair<String, String> position = VoGeocoder.getPosition(pa.getBuilding());
-					pa.getBuilding().setLocation( new BigDecimal(position.first), new BigDecimal(position.second));
+					pa.getBuilding().setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

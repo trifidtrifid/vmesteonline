@@ -305,16 +305,19 @@ public class VoHelper {
 	public static MatrixAsList matrixToList( List < List <String> > matrix ){
 		List<String> list = new ArrayList<String>();
 		
-		for( int row = 0; row < matrix.size(); row ++) {
-			List<String> rowVal = matrix.get(row);
-			for (String val : rowVal) {
-				if( !list.add( null == val ? "" : val)) {
-					throw new RuntimeException( "Implemetation ERROR! Collection must support add method without check of elemnts uniqueless!");
+		if(0!=matrix.size()){
+				for( int row = 0; row < matrix.size(); row ++) {
+			
+				List<String> rowVal = matrix.get(row);
+				for (String val : rowVal) {
+					if( !list.add( null == val ? "" : val)) {
+						throw new RuntimeException( "Implemetation ERROR! Collection must support add method without check of elemnts uniqueless!");
+					}
 				}
 			}
-		}
-		if( list.size() % matrix.size() != 0 ){
-			throw new RuntimeException( "Implemetation ERROR! Matrix must be square!");
+			if( list.size() % matrix.size() != 0 ){
+				throw new RuntimeException( "Implemetation ERROR! Matrix must be square!");
+			}
 		}
 		return new MatrixAsList(matrix.size(), list);
 	}
