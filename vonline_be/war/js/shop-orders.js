@@ -146,10 +146,12 @@ define(
                         orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
                         orderDetails.deliveryTo.flatNo+
                         '</td>'+
+                        '<td class="td9">'+ orderDetails.deliveryCost +'</td>'+
+                        '<td class="td8">'+ orderDetails.weightGramm +'</td>'+
                         '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
                         '<td class="td7">'+
                         '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
-                        '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить в корзину</button>'+
+                        '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить</button>'+
                         '</td>'+
                         '</tr>'+
                         '</tbody>'+
