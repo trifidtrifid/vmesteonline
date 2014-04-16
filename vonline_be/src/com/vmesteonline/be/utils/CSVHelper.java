@@ -217,15 +217,7 @@ public class CSVHelper {
 					Object fieldToWrite = field.get(objectToWrite);
 					if (null != fieldToWrite) {
 						if (fieldToWrite instanceof Number){
-							outStr = fieldToWrite.toString();
-							int delP;
-							if( (delP=outStr.indexOf('.')) !=-1){
-								if( delP<outStr.length()-4 ){ 
-									outStr = outStr.substring(0,delP + 4);
-								}
-								while( outStr.length() > delP+2 && outStr.endsWith("0"))
-									outStr = outStr.substring(0, outStr.length()-2);
-							}
+							outStr = trimFloatPointAsString(fieldToWrite.toString());
 
 						} else if (fieldToWrite instanceof Set || fieldToWrite instanceof List) {
 							for (Object object : listToRead) {
@@ -262,6 +254,18 @@ public class CSVHelper {
 			e.printStackTrace();
 			throw new IOException("Failed to write CSV:" + e.getMessage(), e);
 		}
+	}
+
+	private static String trimFloatPointAsString(String floatPointAsString) {
+		int delP;
+		if( (delP=floatPointAsString.indexOf('.')) !=-1){
+			if( delP<floatPointAsString.length()-4 ){ 
+				floatPointAsString = floatPointAsString.substring(0,delP + 4);
+			}
+			while( floatPointAsString.length() > delP+2 && floatPointAsString.endsWith("0"))
+				floatPointAsString = floatPointAsString.substring(0, floatPointAsString.length()-2);
+		}
+		return floatPointAsString;
 	}
 
 	// ====================================================================================================================
