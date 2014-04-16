@@ -484,27 +484,31 @@ define(
 
                     $('.confirm-order .btn-order').click(function(){
                         var phoneDelivery = $('#phone-delivery');
+                        var alertDeliveryPhone = $('.alert-delivery-phone');
                         if(!phoneDelivery.val()){
 
-                            $('.alert-delivery-phone').text('Введите номер телефона !').show();
-
-                        }else if(!isValidPhone(phoneDelivery.val())){
-
-                            $('.alert-delivery-phone').text('Не корректный номер телефона !').show();
+                            alertDeliveryPhone.text('Введите номер телефона !').show();
 
                         }else if(!$('.input-delivery .delivery-address .error-info').length){
 
-                            $('.alert-delivery-phone').hide();
-
-                            var orderId = $('.tab-pane.active').data('orderid');
-                            thriftModule.client.confirmOrder(orderId);
-
                             var userContacts = thriftModule.userClient.getUserContacts();
                             userContacts.mobilePhone = phoneDelivery.val();
-                            thriftModule.userClient.updateUserContacts(userContacts);
+                            var haveError = 0;
 
-                            alert('Ваш заказ принят !');
-                            cleanBasket();
+                            try{
+                                thriftModule.userClient.updateUserContacts(userContacts);
+                            }catch(e){
+                                haveError = 1;
+                                alertDeliveryPhone.text('Телефон должен быть вида 79219876543, +7(821)1234567 и т.п').show();
+                            }
+
+                            if(!haveError){
+                                alertDeliveryPhone.hide();
+                                var orderId = $('.tab-pane.active').data('orderid');
+                                thriftModule.client.confirmOrder(orderId);
+                                alert('Ваш заказ принят !');
+                                cleanBasket();
+                            }
                         }
                     });
 

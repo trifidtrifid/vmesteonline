@@ -41,44 +41,54 @@ define(
 
             $('.save-changes').click(function(e){
                 e.preventDefault();
-                if ($('#main').hasClass('active')){
 
-                    var newName = $('#edit-name').val();
-                    var newSurname = $('#edit-surname').val();
-                    var newBiz = $('#edit-biz option:selected').text();
-                    var newBirth = $('#date-picker-birthday').val();
-                    var userInfo = thriftModule.userClient.getUserInfo();
+                var errorInfo = $('.error-info');
+                errorInfo.hide();
 
-                    userInfo.firstName = newName;
-                    userInfo.lastName = newSurname;
-                    userInfo.birthday = newBirth;
+                var editEmail = $('#edit-email'),
+                editPhone = $('#edit-phone'),
+                newName = $('#edit-name').val(),
+                newSurname = $('#edit-surname').val(),
+                newEmail = editEmail.val(),
+                newPhone = editPhone.val(),
+                userInfo = thriftModule.userClient.getUserInfo(),
+                userContacts = thriftModule.userClient.getUserContacts(),
+                haveError = 0;
 
-                    thriftModule.userClient.updateUserInfo(userInfo);
-                    //userInfo = thriftModule.userClient.getUserInfo();
+                userInfo.firstName = newName;
+                userInfo.lastName = newSurname;
+                userContacts.mobilePhone = newPhone;
 
-                }else if($('#contacts').hasClass('active')){
-
-                    var newEmail = $('#edit-email').val();
-                    var newPhone = $('#edit-phone').val();
-                    var userContacts = thriftModule.userClient.getUserContacts();
-
+                if (isValidEmail(newEmail)){
                     userContacts.email = newEmail;
-                    userContacts.mobilePhone = newPhone;
-
-                    thriftModule.userClient.updateUserContacts(userContacts);
-
-                }else if($('#interests').hasClass('active')){
-
+                }else{
+                    haveError = 1;
+                    editEmail.find('+.error-info').text('Некорректный email').show();
                 }
 
+                try{
+                    thriftModule.userClient.updateUserContacts(userContacts);
+                }catch(e){
+                    haveError = 1;
+                    editPhone.find('+.error-info').text('Телефон должен быть вида 79219876543, +7(821)1234567 и т.п').show();
+                }
+
+            if(!haveError){
+                thriftModule.userClient.updateUserInfo(userInfo);
                 $('.save-status').addClass('active');
                 function hideSaveStatus(){
                     $('.save-status').removeClass('active')
                 }
                 setTimeout(hideSaveStatus,2000);
-
+            }
 
             });
+
+            function isValidEmail(myEmail) {
+
+                return /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(myEmail);
+
+            }
         }
 
         function SetJSForProfile(){

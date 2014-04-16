@@ -11,7 +11,7 @@
 <%@ page import="com.vmesteonline.be.UserContacts"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
-<%@ page import="com.vmesteonline.be.InvalidOperation"%>    
+<%@ page import="com.vmesteonline.be.InvalidOperation"%>
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
@@ -25,22 +25,8 @@
 	}
 
     UserServiceImpl userService = new UserServiceImpl(request.getSession());
-    AuthServiceImpl authService = new AuthServiceImpl();
-    boolean ifEmailConfirmed = authService.checkIfEmailConfirmed(userService.getUserContacts().email);
-    pageContext.setAttribute("ifEmailConfirmed",ifEmailConfirmed);
-    //out.print(ifEmailConfirmed);
-
-    /*List<Group> Groups = userService.getUserGroups();
-    List<Rubric> Rubrics = userService.getUserRubrics();
-    pageContext.setAttribute("groups",Groups);
-    pageContext.setAttribute("rubrics",Rubrics);
-    pageContext.setAttribute("topics",Topics.topics);
-    MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
-    TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
-    */
 
     ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-    //set<PostalAddress> userAddresses = userService.getUserAddresses();
     pageContext.setAttribute("firstName",ShortUserInfo.firstName);
     pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 
@@ -51,6 +37,7 @@
     UserContacts userContacts = userService.getUserContacts();
     pageContext.setAttribute("userContacts",userContacts);
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -200,50 +187,78 @@
                      <div class="clear"></div>
                 </nav>
                 <div class="dynamic">
-                    <section class="user-descr">
-                        <div class="text-area">
-                            <div class="user-head" >
-                                <c:if test="${!ifEmailConfirmed}">
-                                    <span class="confirm-alert">Аккаунт не подтвержден !</span>
-                                </c:if>
-                                <h1><c:out value="${userInfo.firstName}"/> <c:out value="${userInfo.lastName}"/></h1>
-                                <a class="edit-personal-link" href="#">Редактировать</a>
-                            </div>
-                            <c:if test="${!ifEmailConfirmed}">
-                                <form class="account-no-confirm">
-                                    <input id="confirmCode" type="text" class="form-control" value="Введите код подтверждения" onblur="if(this.value=='') this.value='Введите код подтверждения';" onfocus="if(this.value=='Введите код подтверждения') this.value='';"/>
-                                    <input type="submit" value="Подтвердить" class="btn btn-primary btn-sm no-border useConfirmCode">
-                                    <button class="btn btn-primary btn-sm no-border sendConfirmCode">Получить код повторно</button>
-                                    <div class="confirm-info"></div>
-                                </form>
-                            </c:if>
-                            <div class="user-body">
-                                <%--<div><span>Адрес проживания:</span> <c:out value="${shortProfile.address}"/></div>
-                                <div><span>День рождения:</span> <c:out value="${userInfo.birthday}"/></div>--%>
-                                <h3>Контактная информация</h3>
-                                <div><span>Телефон:</span> <c:out value="${userContacts.mobilePhone}"/></div>
-                                <div><span>Email:</span> <c:out value="${userContacts.email}"/></div>
-                                <h3>Мои адреса</h3>
-                                <div class="user-addresses">
-                                    <%--<div class="user-address-item">
-                                        <span></span>
-                                        <a href="#">редактировать</a>
-                                    </div>--%>
-                                        <div class="form-edit-wrap hide">
-                                            <div class="form-edit">
-                                                <input class="country-delivery" type="text" value="Россия" placeholder="Страна"/>
-                                                <input class="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
-                                                <input class="street-delivery" type="text" placeholder="Улица"/>
-                                                <input class="building-delivery short first" type="text" placeholder="Дом"/>
-                                                <input class="flat-delivery short" type="text" placeholder="Квартира"/>
-                                                <a class="btn btn-primary btn-sm no-border save-new-addr" href="#">Сохранить</a>
-                                                <div class="error-info"></div>
-                                            </div>
-                                        </div>
-                                    <a class="btn btn-primary btn-sm no-border add-user-address" href="#">Добавить</a>
+                   <section class="edit-personal">
+                        <h3>Редактировать профиль</h3>
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#main">Основное</a>
+                                </li>
+
+                                <li class="">
+                                    <a data-toggle="tab" href="#contacts">Контакты</a>
+                                </li>
+
+                                <li class="">
+                                    <a data-toggle="tab" href="#interests">Интересы</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div id="main" class="tab-pane active">
+                                    <div>
+                                        <label for="edit-name">Имя</label>
+                                        <input id="edit-name" value="<c:out value="${userInfo.firstName}"/>" type="text"/>
+                                    </div>
+                                    <div>
+                                        <label for="edit-surname">Фамилия</label>
+                                        <input id="edit-surname" value="<c:out value="${userInfo.lastName}"/>" type="text"/>
+                                    </div>
+                                    <div>
+                                        <label for="edit-biz">Должность</label>
+
+                                        <select class="form-control" id="edit-biz">
+                                            <option value="">&nbsp;</option>
+                                            <option value="AL">Гончар</option>
+                                            <option value="AK">Копьеносец</option>
+                                        </select>
+                                    </div>
+                                    <div>
+
+                                        <label for="date-picker-birthday">Дата рождения</label>
+                                        <input class="form-control date-picker" id="date-picker-birthday" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" value="Выберите дату"/>
+
+                                    </div>
+                                </div>
+
+                                <div id="contacts" class="tab-pane">
+                                    <div>
+                                        <label for="edit-email">E-mail</label>
+                                        <input id="edit-email" value="<c:out value="${userContacts.email}"/>" type="email"/>
+                                        <span class="error-info"></span>
+                                    </div>
+                                    <div>
+                                        <label for="edit-phone">Телефон</label>
+                                        <input id="edit-phone" value="<c:out value="${userContacts.mobilePhone}"/>" type="text"/>
+                                        <span class="error-info"></span>
+                                    </div>
+                                </div>
+
+                                <div id="interests" class="tab-pane">
+                                    <div>
+                                        <label for="edit-about">О себе</label>
+                                        <textarea name="edit-about" id="edit-about" cols="30" rows="5"></textarea>
+                                    </div>
+                                    <div>
+                                        <label for="edit-interests">Интересы</label>
+                                        <textarea name="edit-interests" id="edit-interests" cols="30" rows="5"></textarea>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
+                        <a class="btn btn-primary save-changes no-border" href="#">Сохранить</a>
+                        <span class="save-status">Сохранено</span>
                     </section>
                 </div>
             </div>
