@@ -216,10 +216,18 @@ public class CSVHelper {
 					Field field = value instanceof Field ? (Field) value : objectToWrite.getClass().getField(value.toString());
 					Object fieldToWrite = field.get(objectToWrite);
 					if (null != fieldToWrite) {
-						if (fieldToWrite instanceof Number)
+						if (fieldToWrite instanceof Number){
 							outStr = fieldToWrite.toString();
+							int delP;
+							if( (delP=outStr.indexOf('.')) !=-1){
+								if( delP<outStr.length()-4 ){ 
+									outStr = outStr.substring(0,delP + 4);
+								}
+								while( outStr.length() > delP+2 && outStr.endsWith("0"))
+									outStr = outStr.substring(0, outStr.length()-2);
+							}
 
-						else if (fieldToWrite instanceof Set || fieldToWrite instanceof List) {
+						} else if (fieldToWrite instanceof Set || fieldToWrite instanceof List) {
 							for (Object object : listToRead) {
 								outStr += sd + object;
 							}
