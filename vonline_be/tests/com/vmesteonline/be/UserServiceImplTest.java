@@ -407,4 +407,28 @@ public class UserServiceImplTest extends UserServiceImpl {
 			fail("Exception " + e.getMessage());
 		}
 	}
+	
+	@Test
+	public void testsetUserContacts() {
+		try {
+			Country newCountry = usi.createNewCountry(COUNTRY);
+			City newCity = usi.createNewCity(newCountry.getId(), CITY);
+			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
+			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "17", "53");
+			byte floor;
+			byte flat;
+			byte staircase;
+			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT);
+			
+			usi.updateUserContacts( new UserContacts(UserStatus.CONFIRMED, null, "8(812)123-45-67","a@b.com"));
+			usi.updateUserContacts( new UserContacts(UserStatus.CONFIRMED, newAddress, null,null));
+			usi.updateUserContacts( new UserContacts(UserStatus.CONFIRMED, newAddress, "+7 812 123-45-67"," a@b.com"));
+			
+			
+//			Assert.assertTrue(userHomeAddress.equals(newAddress));
+		} catch (InvalidOperation e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		}
+	}
 }

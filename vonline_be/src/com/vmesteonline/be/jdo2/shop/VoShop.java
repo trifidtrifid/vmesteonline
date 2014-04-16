@@ -128,11 +128,11 @@ public class VoShop {
 	//Defines a text that describes delivery conditions for customer
 	@Persistent
 	@Unindexed
-	private Map<DeliveryType, String> deliveryConditionsText;
+	private Map<Integer, String> deliveryConditionsText;
 	
 	@Persistent
 	@Unindexed
-	private Map<DeliveryType, String> deliveryAddressMasksText;
+	private Map<Integer, String> deliveryAddressMasksText;
 	
 	@Persistent
 	@Unindexed
@@ -148,19 +148,43 @@ public class VoShop {
 	
 	
 	public Map<DeliveryType, String> getDeliveryConditionsText() {
-		return deliveryConditionsText;
+		if(null==deliveryConditionsText) return null;
+		
+		Map<DeliveryType, String> out = new HashMap<DeliveryType, String>();
+		for( Entry<Integer,String> in : deliveryConditionsText.entrySet())
+			out.put( DeliveryType.findByValue(in.getKey()), in.getValue());
+		return out;
 	}
 
 	public void setDeliveryConditionsText(Map<DeliveryType, String> deliveryConditionsText) {
-		this.deliveryConditionsText = deliveryConditionsText;
+		if( null==deliveryConditionsText) 
+			this.deliveryConditionsText = null;
+		else {
+			this.deliveryConditionsText = new HashMap<Integer, String>();
+			for( Entry<DeliveryType, String> in: deliveryConditionsText.entrySet()){
+				this.deliveryConditionsText.put( in.getKey().getValue(), in.getValue());
+			}
+		}
 	}
 
 	public Map<DeliveryType, String> getDeliveryAddressMasksText() {
-		return deliveryAddressMasksText;
+		if(null==deliveryAddressMasksText) return null;
+		
+		Map<DeliveryType, String> out = new HashMap<DeliveryType, String>();
+		for( Entry<Integer,String> in : deliveryAddressMasksText.entrySet())
+			out.put( DeliveryType.findByValue(in.getKey()), in.getValue());
+		return out;
 	}
 
 	public void setDeliveryAddressMasksText(Map<DeliveryType, String> deliveryAddressMasksText) {
-		this.deliveryAddressMasksText = deliveryAddressMasksText;
+		if( null==deliveryAddressMasksText) 
+			this.deliveryAddressMasksText = null;
+		else {
+			this.deliveryAddressMasksText = new HashMap<Integer, String>();
+			for( Entry<DeliveryType, String> in: deliveryAddressMasksText.entrySet()){
+				this.deliveryAddressMasksText.put( in.getKey().getValue(), in.getValue());
+			}
+		}
 	}
 
 	public void setDescr(Text descr) {

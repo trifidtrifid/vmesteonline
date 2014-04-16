@@ -326,5 +326,5 @@ public class VoHelper {
 			matrix.add(new ArrayList<String>( mas.elems.subList(row * rowLen, (row + 1) * rowLen )));
 		}
 		return matrix;
-	} 
+	}
 }
