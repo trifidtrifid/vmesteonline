@@ -1723,6 +1723,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			List<OrderDescription> odl = new ArrayList<OrderDescription>();
 			List<List<String>> fieldsData = new ArrayList<List<String>>();
 
+			long currentUserId = getCurrentUserId(pm);
 			for (VoOrder voOrder : olist) {
 				OrderDescription od = new OrderDescription();
 				od.orderId = voOrder.getId();
@@ -1777,7 +1778,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				lbaos.close();
 				byte[] fileData = lbaos.toByteArray();
 
-				ordersLinesIE.setUrl(StorageHelper.saveImage(fileData, shop.getOwnerId(), false, pm));
+				ordersLinesIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm));
 
 				odl.add(od);
 				ds.addToData(ordersLinesIE);
@@ -1788,7 +1789,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			ordersIE.setFieldsData( VoHelper.matrixToList(fieldsData) );
 			baos.close();
 			byte[] fileData = baos.toByteArray();
-			ordersIE.setUrl(StorageHelper.saveImage(fileData, shop.getOwnerId(), false, pm));
+			ordersIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm));
 
 			ds.addToData(ordersIE);
 
@@ -1874,6 +1875,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			ByteArrayOutputStream fbaos = new ByteArrayOutputStream();
 			List<List<String>> ffl = new ArrayList<List<String>>();
 
+			long currentUserId = getCurrentUserId(pm);
 			for (Entry<Long, SortedMap<Long, ProductOrderDescription>> podme : prodDescMap.entrySet()) {
 
 				SortedMap<Long, ProductOrderDescription> podm = podme.getValue();
@@ -1890,13 +1892,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ffl.addAll(fl);
 
 				pIE.setFieldsData(VoHelper.matrixToList(fl));
-				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), shop.getOwnerId(), false, pm));
+				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), "text/csv", currentUserId, false, pm));
 
 				ds.addToData(pIE);
 			}
 			fbaos.close();
 			fpIE.setFieldsData(VoHelper.matrixToList(ffl));
-			fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), shop.getOwnerId(), false, pm));
+			fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), "text/csv", currentUserId, false, pm));
 
 			ds.addToData(fpIE);
 
@@ -1980,9 +1982,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				}
 			}
 
-			incapsulatePacketData(packFields, ds, prodDescMap, shop.getOwnerId(), pm);
+			incapsulatePacketData(packFields, ds, prodDescMap, getCurrentUserId(pm), pm);
 
 			return ds;
+
+		} catch (InvalidOperation e) {
+			throw new InvalidOperation(VoError.GeneralError, "Failed to export data. " + e.what.name()+":"+ e.why);
 
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.GeneralError, "Failed to export data. " + e.getMessage());
@@ -2020,14 +2025,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ffl.addAll(fl);
 	
 				pIE.setFieldsData(VoHelper.matrixToList(fl));
-				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), userId, false, pm));
+				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), "text/csv", userId, false, pm));
 	
 				ds.addToData(pIE);
 			}
 		}
 		fbaos.close();
 		fpIE.setFieldsData(VoHelper.matrixToList(ffl));
-		fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), userId, false, pm));
+		fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), "text/csv", userId, false, pm));
 
 		ds.addToData(fpIE);
 	}
