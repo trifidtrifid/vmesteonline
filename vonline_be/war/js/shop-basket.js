@@ -218,7 +218,6 @@ define(
 
         function getWeekDay(orderWeekDay){
             var day;
-            console.log(orderWeekDay);
             switch(orderWeekDay){
                 case 0:
                     day = 'ВС';
@@ -511,6 +510,11 @@ define(
 
                 var confirmOrder = $('.confirm-order .catalog-confirm');
                 confirmOrder.html(catalogHtml);
+
+                // на случай если в корзине уже открывали попап, удаляем его, чтобы не
+                // вносить путаницу
+                confirmOrder.find('.modal-body').remove();
+
                 var counter = 0;
 
                 var userPhone = thriftModule.userClient.getUserContacts().mobilePhone;
@@ -519,9 +523,10 @@ define(
                 }
 
                 confirmOrder.find('td .ace-spinner').each(function(){
-                    $(this).after('<input type="text" class="input-mini spinner1 spinner-input form-control no-init" maxlength="3">');
                     var step = $(this).find('.spinner1').data('step');
+                    $(this).after('<input type="text" data-step="'+ step +'" class="input-mini spinner1 spinner-input form-control no-init" maxlength="3">');
                     spinnerModule.InitSpinner($(this).find('+.spinner1'),spinnerValue[counter++],1,step);
+                    if ($(this).find('.spinner1').attr('disabled')) { $(this).find('+.ace-spinner').spinner('disable')}
                     $(this).remove();
                 });
 
@@ -695,7 +700,7 @@ define(
                 AddSingleProductToBasket(currentProduct,currentProduct.qnty);
 
                 thriftModule.client.setOrderLine(orderId,currentProduct.id,currentProduct.qnty,'sdf',packs);
-                if(currentProduct.prepackLine.length != 0 || (packs && commonModule.getPacksLength(packs) > 0)){
+                if(currentProduct.prepackLine.length != 0 || (packs && commonModule.getPacksLength(packs) > 1)){
                     currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]').find('td>.ace-spinner');
                     currentSpinner.spinner('disable');
                 }
@@ -975,7 +980,7 @@ define(
                             deliveryAddress.comment = $('#order-comment').val();
 
                             thriftModule.userClient.addUserAddress(deliveryAddress);
-                            alert(deliveryAddress.street.name);
+                            //alert(deliveryAddress.street.name);
                             thriftModule.client.setOrderDeliveryAddress(orderId,deliveryAddress);
                         }
 

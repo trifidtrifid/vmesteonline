@@ -135,7 +135,7 @@ a {
   display: none;
 }
 .shop-right .tabs-days {
-  margin-top: 110px;
+  margin-top: 82px;
   text-align: center;
 }
 .shop-right .tabs-days .nav span {
@@ -225,6 +225,9 @@ a {
 }
 .shop-right .catalog-order li .unit-name {
   display: none;
+}
+.shop-right .catalog-order .fa-shopping-cart {
+  display: none !important;
 }
 .shop-right .btn-grey {
   margin-left: 186px;
@@ -675,7 +678,6 @@ span
 .modal .modal-footer .ace-spinner,
 .modal .modal-footer .fa {
   display: inline-block;
-  vertical-align: middle;
   margin: 0 17px;
 }
 .modal .modal-footer span {
@@ -689,6 +691,7 @@ span
   display: inline-block;
   vertical-align: middle;
   line-height: 16px;
+  font-size: 12px;
 }
 .modal .modal-footer .prepack-item span {
   font-size: 12px;
@@ -706,10 +709,10 @@ span
 .modal .modal-footer.with-prepack span,
 .modal .modal-footer.with-prepack .ace-spinner,
 .modal .modal-footer.with-prepack .fa {
-  margin: 0 10px;
+  margin: 0 8px;
 }
 .modal .modal-footer.with-prepack .fa-shopping-cart {
-  margin-top: 8px;
+  margin-top: 5px;
 }
 .modal .modal-footer.with-prepack .prepack-item span {
   display: block;
@@ -723,10 +726,11 @@ span
   max-height: 320px;
   overflow: auto;
   line-height: 22px;
+  font-size: 12px;
 }
 .modal .prepack-list {
   float: right;
-  margin-right: 129px;
+  margin-right: 59px;
 }
 .modal .prepack-list .prepack-line {
   margin-top: 5px;
@@ -741,14 +745,18 @@ span
   opacity: 1;
 }
 .modal .error-prepack {
-  position: absolute;
-  bottom: -50px;
-  right: 5px;
-  width: 119px;
-  height: 50px;
+  float: right;
   font-size: 10px;
   line-height: 10px;
+  width: 190px;
+  margin-top: 16px;
 }
+/*position absolute
+bottom -50px
+right 5px
+width 119px
+height 50px
+*/
 .modal-order-end {
   height: 360px;
 }
@@ -1036,6 +1044,9 @@ span
   display: inline-block;
   vertical-align: middle;
   margin-left: 40px;
+}
+.confirm-order .catalog-confirm .fa-shopping-cart {
+  display: none !important;
 }
 .confirm-order .itogo-right {
   float: right;

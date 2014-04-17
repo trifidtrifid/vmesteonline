@@ -336,11 +336,6 @@
             </aside>
             <div class="main-content">
                 <div class="shop-products">
-                    <nav class="breadcrambs">
-                        <a href="#">Главная</a><span> > </span>
-                        <a href="#">Товары</a><span> > </span>
-                        Я здесь
-                    </nav>
                     <form method="post" action="#" class="form-group has-info">
                         <span class="block input-icon input-icon-right">
                             <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>

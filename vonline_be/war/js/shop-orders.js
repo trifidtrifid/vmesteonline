@@ -40,6 +40,7 @@ define(
                         '<td>'+
                         '<input type="text"';
 
+                    var commonModule = require('shop-common');
                     if (orderLines[j].packs && commonModule.getPacksLength(orderLines[j].packs) > 1){
                         ordersProductsHtml += 'disabled="disabled"';
                     }
