@@ -10,11 +10,11 @@ import com.vmesteonline.be.shop.PriceType;
 public class OrderDescription {
 	
 	public long orderId;
-	public int date;
+	public String date;
 	public OrderStatus status;
 	public PriceType priceType;
 	public double tatalCost;
-	public int createdDate;
+	public String createdDate;
 	public DeliveryType deliveryType;
 	public double deliveryCost;
 	public String deliveryAddress;
