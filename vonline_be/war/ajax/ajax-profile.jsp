@@ -251,36 +251,6 @@
     </div>
 
 </div>
-<div class="wysiwig-wrap">
-    <div class="widget-box wysiwig-box">
-        <div class="widget-header widget-header-small  header-color-blue2">
-
-        </div>
-
-        <div class="widget-body">
-            <div class="widget-main no-padding">
-                <div class="wysiwyg-editor"></div>
-            </div>
-
-            <div class="widget-toolbox padding-4 clearfix">
-                <div class="btn-group pull-left">
-                    <button class="btn btn-sm btn-grey btn-cancel">
-                        <i class="icon-remove bigger-125"></i>
-                        Отмена
-                    </button>
-                </div>
-
-                <div class="btn-group pull-right">
-                    <button class="btn btn-sm btn-primary">
-                        <i class="icon-globe bigger-125"></i>
-                        Отправить
-                        <i class="icon-arrow-right icon-on-right bigger-125"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 <!-- общие библиотеки -->

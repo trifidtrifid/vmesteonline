@@ -1,7 +1,7 @@
 define(
     'shop-basket',
-    ['jquery','shop-initThrift','shop-spinner','shop-common','shop-search'],
-    function( $,thriftModule,spinnerModule,commonModule,searchModule ){
+    ['jquery','shop-initThrift','shop-spinner','shop-common','shop-search','shop-orders'],
+    function( $,thriftModule,spinnerModule,commonModule,searchModule,ordersModule ){
 
 
         function isValidPhone(myPhone) {
@@ -535,8 +535,16 @@ define(
                                 alertDeliveryPhone.hide();
                                 var orderId = $('.tab-pane.active').data('orderid');
                                 thriftModule.client.confirmOrder(orderId);
-                                alert('Ваш заказ принят !');
+                                //alert('Ваш заказ принят !');
                                 cleanBasket();
+                                $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
+                                   $('.page').hide();
+                                    $(this).show();
+
+                                    var order = [];
+                                    order[0] = thriftModule.client.getOrder(orderId);
+                                    $('.order-end-info').append(ordersModule.createOrdersHtml(order));
+                                });
                             }
                         }
                     });

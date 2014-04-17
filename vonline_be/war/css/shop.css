@@ -1116,6 +1116,22 @@ span
   font-size: 14px;
   color: #858585;
 }
+/* order End */
+.order-end {
+  padding: 0 20px;
+  text-align: center;
+}
+.order-end h3 {
+  text-align: left;
+}
+.order-end .order-end-info {
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+.order-end .order-end-info .td1,
+.order-end .order-end-info .td7 {
+  display: none;
+}
 /* backoffice */
 .backoffice .main-content {
   margin-left: 200px;

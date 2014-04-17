@@ -382,7 +382,15 @@
                                 <tr data-productid="${product.id}">
                                     <td>
                                         <a href="#" class="product-link">
-                                            <img src="${product.imageURL}" alt="картинка"/>
+                                            <c:choose>
+                                                <c:when test="${product.imageURL != null}">
+                                                    <img src="${product.imageURL}" alt="картинка1"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <img src="i/no-photo.png" alt="нет фото"/>
+                                                </c:otherwise>
+                                            </c:choose>
+
                                             <span>
                                             <span>${product.name}</span>
                                             ${product.shortDescr}
@@ -435,6 +443,7 @@
         </div>
             <div class="page shop-confirm"></div>
             <div class="page shop-profile"></div>
+            <div class="page shop-orderEnd"></div>
             <div class="page shop-editPersonal"></div>
     </div>
 
