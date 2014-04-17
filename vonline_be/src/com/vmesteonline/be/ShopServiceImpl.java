@@ -1075,7 +1075,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		List<VoOrder> orders = (List<VoOrder>) pm.newQuery(VoOrder.class, "shopId==" + order.getShopId() + 
 				" && date == " + order.getDate() +
 				" && user == " + order.getUser().getId() +
-				" && ( status == " + OrderStatus.NEW + " || status == " + OrderStatus.CONFIRMED + ")" ).execute();
+				" && ( status == '" + OrderStatus.NEW + "' || status == '" + OrderStatus.CONFIRMED + "')" ).execute();
 		
 		if( null==orders || 0==orders.size()) {
 			throw new InvalidOperation(VoError.GeneralError, "Failed to Calculate Delivery cost. No order Found but at least one must exists!");
