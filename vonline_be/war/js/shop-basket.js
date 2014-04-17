@@ -217,7 +217,6 @@ define(
         }
 
         function getWeekDay(orderWeekDay){
-            alert('1');
             var day;
             console.log(orderWeekDay);
             switch(orderWeekDay){
@@ -243,7 +242,6 @@ define(
                     day = 'СБ';
                     break;
             }
-            alert(day);
             return day;
         }
 
@@ -471,8 +469,8 @@ define(
 
                 var quest = confirm('Вы действительно хотите отменить заказ ?');
                 if (quest){
-                    cleanBasket();
                     var orderId = $('.tab-pane.active').data('orderid');
+                    cleanBasket();
                     thriftModule.client.cancelOrder(orderId);
                 }
             });
@@ -1015,6 +1013,7 @@ define(
             addTabToBasketHtml: addTabToBasketHtml,
             GoToConfirm: GoToConfirm,
             getWeekDay: getWeekDay,
+            getNextDate: getNextDate,
             callbacks: callbacks,
             selectorForCallbacks: selectorForCallbacks
         }

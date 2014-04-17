@@ -1,7 +1,7 @@
 define(
     'shop-search',
-    ['jquery','jquery_ui','shop-initThrift','shop-basket','initDatepicker','shop-orders','shop-category','shop-common','shop-spinner'],
-    function( $,jquery_ui,thriftModule,basketModule,datepickerModule,ordersModule,categoryModule,commonModule,spinnerModule ){
+    ['jquery','jquery_ui','shop-initThrift','shop-basket','shop-orders','shop-category','shop-common','shop-spinner'],
+    function( $,jquery_ui,thriftModule,basketModule,ordersModule,categoryModule,commonModule,spinnerModule ){
 
         try{
             $.widget( "custom.catcomplete", $.ui.autocomplete, {
@@ -38,34 +38,50 @@ define(
                 delay: 0,
                 source: dataSearch,
                 select: function(event,ui){
-                    //event.preventDefault();
+                    var basketModule = require('shop-basket');
+                    var commonModule = require('shop-common');
+
+                    if (!globalUserAuth){
+                        // если пользователь не залогинен
+                        basketModule.selectorForCallbacks = $(this);
+                        basketModule.callbacks.add(basketModule.BasketTrigger);
+                        //$('.modal-auth').modal();
+                        commonModule.openModalAuth();
+                    }else{
+
                     var productsListPart = thriftModule.client.getProducts(0,10,0);
                     var products = productsListPart.products;
                     var productsLength = products.length;
                     var packs = [];
+
                     for(var i = 0; i < productsLength; i++){
+
                         if(products[i].name == ui.item['label']){
+
                             products[i].qnty = products[i].minClientPack;
                             products[i].prepackLine = [];
                             var productDetails = thriftModule.client.getProductDetails(products[i].id);
+
                             if(productDetails.prepackRequired){
                                 packs[products[i].minClientPack] = 1;
                             }
-                            if($('.tabs-days').length > 0){
-                                // если в корзине уже что-то есть
-                                basketModule.AddProductToBasketCommon(products[i],packs);
-                            }else{
-                                // если первый товар в корзине
-                                basketModule.flagFromBasketClick = 1;
-                                datepickerModule.dPicker.datepicker('setVarFreeDays',products[i], products[i].qnty,0,packs,basketModule.AddSingleProductToBasket,ordersModule.AddOrdersToBasket,basketModule.AddProductToBasketCommon);
-                                datepickerModule.dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');
+
+                            //var basketModule = require('shop-basket');
+                            if ($('.tabs-days').length == 0){
+                                // если это первый товар в корзине
+                                var nextDate = basketModule.getNextDate();
+                                var nextDateStr = new Date(nextDate*1000);
+                                var orderId = thriftModule.client.createOrder(nextDate,'asd',0);
+                                basketModule.addTabToBasketHtml(nextDateStr,orderId);
                             }
+
+                            basketModule.AddProductToBasketCommon(products[i],packs);
+
+                            commonModule.markAddedProduct();
                         }
                     }
+                    }
 
-                    /*for (var p in ui.item){
-                     alert(p+" "+ui.item[p]);
-                     }*/
                 }
             });
 
@@ -86,7 +102,9 @@ define(
 
                 /* подключение событий */
                 spinnerModule.initProductsSpinner();
+                var commonModule = require('shop-common');
                 commonModule.InitProductDetailPopup($('.product-link'));
+                var basketModule = require('shop-basket');
                 basketModule.InitAddToBasket($('.fa-shopping-cart'));
                 categoryModule.InitClickOnCategory();
             });
