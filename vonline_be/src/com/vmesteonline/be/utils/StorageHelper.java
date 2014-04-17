@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
+import javax.mail.internet.ContentType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,6 +61,10 @@ public class StorageHelper {
 	 * @return
 	 */
 	public static String saveImage(byte[] urlOrContent, long ownerId, boolean isPublic, PersistenceManager _pm) throws IOException {
+		return saveImage(urlOrContent, null, ownerId, isPublic, _pm);
+		
+	}
+	public static String saveImage(byte[] urlOrContent, String _contentType, long ownerId, boolean isPublic, PersistenceManager _pm) throws IOException {
 
 		if (null == urlOrContent || 0 == urlOrContent.length) {
 			throw new IOException("Invalid content. Failed to store null or empty content");
@@ -67,7 +72,7 @@ public class StorageHelper {
 		} else {
 			String fname;
 			InputStream is = null;
-			String contentType = "binary/stream";
+			String contentType = null==_contentType ? "binary/stream" : _contentType;
 
 			try { // try to create URL from content
 				URL url = new URL(new String(urlOrContent));
@@ -205,7 +210,8 @@ public class StorageHelper {
 			outputChannel = gcsService.createOrReplace(vfar.getFileName(), GcsFileOptions.getDefaultInstance());
 			streamCopy(is, Channels.newOutputStream(outputChannel));
 			int liop; // append with '.bin' extension if no extension is set
-			String url = getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? "bin" : fileName.substring(liop + 1));
+			String url = getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? 
+					(contentType.equals("binary/stream") ? "dat" : new ContentType(contentType).getSubType()) : fileName.substring(liop + 1));
 			logger.log(Level.FINEST, "File '" + fileName + "' stored with GSNAme:" + vfar.getFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
 			return url;
 		} catch (Exception e) {

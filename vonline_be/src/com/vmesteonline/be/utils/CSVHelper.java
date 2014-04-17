@@ -174,14 +174,17 @@ public class CSVHelper {
 	// =====================================================================================================================
 
 	public static <T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listToRead, List<List<String>> fieldsToFill)
-			throws IOException {
+			throws IOException, InvalidOperation {
 		writeCSVData(os, fieldsMap, listToRead, fieldsToFill, null, null, null);
 	}
 
 	// ====================================================================================================================
 	public static <T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listToRead, List<List<String>> fieldsToFill,
-			String fieldDelim, String setDelim, String avpDelim) throws IOException {
+			String fieldDelim, String setDelim, String avpDelim) throws IOException, InvalidOperation {
 
+		if(fieldsMap.size()==0)
+			throw new InvalidOperation(VoError.IncorrectParametrs, "At least one field must be selected to produce report");
+		
 		String fd = null == fieldDelim ? ";" : fieldDelim;
 		String sd = null == setDelim ? "|" : setDelim;
 		String avpd = null == avpDelim ? ":" : avpDelim;

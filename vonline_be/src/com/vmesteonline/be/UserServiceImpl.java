@@ -476,8 +476,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			// TODO check that there is no country with the same name
 			VoCountry vco = pm.getObjectById(VoCountry.class, countryId);
 			Query q = pm.newQuery(VoCity.class);
-			q.setFilter("country == " + countryId);
-			q.setFilter("name == '" + name + "'");
+			q.setFilter("country == " + countryId + " &&  name == '" + name + "'");
 			List<VoCity> cities = (List<VoCity>) q.execute();
 			if (cities.size() > 0) {
 				logger.info("City was NOT created. The same City was registered. Return an old one: " + cities.get(0));
@@ -505,8 +504,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoCity vc = null;
 			vc = pm.getObjectById(VoCity.class, cityId);
 			Query q = pm.newQuery(VoStreet.class);
-			q.setFilter("city == " + cityId);
-			q.setFilter("name == '" + name + "'");
+			q.setFilter("city == " + cityId + " && name == '" + name + "'");
 			List<VoStreet> streets = (List<VoStreet>) q.execute();
 			if (streets.size() > 0) {
 				logger.info("Street was NOT created. The same sreet was registered. Return an old one: " + streets.get(0));
@@ -533,8 +531,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			// TODO check that there is no building with the same name
 			VoStreet vs = pm.getObjectById(VoStreet.class, streetId);
 			Query q = pm.newQuery(VoBuilding.class);
-			q.setFilter("streetId == " + streetId);
-			q.setFilter("fullNo == '" + fullNo + "'");
+			q.setFilter("streetId == " + streetId +" &&  fullNo == '" + fullNo + "'");
 			List<VoBuilding> buildings = (List<VoBuilding>) q.execute();
 			if (buildings.size() > 0) {
 				logger.info("VoBuilding was NOT created. The same VoBuilding was registered. Return an old one: " + buildings.get(0));
