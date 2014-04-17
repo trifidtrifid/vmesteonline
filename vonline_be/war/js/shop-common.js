@@ -5,6 +5,7 @@ define(
 
         //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 
+        var noPhotoPic = "i/no-photo.png";
         // возвращает cookie с именем name, если есть, если нет, то undefined
         function getCookie(name) {
             try{
@@ -529,6 +530,7 @@ define(
         return{
             getCookie: getCookie,
             setCookie: setCookie,
+            noPhotoPic: noPhotoPic,
             initBasketInReload: initBasketInReload,
             InitProductDetailPopup: InitProductDetailPopup,
             countAmount: countAmount,

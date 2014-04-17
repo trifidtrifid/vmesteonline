@@ -27,10 +27,13 @@ define(
                 productDetails = thriftModule.client.getProductDetails(productsList[i].id);
                 var unitName = "";
                 if (productsList[i].unitName){unitName = productsList[i].unitName;}
+                var myPic;
+                var commonModule = require('shop-common');
+                (productsList[i].imageURL) ? myPic = productsList[i].imageURL : myPic = commonModule.noPhotoPic;
                 productsHtml += '<tr data-productid="'+ productsList[i].id +'">'+
                     '<td>'+
                     '<a href="#" class="product-link">'+
-                    '<img src="'+ productsList[i].imageURL +'" alt="картинка"/>'+
+                    '<img src="'+ myPic +'" alt="картинка"/>'+
                     '<span><span>'+ productsList[i].name +'</span>'+ productsList[i].shortDescr +'</span>'+
                     '</a>'+
                     '<div class="modal">'+

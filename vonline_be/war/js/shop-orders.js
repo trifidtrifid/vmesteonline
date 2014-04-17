@@ -1,7 +1,7 @@
 define(
     'shop-orders',
-    ['jquery','shop-initThrift','shop-basket','shop-common','shop-spinner','initDatepicker'],
-    function( $,thriftModule,basketModule,commonModule,spinnerModule, datepickerModule ){
+    ['jquery','shop-initThrift','shop-basket','shop-common','shop-spinner'],
+    function( $,thriftModule,basketModule,commonModule,spinnerModule ){
 
         function createOrdersProductHtml(orderDetails){
             try{
@@ -23,11 +23,14 @@ define(
                     //var productDetails = thriftModule.client.getProductDetails(orderLines[j].product.id);
                     //var imagesSet = productDetails.imagesURLset;
                     var unitName = "";
+                    var myPic;
+                    commonModule = require('shop-common');
+                    (orderLines[j].product.imageURL) ? myPic = orderLines[j].product.imageURL : myPic = commonModule.noPhotoPic;
                     if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
                     ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
                         '<td>'+
                         '<a href="#" class="product-link">'+
-                        '<img src="'+ orderLines[j].product.imageURL +'" alt="картинка"/>'+
+                        '<img src="'+ myPic +'" alt="картинка"/>'+
                         '<span>'+
                         '<span>'+orderLines[j].product.name+'</span>'+
                         orderLines[j].product.shortDescr +
@@ -293,9 +296,9 @@ define(
                         orderId : $(this).closest('.order-item').data('orderid')
                     };
                     if ($('.additionally-order').hasClass('hide')){
-                        basketModule.flagFromBasketClick = 1;
+                        /*basketModule.flagFromBasketClick = 1;
                         datepickerModule.dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,basketModule.AddSingleProductToBasket,AddOrdersToBasket,basketModule.AddProductToBasketCommon);
-                        datepickerModule.dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');
+                        datepickerModule.dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');*/
                     }else{
                         AddOrdersToBasket(orderData);
                     }

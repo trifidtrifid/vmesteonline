@@ -804,12 +804,13 @@ define(
 
                 if ($(this).hasClass('courier-delivery')){
                     //если доставка курьером
-                    thriftModule.client.setOrderDeliveryType(orderId,2);
 
                     var homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
                     var userAddresses = thriftModule.userClient.getUserAddresses();
                     var myAddress;
                     (homeAddress) ? myAddress = homeAddress : myAddress = userAddresses[0];
+
+                    thriftModule.client.setOrderDeliveryType(orderId,2,myAddress);
 
                     if(myAddress){
                         $('.input-delivery .delivery-address').text(myAddress.country.name + ", " + myAddress.city.name + ", "
@@ -836,10 +837,7 @@ define(
 
                     itogoRight.text(commonModule.countAmount($('.confirm-order')));
 
-                    orderDetails = thriftModule.client.getOrderDetails(orderId);
-                    if (orderDetails.deliveryCost){
-                        $('.delivery-cost').text(orderDetails.deliveryCost);
-                    }
+                    setDeliveryCost(orderId);
 
                     $('.delivery-dropdown').show();
 
@@ -872,8 +870,11 @@ define(
                             $('.delivery-dropdown .dropdown-menu a:not(".delivery-add-address")').click(function(e){
                                 e.preventDefault();
                                 var ind = $(this).parent().index();
+
+                                setDeliveryCost(orderId);
+
                                 writeAddress(userAddresses[ind]);
-                                thriftModule.client.setOrderDeliveryAddress(orderId,userAddresses[ind]);
+                                thriftModule.client.setOrderDeliveryType(orderId,2,userAddresses[ind]);
                             });
 
                     }
@@ -902,6 +903,7 @@ define(
                             address.building.fullNo = $('.building-delivery').val();
                             address.flatNo = $('.flat-delivery').val();
                             writeAddress(address);
+                            setDeliveryCost(orderId);
                             $('.address-input').slideUp();
 
                             // добавление в базу нового города, страны, улицы и т.д (если курьером)
@@ -981,7 +983,7 @@ define(
 
                             thriftModule.userClient.addUserAddress(deliveryAddress);
                             //alert(deliveryAddress.street.name);
-                            thriftModule.client.setOrderDeliveryAddress(orderId,deliveryAddress);
+                            thriftModule.client.setOrderDeliveryType(orderId,2,deliveryAddress);
                         }
 
                     });
@@ -998,12 +1000,21 @@ define(
                     triggerDelivery = 1;*/
                 }else{
                     thriftModule.client.setOrderDeliveryType(orderId,1);
+
                     //$(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
                     SetShopAddress(shopAddress);
                     $('.delivery-dropdown').hide();
                     if (triggerDelivery){itogoRight.text(commonModule.countAmount($('.confirm-order'))); triggerDelivery = 0;}
                 }
             });
+        }
+
+        var counter = 0;
+        function setDeliveryCost(orderId){
+            var orderDetails = thriftModule.client.getOrderDetails(orderId);
+            if (orderDetails.deliveryCost){
+                $('.delivery-cost').text(orderDetails.deliveryCost+" "+counter++);
+            }
         }
 
 
