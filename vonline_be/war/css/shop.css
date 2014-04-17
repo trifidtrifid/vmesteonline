@@ -497,7 +497,7 @@ span
   width: 19%;
 }
 .orders-tbl .td3 {
-  width: 10%;
+  width: 7%;
 }
 .orders-tbl .td4 {
   width: 12%;
@@ -509,7 +509,7 @@ span
   width: 7%;
 }
 .orders-tbl .td7 {
-  width: 16%;
+  width: 19%;
   border: 0;
 }
 .orders-tbl .td8 {
@@ -539,7 +539,7 @@ span
   width: 19%;
 }
 .orders-tbl-wrap .td3 {
-  width: 10%;
+  width: 7%;
 }
 .orders-tbl-wrap .td4 {
   width: 12%;
@@ -551,7 +551,7 @@ span
   width: 7%;
 }
 .orders-tbl-wrap .td7 {
-  width: 16%;
+  width: 19%;
   border: 1px solid #fff;
   background: #fff;
 }

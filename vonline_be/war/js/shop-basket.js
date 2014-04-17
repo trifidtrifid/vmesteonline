@@ -184,7 +184,7 @@ define(
                              // если это первый товар в корзине
                                 var nextDate = getNextDate();
                                 var nextDateStr = new Date(nextDate*1000);
-                                var orderId = thriftModule.client.createOrder(nextDate,'asd',0);
+                                orderId = thriftModule.client.createOrder(nextDate,'asd',0);
                                 addTabToBasketHtml(nextDateStr,orderId);
                              }
                             //else{
@@ -216,6 +216,37 @@ define(
             });
         }
 
+        function getWeekDay(orderWeekDay){
+            alert('1');
+            var day;
+            console.log(orderWeekDay);
+            switch(orderWeekDay){
+                case 0:
+                    day = 'ВС';
+                    break;
+                case 1:
+                    day = 'ПН';
+                    break;
+                case 2:
+                    day = 'ВТ';
+                    break;
+                case 3:
+                    day = 'СР';
+                    break;
+                case 4:
+                    day = 'ЧТ';
+                    break;
+                case 5:
+                    day = 'ПТ';
+                    break;
+                case 6:
+                    day = 'СБ';
+                    break;
+            }
+            alert(day);
+            return day;
+        }
+
         function addTabToBasketHtml(nextDateStr,orderId){
 
             var orderDay = nextDateStr.getDate();
@@ -225,29 +256,7 @@ define(
             orderDay = (orderDay < 10)? "0" + orderDay: orderDay;
             orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
 
-            switch(orderWeekDay){
-                case 0:
-                    orderWeekDay = 'ВС';
-                    break;
-                case 1:
-                    orderWeekDay = 'ПН';
-                    break;
-                case 2:
-                    orderWeekDay = 'ВТ';
-                    break;
-                case 3:
-                    orderWeekDay = 'СР';
-                    break;
-                case 4:
-                    orderWeekDay = 'ЧТ';
-                    break;
-                case 5:
-                    orderWeekDay = 'ПТ';
-                    break;
-                case 6:
-                    orderWeekDay = 'СБ';
-                    break;
-            }
+            orderWeekDay = getWeekDay(orderWeekDay);
 
             if($('.tabs-days').length == 0){
                 // если это первый заказ в корзине
@@ -482,82 +491,95 @@ define(
                 });
 
                 $('.page').hide();
-                $('.shop-confirm').load('ajax/ajax-confirmOrder.html .dynamic',function(){
-                    $('.order-date span').text(orderDay+'.'+orderMonth+' ('+ orderWeekDay +')');
-                    $('.itogo-right span').text(amount);
 
-                    var confirmOrder = $('.confirm-order .catalog-confirm');
-                    confirmOrder.html(catalogHtml);
-                    var counter = 0;
+                var date = {
+                    orderDay: orderDay,
+                    orderMonth: orderMonth,
+                    orderWeekDay: orderWeekDay
+                };
 
-                    var userPhone = thriftModule.userClient.getUserContacts().mobilePhone;
-                    if(userPhone){
-                        $('#phone-delivery').val(userPhone);
-                    }
-
-                    confirmOrder.find('td .ace-spinner').each(function(){
-                        $(this).after('<input type="text" class="input-mini spinner1 spinner-input form-control no-init" maxlength="3">');
-                        var step = $(this).find('.spinner1').data('step');
-                        spinnerModule.InitSpinner($(this).find('+.spinner1'),spinnerValue[counter++],1,step);
-                        $(this).remove();
-                    });
-
-                    InitDeleteProduct(confirmOrder.find('.delete-product'));
-                    commonModule.InitProductDetailPopup($('.product-link'));
-
-                    var shops = thriftModule.client.getShops();
-                    var shop = thriftModule.client.getShop(shops[0].id);
-                    var shopAddress = shop.address;
-                    SetShopAddress(shopAddress);
-                    initRadioBtnClick(shopAddress);
-
-                    $('.confirm-order .btn-order').click(function(){
-                        var phoneDelivery = $('#phone-delivery');
-                        var alertDeliveryPhone = $('.alert-delivery-phone');
-                        if(!phoneDelivery.val()){
-
-                            alertDeliveryPhone.text('Введите номер телефона !').show();
-
-                        }else if(!$('.input-delivery .delivery-address .error-info').length){
-
-                            var userContacts = thriftModule.userClient.getUserContacts();
-                            userContacts.mobilePhone = phoneDelivery.val();
-                            var haveError = 0;
-
-                            try{
-                                thriftModule.userClient.updateUserContacts(userContacts);
-                            }catch(e){
-                                haveError = 1;
-                                alertDeliveryPhone.text('Телефон должен быть вида 79219876543, +7(821)1234567 и т.п').show();
-                            }
-
-                            if(!haveError){
-                                alertDeliveryPhone.hide();
-                                var orderId = $('.tab-pane.active').data('orderid');
-                                thriftModule.client.confirmOrder(orderId);
-                                //alert('Ваш заказ принят !');
-                                cleanBasket();
-                                $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
-                                   $('.page').hide();
-                                    $(this).show();
-
-                                    var order = [];
-                                    order[0] = thriftModule.client.getOrder(orderId);
-                                    $('.order-end-info').append(ordersModule.createOrdersHtml(order));
-                                });
-                            }
-                        }
-                    });
-
-                    $('.confirm-order .btn-cancel').click(function(){
-                        $('.back-to-shop').trigger('click');
-                    });
-
-                }).show();
+                GoToConfirm(catalogHtml,amount,spinnerValue,date);
 
             });
+        }
 
+        function GoToConfirm(catalogHtml,amount,spinnerValue,date){
 
+            $('.shop-confirm').load('ajax/ajax-confirmOrder.html .dynamic',function(){
+                var myDate;
+                (typeof date == 'string') ? myDate = date : myDate = date.orderDay+'.'+date.orderMonth+' ('+ date.orderWeekDay +')';
+                $('.order-date span').text(myDate);
+                $('.itogo-right span').text(amount);
+
+                var confirmOrder = $('.confirm-order .catalog-confirm');
+                confirmOrder.html(catalogHtml);
+                var counter = 0;
+
+                var userPhone = thriftModule.userClient.getUserContacts().mobilePhone;
+                if(userPhone){
+                    $('#phone-delivery').val(userPhone);
+                }
+
+                confirmOrder.find('td .ace-spinner').each(function(){
+                    $(this).after('<input type="text" class="input-mini spinner1 spinner-input form-control no-init" maxlength="3">');
+                    var step = $(this).find('.spinner1').data('step');
+                    spinnerModule.InitSpinner($(this).find('+.spinner1'),spinnerValue[counter++],1,step);
+                    $(this).remove();
+                });
+
+                InitDeleteProduct(confirmOrder.find('.delete-product'));
+                var commonModule = require('shop-common');
+                commonModule.InitProductDetailPopup($('.product-link'));
+
+                var shops = thriftModule.client.getShops();
+                var shop = thriftModule.client.getShop(shops[0].id);
+                var shopAddress = shop.address;
+                SetShopAddress(shopAddress);
+                initRadioBtnClick(shopAddress);
+
+                $('.confirm-order .btn-order').click(function(){
+                    var phoneDelivery = $('#phone-delivery');
+                    var alertDeliveryPhone = $('.alert-delivery-phone');
+                    if(!phoneDelivery.val()){
+
+                        alertDeliveryPhone.text('Введите номер телефона !').show();
+
+                    }else if(!$('.input-delivery .delivery-address .error-info').length){
+
+                        var userContacts = thriftModule.userClient.getUserContacts();
+                        userContacts.mobilePhone = phoneDelivery.val();
+                        var haveError = 0;
+
+                        try{
+                            thriftModule.userClient.updateUserContacts(userContacts);
+                        }catch(e){
+                            haveError = 1;
+                            alertDeliveryPhone.text('Телефон должен быть вида 79219876543, +7(821)1234567 и т.п').show();
+                        }
+
+                        if(!haveError){
+                            alertDeliveryPhone.hide();
+                            var orderId = $('.tab-pane.active').data('orderid');
+                            thriftModule.client.confirmOrder(orderId);
+                            //alert('Ваш заказ принят !');
+                            cleanBasket();
+                            $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
+                                $('.page').hide();
+                                $(this).show();
+
+                                var order = [];
+                                order[0] = thriftModule.client.getOrder(orderId);
+                                $('.order-end-info').append(ordersModule.createOrdersHtml(order));
+                            });
+                        }
+                    }
+                });
+
+                $('.confirm-order .btn-cancel').click(function(){
+                    $('.back-to-shop').trigger('click');
+                });
+
+            }).show();
         }
 
         function SetShopAddress(shopAddress){
@@ -991,6 +1013,8 @@ define(
             BasketTrigger: BasketTrigger,
             AddSingleProductToBasket: AddSingleProductToBasket,
             addTabToBasketHtml: addTabToBasketHtml,
+            GoToConfirm: GoToConfirm,
+            getWeekDay: getWeekDay,
             callbacks: callbacks,
             selectorForCallbacks: selectorForCallbacks
         }

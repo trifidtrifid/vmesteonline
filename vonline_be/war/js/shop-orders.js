@@ -131,13 +131,16 @@ define(
                     var orderMonth = tempDate.getMonth()+1;
                     orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
 
+                    var basketModule = require('shop-basket');
+                    var weekDay = basketModule.getWeekDay(tempDate.getDay());
+
                     ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
                         '<table class="orders-tbl">'+
                         '<tbody>'+
                         '<tr>'+
                         '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
                         '<td class="td2">'+i+'. Заказ '+orders[i].id+'</td>'+
-                        '<td class="td3">'+ orderDay +"."+orderMonth+"."+tempDate.getFullYear()+ '</td>'+
+                        '<td class="td3">'+ orderDay +"."+orderMonth+"<br> ("+weekDay+ ')</td>'+
                         '<td class="td4">'+
                         '<div class="order-status">'+orderStatus +'</div>'+
                         '<div>'+ orderLinks +'</div>'+
@@ -324,14 +327,46 @@ define(
                     AddOrdersToBasket(orderData);
                 }
             });
+
             $('.order-confirm').click(function(e){
                 e.preventDefault();
 
-                thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
+                var currentOrder = $(this).closest('.order-item');
+                var orderId = currentOrder.data('orderid');
+
+                var amount = currentOrder.find('.td6').text();
+
+                if (currentOrder.find('.catalog').length == 0){
+                    var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                    currentOrder.find('.order-products').append(createOrdersProductHtml(orderDetails));
+                }
+
+                var catalogHtml = "";
+                var spinnerValue = [], spinnerStep = [], counter = 0;
+
+                $('.tabs-days .tab-pane').each(function(){
+                   if ($(this).data('orderid') == orderId){
+                       catalogHtml = $(this).find('.catalog-order').html();
+
+                       $(this).find('.catalog-order td .spinner1').each(function(){
+                           spinnerValue[counter] = $(this).closest('.ace-spinner').spinner('value');
+                           spinnerStep[counter++] = $(this).data('step');
+                       });
+                   }
+                });
+
+                $('.page').hide();
+
+                var date = currentOrder.find('.td3').text();
+
+                var basketModule = require('shop-basket');
+                basketModule.GoToConfirm(catalogHtml,amount,spinnerValue,date);
+
+                /*thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
                 thriftModule.client.confirmOrder();
                 alert('Заказ подтвержден !');
                 $(this).closest('td').find('.order-status').text('Подтвержден');
-                $(this).parent().remove();
+                $(this).parent().remove();*/
 
             });
         }
