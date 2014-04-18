@@ -62,8 +62,11 @@ define(
             var currentOrdersLength = currentOrders.length;
             for(var i = 0; i < currentOrdersLength; i++){
                 var orderid = currentOrders[i].id;
+
                 basketModule.addTabToBasketHtml(new Date(currentOrders[i].date*1000),orderid);
                 var orderDetails = thriftModule.client.getOrderDetails(orderid);
+                $('.tab-pane.active').find('.weight span').text(orderDetails.weightGramm);
+
                 var orderLines = orderDetails.odrerLines;
                 var orderLinesLength = orderDetails.odrerLines.length;
                 for(var j = 0; j < orderLinesLength; j++){
@@ -82,7 +85,7 @@ define(
             }
 
             markAddedProduct();
-            $('.tab-pane.active').find('.weight span').text(orderDetails.weightGramm);
+
 
             /*var catalogOrderLi = $('.catalog-order li');
             if(catalogOrderLi.length > 0){

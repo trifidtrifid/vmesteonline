@@ -272,8 +272,8 @@ define(
                     '<div class="tab-content">'+
                     '<div id="day'+orderDay+orderMonth+'" data-orderid="'+ orderId +'" class="tab-pane active">'+
                     '<div class="basket-head">'+
-                        '<div class="weight">Вес: <span></span></div>'+
-                        '<div class="amount">Итого: <span></span></div>'+
+                        '<div class="weight">Вес: <span></span> гр.</div>'+
+                        '<div class="amount">Итого: <span></span> руб.</div>'+
                     '</div>'+
                     '<ul class="catalog-order">'+
                     '</ul>'+
@@ -720,6 +720,9 @@ define(
         function AddSingleProductToBasket(currentProduct,spinnerValue,spinnerDisable){
             try{
                 //var productDetails = thriftModule.client.getProductDetails(currentProduct.id);
+                var myPic;
+                var commonModule = require('shop-common');
+                (currentProduct.imageURL) ? myPic = currentProduct.imageURL : myPic = commonModule.noPhotoPic;
 
                 var productHtml = '<li data-productid="'+ currentProduct.id +'">'+
                     '<table>'+
@@ -731,7 +734,7 @@ define(
                     '</tr>'+
                     '</table>'+
                     '<a href="#" class="product-link no-init">'+
-                    '<span><img src="'+ currentProduct.imageURL +'" alt="картинка"/></span>'+
+                    '<span><img src="'+ myPic +'" alt="картинка"/></span>'+
                     '<div class="product-right-descr">'+
                     currentProduct.name+
                     '</div>'+
@@ -746,7 +749,6 @@ define(
             var currentTab = $('.tab-pane.active');
             var catalogOrder = currentTab.find('.catalog-order');
             catalogOrder.append(productHtml);
-            var commonModule = require('shop-common');
             currentTab.find('.amount span').text(commonModule.countAmount(catalogOrder));
 
             var deleteNoInit = $('.catalog-order .delete-product.no-init');
@@ -826,18 +828,6 @@ define(
                         $('.input-delivery .delivery-address').text(myAddress.country.name + ", " + myAddress.city.name + ", "
                             + myAddress.street.name + " " + myAddress.building.fullNo + ", кв. " + myAddress.flatNo);
 
-                        /*var homeAddressPostal = new com.vmesteonline.be.PostalAddress();
-                        homeAddressPostal.country = homeAddress.country;
-                        homeAddressPostal.city = homeAddress.city;
-                        homeAddressPostal.street = homeAddress.street;
-                        homeAddressPostal.building = homeAddress.building;
-                        homeAddressPostal.flatNo = homeAddress.flatNo;
-                        homeAddressPostal.staircase = 0;
-                        homeAddressPostal.floor= 0;
-                        homeAddressPostal.comment = 'sdf';*/
-
-                        //thriftModule.client.setOrderDeliveryAddress(orderId,myAddress);
-
                     }else{
 
                         $('.input-delivery .delivery-address').html("<span class='error-info'>У вас не указано ни одного адреса доставки.</span>");
@@ -863,29 +853,29 @@ define(
                         autocompleteAddressFlag = 0;
                     }
 
-                        if(userAddresses.length > 0){
-                            homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
-                            if(homeAddress){
-                                writeAddress(homeAddress);
-                            }
-                            var userAddressesHtml = "";
-                            var userAddressesLength = userAddresses.length;
-                            for(var i = 0; i < userAddressesLength; i++){
-                                userAddressesHtml += '<li><a href="#">'+
-                                    userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
-                                    '</a></li>';
-                            }
+                    if(userAddresses.length > 0){
+                        homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
+                        if(homeAddress){
+                            writeAddress(homeAddress);
+                        }
+                        var userAddressesHtml = "";
+                        var userAddressesLength = userAddresses.length;
+                        for(var i = 0; i < userAddressesLength; i++){
+                            userAddressesHtml += '<li><a href="#">'+
+                                userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
+                                '</a></li>';
+                        }
 
-                            $('.delivery-dropdown .dropdown-menu').prepend(userAddressesHtml);
-                            $('.delivery-dropdown .dropdown-menu a:not(".delivery-add-address")').click(function(e){
-                                e.preventDefault();
-                                var ind = $(this).parent().index();
+                        $('.delivery-dropdown .dropdown-menu').prepend(userAddressesHtml);
+                        $('.delivery-dropdown .dropdown-menu a:not(".delivery-add-address")').click(function(e){
+                            e.preventDefault();
+                            var ind = $(this).parent().index();
 
-                                setDeliveryCost(orderId);
+                            setDeliveryCost(orderId);
 
-                                writeAddress(userAddresses[ind]);
-                                thriftModule.client.setOrderDeliveryType(orderId,2,userAddresses[ind]);
-                            });
+                            writeAddress(userAddresses[ind]);
+                            thriftModule.client.setOrderDeliveryType(orderId,2,userAddresses[ind]);
+                        });
 
                     }
                     $('.delivery-add-address').click(function(e){

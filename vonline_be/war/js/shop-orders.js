@@ -30,7 +30,7 @@ define(
                     ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
                         '<td>'+
                         '<a href="#" class="product-link">'+
-                        '<img src="'+ myPic +'" alt="картинка"/>'+
+                        '<div class="product-pic"><img src="'+ myPic +'" alt="картинка"/></div>'+
                         '<span>'+
                         '<span>'+orderLines[j].product.name+'</span>'+
                         orderLines[j].product.shortDescr +

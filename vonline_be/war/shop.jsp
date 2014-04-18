@@ -377,6 +377,7 @@
                                 <tr data-productid="${product.id}">
                                     <td>
                                         <a href="#" class="product-link">
+                                            <div class="product-pic">
                                             <c:choose>
                                                 <c:when test="${product.imageURL != null}">
                                                     <img src="${product.imageURL}" alt="картинка1"/>
@@ -385,6 +386,7 @@
                                                     <img src="i/no-photo.png" alt="нет фото"/>
                                                 </c:otherwise>
                                             </c:choose>
+                                            </div>
 
                                             <span>
                                             <span>${product.name}</span>
