@@ -545,6 +545,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} finally {
 			pm.close();
 		}
+		
+		
 	}
 
 	@Override
