@@ -52,6 +52,79 @@ define(
             }
         }
 
+        function addAddressToBase(currentForm){
+            var countries = thriftModule.userClient.getCounties();
+            var countriesLength = countries.length;
+            var inputCountry = currentForm.find('.country-delivery').val();
+            var country,countryId = 0;
+            for (var i = 0; i < countriesLength; i++){
+                if (countries[i].name == inputCountry){
+                    country = countries[i];
+                    countryId = country.id;
+                }
+            }
+            if (!countryId){
+                country = thriftModule.userClient.createNewCountry(inputCountry);
+                countryId = country.id;
+            }
+
+            var cities = thriftModule.userClient.getCities(countryId);
+            var citiesLength = cities.length;
+            var inputCity = currentForm.find('.city-delivery').val();
+            var city,cityId = 0;
+            for (i = 0; i < citiesLength; i++){
+                if (cities[i].name == inputCity){
+                    city = cities[i];
+                    cityId = city.id;
+                }
+            }
+            if (!cityId){
+                city = thriftModule.userClient.createNewCity(countryId,inputCity);
+                cityId = city.id;
+            }
+
+            var streets = thriftModule.userClient.getStreets(cityId);
+            var streetsLength = streets.length;
+            var inputStreet = currentForm.find('.street-delivery').val();
+            var street,streetId = 0;
+            for (i = 0; i < streetsLength; i++){
+                if (streets[i].name == inputStreet){
+                    street = streets[i];
+                    streetId = street.id;
+                }
+            }
+            if (!streetId){
+                street = thriftModule.userClient.createNewStreet(cityId,inputStreet);
+                streetId = street.id;
+            }
+
+            var buildings = thriftModule.userClient.getBuildings(streetId);
+            var buildingsLength = buildings.length;
+            var inputBuilding = currentForm.find('.building-delivery').val();
+            var building,buildingId = 0;
+            for (i = 0; i < buildingsLength; i++){
+                if (buildings[i].fullNo == inputBuilding){
+                    building = buildings[i];
+                    buildingId = building.id;
+                }
+            }
+            if (!buildingId){
+                building = thriftModule.userClient.createNewBuilding(streetId,inputBuilding,0,0);
+            }
+
+            var deliveryAddress = new com.vmesteonline.be.PostalAddress();
+            deliveryAddress.country = country;
+            deliveryAddress.city = city;
+            deliveryAddress.street = street;
+            deliveryAddress.building = building;
+            deliveryAddress.staircase = 0;
+            deliveryAddress.floor= 0;
+            deliveryAddress.flatNo = parseInt(currentForm.find('.flat-delivery').val());
+            deliveryAddress.comment = $('#order-comment').val();
+
+            return deliveryAddress;
+        }
+
         function initBasketInReload(){
 
             var nowTime = parseInt(new Date().getTime()/1000);
@@ -543,7 +616,8 @@ define(
             setSidebarHeight: setSidebarHeight,
             openModalAuth: openModalAuth,
             markAddedProduct: markAddedProduct,
-            remarkAddedProduct: remarkAddedProduct
+            remarkAddedProduct: remarkAddedProduct,
+            addAddressToBase: addAddressToBase
         }
     }
 );
