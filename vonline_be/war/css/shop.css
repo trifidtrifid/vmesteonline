@@ -151,11 +151,14 @@ a {
   padding: 12px 0 12px 15px;
   text-align: left;
   overflow: auto;
+  font-size: 16px;
 }
 .shop-right .tabs-days .basket-head .amount {
-  font-size: 16px;
   float: right;
   margin-right: 15px;
+}
+.shop-right .tabs-days .basket-head .weight {
+  float: left;
 }
 .shop-right .tabs-days .basket-bottom .btn {
   float: right;

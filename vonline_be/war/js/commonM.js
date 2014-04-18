@@ -37,7 +37,7 @@ define(
         /* переключения на настройки, профиль и выход */
 
         function SetJSForEditPersonal(){
-            $('#date-picker-birthday').datepickerSimple({startView: 2, viewMode: 2,autoclose:true, language:'ru'});
+            //$('#date-picker-birthday').datepickerSimple({startView: 2, viewMode: 2,autoclose:true, language:'ru'});
 
             $('.save-changes').click(function(e){
                 e.preventDefault();

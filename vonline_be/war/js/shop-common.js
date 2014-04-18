@@ -82,6 +82,8 @@ define(
             }
 
             markAddedProduct();
+            $('.tab-pane.active').find('.weight span').text(orderDetails.weightGramm);
+
             /*var catalogOrderLi = $('.catalog-order li');
             if(catalogOrderLi.length > 0){
                 var order = thriftModule.client.getOrder(0);

@@ -77,6 +77,9 @@ define(
 
 
                     thriftModule.client.removeOrderLine(orderId,$(this).closest('li').data('productid'));
+
+                    var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                    currentTab.find('.weight span').text(orderDetails.weightGramm);
                 });
             }catch(e){
                 alert(e+" Функция InitDeleteProduct");
@@ -269,6 +272,7 @@ define(
                     '<div class="tab-content">'+
                     '<div id="day'+orderDay+orderMonth+'" data-orderid="'+ orderId +'" class="tab-pane active">'+
                     '<div class="basket-head">'+
+                        '<div class="weight">Вес: <span></span></div>'+
                         '<div class="amount">Итого: <span></span></div>'+
                     '</div>'+
                     '<ul class="catalog-order">'+
@@ -695,11 +699,17 @@ define(
                 var newSumma = (newSpinnerVal*parseFloat(basketProductSelector.find('.td-price').text())).toFixed(1);
                 basketProductSelector.find('.td-summa').text(newSumma);
                 currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order')));
+                //currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order')));
             }else{
                 // если такого товара еще нет
                 AddSingleProductToBasket(currentProduct,currentProduct.qnty);
 
                 thriftModule.client.setOrderLine(orderId,currentProduct.id,currentProduct.qnty,'sdf',packs);
+
+                var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                currentTab.find('.weight span').text(orderDetails.weightGramm);
+
+
                 if(currentProduct.prepackLine.length != 0 || (packs && commonModule.getPacksLength(packs) > 1)){
                     currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]').find('td>.ace-spinner');
                     currentSpinner.spinner('disable');
@@ -752,7 +762,6 @@ define(
             spinnerModule.InitSpinner(spinnerNoInit,spinnerValue,itsBasket,currentProduct.minClientPack);
             if (spinnerDisable){spinnerNoInit.closest('.ace-spinner').spinner('disable');}
             spinnerNoInit.removeClass('no-init');
-
         }
 
         function BasketTrigger(selector){
@@ -1010,11 +1019,10 @@ define(
             });
         }
 
-        var counter = 0;
         function setDeliveryCost(orderId){
             var orderDetails = thriftModule.client.getOrderDetails(orderId);
             if (orderDetails.deliveryCost){
-                $('.delivery-cost').text(orderDetails.deliveryCost+" "+counter++);
+                $('.delivery-cost').text(orderDetails.deliveryCost);
             }
         }
 

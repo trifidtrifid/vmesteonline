@@ -238,7 +238,6 @@ define(
                         thriftModule.client.setOrderLine(oldOrderId,curProd.id,spinVal,"asd",packs);
                     }
                 }else if (addType == 'append'){
-                    alert(orderId+" "+oldOrderId);
                     orderDetails = thriftModule.client.appendOrder(oldOrderId,orderId);
                 }
                 orderLines = orderDetails.odrerLines;
@@ -248,6 +247,7 @@ define(
                     curProd = orderLines[i].product;
                     spinVal = orderLines[i].quantity;
                     spinnerDisable = false;
+                    var commonModule = require('shop-common');
                     if(orderLines[i].packs && commonModule.getPacksLength(orderLines[i].packs) > 1){
                         spinnerDisable = true;
                     }
