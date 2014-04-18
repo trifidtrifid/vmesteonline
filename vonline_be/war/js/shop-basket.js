@@ -710,6 +710,7 @@ define(
         function AddSingleProductToBasket(currentProduct,spinnerValue,spinnerDisable){
             try{
                 //var productDetails = thriftModule.client.getProductDetails(currentProduct.id);
+
                 var productHtml = '<li data-productid="'+ currentProduct.id +'">'+
                     '<table>'+
                     '<tr>'+
