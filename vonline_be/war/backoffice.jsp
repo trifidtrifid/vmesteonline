@@ -18,7 +18,9 @@
     pageContext.setAttribute("firstName",ShortUserInfo.firstName);
     pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
-    pageContext.setAttribute("auth",false);
+    //pageContext.setAttribute("auth",false);
+        response.sendRedirect("/login.jsp");
+        return;
     }
 
 
@@ -115,17 +117,18 @@
                     <c:choose>
                         <c:when test="${auth}">
                             <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                                <img class="nav-user-photo" src="i/avatars/user.jpg"
-                                     alt="Jason's Photo" /> <span class="user-info"> <small><c:out
-                                    value="${firstName}" /></small> <c:out value="${lastName}" />
-									</span> <i class="icon-caret-down"></i>
+                                <%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
+                                <span class="user-info">
+                                    <c:out value="${firstName}" /> <c:out value="${lastName}" />
+                                </span>
+                                    <i class="icon-caret-down"></i>
                             </a>
                         </c:when>
                         <c:otherwise>
                             <a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
-                                <img class="nav-user-photo" src="i/avatars/user.jpg"
-                                     alt="Jason's Photo" /> <span class="user-info"> <small>Привет,</small>
-											Гость
+                                <%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
+                                <span class="user-info">
+                                    Привет,	Гость
 									</span>
                             </a>
                         </c:otherwise>
@@ -701,7 +704,7 @@
                             </div>
 
                             <div class="export-packs-checklist">
-                                <%for( int val = ExchangeFieldType.TOTAL_PACK_SIZE.getValue(); val <= ExchangeFieldType.TOTAL_DELIVERY_TYPE.getValue(); val ++ ){
+                                <%for( int val = ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val <= ExchangeFieldType.TOTAL_DELIVERY_TYPE.getValue(); val ++ ){
                                     ExchangeFieldType value = ExchangeFieldType.findByValue(val);
                                     if(null!=value){%>
 

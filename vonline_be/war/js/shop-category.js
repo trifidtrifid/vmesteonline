@@ -18,6 +18,7 @@ define(
         }
         }
 
+
         function createProductsTableHtml(productsList){
             var productListLength = productsList.length;
             var productsHtml = '';
@@ -26,10 +27,13 @@ define(
                 productDetails = thriftModule.client.getProductDetails(productsList[i].id);
                 var unitName = "";
                 if (productsList[i].unitName){unitName = productsList[i].unitName;}
+                var myPic;
+                var commonModule = require('shop-common');
+                (productsList[i].imageURL) ? myPic = productsList[i].imageURL : myPic = commonModule.noPhotoPic;
                 productsHtml += '<tr data-productid="'+ productsList[i].id +'">'+
                     '<td>'+
                     '<a href="#" class="product-link">'+
-                    '<img src="'+ productsList[i].imageURL +'" alt="картинка"/>'+
+                    '<img src="'+ myPic +'" alt="картинка"/>'+
                     '<span><span>'+ productsList[i].name +'</span>'+ productsList[i].shortDescr +'</span>'+
                     '</a>'+
                     '<div class="modal">'+
@@ -80,6 +84,8 @@ define(
                 /* новый список товаров */
                 var productsList = thriftModule.client.getProducts(0,10,catID).products;
                 $('.main-content .catalog table tbody').html("").append(createProductsTableHtml(productsList));
+                var commonModule = require('shop-common');
+                commonModule.markAddedProduct();
 
             }catch(e){
                 alert(e+" Функция InitLoadCategory");
@@ -110,9 +116,7 @@ define(
                     }
                     else {
                         parentCounter++;
-                        //console.log(prevParentId[parentCounter]);
                         prevParentId[parentCounter] = $(this).parent().data('parentid');
-                        //console.log($(this).parent().data('catid'));
                         InitLoadCategory($(this).parent().data('catid'));
                         commonModule.setCookie('catid',$(this).parent().data('catid'));
                         commonModule.setCookie('arrayPrevCat',prevParentId);
@@ -127,7 +131,7 @@ define(
         return {
             createProductsTableHtml: createProductsTableHtml,
             InitLoadCategory: InitLoadCategory,
-            InitClickOnCategory: InitClickOnCategory
+            InitClickOnCategory: InitClickOnCategory,
         }
     }
 );

@@ -51,10 +51,17 @@ transform()
       a
         border-bottom-color #2b7dbc
 
-.ace-nav>.user-short a
-  border none
-  padding 3px 8px
-  font-size 14px
+.ace-nav>.user-short
+  line-height 30px
+  .user-info
+    vertical-align middle
+    max-width 300px !important
+  a
+    border none
+    padding 3px 8px
+    font-size 14px
+    i
+      vertical-align bottom
 
 .ace-nav>.user-short>a
   line-height inherit
@@ -134,7 +141,7 @@ transform()
     a
       display block*/
   .tabs-days
-    margin-top 110px
+    margin-top 82px
     text-align center
     .nav span
       display block
@@ -144,8 +151,9 @@ transform()
       background #fff
       position static
     .basket-head
-      padding 15px 0 15px 15px
+      padding 12px 0 12px 15px
       text-align left
+      overflow auto
       .amount
         font-size 16px
         float right
@@ -176,7 +184,12 @@ transform()
         thead td
           background #f2f2f2
         tr
-          td
+          .td-spinner
+            text-align right
+          .td-summa
+            width 35px
+          .td-close
+            width 19px
       .product-link
         display inline-block
         vertical-align middle
@@ -204,6 +217,8 @@ transform()
           background 0
       .unit-name
         display none
+    .fa-shopping-cart
+      display none !important
   .btn-grey
     margin-left 186px
     margin-right 10px
@@ -339,6 +354,8 @@ th.next
       &:first-child
         td
           border-top 1px solid #ccc
+      &.added
+        background-color #e7ffc5
       td
         vertical-align middle
         border-bottom 1px solid #ccc
@@ -373,6 +390,7 @@ th.next
           margin 0
 .shop-orders
   display none
+  margin-right -10px
   h1
     margin-top 10px
   .back-to-shop
@@ -419,20 +437,25 @@ th.next
     border 1px solid #ccc
     padding 5px 0
   .td1
-    width 5%
+    width 3%
   .td2
-    width 12%
+    width 19%
   .td3
-    width 10%
+    width 7%
   .td4
-    width 14%
+    width 12%
   .td5
-    width 27%
+    width 21%
   .td6
     width 7%
   .td7
-    width 230px
+    width 19%//186
     border 0
+  .td8
+    width 6%
+  .td9
+    width 9%
+
 
 .orders-tbl-wrap
   //margin-right 240px
@@ -447,21 +470,25 @@ th.next
       border 1px solid #ccc
       padding 5px 0
   .td1
-    width 5%
+    width 3%
   .td2
-    width 12%
+    width 19%
   .td3
-    width 10%
+    width 7%
   .td4
-    width 14%
+    width 12%
   .td5
-    width 27%
+    width 21%
   .td6
     width 7%
   .td7
-    width 230px
+    width 19%
     border 1px solid #fff
     background #fff
+  .td8
+    width 6%
+  .td9
+    width 9%
 
 .ace-spinner
   width 90px !important
@@ -557,7 +584,7 @@ th.next
       .ace-spinner
       .fa
         display inline-block
-        vertical-align middle
+        //vertical-align middle
         margin 0 17px
       span
         font-size 20px
@@ -568,6 +595,7 @@ th.next
         display inline-block
         vertical-align middle
         line-height 16px
+        font-size 12px
         span
           font-size 12px
           margin-left 0
@@ -582,9 +610,9 @@ th.next
         span
         .ace-spinner
         .fa
-          margin 0 10px
+          margin 0 8px
         .fa-shopping-cart
-          margin-top 8px
+          margin-top 5px
         .prepack-item
           span
             display block
@@ -597,9 +625,10 @@ th.next
       max-height 320px;
       overflow auto
       line-height 22px
+      font-size 12px
     .prepack-list
       float right
-      margin-right 129px
+      margin-right 59px
       .prepack-line
         margin-top 5px
       .close
@@ -610,13 +639,17 @@ th.next
         &:hover
           opacity 1
   .error-prepack
-    position absolute
-    bottom -50px
-    right 5px
-    width 119px
-    height 50px
+    float right
     font-size 10px
     line-height 10px
+    width 190px
+    margin-top 16px
+/*position absolute
+bottom -50px
+right 5px
+width 119px
+height 50px
+*/
 .modal-order-end
   height 360px
   .modal-body-list
@@ -814,7 +847,6 @@ th.next
         td
           width 25%
           text-align center
-          //padding-top 5px
           .ace-spinner
             vertical-align middle
           .unit-name
@@ -826,6 +858,8 @@ th.next
             color #ff0000
             &:hover
               text-decoration none
+          &.td-spinner
+            text-align left
       .product-link
         span
           display inline-block
@@ -839,6 +873,8 @@ th.next
           display inline-block
           vertical-align middle
           margin-left 40px
+    .fa-shopping-cart
+      display none !important
   .itogo-right
     float right
     padding-top 15px
@@ -859,7 +895,7 @@ th.next
         display block
         margin-bottom 5px
       input
-        width 100%
+        width 175px
         margin-bottom 10px
         &.short
           width 175px
@@ -876,7 +912,7 @@ th.next
           left -233px
           width 360px
       .address-input
-        width 360px
+        //width 360px
         margin 10px 0
         display none
         .btn
@@ -884,8 +920,13 @@ th.next
     .alert-delivery
       color #ff0000
       display none
+      font-size 14px
   .additionally-order
-    .btn
+    .add-address
+      margin-left 10px
+      margin-top 7px
+    .btn-order
+    .btn-cancel
       float right
       margin-left 10px
   textarea
@@ -896,6 +937,20 @@ th.next
     font-family Tahoma,Arial
     font-size 14px
     color rgb(133, 133, 133)
+
+/* order End */
+.order-end
+  padding 0 20px
+  text-align center
+  h3
+    text-align left
+  .order-end-info
+    margin-top 20px
+    margin-bottom 15px
+    .td1
+    .td7
+      display none
+
 
 /* backoffice */
 .backoffice .main-content

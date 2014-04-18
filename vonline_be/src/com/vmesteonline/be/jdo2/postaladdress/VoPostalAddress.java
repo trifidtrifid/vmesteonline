@@ -64,7 +64,11 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 			if (pal.size() > 0) {
 				this.id = pal.get(0).id;
 			}
+			pm.retrieve(vob);
+			
 			this.building = vob;
+			this.building.longitude = vob.getLongitude().toString();
+			this.building.latitude = vob.getLatitude().toString();
 			this.staircase = postalAddress.getStaircase();
 			this.floor = postalAddress.getFloor();
 			this.flatNo = postalAddress.getFlatNo();

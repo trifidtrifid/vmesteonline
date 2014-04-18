@@ -97,10 +97,12 @@ $(document).ready(function(){
                 //var imagesSet = productDetails.imagesURLset;
                 var unitName = "";
                 if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
+                var myPic;
+                (orderLines[j].product.imageURL) ? myPic = orderLines[j].product.imageURL : myPic = 'i/no-photo.png';
                 ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
                     '<td>'+
                     '<a href="#" class="product-link">'+
-                    '<img src="'+ orderLines[j].product.imageURL +'" alt="картинка"/>'+
+                    '<img src="'+ myPic +'" alt="картинка"/>'+
                     '<span>'+
                     '<span>'+orderLines[j].product.name+'</span>'+
                     orderLines[j].product.shortDescr +
@@ -851,11 +853,11 @@ $('.import-dropdown .dropdown-menu li').click(function(){
            var currentTab = $(this).closest('.tab-pane');
            var deliveryText = currentTab.find('.export-delivery-dropdown .btn-group-text').text();
            var selectOrderDate = currentTab.find('.datepicker-export').data('selectorderdate');
-           if(deliveryText == 'Тип доставки'){
-               currentTab.find('.error-info').text('Пожалуйста, укажите тип доставки.').show();
-           }else if(!selectOrderDate){
+           if(!selectOrderDate){
                currentTab.find('.error-info').text('Пожалуйста, укажите дату с заказом.').show();
            }else{
+               currentTab.find('.error-info').hide();
+               currentTab.find('.confirm-info').hide();
 
               var tabs = $('.export .nav-tabs').find('li');
               var currentInd = 0;
@@ -865,7 +867,8 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                   }
               });
 
-               var deliveryType = getDeliveryTypeByText(deliveryText);
+               var deliveryType;
+               (deliveryText != 'Тип доставки') ? deliveryType = getDeliveryTypeByText(deliveryText):deliveryType=0;
 
                var dataSet;
 

@@ -264,6 +264,8 @@ service ShopService {
 	**/
 	list<Order> getOrders(1:i32 dateFrom, 2:i32 dateTo) throws (1:error.InvalidOperation exc),
 	list<Order> getOrdersByStatus(1:i32 dateFrom, 2:i32 dateTo, 3:OrderStatus status) throws (1:error.InvalidOperation exc),
+	list<Order> getMyOrdersByStatus(1:i32 dateFrom, 2:i32 dateTo, 3:OrderStatus status) throws (1:error.InvalidOperation exc),
+
 	//returns order and made in current
 	Order getOrder( 1:i64 orderId) throws (1:error.InvalidOperation exc),
 	/**

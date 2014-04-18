@@ -2,7 +2,7 @@ require.config({
     baseUrl: "/js",
     paths: {
         "jquery"   : "lib/jquery-2.0.3.min",
-        "ace_spinner": "lib/fuelux/fuelux.spinner.min",
+        "ace_spinner": "lib/fuelux/fuelux.spinner",
         "bootstrap": "lib/bootstrap.min",
         "ace_extra": "lib/ace-extra.min",
         "ace_elements": "lib/ace-elements.min",

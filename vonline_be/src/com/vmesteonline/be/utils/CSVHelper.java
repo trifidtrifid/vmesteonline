@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.CharSet;
 import org.apache.log4j.Logger;
 
 import com.vmesteonline.be.InvalidOperation;
@@ -174,14 +176,17 @@ public class CSVHelper {
 	// =====================================================================================================================
 
 	public static <T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listToRead, List<List<String>> fieldsToFill)
-			throws IOException {
+			throws IOException, InvalidOperation {
 		writeCSVData(os, fieldsMap, listToRead, fieldsToFill, null, null, null);
 	}
 
 	// ====================================================================================================================
 	public static <T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listToRead, List<List<String>> fieldsToFill,
-			String fieldDelim, String setDelim, String avpDelim) throws IOException {
+			String fieldDelim, String setDelim, String avpDelim) throws IOException, InvalidOperation {
 
+		if(fieldsMap.size()==0)
+			throw new InvalidOperation(VoError.IncorrectParametrs, "At least one field must be selected to produce report");
+		
 		String fd = null == fieldDelim ? ";" : fieldDelim;
 		String sd = null == setDelim ? "|" : setDelim;
 		String avpd = null == avpDelim ? ":" : avpDelim;
@@ -216,10 +221,10 @@ public class CSVHelper {
 					Field field = value instanceof Field ? (Field) value : objectToWrite.getClass().getField(value.toString());
 					Object fieldToWrite = field.get(objectToWrite);
 					if (null != fieldToWrite) {
-						if (fieldToWrite instanceof Number)
-							outStr = fieldToWrite.toString();
+						if (fieldToWrite instanceof Number){
+							outStr = trimFloatPointAsString(fieldToWrite.toString());
 
-						else if (fieldToWrite instanceof Set || fieldToWrite instanceof List) {
+						} else if (fieldToWrite instanceof Set || fieldToWrite instanceof List) {
 							for (Object object : listToRead) {
 								outStr += sd + object;
 							}
@@ -242,7 +247,7 @@ public class CSVHelper {
 				}
 				if( lineLength > maxLineLength ) maxLineLength = lineLength;
 				
-				os.write((lineStr.substring(fd.length()) + "\n").getBytes());
+				os.write((lineStr.substring(fd.length()) + "\n").getBytes(Charset.forName("Cp1251")));
 			}
 			//arrange all lines to be the same size
 			if(null!=fieldsToFill)
@@ -254,6 +259,18 @@ public class CSVHelper {
 			e.printStackTrace();
 			throw new IOException("Failed to write CSV:" + e.getMessage(), e);
 		}
+	}
+
+	private static String trimFloatPointAsString(String floatPointAsString) {
+		int delP;
+		if( (delP=floatPointAsString.indexOf('.')) !=-1){
+			if( delP<floatPointAsString.length()-4 ){ 
+				floatPointAsString = floatPointAsString.substring(0,delP + 4);
+			}
+			while( floatPointAsString.length() > delP+2 && floatPointAsString.endsWith("0"))
+				floatPointAsString = floatPointAsString.substring(0, floatPointAsString.length()-2);
+		}
+		return floatPointAsString;
 	}
 
 	// ====================================================================================================================

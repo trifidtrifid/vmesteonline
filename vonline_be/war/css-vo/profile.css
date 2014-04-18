@@ -77,9 +77,6 @@
 .user-descr .text-area .user-body .form-edit {
   display: none;
 }
-.user-descr .text-area .user-body .form-edit .ui-helper-hidden-accessible {
-  display: none;
-}
 .short.form-control {
   width: 75px !important;
 }

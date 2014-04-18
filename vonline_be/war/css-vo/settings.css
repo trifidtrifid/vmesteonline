@@ -2,29 +2,37 @@
 .edit-personal {
   padding: 0 10px;
 }
+.settings .tabbable,
+.edit-personal .tabbable {
+  z-index: 5;
+}
 .settings h3,
 .edit-personal h3 {
   margin-top: 10px;
 }
-.settings label,
-.edit-personal label {
+.settings .tab-content,
+.edit-personal .tab-content {
+  margin-bottom: 10px;
+}
+.settings .tab-pane label,
+.edit-personal .tab-pane label {
   display: inline-block;
   width: 160px;
 }
-.settings .form-control,
-.edit-personal .form-control {
+.settings .tab-pane .form-control,
+.edit-personal .tab-pane .form-control {
   display: inline-block;
   width: 233px;
   margin: 0 0 10px 0;
 }
-.settings .subs-group,
-.edit-personal .subs-group {
+.settings .tab-pane .subs-group,
+.edit-personal .tab-pane .subs-group {
   display: inline-block;
   border-left: 1px solid #2b7dbc;
   padding-left: 15px;
 }
-.settings .checkbox label,
-.edit-personal .checkbox label {
+.settings .tab-pane .checkbox label,
+.edit-personal .tab-pane .checkbox label {
   width: auto;
 }
 .settings input[type="text"],

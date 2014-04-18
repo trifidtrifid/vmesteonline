@@ -5,6 +5,7 @@ define(
 
         //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 
+        var noPhotoPic = "i/no-photo.png";
         // возвращает cookie с именем name, если есть, если нет, то undefined
         function getCookie(name) {
             try{
@@ -57,9 +58,9 @@ define(
             nowTime -= nowTime%86400;
             var day = 3600*24;
 
-            var currentOrders = thriftModule.client.getOrdersByStatus(nowTime,nowTime+90*day,1);
+            var currentOrders = thriftModule.client.getMyOrdersByStatus(nowTime,nowTime+90*day,1);
             var currentOrdersLength = currentOrders.length;
-            /*for(var i = 0; i < currentOrdersLength; i++){
+            for(var i = 0; i < currentOrdersLength; i++){
                 var orderid = currentOrders[i].id;
                 basketModule.addTabToBasketHtml(new Date(currentOrders[i].date*1000),orderid);
                 var orderDetails = thriftModule.client.getOrderDetails(orderid);
@@ -67,9 +68,20 @@ define(
                 var orderLinesLength = orderDetails.odrerLines.length;
                 for(var j = 0; j < orderLinesLength; j++){
                     //currentProduct,spinnerValue,spinnerDisable
-                    basketModule.AddSingleProductToBasket(orderLines[j].product,orderLines[j].quantity);
+                    var spinnerDisable;
+                    var packs = orderLines[j].packs;
+                    var packsQnty = 0;
+                    for(var p in packs){
+                        if(packs[p] > 1){packsQnty = 1}
+                    }
+
+                    (getPacksLength(packs) > 1 || packsQnty ) ? spinnerDisable=true : spinnerDisable=false;
+                    basketModule.AddSingleProductToBasket(orderLines[j].product,orderLines[j].quantity,spinnerDisable);
+
                 }
-            }*/
+            }
+
+            markAddedProduct();
             /*var catalogOrderLi = $('.catalog-order li');
             if(catalogOrderLi.length > 0){
                 var order = thriftModule.client.getOrder(0);
@@ -199,11 +211,11 @@ define(
                             '<span>'+ product.unitName +'</span>'+
                             '</div>';
                     }
-                    popupHtml += "<div class='error-info error-prepack'></div>"+
-                        '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>';
+                    popupHtml += '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>';
 
 
                     popupHtml += '<div class="prepack-list"></div><br>'+
+                        '<div class="error-info error-prepack"></div>'+
                         '<a href="#" class="btn btn-primary btn-sm no-border full-descr">Подробное описание</a>'+
                         "<div class='product-fullDescr'>"+ productDetails.fullDescr +"</div>"+
                         '</div>'+
@@ -240,6 +252,7 @@ define(
                         }
                         currentModal.find('.prepack-open').click(function(e){
                             e.preventDefault();
+
                             var spinnerStep = $(this).parent().prev().find('.spinner1').data('step');
 
                             var prepackHtml = '<div class="prepack-line no-init">' +
@@ -267,7 +280,7 @@ define(
                             if ($(this).closest('tr').length == 0){
                                 //если мы в корзине
                                 // нужно сделать setOrderLine
-                                var orderId = $(this).closest('.tab-pane').data('orderid');
+                                var orderId = $('.tab-pane.active').data('orderid');
                                 var orderDetails = thriftModule.client.getOrderDetails(orderId);
                                 var orderLinesLength = orderDetails.odrerLines.length;
                                 productId = $(this).closest('li').data('productid');
@@ -294,13 +307,13 @@ define(
                                     /*for(var p in packs){
                                      alert(p+" "+packs[p]);
                                      }*/
-                                    thriftModule.client.setOrderLine(productId,qnty,'sdf',packs);
+                                    thriftModule.client.setOrderLine(orderId,productId,qnty,'sdf',packs);
                                     productSelector.find('td>.ace-spinner').spinner('value',qnty);
                                     productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
                                     $('.itogo-right span').text(countAmount($('.catalog-order')));
                                 }
-                                productSelector.find('td .ace-spinner').spinner('disable');
                             }
+                            productSelector.find('td>.ace-spinner').spinner('disable');
                             spinnerModule.initRemovePrepackLine(currentPrepackLine.find('.prepack-item .close'),productId,productSelector);
                             currentPrepackLine.removeClass('no-init');
 
@@ -344,7 +357,7 @@ define(
 
                     $('.modal-backdrop').click(function(){
                         $('.modal.in .close').trigger('click');
-                    })
+                    });
 
                     var carousel = currentModal.find('.carousel');
                     var slider = currentModal.find('.slider');
@@ -387,6 +400,39 @@ define(
                 //alert(e+" Функция countAmount");
             }
             return summa.toFixed(1);
+        }
+
+        function markAddedProduct(){
+            var productsInTable = $('.catalog tr');
+            var productsInBasket = $('.tabs-days .tab-content .catalog-order li');
+            var basketLength = productsInBasket.length;
+            var addedProductId;
+
+            productsInTable.each(function(){
+                for(var i = 0; i < basketLength; i++){
+                    addedProductId = productsInBasket.eq(i).data('productid');
+                    if($(this).data('productid') == addedProductId){
+                        $(this).addClass('added');
+                    }
+                }
+            });
+
+        }
+
+        function remarkAddedProduct(){
+            var addedProducts= $('.catalog tr.added');
+            var productsInBasket = $('.tabs-days .tab-content .catalog-order li');
+            var basketLength = productsInBasket.length;
+            var addedProductId;
+
+            addedProducts.each(function(){
+                for(var i = 0; i < basketLength; i++){
+                    addedProductId = productsInBasket.eq(i).data('productid');
+                    if($(this).data('productid') == addedProductId){
+                        $(this).removeClass('added');
+                    }
+                }
+            });
         }
 
         function getPacksLength(packs){
@@ -484,12 +530,15 @@ define(
         return{
             getCookie: getCookie,
             setCookie: setCookie,
+            noPhotoPic: noPhotoPic,
             initBasketInReload: initBasketInReload,
             InitProductDetailPopup: InitProductDetailPopup,
             countAmount: countAmount,
             getPacksLength: getPacksLength,
             setSidebarHeight: setSidebarHeight,
-            openModalAuth: openModalAuth
+            openModalAuth: openModalAuth,
+            markAddedProduct: markAddedProduct,
+            remarkAddedProduct: remarkAddedProduct
         }
     }
 );

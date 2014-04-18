@@ -19,15 +19,18 @@ import javax.jdo.Query;
 
 import junit.framework.Assert;
 
+import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.postaladdress.VoCity;
+import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
@@ -62,6 +65,8 @@ import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class ShopServiceImplTest {
+	
+	Logger logger = Logger.getLogger(ShopServiceImplTest.class);
 
 	private static final String LOGO = "http://fi.co/images/FI_logo.png";
 	private static final String DESCR = "TELE2 shop";
@@ -131,13 +136,14 @@ public class ShopServiceImplTest {
 
 		userAddress = usi.getUserHomeAddress();
 		List<Group> userGroups = usi.getUserGroups();
-		long gId = userGroups.get(0).getId();
-
-		topic = msi.createTopic(gId, "AAA", MessageType.BASE, "", new HashMap<MessageType, Long>(), new HashMap<Long, String>(), usi.getUserRubrics()
-				.get(0).getId(), 0);
-
-		topicSet.add(topic.getId());
-
+		if(userGroups.size() > 0 ){
+			long gId = userGroups.get(0).getId();
+	
+			topic = msi.createTopic(gId, "AAA", MessageType.BASE, "", new HashMap<MessageType, Long>(), new HashMap<Long, String>(), usi.getUserRubrics()
+					.get(0).getId(), 0);
+	
+			topicSet.add(topic.getId());
+		} 
 		Country country = usi.getCounties().get(0);
 		City city = usi.getCities(country.getId()).get(0);
 		Street street = usi.getStreets(city.getId()).get(0);
@@ -1371,10 +1377,9 @@ public class ShopServiceImplTest {
 						Assert.assertTrue(  0 == pa.getDistance(pa0));
 					else
 						Assert.assertTrue(  0 != pa.getDistance(pa0));
-					
-					System.out.println("Distance between "+pm.getObjectById(VoStreet.class, pa0.getBuilding().getStreetId()).getName() 
-							+ " "+pa0.getBuilding().getFullNo() +" and "+pm.getObjectById(VoStreet.class, pa.getBuilding().getStreetId()).getName() 
-							+ " "+pa.getBuilding().getFullNo() + " is " + pa.getDistance(pa0) + "km");
+
+					System.out.println("Distance between " + addressString(pm, pa0) + " and " + addressString( pm, pa ) +
+							" is " + pa.getDistance(pa0) + "km");
 				}
 				pa0 = pa;
 			}
@@ -1388,8 +1393,16 @@ public class ShopServiceImplTest {
 	}
 //======================================================================================================================
 
+	private String addressString(PersistenceManager pm, VoPostalAddress pa) {
+		return pm.getObjectById(VoStreet.class, pa.getBuilding().getStreetId()).getName() 
+									+ " "+pa.getBuilding().getFullNo();
+	}
+//======================================================================================================================
+
 	@Test
 	public void testDeliveryDependOnRange() throws InvalidOperation{
+		PersistenceManager pm = PMF.getPm();
+			
 		try{
 			int now = (int) (System.currentTimeMillis() / 1000L);
 			int day = 3600 * 24;
@@ -1397,6 +1410,10 @@ public class ShopServiceImplTest {
 	
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 			Long shopId = si.registerShop(shop);
+			
+			VoPostalAddress sa = new VoPostalAddress( userAddress, pm);
+			logger.debug("Shop is at: " + addressString(pm, sa) + " located at: "+sa.getBuilding().getLatitude()+":"+sa.getBuilding().getLongitude());
+			
 			Map<Integer, Double> deliveryCostByDistance = new HashMap<Integer, Double>();
 			deliveryCostByDistance.put(0, 100.0D); 
 			deliveryCostByDistance.put(5, 150.0D);
@@ -1413,7 +1430,7 @@ public class ShopServiceImplTest {
 			PostalAddress pa5 = createAddress("Водопроводная", "74"); //5 km from the shop
 			
 			si.setOrderDeliveryType(order1ID, DeliveryType.SHORT_RANGE, pa0);
-			assertEquals(""+si.getOrderDetails(order1ID).getDeliveryCost(), ""+100.0D);
+			assertEquals(""+si.getOrderDetails(order1ID).getDeliveryCost(), ""+211.0D);
 			
 			si.setOrderDeliveryType(order1ID, DeliveryType.SHORT_RANGE, pa2);
 			assertEquals(""+si.getOrderDetails(order1ID).getDeliveryCost(), ""+100.0D);
@@ -1425,7 +1442,10 @@ public class ShopServiceImplTest {
 	} catch (Exception e) {
 		e.printStackTrace();
 		fail("Import failed!" + e);
-	} 
+	}  finally {
+		pm.close();
+	}
+	
 	}
 //======================================================================================================================
 
@@ -1437,6 +1457,8 @@ public class ShopServiceImplTest {
 			VoCity city = pm.getObjectById(VoCity.class, usi.getCities(usi.getCounties().get(0).getId()).get(0).getId());
 			VoStreet voStreet = new VoStreet( city, streetName );
 			VoBuilding voBuilding = new VoBuilding(voStreet, buuildingNAme, new BigDecimal("0"), new BigDecimal("0"),pm);
+			Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
+			voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 			VoPostalAddress voPostalAddress = new VoPostalAddress( voBuilding, (byte)1, (byte)1, (byte)1, "");
 			pm.makePersistent(voPostalAddress);
 			

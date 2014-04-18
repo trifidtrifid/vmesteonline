@@ -127,17 +127,19 @@
                             <c:choose>
 								<c:when test="${auth}">
 									<a data-toggle="dropdown" href="#" class="dropdown-toggle">
-										<img class="nav-user-photo" src="i/avatars/user.jpg"
-										alt="Jason's Photo" /> <span class="user-info"> <small><c:out
-													value="${firstName}" /></small> <c:out value="${lastName}" />
-									</span> <i class="icon-caret-down"></i>
+										<%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
+                                        <span class="user-info">
+                                            <c:out value="${firstName}" />
+                                            <c:out value="${lastName}" />
+									    </span>
+                                            <i class="icon-caret-down"></i>
 									</a>
 								</c:when>
 								<c:otherwise>
 									<a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
-										<img class="nav-user-photo" src="i/avatars/user.jpg"
-										alt="Jason's Photo" /> <span class="user-info"> <small>Привет,</small>
-											Гость
+										<%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
+                                        <span class="user-info">
+                                            Привет,	Гость
 									</span>
 									</a>
 								</c:otherwise>
@@ -334,11 +336,6 @@
             </aside>
             <div class="main-content">
                 <div class="shop-products">
-                    <nav class="breadcrambs">
-                        <a href="#">Главная</a><span> > </span>
-                        <a href="#">Товары</a><span> > </span>
-                        Я здесь
-                    </nav>
                     <form method="post" action="#" class="form-group has-info">
                         <span class="block input-icon input-icon-right">
                             <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
@@ -380,7 +377,15 @@
                                 <tr data-productid="${product.id}">
                                     <td>
                                         <a href="#" class="product-link">
-                                            <img src="${product.imageURL}" alt="картинка"/>
+                                            <c:choose>
+                                                <c:when test="${product.imageURL != null}">
+                                                    <img src="${product.imageURL}" alt="картинка1"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <img src="i/no-photo.png" alt="нет фото"/>
+                                                </c:otherwise>
+                                            </c:choose>
+
                                             <span>
                                             <span>${product.name}</span>
                                             ${product.shortDescr}
@@ -417,6 +422,8 @@
                             <td class="td3">Дата</td>
                             <td class="td4">Статус</td>
                             <td class="td5">Доставка</td>
+                            <td class="td9">Цена<br> доставки</td>
+                            <td class="td8">Вес(г)</td>
                             <td class="td6">Сумма</td>
                             <td class="td7"></td>
                         </tr>
@@ -431,6 +438,7 @@
         </div>
             <div class="page shop-confirm"></div>
             <div class="page shop-profile"></div>
+            <div class="page shop-orderEnd"></div>
             <div class="page shop-editPersonal"></div>
     </div>
 

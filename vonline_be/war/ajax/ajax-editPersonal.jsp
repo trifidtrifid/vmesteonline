@@ -189,72 +189,26 @@
                 <div class="dynamic">
                    <section class="edit-personal">
                         <h3>Редактировать профиль</h3>
-                        <div class="tabbable">
-                            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
-                                <li class="active">
-                                    <a data-toggle="tab" href="#main">Основное</a>
-                                </li>
-
-                                <li class="">
-                                    <a data-toggle="tab" href="#contacts">Контакты</a>
-                                </li>
-
-                                <li class="">
-                                    <a data-toggle="tab" href="#interests">Интересы</a>
-                                </li>
-                            </ul>
-
-                            <div class="tab-content">
-                                <div id="main" class="tab-pane active">
-                                    <div>
-                                        <label for="edit-name">Имя</label>
-                                        <input id="edit-name" value="<c:out value="${userInfo.firstName}"/>" type="text"/>
-                                    </div>
-                                    <div>
-                                        <label for="edit-surname">Фамилия</label>
-                                        <input id="edit-surname" value="<c:out value="${userInfo.lastName}"/>" type="text"/>
-                                    </div>
-                                    <div>
-                                        <label for="edit-biz">Должность</label>
-
-                                        <select class="form-control" id="edit-biz">
-                                            <option value="">&nbsp;</option>
-                                            <option value="AL">Гончар</option>
-                                            <option value="AK">Копьеносец</option>
-                                        </select>
-                                    </div>
-                                    <div>
-
-                                        <label for="date-picker-birthday">Дата рождения</label>
-                                        <input class="form-control date-picker" id="date-picker-birthday" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" value="Выберите дату"/>
-
-                                    </div>
+                            <div id="main">
+                                <div>
+                                    <label for="edit-name">Имя</label>
+                                    <input id="edit-name" value="<c:out value="${userInfo.firstName}"/>" type="text"/>
                                 </div>
-
-                                <div id="contacts" class="tab-pane">
-                                    <div>
-                                        <label for="edit-email">E-mail</label>
-                                        <input id="edit-email" value="<c:out value="${userContacts.email}"/>" type="text"/>
-                                    </div>
-                                    <div>
-                                        <label for="edit-phone">Телефон</label>
-                                        <input id="edit-phone" value="<c:out value="${userContacts.mobilePhone}"/>" type="text"/>
-                                    </div>
+                                <div>
+                                    <label for="edit-surname">Фамилия</label>
+                                    <input id="edit-surname" value="<c:out value="${userInfo.lastName}"/>" type="text"/>
                                 </div>
-
-                                <div id="interests" class="tab-pane">
-                                    <div>
-                                        <label for="edit-about">О себе</label>
-                                        <textarea name="edit-about" id="edit-about" cols="30" rows="5"></textarea>
-                                    </div>
-                                    <div>
-                                        <label for="edit-interests">Интересы</label>
-                                        <textarea name="edit-interests" id="edit-interests" cols="30" rows="5"></textarea>
-                                    </div>
-
+                                <div>
+                                    <label for="edit-email">E-mail</label>
+                                    <input id="edit-email" value="<c:out value="${userContacts.email}"/>" type="email"/>
+                                    <span class="error-info"></span>
+                                </div>
+                                <div>
+                                    <label for="edit-phone">Телефон</label>
+                                    <input id="edit-phone" value="<c:out value="${userContacts.mobilePhone}"/>" type="text"/>
+                                    <span class="error-info"></span>
                                 </div>
                             </div>
-                        </div>
                         <a class="btn btn-primary save-changes no-border" href="#">Сохранить</a>
                         <span class="save-status">Сохранено</span>
                     </section>

@@ -126,7 +126,7 @@ define(
         thriftModule.client.getShop(shops[0].id);
 
         var shortUserInfo = thriftModule.userClient.getShortUserInfo();
-        var shortUserInfoHtml =  '<small>'+ shortUserInfo.firstName +'</small>'+ shortUserInfo.lastName;
+        var shortUserInfoHtml =  shortUserInfo.firstName +' '+ shortUserInfo.lastName;
         $('.user-info').html(shortUserInfoHtml).after('<i class="icon-caret-down"></i>');
 
         var dropdownToggle = $('.dropdown-toggle');

@@ -3,7 +3,6 @@ package com.vmesteonline.be;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +22,6 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
-import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoRubric;
@@ -54,28 +52,59 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public void updateUserInfo(UserInfo userInfo) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
-		VoUser user = getCurrentUser(pm);
-		user.setName(userInfo.firstName);
-		user.setLastName(userInfo.lastName);
-		user.setRelations(userInfo.relations);
-		user.setBirthday(userInfo.birthday);
-		pm.makePersistent(user);
-
+		try {
+			VoUser user = getCurrentUser(pm);
+			user.setName(userInfo.firstName);
+			user.setLastName(userInfo.lastName);
+			user.setLastName(userInfo.lastName);
+			pm.makePersistent(user);
+		} finally {
+			pm.close();
+		}
 	}
+
+	private static String emailreg = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+	private static String phonereg = "[\\d-.()+ ]{7,21}";
 
 	@Override
 	public void updateUserContacts(UserContacts contacts) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
-		VoUser user = getCurrentUser(pm);
-		if (!contacts.email.equals(user.getEmail())) {
-			user.setEmail(contacts.email);
-			user.setEmailConfirmed(false);
+		try {
+			VoUser user = getCurrentUser(pm);
+			if (null != contacts.getMobilePhone())
+				if (contacts.getMobilePhone().matches(phonereg))
+					user.setMobilePhone(contacts.getMobilePhone());
+				else
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Phone format '" + contacts.getMobilePhone()
+							+ "'. Should have format like 79219876543, +7(821)1234567, etc");
+
+			if (null != contacts.getEmail() && !contacts.getEmail().trim().equalsIgnoreCase(user.getEmail())) {
+				if (contacts.getEmail().matches(emailreg)) {
+					user.setEmail(contacts.getEmail());
+					user.setEmailConfirmed(false);
+				} else
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Email format '" + contacts.getEmail() + "'. ");
+			}
+			if (null != contacts.getHomeAddress()) {
+				VoPostalAddress pa = new VoPostalAddress(contacts.getHomeAddress(), pm);
+
+				if (user.getAddress() == null || pa.getId() != user.getAddress().getId()) {
+					try {
+						user.setLocation(pa.getAddressCode(), pm);
+					} catch (InvalidOperation e) {
+						e.printStackTrace();
+						throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.why);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.getMessage());
+					}
+				}
+			}
+			pm.makePersistent(user);
+		} finally {
+			pm.close();
 		}
-		user.setMobilePhone(contacts.mobilePhone);
-
-		pm.makePersistent(user);
-
 	}
 
 	// TODO this method is forbidden should be removed. use getShortProfile
@@ -442,8 +471,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			// TODO check that there is no country with the same name
 			VoCountry vco = pm.getObjectById(VoCountry.class, countryId);
 			Query q = pm.newQuery(VoCity.class);
-			q.setFilter("country == " + countryId);
-			q.setFilter("name == '" + name + "'");
+			q.setFilter("country == " + countryId + " &&  name == '" + name + "'");
 			List<VoCity> cities = (List<VoCity>) q.execute();
 			if (cities.size() > 0) {
 				logger.info("City was NOT created. The same City was registered. Return an old one: " + cities.get(0));
@@ -471,8 +499,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoCity vc = null;
 			vc = pm.getObjectById(VoCity.class, cityId);
 			Query q = pm.newQuery(VoStreet.class);
-			q.setFilter("city == " + cityId);
-			q.setFilter("name == '" + name + "'");
+			q.setFilter("city == " + cityId + " && name == '" + name + "'");
 			List<VoStreet> streets = (List<VoStreet>) q.execute();
 			if (streets.size() > 0) {
 				logger.info("Street was NOT created. The same sreet was registered. Return an old one: " + streets.get(0));
@@ -499,8 +526,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			// TODO check that there is no building with the same name
 			VoStreet vs = pm.getObjectById(VoStreet.class, streetId);
 			Query q = pm.newQuery(VoBuilding.class);
-			q.setFilter("streetId == " + streetId);
-			q.setFilter("fullNo == '" + fullNo + "'");
+			q.setFilter("streetId == " + streetId + " &&  fullNo == '" + fullNo + "'");
 			List<VoBuilding> buildings = (List<VoBuilding>) q.execute();
 			if (buildings.size() > 0) {
 				logger.info("VoBuilding was NOT created. The same VoBuilding was registered. Return an old one: " + buildings.get(0));
@@ -545,8 +571,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} finally {
 			pm.close();
 		}
-		
-		
+
 	}
 
 	@Override
