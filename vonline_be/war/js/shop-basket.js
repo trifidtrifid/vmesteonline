@@ -207,7 +207,7 @@ define(
             }
         }
 
-        function initCancel(selector){
+        /*function initCancel(selector){
             selector.find('.btn-cancel').click(function(e){
                 e.preventDefault();
                 var quest = confirm('Вы действительно хотите отменить заказ ?');
@@ -217,7 +217,7 @@ define(
                     thriftModule.client.cancelOrder(orderId);
                 }
             });
-        }
+        }*/
 
         function getWeekDay(orderWeekDay){
             var day;
@@ -320,8 +320,8 @@ define(
                 var quest = confirm('Вы действительно хотите отменить заказ ?');
                 if (quest){
                     var orderId = $('.tab-pane.active').data('orderid');
-                    cleanBasket();
                     thriftModule.client.cancelOrder(orderId);
+                    cleanBasket();
                 }
             });
 
@@ -705,14 +705,13 @@ define(
                     var myAddress;
                     (homeAddress) ? myAddress = homeAddress : myAddress = userAddresses[0];
 
-                    thriftModule.client.setOrderDeliveryType(orderId,2,myAddress);
 
                     if(myAddress){
                         $('.input-delivery .delivery-address').text(myAddress.country.name + ", " + myAddress.city.name + ", "
                             + myAddress.street.name + " " + myAddress.building.fullNo + ", кв. " + myAddress.flatNo);
 
+                        thriftModule.client.setOrderDeliveryType(orderId,2,myAddress);
                     }else{
-
                         $('.input-delivery .delivery-address').html("<span class='error-info'>У вас не указано ни одного адреса доставки.</span>");
                         $('.input-delivery .delivery-address .error-info').show();
 
@@ -741,8 +740,9 @@ define(
                         if(homeAddress){
                             writeAddress(homeAddress);
                         }
-                        setDeliveryDropdown(orderId,userAddresses);
                     }
+                    setDeliveryDropdown(orderId,userAddresses);
+
 
                     $('.add-address').click(function(e){
                         e.preventDefault();
@@ -752,7 +752,6 @@ define(
                             $('.alert-delivery-addr').text('Введите полный адресс доставки !').show();
                         }else{
                             $('.alert-delivery-addr').hide();
-                            setDeliveryCost(orderId);
                             var addressInput = $('.address-input');
                             addressInput.slideUp();
 
@@ -764,6 +763,7 @@ define(
                             thriftModule.userClient.addUserAddress(deliveryAddress);
 
                             thriftModule.client.setOrderDeliveryType(orderId,2,deliveryAddress);
+                            setDeliveryCost(orderId);
                             setDeliveryDropdown(orderId);
                         }
 

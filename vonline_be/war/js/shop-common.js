@@ -307,12 +307,14 @@ define(
                         currentModal.append(popupHtml);
                         if ($(this).closest('tr').length == 0 || $(this).closest('.order-products').length > 0){
                             // если мы в корзине или на странице заказов
+                            var isBasket;
+                            ($(this).closest('.order-products').length > 0) ? isBasket = false : isBasket = true ;
                             if (productDetails.prepackRequired){
                                 var isFirstModal = true;
-                                spinnerModule.initPrepackRequiredInModal($(this),currentModal,productSelector,isFirstModal);
+                                spinnerModule.initPrepackRequiredInModal($(this),currentModal,productSelector,isFirstModal,isBasket);
                             }else{
                                 //если обычный товар
-                                spinnerModule.InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),1,productSelector.find('td>.ace-spinner .spinner1').data('step'));
+                                spinnerModule.InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),isBasket,productSelector.find('td>.ace-spinner .spinner1').data('step'));
                             }
                             if($(this).closest('.order-products').length > 0){
                                 // если на странице истории заказов, то нужно инициализировать AddToBasket

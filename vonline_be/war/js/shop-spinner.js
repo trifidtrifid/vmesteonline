@@ -412,7 +412,10 @@ define(
             });
         }
 
-        function initPrepackRequiredInModal(linkSelector,currentModal,productSelector,isFirstModal){
+        function initPrepackRequiredInModal(linkSelector,currentModal,productSelector,isFirstModal,isBasketBool){
+
+            var isBasket;
+            (isBasketBool === undefined) ? isBasket = true : isBasket = isBasketBool;
 
             var orderId = linkSelector.closest('.tab-pane').data('orderid');
             if(!orderId){orderId = $('.tab-pane.active').data('orderid')}
@@ -451,8 +454,8 @@ define(
                             currentModal.find('.packs .ace-spinner').spinner('value',packs[p]);
                             currentModal.find('.prepack-item:not(".packs") .ace-spinner').spinner('value',p);
                         }else{
-                            InitSpinner(currentModal.find('.packs .spinner1'),packs[p],1,1);
-                            InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),p,1,(productSelector.find('td>.ace-spinner .spinner1').data('step')));
+                            InitSpinner(currentModal.find('.packs .spinner1'),packs[p],isBasket,1);
+                            InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'),p,isBasket,(productSelector.find('td>.ace-spinner .spinner1').data('step')));
                         }
                     }else{
                         if (packs[p] != 0){
@@ -472,8 +475,8 @@ define(
                                 '</div>'+
                                 '</div>';
                             currentModal.find('.prepack-list').append(prepackHtml);
-                            InitSpinner(currentModal.find('.no-init .packs .spinner1'),packs[p],1);
-                            InitSpinner(currentModal.find('.no-init .prepack-item:not(".packs") .spinner1'),p,1,productSelector.find('td>.ace-spinner .spinner1').data('step'));
+                            InitSpinner(currentModal.find('.no-init .packs .spinner1'),packs[p],isBasket);
+                            InitSpinner(currentModal.find('.no-init .prepack-item:not(".packs") .spinner1'),p,isBasket,productSelector.find('td>.ace-spinner .spinner1').data('step'));
                             var currentPrepackLine = currentModal.find('.prepack-line.no-init');
                             initRemovePrepackLine(currentPrepackLine.find('.prepack-item .close'),productId,productSelector);
 
