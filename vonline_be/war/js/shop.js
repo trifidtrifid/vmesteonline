@@ -103,7 +103,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         //modules.deliveryModule.initRadioBtnClick();
 
         if(globalUserAuth){
-        modules.shopCommonModule.initBasketInReload();
+            modules.shopCommonModule.initBasketInReload();
         }
         modules.categoryModule.InitClickOnCategory();
         modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));

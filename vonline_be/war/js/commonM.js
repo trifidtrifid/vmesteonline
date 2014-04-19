@@ -59,7 +59,8 @@ define(
                 userInfo.lastName = newSurname;
                 userContacts.mobilePhone = newPhone;
 
-                if (isValidEmail(newEmail)){
+                var commonModule = require('shop-common');
+                if (commonModule.isValidEmail(newEmail)){
                     userContacts.email = newEmail;
                 }else{
                     haveError = 1;
@@ -84,11 +85,6 @@ define(
 
             });
 
-            function isValidEmail(myEmail) {
-
-                return /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(myEmail);
-
-            }
         }
 
         function SetJSForProfile(){
@@ -291,6 +287,7 @@ define(
                 $(this).parent().addClass('open');
             });
         }
+
 
         return {
             init: init

@@ -158,44 +158,6 @@ define(
             }
 
             markAddedProduct();
-
-
-            /*var catalogOrderLi = $('.catalog-order li');
-            if(catalogOrderLi.length > 0){
-                var order = thriftModule.client.getOrder(0);
-                var orderDetails = thriftModule.client.getOrderDetails(order.id);
-                var orderLines = orderDetails.odrerLines;
-                var orderLinesLength = orderLines.length;
-                var itsBasket = 1;
-                var catalogOrder = $('.catalog-order');
-
-                catalogOrderLi.each(function(){
-                    basketModule.InitDeleteProduct($(this).find('.delete-product'));
-                    InitProductDetailPopup($(this).find('.product-link'));
-                    var newTdSumma = parseFloat($(this).find('.td-summa').text()).toFixed(1);
-                    $(this).find('.td-summa').text(newTdSumma);
-
-                    var productId = $(this).data('productid');
-                    for(var i = 0; i < orderLinesLength; i++){
-                        if (orderLines[i].product.id == productId){
-                            var minClientPack = $(this).find('td .spinner1').data('step');
-                            spinnerModule.InitSpinner($(this).find('td .spinner1'),orderLines[i].quantity,itsBasket,minClientPack);
-                            if( getPacksLength(orderLines[i].packs) > 1 ){
-                                $(this).find('td .ace-spinner').spinner('disable');
-                            }
-                            break;
-                        }
-                    }
-
-                });
-                if(orderDetails.delivery == 1){
-                    $('.radio input:not(".courier-delivery")').trigger('click');
-                }else if (orderDetails.delivery == 2){
-                    $('.radio .courier-delivery').trigger('click');
-                }
-                $('.itogo-right span').text(countAmount(catalogOrder));
-                $('.empty-basket').hide();
-            }*/
         }
 
         function InitProductDetailPopup(selector){
@@ -607,6 +569,12 @@ define(
             }).modal();
         }
 
+        function isValidEmail(myEmail) {
+
+            return /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(myEmail);
+
+        }
+
         return{
             getCookie: getCookie,
             setCookie: setCookie,
@@ -619,7 +587,8 @@ define(
             openModalAuth: openModalAuth,
             markAddedProduct: markAddedProduct,
             remarkAddedProduct: remarkAddedProduct,
-            addAddressToBase: addAddressToBase
+            addAddressToBase: addAddressToBase,
+            isValidEmail: isValidEmail
         }
     }
 );

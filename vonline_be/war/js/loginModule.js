@@ -97,6 +97,8 @@ define(
         }
         else if (thriftModule.authClient.checkEmailRegistered($("#email").val())) {
             $('.email-alert').text('Такой e-mail уже зарегистрирован !').css('display','block');
+        }else if(!commonModule.isValidEmail($('#email').val())){
+            $('.email-alert').text('Некорректный email !').css('display','block');
         }else{
             var userId = thriftModule.authClient.registerNewUser($("#login").val(), "", $("#pass").val(), $("#email").val());
             thriftModule.authClient.login($("#email").val(), $("#pass").val());
