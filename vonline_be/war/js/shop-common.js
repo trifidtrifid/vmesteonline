@@ -52,6 +52,79 @@ define(
             }
         }
 
+        function addAddressToBase(currentForm){
+            var countries = thriftModule.userClient.getCounties();
+            var countriesLength = countries.length;
+            var inputCountry = currentForm.find('.country-delivery').val();
+            var country,countryId = 0;
+            for (var i = 0; i < countriesLength; i++){
+                if (countries[i].name == inputCountry){
+                    country = countries[i];
+                    countryId = country.id;
+                }
+            }
+            if (!countryId){
+                country = thriftModule.userClient.createNewCountry(inputCountry);
+                countryId = country.id;
+            }
+
+            var cities = thriftModule.userClient.getCities(countryId);
+            var citiesLength = cities.length;
+            var inputCity = currentForm.find('.city-delivery').val();
+            var city,cityId = 0;
+            for (i = 0; i < citiesLength; i++){
+                if (cities[i].name == inputCity){
+                    city = cities[i];
+                    cityId = city.id;
+                }
+            }
+            if (!cityId){
+                city = thriftModule.userClient.createNewCity(countryId,inputCity);
+                cityId = city.id;
+            }
+
+            var streets = thriftModule.userClient.getStreets(cityId);
+            var streetsLength = streets.length;
+            var inputStreet = currentForm.find('.street-delivery').val();
+            var street,streetId = 0;
+            for (i = 0; i < streetsLength; i++){
+                if (streets[i].name == inputStreet){
+                    street = streets[i];
+                    streetId = street.id;
+                }
+            }
+            if (!streetId){
+                street = thriftModule.userClient.createNewStreet(cityId,inputStreet);
+                streetId = street.id;
+            }
+
+            var buildings = thriftModule.userClient.getBuildings(streetId);
+            var buildingsLength = buildings.length;
+            var inputBuilding = currentForm.find('.building-delivery').val();
+            var building,buildingId = 0;
+            for (i = 0; i < buildingsLength; i++){
+                if (buildings[i].fullNo == inputBuilding){
+                    building = buildings[i];
+                    buildingId = building.id;
+                }
+            }
+            if (!buildingId){
+                building = thriftModule.userClient.createNewBuilding(streetId,inputBuilding,0,0);
+            }
+
+            var deliveryAddress = new com.vmesteonline.be.PostalAddress();
+            deliveryAddress.country = country;
+            deliveryAddress.city = city;
+            deliveryAddress.street = street;
+            deliveryAddress.building = building;
+            deliveryAddress.staircase = 0;
+            deliveryAddress.floor= 0;
+            deliveryAddress.flatNo = parseInt(currentForm.find('.flat-delivery').val());
+            deliveryAddress.comment = $('#order-comment').val();
+
+            return deliveryAddress;
+        }
+
         function initBasketInReload(){
 
             var nowTime = parseInt(new Date().getTime()/1000);
@@ -62,8 +135,11 @@ define(
             var currentOrdersLength = currentOrders.length;
             for(var i = 0; i < currentOrdersLength; i++){
                 var orderid = currentOrders[i].id;
+
                 basketModule.addTabToBasketHtml(new Date(currentOrders[i].date*1000),orderid);
                 var orderDetails = thriftModule.client.getOrderDetails(orderid);
+                $('.tab-pane.active').find('.weight span').text(orderDetails.weightGramm);
+
                 var orderLines = orderDetails.odrerLines;
                 var orderLinesLength = orderDetails.odrerLines.length;
                 for(var j = 0; j < orderLinesLength; j++){
@@ -82,42 +158,6 @@ define(
             }
 
             markAddedProduct();
-            /*var catalogOrderLi = $('.catalog-order li');
-            if(catalogOrderLi.length > 0){
-                var order = thriftModule.client.getOrder(0);
-                var orderDetails = thriftModule.client.getOrderDetails(order.id);
-                var orderLines = orderDetails.odrerLines;
-                var orderLinesLength = orderLines.length;
-                var itsBasket = 1;
-                var catalogOrder = $('.catalog-order');
-
-                catalogOrderLi.each(function(){
-                    basketModule.InitDeleteProduct($(this).find('.delete-product'));
-                    InitProductDetailPopup($(this).find('.product-link'));
-                    var newTdSumma = parseFloat($(this).find('.td-summa').text()).toFixed(1);
-                    $(this).find('.td-summa').text(newTdSumma);
-
-                    var productId = $(this).data('productid');
-                    for(var i = 0; i < orderLinesLength; i++){
-                        if (orderLines[i].product.id == productId){
-                            var minClientPack = $(this).find('td .spinner1').data('step');
-                            spinnerModule.InitSpinner($(this).find('td .spinner1'),orderLines[i].quantity,itsBasket,minClientPack);
-                            if( getPacksLength(orderLines[i].packs) > 1 ){
-                                $(this).find('td .ace-spinner').spinner('disable');
-                            }
-                            break;
-                        }
-                    }
-
-                });
-                if(orderDetails.delivery == 1){
-                    $('.radio input:not(".courier-delivery")').trigger('click');
-                }else if (orderDetails.delivery == 2){
-                    $('.radio .courier-delivery').trigger('click');
-                }
-                $('.itogo-right span').text(countAmount(catalogOrder));
-                $('.empty-basket').hide();
-            }*/
         }
 
         function InitProductDetailPopup(selector){
@@ -229,12 +269,14 @@ define(
                         currentModal.append(popupHtml);
                         if ($(this).closest('tr').length == 0 || $(this).closest('.order-products').length > 0){
                             // если мы в корзине или на странице заказов
+                            var isBasket;
+                            ($(this).closest('.order-products').length > 0) ? isBasket = false : isBasket = true ;
                             if (productDetails.prepackRequired){
                                 var isFirstModal = true;
-                                spinnerModule.initPrepackRequiredInModal($(this),currentModal,productSelector,isFirstModal);
+                                spinnerModule.initPrepackRequiredInModal($(this),currentModal,productSelector,isFirstModal,isBasket);
                             }else{
                                 //если обычный товар
-                                spinnerModule.InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),1,productSelector.find('td>.ace-spinner .spinner1').data('step'));
+                                spinnerModule.InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),isBasket,productSelector.find('td>.ace-spinner .spinner1').data('step'));
                             }
                             if($(this).closest('.order-products').length > 0){
                                 // если на странице истории заказов, то нужно инициализировать AddToBasket
@@ -527,6 +569,12 @@ define(
             }).modal();
         }
 
+        function isValidEmail(myEmail) {
+
+            return /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(myEmail);
+
+        }
+
         return{
             getCookie: getCookie,
             setCookie: setCookie,
@@ -538,7 +586,9 @@ define(
             setSidebarHeight: setSidebarHeight,
             openModalAuth: openModalAuth,
             markAddedProduct: markAddedProduct,
-            remarkAddedProduct: remarkAddedProduct
+            remarkAddedProduct: remarkAddedProduct,
+            addAddressToBase: addAddressToBase,
+            isValidEmail: isValidEmail
         }
     }
 );

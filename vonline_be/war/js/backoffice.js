@@ -102,7 +102,7 @@ $(document).ready(function(){
                 ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
                     '<td>'+
                     '<a href="#" class="product-link">'+
-                    '<img src="'+ myPic +'" alt="картинка"/>'+
+                    '<div class="product-pic"><img src="'+ myPic +'" alt="картинка"/></div>'+
                     '<span>'+
                     '<span>'+orderLines[j].product.name+'</span>'+
                     orderLines[j].product.shortDescr +
@@ -836,16 +836,24 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
     /* export */
 
-    $('.check-all').click(function(){
+    $('.check-all .lbl').click(function(){
         //var tab = $('#orders');
-        var tab = $(this).closest('.back-tab');//('#orders');
+        var tab = $(this).closest('.back-tab');
 
         if(tab.hasClass('export')){
             tab = $(this).closest('.tab-pane');
         }
 
-        tab.find('.checkbox').addClass('active');
-        tab.find('.checkbox:not(".check-all") input').attr('checked','checked');
+        var checkbox = $(this).closest('.check-all');
+        if(checkbox.hasClass('uncheck')){
+            tab.find('.checkbox').removeClass('active');
+            tab.find('.checkbox:not(".check-all") input').prop('checked',false);
+            checkbox.removeClass('uncheck').find('.lbl').text('check all');
+        }else{
+            tab.find('.checkbox').addClass('active');
+            tab.find('.checkbox:not(".check-all") input').prop('checked',true);
+            checkbox.addClass('uncheck').find('.lbl').text('uncheck all');
+        }
     });
 
        $('.export-btn').click(function(e){

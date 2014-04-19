@@ -33,7 +33,7 @@ define(
                 productsHtml += '<tr data-productid="'+ productsList[i].id +'">'+
                     '<td>'+
                     '<a href="#" class="product-link">'+
-                    '<img src="'+ myPic +'" alt="картинка"/>'+
+                    '<div class="product-pic"><img src="'+ myPic +'" alt="картинка"/></div>'+
                     '<span><span>'+ productsList[i].name +'</span>'+ productsList[i].shortDescr +'</span>'+
                     '</a>'+
                     '<div class="modal">'+
