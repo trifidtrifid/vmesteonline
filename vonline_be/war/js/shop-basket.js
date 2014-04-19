@@ -320,8 +320,8 @@ define(
                 var quest = confirm('Вы действительно хотите отменить заказ ?');
                 if (quest){
                     var orderId = $('.tab-pane.active').data('orderid');
-                    thriftModule.client.cancelOrder(orderId);
                     cleanBasket();
+                    thriftModule.client.cancelOrder(orderId);
                 }
             });
 

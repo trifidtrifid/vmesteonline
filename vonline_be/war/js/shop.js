@@ -114,8 +114,41 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         commonM.init();
 
         window.onerror = function(message, source, lineno) {
-            alert("Ошибка:"+message +"\n" +
-            "файл:" + source + "\n" +
-            "строка:" + lineno);
+            /*alert("Ошибка:"+message +"\n" +
+                "файл:" + source + "\n" +
+                "строка:" + lineno);*/
+            var errorDetails = $('#error-details');
+            var modalError= $('.modal-error');
+            modalError.height('130px').modal();
+            errorDetails.hide().removeClass('active');
+
+            errorDetails.html("Ошибка:"+message +"<br>" +
+                "Файл:" + source + "<br>" +
+                "Строка:" + lineno);
+
+            $('.error-details-link.no-init').click(function(){
+
+                var h1 = modalError.height();
+                var h2 = $('#error-details').height();
+                var h;
+
+                errorDetails.toggleClass('active');
+                if (errorDetails.hasClass('active')) {
+                    h = h1+h2;
+                    errorDetails.slideDown(200);
+                    modalError.height(h);
+                }else{
+                    h = h1-h2;
+                    errorDetails.slideUp(200,function(){
+                    modalError.height(h);
+                    });
+                };
+                $(this).removeClass('no-init');
+            });
+
+            $('.modal-backdrop').click(function(){
+              $('.modal').find('.close').trigger('click');
+            });
+
         };
     });

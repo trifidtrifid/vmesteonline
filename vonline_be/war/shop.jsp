@@ -444,37 +444,18 @@
             <div class="page shop-editPersonal"></div>
     </div>
 
-		<div class="modal modal-order-end">
-			<div class="modal-body">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-hidden="true">×</button>
-				<h3>Ваш заказ :</h3>
-				<section class="catalog">
-					<%--<table>
-					</table>--%>
-					<table class="modal-body-list">
-                        <thead>
-                            <tr>
-                                <td>Название</td>
-                                <td>Цена(руб)</td>
-                                <td>Количество</td>
-                                <td>Ед.изм</td>
-                                <td>Сумма</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-					</table>
-				</section>
-			</div>
-			<div class="modal-footer">
-				<div class="modal-itogo">
-					Итого : <span>333</span> р.
-				</div>
-				<button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>
-				<button class="btn btn-sm btn-grey no-border">Отменить</button>
-			</div>
-		</div>
+        <div class="modal modal-error">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <p>Произошла ошибка работы приложения. Наши программисты уже получили всю необходимую информацию.
+                Приносим извинения за доставленные неудобства.</p>
+                <p>Для продолжения работы перезагрузите страницу.</p>
+                <div class="details-block">
+                    <a href="#" class="error-details-link no-init">Детали</a>
+                    <div id="error-details" class="error-info"></div>
+                </div>
+            </div>
+        </div>
 
 		<div class="modal modal-auth">
 		</div>
