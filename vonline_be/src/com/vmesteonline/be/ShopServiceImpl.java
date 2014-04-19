@@ -1714,6 +1714,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	@Override
 	public DataSet getTotalOrdersReport(int date, DeliveryType deliveryType, Map<Integer, ExchangeFieldType> orderFields,
 			Map<Integer, ExchangeFieldType> orderLineFIelds) throws InvalidOperation {
+		
 		DataSet ds = new DataSet();
 		ds.date = date;
 		ds.id = 0;
@@ -1722,6 +1723,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop shop = getCurrentShop(pm);
+			long currentUserId = getCurrentUserId(pm);
+			
 			// import get all of orders for the shop by date
 			Query q = pm.newQuery(VoOrder.class);
 			q.setFilter("shopId == " + shop.getId() + (0 == date ? "" : " && date == " + date)
@@ -1729,14 +1732,19 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			List<VoOrder> olist = (List<VoOrder>) q.execute();
 
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			OrderLineDescription odInstance = new OrderLineDescription();
 			OrderDescription oInstance = new OrderDescription();
 			List<OrderDescription> odl = new ArrayList<OrderDescription>();
 			List<List<String>> fieldsData = new ArrayList<List<String>>();
 
-			long currentUserId = getCurrentUserId(pm);
+			//User ID - Order ID - product ID - Quantity Map
+			Map<Long, Map<Long, Map<Long,Double>>> ordersMap = new TreeMap<Long, Map<Long,Map<Long,Double>>>();
+			Map<Long,VoProduct> productsList = new TreeMap<Long, VoProduct>();
+			Map<Long,VoUser> usersMap = new TreeMap<Long, VoUser>();		
+			VoProduct vop;
+			
 			for (VoOrder voOrder : olist) {
+				
 				OrderDescription od = new OrderDescription();
 				od.orderId = voOrder.getId();
 				od.date = new Date( ((long)date) * 1000L ).toString();
@@ -1755,30 +1763,49 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				od.userId = user.getId();
 				od.userName = user.getName() + " " + user.getLastName();
 				od.weight = voOrder.getWeightGramm();
-
+				
 				ArrayList<OrderLineDescription> oldl = new ArrayList<OrderLineDescription>();
+				Map<Long,Double> productQM = new TreeMap<Long, Double>();
+				
+				if( !usersMap.containsKey(od.userId) ){ 
+					ordersMap.put( od.userId, new TreeMap<Long, Map<Long,Double>>());
+					usersMap.put(od.userId,user);
+				}
+				ordersMap.get(od.userId).put(od.orderId, productQM);
+				
 				if(null!=voOrder.getOrderLines())
 					for (Long volId : voOrder.getOrderLines().values()) {
-					VoOrderLine vol = pm.getObjectById(VoOrderLine.class, volId);
-					VoProduct vop = pm.getObjectById(VoProduct.class, vol.getProductId());
-					OrderLineDescription old = new OrderLineDescription();
-					old.lineId = vol.getId().getId();
-					old.quantity = vol.getQuantity();
-					old.orderId = voOrder.getId();
-					// TODO optimize count of requests to DB
-					old.productId = vol.getProductId();
-					old.productName = vop.getName();
-					old.producerId = vop.getProducer();
-
-					VoProducer vopr = pm.getObjectById(VoProducer.class, old.producerId);
-					old.producerName = vopr.getName();
-					old.price = vol.getPrice();
-					old.comment = vol.getComment();
-					if (null != vol.getPackets()) {
-						old.packets = new TreeMap<Double, Integer>();
-						old.packets.putAll(vol.getPackets());
-					}
-					oldl.add(old);
+						
+						VoOrderLine vol = pm.getObjectById(VoOrderLine.class, volId);
+						
+						
+						if(productsList.containsKey( vol.getProductId() ))
+								vop = productsList.get(vol.getProductId());
+						else {
+								vop = pm.getObjectById(VoProduct.class, vol.getProductId());
+								productsList.put(vol.getProductId(), vop);
+						}
+								
+						OrderLineDescription old = new OrderLineDescription();
+						old.lineId = vol.getId().getId();
+						old.quantity = vol.getQuantity();
+						old.orderId = voOrder.getId();
+						// TODO optimize count of requests to DB
+						old.productId = vol.getProductId();
+						old.productName = vop.getName();
+						old.producerId = vop.getProducer();
+	
+						VoProducer vopr = pm.getObjectById(VoProducer.class, old.producerId);
+						old.producerName = vopr.getName();
+						old.price = vol.getPrice();
+						old.comment = vol.getComment();
+						if (null != vol.getPackets()) {
+							old.packets = new TreeMap<Double, Integer>();
+							old.packets.putAll(vol.getPackets());
+						}
+						oldl.add(old);
+			
+						productQM.put(old.productId, old.quantity);			
 				}
 				// collect all order line information
 				ByteArrayOutputStream lbaos = new ByteArrayOutputStream();
@@ -1796,27 +1823,107 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				odl.add(od);
 				ds.addToData(ordersLinesIE);
 			}
+			
+			//create orders matrix
+			ds.addToData(createFullOrderMatrix(currentUserId, ordersMap, productsList, usersMap, pm));
+			
+			//add total orders info
 			ImportElement ordersIE = new ImportElement(ImExType.EXPORT_ORDERS, "orders.csv", orderFields);
 
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			CSVHelper.writeCSVData(baos, CSVHelper.getFieldsMap(oInstance, ExchangeFieldType.ORDER_ID, orderFields), odl, fieldsData);
 			ordersIE.setFieldsData( VoHelper.matrixToList(fieldsData) );
 			baos.close();
-			byte[] fileData = baos.toByteArray();
-			ordersIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm));
+			byte[] fileData2 = baos.toByteArray();
+			ordersIE.setUrl(StorageHelper.saveImage(fileData2, "text/csv", currentUserId, false, pm));
 
 			ds.addToData(ordersIE);
 
 			return ds;
 
 		} catch (InvalidOperation ei) {
+			ei.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to export data. " + ei.why);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to export data. " + e);
 
 		}finally {
 			pm.close();
 		}
+	}
+
+	private ImportElement createFullOrderMatrix(long currentUserId, Map<Long, Map<Long, Map<Long, Double>>> ordersMap, Map<Long, VoProduct> productsList,
+			Map<Long, VoUser> usersMap, PersistenceManager pm) throws IOException {
+		/*
+		User ID - Order ID - product ID - Quantity Map
+		Map<Long, Map<Long, Map<Long,Double>>> ordersMap = new TreeMap<Long, Map<Long,Map<Long,Double>>>();
+		Map<Long,VoProduct> productsList = new TreeMap<Long, VoProduct>();
+		Map<Long,VoUser> usersMap = new TreeMap<Long, VoUser>();
+		*/
+		List<List<String>> productsMatrix = new ArrayList<List<String>>();
+		//create line for products
+		ArrayList<String> lineOfProductNames = new ArrayList<String>();
+		ArrayList<String> lineOfProductVendors = new ArrayList<String>();
+		ArrayList<String> lineOfProductId = new ArrayList<String>();
+		ArrayList<String> lineOfProductImportId = new ArrayList<String>();
+		
+		lineOfProductNames.add("");//skip three lines
+		lineOfProductNames.add("");
+		lineOfProductNames.add("");
+		lineOfProductVendors.addAll(lineOfProductNames);
+		lineOfProductId.addAll(lineOfProductNames);
+		lineOfProductImportId.addAll(lineOfProductNames);
+		
+		for( VoProduct nextProduct : productsList.values() ){
+			lineOfProductNames.add(nextProduct.getName());
+			lineOfProductVendors.add(pm.getObjectById(VoProducer.class,nextProduct.getProducer()).getName());
+			lineOfProductId.add(""+nextProduct.getId());
+			lineOfProductImportId.add(""+nextProduct.getImportId());
+		}
+		
+		productsMatrix.add(lineOfProductVendors);
+		lineOfProductVendors.set(0, "VENDOR");
+		
+		productsMatrix.add(lineOfProductId);
+		lineOfProductId.set(0,"INT PRODUCT ID");
+		
+		productsMatrix.add(lineOfProductImportId);
+		lineOfProductImportId.set(0, "PRODUCT ID");
+		
+		productsMatrix.add(lineOfProductNames);
+		lineOfProductNames.set(0, "PRODUCT NAME");
+		
+		for(  VoUser nextUser : usersMap.values() ){
+			int userOrdrersCounter = 1;
+			for( Entry<Long, Map<Long,Double>> orderEntry : ordersMap.get(nextUser.getId()).entrySet()){
+				List<String> line = new ArrayList<String>();
+				
+				productsMatrix.add( line ); //create new row
+				line.add( "user:"+nextUser.getId() ); //three line of row head
+				line.add( nextUser.getName());
+				line.add( "order["+userOrdrersCounter+"]:"+orderEntry.getKey() );
+				//fill the row
+				for( VoProduct nextProduct : productsList.values() ){
+					Double quantity = orderEntry.getValue().get( nextProduct.getId() );
+					line.add( "" + (quantity == null ? "" : ""+quantity));
+				}
+				userOrdrersCounter ++;
+			}
+		}
+		productsMatrix = VoHelper.transMatrix(productsMatrix);
+		//add orders matrix
+		ImportElement ordersMtxIE = new ImportElement(ImExType.EXPORT_ORDERS, "orders_matrix.csv", null);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		CSVHelper.writeCSV(baos,productsMatrix,null,null,null);
+		ordersMtxIE.setFieldsData( VoHelper.matrixToList(productsMatrix) );
+		baos.close();
+		byte[] fileData = baos.toByteArray();
+		ordersMtxIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm));
+
+		return ordersMtxIE;
 	}
 
 	// ======================================================================================================================
