@@ -674,10 +674,9 @@ define(
                 e.preventDefault();
                 var ind = $(this).parent().index();
 
-                setDeliveryCost(orderId);
-
                 writeAddress(addresses[ind]);
                 thriftModule.client.setOrderDeliveryType(orderId,2,addresses[ind]);
+                setDeliveryCost(orderId);
             });
 
             $('.delivery-add-address').click(function(e){
@@ -711,6 +710,8 @@ define(
                             + myAddress.street.name + " " + myAddress.building.fullNo + ", кв. " + myAddress.flatNo);
 
                         thriftModule.client.setOrderDeliveryType(orderId,2,myAddress);
+                        setDeliveryCost(orderId);
+
                     }else{
                         $('.input-delivery .delivery-address').html("<span class='error-info'>У вас не указано ни одного адреса доставки.</span>");
                         $('.input-delivery .delivery-address .error-info').show();
@@ -719,7 +720,6 @@ define(
 
                     itogoRight.text(commonModule.countAmount($('.confirm-order')));
 
-                    setDeliveryCost(orderId);
 
                     $('.delivery-dropdown').show();
 
