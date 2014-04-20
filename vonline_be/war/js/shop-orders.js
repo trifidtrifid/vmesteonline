@@ -30,7 +30,7 @@ define(
                     ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
                         '<td>'+
                         '<a href="#" class="product-link">'+
-                        '<img src="'+ myPic +'" alt="картинка"/>'+
+                        '<div class="product-pic"><img src="'+ myPic +'" alt="картинка"/></div>'+
                         '<span>'+
                         '<span>'+orderLines[j].product.name+'</span>'+
                         orderLines[j].product.shortDescr +
@@ -195,7 +195,13 @@ define(
                             orderProducts.append(createOrdersProductHtml(orderDetails));
 
                             for (var i = 0; i < orderLinesLength; i++){
-                                spinnerModule.InitSpinner(orderProducts.find('tbody tr:eq('+ i +') .spinner1'),orderLines[i].quantity,0,orderProducts.find('tbody tr:eq('+ i +') .spinner1').data('step'));
+                                var spinnerSelector = orderProducts.find('tbody tr:eq('+ i +') .spinner1');
+                                var spinnerStep = orderProducts.find('tbody tr:eq('+ i +') .spinner1').data('step');
+                                spinnerModule.InitSpinner(spinnerSelector,orderLines[i].quantity,0,spinnerStep);
+
+                                if(spinnerSelector.attr('disabled') == 'disabled'){
+                                    spinnerSelector.closest('.ace-spinner').spinner('disable');
+                                }
                             }
 
                             var basketModule = require('shop-basket');
@@ -226,6 +232,13 @@ define(
                     curProd,
                     spinVal, i,
                     oldOrderId = $('.tab-pane.active').data('orderid');
+                    var basketModule = require('shop-basket');
+                    if (!oldOrderId){
+                        var nextDate = basketModule.getNextDate();
+                        var nextDateStr = new Date(nextDate*1000);
+                        oldOrderId = thriftModule.client.createOrder(nextDate,'asd',0);
+                        basketModule.addTabToBasketHtml(nextDateStr,oldOrderId);
+                    }
 
                 if (addType == 'replace'){
                     orderDetails = thriftModule.client.getOrderDetails(orderId);
@@ -238,7 +251,6 @@ define(
                         thriftModule.client.setOrderLine(oldOrderId,curProd.id,spinVal,"asd",packs);
                     }
                 }else if (addType == 'append'){
-                    alert(orderId+" "+oldOrderId);
                     orderDetails = thriftModule.client.appendOrder(oldOrderId,orderId);
                 }
                 orderLines = orderDetails.odrerLines;
@@ -248,10 +260,10 @@ define(
                     curProd = orderLines[i].product;
                     spinVal = orderLines[i].quantity;
                     spinnerDisable = false;
+                    var commonModule = require('shop-common');
                     if(orderLines[i].packs && commonModule.getPacksLength(orderLines[i].packs) > 1){
                         spinnerDisable = true;
                     }
-                    var basketModule = require('shop-basket');
                     basketModule.AddSingleProductToBasket(curProd,spinVal,spinnerDisable);
                 }
             }catch(e){

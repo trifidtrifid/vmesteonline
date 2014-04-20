@@ -154,10 +154,12 @@ transform()
       padding 12px 0 12px 15px
       text-align left
       overflow auto
+      font-size 16px
       .amount
-        font-size 16px
         float right
         margin-right 15px
+      .weight
+        float left
     .basket-bottom
       .btn
         float right
@@ -365,9 +367,14 @@ th.next
           text-align left
           width 60%
           padding-left 5px
-        img
-          width 20px
+        .product-pic
+          width 40px
+          height 40px
+          text-align center
           float left
+          img
+            max-width 40px
+            max-height 40px
         .fa
           font-size 24px
           color #428bca
@@ -377,11 +384,16 @@ th.next
             text-decoration none
         .product-link
           margin-left 0
-          span span
-            display none
+          line-height 40px
+          span
+            display inline-block
+            width 80%
+            vertical-align middle
+            line-height 14px
+            span
+              display none
         span
-          display block
-          margin-left 30px
+          margin-left 10px
           margin-right 10px
           span
             margin 0
@@ -403,7 +415,7 @@ th.next
       font-size 24px
       text-decoration none
     .order-products
-      margin 10px 0 0 0
+      margin 10px 10px 0 0
       display none
     .order-edit
     .order-confirm
@@ -950,7 +962,22 @@ height 50px
     .td1
     .td7
       display none
-
+/* error */
+.modal-error
+  height 130px
+  font-size 14px
+  padding-top 10px
+  border 3px solid #ff0000
+  .close
+    margin-top -15px
+  .error-info
+    clear right
+    text-align right
+    float right
+    font-size 12px
+    height 54px
+  .error-details-link
+    float right
 
 /* backoffice */
 .backoffice .main-content

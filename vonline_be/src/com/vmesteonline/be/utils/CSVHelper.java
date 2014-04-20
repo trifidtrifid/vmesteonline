@@ -173,14 +173,45 @@ public class CSVHelper {
 		return rslt;
 	}
 
-	// =====================================================================================================================
-
+// =====================================================================================================================
+	public static<T> void writeCSV( OutputStream os, List<List<T>> matrixToWrite, String fieldDelim, String setDelim, String avpDelim ) throws IOException{
+		String fd = null == fieldDelim ? ";" : fieldDelim;
+		String sd = null == setDelim ? "|" : setDelim;
+		String avpd = null == avpDelim ? ":" : avpDelim;
+		
+		for( List<T> row : matrixToWrite ){
+			boolean isFirst = false;
+			for( T col : row ){
+				if( isFirst ){
+					isFirst = false;
+				} else {
+					os.write(fd.getBytes(Charset.forName("Cp1251")));
+				}
+				os.write( writeFieldToCSVCell( col,fd, sd, avpDelim).getBytes( Charset.forName("Cp1251")));
+			}
+			os.write("\r\n".getBytes( Charset.forName("Cp1251")));	
+		}
+	}
+//=====================================================================================================================
+	
 	public static <T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listToRead, List<List<String>> fieldsToFill)
 			throws IOException, InvalidOperation {
 		writeCSVData(os, fieldsMap, listToRead, fieldsToFill, null, null, null);
 	}
 
 	// ====================================================================================================================
+	/** MEthod writes a list of object 'listToRead'. 
+	 * Fields of object are written in order that is determined by 'fieldsMap'
+	 * @param os stream to write csv data to
+	 * @param fieldsMap map that determines the order of fields according to field name
+	 * @param listToRead list of objects to wrote
+	 * @param fieldsToFill list of fields that should be written
+	 * @param fieldDelim csv delimiter
+	 * @param setDelim delimiter that used  to write a set into a cell
+	 * @param avpDelim delimiter that used to write a key-value cell
+	 * @throws IOException thrown if can't write
+	 * @throws InvalidOperation thrown if a data is invalid
+	 */
 	public static <T> void writeCSVData(OutputStream os, Map<Integer, String> fieldsMap, List<T> listToRead, List<List<String>> fieldsToFill,
 			String fieldDelim, String setDelim, String avpDelim) throws IOException, InvalidOperation {
 
@@ -221,22 +252,8 @@ public class CSVHelper {
 					Field field = value instanceof Field ? (Field) value : objectToWrite.getClass().getField(value.toString());
 					Object fieldToWrite = field.get(objectToWrite);
 					if (null != fieldToWrite) {
-						if (fieldToWrite instanceof Number){
-							outStr = trimFloatPointAsString(fieldToWrite.toString());
-
-						} else if (fieldToWrite instanceof Set || fieldToWrite instanceof List) {
-							for (Object object : listToRead) {
-								outStr += sd + object;
-							}
-							outStr = outStr.substring(sd.length());
-						} else if (fieldToWrite instanceof Map) {
-							for (Object en : ((Map) fieldToWrite).entrySet()) {
-								outStr += sd + ((Entry) en).getKey() + avpd + ((Entry) en).getValue();
-							}
-							outStr = outStr.substring(sd.length());
-						} else {
-							outStr = fieldToWrite.toString().contains(fd) ? "\"" + fieldToWrite.toString() + "\"" : "" + fieldToWrite;
-						}
+						outStr = writeFieldToCSVCell(fieldToWrite, fd, sd, avpd);
+						
 						if (nextFieldsLine != null) {
 							nextFieldsLine.add(outStr);
 							lineLength++;
@@ -261,6 +278,34 @@ public class CSVHelper {
 		}
 	}
 
+	//=====================================================================================================================
+	
+	private static String writeFieldToCSVCell(Object fieldToWrite,  String fd, String sd, String avpd) {
+		String outStr;
+		
+		if (fieldToWrite instanceof Number){
+			outStr = trimFloatPointAsString(fieldToWrite.toString());
+
+		} else if (fieldToWrite instanceof Set || fieldToWrite instanceof List) {
+			outStr = "";
+			for (Object object : (Collection)fieldToWrite ) {
+				outStr += sd + object;
+			}
+			outStr = outStr.substring(sd.length());
+		} else if (fieldToWrite instanceof Map) {
+			outStr = "";
+			for (Object en : ((Map) fieldToWrite).entrySet()) {
+				outStr += sd + ((Entry) en).getKey() + avpd + ((Entry) en).getValue();
+			}
+			outStr = outStr.substring(sd.length());
+		} else {
+			outStr = fieldToWrite.toString().contains(fd) ? "\"" + fieldToWrite.toString() + "\"" : "" + fieldToWrite;
+		}
+		return outStr;
+	}	
+	
+	//=====================================================================================================================
+		
 	private static String trimFloatPointAsString(String floatPointAsString) {
 		int delP;
 		if( (delP=floatPointAsString.indexOf('.')) !=-1){
@@ -322,5 +367,4 @@ public class CSVHelper {
 		}
 		return lines;
 	}
-
 }

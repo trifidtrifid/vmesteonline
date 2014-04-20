@@ -15,7 +15,9 @@
 <title>Login</title>
 <link rel="stylesheet" href="css/style.css"/>
 <script src="js/lib/jquery-2.0.3.min.js" type="text/javascript"></script>
-
+    <script type="text/javascript">
+        globalUserAuth = false;
+    </script>
 </head>
 <body>
 <div class="container">

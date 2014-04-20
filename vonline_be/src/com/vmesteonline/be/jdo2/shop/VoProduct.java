@@ -539,4 +539,8 @@ public class VoProduct {
 		}
 		return null;
 	}
+
+	public Long getImportId() {
+		return importId;
+	}
 }
