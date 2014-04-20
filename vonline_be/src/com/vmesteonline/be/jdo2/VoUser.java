@@ -2,10 +2,7 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -39,7 +36,7 @@ public class VoUser extends GeoLocation {
 		this.likesNum = 0;
 		this.unlikesNum = 0;
 		this.rubrics = new ArrayList<VoRubric>();
-		this.deliveryAddresses = new TreeSet<VoPostalAddress>();
+		this.deliveryAddresses = new ArrayList<VoPostalAddress>();
 		this.confirmCode = 0;
 		this.emailConfirmed = false;
 		this.avatarMessage = Defaults.defaultAvatarTopicUrl;
@@ -238,7 +235,7 @@ public class VoUser extends GeoLocation {
 		deliveryAddresses.add(pa);
 	}
 
-	public Set<VoPostalAddress> getAddresses() {
+	public List<VoPostalAddress> getAddresses() {
 		return deliveryAddresses;
 	}
 
@@ -263,7 +260,7 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	@Unowned
-	private Set<VoPostalAddress> deliveryAddresses;
+	private List<VoPostalAddress> deliveryAddresses;
 
 	@Persistent
 	@Unindexed

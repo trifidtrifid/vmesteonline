@@ -28,6 +28,7 @@ public class UserServiceImplTest extends UserServiceImpl {
 	private static final String COMMENT = "Комент";
 	private static final String BUILDING_NO = "31";
 	private static final String STREET = "шоссе Революции";
+	private static final String STREET1 = "Полюстровский пр";
 	private static final String CITY = "Saint-Petersburg";
 	private static final String COUNTRY = "Russia";
 
@@ -37,6 +38,11 @@ public class UserServiceImplTest extends UserServiceImpl {
 	private String userHomeLocation;
 	private long userId;
 	private UserServiceImpl usi;
+	Country newCountry;
+	City newCity;
+	Street newStreet;
+	Street newStreet1;
+	Building newBuilding;
 
 	@Before
 	public void setUp() throws Exception {
@@ -56,6 +62,18 @@ public class UserServiceImplTest extends UserServiceImpl {
 		userId = asi.registerNewUser("fn", "ln", "pswd", "eml", userHomeLocation);
 		Assert.assertTrue(userId > 0);
 		asi.login("eml", "pswd");
+
+		newCountry = usi.createNewCountry(COUNTRY);
+		newCity = usi.createNewCity(newCountry.getId(), CITY);
+		newStreet = usi.createNewStreet(newCity.getId(), STREET);
+		newStreet1 = usi.createNewStreet(newCity.getId(), STREET1);
+
+		newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "17", "53");
+
+		Assert.assertEquals(newBuilding.getFullNo(), BUILDING_NO);
+		Assert.assertEquals(newBuilding.getStreetId(), newStreet.getId());
+		Assert.assertTrue(newBuilding.getId() > 0);
+
 	}
 
 	@Test
@@ -371,14 +389,6 @@ public class UserServiceImplTest extends UserServiceImpl {
 	@Test
 	public void testCreateNewBuilding() {
 		try {
-			Country newCountry = usi.createNewCountry(COUNTRY);
-			City newCity = usi.createNewCity(newCountry.getId(), CITY);
-			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "0", "0");
-
-			Assert.assertEquals(newBuilding.getFullNo(), BUILDING_NO);
-			Assert.assertEquals(newBuilding.getStreetId(), newStreet.getId());
-			Assert.assertTrue(newBuilding.getId() > 0);
 
 			List<Building> buildings = usi.getBuildings(newStreet.getId());
 			Assert.assertTrue(buildings.size() > 0);
@@ -400,12 +410,7 @@ public class UserServiceImplTest extends UserServiceImpl {
 	@Test
 	public void testAddUserAddress() {
 		try {
-			Country newCountry = usi.createNewCountry(COUNTRY);
-			City newCity = usi.createNewCity(newCountry.getId(), CITY);
-			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "17", "53");
 			byte floor, flat, staircase;
-
 			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT);
 			boolean created = usi.addUserAddress(newAddress);
 			Assert.assertTrue(created);
@@ -445,12 +450,31 @@ public class UserServiceImplTest extends UserServiceImpl {
 	}
 
 	@Test
+	public void testRemoveUserAddress() {
+		try {
+			byte floor = 2, flat = 3, staircase = 1;
+			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase, floor, flat, COMMENT);
+			Assert.assertTrue(usi.addUserAddress(newAddress));
+			PostalAddress newAddress1 = new PostalAddress(newCountry, newCity, newStreet1, newBuilding, staircase, floor, flat, COMMENT);
+			Assert.assertTrue(usi.addUserAddress(newAddress1));
+
+			Set<PostalAddress> userAddresses = usi.getUserAddresses();
+			Assert.assertEquals(2, userAddresses.size());
+
+			usi.deleteUserAddress(newAddress1);
+			
+			userAddresses = usi.getUserAddresses();
+			Assert.assertEquals(1, userAddresses.size());
+
+		} catch (TException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+
+	@Test
 	public void testGetUserAddress() {
 		try {
-			Country newCountry = usi.createNewCountry(COUNTRY);
-			City newCity = usi.createNewCity(newCountry.getId(), CITY);
-			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "17", "53");
 			byte floor;
 			byte flat;
 			byte staircase;
@@ -464,25 +488,18 @@ public class UserServiceImplTest extends UserServiceImpl {
 			fail("Exception " + e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testsetUserContacts() {
 		try {
-			Country newCountry = usi.createNewCountry(COUNTRY);
-			City newCity = usi.createNewCity(newCountry.getId(), CITY);
-			Street newStreet = usi.createNewStreet(newCity.getId(), STREET);
-			Building newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "17", "53");
-			byte floor;
-			byte flat;
-			byte staircase;
-			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT);
-			
-			usi.updateUserContacts( new UserContacts(UserStatus.CONFIRMED, null, "8(812)123-45-67","a@b.com"));
-			usi.updateUserContacts( new UserContacts(UserStatus.CONFIRMED, newAddress, null,null));
-			usi.updateUserContacts( new UserContacts(UserStatus.CONFIRMED, newAddress, "+7 812 123-45-67"," a@b.com"));
-			
-			
-//			Assert.assertTrue(userHomeAddress.equals(newAddress));
+			byte floor = 2, flat = 3, staircase = 1;
+			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase, floor, flat, COMMENT);
+
+			usi.updateUserContacts(new UserContacts(UserStatus.CONFIRMED, null, "8(812)123-45-67", "a@b.com"));
+			usi.updateUserContacts(new UserContacts(UserStatus.CONFIRMED, newAddress, null, null));
+			usi.updateUserContacts(new UserContacts(UserStatus.CONFIRMED, newAddress, "+7 812 123-45-67", " a@b.com"));
+
+			// Assert.assertTrue(userHomeAddress.equals(newAddress));
 		} catch (InvalidOperation e) {
 			e.printStackTrace();
 			fail("Exception " + e.getMessage());

@@ -44,8 +44,10 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
 	@SuppressWarnings("unchecked")
 	public VoPostalAddress(PostalAddress postalAddress, PersistenceManager _pm) throws InvalidOperation {
+		
 		if (null == postalAddress)
-			return;
+			throw new InvalidOperation(VoError.IncorrectParametrs, "can't init VoPostalAddress object. Input parametr is null");
+
 
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		try {

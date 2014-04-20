@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -227,6 +228,32 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} finally {
 			pm.close();
 		}
+	}
+
+	@Override
+	public void deleteUserAddress(PostalAddress newAddress) throws InvalidOperation, TException {
+
+		PersistenceManager pm = PMF.getPm();
+		try {
+
+			VoPostalAddress addr = new VoPostalAddress(newAddress, pm);
+			VoUser currentUser = getCurrentUser(pm);
+
+			List<VoPostalAddress> addrs = currentUser.getAddresses();
+
+			for (Iterator<VoPostalAddress> iter = addrs.listIterator(); iter.hasNext();) {
+				VoPostalAddress tmpAddr = iter.next();
+				if (tmpAddr.equals(addr))
+					iter.remove();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to deleteUserAddress. " + e.getMessage());
+		} finally {
+			pm.close();
+		}
+
 	}
 
 	@Override

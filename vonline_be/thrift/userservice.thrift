@@ -18,8 +18,10 @@ service UserService {
 	
 	bool setUserAddress( 1:bedata.PostalAddress newAddress )throws (1:error.InvalidOperation exc),
 	bool addUserAddress( 1:bedata.PostalAddress newAddress )throws (1:error.InvalidOperation exc),
-	bedata.PostalAddress getUserHomeAddress( )throws (1:error.InvalidOperation exc),
-	set<bedata.PostalAddress> getUserAddresses( )throws (1:error.InvalidOperation exc),
+	void deleteUserAddress(1:bedata.PostalAddress newAddress) throws (1:error.InvalidOperation exc),
+	set<bedata.PostalAddress> getUserAddresses() throws (1:error.InvalidOperation exc),
+	
+	bedata.PostalAddress getUserHomeAddress() throws (1:error.InvalidOperation exc),
 	
 //для отображения короткой информации о пользователе в верху страницы самому пользователю. 
 	bedata.ShortUserInfo getShortUserInfo() throws (1:error.InvalidOperation exc),
