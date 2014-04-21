@@ -60,6 +60,7 @@ struct ShortProfile{
 	7: string balance,
 }
 
+enum RelationsType { MARRIED=0, NOTMARRIED=1, UNKNOWN=3 }
 
 struct UserInfo{
 	1: i64 id,
@@ -68,7 +69,7 @@ struct UserInfo{
 	4: i32 rating
 	5: string avatar,
 	6: string birthday,
-	7: string relations,
+	7: RelationsType relations,
 }
 
 enum UserStatus { UNCONFIRMED=0, CONFIRMED=1, REQUESTED=2, WAIT_CONFIRMATION=3, HIDE=4 }

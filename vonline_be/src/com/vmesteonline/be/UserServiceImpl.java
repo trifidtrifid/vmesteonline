@@ -3,8 +3,8 @@ package com.vmesteonline.be;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -23,7 +23,6 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
-import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoRubric;
@@ -53,10 +52,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public void updateUserInfo(UserInfo userInfo) throws InvalidOperation {
 
-		/*
-		 * 4: i32 rating 5: string avatar, 6: string birthday, 7: string relations,
-		 */
-
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser user = getCurrentUser(pm);
@@ -70,41 +65,42 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	private static String emailreg = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
-	private static String phonereg ="[\\d-.()+ ]{7,21}";
-	
+	private static String phonereg = "[\\d-.()+ ]{7,21}";
+
 	@Override
 	public void updateUserContacts(UserContacts contacts) throws InvalidOperation {
-		
+
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser user = getCurrentUser(pm);
-			if( null!=contacts.getMobilePhone()) 
-				if(contacts.getMobilePhone().matches(phonereg)) 
+			if (null != contacts.getMobilePhone())
+				if (contacts.getMobilePhone().matches(phonereg))
 					user.setMobilePhone(contacts.getMobilePhone());
-				else 
-					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Phone format '"+contacts.getMobilePhone()+"'. Should have format like 79219876543, +7(821)1234567, etc");
-			
-			if( null!=contacts.getEmail() && !contacts.getEmail().trim().equalsIgnoreCase(user.getEmail())){
-				if(contacts.getEmail().matches(emailreg)) {
+				else
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Phone format '" + contacts.getMobilePhone()
+							+ "'. Should have format like 79219876543, +7(821)1234567, etc");
+
+			if (null != contacts.getEmail() && !contacts.getEmail().trim().equalsIgnoreCase(user.getEmail())) {
+				if (contacts.getEmail().matches(emailreg)) {
 					user.setEmail(contacts.getEmail());
 					user.setEmailConfirmed(false);
-				} else 
-					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Email format '"+contacts.getEmail()+"'. ");
+				} else
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Email format '" + contacts.getEmail() + "'. ");
 			}
-			if( null != contacts.getHomeAddress() ){
-				VoPostalAddress pa = new VoPostalAddress(contacts.getHomeAddress(),pm);
-				
-				if( user.getAddress() == null || pa.getId() != user.getAddress().getId() ){
-						try {
-							user.setLocation( pa.getAddressCode(), pm);
-						} catch (InvalidOperation e) {
-							e.printStackTrace();
-							throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect."+e.why);
-						} catch (Exception e) {
-							e.printStackTrace();
-							throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect."+e.getMessage());
-						}
-				} 
+			if (null != contacts.getHomeAddress()) {
+				VoPostalAddress pa = new VoPostalAddress(contacts.getHomeAddress(), pm);
+
+				if (user.getAddress() == null || pa.getId() != user.getAddress().getId()) {
+					try {
+						user.setLocation(pa.getAddressCode(), pm);
+					} catch (InvalidOperation e) {
+						e.printStackTrace();
+						throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.why);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.getMessage());
+					}
+				}
 			}
 			pm.makePersistent(user);
 		} finally {
@@ -235,6 +231,32 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
+	public void deleteUserAddress(PostalAddress newAddress) throws InvalidOperation, TException {
+
+		PersistenceManager pm = PMF.getPm();
+		try {
+
+			VoPostalAddress addr = new VoPostalAddress(newAddress, pm);
+			VoUser currentUser = getCurrentUser(pm);
+
+			List<VoPostalAddress> addrs = currentUser.getAddresses();
+
+			for (Iterator<VoPostalAddress> iter = addrs.listIterator(); iter.hasNext();) {
+				VoPostalAddress tmpAddr = iter.next();
+				if (tmpAddr.equals(addr))
+					iter.remove();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to deleteUserAddress. " + e.getMessage());
+		} finally {
+			pm.close();
+		}
+
+	}
+
+	@Override
 	public List<Country> getCounties() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -276,7 +298,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser u = getCurrentUser(pm);
-			UserInfo ui = new UserInfo(u.getId(), u.getName(), u.getLastName(), 0, "avatar path", "birthday", "relations");
+			UserInfo ui = u.getUserInfo();
 			return ui;
 		} finally {
 			pm.close();
@@ -531,7 +553,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			// TODO check that there is no building with the same name
 			VoStreet vs = pm.getObjectById(VoStreet.class, streetId);
 			Query q = pm.newQuery(VoBuilding.class);
-			q.setFilter("streetId == " + streetId +" &&  fullNo == '" + fullNo + "'");
+			q.setFilter("streetId == " + streetId + " &&  fullNo == '" + fullNo + "'");
 			List<VoBuilding> buildings = (List<VoBuilding>) q.execute();
 			if (buildings.size() > 0) {
 				logger.info("VoBuilding was NOT created. The same VoBuilding was registered. Return an old one: " + buildings.get(0));
@@ -540,16 +562,18 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				logger.info("VoBuilding '" + fullNo + "'was created.");
 				VoBuilding voBuilding = new VoBuilding(vs, fullNo, new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
 						new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude), pm);
-				if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate
-					// location
-					try {
-						Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
-						voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
-					} catch (Exception e) {
-						e.printStackTrace();
-						throw new InvalidOperation(VoError.GeneralError, "FAiled to determine location of the building." + e.getMessage());
-					}
+				if (longitude != null && lattitude != null) {
+					if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate
+						// location
+						try {
+							Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
+							voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
+						} catch (Exception e) {
+							e.printStackTrace();
+							throw new InvalidOperation(VoError.GeneralError, "FAiled to determine location of the building." + e.getMessage());
+						}
 
+					}
 				}
 				pm.makePersistent(voBuilding);
 				return voBuilding.getBuilding();
@@ -576,6 +600,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} finally {
 			pm.close();
 		}
+
 	}
 
 	@Override

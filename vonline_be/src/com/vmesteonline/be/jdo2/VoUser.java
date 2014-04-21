@@ -2,10 +2,7 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -16,7 +13,9 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.RelationsType;
 import com.vmesteonline.be.ShortUserInfo;
+import com.vmesteonline.be.UserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
@@ -37,18 +36,31 @@ public class VoUser extends GeoLocation {
 		this.likesNum = 0;
 		this.unlikesNum = 0;
 		this.rubrics = new ArrayList<VoRubric>();
-		this.deliveryAddresses = new TreeSet<VoPostalAddress>();
+		this.deliveryAddresses = new ArrayList<VoPostalAddress>();
 		this.confirmCode = 0;
 		this.emailConfirmed = false;
 		this.avatarMessage = Defaults.defaultAvatarTopicUrl;
 		this.avatarTopic = Defaults.defaultAvatarTopicUrl;
 		this.avatarProfile = Defaults.defaultAvatarProfileUrl;
 		this.avatarProfileShort = Defaults.defaultAvatarShortProfileUrl;
+		this.relations = RelationsType.UNKNOWN;
 
+	}
+
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+
+	public void setRelations(RelationsType relations) {
+		this.relations = relations;
 	}
 
 	public ShortUserInfo getShortUserInfo() {
 		return new ShortUserInfo(getId(), name, lastName, 0, getAvatarTopic());
+	}
+
+	public UserInfo getUserInfo() {
+		return new UserInfo(getId(), name, lastName, 0, getAvatarProfile(), birthday, relations);
 	}
 
 	public VoUserGroup getGroupById(long id) throws InvalidOperation {
@@ -223,7 +235,7 @@ public class VoUser extends GeoLocation {
 		deliveryAddresses.add(pa);
 	}
 
-	public Set<VoPostalAddress> getAddresses() {
+	public List<VoPostalAddress> getAddresses() {
 		return deliveryAddresses;
 	}
 
@@ -242,12 +254,13 @@ public class VoUser extends GeoLocation {
 
 	@Persistent
 	@Unindexed
-	private long birthday;
+	private String birthday;
 
+	
 	@Persistent
 	@Unindexed
 	@Unowned
-	private Set<VoPostalAddress> deliveryAddresses;
+	private List<VoPostalAddress> deliveryAddresses;
 
 	@Persistent
 	@Unindexed
@@ -368,6 +381,10 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	private String mobilePhone;
+
+	@Persistent
+	@Unindexed
+	RelationsType relations;
 
 	public String getMobilePhone() {
 		return mobilePhone;
