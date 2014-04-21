@@ -213,6 +213,8 @@ $(document).ready(function(){
                     orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
                     orderDetails.deliveryTo.flatNo+
                     '</td>'+
+                    '<td class="td9">'+ orderDetails.deliveryCost +'</td>'+
+                    '<td class="td8">'+ orderDetails.weightGramm +'</td>'+
                     '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
                     '</tr>'+
                     '</tbody>'+
@@ -1059,9 +1061,9 @@ $('.import-dropdown .dropdown-menu li').click(function(){
             var mainContent = $('.main-content');
 
             if (mainContent.height() > w.height()){
-                $('.shop-right').css('height', mainContent.height()+45);
+                $('#sidebar').css('height', mainContent.height());
             }else{
-                $('.shop-right').css('height', '100%');
+                $('#sidebar').css('height', '100%');
             }
         }catch(e){
             alert(e+" Функция setSidebarHeight");
@@ -1085,6 +1087,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         }
         $(this).closest('ul').find('.active').removeClass('active');
         $(this).parent().addClass('active');
+        setSidebarHeight();
     });
 
 });

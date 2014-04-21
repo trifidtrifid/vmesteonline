@@ -219,55 +219,6 @@
 
                     </div>
                     <div class="orders-list">
-                    <%--<c:forEach var="orders" items="${orders}">
-                        <div class="order-item" data-orderid="${orders.id}">
-                            <table class="orders-tbl">
-                                <tbody>
-                                <tr>
-                                    <td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>
-                                    <td class="td2">Заказ N 124</td>
-                                    <td class="td3">${orders.date}</td>
-                                    <td class="td4">${orders.status}</td>
-                                    <td class="td5">Курьер рядом<br> Санкт-Петербург, e e, кв.12</td>
-                                    <td class="td6">${orders.totalCost}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <div class="order-products">
-                                &lt;%&ndash;<section class="catalog">
-                                    <table>
-                                        <thead>
-                                        <tr>
-                                            <td>Название</td>
-                                            <td>Цена (руб)</td>
-                                            <td>Количество</td>
-                                            <td>Ед.изм</td>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr data-productid="5435985487724544">
-                                            <td>
-                                                <a href="#" class="product-link">
-                                                    <img src="/file/FVAAAAAAAA=.jpg" alt="картинка">
-                                                <span>
-                                                    <span>Молоко 3,2%</span>
-                                                    Молоко питьевое пастеризованное 2%, 1л, ГОСТ Р 52090
-                                                </span>
-                                                </a>
-                                                <div class="modal"></div>
-                                            </td>
-                                            <td class="product-price">48</td>
-                                            <td>
-                                                <input type="text" class="input-mini spinner1" />
-                                            </td>
-                                            <td><span class="unit-name">пак</span></td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </section>&ndash;%&gt;
-                            </div>
-                        </div>
-                    </c:forEach>--%>
                     </div>
 
                 </div>

@@ -85,6 +85,8 @@ define(
 
             });
 
+            $('.main-container').css('min-height', w.height()-45);
+
         }
 
         function SetJSForProfile(){
@@ -283,9 +285,13 @@ define(
                 document.location.replace("login.jsp");
             }
         });
-            $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
+
+        $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
                 $(this).parent().addClass('open');
             });
+
+        commonModule.setSidebarHeight();
+
         }
 
 
