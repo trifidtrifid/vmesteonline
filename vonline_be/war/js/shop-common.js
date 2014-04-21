@@ -564,6 +564,7 @@ define(
                         setSidebarHeight();
                     }
                 }
+            markAddedProduct();
             /*}catch(e){
                 alert(e+" Функция $('.shop-trigger').click");
             }*/

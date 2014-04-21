@@ -208,6 +208,7 @@ define(
                             var commonModule = require('shop-common');
                             basketModule.InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
                             commonModule.InitProductDetailPopup(orderProducts.find('.product-link'));
+                            commonModule.markAddedProduct();
                         }
 
                         orderProducts.slideToggle(200,function(){
@@ -220,6 +221,8 @@ define(
                         }else{
                             $(this).removeClass('fa-minus').addClass('fa-plus');
                         }
+
+
                     });
                 }catch(e){
                     alert(e+" Функция initOrderPlusMinus");
@@ -266,6 +269,7 @@ define(
                     }
                     basketModule.AddSingleProductToBasket(curProd,spinVal,spinnerDisable);
                 }
+                commonModule.markAddedProduct();
             }catch(e){
                 alert(e+" Функция addSingleOrderToBasket");
             }

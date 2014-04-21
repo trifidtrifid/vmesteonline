@@ -369,6 +369,8 @@
                                     <li><a href="#">Самовывоз</a></li>
                                     <li><a href="#">Курьер рядом</a></li>
                                     <li><a href="#">Курьер далеко</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">Все</a></li>
                                 </ul>
                             </div>
 
@@ -582,6 +584,8 @@
                                     <li><a href="#">Самовывоз</a></li>
                                     <li><a href="#">Курьер рядом</a></li>
                                     <li><a href="#">Курьер далеко</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">Все</a></li>
                                 </ul>
                             </div>
 
@@ -688,6 +692,8 @@
                                     <li><a href="#">Самовывоз</a></li>
                                     <li><a href="#">Курьер рядом</a></li>
                                     <li><a href="#">Курьер далеко</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">Все</a></li>
                                 </ul>
                             </div>
 

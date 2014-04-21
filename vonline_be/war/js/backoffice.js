@@ -882,7 +882,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
               });
 
                var deliveryType;
-               (deliveryText != 'Тип доставки') ? deliveryType = getDeliveryTypeByText(deliveryText):deliveryType=0;
+               (deliveryText != 'Тип доставки' && deliveryText != 'Все') ? deliveryType = getDeliveryTypeByText(deliveryText):deliveryType=0;
 
                var dataSet;
 
