@@ -117,6 +117,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             /*alert("Ошибка:"+message +"\n" +
                 "файл:" + source + "\n" +
                 "строка:" + lineno);*/
+          $('.modal.in').find('.close').trigger('click');
             var errorDetails = $('#error-details');
             var modalError= $('.modal-error');
             modalError.height('130px').modal();
@@ -147,7 +148,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             });
 
             $('.modal-backdrop').click(function(){
-              $('.modal').find('.close').trigger('click');
+              $('.modal.in').find('.close').trigger('click');
             });
 
         };

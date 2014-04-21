@@ -101,7 +101,7 @@ define(
                     if (!globalUserAuth){
                         // если пользователь не залогинен
                         selectorForCallbacks = $(this);
-                        callbacks.add(BasketTrigger);
+                        //callbacks.add(BasketTrigger);
                         //$('.modal-auth').modal();
                         var commonModule = require('shop-common');
                         commonModule.openModalAuth();

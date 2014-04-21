@@ -571,6 +571,7 @@ define(
         });
 
         function openModalAuth(){
+            $('.modal.in .close').trigger('click');
             var modalAuth = $('.modal-auth');
             modalAuth.load('login.jsp .container',function(){
                 var closeHtml = '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';

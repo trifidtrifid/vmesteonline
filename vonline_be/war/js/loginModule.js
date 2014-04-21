@@ -95,22 +95,16 @@ define(
 
         thriftModule.authClient.checkEmailRegistered($("#email").val());
         var t;
-        alert(t);
         if($('#login').val()=="" || $('#email').val()=="" || $('#pass').val()==""){
             $('.email-alert').text('Вы заполнили не все поля !').css('display','block');
         }
         else if (thriftModule.authClient.checkEmailRegistered($("#email").val())) {
-            alert('00');
             $('.email-alert').text('Такой e-mail уже зарегистрирован !').css('display','block');
         }else if(!commonModule.isValidEmail($('#email').val())){
             $('.email-alert').text('Некорректный email !').css('display','block');
-            alert('000');
         }else{
-            alert('1');
             var userId = thriftModule.authClient.registerNewUser($("#login").val(), "", $("#pass").val(), $("#email").val());
-            alert('2');
             thriftModule.authClient.login($("#email").val(), $("#pass").val());
-            alert('3');
             if ( selector.closest('.modal-auth').length > 0) {
                 //document.location.replace("/shop.jsp");
                 AuthRealTime(selector);
