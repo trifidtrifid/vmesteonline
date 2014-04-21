@@ -543,6 +543,10 @@ define(
                 (commonModule.getPacksLength(packs) <= 1) ? currentSpinner.spinner('enable'):currentSpinner.spinner('disable');
 
                 thriftModule.client.setOrderLine(orderId,currentProduct.id,newSpinnerVal,'sdf',packs);
+
+                var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                currentTab.find('.weight span').text(orderDetails.weightGramm);
+
                 var newSumma = (newSpinnerVal*parseFloat(basketProductSelector.find('.td-price').text())).toFixed(1);
                 basketProductSelector.find('.td-summa').text(newSumma);
                 currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order')));
@@ -553,7 +557,7 @@ define(
 
                 thriftModule.client.setOrderLine(orderId,currentProduct.id,currentProduct.qnty,'sdf',packs);
 
-                var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                orderDetails = thriftModule.client.getOrderDetails(orderId);
                 currentTab.find('.weight span').text(orderDetails.weightGramm);
 
 
