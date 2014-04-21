@@ -47,6 +47,8 @@ import org.apache.thrift.TException;
 
 
 
+
+
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
@@ -77,6 +79,8 @@ import com.vmesteonline.be.shop.ImExType;
 import com.vmesteonline.be.shop.ImportElement;
 import com.vmesteonline.be.shop.MatrixAsList;
 import com.vmesteonline.be.shop.Order;
+import com.vmesteonline.be.shop.OrderDate;
+import com.vmesteonline.be.shop.OrderDates;
 import com.vmesteonline.be.shop.OrderDetails;
 import com.vmesteonline.be.shop.OrderLine;
 import com.vmesteonline.be.shop.OrderStatus;
@@ -386,29 +390,6 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	@Override
-	public void setDates(Map<Integer, DateType> dateDateTypeMap) throws InvalidOperation {
-
-		PersistenceManager pm = PMF.getPm();
-
-		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
-		if (null == shopId || 0 == shopId) {
-			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to setDates. SHOP ID is not set in session context.");
-		}
-		try {
-			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
-			pm.retrieve(voShop);
-			voShop.setDates(dateDateTypeMap);
-			pm.makePersistent(voShop);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to set dates for shopId=" + shopId + "." + e);
-		} finally {
-			pm.close();
-		}
-	}
-
-	// ======================================================================================================================
-	@Override
 	public List<Shop> getShops() throws InvalidOperation {
 		List<Shop> shops = new ArrayList<Shop>();
 		PersistenceManager pm = PMF.getPm();
@@ -425,26 +406,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		return shops;
 	}
 
-	// ======================================================================================================================
-	@Override
-	public Map<Integer, DateType> getDates(int from, int to) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
-		if (null == shopId || 0 == shopId) {
-			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to getDates. SHOP ID is not set in session context.");
-		}
-		try {
-			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
-			return voShop.getDates(from, to);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to getDates for shopId=" + shopId + "." + e);
-		} finally {
-			pm.close();
-		}
-	}
-
-	// ======================================================================================================================
+		// ======================================================================================================================
 	@Override
 	public Shop getShop(long shopId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -464,6 +426,47 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	// ======================================================================================================================
+	
+	@Override
+	public void setDate(OrderDates dates) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
+		if (null == shopId || 0 == shopId) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to setDate. SHOP ID is not set in session context.");
+		}
+		try {
+			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
+			voShop.setDates(dates);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to getDates for shopId=" + shopId + "." + e);
+		} finally {
+			pm.close();
+		}
+		
+	}
+	// ======================================================================================================================
+	@Override
+	public OrderDate getNextOrderDate(int afterDate) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
+		if (null == shopId || 0 == shopId) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to setDate. SHOP ID is not set in session context.");
+		}
+		try {
+			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
+			return voShop.getNextOrderDate(afterDate);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to getDates for shopId=" + shopId + "." + e);
+		} finally {
+			pm.close();
+		}
+	}
+	// ======================================================================================================================
+
+	
+	// ======================================================================================================================
 	@Override
 	public List<Producer> getProducers() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -482,6 +485,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		} finally {
 			pm.close();
 		}
+	}
+
+	@Override
+	public void removeDate(OrderDates dates) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		
 	}
 
 	// ======================================================================================================================
@@ -687,7 +696,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	@Override
-	public long createOrder(int date, String comment, PriceType priceType) throws InvalidOperation {
+	public long createOrder(int date, String comment) throws InvalidOperation {
 		if (date < System.currentTimeMillis() / 1000L)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Order could not be created for the past");
 
@@ -695,20 +704,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			VoShop shop = getCurrentShop(pm);
 			pm.retrieve(shop);
-			Collection<DateType> dateTypes = shop.getDates(date, date + 1).values();
-			boolean NEXT_ORDERfound = false;
-			for (DateType dt : dateTypes) {
-				if (DateType.NEXT_ORDER == dt) {
-					NEXT_ORDERfound = true;
-					break;
-				}
-			}
-
-			if (!NEXT_ORDERfound)
-				throw new InvalidOperation(VoError.ShopNotOrderDate, "The date is not avialable for order");
-
+			PriceType pt = shop.getPriceType( date );
+			
 			VoUser user = getCurrentUser(pm);
-			VoOrder voOrder = new VoOrder(user, shop, date, priceType, comment, pm);
+			VoOrder voOrder = new VoOrder(user, shop, date, pt, comment, pm);
 
 			long id = voOrder.getId();
 
@@ -1082,7 +1081,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				" && ( status == '" + OrderStatus.NEW + "' || status == '" + OrderStatus.CONFIRMED + "')" ).execute();
 		
 		if( null==orders || 0==orders.size()) {
-			throw new InvalidOperation(VoError.GeneralError, "Failed to Calculate Delivery cost. No order Found but at least one must exists!");
+			//@TODO check that there is a cancelled order and throw exception only if no one found
+			//throw new InvalidOperation(VoError.GeneralError, "Failed to Calculate Delivery cost. No order Found but at least one must exists!");
+			return 0D;
 		}
 		//orders that stores the delivery cost of old and new delivery group
 		VoOrder voOrderWithDelivery = null, voOrderWithDeliverySet = null;
@@ -1732,6 +1733,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 			List<VoOrder> olist = (List<VoOrder>) q.execute();
 
+			if( olist.size() == 0 ){
+				logger.info("No orders found for Orders report.");
+				return ds;
+			}
+			
 			OrderLineDescription odInstance = new OrderLineDescription();
 			OrderDescription oInstance = new OrderDescription();
 			List<OrderDescription> odl = new ArrayList<OrderDescription>();
@@ -1945,6 +1951,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					+ (deliveryType == DeliveryType.UNKNOWN ? "" : " && delivery == '" + deliveryType.toString() + "'"));
 
 			List<VoOrder> olist = (List<VoOrder>) q.execute();
+			if( olist.size() == 0 ){
+				logger.info("No orders found for TotalProductsReport.");
+				return ds;
+			}
 
 			// Products combined by producer
 			SortedMap<Long, SortedMap<Long, ProductOrderDescription>> prodDescMap = new TreeMap<Long, SortedMap<Long, ProductOrderDescription>>();
@@ -2050,6 +2060,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					+ (deliveryType == DeliveryType.UNKNOWN ? "" : " && delivery == '" + deliveryType.toString() + "'"));
 
 			List<VoOrder> olist = (List<VoOrder>) q.execute();
+			if( olist.size() == 0 ){
+				logger.info("No orders found for TotalPackReport.");
+				return ds;
+			}
 
 			// Products combined by pack size required
 			SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap = new TreeMap<Long, SortedMap<Double, ProductOrderDescription>>();

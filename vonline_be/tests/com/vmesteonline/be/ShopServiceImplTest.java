@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +49,8 @@ import com.vmesteonline.be.shop.ImExType;
 import com.vmesteonline.be.shop.ImportElement;
 import com.vmesteonline.be.shop.MatrixAsList;
 import com.vmesteonline.be.shop.Order;
+import com.vmesteonline.be.shop.OrderDates;
+import com.vmesteonline.be.shop.OrderDatesType;
 import com.vmesteonline.be.shop.OrderDetails;
 import com.vmesteonline.be.shop.OrderLine;
 import com.vmesteonline.be.shop.OrderStatus;
@@ -280,8 +283,8 @@ public class ShopServiceImplTest {
 			// set current shop
 			si.getShop(shopId);
 			// initialize shop dates
-			HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
-			si.setDates(dates);
+			setAllDates();
+			
 
 			/* long prodId = */si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
 			long prod2Id = si.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
@@ -371,6 +374,11 @@ public class ShopServiceImplTest {
 		}
 	}
 
+	private void setAllDates() throws InvalidOperation {
+		si.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 3, 0, PriceType.INET));
+		si.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 4, 0, PriceType.INET));
+	}
+
 	@Test
 	public void testUploadProductCategoies() {
 		try {
@@ -429,28 +437,22 @@ public class ShopServiceImplTest {
 			si.getShop(shopId);
 
 			// initialize shop dates
-			HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
-			int now = (int) (System.currentTimeMillis() / 1000L);
-			now -= now % 86400;
-
-			int day = 3600 * 24;
-
-			dates.put(now, DateType.NEXT_ORDER);
-			dates.put(now - day, DateType.CLEAN);
-			dates.put(now + 2 * day, DateType.SPECIAL_PRICE);
-			dates.put(now + 3 * day, DateType.CLOSED);
-			dates.put(now + 30 * day, DateType.CLOSED);
-
-			si.setDates(dates);
-
-			si.getShop(shopId);
-
-			Map<Integer, DateType> sd = si.getDates(now - 10 * day, now + 10 * day);
-			Assert.assertEquals(sd.size(), 4);
-			Assert.assertEquals(sd.get(now), DateType.NEXT_ORDER);
-			Assert.assertEquals(sd.get(now + 3 * day), DateType.CLOSED);
-			Assert.assertEquals(sd.get(now + 30 * day), null);
-
+			si.setDate( new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 3, 0, PriceType.INET));
+			Calendar now = Calendar.getInstance();
+			int nowDate = (int)(now.getTimeInMillis() / 1000L);
+			int mondayBeforeNow = nowDate - ( now.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY ) * 86400;
+			int tuesBeforeNow = nowDate - ( now.get(Calendar.DAY_OF_WEEK) - Calendar.TUESDAY ) * 86400;
+			int nextThursdayAfterNow = nowDate - ( now.get(Calendar.DAY_OF_WEEK) - Calendar.THURSDAY) * 86400;
+			
+			Assert.assertEquals( nextThursdayAfterNow/86400, si.getNextOrderDate( mondayBeforeNow ).orderDate/86400 );
+			Assert.assertEquals( nextThursdayAfterNow/86400 + 7, si.getNextOrderDate( tuesBeforeNow ).orderDate/86400);
+			Assert.assertEquals( nextThursdayAfterNow/86400 + 7, si.getNextOrderDate( nextThursdayAfterNow ).orderDate/86400);
+			
+			si.setDate( new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 2, 0, PriceType.RETAIL));
+			Assert.assertEquals( nextThursdayAfterNow/86400, si.getNextOrderDate( mondayBeforeNow ).orderDate/86400 );
+			Assert.assertEquals( mondayBeforeNow/86400 + 7, si.getNextOrderDate( tuesBeforeNow ).orderDate/86400);
+			Assert.assertEquals( mondayBeforeNow/86400 + 7, si.getNextOrderDate( nextThursdayAfterNow ).orderDate/86400);
+			
 		} catch (TException e) {
 			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
@@ -501,12 +503,12 @@ public class ShopServiceImplTest {
 
 			long canceledOID = si.cancelOrder(0);
 			try {
-				si.createOrder(now + 5 * day, "aaaa", PriceType.RETAIL);
+				si.createOrder(now + 5 * day, "aaaa");
 				fail("Order could not be created in this date!");
 			} catch (InvalidOperation e) {
 				Assert.assertEquals(e.what, VoError.ShopNotOrderDate);
 			}
-			long lastOrder = si.createOrder(now + 6 * day, "aaaa", PriceType.RETAIL);
+			long lastOrder = si.createOrder(now + 6 * day, "aaaa");
 
 			List<Order> orders = si.getOrders(now - 10 * day, now + 10 * day);
 			Assert.assertEquals(orders.size(), 2);
@@ -553,7 +555,7 @@ public class ShopServiceImplTest {
 			// here we have an order with One product of second type lets try merge
 			// and add other orders
 
-			si.createOrder(now + 10 * day, "aaaa", PriceType.INET);
+			si.createOrder(now + 10 * day, "aaaa");
 			si.appendOrder(0,orders.get(0).getId()); // here we expect to have a copy of
 																							// an old order
 			si.appendOrder(0,orders.get(0).getId()); // here we expect to have doubled
@@ -662,14 +664,11 @@ public class ShopServiceImplTest {
 		}
 	}
 
-	private List<Long> createCategoriesAndProductsAndOrder(int now, int day, Long shopId) throws InvalidOperation {
+	private List<Long> createCategoriesAndProductsAndOrder(int now, int day, Long shopId) throws TException {
 		List<Long> upProductsIdl;
 		// set current shop
 		si.getShop(shopId);
-		HashMap<Integer, DateType> dates = new HashMap<Integer, DateType>();
-		si.setDates(dates);
-		si.setDates(dates);
-		si.setDates(dates);
+		setAllDates();
 
 		// create categories
 		List<ProductCategory> categories = new Vector<ProductCategory>();
@@ -723,18 +722,13 @@ public class ShopServiceImplTest {
 
 		upProductsIdl = si.uploadProducts(productsList, shopId, true);
 
-		// initialize shop dates
-		dates = new HashMap<Integer, DateType>();
+		try {
+			setAllDates();
+		} catch (TException e) {
+			e.printStackTrace();
+		}
 
-		dates.put(now, DateType.NEXT_ORDER);
-		dates.put(now - day, DateType.CLEAN);
-		dates.put(now + 2 * day, DateType.SPECIAL_PRICE);
-		dates.put(now + 3 * day, DateType.CLOSED);
-		dates.put(now + 6 * day, DateType.NEXT_ORDER);
-		dates.put(now + 10 * day, DateType.NEXT_ORDER);
-		si.setDates(dates);
-
-		si.createOrder(now + 1000, "aaaa", PriceType.RETAIL);
+		si.createOrder(now + 1000, "aaaa");
 		return upProductsIdl;
 	}
 
@@ -751,9 +745,9 @@ public class ShopServiceImplTest {
 			Map<Integer, DateType> dateDateTypeMap = new HashMap<Integer, DateType>();
 			int date = (int) (System.currentTimeMillis() / 1000L) + 1000;
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
-			si.setDates(dateDateTypeMap);
+			setAllDates();
 
-			long order = si.createOrder(date, "aaaa", PriceType.INET);
+			long order = si.createOrder(date, "aaaa");
 			Map<DeliveryType, Double> newDeliveryCosts = new HashMap<DeliveryType, Double>();
 			newDeliveryCosts.put(DeliveryType.LONG_RANGE, 10.0D);
 			newDeliveryCosts.put(DeliveryType.SHORT_RANGE, 5.0D);
@@ -791,9 +785,9 @@ public class ShopServiceImplTest {
 			Map<Integer, DateType> dateDateTypeMap = new HashMap<Integer, DateType>();
 			int date = (int) (System.currentTimeMillis() / 1000L) + 1000;
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
-			si.setDates(dateDateTypeMap);
+			setAllDates();
 
-			long order = si.createOrder(date, "aaaa", PriceType.INET);
+			long order = si.createOrder(date, "aaaa");
 
 			Map<PaymentType, Double> newPaymentCosts = new HashMap<PaymentType, Double>();
 			newPaymentCosts.put(PaymentType.CREDIT_CARD, 10.0D);
@@ -830,9 +824,9 @@ public class ShopServiceImplTest {
 			Map<Integer, DateType> dateDateTypeMap = new HashMap<Integer, DateType>();
 			int date = (int) (System.currentTimeMillis() / 1000L) + 1000;
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
-			si.setDates(dateDateTypeMap);
+			setAllDates();
 
-			long order = si.createOrder(date, "aaaa", PriceType.INET);
+			long order = si.createOrder(date, "aaaa");
 			si.setOrderDeliveryAddress(0, userAddress2);
 			OrderDetails orderDetails = si.getOrderDetails(order);
 			Assert.assertEquals(orderDetails.getDeliveryTo(), userAddress2);
@@ -856,9 +850,9 @@ public class ShopServiceImplTest {
 			Map<Integer, DateType> dateDateTypeMap = new HashMap<Integer, DateType>();
 			int date = (int) (System.currentTimeMillis() / 1000L) + 1000;
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
-			si.setDates(dateDateTypeMap);
+			setAllDates();
 
-			long order = si.createOrder(date, "aaaa", PriceType.INET);
+			long order = si.createOrder(date, "aaaa");
 			PaymentStatus ps = si.getOrderDetails(order).getPaymentStatus();
 			Assert.assertEquals(ps, PaymentStatus.WAIT);
 			si.setOrderPaymentStatus(order, PaymentStatus.COMPLETE);
@@ -1279,16 +1273,16 @@ public class ShopServiceImplTest {
 		
 		si.confirmOrder(0);
 		
-		/*long order2ID = */si.createOrder(now + 1000, "22aaaa", PriceType.INET);
+		/*long order2ID = */si.createOrder(now + 1000, "22aaaa");
 		/*OrderLine ol21 = */si.setOrderLine(0,upProductsIdl.get(0), 35.0D, "comment21", packets);
 		si.confirmOrder(0);
 		
-		/*long order3ID = */si.createOrder(now + 1000, "33aaaa", PriceType.INET);
+		/*long order3ID = */si.createOrder(now + 1000, "33aaaa");
 		/*OrderLine ol31 = */si.setOrderLine(0,upProductsIdl.get(1), 33.0D, "comment31", null);
 		si.setOrderDeliveryType(0,DeliveryType.LONG_RANGE,null);
 		si.confirmOrder(0);
 		
-		/*long order4ID = */si.createOrder(now + 1001, "44aaaa", PriceType.INET);
+		/*long order4ID = */si.createOrder(now + 1001, "44aaaa");
 		/*OrderLine ol41 = */si.setOrderLine(0,upProductsIdl.get(1), 44.0D, "comment41", null);
 
 		si.confirmOrder(0);
@@ -1519,13 +1513,16 @@ public class ShopServiceImplTest {
 		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 		try {
 			Long shopId = si.registerShop(shop);
-			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
+			try {
+				upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
+			} catch (TException e) {
+				e.printStackTrace();
+			}
 			List<IdNameChilds> productsByCategories = si.getProductsByCategories(shopId);
 
 			Assert.assertEquals(productsByCategories.size(), 2);
 
 		} catch (InvalidOperation e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

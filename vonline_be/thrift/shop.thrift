@@ -72,6 +72,20 @@ struct FullProductInfo {
 	2:ProductDetails details,
 }
 
+//struct to use to define dates of orde for a shop
+enum OrderDatesType { ORDER_WEEKLY, ORDER_MOUNTHLY }
+struct OrderDates {
+	1:OrderDatesType type, 
+	2:i32 orderDay,//day of week or day month and so
+	3:i32 orderBefore, //days gap between the order date and create the order date dedline
+	4:i32 eachOddEven, //field takes value 0,1,2 for each periods, odd periods and even periods accordingly
+	5:PriceType priceTypeToUse 
+}
+struct OrderDate { //struct to use in responses for FE
+	1:i32 orderDate,
+	2:PriceType priceType
+}
+
 enum OrderStatus { UNKNOWN=0, NEW=1, CONFIRMED=2, SHIPPING=3, DELIVERED=4, CLOSED=5, CANCELED=6 }
 enum PaymentStatus { UNKNOWN=0, WAIT=1, PENDING=2, COMPLETE=3, CREDIT=4 }
 
@@ -211,7 +225,10 @@ service ShopService {
 	list<Order> getFullOrders(1:i32 dateFrom, 2:i32 dateTo, 3:i64 userId, 4:i64 shopId) throws (1:error.InvalidOperation exc),
 	void updateOrderStatusesById( 1:map<i64,OrderStatus> orderStatusMap ) throws (1:error.InvalidOperation exc),
 	
-	void setDates( 1:map<i32,DateType> dateDateTypeMap),
+	//void setDates( 1:map<i32,DateType> dateDateTypeMap),
+	void setDate( 1:OrderDates dates ) throws (1:error.InvalidOperation exc), 
+	void removeDate( 1:OrderDates dates ) throws (1:error.InvalidOperation exc), 
+	
 	void setDeliveryCosts( 1:map<DeliveryType,double> newDeliveryCosts) throws (1:error.InvalidOperation exc),
 	void setPaymentTypesCosts( 1:map<PaymentType,double> newPaymentTypeCosts) throws (1:error.InvalidOperation exc),
 	
@@ -242,7 +259,12 @@ service ShopService {
 
 	//frontend functions================================================================================================
 	list<Shop> getShops() throws (1:error.InvalidOperation exc),
-	map<i32,DateType> getDates(1:i32 from, 2: i32 to) throws (1:error.InvalidOperation exc),
+	//map<i32,DateType> getDates(1:i32 from, 2: i32 to) throws (1:error.InvalidOperation exc),
+	/**
+	* MEthod returns the next date to create or change order is avialable.
+	* If  afterDate = 0 then current date used instead of it
+	**/
+	OrderDate getNextOrderDate( 1:i32 afterDate ) throws (1:error.InvalidOperation exc),
 	/**
 	Method returns Shop information and set currentShopId to value of provided shopId parameter that would be used in all of methods followed below
 	**/
@@ -275,7 +297,7 @@ service ShopService {
 	/**
 	* Method returns id of new order and set is as a current
 	**/
-	i64 createOrder(1:i32 date, 2:string comment, 3:PriceType priceType) throws (1:error.InvalidOperation exc),
+	i64 createOrder(1:i32 date, 2:string comment ) throws (1:error.InvalidOperation exc),
 	void updateOrder( 1:i64 orderId, 2:i32 date, 3:string comment) throws (1:error.InvalidOperation exc),
 	i64 cancelOrder(1:i64 orderId) throws (1:error.InvalidOperation exc),
 	i64 deleteOrder(1:i64 orderId) throws (1:error.InvalidOperation exc),
