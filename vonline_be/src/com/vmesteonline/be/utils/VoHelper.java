@@ -330,4 +330,20 @@ public class VoHelper {
 		}
 		return matrix;
 	}
+
+	public static<T> List<List<T>> transMatrix(List<List<T>> matrix) {
+		
+		int ocols  = matrix.size();
+		int orows = ocols > 0 ? matrix.get(0).size() : 0;
+		
+		List<List<T>> out = new ArrayList<List<T>>(orows);
+		for( int row = 0; row < orows; row++){
+			out.add(new ArrayList<T>(ocols));
+			List<T> nextORow = out.get(row);
+			for( int col = 0; col < ocols; col++){
+				nextORow.add( matrix.get(col).get(row));
+			}
+		}
+		return out;
+	}
 }
