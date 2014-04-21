@@ -267,6 +267,12 @@ $(document).ready(function(){
         dPicker.val('Фильтр по дате');
     });
 
+    /* сброс */
+    $('#date-picker-2,#date-picker-3,#date-picker-4').val('Фильтр по дате');
+    $('.export .checkbox input.ace').prop('checked',false);
+    /* --- */
+
+
     function getStatusTypeByText(statusText){
         var statusType;
 

@@ -113,7 +113,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
         commonM.init();
 
-        window.onerror = function(message, source, lineno) {
+      window.onerror = function(message, source, lineno) {
             /*alert("Ошибка:"+message +"\n" +
                 "файл:" + source + "\n" +
                 "строка:" + lineno);*/

@@ -634,14 +634,14 @@ span
   float: none;
   display: inline-block;
 }
-.modal .product-slider .slider li {
+.modal .product-slider .slider >li {
   height: 192px;
   line-height: 192px;
 }
 .modal .product-slider .slider img {
   max-width: 192px;
-  max-height: 192px;
-  vertical-align: middle;
+  max-height: 172px;
+  vertical-align: top;
 }
 .modal .product-slider .carousel img {
   max-width: 60px;
@@ -649,6 +649,7 @@ span
 }
 .modal .product-slider .carousel li {
   cursor: pointer;
+  line-height: 60px !important;
 }
 .modal .product-descr {
   margin-left: 210px;
