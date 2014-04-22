@@ -186,7 +186,7 @@ public class VoUser extends GeoLocation {
 		if (null != building) {
 			pm.retrieve(building);
 			VoUserGroup home = userAddress.getUserHomeGroup();
-			if(null!=home){
+			if (null != home) {
 				this.setLatitude(home.getLatitude());
 				this.setLongitude(home.getLongitude());
 				if (null != groups && !groups.isEmpty()) {
@@ -194,13 +194,14 @@ public class VoUser extends GeoLocation {
 						ug.setLatitude(home.getLatitude());
 						ug.setLongitude(home.getLongitude());
 					}
-				}
-			} else {
-				groups = new ArrayList<VoUserGroup>();
-				if(null!=Defaults.defaultGroups){
-					for (VoGroup grp : Defaults.defaultGroups) {
-						if (!grp.isHome())
-							groups.add(new VoUserGroup(this, grp));
+				} else {
+					groups = new ArrayList<VoUserGroup>();
+					groups.add(home);
+					if (null != Defaults.defaultGroups) {
+						for (VoGroup grp : Defaults.defaultGroups) {
+							if (!grp.isHome())
+								groups.add(new VoUserGroup(this, grp));
+						}
 					}
 				}
 			}
@@ -256,7 +257,6 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private String birthday;
 
-	
 	@Persistent
 	@Unindexed
 	@Unowned
