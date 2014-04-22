@@ -406,6 +406,7 @@ define(
                     initOrderBtns(ordersNoInit);
                     ordersNoInit.removeClass('orders-no-init');
                     offsetOrders += lengthOrders;
+                    var commonModule = require('shop-common');
                     commonModule.setSidebarHeight();
                 });
             }catch(e){

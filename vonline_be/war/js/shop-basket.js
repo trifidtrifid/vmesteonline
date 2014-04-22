@@ -355,6 +355,8 @@ define(
 
             $('.shop-confirm').load('ajax/ajax-confirmOrder.html .dynamic',function(){
                 var myDate;
+                $('.main-container').css('min-height', $(window).height()-45);
+
                 (typeof date == 'string') ? myDate = date : myDate = date.orderDay+'.'+date.orderMonth+' ('+ date.orderWeekDay +')';
                 $('.order-date span').text(myDate);
                 $('.itogo-right span').text(amount);
@@ -420,6 +422,7 @@ define(
                             $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
                                 $('.page').hide();
                                 $(this).show();
+                                $('.main-container').css('min-height', $(window).height()-45);
 
                                 var order = [];
                                 order[0] = thriftModule.client.getOrder(orderId);

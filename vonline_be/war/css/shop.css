@@ -1150,6 +1150,8 @@ height 50px
 }
 .order-end h3 {
   text-align: left;
+  margin-top: 0;
+  padding-top: 15px;
 }
 .order-end .order-end-info {
   margin-top: 20px;
