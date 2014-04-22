@@ -2,6 +2,8 @@ package com.vmesteonline.be.jdo2.shop;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,11 @@ import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
+import com.vmesteonline.be.shop.OrderDate;
+import com.vmesteonline.be.shop.OrderDates;
+import com.vmesteonline.be.shop.OrderDatesType;
 import com.vmesteonline.be.shop.PaymentType;
+import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.utils.VoHelper;
 
@@ -70,7 +76,7 @@ public class VoShop {
 				this.topics = new ArrayList<Long>();
 				topics.addAll(topicSet);
 			}
-			dates = new TreeMap<Integer, Integer>();
+			dates = new ArrayList<OrderDates>();
 			pm.makePersistent(this);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -117,9 +123,9 @@ public class VoShop {
 	@Persistent
 	public List<String> tags;
 
-	@Persistent
+	@Persistent(serialized = "true")
 	@Unindexed
-	private Map<Integer, Integer> dates;
+	private List<OrderDates> dates;
 
 	@Persistent
 	@Unindexed
@@ -229,32 +235,17 @@ public class VoShop {
 		this.deliveryCostByDistance = deliveryCostByDistance;
 	}
 
-	public void setDates(Map<Integer, DateType> newDates) {
-		if (null == dates)
-			dates = new HashMap<Integer, Integer>();
-		for (Entry<Integer, DateType> e : newDates.entrySet()) { // round to the
-																															// begining of the
-																															// day
-			dates.put(e.getKey() - e.getKey() % 86400, e.getValue().getValue());
+	public void setDates(OrderDates newDates) {
+		for( OrderDates ods : dates ){
+			if( ods.orderDay == newDates.orderDay ) {//replace the dates
+				ods.eachOddEven = newDates.eachOddEven;
+				ods.orderBefore = newDates.orderBefore;
+				return;
+			}
 		}
+		dates.add(newDates);
 	}
 
-	public SortedMap<Integer, Integer> selectDates(int fromDate, int toDate) {
-		SortedMap<Integer, Integer> selectedDates = new TreeMap<Integer, Integer>();
-		for (int date = fromDate; date < toDate + 86400; date += 86400)
-			if (dates.containsKey(date))
-				selectedDates.put(date, dates.get(date));
-
-		return selectedDates;
-	}
-
-	/*
-	 * public void addProductCategory(VoProductCategory category) { categories.add(category); }
-	 * 
-	 * public void addProduct(VoProduct product) { products.add(product); }
-	 * 
-	 * public void addProducer(VoProducer producer) { producers.add(producer); }
-	 */
 	public String getName() {
 		return name;
 	}
@@ -329,7 +320,7 @@ public class VoShop {
 	 * public List<VoProducer> getProducers() { return producers; }
 	 */
 
-	public Map<Integer, Integer> getDates() {
+	public List<OrderDates> getDates() {
 		return dates;
 	}
 
@@ -342,16 +333,9 @@ public class VoShop {
 		return "VoShop [id=" + id + ", name=" + name + ", descr=" + descr + ", address=" + address + ", logoURL=" + logoURL + ", ownerId=" + ownerId
 				+ "]";
 	}
-
-	public SortedMap<Integer, DateType> getDates(int from, int to) {
-
-		SortedMap<Integer, DateType> selectedDates = new TreeMap<Integer, DateType>();
-		if( null!=dates) 
-			for (int date = from - from % 86400; date < to + 86400 - to % 86400; date += 86400)
-				if (dates.containsKey(date))
-					selectedDates.put(date, DateType.findByValue(dates.get(date)));
-		return selectedDates;
-
+	
+	public static String printDate( int date, DateType type){
+		return type.name() + "[" + new Date(((long)date)*1000L).toLocaleString()+"]";
 	}
 
 	public static Map<Integer, Double> convertFromPaymentTypeMap(Map<PaymentType, Double> in, Map<Integer, Double> out) {
@@ -440,6 +424,84 @@ public class VoShop {
 			this.topics = new ArrayList<Long>();
 			this.topics.addAll(newShopWithOldId.topicSet);
 		}
+	}
+//======================================================================================================================
+	public PriceType getPriceType(int date) throws InvalidOperation {
+		Calendar now = Calendar.getInstance();
+		Calendar theDate = Calendar.getInstance();
+		theDate.setTimeInMillis(((long)date)*1000L);
+		
+		for( OrderDates d : dates ){
+			if( d.type == OrderDatesType.ORDER_WEEKLY && 
+				d.orderDay == theDate.get(Calendar.DAY_OF_WEEK) &&
+				( d.eachOddEven == 0 || 
+						d.eachOddEven == 1 && 1 == theDate.get(Calendar.WEEK_OF_YEAR) % 2  ||
+						d.eachOddEven == 2 && 0 == theDate.get(Calendar.WEEK_OF_YEAR) % 2 ) ) {
+				if( now.getTimeInMillis() < theDate.getTimeInMillis() - 86400000L * (long)d.orderBefore )
+					return d.getPriceTypeToUse();
+				
+			} else if( d.type == OrderDatesType.ORDER_MOUNTHLY &
+					( d.eachOddEven == 0 || 
+					d.eachOddEven == 1 && 1 == theDate.get(Calendar.MONTH) % 2  ||
+					d.eachOddEven == 2 && 0 == theDate.get(Calendar.MONTH) % 2 ) ) {
+			if( now.getTimeInMillis() < theDate.getTimeInMillis() - 86400000L * (long)d.orderBefore )
+				return d.getPriceTypeToUse();
+			}
+		}
+		throw new InvalidOperation( VoError.IncorrectParametrs, "Order could not be created for date "+new Date(1000L * (long)date).toGMTString());
+	}
+
+	//=====================================================================================================================
+	
+	public OrderDate getNextOrderDate(int afterDate) throws InvalidOperation {
+		Calendar theDate = Calendar.getInstance();
+		theDate.setTimeInMillis(((long)afterDate)*1000L);
+		int closestDelta = 1000;
+		PriceType pt = PriceType.INET;
+
+		for( OrderDates d : dates ){
+			int delta;
+			
+			if( d.type == OrderDatesType.ORDER_WEEKLY ){
+				int ddow = theDate.get(Calendar.DAY_OF_WEEK); //day of week of the date
+				int dobow = d.orderDay - d.orderBefore; //day of week for order before
+				if( dobow < 0 ) 
+					dobow = 7 - dobow;
+				delta = ddow > dobow ? 7 - ddow + dobow : dobow - ddow;
+				
+				if( 1 == d.eachOddEven && 1 == theDate.get(Calendar.WEEK_OF_YEAR % 2 ) || 
+						2 == d.eachOddEven && 0 == theDate.get(Calendar.WEEK_OF_YEAR % 2 ) || 
+						0 == d.eachOddEven );
+				else
+					delta += 7;
+				
+			} else { //d.type == OrderDatesType.ORDER_MONTHLY
+				
+				int ddow = theDate.get(Calendar.DAY_OF_WEEK); //day of week of the date
+				int dobow = d.orderDay - d.orderBefore; //day of week for order before
+				if( dobow < 0 ) 
+					dobow = theDate.getActualMaximum(Calendar.DAY_OF_MONTH) - dobow;
+				delta = ddow > dobow ? theDate.getActualMaximum(Calendar.DAY_OF_MONTH) - ddow + dobow : dobow - ddow;
+				
+				if( 1 == d.eachOddEven && 1 == theDate.get(Calendar.MONTH % 2 ) || 
+						2 == d.eachOddEven && 0 == theDate.get(Calendar.MONTH % 2 ) || 
+						0 == d.eachOddEven );
+				else
+					delta += theDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+			} 
+			delta += d.orderBefore; 
+					
+			if( closestDelta > delta ){
+				closestDelta = delta;
+				pt = d.priceTypeToUse;
+			}
+		}
+		
+		if( closestDelta == 1000 )
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No order dates found in nearest 1000 days after " + 
+		new Date(1000L * (long)afterDate));
+		
+		return new OrderDate( afterDate+closestDelta * 86400, pt);
 	}
 
 	/*
