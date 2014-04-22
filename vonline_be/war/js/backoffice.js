@@ -925,6 +925,9 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                    }
                    initShowFullText();
                    initCloseFullText();
+
+                   if(!dataSet) currentTab.find('.confirm-info').text('Нет данных на такое сочетание даты и типа доставки.').show();
+
                }catch(e){
                    currentTab.find('.confirm-info').text('Ошибка экспорта.').show();
                }
@@ -981,7 +984,11 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                 }
             }
 
-             var headColArray = exportFields.headColArray;
+             //var headColArray = exportFields.headColArray;
+             var headColArray;
+            (dataSet.data[0].fieldsMap) ? headColArray = exportFields.headColArray :
+                headColArray = exportData[0] ;
+
             if(exportFieldsOrderLine){
                 (z == tablesCount-1) ? headColArray = exportFields.headColArray: headColArray = exportFieldsOrderLine.headColArray;
             }
@@ -1025,7 +1032,6 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         var exportDataLength = exportData.length;
 
         for(var i = 0; i < exportDataLength; i++){
-            console.log(exportData[i]);
             exportTable += '<tr>'+
                 createExportLine(exportData[i],colCount)+
                 '</tr>';

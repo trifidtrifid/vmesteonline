@@ -592,6 +592,13 @@ define(
 
         }
 
+        function changeShortUserInfo(newUserInfo){
+            var shortUserInfo;
+            (newUserInfo) ? shortUserInfo = newUserInfo : shortUserInfo = thriftModule.userClient.getShortUserInfo();
+            var shortUserInfoHtml =  shortUserInfo.firstName +' '+ shortUserInfo.lastName;
+            $('.user-info').html(shortUserInfoHtml);
+        }
+
         return{
             getCookie: getCookie,
             setCookie: setCookie,
@@ -605,7 +612,8 @@ define(
             markAddedProduct: markAddedProduct,
             remarkAddedProduct: remarkAddedProduct,
             addAddressToBase: addAddressToBase,
-            isValidEmail: isValidEmail
+            isValidEmail: isValidEmail,
+            changeShortUserInfo: changeShortUserInfo
         }
     }
 );

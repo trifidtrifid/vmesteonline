@@ -77,6 +77,9 @@ define(
             if(!haveError){
                 thriftModule.userClient.updateUserInfo(userInfo);
                 $('.save-status').addClass('active');
+
+                commonModule.changeShortUserInfo(userInfo);
+
                 function hideSaveStatus(){
                     $('.save-status').removeClass('active')
                 }
@@ -90,6 +93,8 @@ define(
         }
 
         function SetJSForProfile(){
+
+            $('.main-container').css('min-height', $(window).height()-45);
 
             $('.edit-personal-link').click(function(e){
                 e.preventDefault();
@@ -184,7 +189,7 @@ define(
              }
         }
 
-        function initSaveNewAddr(selector){
+        function initSaveNewAddr(selector,addressForDelete){
             selector.find('.save-new-addr').click(function(e){
                 e.preventDefault();
                 var currentForm = $(this).closest('.form-edit');
@@ -202,8 +207,13 @@ define(
                 var deliveryAddress = commonModule.addAddressToBase(currentForm);
 
                 if(!currentForm.prev().hasClass('add-user-address')){
+
                 currentForm.prev().find('span').text(deliveryAddress.country.name + ", " + deliveryAddress.city.name + ", "
                     + deliveryAddress.street.name + " " + deliveryAddress.building.fullNo + ", кв. " + deliveryAddress.flatNo);
+
+                    if (addressForDelete) thriftModule.userClient.deleteUserAddress(addressForDelete);
+                    thriftModule.userClient.addUserAddress(deliveryAddress);
+
                 }else{
                     var ind = $('.user-address-item').length;
                     if(!ind){ind = 1;}
@@ -218,17 +228,11 @@ define(
 
                     thriftModule.userClient.addUserAddress(deliveryAddress);
                     var userAddresses = thriftModule.userClient.getUserAddresses();
-                    /*for(var i = 0 ; i < userAddresses.length; i++){
-                        console.log(userAddresses[i].street.name);
-                    }*/
 
                     var noInit = $('.user-address-item.no-init');
                     initEditAddress(noInit,userAddresses,deliveryAddress);
                     noInit.removeClass('no-init');
-
                 }
-
-                //thriftModule.client.setOrderDeliveryAddress(deliveryAddress);
                 }
             });
         }
@@ -251,10 +255,10 @@ define(
                     var ind = currentAddrItem.data('index');
                     if(!currentAddress){currAddr = userAddresses[ind];}
 
-                    WriteAddress(currentForm,currAddr);//userAddresses[ind]
-                    initSaveNewAddr(currentForm);
+                    WriteAddress(currentForm,currAddr);
+                    var addressForDelete = commonModule.addAddressToBase(currentForm);
+                    initSaveNewAddr(currentForm,addressForDelete);
                     searchModule.initAutocompleteAddress(currentForm);
-
                 }
 
                 currentAddrItem.find('+.form-edit').slideToggle(200,function(){
