@@ -562,16 +562,18 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				logger.info("VoBuilding '" + fullNo + "'was created.");
 				VoBuilding voBuilding = new VoBuilding(vs, fullNo, new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
 						new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude), pm);
-				if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate
-					// location
-					try {
-						Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
-						voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
-					} catch (Exception e) {
-						e.printStackTrace();
-						throw new InvalidOperation(VoError.GeneralError, "FAiled to determine location of the building." + e.getMessage());
-					}
+				if (longitude != null && lattitude != null) {
+					if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate
+						// location
+						try {
+							Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
+							voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
+						} catch (Exception e) {
+							e.printStackTrace();
+							throw new InvalidOperation(VoError.GeneralError, "FAiled to determine location of the building." + e.getMessage());
+						}
 
+					}
 				}
 				pm.makePersistent(voBuilding);
 				return voBuilding.getBuilding();

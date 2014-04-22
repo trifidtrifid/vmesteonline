@@ -284,23 +284,35 @@ public class CSVHelper {
 		String outStr;
 		
 		if (fieldToWrite instanceof Number){
-			outStr = trimFloatPointAsString(fieldToWrite.toString());
+			outStr = quoteCell(trimFloatPointAsString(fieldToWrite.toString()),fd,sd,avpd);
 
 		} else if (fieldToWrite instanceof Set || fieldToWrite instanceof List) {
 			outStr = "";
 			for (Object object : (Collection)fieldToWrite ) {
-				outStr += sd + object;
+				outStr += sd + quoteCell(writeFieldToCSVCell(object,fd,sd,avpd),fd,sd,avpd);
 			}
-			outStr = outStr.substring(sd.length());
+			if(outStr.length()>=sd.length())
+				outStr = outStr.substring(sd.length());
+			
 		} else if (fieldToWrite instanceof Map) {
 			outStr = "";
 			for (Object en : ((Map) fieldToWrite).entrySet()) {
-				outStr += sd + ((Entry) en).getKey() + avpd + ((Entry) en).getValue();
+				outStr += sd + 
+						quoteCell(writeFieldToCSVCell(((Entry) en).getKey(),fd,sd,avpd),fd,sd,avpd)
+						+ avpd + 
+						quoteCell( writeFieldToCSVCell(((Entry) en).getValue(),fd,sd,avpd), fd,sd,avpd);
 			}
-			outStr = outStr.substring(sd.length());
+			if(outStr.length()>=sd.length())
+				outStr = outStr.substring(sd.length());
 		} else {
-			outStr = fieldToWrite.toString().contains(fd) ? "\"" + fieldToWrite.toString() + "\"" : "" + fieldToWrite;
+			outStr = quoteCell(fieldToWrite.toString(), fd, sd, avpd);
 		}
+		return outStr;
+	}
+
+	private static String quoteCell(String outStr, String fd, String sd, String avpd) {
+		if( outStr.contains(fd) || outStr.contains(sd) || outStr.contains(avpd))
+			outStr = "\"" + outStr + "\"" ;
 		return outStr;
 	}	
 	

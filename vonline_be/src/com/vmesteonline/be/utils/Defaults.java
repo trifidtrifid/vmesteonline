@@ -3,6 +3,7 @@ package com.vmesteonline.be.utils;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,10 @@ import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.ExchangeFieldType;
 import com.vmesteonline.be.shop.ImExType;
 import com.vmesteonline.be.shop.ImportElement;
+import com.vmesteonline.be.shop.OrderDates;
+import com.vmesteonline.be.shop.OrderDatesType;
 import com.vmesteonline.be.shop.PaymentType;
+import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Shop;
 
 @SuppressWarnings("unchecked")
@@ -216,15 +220,11 @@ public class Defaults {
 
 			ssi.getShop(shop); // to make it current
 			// set dates
-			int now = (int) (System.currentTimeMillis() / 1000L);
-			Map<Integer, DateType> dates = new HashMap<Integer, DateType>();
-			for (int dt = now; dt < now + 86400 * 365; dt += 7 * 86400) {
-				dates.put(dt, DateType.NEXT_ORDER);
-				dates.put(dt - 3 * 86400, DateType.NEXT_ORDER);
-				dates.put(dt - 86400, DateType.SPECIAL_PRICE);
-				dates.put(dt - 4 * 86400, DateType.SPECIAL_PRICE);
-			}
-			ssi.setDates(dates);
+			// next order is MONday and THursday 
+			// closed date is monday and thursday but shifted 1 step ago
+			
+			ssi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 3, 0, PriceType.INET));
+			ssi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 4, 0, PriceType.INET));
 
 			Map<Integer, Integer> deliveryByWeightIncrement = new HashMap<Integer, Integer>();
 			deliveryByWeightIncrement.put(15000, 50); // 50 rub each 10 kg
