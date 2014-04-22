@@ -630,7 +630,7 @@ define(
                 var now = parseInt(new Date()/1000);
                 now -= now%86400;
 
-                var datesArray = thriftModule.client.getDates(now+day,now+32*day);
+                /*var datesArray = thriftModule.client.getDates(now+day,now+32*day);
                 var nextDate;
                 for (var date in datesArray){
                     if(datesArray[date] == 1){
@@ -638,18 +638,21 @@ define(
                         nextDate = date;
                         break;
                     }
+
                     // если это следующий день то нельзя
-                    /*var firstMarkDay = $('.mark-day:eq(0)');
+                    *//*var firstMarkDay = $('.mark-day:eq(0)');
                     if (!firstMarkDay.hasClass('.closed-day')){
                         // если ближайший к сегодня marked day является не closed-day, то очищаем его
                         // если же ближайший close day, то все остается как есть
                         firstMarkDay.removeClass('free-day day-with-order special-day');
-                    }*/
-                }
+                    }*//*
+                }*/
+
+                var nextDate = thriftModule.client.getNextOrderDate(now);
             }catch(e){
                 alert(e + ' Функция SetFreeDates');
             }
-            return nextDate;
+            return nextDate.orderDate;
         }
 
         /* delivery */
