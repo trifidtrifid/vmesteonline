@@ -16,6 +16,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import org.apache.log4j.Logger;
+
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
@@ -33,6 +35,8 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoProduct {
 
+	//private static Logger logger = Logger.getLogger(VoProduct.class);
+	
 	private VoProduct() {
 	}
 
@@ -132,7 +136,7 @@ public class VoProduct {
 						try {
 							vp.imagesURLset.add(StorageHelper.saveImage(imgURL, shop.ownerId, true, _pm));
 						} catch (Throwable ie) {
-							ie.printStackTrace();
+							//logger.warn("Failed to update image from URL: '"+imgURL+"'. "+ie.getMessage());
 							// throw new InvalidOperation(VoError.IncorrectParametrs,
 							// ie.getMessage());
 						}
