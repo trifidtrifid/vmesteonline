@@ -240,13 +240,15 @@ define(
                 var orderDetails,
                     curProd,
                     spinVal, i,
-                    oldOrderId = $('.tab-pane.active').data('orderid');
+                    tabPaneActive = $('.tab-pane.active'),
+                    oldOrderId = tabPaneActive.data('orderid');
                     var basketModule = require('shop-basket');
                     if (!oldOrderId){
                         var nextDate = basketModule.getNextDate();
                         var nextDateStr = new Date(nextDate*1000);
                         oldOrderId = thriftModule.client.createOrder(nextDate);
                         basketModule.addTabToBasketHtml(nextDateStr,oldOrderId);
+                        tabPaneActive = $('.tab-pane.active')
                     }
 
                 if (addType == 'replace'){
@@ -276,6 +278,7 @@ define(
                     basketModule.AddSingleProductToBasket(curProd,spinVal,spinnerDisable);
                 }
                 commonModule.markAddedProduct();
+                tabPaneActive.find('.weight span').text(orderDetails.weightGramm);
             }catch(e){
                 alert(e+" Функция addSingleOrderToBasket");
             }
