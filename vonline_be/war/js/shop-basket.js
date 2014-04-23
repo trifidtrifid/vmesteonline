@@ -377,12 +377,11 @@ define(
                         checkboxDeliveryType.find('input.courier-delivery').prop('checked',true);
                         writeAddress(orderDetails.deliveryTo);
                         var userAddresses = thriftModule.userClient.getUserAddresses();
+                        defaultAddressForCourier = orderDetails.deliveryTo;
                         showDeliveryDropdown(orderId,userAddresses);
                         break;
                 }
                 setDeliveryCost(orderId);
-
-                defaultAddressForCourier = orderDetails.deliveryTo;
                 initRadioBtnClick(shopAddress);
 
                 (typeof date == 'string') ? myDate = date : myDate = date.orderDay+'.'+date.orderMonth+' ('+ date.orderWeekDay +')';
@@ -446,9 +445,51 @@ define(
                                 $(this).show();
                                 $('.main-container').css('min-height', $(window).height()-45);
 
-                                var order = [];
-                                order[0] = thriftModule.client.getOrder(orderId);
-                                $('.order-end-info').append(ordersModule.createOrdersHtml(order));
+                                $('.bill-amount span,.all-amount span').text($('.itogo-right span').text());
+                                $('.bill-delivery-address span,.bill-delivery').text($('.input-delivery .delivery-address').text());
+                                $('.bill-date-delivery span').text($('.order-date span').text());
+                                $('.bill-client span').text($('.user-info').text());
+                                $('.bill-client-phone span').text($('#phone-delivery').val());
+                                var payType;
+                                if($('.courier-delivery').prop('checked') == true){
+                                    payType = "Курьеру";
+                                }else{
+                                    payType = "При получении";
+                                }
+                                $('.bill-pay-type span').text(payType);
+                                $('.bill-weight span').text($('.weight-right span').text()+" гр.");
+
+
+                                /*var shops = thriftModule.client.getShops();
+                                var shop = thriftModule.client.getShop(shops[0].id);
+                                var shopAddress = shop.address;*/
+                                var order = thriftModule.client.getOrder(orderId);
+                                var orderDetails = thriftModule.client.getOrderDetails(orderId);
+
+                                var orderDate = new Date(orderDetails.createdAt*1000);
+                                var orderDay = orderDate.getDate();
+                                var orderWeekDay = orderDate.getDay();
+                                var orderMonth = orderDate.getMonth()+1;
+
+                                orderDay = (orderDay < 10)? "0" + orderDay: orderDay;
+                                orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
+
+                                orderWeekDay = getWeekDay(orderWeekDay);
+
+                                $('.bill-shop-name span').text(shop.name);
+                                $('.bill-order-number span').text(order.id);
+                                $('.bill-date-order span').text(orderDay+"."+orderMonth+" ("+ orderWeekDay +")");
+                                $('.bill-shop-phone span').text('---');
+                                $('.bill-shop-email span').text('---');
+                                $('.order-end-logo img').attr('src',shop.logoURL);
+
+                                $('.bill-amount-order span').text($('.itogo-right span').text()-$('.delivery-cost').text());
+                                $('.bill-amount-delivery span').text($('.delivery-cost').text());
+
+
+                                var noEdit = true;
+                                $('.bill-order-list').append(ordersModule.createOrdersProductHtml(orderDetails,noEdit));
+                                //$('.order-end-info').append(ordersModule.createOrdersHtml(order));
                             });
                         }
                     }

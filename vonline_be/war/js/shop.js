@@ -91,7 +91,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             $('.modal-login').modal();
         });
 
-
     }catch(e){
         //alert(e + ' Ошибка в простых обработчиках');
     }

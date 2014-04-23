@@ -1151,18 +1151,93 @@ height 50px
   padding: 0 20px;
   text-align: center;
 }
-.order-end h3 {
+.order-end .to-main-link {
+  float: left;
+  margin: 10px 0;
+}
+.order-end .order-end-in {
+  min-width: 768px;
+  width: 80%;
+  margin: 0 auto;
+}
+.order-end .order-end-in h3 {
   text-align: left;
   margin-top: 0;
   padding-top: 15px;
+  margin-bottom: 20px;
+  clear: left;
 }
-.order-end .order-end-info {
+.order-end .order-end-in .bill-wrap {
+  border: 1px solid #438eb9;
+  text-align: left;
+  padding: 20px;
+}
+.order-end .order-end-in .bill-wrap .bill-title {
+  padding: 5px 10px;
+  margin: -35px 0 0 0;
+  background: #fff;
+  position: absolute;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .bill-item {
+  font-size: 14px;
+  line-height: 26px;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .bill-item span {
+  line-height: 16px;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .bill-amount {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .order-end-head-left {
+  float: left;
+  margin-bottom: 30px;
+  width: 45%;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .order-end-head-right {
+  float: right;
+  width: 45%;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .order-end-head-right .order-end-logo {
+  float: left;
+  width: 100px;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .order-end-head-right .order-end-logo img {
+  width: 100%;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .order-end-head-right .order-end-shop-info {
+  margin-left: 120px;
+}
+.order-end .order-end-in .bill-wrap .order-end-info {
   margin-top: 20px;
-  margin-bottom: 15px;
 }
-.order-end .order-end-info .td1,
-.order-end .order-end-info .td7 {
-  display: none;
+.order-end .order-end-in .bill-wrap .order-end-info .product-link {
+  color: #000;
+  cursor: default;
+}
+.order-end .order-end-in .bill-wrap .order-end-info h2 {
+  clear: both;
+  font-size: 20px;
+}
+.order-end .order-end-in .bill-wrap .order-end-info .bill-delivery {
+  font-size: 16px;
+  padding: 10px 0;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+.order-end .order-end-in .bill-wrap .order-end-info .order-end-amount {
+  text-align: right;
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 10px;
+}
+.order-end .order-end-in .bill-wrap .order-end-info .order-end-amount.all-amount {
+  font-size: 16px;
+  clear: right;
+  padding: 15px 10px 0 0;
+  margin-top: 15px;
+  border-top: 1px solid #438eb9;
 }
 /* error */
 .modal-error {

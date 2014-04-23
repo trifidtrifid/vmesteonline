@@ -503,10 +503,10 @@ define(
 
         function setSidebarHeight(){
             try{
-
                 var mainContent = $('.main-content');
+                //alert(mainContent.height()+" "+$(window).height());
 
-                if (mainContent.height() > $(window).height()){
+                if (mainContent.height() > $(window).height()-45){
                     $('.shop-right').css('height', mainContent.height()+45);
                 }else{
                     $('.shop-right').css('height', '100%');
