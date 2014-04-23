@@ -3,7 +3,7 @@ define(
     ['jquery','shop-initThrift','shop-basket','shop-common','shop-spinner'],
     function( $,thriftModule,basketModule,commonModule,spinnerModule ){
 
-        function createOrdersProductHtml(orderDetails){
+        function createOrdersProductHtml(orderDetails,noEdit){
             try{
                 var ordersProductsHtml = '<section class="catalog">'+
                     '<table>'+
@@ -40,24 +40,30 @@ define(
                         '</div>'+
                         '</td>'+
                         '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
-                        '<td>'+
-                        '<input type="text"';
+                        '<td>';
 
-                    var commonModule = require('shop-common');
-                    if (orderLines[j].packs && commonModule.getPacksLength(orderLines[j].packs) > 1){
-                        ordersProductsHtml += 'disabled="disabled"';
+                    if(noEdit){
+                        ordersProductsHtml += orderLines[j].quantity;
+                    }else{
+                        ordersProductsHtml += '<input type="text"';
+
+                        var commonModule = require('shop-common');
+                        if (orderLines[j].packs && commonModule.getPacksLength(orderLines[j].packs) > 1){
+                            ordersProductsHtml += 'disabled="disabled"';
+                        }
+
+                        ordersProductsHtml += ' data-step="'+  orderLines[j].product.minClientPack +'" class="input-mini spinner1" />';
                     }
 
-                    ordersProductsHtml += ' data-step="'+  orderLines[j].product.minClientPack +'" class="input-mini spinner1" />'+
-                        '</td>'+
-                        '<td><span class="unit-name">'+unitName+'</span></td>'+
-                        '<td>'+
+                    ordersProductsHtml += '</td>'+
+                        '<td><span class="unit-name">'+unitName+'</span></td>';
+
+                    if(!noEdit){
+                        ordersProductsHtml += '<td>'+
                         '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
-                        '</td>'+
-                        '</tr>';
-
-
-
+                        '</td>';
+                    }
+                    ordersProductsHtml +=  '</tr>';
                 }
                 ordersProductsHtml += '</table>'+
                     '</section>';
