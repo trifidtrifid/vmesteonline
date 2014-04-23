@@ -223,8 +223,8 @@ public class Defaults {
 			// next order is MONday and THursday 
 			// closed date is monday and thursday but shifted 1 step ago
 			
-			ssi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 3, 0, PriceType.INET));
-			ssi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 4, 0, PriceType.INET));
+			ssi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 4, 0, PriceType.INET));
+			ssi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 3, 0, PriceType.INET));
 
 			Map<Integer, Integer> deliveryByWeightIncrement = new HashMap<Integer, Integer>();
 			deliveryByWeightIncrement.put(15000, 50); // 50 rub each 10 kg
