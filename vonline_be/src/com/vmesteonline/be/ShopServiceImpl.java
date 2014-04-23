@@ -1178,7 +1178,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		//get delivery cost by address mask if set
 		Map<DeliveryType, String> dam = voShop.getDeliveryAddressMasksText();
 		if( null!=dam && null!=deliveryCosts ){ //look for delivery cost by address mask
-			String addressString = deliveryTo.getAddressText(pm);
+			String addressString = deliveryTo.getAddressText(pm) + deliveryTo.getBuilding().getAddressString();
 			
 			//sort the map by DelivertType to math cheapest delivery first
 			SortedMap<DeliveryType, String> sm = new TreeMap<DeliveryType, String>(dam);
@@ -1897,13 +1897,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			pm.close();
 		}
 	}
-
+//======================================================================================================================
 	private static ArrayList<String> createModifableListFromArray(String[] array) {
 		ArrayList<String> out = new ArrayList<String>( array.length );
 		out.addAll( Arrays.asList( array ));
 		return out;
 	}
-
+//======================================================================================================================
 	private ImportElement createFullOrderMatrix(long currentUserId, Map<Long, Map<Long, Map<Long, Double>>> ordersMap, Map<Long, VoProduct> productsList,
 			Map<Long, VoUser> usersMap, PersistenceManager pm) throws IOException {
 		/*

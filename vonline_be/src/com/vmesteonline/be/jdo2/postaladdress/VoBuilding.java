@@ -167,4 +167,11 @@ public class VoBuilding implements Comparable<VoBuilding> {
 		return new BigDecimal(latitude);
 	}
 
+	public void setAddressString(String addressString) {
+		this.addressString = addressString;
+	}
+
+	public void setStreetId(Key streetId) {
+		this.streetId = streetId;
+	}
 }
