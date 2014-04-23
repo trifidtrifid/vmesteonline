@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,10 +62,10 @@ public class StorageHelper {
 	 * @return
 	 */
 	public static String saveImage(byte[] urlOrContent, long ownerId, boolean isPublic, PersistenceManager _pm) throws IOException {
-		return saveImage(urlOrContent, null, ownerId, isPublic, _pm);
+		return saveImage(urlOrContent, null, ownerId, isPublic, _pm, null);
 		
 	}
-	public static String saveImage(byte[] urlOrContent, String _contentType, long ownerId, boolean isPublic, PersistenceManager _pm) throws IOException {
+	public static String saveImage(byte[] urlOrContent, String _contentType, long ownerId, boolean isPublic, PersistenceManager _pm, String fileName) throws IOException {
 
 		if (null == urlOrContent || 0 == urlOrContent.length) {
 			throw new IOException("Invalid content. Failed to store null or empty content");
@@ -90,7 +91,9 @@ public class StorageHelper {
 
 			} catch (MalformedURLException e) {
 				is = new ByteArrayInputStream(urlOrContent);
-				fname = numberToString((long) (Math.random() * Long.MAX_VALUE));
+				fname = (null==fileName || 0 == fileName.trim().length()) ? 
+						numberToString((long) (Math.random() * Long.MAX_VALUE)) : 
+							URLEncoder.encode(fileName);
 			}
 
 			return saveImage(fname, contentType, ownerId, isPublic, is, _pm);
@@ -176,7 +179,8 @@ public class StorageHelper {
 			try {
 				VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
 				resp.setStatus(HttpServletResponse.SC_OK);
-				resp.setContentType(vfar.getContentType());
+				resp.setContentType(vfar.getContentType()+"; filename='"+vfar.getFileName().getObjectName()+"'");
+				resp.addHeader( "Content-Disposition", "attachment; filename="+vfar.getFileName().getObjectName());
 				getFile(vfar.getFileName(), resp.getOutputStream());
 			} catch (JDOObjectNotFoundException onfe) {
 				resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not Found");

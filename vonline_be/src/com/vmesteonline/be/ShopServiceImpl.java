@@ -49,6 +49,7 @@ import org.apache.thrift.TException;
 
 
 
+
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
@@ -1758,8 +1759,6 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			VoProduct vop;
 			
 			// collect total orders CSV
-			ByteArrayOutputStream tobaos = new ByteArrayOutputStream();
-			ImportElement ordersLinesTO = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_total_lines.csv", orderLineFIelds);
 			List<List<String>> toFieldsData = new ArrayList<List<String>>();
 			
 			for (VoOrder voOrder : olist) {
@@ -1841,20 +1840,33 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				lbaos.close();
 				byte[] fileData = lbaos.toByteArray();
 
-				ordersLinesIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm));
+				ordersLinesIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm, ordersLinesIE.getFileName()));
 
 				odl.add(od);
 				ds.addToData(ordersLinesIE);
 				
 				//collect total order info
-				toFieldsData.add( Arrays.asList( new String[]{ ""+od.orderId, od.userName, user.getMobilePhone() })); //order title
-				if( od.deliveryType != DeliveryType.SELF_PICKUP ) toFieldsData.add( Arrays.asList( new String[]{ od.deliveryAddress }));
-				if( null!=od.comment && od.comment.trim().length() > 0 ) toFieldsData.add( Arrays.asList( new String[]{ od.comment }));
+				toFieldsData.add( createModifableListFromArray( new String[]{ ""+od.orderId, od.userName, "" +user.getMobilePhone()})); //order title
+				if( od.deliveryType != DeliveryType.SELF_PICKUP ) toFieldsData.add( createModifableListFromArray( new String[]{ od.deliveryAddress }));
+				if( null!=od.comment && od.comment.trim().length() > 0 ) toFieldsData.add( createModifableListFromArray( new String[]{ od.comment }));
+				toFieldsData.add( createModifableListFromArray( new String[]{ "-------","-------------------","----------------","-------","-------------------","----------------"})); //order
 				CSVHelper.writeCSVData(lbaos, CSVHelper.getFieldsMap(odInstance, ExchangeFieldType.ORDER_LINE_ID, orderLineFIelds), oldl, toFieldsData); //orderLines
-				toFieldsData.add( Arrays.asList( new String[]{ "Вес: "+od.weight, "ДОставка: "+od.deliveryCost, "Итого: "+od.tatalCost })); //order
-				toFieldsData.add( Arrays.asList( new String[]{ "----------------------------------------------------------------------"})); //order
-				
+				toFieldsData.add( createModifableListFromArray( new String[]{ "-------","-------------------","----------------","-------","-------------------","----------------"})); //order
+				toFieldsData.add( createModifableListFromArray( new String[]{ "Вес: "+od.weight, "Доставка: "+od.deliveryCost, "Итого: "+od.tatalCost })); //order
+				toFieldsData.add( createModifableListFromArray( new String[]{ "=======","===================","================","=======","===================","================"})); //order
+				toFieldsData.add( createModifableListFromArray( new String[]{ ""})); //delimiter
 			}
+			
+		// collect total orders CSV
+			ByteArrayOutputStream tobaos = new ByteArrayOutputStream();
+			CSVHelper.writeCSV(tobaos, toFieldsData, null, null, null);		
+			tobaos.close();
+			byte[] toFileDate = tobaos.toByteArray();
+			
+			ImportElement ordersLinesTO = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_total_lines.csv", orderLineFIelds);
+			ordersLinesTO.setUrl(StorageHelper.saveImage(toFileDate, "text/csv", currentUserId, false, pm, ordersLinesTO.getFileName()));
+			ordersLinesTO.setFieldsData( VoHelper.matrixToList(toFieldsData) );
+			ds.addToData(ordersLinesTO);
 			
 			//create orders matrix
 			ds.addToData(createFullOrderMatrix(currentUserId, ordersMap, productsList, usersMap, pm));
@@ -1867,7 +1879,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			ordersIE.setFieldsData( VoHelper.matrixToList(fieldsData) );
 			baos.close();
 			byte[] fileData2 = baos.toByteArray();
-			ordersIE.setUrl(StorageHelper.saveImage(fileData2, "text/csv", currentUserId, false, pm));
+			ordersIE.setUrl(StorageHelper.saveImage(fileData2, "text/csv", currentUserId, false, pm, ordersIE.getFileName()));
 
 			ds.addToData(ordersIE);
 
@@ -1884,6 +1896,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}finally {
 			pm.close();
 		}
+	}
+
+	private static ArrayList<String> createModifableListFromArray(String[] array) {
+		ArrayList<String> out = new ArrayList<String>( array.length );
+		out.addAll( Arrays.asList( array ));
+		return out;
 	}
 
 	private ImportElement createFullOrderMatrix(long currentUserId, Map<Long, Map<Long, Map<Long, Double>>> ordersMap, Map<Long, VoProduct> productsList,
@@ -1953,7 +1971,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		ordersMtxIE.setFieldsData( VoHelper.matrixToList(productsMatrix) );
 		baos.close();
 		byte[] fileData = baos.toByteArray();
-		ordersMtxIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm));
+		ordersMtxIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm, null));
 
 		return ordersMtxIE;
 	}
@@ -2047,13 +2065,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ffl.addAll(fl);
 
 				pIE.setFieldsData(VoHelper.matrixToList(fl));
-				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), "text/csv", currentUserId, false, pm));
+				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), "text/csv", currentUserId, false, pm, null));
 
 				ds.addToData(pIE);
 			}
 			fbaos.close();
 			fpIE.setFieldsData(VoHelper.matrixToList(ffl));
-			fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), "text/csv", currentUserId, false, pm));
+			fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), "text/csv", currentUserId, false, pm, null));
 
 			ds.addToData(fpIE);
 
@@ -2184,14 +2202,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ffl.addAll(fl);
 	
 				pIE.setFieldsData(VoHelper.matrixToList(fl));
-				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), "text/csv", userId, false, pm));
+				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), "text/csv", userId, false, pm, null));
 	
 				ds.addToData(pIE);
 			}
 		}
 		fbaos.close();
 		fpIE.setFieldsData(VoHelper.matrixToList(ffl));
-		fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), "text/csv", userId, false, pm));
+		fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), "text/csv", userId, false, pm, null));
 
 		ds.addToData(fpIE);
 	}

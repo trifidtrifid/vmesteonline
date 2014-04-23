@@ -180,7 +180,7 @@ public class CSVHelper {
 		String avpd = null == avpDelim ? ":" : avpDelim;
 		
 		for( List<T> row : matrixToWrite ){
-			boolean isFirst = false;
+			boolean isFirst = true;
 			for( T col : row ){
 				if( isFirst ){
 					isFirst = false;
@@ -270,7 +270,7 @@ public class CSVHelper {
 			if(null!=fieldsToFill)
 				for( List< String > line : fieldsToFill ){
 					while(line.size() < maxLineLength)
-						line.add(null);	
+						line.add("");	
 				} 
 		} catch (Exception e) {
 			e.printStackTrace();
