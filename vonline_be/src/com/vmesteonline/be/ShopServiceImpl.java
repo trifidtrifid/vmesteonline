@@ -1432,7 +1432,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ps = (List<VoOrder>) pcq.execute(dateFrom);
 			}
 			List<Order> lo = new ArrayList<Order>();
+			int now = (int)(System.currentTimeMillis()/1000L);
+			OrderDate nextDate;
 			for (VoOrder p : ps) {
+				
+				if(OrderStatus.NEW == p.getStatus() && p.getDate() > (nextDate = getNextOrderDate( now )).orderDate ){
+					p.setDate(nextDate.orderDate);
+					p.setPriceType(nextDate.priceType, pm);
+				} 
 				if (p.getDate() < dateTo)
 					lo.add(p.getOrder());
 			}
@@ -1746,6 +1753,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			//User ID - Order ID - product ID - Quantity Map
 			Map<Long, Map<Long, Map<Long,Double>>> ordersMap = new TreeMap<Long, Map<Long,Map<Long,Double>>>();
 			Map<Long,VoProduct> productsList = new TreeMap<Long, VoProduct>();
+			
 			Map<Long,VoUser> usersMap = new TreeMap<Long, VoUser>();		
 			VoProduct vop;
 			
@@ -1779,7 +1787,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				}
 				ordersMap.get(od.userId).put(od.orderId, productQM);
 				
-				if(null!=voOrder.getOrderLines())
+				if(null!=voOrder.getOrderLines()){
 					for (Long volId : voOrder.getOrderLines().values()) {
 						
 						VoOrderLine vol = pm.getObjectById(VoOrderLine.class, volId);
@@ -1811,7 +1819,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 						}
 						oldl.add(old);
 			
-						productQM.put(old.productId, old.quantity);			
+						productQM.put(old.productId, old.quantity);	
+					}
+				} else {
+					
+					continue;
 				}
 				// collect all order line information
 				ByteArrayOutputStream lbaos = new ByteArrayOutputStream();
