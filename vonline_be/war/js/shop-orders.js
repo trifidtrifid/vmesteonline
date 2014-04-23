@@ -239,7 +239,7 @@ define(
                     if (!oldOrderId){
                         var nextDate = basketModule.getNextDate();
                         var nextDateStr = new Date(nextDate*1000);
-                        oldOrderId = thriftModule.client.createOrder(nextDate,'asd',0);
+                        oldOrderId = thriftModule.client.createOrder(nextDate);
                         basketModule.addTabToBasketHtml(nextDateStr,oldOrderId);
                     }
 
@@ -251,7 +251,7 @@ define(
                         curProd = orderLines[i].product;
                         spinVal = orderLines[i].quantity;
                         var packs = orderLines[i].packs;
-                        thriftModule.client.setOrderLine(oldOrderId,curProd.id,spinVal,"asd",packs);
+                        thriftModule.client.setOrderLine(oldOrderId,curProd.id,spinVal,"",packs);
                     }
                 }else if (addType == 'append'){
                     orderDetails = thriftModule.client.appendOrder(oldOrderId,orderId);

@@ -187,9 +187,7 @@ define(
                              // если это первый товар в корзине
                                 var nextDate = getNextDate();
                                 var nextDateStr = new Date(nextDate*1000);
-                                alert("1 "+nextDate);
-                                orderId = thriftModule.client.createOrder(nextDate,'asd');
-                                alert('2');
+                                orderId = thriftModule.client.createOrder(nextDate);
                                 addTabToBasketHtml(nextDateStr,orderId);
                              }
                             //else{
@@ -333,6 +331,7 @@ define(
                 var currentTab = $('.tab-pane.active');
                 var commonModule = require('shop-common');
                 var amount = commonModule.countAmount(currentTab.find('.catalog-order'));
+                var weight = $('.weight span').text();
                 var catalogHtml = currentTab.find('.catalog-order').html();
                 var spinnerValue = [], spinnerStep = [], counter = 0;
                 currentTab.find('.catalog-order td .spinner1').each(function(){
@@ -348,20 +347,48 @@ define(
                     orderWeekDay: orderWeekDay
                 };
 
-                GoToConfirm(catalogHtml,amount,spinnerValue,date);
+                GoToConfirm(catalogHtml,amount,spinnerValue,date,weight);
 
             });
         }
 
-        function GoToConfirm(catalogHtml,amount,spinnerValue,date){
+        function GoToConfirm(catalogHtml,amount,spinnerValue,date,weight){
 
             $('.shop-confirm').load('ajax/ajax-confirmOrder.html .dynamic',function(){
                 var myDate;
                 $('.main-container').css('min-height', $(window).height()-45);
 
+
+                var orderId = $('.tab-pane.active').data('orderid');
+
+                var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                var checkboxDeliveryType = $('.delivery-right .radio');
+                checkboxDeliveryType.find('input').prop('checked',false);
+                var shops = thriftModule.client.getShops();
+                var shop = thriftModule.client.getShop(shops[0].id);
+                var shopAddress = shop.address;
+                switch (orderDetails.delivery){
+                    case 1:
+                        checkboxDeliveryType.find('input:not(".courier-delivery")').prop('checked',true);
+                        //checkboxDeliveryType.find('input:not(".courier-delivery")').trigger('click');
+                        writeAddress(shopAddress);
+                        break;
+                    default:
+                        checkboxDeliveryType.find('input.courier-delivery').prop('checked',true);
+                        writeAddress(orderDetails.deliveryTo);
+                        var userAddresses = thriftModule.userClient.getUserAddresses();
+                        showDeliveryDropdown(orderId,userAddresses);
+                        break;
+                }
+                setDeliveryCost(orderId);
+
+                defaultAddressForCourier = orderDetails.deliveryTo;
+                initRadioBtnClick(shopAddress);
+
                 (typeof date == 'string') ? myDate = date : myDate = date.orderDay+'.'+date.orderMonth+' ('+ date.orderWeekDay +')';
                 $('.order-date span').text(myDate);
                 $('.itogo-right span').text(amount);
+                $('.weight-right span').text(weight);
 
                 var confirmOrder = $('.confirm-order .catalog-confirm');
                 confirmOrder.html(catalogHtml);
@@ -389,12 +416,6 @@ define(
                 var commonModule = require('shop-common');
                 commonModule.InitProductDetailPopup($('.product-link'));
 
-                var shops = thriftModule.client.getShops();
-                var shop = thriftModule.client.getShop(shops[0].id);
-                var shopAddress = shop.address;
-                SetShopAddress(shopAddress);
-                initRadioBtnClick(shopAddress);
-
                 $('.confirm-order .btn-order').click(function(){
                     var phoneDelivery = $('#phone-delivery');
                     var alertDeliveryPhone = $('.alert-delivery-phone');
@@ -417,7 +438,6 @@ define(
 
                         if(!haveError){
                             alertDeliveryPhone.hide();
-                            var orderId = $('.tab-pane.active').data('orderid');
                             thriftModule.client.confirmOrder(orderId);
                             //alert('Ваш заказ принят !');
                             cleanBasket();
@@ -441,12 +461,12 @@ define(
             }).show();
         }
 
-        function SetShopAddress(shopAddress){
+        /*function SetShopAddress(shopAddress){
             $('.input-delivery .delivery-address').text(shopAddress.country.name + ", " + shopAddress.city.name + ", "
                 + shopAddress.street.name + " " + shopAddress.building.fullNo + ", кв. " + shopAddress.flatNo);
 
             $('.delivery-cost').text('0');
-        }
+        }*/
 
         function AddProductToBasketCommon(currentProduct,packs){
             var addedProductFlag = 0;
@@ -469,85 +489,12 @@ define(
                 //var newSpinnerVal = currentSpinner.spinner('value')+currentProduct.qnty;
                 var newSpinnerVal = currentProduct.qnty;
                 currentSpinner.spinner('value',newSpinnerVal);
-                /* здесь комментарии хранят код, к-й добавляет добавляемое кол-во к тому, что уже есть в корзине,
-                 а не заменяет
-                 */
+
                 var newPacks;
-                /*            if (packs){
-                 var orderDetails = thriftModule.client.getOrderDetails(currentOrderId);
-                 var orderLines = orderDetails.odrerLines;
-                 var orderLinesLength = orderLines.length;
-                 var orderPacks;
-                 for(var i = 0; i < orderLinesLength; i++){
-                 if (orderLines[i].product.id == currentProduct.id){
-                 orderPacks = orderLines[i].packs;
-                 }
-                 }
-                 var oldPacksQnty,newPacksQnty;
-
-                 if(currentProduct.prepackLine.length != 0){
-                 // если prepackLine не одна
-                 currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]').find('td>.ace-spinner');
-                 currentSpinner.spinner('disable');
-                 newPacks = orderPacks;
-                 for(var p1 in packs){
-                 oldPacksQnty = 0;
-                 for (var p2 in orderPacks){
-                 if(parseFloat(p1).toFixed(1) == parseFloat(p2).toFixed(1)){
-                 // если в корзине товар, где prepackLine с таким же кол-м товара (то оставляем эту линию, но увеличиваем соответственно кол-во упаковок)
-                 oldPacksQnty = orderPacks[p2];
-                 newPacksQnty = oldPacksQnty + packs[p1];
-                 newPacks[p2] = newPacksQnty;
-                 break;
-                 }
-                 }
-                 if(!oldPacksQnty){
-                 newPacks[p1] = packs[p1];
-                 }
-                 }
-                 }else{
-                 // если одна линия
-                 if(getPacksLength(orderPacks) == 1){
-                 // если у этого товара в заказе только одна линия
-                 for(var p in orderPacks){
-                 // т.к линия одна у цикла будет только один проход
-                 newPacks = orderPacks;
-                 //alert(p+" "+currentProduct.quantVal);
-                 if(p == currentProduct.quantVal){
-                 // если в корзине товар, где prepackLine с таким же кол-м товара (то оставляем эту линию, но увеличиваем соответственно кол-во упаковок)
-                 oldPacksQnty = orderPacks[p];
-                 newPacksQnty = oldPacksQnty + currentProduct.packVal;
-                 newPacks[p] = newPacksQnty;
-                 }else{
-                 // если в корзине товар, где prepackLine с другим кол-м товара (то меняем packs, добавляя новую линию prepackLine)
-                 newPacks[currentProduct.quantVal] = currentProduct.packVal;
-                 }
-                 }
-                 }else{
-                 // если у этого товара в заказе несколько линий
-                 newPacks = orderPacks;
-                 for(var p in orderPacks){
-                 //alert(p+" "+currentProduct.quantVal);
-                 if(p == currentProduct.quantVal){
-                 // если в корзине товар, где prepackLine с таким же кол-м товара (то оставляем эту линию, но увеличиваем соответственно кол-во упаковок)
-                 oldPacksQnty = orderPacks[p];
-                 newPacksQnty = oldPacksQnty + currentProduct.packVal;
-                 newPacks[p] = newPacksQnty;
-                 //alert('4 '+ oldPacksQnty+" "+currentProduct.packVal+" "+newPacksQnty );
-                 break;
-                 }
-                 }
-                 if(!oldPacksQnty){
-                 newPacks[currentProduct.quantVal] = currentProduct.packVal;
-                 }
-                 }
-                 }
-
-                 }*/
 
                 (commonModule.getPacksLength(packs) <= 1) ? currentSpinner.spinner('enable'):currentSpinner.spinner('disable');
 
-                thriftModule.client.setOrderLine(orderId,currentProduct.id,newSpinnerVal,'sdf',packs);
+                thriftModule.client.setOrderLine(orderId,currentProduct.id,newSpinnerVal,'',packs);
 
                 var orderDetails = thriftModule.client.getOrderDetails(orderId);
                 currentTab.find('.weight span').text(orderDetails.weightGramm);
@@ -555,12 +502,11 @@ define(
                 var newSumma = (newSpinnerVal*parseFloat(basketProductSelector.find('.td-price').text())).toFixed(1);
                 basketProductSelector.find('.td-summa').text(newSumma);
                 currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order')));
-                //currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order')));
             }else{
                 // если такого товара еще нет
                 AddSingleProductToBasket(currentProduct,currentProduct.qnty);
 
-                thriftModule.client.setOrderLine(orderId,currentProduct.id,currentProduct.qnty,'sdf',packs);
+                thriftModule.client.setOrderLine(orderId,currentProduct.id,currentProduct.qnty,'',packs);
 
                 orderDetails = thriftModule.client.getOrderDetails(orderId);
                 currentTab.find('.weight span').text(orderDetails.weightGramm);
@@ -667,7 +613,6 @@ define(
         }
 
         function setDeliveryDropdown(orderId,userAddresses){
-
             var addresses;
             (userAddresses) ? addresses = userAddresses : addresses = thriftModule.userClient.getUserAddresses();
 
@@ -686,6 +631,7 @@ define(
                 e.preventDefault();
                 var ind = $(this).parent().index();
 
+                defaultAddressForCourier = addresses[ind];
                 writeAddress(addresses[ind]);
                 thriftModule.client.setOrderDeliveryType(orderId,2,addresses[ind]);
                 setDeliveryCost(orderId);
@@ -701,10 +647,19 @@ define(
             });
         }
 
+        function showDeliveryDropdown(orderId,userAddresses){
+            $('.delivery-dropdown').show().click(function(){
+                $(this).addClass('open');
+            });
+
+            setDeliveryDropdown(orderId,userAddresses);
+        }
+
+        var defaultAddressForCourier;
         function initRadioBtnClick(shopAddress){
+
             $('.radio input').click(function(){
                 var itogoRight = $('.itogo-right span');
-                var orderDetails = 0;
                 var orderId = $('.tab-pane.active').data('orderid');
                 var commonModule = require('shop-common');
 
@@ -713,31 +668,28 @@ define(
 
                     var homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
                     var userAddresses = thriftModule.userClient.getUserAddresses();
-                    var myAddress;
-                    (homeAddress) ? myAddress = homeAddress : myAddress = userAddresses[0];
-
+                    if (!defaultAddressForCourier){
+                        (homeAddress) ? defaultAddressForCourier = homeAddress : defaultAddressForCourier = userAddresses[0];
+                    }
+                    var myAddress = defaultAddressForCourier;
 
                     if(myAddress){
-                        $('.input-delivery .delivery-address').text(myAddress.country.name + ", " + myAddress.city.name + ", "
-                            + myAddress.street.name + " " + myAddress.building.fullNo + ", кв. " + myAddress.flatNo);
-
+                        writeAddress(myAddress);
                         thriftModule.client.setOrderDeliveryType(orderId,2,myAddress);
                         setDeliveryCost(orderId);
-
                     }else{
                         $('.input-delivery .delivery-address').html("<span class='error-info'>У вас не указано ни одного адреса доставки.</span>");
                         $('.input-delivery .delivery-address .error-info').show();
-
                     }
 
                     itogoRight.text(commonModule.countAmount($('.confirm-order')));
 
-
-                    $('.delivery-dropdown').show();
-
-                    $('.delivery-dropdown').click(function(){
+                    showDeliveryDropdown(orderId,userAddresses);
+                   /* $('.delivery-dropdown').show().click(function(){
                         $(this).addClass('open');
                     });
+
+                    setDeliveryDropdown(orderId,userAddresses);*/
 
                     triggerDelivery = 1;
 
@@ -746,15 +698,6 @@ define(
                         searchModule.initAutocompleteAddress($('.address-input'));
                         autocompleteAddressFlag = 0;
                     }
-
-                    if(userAddresses.length > 0){
-                        homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
-                        if(homeAddress){
-                            writeAddress(homeAddress);
-                        }
-                    }
-                    setDeliveryDropdown(orderId,userAddresses);
-
 
                     $('.add-address').click(function(e){
                         e.preventDefault();
@@ -769,7 +712,7 @@ define(
 
                             // добавление в базу нового города, страны, улицы и т.д (если курьером)
 
-                            var deliveryAddress = commonModule.addAddressToBase(addressInput);
+                            var deliveryAddress = defaultAddressForCourier = commonModule.addAddressToBase(addressInput);
                             writeAddress(deliveryAddress);
 
                             thriftModule.userClient.addUserAddress(deliveryAddress);
@@ -781,21 +724,12 @@ define(
 
                     });
 
-                    /*$(this).closest('.delivery-right').find('.input-delivery').addClass('active').slideDown();
-                    orderDetails = thriftModule.client.getOrderDetails(orderId);
-                    if (orderDetails.deliveryCost){
-                        $('.delivery-cost').text(orderDetails.deliveryCost);
-                    }
-                    var commonModule = require('shop-common');
-                    itogoRight.text(commonModule.countAmount($('.confirm-order')));
-
-                    //thriftModule.client.setOrderDeliveryType(orderId,2);
-                    triggerDelivery = 1;*/
                 }else{
                     thriftModule.client.setOrderDeliveryType(orderId,1);
 
                     //$(this).closest('.delivery-right').find('.input-delivery').removeClass('active').slideUp();
-                    SetShopAddress(shopAddress);
+                    writeAddress(shopAddress);
+                    setDeliveryCost(orderId);
                     $('.delivery-dropdown').hide();
                     if (triggerDelivery){itogoRight.text(commonModule.countAmount($('.confirm-order'))); triggerDelivery = 0;}
                 }
@@ -806,7 +740,12 @@ define(
             var orderDetails = thriftModule.client.getOrderDetails(orderId);
             if (orderDetails.deliveryCost){
                 $('.delivery-cost').text(orderDetails.deliveryCost);
+            }else{
+                $('.delivery-cost').text('0');
             }
+
+            var commonModule = require('shop-common');
+            $('.itogo-right span,.amount span').text(commonModule.countAmount($('.confirm-order')));
         }
 
 
@@ -819,6 +758,7 @@ define(
             BasketTrigger: BasketTrigger,
             AddSingleProductToBasket: AddSingleProductToBasket,
             addTabToBasketHtml: addTabToBasketHtml,
+            setDeliveryCost: setDeliveryCost,
             GoToConfirm: GoToConfirm,
             getWeekDay: getWeekDay,
             getNextDate: getNextDate,

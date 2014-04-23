@@ -63,7 +63,7 @@
     }
 
     List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(catId);
-    ProductListPart productsListPart = shopService.getProducts(0,30,catId);
+    ProductListPart productsListPart = shopService.getProducts(0,1000,catId);
     if (productsListPart.products.size() > 0){
         pageContext.setAttribute("products",productsListPart.products);
     }

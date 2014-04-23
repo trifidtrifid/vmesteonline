@@ -361,10 +361,8 @@ define(
                                     productSelector.find('.error-prepack').hide();
                                     qnty += addedPackVal*addedQntyVal;
                                     packs[addedQntyVal] = addedPackVal;
-                                    /*for(var p in packs){
-                                     alert(p+" "+packs[p]);
-                                     }*/
-                                    thriftModule.client.setOrderLine(orderId,productId,qnty,'sdf',packs);
+
+                                    thriftModule.client.setOrderLine(orderId,productId,qnty,'',packs);
                                     productSelector.find('td>.ace-spinner').spinner('value',qnty);
                                     productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
                                     $('.itogo-right span').text(countAmount($('.catalog-order')));
