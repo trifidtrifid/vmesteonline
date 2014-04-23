@@ -1432,7 +1432,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ps = (List<VoOrder>) pcq.execute(dateFrom);
 			}
 			List<Order> lo = new ArrayList<Order>();
+			int now = (int)(System.currentTimeMillis()/1000L);
+			OrderDate nextDate;
 			for (VoOrder p : ps) {
+				
+				if(OrderStatus.NEW == p.getStatus() && p.getDate() > (nextDate = getNextOrderDate( now )).orderDate ){
+					p.setDate(nextDate.orderDate);
+					p.setPriceType(nextDate.priceType, pm);
+				} 
 				if (p.getDate() < dateTo)
 					lo.add(p.getOrder());
 			}
@@ -1746,8 +1753,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			//User ID - Order ID - product ID - Quantity Map
 			Map<Long, Map<Long, Map<Long,Double>>> ordersMap = new TreeMap<Long, Map<Long,Map<Long,Double>>>();
 			Map<Long,VoProduct> productsList = new TreeMap<Long, VoProduct>();
+			
 			Map<Long,VoUser> usersMap = new TreeMap<Long, VoUser>();		
 			VoProduct vop;
+			
+			// collect total orders CSV
+			ByteArrayOutputStream tobaos = new ByteArrayOutputStream();
+			ImportElement ordersLinesTO = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_total_lines.csv", orderLineFIelds);
+			List<List<String>> toFieldsData = new ArrayList<List<String>>();
 			
 			for (VoOrder voOrder : olist) {
 				
@@ -1779,7 +1792,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				}
 				ordersMap.get(od.userId).put(od.orderId, productQM);
 				
-				if(null!=voOrder.getOrderLines())
+				if(null!=voOrder.getOrderLines()){
 					for (Long volId : voOrder.getOrderLines().values()) {
 						
 						VoOrderLine vol = pm.getObjectById(VoOrderLine.class, volId);
@@ -1811,7 +1824,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 						}
 						oldl.add(old);
 			
-						productQM.put(old.productId, old.quantity);			
+						productQM.put(old.productId, old.quantity);	
+					}
+				} else {
+					
+					continue;
 				}
 				// collect all order line information
 				ByteArrayOutputStream lbaos = new ByteArrayOutputStream();
@@ -1828,6 +1845,15 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 				odl.add(od);
 				ds.addToData(ordersLinesIE);
+				
+				//collect total order info
+				toFieldsData.add( Arrays.asList( new String[]{ ""+od.orderId, od.userName, user.getMobilePhone() })); //order title
+				if( od.deliveryType != DeliveryType.SELF_PICKUP ) toFieldsData.add( Arrays.asList( new String[]{ od.deliveryAddress }));
+				if( null!=od.comment && od.comment.trim().length() > 0 ) toFieldsData.add( Arrays.asList( new String[]{ od.comment }));
+				CSVHelper.writeCSVData(lbaos, CSVHelper.getFieldsMap(odInstance, ExchangeFieldType.ORDER_LINE_ID, orderLineFIelds), oldl, toFieldsData); //orderLines
+				toFieldsData.add( Arrays.asList( new String[]{ "Вес: "+od.weight, "ДОставка: "+od.deliveryCost, "Итого: "+od.tatalCost })); //order
+				toFieldsData.add( Arrays.asList( new String[]{ "----------------------------------------------------------------------"})); //order
+				
 			}
 			
 			//create orders matrix

@@ -40,6 +40,19 @@ public class VoOrder {
 		return priceType;
 	}
 
+	public void setPriceType(PriceType priceType, PersistenceManager _pm) {
+		if( null!=this.priceType && this.priceType !=priceType && orderLines.size() > 0 ){ //have to update order total cost
+			for( Long olpid: orderLines.keySet() ){
+				VoProduct vop = _pm.getObjectById(VoProduct.class, olpid);
+				if( vop.getPrice(priceType) != vop.getPrice(this.priceType)) {
+					VoOrderLine vol = _pm.getObjectById(VoOrderLine.class, orderLines.get(olpid));
+					addCost( vol.getQuantity() * (vop.getPrice(priceType) - vop.getPrice(this.priceType)));
+				}
+			}
+		}
+		setPriceType(priceType);
+	}
+	
 	public void setPriceType(PriceType priceType) {
 		this.priceType = priceType;
 	}
