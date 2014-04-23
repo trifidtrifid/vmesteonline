@@ -1064,12 +1064,15 @@ height 50px
 .confirm-order .catalog-confirm .fa-shopping-cart {
   display: none !important;
 }
-.confirm-order .itogo-right {
+.confirm-order .itogo-right,
+.confirm-order .weight-right {
   float: right;
+  clear: right;
   padding-top: 15px;
   font-size: 16px;
 }
-.confirm-order .itogo-right span {
+.confirm-order .itogo-right span,
+.confirm-order .weight-right span {
   font-weight: bold;
 }
 .confirm-order .delivery-right {

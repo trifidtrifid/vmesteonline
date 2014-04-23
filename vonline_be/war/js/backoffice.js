@@ -897,9 +897,15 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
                            dataSet = client.getTotalOrdersReport(selectOrderDate,deliveryType,exportFieldsOrder.fieldsMap,exportFieldsOrderLine.fieldsMap);
 
-                           var tablesCount = dataSet.data.length;  // кол-во таблиц в нашем отчете
+                           var tablesCount;
 
-                           drawExportTables(dataSet,tablesCount,exportFieldsOrder,exportFieldsOrderLine);
+                           if(dataSet.data){
+
+                               tablesCount = dataSet.data.length;  // кол-во таблиц в нашем отчете
+
+                               drawExportTables(dataSet,tablesCount,exportFieldsOrder,exportFieldsOrderLine);
+
+                           }
 
                            break;
                        case 1:
@@ -907,9 +913,13 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
                            dataSet = client.getTotalProductsReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
 
-                           tablesCount = 1;  // кол-во таблиц в нашем отчете
+                           if(dataSet.data){
 
-                           drawExportTables(dataSet,tablesCount,exportFields);
+                               tablesCount = 1;  // кол-во таблиц в нашем отчете
+
+                               drawExportTables(dataSet,tablesCount,exportFields);
+
+                            }
 
                            break;
                        case 2:
@@ -917,16 +927,19 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
                            dataSet = client.getTotalPackReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
 
-                           tablesCount = 1;  // кол-во таблиц в нашем отчете
+                           if(dataSet.data){
 
-                           drawExportTables(dataSet,tablesCount,exportFields);
+                               tablesCount = 1;  // кол-во таблиц в нашем отчете
+
+                               drawExportTables(dataSet,tablesCount,exportFields);
+                           }
 
                            break;
                    }
                    initShowFullText();
                    initCloseFullText();
 
-                   if(!dataSet) currentTab.find('.confirm-info').text('Нет данных на такое сочетание даты и типа доставки.').show();
+                   if(!dataSet.data) currentTab.find('.confirm-info').text('Нет данных на такое сочетание даты и типа доставки.').show();
 
                }catch(e){
                    currentTab.find('.confirm-info').text('Ошибка экспорта.').show();

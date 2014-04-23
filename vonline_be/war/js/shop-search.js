@@ -71,7 +71,7 @@ define(
                                 // если это первый товар в корзине
                                 var nextDate = basketModule.getNextDate();
                                 var nextDateStr = new Date(nextDate*1000);
-                                var orderId = thriftModule.client.createOrder(nextDate,'asd',0);
+                                var orderId = thriftModule.client.createOrder(nextDate);
                                 basketModule.addTabToBasketHtml(nextDateStr,orderId);
                             }
 
