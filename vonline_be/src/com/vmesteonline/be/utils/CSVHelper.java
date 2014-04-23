@@ -280,8 +280,12 @@ public class CSVHelper {
 
 	//=====================================================================================================================
 	
-	private static String writeFieldToCSVCell(Object fieldToWrite,  String fd, String sd, String avpd) {
+	private static String writeFieldToCSVCell(Object fieldToWrite,  String fieldDelim, String setDelim, String avpDelim) {
 		String outStr;
+		
+		String fd = null == fieldDelim ? ";" : fieldDelim;
+		String sd = null == setDelim ? "|" : setDelim;
+		String avpd = null == avpDelim ? ":" : avpDelim;
 		
 		if (fieldToWrite instanceof Number){
 			outStr = quoteCell(trimFloatPointAsString(fieldToWrite.toString()),fd,sd,avpd);
@@ -305,7 +309,7 @@ public class CSVHelper {
 			if(outStr.length()>=sd.length())
 				outStr = outStr.substring(sd.length());
 		} else {
-			outStr = quoteCell(fieldToWrite.toString(), fd, sd, avpd);
+				outStr = quoteCell(fieldToWrite.toString(), fd, sd, avpd);
 		}
 		return outStr;
 	}

@@ -101,6 +101,7 @@ define(
             var buildings = thriftModule.userClient.getBuildings(streetId);
             var buildingsLength = buildings.length;
             var inputBuilding = currentForm.find('.building-delivery').val();
+
             var building,buildingId = 0;
             for (i = 0; i < buildingsLength; i++){
                 if (buildings[i].fullNo == inputBuilding){
@@ -109,7 +110,8 @@ define(
                 }
             }
             if (!buildingId){
-                building = thriftModule.userClient.createNewBuilding(streetId,inputBuilding,0,0);
+                building = thriftModule.userClient.createNewBuilding(streetId,inputBuilding);
+                buildingId = building.id;
             }
 
             var deliveryAddress = new com.vmesteonline.be.PostalAddress();
@@ -189,9 +191,10 @@ define(
                     var currentModal = $(this).find('+.modal');
 
                     if(imagesSet.length){
-                        var oldHeight = currentModal.height();
-                        currentModal.height(oldHeight + 25);
+                        //var oldHeight = currentModal.height();
+                        currentModal.height('275px');
                     }
+
                     if (productDetails.prepackRequired){
                         currentModal.addClass('modal-with-prepack');
                     }
@@ -204,8 +207,15 @@ define(
                         '<ul class="slides">'+
                         '<li>'+
                         '<img src="'+product.imageURL+'" />'+
-                        '</li>'+
-                        '</ul>'+
+                        '</li>';
+                    if(imagesSet.length){
+                        for(var i = 0; i < imagesSet.length; i++){
+                            popupHtml += '<li>'+
+                                '<img src="'+imagesSet[i]+'" />'+
+                                '</li>';
+                        }
+                    }
+                        popupHtml += '</ul>'+
                         '</div>';
 
                     if(imagesSet.length){
@@ -213,8 +223,13 @@ define(
                             '<ul class="slides">'+
                             '<li>'+
                             '<img src="'+product.imageURL+'" />'+
-                            '</li>'+
-                            '</ul>'+
+                            '</li>';
+                        for(i = 0; i < imagesSet.length; i++){
+                            popupHtml += '<li>'+
+                                '<img src="'+imagesSet[i]+'" />'+
+                                '</li>';
+                        }
+                        popupHtml += '</ul>'+
                             '</div>';
                     }
 
@@ -549,12 +564,14 @@ define(
                         setSidebarHeight();
                     }
                 }
+            markAddedProduct();
             /*}catch(e){
                 alert(e+" Функция $('.shop-trigger').click");
             }*/
         });
 
         function openModalAuth(){
+            $('.modal.in .close').trigger('click');
             var modalAuth = $('.modal-auth');
             modalAuth.load('login.jsp .container',function(){
                 var closeHtml = '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
@@ -575,6 +592,13 @@ define(
 
         }
 
+        function changeShortUserInfo(newUserInfo){
+            var shortUserInfo;
+            (newUserInfo) ? shortUserInfo = newUserInfo : shortUserInfo = thriftModule.userClient.getShortUserInfo();
+            var shortUserInfoHtml =  shortUserInfo.firstName +' '+ shortUserInfo.lastName;
+            $('.user-info').html(shortUserInfoHtml);
+        }
+
         return{
             getCookie: getCookie,
             setCookie: setCookie,
@@ -588,7 +612,8 @@ define(
             markAddedProduct: markAddedProduct,
             remarkAddedProduct: remarkAddedProduct,
             addAddressToBase: addAddressToBase,
-            isValidEmail: isValidEmail
+            isValidEmail: isValidEmail,
+            changeShortUserInfo: changeShortUserInfo
         }
     }
 );

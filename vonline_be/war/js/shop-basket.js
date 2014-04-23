@@ -101,7 +101,7 @@ define(
                     if (!globalUserAuth){
                         // если пользователь не залогинен
                         selectorForCallbacks = $(this);
-                        callbacks.add(BasketTrigger);
+                        //callbacks.add(BasketTrigger);
                         //$('.modal-auth').modal();
                         var commonModule = require('shop-common');
                         commonModule.openModalAuth();
@@ -187,7 +187,9 @@ define(
                              // если это первый товар в корзине
                                 var nextDate = getNextDate();
                                 var nextDateStr = new Date(nextDate*1000);
-                                orderId = thriftModule.client.createOrder(nextDate,'asd',0);
+                                alert("1 "+nextDate);
+                                orderId = thriftModule.client.createOrder(nextDate,'asd');
+                                alert('2');
                                 addTabToBasketHtml(nextDateStr,orderId);
                              }
                             //else{
@@ -355,6 +357,8 @@ define(
 
             $('.shop-confirm').load('ajax/ajax-confirmOrder.html .dynamic',function(){
                 var myDate;
+                $('.main-container').css('min-height', $(window).height()-45);
+
                 (typeof date == 'string') ? myDate = date : myDate = date.orderDay+'.'+date.orderMonth+' ('+ date.orderWeekDay +')';
                 $('.order-date span').text(myDate);
                 $('.itogo-right span').text(amount);
@@ -420,6 +424,7 @@ define(
                             $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
                                 $('.page').hide();
                                 $(this).show();
+                                $('.main-container').css('min-height', $(window).height()-45);
 
                                 var order = [];
                                 order[0] = thriftModule.client.getOrder(orderId);
@@ -543,6 +548,10 @@ define(
                 (commonModule.getPacksLength(packs) <= 1) ? currentSpinner.spinner('enable'):currentSpinner.spinner('disable');
 
                 thriftModule.client.setOrderLine(orderId,currentProduct.id,newSpinnerVal,'sdf',packs);
+
+                var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                currentTab.find('.weight span').text(orderDetails.weightGramm);
+
                 var newSumma = (newSpinnerVal*parseFloat(basketProductSelector.find('.td-price').text())).toFixed(1);
                 basketProductSelector.find('.td-summa').text(newSumma);
                 currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order')));
@@ -553,7 +562,7 @@ define(
 
                 thriftModule.client.setOrderLine(orderId,currentProduct.id,currentProduct.qnty,'sdf',packs);
 
-                var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                orderDetails = thriftModule.client.getOrderDetails(orderId);
                 currentTab.find('.weight span').text(orderDetails.weightGramm);
 
 
@@ -623,7 +632,7 @@ define(
                 var now = parseInt(new Date()/1000);
                 now -= now%86400;
 
-                var datesArray = thriftModule.client.getDates(now+day,now+32*day);
+                /*var datesArray = thriftModule.client.getDates(now+day,now+32*day);
                 var nextDate;
                 for (var date in datesArray){
                     if(datesArray[date] == 1){
@@ -631,18 +640,21 @@ define(
                         nextDate = date;
                         break;
                     }
+
                     // если это следующий день то нельзя
-                    /*var firstMarkDay = $('.mark-day:eq(0)');
+                    *//*var firstMarkDay = $('.mark-day:eq(0)');
                     if (!firstMarkDay.hasClass('.closed-day')){
                         // если ближайший к сегодня marked day является не closed-day, то очищаем его
                         // если же ближайший close day, то все остается как есть
                         firstMarkDay.removeClass('free-day day-with-order special-day');
-                    }*/
-                }
+                    }*//*
+                }*/
+
+                var nextDate = thriftModule.client.getNextOrderDate(now);
             }catch(e){
                 alert(e + ' Функция SetFreeDates');
             }
-            return nextDate;
+            return nextDate.orderDate;
         }
 
         /* delivery */

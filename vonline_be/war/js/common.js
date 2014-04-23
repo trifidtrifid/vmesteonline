@@ -6,7 +6,7 @@
             showLeftTop = (w.height()-showLeft.width())/ 2;
 
         showLeft.css('top',showLeftTop);
-        sidebar.css('min-height', w.height());
+        sidebar.css('min-height', w.height()-45);
 
         showLeft.click(function(){
             if (!$(this).hasClass('active')){

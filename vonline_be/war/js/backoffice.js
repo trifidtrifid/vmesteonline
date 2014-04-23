@@ -213,6 +213,8 @@ $(document).ready(function(){
                     orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
                     orderDetails.deliveryTo.flatNo+
                     '</td>'+
+                    '<td class="td9">'+ orderDetails.deliveryCost +'</td>'+
+                    '<td class="td8">'+ orderDetails.weightGramm +'</td>'+
                     '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
                     '</tr>'+
                     '</tbody>'+
@@ -266,6 +268,12 @@ $(document).ready(function(){
         $('#back-search').val('Поиск по имени клиента или номеру телефона');
         dPicker.val('Фильтр по дате');
     });
+
+    /* сброс */
+    $('#date-picker-2,#date-picker-3,#date-picker-4').val('Фильтр по дате');
+    $('.export .checkbox input.ace').prop('checked',false);
+    /* --- */
+
 
     function getStatusTypeByText(statusText){
         var statusType;
@@ -876,7 +884,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
               });
 
                var deliveryType;
-               (deliveryText != 'Тип доставки') ? deliveryType = getDeliveryTypeByText(deliveryText):deliveryType=0;
+               (deliveryText != 'Тип доставки' && deliveryText != 'Все') ? deliveryType = getDeliveryTypeByText(deliveryText):deliveryType=0;
 
                var dataSet;
 
@@ -917,6 +925,9 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                    }
                    initShowFullText();
                    initCloseFullText();
+
+                   if(!dataSet) currentTab.find('.confirm-info').text('Нет данных на такое сочетание даты и типа доставки.').show();
+
                }catch(e){
                    currentTab.find('.confirm-info').text('Ошибка экспорта.').show();
                }
@@ -973,7 +984,11 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                 }
             }
 
-             var headColArray = exportFields.headColArray;
+             //var headColArray = exportFields.headColArray;
+             var headColArray;
+            (dataSet.data[0].fieldsMap) ? headColArray = exportFields.headColArray :
+                headColArray = exportData[0] ;
+
             if(exportFieldsOrderLine){
                 (z == tablesCount-1) ? headColArray = exportFields.headColArray: headColArray = exportFieldsOrderLine.headColArray;
             }
@@ -1017,7 +1032,6 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         var exportDataLength = exportData.length;
 
         for(var i = 0; i < exportDataLength; i++){
-            console.log(exportData[i]);
             exportTable += '<tr>'+
                 createExportLine(exportData[i],colCount)+
                 '</tr>';
@@ -1053,9 +1067,9 @@ $('.import-dropdown .dropdown-menu li').click(function(){
             var mainContent = $('.main-content');
 
             if (mainContent.height() > w.height()){
-                $('.shop-right').css('height', mainContent.height()+45);
+                $('#sidebar').css('height', mainContent.height());
             }else{
-                $('.shop-right').css('height', '100%');
+                $('#sidebar').css('height', '100%');
             }
         }catch(e){
             alert(e+" Функция setSidebarHeight");
@@ -1079,6 +1093,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         }
         $(this).closest('ul').find('.active').removeClass('active');
         $(this).parent().addClass('active');
+        setSidebarHeight();
     });
 
 });

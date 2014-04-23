@@ -1757,6 +1757,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			Map<Long,VoUser> usersMap = new TreeMap<Long, VoUser>();		
 			VoProduct vop;
 			
+			// collect total orders CSV
+			ByteArrayOutputStream tobaos = new ByteArrayOutputStream();
+			ImportElement ordersLinesTO = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_total_lines.csv", orderLineFIelds);
+			List<List<String>> toFieldsData = new ArrayList<List<String>>();
+			
 			for (VoOrder voOrder : olist) {
 				
 				OrderDescription od = new OrderDescription();
@@ -1840,6 +1845,15 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 				odl.add(od);
 				ds.addToData(ordersLinesIE);
+				
+				//collect total order info
+				toFieldsData.add( Arrays.asList( new String[]{ ""+od.orderId, od.userName, user.getMobilePhone() })); //order title
+				if( od.deliveryType != DeliveryType.SELF_PICKUP ) toFieldsData.add( Arrays.asList( new String[]{ od.deliveryAddress }));
+				if( null!=od.comment && od.comment.trim().length() > 0 ) toFieldsData.add( Arrays.asList( new String[]{ od.comment }));
+				CSVHelper.writeCSVData(lbaos, CSVHelper.getFieldsMap(odInstance, ExchangeFieldType.ORDER_LINE_ID, orderLineFIelds), oldl, toFieldsData); //orderLines
+				toFieldsData.add( Arrays.asList( new String[]{ "Вес: "+od.weight, "ДОставка: "+od.deliveryCost, "Итого: "+od.tatalCost })); //order
+				toFieldsData.add( Arrays.asList( new String[]{ "----------------------------------------------------------------------"})); //order
+				
 			}
 			
 			//create orders matrix

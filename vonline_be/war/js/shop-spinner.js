@@ -377,7 +377,11 @@ define(
                             qnty = (qnty - quantVal*packVal).toFixed(1);
                             productSelector.find('td>.ace-spinner').spinner('value',qnty);
                             productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
+
                             thriftModule.client.setOrderLine(orderId,productId,qnty,'asd',packs);
+                            var currentTab = $('.tab-pane.active');
+                            currentTab.find('.weight span').text(orderDetails.weightGramm);
+
                             var commonModule = require('shop-common');
 
                             var currentCatalog;
