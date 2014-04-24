@@ -915,7 +915,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
                            if(dataSet.data){
 
-                               tablesCount = 1;  // кол-во таблиц в нашем отчете
+                               tablesCount = dataSet.data.length;  // кол-во таблиц в нашем отчете
 
                                drawExportTables(dataSet,tablesCount,exportFields);
 
@@ -926,10 +926,10 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                            exportFields = getExportFields('packs');
 
                            dataSet = client.getTotalPackReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
-
                            if(dataSet.data){
 
-                               tablesCount = 1;  // кол-во таблиц в нашем отчете
+                               //tablesCount = 1;  // кол-во таблиц в нашем отчете
+                               tablesCount = dataSet.data.length;
 
                                drawExportTables(dataSet,tablesCount,exportFields);
                            }
@@ -977,6 +977,14 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         return {fieldsMap: fieldsMap,headColArray: headColArray }
     };
 
+    /*function getExportFieldsByMap(fieldsMap){
+        var counter = 0;
+
+        for (var p in fieldsMap){
+            console.log(p+" "+fieldsMap[p]);
+        }
+    }*/
+
     function drawExportTables(dataSet,tablesCount,exportFields,exportFieldsOrderLine){
 
         var currentExportTable = $('.tab-pane.active').find('.export-table');
@@ -998,14 +1006,17 @@ $('.import-dropdown .dropdown-menu li').click(function(){
             }
 
              //var headColArray = exportFields.headColArray;
-             var headColArray;
-            (dataSet.data[0].fieldsMap) ? headColArray = exportFields.headColArray :
-                headColArray = exportData[0] ;
+             var headColArray, beginRow = 0;
 
-            if(exportFieldsOrderLine){
-                (z == tablesCount-1) ? headColArray = exportFields.headColArray: headColArray = exportFieldsOrderLine.headColArray;
+            if(dataSet.data[z].fieldsMap){
+                headColArray = exportFields.headColArray;
+                if(exportFieldsOrderLine){
+                    (z == tablesCount-1) ? headColArray = exportFields.headColArray: headColArray = exportFieldsOrderLine.headColArray;
+                }
+            }else{
+                headColArray = exportData[0];
+                beginRow = 1;
             }
-
 
             var reportTable = '<div class="export-single-table"><table>' +
                 '<thead>' +
@@ -1014,7 +1025,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                 '</tr>'+
                 '</thead>'+
                 '<tbody>' +
-                createExportTable(exportData,colCount)+
+                createExportTable(exportData,colCount,beginRow)+
                 '</tbody>'+
                 '</table></div>';
 
@@ -1040,11 +1051,11 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
     }
 
-    function createExportTable(exportData,colCount){
+    function createExportTable(exportData,colCount,beginRow){
         var exportTable = "";
         var exportDataLength = exportData.length;
 
-        for(var i = 0; i < exportDataLength; i++){
+        for(var i = beginRow; i < exportDataLength; i++){
             exportTable += '<tr>'+
                 createExportLine(exportData[i],colCount)+
                 '</tr>';

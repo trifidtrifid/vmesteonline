@@ -445,26 +445,22 @@ define(
                                 $(this).show();
                                 $('.main-container').css('min-height', $(window).height()-45);
 
+                                var order = thriftModule.client.getOrder(orderId);
+                                var orderDetails = thriftModule.client.getOrderDetails(orderId);
+
                                 $('.bill-amount span,.all-amount span').text($('.itogo-right span').text());
-                                $('.bill-delivery-address span,.bill-delivery').text($('.input-delivery .delivery-address').text());
+                                $('.bill-delivery-address span').text($('.input-delivery .delivery-address').text());
                                 $('.bill-date-delivery span').text($('.order-date span').text());
                                 $('.bill-client span').text($('.user-info').text());
                                 $('.bill-client-phone span').text($('#phone-delivery').val());
-                                var payType;
+                                /*var payType;
                                 if($('.courier-delivery').prop('checked') == true){
                                     payType = "Курьеру";
                                 }else{
                                     payType = "При получении";
-                                }
-                                $('.bill-pay-type span').text(payType);
+                                }*/
+                                $('.bill-pay-type span').text(getPaymentType(orderDetails.paymentType));
                                 $('.bill-weight span').text($('.weight-right span').text()+" гр.");
-
-
-                                /*var shops = thriftModule.client.getShops();
-                                var shop = thriftModule.client.getShop(shops[0].id);
-                                var shopAddress = shop.address;*/
-                                var order = thriftModule.client.getOrder(orderId);
-                                var orderDetails = thriftModule.client.getOrderDetails(orderId);
 
                                 var orderDate = new Date(orderDetails.createdAt*1000);
                                 var orderDay = orderDate.getDate();
@@ -483,9 +479,16 @@ define(
                                 $('.bill-shop-email span').text('---');
                                 $('.order-end-logo img').attr('src',shop.logoURL);
 
-                                $('.bill-amount-order span').text($('.itogo-right span').text()-$('.delivery-cost').text());
-                                $('.bill-amount-delivery span').text($('.delivery-cost').text());
+                                var costWithoutDelivery = $('.itogo-right span').text()-$('.delivery-cost').text();
+                                $('.bill-amount-order span').text(costWithoutDelivery.toFixed(1));
 
+                                if($('#order-comment').val()){
+                                    var commentHtml = "<div class='bill-comment'>" +
+                                        "<h4>Комментарий: </h4>"+
+                                        "<div>"+ $('#order-comment').val() +"</div>"+
+                                        "</div>";
+                                    $('.bill-amount-order').after(commentHtml);
+                                }
 
                                 var noEdit = true;
                                 $('.bill-order-list').append(ordersModule.createOrdersProductHtml(orderDetails,noEdit));
@@ -502,12 +505,27 @@ define(
             }).show();
         }
 
-        /*function SetShopAddress(shopAddress){
-            $('.input-delivery .delivery-address').text(shopAddress.country.name + ", " + shopAddress.city.name + ", "
-                + shopAddress.street.name + " " + shopAddress.building.fullNo + ", кв. " + shopAddress.flatNo);
-
-            $('.delivery-cost').text('0');
-        }*/
+        function getPaymentType(paymentTypeDigit){
+            var paymentType;
+             switch(paymentTypeDigit){
+                 case 0:
+                     paymentType = "Неизвестно";
+                     break;
+                 case 1:
+                     paymentType = "Наличными";
+                     break;
+                 case 2:
+                     paymentType = "Кредитной карточкой";
+                     break;
+                 case 3:
+                     paymentType = "Трансфер";
+                     break;
+                 case 4:
+                     paymentType = "Кредит";
+                     break;
+             }
+            return paymentType;
+        }
 
         function AddProductToBasketCommon(currentProduct,packs){
             var addedProductFlag = 0;
@@ -637,7 +655,7 @@ define(
                     }*//*
                 }*/
 
-                var nextDate = thriftModule.client.getNextOrderDate(now);
+                var nextDate = thriftModule.client.getNextOrderDate(now+day);
             }catch(e){
                 alert(e + ' Функция SetFreeDates');
             }
@@ -685,6 +703,32 @@ define(
                 $('.address-input .flat-delivery').val('');
                 $('.address-input').show();
                 $('.delivery-dropdown .btn-group-text').text('Выбрать адрес');
+            });
+
+            $('.add-address').click(function(e){
+                e.preventDefault();
+
+                if (!$('.country-delivery').val() || !$('.city-delivery').val() || !$('.street-delivery').val() || !$('.building-delivery').val() || !$('.flat-delivery').val()){
+                    $('.alert-delivery-phone').hide();
+                    $('.alert-delivery-addr').text('Введите полный адресс доставки !').show();
+                }else{
+                    $('.alert-delivery-addr').hide();
+                    var addressInput = $('.address-input');
+                    addressInput.slideUp();
+
+                    // добавление в базу нового города, страны, улицы и т.д (если курьером)
+
+                    var commonModule = require('shop-common');
+                    var deliveryAddress = defaultAddressForCourier = commonModule.addAddressToBase(addressInput);
+                    writeAddress(deliveryAddress);
+
+                    thriftModule.userClient.addUserAddress(deliveryAddress);
+
+                    thriftModule.client.setOrderDeliveryType(orderId,2,deliveryAddress);
+                    setDeliveryCost(orderId);
+                    setDeliveryDropdown(orderId);
+                }
+
             });
         }
 
@@ -740,30 +784,7 @@ define(
                         autocompleteAddressFlag = 0;
                     }
 
-                    $('.add-address').click(function(e){
-                        e.preventDefault();
 
-                        if (!$('.country-delivery').val() || !$('.city-delivery').val() || !$('.street-delivery').val() || !$('.building-delivery').val() || !$('.flat-delivery').val()){
-                            $('.alert-delivery-phone').hide();
-                            $('.alert-delivery-addr').text('Введите полный адресс доставки !').show();
-                        }else{
-                            $('.alert-delivery-addr').hide();
-                            var addressInput = $('.address-input');
-                            addressInput.slideUp();
-
-                            // добавление в базу нового города, страны, улицы и т.д (если курьером)
-
-                            var deliveryAddress = defaultAddressForCourier = commonModule.addAddressToBase(addressInput);
-                            writeAddress(deliveryAddress);
-
-                            thriftModule.userClient.addUserAddress(deliveryAddress);
-
-                            thriftModule.client.setOrderDeliveryType(orderId,2,deliveryAddress);
-                            setDeliveryCost(orderId);
-                            setDeliveryDropdown(orderId);
-                        }
-
-                    });
 
                 }else{
                     thriftModule.client.setOrderDeliveryType(orderId,1);
