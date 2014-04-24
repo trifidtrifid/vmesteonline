@@ -1116,6 +1116,9 @@ height 50px
   left: -233px;
   width: 360px;
 }
+.confirm-order .delivery-right .input-delivery .delivery-dropdown .dropdown-menu li a {
+  white-space: normal;
+}
 .confirm-order .delivery-right .input-delivery .address-input {
   margin: 10px 0;
   display: none;
@@ -1220,11 +1223,19 @@ height 50px
   clear: both;
   font-size: 20px;
 }
-.order-end .order-end-in .bill-wrap .order-end-info .bill-delivery {
+.order-end .order-end-in .bill-wrap .order-end-info .bill-comment {
+  clear: right;
+  float: right;
+  margin: 10px 0 20px 0;
+  width: 60%;
+}
+.order-end .order-end-in .bill-wrap .order-end-info .bill-comment h4 {
+  float: left;
   font-size: 16px;
-  padding: 10px 0;
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
+  margin: 0;
+}
+.order-end .order-end-in .bill-wrap .order-end-info .bill-comment div {
+  margin-left: 130px;
 }
 .order-end .order-end-in .bill-wrap .order-end-info .order-end-amount {
   text-align: right;
