@@ -33,7 +33,6 @@ require.config({
         deps: ['jquery','datepicker'],
         exports: 'datepicker-ru'
     }*/
-
     }
 });
 
