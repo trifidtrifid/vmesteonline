@@ -372,10 +372,14 @@ define(
 
                 var catalogHtml = "";
                 var spinnerValue = [], spinnerStep = [], counter = 0;
+                var weight;
 
+                $('.tabs-days .tab-pane.active').removeClass('active');
                 $('.tabs-days .tab-pane').each(function(){
                    if ($(this).data('orderid') == orderId){
+                       $(this).addClass('active');
                        catalogHtml = $(this).find('.catalog-order').html();
+                       weight = $(this).find('.weight span').text();
 
                        $(this).find('.catalog-order td .spinner1').each(function(){
                            spinnerValue[counter] = $(this).closest('.ace-spinner').spinner('value');
@@ -389,7 +393,7 @@ define(
                 var date = currentOrder.find('.td3').text();
 
                 var basketModule = require('shop-basket');
-                basketModule.GoToConfirm(catalogHtml,amount,spinnerValue,date);
+                basketModule.GoToConfirm(catalogHtml,amount,spinnerValue,date,weight);
 
                 /*thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
                 thriftModule.client.confirmOrder();
