@@ -207,18 +207,6 @@ define(
             }
         }
 
-        /*function initCancel(selector){
-            selector.find('.btn-cancel').click(function(e){
-                e.preventDefault();
-                var quest = confirm('Вы действительно хотите отменить заказ ?');
-                if (quest){
-                    cleanBasket();
-                    var orderId = $('.tab-pane.active').data('orderid');
-                    thriftModule.client.cancelOrder(orderId);
-                }
-            });
-        }*/
-
         function getWeekDay(orderWeekDay){
             var day;
             switch(orderWeekDay){
@@ -547,7 +535,7 @@ define(
                 var currentSpinner = basketProductSelector.find('td>.ace-spinner');
                 //var newSpinnerVal = currentSpinner.spinner('value')+currentProduct.qnty;
                 var newSpinnerVal = currentProduct.qnty;
-                currentSpinner.spinner('value',newSpinnerVal);
+                currentSpinner.spinner('value',parseFloat(newSpinnerVal).toFixed(1));
 
                 var newPacks;
 
@@ -569,12 +557,10 @@ define(
 
                 orderDetails = thriftModule.client.getOrderDetails(orderId);
                 currentTab.find('.weight span').text(orderDetails.weightGramm);
-
-
-                if(currentProduct.prepackLine.length != 0 || (packs && commonModule.getPacksLength(packs) > 1)){
-                    currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]').find('td>.ace-spinner');
-                    currentSpinner.spinner('disable');
-                }
+            }
+            if(currentProduct.packVal > 1 || currentProduct.prepackLine.length != 0 || (packs && commonModule.getPacksLength(packs) > 1)){
+                currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]').find('td>.ace-spinner');
+                currentSpinner.spinner('disable');
             }
         }
 
@@ -622,7 +608,7 @@ define(
 
             var spinnerNoInit = $('.catalog-order .spinner1.no-init');
             var itsBasket = 1;
-            spinnerModule.InitSpinner(spinnerNoInit,spinnerValue,itsBasket,currentProduct.minClientPack);
+            spinnerModule.InitSpinner(spinnerNoInit,parseFloat(spinnerValue).toFixed(1),itsBasket,currentProduct.minClientPack);
             if (spinnerDisable){spinnerNoInit.closest('.ace-spinner').spinner('disable');}
             spinnerNoInit.removeClass('no-init');
         }

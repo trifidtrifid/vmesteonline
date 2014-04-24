@@ -307,6 +307,7 @@ define(
                             }
                             basketModule.InitAddToBasket(currentModal.find('.fa-shopping-cart'));
                         }
+
                         currentModal.find('.prepack-open').click(function(e){
                             e.preventDefault();
 
@@ -334,6 +335,10 @@ define(
                             spinnerModule.InitSpinner(currentPrepackLine.find('.prepack-item:not(".packs") .spinner1'), spinnerStep,itsBasket,spinnerStep);
                             var productId = $(this).closest('tr').data('productid');
 
+                            var addedPackVal = currentPrepackLine.find('.packs .ace-spinner').spinner('value');
+                            var addedQntyVal = parseFloat(currentPrepackLine.find('.prepack-item:not(".packs") .ace-spinner').spinner('value')).toFixed(1);
+                            var qnty;
+
                             if ($(this).closest('tr').length == 0){
                                 //если мы в корзине
                                 // нужно сделать setOrderLine
@@ -341,7 +346,7 @@ define(
                                 var orderDetails = thriftModule.client.getOrderDetails(orderId);
                                 var orderLinesLength = orderDetails.odrerLines.length;
                                 productId = $(this).closest('li').data('productid');
-                                var packs,qnty;
+                                var packs;
                                 var reCount = true;
                                 for (var i = 0; i < orderLinesLength; i++){
                                     if (orderDetails.odrerLines[i].product.id == productId){
@@ -355,18 +360,21 @@ define(
                                         qnty = orderDetails.odrerLines[i].quantity;
                                     }
                                 }
-                                var addedPackVal = currentPrepackLine.find('.packs .ace-spinner').spinner('value');
-                                var addedQntyVal = parseFloat(currentPrepackLine.find('.prepack-item:not(".packs") .ace-spinner').spinner('value')).toFixed(1);
                                 if (reCount) {
                                     productSelector.find('.error-prepack').hide();
                                     qnty += addedPackVal*addedQntyVal;
                                     packs[addedQntyVal] = addedPackVal;
 
                                     thriftModule.client.setOrderLine(orderId,productId,qnty,'',packs);
-                                    productSelector.find('td>.ace-spinner').spinner('value',qnty);
+                                    productSelector.find('td>.ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
                                     productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
                                     $('.itogo-right span').text(countAmount($('.catalog-order')));
                                 }
+                            }else{
+                                // если в таблице продуктов
+                                qnty = productSelector.find('td>.ace-spinner').spinner('value');
+                                qnty += addedPackVal*addedQntyVal;
+                                productSelector.find('td>.ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
                             }
                             productSelector.find('td>.ace-spinner').spinner('disable');
                             spinnerModule.initRemovePrepackLine(currentPrepackLine.find('.prepack-item .close'),productId,productSelector);
@@ -376,6 +384,7 @@ define(
                             $(this).closest('.modal').height(oldHeight + 53);
 
                         });
+
                         currentModal.find('.full-descr').click(function(){
                             var fullDescr = $('.product-fullDescr');
                             var oldHeight;
@@ -390,12 +399,14 @@ define(
                                 });
                             }
                         });
+
                         if($(this).closest('.catalog-order').length > 0){
                             //если это popup для корзины
                             currentModal.find('.fa-shopping-cart').click(function(){
                                 currentModal.modal('hide');
                             });
                         }
+
                     }else{
                         //если popup уже открывали
                         if ($(this).closest('tr').length == 0 || $(this).closest('.order-products').length > 0){
@@ -403,6 +414,13 @@ define(
                             if (productDetails.prepackRequired){
                                 isFirstModal = false;
                                 spinnerModule.initPrepackRequiredInModal($(this),currentModal,productSelector,isFirstModal);
+                            }
+                        }else{
+                            if (productDetails.prepackRequired){
+                                var prepackLineLength = currentModal.find('.prepack-line').length;
+                                var modalHeight = 268;
+                                modalHeight += prepackLineLength*53;
+                                currentModal.height(modalHeight);
                             }
                         }
                     }
@@ -569,7 +587,8 @@ define(
         });
 
         function openModalAuth(){
-            $('.modal.in .close').trigger('click');
+            //$('.modal.in .close').trigger('click');
+            $('.modal.in').modal('hide');
             var modalAuth = $('.modal-auth');
             modalAuth.load('login.jsp .container',function(){
                 var closeHtml = '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
