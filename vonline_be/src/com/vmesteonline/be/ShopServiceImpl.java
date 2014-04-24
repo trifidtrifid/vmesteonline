@@ -50,6 +50,8 @@ import org.apache.thrift.TException;
 
 
 
+
+
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
@@ -1221,6 +1223,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		logger.info("New delivery fee "+newDeliveryCost+" for order:"+order.getId()+" for weight:" + totalWeight +
 				(distance!=-1?" distance "+distance+"km":"")+
 				(null!=addressMathces ? " matches by address text to "+addressMathces:""));
+		
 		return newDeliveryCost;
 	}
 //======================================================================================================================
@@ -2109,9 +2112,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				return ds;
 			}
 
+			
 			// Products combined by pack size required
 			SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap = new TreeMap<Long, SortedMap<Double, ProductOrderDescription>>();
-
+			SortedSet<Double> packSizeSet = new TreeSet<Double>();
+			
 			for (VoOrder voOrder : olist) {
 
 				for (Long volid : voOrder.getOrderLines().values()) {
@@ -2119,6 +2124,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					// TODO optimize DB requests count
 					VoOrderLine vopl = pm.getObjectById(VoOrderLine.class, volid);
 					VoProduct product = pm.getObjectById(VoProduct.class, vopl.getProductId());
+					
+					if (!product.isPrepackRequired())
+						continue; // skip product that does not require prepacking
+
 					VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducer());
 
 					ProductOrderDescription pod;
@@ -2126,40 +2135,43 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					if (!prodDescMap.containsKey(product.getId())) {
 						prodDescMap.put(product.getId(), new TreeMap<Double, ProductOrderDescription>());
 					}
-
-					if (!product.isPrepackRequired())
-						continue; // skip product that does not require prepacking
-
+					SortedMap<Double, ProductOrderDescription> productPackMap = prodDescMap.get(product.getId());
+					
+					
 					Map<Double, Integer> packets = vopl.getPackets();
 					if (packets == null) {
-						packets = new HashMap<Double, Integer>();
+						packets = new TreeMap<Double, Integer>();
 						packets.put(vopl.getQuantity(), 1);
 					}
 					for (Entry<Double, Integer> pqe : packets.entrySet()) {
 
-						if (prodDescMap.get(product.getId()).containsKey(pqe.getKey())) {
+						if (productPackMap.containsKey(pqe.getKey())) {
 
-							pod = prodDescMap.get(product.getId()).get(pqe.getKey());
-							pod.orderedQuantity += pqe.getKey();
+							pod = productPackMap.get(pqe.getKey());
+							pod.orderedQuantity += pqe.getKey() * pqe.getValue();
 							pod.packQuantity += pqe.getValue();
 							continue;
 						}
-						prodDescMap.get(product.getId()).put(pqe.getKey(), pod = new ProductOrderDescription());
+						packSizeSet.add( VoHelper.roundDouble(pqe.getKey(), 2) );
+						
+						productPackMap.put(pqe.getKey(), pod = new ProductOrderDescription());
 						pod.producerId = producer.getId();
 						pod.producerName = producer.getName();
 						pod.productId = product.getId();
 						pod.productName = product.getName();
 						pod.minUnitSize = product.getMinProducerPack();
-						pod.orderedQuantity = pqe.getKey();
+						pod.orderedQuantity = pqe.getKey() * pqe.getValue();
 						pod.prepackRequired = product.isPrepackRequired();
 						pod.packSize = pqe.getKey();
-						pod.packQuantity = 1;
+						pod.packQuantity = pqe.getValue();
 						pod.deliveryType = deliveryType;
 					}
 				}
 			}
 
-			incapsulatePacketData(packFields, ds, prodDescMap, getCurrentUserId(pm), pm);
+			long currentUserId = getCurrentUserId(pm);
+			incapsulatePacketData(packFields, prodDescMap, ds, currentUserId, pm);
+			incapsulatePaketMatrix(packSizeSet, prodDescMap, ds, currentUserId, pm);
 
 			return ds;
 
@@ -2173,11 +2185,46 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			pm.close();
 		}
 	}
+	
+//=====================================================================================================================
+	
+	private void incapsulatePaketMatrix( SortedSet<Double> packSizeSet, SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap,
+			DataSet ds, long currentUserId, PersistenceManager pm ) throws IOException {
+		List<List<String>> packMatrix = new ArrayList<List<String>>();
+		//create title
+		ArrayList<String> title = new ArrayList<String>();
+		title.add("Producer");
+		title.add("Product\\Packet");
+		for( Double psd: packSizeSet)
+			title.add(""+psd);
+		packMatrix.add( title );
+		//fill down the content
+		for( SortedMap<Double, ProductOrderDescription> pdm: prodDescMap.values() ){
+			List<String> line = new ArrayList<String>();
+			ProductOrderDescription pod = pdm.values().iterator().next();
+			line.add( pod.producerName );
+			line.add( pod.productName );
+			for( Double ps : packSizeSet ){
+				line.add( pdm.containsKey(ps) ? ""+pdm.get(ps).packQuantity : "" );  
+			}
+			packMatrix.add(line);
+		}
+		ImportElement packMtxIE = new ImportElement(ImExType.EXPORT_TOTAL_PACK, "pack_matrix.csv", null);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		CSVHelper.writeCSV(baos,packMatrix,null,null,null);
+		packMtxIE.setFieldsData( VoHelper.matrixToList(packMatrix) );
+		baos.close();
+		byte[] fileData = baos.toByteArray();
+		packMtxIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm, null));
+
+		ds.addToData(packMtxIE);
+	}
 
 	// =====================================================================================================================
-
-	private void incapsulatePacketData(Map<Integer, ExchangeFieldType> packFields, DataSet ds,
-			SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap, long userId, PersistenceManager pm) throws IOException,
+	
+	private void incapsulatePacketData(Map<Integer, ExchangeFieldType> packFields, SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap,  
+			DataSet ds, long userId, PersistenceManager pm) throws IOException,
 			InvalidOperation {
 
 		ProductOrderDescription pod = new ProductOrderDescription();
