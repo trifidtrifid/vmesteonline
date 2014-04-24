@@ -24,10 +24,29 @@ define(
         }
 
         function InitSpinnerChangeInFinal(selector){
-            selector.on('change',function(e){
-                var currentValue = $(this).closest('.ace-spinner').spinner('value');
-                $(this).closest('.ace-spinner').spinner('value',+currentValue.toFixed(1));
+            var oldSpinnerValue = selector.data('step');
 
+            selector.on('focusout',function(){
+
+                if($(this).val() != oldSpinnerValue){
+                    $(this).trigger('change');
+                }
+
+            });
+
+            selector.on('change',function(e){
+
+                // действия для окргуления и избежания неправильного ввода (0 например)
+                var currentValue = $(this).closest('.ace-spinner').spinner('value');
+                if (currentValue == 0 || currentValue === undefined){
+                    ($(this).data('step')) ? currentValue = $(this).data('step'):currentValue = 1;
+                }
+                if(currentValue) currentValue = parseFloat(currentValue).toFixed(1);
+                $(this).closest('.ace-spinner').spinner('value',currentValue);
+
+                if (oldSpinnerValue != currentValue){
+                    // чтобы не обрабатывать щелчки ниже 1
+                oldSpinnerValue = currentValue;
                 var productSelector = $(this).closest('li');
                 var price = productSelector.find('.td-price').text();
                 var orderid = $('.tab-pane.active').data('orderid');
@@ -68,6 +87,7 @@ define(
                     $('.itogo-right span,.amount span').text(commonModule.countAmount($('.catalog-confirm')));
                     $('.weight-right span,.weight span').text(orderDetails.weightGramm);
                     checkBigWeight(orderid);
+                }
                 }
             });
         }
@@ -183,10 +203,24 @@ define(
 
         function InitSpinnerChangeInBasket(selector){
             var oldSpinnerValue = selector.data('step');
+
+            selector.on('focusout',function(){
+
+               if($(this).val() != oldSpinnerValue){
+                   $(this).trigger('change');
+               }
+
+            });
+
             selector.on('change',function(e){
 
+                // действия для окргуления и избежания неправильного ввода (0 например)
                 var currentValue = $(this).closest('.ace-spinner').spinner('value');
-                $(this).closest('.ace-spinner').spinner('value',+currentValue.toFixed(1));
+                if (currentValue == 0 || currentValue === undefined){
+                    ($(this).data('step')) ? currentValue = $(this).data('step'):currentValue = 1;
+                }
+                if(currentValue) currentValue = parseFloat(currentValue).toFixed(1);
+                $(this).closest('.ace-spinner').spinner('value',currentValue);
 
                 if (oldSpinnerValue != currentValue){
                     // чтобы не обрабатывать щелчки ниже 1
@@ -229,12 +263,28 @@ define(
         }
 
         function InitSpinnerChange(selector){
+            var oldSpinnerValue = selector.data('step');
+
+            selector.on('focusout',function(){
+
+                if($(this).val() != oldSpinnerValue){
+                    $(this).trigger('change');
+                }
+
+            });
             try{
                 selector.on('change',function(e){
+
+                    // действия для окргуления и избежания неправильного ввода (0 например)
                     var currentValue = $(this).closest('.ace-spinner').spinner('value');
-                    $(this).closest('.ace-spinner').spinner('value',+currentValue.toFixed(1));
+                    if (currentValue == 0 || currentValue === undefined){
+                        ($(this).data('step')) ? currentValue = $(this).data('step'):currentValue = 1;
+                    }
+                    if(currentValue) currentValue = parseFloat(currentValue).toFixed(1);
+                    $(this).closest('.ace-spinner').spinner('value',currentValue);
 
                     var productSelector = $(this).closest('tr');
+                    oldSpinnerValue = currentValue;
 
                     var qnty = $(this).val();
                     if ($(this).closest('.modal').length > 0){
