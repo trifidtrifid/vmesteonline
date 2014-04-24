@@ -641,7 +641,7 @@ define(
                     }*//*
                 }*/
 
-                var nextDate = thriftModule.client.getNextOrderDate(now+day);
+                var nextDate = thriftModule.client.getNextOrderDate(now);
             }catch(e){
                 alert(e + ' Функция SetFreeDates');
             }
@@ -672,6 +672,7 @@ define(
                 '<li><a href="#" class="delivery-add-address">Добавить адрес ...</a></li>';
 
             $('.delivery-dropdown .dropdown-menu').html('').prepend(userAddressesHtml);
+
             $('.delivery-dropdown .dropdown-menu a:not(".delivery-add-address")').click(function(e){
                 e.preventDefault();
                 var ind = $(this).parent().index();
@@ -769,8 +770,6 @@ define(
                         searchModule.initAutocompleteAddress($('.address-input'));
                         autocompleteAddressFlag = 0;
                     }
-
-
 
                 }else{
                     thriftModule.client.setOrderDeliveryType(orderId,1);

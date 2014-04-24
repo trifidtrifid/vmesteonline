@@ -179,6 +179,7 @@ a {
   font-size: 12px;
   border-bottom: 1px solid #ccc;
   line-height: 32px;
+  text-align: left;
 }
 .shop-right .catalog-order li table {
   width: 180px;

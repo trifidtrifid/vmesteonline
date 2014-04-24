@@ -288,6 +288,9 @@ define(
                     if(currentValue) currentValue = parseFloat(currentValue).toFixed(1);
                     $(this).closest('.ace-spinner').spinner('value',currentValue);
 
+                    if (oldSpinnerValue != currentValue){
+                        // чтобы не обрабатывать щелчки ниже 1
+                    oldSpinnerValue = currentValue;
                     var productSelector = $(this).closest('tr');
                     oldSpinnerValue = currentValue;
 
@@ -336,6 +339,7 @@ define(
                         }else{
                             productSelector.find('.modal .ace-spinner').spinner('value',qnty);
                         }
+                    }
                     }
                 });
             }catch(e){
