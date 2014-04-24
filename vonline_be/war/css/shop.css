@@ -634,14 +634,14 @@ span
   float: none;
   display: inline-block;
 }
-.modal .product-slider .slider li {
+.modal .product-slider .slider >li {
   height: 192px;
   line-height: 192px;
 }
 .modal .product-slider .slider img {
   max-width: 192px;
-  max-height: 192px;
-  vertical-align: middle;
+  max-height: 172px;
+  vertical-align: top;
 }
 .modal .product-slider .carousel img {
   max-width: 60px;
@@ -649,6 +649,7 @@ span
 }
 .modal .product-slider .carousel li {
   cursor: pointer;
+  line-height: 60px !important;
 }
 .modal .product-descr {
   margin-left: 210px;
@@ -1063,12 +1064,15 @@ height 50px
 .confirm-order .catalog-confirm .fa-shopping-cart {
   display: none !important;
 }
-.confirm-order .itogo-right {
+.confirm-order .itogo-right,
+.confirm-order .weight-right {
   float: right;
+  clear: right;
   padding-top: 15px;
   font-size: 16px;
 }
-.confirm-order .itogo-right span {
+.confirm-order .itogo-right span,
+.confirm-order .weight-right span {
   font-weight: bold;
 }
 .confirm-order .delivery-right {
@@ -1112,6 +1116,9 @@ height 50px
   left: -233px;
   width: 360px;
 }
+.confirm-order .delivery-right .input-delivery .delivery-dropdown .dropdown-menu li a {
+  white-space: normal;
+}
 .confirm-order .delivery-right .input-delivery .address-input {
   margin: 10px 0;
   display: none;
@@ -1147,16 +1154,101 @@ height 50px
   padding: 0 20px;
   text-align: center;
 }
-.order-end h3 {
+.order-end .to-main-link {
+  float: left;
+  margin: 10px 0;
+}
+.order-end .order-end-in {
+  min-width: 768px;
+  width: 80%;
+  margin: 0 auto;
+}
+.order-end .order-end-in h3 {
   text-align: left;
+  margin-top: 0;
+  padding-top: 15px;
+  margin-bottom: 20px;
+  clear: left;
 }
-.order-end .order-end-info {
+.order-end .order-end-in .bill-wrap {
+  border: 1px solid #438eb9;
+  text-align: left;
+  padding: 20px;
+}
+.order-end .order-end-in .bill-wrap .bill-title {
+  padding: 5px 10px;
+  margin: -35px 0 0 0;
+  background: #fff;
+  position: absolute;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .bill-item {
+  font-size: 14px;
+  line-height: 26px;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .bill-item span {
+  line-height: 16px;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .bill-amount {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .order-end-head-left {
+  float: left;
+  margin-bottom: 30px;
+  width: 45%;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .order-end-head-right {
+  float: right;
+  width: 45%;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .order-end-head-right .order-end-logo {
+  float: left;
+  width: 100px;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .order-end-head-right .order-end-logo img {
+  width: 100%;
+}
+.order-end .order-end-in .bill-wrap .order-end-head .order-end-head-right .order-end-shop-info {
+  margin-left: 120px;
+}
+.order-end .order-end-in .bill-wrap .order-end-info {
   margin-top: 20px;
-  margin-bottom: 15px;
 }
-.order-end .order-end-info .td1,
-.order-end .order-end-info .td7 {
-  display: none;
+.order-end .order-end-in .bill-wrap .order-end-info .product-link {
+  color: #000;
+  cursor: default;
+}
+.order-end .order-end-in .bill-wrap .order-end-info h2 {
+  clear: both;
+  font-size: 20px;
+}
+.order-end .order-end-in .bill-wrap .order-end-info .bill-comment {
+  clear: right;
+  float: right;
+  margin: 10px 0 20px 0;
+  width: 60%;
+}
+.order-end .order-end-in .bill-wrap .order-end-info .bill-comment h4 {
+  float: left;
+  font-size: 16px;
+  margin: 0;
+}
+.order-end .order-end-in .bill-wrap .order-end-info .bill-comment div {
+  margin-left: 130px;
+}
+.order-end .order-end-in .bill-wrap .order-end-info .order-end-amount {
+  text-align: right;
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 10px;
+}
+.order-end .order-end-in .bill-wrap .order-end-info .order-end-amount.all-amount {
+  font-size: 16px;
+  clear: right;
+  padding: 15px 10px 0 0;
+  margin-top: 15px;
+  border-top: 1px solid #438eb9;
 }
 /* error */
 .modal-error {

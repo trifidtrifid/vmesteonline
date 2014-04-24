@@ -82,7 +82,7 @@ define(
                 $('.shop-menu ul').html(firstMenuItem).append(shopMenu);
 
                 /* новый список товаров */
-                var productsList = thriftModule.client.getProducts(0,10,catID).products;
+                var productsList = thriftModule.client.getProducts(0,1000,catID).products;
                 $('.main-content .catalog table tbody').html("").append(createProductsTableHtml(productsList));
                 var commonModule = require('shop-common');
                 commonModule.markAddedProduct();
@@ -98,7 +98,7 @@ define(
             commonModule.InitProductDetailPopup($('.product-link'));
             basketModule.InitAddToBasket($('.fa-shopping-cart'));
             InitClickOnCategory();
-
+            commonModule.setSidebarHeight();
         }
 
         function InitClickOnCategory(){
@@ -112,7 +112,6 @@ define(
                         parentCounter--;
                         commonModule.setCookie('arrayPrevCat',prevParentId);
                         commonModule.setCookie('prevCatCounter',parentCounter);
-
                     }
                     else {
                         parentCounter++;

@@ -213,6 +213,8 @@ $(document).ready(function(){
                     orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
                     orderDetails.deliveryTo.flatNo+
                     '</td>'+
+                    '<td class="td9">'+ orderDetails.deliveryCost +'</td>'+
+                    '<td class="td8">'+ orderDetails.weightGramm +'</td>'+
                     '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
                     '</tr>'+
                     '</tbody>'+
@@ -266,6 +268,12 @@ $(document).ready(function(){
         $('#back-search').val('Поиск по имени клиента или номеру телефона');
         dPicker.val('Фильтр по дате');
     });
+
+    /* сброс */
+    $('#date-picker-2,#date-picker-3,#date-picker-4').val('Фильтр по дате');
+    $('.export .checkbox input.ace').prop('checked',false);
+    /* --- */
+
 
     function getStatusTypeByText(statusText){
         var statusType;
@@ -876,7 +884,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
               });
 
                var deliveryType;
-               (deliveryText != 'Тип доставки') ? deliveryType = getDeliveryTypeByText(deliveryText):deliveryType=0;
+               (deliveryText != 'Тип доставки' && deliveryText != 'Все') ? deliveryType = getDeliveryTypeByText(deliveryText):deliveryType=0;
 
                var dataSet;
 
@@ -889,9 +897,15 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
                            dataSet = client.getTotalOrdersReport(selectOrderDate,deliveryType,exportFieldsOrder.fieldsMap,exportFieldsOrderLine.fieldsMap);
 
-                           var tablesCount = dataSet.data.length;  // кол-во таблиц в нашем отчете
+                           var tablesCount;
 
-                           drawExportTables(dataSet,tablesCount,exportFieldsOrder,exportFieldsOrderLine);
+                           if(dataSet.data){
+
+                               tablesCount = dataSet.data.length;  // кол-во таблиц в нашем отчете
+
+                               drawExportTables(dataSet,tablesCount,exportFieldsOrder,exportFieldsOrderLine);
+
+                           }
 
                            break;
                        case 1:
@@ -899,24 +913,34 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
                            dataSet = client.getTotalProductsReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
 
-                           tablesCount = 1;  // кол-во таблиц в нашем отчете
+                           if(dataSet.data){
 
-                           drawExportTables(dataSet,tablesCount,exportFields);
+                               tablesCount = dataSet.data.length;  // кол-во таблиц в нашем отчете
+
+                               drawExportTables(dataSet,tablesCount,exportFields);
+
+                            }
 
                            break;
                        case 2:
                            exportFields = getExportFields('packs');
 
                            dataSet = client.getTotalPackReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
+                           if(dataSet.data){
 
-                           tablesCount = 1;  // кол-во таблиц в нашем отчете
+                               //tablesCount = 1;  // кол-во таблиц в нашем отчете
+                               tablesCount = dataSet.data.length;
 
-                           drawExportTables(dataSet,tablesCount,exportFields);
+                               drawExportTables(dataSet,tablesCount,exportFields);
+                           }
 
                            break;
                    }
                    initShowFullText();
                    initCloseFullText();
+
+                   if(!dataSet.data) currentTab.find('.confirm-info').text('Нет данных на такое сочетание даты и типа доставки.').show();
+
                }catch(e){
                    currentTab.find('.confirm-info').text('Ошибка экспорта.').show();
                }
@@ -953,6 +977,14 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         return {fieldsMap: fieldsMap,headColArray: headColArray }
     };
 
+    /*function getExportFieldsByMap(fieldsMap){
+        var counter = 0;
+
+        for (var p in fieldsMap){
+            console.log(p+" "+fieldsMap[p]);
+        }
+    }*/
+
     function drawExportTables(dataSet,tablesCount,exportFields,exportFieldsOrderLine){
 
         var currentExportTable = $('.tab-pane.active').find('.export-table');
@@ -973,11 +1005,18 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                 }
             }
 
-             var headColArray = exportFields.headColArray;
-            if(exportFieldsOrderLine){
-                (z == tablesCount-1) ? headColArray = exportFields.headColArray: headColArray = exportFieldsOrderLine.headColArray;
-            }
+             //var headColArray = exportFields.headColArray;
+             var headColArray, beginRow = 0;
 
+            if(dataSet.data[z].fieldsMap){
+                headColArray = exportFields.headColArray;
+                if(exportFieldsOrderLine){
+                    (z == tablesCount-1) ? headColArray = exportFields.headColArray: headColArray = exportFieldsOrderLine.headColArray;
+                }
+            }else{
+                headColArray = exportData[0];
+                beginRow = 1;
+            }
 
             var reportTable = '<div class="export-single-table"><table>' +
                 '<thead>' +
@@ -986,7 +1025,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
                 '</tr>'+
                 '</thead>'+
                 '<tbody>' +
-                createExportTable(exportData,colCount)+
+                createExportTable(exportData,colCount,beginRow)+
                 '</tbody>'+
                 '</table></div>';
 
@@ -1012,12 +1051,11 @@ $('.import-dropdown .dropdown-menu li').click(function(){
 
     }
 
-    function createExportTable(exportData,colCount){
+    function createExportTable(exportData,colCount,beginRow){
         var exportTable = "";
         var exportDataLength = exportData.length;
 
-        for(var i = 0; i < exportDataLength; i++){
-            console.log(exportData[i]);
+        for(var i = beginRow; i < exportDataLength; i++){
             exportTable += '<tr>'+
                 createExportLine(exportData[i],colCount)+
                 '</tr>';
@@ -1053,9 +1091,9 @@ $('.import-dropdown .dropdown-menu li').click(function(){
             var mainContent = $('.main-content');
 
             if (mainContent.height() > w.height()){
-                $('.shop-right').css('height', mainContent.height()+45);
+                $('#sidebar').css('height', mainContent.height());
             }else{
-                $('.shop-right').css('height', '100%');
+                $('#sidebar').css('height', '100%');
             }
         }catch(e){
             alert(e+" Функция setSidebarHeight");
@@ -1079,6 +1117,7 @@ $('.import-dropdown .dropdown-menu li').click(function(){
         }
         $(this).closest('ul').find('.active').removeClass('active');
         $(this).parent().addClass('active');
+        setSidebarHeight();
     });
 
 });

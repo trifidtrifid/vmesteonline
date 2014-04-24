@@ -92,6 +92,9 @@ define(
     }
 
     function reg(selector) {
+
+        thriftModule.authClient.checkEmailRegistered($("#email").val());
+        var t;
         if($('#login').val()=="" || $('#email').val()=="" || $('#pass').val()==""){
             $('.email-alert').text('Вы заполнили не все поля !').css('display','block');
         }
@@ -127,9 +130,11 @@ define(
         var shops = thriftModule.client.getShops();
         thriftModule.client.getShop(shops[0].id);
 
-        var shortUserInfo = thriftModule.userClient.getShortUserInfo();
+        commonModule.changeShortUserInfo();
+        $('.user-info').after('<i class="icon-caret-down"></i>');
+        /*var shortUserInfo = thriftModule.userClient.getShortUserInfo();
         var shortUserInfoHtml =  shortUserInfo.firstName +' '+ shortUserInfo.lastName;
-        $('.user-info').html(shortUserInfoHtml).after('<i class="icon-caret-down"></i>');
+        $('.user-info').html(shortUserInfoHtml).after('<i class="icon-caret-down"></i>');*/
 
         var dropdownToggle = $('.dropdown-toggle');
         dropdownToggle.removeClass('no-login');

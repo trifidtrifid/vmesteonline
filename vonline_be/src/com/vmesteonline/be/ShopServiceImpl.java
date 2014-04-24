@@ -49,6 +49,9 @@ import org.apache.thrift.TException;
 
 
 
+
+
+
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
@@ -1177,7 +1180,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		//get delivery cost by address mask if set
 		Map<DeliveryType, String> dam = voShop.getDeliveryAddressMasksText();
 		if( null!=dam && null!=deliveryCosts ){ //look for delivery cost by address mask
-			String addressString = deliveryTo.getAddressText(pm);
+			String addressString = deliveryTo.getAddressText(pm) + deliveryTo.getBuilding().getAddressString();
 			
 			//sort the map by DelivertType to math cheapest delivery first
 			SortedMap<DeliveryType, String> sm = new TreeMap<DeliveryType, String>(dam);
@@ -1220,6 +1223,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		logger.info("New delivery fee "+newDeliveryCost+" for order:"+order.getId()+" for weight:" + totalWeight +
 				(distance!=-1?" distance "+distance+"km":"")+
 				(null!=addressMathces ? " matches by address text to "+addressMathces:""));
+		
 		return newDeliveryCost;
 	}
 //======================================================================================================================
@@ -1432,7 +1436,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ps = (List<VoOrder>) pcq.execute(dateFrom);
 			}
 			List<Order> lo = new ArrayList<Order>();
+			int now = (int)(System.currentTimeMillis()/1000L);
+			OrderDate nextDate;
 			for (VoOrder p : ps) {
+				
+				if(OrderStatus.NEW == p.getStatus() && p.getDate() > (nextDate = getNextOrderDate( now )).orderDate ){
+					p.setDate(nextDate.orderDate);
+					p.setPriceType(nextDate.priceType, pm);
+				} 
 				if (p.getDate() < dateTo)
 					lo.add(p.getOrder());
 			}
@@ -1746,8 +1757,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			//User ID - Order ID - product ID - Quantity Map
 			Map<Long, Map<Long, Map<Long,Double>>> ordersMap = new TreeMap<Long, Map<Long,Map<Long,Double>>>();
 			Map<Long,VoProduct> productsList = new TreeMap<Long, VoProduct>();
+			
 			Map<Long,VoUser> usersMap = new TreeMap<Long, VoUser>();		
 			VoProduct vop;
+			
+			// collect total orders CSV
+			List<List<String>> toFieldsData = new ArrayList<List<String>>();
 			
 			for (VoOrder voOrder : olist) {
 				
@@ -1779,7 +1794,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				}
 				ordersMap.get(od.userId).put(od.orderId, productQM);
 				
-				if(null!=voOrder.getOrderLines())
+				if(null!=voOrder.getOrderLines()){
 					for (Long volId : voOrder.getOrderLines().values()) {
 						
 						VoOrderLine vol = pm.getObjectById(VoOrderLine.class, volId);
@@ -1811,7 +1826,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 						}
 						oldl.add(old);
 			
-						productQM.put(old.productId, old.quantity);			
+						productQM.put(old.productId, old.quantity);	
+					}
+				} else {
+					
+					continue;
 				}
 				// collect all order line information
 				ByteArrayOutputStream lbaos = new ByteArrayOutputStream();
@@ -1824,11 +1843,33 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				lbaos.close();
 				byte[] fileData = lbaos.toByteArray();
 
-				ordersLinesIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm));
+				ordersLinesIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm, ordersLinesIE.getFileName()));
 
 				odl.add(od);
 				ds.addToData(ordersLinesIE);
+				
+				//collect total order info
+				toFieldsData.add( createModifableListFromArray( new String[]{ ""+od.orderId, od.userName, "" +user.getMobilePhone()})); //order title
+				if( od.deliveryType != DeliveryType.SELF_PICKUP ) toFieldsData.add( createModifableListFromArray( new String[]{ od.deliveryAddress }));
+				if( null!=od.comment && od.comment.trim().length() > 0 ) toFieldsData.add( createModifableListFromArray( new String[]{ od.comment }));
+				toFieldsData.add( createModifableListFromArray( new String[]{ "-------","-------------------","----------------","-------","-------------------","----------------"})); //order
+				CSVHelper.writeCSVData(lbaos, CSVHelper.getFieldsMap(odInstance, ExchangeFieldType.ORDER_LINE_ID, orderLineFIelds), oldl, toFieldsData); //orderLines
+				toFieldsData.add( createModifableListFromArray( new String[]{ "-------","-------------------","----------------","-------","-------------------","----------------"})); //order
+				toFieldsData.add( createModifableListFromArray( new String[]{ "Вес: "+od.weight, "Доставка: "+od.deliveryCost, "Итого: "+od.tatalCost })); //order
+				toFieldsData.add( createModifableListFromArray( new String[]{ "=======","===================","================","=======","===================","================"})); //order
+				toFieldsData.add( createModifableListFromArray( new String[]{ ""})); //delimiter
 			}
+			
+		// collect total orders CSV
+			ByteArrayOutputStream tobaos = new ByteArrayOutputStream();
+			CSVHelper.writeCSV(tobaos, toFieldsData, null, null, null);		
+			tobaos.close();
+			byte[] toFileDate = tobaos.toByteArray();
+			
+			ImportElement ordersLinesTO = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_total_lines.csv", orderLineFIelds);
+			ordersLinesTO.setUrl(StorageHelper.saveImage(toFileDate, "text/csv", currentUserId, false, pm, ordersLinesTO.getFileName()));
+			ordersLinesTO.setFieldsData( VoHelper.matrixToList(toFieldsData) );
+			ds.addToData(ordersLinesTO);
 			
 			//create orders matrix
 			ds.addToData(createFullOrderMatrix(currentUserId, ordersMap, productsList, usersMap, pm));
@@ -1841,7 +1882,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			ordersIE.setFieldsData( VoHelper.matrixToList(fieldsData) );
 			baos.close();
 			byte[] fileData2 = baos.toByteArray();
-			ordersIE.setUrl(StorageHelper.saveImage(fileData2, "text/csv", currentUserId, false, pm));
+			ordersIE.setUrl(StorageHelper.saveImage(fileData2, "text/csv", currentUserId, false, pm, ordersIE.getFileName()));
 
 			ds.addToData(ordersIE);
 
@@ -1859,7 +1900,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			pm.close();
 		}
 	}
-
+//======================================================================================================================
+	private static ArrayList<String> createModifableListFromArray(String[] array) {
+		ArrayList<String> out = new ArrayList<String>( array.length );
+		out.addAll( Arrays.asList( array ));
+		return out;
+	}
+//======================================================================================================================
 	private ImportElement createFullOrderMatrix(long currentUserId, Map<Long, Map<Long, Map<Long, Double>>> ordersMap, Map<Long, VoProduct> productsList,
 			Map<Long, VoUser> usersMap, PersistenceManager pm) throws IOException {
 		/*
@@ -1927,7 +1974,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		ordersMtxIE.setFieldsData( VoHelper.matrixToList(productsMatrix) );
 		baos.close();
 		byte[] fileData = baos.toByteArray();
-		ordersMtxIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm));
+		ordersMtxIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm, null));
 
 		return ordersMtxIE;
 	}
@@ -2021,13 +2068,13 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ffl.addAll(fl);
 
 				pIE.setFieldsData(VoHelper.matrixToList(fl));
-				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), "text/csv", currentUserId, false, pm));
+				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), "text/csv", currentUserId, false, pm, null));
 
 				ds.addToData(pIE);
 			}
 			fbaos.close();
 			fpIE.setFieldsData(VoHelper.matrixToList(ffl));
-			fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), "text/csv", currentUserId, false, pm));
+			fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), "text/csv", currentUserId, false, pm, null));
 
 			ds.addToData(fpIE);
 
@@ -2065,9 +2112,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				return ds;
 			}
 
+			
 			// Products combined by pack size required
 			SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap = new TreeMap<Long, SortedMap<Double, ProductOrderDescription>>();
-
+			SortedSet<Double> packSizeSet = new TreeSet<Double>();
+			
 			for (VoOrder voOrder : olist) {
 
 				for (Long volid : voOrder.getOrderLines().values()) {
@@ -2075,6 +2124,10 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					// TODO optimize DB requests count
 					VoOrderLine vopl = pm.getObjectById(VoOrderLine.class, volid);
 					VoProduct product = pm.getObjectById(VoProduct.class, vopl.getProductId());
+					
+					if (!product.isPrepackRequired())
+						continue; // skip product that does not require prepacking
+
 					VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducer());
 
 					ProductOrderDescription pod;
@@ -2082,40 +2135,43 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					if (!prodDescMap.containsKey(product.getId())) {
 						prodDescMap.put(product.getId(), new TreeMap<Double, ProductOrderDescription>());
 					}
-
-					if (!product.isPrepackRequired())
-						continue; // skip product that does not require prepacking
-
+					SortedMap<Double, ProductOrderDescription> productPackMap = prodDescMap.get(product.getId());
+					
+					
 					Map<Double, Integer> packets = vopl.getPackets();
 					if (packets == null) {
-						packets = new HashMap<Double, Integer>();
+						packets = new TreeMap<Double, Integer>();
 						packets.put(vopl.getQuantity(), 1);
 					}
 					for (Entry<Double, Integer> pqe : packets.entrySet()) {
 
-						if (prodDescMap.get(product.getId()).containsKey(pqe.getKey())) {
+						if (productPackMap.containsKey(pqe.getKey())) {
 
-							pod = prodDescMap.get(product.getId()).get(pqe.getKey());
-							pod.orderedQuantity += pqe.getKey();
+							pod = productPackMap.get(pqe.getKey());
+							pod.orderedQuantity += pqe.getKey() * pqe.getValue();
 							pod.packQuantity += pqe.getValue();
 							continue;
 						}
-						prodDescMap.get(product.getId()).put(pqe.getKey(), pod = new ProductOrderDescription());
+						packSizeSet.add( VoHelper.roundDouble(pqe.getKey(), 2) );
+						
+						productPackMap.put(pqe.getKey(), pod = new ProductOrderDescription());
 						pod.producerId = producer.getId();
 						pod.producerName = producer.getName();
 						pod.productId = product.getId();
 						pod.productName = product.getName();
 						pod.minUnitSize = product.getMinProducerPack();
-						pod.orderedQuantity = pqe.getKey();
+						pod.orderedQuantity = pqe.getKey() * pqe.getValue();
 						pod.prepackRequired = product.isPrepackRequired();
 						pod.packSize = pqe.getKey();
-						pod.packQuantity = 1;
+						pod.packQuantity = pqe.getValue();
 						pod.deliveryType = deliveryType;
 					}
 				}
 			}
 
-			incapsulatePacketData(packFields, ds, prodDescMap, getCurrentUserId(pm), pm);
+			long currentUserId = getCurrentUserId(pm);
+			incapsulatePacketData(packFields, prodDescMap, ds, currentUserId, pm);
+			incapsulatePaketMatrix(packSizeSet, prodDescMap, ds, currentUserId, pm);
 
 			return ds;
 
@@ -2129,11 +2185,46 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			pm.close();
 		}
 	}
+	
+//=====================================================================================================================
+	
+	private void incapsulatePaketMatrix( SortedSet<Double> packSizeSet, SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap,
+			DataSet ds, long currentUserId, PersistenceManager pm ) throws IOException {
+		List<List<String>> packMatrix = new ArrayList<List<String>>();
+		//create title
+		ArrayList<String> title = new ArrayList<String>();
+		title.add("Producer");
+		title.add("Product\\Packet");
+		for( Double psd: packSizeSet)
+			title.add(""+psd);
+		packMatrix.add( title );
+		//fill down the content
+		for( SortedMap<Double, ProductOrderDescription> pdm: prodDescMap.values() ){
+			List<String> line = new ArrayList<String>();
+			ProductOrderDescription pod = pdm.values().iterator().next();
+			line.add( pod.producerName );
+			line.add( pod.productName );
+			for( Double ps : packSizeSet ){
+				line.add( pdm.containsKey(ps) ? ""+pdm.get(ps).packQuantity : "" );  
+			}
+			packMatrix.add(line);
+		}
+		ImportElement packMtxIE = new ImportElement(ImExType.EXPORT_TOTAL_PACK, "pack_matrix.csv", null);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		CSVHelper.writeCSV(baos,packMatrix,null,null,null);
+		packMtxIE.setFieldsData( VoHelper.matrixToList(packMatrix) );
+		baos.close();
+		byte[] fileData = baos.toByteArray();
+		packMtxIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm, null));
+
+		ds.addToData(packMtxIE);
+	}
 
 	// =====================================================================================================================
-
-	private void incapsulatePacketData(Map<Integer, ExchangeFieldType> packFields, DataSet ds,
-			SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap, long userId, PersistenceManager pm) throws IOException,
+	
+	private void incapsulatePacketData(Map<Integer, ExchangeFieldType> packFields, SortedMap<Long, SortedMap<Double, ProductOrderDescription>> prodDescMap,  
+			DataSet ds, long userId, PersistenceManager pm) throws IOException,
 			InvalidOperation {
 
 		ProductOrderDescription pod = new ProductOrderDescription();
@@ -2158,14 +2249,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 				ffl.addAll(fl);
 	
 				pIE.setFieldsData(VoHelper.matrixToList(fl));
-				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), "text/csv", userId, false, pm));
+				pIE.setUrl(StorageHelper.saveImage(baos.toByteArray(), "text/csv", userId, false, pm, null));
 	
 				ds.addToData(pIE);
 			}
 		}
 		fbaos.close();
 		fpIE.setFieldsData(VoHelper.matrixToList(ffl));
-		fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), "text/csv", userId, false, pm));
+		fpIE.setUrl(StorageHelper.saveImage(fbaos.toByteArray(), "text/csv", userId, false, pm, null));
 
 		ds.addToData(fpIE);
 	}
