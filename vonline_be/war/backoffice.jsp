@@ -429,16 +429,16 @@
 <script src="gen-js/UserService.js" type="text/javascript"></script>
 <!-- -->
 
-<!-- конкретные плагины -->
+<%--<!-- конкретные плагины -->
 <script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
-<script src="js/lib/date-time/bootstrap-datepicker-backoffice.js"></script>
+<script src="js/bootstrap-datepicker-backoffice.js"></script>
 <script src="js/lib/date-time/locales/bootstrap-datepicker.ru.js"></script>
 <!-- -->
 <!-- собственные скрипты  -->
 <script src="js/lib/ace-extra.min.js"></script>
 <script src="js/lib/ace-elements.min.js"></script>
-<%--<script src="js/common.js"></script>--%>
-<!--<script src="js/backoffice.js"></script>-->
+<script src="js/common.js"></script>
+<script src="js/backoffice.js"></script>--%>
 
 <script type="text/javascript" data-main="js/backoffice.js" src="js/require.js"></script>
 

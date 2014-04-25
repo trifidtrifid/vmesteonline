@@ -30,6 +30,7 @@ define(
 
         $('.nav-list a,.navbar .nav a:not(".dropdown-toggle")').click(function(e){
             e.preventDefault();
+            alert('1');
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
         });
@@ -273,6 +274,7 @@ define(
             e.preventDefault();
             $('.navbar .nav .active').removeClass('active');
 
+            alert('111');
             $(this).closest('.user-short').removeClass('open');
             e.stopPropagation();
 
@@ -290,9 +292,9 @@ define(
             }
         });
 
-        $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
+        /*$('.user-short .dropdown-toggle:not(".no-login")').click(function(){
                 $(this).parent().addClass('open');
-            });
+            });*/
 
         commonModule.setSidebarHeight();
 

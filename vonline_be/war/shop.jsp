@@ -463,7 +463,7 @@
 	</div>
 	<!-- общие библиотеки -->
 	<script src="js/lib/jquery-2.0.3.min.js"></script>
-	<script src="js/lib/bootstrap.min.js"></script>
+	<script src="js/lib/bootstrap.js"></script>
     <!-- файлы thrift -->
     <script src="js/thrift.js" type="text/javascript"></script>
     <script src="gen-js/bedata_types.js" type="text/javascript"></script>

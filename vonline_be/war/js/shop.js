@@ -94,10 +94,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
         modules.spinnerModule.initProductsSpinner();
 
-   /* var triggerDelivery = 0;
-    var autocompleteAddressFlag = 1;*/
-        //modules.deliveryModule.initRadioBtnClick();
-
         if(globalUserAuth){
             modules.shopCommonModule.initBasketInReload();
         }

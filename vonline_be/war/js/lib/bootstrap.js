@@ -646,6 +646,7 @@
     constructor: Dropdown
 
   , toggle: function (e) {
+          alert('1');
       var $this = $(this)
         , $parent
         , isActive
@@ -664,6 +665,7 @@
 
       $this.focus()
 
+          alert('2');
       return false
     }
 

@@ -2,28 +2,36 @@ require.config({
     baseUrl: "/js",
     paths: {
         "jquery"   : "lib/jquery-2.0.3.min",
-        "bootstrap": "lib/bootstrap.min",
+        "bootstrap": "lib/bootstrap",
         "ace_extra": "lib/ace-extra.min",
         "ace_elements": "lib/ace-elements.min",
         "jquery_ui": "lib/jquery-ui-1.10.3.full.min",
-        "datepicker-backoffice": "lib/date-time/bootstrap-datepicker-backoffice",
-        "datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru"/*,
-         "datepicker": "lib/date-time/bootstrap-datepicker",
-         */
+        "flexslider": "lib/jquery.flexslider-min",
+        "ace_spinner": "lib/fuelux/fuelux.spinner",
+        "datepicker-backoffice": "bootstrap-datepicker-backoffice",
+        "datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru"
     },
     shim:{
+        'ace_spinner':{
+            deps: ['jquery',"ace_extra","ace_elements","jquery_ui"],
+            exports: 'ace_spinner'
+        },
         'jquery_ui':{
             deps: ['jquery'],
             exports: 'jquery_ui'
         },
         'datepicker-backoffice':{
-            deps: ['jquery'],
+            deps: ['jquery','jquery_ui'],
             exports: 'datepicker-backoffice'
         },
          'datepicker-ru':{
          deps: ['jquery','datepicker-backoffice'],
          exports: 'datepicker-ru'
-         }
+         }  ,
+        'flexslider':{
+            deps: ['jquery'],
+            exports: 'flexslider'
+        }
     }
 });
 
@@ -35,11 +43,10 @@ var deliveryFilterFlag= 0,
     dateFilterFlag = 0,
     searchFilterFlag = 0;
 
-require(["jquery",'shop-initThrift','datepicker-backoffice','datepicker-ru'],
-    function($,thriftModule) {
-        /*var transport = new Thrift.Transport("/thrift/ShopService");
-        var protocol = new Thrift.Protocol(transport);
-        var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);*/
+require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicker-ru'],
+    function($,thriftModule,commonM) {
+
+        commonM.init();
 
         var w = $(window);
 
@@ -96,12 +103,6 @@ require(["jquery",'shop-initThrift','datepicker-backoffice','datepicker-ru'],
                 }
             });
         }
-
-        /*function InitSpinner(selector,spinnerValue,itsBasket){
-            selector.ace_spinner({value:spinnerValue,min:1,max:200,step:1, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
-                .on('change', function(){
-                });
-        }*/
 
         function createOrdersProductHtml(orderDetails){
             try{
@@ -264,6 +265,7 @@ require(["jquery",'shop-initThrift','datepicker-backoffice','datepicker-ru'],
             return ordersHtml;
         }
 
+
         var dPicker = $('#date-picker-1');
         var dPickerExport = $('.datepicker-export');
 
@@ -288,7 +290,6 @@ require(["jquery",'shop-initThrift','datepicker-backoffice','datepicker-ru'],
         dPicker.datepicker('setVarOrderDates',datepickerFunc);
         dPickerExport.datepicker('setVarOrderDates',datepickerFunc);
 
-
         $('.reset-filters').click(function(){
             showAllOrders();
             $('.type-delivery-dropdown .btn-group-text').text('Тип доставки');
@@ -301,7 +302,6 @@ require(["jquery",'shop-initThrift','datepicker-backoffice','datepicker-ru'],
         $('#date-picker-2,#date-picker-3,#date-picker-4').val('Фильтр по дате');
         $('.export .checkbox input.ace').prop('checked',false);
         /* --- */
-
 
         function getStatusTypeByText(statusText){
             var statusType;
