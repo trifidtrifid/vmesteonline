@@ -1,6 +1,6 @@
 define(
     'shop-common',
-    ['jquery','flexslider','shop-initThrift','shop-basket','shop-spinner','shop-orders'],
+    ['jquery','flexslider','shop-initThrift','shop-basket','shop-spinner','shop-orders','bootstrap'],
     function( $ ,flexsliderModule,thriftModule,basketModule,spinnerModule,ordersModule ){
 
         //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
@@ -588,7 +588,7 @@ define(
 
         function openModalAuth(){
             //$('.modal.in .close').trigger('click');
-            $('.modal.in').modal('hide');
+            if($('.modal.in').length) $('.modal.in').modal('hide');
             var modalAuth = $('.modal-auth');
             modalAuth.load('login.jsp .container',function(){
                 var closeHtml = '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';

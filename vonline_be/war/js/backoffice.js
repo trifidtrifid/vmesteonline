@@ -43,7 +43,7 @@ var deliveryFilterFlag= 0,
     dateFilterFlag = 0,
     searchFilterFlag = 0;
 
-require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicker-ru'],
+require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicker-ru','bootstrap'],
     function($,thriftModule,commonM) {
 
         commonM.init();

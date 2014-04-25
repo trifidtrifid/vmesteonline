@@ -16,7 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ========================================================== */
-!function ($) {
+
+ !function ($) {
 
   "use strict"; // jshint ;_;
 
@@ -646,7 +647,6 @@
     constructor: Dropdown
 
   , toggle: function (e) {
-          alert('1');
       var $this = $(this)
         , $parent
         , isActive
@@ -664,8 +664,6 @@
       }
 
       $this.focus()
-
-          alert('2');
       return false
     }
 
