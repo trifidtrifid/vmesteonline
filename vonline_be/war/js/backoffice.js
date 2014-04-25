@@ -13,7 +13,7 @@ require.config({
     },
     shim:{
         'jquery_ui':{
-            deps: ['jquery'],
+            deps: ['jquery',"bootstrap","ace_extra","ace_elements"],
             exports: 'jquery_ui'
         },
         'datepicker-backoffice':{
@@ -35,7 +35,7 @@ var deliveryFilterFlag= 0,
     dateFilterFlag = 0,
     searchFilterFlag = 0;
 
-require(["jquery",'shop-initThrift','datepicker-backoffice','datepicker-ru'],
+require(["jquery",'shop-initThrift','datepicker-backoffice','datepicker-ru',"jquery_ui"],
     function($,thriftModule) {
         /*var transport = new Thrift.Transport("/thrift/ShopService");
         var protocol = new Thrift.Protocol(transport);
