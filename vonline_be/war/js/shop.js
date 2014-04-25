@@ -21,6 +21,10 @@ require.config({
           deps: ['jquery'],
           exports: 'jquery_ui'
       },
+    'bootstrap':{
+        deps: ['jquery'],
+        exports: 'bootstrap'
+    },
         'flexslider':{
             deps: ['jquery'],
             exports: 'flexslider'

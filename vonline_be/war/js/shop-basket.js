@@ -411,7 +411,6 @@ define(
                         alertDeliveryPhone.text('Введите номер телефона !').show();
 
                     }else if(!$('.input-delivery .delivery-address .error-info').length){
-
                         var userContacts = thriftModule.userClient.getUserContacts();
                         userContacts.mobilePhone = phoneDelivery.val();
                         var haveError = 0;
@@ -422,7 +421,6 @@ define(
                             haveError = 1;
                             alertDeliveryPhone.text('Телефон должен быть вида 79219876543, +7(821)1234567 и т.п').show();
                         }
-
                         if(!haveError){
                             alertDeliveryPhone.hide();
                             thriftModule.client.confirmOrder(orderId);
@@ -436,17 +434,12 @@ define(
                                 var order = thriftModule.client.getOrder(orderId);
                                 var orderDetails = thriftModule.client.getOrderDetails(orderId);
 
-                                $('.bill-amount span,.all-amount span').text($('.itogo-right span').text());
+                                var summaryCost = $('.itogo-right span').text();
+                                $('.bill-amount span,.all-amount span').text(summaryCost);
                                 $('.bill-delivery-address span').text($('.input-delivery .delivery-address').text());
                                 $('.bill-date-delivery span').text($('.order-date span').text());
                                 $('.bill-client span').text($('.user-info').text());
                                 $('.bill-client-phone span').text($('#phone-delivery').val());
-                                /*var payType;
-                                if($('.courier-delivery').prop('checked') == true){
-                                    payType = "Курьеру";
-                                }else{
-                                    payType = "При получении";
-                                }*/
                                 $('.bill-pay-type span').text(getPaymentType(orderDetails.paymentType));
                                 $('.bill-weight span').text($('.weight-right span').text()+" гр.");
 
@@ -467,7 +460,12 @@ define(
                                 $('.bill-shop-email span').text('---');
                                 $('.order-end-logo img').attr('src',shop.logoURL);
 
-                                var costWithoutDelivery = $('.itogo-right span').text()-$('.delivery-cost').text();
+                                var deliveryCost = $('.delivery-cost').text();
+                                var costWithoutDelivery = summaryCost-deliveryCost;
+
+                                var placeForDeliveryCost = $('.bill-delivery span');
+                                (deliveryCost != '0') ? placeForDeliveryCost.text(deliveryCost+" р.") : placeForDeliveryCost.text("---");
+
                                 $('.bill-amount-order span').text(costWithoutDelivery.toFixed(1));
 
                                 if($('#order-comment').val()){
@@ -480,7 +478,6 @@ define(
 
                                 var noEdit = true;
                                 $('.bill-order-list').append(ordersModule.createOrdersProductHtml(orderDetails,noEdit));
-                                //$('.order-end-info').append(ordersModule.createOrdersHtml(order));
                             });
                         }
                     }
@@ -720,9 +717,7 @@ define(
         }
 
         function showDeliveryDropdown(orderId,userAddresses){
-            $('.delivery-dropdown').show().click(function(){
-                $(this).addClass('open');
-            });
+            $('.delivery-dropdown').show();
 
             setDeliveryDropdown(orderId,userAddresses);
         }

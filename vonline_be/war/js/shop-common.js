@@ -400,7 +400,8 @@ define(
                             }
                         });
 
-                        if($(this).closest('.catalog-order').length > 0){
+                        isBasket = $(this).closest('.catalog-order').length > 0 || $(this).closest('.catalog-confirm').length > 0;
+                        if(isBasket){
                             //если это popup для корзины
                             currentModal.find('.fa-shopping-cart').click(function(){
                                 currentModal.modal('hide');

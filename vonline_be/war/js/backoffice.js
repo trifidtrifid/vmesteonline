@@ -958,6 +958,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             exportFields = getExportFields('packs');
 
                             dataSet = thriftModule.client.getTotalPackReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
+
                             if(dataSet.data){
 
                                 //tablesCount = 1;  // кол-во таблиц в нашем отчете
