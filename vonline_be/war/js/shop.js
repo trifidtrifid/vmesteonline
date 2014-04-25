@@ -36,8 +36,6 @@ require.config({
     }
 });
 
-/*require(["jquery",'shop-initThrift','shop-common','shop-spinner','shop-addProduct','shop-category','shop-orders','shop-delivery'],
-    function($,thriftModule,commonModule,spinnerModule,addProduct,categoryModule,ordersModule,deliveryModule) {*/
 require(["jquery",'shop-modules','commonM','loginModule'],
     function($,modules,commonM,loginModule) {
     /* простые обработчики событий */

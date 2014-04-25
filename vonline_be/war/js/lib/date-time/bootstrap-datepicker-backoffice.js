@@ -34,7 +34,6 @@
     function getMetaDate(){
         try {
         var strDate = $('.datepicker:eq(0)').find('.datepicker-days .switch').text().split(" ");
-            alert(strDate);
         var strMonth="";
         var year = strDate[1];
         switch(strDate[0]){

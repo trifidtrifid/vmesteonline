@@ -16,12 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ========================================================== */
-
-
 !function ($) {
 
   "use strict"; // jshint ;_;
-
 
   /* CSS TRANSITION SUPPORT (http://www.modernizr.com/)
    * ======================================================= */
@@ -632,7 +629,6 @@
 !function ($) {
 
   "use strict"; // jshint ;_;
-
 
  /* DROPDOWN CLASS DEFINITION
   * ========================= */

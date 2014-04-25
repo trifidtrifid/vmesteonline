@@ -413,8 +413,10 @@
 
 </div>
 <!-- общие библиотеки -->
+
 <script src="js/lib/jquery-2.0.3.min.js"></script>
-<script src="js/lib/bootstrap.min.js"></script>
+<script src="js/lib/bootstrap.js"></script>
+
 
 <!-- файлы thrift -->
 <script src="js/thrift.js" type="text/javascript"></script>
@@ -435,8 +437,8 @@
 <!-- собственные скрипты  -->
 <script src="js/lib/ace-extra.min.js"></script>
 <script src="js/lib/ace-elements.min.js"></script>
-<%--<script src="js/common.js"></script>
-<script src="js/backoffice.js"></script>--%>
+<%--<script src="js/common.js"></script>--%>
+<!--<script src="js/backoffice.js"></script>-->
 
 <script type="text/javascript" data-main="js/backoffice.js" src="js/require.js"></script>
 
