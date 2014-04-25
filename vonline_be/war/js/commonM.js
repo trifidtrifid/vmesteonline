@@ -29,7 +29,8 @@ define(
         });
 
         $('.nav-list a,.navbar .nav a:not(".dropdown-toggle")').click(function(e){
-            e.preventDefault();
+            var isBackoffise = $(this).closest('.backoffice').length;
+            if(!isBackoffise) e.preventDefault();
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
         });

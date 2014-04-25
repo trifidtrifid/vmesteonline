@@ -20,6 +20,10 @@ require.config({
             deps: ['jquery'],
             exports: 'jquery_ui'
         },
+        'bootstrap':{
+            deps: ['jquery'],
+            exports: 'bootstrap'
+        },
         'datepicker-backoffice':{
             deps: ['jquery','jquery_ui'],
             exports: 'datepicker-backoffice'

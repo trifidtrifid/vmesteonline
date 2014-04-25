@@ -110,7 +110,7 @@
     </div><!-- /.container -->
     </div>
     <div class="main-container backoffice dynamic" id="main-container">
-        <div class="main-container-inner">
+        <div class="page main-container-inner">
             <aside class="sidebar" id="sidebar">
                 <script type="text/javascript">
                     try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
@@ -409,6 +409,9 @@
                 </div>
             </div>
         </div>
+        <div class="page shop-profile"></div>
+        <div class="page shop-editPersonal"></div>
+
     </div>
 
 </div>

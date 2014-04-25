@@ -171,12 +171,6 @@
                 </div>
                 <div class="hide-right">×</div>
                 <div class="sidebar-title">
-                    <%--<a href="#" class="go-to-orders shop-trigger">Заказы</a>--%>
-                    <%--<nav>
-                        <div class="input-group">
-                            <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="dd-mm-yyyy" value="Выберите дату" onblur="if(this.value=='') this.value='Выберите дату';" onfocus="if(this.value=='Выберите дату') this.value='';"/>
-                        </div>
-                    </nav>--%>
                 </div>
 
                 <%--<div class="tabbable tabs-right tabs-days">
@@ -283,56 +277,6 @@
                     </div>
                 </div>--%>
 
-
-<%--                <div class="additionally-order">
-                    <div class="itogo-right">
-                        Товаров на сумму: <span></span> руб.
-                    </div>
-                    <div class="delivery-right">
-                        <h3>Доставка</h3>
-                        <div class="radio">
-                            <label>
-                                <input name="form-field-radio" type="radio" checked="checked" class="ace">
-                                <span class="lbl"> Самовывоз</span>
-                            </label>
-                        </div>
-                        <div class="radio">
-                            <label>
-                                <input name="form-field-radio" type="radio" class="ace courier-delivery">
-                                <span class="lbl"> Курьер </span>
-                            </label>
-                        </div>
-                        <div class="input-delivery">
-                            <span class="lbl">Стоимость доставки : <span class="delivery-cost"></span> руб</span>
-                            <input id="phone-delivery" type="tel" required="required" placeholder="Номер телефона"/>
-                            <div class="alert-delivery alert-delivery-phone"></div>
-                            <div class="btn-group delivery-dropdown">
-                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                                    <span class="btn-group-text">Выбрать адрес</span>
-                                    <span class="icon-caret-down icon-on-right"></span>
-                                </button>
-
-                                <ul class="dropdown-menu dropdown-blue">
-                                    <li class="divider"></li>
-                                    <li><a href="#" class="delivery-add-address">Добавить адрес ...</a></li>
-                                </ul>
-                            </div>
-                            <span class="lbl"> Адрес доставки</span>
-                            <input id="country-delivery" type="text" value="Россия" placeholder="Страна"/>
-                            <input id="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
-                            <input id="street-delivery" type="text" placeholder="Улица"/>
-                            <input id="building-delivery" type="text" class="short first" placeholder="Дом"/>
-                            <input id="flat-delivery" type="text" class="short" placeholder="Квартира"/>
-                        </div>
-                        <div class="alert-delivery alert-delivery-addr">Введите адрес доставки !</div>
-                    </div>
-                    <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
-                    <button class="btn btn-sm btn-grey no-border btn-cancel">Отменить</button>
-                    <button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>
-                </div>--%>
-                <%--<div class="empty-basket">
-                    Ваша корзина пуста
-                </div>--%>
             </aside>
             <div class="main-content">
                 <div class="shop-products">
