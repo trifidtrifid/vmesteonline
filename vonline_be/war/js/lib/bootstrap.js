@@ -17,11 +17,9 @@
  * limitations under the License.
  * ========================================================== */
 
-
-!function ($) {
+ !function ($) {
 
   "use strict"; // jshint ;_;
-
 
   /* CSS TRANSITION SUPPORT (http://www.modernizr.com/)
    * ======================================================= */
@@ -633,7 +631,6 @@
 
   "use strict"; // jshint ;_;
 
-
  /* DROPDOWN CLASS DEFINITION
   * ========================= */
 
@@ -667,7 +664,6 @@
       }
 
       $this.focus()
-
       return false
     }
 

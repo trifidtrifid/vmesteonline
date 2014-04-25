@@ -462,8 +462,8 @@
 
 	</div>
 	<!-- общие библиотеки -->
-	<script src="js/lib/jquery-2.0.3.min.js"></script>
-	<script src="js/lib/bootstrap.min.js"></script>
+	<%--<script src="js/lib/jquery-2.0.3.min.js"></script>--%>
+	<%--<script src="js/lib/bootstrap.js"></script>--%>
     <!-- файлы thrift -->
     <script src="js/thrift.js" type="text/javascript"></script>
     <script src="gen-js/bedata_types.js" type="text/javascript"></script>
@@ -475,19 +475,14 @@
     <script src="gen-js/UserService.js" type="text/javascript"></script>
     <!-- -->
 
-	<!-- конкретные плагины -->
+<%--	<!-- конкретные плагины -->
 	<script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
 	<script src="js/lib/fuelux/fuelux.spinner.min.js"></script>
-	<script src="js/lib/date-time/bootstrap-datepicker.js"></script>
-	<script src="js/lib/date-time/bootstrap-datepicker-simple.js"></script>
-    <script src="js/lib/date-time/locales/bootstrap-datepicker.ru.js"></script>
-	<%--<script src="js/lib/date-time/bootstrap-datepicker.js"></script>--%>
-
 	<script src="js/lib/jquery.flexslider-min.js"></script>
 
 	<!-- -->
 	<script src="js/lib/ace-extra.min.js"></script>
-	<script src="js/lib/ace-elements.min.js"></script>
+	<script src="js/lib/ace-elements.min.js"></script>--%>
 	<!-- собственные скрипты  -->
 <%--
 	<script src="js/login.js"></script>

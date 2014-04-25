@@ -290,9 +290,9 @@ define(
             }
         });
 
-        $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
+        $('.user-short .dropdown-toggle.no-login').click(function(){
                 $(this).parent().addClass('open');
-            });
+        });
 
         commonModule.setSidebarHeight();
 

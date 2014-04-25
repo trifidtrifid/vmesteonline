@@ -3,18 +3,18 @@ require.config({
     paths: {
         "jquery"   : "lib/jquery-2.0.3.min",
         "ace_spinner": "lib/fuelux/fuelux.spinner",
-        "bootstrap": "lib/bootstrap.min",
+        "bootstrap": "lib/bootstrap",
         "ace_extra": "lib/ace-extra.min",
         "ace_elements": "lib/ace-elements.min",
         "flexslider": "lib/jquery.flexslider-min",
-        "jquery_ui": "lib/jquery-ui-1.10.3.full.min",
-        "datepicker-simple": "lib/date-time/bootstrap-datepicker-simple"/*,
-        "datepicker": "lib/date-time/bootstrap-datepicker",
-        "datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru"*/
+        "jquery_ui": "lib/jquery-ui-1.10.3.full.min"
+        //"datepicker-simple": "lib/date-time/bootstrap-datepicker-simple",
+        //"datepicker": "lib/date-time/bootstrap-datepicker",
+        //"datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru"
     },
     shim:{
       'ace_spinner':{
-         deps: ['jquery',"bootstrap","ace_extra","ace_elements","jquery_ui"],
+         deps: ['jquery',"ace_extra","ace_elements","jquery_ui"],
          exports: 'ace_spinner'
       },
       'jquery_ui':{
@@ -24,25 +24,21 @@ require.config({
         'flexslider':{
             deps: ['jquery'],
             exports: 'flexslider'
-        },
+        }/*,
       'datepicker-simple':{
-          deps: ['jquery',"bootstrap"],
+          deps: ['jquery'],
           exports: 'datepicker-simple'
-      }/*,
+      },
     'datepicker-ru':{
         deps: ['jquery','datepicker'],
         exports: 'datepicker-ru'
     }*/
-
     }
 });
 
-/*require(["jquery",'shop-initThrift','shop-common','shop-spinner','shop-addProduct','shop-category','shop-orders','shop-delivery'],
-    function($,thriftModule,commonModule,spinnerModule,addProduct,categoryModule,ordersModule,deliveryModule) {*/
 require(["jquery",'shop-modules','commonM','loginModule'],
     function($,modules,commonM,loginModule) {
     /* простые обработчики событий */
-        //alert('app '+commonModule+" "+spinnerModule+" "+addProduct+" "+categoryModule+" "+ordersModule+" "+deliveryModule);
         loginModule.initLogin();
     try{
         var w = $(window),
@@ -96,10 +92,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
     }
 
         modules.spinnerModule.initProductsSpinner();
-
-   /* var triggerDelivery = 0;
-    var autocompleteAddressFlag = 1;*/
-        //modules.deliveryModule.initRadioBtnClick();
 
         if(globalUserAuth){
             modules.shopCommonModule.initBasketInReload();
