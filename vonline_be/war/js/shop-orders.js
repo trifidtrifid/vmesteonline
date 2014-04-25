@@ -278,7 +278,7 @@ define(
                     basketModule.AddSingleProductToBasket(curProd,spinVal,spinnerDisable);
                 }
                 commonModule.markAddedProduct();
-                tabPaneActive.find('.weight span').text(orderDetails.weightGramm);
+                tabPaneActive.find('.weight span').text(commonModule.getOrderWeight(orderId));
             }catch(e){
                 alert(e+" Функция addSingleOrderToBasket");
             }

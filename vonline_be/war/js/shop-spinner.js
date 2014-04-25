@@ -50,14 +50,14 @@ define(
 
                 var productSelector = $(this).closest('li');
                 var price = productSelector.find('.td-price').text();
-                var orderid = $('.tab-pane.active').data('orderid');
+                var orderId = $('.tab-pane.active').data('orderid');
                 var qnty = $(this).val();
                 price = parseFloat(price);
 
                 var productDetails = thriftModule.client.getProductDetails(productSelector.data('productid'));
                 var packs=[];
                 var packsObj = {};
-                var orderDetails = thriftModule.client.getOrderDetails(orderid);
+                var orderDetails = thriftModule.client.getOrderDetails(orderId);
                 if (productDetails.prepackRequired){
                     // если фасованный товар
                     var orderLines = orderDetails.odrerLines;
@@ -84,13 +84,14 @@ define(
                 });
 
                 if(!packsObj.errorFlag){
-                    thriftModule.client.setOrderLine(orderid,productSelector.data('productid'),packsObj.qnty,'',packsObj.packs);
+                    thriftModule.client.setOrderLine(orderId,productSelector.data('productid'),packsObj.qnty,'',packsObj.packs);
                     productSelector.find('.td-summa').text((price*packsObj.qnty).toFixed(1));
 
                     var commonModule = require('shop-common');
                     $('.itogo-right span,.amount span').text(commonModule.countAmount($('.catalog-confirm')));
-                    $('.weight-right span,.weight span').text(orderDetails.weightGramm);
-                    checkBigWeight(orderid);
+
+                    $('.weight-right span,.weight span').text(commonModule.getOrderWeight(orderId));
+                    checkBigWeight(orderId);
                 }
                 }
             });
@@ -252,12 +253,13 @@ define(
                          }*/
                         thriftModule.client.setOrderLine(orderId,productId,packsObj.qnty,'',packsObj.packs);
 
-                        currentTab.find('.weight span').text(orderDetails.weightGramm);
+                        var commonModule = require('shop-common');
+                        currentTab.find('.weight span').text(commonModule.getOrderWeight(orderId));
 
                         var price = productSelector.find('.td-price').text();
                         price = parseFloat(price);
                         productSelector.find('.td-summa').text((price*packsObj.qnty).toFixed(1));
-                        var commonModule = require('shop-common');
+
                         var currentPane = $(this).closest('.tab-pane');
                         currentPane.find('.amount span').text(commonModule.countAmount(currentPane.find('.catalog-order')));
                         //$('.modal-itogo span').text(commonModule.countAmount($('.modal-body-list')));
@@ -390,11 +392,11 @@ define(
                             productSelector.find('td>.ace-spinner').spinner('value',qnty);
                             productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
 
+                            var commonModule = require('shop-common');
+
                             thriftModule.client.setOrderLine(orderId,productId,qnty,'',packs);
                             var currentTab = $('.tab-pane.active');
-                            currentTab.find('.weight span').text(orderDetails.weightGramm);
-
-                            var commonModule = require('shop-common');
+                            currentTab.find('.weight span').text(commonModule.getOrderWeight(orderId));
 
                             var currentCatalog;
                             (catalogOrder.length) ? currentCatalog = catalogOrder: currentCatalog = catalogConfirm;

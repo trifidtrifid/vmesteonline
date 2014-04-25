@@ -78,8 +78,8 @@ define(
 
                     thriftModule.client.removeOrderLine(orderId,$(this).closest('li').data('productid'));
 
-                    var orderDetails = thriftModule.client.getOrderDetails(orderId);
-                    currentTab.find('.weight span').text(orderDetails.weightGramm);
+                    var commonModule = require('shop-common');
+                    currentTab.find('.weight span').text(commonModule.getOrderWeight(orderId));
                 });
             }catch(e){
                 alert(e+" Функция InitDeleteProduct");
@@ -260,7 +260,7 @@ define(
                     '<div class="tab-content">'+
                     '<div id="day'+orderDay+orderMonth+'" data-orderid="'+ orderId +'" class="tab-pane active">'+
                     '<div class="basket-head">'+
-                        '<div class="weight">Вес: <span></span> гр.</div>'+
+                        '<div class="weight">Вес: <span></span> кг.</div>'+
                         '<div class="amount">Итого: <span></span> руб.</div>'+
                     '</div>'+
                     '<ul class="catalog-order">'+
@@ -441,7 +441,7 @@ define(
                                 $('.bill-client span').text($('.user-info').text());
                                 $('.bill-client-phone span').text($('#phone-delivery').val());
                                 $('.bill-pay-type span').text(getPaymentType(orderDetails.paymentType));
-                                $('.bill-weight span').text($('.weight-right span').text()+" гр.");
+                                $('.bill-weight span').text($('.weight-right span').text()+" кг.");
 
                                 var orderDate = new Date(orderDetails.createdAt*1000);
                                 var orderDay = orderDate.getDate();
@@ -540,8 +540,7 @@ define(
 
                 thriftModule.client.setOrderLine(orderId,currentProduct.id,newSpinnerVal,'',packs);
 
-                var orderDetails = thriftModule.client.getOrderDetails(orderId);
-                currentTab.find('.weight span').text(orderDetails.weightGramm);
+                currentTab.find('.weight span').text(commonModule.getOrderWeight(orderId));
 
                 var newSumma = (newSpinnerVal*parseFloat(basketProductSelector.find('.td-price').text())).toFixed(1);
                 basketProductSelector.find('.td-summa').text(newSumma);
@@ -552,8 +551,7 @@ define(
 
                 thriftModule.client.setOrderLine(orderId,currentProduct.id,currentProduct.qnty,'',packs);
 
-                orderDetails = thriftModule.client.getOrderDetails(orderId);
-                currentTab.find('.weight span').text(orderDetails.weightGramm);
+                currentTab.find('.weight span').text(commonModule.getOrderWeight(orderId));
             }
             if(currentProduct.packVal > 1 || currentProduct.prepackLine.length != 0 || (packs && commonModule.getPacksLength(packs) > 1)){
                 currentSpinner = $('.catalog-order li[data-productid="'+ currentProduct.id +'"]').find('td>.ace-spinner');

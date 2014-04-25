@@ -52,6 +52,11 @@ define(
             }
         }
 
+        function getOrderWeight(orderId){
+            var orderDetails = thriftModule.client.getOrderDetails(orderId);
+            return (orderDetails.weightGramm/1000).toFixed(3);
+        }
+
         function addAddressToBase(currentForm){
             var countries = thriftModule.userClient.getCounties();
             var countriesLength = countries.length;
@@ -139,9 +144,9 @@ define(
                 var orderid = currentOrders[i].id;
 
                 basketModule.addTabToBasketHtml(new Date(currentOrders[i].date*1000),orderid);
-                var orderDetails = thriftModule.client.getOrderDetails(orderid);
-                $('.tab-pane.active').find('.weight span').text(orderDetails.weightGramm);
+                $('.tab-pane.active').find('.weight span').text(getOrderWeight(orderid));
 
+                var orderDetails = thriftModule.client.getOrderDetails(orderid);
                 var orderLines = orderDetails.odrerLines;
                 var orderLinesLength = orderDetails.odrerLines.length;
                 for(var j = 0; j < orderLinesLength; j++){
@@ -631,7 +636,8 @@ define(
             remarkAddedProduct: remarkAddedProduct,
             addAddressToBase: addAddressToBase,
             isValidEmail: isValidEmail,
-            changeShortUserInfo: changeShortUserInfo
+            changeShortUserInfo: changeShortUserInfo,
+            getOrderWeight: getOrderWeight
         }
     }
 );
