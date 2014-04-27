@@ -31,9 +31,26 @@
     var protocol = new Thrift.Protocol(transport);
     var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
 
-    function getMetaDate(){
+    function getMetaDate(calendarPicker){
         try {
-        var strDate = $('.datepicker:eq(0)').find('.datepicker-days .switch').text().split(" ");
+            /*var strDate;
+
+            switch (calendarID){
+                case 'date':
+                    $calSelector = $('#date-picker-2');
+                    break;
+                case 'products':
+                    $calSelector = $('#date-picker-3');
+                    break;
+                case 'packs':
+                    $calSelector = $('#date-picker-4');
+                    break;
+            }*/
+
+            var strDate = calendarPicker.find('.datepicker-days .switch').text().split(" ");
+            // если календарь заказов
+//            strDate = $('.datepicker:eq(0)').find('.datepicker-days .switch').text().split(" ");
+
         var strMonth="";
         var year = strDate[1];
         switch(strDate[0]){
@@ -80,13 +97,15 @@
         return (Date.parse('15 '+strMonth+" "+year));
     }
 
-    function SetOrderDates(){
+    function SetOrderDates(currentCal){
         try{
-        var metaTime = parseInt(getMetaDate()/1000);
+        var metaTime = parseInt(getMetaDate(currentCal.picker)/1000);
         metaTime -= metaTime%86400;
         var day = 3600*24;
         var currentDateItem = new Date(metaTime*1000);
-        var currentMonth = currentDateItem.getMonth();
+        var currentMonth = currentDateItem.getMonth(),
+            prevMonth = currentMonth - 1,
+            nextMonth = currentMonth + 1;
 
         if (globalUserAuth){
             var orders = client.getOrdersByStatus(metaTime-30*day,metaTime+30*day,0);
@@ -100,6 +119,11 @@
                 $('.day').each(function(){
                     if (tempMonth == currentMonth){
                         if ($(this).text() == dayStr && !$(this).hasClass('old') && !$(this).hasClass('new')){
+                            $(this).addClass('order-day').attr('id',orders[i].date);
+                        }
+                    }
+                    if (tempMonth == prevMonth){
+                        if ($(this).text() == dayStr && $(this).hasClass('old')){
                             $(this).addClass('order-day').attr('id',orders[i].date);
                         }
                     }
@@ -630,7 +654,7 @@
 				year += 1;
 			}
 			yearCont.html(html);
-                SetOrderDates();
+                SetOrderDates(this);
                initOrderDay(this.createOrdersHtml,this.initOrderPlusMinus,this.setSidebarHeight,this.filterByStatus,this.filterByDelivery,this.filterBySearch)
 	},
 

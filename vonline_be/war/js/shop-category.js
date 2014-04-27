@@ -4,10 +4,12 @@ define(
     function( $,thriftModule,basketModule,commonModule,spinnerModule ){
 
         var prevParentId = [],
-            parentCounter = 0;
+            parentCounter = 0,
+            prevCatCounter;
 
         //var commonModule = require('shop-common');
-        if(commonModule){
+        /*if(commonModule){
+            alert('1');
         var prevCatCounter = commonModule.getCookie('prevCatCounter');
         if (prevCatCounter !== undefined){
             parentCounter = parseInt(prevCatCounter);
@@ -16,7 +18,7 @@ define(
         if (arrayPrevCatCookie !== undefined){
             prevParentId = arrayPrevCatCookie.split(',');
         }
-        }
+        }*/
 
 
         function createProductsTableHtml(productsList){
@@ -101,20 +103,41 @@ define(
             commonModule.setSidebarHeight();
         }
 
+        function initGetCookie(){
+            var commonModule = require('shop-common');
+            prevCatCounter = commonModule.getCookie('prevCatCounter');
+            if (prevCatCounter !== undefined){
+                parentCounter = parseInt(prevCatCounter);
+            }
+            var arrayPrevCatCookie = commonModule.getCookie('arrayPrevCat');
+            if (arrayPrevCatCookie !== undefined){
+                prevParentId = arrayPrevCatCookie.split(',');
+            }
+        }
+
         function InitClickOnCategory(){
+            if(prevCatCounter == undefined ){
+                initGetCookie();
+            }
             try{
                 $('.shop-menu li a').click(function(e){
                     e.preventDefault();
+                    var isReturnBtn = $(this).find('.fa-reply-all').length;
                     var commonModule = require('shop-common');
-                    if ($(this).hasClass('fa-reply-all')){
+
+                    if (isReturnBtn){
+                        //alert('1-1 '+parentCounter);
                         InitLoadCategory(prevParentId[parentCounter]);
                         commonModule.setCookie('catid',prevParentId[parentCounter]);
                         parentCounter--;
+                        //alert('1-2 '+parentCounter);
                         commonModule.setCookie('arrayPrevCat',prevParentId);
                         commonModule.setCookie('prevCatCounter',parentCounter);
                     }
                     else {
+                        //alert('2-1 '+parentCounter);
                         parentCounter++;
+                        //alert('2-2 '+parentCounter);
                         prevParentId[parentCounter] = $(this).parent().data('parentid');
                         InitLoadCategory($(this).parent().data('catid'));
                         commonModule.setCookie('catid',$(this).parent().data('catid'));

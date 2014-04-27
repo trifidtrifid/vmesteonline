@@ -277,6 +277,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
         dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
             $(this).prev().focus();
         });
+        console.log('---------------------');
 
         dPickerExport.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
             $(this).prev().focus();
