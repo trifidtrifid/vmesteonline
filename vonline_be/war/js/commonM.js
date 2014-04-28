@@ -132,14 +132,17 @@ define(
                 }
             });
 
+            //var userAddresses = thriftModule.client.getUserDeliveryAddresses();
             var userAddresses = thriftModule.userClient.getUserAddresses();
+
             var userAddressesLength = userAddresses.length;
             if(userAddressesLength > 0){
                 var userAddressesHtml = "";
                 for(var i = 0; i < userAddressesLength; i++){
                     userAddressesHtml +='<div class="user-address-item" data-index="'+ i +'">'+
                         '<span>'+
-                        userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
+                        userAddresses[i]+
+                        //userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
                         '</span>'+
                         '<a href="#" class="edit-user-addr">редактировать</a>'+
                         '<a href="#" title="Удалить" class="remove-user-addr">&times;</a>'+

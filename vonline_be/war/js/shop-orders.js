@@ -27,12 +27,12 @@ define(
                     commonModule = require('shop-common');
                     (orderLines[j].product.imageURL) ? myPic = orderLines[j].product.imageURL : myPic = commonModule.noPhotoPic;
                     if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
-                    ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
+                    ordersProductsHtml += '<tr class="product" data-prepack="'+ orderLines[j].product.prepackRequired +'" data-productid="'+ orderLines[j].product.id +'">'+
                         '<td>'+
                         '<a href="#" class="product-link">'+
                         '<div class="product-pic"><img src="'+ myPic +'" alt="картинка"/></div>'+
                         '<span>'+
-                        '<span>'+orderLines[j].product.name+'</span>'+
+                        '<span class="product-name">'+orderLines[j].product.name+'</span>'+
                         orderLines[j].product.shortDescr +
                         '</span>'+
                         '</a>'+
@@ -40,7 +40,7 @@ define(
                         '</div>'+
                         '</td>'+
                         '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
-                        '<td>';
+                        '<td class="td-spinner">';
 
                     if(noEdit){
                         ordersProductsHtml += orderLines[j].quantity;

@@ -32,17 +32,17 @@ define(
                 var myPic;
                 var commonModule = require('shop-common');
                 (productsList[i].imageURL) ? myPic = productsList[i].imageURL : myPic = commonModule.noPhotoPic;
-                productsHtml += '<tr data-productid="'+ productsList[i].id +'">'+
+                productsHtml += '<tr class="product" data-prepack="'+ productsList[i].prepackRequired +'" data-productid="'+ productsList[i].id +'">'+
                     '<td>'+
                     '<a href="#" class="product-link">'+
                     '<div class="product-pic"><img src="'+ myPic +'" alt="картинка"/></div>'+
-                    '<span><span>'+ productsList[i].name +'</span>'+ productsList[i].shortDescr +'</span>'+
+                    '<span><span class="product-name">'+ productsList[i].name +'</span>'+ productsList[i].shortDescr +'</span>'+
                     '</a>'+
                     '<div class="modal">'+
                     '</div>'+
                     '</td>'+
                     '<td class="product-price">'+ productsList[i].price  +'</td>'+
-                    '<td>'+
+                    '<td class="td-spinner">'+
                     '<input type="text" data-step="'+ productsList[i].minClientPack +'" class="input-mini spinner1" /> '+
                     '<span class="added-text">добавлен</span>'+
                     '</td>'+
@@ -59,7 +59,7 @@ define(
         function InitLoadCategory(catID){
             try{
                 /* замена меню категорий */
-
+                var commonModule = require('shop-common');
                 var productCategories = thriftModule.client.getProductCategories(catID);
                 var categoriesLength = productCategories.length;
                 var shopMenu = '';
@@ -88,7 +88,6 @@ define(
                 /* новый список товаров */
                 var productsList = thriftModule.client.getProducts(0,1000,catID).products;
                 $('.main-content .catalog table tbody').html("").append(createProductsTableHtml(productsList));
-                var commonModule = require('shop-common');
                 commonModule.markAddedProduct();
 
             }catch(e){
@@ -97,7 +96,6 @@ define(
 
             /* подключение событий */
             spinnerModule.initProductsSpinner();
-            var commonModule = require('shop-common');
             var basketModule = require('shop-basket');
             commonModule.InitProductDetailPopup($('.product-link'));
             basketModule.InitAddToBasket($('.fa-shopping-cart'));

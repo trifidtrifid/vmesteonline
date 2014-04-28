@@ -318,7 +318,7 @@
                             </tr>
                             </thead>
                             <c:forEach var="product" items="${products}">
-                                <tr data-productid="${product.id}">
+                                <tr data-productid="${product.id}" data-prepack="${product.prepackRequired}" class="product">
                                     <td>
                                         <a href="#" class="product-link">
                                             <div class="product-pic">
@@ -333,7 +333,7 @@
                                             </div>
 
                                             <span>
-                                            <span>${product.name}</span>
+                                            <span class="product-name">${product.name}</span>
                                             ${product.shortDescr}
                                             </span>
                                         </a>
@@ -341,7 +341,7 @@
                                         </div>
                                     </td>
                                     <td class="product-price">${product.price}</td>
-                                    <td>
+                                    <td class="td-spinner">
                                         <input type="text" class="input-mini spinner1" data-step="${product.minClientPack}" />
                                         <span class="added-text">добавлен</span>
                                     </td>
