@@ -10,6 +10,8 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolUtil;
 import org.apache.thrift.protocol.TType;
 
+import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.access.VoTAccessValidator;
 import com.vmesteonline.be.access.VoUserAccessBase;
 
@@ -31,10 +33,7 @@ public abstract class TBaseProcessor<I> implements TProcessor {
   public boolean process(TProtocol in, TProtocol out) throws TException {
     TMessage msg = in.readMessageBegin();
     ProcessFunction fn = processMap.get(msg.name);
-    if (fn == null 
-    		/* Code added to implement authorization*/
-    		|| !checkAccessRights(fn.getMethodName())
-    		/* End of added code */) {
+    if (fn == null ){
       TProtocolUtil.skip(in, TType.STRUCT);
       in.readMessageEnd();
       TApplicationException x = new TApplicationException(TApplicationException.UNKNOWN_METHOD, "Invalid method name: '"+msg.name+"'");
@@ -43,7 +42,18 @@ public abstract class TBaseProcessor<I> implements TProcessor {
       out.writeMessageEnd();
       out.getTransport().flush();
       return true;
+      /* Code added to implement authorization*/
+    } else if(!checkAccessRights(fn.getMethodName())){
+    	TProtocolUtil.skip(in, TType.STRUCT);
+      in.readMessageEnd();
+      InvalidOperation x = new InvalidOperation(VoError.NotAuthorized, "Access denied for user.");
+      out.writeMessageBegin(new TMessage(msg.name, TMessageType.EXCEPTION, msg.seqid));
+      x.write(out);
+      out.writeMessageEnd();
+      out.getTransport().flush();
+      return true;
     }
+    /* End of added code */
     fn.process(msg.seqid, in, out, iface);
     return true;
   }
