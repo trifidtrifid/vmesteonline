@@ -97,6 +97,7 @@
         return (Date.parse('15 '+strMonth+" "+year));
     }
 
+    var orders;
     function SetOrderDates(currentCal){
         try{
         var metaTime = parseInt(getMetaDate(currentCal.picker)/1000);
@@ -108,7 +109,8 @@
             nextMonth = currentMonth + 1;
 
         if (globalUserAuth){
-            var orders = client.getOrdersByStatus(metaTime-30*day,metaTime+30*day,0);
+            orders = (orders) ? orders : client.getOrdersByStatus(metaTime-180*day,metaTime+180*day,0);
+            //var orders = client.getOrdersByStatus(metaTime-30*day,metaTime+30*day,0);
             var ordersLength = orders.length;
 
             for (var i = 0; i < ordersLength; i++){
@@ -154,11 +156,12 @@
             }
             var orderDate = parseInt($(this).attr('id'));
             var day = 3600*24;
-            var orders = client.getOrdersByStatus(orderDate,orderDate+day,0);
+            var orders = client.getOrdersByStatus(orderDate-100*day,orderDate+100*day,0);
             var ordersLength = orders.length;
             var orderList = [];
             var counter = 0;
             for (var i = 0; i < ordersLength; i++){
+                //alert(orders[i].date + " "+orderDate);
                 if (orders[i].date == orderDate){
                     orderList[counter++] = orders[i];
                 }
