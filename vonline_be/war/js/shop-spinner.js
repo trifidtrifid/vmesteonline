@@ -175,14 +175,16 @@ define(
                 }
             } else{
 
-                packsVal = 0;
-                for(var p in packs){
-                    packsVal = packs[p];
-                }
-                packs = [];
-                if(packsVal){
-                    packs[qnty]=packsVal;
-                    qnty = qnty*packsVal;
+                if (packs){
+                    packsVal = 0;
+                    for(var p in packs){
+                        packsVal = packs[p];
+                    }
+                    packs = [];
+                    if(packsVal){
+                        packs[qnty]=packsVal;
+                        qnty = qnty*packsVal;
+                    }
                 }
                 var isModalWasOpen = productSelector.find('.modal-body').length > 0;
                 if(isModalWasOpen){
@@ -232,17 +234,21 @@ define(
                 if (oldSpinnerValue != currentValue){
                     // чтобы не обрабатывать щелчки ниже 1
                     oldSpinnerValue = currentValue;
+                    var productId = $(this).closest('.product').data('productid');
+                    var productSelector = $(this).closest('.product');
                     var qnty;
-                    var packs;
-                    var productSelector = $(this).closest('li');
+                    var packs = 0;
                     var currentTab = $(this).closest('.tab-pane');
                     var orderId = currentTab.data('orderid');
-                    var orderDetails = thriftModule.client.getOrderDetails(orderId);
-                    var orderLinesLength = orderDetails.odrerLines.length;
-                    var productId = $(this).closest('.product').data('productid');
-                    for (var i = 0; i < orderLinesLength; i++){
-                        if (orderDetails.odrerLines[i].product.id == productId){
-                            packs = orderDetails.odrerLines[i].packs;
+
+
+                    if(productSelector.data('prepack')){
+                        var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                        var orderLinesLength = orderDetails.odrerLines.length;
+                        for (var i = 0; i < orderLinesLength; i++){
+                            if (orderDetails.odrerLines[i].product.id == productId){
+                                packs = orderDetails.odrerLines[i].packs;
+                            }
                         }
                     }
                     var packsObj = changePacks($(this),productSelector,packs);
@@ -252,7 +258,6 @@ define(
 
                         thriftModule.client.setOrderLine(orderId,productId,packsObj.qnty,'',packsObj.packs);
                         orderDetails = thriftModule.client.getOrderDetails(orderId);
-
 
                         var commonModule = require('shop-common');
                         currentTab.find('.weight span').text(commonModule.getOrderWeight(orderId,orderDetails));

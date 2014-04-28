@@ -37,8 +37,7 @@ define(
                     var currentTab = $('.tab-pane.active'),
                     orderId = currentTab.data('orderid'),
                     currentProductList,
-                    inConfirm,
-                    myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
+                    inConfirm,myOrderDetails;
 
                     inConfirm = $(this).closest('.confirm-order').length > 0;
                     (inConfirm) ? currentProductList = $(this).closest('.catalog-confirm').find('.product'):
@@ -56,6 +55,8 @@ define(
                         var commonModule = require('shop-common');
                         if(inConfirm){
                             // если на странице конфирма, то обновляем и корзину на главной
+                            myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
+
                             $('.tabs-days .tab-content .catalog-order').find('.product').each(function(){
                                 if($(this).data('productid') == productId){
                                     $(this).css('display','none').detach();
@@ -63,12 +64,9 @@ define(
                             });
 
                             $('.itogo-right span').text(commonModule.countAmount(currentTab.find('.catalog-order'),myOrderDetails));
-                        }else{
-
                         }
 
                         $(this).detach();
-                        currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order')),myOrderDetails);
 
                         if (currentProductList.length == 1){
                             // если это был последний товар в корзине
@@ -79,8 +77,9 @@ define(
                         thriftModule.client.removeOrderLine(orderId,$(this).closest('.product').data('productid'));
                         myOrderDetails = thriftModule.client.getOrderDetails(orderId);
 
-                        var commonModule = require('shop-common');
-                        var weight = commonModule.getOrderWeight(orderId);
+                        currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order'),myOrderDetails));
+
+                        var weight = commonModule.getOrderWeight(orderId,myOrderDetails);
                         currentTab.find('.weight span').text(weight);
                         $('.weight-right span').text(weight);
                     });
@@ -384,9 +383,9 @@ define(
 
                 var counter = 0;
 
-                var userPhone = thriftModule.userClient.getUserContacts().mobilePhone;
-                if(userPhone){
-                    $('#phone-delivery').val(userPhone);
+                var userContacts = thriftModule.userClient.getUserContacts();
+                if(userContacts.mobilePhone){
+                    $('#phone-delivery').val(userContacts.mobilePhone);
                 }
 
                 confirmOrder.find('td .ace-spinner').each(function(){
@@ -403,6 +402,7 @@ define(
 
                 var optionsForBtnOrderClick = {
                     orderId : orderId,
+                    userContacts : userContacts,
                     shop : shop
                 };
                 initBtnOrderClick($('.confirm-order .btn-order'),optionsForBtnOrderClick);
@@ -503,12 +503,14 @@ define(
                     alertDeliveryPhone.text('Введите номер телефона !').show();
 
                 }else if(!$('.input-delivery .delivery-address .error-info').length){
-                    var userContacts = thriftModule.userClient.getUserContacts();
-                    userContacts.mobilePhone = phoneDelivery.val();
+                    //var userContacts = thriftModule.userClient.getUserContacts();
                     var haveError = 0;
 
                     try{
-                        thriftModule.userClient.updateUserContacts(userContacts);
+                        if (options.userContacts.mobilePhone != phoneDelivery.val()){
+                            options.userContacts.mobilePhone = phoneDelivery.val();
+                            thriftModule.userClient.updateUserContacts(options.userContacts);
+                        };
                     }catch(e){
                         haveError = 1;
                         alertDeliveryPhone.text('Телефон должен быть вида 79219876543, +7(821)1234567 и т.п').show();
@@ -598,7 +600,7 @@ define(
             return paymentType;
         }
 
-        function AddProductToBasketCommon(currentProduct,packs,orderDetails){
+        function AddProductToBasketCommon(currentProduct,packs){
             var addedProductFlag = 0;
             var currentTab = $('.tab-pane.active');
             var orderId = currentTab.data('orderid');
@@ -610,7 +612,7 @@ define(
                 }
             });
 
-            var myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
+            var myOrderDetails;
 
             if (addedProductFlag){
                 // если такой товар уже есть
@@ -624,6 +626,7 @@ define(
                 (commonModule.getPacksLength(packs) <= 1) ? currentSpinner.spinner('enable'):currentSpinner.spinner('disable');
 
                 thriftModule.client.setOrderLine(orderId,currentProduct.id,newSpinnerVal,'',packs);
+                 myOrderDetails = thriftModule.client.getOrderDetails(orderId);
 
                 currentTab.find('.weight span').text(commonModule.getOrderWeight(orderId,myOrderDetails));
 
@@ -632,10 +635,10 @@ define(
                 currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order'),myOrderDetails));
             }else{
                 // если такого товара еще нет
-                AddSingleProductToBasket(currentProduct,currentProduct.qnty,0,myOrderDetails);
-
                 thriftModule.client.setOrderLine(orderId,currentProduct.id,currentProduct.qnty,'',packs);
                 myOrderDetails = thriftModule.client.getOrderDetails(orderId);
+
+                AddSingleProductToBasket(currentProduct,currentProduct.qnty,0,myOrderDetails);
 
                 currentTab.find('.weight span').text(commonModule.getOrderWeight(orderId,myOrderDetails));
             }
@@ -849,7 +852,7 @@ define(
             }
 
             var commonModule = require('shop-common');
-            $('.itogo-right span,.amount span').text(commonModule.countAmount($('.confirm-order')));
+            $('.itogo-right span,.amount span').text(commonModule.countAmount($('.confirm-order'),orderDetails));
         }
 
         return{
