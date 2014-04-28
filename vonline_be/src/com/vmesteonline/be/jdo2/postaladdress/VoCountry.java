@@ -1,8 +1,11 @@
 package com.vmesteonline.be.jdo2.postaladdress;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
@@ -16,9 +19,15 @@ import com.vmesteonline.be.Country;
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 public class VoCountry implements Comparable<VoCountry> {
 	
-	public VoCountry(String name){
-		this.name = name;
-		this.cities = new TreeSet<VoCity>(); 
+	public VoCountry(String name, PersistenceManager pm){
+		List<VoCountry> vcl = (List<VoCountry>)pm.newQuery(VoCountry.class, "name=='"+name+"'").execute();
+		if( vcl.size() > 0 ){
+			id = vcl.get(0).getId();
+		} else {
+			this.setName(name);
+			this.setCities(new HashSet<VoCity>());
+			pm.makePersistent(this);
+		}
 	}
 	
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -32,7 +41,17 @@ public class VoCountry implements Comparable<VoCountry> {
 	@Unowned
 	private Set<VoCity> cities;
 	
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setCities(Set<VoCity> cities) {
+		this.cities = cities;
+	}
+
 	public void addCity(VoCity city){
+		if(null==cities) cities = new HashSet<VoCity>();
 		cities.add(city);
 	}
 
@@ -59,6 +78,7 @@ public class VoCountry implements Comparable<VoCountry> {
 	}
 
 	public Set<VoCity> getCities() {
+		if(null==cities) cities = new HashSet<VoCity>();
 		return cities;
 	}
 	

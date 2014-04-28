@@ -182,7 +182,7 @@ public class Defaults {
 			try {
 
 				VoCity vocity = pm.getExtent(VoCity.class).iterator().next();
-				VoStreet street = new VoStreet(vocity, "г. Пушкин, Детскосельский бульвар");
+				VoStreet street = new VoStreet(vocity, "г. Пушкин, Детскосельский бульвар",pm);
 				VoBuilding building = new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0"), pm);
 				VoPostalAddress voPostalAddress = new VoPostalAddress(building, (byte) 1, (byte) 1, (byte) 1,
 						"Угол ул. Железнодоррожная и Детскосельского бульвара");
@@ -389,11 +389,12 @@ public class Defaults {
 
 	// ======================================================================================================================
 	private static List<String> initializeTestLocations() throws InvalidOperation {
-		List<String> locations = new ArrayList<String>();
-		VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY), CITY), "Республиканская");
 		PersistenceManager pm = PMF.getPm();
 
 		try {
+			List<String> locations = new ArrayList<String>();
+			VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY,pm), "Республиканская", pm);
+			
 			pm.makePersistent(street);
 			VoPostalAddress[] addresses;
 			addresses = new VoPostalAddress[] {

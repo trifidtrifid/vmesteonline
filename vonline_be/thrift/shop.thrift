@@ -51,8 +51,7 @@ struct ProductDetails {
 	6:list<i64> topicSet,
 	7:i64 producerId,
 	9:double minProducerPack,
-	10:bool prepackRequired,
-	11:set<string> knownNames,
+	10:set<string> knownNames,
 }
 
 struct Product {
@@ -65,6 +64,7 @@ struct Product {
 	7:string unitName,
 	8:double minClientPack,
 	9:i64 shopId,
+	10:bool prepackRequired,
 }
 
 struct FullProductInfo {
@@ -301,7 +301,7 @@ service ShopService {
 	void updateOrder( 1:i64 orderId, 2:i32 date, 3:string comment) throws (1:error.InvalidOperation exc),
 	i64 cancelOrder(1:i64 orderId) throws (1:error.InvalidOperation exc),
 	i64 deleteOrder(1:i64 orderId) throws (1:error.InvalidOperation exc),
-	i64 confirmOrder(1:i64 orderId) throws (1:error.InvalidOperation exc),
+	i64 confirmOrder(1:i64 orderId, 2:string comment) throws (1:error.InvalidOperation exc),
 	/**
 	* Method adds all orderLines from order with id set in parameter to current order. 
 	* All Lines with the same product ID would summarized! 
@@ -324,4 +324,10 @@ service ShopService {
 	OrderDetails setOrderDeliveryType( 1:i64 orderId, 2:DeliveryType deliveryType, 3:bedata.PostalAddress deliveryAddress ) throws (1:error.InvalidOperation exc),
 	bool setOrderPaymentType( 1:i64 orderId, 2:PaymentType paymentType ) throws (1:error.InvalidOperation exc),
 	OrderDetails setOrderDeliveryAddress( 1:i64 orderId, 2:bedata.PostalAddress deliveryAddress ) throws (1:error.InvalidOperation exc),
+	
+	bedata.PostalAddress createDeliveryAddress(1:string buildingAddressText, 2:i32 flat, 3:byte floor, 4:byte staircase, 5:string comment ) throws (1:error.InvalidOperation exc),
+	list<string> getUserDeliveryAddresses() throws (1:error.InvalidOperation exc),
+	bedata.PostalAddress getUserDeliveryAddress(1:string addressText) throws (1:error.InvalidOperation exc),
+	void deleteDeliveryAddress(1:string addressText ) throws (1:error.InvalidOperation exc),
+	string getDeliveryAddressViewURL(1:string addressText, 2:i32 width, 3:i32 height ) throws (1:error.InvalidOperation exc),	
 }

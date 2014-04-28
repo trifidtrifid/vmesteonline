@@ -437,7 +437,7 @@ public class VoShop {
 				( d.eachOddEven == 0 || 
 						d.eachOddEven == 1 && 1 == theDate.get(Calendar.WEEK_OF_YEAR) % 2  ||
 						d.eachOddEven == 2 && 0 == theDate.get(Calendar.WEEK_OF_YEAR) % 2 ) ) {
-				if( now.getTimeInMillis() < theDate.getTimeInMillis() - 86400000L * (long)(d.orderBefore - 1) - now.get(Calendar.ZONE_OFFSET)) 
+				if( now.getTimeInMillis() < theDate.getTimeInMillis() - 86400000L * (long)(d.orderBefore - 1) - now.get(Calendar.ZONE_OFFSET) )
 					return d.getPriceTypeToUse();
 				
 			} else if( d.type == OrderDatesType.ORDER_MOUNTHLY &&
