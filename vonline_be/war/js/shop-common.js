@@ -394,13 +394,17 @@ define(
                             var fullDescr = $('.product-fullDescr');
                             var oldHeight;
                             oldHeight = $(this).closest('.modal').height();
+                            var newHeight;
                             if(fullDescr.css('display') == 'none'){
-                                $(this).closest('.modal').height(oldHeight + fullDescrHeight+10);
+                                newHeight = oldHeight + fullDescrHeight+10;
+                                //newHeight += 'px !important';
+                                $(this).closest('.modal').height(newHeight);
                                 fullDescr.show(200);
                             }else{
-                                //fullDescrHeight = $(this).closest('.modal').find('.product-fullDescr').height();
+                                newHeight = oldHeight - fullDescrHeight - 10;
+                                //newHeight += 'px !important';
                                 fullDescr.hide(200,function(){
-                                    $(this).closest('.modal').height(oldHeight - fullDescrHeight-10);
+                                    $(this).closest('.modal').height(newHeight);
                                 });
                             }
                         });
@@ -423,7 +427,8 @@ define(
                             }
                         }else{
                             if (productDetails.prepackRequired){
-                                var prepackLineLength = currentModal.find('.prepack-line').length;
+                                var prepackLineLength;
+                                (productSelector.hasClass('added')) ? prepackLineLength = 0 : prepackLineLength = currentModal.find('.prepack-line').length;
                                 var modalHeight = 268;
                                 modalHeight += prepackLineLength*53;
                                 currentModal.height(modalHeight);

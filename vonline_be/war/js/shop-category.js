@@ -44,10 +44,12 @@ define(
                     '<td class="product-price">'+ productsList[i].price  +'</td>'+
                     '<td>'+
                     '<input type="text" data-step="'+ productsList[i].minClientPack +'" class="input-mini spinner1" /> '+
+                    '<span class="added-text">добавлен</span>'+
                     '</td>'+
                     '<td>'+ '<span class="unit-name">'+ unitName +'</span></td>'+
                     '<td>'+
                     '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
+                    '<span href="#" title="Продукт уже у вас в корзине" class="fa fa-check"></span>'+
                     '</td>'+
                     '</tr>';
             }
@@ -116,7 +118,7 @@ define(
         }
 
         function InitClickOnCategory(){
-            if(prevCatCounter == undefined ){
+            if(prevCatCounter === undefined ){
                 initGetCookie();
             }
             try{

@@ -55,12 +55,13 @@ define(
                         ordersProductsHtml += ' data-step="'+  orderLines[j].product.minClientPack +'" class="input-mini spinner1" />';
                     }
 
-                    ordersProductsHtml += '</td>'+
+                    ordersProductsHtml += '<span class="added-text">добавлен</span></td>'+
                         '<td><span class="unit-name">'+unitName+'</span></td>';
 
                     if(!noEdit){
                         ordersProductsHtml += '<td>'+
                         '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
+                        '<span href="#" title="Продукт уже у вас в корзине" class="fa fa-check"></span>'+
                         '</td>';
                     }
                     ordersProductsHtml +=  '</tr>';

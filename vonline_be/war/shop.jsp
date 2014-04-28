@@ -343,12 +343,14 @@
                                     <td class="product-price">${product.price}</td>
                                     <td>
                                         <input type="text" class="input-mini spinner1" data-step="${product.minClientPack}" />
+                                        <span class="added-text">добавлен</span>
                                     </td>
                                     <td>
                                         <span class="unit-name">${product.unitName}</span>
                                     </td>
                                     <td>
                                         <a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>
+                                        <span href="#" title="Продукт уже у вас в корзине" class="fa fa-check"></span>
                                     </td>
                                 </tr>
                             </c:forEach>
