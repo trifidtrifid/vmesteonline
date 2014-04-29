@@ -3,6 +3,7 @@ package com.vmesteonline.be.jdo2.postaladdress;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -56,43 +57,44 @@ public class VoGeocoder {
 					+ building.getFullNo();
 			address = URLEncoder.encode(address);
 			try {
-				URL url = new URL(geocogingServerURL + "?" + addressParamName + "=" + address);
-				YAMLGecodingHandler handler = new YAMLGecodingHandler();
-				saxParser.parse(url.openStream(), handler);
-				String longLatString = handler.longLatString();
-				
+				AddressInfo addrInfo = resolveAddressString(address);
+				String longLatString = addrInfo.getLongLatString();
+
 				if (null != longLatString) {
 					StringTokenizer st = new StringTokenizer(longLatString, " ");
 					if (st.countTokens() > 1) {
 						String longitude = st.nextToken();
 						String lattitude = st.nextToken();
 						if (!longitude.isEmpty() && !lattitude.isEmpty())
-							
-						//update other address information
-							if(handler.getStreetName() != null && !street.getName().equals( handler.getStreetName())) { //update street name
-								 List<VoStreet> streets = (List<VoStreet>) pm.newQuery(VoStreet.class, "city == :key && name == '"+handler.getStreetName().trim()+"'").execute(street.getCity().getId());
-								 
-								 VoStreet rightStreet;
-								 if( streets.size() > 0 ){
-									 rightStreet = streets.get(0);
- 								 } else { //create new street
-									 rightStreet = new VoStreet( street.getCity(), handler.getStreetName());
-									 pm.makePersistent(rightStreet);
-								 }
-								 building.setStreetId(rightStreet.getId());
-								 //check if old street has a buildings
-								 List<VoBuilding> buildings = (List<VoBuilding>) pm.newQuery(VoBuilding.class, "streetId == :key").execute(street.getId());
-								 if( buildings.size() == 0 ){
-									 pm.deletePersistent(street);
-								 }
-							} 
-							if( null!=handler.getAddresText() && null==building.getAddress())
-								building.setAddressString(handler.getAddresText());
-							
-							return new Pair<String, String>(longitude, lattitude);
+
+							// update other address information
+							if (addrInfo.getStreetName() != null && !street.getName().equals(addrInfo.getStreetName())) { // update
+																																																						// street
+																																																						// name
+								List<VoStreet> streets = (List<VoStreet>) pm.newQuery(VoStreet.class,
+										"city == :key && name == '" + addrInfo.getStreetName().trim() + "'").execute(street.getCity().getId());
+
+								VoStreet rightStreet;
+								if (streets.size() > 0) {
+									rightStreet = streets.get(0);
+								} else { // create new street
+									rightStreet = new VoStreet(street.getCity(), addrInfo.getStreetName(), pm);
+									pm.makePersistent(rightStreet);
+								}
+								building.setStreetId(rightStreet.getId());
+								// check if old street has a buildings
+								List<VoBuilding> buildings = (List<VoBuilding>) pm.newQuery(VoBuilding.class, "streetId == :key").execute(street.getId());
+								if (buildings.size() == 0) {
+									pm.deletePersistent(street);
+								}
+							}
+						if (null != addrInfo.getAddresText() && null == building.getAddress())
+							building.setAddressString(addrInfo.getAddresText());
+
+						return new Pair<String, String>(longitude, lattitude);
 					}
 				}
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.GeneralError, "Failed to get Location: " + e.getMessage());
@@ -103,110 +105,170 @@ public class VoGeocoder {
 		}
 	}
 
-	private static class YAMLGecodingHandler extends DefaultHandler {
+	public static AddressInfo resolveAddressString(String address) throws InvalidOperation {
+		try {
+			URL url = new URL(geocogingServerURL + "?" + addressParamName + "=" + address);
+			YAMLGecodingHandler handler = new YAMLGecodingHandler();
+			saxParser.parse(url.openStream(), handler);
+			return handler;
 
-		private enum WhatDataToRead { UNKNOWN, POS, STREET, CITY, FULLNO, HOUSEIDX, KIND, ADDRESS, PRECISION };
-		private WhatDataToRead whatNext = WhatDataToRead.UNKNOWN;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to resolve address. " + e.getMessage());
+		}
+	}
+
+	public static String createMapImageURL(BigDecimal longitude, BigDecimal latitude, int width, int height, String addressText) {
 		
+		return "http://static-maps.yandex.ru/1.x/?l=map&pt="+longitude+","+latitude+",pm2blm&size="+width+","+height+"&spn="+0.00002*width+","+0.00002*height;
+	}
+
+	private static class YAMLGecodingHandler extends DefaultHandler implements AddressInfo {
+
+		private enum WhatDataToRead {
+			UNKNOWN, POS, STREET, CITY, COUNTRY, FULLNO, HOUSEIDX, KIND, ADDRESS, PRECISION
+		};
+
+		private WhatDataToRead whatNext = WhatDataToRead.UNKNOWN;
+
 		private String longLatString = null;
+		private String countryName = null;
 		private String streetName = null;
 		private String cityName = null;
 		private String buildingNo = null;
-		private boolean isKindHouse = false; //<kind>house</kind> 
-    private String addresText = null; //<text>Россия, Москва, улица Новый Арбат, 24</text>
-    private boolean isExact = false; //<PRECISION>exact</precision>
-		
+		private boolean isKindHouse = false; // <kind>house</kind>
+		private String addresText = null; // <text>Россия, Москва, улица Новый
+																			// Арбат, 24</text>
+		private boolean isExact = false; // <PRECISION>exact</precision>
+		private BigDecimal lattitude = null, longitude = null;
 
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-			if (qName.equalsIgnoreCase("POS")){
+			if (qName.equalsIgnoreCase("POS")) {
 				whatNext = WhatDataToRead.POS;
-			} else if (qName.equalsIgnoreCase("kind")){
+			} else if (qName.equalsIgnoreCase("kind")) {
 				whatNext = WhatDataToRead.KIND;
-			}  else if (qName.equalsIgnoreCase("ThoroughfareName")){
+			} else if (qName.equalsIgnoreCase("ThoroughfareName")) {
 				whatNext = WhatDataToRead.STREET;
-			}  else if (qName.equalsIgnoreCase("LocalityName")){
+			} else if (qName.equalsIgnoreCase("LocalityName")) {
 				whatNext = WhatDataToRead.CITY;
-			} else if (qName.equalsIgnoreCase("PremiseNumber")){
+			} else if (qName.equalsIgnoreCase("PremiseNumber")) {
 				whatNext = WhatDataToRead.FULLNO;
-			} else if (qName.equalsIgnoreCase("HOUSELETTER")){ //NOT IMPLEMENTED
+			} else if (qName.equalsIgnoreCase("HOUSELETTER")) { // NOT IMPLEMENTED
 				whatNext = WhatDataToRead.HOUSEIDX;
-			} else if (qName.equalsIgnoreCase("precision")){
+			} else if (qName.equalsIgnoreCase("precision")) {
 				whatNext = WhatDataToRead.PRECISION;
-			} else if (qName.equalsIgnoreCase("AddressLine")){
+			} else if (qName.equalsIgnoreCase("CountryName")) {
+				whatNext = WhatDataToRead.COUNTRY;
+			} else if (qName.equalsIgnoreCase("AddressLine")) {
 				whatNext = WhatDataToRead.ADDRESS;
 			} else {
 				whatNext = WhatDataToRead.UNKNOWN;
-			} 
+			}
 		}
 
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
-			whatNext = WhatDataToRead.UNKNOWN;	
+			whatNext = WhatDataToRead.UNKNOWN;
 		}
 
 		@Override
 		public void characters(char[] ch, int start, int length) throws SAXException {
-			switch(whatNext){
-				case POS:
-					longLatString = new String(ch, start, length);
-					break;
-				case KIND:
-					isKindHouse = new String(ch, start, length).equalsIgnoreCase("house");
-					break;
-				case STREET:
-					streetName = new String(ch, start, length);
-					break;
-				case CITY:
-					cityName = new String(ch, start, length);
-					break;
-				case ADDRESS:
-					addresText = new String(ch, start, length);
-					break;
-				case PRECISION:
-					isExact = new String(ch, start, length).equalsIgnoreCase("exact");
-					break;
-				case FULLNO:
-					buildingNo = new String(ch, start, length);
-					break;
-				default:
-					break;
+			switch (whatNext) {
+			case POS:
+				longLatString = new String(ch, start, length);
+				break;
+			case KIND:
+				isKindHouse = new String(ch, start, length).equalsIgnoreCase("house");
+				break;
+			case STREET:
+				streetName = new String(ch, start, length);
+				break;
+			case CITY:
+				cityName = new String(ch, start, length);
+				break;
+			case COUNTRY:
+				countryName = new String(ch, start, length);
+				break;
+			case ADDRESS:
+				addresText = new String(ch, start, length);
+				break;
+			case PRECISION:
+				isExact = new String(ch, start, length).equalsIgnoreCase("exact");
+				break;
+			case FULLNO:
+				buildingNo = new String(ch, start, length);
+				break;
+			default:
+				break;
 			}
 		}
 
-		public String longLatString() {
-			return longLatString;
+		@Override
+		public String getCountryName() {
+			return countryName;
 		}
 
+		@Override
 		public String getLongLatString() {
 			return longLatString;
 		}
 
+		@Override
 		public String getStreetName() {
 			return streetName;
 		}
 
+		@Override
 		public String getCityName() {
 			return cityName;
 		}
 
+		@Override
 		public String getBuildingNo() {
 			return buildingNo;
 		}
 
+		@Override
 		public boolean isKindHouse() {
 			return isKindHouse;
 		}
 
+		@Override
 		public String getAddresText() {
 			return addresText;
 		}
 
+		@Override
 		public boolean isExact() {
 			return isExact;
 		}
-		
-		
+
+		@Override
+		public BigDecimal getLattitude() {
+			if (lattitude == null) {
+				calculateLongLat();
+			}
+			return lattitude;
+		}
+
+		@Override
+		public BigDecimal getLongitude() {
+			if (longitude == null) {
+				calculateLongLat();
+			}
+			return longitude;
+		}
+
+		private void calculateLongLat() {
+			if (null != longLatString) {
+				StringTokenizer st = new StringTokenizer(longLatString, " ");
+				if (st.countTokens() > 1) {
+					longitude = new BigDecimal(st.nextToken());
+					lattitude = new BigDecimal(st.nextToken());
+				}
+			}
+		}
 	}
 
 }

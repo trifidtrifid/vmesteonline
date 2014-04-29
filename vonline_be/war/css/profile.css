@@ -74,6 +74,18 @@
 .user-descr .text-area .user-body .user-addresses .add-user-address {
   margin: 10px 0;
 }
+.user-descr .text-area .user-body .user-addresses .edit-user-addr {
+  vertical-align: middle;
+  display: inline-block;
+}
+.user-descr .text-area .user-body .user-addresses .remove-user-addr {
+  color: #f00;
+  vertical-align: middle;
+  margin-left: 5px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px;
+}
 .user-descr .text-area .user-body .form-edit {
   display: none;
 }

@@ -240,12 +240,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoPostalAddress addr = new VoPostalAddress(newAddress, pm);
 			VoUser currentUser = getCurrentUser(pm);
 
-			List<VoPostalAddress> addrs = currentUser.getAddresses();
-
-			for (Iterator<VoPostalAddress> iter = addrs.listIterator(); iter.hasNext();) {
-				VoPostalAddress tmpAddr = iter.next();
-				if (tmpAddr.equals(addr))
-					iter.remove();
+			List<String> addresses = currentUser.getAddresses();
+			
+			for(String addrName : addresses) {
+				if( currentUser.getDeliveryAddress(addrName).equals(addr) ){
+					currentUser.removeDeliveryAddress(addrName);
+				}
 			}
 
 		} catch (Exception e) {
@@ -471,7 +471,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no country with the same name
-			VoCountry vc = new VoCountry(name);
+			VoCountry vc = new VoCountry(name,pm);
 			Query q = pm.newQuery(VoCountry.class);
 			q.setFilter("name == '" + name + "'");
 			List<VoCountry> countries = (List<VoCountry>) q.execute();
@@ -496,20 +496,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public City createNewCity(long countryId, String name) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			// TODO check that there is no country with the same name
 			VoCountry vco = pm.getObjectById(VoCountry.class, countryId);
-			Query q = pm.newQuery(VoCity.class);
-			q.setFilter("country == " + countryId + " &&  name == '" + name + "'");
-			List<VoCity> cities = (List<VoCity>) q.execute();
-			if (cities.size() > 0) {
-				logger.info("City was NOT created. The same City was registered. Return an old one: " + cities.get(0));
-				return cities.get(0).getCity();
-			} else {
-				logger.info("City '" + name + "'was created.");
-				VoCity vc = new VoCity(vco, name);
-				pm.makePersistent(vco);
-				return vc.getCity();
-			}
+			return new VoCity(vco, name, pm).getCity();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewCity. " + e.getMessage());
@@ -524,20 +512,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no street with the same name
-			VoCity vc = null;
-			vc = pm.getObjectById(VoCity.class, cityId);
-			Query q = pm.newQuery(VoStreet.class);
-			q.setFilter("city == " + cityId + " && name == '" + name + "'");
-			List<VoStreet> streets = (List<VoStreet>) q.execute();
-			if (streets.size() > 0) {
-				logger.info("Street was NOT created. The same sreet was registered. Return an old one: " + streets.get(0));
-				return streets.get(0).getStreet();
-			} else {
-				logger.info("Street '" + name + "'was created.");
-				VoStreet vs = new VoStreet(vc, name);
-				pm.makePersistent(vs);
-				return vs.getStreet();
-			}
+			VoCity vc = pm.getObjectById(VoCity.class, cityId);
+			return new VoStreet(vc, name,pm).getStreet();
+		
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewStreet. " + e.getMessage());
@@ -590,7 +567,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			pm.retrieve(currentUser);
-			currentUser.addPostalAddress(new VoPostalAddress(newAddress, pm));
+			currentUser.addDeliveryAddress(new VoPostalAddress(newAddress, pm),null);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -607,8 +584,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			Set<PostalAddress> pas = new HashSet<PostalAddress>();
-			for (VoPostalAddress pa : currentUser.getAddresses()) {
-				pas.add(pa.getPostalAddress(pm));
+			for (String pa : currentUser.getAddresses()) {
+				pas.add(currentUser.getDeliveryAddress(pa).getPostalAddress());
 			}
 			return pas;
 		} catch (Exception e) {

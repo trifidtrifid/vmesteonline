@@ -52,11 +52,28 @@ import org.apache.thrift.TException;
 
 
 
+
+
+
+
+
+
+
+
+
+import com.google.apphosting.api.search.DocumentPb.FieldValue.Geo;
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.GeoLocation;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.postaladdress.AddressInfo;
+import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
+import com.vmesteonline.be.jdo2.postaladdress.VoCity;
+import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
+import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
+import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.jdo2.shop.VoOrder;
 import com.vmesteonline.be.jdo2.shop.VoOrderLine;
 import com.vmesteonline.be.jdo2.shop.VoProducer;
@@ -759,11 +776,12 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	@Override
-	public long confirmOrder( long orderId ) throws InvalidOperation {
+	public long confirmOrder( long orderId, String comment ) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
 			currentOrder.setStatus(OrderStatus.CONFIRMED);
+			if( null!=comment ) currentOrder.setComment(comment);
 			// unset current order
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0);
 			pm.makePersistent(currentOrder);
@@ -1280,17 +1298,18 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
 
-			VoPostalAddress adrress = new VoPostalAddress(deliveryAddress, pm);
+			VoPostalAddress address = new VoPostalAddress(deliveryAddress, pm);
 			VoPostalAddress oldAddress = currentOrder.getDeliveryTo();
 			
-			currentOrder.setDeliveryTo(adrress);
+			currentOrder.setDeliveryTo(address);
 			pm.makePersistent(currentOrder);
 			
 			updateDeliveryCost( pm.getObjectById(VoShop.class, currentOrder.getShopId()), 
 					currentOrder, oldAddress, pm);
 			
 			VoUser currentUser = getCurrentUser(pm);
-			currentUser.addPostalAddress(adrress);
+			currentUser.addDeliveryAddress( address, address.getAddressText(pm) );
+			
 			pm.makePersistent(currentUser);
 			return currentOrder.getOrderDetails(pm);
 
@@ -1438,14 +1457,15 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			List<Order> lo = new ArrayList<Order>();
 			int now = (int)(System.currentTimeMillis()/1000L);
 			OrderDate nextDate;
-			for (VoOrder p : ps) {
+			for (VoOrder nextOrder : ps) {
 				
-				if(OrderStatus.NEW == p.getStatus() && p.getDate() > (nextDate = getNextOrderDate( now )).orderDate ){
-					p.setDate(nextDate.orderDate);
-					p.setPriceType(nextDate.priceType, pm);
+				if( 0!= userId && OrderStatus.NEW == status && nextOrder.getDate() < (nextDate = getNextOrderDate( now )).orderDate ){
+					nextOrder.setDate(nextDate.orderDate);
+					nextOrder.setPriceType(nextDate.priceType, pm);
 				} 
-				if (p.getDate() < dateTo)
-					lo.add(p.getOrder());
+				if (nextOrder.getDate() < dateTo)
+					lo.add(nextOrder.getOrder());
+				
 			}
 			pcq.closeAll();
 			return lo;
@@ -2168,10 +2188,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 					}
 				}
 			}
-
-			long currentUserId = getCurrentUserId(pm);
-			incapsulatePacketData(packFields, prodDescMap, ds, currentUserId, pm);
-			incapsulatePaketMatrix(packSizeSet, prodDescMap, ds, currentUserId, pm);
+			if( 0 < prodDescMap.size()) {
+				long currentUserId = getCurrentUserId(pm);
+				incapsulatePacketData(packFields, prodDescMap, ds, currentUserId, pm);
+				incapsulatePaketMatrix(packSizeSet, prodDescMap, ds, currentUserId, pm);
+			}
 
 			return ds;
 
@@ -2374,6 +2395,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			
 		} catch ( JDOObjectNotFoundException onfe ) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
+			
 		} finally {
 			pm.close();
 		}
@@ -2409,5 +2431,77 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		} finally {
 			pm.close();
 		}	
+	}
+//======================================================================================================================
+	@Override
+	public PostalAddress createDeliveryAddress(String buildingAddressText, int flatNo, byte floor, byte staircase, String comment)
+			throws InvalidOperation {
+		
+		AddressInfo addrInfo = VoGeocoder.resolveAddressString("Россия, Санкт Петербург, "+buildingAddressText);
+		
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser currentUser = getCurrentUser(pm);  
+			VoCountry voCountry = new VoCountry( addrInfo.getCountryName(), pm );
+			VoCity voCity = new VoCity( voCountry, addrInfo.getCityName(), pm );
+			VoStreet voStreet = new VoStreet(voCity, addrInfo.getStreetName(),pm );
+			String no = addrInfo.getBuildingNo();
+			VoBuilding voBuilding = new VoBuilding(voStreet, no, addrInfo.getLongitude(), addrInfo.getLattitude(), pm);
+			
+			VoPostalAddress pa = new VoPostalAddress( voBuilding, staircase, floor, (byte)flatNo, comment );
+			currentUser.addDeliveryAddress( pa, buildingAddressText);
+			return pa.getPostalAddress();
+			
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public List<String> getUserDeliveryAddresses() throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			return getCurrentUser(pm).getAddresses();
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public PostalAddress getUserDeliveryAddress(String addressText) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoPostalAddress deliveryAddress = getCurrentUser(pm).getDeliveryAddress(addressText);
+			return null == deliveryAddress ? null : deliveryAddress.getPostalAddress();
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public void deleteDeliveryAddress(String addressText) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			getCurrentUser(pm).removeDeliveryAddress(addressText);
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public String getDeliveryAddressViewURL(String addressText, int width, int height) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoPostalAddress deliveryAddress = getCurrentUser(pm).getDeliveryAddress(addressText);
+			if( null==deliveryAddress)
+				return null;
+			VoBuilding building = deliveryAddress.getBuilding();
+			return VoGeocoder.createMapImageURL( building.getLongitude(), building.getLatitude(), width, height, addressText);
+		} finally {
+			pm.close();
+		}
 	}	
+	
+//======================================================================================================================
+
 }

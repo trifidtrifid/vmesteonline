@@ -2,7 +2,10 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -19,6 +22,7 @@ import com.vmesteonline.be.UserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
+//import com.vmesteonline.be.shop.DeliveryAddress;
 import com.vmesteonline.be.utils.Defaults;
 
 @PersistenceCapable
@@ -36,7 +40,7 @@ public class VoUser extends GeoLocation {
 		this.likesNum = 0;
 		this.unlikesNum = 0;
 		this.rubrics = new ArrayList<VoRubric>();
-		this.deliveryAddresses = new ArrayList<VoPostalAddress>();
+		this.deliveryAddresses = new HashMap<String,VoPostalAddress>();
 		this.confirmCode = 0;
 		this.emailConfirmed = false;
 		this.avatarMessage = Defaults.defaultAvatarTopicUrl;
@@ -147,6 +151,10 @@ public class VoUser extends GeoLocation {
 		this.confirmCode = confirmCode;
 	}
 
+	public VoPostalAddress getDeliveryAddress( String key ) {
+		return deliveryAddresses.get(key);
+	}
+	
 	public void setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
 		Key addressKey = VoPostalAddress.getKeyValue(locCode);
 		try {
@@ -208,10 +216,15 @@ public class VoUser extends GeoLocation {
 		} else {
 			groups = new ArrayList<VoUserGroup>();
 		}
-		addPostalAddress(userAddress);
+		addDeliveryAddress( 0L, "домой", userAddress );
 
 		pm.makePersistent(this);
 		pm.makePersistent(building);
+	}
+
+	private void addDeliveryAddress(long l, String string, VoPostalAddress userAddress) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	// *****
@@ -232,12 +245,18 @@ public class VoUser extends GeoLocation {
 		pm.makePersistent(this);
 	}
 
-	public void addPostalAddress(VoPostalAddress pa) {
-		deliveryAddresses.add(pa);
+	public void addDeliveryAddress( VoPostalAddress pa, String textKey ) throws InvalidOperation {
+		deliveryAddresses.put(textKey, pa);
+	}
+	
+	public boolean removeDeliveryAddress( String key ){
+		return deliveryAddresses.remove(key) != null;
 	}
 
-	public List<VoPostalAddress> getAddresses() {
-		return deliveryAddresses;
+	public List<String> getAddresses() {
+		List<String> out = new ArrayList<String>();
+		out.addAll( deliveryAddresses.keySet());
+		return out;
 	}
 
 	public boolean isEmailConfirmed() {
@@ -260,7 +279,7 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	@Unowned
-	private List<VoPostalAddress> deliveryAddresses;
+	private Map<String,VoPostalAddress> deliveryAddresses;
 
 	@Persistent
 	@Unindexed
@@ -325,7 +344,8 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	private String avatarProfileShort;
-
+	
+	
 	public String getAvatarMessage() {
 		return avatarMessage;
 	}
