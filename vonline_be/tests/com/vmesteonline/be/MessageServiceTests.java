@@ -346,12 +346,13 @@ public class MessageServiceTests {
 
 			Assert.assertTrue(asi.login(Defaults.user3email, Defaults.user3pass));
 
-			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
+			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), getUserGroupId(Defaults.user3email, Defaults.radiusHome), MessageType.BASE, 0,
+					false, 10);
 			Assert.assertNotNull(mlp);
 			Assert.assertEquals(1, mlp.totalSize);
 			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getId());
 
-			mlp = msi.getMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, msg.getId(), false, 10);
+			mlp = msi.getMessages(topic.getId(), getUserGroupId(Defaults.user3email, Defaults.radiusHome), MessageType.BASE, msg.getId(), false, 10);
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals(1, mlp.messages.get(0).getOffset());
@@ -547,6 +548,7 @@ public class MessageServiceTests {
 			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), getUserGroupId(Defaults.user1email, 20), MessageType.BASE,
 					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
 
+			asi.login(Defaults.user2email, Defaults.user2pass);
 			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), getUserGroupId(Defaults.user2email, 2000), MessageType.BASE, 0, false, 20);
 			Assert.assertNotNull(mlp);
 			Assert.assertEquals(0, mlp.totalSize);

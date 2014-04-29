@@ -222,7 +222,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			List<String> locations = new ArrayList<String>();
 			for (VoPostalAddress pa : postalAddresses) {
 				pm.retrieve(pa);
-				locations.add("" + pa.getAddressCode());
+				if (pa.getBuilding() != null)
+					locations.add("" + pa.getAddressCode());
 			}
 			return locations;
 		} finally {
@@ -427,7 +428,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			for (VoCity voc : vocis) {
 				cil.add(voc.getCity());
 			}
-
+		
 			Extent<VoStreet> voss = pm.getExtent(VoStreet.class);
 			List<Street> sl = new ArrayList<Street>();
 			for (VoStreet voc : voss) {
