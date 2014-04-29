@@ -23,7 +23,6 @@ import com.vmesteonline.be.UserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
-//import com.vmesteonline.be.shop.DeliveryAddress;
 import com.vmesteonline.be.utils.Defaults;
 
 @PersistenceCapable
@@ -153,7 +152,7 @@ public class VoUser extends GeoLocation {
 	}
 
 	public VoPostalAddress getDeliveryAddress( String key ) {
-		return deliveryAddresses.get(key);
+		return deliveryAddresses!=null ? deliveryAddresses.get(key) : null;
 	}
 	
 	public void setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
@@ -195,7 +194,7 @@ public class VoUser extends GeoLocation {
 		if (null != building) {
 			pm.retrieve(building);
 			VoUserGroup home = userAddress.getUserHomeGroup();
-			if (null != home) {
+			if(null!=home){
 				this.setLatitude(home.getLatitude());
 				this.setLongitude(home.getLongitude());
 				if (null != groups && !groups.isEmpty()) {
@@ -203,14 +202,13 @@ public class VoUser extends GeoLocation {
 						ug.setLatitude(home.getLatitude());
 						ug.setLongitude(home.getLongitude());
 					}
-				} else {
-					groups = new ArrayList<VoUserGroup>();
-					groups.add(home);
-					if (null != Defaults.defaultGroups) {
-						for (VoGroup grp : Defaults.defaultGroups) {
-							if (!grp.isHome())
-								groups.add(new VoUserGroup(this, grp));
-						}
+				}
+			} else {
+				groups = new ArrayList<VoUserGroup>();
+				if(null!=Defaults.defaultGroups){
+					for (VoGroup grp : Defaults.defaultGroups) {
+						if (!grp.isHome())
+							groups.add(new VoUserGroup(this, grp));
 					}
 				}
 			}
@@ -247,11 +245,13 @@ public class VoUser extends GeoLocation {
 	}
 
 	public void addDeliveryAddress( VoPostalAddress pa, String textKey ) throws InvalidOperation {
+		if(deliveryAddresses==null)
+			deliveryAddresses = new HashMap<String,VoPostalAddress>();
 		deliveryAddresses.put(textKey, pa);
 	}
 	
 	public boolean removeDeliveryAddress( String key ){
-		return deliveryAddresses.remove(key) != null;
+		return null == deliveryAddresses ? false : deliveryAddresses.remove(key) != null;
 	}
 
 	public List<String> getAddresses() {
@@ -281,6 +281,7 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private String birthday;
 
+	
 	@Persistent
 	@Unindexed
 	@Unowned
