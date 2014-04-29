@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -255,7 +256,11 @@ public class VoUser extends GeoLocation {
 
 	public List<String> getAddresses() {
 		List<String> out = new ArrayList<String>();
-		out.addAll( deliveryAddresses.keySet());
+		if(null!=deliveryAddresses){
+			Set<String> keySet = deliveryAddresses.keySet();
+			if( null!=keySet && keySet.size() > 0 ) 
+				out.addAll( keySet);
+		}
 		return out;
 	}
 
