@@ -2,7 +2,6 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,6 @@ import com.vmesteonline.be.UserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
-//import com.vmesteonline.be.shop.DeliveryAddress;
 import com.vmesteonline.be.utils.Defaults;
 
 @PersistenceCapable

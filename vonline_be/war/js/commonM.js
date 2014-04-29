@@ -132,8 +132,8 @@ define(
                 }
             });
 
-            //var userAddresses = thriftModule.client.getUserDeliveryAddresses();
-            var userAddresses = thriftModule.userClient.getUserAddresses();
+            var userAddresses = thriftModule.client.getUserDeliveryAddresses();
+            //var userAddresses = thriftModule.userClient.getUserAddresses();
 
             var userAddressesLength = userAddresses.length;
             if(userAddressesLength > 0){
