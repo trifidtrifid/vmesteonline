@@ -361,9 +361,9 @@ define(
                     default:
                         checkboxDeliveryType.find('input.courier-delivery').prop('checked',true);
                         writeAddress(orderDetails.deliveryTo);
-                        var userAddresses = thriftModule.userClient.getUserAddresses();
+                        //var userAddresses = thriftModule.userClient.getUserAddresses();
                         defaultAddressForCourier = orderDetails.deliveryTo;
-                        showDeliveryDropdown(orderId,userAddresses);
+                        //showDeliveryDropdown(orderId,userAddresses);
                         break;
                 }
                 setDeliveryCost(orderId,orderDetails);
@@ -702,10 +702,11 @@ define(
 
         function getNextDate(){
             try{
-                //var day = 3600*24;
+                var day = 3600*24;
                 var now = parseInt(new Date()/1000);
                 now -= now%86400;
                 var nextDate = thriftModule.client.getNextOrderDate(now);
+                //alert(nextDate.orderDate);
             }catch(e){
                 alert(e + ' Функция SetFreeDates');
             }
@@ -802,7 +803,7 @@ define(
                     //если доставка курьером
 
                     var homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
-                    var userAddresses = thriftModule.userClient.getUserAddresses();
+                    //var userAddresses = thriftModule.userClient.getUserAddresses();
                     if (!defaultAddressForCourier){
                         defaultAddressForCourier = (homeAddress) ? homeAddress : userAddresses[0];
                     }
@@ -819,7 +820,18 @@ define(
 
                     itogoRight.text(commonModule.countAmount($('.confirm-order'),orderDetails));
 
-                    showDeliveryDropdown(orderId,userAddresses);
+                    $('.address-input').show();
+
+                    $('.street-and-building').focusout(function(){
+                        var addressText =  $(this).val();
+                        //alert('1');
+                        var mapUrl = thriftModule.client.getDeliveryAddressViewURL(addressText,300,200);
+                        alert(mapUrl);
+
+                        $(this).closest('.address-input').after("<img src='"+ mapUrl +"'>");
+                    });
+
+                    //showDeliveryDropdown(orderId,userAddresses);
 
                     triggerDelivery = 1;
 
