@@ -54,7 +54,7 @@ define(
 
         function getOrderWeight(orderId,orderDetails){
             var myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
-            return (myOrderDetails.weightGramm/1000).toFixed(3);
+            return (myOrderDetails.weightGramm/1000).toFixed(1);
         }
 
         function addAddressToBase(currentForm){

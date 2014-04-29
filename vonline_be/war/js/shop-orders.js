@@ -161,7 +161,7 @@ define(
                         orderDetails.deliveryTo.flatNo+
                         '</td>'+
                         '<td class="td9">'+ orderDetails.deliveryCost +'</td>'+
-                        '<td class="td8">'+ orderDetails.weightGramm +'</td>'+
+                        '<td class="td8">'+ (orderDetails.weightGramm/1000).toFixed(1) +'</td>'+
                         '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
                         '<td class="td7">'+
                         '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+

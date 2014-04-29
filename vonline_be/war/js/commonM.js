@@ -136,7 +136,6 @@ define(
             //var userAddresses = thriftModule.userClient.getUserAddresses();
 
             var userAddressesLength = userAddresses.length;
-            alert(userAddressesLength);
 
             if(userAddressesLength > 0){
                 var userAddressesHtml = "";
@@ -214,17 +213,15 @@ define(
                 var deliveryAddress = commonModule.addAddressToBase(currentForm);
 
                 if(!currentForm.prev().hasClass('add-user-address')){
-                     //если сохраняем при добавлении
-
+                    // если сохраняем при редактировании
                 currentForm.prev().find('span').text(deliveryAddress.country.name + ", " + deliveryAddress.city.name + ", "
                     + deliveryAddress.street.name + " " + deliveryAddress.building.fullNo + ", кв. " + deliveryAddress.flatNo);
 
-                    if (addressForDelete) thriftModule.userClient.deleteUserAddress(addressForDelete);
-                    thriftModule.userClient.addUserAddress(deliveryAddress);
+                    if (addressForDelete) thriftModule.client.deleteDeliveryAddress(addressForDelete.street.name+" "+deliveryAddress.building.fullNo);
+                    thriftModule.client.createDeliveryAddress(deliveryAddress.street.name+" "+deliveryAddress.building.fullNo,deliveryAddress.flatNo,0,0,0);
 
                 }else{
-                    // если сохраняем при редактировании
-
+                    //если сохраняем при добавлении
                     var ind = $('.user-address-item').length;
                     if(!ind){ind = 1;}
                     var newAddressesHtml ='<div class="user-address-item no-init" data-index="'+ ind +'">'+
@@ -237,8 +234,8 @@ define(
                         '</div>';
                    $('.user-addresses').prepend(newAddressesHtml);
 
-                    thriftModule.userClient.addUserAddress(deliveryAddress);
-                    var userAddresses = thriftModule.userClient.getUserAddresses();
+                    thriftModule.client.createDeliveryAddress(deliveryAddress.street.name+" "+deliveryAddress.building.fullNo,deliveryAddress.flatNo,0,0,0);
+                    var userAddresses = thriftModule.client.getUserDeliveryAddresses();
 
                     var noInit = $('.user-address-item.no-init');
                     initEditAddress(noInit,userAddresses,deliveryAddress);
@@ -264,7 +261,7 @@ define(
                     var currentForm = currentAddrItem.find('+.form-edit');
 
                     var ind = currentAddrItem.data('index');
-                    if(!currentAddress){currAddr = userAddresses[ind];}
+                    if(!currentAddress){currAddr = thriftModule.client.getUserDeliveryAddress(userAddresses[ind]);}
 
                     WriteAddress(currentForm,currAddr);
                     var addressForDelete = commonModule.addAddressToBase(currentForm);
@@ -285,8 +282,9 @@ define(
                 $(this).closest('.user-address-item').slideUp(function(){
                     var ind = $(this).data('index');
                     var currAddr;
-                    (currentAddress) ? currAddr = currentAddress: currAddr = userAddresses[ind];
-                    thriftModule.userClient.deleteUserAddress(currAddr);
+                    currAddr = (currentAddress) ? currentAddress : userAddresses[ind];
+                    //thriftModule.userClient.deleteUserAddress(currAddr);
+                    thriftModule.client.deleteDeliveryAddress(currAddr);
                 });
             })
         }

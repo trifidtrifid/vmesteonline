@@ -68,16 +68,16 @@ define(
 
                         $(this).detach();
 
+                        thriftModule.client.removeOrderLine(orderId,$(this).closest('.product').data('productid'));
+                        myOrderDetails = thriftModule.client.getOrderDetails(orderId);
+
+                        currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order'),myOrderDetails));
+
                         if (currentProductList.length == 1){
                             // если это был последний товар в корзине
                             currentTab.closest('.tabs-days').hide().remove();
                             thriftModule.client.deleteOrder(orderId);
                         }
-
-                        thriftModule.client.removeOrderLine(orderId,$(this).closest('.product').data('productid'));
-                        myOrderDetails = thriftModule.client.getOrderDetails(orderId);
-
-                        currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order'),myOrderDetails));
 
                         var weight = commonModule.getOrderWeight(orderId,myOrderDetails);
                         currentTab.find('.weight span').text(weight);
@@ -361,9 +361,9 @@ define(
                     default:
                         checkboxDeliveryType.find('input.courier-delivery').prop('checked',true);
                         writeAddress(orderDetails.deliveryTo);
-                        //var userAddresses = thriftModule.userClient.getUserAddresses();
+                        var userAddresses = thriftModule.client.getUserDeliveryAddresses();
                         defaultAddressForCourier = orderDetails.deliveryTo;
-                        //showDeliveryDropdown(orderId,userAddresses);
+                        showDeliveryDropdown(orderId,userAddresses);
                         break;
                 }
                 setDeliveryCost(orderId,orderDetails);
@@ -718,19 +718,24 @@ define(
         var triggerDelivery = 0;
 
         function writeAddress(address){
+            //if(address.country){
             $('.input-delivery .delivery-address').text(address.country.name + ", " + address.city.name + ", "
                 + address.street.name + " " + address.building.fullNo + ", кв. " + address.flatNo);
+            /*}else{
+                $('.input-delivery .delivery-address').text(address);
+            }*/
         }
 
         function setDeliveryDropdown(orderId,userAddresses){
             var addresses;
-            addresses = (userAddresses) ? userAddresses : thriftModule.userClient.getUserAddresses();
+            addresses = (userAddresses) ? userAddresses : thriftModule.client.getUserDeliveryAddresses();
 
             var userAddressesHtml = "";
             var userAddressesLength = addresses.length;
             for(var i = 0; i < userAddressesLength; i++){
                 userAddressesHtml += '<li><a href="#">'+
-                    addresses[i].country.name+", "+addresses[i].city.name+", "+addresses[i].street.name+" "+addresses[i].building.fullNo+", кв. "+addresses[i].flatNo+
+                    addresses[i]+
+                    //addresses[i].country.name+", "+addresses[i].city.name+", "+addresses[i].street.name+" "+addresses[i].building.fullNo+", кв. "+addresses[i].flatNo+
                     '</a></li>';
             }
             userAddressesHtml += '<li class="divider"></li>'+
@@ -742,9 +747,9 @@ define(
                 e.preventDefault();
                 var ind = $(this).parent().index();
 
-                defaultAddressForCourier = addresses[ind];
-                writeAddress(addresses[ind]);
-                var orderDetails = thriftModule.client.setOrderDeliveryType(orderId,2,addresses[ind]);
+                defaultAddressForCourier = thriftModule.client.getUserDeliveryAddress(addresses[ind]);
+                writeAddress(defaultAddressForCourier);
+                var orderDetails = thriftModule.client.setOrderDeliveryType(orderId,2,defaultAddressForCourier);
                 setDeliveryCost(orderId,orderDetails);
             });
 
@@ -760,10 +765,23 @@ define(
             $('.add-address').click(function(e){
                 e.preventDefault();
 
-                if (!$('.country-delivery').val() || !$('.city-delivery').val() || !$('.street-delivery').val() || !$('.building-delivery').val() || !$('.flat-delivery').val()){
+                var street = $('.street-delivery').val(),
+                    building = $('.building-delivery').val(),
+                    flat = $('.flat-delivery').val();
+
+                if (!$('.country-delivery').val() || !$('.city-delivery').val() || !street || !building || !flat){
                     $('.alert-delivery-phone').hide();
                     $('.alert-delivery-addr').text('Введите полный адресс доставки !').show();
                 }else{
+                    var addressText =  street + " " + building;
+                    alert(addressText+" "+flat);
+                    thriftModule.client.createDeliveryAddress(addressText,parseInt(flat),0,0,0);
+                    alert('---');
+                    var mapUrl = thriftModule.client.getDeliveryAddressViewURL(addressText,300,200);
+                    alert(mapUrl);
+
+                    $(this).closest('.address-input').after("<img src='"+ mapUrl +"'>");
+
                     $('.alert-delivery-addr').hide();
                     var addressInput = $('.address-input');
                     addressInput.slideUp();
@@ -774,7 +792,7 @@ define(
                     var deliveryAddress = defaultAddressForCourier = commonModule.addAddressToBase(addressInput);
                     writeAddress(deliveryAddress);
 
-                    thriftModule.userClient.addUserAddress(deliveryAddress);
+                    //thriftModule.client.addUserAddress(deliveryAddress);
 
                     var orderDetails = thriftModule.client.setOrderDeliveryType(orderId,2,deliveryAddress);
                     setDeliveryCost(orderId,orderDetails);
@@ -803,9 +821,9 @@ define(
                     //если доставка курьером
 
                     var homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
-                    //var userAddresses = thriftModule.userClient.getUserAddresses();
+                    var userAddresses = thriftModule.client.getUserDeliveryAddresses();
                     if (!defaultAddressForCourier){
-                        defaultAddressForCourier = (homeAddress) ? homeAddress : userAddresses[0];
+                        defaultAddressForCourier = (homeAddress) ? homeAddress : thriftModule.client.getUserDeliveryAddress(userAddresses[0]);
                     }
                     var myAddress = defaultAddressForCourier;
 
@@ -820,9 +838,7 @@ define(
 
                     itogoRight.text(commonModule.countAmount($('.confirm-order'),orderDetails));
 
-                    $('.address-input').show();
-
-                    $('.street-and-building').focusout(function(){
+                    /*$('.street-and-building').focusout(function(){
                         var addressText =  $(this).val();
                         alert('1');
                         thriftModule.client.createDeliveryAddress(addressText,0,0,0,0);
@@ -830,9 +846,9 @@ define(
                         alert(mapUrl);
 
                         $(this).closest('.address-input').after("<img src='"+ mapUrl +"'>");
-                    });
+                    });*/
 
-                    //showDeliveryDropdown(orderId,userAddresses);
+                    showDeliveryDropdown(orderId,userAddresses);
 
                     triggerDelivery = 1;
 
