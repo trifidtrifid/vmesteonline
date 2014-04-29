@@ -107,7 +107,7 @@ public class VoGeocoder {
 
 	public static AddressInfo resolveAddressString(String address) throws InvalidOperation {
 		try {
-			URL url = new URL(geocogingServerURL + "?" + addressParamName + "=" + address);
+			URL url = new URL(geocogingServerURL + "?" + addressParamName + "=" + URLEncoder.encode(address));
 			YAMLGecodingHandler handler = new YAMLGecodingHandler();
 			saxParser.parse(url.openStream(), handler);
 			return handler;

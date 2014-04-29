@@ -60,7 +60,7 @@ public class VoShopAccessRoles extends VoUserAccessBaseRoles {
 		fillRoleMethods( methodsAccessMask, CUSTOMER, new String[] {
 			"getMyOrdersByStatus","getOrder","getOrderDetails","createOrder","updateOrder","cancelOrder","deleteOrder","confirmOrder","appendOrder","mergeOrder",
 			"setOrderLine","removeOrderLine","setOrderDeliveryType","setOrderPaymentType",
-			"setOrderDeliveryAddress","createDeliveryAddres","getUserDeliveryAddresses","getUserDeliveryAddress","deleteDeliveryAddress","getDeliveryAddressViewURL"
+			"setOrderDeliveryAddress","createDeliveryAddress","getUserDeliveryAddresses","getUserDeliveryAddress","deleteDeliveryAddress","getDeliveryAddressViewURL"
 		});
 
 		//Unregistered User 

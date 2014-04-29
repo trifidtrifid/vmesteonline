@@ -824,7 +824,8 @@ define(
 
                     $('.street-and-building').focusout(function(){
                         var addressText =  $(this).val();
-                        //alert('1');
+                        alert('1');
+                        thriftModule.client.createDeliveryAddress(addressText,0,0,0,0);
                         var mapUrl = thriftModule.client.getDeliveryAddressViewURL(addressText,300,200);
                         alert(mapUrl);
 
