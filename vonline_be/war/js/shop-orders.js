@@ -27,12 +27,12 @@ define(
                     commonModule = require('shop-common');
                     (orderLines[j].product.imageURL) ? myPic = orderLines[j].product.imageURL : myPic = commonModule.noPhotoPic;
                     if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
-                    ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
+                    ordersProductsHtml += '<tr class="product" data-prepack="'+ orderLines[j].product.prepackRequired +'" data-productid="'+ orderLines[j].product.id +'">'+
                         '<td>'+
                         '<a href="#" class="product-link">'+
                         '<div class="product-pic"><img src="'+ myPic +'" alt="картинка"/></div>'+
                         '<span>'+
-                        '<span>'+orderLines[j].product.name+'</span>'+
+                        '<span class="product-name">'+orderLines[j].product.name+'</span>'+
                         orderLines[j].product.shortDescr +
                         '</span>'+
                         '</a>'+
@@ -40,7 +40,7 @@ define(
                         '</div>'+
                         '</td>'+
                         '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
-                        '<td>';
+                        '<td class="td-spinner">';
 
                     if(noEdit){
                         ordersProductsHtml += orderLines[j].quantity;
@@ -55,12 +55,13 @@ define(
                         ordersProductsHtml += ' data-step="'+  orderLines[j].product.minClientPack +'" class="input-mini spinner1" />';
                     }
 
-                    ordersProductsHtml += '</td>'+
+                    ordersProductsHtml += '<span class="added-text">добавлен</span></td>'+
                         '<td><span class="unit-name">'+unitName+'</span></td>';
 
                     if(!noEdit){
                         ordersProductsHtml += '<td>'+
                         '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
+                        '<span href="#" title="Продукт уже у вас в корзине" class="fa fa-check"></span>'+
                         '</td>';
                     }
                     ordersProductsHtml +=  '</tr>';
@@ -278,7 +279,7 @@ define(
                     basketModule.AddSingleProductToBasket(curProd,spinVal,spinnerDisable);
                 }
                 commonModule.markAddedProduct();
-                tabPaneActive.find('.weight span').text(orderDetails.weightGramm);
+                tabPaneActive.find('.weight span').text(commonModule.getOrderWeight(orderId));
             }catch(e){
                 alert(e+" Функция addSingleOrderToBasket");
             }

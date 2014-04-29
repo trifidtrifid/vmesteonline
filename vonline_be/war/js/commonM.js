@@ -29,7 +29,8 @@ define(
         });
 
         $('.nav-list a,.navbar .nav a:not(".dropdown-toggle")').click(function(e){
-            e.preventDefault();
+            var isBackoffise = $(this).closest('.backoffice').length;
+            if(!isBackoffise) e.preventDefault();
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
         });
@@ -131,16 +132,20 @@ define(
                 }
             });
 
+            //var userAddresses = thriftModule.client.getUserDeliveryAddresses();
             var userAddresses = thriftModule.userClient.getUserAddresses();
+
             var userAddressesLength = userAddresses.length;
             if(userAddressesLength > 0){
                 var userAddressesHtml = "";
                 for(var i = 0; i < userAddressesLength; i++){
                     userAddressesHtml +='<div class="user-address-item" data-index="'+ i +'">'+
                         '<span>'+
-                        userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
+                        userAddresses[i]+
+                        //userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
                         '</span>'+
                         '<a href="#" class="edit-user-addr">редактировать</a>'+
+                        '<a href="#" title="Удалить" class="remove-user-addr">&times;</a>'+
                     '</div>';
                 }
                 $('.user-addresses').prepend(userAddressesHtml);
@@ -207,6 +212,7 @@ define(
                 var deliveryAddress = commonModule.addAddressToBase(currentForm);
 
                 if(!currentForm.prev().hasClass('add-user-address')){
+                     //если сохраняем при добавлении
 
                 currentForm.prev().find('span').text(deliveryAddress.country.name + ", " + deliveryAddress.city.name + ", "
                     + deliveryAddress.street.name + " " + deliveryAddress.building.fullNo + ", кв. " + deliveryAddress.flatNo);
@@ -215,6 +221,8 @@ define(
                     thriftModule.userClient.addUserAddress(deliveryAddress);
 
                 }else{
+                    // если сохраняем при редактировании
+
                     var ind = $('.user-address-item').length;
                     if(!ind){ind = 1;}
                     var newAddressesHtml ='<div class="user-address-item no-init" data-index="'+ ind +'">'+
@@ -223,6 +231,7 @@ define(
                         + deliveryAddress.street.name + " " + deliveryAddress.building.fullNo + ", кв. " + deliveryAddress.flatNo+
                         '</span>'+
                         '<a href="#" class="edit-user-addr">редактировать</a>'+
+                        '<a href="#" title="Удалить" class="remove-user-addr">&times;</a>'+
                         '</div>';
                    $('.user-addresses').prepend(newAddressesHtml);
 
@@ -267,7 +276,19 @@ define(
                 });
 
             });
+
+            selector.find('.remove-user-addr').click(function(e){
+                e.preventDefault();
+
+                $(this).closest('.user-address-item').slideUp(function(){
+                    var ind = $(this).data('index');
+                    var currAddr;
+                    (currentAddress) ? currAddr = currentAddress: currAddr = userAddresses[ind];
+                    thriftModule.userClient.deleteUserAddress(currAddr);
+                });
+            })
         }
+
 
         $('.user-menu a').click(function(e){
             e.preventDefault();
@@ -290,9 +311,9 @@ define(
             }
         });
 
-        $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
+        $('.user-short .dropdown-toggle.no-login').click(function(){
                 $(this).parent().addClass('open');
-            });
+        });
 
         commonModule.setSidebarHeight();
 

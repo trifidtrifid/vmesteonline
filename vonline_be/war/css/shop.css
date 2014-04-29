@@ -230,9 +230,6 @@ a {
 .shop-right .catalog-order li .unit-name {
   display: none;
 }
-.shop-right .catalog-order .fa-shopping-cart {
-  display: none !important;
-}
 .shop-right .btn-grey {
   margin-left: 186px;
   margin-right: 10px;
@@ -394,6 +391,24 @@ span
 }
 .catalog table tr.added {
   background-color: #e7ffc5;
+/*.modal-with-prepack
+          height 268px !important*/
+}
+.catalog table tr.added .added-text {
+  display: block;
+  font-weight: bold;
+}
+.catalog table tr.added .ace-spinner,
+.catalog table tr.added .fa-shopping-cart,
+.catalog table tr.added .prepack-item,
+.catalog table tr.added .prepack-list {
+  display: none;
+}
+.catalog table tr.added .fa-check {
+  display: block;
+  font-size: 24px;
+  cursor: default;
+  margin: 0;
 }
 .catalog table tr td {
   vertical-align: middle;
@@ -448,6 +463,10 @@ span
 .catalog table tr td .unit-name,
 .catalog table tr td .ace-spinner {
   margin: 0;
+}
+.catalog table tr td .added-text,
+.catalog table tr td .fa-check {
+  display: none;
 }
 .shop-orders {
   display: none;
@@ -1062,9 +1081,6 @@ height 50px
   vertical-align: middle;
   margin-left: 40px;
 }
-.confirm-order .catalog-confirm .fa-shopping-cart {
-  display: none !important;
-}
 .confirm-order .itogo-right,
 .confirm-order .weight-right {
   float: right;
@@ -1237,6 +1253,12 @@ height 50px
 }
 .order-end .order-end-in .bill-wrap .order-end-info .bill-comment div {
   margin-left: 130px;
+}
+.order-end .order-end-in .bill-wrap .order-end-info .bill-delivery {
+  float: right;
+  font-weight: bold;
+  margin: 10px 0 15px 0;
+  font-size: 14px;
 }
 .order-end .order-end-in .bill-wrap .order-end-info .order-end-amount {
   text-align: right;

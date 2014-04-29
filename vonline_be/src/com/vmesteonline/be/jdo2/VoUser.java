@@ -22,7 +22,7 @@ import com.vmesteonline.be.UserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
-import com.vmesteonline.be.shop.DeliveryAddress;
+//import com.vmesteonline.be.shop.DeliveryAddress;
 import com.vmesteonline.be.utils.Defaults;
 
 @PersistenceCapable

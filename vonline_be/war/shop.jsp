@@ -171,12 +171,6 @@
                 </div>
                 <div class="hide-right">×</div>
                 <div class="sidebar-title">
-                    <%--<a href="#" class="go-to-orders shop-trigger">Заказы</a>--%>
-                    <%--<nav>
-                        <div class="input-group">
-                            <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="dd-mm-yyyy" value="Выберите дату" onblur="if(this.value=='') this.value='Выберите дату';" onfocus="if(this.value=='Выберите дату') this.value='';"/>
-                        </div>
-                    </nav>--%>
                 </div>
 
                 <%--<div class="tabbable tabs-right tabs-days">
@@ -283,56 +277,6 @@
                     </div>
                 </div>--%>
 
-
-<%--                <div class="additionally-order">
-                    <div class="itogo-right">
-                        Товаров на сумму: <span></span> руб.
-                    </div>
-                    <div class="delivery-right">
-                        <h3>Доставка</h3>
-                        <div class="radio">
-                            <label>
-                                <input name="form-field-radio" type="radio" checked="checked" class="ace">
-                                <span class="lbl"> Самовывоз</span>
-                            </label>
-                        </div>
-                        <div class="radio">
-                            <label>
-                                <input name="form-field-radio" type="radio" class="ace courier-delivery">
-                                <span class="lbl"> Курьер </span>
-                            </label>
-                        </div>
-                        <div class="input-delivery">
-                            <span class="lbl">Стоимость доставки : <span class="delivery-cost"></span> руб</span>
-                            <input id="phone-delivery" type="tel" required="required" placeholder="Номер телефона"/>
-                            <div class="alert-delivery alert-delivery-phone"></div>
-                            <div class="btn-group delivery-dropdown">
-                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                                    <span class="btn-group-text">Выбрать адрес</span>
-                                    <span class="icon-caret-down icon-on-right"></span>
-                                </button>
-
-                                <ul class="dropdown-menu dropdown-blue">
-                                    <li class="divider"></li>
-                                    <li><a href="#" class="delivery-add-address">Добавить адрес ...</a></li>
-                                </ul>
-                            </div>
-                            <span class="lbl"> Адрес доставки</span>
-                            <input id="country-delivery" type="text" value="Россия" placeholder="Страна"/>
-                            <input id="city-delivery" type="text" value="Санкт-Петербург" placeholder="Город"/>
-                            <input id="street-delivery" type="text" placeholder="Улица"/>
-                            <input id="building-delivery" type="text" class="short first" placeholder="Дом"/>
-                            <input id="flat-delivery" type="text" class="short" placeholder="Квартира"/>
-                        </div>
-                        <div class="alert-delivery alert-delivery-addr">Введите адрес доставки !</div>
-                    </div>
-                    <textarea name="order-comment" id="order-comment" placeholder="Комментарий к заказу"></textarea>
-                    <button class="btn btn-sm btn-grey no-border btn-cancel">Отменить</button>
-                    <button class="btn btn-sm btn-primary no-border btn-order">Заказать</button>
-                </div>--%>
-                <%--<div class="empty-basket">
-                    Ваша корзина пуста
-                </div>--%>
             </aside>
             <div class="main-content">
                 <div class="shop-products">
@@ -374,7 +318,7 @@
                             </tr>
                             </thead>
                             <c:forEach var="product" items="${products}">
-                                <tr data-productid="${product.id}">
+                                <tr data-productid="${product.id}" data-prepack="${product.prepackRequired}" class="product">
                                     <td>
                                         <a href="#" class="product-link">
                                             <div class="product-pic">
@@ -389,7 +333,7 @@
                                             </div>
 
                                             <span>
-                                            <span>${product.name}</span>
+                                            <span class="product-name">${product.name}</span>
                                             ${product.shortDescr}
                                             </span>
                                         </a>
@@ -397,14 +341,16 @@
                                         </div>
                                     </td>
                                     <td class="product-price">${product.price}</td>
-                                    <td>
+                                    <td class="td-spinner">
                                         <input type="text" class="input-mini spinner1" data-step="${product.minClientPack}" />
+                                        <span class="added-text">добавлен</span>
                                     </td>
                                     <td>
                                         <span class="unit-name">${product.unitName}</span>
                                     </td>
                                     <td>
                                         <a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>
+                                        <span href="#" title="Продукт уже у вас в корзине" class="fa fa-check"></span>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -462,8 +408,8 @@
 
 	</div>
 	<!-- общие библиотеки -->
-	<script src="js/lib/jquery-2.0.3.min.js"></script>
-	<script src="js/lib/bootstrap.min.js"></script>
+	<%--<script src="js/lib/jquery-2.0.3.min.js"></script>--%>
+	<%--<script src="js/lib/bootstrap.js"></script>--%>
     <!-- файлы thrift -->
     <script src="js/thrift.js" type="text/javascript"></script>
     <script src="gen-js/bedata_types.js" type="text/javascript"></script>
@@ -475,19 +421,14 @@
     <script src="gen-js/UserService.js" type="text/javascript"></script>
     <!-- -->
 
-	<!-- конкретные плагины -->
+<%--	<!-- конкретные плагины -->
 	<script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
 	<script src="js/lib/fuelux/fuelux.spinner.min.js"></script>
-	<script src="js/lib/date-time/bootstrap-datepicker.js"></script>
-	<script src="js/lib/date-time/bootstrap-datepicker-simple.js"></script>
-    <script src="js/lib/date-time/locales/bootstrap-datepicker.ru.js"></script>
-	<%--<script src="js/lib/date-time/bootstrap-datepicker.js"></script>--%>
-
 	<script src="js/lib/jquery.flexslider-min.js"></script>
 
 	<!-- -->
 	<script src="js/lib/ace-extra.min.js"></script>
-	<script src="js/lib/ace-elements.min.js"></script>
+	<script src="js/lib/ace-elements.min.js"></script>--%>
 	<!-- собственные скрипты  -->
 <%--
 	<script src="js/login.js"></script>

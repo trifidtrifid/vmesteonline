@@ -60,9 +60,9 @@ define(
 
                             products[i].qnty = products[i].minClientPack;
                             products[i].prepackLine = [];
-                            var productDetails = thriftModule.client.getProductDetails(products[i].id);
+                            //var productDetails = thriftModule.client.getProductDetails(products[i].id);
 
-                            if(productDetails.prepackRequired){
+                            if(products[i].prepackRequired){
                                 packs[products[i].minClientPack] = 1;
                             }
 
