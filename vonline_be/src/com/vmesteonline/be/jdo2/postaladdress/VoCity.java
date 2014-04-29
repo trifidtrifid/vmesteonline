@@ -23,17 +23,18 @@ public class VoCity implements Comparable<VoCity> {
 	
 	public VoCity(VoCountry country,String name,PersistenceManager pm) throws InvalidOperation {
 		List<VoCity> vcl = (List<VoCity>)pm.newQuery(VoCity.class, "country == :key && name=='"+name+"'").execute(country.getId());
+		this.setCountry(country);
+		this.setName(name);
+		
 		if( vcl.size() > 0 ){
 			id = vcl.get(0).getId();
+			this.setStreets( vcl.get(0).getStreets());
 			
 		} else {
 			
-			this.setCountry(country);
-			this.setName(name);
 			if( country.getCities().contains( this ))
 				throw new InvalidOperation(VoError.GeneralError, "The same City '"+name+"' already exists in contry "+country.getName());
 			country.addCity(this);
-			this.name = name;
 			this.setStreets(new HashSet<VoStreet>());
 			pm.makePersistent(this);
 		}

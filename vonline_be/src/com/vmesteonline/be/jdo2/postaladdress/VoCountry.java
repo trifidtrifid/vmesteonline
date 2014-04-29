@@ -22,7 +22,9 @@ public class VoCountry implements Comparable<VoCountry> {
 	public VoCountry(String name, PersistenceManager pm){
 		List<VoCountry> vcl = (List<VoCountry>)pm.newQuery(VoCountry.class, "name=='"+name+"'").execute();
 		if( vcl.size() > 0 ){
-			id = vcl.get(0).getId();
+			this.id = vcl.get(0).getId();
+			this.name = vcl.get(0).getName();
+			this.cities = vcl.get(0).getCities();
 		} else {
 			this.setName(name);
 			this.setCities(new HashSet<VoCity>());

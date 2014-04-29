@@ -2446,6 +2446,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			throws InvalidOperation {
 		
 		AddressInfo addrInfo = VoGeocoder.resolveAddressString("Россия, Санкт Петербург, "+buildingAddressText);
+		if( null == addrInfo.getBuildingNo() )
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No building found. Be sure that you entered a house number.");
 		
 		PersistenceManager pm = PMF.getPm();
 		try {
