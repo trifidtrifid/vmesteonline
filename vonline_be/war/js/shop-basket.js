@@ -823,7 +823,8 @@ define(
                     $('.address-input').show();
 
                     $('.street-and-building').focusout(function(){
-                        var addressText =  $(this).text();
+                        var addressText =  $(this).val();
+                        //alert('1');
                         var mapUrl = thriftModule.client.getDeliveryAddressViewURL(addressText,300,200);
                         alert(mapUrl);
 

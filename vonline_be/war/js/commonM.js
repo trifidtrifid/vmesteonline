@@ -136,6 +136,8 @@ define(
             //var userAddresses = thriftModule.userClient.getUserAddresses();
 
             var userAddressesLength = userAddresses.length;
+            alert(userAddressesLength);
+
             if(userAddressesLength > 0){
                 var userAddressesHtml = "";
                 for(var i = 0; i < userAddressesLength; i++){
