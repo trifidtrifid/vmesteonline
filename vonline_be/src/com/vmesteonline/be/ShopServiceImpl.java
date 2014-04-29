@@ -61,9 +61,20 @@ import org.apache.thrift.TException;
 
 
 
+
+
+
+
+
+
+
 import com.google.apphosting.api.search.DocumentPb.FieldValue.Geo;
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
+import com.vmesteonline.be.access.VoUserAccessBase;
+import com.vmesteonline.be.access.VoUserAccessBaseRoles;
+import com.vmesteonline.be.access.shop.VoShopAccess;
+import com.vmesteonline.be.access.shop.VoShopAccessRoles;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.GeoLocation;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -638,7 +649,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
-	Long getCurrentShopId(PersistenceManager pm) throws InvalidOperation {
+	public Long getCurrentShopId(PersistenceManager pm) throws InvalidOperation {
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "SHOP ID is not set in session context. shopId=" + shopId);
@@ -2217,7 +2228,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		title.add("Producer");
 		title.add("Product\\Packet");
 		for( Double psd: packSizeSet)
-			title.add(""+psd);
+			title.add(""+VoHelper.roundDouble(psd,2));
 		packMatrix.add( title );
 		//fill down the content
 		for( SortedMap<Double, ProductOrderDescription> pdm: prodDescMap.values() ){
@@ -2319,17 +2330,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 
-	private static final Set<String> publicMethods = new HashSet<String>(Arrays.asList(new String[] {
-
-	"getShops", "getDates", "getShop", "getProducers", "getProductCategories", "getProducts", "getProductDetails", "getOrders", "getOrdersByStatus",
-			"getOrder", "getOrderDetails", "createOrder", "updateOrder", "cancelOrder", "deleteOrder", "confirmOrder", "appendOrder", "mergeOrder",
-			"setOrderLine", "removeOrderLine", "setOrderDeliveryType", "setOrderPaymentType", "setOrderDeliveryAddress", "getProductsByCategories"
-
-	}));
-
 	@Override
 	public boolean isPublicMethod(String method) {
-		return true;// publicMethods.contains(method);
+		Long roleRequired;
+		if( null == (roleRequired =  VoShopAccessRoles.getRequiredRole(method))){
+			logger.warn("Method '"+method+"' is called but there is no role registered for it! Access denied");
+			return false;
+		}
+		return roleRequired == VoUserAccessBaseRoles.ANYBODY || roleRequired == VoShopAccessRoles.CUSTOMER;
 	}
 
 	// ======================================================================================================================
@@ -2500,8 +2508,35 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		} finally {
 			pm.close();
 		}
-	}	
-	
+	}
+
 //======================================================================================================================
 
+	@Override
+	public boolean accessAllowed(VoUserAccessBase voUserAccessBase, long currentUserId, long categoryId, String method, PersistenceManager pm) {
+
+		Long roleRequired;
+		if( null == (roleRequired =  VoShopAccessRoles.getRequiredRole(method))){
+			logger.warn("Method '"+method+"' is called but there is no role registered for it! Access denied");
+			return false;
+		}
+		
+		if( roleRequired == VoUserAccessBaseRoles.ANYBODY || roleRequired == VoShopAccessRoles.CUSTOMER) 
+			return true;
+		
+		long shopId = 0;
+		try {
+			shopId = getCurrentShopId(pm);
+		} catch (InvalidOperation e) {
+		}
+		if( voUserAccessBase instanceof VoShopAccess ){
+			
+			long arShopId = ((VoShopAccess)voUserAccessBase).getShopId();
+			if( (0 == arShopId || shopId == arShopId) && voUserAccessBase.getAccessPermission(roleRequired))
+				return true;
+		}
+		return false;
+	}	
+	
+	public Class getAuthRecordClass(){ return VoShopAccess.class; }
 }

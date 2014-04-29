@@ -25,6 +25,7 @@ import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.ShopServiceImpl;
 import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.VoError;
+import com.vmesteonline.be.access.shop.VoShopAccessManager;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.GeoLocation;
@@ -131,7 +132,7 @@ public class Defaults {
 			try {
 				pm.deletePersistent(i);
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 	}
@@ -217,6 +218,8 @@ public class Defaults {
 
 			long shop = ssi.registerShop(new Shop(10, "Во!Молоко", "Магазин свежей молочной продукции Вологодского края", postalAddress,
 					"http://vomoloko.ru/img/logo.jpg", userId, topicSet, tags, deliveryCosts, paymentTypes));
+			
+			VoShopAccessManager.createAccessForShopOwner(userId, shop);
 
 			ssi.getShop(shop); // to make it current
 			// set dates
@@ -378,7 +381,6 @@ public class Defaults {
 		} catch (Exception e1) {
 
 		}
-		userId = user2Id;
 		try {
 			user3Id = asi.registerNewUser(user3name, user3lastName, user3pass, user3email, locCodes.get(2));
 		} catch (Exception e) {

@@ -10,15 +10,12 @@ import com.vmesteonline.be.ServiceImpl;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 
-public class VoServiceMapAccessValidator implements VoTAccessValidator {
+public class VoServiceMapAccessValidator extends VoTAccessValidator {
 	private static final Logger logger = Logger.getLogger(VoServiceMapAccessValidator.class.getName());
 	
 	public VoServiceMapAccessValidator(ServiceImpl si) {
-		this.si = si;
+		super(si);
 	}
-
-
-	private final ServiceImpl si;
 	
 	
 	@Override
@@ -27,6 +24,7 @@ public class VoServiceMapAccessValidator implements VoTAccessValidator {
 			return null == si ? false : 
 				si.isPublicMethod( method ) ? true :
 					checkAccessForUser( si.getCurrentUserId(), si.categoryId(), method );
+			
 		} catch (InvalidOperation e) {
 			if(e.what != VoError.NotAuthorized )
 				e.printStackTrace();
@@ -41,7 +39,8 @@ public class VoServiceMapAccessValidator implements VoTAccessValidator {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			List<VoUserAccessBase> vuabl = (List<VoUserAccessBase>) pm.newQuery( VoUserAccessBase.class, "userId == "+currentUserId+" &&"
-					+ " categoryId == " + categoryId + " methodName == " + method ).execute();
+					+ " categoryId == " + categoryId + " && methodName == '" + method +"'" ).execute();
+			
 			return vuabl.size() >= 0;
 		} catch( Exception e) {
 			e.printStackTrace();
