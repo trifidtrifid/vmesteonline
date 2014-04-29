@@ -774,11 +774,11 @@ define(
                     $('.alert-delivery-addr').text('Введите полный адресс доставки !').show();
                 }else{
                     var addressText =  street + " " + building;
-                    alert(addressText+" "+flat);
+                    //alert(addressText+" "+flat);
                     thriftModule.client.createDeliveryAddress(addressText,parseInt(flat),0,0,0);
-                    alert('---');
+                    //alert('---');
                     var mapUrl = thriftModule.client.getDeliveryAddressViewURL(addressText,300,200);
-                    alert(mapUrl);
+                    //alert(mapUrl);
 
                     $(this).closest('.address-input').after("<img src='"+ mapUrl +"'>");
 
