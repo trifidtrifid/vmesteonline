@@ -237,7 +237,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             '<td class="td8 user-name">'+
                             orders[i].userName +
                             '</td>'+
-                            '<td class="td3">'+ orderDay +"."+orderMonth+"."+tempDate.getFullYear()+ '</td>'+
+                            '<td class="td3" id="'+ orders[i].date +'">'+ orderDay +"."+orderMonth+"."+tempDate.getFullYear()+ '</td>'+
                             '<td class="td4">'+
                             '<div class="order-status">'+orderStatus +'</div>'+
                             '</td>'+

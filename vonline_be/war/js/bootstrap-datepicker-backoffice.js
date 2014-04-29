@@ -124,6 +124,11 @@
                             $(this).addClass('order-day').attr('id',orders[i].date);
                         }
                     }
+                    if (tempMonth == nextMonth){
+                        if ($(this).text() == dayStr && $(this).hasClass('new')){
+                            $(this).addClass('order-day').attr('id',orders[i].date);
+                        }
+                    }
                     if (tempMonth == prevMonth){
                         if ($(this).text() == dayStr && $(this).hasClass('old')){
                             $(this).addClass('order-day').attr('id',orders[i].date);
@@ -153,7 +158,7 @@
                 var currentPane = $('.tab-pane.active');
                 currentPane.find('.datepicker-export').attr('data-selectOrderDate',$(this).attr('id'));
                 currentPane.find('.error-info').hide();
-            }
+            }else{
             var orderDate = parseInt($(this).attr('id'));
             var day = 3600*24;
             var orders = client.getOrdersByStatus(orderDate-100*day,orderDate+100*day,0);
@@ -185,8 +190,10 @@
             var ordersNoInit = $('.orders-no-init');
             initOrderPlusMinus(ordersNoInit);
             ordersNoInit.removeClass('orders-no-init');
+            }
 
             setSidebarHeight();
+
         });
         }catch(e){
             alert(e + ' Функция initOrderDay');
