@@ -728,7 +728,10 @@ public class ShopServiceImplTest {
 			e.printStackTrace();
 		}
 
-		si.createOrder(now + 1000, "aaaa");
+		int date = (int) (System.currentTimeMillis() / 1000L);
+		date = si.getNextOrderDate( date ).orderDate;
+		
+		si.createOrder(date, "aaaa");
 		return upProductsIdl;
 	}
 
@@ -743,11 +746,12 @@ public class ShopServiceImplTest {
 			si.getShop(shopId);
 
 			Map<Integer, DateType> dateDateTypeMap = new HashMap<Integer, DateType>();
-			int date = (int) (System.currentTimeMillis() / 1000L) + 1000;
+			int date = (int) (System.currentTimeMillis() / 1000L);
+			date = si.getNextOrderDate( date ).orderDate;
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
 			setAllDates();
 
-			long order = si.createOrder(date, "aaaa");
+			long order = si.createOrder(si.getNextOrderDate( date ).orderDate, "aaaa");
 			Map<DeliveryType, Double> newDeliveryCosts = new HashMap<DeliveryType, Double>();
 			newDeliveryCosts.put(DeliveryType.LONG_RANGE, 10.0D);
 			newDeliveryCosts.put(DeliveryType.SHORT_RANGE, 5.0D);
@@ -1273,16 +1277,23 @@ public class ShopServiceImplTest {
 		
 		si.confirmOrder(0,"");
 		
-		/*long order2ID = */si.createOrder(now + 1000, "22aaaa");
+		int date = (int) (System.currentTimeMillis() / 1000L);
+		try {
+			date = si.getNextOrderDate( date ).orderDate;
+		} catch (TException e) {
+			e.printStackTrace();
+		}
+		
+		/*long order2ID = */si.createOrder(date, "22aaaa");
 		/*OrderLine ol21 = */si.setOrderLine(0,upProductsIdl.get(0), 35.0D, "comment21", packets);
 		si.confirmOrder(0, "");
 		
-		/*long order3ID = */si.createOrder(now + 1000, "33aaaa");
+		/*long order3ID = */si.createOrder(date, "33aaaa");
 		/*OrderLine ol31 = */si.setOrderLine(0,upProductsIdl.get(1), 33.0D, "comment31", null);
 		si.setOrderDeliveryType(0,DeliveryType.LONG_RANGE,null);
 		si.confirmOrder(0, "");
 		
-		/*long order4ID = */si.createOrder(now + 1001, "44aaaa");
+		/*long order4ID = */si.createOrder(date, "44aaaa");
 		/*OrderLine ol41 = */si.setOrderLine(0,upProductsIdl.get(1), 44.0D, "comment41", null);
 
 		si.confirmOrder(0, "");
