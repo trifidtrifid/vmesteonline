@@ -428,7 +428,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			for (VoCity voc : vocis) {
 				cil.add(voc.getCity());
 			}
-
+		
 			Extent<VoStreet> voss = pm.getExtent(VoStreet.class);
 			List<Street> sl = new ArrayList<Street>();
 			for (VoStreet voc : voss) {

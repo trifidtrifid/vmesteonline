@@ -55,7 +55,7 @@ define(
         function InitLoadCategory(catID){
             try{
                 /* замена меню категорий */
-
+            	
                 var productCategories = thriftModule.client.getProductCategories(catID);
                 var categoriesLength = productCategories.length;
                 var shopMenu = '';

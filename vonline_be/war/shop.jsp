@@ -70,7 +70,7 @@
     pageContext.setAttribute("productCategories", ArrayProductCategory);
 
     //String productURL = new String( productsListPart.products.get(0).imageURL);
-    //out.print(ArrayProductCategory.get(1).id);
+    out.print(productsListPart.products.size());
 
 %>
 
