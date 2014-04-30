@@ -68,6 +68,7 @@ import org.apache.thrift.TException;
 
 
 
+
 import com.google.apphosting.api.search.DocumentPb.FieldValue.Geo;
 //import com.google.api.client.util.Sets;
 import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
@@ -1209,7 +1210,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		//get delivery cost by address mask if set
 		Map<DeliveryType, String> dam = voShop.getDeliveryAddressMasksText();
 		if( null!=dam && null!=deliveryCosts ){ //look for delivery cost by address mask
-			String addressString = deliveryTo.getAddressText(pm) + deliveryTo.getBuilding().getAddressString();
+			String addressString = deliveryTo.getAddressText(pm);
 			
 			//sort the map by DelivertType to math cheapest delivery first
 			SortedMap<DeliveryType, String> sm = new TreeMap<DeliveryType, String>(dam);
@@ -1453,6 +1454,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	private List<Order> getOrdersByStatus(long userId, int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = getCurrentShopId(pm);
+		dateFrom = dateFrom - dateFrom % 86400;
+		dateTo = dateTo - dateTo % 86400 + 86400;
+		
 		try {
 			Query pcq = pm.newQuery(VoOrder.class);
 			List<VoOrder> ps;
@@ -2445,7 +2449,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public PostalAddress createDeliveryAddress(String buildingAddressText, int flatNo, byte floor, byte staircase, String comment)
 			throws InvalidOperation {
 		
-		AddressInfo addrInfo = VoGeocoder.resolveAddressString("Россия, Санкт Петербург, "+buildingAddressText);
+		AddressInfo addrInfo = VoGeocoder.resolveAddressString("Россия Санкт Петербург "+buildingAddressText);
 		if( null == addrInfo.getBuildingNo() )
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No building found. Be sure that you entered a house number.");
 		
@@ -2457,10 +2461,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			VoStreet voStreet = new VoStreet(voCity, addrInfo.getStreetName(),pm );
 			String no = addrInfo.getBuildingNo();
 			VoBuilding voBuilding = new VoBuilding(voStreet, no, addrInfo.getLongitude(), addrInfo.getLattitude(), pm);
-			
 			VoPostalAddress pa = new VoPostalAddress( voBuilding, staircase, floor, (byte)flatNo, comment );
 			currentUser.addDeliveryAddress( pa, buildingAddressText);
-			return pa.getPostalAddress();
+			return pa.getPostalAddress(pm);
 			
 		} finally {
 			pm.close();
@@ -2468,10 +2471,11 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	}
 
 	@Override
-	public List<String> getUserDeliveryAddresses() throws InvalidOperation {
+	public MatrixAsList getUserDeliveryAddresses() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			return getCurrentUser(pm).getAddresses();
+			List<String> list = getCurrentUser(pm).getAddresses();
+			return new MatrixAsList( list.size(), list);
 		} finally {
 			pm.close();
 		}
