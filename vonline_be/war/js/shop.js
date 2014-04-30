@@ -8,6 +8,7 @@ require.config({
         "ace_elements": "lib/ace-elements.min",
         "flexslider": "lib/jquery.flexslider-min",
         "jquery_ui": "lib/jquery-ui-1.10.3.full.min"
+        //"uriAnchor": "lib/jquery.uriAnchor"
         //"datepicker-simple": "lib/date-time/bootstrap-datepicker-simple",
         //"datepicker": "lib/date-time/bootstrap-datepicker",
         //"datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru"
@@ -24,11 +25,15 @@ require.config({
     'bootstrap':{
         deps: ['jquery'],
         exports: 'bootstrap'
-    },
-        'flexslider':{
-            deps: ['jquery'],
-            exports: 'flexslider'
-        }/*,
+    },/*
+    'uriAnchor':{
+        deps: ['jquery'],
+        exports: 'uriAnchor'
+    },*/
+    'flexslider':{
+        deps: ['jquery'],
+        exports: 'flexslider'
+    }/*,
       'datepicker-simple':{
           deps: ['jquery'],
           exports: 'datepicker-simple'
@@ -42,6 +47,41 @@ require.config({
 
 require(["jquery",'shop-modules','commonM','loginModule'],
     function($,modules,commonM,loginModule) {
+
+        modules.shopCommonModule.InitProductDetailPopup($('.product-link'));
+        modules.spinnerModule.initProductsSpinner();
+
+        var urlHash = document.location.hash;
+
+        var state = {
+            type : 'default'
+        };
+        window.history.pushState(state,null,'shop.jsp');
+
+        if (urlHash){
+            if (urlHash.indexOf('modal') != -1){
+                // значит url с modal
+                var hashParts = urlHash.split('=');
+                modules.shopCommonModule.identificateModal(hashParts[1]);
+            }
+        }
+
+        window.addEventListener('popstate',makeHistory,false);
+
+        function makeHistory(e){
+            var isHistory = true;
+            if(e.state){
+                if(e.state.type == 'modal'){
+
+                    modules.shopCommonModule.identificateModal(e.state.productid,isHistory);
+
+                }else if(e.state.type == 'default'){
+
+                    $('.modal.in .close').trigger('click',[isHistory]);
+                }
+            }
+        }
+
     /* простые обработчики событий */
         loginModule.initLogin();
     try{
@@ -95,14 +135,11 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         //alert(e + ' Ошибка в простых обработчиках');
     }
 
-        modules.spinnerModule.initProductsSpinner();
-
         if(globalUserAuth){
             modules.shopCommonModule.initBasketInReload();
         }
         modules.categoryModule.InitClickOnCategory();
         modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
-        modules.shopCommonModule.InitProductDetailPopup($('.product-link'));
     // переключение между категориями
         modules.ordersModule.initOrderPlusMinus($('.shop-orders'));
 

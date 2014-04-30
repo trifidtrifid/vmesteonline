@@ -57,8 +57,9 @@ define(
 
                 var packs=[];
                 var packsObj = {};
-                var orderDetails = thriftModule.client.getOrderDetails(orderId);
                 if (productSelector.data('prepack')){
+                    var orderDetails = thriftModule.client.getOrderDetails(orderId);
+
                     // если фасованный товар
                     var orderLines = orderDetails.odrerLines;
                     var orderLinesLength = orderDetails.odrerLines.length;
@@ -85,6 +86,7 @@ define(
                 if(!packsObj.errorFlag){
                     thriftModule.client.setOrderLine(orderId,productSelector.data('productid'),packsObj.qnty,'',packsObj.packs);
                     productSelector.find('.td-summa').text((price*packsObj.qnty).toFixed(1));
+                    orderDetails = thriftModule.client.getOrderDetails(orderId);
 
                     var commonModule = require('shop-common');
                     $('.itogo-right span,.amount span').text(commonModule.countAmount($('.catalog-confirm'),orderDetails));

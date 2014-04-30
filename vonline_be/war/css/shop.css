@@ -602,8 +602,8 @@ span
 .ace-spinner {
   width: 90px !important;
 }
-.ace-spinner .input-mini {
-  width: 40px;
+.ace-spinner .input-mini.spinner-input.spinner1.form-control {
+  width: 40px !important;
   padding: 5px 2px;
 }
 .ace-spinner .spinner-down:hover,
@@ -1333,7 +1333,7 @@ height 50px
   margin-left: 20px;
 }
 .import .form-import input[type="submit"] {
-  margin-top: 10px;
+  margin-left: 10px;
 }
 .import .products-checklist,
 .import .categories-checklist,
@@ -1349,12 +1349,13 @@ height 50px
 .import .import-show .import-field-dropdown {
   display: block;
   width: 100%;
+  background: #6fb3e0;
 }
 .import .import-show .import-field-dropdown .btn {
-  width: 100%;
   padding: 5px;
   border: 0;
   font-size: 12px;
+  float: none;
 }
 .import .import-show .import-table {
   overflow-x: auto;
@@ -1380,7 +1381,7 @@ height 50px
 }
 .export .input-group {
   display: inline-block;
-  margin-bottom: 10px;
+  vertical-align: middle;
 }
 .export .report-link {
   line-height: 34px;

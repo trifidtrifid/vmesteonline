@@ -124,6 +124,11 @@
                             $(this).addClass('order-day').attr('id',orders[i].date);
                         }
                     }
+                    if (tempMonth == nextMonth){
+                        if ($(this).text() == dayStr && $(this).hasClass('new')){
+                            $(this).addClass('order-day').attr('id',orders[i].date);
+                        }
+                    }
                     if (tempMonth == prevMonth){
                         if ($(this).text() == dayStr && $(this).hasClass('old')){
                             $(this).addClass('order-day').attr('id',orders[i].date);
@@ -135,6 +140,20 @@
         }catch(e){
             alert(e + ' Функция SetOrderDates');
         }
+    }
+
+    function getStringDate(date){
+        var dateStr = new Date(date*1000);
+
+        var orderDay = dateStr.getDate();
+        var orderMonth = dateStr.getMonth()+1;
+        var orderYear = dateStr.getFullYear();
+
+        orderDay = (orderDay < 10) ? "0" + orderDay : orderDay;
+        orderMonth = (orderMonth < 10) ? "0" + orderMonth : orderMonth;
+
+        return orderDay+"."+orderMonth+"."+orderYear;
+
     }
 
     function AdditionallyOrderToggle(){
@@ -153,40 +172,42 @@
                 var currentPane = $('.tab-pane.active');
                 currentPane.find('.datepicker-export').attr('data-selectOrderDate',$(this).attr('id'));
                 currentPane.find('.error-info').hide();
-            }
-            var orderDate = parseInt($(this).attr('id'));
-            var day = 3600*24;
-            var orders = client.getOrdersByStatus(orderDate-100*day,orderDate+100*day,0);
-            var ordersLength = orders.length;
-            var orderList = [];
-            var counter = 0;
-            for (var i = 0; i < ordersLength; i++){
-                //alert(orders[i].date + " "+orderDate);
-                if (orders[i].date == orderDate){
-                    orderList[counter++] = orders[i];
+            }else{
+                var orderDate = parseInt($(this).attr('id'));
+                var day = 3600*24;
+                var orders = client.getOrdersByStatus(orderDate-100*day,orderDate+100*day,0);
+                var ordersLength = orders.length;
+                var orderList = [];
+                var counter = 0;
+                for (var i = 0; i < ordersLength; i++){
+                    //alert(orders[i].date + " "+orderDate);
+                    if (getStringDate(orders[i].date) == getStringDate(orderDate)){
+                        orderList[counter++] = orders[i];
+                    }
                 }
-            }
-            if(statusFilterFlag){
-                orderList = filterByStatus(orderList);
-            }
-            if(deliveryFilterFlag){
-                orderList = filterByDelivery(orderList);
-            }
-            if(searchFilterFlag){
-                orderList = filterBySearch(orderList,$('#back-search').val());
-            }
+                if(statusFilterFlag){
+                    orderList = filterByStatus(orderList);
+                }
+                if(deliveryFilterFlag){
+                    orderList = filterByDelivery(orderList);
+                }
+                if(searchFilterFlag){
+                    orderList = filterBySearch(orderList,$('#back-search').val());
+                }
 
-            dateFilterFlag = 1;
-            var shopOrdersList = $('.orders-list');
-            shopOrdersList.html('').append(createOrdersHtml(orderList));
+                dateFilterFlag = 1;
+                var shopOrdersList = $('.orders-list');
+                shopOrdersList.html('').append(createOrdersHtml(orderList));
 
-            //initOrderPlusMinus(shopOrdersList);
+                //initOrderPlusMinus(shopOrdersList);
 
-            var ordersNoInit = $('.orders-no-init');
-            initOrderPlusMinus(ordersNoInit);
-            ordersNoInit.removeClass('orders-no-init');
+                var ordersNoInit = $('.orders-no-init');
+                initOrderPlusMinus(ordersNoInit);
+                ordersNoInit.removeClass('orders-no-init');
+            }
 
             setSidebarHeight();
+
         });
         }catch(e){
             alert(e + ' Функция initOrderDay');

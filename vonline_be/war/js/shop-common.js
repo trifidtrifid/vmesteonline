@@ -169,7 +169,7 @@ define(
 
         function InitProductDetailPopup(selector){
             try{
-                selector.click(function(e){
+                selector.click(function(e,isHistory){
                     e.preventDefault();
 
                     var productSelector = $(this).closest('.product'),
@@ -284,7 +284,7 @@ define(
                     if (!isModalWasOpen){
                         // если еще не открывали popup
                         currentModal.append(popupHtml);
-                            var currentSpinnerValue,currentSpinnerStep;
+                        var currentSpinnerValue,currentSpinnerStep;
 
                         if (isBasket || isOrdersHistory){
                             // если мы в корзине или на странице заказов
@@ -330,6 +330,10 @@ define(
                             });
                         }
 
+                        currentModal.find('.close').click(function(e,isHistory){
+                            if (!isHistory) window.history.back();
+                        });
+
                     }else{
                         //если popup уже открывали
                         if (isBasket || isOrdersHistory){
@@ -351,11 +355,23 @@ define(
                             }
                         }
                     }
+                   /* $.uriAnchor.setAnchor({
+                       product : productId
+                    });*/
+                    if (!isHistory){
+                        var state = {
+                            type : 'modal',
+                            productid : productId
+                        };
+                        window.history.pushState(state,null,'shop.jsp#modal='+productId);
+
+                    }
                     currentModal.modal();
                     fullDescrHeight = currentModal.find('.product-fullDescr').height();
                     currentModal.find('.product-fullDescr').hide();
 
                     $('.modal-backdrop').click(function(){
+                        window.history.back();
                         $('.modal.in .close').trigger('click');
                     });
 
@@ -384,6 +400,15 @@ define(
             }catch(e){
                 alert(e+" Функция InitProductDetailPopup");
             }
+        }
+
+        function identificateModal(productId,historyBool){
+            var isHistory = (historyBool) ? historyBool : false;
+            $('.catalog .product').each(function(){
+                if($(this).data('productid') == productId){
+                    $(this).find('.product-link').trigger('click',[isHistory]);
+                }
+            })
         }
 
         function initPrepackOpenClick(selector,options){
@@ -662,7 +687,8 @@ define(
             addAddressToBase: addAddressToBase,
             isValidEmail: isValidEmail,
             changeShortUserInfo: changeShortUserInfo,
-            getOrderWeight: getOrderWeight
+            getOrderWeight: getOrderWeight,
+            identificateModal: identificateModal
         }
     }
 );
