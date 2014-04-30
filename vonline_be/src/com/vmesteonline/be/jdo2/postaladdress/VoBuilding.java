@@ -33,7 +33,7 @@ public class VoBuilding implements Comparable<VoBuilding> {
 			users = new ArrayList<VoUser>();
 			this.longitude = longitude.toPlainString();
 			this.latitude = latitude.toPlainString();
-			this.addressString = vs.getName() + ", " + fullNo;
+			this.addressString = vs.getCity().getCountry().getName() + "," + vs.getCity().getName() + "," + vs.getName() + ", " + fullNo;
 			vs.addBuilding(this);
 			
 		} else {

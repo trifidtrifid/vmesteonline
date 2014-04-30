@@ -1520,12 +1520,12 @@ public class ShopServiceImplTest {
 		try {
 			String addressText = "детскосельский 3";
 			PostalAddress deliveryAddress = si.createDeliveryAddress( addressText, 81, (byte)2, (byte)8,"");
-			List<String> addressList = si.getUserDeliveryAddresses();
+			List<String> addressList = si.getUserDeliveryAddresses().getElems();
 			PostalAddress da = si.getUserDeliveryAddress(addressText);
 			String deliveryAddressViewURL = si.getDeliveryAddressViewURL(addressText, 200, 200);
 			String nullVal = si.getDeliveryAddressViewURL(null, 200, 200);
 			si.deleteDeliveryAddress(addressText);
-			List<String> addressListWithoutAddrText = si.getUserDeliveryAddresses();
+			List<String> addressListWithoutAddrText = si.getUserDeliveryAddresses().getElems();
 			PostalAddress daNull = si.getUserDeliveryAddress(addressText);
 			
 		} catch (InvalidOperation e) {

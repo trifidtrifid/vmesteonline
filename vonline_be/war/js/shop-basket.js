@@ -361,9 +361,9 @@ define(
                     default:
                         checkboxDeliveryType.find('input.courier-delivery').prop('checked',true);
                         writeAddress(orderDetails.deliveryTo);
-                        var userAddresses = thriftModule.client.getUserDeliveryAddresses();
+                        var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
                         defaultAddressForCourier = orderDetails.deliveryTo;
-                        showDeliveryDropdown(orderId,userAddresses);
+                        showDeliveryDropdown(orderId,userAddresses.elems);
                         break;
                 }
                 setDeliveryCost(orderId,orderDetails);
@@ -728,7 +728,7 @@ define(
 
         function setDeliveryDropdown(orderId,userAddresses){
             var addresses;
-            addresses = (userAddresses) ? userAddresses : thriftModule.client.getUserDeliveryAddresses();
+            addresses = (userAddresses) ? userAddresses : thriftModule.client.getUserDeliveryAddresses().elems;
 
             var userAddressesHtml = "";
             var userAddressesLength = addresses.length;
@@ -821,7 +821,7 @@ define(
                     //если доставка курьером
 
                     var homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
-                    var userAddresses = thriftModule.client.getUserDeliveryAddresses();
+                    var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
                     if (!defaultAddressForCourier){
                         defaultAddressForCourier = (homeAddress) ? homeAddress : thriftModule.client.getUserDeliveryAddress(userAddresses[0]);
                     }

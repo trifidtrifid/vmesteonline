@@ -255,13 +255,11 @@ public class VoUser extends GeoLocation {
 
 	public List<String> getAddresses() {
 		List<String> out = new ArrayList<String>();
-		if(null!=deliveryAddresses){
+		if(null!=deliveryAddresses && deliveryAddresses.size() > 0){
 			Set<String> keySet = deliveryAddresses.keySet();
 			if( null!=keySet && keySet.size() > 0 ) 
 				out.addAll( keySet);
-		} else {
-			return null;
-		}
+		} 
 		return out;
 	}
 

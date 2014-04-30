@@ -132,7 +132,7 @@ define(
                 }
             });
 
-            var userAddresses = thriftModule.client.getUserDeliveryAddresses();
+            var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
             //var userAddresses = thriftModule.userClient.getUserAddresses();
 
             var userAddressesLength = userAddresses.length;
@@ -235,7 +235,7 @@ define(
                    $('.user-addresses').prepend(newAddressesHtml);
 
                     thriftModule.client.createDeliveryAddress(deliveryAddress.street.name+" "+deliveryAddress.building.fullNo,deliveryAddress.flatNo,0,0,0);
-                    var userAddresses = thriftModule.client.getUserDeliveryAddresses();
+                    var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
 
                     var noInit = $('.user-address-item.no-init');
                     initEditAddress(noInit,userAddresses,deliveryAddress);
