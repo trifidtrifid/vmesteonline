@@ -919,6 +919,13 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
         /* export */
 
+        $('.export .nav-tabs').find('li').click(function(){
+            var ind = $(this).index();
+
+            var contentH = $('.export .tab-pane:eq('+ ind +')').addClass('active').height();
+            setSidebarHeight(contentH);
+        });
+
         $('.check-all .lbl').click(function(){
             //var tab = $('#orders');
             var tab = $(this).closest('.back-tab');
@@ -1016,6 +1023,8 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                     initCloseFullText();
 
                     if(!dataSet.data) currentTab.find('.confirm-info').text('Нет данных на такое сочетание даты и типа доставки.').show();
+
+                    setSidebarHeight();
 
                 }catch(e){
                     currentTab.find('.confirm-info').text('Ошибка экспорта.').show();
@@ -1161,13 +1170,16 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
         /* /export */
 
-        function setSidebarHeight(){
+        function setSidebarHeight(contentH){
             try{
 
                 var mainContent = $('.main-content');
+                var contH = (contentH) ? contentH : mainContent.height();
+                //alert(contH+" "+w.height());
 
-                if (mainContent.height() > w.height()){
-                    $('#sidebar').css('height', mainContent.height());
+                if (contH > w.height()){
+                    contH = (contentH) ? contentH+100 : mainContent.height()+45;
+                    $('#sidebar').css('height', contH);
                 }else{
                     $('#sidebar').css('height', '100%');
                 }
