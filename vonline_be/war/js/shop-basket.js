@@ -192,7 +192,7 @@ define(
                                 orderId = thriftModule.client.createOrder(nextDate);
                                 addTabToBasketHtml(nextDateStr,orderId,orderDetails);
                              }
-                            AddProductToBasketCommon(currentProduct,packs,orderDetails);
+                            AddProductToBasketCommon(currentProduct,packs);
                         }
 
                         var isModalWindow = $(this).closest('.modal').length > 0;

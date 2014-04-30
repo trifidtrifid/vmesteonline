@@ -659,10 +659,21 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                                 }
                                 break;
                         }
-                        if(counter != colCount){
-                            var begin,end;
-                            begin = (counter > colCount) ? counter : colCount;
-                            end = (counter > colCount) ? colCount : counter;
+                        var begin,end;
+                        if(colCount < counter ){
+                            // если стобцов в таблице меньше чем default удаляем лишние default столбцы
+                            begin = counter;
+                            end = colCount;
+
+                            for(i = begin-1; i >= end ; i--){
+                                dropdownColArray.pop();
+                                dropdownColArrayFieldType.pop();
+                            }
+                        }
+                        if(colCount > counter){
+                            // если столбцов больше, то добавляем столбцы со значеним SKIP
+                            begin = colCount;
+                            end = counter;
 
                             for(i = begin-1; i >= end ; i--){
                                 dropdownColArray[i] = skipConst;
@@ -741,11 +752,18 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             var importDropdownLine = "";
             var importDropdownLineLength = dropdownColArray.length;
 
-            var importDropdownMenu = "";
+            var importDropdownMenu = "",
+                haveSkip = false;
             for(var i = 0; i < importDropdownLineLength; i++){
-                importDropdownMenu += '<li data-fieldtype="'+ dropdownColArrayFieldType[i] +'"><a href="#">'+ dropdownColArray[i] +'</a></li>';
+                if(!haveSkip) importDropdownMenu += '<li data-fieldtype="'+ dropdownColArrayFieldType[i] +'"><a href="#">'+ dropdownColArray[i] +'</a></li>';
+
+                if(dropdownColArray[i] == skipConst){
+                    // на случай если добавляется таблица с большим чем Default кол-вом стобцов, чтобы SKIP не
+                    // дублировался в dropdown
+                    haveSkip = true;
+                }
             }
-            importDropdownMenu += '<li data-fieldtype="'+ -1 +'"><a href="#">'+ skipConst +'</a></li>';
+            if(!haveSkip) importDropdownMenu += '<li data-fieldtype="'+ -1 +'"><a href="#">'+ skipConst +'</a></li>';
 
             for(i = 0; i < importDropdownLineLength; i++){
                 importDropdownLine += '<td>' +
