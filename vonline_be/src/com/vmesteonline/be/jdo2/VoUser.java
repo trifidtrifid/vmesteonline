@@ -259,6 +259,8 @@ public class VoUser extends GeoLocation {
 			Set<String> keySet = deliveryAddresses.keySet();
 			if( null!=keySet && keySet.size() > 0 ) 
 				out.addAll( keySet);
+		} else {
+			return null;
 		}
 		return out;
 	}

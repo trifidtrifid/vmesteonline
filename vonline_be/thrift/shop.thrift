@@ -325,7 +325,7 @@ service ShopService {
 	bool setOrderPaymentType( 1:i64 orderId, 2:PaymentType paymentType ) throws (1:error.InvalidOperation exc),
 	OrderDetails setOrderDeliveryAddress( 1:i64 orderId, 2:bedata.PostalAddress deliveryAddress ) throws (1:error.InvalidOperation exc),
 	
-	bedata.PostalAddress createDeliveryAddress(1:string buildingAddressText, 2:i32 flat, 3:byte floor, 4:byte staircase, 5:string comment ) throws (1:error.InvalidOperation exc),
+	bedata.PostalAddress createDeliveryAddress(1:string  , 2:i32 flat, 3:byte floor, 4:byte staircase, 5:string comment ) throws (1:error.InvalidOperation exc),
 	list<string> getUserDeliveryAddresses() throws (1:error.InvalidOperation exc),
 	bedata.PostalAddress getUserDeliveryAddress(1:string addressText) throws (1:error.InvalidOperation exc),
 	void deleteDeliveryAddress(1:string addressText ) throws (1:error.InvalidOperation exc),

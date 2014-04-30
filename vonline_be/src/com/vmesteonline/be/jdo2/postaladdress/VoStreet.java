@@ -3,7 +3,6 @@ package com.vmesteonline.be.jdo2.postaladdress;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -13,25 +12,25 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Street;
 import com.vmesteonline.be.VoError;
-import com.vmesteonline.be.data.PMF;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 public class VoStreet implements Comparable<VoStreet> {
 
 	public VoStreet(VoCity city, String name, PersistenceManager pm) throws InvalidOperation {
 		List<VoStreet> vcl = (List<VoStreet>)pm.newQuery(VoStreet.class, "city == :key && name=='"+name+"'").execute(city.getId());
+		this.setCity(city);
+		this.setName(name);
+		
 		if( vcl.size() > 0 ){
 			id = vcl.get(0).getId();
+			this.setBuildings(vcl.get(0).getBuildings());
 			
 		} else {
 			
-			this.setCity(city);
-			this.setName(name);
 			if( city.getStreets().contains( this ))
 				throw new InvalidOperation(VoError.GeneralError, "The same Street '"+name+"' already exists in City "+city.getName());
 			city.addStreet(this);
