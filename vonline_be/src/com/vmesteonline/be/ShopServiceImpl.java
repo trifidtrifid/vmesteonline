@@ -363,6 +363,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	@Override
 	public List<Order> getFullOrders(int dateFrom, int dateTo, long userId, long shopId) throws InvalidOperation {
 
+		dateFrom -= dateFrom % 86400;
+		dateTo += ( 86400 - dateTo % 86400 );
+		
 		PersistenceManager pm = PMF.getPm();
 		List<Order> ol;
 		try {
@@ -629,6 +632,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	// ======================================================================================================================
 	@Override
 	public List<Order> getOrders(int dateFrom, int dateTo) throws InvalidOperation {
+		dateFrom -= dateFrom % 86400;
+		dateTo += ( 86400 - dateTo % 86400 );
+		
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = getCurrentShopId(pm);
 		try {
@@ -732,6 +738,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		if (date < System.currentTimeMillis() / 1000L)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Order could not be created for the past");
 
+		date -= date % 86400;
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoShop shop = getCurrentShop(pm);
@@ -1762,8 +1769,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public DataSet getTotalOrdersReport(int date, DeliveryType deliveryType, Map<Integer, ExchangeFieldType> orderFields,
 			Map<Integer, ExchangeFieldType> orderLineFIelds) throws InvalidOperation {
 		
+		date -= date % 86400;
 		DataSet ds = new DataSet();
-		ds.date = date;
 		ds.id = 0;
 		ds.name = "TotalOrdersReport";
 		
@@ -2019,6 +2026,8 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	@Override
 	public DataSet getTotalProductsReport(int date, DeliveryType deliveryType, Map<Integer, ExchangeFieldType> productFields) throws InvalidOperation {
 
+		date -= date % 86400;
+		
 		DataSet ds = new DataSet();
 		ds.date = date;
 		ds.id = 0;
@@ -2128,6 +2137,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	@Override
 	public DataSet getTotalPackReport(int date, DeliveryType deliveryType, Map<Integer, ExchangeFieldType> packFields) throws InvalidOperation {
 
+		date -= date % 86400;
 		DataSet ds = new DataSet();
 		ds.date = date;
 		ds.id = 0;
@@ -2300,6 +2310,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	// ======================================================================================================================
 	@Override
 	public void updateOrder(long orderId, int date, String comment) throws InvalidOperation {
+		date -= date % 86400;
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder voOrder = 0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
