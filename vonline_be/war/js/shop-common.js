@@ -57,10 +57,10 @@ define(
             return (myOrderDetails.weightGramm/1000).toFixed(1);
         }
 
-        function addAddressToBase(currentForm){
+        function addAddressToBase(currentForm,address){
             var countries = thriftModule.userClient.getCounties();
             var countriesLength = countries.length;
-            var inputCountry = currentForm.find('.country-delivery').val();
+            var inputCountry = (address) ? address.country.name : currentForm.find('.country-delivery').val();
             var country,countryId = 0;
             for (var i = 0; i < countriesLength; i++){
                 if (countries[i].name == inputCountry){
@@ -75,7 +75,7 @@ define(
 
             var cities = thriftModule.userClient.getCities(countryId);
             var citiesLength = cities.length;
-            var inputCity = currentForm.find('.city-delivery').val();
+            var inputCity = (address) ? address.city.name : currentForm.find('.city-delivery').val();
             var city,cityId = 0;
             for (i = 0; i < citiesLength; i++){
                 if (cities[i].name == inputCity){
@@ -90,7 +90,7 @@ define(
 
             var streets = thriftModule.userClient.getStreets(cityId);
             var streetsLength = streets.length;
-            var inputStreet = currentForm.find('.street-delivery').val();
+            var inputStreet = (address) ? address.street.name : currentForm.find('.street-delivery').val();
             var street,streetId = 0;
             for (i = 0; i < streetsLength; i++){
                 if (streets[i].name == inputStreet){
@@ -105,7 +105,7 @@ define(
 
             var buildings = thriftModule.userClient.getBuildings(streetId);
             var buildingsLength = buildings.length;
-            var inputBuilding = currentForm.find('.building-delivery').val();
+            var inputBuilding = (address) ? address.building.fullNo : currentForm.find('.building-delivery').val();
 
             var building,buildingId = 0;
             for (i = 0; i < buildingsLength; i++){
@@ -126,7 +126,7 @@ define(
             deliveryAddress.building = building;
             deliveryAddress.staircase = 0;
             deliveryAddress.floor= 0;
-            deliveryAddress.flatNo = parseInt(currentForm.find('.flat-delivery').val());
+            deliveryAddress.flatNo = parseInt((address) ? address.flatNo : currentForm.find('.flat-delivery').val());
             deliveryAddress.comment = $('#order-comment').val();
 
             return deliveryAddress;

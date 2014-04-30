@@ -9,9 +9,6 @@ require.config({
         "flexslider": "lib/jquery.flexslider-min",
         "jquery_ui": "lib/jquery-ui-1.10.3.full.min"
         //"uriAnchor": "lib/jquery.uriAnchor"
-        //"datepicker-simple": "lib/date-time/bootstrap-datepicker-simple",
-        //"datepicker": "lib/date-time/bootstrap-datepicker",
-        //"datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru"
     },
     shim:{
       'ace_spinner':{
@@ -33,15 +30,7 @@ require.config({
     'flexslider':{
         deps: ['jquery'],
         exports: 'flexslider'
-    }/*,
-      'datepicker-simple':{
-          deps: ['jquery'],
-          exports: 'datepicker-simple'
-      },
-    'datepicker-ru':{
-        deps: ['jquery','datepicker'],
-        exports: 'datepicker-ru'
-    }*/
+    }
     }
 });
 

@@ -727,9 +727,8 @@ define(
             }*/
         }
 
-        function setDeliveryDropdown(orderId,userAddresses){
-            var addresses;
-            addresses = (userAddresses) ? userAddresses : thriftModule.client.getUserDeliveryAddresses().elems;
+        function setDeliveryDropdown(orderId,userAddresses,NoAddAddressAgain){
+            var addresses = (userAddresses) ? userAddresses : thriftModule.client.getUserDeliveryAddresses().elems;
 
             var userAddressesHtml = "";
             var userAddressesLength = addresses.length;
@@ -763,6 +762,7 @@ define(
                 $('.delivery-dropdown .btn-group-text').text('Выбрать адрес');
             });
 
+            if(!NoAddAddressAgain){
             $('.add-address').click(function(e){
                 e.preventDefault();
 
@@ -775,13 +775,11 @@ define(
                     $('.alert-delivery-addr').text('Введите полный адресс доставки !').show();
                 }else{
                     var addressText =  street + " " + building;
-                    //alert(addressText+" "+flat);
-                    thriftModule.client.createDeliveryAddress(addressText,parseInt(flat),0,0,0);
-                    //alert('---');
-                    var mapUrl = thriftModule.client.getDeliveryAddressViewURL(addressText,300,200);
-                    //alert(mapUrl);
+                    var deliveryAddress = defaultAddressForCourier = thriftModule.client.createDeliveryAddress(addressText,parseInt(flat),0,0,0);
+                    var mapUrl = thriftModule.client.getDeliveryAddressViewURL(addressText,400,300);
 
-                    $(this).closest('.address-input').after("<img src='"+ mapUrl +"'>");
+                    $('.address-map').remove();
+                    $(this).closest('.address-input').after("<img class='address-map' src='"+ mapUrl +"'>");
 
                     $('.alert-delivery-addr').hide();
                     var addressInput = $('.address-input');
@@ -790,17 +788,17 @@ define(
                     // добавление в базу нового города, страны, улицы и т.д (если курьером)
 
                     var commonModule = require('shop-common');
-                    var deliveryAddress = defaultAddressForCourier = commonModule.addAddressToBase(addressInput);
+                    commonModule.addAddressToBase(addressInput,deliveryAddress);
                     writeAddress(deliveryAddress);
-
-                    //thriftModule.client.addUserAddress(deliveryAddress);
 
                     var orderDetails = thriftModule.client.setOrderDeliveryType(orderId,2,deliveryAddress);
                     setDeliveryCost(orderId,orderDetails);
-                    setDeliveryDropdown(orderId);
+                    var NoAddAddressAgain = true;
+                    setDeliveryDropdown(orderId,0,NoAddAddressAgain);
                 }
 
             });
+            }
         }
 
         function showDeliveryDropdown(orderId,userAddresses){
