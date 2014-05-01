@@ -197,7 +197,7 @@ define(
 
                         var isModalWindow = $(this).closest('.modal').length > 0;
                         if (isModalWindow && !errorPrepack){
-                            $(this).closest('.modal').modal('hide');
+                            $(this).closest('.modal').find('.close').trigger('click');//modal('hide');
                             currentProductSelector.find('.error-prepack').hide();
                         }
                     }

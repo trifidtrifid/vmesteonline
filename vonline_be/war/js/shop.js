@@ -58,15 +58,17 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         window.addEventListener('popstate',makeHistory,false);
 
         function makeHistory(e){
-            var isHistory = true;
+            // действия для корректной навигации по истории
+            var isHistoryNav = true;
+            //alert('makeHistory '+e.state.locationModal);
             if(e.state){
                 if(e.state.type == 'modal'){
 
-                    modules.shopCommonModule.identificateModal(e.state.productid,isHistory);
+                    modules.shopCommonModule.identificateModal(e.state.productid,isHistoryNav);
 
                 }else if(e.state.type == 'default'){
 
-                    $('.modal.in .close').trigger('click',[isHistory]);
+                    $('.modal.in .close').trigger('click',[isHistoryNav]);
                 }
             }
         }

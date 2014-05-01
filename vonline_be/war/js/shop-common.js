@@ -169,7 +169,7 @@ define(
 
         function InitProductDetailPopup(selector){
             try{
-                selector.click(function(e,isHistory){
+                selector.click(function(e,isHistoryNav){
                     e.preventDefault();
 
                     var productSelector = $(this).closest('.product'),
@@ -330,8 +330,8 @@ define(
                             });
                         }
 
-                        currentModal.find('.close').click(function(e,isHistory){
-                            if (!isHistory) window.history.back();
+                        currentModal.find('.close').click(function(e,isHistoryNav){
+                            if (!isHistoryNav) window.history.back();
                         });
 
                     }else{
@@ -355,15 +355,15 @@ define(
                             }
                         }
                     }
-                   /* $.uriAnchor.setAnchor({
-                       product : productId
-                    });*/
-                    if (!isHistory){
+                    //var beginHash = (isBasket || isOrdersHistory) ? "p-basket" : "p";
+                    var beginHash = "p";
+
+                    if (!isHistoryNav){
                         var state = {
                             type : 'modal',
                             productid : productId
                         };
-                        window.history.pushState(state,null,'shop.jsp#p='+productId);
+                        window.history.pushState(state,null,'shop.jsp#'+ beginHash +'='+productId);
 
                     }
                     currentModal.modal();
@@ -403,10 +403,10 @@ define(
         }
 
         function identificateModal(productId,historyBool){
-            var isHistory = (historyBool) ? historyBool : false;
+            var isHistoryNav = (historyBool) ? historyBool : false;
             $('.catalog .product').each(function(){
                 if($(this).data('productid') == productId){
-                    $(this).find('.product-link').trigger('click',[isHistory]);
+                    $(this).find('.product-link').trigger('click',[isHistoryNav]);
                 }
             })
         }
