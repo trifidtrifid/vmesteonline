@@ -207,44 +207,62 @@ define(
                 }else{
                     currentForm.find('.error-info').hide();
 
-                currentForm.slideUp();
-
                 var commonModule = require('shop-common');
 
                 var street = currentForm.find('.street-delivery').val();
                 var building = currentForm.find('.building-delivery').val();
-                var deliveryAddress;
+                var deliveryAddress, badAddress = false;
 
                 if(!currentForm.prev().hasClass('add-user-address')){
                     // если сохраняем при редактировании
-                    currentForm.prev().find('span').text(street + " " + building + ", кв. " + flatNo);
-
-                    if (addressForDelete) thriftModule.client.deleteDeliveryAddress(addressForDelete.street.name+" "+addressForDelete.building.fullNo);
                     //thriftModule.client.createDeliveryAddress(deliveryAddress.street.name+" "+deliveryAddress.building.fullNo,deliveryAddress.flatNo,0,0,0);
-                    deliveryAddress = thriftModule.client.createDeliveryAddress(street+" "+building,flatNo,0,0,0);
+                    try{
+                        deliveryAddress = thriftModule.client.createDeliveryAddress(street+" "+building,flatNo,0,0,0);
+                        currentForm.find('.error-info').hide();
+
+                        currentForm.prev().find('span').text(street + " " + building + ", кв. " + flatNo);
+
+                        if (addressForDelete) thriftModule.client.deleteDeliveryAddress(addressForDelete.street.name+" "+addressForDelete.building.fullNo);
+
+                    }catch(e){
+                        badAddress = true;
+                        currentForm.find('.error-info').text('Такого адреса не существует !').show();
+                    }
 
                 }else{
                     //если сохраняем при добавлении
-                    var ind = $('.user-address-item').length;
-                    if(!ind){ind = 1;}
-                    var newAddressesHtml ='<div class="user-address-item no-init" data-index="'+ ind +'">'+
-                        '<span>'+
-                         street + " " + building + ", кв. " + flatNo+
-                        '</span>'+
-                        '<a href="#" class="edit-user-addr">редактировать</a>'+
-                        '<a href="#" title="Удалить" class="remove-user-addr">&times;</a>'+
-                        '</div>';
-                   $('.user-addresses').prepend(newAddressesHtml);
+                    try{
+                        deliveryAddress = thriftModule.client.createDeliveryAddress(street+" "+building,flatNo,0,0,0);
+                        currentForm.find('.error-info').hide();
 
-                    deliveryAddress = thriftModule.client.createDeliveryAddress(street+" "+building,flatNo,0,0,0);
-                    var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
+                        var ind = $('.user-address-item').length;
+                        if(!ind){ind = 1;}
+                        var newAddressesHtml ='<div class="user-address-item no-init" data-index="'+ ind +'">'+
+                            '<span>'+
+                            street + " " + building + ", кв. " + flatNo+
+                            '</span>'+
+                            '<a href="#" class="edit-user-addr">редактировать</a>'+
+                            '<a href="#" title="Удалить" class="remove-user-addr">&times;</a>'+
+                            '</div>';
+                        $('.user-addresses').prepend(newAddressesHtml);
 
-                    var noInit = $('.user-address-item.no-init');
-                    initEditAddress(noInit,userAddresses,deliveryAddress);
-                    noInit.removeClass('no-init');
+                        var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
+
+                        var noInit = $('.user-address-item.no-init');
+                        initEditAddress(noInit,userAddresses,deliveryAddress);
+                        noInit.removeClass('no-init');
+
+                    }catch(e){
+                        badAddress = true;
+                        currentForm.find('.error-info').text('Такого адреса не существует !').show();
+                    }
+
                 }
                     //commonModule.addAddressToBase(currentForm);
-                    commonModule.addAddressToBase(currentForm,deliveryAddress);
+                    if(!badAddress) {
+                        commonModule.addAddressToBase(currentForm,deliveryAddress);
+                        currentForm.slideUp();
+                    }
 
                 }
             });
@@ -284,13 +302,15 @@ define(
             selector.find('.remove-user-addr').click(function(e){
                 e.preventDefault();
 
-                $(this).closest('.user-address-item').slideUp(function(){
+                var userAddressItem = $(this).closest('.user-address-item');
+                userAddressItem.slideUp(function(){
                     var ind = $(this).data('index');
                     var currAddr;
                     currAddr = (currentAddress) ? currentAddress : userAddresses[ind];
                     //thriftModule.userClient.deleteUserAddress(currAddr);
                     thriftModule.client.deleteDeliveryAddress(currAddr);
                 });
+                userAddressItem.find('+.form-edit').slideUp();
             })
         }
 

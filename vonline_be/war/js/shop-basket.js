@@ -727,6 +727,8 @@ define(
             }*/
         }
 
+        var mapWidthConst = 400;
+        var mapHeightConst = 300;
         function setDeliveryDropdown(orderId,userAddresses,NoAddAddressAgain){
             var addresses = (userAddresses) ? userAddresses : thriftModule.client.getUserDeliveryAddresses().elems;
 
@@ -749,6 +751,12 @@ define(
 
                 defaultAddressForCourier = thriftModule.client.getUserDeliveryAddress(addresses[ind]);
                 writeAddress(defaultAddressForCourier);
+
+                var addressText = $(this).text();
+                var mapSrc = thriftModule.client.getDeliveryAddressViewURL(addressText,mapWidthConst,mapHeightConst);
+                $('.address-map').remove();
+                $(this).closest('.input-delivery').find('.address-input').after("<img class='address-map' src='"+ mapSrc +"'>");
+
                 var orderDetails = thriftModule.client.setOrderDeliveryType(orderId,2,defaultAddressForCourier);
                 setDeliveryCost(orderId,orderDetails);
             });
@@ -776,10 +784,10 @@ define(
                 }else{
                     var addressText =  street + " " + building;
                     var deliveryAddress = defaultAddressForCourier = thriftModule.client.createDeliveryAddress(addressText,parseInt(flat),0,0,0);
-                    var mapUrl = thriftModule.client.getDeliveryAddressViewURL(addressText,400,300);
+                    var mapSrc = thriftModule.client.getDeliveryAddressViewURL(addressText,mapWidthConst,mapHeightConst);
 
                     $('.address-map').remove();
-                    $(this).closest('.address-input').after("<img class='address-map' src='"+ mapUrl +"'>");
+                    $(this).closest('.address-input').after("<img class='address-map' src='"+ mapSrc +"'>");
 
                     $('.alert-delivery-addr').hide();
                     var addressInput = $('.address-input');
