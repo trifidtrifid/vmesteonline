@@ -46,7 +46,7 @@ public class ProductDescription {
 	
 	public FullProductInfo getFullProductInfo(){
 	//the last argument is the Shop id but it is unknown here
-		Product product = new Product(id, name, shortDescr, weight, imageURL, price, unitName,minClientPack,0); 
+		Product product = new Product(id, name, shortDescr, weight, imageURL, price, unitName,minClientPack,0,prepackRequired); 
 		
 		Map<PriceType, Double> pricesMap = new HashMap<PriceType, Double>();
 		if( null != priceRetail ) pricesMap.put(PriceType.RETAIL, priceRetail);
@@ -57,7 +57,7 @@ public class ProductDescription {
 		List<Long> topics = VoHelper.convertSet(topicSet, new ArrayList<Long>(), new Long(0));
 		List<Long> categoriesSet = VoHelper.convertSet(categories, new ArrayList<Long>(), new Long(0));
 		ProductDetails details = new ProductDetails(categoriesSet, fullDescr, imagesURLset, pricesMap , optionsMap, topics, 
-				producerId, minProducerPack, prepackRequired, knownNames );
+				producerId, minProducerPack, knownNames );
 		FullProductInfo fpi = new FullProductInfo(product, details);
 		return fpi;
 	}

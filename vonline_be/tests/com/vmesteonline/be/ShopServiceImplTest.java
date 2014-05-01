@@ -323,11 +323,11 @@ public class ShopServiceImplTest {
 			optionsMap2.put("цвет", "черный");
 			optionsMap2.put("вкус", "мерзкий");
 
-			productsList.add(new FullProductInfo(new Product(1, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан", 1000, shopId), new ProductDetails(
-					categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 3000, true, new HashSet<String>())));
+			productsList.add(new FullProductInfo(new Product(1, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан", 1000, shopId, true), new ProductDetails(
+					categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 3000, new HashSet<String>())));
 
-			productsList.add(new FullProductInfo(new Product(2, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000, shopId), new ProductDetails(
-					categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 3000, true, new HashSet<String>())));
+			productsList.add(new FullProductInfo(new Product(2, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000, shopId, true), new ProductDetails(
+					categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 3000, new HashSet<String>())));
 
 			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
 			// expects to get all of products
@@ -588,7 +588,7 @@ public class ShopServiceImplTest {
 
 			// void testConfirmOrder() {
 			long curOrderId = orders.get(0).getId();
-			long confirmedOrder = si.confirmOrder(0);
+			long confirmedOrder = si.confirmOrder(0, "");
 			Assert.assertEquals(curOrderId, confirmedOrder);
 			orders = si.getOrders(now + 9 * day, now + 11 * day);
 			Assert.assertEquals(orders.size(), 1);
@@ -714,11 +714,11 @@ public class ShopServiceImplTest {
 		optionsMap2.put("цвет", "черный");
 		optionsMap2.put("вкус", "мерзкий");
 
-		productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан", 1000, shopId), new ProductDetails(
-				categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 3000, true, new HashSet<String>())));
+		productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан", 1000, shopId, true), new ProductDetails(
+				categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 3000, new HashSet<String>())));
 
-		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000, shopId), new ProductDetails(
-				categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 3000, true, new HashSet<String>())));
+		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000, shopId, true), new ProductDetails(
+				categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 3000, new HashSet<String>())));
 
 		upProductsIdl = si.uploadProducts(productsList, shopId, true);
 
@@ -1271,21 +1271,21 @@ public class ShopServiceImplTest {
 		/*OrderLine ol1 = */si.setOrderLine(0,upProductsIdl.get(0), 35.0D, "comment11", packets);
 		/*OrderLine ol2 = */si.setOrderLine(0,upProductsIdl.get(1), 2.0D, "comment12", null);
 		
-		si.confirmOrder(0);
+		si.confirmOrder(0,"");
 		
 		/*long order2ID = */si.createOrder(now + 1000, "22aaaa");
 		/*OrderLine ol21 = */si.setOrderLine(0,upProductsIdl.get(0), 35.0D, "comment21", packets);
-		si.confirmOrder(0);
+		si.confirmOrder(0, "");
 		
 		/*long order3ID = */si.createOrder(now + 1000, "33aaaa");
 		/*OrderLine ol31 = */si.setOrderLine(0,upProductsIdl.get(1), 33.0D, "comment31", null);
 		si.setOrderDeliveryType(0,DeliveryType.LONG_RANGE,null);
-		si.confirmOrder(0);
+		si.confirmOrder(0, "");
 		
 		/*long order4ID = */si.createOrder(now + 1001, "44aaaa");
 		/*OrderLine ol41 = */si.setOrderLine(0,upProductsIdl.get(1), 44.0D, "comment41", null);
 
-		si.confirmOrder(0);
+		si.confirmOrder(0, "");
 		return order1ID;
 	}
 
@@ -1449,7 +1449,7 @@ public class ShopServiceImplTest {
 		try {
 			
 			VoCity city = pm.getObjectById(VoCity.class, usi.getCities(usi.getCounties().get(0).getId()).get(0).getId());
-			VoStreet voStreet = new VoStreet( city, streetName );
+			VoStreet voStreet = new VoStreet( city, streetName, pm );
 			VoBuilding voBuilding = new VoBuilding(voStreet, buuildingNAme, new BigDecimal("0"), new BigDecimal("0"),pm);
 			Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
 			voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
@@ -1504,6 +1504,28 @@ public class ShopServiceImplTest {
 //======================================================================================================================
 
 	@Test
+	public void testUserDeliveryAddress() {
+
+		try {
+			String addressText = "детскосельский 3";
+			PostalAddress deliveryAddress = si.createDeliveryAddress( addressText, 81, (byte)2, (byte)8,"");
+			List<String> addressList = si.getUserDeliveryAddresses();
+			PostalAddress da = si.getUserDeliveryAddress(addressText);
+			String deliveryAddressViewURL = si.getDeliveryAddressViewURL(addressText, 200, 200);
+			String nullVal = si.getDeliveryAddressViewURL(null, 200, 200);
+			si.deleteDeliveryAddress(addressText);
+			List<String> addressListWithoutAddrText = si.getUserDeliveryAddresses();
+			PostalAddress daNull = si.getUserDeliveryAddress(addressText);
+			
+		} catch (InvalidOperation e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+
+	//======================================================================================================================
+	
+	@Test
 	public void testGetProductsByCategories() {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
@@ -1525,7 +1547,6 @@ public class ShopServiceImplTest {
 		} catch (InvalidOperation e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }

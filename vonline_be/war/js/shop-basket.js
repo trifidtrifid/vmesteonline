@@ -655,7 +655,7 @@ define(
                     }*//*
                 }*/
 
-                var nextDate = thriftModule.client.getNextOrderDate(now+day);
+                var nextDate = thriftModule.client.getNextOrderDate(now);
             }catch(e){
                 alert(e + ' Функция SetFreeDates');
             }

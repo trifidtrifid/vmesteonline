@@ -161,7 +161,7 @@ public class VoProduct {
 
 			vp.minClientPack = product.minClientPack;
 			vp.minProducerPack = details.minProducerPack;
-			vp.prepackRequired = details.prepackRequired;
+			vp.prepackRequired = product.prepackRequired;
 			vp.knownNames = new HashSet<String>();
 			if (details.knownNames != null)
 				for (String name : details.knownNames) {
@@ -205,7 +205,7 @@ public class VoProduct {
 		this.importId = product.id;
 		this.minClientPack = product.minClientPack;
 		this.minProducerPack = details.minProducerPack;
-		this.prepackRequired = details.prepackRequired;
+		this.prepackRequired = product.prepackRequired;
 		
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
@@ -254,7 +254,7 @@ public class VoProduct {
 
 	// =====================================================================================================================
 	public Product getProduct() {
-		return new Product(id.getId(), name, shortDescr, weight, imageURL, price, unitName, minClientPack, shopId);
+		return new Product(id.getId(), name, shortDescr, weight, imageURL, price, unitName, minClientPack, shopId, prepackRequired);
 	}
 
 	public ProductDetails getProductDetails() {
@@ -267,7 +267,6 @@ public class VoProduct {
 		productDetails.setFullDescr(fullDescr.getValue());
 		productDetails.setTopicSet(getTopicSet());
 		productDetails.setImagesURLset(getImagesURLset());
-		productDetails.setPrepackRequired(prepackRequired);
 		productDetails.setKnownNames(knownNames);
 
 		return productDetails;

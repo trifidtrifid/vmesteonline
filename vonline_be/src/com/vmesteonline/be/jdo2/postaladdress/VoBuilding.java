@@ -43,6 +43,7 @@ public class VoBuilding implements Comparable<VoBuilding> {
 			this.longitude = oldbg.getLongitude().toPlainString();
 			this.latitude = oldbg.getLatitude().toPlainString();
 			this.addressString = oldbg.getAddressString();
+			pm.makePersistent(this);
 		}
 	}
 

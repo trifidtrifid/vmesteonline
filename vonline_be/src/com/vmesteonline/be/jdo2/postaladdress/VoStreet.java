@@ -1,5 +1,7 @@
 package com.vmesteonline.be.jdo2.postaladdress;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -21,14 +23,22 @@ import com.vmesteonline.be.data.PMF;
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 public class VoStreet implements Comparable<VoStreet> {
 
-	public VoStreet(VoCity city, String name) throws InvalidOperation {
-		this.city = city;
-		this.name = name;
-		if( city.getStreets().contains( this ))
-			throw new InvalidOperation(VoError.GeneralError, "The same Street '"+name+"' already exists in City "+city.getName());
-		city.addStreet(this);
-		this.name = name;
-		this.buildings = new TreeSet<VoBuilding>();
+	public VoStreet(VoCity city, String name, PersistenceManager pm) throws InvalidOperation {
+		List<VoStreet> vcl = (List<VoStreet>)pm.newQuery(VoStreet.class, "city == :key && name=='"+name+"'").execute(city.getId());
+		if( vcl.size() > 0 ){
+			id = vcl.get(0).getId();
+			
+		} else {
+			
+			this.setCity(city);
+			this.setName(name);
+			if( city.getStreets().contains( this ))
+				throw new InvalidOperation(VoError.GeneralError, "The same Street '"+name+"' already exists in City "+city.getName());
+			city.addStreet(this);
+			this.setBuildings(new HashSet<VoBuilding>());
+			
+			pm.makePersistent(this);
+		}
 	}
 
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -36,7 +46,7 @@ public class VoStreet implements Comparable<VoStreet> {
 	private Key id;
 
 	public void setId(Key id) {
-
+		this.id = id;
 	}
 
 	@Persistent
@@ -73,6 +83,20 @@ public class VoStreet implements Comparable<VoStreet> {
 	@Override
 	public String toString() {
 		return "VoStreet [id=" + id + ", name=" + name + ", city=" + city + "]";
+	}
+	
+	
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setCity(VoCity city) {
+		this.city = city;
+	}
+
+	public void setBuildings(Set<VoBuilding> buildings) {
+		this.buildings = buildings;
 	}
 
 	@Override
