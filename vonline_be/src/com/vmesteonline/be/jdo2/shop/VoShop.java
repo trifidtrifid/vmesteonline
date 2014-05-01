@@ -427,6 +427,9 @@ public class VoShop {
 	}
 //======================================================================================================================
 	public PriceType getPriceType(int date) throws InvalidOperation {
+		
+		date -= date % 86400;
+		
 		Calendar now = Calendar.getInstance();
 		Calendar theDate = Calendar.getInstance();
 		theDate.setTimeInMillis(((long)date)*1000L);
@@ -454,6 +457,9 @@ public class VoShop {
 	//=====================================================================================================================
 	
 	public OrderDate getNextOrderDate(int afterDate) throws InvalidOperation {
+		
+		afterDate -= afterDate % 86400;
+		
 		Calendar afterDateCldr = Calendar.getInstance();
 		afterDateCldr.setTimeInMillis(((long)afterDate)*1000L);
 		int closestDelta = 1000;
@@ -501,7 +507,7 @@ public class VoShop {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No order dates found in nearest 1000 days after " + 
 		new Date(1000L * (long)afterDate));
 		
-		return new OrderDate( afterDate+closestDelta * 86400, pt);
+		return new OrderDate( afterDate + closestDelta * 86400, pt);
 	}
 
 	/*
