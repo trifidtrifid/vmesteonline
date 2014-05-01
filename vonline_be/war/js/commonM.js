@@ -138,12 +138,14 @@ define(
             var userAddressesLength = userAddresses.length;
 
             if(userAddressesLength > 0){
-                var userAddressesHtml = "";
+                var userAddressesHtml = "",
+                    address;
                 for(var i = 0; i < userAddressesLength; i++){
+                    address = thriftModule.client.getUserDeliveryAddress(userAddresses[i]);
                     userAddressesHtml +='<div class="user-address-item" data-index="'+ i +'">'+
                         '<span>'+
-                        userAddresses[i]+
-                        //userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
+                        //userAddresses[i]+
+                        address.street.name+" "+address.building.fullNo+", кв. "+address.flatNo+
                         '</span>'+
                         '<a href="#" class="edit-user-addr">редактировать</a>'+
                         '<a href="#" title="Удалить" class="remove-user-addr">&times;</a>'+
@@ -220,7 +222,7 @@ define(
                         deliveryAddress = thriftModule.client.createDeliveryAddress(street+" "+building,flatNo,0,0,0);
                         currentForm.find('.error-info').hide();
 
-                        currentForm.prev().find('span').text(street + " " + building + ", кв. " + flatNo);
+                        currentForm.prev().find('span').text(deliveryAddress.street.name + " " + deliveryAddress.building.fullNo + ", кв. " + deliveryAddress.flatNo);
 
                         if (addressForDelete) thriftModule.client.deleteDeliveryAddress(addressForDelete.street.name+" "+addressForDelete.building.fullNo);
 
@@ -239,7 +241,7 @@ define(
                         if(!ind){ind = 1;}
                         var newAddressesHtml ='<div class="user-address-item no-init" data-index="'+ ind +'">'+
                             '<span>'+
-                            street + " " + building + ", кв. " + flatNo+
+                            deliveryAddress.street.name + " " + deliveryAddress.building.fullNo + ", кв. " + deliveryAddress.flatNo+
                             '</span>'+
                             '<a href="#" class="edit-user-addr">редактировать</a>'+
                             '<a href="#" title="Удалить" class="remove-user-addr">&times;</a>'+

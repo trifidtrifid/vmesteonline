@@ -364,7 +364,7 @@ define(
                         writeAddress(orderDetails.deliveryTo);
                         var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
                         defaultAddressForCourier = orderDetails.deliveryTo;
-                        showDeliveryDropdown(orderId,userAddresses.elems);
+                        showDeliveryDropdown(orderId,userAddresses);
                         break;
                 }
                 setDeliveryCost(orderId,orderDetails);
@@ -733,11 +733,13 @@ define(
             var addresses = (userAddresses) ? userAddresses : thriftModule.client.getUserDeliveryAddresses().elems;
 
             var userAddressesHtml = "";
-            var userAddressesLength = addresses.length;
+            var userAddressesLength = addresses.length,
+                address;
             for(var i = 0; i < userAddressesLength; i++){
-                userAddressesHtml += '<li><a href="#">'+
-                    addresses[i]+
-                    //addresses[i].country.name+", "+addresses[i].city.name+", "+addresses[i].street.name+" "+addresses[i].building.fullNo+", кв. "+addresses[i].flatNo+
+                address = thriftModule.client.getUserDeliveryAddress(addresses[i]);
+                userAddressesHtml += '<li><a data-addresstext="'+addresses[i]+'" href="#">'+
+                    //addresses[i]+
+                    address.street.name+" "+address.building.fullNo+", кв. "+address.flatNo+
                     '</a></li>';
             }
             userAddressesHtml += '<li class="divider"></li>'+
@@ -752,7 +754,7 @@ define(
                 defaultAddressForCourier = thriftModule.client.getUserDeliveryAddress(addresses[ind]);
                 writeAddress(defaultAddressForCourier);
 
-                var addressText = $(this).text();
+                var addressText = $(this).data('addresstext');
                 var mapSrc = thriftModule.client.getDeliveryAddressViewURL(addressText,mapWidthConst,mapHeightConst);
                 $('.address-map').remove();
                 $(this).closest('.input-delivery').find('.address-input').after("<img class='address-map' src='"+ mapSrc +"'>");
