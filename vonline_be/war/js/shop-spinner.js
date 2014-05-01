@@ -24,21 +24,36 @@ define(
         }
 
         function InitSpinnerChangeInFinal(selector){
+            var oldSpinnerValue = selector.data('step');
+
+            selector.on('focusout',function(){
+
+                if($(this).val() != oldSpinnerValue){
+                    $(this).trigger('change');
+                }
+
+            });
+
             selector.on('change',function(e){
+
+                // действия для окргуления и избежания неправильного ввода (0 например)
                 var currentValue = $(this).closest('.ace-spinner').spinner('value');
-                $(this).closest('.ace-spinner').spinner('value',+currentValue.toFixed(1));
+                if (currentValue == 0 || currentValue === undefined){
+                    ($(this).data('step')) ? currentValue = $(this).data('step'):currentValue = 1;
+                }
+                if(currentValue) currentValue = parseFloat(currentValue).toFixed(1);
+                $(this).closest('.ace-spinner').spinner('value',currentValue);
+
+                if (oldSpinnerValue != currentValue){
+                    // чтобы не обрабатывать щелчки ниже 1
+                oldSpinnerValue = currentValue;
 
                 var productSelector = $(this).closest('li');
                 var price = productSelector.find('.td-price').text();
                 var orderid = $('.tab-pane.active').data('orderid');
                 var qnty = $(this).val();
                 price = parseFloat(price);
-                $('.catalog-order>li').each(function(){
-                    if ($(this).data('productid') == productSelector.data('productid')){
-                        $(this).find('.ace-spinner').spinner('value',qnty);
-                        $(this).find('.td-summa').text((price*qnty).toFixed(1));
-                    }
-                });
+
                 var productDetails = thriftModule.client.getProductDetails(productSelector.data('productid'));
                 var packs=[];
                 var packsObj = {};
@@ -60,6 +75,14 @@ define(
                 /* ----- */
                 packsObj = changePacks($(this),productSelector,packs);
                 /* ----- */
+
+                $('.catalog-order>li').each(function(){
+                    if ($(this).data('productid') == productSelector.data('productid')){
+                        $(this).find('.ace-spinner').spinner('value',packsObj.qnty);
+                        $(this).find('.td-summa').text((price*packsObj.qnty).toFixed(1));
+                    }
+                });
+
                 if(!packsObj.errorFlag){
                     thriftModule.client.setOrderLine(orderid,productSelector.data('productid'),packsObj.qnty,'',packsObj.packs);
                     productSelector.find('.td-summa').text((price*packsObj.qnty).toFixed(1));
@@ -68,6 +91,7 @@ define(
                     $('.itogo-right span,.amount span').text(commonModule.countAmount($('.catalog-confirm')));
                     $('.weight-right span,.weight span').text(orderDetails.weightGramm);
                     checkBigWeight(orderid);
+                }
                 }
             });
         }
@@ -143,6 +167,7 @@ define(
                         });
                     }
                 }
+
                 if(!errorFlag){
                     productSelector.find('td>.ace-spinner').spinner('value',qnty);
                 }
@@ -183,10 +208,24 @@ define(
 
         function InitSpinnerChangeInBasket(selector){
             var oldSpinnerValue = selector.data('step');
+
+            selector.on('focusout',function(){
+
+               if($(this).val() != oldSpinnerValue){
+                   $(this).trigger('change');
+               }
+
+            });
+
             selector.on('change',function(e){
 
+                // действия для окргуления и избежания неправильного ввода (0 например)
                 var currentValue = $(this).closest('.ace-spinner').spinner('value');
-                $(this).closest('.ace-spinner').spinner('value',+currentValue.toFixed(1));
+                if (currentValue == 0 || currentValue === undefined){
+                    ($(this).data('step')) ? currentValue = $(this).data('step'):currentValue = 1;
+                }
+                if(currentValue) currentValue = parseFloat(currentValue).toFixed(1);
+                $(this).closest('.ace-spinner').spinner('value',currentValue);
 
                 if (oldSpinnerValue != currentValue){
                     // чтобы не обрабатывать щелчки ниже 1
@@ -229,12 +268,31 @@ define(
         }
 
         function InitSpinnerChange(selector){
+            var oldSpinnerValue = selector.data('step');
+
+            selector.on('focusout',function(){
+
+                if($(this).val() != oldSpinnerValue){
+                    $(this).trigger('change');
+                }
+
+            });
             try{
                 selector.on('change',function(e){
-                    var currentValue = $(this).closest('.ace-spinner').spinner('value');
-                    $(this).closest('.ace-spinner').spinner('value',+currentValue.toFixed(1));
 
+                    // действия для окргуления и избежания неправильного ввода (0 например)
+                    var currentValue = $(this).closest('.ace-spinner').spinner('value');
+                    if (currentValue == 0 || currentValue === undefined){
+                        ($(this).data('step')) ? currentValue = $(this).data('step'):currentValue = 1;
+                    }
+                    if(currentValue) currentValue = parseFloat(currentValue).toFixed(1);
+                    $(this).closest('.ace-spinner').spinner('value',currentValue);
+
+                    if (oldSpinnerValue != currentValue){
+                        // чтобы не обрабатывать щелчки ниже 1
+                    oldSpinnerValue = currentValue;
                     var productSelector = $(this).closest('tr');
+                    oldSpinnerValue = currentValue;
 
                     var qnty = $(this).val();
                     if ($(this).closest('.modal').length > 0){
@@ -253,7 +311,7 @@ define(
                                     qnty = $(this).closest('.modal-footer').find('>.prepack-item:not(".packs") .ace-spinner').spinner('value');
                                 }
                                 productSelector.find('td>.ace-spinner').spinner('enable');
-                                productSelector.find('td>.ace-spinner').spinner('value',qnty);
+                                productSelector.find('td>.ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
                             }else{
                                 // если линия не одна или упаковок больше одной, то делаем spinner disable
                                 productSelector.find('td>.ace-spinner').spinner('disable');
@@ -266,10 +324,10 @@ define(
                                     var tempQntyVal = $(this).find('.prepack-item:not(".packs") .ace-spinner').spinner('value');
                                     newQnty += tempPacksVal*tempQntyVal;
                                 });
-                                productSelector.find('td>.ace-spinner').spinner('value',newQnty);
+                                productSelector.find('td>.ace-spinner').spinner('value',parseFloat(newQnty).toFixed(1));
                             }
                         }else{
-                            productSelector.find('td>.ace-spinner').spinner('value',qnty);
+                            productSelector.find('td>.ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
                         }
                     } else{
                         // значит мы в таблице продуктов и нам нужно автом. поменять значение
@@ -282,6 +340,7 @@ define(
                             productSelector.find('.modal .ace-spinner').spinner('value',qnty);
                         }
                     }
+                    }
                 });
             }catch(e){
                 alert(e+" Функция InitSpinnerChange");
@@ -290,7 +349,9 @@ define(
 
         function initRemovePrepackLine(selector,productId,productSelector){
             try{
-                selector.click(function(){
+                selector.click(function(e){
+                    e.preventDefault();
+
                     var currentSpinnerVal = parseFloat($(this).closest('.prepack-line').find('.prepack-item:not(".packs") .ace-spinner').spinner('value')).toFixed(1);
                     var setFlag = true,
                         counterForSetFlag = 0;
@@ -303,13 +364,17 @@ define(
                     var catalogOrder = $(this).closest('.catalog-order');
                     var catalogConfirm = $(this).closest('.catalog-confirm');
 
+                    var quantVal = $(this).closest('.prepack-line').find('.prepack-item:not(".packs") .ace-spinner').spinner('value');
+                    var packVal = $(this).closest('.prepack-line').find('.packs .ace-spinner').spinner('value');
+                    var qnty;
+
                     if (catalogOrder.length || catalogConfirm.length){
                         // если мы в корзине или на странице конфирма,
                         // то нужно менять packs и делать setOrderLine
                         var orderId = $('.tab-pane.active').data('orderid');
                         var orderDetails = thriftModule.client.getOrderDetails(orderId);
                         var orderLinesLength = orderDetails.odrerLines.length;
-                        var packs,qnty;
+                        var packs;
                         for (var i = 0; i < orderLinesLength; i++){
                             if (orderDetails.odrerLines[i].product.id == productId){
                                 packs = orderDetails.odrerLines[i].packs;
@@ -321,8 +386,6 @@ define(
                         }
                         if (setFlag){
                             packs[currentSpinnerVal] = 0;
-                            var quantVal = $(this).closest('.prepack-line').find('.prepack-item:not(".packs") .ace-spinner').spinner('value');
-                            var packVal = $(this).closest('.prepack-line').find('.packs .ace-spinner').spinner('value');
                             qnty = (qnty - quantVal*packVal).toFixed(1);
                             productSelector.find('td>.ace-spinner').spinner('value',qnty);
                             productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
@@ -337,10 +400,15 @@ define(
                             (catalogOrder.length) ? currentCatalog = catalogOrder: currentCatalog = catalogConfirm;
                             $('.itogo-right span').text(commonModule.countAmount(currentCatalog));
                         }
+                    }else{
+                        // если мы в таблице продуктов
+                        qnty = productSelector.find('td>.ace-spinner').spinner('value');
+                        qnty = (qnty - quantVal*packVal).toFixed(1);
+                        productSelector.find('td>.ace-spinner').spinner('value',qnty);
                     }
                     $(this).closest('.prepack-line').slideUp(function(){
                         var oldHeight = $(this).closest('.modal').height();
-                        $(this).closest('.modal').height(oldHeight - 53);
+                        $(this).closest('.modal').height(oldHeight - 53).css('min-height','268px');
                         if (counterForSetFlag <= 2){
                             $('.error-prepack').hide();
                         }
