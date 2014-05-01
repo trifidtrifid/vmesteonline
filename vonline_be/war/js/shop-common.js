@@ -57,10 +57,10 @@ define(
             return (myOrderDetails.weightGramm/1000).toFixed(1);
         }
 
-        function addAddressToBase(currentForm){
+        function addAddressToBase(currentForm,address){
             var countries = thriftModule.userClient.getCounties();
             var countriesLength = countries.length;
-            var inputCountry = currentForm.find('.country-delivery').val();
+            var inputCountry = (address) ? address.country.name : currentForm.find('.country-delivery').val();
             var country,countryId = 0;
             for (var i = 0; i < countriesLength; i++){
                 if (countries[i].name == inputCountry){
@@ -75,7 +75,7 @@ define(
 
             var cities = thriftModule.userClient.getCities(countryId);
             var citiesLength = cities.length;
-            var inputCity = currentForm.find('.city-delivery').val();
+            var inputCity = (address) ? address.city.name : currentForm.find('.city-delivery').val();
             var city,cityId = 0;
             for (i = 0; i < citiesLength; i++){
                 if (cities[i].name == inputCity){
@@ -90,7 +90,7 @@ define(
 
             var streets = thriftModule.userClient.getStreets(cityId);
             var streetsLength = streets.length;
-            var inputStreet = currentForm.find('.street-delivery').val();
+            var inputStreet = (address) ? address.street.name : currentForm.find('.street-delivery').val();
             var street,streetId = 0;
             for (i = 0; i < streetsLength; i++){
                 if (streets[i].name == inputStreet){
@@ -105,7 +105,7 @@ define(
 
             var buildings = thriftModule.userClient.getBuildings(streetId);
             var buildingsLength = buildings.length;
-            var inputBuilding = currentForm.find('.building-delivery').val();
+            var inputBuilding = (address) ? address.building.fullNo : currentForm.find('.building-delivery').val();
 
             var building,buildingId = 0;
             for (i = 0; i < buildingsLength; i++){
@@ -126,7 +126,7 @@ define(
             deliveryAddress.building = building;
             deliveryAddress.staircase = 0;
             deliveryAddress.floor= 0;
-            deliveryAddress.flatNo = parseInt(currentForm.find('.flat-delivery').val());
+            deliveryAddress.flatNo = parseInt((address) ? address.flatNo : currentForm.find('.flat-delivery').val());
             deliveryAddress.comment = $('#order-comment').val();
 
             return deliveryAddress;
@@ -169,7 +169,7 @@ define(
 
         function InitProductDetailPopup(selector){
             try{
-                selector.click(function(e){
+                selector.click(function(e,isHistoryNav){
                     e.preventDefault();
 
                     var productSelector = $(this).closest('.product'),
@@ -284,7 +284,7 @@ define(
                     if (!isModalWasOpen){
                         // если еще не открывали popup
                         currentModal.append(popupHtml);
-                            var currentSpinnerValue,currentSpinnerStep;
+                        var currentSpinnerValue,currentSpinnerStep;
 
                         if (isBasket || isOrdersHistory){
                             // если мы в корзине или на странице заказов
@@ -330,6 +330,10 @@ define(
                             });
                         }
 
+                        currentModal.find('.close').click(function(e,isHistoryNav){
+                            if (!isHistoryNav) window.history.back();
+                        });
+
                     }else{
                         //если popup уже открывали
                         if (isBasket || isOrdersHistory){
@@ -351,11 +355,23 @@ define(
                             }
                         }
                     }
+                    //var beginHash = (isBasket || isOrdersHistory) ? "p-basket" : "p";
+                    var beginHash = "p";
+
+                    if (!isHistoryNav){
+                        var state = {
+                            type : 'modal',
+                            productid : productId
+                        };
+                        window.history.pushState(state,null,'shop.jsp#'+ beginHash +'='+productId);
+
+                    }
                     currentModal.modal();
                     fullDescrHeight = currentModal.find('.product-fullDescr').height();
                     currentModal.find('.product-fullDescr').hide();
 
                     $('.modal-backdrop').click(function(){
+                        window.history.back();
                         $('.modal.in .close').trigger('click');
                     });
 
@@ -386,6 +402,15 @@ define(
             }
         }
 
+        function identificateModal(productId,historyBool){
+            var isHistoryNav = (historyBool) ? historyBool : false;
+            $('.catalog .product').each(function(){
+                if($(this).data('productid') == productId){
+                    $(this).find('.product-link').trigger('click',[isHistoryNav]);
+                }
+            })
+        }
+
         function initPrepackOpenClick(selector,options){
             selector.find('.prepack-open').click(function(e){
                 e.preventDefault();
@@ -407,7 +432,7 @@ define(
                     '<span>'+ $(this).closest('.prepack-item').prev().find('span').text() +'</span>'+
                     '</div>'+
                     '<div class="prepack-item">'+
-                    '<a href="#" class="close" title="Удалить">×</a>'+
+                    '<a href="#" class="remove-prepack-line" title="Удалить">×</a>'+
                     '</div>'+
                     '</div>';
                 $(this).closest('.modal-footer').find('.prepack-list').append(prepackHtml);
@@ -458,7 +483,7 @@ define(
                     productSelector.find('.td-spinner .ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
                 }
                 productSelector.find('.td-spinner .ace-spinner').spinner('disable');
-                spinnerModule.initRemovePrepackLine(currentPrepackLine.find('.prepack-item .close'),productId,productSelector);
+                spinnerModule.initRemovePrepackLine(currentPrepackLine.find('.prepack-item .remove-prepack-line'),productId,productSelector);
                 currentPrepackLine.removeClass('no-init');
 
                 var oldHeight = $(this).closest('.modal').height();
@@ -662,7 +687,8 @@ define(
             addAddressToBase: addAddressToBase,
             isValidEmail: isValidEmail,
             changeShortUserInfo: changeShortUserInfo,
-            getOrderWeight: getOrderWeight
+            getOrderWeight: getOrderWeight,
+            identificateModal: identificateModal
         }
     }
 );

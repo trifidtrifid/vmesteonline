@@ -237,7 +237,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             '<td class="td8 user-name">'+
                             orders[i].userName +
                             '</td>'+
-                            '<td class="td3">'+ orderDay +"."+orderMonth+"."+tempDate.getFullYear()+ '</td>'+
+                            '<td class="td3" id="'+ orders[i].date +'">'+ orderDay +"."+orderMonth+"."+tempDate.getFullYear()+ '</td>'+
                             '<td class="td4">'+
                             '<div class="order-status">'+orderStatus +'</div>'+
                             '</td>'+
@@ -643,7 +643,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                                 }
                                 break;
                             case "Категории продуктов" :
-                                for(var p in ExField){
+                                for(p in ExField){
                                     if (ExField[p] >= 200 && ExField[p] < 230  ){
                                         dropdownColArray[counter] = p;
                                         dropdownColArrayFieldType[counter++] = ExField[p];
@@ -651,7 +651,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                                 }
                                 break;
                             case "Производители" :
-                                for(var p in ExField){
+                                for(p in ExField){
                                     if (ExField[p] >= 100 && ExField[p] < 130  ){
                                         dropdownColArray[counter] = p;
                                         dropdownColArrayFieldType[counter++] = ExField[p];
@@ -659,6 +659,28 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                                 }
                                 break;
                         }
+                        var begin,end;
+                        if(colCount < counter ){
+                            // если стобцов в таблице меньше чем default удаляем лишние default столбцы
+                            begin = counter;
+                            end = colCount;
+
+                            for(i = begin-1; i >= end ; i--){
+                                dropdownColArray.pop();
+                                dropdownColArrayFieldType.pop();
+                            }
+                        }
+                        if(colCount > counter){
+                            // если столбцов больше, то добавляем столбцы со значеним SKIP
+                            begin = colCount;
+                            end = counter;
+
+                            for(i = begin-1; i >= end ; i--){
+                                dropdownColArray[i] = skipConst;
+                                dropdownColArrayFieldType[i] = -1;
+                            }
+                        }
+
                         var importHtml = '<table><thead>' +
                             '<tr>' +
                             createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType)+
@@ -686,6 +708,14 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
                             var fieldName = $(this).parent().text();
                             var fieldType = $(this).parent().data('fieldtype');
+
+                            $('.import-field-dropdown').each(function(){
+                               if ($(this).find('.btn-group-text').text() == fieldName){
+                                   $(this).find('.dropdown-toggle').attr('data-fieldtype',-1);
+                                   $(this).find('.btn-group-text').text(skipConst);
+                               }
+                            });
+
                             var currentDropdown = $(this).closest('.import-field-dropdown');
                             currentDropdown.find('.btn-group-text').text(fieldName).parent().attr('data-fieldtype',fieldType);
                         });
@@ -722,10 +752,18 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             var importDropdownLine = "";
             var importDropdownLineLength = dropdownColArray.length;
 
-            var importDropdownMenu = "";
+            var importDropdownMenu = "",
+                haveSkip = false;
             for(var i = 0; i < importDropdownLineLength; i++){
-                importDropdownMenu += '<li data-fieldtype="'+ dropdownColArrayFieldType[i] +'"><a href="#">'+ dropdownColArray[i] +'</a></li>';
+                if(!haveSkip) importDropdownMenu += '<li data-fieldtype="'+ dropdownColArrayFieldType[i] +'"><a href="#">'+ dropdownColArray[i] +'</a></li>';
+
+                if(dropdownColArray[i] == skipConst){
+                    // на случай если добавляется таблица с большим чем Default кол-вом стобцов, чтобы SKIP не
+                    // дублировался в dropdown
+                    haveSkip = true;
+                }
             }
+            if(!haveSkip) importDropdownMenu += '<li data-fieldtype="'+ -1 +'"><a href="#">'+ skipConst +'</a></li>';
 
             for(i = 0; i < importDropdownLineLength; i++){
                 importDropdownLine += '<td>' +
@@ -791,6 +829,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             $('.import').find('.error-info').hide();
         });
 
+        var skipConst = "SKIP";
         $('.import-btn').click(function(e){
             e.preventDefault();
 
@@ -803,7 +842,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                     var ind = $(this).parent().index();
                     var dropdownName = $(this).find('.btn-group-text').text();
                     for(var i = ind+1; i < dropdownLength; i++){
-                        if (dropdownName == dropdowns.eq(i).find('.btn-group-text').text()){
+                        if (dropdownName == dropdowns.eq(i).find('.btn-group-text').text() && dropdownName != skipConst){
                             repeatDropdown = dropdownName;
                             haveRepeat = true;
                             break;
@@ -836,7 +875,10 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 var fieldsMap = [];
                 var fieldsCounter = 0;
                 $('.import .import-field-dropdown').each(function(){
-                    fieldsMap[fieldsCounter++] = parseInt($(this).find('.btn').data('fieldtype'));
+                    var fieldName = $(this).find('.btn-group-text').text();
+                    if(fieldName != skipConst){
+                        fieldsMap[fieldsCounter++] = parseInt($(this).find('.btn').data('fieldtype'));
+                    }
                 });
                 /*$('.checkbox.active:not(".check-all")').each(function(){
                  fieldsMap[fieldsCounter++] = parseInt($(this).data('exchange'));
@@ -876,6 +918,13 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
         /* /import */
 
         /* export */
+
+        $('.export .nav-tabs').find('li').click(function(){
+            var ind = $(this).index();
+
+            var contentH = $('.export .tab-pane:eq('+ ind +')').addClass('active').height();
+            setSidebarHeight(contentH);
+        });
 
         $('.check-all .lbl').click(function(){
             //var tab = $('#orders');
@@ -974,6 +1023,8 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                     initCloseFullText();
 
                     if(!dataSet.data) currentTab.find('.confirm-info').text('Нет данных на такое сочетание даты и типа доставки.').show();
+
+                    setSidebarHeight();
 
                 }catch(e){
                     currentTab.find('.confirm-info').text('Ошибка экспорта.').show();
@@ -1119,13 +1170,16 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
         /* /export */
 
-        function setSidebarHeight(){
+        function setSidebarHeight(contentH){
             try{
 
                 var mainContent = $('.main-content');
+                var contH = (contentH) ? contentH : mainContent.height();
+                //alert(contH+" "+w.height());
 
-                if (mainContent.height() > w.height()){
-                    $('#sidebar').css('height', mainContent.height());
+                if (contH > w.height()){
+                    contH = (contentH) ? contentH+100 : mainContent.height()+45;
+                    $('#sidebar').css('height', contH);
                 }else{
                     $('#sidebar').css('height', '100%');
                 }

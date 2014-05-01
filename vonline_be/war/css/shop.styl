@@ -519,8 +519,8 @@ th.next
 
 .ace-spinner
   width 90px !important
-  .input-mini
-    width 40px
+  .input-mini.spinner-input.spinner1.form-control
+    width 40px !important
     padding 5px 2px
   .spinner-down:hover
   .spinner-up:hover
@@ -659,13 +659,16 @@ th.next
       margin-right 59px
       .prepack-line
         margin-top 5px
-      .close
+      .remove-prepack-line
         color #a44451
         opacity .5
         position relative
         top: -10px
+        font-size 21px
+        font-weight bold
         &:hover
           opacity 1
+          text-decoration none
   .error-prepack
     float right
     font-size 10px
@@ -1104,7 +1107,8 @@ height 50px
     display inline-block
     margin-left 20px
     input[type="submit"]
-      margin-top 10px
+      //margin-top 10px
+      margin-left 10px
   .products-checklist
   .categories-checklist
   .producers-checklist
@@ -1116,11 +1120,12 @@ height 50px
     .import-field-dropdown
       display block
       width 100%
+      background #6fb3e0
       .btn
-        width 100%
         padding 5px
         border 0
         font-size 12px
+        float none
     .import-table
       overflow-x auto
       overflow-y visible
@@ -1142,7 +1147,7 @@ height 50px
 .export
   .input-group
     display inline-block
-    margin-bottom 10px
+    vertical-align middle
   .report-link
     line-height 34px
     display inline-block
