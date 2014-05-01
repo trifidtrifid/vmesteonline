@@ -48,7 +48,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         window.history.pushState(state,null,'shop.jsp');
 
         if (urlHash){
-            if (urlHash.indexOf('modal') != -1){
+            if (urlHash.indexOf('p') != -1){
                 // значит url с modal
                 var hashParts = urlHash.split('=');
                 modules.shopCommonModule.identificateModal(hashParts[1]);

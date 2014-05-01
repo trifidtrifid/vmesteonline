@@ -363,7 +363,7 @@ define(
                             type : 'modal',
                             productid : productId
                         };
-                        window.history.pushState(state,null,'shop.jsp#modal='+productId);
+                        window.history.pushState(state,null,'shop.jsp#p='+productId);
 
                     }
                     currentModal.modal();
@@ -432,7 +432,7 @@ define(
                     '<span>'+ $(this).closest('.prepack-item').prev().find('span').text() +'</span>'+
                     '</div>'+
                     '<div class="prepack-item">'+
-                    '<a href="#" class="close" title="Удалить">×</a>'+
+                    '<a href="#" class="remove-prepack-line" title="Удалить">×</a>'+
                     '</div>'+
                     '</div>';
                 $(this).closest('.modal-footer').find('.prepack-list').append(prepackHtml);
@@ -483,7 +483,7 @@ define(
                     productSelector.find('.td-spinner .ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
                 }
                 productSelector.find('.td-spinner .ace-spinner').spinner('disable');
-                spinnerModule.initRemovePrepackLine(currentPrepackLine.find('.prepack-item .close'),productId,productSelector);
+                spinnerModule.initRemovePrepackLine(currentPrepackLine.find('.prepack-item .remove-prepack-line'),productId,productSelector);
                 currentPrepackLine.removeClass('no-init');
 
                 var oldHeight = $(this).closest('.modal').height();

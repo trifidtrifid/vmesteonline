@@ -440,7 +440,6 @@ define(
                     }
                     if(!haveError){
                         alertDeliveryPhone.hide();
-                        thriftModule.client.confirmOrder(orderId);
                         //alert('Ваш заказ принят !');
                         cleanBasket();
                         $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
@@ -485,13 +484,18 @@ define(
 
                             $('.bill-amount-order span').text(costWithoutDelivery.toFixed(1));
 
-                            if($('#order-comment').val()){
+                            var comment = "";
+                            var orderComment = $('#order-comment');
+                            if(orderComment.val()){
                                 var commentHtml = "<div class='bill-comment'>" +
                                     "<h4>Комментарий: </h4>"+
-                                    "<div>"+ $('#order-comment').val() +"</div>"+
+                                    "<div>"+ orderComment.val() +"</div>"+
                                     "</div>";
-                                $('.bill-amount-order').after(commentHtml);
+                                $('.bill-delivery').after(commentHtml);
+                                comment = orderComment.val();
                             }
+
+                            thriftModule.client.confirmOrder(orderId,comment);
 
                             var noEdit = true;
                             $('.bill-order-list').append(ordersModule.createOrdersProductHtml(orderDetails,noEdit));
@@ -604,15 +608,15 @@ define(
             catalogOrder.append(productHtml);
             currentTab.find('.amount span').text(commonModule.countAmount(catalogOrder,orderDetails));
 
-            var deleteNoInit = $('.catalog-order .delete-product.no-init');
+            var deleteNoInit = currentTab.find('.catalog-order .delete-product.no-init');
             InitDeleteProduct(deleteNoInit,orderDetails);
             deleteNoInit.removeClass('no-init');
 
-            var popupNoInit = $('.catalog-order .product-link.no-init');
+            var popupNoInit = currentTab.find('.catalog-order .product-link.no-init');
             commonModule.InitProductDetailPopup(popupNoInit);
             popupNoInit.removeClass('no-init');
 
-            var spinnerNoInit = $('.catalog-order .spinner1.no-init');
+            var spinnerNoInit = currentTab.find('.catalog-order .spinner1.no-init');
             var itsBasket = 1;
             spinnerModule.InitSpinner(spinnerNoInit,parseFloat(spinnerValue).toFixed(1),itsBasket,currentProduct.minClientPack);
             if (spinnerDisable){spinnerNoInit.closest('.ace-spinner').spinner('disable');}
