@@ -78,7 +78,8 @@ define(
 
                 $('.catalog-order>li').each(function(){
                     if ($(this).data('productid') == productSelector.data('productid')){
-                        $(this).find('.ace-spinner').spinner('value',packsObj.qnty);
+                        $(this).find('.td-spinner .ace-spinner').spinner('value',packsObj.qnty);
+                        $(this).find('.qnty .ace-spinner').spinner('value',packsObj.qnty);
                         $(this).find('.td-summa').text((price*packsObj.qnty).toFixed(1));
                     }
                 });
@@ -483,6 +484,7 @@ define(
                     if (counter == 0){
                         // если самая первая линия
                         if(!isFirstModal){
+                            //alert("1 "+packs[p]+" "+p);
                             currentModal.find('.packs .ace-spinner').spinner('value',packs[p]);
                             currentModal.find('.qnty .ace-spinner').spinner('value',p);
                         }else{

@@ -399,7 +399,7 @@ define(
 
                 InitDeleteProduct(confirmOrder.find('.delete-product'),orderDetails);
                 var commonModule = require('shop-common');
-                commonModule.InitProductDetailPopup($('.product-link'));
+                commonModule.InitProductDetailPopup(confirmOrder.find('.product-link'));
 
                 var optionsForBtnOrderClick = {
                     orderId : orderId,
@@ -407,84 +407,6 @@ define(
                     shop : shop
                 };
                 initBtnOrderClick($('.confirm-order .btn-order'),optionsForBtnOrderClick);
-                /*$('.confirm-order .btn-order').click(function(){
-                    var phoneDelivery = $('#phone-delivery');
-                    var alertDeliveryPhone = $('.alert-delivery-phone');
-                    if(!phoneDelivery.val()){
-                        alertDeliveryPhone.text('Введите номер телефона !').show();
-
-                    }else if(!$('.input-delivery .delivery-address .error-info').length){
-                        var userContacts = thriftModule.userClient.getUserContacts();
-                        userContacts.mobilePhone = phoneDelivery.val();
-                        var haveError = 0;
-
-                        try{
-                            thriftModule.userClient.updateUserContacts(userContacts);
-                        }catch(e){
-                            haveError = 1;
-                            alertDeliveryPhone.text('Телефон должен быть вида 79219876543, +7(821)1234567 и т.п').show();
-                        }
-                        if(!haveError){
-                            alertDeliveryPhone.hide();
-                            thriftModule.client.confirmOrder(orderId);
-                            //alert('Ваш заказ принят !');
-                            cleanBasket();
-                            $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
-                                $('.page').hide();
-                                $(this).show();
-                                $('.main-container').css('min-height', $(window).height()-45);
-
-                                var order = thriftModule.client.getOrder(orderId);
-                                var orderDetails = thriftModule.client.getOrderDetails(orderId);
-
-                                var summaryCost = $('.itogo-right span').text();
-                                $('.bill-amount span,.all-amount span').text(summaryCost);
-                                $('.bill-delivery-address span').text($('.input-delivery .delivery-address').text());
-                                $('.bill-date-delivery span').text($('.order-date span').text());
-                                $('.bill-client span').text($('.user-info').text());
-                                $('.bill-client-phone span').text($('#phone-delivery').val());
-                                $('.bill-pay-type span').text(getPaymentType(orderDetails.paymentType));
-                                $('.bill-weight span').text($('.weight-right span').text()+" кг.");
-
-                                var orderDate = new Date(orderDetails.createdAt*1000);
-                                var orderDay = orderDate.getDate();
-                                var orderWeekDay = orderDate.getDay();
-                                var orderMonth = orderDate.getMonth()+1;
-
-                                orderDay = (orderDay < 10)? "0" + orderDay: orderDay;
-                                orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
-
-                                orderWeekDay = getWeekDay(orderWeekDay);
-
-                                $('.bill-shop-name span').text(shop.name);
-                                $('.bill-order-number span').text(order.id);
-                                $('.bill-date-order span').text(orderDay+"."+orderMonth+" ("+ orderWeekDay +")");
-                                $('.bill-shop-phone span').text('---');
-                                $('.bill-shop-email span').text('---');
-                                $('.order-end-logo img').attr('src',shop.logoURL);
-
-                                var deliveryCost = $('.delivery-cost').text();
-                                var costWithoutDelivery = summaryCost-deliveryCost;
-
-                                var placeForDeliveryCost = $('.bill-delivery span');
-                                (deliveryCost != '0') ? placeForDeliveryCost.text(deliveryCost+" р.") : placeForDeliveryCost.text("---");
-
-                                $('.bill-amount-order span').text(costWithoutDelivery.toFixed(1));
-
-                                if($('#order-comment').val()){
-                                    var commentHtml = "<div class='bill-comment'>" +
-                                        "<h4>Комментарий: </h4>"+
-                                        "<div>"+ $('#order-comment').val() +"</div>"+
-                                        "</div>";
-                                    $('.bill-amount-order').after(commentHtml);
-                                }
-
-                                var noEdit = true;
-                                $('.bill-order-list').append(ordersModule.createOrdersProductHtml(orderDetails,noEdit));
-                            });
-                        }
-                    }
-                });*/
 
                 $('.confirm-order .btn-cancel').click(function(){
                     $('.back-to-shop').trigger('click');
