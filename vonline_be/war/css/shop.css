@@ -771,14 +771,17 @@ span
 .modal .prepack-list .prepack-line {
   margin-top: 5px;
 }
-.modal .prepack-list .close {
+.modal .prepack-list .remove-prepack-line {
   color: #a44451;
   opacity: 0.5;
   position: relative;
   top: -10px;
+  font-size: 21px;
+  font-weight: bold;
 }
-.modal .prepack-list .close:hover {
+.modal .prepack-list .remove-prepack-line:hover {
   opacity: 1;
+  text-decoration: none;
 }
 .modal .error-prepack {
   float: right;

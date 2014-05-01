@@ -181,7 +181,7 @@
                 var counter = 0;
                 for (var i = 0; i < ordersLength; i++){
                     //alert(orders[i].date + " "+orderDate);
-                    if (getStringDate(orders[i].date) == getStringDate(orderDate)){
+                    if (orders[i].date == orderDate){
                         orderList[counter++] = orders[i];
                     }
                 }

@@ -197,7 +197,7 @@ define(
 
                         var isModalWindow = $(this).closest('.modal').length > 0;
                         if (isModalWindow && !errorPrepack){
-                            $(this).closest('.modal').modal('hide');
+                            $(this).closest('.modal').find('.close').trigger('click');//modal('hide');
                             currentProductSelector.find('.error-prepack').hide();
                         }
                     }
@@ -364,7 +364,7 @@ define(
                         writeAddress(orderDetails.deliveryTo);
                         var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
                         defaultAddressForCourier = orderDetails.deliveryTo;
-                        showDeliveryDropdown(orderId,userAddresses.elems);
+                        showDeliveryDropdown(orderId,userAddresses);
                         break;
                 }
                 setDeliveryCost(orderId,orderDetails);
@@ -399,7 +399,7 @@ define(
 
                 InitDeleteProduct(confirmOrder.find('.delete-product'),orderDetails);
                 var commonModule = require('shop-common');
-                commonModule.InitProductDetailPopup($('.product-link'));
+                commonModule.InitProductDetailPopup(confirmOrder.find('.product-link'));
 
                 var optionsForBtnOrderClick = {
                     orderId : orderId,
@@ -407,84 +407,6 @@ define(
                     shop : shop
                 };
                 initBtnOrderClick($('.confirm-order .btn-order'),optionsForBtnOrderClick);
-                /*$('.confirm-order .btn-order').click(function(){
-                    var phoneDelivery = $('#phone-delivery');
-                    var alertDeliveryPhone = $('.alert-delivery-phone');
-                    if(!phoneDelivery.val()){
-                        alertDeliveryPhone.text('Введите номер телефона !').show();
-
-                    }else if(!$('.input-delivery .delivery-address .error-info').length){
-                        var userContacts = thriftModule.userClient.getUserContacts();
-                        userContacts.mobilePhone = phoneDelivery.val();
-                        var haveError = 0;
-
-                        try{
-                            thriftModule.userClient.updateUserContacts(userContacts);
-                        }catch(e){
-                            haveError = 1;
-                            alertDeliveryPhone.text('Телефон должен быть вида 79219876543, +7(821)1234567 и т.п').show();
-                        }
-                        if(!haveError){
-                            alertDeliveryPhone.hide();
-                            thriftModule.client.confirmOrder(orderId);
-                            //alert('Ваш заказ принят !');
-                            cleanBasket();
-                            $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
-                                $('.page').hide();
-                                $(this).show();
-                                $('.main-container').css('min-height', $(window).height()-45);
-
-                                var order = thriftModule.client.getOrder(orderId);
-                                var orderDetails = thriftModule.client.getOrderDetails(orderId);
-
-                                var summaryCost = $('.itogo-right span').text();
-                                $('.bill-amount span,.all-amount span').text(summaryCost);
-                                $('.bill-delivery-address span').text($('.input-delivery .delivery-address').text());
-                                $('.bill-date-delivery span').text($('.order-date span').text());
-                                $('.bill-client span').text($('.user-info').text());
-                                $('.bill-client-phone span').text($('#phone-delivery').val());
-                                $('.bill-pay-type span').text(getPaymentType(orderDetails.paymentType));
-                                $('.bill-weight span').text($('.weight-right span').text()+" кг.");
-
-                                var orderDate = new Date(orderDetails.createdAt*1000);
-                                var orderDay = orderDate.getDate();
-                                var orderWeekDay = orderDate.getDay();
-                                var orderMonth = orderDate.getMonth()+1;
-
-                                orderDay = (orderDay < 10)? "0" + orderDay: orderDay;
-                                orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
-
-                                orderWeekDay = getWeekDay(orderWeekDay);
-
-                                $('.bill-shop-name span').text(shop.name);
-                                $('.bill-order-number span').text(order.id);
-                                $('.bill-date-order span').text(orderDay+"."+orderMonth+" ("+ orderWeekDay +")");
-                                $('.bill-shop-phone span').text('---');
-                                $('.bill-shop-email span').text('---');
-                                $('.order-end-logo img').attr('src',shop.logoURL);
-
-                                var deliveryCost = $('.delivery-cost').text();
-                                var costWithoutDelivery = summaryCost-deliveryCost;
-
-                                var placeForDeliveryCost = $('.bill-delivery span');
-                                (deliveryCost != '0') ? placeForDeliveryCost.text(deliveryCost+" р.") : placeForDeliveryCost.text("---");
-
-                                $('.bill-amount-order span').text(costWithoutDelivery.toFixed(1));
-
-                                if($('#order-comment').val()){
-                                    var commentHtml = "<div class='bill-comment'>" +
-                                        "<h4>Комментарий: </h4>"+
-                                        "<div>"+ $('#order-comment').val() +"</div>"+
-                                        "</div>";
-                                    $('.bill-amount-order').after(commentHtml);
-                                }
-
-                                var noEdit = true;
-                                $('.bill-order-list').append(ordersModule.createOrdersProductHtml(orderDetails,noEdit));
-                            });
-                        }
-                    }
-                });*/
 
                 $('.confirm-order .btn-cancel').click(function(){
                     $('.back-to-shop').trigger('click');
@@ -518,7 +440,6 @@ define(
                     }
                     if(!haveError){
                         alertDeliveryPhone.hide();
-                        thriftModule.client.confirmOrder(orderId);
                         //alert('Ваш заказ принят !');
                         cleanBasket();
                         $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
@@ -563,13 +484,18 @@ define(
 
                             $('.bill-amount-order span').text(costWithoutDelivery.toFixed(1));
 
-                            if($('#order-comment').val()){
+                            var comment = "";
+                            var orderComment = $('#order-comment');
+                            if(orderComment.val()){
                                 var commentHtml = "<div class='bill-comment'>" +
                                     "<h4>Комментарий: </h4>"+
-                                    "<div>"+ $('#order-comment').val() +"</div>"+
+                                    "<div>"+ orderComment.val() +"</div>"+
                                     "</div>";
-                                $('.bill-amount-order').after(commentHtml);
+                                $('.bill-delivery').after(commentHtml);
+                                comment = orderComment.val();
                             }
+
+                            thriftModule.client.confirmOrder(orderId,comment);
 
                             var noEdit = true;
                             $('.bill-order-list').append(ordersModule.createOrdersProductHtml(orderDetails,noEdit));
@@ -682,15 +608,15 @@ define(
             catalogOrder.append(productHtml);
             currentTab.find('.amount span').text(commonModule.countAmount(catalogOrder,orderDetails));
 
-            var deleteNoInit = $('.catalog-order .delete-product.no-init');
+            var deleteNoInit = currentTab.find('.catalog-order .delete-product.no-init');
             InitDeleteProduct(deleteNoInit,orderDetails);
             deleteNoInit.removeClass('no-init');
 
-            var popupNoInit = $('.catalog-order .product-link.no-init');
+            var popupNoInit = currentTab.find('.catalog-order .product-link.no-init');
             commonModule.InitProductDetailPopup(popupNoInit);
             popupNoInit.removeClass('no-init');
 
-            var spinnerNoInit = $('.catalog-order .spinner1.no-init');
+            var spinnerNoInit = currentTab.find('.catalog-order .spinner1.no-init');
             var itsBasket = 1;
             spinnerModule.InitSpinner(spinnerNoInit,parseFloat(spinnerValue).toFixed(1),itsBasket,currentProduct.minClientPack);
             if (spinnerDisable){spinnerNoInit.closest('.ace-spinner').spinner('disable');}
@@ -727,16 +653,19 @@ define(
             }*/
         }
 
-        function setDeliveryDropdown(orderId,userAddresses){
-            var addresses;
-            addresses = (userAddresses) ? userAddresses : thriftModule.client.getUserDeliveryAddresses().elems;
+        var mapWidthConst = 400;
+        var mapHeightConst = 300;
+        function setDeliveryDropdown(orderId,userAddresses,NoAddAddressAgain){
+            var addresses = (userAddresses) ? userAddresses : thriftModule.client.getUserDeliveryAddresses().elems;
 
             var userAddressesHtml = "";
-            var userAddressesLength = addresses.length;
+            var userAddressesLength = addresses.length,
+                address;
             for(var i = 0; i < userAddressesLength; i++){
-                userAddressesHtml += '<li><a href="#">'+
-                    addresses[i]+
-                    //addresses[i].country.name+", "+addresses[i].city.name+", "+addresses[i].street.name+" "+addresses[i].building.fullNo+", кв. "+addresses[i].flatNo+
+                address = thriftModule.client.getUserDeliveryAddress(addresses[i]);
+                userAddressesHtml += '<li><a data-addresstext="'+addresses[i]+'" href="#">'+
+                    //addresses[i]+
+                    address.street.name+" "+address.building.fullNo+", кв. "+address.flatNo+
                     '</a></li>';
             }
             userAddressesHtml += '<li class="divider"></li>'+
@@ -750,6 +679,12 @@ define(
 
                 defaultAddressForCourier = thriftModule.client.getUserDeliveryAddress(addresses[ind]);
                 writeAddress(defaultAddressForCourier);
+
+                var addressText = $(this).data('addresstext');
+                var mapSrc = thriftModule.client.getDeliveryAddressViewURL(addressText,mapWidthConst,mapHeightConst);
+                $('.address-map').remove();
+                $(this).closest('.input-delivery').find('.address-input').after("<img class='address-map' src='"+ mapSrc +"'>");
+
                 var orderDetails = thriftModule.client.setOrderDeliveryType(orderId,2,defaultAddressForCourier);
                 setDeliveryCost(orderId,orderDetails);
             });
@@ -763,6 +698,7 @@ define(
                 $('.delivery-dropdown .btn-group-text').text('Выбрать адрес');
             });
 
+            if(!NoAddAddressAgain){
             $('.add-address').click(function(e){
                 e.preventDefault();
 
@@ -775,13 +711,11 @@ define(
                     $('.alert-delivery-addr').text('Введите полный адресс доставки !').show();
                 }else{
                     var addressText =  street + " " + building;
-                    //alert(addressText+" "+flat);
-                    thriftModule.client.createDeliveryAddress(addressText,parseInt(flat),0,0,0);
-                    //alert('---');
-                    var mapUrl = thriftModule.client.getDeliveryAddressViewURL(addressText,300,200);
-                    //alert(mapUrl);
+                    var deliveryAddress = defaultAddressForCourier = thriftModule.client.createDeliveryAddress(addressText,parseInt(flat),0,0,0);
+                    var mapSrc = thriftModule.client.getDeliveryAddressViewURL(addressText,mapWidthConst,mapHeightConst);
 
-                    $(this).closest('.address-input').after("<img src='"+ mapUrl +"'>");
+                    $('.address-map').remove();
+                    $(this).closest('.address-input').after("<img class='address-map' src='"+ mapSrc +"'>");
 
                     $('.alert-delivery-addr').hide();
                     var addressInput = $('.address-input');
@@ -790,17 +724,17 @@ define(
                     // добавление в базу нового города, страны, улицы и т.д (если курьером)
 
                     var commonModule = require('shop-common');
-                    var deliveryAddress = defaultAddressForCourier = commonModule.addAddressToBase(addressInput);
+                    commonModule.addAddressToBase(addressInput,deliveryAddress);
                     writeAddress(deliveryAddress);
-
-                    //thriftModule.client.addUserAddress(deliveryAddress);
 
                     var orderDetails = thriftModule.client.setOrderDeliveryType(orderId,2,deliveryAddress);
                     setDeliveryCost(orderId,orderDetails);
-                    setDeliveryDropdown(orderId);
+                    var NoAddAddressAgain = true;
+                    setDeliveryDropdown(orderId,0,NoAddAddressAgain);
                 }
 
             });
+            }
         }
 
         function showDeliveryDropdown(orderId,userAddresses){

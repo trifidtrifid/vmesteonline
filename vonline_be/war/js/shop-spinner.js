@@ -76,9 +76,15 @@ define(
                 packsObj = changePacks($(this),productSelector,packs);
                 /* ----- */
 
-                $('.catalog-order>li').each(function(){
+                    var commonModule = require('shop-common');
+                    $('.catalog-order>li').each(function(){
                     if ($(this).data('productid') == productSelector.data('productid')){
-                        $(this).find('.ace-spinner').spinner('value',packsObj.qnty);
+                        $(this).find('.td-spinner .ace-spinner').spinner('value',packsObj.qnty);
+                        if(packsObj.packs && commonModule.getPacksLength(packsObj.packs) > 1){
+                            $(this).find('.td-spinner .ace-spinner').spinner('disable');
+                        }
+
+                        $(this).find('.qnty .ace-spinner').spinner('value',packsObj.qnty);
                         $(this).find('.td-summa').text((price*packsObj.qnty).toFixed(1));
                     }
                 });
@@ -88,7 +94,6 @@ define(
                     productSelector.find('.td-summa').text((price*packsObj.qnty).toFixed(1));
                     orderDetails = thriftModule.client.getOrderDetails(orderId);
 
-                    var commonModule = require('shop-common');
                     $('.itogo-right span,.amount span').text(commonModule.countAmount($('.catalog-confirm'),orderDetails));
 
                     $('.weight-right span,.weight span').text(commonModule.getOrderWeight(orderId,orderDetails));
@@ -382,7 +387,8 @@ define(
                     if (catalogOrder.length || catalogConfirm.length){
                         // если мы в корзине или на странице конфирма,
                         // то нужно менять packs и делать setOrderLine
-                        var orderId = $('.tab-pane.active').data('orderid');
+                        var currentPane = $('.tab-pane.active');
+                        var orderId = currentPane.data('orderid');
                         var orderDetails = thriftModule.client.getOrderDetails(orderId);
                         var orderLinesLength = orderDetails.odrerLines.length;
                         var packs;
@@ -397,19 +403,42 @@ define(
                         }
                         if (setFlag){
                             packs[currentSpinnerVal] = 0;
+                            //alert(qnty+" "+quantVal+" "+packVal);
                             qnty = (qnty - quantVal*packVal).toFixed(1);
                             productSelector.find('.td-spinner .ace-spinner').spinner('value',qnty);
                             productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
 
                             var commonModule = require('shop-common');
 
+                            if(catalogConfirm.length){
+                                // меняемобщий спинер в корзине если мы в конфирме
+                                currentPane.find('.catalog-order .product').each(function(){
+                                    if($(this).data('productid') == productSelector.data('productid')){
+                                        $(this).find('.td-spinner .ace-spinner').spinner('value',qnty);
+
+                                        if(commonModule.getPacksLength(packs) == 1){
+                                            $(this).find('.td-spinner .ace-spinner').spinner('enable');
+                                        }
+
+                                        $(this).find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
+                                    }
+                                });
+                             }
+
+
+                            /*alert(qnty);
+                            for(var p in packs){
+                                alert(p+" "+packs[p]);
+                            }*/
                             thriftModule.client.setOrderLine(orderId,productId,qnty,'',packs);
                             var currentTab = $('.tab-pane.active');
                             currentTab.find('.weight span').text(commonModule.getOrderWeight(orderId,orderDetails));
 
                             var currentCatalog;
                             currentCatalog = (catalogOrder.length) ? catalogOrder: catalogConfirm;
-                            $('.itogo-right span').text(commonModule.countAmount(currentCatalog,orderDetails));
+                            $('.itogo-right span,.amount span').text(commonModule.countAmount(currentCatalog,orderDetails));
+
+
                         }
                     }else{
                         // если мы в таблице продуктов
@@ -483,6 +512,7 @@ define(
                     if (counter == 0){
                         // если самая первая линия
                         if(!isFirstModal){
+                            //alert("1 "+packs[p]+" "+p);
                             currentModal.find('.packs .ace-spinner').spinner('value',packs[p]);
                             currentModal.find('.qnty .ace-spinner').spinner('value',p);
                         }else{
@@ -503,16 +533,17 @@ define(
                                 '<span>'+ unitName +'</span>'+
                                 '</div>'+
                                 '<div class="prepack-item">'+
-                                '<a href="#" class="close" title="Удалить">&times;</a>'+
+                                '<a href="#" class="remove-prepack-line" title="Удалить">&times;</a>'+
                                 '</div>'+
                                 '</div>';
                             currentModal.find('.prepack-list').append(prepackHtml);
                             InitSpinner(currentModal.find('.no-init .packs .spinner1'),packs[p],isBasket);
                             InitSpinner(currentModal.find('.no-init .qnty .spinner1'),p,isBasket,productSelector.find('.td-spinner .spinner1').data('step'));
-                            var currentPrepackLine = currentModal.find('.prepack-line.no-init');
-                            initRemovePrepackLine(currentPrepackLine.find('.prepack-item .close'),productId,productSelector);
 
+                            var currentPrepackLine = currentModal.find('.prepack-line.no-init');
+                            initRemovePrepackLine(currentPrepackLine.find('.prepack-item .remove-prepack-line'),productId,productSelector);
                             currentPrepackLine.removeClass('no-init');
+
                             modalHeight += 53;
                             currentModal.height(modalHeight);
                         }

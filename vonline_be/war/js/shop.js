@@ -9,9 +9,6 @@ require.config({
         "flexslider": "lib/jquery.flexslider-min",
         "jquery_ui": "lib/jquery-ui-1.10.3.full.min"
         //"uriAnchor": "lib/jquery.uriAnchor"
-        //"datepicker-simple": "lib/date-time/bootstrap-datepicker-simple",
-        //"datepicker": "lib/date-time/bootstrap-datepicker",
-        //"datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru"
     },
     shim:{
       'ace_spinner':{
@@ -33,15 +30,7 @@ require.config({
     'flexslider':{
         deps: ['jquery'],
         exports: 'flexslider'
-    }/*,
-      'datepicker-simple':{
-          deps: ['jquery'],
-          exports: 'datepicker-simple'
-      },
-    'datepicker-ru':{
-        deps: ['jquery','datepicker'],
-        exports: 'datepicker-ru'
-    }*/
+    }
     }
 });
 
@@ -59,7 +48,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         window.history.pushState(state,null,'shop.jsp');
 
         if (urlHash){
-            if (urlHash.indexOf('modal') != -1){
+            if (urlHash.indexOf('p') != -1){
                 // значит url с modal
                 var hashParts = urlHash.split('=');
                 modules.shopCommonModule.identificateModal(hashParts[1]);
@@ -69,15 +58,17 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         window.addEventListener('popstate',makeHistory,false);
 
         function makeHistory(e){
-            var isHistory = true;
+            // действия для корректной навигации по истории
+            var isHistoryNav = true;
+            //alert('makeHistory '+e.state.locationModal);
             if(e.state){
                 if(e.state.type == 'modal'){
 
-                    modules.shopCommonModule.identificateModal(e.state.productid,isHistory);
+                    modules.shopCommonModule.identificateModal(e.state.productid,isHistoryNav);
 
                 }else if(e.state.type == 'default'){
 
-                    $('.modal.in .close').trigger('click',[isHistory]);
+                    $('.modal.in .close').trigger('click',[isHistoryNav]);
                 }
             }
         }
