@@ -2331,9 +2331,14 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			StorageHelper.getFile(url, baos);
 			baos.close();
 			List<List<String>> matrix = CSVHelper.parseCSV(baos.toByteArray(), null, null, null);
-			ArrayList list = new ArrayList();
+			int rowSize = 0;
+			for (List<String> list : matrix) {
+				if(list.size() > rowSize ) rowSize = list.size();
+			}
+			ArrayList<String> list = new ArrayList<String>();
 			for( int row = 0; row < matrix.size(); row ++){
 				list.addAll(matrix.get(row));
+				for( int rest = rowSize - matrix.get(row).size(); rest > 0; rest --) list.add("");
 			}
 			MatrixAsList mal = new MatrixAsList(matrix.size(), list);
 			return mal;
