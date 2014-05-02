@@ -38,7 +38,15 @@ define(
         /* переключения на настройки, профиль и выход */
 
         function SetJSForEditPersonal(){
-            //$('#date-picker-birthday').datepickerSimple({startView: 2, viewMode: 2,autoclose:true, language:'ru'});
+            /* history*/
+            if (window.history.state.pageName != 'edit-profile'){
+                var state = {
+                    type : 'page',
+                    pageName: 'edit-profile'
+                };
+                window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+            }
+            /**/
 
             $('.save-changes').click(function(e){
                 e.preventDefault();
@@ -93,9 +101,7 @@ define(
 
         }
 
-        function SetJSForProfile(){
-
-            $('.main-container').css('min-height', $(window).height()-45);
+        function SetJSForProfile(isEditPersonal){
 
             $('.edit-personal-link').click(function(e){
                 e.preventDefault();
@@ -105,6 +111,23 @@ define(
                     SetJSForEditPersonal();
                 }).show();
             });
+
+            if (isEditPersonal){
+
+                $('.edit-personal-link').trigger('click');
+
+            }else{
+            /* history*/
+            if (window.history.state.pageName != 'profile'){
+                var state = {
+                    type : 'page',
+                    pageName: 'profile'
+                };
+                window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+            }
+            /**/
+
+            $('.main-container').css('min-height', $(window).height()-45);
 
             $('.sendConfirmCode').click(function(e){
                 e.preventDefault();
@@ -179,6 +202,7 @@ define(
 
 
             });
+            }
         }
 
         function WriteAddress(selector,address){
@@ -317,8 +341,10 @@ define(
         }
 
 
-        $('.user-menu a').click(function(e){
+        $('.user-menu a').click(function(e,loadEditPersonal){
             e.preventDefault();
+            var isEditPersonal = (loadEditPersonal) ? loadEditPersonal : false;
+
             $('.navbar .nav .active').removeClass('active');
 
             $(this).closest('.user-short').removeClass('open');
@@ -329,7 +355,7 @@ define(
             if (ind == 0){
                 $('.page').hide();
                 $('.shop-profile').load("ajax/ajax-profile.jsp .dynamic",function(){
-                    SetJSForProfile();
+                    SetJSForProfile(isEditPersonal);
                 }).show();
             } else {
                 thriftModule.authClient.logout();
@@ -345,7 +371,6 @@ define(
         commonModule.setSidebarHeight();
 
         }
-
 
         return {
             init: init

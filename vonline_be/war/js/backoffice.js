@@ -611,7 +611,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                      },*/
                     success: function(html) {
                         fileUrl = html;
-                        var matrixAsList = thriftModule.client.parseCSVfile(fileUrl);
+                        var matrixAsList = thriftModule.clientBO.parseCSVfile(fileUrl);
                         elems = matrixAsList.elems;
                         rowCount = matrixAsList.rowCount;
                         var dataCSVLength = elems.length;
@@ -717,7 +717,10 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             });
 
                             var currentDropdown = $(this).closest('.import-field-dropdown');
-                            currentDropdown.find('.btn-group-text').text(fieldName).parent().attr('data-fieldtype',fieldType);
+                            //alert(fieldType);
+                            currentDropdown.find('.btn-group-text').text(fieldName).parent().data('fieldtype',fieldType);
+                            //currentDropdown.find('.btn-group-text').text(fieldName).closest('.btn').dataset.fieldtype = fieldType;
+                            //alert(currentDropdown.find('.btn-group-text').text(fieldName).closest('.btn').data('fieldtype'));
                         });
                     }
                 });
@@ -877,8 +880,10 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 $('.import .import-field-dropdown').each(function(){
                     var fieldName = $(this).find('.btn-group-text').text();
                     if(fieldName != skipConst){
+                        //alert(fieldsCounter+ " " + $(this).find('.btn .btn-group-text').text() +" "+ $(this).find('.btn').data('fieldtype'));
                         fieldsMap[fieldsCounter++] = parseInt($(this).find('.btn').data('fieldtype'));
                     }
+                    //fieldsCounter++;
                 });
                 /*$('.checkbox.active:not(".check-all")').each(function(){
                  fieldsMap[fieldsCounter++] = parseInt($(this).data('exchange'));
@@ -898,7 +903,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 dataSet.data = temp;
 
                 try{
-                    thriftModule.client.importData(dataSet);
+                    thriftModule.clientBO.importData(dataSet);
                     confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
 
                 }catch(e){
@@ -977,7 +982,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
                             var exportFieldsOrderLine = getExportFields('orderLine');
 
-                            dataSet = thriftModule.client.getTotalOrdersReport(selectOrderDate,deliveryType,exportFieldsOrder.fieldsMap,exportFieldsOrderLine.fieldsMap);
+                            dataSet = thriftModule.clientBO.getTotalOrdersReport(selectOrderDate,deliveryType,exportFieldsOrder.fieldsMap,exportFieldsOrderLine.fieldsMap);
 
                             var tablesCount;
 
@@ -993,7 +998,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                         case 1:
                             var exportFields = getExportFields('products');
 
-                            dataSet = thriftModule.client.getTotalProductsReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
+                            dataSet = thriftModule.clientBO.getTotalProductsReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
 
                             if(dataSet.data){
 
@@ -1007,7 +1012,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                         case 2:
                             exportFields = getExportFields('packs');
 
-                            dataSet = thriftModule.client.getTotalPackReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
+                            dataSet = thriftModule.clientBO.getTotalPackReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
 
                             if(dataSet.data){
 

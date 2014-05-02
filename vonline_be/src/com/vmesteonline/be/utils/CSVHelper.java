@@ -1,7 +1,6 @@
 package com.vmesteonline.be.utils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -17,12 +16,11 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.CharSet;
 import org.apache.log4j.Logger;
 
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
-import com.vmesteonline.be.shop.ExchangeFieldType;
+import com.vmesteonline.be.shop.bo.ExchangeFieldType;
 
 public class CSVHelper {
 

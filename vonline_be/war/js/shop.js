@@ -36,8 +36,17 @@ require.config({
 
 require(["jquery",'shop-modules','commonM','loginModule'],
     function($,modules,commonM,loginModule) {
+        if(globalUserAuth){
+            modules.shopCommonModule.initBasketInReload();
+        }
+        modules.categoryModule.InitClickOnCategory();
+        // переключение между категориями
+        modules.ordersModule.initOrderPlusMinus($('.shop-orders'));
 
-        modules.shopCommonModule.InitProductDetailPopup($('.product-link'));
+        commonM.init();
+
+        modules.shopCommonModule.InitProductDetailPopup($('.catalog .product-link'));
+        modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
         modules.spinnerModule.initProductsSpinner();
 
         var urlHash = document.location.hash;
@@ -45,19 +54,37 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         var state = {
             type : 'default'
         };
-        window.history.pushState(state,null,'shop.jsp');
+        window.history.replaceState(state,null,'shop.jsp');
 
         if (urlHash){
-            if (urlHash.indexOf('p') != -1){
+            if (urlHash.indexOf('p=') != -1){
                 // значит url с modal
                 var hashParts = urlHash.split('=');
                 modules.shopCommonModule.identificateModal(hashParts[1]);
+
+            }else if (urlHash == '#orders-history'){
+
+                $('.shop-trigger.go-to-orders').trigger('click');
+
+            }else if (urlHash == '#profile'){
+
+                $('.user-menu a:eq(0)').trigger('click');
+
+            }else if (urlHash == '#edit-profile'){
+
+                var loadEditPersonal = true;
+                $('.user-menu a:eq(0)').trigger('click',[loadEditPersonal]);
+
+            }else if (urlHash == '#confirm-order'){
+
+                $('.basket-bottom .btn-order').trigger('click');
+
             }
         }
 
-        window.addEventListener('popstate',makeHistory,false);
+        window.addEventListener('popstate',makeHistoryNav,false);
 
-        function makeHistory(e){
+        function makeHistoryNav(e){
             // действия для корректной навигации по истории
             var isHistoryNav = true;
             //alert('makeHistory '+e.state.locationModal);
@@ -66,8 +93,29 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
                     modules.shopCommonModule.identificateModal(e.state.productid,isHistoryNav);
 
+                }else if(e.state.type == 'page'){
+
+                    if(e.state.pageName == 'orders-history'){
+
+                        $('.shop-trigger.go-to-orders').trigger('click',[isHistoryNav]);
+
+                    }else if(e.state.pageName == 'profile'){
+
+                        $('.user-menu a:eq(0)').trigger('click');
+
+                    }else if(e.state.pageName == 'edit-profile'){
+
+                        var loadEditPersonal = true;
+                        $('.user-menu a:eq(0)').trigger('click',[loadEditPersonal]);
+
+                    }else if(e.state.pageName == 'confirm-order'){
+
+                        $('.basket-bottom .btn-order').trigger('click');
+
+                    }
                 }else if(e.state.type == 'default'){
 
+                    $('.shop-trigger.back-to-shop').trigger('click',[isHistoryNav]);
                     $('.modal.in .close').trigger('click',[isHistoryNav]);
                 }
             }
@@ -126,15 +174,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         //alert(e + ' Ошибка в простых обработчиках');
     }
 
-        if(globalUserAuth){
-            modules.shopCommonModule.initBasketInReload();
-        }
-        modules.categoryModule.InitClickOnCategory();
-        modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
-    // переключение между категориями
-        modules.ordersModule.initOrderPlusMinus($('.shop-orders'));
 
-        commonM.init();
 
       window.onerror = function(message, source, lineno) {
             /*alert("Ошибка:"+message +"\n" +
