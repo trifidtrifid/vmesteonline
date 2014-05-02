@@ -117,6 +117,7 @@ public class CSVHelper {
 							}
 							field.set(nextOtf, fo);
 						}
+						if(nextItem.trim().length()>0)
 						try {
 							if (fo instanceof Double)
 								field.set(nextOtf, Double.parseDouble(nextItem));
