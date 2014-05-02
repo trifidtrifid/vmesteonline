@@ -388,6 +388,17 @@
             <div class="page shop-orderEnd"></div>
             <div class="page shop-editPersonal"></div>
     </div>
+        <footer>
+            <div>
+                <ul>
+                    <li><a href="#">О сайте</a></li>
+                    <li><a href="#">Правила</a></li>
+                    <li><a href="#">Контакты</a></li>
+                    <li><a href="#">в начало</a></li>
+                </ul>
+            </div>
+            <div>Вместе Онлайн (c) 2014</div>
+        </footer>
 
         <div class="modal modal-error">
             <div class="modal-body">
