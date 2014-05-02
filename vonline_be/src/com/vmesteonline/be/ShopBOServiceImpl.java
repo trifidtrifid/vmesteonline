@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.access.VoUserAccessBaseRoles;
+import com.vmesteonline.be.access.shop.VoShopAccess;
 import com.vmesteonline.be.access.shop.VoShopAccessRoles;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -61,14 +62,21 @@ import com.vmesteonline.be.utils.CSVHelper;
 import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
-public class ShopBOService extends ServiceImpl implements Iface {
+public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	
 	public static Logger logger;
 
 	static {
-		logger = Logger.getLogger(ShopBOService.class);
+		logger = Logger.getLogger(ShopBOServiceImpl.class);
 	}
 	
+	public ShopBOServiceImpl(String sessionId) {
+		super(sessionId);
+	}
+
+	public ShopBOServiceImpl() {
+	}
+
 	@Override
 	public long registerShop(Shop shop) throws InvalidOperation {
 		return shop.id = new VoShop(shop).getId();
@@ -1303,8 +1311,6 @@ public class ShopBOService extends ServiceImpl implements Iface {
 		return ServiceCategoryID.SHOP_SI.ordinal();
 	}
 
-	
-	
 
 	private static Object createShopProductsByCategoryKey(long shopId) {
 		return "createShopProductsByCategoryKey"+shopId;
@@ -1360,4 +1366,7 @@ public class ShopBOService extends ServiceImpl implements Iface {
 			pm.close();
 		}	
 	}
+	
+	public Class getAuthRecordClass(){ return VoShopAccess.class; }
+	
 }

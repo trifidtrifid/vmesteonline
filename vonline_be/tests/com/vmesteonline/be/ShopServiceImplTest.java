@@ -86,6 +86,7 @@ public class ShopServiceImplTest {
 	private long userId;
 	private UserServiceImpl usi;
 	ShopServiceImpl si;
+	ShopBOServiceImpl sbi;
 	MessageServiceImpl msi;
 	private static String TAG = "TAG";
 	Topic topic;
@@ -135,6 +136,8 @@ public class ShopServiceImplTest {
 		asi.login("eml", "pswd");
 		usi = new UserServiceImpl(sessionId);
 		si = new ShopServiceImpl(sessionId);
+		sbi = new ShopBOServiceImpl(sessionId);
+		
 		msi = new MessageServiceImpl(sessionId);
 
 		userAddress = usi.getUserHomeAddress();
@@ -166,7 +169,7 @@ public class ShopServiceImplTest {
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 
-			Long id = si.registerShop(shop);
+			Long id = sbi.registerShop(shop);
 			Shop savedShop = si.getShop(id);
 
 			Assert.assertEquals(savedShop.getName(), NAME);
@@ -191,23 +194,23 @@ public class ShopServiceImplTest {
 		try {
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
 
-			si.registerProducer( new Producer(1L, "ddd","www", "", "" ), shopId);
+			sbi.registerProducer( new Producer(1L, "ddd","www", "", "" ), shopId);
 			
 			ProductCategory rootCategory = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
-			Long rootCatId = si.registerProductCategory(rootCategory, shopId);
+			Long rootCatId = sbi.registerProductCategory(rootCategory, shopId);
 
 			ProductCategory secCategory = new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
-			Long SecCatId = si.registerProductCategory(secCategory, shopId);
+			Long SecCatId = sbi.registerProductCategory(secCategory, shopId);
 
 			ProductCategory thirdCategory = new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
 			ProductCategory third2Category = new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0);
 
-			si.registerProductCategory(thirdCategory, shopId);
-			si.registerProductCategory(third2Category, shopId);
+			sbi.registerProductCategory(thirdCategory, shopId);
+			sbi.registerProductCategory(third2Category, shopId);
 
 			try {
 				importProductsForTest();
@@ -250,13 +253,13 @@ public class ShopServiceImplTest {
 		try {
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
 
-			long prodId = si.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
+			long prodId = sbi.registerProducer(new Producer(0L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
 			try {
-				si.registerProducer(new Producer(1L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId + 1);
+				sbi.registerProducer(new Producer(1L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId + 1);
 				fail("Created Producer with incorrect shopId");
 			} catch (InvalidOperation ioe) {
 				Assert.assertEquals(ioe.getWhat(), VoError.IncorrectParametrs);
@@ -281,22 +284,22 @@ public class ShopServiceImplTest {
 	public void testUploadProducts() {
 		try {
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
 			// initialize shop dates
 			setAllDates();
 			
 
-			/* long prodId = */si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
-			long prod2Id = si.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
+			/* long prodId = */sbi.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
+			long prod2Id = sbi.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
 
-			Long rootCatId = si.registerProductCategory(new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0), shopId);
-			Long SecCatId = si.registerProductCategory(new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set, 0),
+			Long rootCatId = sbi.registerProductCategory(new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0), shopId);
+			Long SecCatId = sbi.registerProductCategory(new ProductCategory(2L, rootCatId, "Second LevelPC", "Второй уровень", images2, topic2Set, 0),
 					shopId);
-			Long THirdCatId = si.registerProductCategory(new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set, 0),
+			Long THirdCatId = sbi.registerProductCategory(new ProductCategory(3L, SecCatId, "THird LevelPC", "Третий уровень", images2, topic2Set, 0),
 					shopId);
-			Long THird2CatId = si.registerProductCategory(new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0),
+			Long THird2CatId = sbi.registerProductCategory(new ProductCategory(4L, SecCatId, "THird Level2PC", "Третий уровень2", images3, topic2Set, 0),
 					shopId);
 
 			ArrayList<FullProductInfo> productsList = new ArrayList<FullProductInfo>();
@@ -331,7 +334,7 @@ public class ShopServiceImplTest {
 			productsList.add(new FullProductInfo(new Product(2, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000, shopId, true), new ProductDetails(
 					categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 3000, new HashSet<String>())));
 
-			List<Long> upProductsIdl = si.uploadProducts(productsList, shopId, true);
+			List<Long> upProductsIdl = sbi.uploadProducts(productsList, shopId, true);
 			// expects to get all of products
 			// the first product is posted to second level and one of the third, the
 			// second - in the root and the other third
@@ -377,21 +380,21 @@ public class ShopServiceImplTest {
 	}
 
 	private void setAllDates() throws InvalidOperation {
-		si.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 3, 0, PriceType.INET));
-		si.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 4, 0, PriceType.INET));
+		sbi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 3, 0, PriceType.INET));
+		sbi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 4, 0, PriceType.INET));
 	}
 
 	@Test
 	public void testUploadProductCategoies() {
 		try {
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
 
 			// create categories
 			List<ProductCategory> categories = new Vector<ProductCategory>();
-			si.registerProducer( new Producer(1L, "ddd","www", "", "" ), shopId);
+			sbi.registerProducer( new Producer(1L, "ddd","www", "", "" ), shopId);
 			ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
 			ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
 			ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
@@ -402,7 +405,7 @@ public class ShopServiceImplTest {
 			categories.add(l3cat1);
 			categories.add(l3cat2);
 
-			/* List<ProductCategory> uploadProductCategoies = */si.uploadProductCategoies(categories, true);
+			/* List<ProductCategory> uploadProductCategoies = */sbi.uploadProductCategoies(categories, true);
 
 			// check the consistency of IDs
 			// get root category
@@ -435,12 +438,12 @@ public class ShopServiceImplTest {
 	public void testSetDates() {
 		try {
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
 
 			// initialize shop dates
-			si.setDate( new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 3, 0, PriceType.INET));
+			sbi.setDate( new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 3, 0, PriceType.INET));
 			Calendar now = Calendar.getInstance();
 			int nowDate = (int)(now.getTimeInMillis() / 1000L);
 			int mondayBeforeNow = nowDate - ( now.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY ) * 86400;
@@ -451,7 +454,7 @@ public class ShopServiceImplTest {
 			Assert.assertEquals( nextThursdayAfterNow/86400 + 7, si.getNextOrderDate( tuesBeforeNow ).orderDate/86400);
 			Assert.assertEquals( nextThursdayAfterNow/86400 + 7, si.getNextOrderDate( nextThursdayAfterNow ).orderDate/86400);
 			
-			si.setDate( new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 2, 0, PriceType.RETAIL));
+			sbi.setDate( new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 2, 0, PriceType.RETAIL));
 			Assert.assertEquals( nextThursdayAfterNow/86400, si.getNextOrderDate( mondayBeforeNow ).orderDate/86400 );
 			Assert.assertEquals( mondayBeforeNow/86400 + 7, si.getNextOrderDate( tuesBeforeNow ).orderDate/86400);
 			Assert.assertEquals( mondayBeforeNow/86400 + 7, si.getNextOrderDate( nextThursdayAfterNow ).orderDate/86400);
@@ -469,9 +472,9 @@ public class ShopServiceImplTest {
 			Shop shop2 = new Shop(0L, NAME + 1, DESCR + 1, userAddress, LOGO + 1, userId, topic2Set, tags, deliveryCosts, paymentTypes);
 			Shop shop3 = new Shop(0L, NAME + 2, DESCR + 2, userAddress, LOGO + 2, userId, topicSet, tags, deliveryCosts, paymentTypes);
 
-			Long shopId = si.registerShop(shop);
-			Long shop2Id = si.registerShop(shop2);
-			/* Long shop3Id = */si.registerShop(shop3);
+			Long shopId = sbi.registerShop(shop);
+			Long shop2Id = sbi.registerShop(shop2);
+			/* Long shop3Id = */sbi.registerShop(shop3);
 
 			// set current shop
 			List<Shop> shops = si.getShops();
@@ -500,7 +503,7 @@ public class ShopServiceImplTest {
 			List<Long> upProductsIdl;
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
 
@@ -597,17 +600,17 @@ public class ShopServiceImplTest {
 			Assert.assertEquals(orders.size(), 1);
 			Assert.assertEquals(orders.get(0).getStatus(), OrderStatus.CONFIRMED);
 
-			List<Order> fullOrders = si.getFullOrders(0, now + 1000 * day, 0, 0);
+			List<Order> fullOrders = sbi.getFullOrders(0, now + 1000 * day, 0, 0);
 			Assert.assertEquals(fullOrders.size(), 3);
-			fullOrders = si.getFullOrders(0, now + 1000 * day, userId + 1, 0);
+			fullOrders = sbi.getFullOrders(0, now + 1000 * day, userId + 1, 0);
 			Assert.assertEquals(fullOrders.size(), 0);
-			fullOrders = si.getFullOrders(0, now + 1000 * day, userId, 0);
+			fullOrders = sbi.getFullOrders(0, now + 1000 * day, userId, 0);
 			Assert.assertEquals(fullOrders.size(), 3);
-			fullOrders = si.getFullOrders(0, now + 1000 * day, userId, shopId + 1);
+			fullOrders = sbi.getFullOrders(0, now + 1000 * day, userId, shopId + 1);
 			Assert.assertEquals(fullOrders.size(), 0);
-			fullOrders = si.getFullOrders(0, now + 1000 * day, userId, shopId);
+			fullOrders = sbi.getFullOrders(0, now + 1000 * day, userId, shopId);
 			Assert.assertEquals(fullOrders.size(), 3);
-			fullOrders = si.getFullOrders(0, now + 1000 * day, 0, shopId);
+			fullOrders = sbi.getFullOrders(0, now + 1000 * day, 0, shopId);
 			Assert.assertEquals(fullOrders.size(), 3);
 
 			orders = si.getOrdersByStatus(0, now + 1000 * day, OrderStatus.CONFIRMED);
@@ -646,7 +649,7 @@ public class ShopServiceImplTest {
 			Assert.assertEquals(curOrderDetails.getOdrerLines().get(1).getQuantity(), 1.0D);
 
 			// change Prices and check again
-			si.setProductPrices(productPrices);
+			sbi.setProductPrices(productPrices);
 			si.setOrderLine(0,upProductsIdl.get(0), 10.0D, null, null);
 			si.setOrderLine(0,upProductsIdl.get(1), 1.0D, null, null);
 
@@ -685,11 +688,11 @@ public class ShopServiceImplTest {
 		categories.add(l3cat1);
 		categories.add(l3cat2);
 
-		/* List<ProductCategory> uploadProductCategoies = */si.uploadProductCategoies(categories, true);
+		/* List<ProductCategory> uploadProductCategoies = */sbi.uploadProductCategoies(categories, true);
 
 		// create producers
-		si.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
-		si.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
+		sbi.registerProducer(new Producer(1L, "Производитель1", "Описание производителя", LOGO, "http://google.com"), shopId);
+		sbi.registerProducer(new Producer(2L, "Производитель2", "Описание производителя2", LOGO, "http://google2.com"), shopId);
 
 		// Upload products
 
@@ -723,7 +726,7 @@ public class ShopServiceImplTest {
 		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000, shopId, true), new ProductDetails(
 				categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 3000, new HashSet<String>())));
 
-		upProductsIdl = si.uploadProducts(productsList, shopId, true);
+		upProductsIdl = sbi.uploadProducts(productsList, shopId, true);
 
 		try {
 			setAllDates();
@@ -744,7 +747,7 @@ public class ShopServiceImplTest {
 		try {
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
 
@@ -759,7 +762,7 @@ public class ShopServiceImplTest {
 			newDeliveryCosts.put(DeliveryType.LONG_RANGE, 10.0D);
 			newDeliveryCosts.put(DeliveryType.SHORT_RANGE, 5.0D);
 			newDeliveryCosts.put(DeliveryType.SELF_PICKUP, 0.0D);
-			si.setDeliveryCosts(newDeliveryCosts);
+			sbi.setDeliveryCosts(newDeliveryCosts);
 
 			si.setOrderDeliveryType(0, DeliveryType.SHORT_RANGE, null );
 			List<Order> curOrders = si.getOrders(date, date + 1);
@@ -785,7 +788,7 @@ public class ShopServiceImplTest {
 		try {
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
 
@@ -800,7 +803,7 @@ public class ShopServiceImplTest {
 			newPaymentCosts.put(PaymentType.CREDIT_CARD, 10.0D);
 			newPaymentCosts.put(PaymentType.SHOP_CREDIT, 5.0D);
 			newPaymentCosts.put(PaymentType.CASH, 0.0D);
-			si.setPaymentTypesCosts(newPaymentCosts);
+			sbi.setPaymentTypesCosts(newPaymentCosts);
 
 			si.setOrderPaymentType(0, PaymentType.SHOP_CREDIT);
 			List<Order> curOrders = si.getOrders(date, date + 1);
@@ -824,7 +827,7 @@ public class ShopServiceImplTest {
 		try {
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
 
@@ -850,7 +853,7 @@ public class ShopServiceImplTest {
 
 		try {
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
 
@@ -863,7 +866,7 @@ public class ShopServiceImplTest {
 			long order = si.createOrder(date, "aaaa");
 			PaymentStatus ps = si.getOrderDetails(order).getPaymentStatus();
 			Assert.assertEquals(ps, PaymentStatus.WAIT);
-			si.setOrderPaymentStatus(order, PaymentStatus.COMPLETE);
+			sbi.setOrderPaymentStatus(order, PaymentStatus.COMPLETE);
 			ps = si.getOrderDetails(order).getPaymentStatus();
 			Assert.assertEquals(ps, PaymentStatus.COMPLETE);
 
@@ -900,10 +903,10 @@ public class ShopServiceImplTest {
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 
-			Long id = si.registerShop(shop);
+			Long id = sbi.registerShop(shop);
 			/* Shop savedShop = */si.getShop(id);
 
-			/* DataSet importData2 = */si.importData(ds);
+			/* DataSet importData2 = */sbi.importData(ds);
 			List<Producer> producers = si.getProducers();
 			Assert.assertEquals(producers.size(), 2);
 		} catch (Exception e) {
@@ -942,7 +945,7 @@ public class ShopServiceImplTest {
 
 			ds.addToData(importData);
 
-			/* DataSet importData2 = */si.importData(ds);
+			/* DataSet importData2 = */sbi.importData(ds);
 			/* List<Shop> shops = */si.getShops();
 			// Assert.assertEquals(shops.size(), 2);
 		} catch (Exception e) {
@@ -981,11 +984,11 @@ public class ShopServiceImplTest {
 			ds.addToData(importData);
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
 
-			/* DataSet importData2 = */si.importData(ds);
+			/* DataSet importData2 = */sbi.importData(ds);
 			importProductsForTest();
 			
 			List<ProductCategory> productCategories = si.getProductCategories(0);
@@ -1051,11 +1054,11 @@ public class ShopServiceImplTest {
 			List<ProductCategory> productCategories = null;
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
 
-			/* DataSet importData2 = */si.importData(ds);
+			/* DataSet importData2 = */sbi.importData(ds);
 
 			importProductsForTest();
 
@@ -1107,7 +1110,7 @@ public class ShopServiceImplTest {
 
 		ds2.addToData(importData);
 
-		/* DataSet importData2 = */si.importData(ds2);
+		/* DataSet importData2 = */sbi.importData(ds2);
 	}
 
 	// =====================================================================================================================
@@ -1121,7 +1124,7 @@ public class ShopServiceImplTest {
 			List<Long> upProductsIdl;
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
 
@@ -1210,7 +1213,7 @@ public class ShopServiceImplTest {
 			List<Long> upProductsIdl;
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
 			
@@ -1226,7 +1229,7 @@ public class ShopServiceImplTest {
 					ExchangeFieldType.ORDER_LINE_PRODUCER_ID, ExchangeFieldType.ORDER_LINE_PRODUCER_NAME, ExchangeFieldType.ORDER_LINE_PRICE,
 					ExchangeFieldType.ORDER_LINE_COMMENT, ExchangeFieldType.ORDER_LINE_PACKETS });
 
-			DataSet totalOrdersReport = si.getTotalOrdersReport(si.getNextOrderDate( now ).orderDate, DeliveryType.SELF_PICKUP, listToMap(orderFields), listToMap(orderLineFIelds));
+			DataSet totalOrdersReport = sbi.getTotalOrdersReport(si.getNextOrderDate( now ).orderDate, DeliveryType.SELF_PICKUP, listToMap(orderFields), listToMap(orderLineFIelds));
 
 			Assert.assertTrue(totalOrdersReport != null);
 			Assert.assertEquals(totalOrdersReport.data.size(), 6); // two order lines and one orders
@@ -1315,7 +1318,7 @@ public class ShopServiceImplTest {
 			List<Long> upProductsIdl;
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
 			/*Long order1ID = */createFourOrders(now, upProductsIdl);
@@ -1326,7 +1329,7 @@ public class ShopServiceImplTest {
 					ExchangeFieldType.TOTAL_REST, ExchangeFieldType.TOTAL_PREPACK_REQUIRED, ExchangeFieldType.TOTAL_PACK_SIZE,
 					ExchangeFieldType.TOTAL_PACK_QUANTYTY, ExchangeFieldType.TOTAL_DELIVERY_TYPE });
 
-			DataSet totalProductsReport = si.getTotalProductsReport(now + 1000, DeliveryType.SELF_PICKUP, listToMap(productFields));
+			DataSet totalProductsReport = sbi.getTotalProductsReport(now + 1000, DeliveryType.SELF_PICKUP, listToMap(productFields));
 			Assert.assertEquals(totalProductsReport.getDataSize(), 3);
 
 		} catch (TException e) {
@@ -1346,7 +1349,7 @@ public class ShopServiceImplTest {
 			List<Long> upProductsIdl;
 
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
 			/*Long order1ID = */createFourOrders(now, upProductsIdl);
@@ -1357,7 +1360,7 @@ public class ShopServiceImplTest {
 					ExchangeFieldType.TOTAL_REST, ExchangeFieldType.TOTAL_PREPACK_REQUIRED, ExchangeFieldType.TOTAL_PACK_SIZE,
 					ExchangeFieldType.TOTAL_PACK_QUANTYTY, ExchangeFieldType.TOTAL_DELIVERY_TYPE });
 
-			DataSet totalProductsReport = si.getTotalPackReport(now + 1000, DeliveryType.SELF_PICKUP, listToMap(productFields));
+			DataSet totalProductsReport = sbi.getTotalPackReport(now + 1000, DeliveryType.SELF_PICKUP, listToMap(productFields));
 			Assert.assertEquals(totalProductsReport.getDataSize(), 3);
 
 		} catch (TException e) {
@@ -1418,7 +1421,7 @@ public class ShopServiceImplTest {
 			List<Long> upProductsIdl;
 	
 			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			
 			VoPostalAddress sa = new VoPostalAddress( userAddress, pm);
 			logger.debug("Shop is at: " + addressString(pm, sa) + " located at: "+sa.getBuilding().getLatitude()+":"+sa.getBuilding().getLongitude());
@@ -1427,7 +1430,7 @@ public class ShopServiceImplTest {
 			deliveryCostByDistance.put(0, 100.0D); 
 			deliveryCostByDistance.put(5, 150.0D);
 			deliveryCostByDistance.put(10, 200.0D);
-			si.setShopDeliveryCostByDistance(shopId, deliveryCostByDistance );
+			sbi.setShopDeliveryCostByDistance(shopId, deliveryCostByDistance );
 			
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
 			
@@ -1506,7 +1509,7 @@ public class ShopServiceImplTest {
 		MatrixAsList parseCSVfile;
 		try {
 			String url = StorageHelper.saveImage(csv.getBytes(), userId, true, null);
-			parseCSVfile = si.parseCSVfile(url);
+			parseCSVfile = sbi.parseCSVfile(url);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -1549,7 +1552,7 @@ public class ShopServiceImplTest {
 
 		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 		try {
-			Long shopId = si.registerShop(shop);
+			Long shopId = sbi.registerShop(shop);
 			try {
 				upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
 			} catch (TException e) {

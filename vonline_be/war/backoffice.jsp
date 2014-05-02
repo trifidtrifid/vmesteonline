@@ -8,6 +8,7 @@
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.shop.*"%>
+<%@ page import="com.vmesteonline.be.shop.bo.*"%>
 
 <%
     HttpSession sess = request.getSession();
