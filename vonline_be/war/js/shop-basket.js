@@ -343,6 +343,15 @@ define(
         function GoToConfirm(catalogHtml,amount,spinnerValue,date,weight){
 
             $('.shop-confirm').load('ajax/ajax-confirmOrder.html .dynamic',function(){
+                /* history */
+                if (window.history.state.pageName != 'confirm-order'){
+                    var state = {
+                        type : 'page',
+                        pageName: 'confirm-order'
+                    };
+                    window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+                }
+                /* --- */
                 var myDate;
                 $('.main-container').css('min-height', $(window).height()-45);
 
@@ -443,6 +452,7 @@ define(
                         //alert('Ваш заказ принят !');
                         cleanBasket();
                         $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
+
                             $('.page').hide();
                             $(this).show();
                             $('.main-container').css('min-height', $(window).height()-45);

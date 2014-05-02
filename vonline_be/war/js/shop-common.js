@@ -331,7 +331,9 @@ define(
                         }
 
                         currentModal.find('.close').click(function(e,isHistoryNav){
-                            if (!isHistoryNav) window.history.back();
+                            if (!isHistoryNav) {
+                                window.history.back();
+                            }
                         });
 
                     }else{
@@ -364,7 +366,6 @@ define(
                             productid : productId
                         };
                         window.history.pushState(state,null,'shop.jsp#'+ beginHash +'='+productId);
-
                     }
                     currentModal.modal();
                     fullDescrHeight = currentModal.find('.product-fullDescr').height();
@@ -590,23 +591,38 @@ define(
             }
         }
 
-        $('.shop-trigger').click(function(e){
+        $('.shop-trigger').click(function(e,isHistoryNav){
             e.preventDefault();
             //try{
                 var shopOrders = $('.shop-orders');
                 var ordersList = $('.orders-list');
                 $('.page').hide();
+                var state;
 
                 if($(this).hasClass('back-to-shop')){
-                    shopOrders.hide();
-                    $('.shop-confirm').hide();
-                    $('.main-container-inner').show();
-                    $('.nav li.active').addClass('active');
-                    $('.nav li:eq(0)').addClass('active');
-                    $('.shop-products').show(function(){
-                        setSidebarHeight();
-                    });
+                        shopOrders.hide();
+                        $('.shop-confirm').hide();
+                        $('.main-container-inner').show();
+                        $('.navbar .nav li.active').removeClass('active');
+                        $('.navbar .nav li:eq(0)').addClass('active');
+                        $('.shop-products').show(function(){
+                            setSidebarHeight();
+                        });
+                    state = {
+                        type : 'default'
+                    };
+                    window.history.pushState(state,null,'shop.jsp');
+
                 }else{
+                    /* history */
+                    if (!isHistoryNav && window.history.state.pageName != 'orders-history'){
+                        state = {
+                            type : 'page',
+                            pageName: 'orders-history'
+                        };
+                        window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+                    }
+                    /**/
                     var ordersModule = require('shop-orders');
                     if (!globalUserAuth){
                         var basketModule = require('shop-basket');
@@ -620,12 +636,15 @@ define(
                         var nowTime = parseInt(new Date().getTime()/1000);
                         nowTime -= nowTime%86400;
                         var day = 3600*24;
-                        var orders = thriftModule.client.getOrders(0,nowTime+90*day);
+                        //var orders = thriftModule.client.getOrders(0,nowTime+90*day);
+                        var orders = thriftModule.client.getMyOrdersByStatus(0,nowTime+90*day,0);
                         ordersModule.initVarForMoreOrders();
+
                         // если всегда делать createOrdersHtml, то странциа заказов будет обновляться в реальном времени
                         // а так можно оптимизировать и не делать createOrderHtml каждый раз при перезагрузке
                         ordersList.html('').append(ordersModule.createOrdersHtml(orders));
-                        InitProductDetailPopup($('.product-link'));
+
+                        InitProductDetailPopup($('.shop-orders .product-link'));
                         ordersModule.initShowMoreOrders(orders);
                         ordersModule.initOrdersLinks();
                         var ordersNoInit = $('.orders-no-init');
