@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.access.VoUserAccessBaseRoles;
+import com.vmesteonline.be.access.shop.VoShopAccess;
 import com.vmesteonline.be.access.shop.VoShopAccessRoles;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -1365,5 +1366,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			pm.close();
 		}	
 	}
+	
+	public Class getAuthRecordClass(){ return VoShopAccess.class; }
 	
 }
