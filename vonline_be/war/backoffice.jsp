@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
+<%@ page import="com.vmesteonline.be.ShopBOServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
@@ -16,6 +17,10 @@
     AuthServiceImpl.checkIfAuthorised(sess.getId());
     UserServiceImpl userService = new UserServiceImpl(request.getSession());
     ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+    if( null == ShortUserInfo){
+        sess.invalidate();
+        throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
+    }
     pageContext.setAttribute("firstName",ShortUserInfo.firstName);
     pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
