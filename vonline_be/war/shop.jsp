@@ -15,6 +15,10 @@
         AuthServiceImpl.checkIfAuthorised(sess.getId());
         UserServiceImpl userService = new UserServiceImpl(request.getSession());
         ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+        if( null == ShortUserInfo){
+        	sess.invalidate();
+        	throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
+        }
         pageContext.setAttribute("firstName",ShortUserInfo.firstName);
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
@@ -388,6 +392,17 @@
             <div class="page shop-orderEnd"></div>
             <div class="page shop-editPersonal"></div>
     </div>
+        <footer>
+            <div class="footer-menu">
+                <ul>
+                    <li><a href="#">О сайте</a></li>
+                    <li><a href="#">Правила</a></li>
+                    <li><a href="#">Контакты</a></li>
+                    <li><a href="#">В начало</a></li>
+                </ul>
+            </div>
+            <div>Вместе Онлайн (c) 2014</div>
+        </footer>
 
         <div class="modal modal-error">
             <div class="modal-body">

@@ -45,10 +45,12 @@ public class VoProducer {
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
 		try {
-			this.logoURL = StorageHelper.saveImage(producer.getLogoURL(), userId, true, _pm);
+			String logoURL2 = producer.getLogoURL();
+			this.logoURL = logoURL2 == null || logoURL2.trim().isEmpty() ? null : StorageHelper.saveImage(logoURL2, userId, true, _pm);
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: "+e);
+			//e.printStackTrace();
+			
+			//throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: "+e);
 		}
 		
 		try {
