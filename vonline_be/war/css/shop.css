@@ -13,6 +13,20 @@ a {
 .clear {
   clear: both;
 }
+footer {
+  text-align: center;
+  border: 1px solid #ccc;
+  border-bottom: 0;
+  padding: 10px 0;
+}
+footer .footer-menu ul {
+  margin-left: 0;
+}
+footer .footer-menu li {
+  list-style: none;
+  margin: 0 10px;
+  display: inline-block;
+}
 .btn-primary,
 .header-color-blue2 {
   background-color: #438eb9 !important;
@@ -92,6 +106,7 @@ a {
 }
 .shop {
   border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
 }
 .main-content {
   margin-right: 380px;
@@ -105,24 +120,6 @@ a {
   border-left: 1px solid #ccc;
   padding-bottom: 20px;
   right: 0;
-/*.sidebar-title
-    font-size 20px
-    border-top 1px solid #ccc
-    padding 4px 0 7px 0
-    background #f9f9f9
-    text-align center
-    color #2b7dbc
-    .go-to-orders
-      display inline-block
-      vertical-align middle
-      margin-right 10px
-  nav
-    display inline-block
-    vertical-align middle
-    width 70%
-    .input-group
-    a
-      display block*/
 }
 .shop-right:before {
   border: 0;
@@ -335,17 +332,6 @@ th.next,
 }
 .ui-menu-item a:hover {
   text-decoration: none;
-}
-.breadcrambs {
-  margin-bottom: 10px;
-span
-}
-.breadcrambs a {
-  font-weight: normal;
-}
-.breadcrambs span {
-  display: inline-block;
-  margin: 0 2px;
 }
 .shop-menu {
   overflow: auto;

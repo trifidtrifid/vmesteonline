@@ -630,7 +630,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                         var importType = $('.import-dropdown .btn-group-text').text();
                         var dropdownColArray = [];
                         var dropdownColArrayFieldType = [];
-                        var ExField = com.vmesteonline.be.shop.ExchangeFieldType;
+                        var ExField = com.vmesteonline.be.shop.bo.ExchangeFieldType;
                         counter = 0;
 
                         switch (importType){
@@ -865,13 +865,13 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
                 switch (importType){
                     case 'Продукты':
-                        ImExType = com.vmesteonline.be.shop.ImExType.IMPORT_PRODUCTS;
+                        ImExType = com.vmesteonline.be.shop.bo.ImExType.IMPORT_PRODUCTS;
                         break;
                     case 'Категории продуктов':
-                        ImExType = com.vmesteonline.be.shop.ImExType.IMPORT_CATEGORIES;
+                        ImExType = com.vmesteonline.be.shop.bo.ImExType.IMPORT_CATEGORIES;
                         break;
                     case 'Производители':
-                        ImExType = com.vmesteonline.be.shop.ImExType.IMPORT_PRODUCERS;
+                        ImExType = com.vmesteonline.be.shop.bo.ImExType.IMPORT_PRODUCERS;
                         break;
                 }
 
@@ -889,7 +889,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                  fieldsMap[fieldsCounter++] = parseInt($(this).data('exchange'));
                  });*/
 
-                var importElement = new com.vmesteonline.be.shop.ImportElement;
+                var importElement = new com.vmesteonline.be.shop.bo.ImportElement;
                 importElement.type = ImExType;
                 importElement.filename = 'filename';
                 importElement.fieldsMap = fieldsMap;
@@ -897,7 +897,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 var temp = [];
                 temp[0] = importElement;
 
-                var dataSet = new com.vmesteonline.be.shop.DataSet;
+                var dataSet = new com.vmesteonline.be.shop.bo.DataSet;
                 dataSet.name = "name";
                 dataSet.date = nowTime;
                 dataSet.data = temp;
