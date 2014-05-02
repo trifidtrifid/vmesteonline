@@ -29,7 +29,7 @@
 	}
     var transport = new Thrift.Transport("/thrift/ShopService");
     var protocol = new Thrift.Protocol(transport);
-    var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
+    var client = new com.vmesteonline.be.shop.ShopFEServiceClient(protocol);
 
     function getMetaDate(calendarPicker){
         try {

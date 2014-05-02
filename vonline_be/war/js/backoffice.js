@@ -611,7 +611,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                      },*/
                     success: function(html) {
                         fileUrl = html;
-                        var matrixAsList = thriftModule.client.parseCSVfile(fileUrl);
+                        var matrixAsList = thriftModule.clientBO.parseCSVfile(fileUrl);
                         elems = matrixAsList.elems;
                         rowCount = matrixAsList.rowCount;
                         var dataCSVLength = elems.length;
@@ -903,7 +903,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 dataSet.data = temp;
 
                 try{
-                    thriftModule.client.importData(dataSet);
+                    thriftModule.clientBO.importData(dataSet);
                     confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
 
                 }catch(e){
@@ -982,7 +982,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
                             var exportFieldsOrderLine = getExportFields('orderLine');
 
-                            dataSet = thriftModule.client.getTotalOrdersReport(selectOrderDate,deliveryType,exportFieldsOrder.fieldsMap,exportFieldsOrderLine.fieldsMap);
+                            dataSet = thriftModule.clientBO.getTotalOrdersReport(selectOrderDate,deliveryType,exportFieldsOrder.fieldsMap,exportFieldsOrderLine.fieldsMap);
 
                             var tablesCount;
 
@@ -998,7 +998,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                         case 1:
                             var exportFields = getExportFields('products');
 
-                            dataSet = thriftModule.client.getTotalProductsReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
+                            dataSet = thriftModule.clientBO.getTotalProductsReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
 
                             if(dataSet.data){
 
@@ -1012,7 +1012,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                         case 2:
                             exportFields = getExportFields('packs');
 
-                            dataSet = thriftModule.client.getTotalPackReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
+                            dataSet = thriftModule.clientBO.getTotalPackReport(selectOrderDate,deliveryType,exportFields.fieldsMap);
 
                             if(dataSet.data){
 

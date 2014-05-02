@@ -424,8 +424,12 @@
 <!-- файлы thrift -->
 <script src="js/thrift.js" type="text/javascript"></script>
 <script src="gen-js/bedata_types.js" type="text/javascript"></script>
+
 <script src="gen-js/shop_types.js" type="text/javascript"></script>
-<script src="gen-js/ShopService.js" type="text/javascript"></script>
+<script src="gen-js/ShopFEService.js" type="text/javascript"></script>
+<script src="gen-js/shop.bo_types.js" type="text/javascript"></script>
+<script src="gen-js/ShopBOService.js" type="text/javascript"></script>
+
 <script src="gen-js/authservice_types.js" type="text/javascript"></script>
 <script src="gen-js/AuthService.js" type="text/javascript"></script>
 <script src="gen-js/userservice_types.js" type="text/javascript"></script>
