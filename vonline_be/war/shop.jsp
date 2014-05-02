@@ -15,6 +15,10 @@
         AuthServiceImpl.checkIfAuthorised(sess.getId());
         UserServiceImpl userService = new UserServiceImpl(request.getSession());
         ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+        if( null == ShortUserInfo){
+        	sess.invalidate();
+        	throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
+        }
         pageContext.setAttribute("firstName",ShortUserInfo.firstName);
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
