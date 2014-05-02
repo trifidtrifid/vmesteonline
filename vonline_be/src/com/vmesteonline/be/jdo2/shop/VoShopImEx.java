@@ -10,8 +10,8 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.vmesteonline.be.shop.ExchangeFieldType;
-import com.vmesteonline.be.shop.ImExType;
+import com.vmesteonline.be.shop.bo.ExchangeFieldType;
+import com.vmesteonline.be.shop.bo.ImExType;
 
 @PersistenceCapable
 public class VoShopImEx {

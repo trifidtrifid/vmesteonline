@@ -39,15 +39,15 @@ import com.vmesteonline.be.jdo2.shop.VoOrder;
 import com.vmesteonline.be.jdo2.shop.VoOrderLine;
 import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.messageservice.Topic;
-import com.vmesteonline.be.shop.DataSet;
+import com.vmesteonline.be.shop.bo.DataSet;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
-import com.vmesteonline.be.shop.ExchangeFieldType;
+import com.vmesteonline.be.shop.bo.ExchangeFieldType;
 import com.vmesteonline.be.shop.FullProductInfo;
-import com.vmesteonline.be.shop.IdNameChilds;
-import com.vmesteonline.be.shop.ImExType;
-import com.vmesteonline.be.shop.ImportElement;
-import com.vmesteonline.be.shop.MatrixAsList;
+import com.vmesteonline.be.IdNameChilds;
+import com.vmesteonline.be.shop.bo.ImExType;
+import com.vmesteonline.be.shop.bo.ImportElement;
+import com.vmesteonline.be.MatrixAsList;
 import com.vmesteonline.be.shop.Order;
 import com.vmesteonline.be.shop.OrderDates;
 import com.vmesteonline.be.shop.OrderDatesType;
@@ -195,6 +195,8 @@ public class ShopServiceImplTest {
 			// set current shop
 			si.getShop(shopId);
 
+			si.registerProducer( new Producer(1L, "ddd","www", "", "" ), shopId);
+			
 			ProductCategory rootCategory = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
 			Long rootCatId = si.registerProductCategory(rootCategory, shopId);
 
@@ -389,6 +391,7 @@ public class ShopServiceImplTest {
 
 			// create categories
 			List<ProductCategory> categories = new Vector<ProductCategory>();
+			si.registerProducer( new Producer(1L, "ddd","www", "", "" ), shopId);
 			ProductCategory rootCat = new ProductCategory(1L, 0L, ROOT_PRODUCT_CAT1, PRC1_DESCR, images, topicSet, 0);
 			ProductCategory l2Cat = new ProductCategory(2L, 1L, "Second LevelPC", "Второй уровень", images2, topic2Set, 0);
 			ProductCategory l3cat1 = new ProductCategory(3L, 2L, "THird LevelPC", "Третий уровень", images2, topic2Set, 0);
@@ -745,13 +748,13 @@ public class ShopServiceImplTest {
 			// set current shop
 			si.getShop(shopId);
 
-			Map<Integer, DateType> dateDateTypeMap = new HashMap<Integer, DateType>();
+			//Map<Integer, DateType> dateDateTypeMap = new HashMap<Integer, DateType>();
 			int date = (int) (System.currentTimeMillis() / 1000L);
-			date = si.getNextOrderDate( date ).orderDate;
-			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
+			//dateDateTypeMap.put(date, DateType.NEXT_ORDER);
 			setAllDates();
+			date = si.getNextOrderDate( date ).orderDate;
 
-			long order = si.createOrder(si.getNextOrderDate( date ).orderDate, "aaaa");
+			long order = si.createOrder(date = si.getNextOrderDate( date ).orderDate, "aaaa");
 			Map<DeliveryType, Double> newDeliveryCosts = new HashMap<DeliveryType, Double>();
 			newDeliveryCosts.put(DeliveryType.LONG_RANGE, 10.0D);
 			newDeliveryCosts.put(DeliveryType.SHORT_RANGE, 5.0D);
@@ -790,7 +793,7 @@ public class ShopServiceImplTest {
 			int date = (int) (System.currentTimeMillis() / 1000L) + 1000;
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
 			setAllDates();
-
+			date = si.getNextOrderDate(date).orderDate;
 			long order = si.createOrder(date, "aaaa");
 
 			Map<PaymentType, Double> newPaymentCosts = new HashMap<PaymentType, Double>();
@@ -829,7 +832,7 @@ public class ShopServiceImplTest {
 			int date = (int) (System.currentTimeMillis() / 1000L) + 1000;
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
 			setAllDates();
-
+			date = si.getNextOrderDate(date).orderDate;
 			long order = si.createOrder(date, "aaaa");
 			si.setOrderDeliveryAddress(0, userAddress2);
 			OrderDetails orderDetails = si.getOrderDetails(order);
@@ -855,6 +858,7 @@ public class ShopServiceImplTest {
 			int date = (int) (System.currentTimeMillis() / 1000L) + 1000;
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
 			setAllDates();
+			date = si.getNextOrderDate( (int) (System.currentTimeMillis() / 1000L) + 1000).orderDate;
 
 			long order = si.createOrder(date, "aaaa");
 			PaymentStatus ps = si.getOrderDetails(order).getPaymentStatus();
@@ -1222,13 +1226,13 @@ public class ShopServiceImplTest {
 					ExchangeFieldType.ORDER_LINE_PRODUCER_ID, ExchangeFieldType.ORDER_LINE_PRODUCER_NAME, ExchangeFieldType.ORDER_LINE_PRICE,
 					ExchangeFieldType.ORDER_LINE_COMMENT, ExchangeFieldType.ORDER_LINE_PACKETS });
 
-			DataSet totalOrdersReport = si.getTotalOrdersReport(now + 1000, DeliveryType.SELF_PICKUP, listToMap(orderFields), listToMap(orderLineFIelds));
+			DataSet totalOrdersReport = si.getTotalOrdersReport(si.getNextOrderDate( now ).orderDate, DeliveryType.SELF_PICKUP, listToMap(orderFields), listToMap(orderLineFIelds));
 
 			Assert.assertTrue(totalOrdersReport != null);
-			Assert.assertEquals(totalOrdersReport.data.size(), 3); // two order lines and one orders
+			Assert.assertEquals(totalOrdersReport.data.size(), 6); // two order lines and one orders
 			Assert.assertEquals(totalOrdersReport.data.get(0).getType(), ImExType.EXPORT_ORDER_LINES); // lines of the first order
 			Assert.assertEquals(totalOrdersReport.data.get(1).getType(), ImExType.EXPORT_ORDER_LINES); // lines of the second order
-			Assert.assertEquals(totalOrdersReport.data.get(2).getType(), ImExType.EXPORT_ORDERS); // orders
+			Assert.assertEquals(totalOrdersReport.data.get(5).getType(), ImExType.EXPORT_ORDERS); // orders
 			Assert.assertEquals(VoHelper.listToMatrix( totalOrdersReport.data.get(2).getFieldsData()).size(), 2); // two orders
 			// check content of order 1
 			Assert.assertEquals(VoHelper.listToMatrix(totalOrdersReport.data.get(0).getFieldsData()).size(), 2);

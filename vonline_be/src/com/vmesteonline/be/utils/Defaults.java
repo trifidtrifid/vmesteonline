@@ -13,23 +13,15 @@ import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
-import com.google.appengine.api.images.Image;
-import com.google.appengine.api.images.ImagesService;
-import com.google.appengine.api.images.ImagesServiceFactory;
-import com.google.appengine.api.images.Transform;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.AuthServiceImpl;
-import com.vmesteonline.be.FullAddressCatalogue;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.ShopServiceImpl;
-import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.access.shop.VoShopAccessManager;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.GeoLocation;
-import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoRubric;
@@ -49,17 +41,16 @@ import com.vmesteonline.be.jdo2.shop.VoProducer;
 import com.vmesteonline.be.jdo2.shop.VoProduct;
 import com.vmesteonline.be.jdo2.shop.VoProductCategory;
 import com.vmesteonline.be.jdo2.shop.VoShop;
-import com.vmesteonline.be.shop.DataSet;
-import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
-import com.vmesteonline.be.shop.ExchangeFieldType;
-import com.vmesteonline.be.shop.ImExType;
-import com.vmesteonline.be.shop.ImportElement;
 import com.vmesteonline.be.shop.OrderDates;
 import com.vmesteonline.be.shop.OrderDatesType;
 import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Shop;
+import com.vmesteonline.be.shop.bo.DataSet;
+import com.vmesteonline.be.shop.bo.ExchangeFieldType;
+import com.vmesteonline.be.shop.bo.ImExType;
+import com.vmesteonline.be.shop.bo.ImportElement;
 
 @SuppressWarnings("unchecked")
 public class Defaults {

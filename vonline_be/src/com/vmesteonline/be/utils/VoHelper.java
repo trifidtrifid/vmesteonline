@@ -18,7 +18,7 @@ import javax.jdo.PersistenceManager;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.GeoLocation;
-import com.vmesteonline.be.shop.MatrixAsList;
+import com.vmesteonline.be.MatrixAsList;
 
 public class VoHelper {
 

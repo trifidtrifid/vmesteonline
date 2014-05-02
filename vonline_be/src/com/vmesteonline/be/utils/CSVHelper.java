@@ -1,7 +1,6 @@
 package com.vmesteonline.be.utils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -17,12 +16,11 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.CharSet;
 import org.apache.log4j.Logger;
 
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
-import com.vmesteonline.be.shop.ExchangeFieldType;
+import com.vmesteonline.be.shop.bo.ExchangeFieldType;
 
 public class CSVHelper {
 
@@ -41,7 +39,7 @@ public class CSVHelper {
 		List<String> lines = readLines(data);
 		for (String nextLine : lines) {
 			ArrayList<String> lineCols = new ArrayList<String>();
-			String[] items = nextLine.split("[" + fd + "]");
+			String[] items = nextLine.split("[" + fd + "]",-500);
 			int delimSkipped = 0;
 			for (int pos = 0; pos < items.length; pos++) {
 
@@ -117,6 +115,7 @@ public class CSVHelper {
 							}
 							field.set(nextOtf, fo);
 						}
+						if(nextItem.trim().length()>0)
 						try {
 							if (fo instanceof Double)
 								field.set(nextOtf, Double.parseDouble(nextItem));
