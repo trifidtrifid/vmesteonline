@@ -20,9 +20,14 @@ a
 
 footer
   text-align center
-  border 1px solid #ccc
-  border-bottom 0
-  padding 10px 0
+  position absolute
+  background #fff
+  width 100%
+  bottom 0
+  .container
+    border 1px solid #ccc
+    border-bottom 0
+    padding 10px 0
   .footer-menu
     ul
       margin-left 0
@@ -42,10 +47,17 @@ transform()
 .header-color-blue2
   background-color #438eb9 !important
 
+.wrap
+  min-height 100%
+  padding-bottom 70px
+  position relative
+
 .container
   padding 0
   max-width 1240px
   min-height 100%
+ /* &.main
+    padding-bottom 70px*/
 
 .navbar
   a.navbar-brand
@@ -725,10 +737,12 @@ height 50px
 @media all and (max-width: 990px)
   .shop-right
     position fixed
+    margin-top -45px
     height 100%
     right -380px
     z-index 10
     padding 0 0 20px 0
+    padding-top 65px
     border-bottom 1px solid #ccc
     overflow auto
     &:before
@@ -895,19 +909,20 @@ height 50px
   .weight-right
     float right
     clear right
+    padding-right 10px
     padding-top 15px
     font-size 16px
     span
       font-weight bold
+  .additionally-order
+    padding 0 10px
   .delivery-right
-    padding-left 10px
     margin-top 40px
     h3
       font-size 16px
     #phone-delivery
       width 250px
     .input-delivery
-      padding-right 10px
       .lbl
         font-size 16px
         display block
@@ -949,8 +964,9 @@ height 50px
     .btn-cancel
       float right
       margin-left 10px
+      margin-bottom 10px
   textarea
-    margin 10px
+    margin 10px 0
     width 100%
     display block
     height 80px
@@ -969,6 +985,7 @@ height 50px
     min-width 768px
     width 80%
     margin 0 auto
+    margin-bottom 25px
     h3
       text-align left
       margin-top 0
