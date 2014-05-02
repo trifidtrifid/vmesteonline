@@ -17,6 +17,7 @@ import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.PostalAddress;
+import com.vmesteonline.be.ShopBOServiceImpl;
 import com.vmesteonline.be.ShopServiceImpl;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.access.shop.VoShopAccessManager;
@@ -166,6 +167,7 @@ public class Defaults {
 		try {
 			ShopServiceImpl ssi = new ShopServiceImpl("123");
 			AuthServiceImpl asi = new AuthServiceImpl("123");
+			ShopBOServiceImpl sbsi = new ShopBOServiceImpl("123");
 			asi.login(user1email, user1pass);
 
 			PersistenceManager pm = PMF.getPm();
@@ -207,7 +209,7 @@ public class Defaults {
 
 			Map<PaymentType, Double> paymentTypes = new TreeMap<PaymentType, Double>();
 
-			long shop = ssi.registerShop(new Shop(10, "Во!Молоко", "Магазин свежей молочной продукции Вологодского края", postalAddress,
+			long shop = sbsi.registerShop(new Shop(10, "Во!Молоко", "Магазин свежей молочной продукции Вологодского края", postalAddress,
 					"http://vomoloko.ru/img/logo.jpg", userId, topicSet, tags, deliveryCosts, paymentTypes));
 			
 			VoShopAccessManager.createAccessForShopOwner(userId, shop);
@@ -217,17 +219,17 @@ public class Defaults {
 			// next order is MONday and THursday 
 			// closed date is monday and thursday but shifted 1 step ago
 			
-			ssi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 4, 0, PriceType.INET));
-			ssi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 3, 0, PriceType.INET));
+			sbsi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 4, 0, PriceType.INET));
+			sbsi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 3, 0, PriceType.INET));
 
 			Map<Integer, Integer> deliveryByWeightIncrement = new HashMap<Integer, Integer>();
 			deliveryByWeightIncrement.put(15000, 50); // 50 rub each 10 kg
-			ssi.setShopDeliveryByWeightIncrement(shop, deliveryByWeightIncrement);
+			sbsi.setShopDeliveryByWeightIncrement(shop, deliveryByWeightIncrement);
 
 			Map<DeliveryType, String> deliveryTypeAddressMasks = new HashMap<DeliveryType, String>();
 			deliveryTypeAddressMasks.put(DeliveryType.SHORT_RANGE, ".*(Пушкин|Павловск|Шушары|Колпино).*");
 			deliveryTypeAddressMasks.put(DeliveryType.LONG_RANGE, ".*");
-			ssi.setShopDeliveryTypeAddressMasks(shop, deliveryTypeAddressMasks);
+			sbsi.setShopDeliveryTypeAddressMasks(shop, deliveryTypeAddressMasks);
 
 			DataSet ds = new DataSet();
 			ds.date = (int) (System.currentTimeMillis() / 1000L);
@@ -237,7 +239,7 @@ public class Defaults {
 			loadCategories(ds);
 			loadProducts(ds);
 
-			ssi.importData(ds);
+			sbsi.importData(ds);
 
 		} catch (Exception e) {
 			e.printStackTrace();
