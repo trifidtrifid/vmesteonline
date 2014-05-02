@@ -130,133 +130,10 @@ struct ProductListPart {
 	2:i32 length
 }
 
-enum ExchangeFieldType {
-	
-	SHOP_ID=10, SHOP_NAME,SHOP_DESCRIPTION,SHOP_ADDRESS,SHOP_LOGOURL,SHOP_OWNERID,SHOP_TOPICS,SHOP_TAGS,
-	SHOP_DELIVERY_COST_AVP,
-	SHOP_PAYMENT_COST_AVP,
-	
-	PRODUCER_ID = 100, PRODUCER_NAME, PRODUCER_DESCRIPTION, PRODUCER_LOGOURL, PRODUCER_HOMEURL,
-
-	CATEGORY_ID = 200, CATEGORY_PARENT_ID, CATEGORY_NAME, CATEGORY_DESCRIPTION, CATEGORY_LOGOURLS, CATEGORY_TOPICS,
-	
-	PRODUCT_ID=300, PRODUCT_NAME,	PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
-	PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
-	PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID, PRODUCT_MIN_CLN_PACK, PRODUCT_MIN_PROD_PACK, PRODUCT_PREPACK_REQ, 
-	PRODUCT_KNOWN_NAMES, PRODUCT_UNIT_NAME
-	
-	DATE_TYPE=400, DATE_DATE,
-	
-	ORDER_ID = 1000, ORDER_DATE, ORDER_STATUS, ORDER_PRICE_TYPE, ORDER_TOTAL_COST, 
-	ORDER_CREATED, ORDER_DELIVERY_TYPE, ORDER_DELIVERY_COST, ORDER_DELIVERY_ADDRESS, ORDER_PAYMENT_TYPE, ORDER_PAYMENT_STATUS,
-	ORDER_COMMENT, ORDER_WEIGHT, ORDER_USER_ID, ORDER_USER_NAME,
-	
-	ORDER_LINE_ID = 1100, ORDER_LINE_QUANTITY, ORDER_LINE_OPRDER_ID, ORDER_LINE_PRODUCT_ID, ORDER_LINE_PRODUCT_NAME, ORDER_LINE_PRODUCER_ID, ORDER_LINE_PRODUCER_NAME, 
-	ORDER_LINE_PRICE, ORDER_LINE_COMMENT, ORDER_LINE_PACKETS
-	
-	//product report
-	TOTAL_PROUCT_ID=2000, TOTAL_PRODUCT_NAME, TOTAL_PRODUCER_ID, TOTAL_PRODUCER_NAME, TOTAL_PRODUCT_MIN_PACK, TOTAL_ORDERED, TOTAL_MIN_QUANTITY, TOTAL_REST, TOTAL_PREPACK_REQUIRED,
-	//pack variants report by delivery type
-	TOTAL_PACK_SIZE,TOTAL_PACK_QUANTYTY, TOTAL_DELIVERY_TYPE  
-} 
-
-enum ImExType { IMPORT_SHOP = 10, IMPORT_PRODUCERS, IMPORT_CATEGORIES, IMPORT_PRODUCTS, 
-	EXPORT_ORDERS=20, EXPORT_ORDER_LINES, EXPORT_TOTAL_PRODUCT, EXPORT_TOTAL_PACK  }
-
-struct MatrixAsList {
-	1:i32 rowCount,
-	2:list<string> elems
-}
-
-struct ImportElement {
-	1:ImExType type,
-	2:string fileName,
-	3:map<i32,ExchangeFieldType> fieldsMap,
-	4:optional string url,
-	5:optional MatrixAsList fieldsData, //returned in response if empty in request
-}
-
-struct DataSet {
-	1:optional i64 id, //should not been initialized first time by FE.
-	2:string name,
-	3:i32 date,
-	4:list<ImportElement> data,
-}
 
 
-struct IdName {
-	1:i64 id,
-	2:string name,
-}
-
-struct IdNameChilds {
-	1:i64 id,
-	2:string name,
-	3:list<IdName> childs,
-}
-
-service ShopService {
+service ShopFEService {
 	
-	//backend functions=================================================================================================
-	
-	i64 registerShop( 1:Shop shop) throws (1:error.InvalidOperation exc),
-	i64 registerProductCategory( 1:ProductCategory productCategory, 2:i64 shopId) throws (1:error.InvalidOperation exc),
-	i64 registerProducer( 1:Producer producer, 2:i64 shopId, ) throws (1:error.InvalidOperation exc),
-	i64 registerProduct( 1:FullProductInfo fpi, 2:i64 shopId ) throws (1:error.InvalidOperation exc),
-	
-	void setShopDeliveryByWeightIncrement( 1:i64 shopId, 2:map<i32,i32> deliveryByWeightIncrement) throws (1:error.InvalidOperation exc),
-	void setShopDeliveryCostByDistance( 1:i64 shopId, 2:map<i32,double> deliveryCostByDistance) throws (1:error.InvalidOperation exc),
-	void setShopDeliveryTypeAddressMasks( 1:i64 shopId, 2:map<DeliveryType,string> deliveryTypeAddressMasks) throws (1:error.InvalidOperation exc),
-	
-	/**
-	* Method uploads products to the shop that by parameter shopId. All value of image URLS may contain a JPEG image data or HTTP url 
-	* to pull the image from.   
-	**/
-	list<i64> uploadProducts( 1:list<FullProductInfo> products, 2:i64 shopId, 3:bool cleanShopBeforeUpload ) throws (1:error.InvalidOperation exc),
-	/**
-	* Method uploads categories. List in the request should contain relative values of  and return list with updated values of id, parentId
-	* and URLS replaced to local. Any of URL parameter may contain JPEG image data.
-	**/
-	list<ProductCategory> uploadProductCategoies( 1:list<ProductCategory> categories, 2:bool cleanShopBeforeUpload )
-		throws (1:error.InvalidOperation exc),
-	/**
-	* Method returns full orders information. userId and shopId may be used as a filter by defining not 0 value 
-	**/
-	list<Order> getFullOrders(1:i32 dateFrom, 2:i32 dateTo, 3:i64 userId, 4:i64 shopId) throws (1:error.InvalidOperation exc),
-	void updateOrderStatusesById( 1:map<i64,OrderStatus> orderStatusMap ) throws (1:error.InvalidOperation exc),
-	
-	//void setDates( 1:map<i32,DateType> dateDateTypeMap),
-	void setDate( 1:OrderDates dates ) throws (1:error.InvalidOperation exc), 
-	void removeDate( 1:OrderDates dates ) throws (1:error.InvalidOperation exc), 
-	
-	void setDeliveryCosts( 1:map<DeliveryType,double> newDeliveryCosts) throws (1:error.InvalidOperation exc),
-	void setPaymentTypesCosts( 1:map<PaymentType,double> newPaymentTypeCosts) throws (1:error.InvalidOperation exc),
-	
-	void setOrderPaymentStatus(1:i64 orderId, 2: PaymentStatus newStatus) throws (1:error.InvalidOperation exc),
-	void setOrderStatus(1:i64 orderId, 2: OrderStatus newStatus) throws (1:error.InvalidOperation exc),
-	/**
-	* Method updates prices for Products. Map contains productId and map of new prices values for types.
-	**/
-	void setProductPrices( 1: map<i64, map<PriceType,double>> newPricesMap) throws (1:error.InvalidOperation exc),
-	
-	void updateProduct( 1:FullProductInfo newInfoWithOldId ) throws (1:error.InvalidOperation exc),
-	void updateShop( 1:Shop newShopWithOldId ) throws (1:error.InvalidOperation exc),
-	void updateCategory( 1:ProductCategory newCategoryInfo) throws (1:error.InvalidOperation exc),
-	void updateProducer( 1:Producer newInfoWithOldId ) throws (1:error.InvalidOperation exc),
-	
-	//IMPORT-EXPORT BACK OFFICE
-
-	DataSet importData(1:DataSet data) throws (1:error.InvalidOperation exc),
-	DataSet getTotalOrdersReport( 1:i32 date, 2:DeliveryType deliveryType, 
-		3:map<i32,ExchangeFieldType> orderFields, 4:map<i32,ExchangeFieldType> orderLineFIelds) throws (1:error.InvalidOperation exc),
-	DataSet getTotalProductsReport( 1:i32 date, 2:DeliveryType deliveryType,
-		3:map<i32,ExchangeFieldType> productFields ) throws (1:error.InvalidOperation exc),
-	DataSet getTotalPackReport( 1:i32 date, 2:DeliveryType deliveryType,
-		3:map<i32,ExchangeFieldType> packFields ) throws (1:error.InvalidOperation exc),
-		
-	MatrixAsList parseCSVfile( 1:string url ) throws (1:error.InvalidOperation exc),
-
-
 	//frontend functions================================================================================================
 	list<Shop> getShops() throws (1:error.InvalidOperation exc),
 	//map<i32,DateType> getDates(1:i32 from, 2: i32 to) throws (1:error.InvalidOperation exc),
@@ -279,7 +156,7 @@ service ShopService {
 	**/ 
 	ProductListPart getProducts(1:i32 offset, 2:i32 length, 3:i64 categoryId ) throws (1:error.InvalidOperation exc),
 	ProductDetails getProductDetails( 1:i64 productId ) throws (1:error.InvalidOperation exc),
-	list<IdNameChilds> getProductsByCategories(1:i64 shopId) throws (1:error.InvalidOperation exc),
+	list<bedata.IdNameChilds> getProductsByCategories(1:i64 shopId) throws (1:error.InvalidOperation exc),
 	
 	/**
 	Order operations use shopId that must be set by AuthService.setCurrentAttribute or by calling method getShop
@@ -326,7 +203,7 @@ service ShopService {
 	OrderDetails setOrderDeliveryAddress( 1:i64 orderId, 2:bedata.PostalAddress deliveryAddress ) throws (1:error.InvalidOperation exc),
 	
 	bedata.PostalAddress createDeliveryAddress(1:string  addressString, 2:i32 flat, 3:byte floor, 4:byte staircase, 5:string comment ) throws (1:error.InvalidOperation exc),
-	MatrixAsList getUserDeliveryAddresses() throws (1:error.InvalidOperation exc),
+	bedata.MatrixAsList getUserDeliveryAddresses() throws (1:error.InvalidOperation exc),
 	bedata.PostalAddress getUserDeliveryAddress(1:string addressText) throws (1:error.InvalidOperation exc),
 	void deleteDeliveryAddress(1:string addressText ) throws (1:error.InvalidOperation exc),
 	string getDeliveryAddressViewURL(1:string addressText, 2:i32 width, 3:i32 height ) throws (1:error.InvalidOperation exc),	

@@ -1,7 +1,6 @@
 package com.vmesteonline.be.jdo2.shop.exchange;
 
 import com.vmesteonline.be.shop.DeliveryType;
-import com.vmesteonline.be.shop.ExchangeFieldType;
 import com.vmesteonline.be.shop.OrderStatus;
 import com.vmesteonline.be.shop.PaymentStatus;
 import com.vmesteonline.be.shop.PaymentType;

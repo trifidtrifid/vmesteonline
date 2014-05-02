@@ -1,26 +1,20 @@
 package com.vmesteonline.be;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Vector;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -30,54 +24,11 @@ import javax.jdo.Transaction;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import com.google.apphosting.api.search.DocumentPb.FieldValue.Geo;
-//import com.google.api.client.util.Sets;
-import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.access.VoUserAccessBase;
 import com.vmesteonline.be.access.VoUserAccessBaseRoles;
 import com.vmesteonline.be.access.shop.VoShopAccess;
 import com.vmesteonline.be.access.shop.VoShopAccessRoles;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.GeoLocation;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.postaladdress.AddressInfo;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
@@ -100,16 +51,15 @@ import com.vmesteonline.be.jdo2.shop.exchange.ProducerDescription;
 import com.vmesteonline.be.jdo2.shop.exchange.ProductDescription;
 import com.vmesteonline.be.jdo2.shop.exchange.ProductOrderDescription;
 import com.vmesteonline.be.jdo2.shop.exchange.ShopDescription;
-import com.vmesteonline.be.shop.DataSet;
-import com.vmesteonline.be.shop.DateType;
+import com.vmesteonline.be.shop.bo.DataSet;
 import com.vmesteonline.be.shop.DeliveryType;
-import com.vmesteonline.be.shop.ExchangeFieldType;
+import com.vmesteonline.be.shop.bo.ExchangeFieldType;
 import com.vmesteonline.be.shop.FullProductInfo;
-import com.vmesteonline.be.shop.IdName;
-import com.vmesteonline.be.shop.IdNameChilds;
-import com.vmesteonline.be.shop.ImExType;
-import com.vmesteonline.be.shop.ImportElement;
-import com.vmesteonline.be.shop.MatrixAsList;
+import com.vmesteonline.be.IdName;
+import com.vmesteonline.be.IdNameChilds;
+import com.vmesteonline.be.shop.bo.ImExType;
+import com.vmesteonline.be.shop.bo.ImportElement;
+import com.vmesteonline.be.MatrixAsList;
 import com.vmesteonline.be.shop.Order;
 import com.vmesteonline.be.shop.OrderDate;
 import com.vmesteonline.be.shop.OrderDates;
@@ -125,12 +75,15 @@ import com.vmesteonline.be.shop.ProductCategory;
 import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
-import com.vmesteonline.be.shop.ShopService.Iface;
+import com.vmesteonline.be.shop.bo.ShopBOService;
+import com.vmesteonline.be.shop.ShopFEService;
+
 import com.vmesteonline.be.utils.CSVHelper;
 import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
+//import com.google.api.client.util.Sets;
 
-public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable {
+public class ShopServiceImpl extends ServiceImpl implements ShopBOService.Iface, ShopFEService.Iface,  Serializable {
 
 	public static Logger logger;
 	private static int QUANTITY_SCALE = 5;
@@ -141,7 +94,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 	// ======================================================================================================================
 	private final class ProdcutNameComparator implements Comparator<Product>, Serializable {
-		@Override
+			@Override
 		public int compare(Product o1, Product o2) {
 			return (o1.getName() + o1.getId()).compareTo(o2.getName() + o2.getId());
 		}
@@ -165,7 +118,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		PersistenceManager pm = PMF.getPm();
 		try {
 			if (0 == shopId)
-				shopId = getCurrentShopId(pm);
+				shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
 			VoProductCategory voProductCategory = new VoProductCategory(voShop, productCategory.getId(), productCategory.getParentId(),
 					productCategory.getName(), productCategory.getDescr(), productCategory.getLogoURLset(), productCategory.getTopicSet(), voShop.getOwnerId(),
@@ -195,7 +148,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		List<Long> productIds;
 		try {
 			if (0 == shopId)
-				shopId = getCurrentShopId(pm);
+				shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
 
 			productIds = new ArrayList<Long>();
@@ -505,7 +458,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	@Override
 	public List<Producer> getProducers() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		Long shopId = getCurrentShopId(pm);
+		Long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		try {
 			List<VoProducer> vpl = (List<VoProducer>) pm.newQuery(VoProducer.class, "shopId == " + shopId).execute();
 			List<Producer> pl = new ArrayList<Producer>();
@@ -533,7 +486,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public List<ProductCategory> getProductCategories(long currentProductCategoryId) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
-		Long shopId = getCurrentShopId(pm);
+		Long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		try {
 			pm.getObjectById(VoShop.class, shopId);
 			List<ProductCategory> lpc = new ArrayList<ProductCategory>();
@@ -578,7 +531,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			throw new InvalidOperation(VoError.IncorrectParametrs, "offset must be >= 0 and length > 0 ");
 
 		PersistenceManager pm = PMF.getPm();
-		Long shopId = getCurrentShopId(pm);
+		Long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		try {
 			String key = getProcutsOfCategoryCacheKey(categoryId, shopId);
 			ArrayList<Product> products = ServiceImpl.getObjectFromCache(key);
@@ -607,7 +560,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
-	private static String getProcutsOfCategoryCacheKey(long categoryId, Long shopId) {
+	static String getProcutsOfCategoryCacheKey(long categoryId, Long shopId) {
 		return "VoProductsForCategory:" + shopId + ":" + categoryId;
 	}
 
@@ -636,7 +589,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		dateTo += ( 86400 - dateTo % 86400 );
 		
 		PersistenceManager pm = PMF.getPm();
-		Long shopId = getCurrentShopId(pm);
+		Long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		try {
 			Query pcq = pm.newQuery(VoOrder.class);
 			pcq.setFilter("shopId == " + shopId + " && user == " + getCurrentUserId(pm) + " && date >= " + dateFrom);
@@ -656,38 +609,6 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 	}
 
-	public Long getCurrentShopId(PersistenceManager pm) throws InvalidOperation {
-		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
-		if (null == shopId || 0 == shopId) {
-			throw new InvalidOperation(VoError.IncorrectParametrs, "SHOP ID is not set in session context. shopId=" + shopId);
-		}
-		return shopId;
-	}
-
-	// ======================================================================================================================
-	private VoShop getCurrentShop(PersistenceManager _pm) throws InvalidOperation {
-
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-
-		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
-		if (null == shopId || 0 == shopId) {
-			throw new InvalidOperation(VoError.IncorrectParametrs, "SHOP ID is not set in session context.");
-		}
-
-		try {
-			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
-			if (null != voShop) {
-				return voShop;
-			}
-			throw new InvalidOperation(VoError.IncorrectParametrs, "SHOP ID is SET but SHOP not FOUND for this ID.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to SHOP by ID" + shopId + ". " + e);
-		} finally {
-			if (null == _pm)
-				pm.close();
-		}
-	}
 
 	// ======================================================================================================================
 	private VoOrder getCurrentOrder(PersistenceManager _pm) throws InvalidOperation {
@@ -741,7 +662,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		date -= date % 86400;
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop shop = getCurrentShop(pm);
+			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			pm.retrieve(shop);
 			PriceType pt = shop.getPriceType( date );
 			
@@ -762,7 +683,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public long cancelOrder(long orderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 			currentOrder.setStatus(OrderStatus.CANCELED);
 			// unset current order
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0, pm);
@@ -780,7 +701,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public long deleteOrder(long orderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 			if (null != currentOrder.getOrderLines() && 0 != currentOrder.getOrderLines().size()) {
 				throw new InvalidOperation(VoError.IncorrectParametrs, "Only an ampry order could be deleted!");
 			}
@@ -798,7 +719,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public long confirmOrder( long orderId, String comment ) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 			currentOrder.setStatus(OrderStatus.CONFIRMED);
 			if( null!=comment ) currentOrder.setComment(comment);
 			// unset current order
@@ -822,7 +743,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
 			if (null != voOrder) {
 				double addCost = 0;
-				VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+				VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 				
 				Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 
@@ -930,7 +851,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public OrderDetails mergeOrder(long orderId, long oldOrderId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
@@ -971,7 +892,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		}
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
@@ -1030,7 +951,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public boolean removeOrderLine(long orderId, long productId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 			Long removedLineID = currentOdrerLines.remove(productId);
@@ -1057,7 +978,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public OrderDetails setOrderDeliveryType(long orderId, DeliveryType deliveryType, PostalAddress pa) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
 			VoPostalAddress oldDeliveryTo = currentOrder.getDeliveryTo();
 			VoPostalAddress newDeliveryTo = null == pa ? null : new VoPostalAddress(pa, pm);
@@ -1069,7 +990,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			if (deliveryType != currentOrder.getDelivery() || //type changed 
 					deliveryType != DeliveryType.SELF_PICKUP && oldDeliveryTo.getId() != newDeliveryTo.getId()) { //or address changed
 				
-				VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId(pm));
+				VoShop voShop = pm.getObjectById(VoShop.class, ShopServiceHelper.getCurrentShopId( this, pm ));
 
 				currentOrder.setDelivery(deliveryType);
 				
@@ -1282,9 +1203,9 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public boolean setOrderPaymentType(long orderId, PaymentType paymentType) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
-			VoShop voShop = pm.getObjectById(VoShop.class, getCurrentShopId(pm));
+			VoShop voShop = pm.getObjectById(VoShop.class, ShopServiceHelper.getCurrentShopId( this, pm ));
 			PaymentType oldPaymentType = currentOrder.getPaymentType();
 
 			if (oldPaymentType != paymentType) {
@@ -1315,7 +1236,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public OrderDetails setOrderDeliveryAddress(long orderId, PostalAddress deliveryAddress) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
 			VoPostalAddress address = new VoPostalAddress(deliveryAddress, pm);
 			VoPostalAddress oldAddress = currentOrder.getDeliveryTo();
@@ -1345,7 +1266,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public void setOrderPaymentStatus(long orderId, PaymentStatus newStatus) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder currentOrder =  0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 			currentOrder.setPaymentStatus(newStatus);
 			pm.makePersistent(currentOrder);
 		} catch (Exception e) {
@@ -1360,7 +1281,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	@Override
 	public void setProductPrices(Map<Long, Map<PriceType, Double>> newPricesMap) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		long shopId = getCurrentShopId(pm);
+		long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		// Transaction ct = pm.currentTransaction(); //cross tranaction required
 		// ct.begin();
 		try {
@@ -1403,7 +1324,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public void setDeliveryCosts(Map<DeliveryType, Double> newDeliveryCosts) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop currentShop = getCurrentShop(pm);
+			VoShop currentShop = ShopServiceHelper.getCurrentShop( this, pm );
 			currentShop.getDeliveryCosts().putAll(VoShop.convertFromDeliveryTypeMap(newDeliveryCosts, new HashMap<Integer, Double>()));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1418,7 +1339,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public void setPaymentTypesCosts(Map<PaymentType, Double> setPaymentTypesCosts) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop currentShop = getCurrentShop(pm);
+			VoShop currentShop = ShopServiceHelper.getCurrentShop( this, pm );
 			currentShop.getPaymentTypes().putAll(VoShop.convertFromPaymentTypeMap(setPaymentTypesCosts, new HashMap<Integer, Double>()));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1460,7 +1381,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	
 	private List<Order> getOrdersByStatus(long userId, int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		Long shopId = getCurrentShopId(pm);
+		Long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		dateFrom = dateFrom - dateFrom % 86400;
 		dateTo = dateTo - dateTo % 86400 + 86400;
 		
@@ -1506,7 +1427,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		try {
 			VoOrder currentOrder;
 			if (0 == orderId) {
-				currentOrder = getCurrentOrder(pm);
+				currentOrder = ShopServiceHelper.getCurrentOrder( this, pm );
 			} else {
 				currentOrder = pm.getObjectById(VoOrder.class, orderId);
 				super.setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), orderId, pm);
@@ -1738,7 +1659,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public long registerProduct(FullProductInfo fpi, long shopId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop shop = 0 == shopId ? getCurrentShop(pm) : pm.getObjectById(VoShop.class, shopId);
+			VoShop shop = 0 == shopId ? ShopServiceHelper.getCurrentShop( this, pm ) : pm.getObjectById(VoShop.class, shopId);
 			return registerProduct(fpi, shop, pm);
 		} finally {
 			pm.close();
@@ -1749,7 +1670,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public long registerProduct(FullProductInfo fpi, VoShop _shop, PersistenceManager _pm) throws InvalidOperation {
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
 		try {
-			VoShop shop = _shop == null ? getCurrentShop(pm) : _shop;
+			VoShop shop = _shop == null ? ShopServiceHelper.getCurrentShop( this, pm ) : _shop;
 			VoProduct product = VoProduct.createObject(shop, fpi, pm);
 			for( Long catId: product.getCategories())
 				removeObjectFromCache(ShopServiceImpl.getProcutsOfCategoryCacheKey(catId, product.getShopId()));
@@ -1776,7 +1697,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop shop = getCurrentShop(pm);
+			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			long currentUserId = getCurrentUserId(pm);
 			
 			// import get all of orders for the shop by date
@@ -2035,7 +1956,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop shop = getCurrentShop(pm);
+			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			// import get all of orders for the shop by date
 			Query q = pm.newQuery(VoOrder.class);
 			q.setFilter("shopId == " + shop.getId() + " && date == " + date
@@ -2145,7 +2066,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop shop = getCurrentShop(pm);
+			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			// import get all of orders for the shop by date
 			Query q = pm.newQuery(VoOrder.class);
 			q.setFilter("shopId == " + shop.getId() + " && date == " + date
@@ -2313,7 +2234,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		date -= date % 86400;
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder voOrder = 0 == orderId ? getCurrentOrder(pm) : pm.getObjectById(VoOrder.class, orderId);
+			VoOrder voOrder = 0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 			voOrder.setDate(date);
 			voOrder.setComment(comment);
 			pm.makePersistent(voOrder);
@@ -2380,7 +2301,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 			PersistenceManager pm = PMF.getPm();
 			try {
 				if( 0 == shopId )
-						shopId = getCurrentShopId(pm);
+						shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 				List<VoProduct> products = (List<VoProduct>) pm.newQuery(VoProduct.class, "shopId=="+shopId ).execute();
 				for (VoProduct voProduct : products) {
 					for(Long catId : voProduct.getCategories()){
@@ -2406,7 +2327,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		return catwithProcuts;
 	}
 
-	private static Object createShopProductsByCategoryKey(long shopId) {
+	static Object createShopProductsByCategoryKey(long shopId) {
 		return "createShopProductsByCategoryKey"+shopId;
 	}
 	
@@ -2417,7 +2338,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public void setShopDeliveryByWeightIncrement(long shopId, Map<Integer, Integer> deliveryByWeightIncrement) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop theShop = 0 == shopId ? getCurrentShop( pm ) : pm.getObjectById(VoShop.class, shopId );
+			VoShop theShop = 0 == shopId ? ShopServiceHelper.getCurrentShop( this, pm ) : pm.getObjectById(VoShop.class, shopId );
 			theShop.setDeliveryByWeightIncrement(deliveryByWeightIncrement);
 			pm.makePersistent(theShop);
 			
@@ -2434,7 +2355,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public void setShopDeliveryCostByDistance(long shopId, Map<Integer, Double> deliveryCostByDistance) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop theShop = 0 == shopId ? getCurrentShop( pm ) : pm.getObjectById(VoShop.class, shopId );
+			VoShop theShop = 0 == shopId ? ShopServiceHelper.getCurrentShop( this, pm ) : pm.getObjectById(VoShop.class, shopId );
 			theShop.setDeliveryCostByDistance(deliveryCostByDistance);
 			pm.makePersistent(theShop);
 			
@@ -2450,7 +2371,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 	public void setShopDeliveryTypeAddressMasks(long shopId, Map<DeliveryType, String> deliveryTypeAddressMasks) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop theShop = 0 == shopId ? getCurrentShop( pm ) : pm.getObjectById(VoShop.class, shopId );
+			VoShop theShop = 0 == shopId ? ShopServiceHelper.getCurrentShop( this, pm ) : pm.getObjectById(VoShop.class, shopId );
 			theShop.setDeliveryAddressMasksText(deliveryTypeAddressMasks);
 			pm.makePersistent(theShop);
 			
@@ -2548,7 +2469,7 @@ public class ShopServiceImpl extends ServiceImpl implements Iface, Serializable 
 		
 		long shopId = 0;
 		try {
-			shopId = getCurrentShopId(pm);
+			shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		} catch (InvalidOperation e) {
 		}
 		if( voUserAccessBase instanceof VoShopAccess ){
