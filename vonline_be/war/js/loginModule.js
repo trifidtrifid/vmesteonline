@@ -79,7 +79,7 @@ define(
                     //document.location.replace("/shop.jsp");
                     AuthRealTime(selector);
                 }else{
-                    document.location.replace("/shop.jsp");
+                    document.location.replace("./shop.jsp");
                 }
             } else {
                 result.val(session.error);

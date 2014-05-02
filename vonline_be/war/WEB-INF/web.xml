@@ -28,6 +28,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>MessageServiceServlet</servlet-name>
 		<url-pattern>/thrift/MessageService</url-pattern>
 	</servlet-mapping>
+	
 	<servlet>
 		<servlet-name>ShopServiceServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.ShopServiceServlet</servlet-class>
@@ -36,10 +37,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>ShopServiceServlet</servlet-name>
 		<url-pattern>/thrift/ShopService</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ShopBOServiceServlet</servlet-name>
+		<servlet-class>com.vmesteonline.be.ShopBOServiceServlet</servlet-class>
+	</servlet>
 	<servlet-mapping>
-		<servlet-name>ShopServiceServlet</servlet-name>
+		<servlet-name>ShopBOServiceServlet</servlet-name>
 		<url-pattern>/thrift/ShopBOService</url-pattern>
 	</servlet-mapping>
+	
 	<servlet>
 		<servlet-name>FileAccess</servlet-name>
 		<servlet-class>com.vmesteonline.be.VoFileAccess</servlet-class>

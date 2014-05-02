@@ -15,6 +15,10 @@
         AuthServiceImpl.checkIfAuthorised(sess.getId());
         UserServiceImpl userService = new UserServiceImpl(request.getSession());
         ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+        if( null == ShortUserInfo){
+        	sess.invalidate();
+        	throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
+        }
         pageContext.setAttribute("firstName",ShortUserInfo.firstName);
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
@@ -78,7 +82,7 @@
 <head>
 <meta charset="utf-8" />
 <title>Магазин</title>
-<link rel="stylesheet" href="css/shop.css" />
+<link rel="stylesheet" href="/css/shop.css" />
 <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -97,7 +101,8 @@
 </script>
 </head>
 <body>
-	<div class="container">
+    <div class="wrap">
+	<div class="main container">
 		<div class="navbar navbar-default" id="navbar">
 			<script type="text/javascript">
 				try {
@@ -406,22 +411,36 @@
 		</div>
 
 	</div>
+    <footer>
+        <div class="container">
+            <div class="footer-menu">
+                <ul>
+                    <li><a href="#">О сайте</a></li>
+                    <li><a href="#">Правила</a></li>
+                    <li><a href="#">Контакты</a></li>
+                    <li><a href="#">В начало</a></li>
+                </ul>
+            </div>
+            <div>Вместе Онлайн (c) 2014</div>
+        </div>
+    </footer>
+    </div>
 	<!-- общие библиотеки -->
 	<%--<script src="js/lib/jquery-2.0.3.min.js"></script>--%>
 	<%--<script src="js/lib/bootstrap.js"></script>--%>
     <!-- файлы thrift -->
-    <script src="js/thrift.js" type="text/javascript"></script>
-    <script src="gen-js/bedata_types.js" type="text/javascript"></script>
+    <script src="/js/thrift.js" type="text/javascript"></script>
+    <script src="/gen-js/bedata_types.js" type="text/javascript"></script>
 
-    <script src="gen-js/shop_types.js" type="text/javascript"></script>
-    <script src="gen-js/ShopFEService.js" type="text/javascript"></script>
-    <script src="gen-js/shop.bo_types.js" type="text/javascript"></script>
-    <script src="gen-js/ShopBOService.js" type="text/javascript"></script>
+    <script src="/gen-js/shop_types.js" type="text/javascript"></script>
+    <script src="/gen-js/ShopFEService.js" type="text/javascript"></script>
+    <script src="/gen-js/shop.bo_types.js" type="text/javascript"></script>
+    <script src="/gen-js/ShopBOService.js" type="text/javascript"></script>
 
-    <script src="gen-js/authservice_types.js" type="text/javascript"></script>
-    <script src="gen-js/AuthService.js" type="text/javascript"></script>
-    <script src="gen-js/userservice_types.js" type="text/javascript"></script>
-    <script src="gen-js/UserService.js" type="text/javascript"></script>
+    <script src="/gen-js/authservice_types.js" type="text/javascript"></script>
+    <script src="/gen-js/AuthService.js" type="text/javascript"></script>
+    <script src="/gen-js/userservice_types.js" type="text/javascript"></script>
+    <script src="/gen-js/UserService.js" type="text/javascript"></script>
     <!-- -->
 
 <%--	<!-- конкретные плагины -->
@@ -437,7 +456,7 @@
 	<script src="js/login.js"></script>
 --%>
 	<%--<script src="js/common.js"></script>--%>
-    <script type="text/javascript" data-main="js/shop.js" src="js/require.js"></script>
+    <script type="text/javascript" data-main="/js/shop.js" src="/js/require.js"></script>
 
     <%--<script src="js/shop.js"></script>--%>
 

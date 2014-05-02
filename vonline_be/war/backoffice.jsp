@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
+<%@ page import="com.vmesteonline.be.ShopBOServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
@@ -16,6 +17,10 @@
     AuthServiceImpl.checkIfAuthorised(sess.getId());
     UserServiceImpl userService = new UserServiceImpl(request.getSession());
     ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+    if( null == ShortUserInfo){
+        sess.invalidate();
+        throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
+    }
     pageContext.setAttribute("firstName",ShortUserInfo.firstName);
     pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
@@ -42,7 +47,7 @@
 <head>
 <meta charset="utf-8" />
   <title>Бэкоффис</title>
-  <link rel="stylesheet" href="css/shop.css"/>
+  <link rel="stylesheet" href="/css/shop.css"/>
     <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -423,18 +428,18 @@
 
 
 <!-- файлы thrift -->
-<script src="js/thrift.js" type="text/javascript"></script>
-<script src="gen-js/bedata_types.js" type="text/javascript"></script>
+<script src="/js/thrift.js" type="text/javascript"></script>
+<script src="/gen-js/bedata_types.js" type="text/javascript"></script>
 
-<script src="gen-js/shop_types.js" type="text/javascript"></script>
-<script src="gen-js/ShopFEService.js" type="text/javascript"></script>
-<script src="gen-js/shop.bo_types.js" type="text/javascript"></script>
-<script src="gen-js/ShopBOService.js" type="text/javascript"></script>
+<script src="/gen-js/shop_types.js" type="text/javascript"></script>
+<script src="/gen-js/ShopFEService.js" type="text/javascript"></script>
+<script src="/gen-js/shop.bo_types.js" type="text/javascript"></script>
+<script src="/gen-js/ShopBOService.js" type="text/javascript"></script>
 
-<script src="gen-js/authservice_types.js" type="text/javascript"></script>
-<script src="gen-js/AuthService.js" type="text/javascript"></script>
-<script src="gen-js/userservice_types.js" type="text/javascript"></script>
-<script src="gen-js/UserService.js" type="text/javascript"></script>
+<script src="/gen-js/authservice_types.js" type="text/javascript"></script>
+<script src="/gen-js/AuthService.js" type="text/javascript"></script>
+<script src="/gen-js/userservice_types.js" type="text/javascript"></script>
+<script src="/gen-js/UserService.js" type="text/javascript"></script>
 <!-- -->
 
 <%--<!-- конкретные плагины -->
@@ -449,7 +454,7 @@
 <script src="js/common.js"></script>
 <script src="js/backoffice.js"></script>--%>
 
-<script type="text/javascript" data-main="js/backoffice.js" src="js/require.js"></script>
+<script type="text/javascript" data-main="/js/backoffice.js" src="/js/require.js"></script>
 
 
 </body>
