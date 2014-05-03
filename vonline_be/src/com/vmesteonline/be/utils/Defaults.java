@@ -282,7 +282,7 @@ public class Defaults {
 		productFieldsOrder.add(ExchangeFieldType.PRODUCT_UNIT_NAME);
 
 		importData = new ImportElement(ImExType.IMPORT_PRODUCTS, "product.csv", VoHelper.listToMap(productFieldsOrder));
-		importData.setUrl(StorageHelper.saveImage("http://localhost:8888/data/products_1000_sheksna.csv", userId, false, null));
+		importData.setUrl(StorageHelper.saveImage("/data/products_1000_sheksna.csv", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -301,7 +301,7 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
 
 		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage("http://localhost:8888/data/product_categories.csv", userId, false, null));
+		importData.setUrl(StorageHelper.saveImage("/data/product_categories.csv", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -320,7 +320,7 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
 
 		importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage("http://localhost:8888/data/producers.csv", userId, false, null));
+		importData.setUrl(StorageHelper.saveImage("/data/producers.csv", userId, false, null));
 
 		ds.addToData(importData);
 	}
