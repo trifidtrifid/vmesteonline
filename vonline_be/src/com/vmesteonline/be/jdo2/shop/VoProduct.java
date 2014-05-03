@@ -75,7 +75,9 @@ public class VoProduct {
 		if (null != newInfo.details.getTopicSet())
 			this.topicSet.addAll(newInfo.details.getTopicSet());
 		this.unitName = newInfo.product.unitName;
-
+		
+		_pm.makePersistent(this);
+		
 		updateCategoriesList(newInfo, _pm);
 	}
 

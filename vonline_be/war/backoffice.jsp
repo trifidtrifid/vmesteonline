@@ -26,6 +26,7 @@
     } catch (InvalidOperation ioe) {
     //pageContext.setAttribute("auth",false);
         response.sendRedirect("/login.jsp");
+        sess.setAttribute("successLoginURL", request.getQueryString());
         return;
     }
 
