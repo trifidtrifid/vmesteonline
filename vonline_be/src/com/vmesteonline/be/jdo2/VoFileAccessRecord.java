@@ -12,9 +12,9 @@ import com.google.appengine.tools.cloudstorage.GcsFilename;
 public class VoFileAccessRecord {
 
 	public VoFileAccessRecord( long userId, boolean isPublic, String fileName, String contentType) {
-		this.fileName = ""+(System.currentTimeMillis() % 10000) +"_"+fileName.replaceAll("[^A-Za-z0-9._]", "");
-		if(this.fileName.length() > 32 ) this.fileName = this.fileName.substring(1,32);
-		this.bucket = ""+(this.userId=userId) + "_" + ((this.isPublic=isPublic) ? "public" : "private");
+		this.fileName = (this.userId=userId) + "_" + ((this.isPublic=isPublic) ? "public" : "private")+(System.currentTimeMillis() % 10000) +"_"+fileName.replaceAll("[^A-Za-z0-9._]", "");
+		if(this.fileName.length() > 128) this.fileName = this.fileName.substring(1,128);
+		this.bucket = "vmesteonline.appspot.com";
 		this.contentType = contentType;
 	}
 	

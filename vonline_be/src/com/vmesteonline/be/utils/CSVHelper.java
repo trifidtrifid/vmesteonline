@@ -362,7 +362,7 @@ public class CSVHelper {
 					char c;
 					if (pos == buf.length || (c = (char) buf[pos] ) == '\n' || c == '\r' ) {
 						
-						String nl = new String(buf, lastPos, pos - lastPos);
+						String nl = new String(buf, lastPos, pos - lastPos, Charset.forName("UTF-8"));
 						if (nl.trim().length() > 0)
 							lines.add(nl);
 	
