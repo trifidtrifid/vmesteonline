@@ -17,6 +17,7 @@
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
+<%@ page import="java.util.ArrayList"%>
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
@@ -37,7 +38,10 @@
     MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
     //MessageType mesType = MessageType.BASE;
 
-    TopicListPart Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
+    TopicListPart Topics = new TopicListPart( new ArrayList<Topic>(), 0);
+    if( Groups.size() > 0 && Rubrics.size() > 0 )
+    	Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
+    	
     //out.print(ShortUserInfo.firstName);
 
     pageContext.setAttribute("groups",Groups);
