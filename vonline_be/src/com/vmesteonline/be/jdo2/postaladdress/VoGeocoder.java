@@ -55,8 +55,8 @@ public class VoGeocoder {
 
 			String address = street.getCity().getCountry().getName() + "," + street.getCity().getName() + "," + street.getName() + ","
 					+ building.getFullNo();
-			address = URLEncoder.encode(address);
-			try {
+			address = URLEncoder.encode(address,"UTF-8");
+
 				AddressInfo addrInfo = resolveAddressString(address);
 				String longLatString = addrInfo.getLongLatString();
 
@@ -94,20 +94,18 @@ public class VoGeocoder {
 						return new Pair<String, String>(longitude, lattitude);
 					}
 				}
-
+				throw new InvalidOperation(VoError.GeneralError, "Failed to get Location. THere is No data");
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.GeneralError, "Failed to get Location: " + e.getMessage());
-			}
-			throw new InvalidOperation(VoError.GeneralError, "Failed to get Location. THere is No data");
-		} finally {
+			} finally {
 			pm.close();
 		}
 	}
 
 	public static AddressInfo resolveAddressString(String address) throws InvalidOperation {
 		try {
-			URL url = new URL(geocogingServerURL + "?" + addressParamName + "=" + URLEncoder.encode(address));
+			URL url = new URL(geocogingServerURL + "?" + addressParamName + "=" + URLEncoder.encode(address,"UTF-8"));
 			YAMLGecodingHandler handler = new YAMLGecodingHandler();
 			saxParser.parse(url.openStream(), handler);
 			return handler;
