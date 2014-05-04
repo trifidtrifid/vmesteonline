@@ -1144,7 +1144,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoPostalAddress deliveryAddress = getCurrentUser(pm).getDeliveryAddress(addressText);
-			return null == deliveryAddress ? null : deliveryAddress.getPostalAddress();
+			if(null==deliveryAddress)
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Addrress not found for user by text '"+addressText+"'");
+			return deliveryAddress.getPostalAddress();
 		} finally {
 			pm.close();
 		}

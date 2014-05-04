@@ -215,13 +215,13 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			fis.read(content);
 			fis.close();
 
-			EMailHelper.sendSimpleEMail("Во! <info@vmesteonline.ru>", to, "Код для смены пароля на сайте Во!",
+			EMailHelper.sendSimpleEMail("Во! <trifid@vmesteonline.ru>", to, "Код для смены пароля на сайте Во!",
 					new String(content, "UTF-8").replace("%code%", "" + code).replace("%name%", vu.getName() + " " + vu.getLastName()));
 			logger.info("Code to change password is: " + code);
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to send email to '" + to + "'. " + to);
+			throw new InvalidOperation(VoError.GeneralError, "Failed to send email to '" + to + "'. " + e);
 
 		} finally {
 			pm.close();
