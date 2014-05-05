@@ -5783,3 +5783,8 @@ button.close {
   }
 }
 /*# sourceMappingURL=bootstrap.css.map */
+.features .col-sm-6{
+	display: inline-block !important;
+	vertical-align: top !important;
+	float: none !important;
+}
