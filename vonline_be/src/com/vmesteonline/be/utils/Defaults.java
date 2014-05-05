@@ -60,6 +60,7 @@ public class Defaults {
 	private static final String COUNTRY = "Россия";
 	public static List<VoGroup> defaultGroups;
 	public static List<VoRubric> defaultRubrics;
+	private static String shopDataStorage = "http://localhost:8888/data/vomoloko_catalog/";
 
 	public static String user1lastName = "Afamily";
 	public static String user1name = "Aname";
@@ -249,42 +250,48 @@ public class Defaults {
 	// ======================================================================================================================
 
 	private static void loadProducts(DataSet ds) throws IOException {
-		ImportElement importData;
-		String imgURL;
-		/*
-		 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT,
-		 * PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
-		 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL,
-		 * PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
-		 * PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
-		 */
-		List<ExchangeFieldType> productFieldsOrder = new ArrayList<ExchangeFieldType>();
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_ID);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_NAME);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_SHORT_DESCRIPTION);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_WEIGHT);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_IMAGEURL);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_CATEGORY_IDS);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_FULL_DESCRIPTION);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_IMAGE_URLS);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_RETAIL);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_INET);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_VIP);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_SPECIAL);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_OPIONSAVP);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_TOPICS);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRODUCER_ID);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_MIN_CLN_PACK);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_MIN_PROD_PACK);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PREPACK_REQ);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_KNOWN_NAMES);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_UNIT_NAME);
-
-		importData = new ImportElement(ImExType.IMPORT_PRODUCTS, "product.csv", VoHelper.listToMap(productFieldsOrder));
-		importData.setUrl(StorageHelper.saveImage("/data/products_1000_sheksna.csv", userId, false, null));
-
-		ds.addToData(importData);
+		
+		String[] products = new String[] {"products_1000_sheksna_new.csv", "products_1000_vmk_new.csv", "products_3000_sheksnahleb_new.csv", 
+			"products_4000_volkonditerka_new.csv", "products_5000_atag_new.csv", "products_6000_sokol_new.csv", "products_7000_mgk_new.csv", 
+			"products_8000_tarnoga_new.csv"};
+		
+		for( String pFile : products ){
+			ImportElement importData;
+			/*
+			 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT,
+			 * PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
+			 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL,
+			 * PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
+			 * PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
+			 */
+			List<ExchangeFieldType> productFieldsOrder = new ArrayList<ExchangeFieldType>();
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_ID);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_NAME);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_SHORT_DESCRIPTION);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_WEIGHT);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_IMAGEURL);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_CATEGORY_IDS);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_FULL_DESCRIPTION);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_IMAGE_URLS);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_RETAIL);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_INET);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_VIP);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_SPECIAL);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_OPIONSAVP);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_TOPICS);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRODUCER_ID);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_MIN_CLN_PACK);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_MIN_PROD_PACK);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PREPACK_REQ);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_KNOWN_NAMES);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_UNIT_NAME);
+	
+			importData = new ImportElement(ImExType.IMPORT_PRODUCTS, pFile, VoHelper.listToMap(productFieldsOrder));
+			importData.setUrl(StorageHelper.saveImage(shopDataStorage+pFile, userId, false, null));
+	
+			ds.addToData(importData);
+		}
 	}
 
 	// ======================================================================================================================
@@ -301,7 +308,7 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
 
 		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage("/data/product_categories.csv", userId, false, null));
+		importData.setUrl(StorageHelper.saveImage(shopDataStorage+"product_categories.csv", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -311,7 +318,7 @@ public class Defaults {
 	private static void loadProducers(DataSet ds) throws IOException {
 		List<ExchangeFieldType> fieldsOrder;
 		ImportElement importData;
-		String imgURL;
+	
 		fieldsOrder = new ArrayList<ExchangeFieldType>();
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_ID);
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_NAME);
@@ -320,7 +327,7 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
 
 		importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage("/data/producers.csv", userId, false, null));
+		importData.setUrl(StorageHelper.saveImage(shopDataStorage+"producers.csv ", userId, false, null));
 
 		ds.addToData(importData);
 	}
