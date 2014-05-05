@@ -43,6 +43,7 @@ import com.vmesteonline.be.shop.OrderDate;
 import com.vmesteonline.be.shop.OrderDetails;
 import com.vmesteonline.be.shop.OrderLine;
 import com.vmesteonline.be.shop.OrderStatus;
+import com.vmesteonline.be.shop.OrderUpdateInfo;
 import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Producer;
@@ -563,7 +564,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 	// ======================================================================================================================
 	@Override
-	public OrderLine setOrderLine(long orderId, long productId, double quantity, String comment, Map<Double, Integer> packs) throws InvalidOperation {
+	public OrderUpdateInfo setOrderLine(long orderId, long productId, double quantity, String comment, Map<Double, Integer> packs) throws InvalidOperation {
 		if (0 == quantity) {
 			removeOrderLine(orderId, productId);
 			return null;
@@ -614,7 +615,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			}
 			
 			pm.makePersistent(currentOrder);
-			return theLine.getOrderLine(pm);
+			return new OrderUpdateInfo( currentOrder.getTotalCost(), currentOrder.getDelivery(), currentOrder.getDeliveryCost(), 
+					currentOrder.getWeightGramm(), theLine.getOrderLine(pm));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1144,7 +1146,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoPostalAddress deliveryAddress = getCurrentUser(pm).getDeliveryAddress(addressText);
-			return null == deliveryAddress ? null : deliveryAddress.getPostalAddress();
+			if(null==deliveryAddress)
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Addrress not found for user by text '"+addressText+"'");
+			return deliveryAddress.getPostalAddress();
 		} finally {
 			pm.close();
 		}

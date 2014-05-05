@@ -130,7 +130,13 @@ struct ProductListPart {
 	2:i32 length
 }
 
-
+struct OrderUpdateInfo {
+	1:double totalCost,
+	2:DeliveryType delivery,
+	3:double deliveryCost,
+	4:i32 weightGramm, 
+	5:OrderLine newOrderLine,
+}
 
 service ShopFEService {
 	
@@ -193,7 +199,7 @@ service ShopFEService {
 	* Methods adds or replaces line to the current order that set by createOrder, or getOrderDetails method
 	* it returns orderline that is with price set
 	**/
-	OrderLine setOrderLine( 1:i64 orderId, 2:i64 productId, 3:double quantity, 4:string comment, 5:map<double, i32>  packets) throws (1:error.InvalidOperation exc),
+	OrderUpdateInfo setOrderLine( 1:i64 orderId, 2:i64 productId, 3:double quantity, 4:string comment, 5:map<double, i32>  packets) throws (1:error.InvalidOperation exc),
 	bool removeOrderLine(1:i64 orderId, 2:i64 productId) throws (1:error.InvalidOperation exc),
 	/**
 	* Method returns Order details that contains new value of postal address and delivery cost of order delivery 

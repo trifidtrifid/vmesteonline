@@ -256,7 +256,12 @@ public class VoProduct {
 
 	// =====================================================================================================================
 	public Product getProduct() {
-		return new Product(id.getId(), name, shortDescr, weight, imageURL, price, unitName, minClientPack, shopId, prepackRequired);
+		//@TODO the price should depend on shop type of day of order. Now use INET version if set, RETAIL otherwise and regular at last
+		double thePrice = pricesMap == null || pricesMap.size() == 0 ? price : 
+			null == pricesMap.get(PriceType.INET.getValue()) ? 
+					pricesMap.get(PriceType.RETAIL.getValue()) == null ? price : pricesMap.get(PriceType.RETAIL.getValue()) :
+						pricesMap.get(PriceType.INET.getValue());
+		return new Product(id.getId(), name, shortDescr, weight, imageURL, thePrice, unitName, minClientPack, shopId, prepackRequired);
 	}
 
 	public ProductDetails getProductDetails() {

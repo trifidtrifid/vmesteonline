@@ -1,12 +1,4 @@
-/out
+/.google_apis
+/.settings
 /.classpath
-/.idea
-/thrift/thrift.exe
-
-.classpath
-.project
-/bin
-
-vonline_be.iml
-.google_apis
 /WEB-INF

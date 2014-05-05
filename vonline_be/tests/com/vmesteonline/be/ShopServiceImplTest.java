@@ -529,7 +529,7 @@ public class ShopServiceImplTest {
 			}
 			Assert.assertTrue(orderFound);
 
-			OrderLine newOrderLine = si.setOrderLine(0,upProductsIdl.get(0), 1.0D, null, null);
+			OrderLine newOrderLine = si.setOrderLine(0,upProductsIdl.get(0), 1.0D, null, null).newOrderLine;
 			Assert.assertEquals(newOrderLine.getProduct().getId(), upProductsIdl.get(0).longValue());
 			Assert.assertEquals(newOrderLine.getQuantity(), 1.0D);
 			Assert.assertEquals(newOrderLine.getPrice(), 12.0D);
