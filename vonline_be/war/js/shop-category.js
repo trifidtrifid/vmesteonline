@@ -19,10 +19,9 @@ define(
 			function createProductsTableHtml(productsList) {
 				var productListLength = productsList.length;
 				var productsHtml = '';
-				var productDetails;
+				//var productDetails;
 				for (i = 0; i < productListLength; i++) {
-					productDetails = thriftModule.client
-							.getProductDetails(productsList[i].id);
+					//productDetails = thriftModule.client.getProductDetails(productsList[i].id);
 					var unitName = "";
 					if (productsList[i].unitName) {
 						unitName = productsList[i].unitName;
