@@ -128,7 +128,6 @@ public class VoSession {
 
 	public Map<Integer, Long> getSessionAttributes() {
 		return curAttrMap;
-
 	}
 
 	@Override
