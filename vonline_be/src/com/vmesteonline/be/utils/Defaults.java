@@ -251,9 +251,9 @@ public class Defaults {
 
 	private static void loadProducts(DataSet ds) throws IOException {
 		
-		String[] products = new String[] {"products_1000_sheksna_new.csv", "products_1000_vmk_new.csv", "products_3000_sheksnahleb_new.csv", 
+		String[] products = new String[] {"products_1000_sheksna_new.csv"/*, "products_1000_vmk_new.csv", "products_3000_sheksnahleb_new.csv", 
 			"products_4000_volkonditerka_new.csv", "products_5000_atag_new.csv", "products_6000_sokol_new.csv", "products_7000_mgk_new.csv", 
-			"products_8000_tarnoga_new.csv"};
+			"products_8000_tarnoga_new.csv"*/};
 		
 		for( String pFile : products ){
 			ImportElement importData;

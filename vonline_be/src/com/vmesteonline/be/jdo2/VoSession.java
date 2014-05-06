@@ -108,7 +108,7 @@ public class VoSession {
 	}
 
 	public void setUserId(Long userId) {
-		this.userId = userId;
+		this.userId = null == userId ? 0 : userId;
 	}
 
 	public long getSessionAttribute(CurrentAttributeType type) {
