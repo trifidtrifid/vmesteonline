@@ -36,6 +36,8 @@ require.config({
 
 require(["jquery",'shop-modules','commonM','loginModule'],
     function($,modules,commonM,loginModule) {
+        modules.shopCommonModule.setCatalogTopOffset();
+
         if(globalUserAuth){
             modules.shopCommonModule.initBasketInReload();
             var catalogHeight = $('.catalog').height();
@@ -149,8 +151,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             $(this).parent().animate({'right':'-470px'},200);
             showRight.animate({'right':'-28px'},200).removeClass('active');
         });
-
-        modules.shopCommonModule.setCatalogTopOffset();
 
         $('.dropdown-menu li a').click(function(e){
             e.preventDefault();

@@ -593,7 +593,6 @@ define(
         }
 
         function setCatalogTopOffset(){
-            $(window).height();
             var catalogTop = $('.shop-products .form-group').height()+$('.shop-menu').height()+$('.catalog-head').height()+$('.navbar').height();
             var catalogBottom = $('.wrap footer').height();
             //alert($('.shop-products .form-group').height()+" "+$('.shop-menu').height()+" "+$('.catalog-head').height()+" "+$('.navbar').height());
