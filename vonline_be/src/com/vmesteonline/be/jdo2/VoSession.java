@@ -107,7 +107,7 @@ public class VoSession {
 		return userId;
 	}
 
-	public void setUserId(Long userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 
@@ -117,7 +117,8 @@ public class VoSession {
 	}
 
 	public void setSessionAttribute(int key, long value) {
-		if(null==curAttrMap) curAttrMap = new HashMap<Integer, Long>();
+		if (null == curAttrMap)
+			curAttrMap = new HashMap<Integer, Long>();
 		curAttrMap.put(key, value);
 	}
 
