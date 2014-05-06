@@ -212,7 +212,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		try {
-			String key = getProcutsOfCategoryCacheKey(categoryId, shopId);
+			String key = ShopServiceHelper.getProcutsOfCategoryCacheKey(categoryId, shopId);
 			ArrayList<Product> products = ServiceImpl.getObjectFromCache(key);
 
 			if (null == products) { // no data in cache
@@ -237,10 +237,6 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		} finally {
 			pm.close();
 		}
-	}
-
-	static String getProcutsOfCategoryCacheKey(long categoryId, Long shopId) {
-		return "VoProductsForCategory:" + shopId + ":" + categoryId;
 	}
 
 	// ======================================================================================================================

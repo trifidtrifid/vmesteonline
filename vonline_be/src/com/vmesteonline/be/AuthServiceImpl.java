@@ -38,8 +38,17 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		try {
 
 			VoSession session = getSession(httpSessId, pm);
-			if (null == session || 0 == session.getUserId())
+			
+			if (null == session || 0 == session.getUserId() ){
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
+			}
+			try {
+				pm.getObjectById(VoUser.class,session.getUserId());
+			} catch (Exception e) {
+				session.setUserId(null);
+				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
+			}
+
 		} finally {
 			pm.close();
 		}

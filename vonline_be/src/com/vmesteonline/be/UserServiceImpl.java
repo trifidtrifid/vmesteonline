@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.jdo.Extent;
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.http.HttpSession;
@@ -150,15 +151,20 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public List<Group> getUserGroups() throws InvalidOperation {
 		try {
 
-			long userId = getCurrentUserId();
 			PersistenceManager pm = PMF.getPm();
+			
 			try {
-				VoUser user = pm.getObjectById(VoUser.class, userId);
-
-				if (user == null) {
-					logger.error("can't find user by id " + Long.toString(userId));
+				long userId = getCurrentUserId(pm);
+				
+				VoUser user;
+				try {
+					user = pm.getObjectById(VoUser.class, userId);
+				} catch (JDOObjectNotFoundException e) {
+					logger.info("Current user doues not exists. Not found by Id.");
+					getCurrentSession(pm).setUserId(null);
 					throw new InvalidOperation(VoError.NotAuthorized, "can't find user by id");
 				}
+
 				logger.info("find user email " + user.getEmail() + " name " + user.getName());
 
 				if (user.getGroups() == null) {

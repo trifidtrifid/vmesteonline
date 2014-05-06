@@ -486,8 +486,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			long cuid = getCurrentUserId(pm);
 			vop.update(newInfoWithOldId, cuid, pm);
 			for( Long catId: vop.getCategories())
-				removeObjectFromCache(ShopServiceImpl.getProcutsOfCategoryCacheKey(catId, vop.getShopId()));
+				removeObjectFromCache(ShopServiceHelper.getProcutsOfCategoryCacheKey(catId, vop.getShopId()));
 			
+			removeObjectFromCache(ShopServiceHelper.getProcutsOfCategoryCacheKey(0, vop.getShopId()));
 			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(vop.getShopId()));
 			pm.makePersistent(vop);
 		} catch (Exception e) {
@@ -708,7 +709,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			VoShop shop = _shop == null ? ShopServiceHelper.getCurrentShop( this, pm ) : _shop;
 			VoProduct product = VoProduct.createObject(shop, fpi, pm);
 			for( Long catId: product.getCategories())
-				removeObjectFromCache(ShopServiceImpl.getProcutsOfCategoryCacheKey(catId, product.getShopId()));
+				removeObjectFromCache(ShopServiceHelper.getProcutsOfCategoryCacheKey(catId, product.getShopId()));
 			
 			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(shop.getId()));
 			
