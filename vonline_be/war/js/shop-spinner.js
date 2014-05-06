@@ -104,13 +104,13 @@ define(
         }
 
         function checkBigWeight(orderId,orderDetails){
-            var bigWeight = 15000;
+            var bigWeight = 15;
             var weight;
             var weightRight = $('.weight-right span');
 
-            weight = (weightRight.length) ? parseInt(weightRight.text()) : parseInt($('.weight span').text());
+            weight = (weightRight.length) ? parseFloat(weightRight.text()) : parseFloat($('.weight span').text());
 
-            if(weight > bigWeight){
+            if(weight >= bigWeight){
                 var basketModule = require('shop-basket');
                 basketModule.setDeliveryCost(orderId,orderDetails);
             }

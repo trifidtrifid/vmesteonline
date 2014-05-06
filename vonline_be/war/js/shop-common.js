@@ -331,7 +331,8 @@ define(
                         }
 
                         currentModal.find('.close').click(function(e,isHistoryNav){
-                            if (!isHistoryNav) {
+                            //isCatalog
+                            if (!isHistoryNav && isCatalog) {
                                 window.history.back();
                             }
                         });
@@ -360,7 +361,7 @@ define(
                     //var beginHash = (isBasket || isOrdersHistory) ? "p-basket" : "p";
                     var beginHash = "p";
 
-                    if (!isHistoryNav){
+                    if (!isHistoryNav && isCatalog){
                         var state = {
                             type : 'modal',
                             productid : productId
@@ -372,7 +373,7 @@ define(
                     currentModal.find('.product-fullDescr').hide();
 
                     $('.modal-backdrop').click(function(){
-                        window.history.back();
+                        if (isCatalog) window.history.back();
                         $('.modal.in .close').trigger('click');
                     });
 
