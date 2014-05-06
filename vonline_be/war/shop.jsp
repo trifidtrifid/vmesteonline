@@ -12,7 +12,7 @@
 	HttpSession sess = request.getSession();
     pageContext.setAttribute("auth",true);
     try {
-        AuthServiceImpl.checkIfAuthorised(sess.getId());
+        //AuthServiceImpl.checkIfAuthorised(sess.getId());
         UserServiceImpl userService = new UserServiceImpl(request.getSession());
         ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
         if( null == ShortUserInfo){
@@ -29,8 +29,10 @@
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
-    Shop shop = shopService.getShop(ArrayShops.get(0).id);
-    pageContext.setAttribute("logoURL", shop.logoURL);
+    if(ArrayShops != null && ArrayShops.size() > 0){
+        Shop shop = shopService.getShop(ArrayShops.get(0).id);
+        pageContext.setAttribute("logoURL", shop.logoURL);
+    }
 
     OrderDetails currentOrderDetails;
     try{
@@ -71,7 +73,9 @@
     if (productsListPart.products.size() > 0){
         pageContext.setAttribute("products",productsListPart.products);
     }
-    pageContext.setAttribute("productCategories", ArrayProductCategory);
+    if(ArrayProductCategory.size() > 0){
+        pageContext.setAttribute("productCategories", ArrayProductCategory);
+    }
 
     //String productURL = new String( productsListPart.products.get(0).imageURL);
 

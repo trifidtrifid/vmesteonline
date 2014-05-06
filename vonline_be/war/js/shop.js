@@ -54,7 +54,8 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         var state = {
             type : 'default'
         };
-        window.history.replaceState(state,null,'shop.jsp');
+
+        if($('.login-page').length == 0) window.history.replaceState(state,null,'shop.jsp');
 
         if (urlHash){
             if (urlHash.indexOf('p=') != -1){

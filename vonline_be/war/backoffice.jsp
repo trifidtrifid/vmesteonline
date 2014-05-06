@@ -30,17 +30,20 @@
         return;
     }
 
-
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
-    Shop shop = shopService.getShop(ArrayShops.get(0).id);
-    pageContext.setAttribute("logoURL", shop.logoURL);
+    if(ArrayShops != null && ArrayShops.size() > 0){
+        Shop shop = shopService.getShop(ArrayShops.get(0).id);
+        pageContext.setAttribute("logoURL", shop.logoURL);
+    }
 
     int now = (int) (System.currentTimeMillis() / 1000L);
     int day = 3600 * 24;
     List<Order> orders = shopService.getOrders(0, now + 180*day);
-    pageContext.setAttribute("orders", orders);
+    if(orders.size() > 0 ){
+        pageContext.setAttribute("orders", orders);
+    }
 
 %>
 <!DOCTYPE html>
