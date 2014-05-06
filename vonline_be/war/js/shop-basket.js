@@ -429,15 +429,15 @@ define(
                 var phoneDelivery = $('#phone-delivery');
                 var alertDeliveryPhone = $('.alert-delivery-phone'),
                     orderId = options.orderId,
-                    shop = options.shop;
+                    shop = options.shop,
+                    isEmptyAddressDelivery = $('.delivery-address').find('.error-info').length > 0;
 
                 if(!phoneDelivery.val()){
                     alertDeliveryPhone.text('Введите номер телефона !').show();
 
-                }else if(!$('.input-delivery .delivery-address .error-info').length){
+                }else{
                     //var userContacts = thriftModule.userClient.getUserContacts();
                     var haveError = 0;
-
                     try{
                         if (options.userContacts.mobilePhone != phoneDelivery.val()){
                             options.userContacts.mobilePhone = phoneDelivery.val();
@@ -447,6 +447,12 @@ define(
                         haveError = 1;
                         alertDeliveryPhone.text('Телефон должен быть вида 79219876543, +7(821)1234567 и т.п').show();
                     }
+                    var orderDetails;
+                    if (isEmptyAddressDelivery) {
+                        orderDetails = thriftModule.client.setOrderDeliveryType(orderId,1);
+                        writeAddress(shop.address);
+                    }
+
                     if(!haveError){
                         alertDeliveryPhone.hide();
                         //alert('Ваш заказ принят !');
@@ -458,7 +464,7 @@ define(
                             $('.main-container').css('min-height', $(window).height()-45);
 
                             var order = thriftModule.client.getOrder(orderId);
-                            var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                            orderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
 
                             var summaryCost = $('.itogo-right span').text();
                             $('.bill-amount span,.all-amount span').text(summaryCost);
@@ -768,17 +774,25 @@ define(
                     var homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
                     var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
                     if (!defaultAddressForCourier){
-                        defaultAddressForCourier = (homeAddress) ? homeAddress : thriftModule.client.getUserDeliveryAddress(userAddresses[0]);
+                        if(homeAddress){
+                            defaultAddressForCourier = homeAddress;
+                        }else if (userAddresses.length){
+                            defaultAddressForCourier = thriftModule.client.getUserDeliveryAddress(userAddresses[0]);
+                        }
+                        //defaultAddressForCourier = (homeAddress) ? homeAddress : thriftModule.client.getUserDeliveryAddress(userAddresses[0]);
                     }
                     var myAddress = defaultAddressForCourier;
+
+                    showDeliveryDropdown(orderId,userAddresses);
 
                     if(myAddress){
                         writeAddress(myAddress);
                         orderDetails = thriftModule.client.setOrderDeliveryType(orderId,2,myAddress);
                         setDeliveryCost(orderId,orderDetails);
                     }else{
-                        $('.input-delivery .delivery-address').html("<span class='error-info'>У вас не указано ни одного адреса доставки.</span>");
+                        $('.input-delivery .delivery-address').html("<span class='error-info'>Введите пожалуйста адрес доставки.</span>");
                         $('.input-delivery .delivery-address .error-info').show();
+                        $('.delivery-add-address').trigger('click');
                     }
 
                     itogoRight.text(commonModule.countAmount($('.confirm-order'),orderDetails));
@@ -793,7 +807,6 @@ define(
                         $(this).closest('.address-input').after("<img src='"+ mapUrl +"'>");
                     });*/
 
-                    showDeliveryDropdown(orderId,userAddresses);
 
                     triggerDelivery = 1;
 

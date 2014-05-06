@@ -19,7 +19,7 @@
         globalUserAuth = false;
     </script>
 </head>
-<body>
+<body class="login-page">
 <div class="container">
 
     <div class="login-forms">
