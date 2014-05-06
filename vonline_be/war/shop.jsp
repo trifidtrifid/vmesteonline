@@ -12,7 +12,7 @@
 	HttpSession sess = request.getSession();
     pageContext.setAttribute("auth",true);
     try {
-        AuthServiceImpl.checkIfAuthorised(sess.getId());
+        //AuthServiceImpl.checkIfAuthorised(sess.getId());
         UserServiceImpl userService = new UserServiceImpl(request.getSession());
         ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
         if( null == ShortUserInfo){

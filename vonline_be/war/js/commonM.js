@@ -90,7 +90,9 @@ define(
                 commonModule.changeShortUserInfo(userInfo);
 
                 function hideSaveStatus(){
-                    $('.save-status').removeClass('active')
+                    $('.save-status').removeClass('active');
+                    $('.shop-editPersonal').hide();
+                    $('.user-menu li:eq(0) a').trigger('click');
                 }
                 setTimeout(hideSaveStatus,2000);
             }
