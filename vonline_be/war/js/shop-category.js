@@ -74,8 +74,7 @@ define(
 				try {
 					/* замена меню категорий */
 					var commonModule = require('shop-common');
-					var productCategories = thriftModule.client
-							.getProductCategories(catID);
+					var productCategories = thriftModule.client.getProductCategories(catID);
 					var categoriesLength = productCategories.length;
 					var shopMenu = '';
 					var firstMenuItem = "";
@@ -118,7 +117,8 @@ define(
 				basketModule.InitAddToBasket($('.fa-shopping-cart'));
 				InitClickOnCategory();
 				commonModule.setSidebarHeight();
-			}
+                commonModule.setCatalogTopOffset();
+            }
 
 			function initGetCookie() {
 				var commonModule = require('shop-common');

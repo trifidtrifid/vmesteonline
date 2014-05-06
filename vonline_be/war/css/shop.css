@@ -45,10 +45,15 @@ footer .footer-menu li {
 .container {
   padding: 0;
   max-width: 1240px;
-  min-height: 100%;
 }
 /* &.main
     padding-bottom 70px*/
+.main-container,
+.main-container > .main-container-inner,
+.main-content,
+.shop-products {
+  height: 100%;
+}
 .navbar a.navbar-brand {
   padding: 0;
 }
@@ -122,13 +127,17 @@ footer .footer-menu li {
   border-right: 1px solid #ccc;
 }
 .main-content {
-  margin-right: 380px;
+  margin-right: 480px;
   margin-left: 0;
   padding: 10px;
 }
+.shop-products {
+  height: 100%;
+  position: relative;
+}
 .shop-right {
   float: right;
-  width: 380px;
+  width: 470px;
   border: 0;
   border-left: 1px solid #ccc;
   padding-bottom: 20px;
@@ -192,7 +201,7 @@ footer .footer-menu li {
   text-align: left;
 }
 .shop-right .catalog-order li table {
-  width: 180px;
+  width: 220px;
   float: right;
   text-align: center;
   line-height: 16px;
@@ -200,11 +209,8 @@ footer .footer-menu li {
 .shop-right .catalog-order li table thead td {
   background: #f2f2f2;
 }
-.shop-right .catalog-order li table tr .td-spinner {
-  text-align: right;
-}
 .shop-right .catalog-order li table tr .td-summa {
-  width: 35px;
+  width: 60px;
 }
 .shop-right .catalog-order li table tr .td-close {
   width: 19px;
@@ -213,7 +219,7 @@ footer .footer-menu li {
   display: inline-block;
   vertical-align: middle;
   line-height: 16px;
-  max-width: 119px;
+  max-width: 160px;
 }
 .shop-right .catalog-order li .product-link span {
   display: none;
@@ -243,6 +249,11 @@ footer .footer-menu li {
 .shop-right .btn-grey {
   margin-left: 186px;
   margin-right: 10px;
+}
+.tabs-right > .nav-tabs > li > a {
+  min-width: 40px;
+  margin-right: 0 !important;
+  padding: 8px 5px;
 }
 .datepicker {
   padding: 0 2px 5px 2px;
@@ -356,10 +367,11 @@ th.next,
 .shop-menu ul li {
   list-style: none;
   float: left;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   display: inline-block;
   margin-left: 5px;
   width: 80px;
+  height: 65px;
   text-align: center;
   line-height: 14px;
   font-size: 11px;
@@ -369,7 +381,7 @@ th.next,
 }
 .shop-menu ul li a {
   display: block;
-  font-size: 24px;
+  font-size: 20px;
 }
 .shop-menu ul li a:hover {
   text-decoration: none;
@@ -378,12 +390,42 @@ th.next,
   font-size: 12px;
   display: block;
 }
-.catalog table {
-  width: 100%;
-}
-.catalog table thead tr td {
+.catalog-head table {
   background: #f9f9f9;
   font-style: italic;
+  width: 100%;
+}
+.catalog-head table td {
+  text-align: center;
+}
+.catalog-head table td:first-child {
+  width: 60%;
+  text-align: left;
+}
+.catalog-head table td.td-basket {
+  padding-right: 50px;
+}
+.catalog-head table td.product-price {
+  width: 10%;
+}
+.catalog-head table td.td-spinner {
+  width: 20%;
+}
+.catalog-head table td.td-unit {
+  width: 5%;
+}
+.catalog {
+  overflow: auto;
+  position: absolute;
+  width: 100%;
+}
+.catalog table {
+  width: 100%;
+/*thead
+      tr
+        td
+          background #f9f9f9
+          font-style italic*/
 }
 .catalog table tr:first-child td {
   border-top: 1px solid #ccc;
@@ -419,6 +461,18 @@ th.next,
   text-align: left;
   width: 60%;
   padding-left: 5px;
+}
+.catalog table tr td.td-basket {
+  width: 35px;
+}
+.catalog table tr td.product-price {
+  width: 10%;
+}
+.catalog table tr td.td-spinner {
+  width: 20%;
+}
+.catalog table tr td.td-unit {
+  width: 5%;
 }
 .catalog table tr td .product-pic {
   width: 40px;
@@ -860,12 +914,25 @@ height 50px
 .sidebar#sidebar .show-left {
   display: none;
 }
+@media all and (max-width: 1170px) {
+  .catalog-head table td.td-basket {
+    padding-right: 40px;
+  }
+  .catalog table tr td .product-link span {
+    width: 70%;
+  }
+}
+@media all and (max-width: 1024px) {
+  .catalog-head table td.td-basket {
+    padding-right: 30px;
+  }
+}
 @media all and (max-width: 990px) {
   .shop-right {
     position: fixed;
     margin-top: -45px;
     height: 100%;
-    right: -380px;
+    right: -470px;
     z-index: 10;
     padding: 0 0 20px 0;
     padding-top: 65px;
@@ -1197,6 +1264,11 @@ height 50px
   border: 1px solid #438eb9;
   text-align: left;
   padding: 20px;
+}
+.order-end .order-end-in .bill-wrap .catalog {
+  position: static;
+  top: 0;
+  bottom: 0;
 }
 .order-end .order-end-in .bill-wrap .bill-title {
   padding: 5px 10px;

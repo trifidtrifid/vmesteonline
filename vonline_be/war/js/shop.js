@@ -38,6 +38,8 @@ require(["jquery",'shop-modules','commonM','loginModule'],
     function($,modules,commonM,loginModule) {
         if(globalUserAuth){
             modules.shopCommonModule.initBasketInReload();
+            var catalogHeight = $('.catalog').height();
+            $('.catalog-order').css('max-height',catalogHeight-100)
         }
         modules.categoryModule.InitClickOnCategory();
         // переключение между категориями
@@ -132,11 +134,11 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             showRightTop = (w.height()-showRight.width())/ 2;
 
         showRight.css('top',showRightTop);
-        shopRight.css('min-height', w.height()-45);
+        shopRight.css('min-height', w.height()-115);
 
         showRight.click(function(){
             if (!$(this).hasClass('active')){
-                $(this).animate({'right':'352px'},200).addClass('active');
+                $(this).animate({'right':'442px'},200).addClass('active');
                 $(this).parent().animate({'right':0},200);
             }else{
                 hideRight.trigger('click');
@@ -144,9 +146,11 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         });
 
         hideRight.click(function(){
-            $(this).parent().animate({'right':'-380px'},200);
+            $(this).parent().animate({'right':'-470px'},200);
             showRight.animate({'right':'-28px'},200).removeClass('active');
         });
+
+        modules.shopCommonModule.setCatalogTopOffset();
 
         $('.dropdown-menu li a').click(function(e){
             e.preventDefault();

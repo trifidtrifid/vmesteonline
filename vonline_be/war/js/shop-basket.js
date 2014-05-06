@@ -353,7 +353,7 @@ define(
                 }
                 /* --- */
                 var myDate;
-                $('.main-container').css('min-height', $(window).height()-45);
+                //$('.main-container').css('min-height', $(window).height()-45);
 
                 var orderId = $('.tab-pane.active').data('orderid');
 
@@ -462,7 +462,7 @@ define(
 
                             $('.page').hide();
                             $(this).show();
-                            $('.main-container').css('min-height', $(window).height()-45);
+                            //$('.main-container').css('min-height', $(window).height()-45);
 
                             var order = thriftModule.client.getOrder(orderId);
                             orderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
@@ -768,12 +768,13 @@ define(
                 var orderId = $('.tab-pane.active').data('orderid');
                 var commonModule = require('shop-common');
                 var orderDetails;
+                var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
+
 
                 if ($(this).hasClass('courier-delivery')){
                     //если доставка курьером
 
                     //var homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
-                    var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
                     if (!defaultAddressForCourier){
                         /*if(homeAddress){
                             defaultAddressForCourier = homeAddress;
@@ -790,6 +791,7 @@ define(
                         writeAddress(myAddress);
                         orderDetails = thriftModule.client.setOrderDeliveryType(orderId,2,myAddress);
                         setDeliveryCost(orderId,orderDetails);
+
                     }else{
                         $('.input-delivery .delivery-address').html("<span class='error-info'>Введите пожалуйста адрес доставки.</span>");
                         $('.input-delivery .delivery-address .error-info').show();
@@ -814,6 +816,7 @@ define(
                     writeAddress(shopAddress);
                     setDeliveryCost(orderId,orderDetails);
                     $('.delivery-dropdown').hide();
+
                     if (triggerDelivery){
                         itogoRight.text(commonModule.countAmount($('.confirm-order')),orderDetails);
                         triggerDelivery = 0;
