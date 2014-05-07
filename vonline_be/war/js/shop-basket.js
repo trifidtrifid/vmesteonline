@@ -110,7 +110,6 @@ define(
                     }else{
                         // если пользователь залогинен
                         var currentProductSelector = $(this).closest('.product');
-                        currentProductSelector.addClass('added');
 
                         var spinnerValue = currentProductSelector.find('.td-spinner .ace-spinner').spinner('value');
                         var currentProduct = {
@@ -193,6 +192,8 @@ define(
                                 addTabToBasketHtml(nextDateStr,orderId,orderDetails);
                              }
                             AddProductToBasketCommon(currentProduct,packs);
+                            currentProductSelector.addClass('added');
+
                         }
 
                         var isModalWindow = $(this).closest('.modal').length > 0;
