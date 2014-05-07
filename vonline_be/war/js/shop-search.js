@@ -107,6 +107,7 @@ define(
                 spinnerModule.initProductsSpinner();
                 var commonModule = require('shop-common');
                 commonModule.InitProductDetailPopup($('.product-link'));
+                commonModule.markAddedProduct();
                 var basketModule = require('shop-basket');
                 basketModule.InitAddToBasket($('.fa-shopping-cart'));
                 categoryModule.InitClickOnCategory();
