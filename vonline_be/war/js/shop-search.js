@@ -115,6 +115,7 @@ define(
 
             /* автозаполнение адреса доставки  */
             function initAutocompleteAddress(selector){
+                try{
                 var addressesBase = thriftModule.userClient.getAddressCatalogue();
 
                 var countries = addressesBase.countries;
@@ -211,6 +212,9 @@ define(
                         source: buildingsTags
                     });
                 });
+                }catch(e){
+
+                }
             }
 
 
