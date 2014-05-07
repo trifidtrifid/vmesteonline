@@ -170,6 +170,10 @@ define(
                 selector.click(function(e,isHistoryNav){
                     e.preventDefault();
 
+                    var isCatalog = ($(this).closest('.catalog').length) ? true : false,
+                        isOrdersHistory = ($(this).closest('.order-products').length) ? true : false,
+                        isBasket = ($(this).closest('.catalog-order').length || $(this).closest('.catalog-confirm').length) ? true : false;
+
                     var productSelector = $(this).closest('.product'),
                     name= $(this).find('.product-name').text(),
                     productId = productSelector.data('productid');
@@ -181,11 +185,16 @@ define(
                         imageURL : $(this).find('img').attr('src')
                     };
 
-                    var productDetails = thriftModule.client.getProductDetails(productId);
-                    var imagesSet = productDetails.imagesURLset;
-                    var options = productDetails.optionsMap;
-                    var boolPrepackRequired = productSelector.data('prepack');
                     var currentModal = $(this).find('+.modal');
+                    var isModalWasOpen = currentModal.find('.modal-body').length;
+                    var boolPrepackRequired = productSelector.data('prepack');
+
+                    if (!isModalWasOpen){
+
+                        var productDetails = thriftModule.client.getProductDetails(productId);
+                        var imagesSet = productDetails.imagesURLset;
+                        var options = productDetails.optionsMap;
+
 
                     if(imagesSet.length){
                         //var oldHeight = currentModal.height();
@@ -272,14 +281,6 @@ define(
                         '</div>'+
                         '</div>';
 
-
-                    var isModalWasOpen = currentModal.find('.modal-body').length;
-
-                    var isCatalog = ($(this).closest('.catalog').length) ? true : false,
-                        isOrdersHistory = ($(this).closest('.order-products').length) ? true : false,
-                        isBasket = ($(this).closest('.catalog-order').length || $(this).closest('.catalog-confirm').length) ? true : false;
-
-                    if (!isModalWasOpen){
                         // если еще не открывали popup
                         currentModal.append(popupHtml);
                         var currentSpinnerValue,currentSpinnerStep;
@@ -324,6 +325,15 @@ define(
                         if(isBasket){
                             //если это popup для корзины
                             currentModal.find('.fa-shopping-cart').click(function(){
+
+                                var orderId = $('.tab-pane.active').data('orderid');
+
+                                spinnerModule.singleSetOrderLine(productSelector,orderId,productId);
+
+                                var basketProductsContainer = ($(this).closest('.catalog-order').length) ?
+                                    $(this).closest('.catalog-order') : $(this).closest('.catalog-confirm');
+                                spinnerModule.updateWeightAndAmount(orderId,basketProductsContainer);
+
                                 currentModal.modal('hide');
                                 return false;
                             });

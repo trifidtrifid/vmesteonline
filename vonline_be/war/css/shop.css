@@ -1157,6 +1157,13 @@ height 50px
   vertical-align: middle;
   margin-left: 40px;
 }
+.confirm-order .refresh {
+  float: right;
+  cursor: pointer;
+  margin: 10px 10px 0 0;
+  clear: right;
+  font-size: 14px;
+}
 .confirm-order .itogo-right,
 .confirm-order .weight-right {
   float: right;

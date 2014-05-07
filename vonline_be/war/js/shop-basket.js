@@ -414,6 +414,7 @@ define(
                 InitDeleteProduct(confirmOrder.find('.delete-product'),orderDetails);
                 var commonModule = require('shop-common');
                 commonModule.InitProductDetailPopup(confirmOrder.find('.product-link'));
+                spinnerModule.initRefresh();
 
                 var optionsForBtnOrderClick = {
                     orderId : orderId,
@@ -830,10 +831,9 @@ define(
             });
         }
 
-        function setDeliveryCost(orderId,orderDetails){
+        function setDeliveryCost(orderId,orderDetails,basketProductsContainer){
             var myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
-            //var myOrderDetails = thriftModule.client.getOrderDetails(orderId);
-            //alert(myOrderDetails.deliveryTo.street.name);
+
             if (myOrderDetails.deliveryCost){
                 $('.delivery-cost').text(myOrderDetails.deliveryCost);
             }else{
@@ -841,7 +841,9 @@ define(
             }
 
             var commonModule = require('shop-common');
-            $('.itogo-right span,.amount span').text(commonModule.countAmount($('.confirm-order'),orderDetails));
+
+            var container = (basketProductsContainer) ? basketProductsContainer : $('.catalog-confirm') ;
+            $('.itogo-right span,.amount span').text(commonModule.countAmount(container,orderDetails));
         }
 
         return{
