@@ -525,7 +525,6 @@ define(
         }
 
         function initPrepackRequiredInModal(linkSelector,currentModal,productSelector,isFirstModal,isBasketBool){
-                         alert('1');
             var isBasket;
             isBasket = (isBasketBool === undefined) ? true : isBasketBool;
 

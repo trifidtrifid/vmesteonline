@@ -120,7 +120,7 @@ define(
                 commonModule.setCatalogTopOffset();
             }
 
-			function initGetCookie() {
+/*			function initGetCookie() {
 				var commonModule = require('shop-common');
 				prevCatCounter = commonModule.getCookie('prevCatCounter');
 				if (prevCatCounter !== undefined) {
@@ -130,7 +130,7 @@ define(
 				if (arrayPrevCatCookie !== undefined) {
 					prevParentId = arrayPrevCatCookie.split(',');
 				}
-			}
+			}*/
 
 			function InitClickOnCategory() {
                 var commonModule = require('shop-common');

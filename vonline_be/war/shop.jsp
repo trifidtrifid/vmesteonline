@@ -46,7 +46,7 @@
         //out.print('2');
     }
 
-    Cookie cookies [] = request.getCookies();
+    /*Cookie cookies [] = request.getCookies();
     String cookieName = "catid";
     Cookie catIdCookie = null;
     if (cookies != null) {
@@ -66,10 +66,10 @@
         }
     }catch(Exception e){
         catId = 0;
-    }
+    }*/
 
-    List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(catId);
-    ProductListPart productsListPart = shopService.getProducts(0,1000,catId);
+    List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(0);
+    ProductListPart productsListPart = shopService.getProducts(0,1000,0);
     if (productsListPart.products.size() > 0){
         pageContext.setAttribute("products",productsListPart.products);
     }
