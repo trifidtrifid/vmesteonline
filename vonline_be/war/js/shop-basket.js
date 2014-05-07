@@ -266,6 +266,7 @@ define(
                     '<ul class="catalog-order">'+
                     '</ul>'+
                     '<div class="basket-bottom">'+
+                    '<a class="refresh">Обновить</a>'+
                     '<a href="#" class="btn btn-sm btn-primary no-border btn-order">Оформить</a>'+
                         '<a href="#" class="btn btn-sm btn-cancel no-border">Отменить</a>'+
                     '</div>'+
@@ -293,12 +294,16 @@ define(
                     '<ul class="catalog-order">'+
                     '</ul>'+
                     '<div class="basket-bottom">'+
+                    '<a class="refresh">Обновить</a>'+
                     '<a href="#" class="btn btn-sm btn-primary no-border btn-order">Оформить</a>'+
                     '<a href="#" class="btn btn-sm btn-cancel no-border">Отменить</a>'+
                     '</div>'+
                     '</div>';
                 tabDays.find('.tab-content').append(html);
             }
+
+            var spinnerModule = require('shop-spinner');
+            spinnerModule.initRefresh();
 
             var activeOrder = $('.tabs-days .tab-pane.active');
 

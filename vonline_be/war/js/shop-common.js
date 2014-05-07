@@ -325,6 +325,7 @@ define(
                             //если это popup для корзины
                             currentModal.find('.fa-shopping-cart').click(function(){
                                 currentModal.modal('hide');
+                                return false;
                             });
                         }
 

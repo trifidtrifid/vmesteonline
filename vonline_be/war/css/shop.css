@@ -181,7 +181,12 @@ footer .footer-menu li {
 }
 .shop-right .tabs-days .basket-bottom .btn {
   float: right;
-  margin: 15px 10px 0 0;
+  margin: 1px 10px 0 0;
+}
+.shop-right .tabs-days .basket-bottom .refresh {
+  float: left;
+  cursor: pointer;
+  margin: 10px 0 0 5px;
 }
 .shop-right .catalog-order {
   max-height: 320px;
