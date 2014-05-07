@@ -67,6 +67,18 @@ require(["jquery",'shop-modules','commonM','loginModule'],
                 var hashParts = urlHash.split('=');
                 modules.shopCommonModule.identificateModal(hashParts[1]);
 
+            }else if (urlHash.indexOf('cat=') != -1){
+                // значит категория
+                var categoriesHistory = urlHash.split(';');
+                var categoriesHistoryLength = categoriesHistory.length;
+                for(var i = 0; i < categoriesHistoryLength; i++){
+                    hashParts = categoriesHistory[i].split('=');
+                    $('.shop-menu li').each(function(){
+                        if($(this).data('catid') == hashParts[1]){
+                            $(this).find('a').trigger('click');
+                        }
+                    });
+                }
             }else if (urlHash == '#orders-history'){
 
                 $('.shop-trigger.go-to-orders').trigger('click');
@@ -98,6 +110,21 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
                     modules.shopCommonModule.identificateModal(e.state.productid,isHistoryNav);
 
+                }else if(e.state.type == 'category'){
+
+                    var categoriesHistory = e.state.categoriesHash.split(';');
+                    var categoriesHistoryLength = categoriesHistory.length;
+                    var prevCategoryIndexPos = categoriesHistoryLength - 1;
+                    var prevCategoryIndex;
+
+                    if (prevCategoryIndexPos < 0){
+                        prevCategoryIndex = 0;
+                    }else{
+                        var hashParts = categoriesHistory[prevCategoryIndexPos].split('=');
+                        prevCategoryIndex = hashParts[1];
+                    }
+                    modules.categoryModule.InitLoadCategory(prevCategoryIndex);
+
                 }else if(e.state.type == 'page'){
 
                     if(e.state.pageName == 'orders-history'){
@@ -122,6 +149,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
                     $('.shop-trigger.back-to-shop').trigger('click',[isHistoryNav]);
                     $('.modal.in .close').trigger('click',[isHistoryNav]);
+                    modules.categoryModule.InitLoadCategory(0);
                 }
             }
         }

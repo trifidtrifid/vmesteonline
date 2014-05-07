@@ -3,8 +3,6 @@ define(
     ['jquery','flexslider','shop-initThrift','shop-basket','shop-spinner','shop-orders','bootstrap'],
     function( $ ,flexsliderModule,thriftModule,basketModule,spinnerModule,ordersModule ){
 
-        //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
-
         var noPhotoPic = "i/no-photo.png";
         // возвращает cookie с именем name, если есть, если нет, то undefined
         function getCookie(name) {

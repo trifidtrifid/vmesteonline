@@ -3,8 +3,9 @@ define(
 		[ 'jquery', 'shop-initThrift', 'shop-basket', 'shop-common',
 				'shop-spinner' ],
 		function($, thriftModule, basketModule, commonModule, spinnerModule) {
+            //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 
-			var prevParentId = [], parentCounter = 0, prevCatCounter;
+            var prevParentId = [], parentCounter = 0, prevCatCounter;
 
 			// var commonModule = require('shop-common');
 			/*
@@ -79,8 +80,7 @@ define(
 					var shopMenu = '';
 					var firstMenuItem = "";
 
-					if (productCategories[0]
-							&& productCategories[0].parentId != 0
+					if (productCategories[0] && productCategories[0].parentId != 0
 							|| productCategories[0] === undefined) {
 						firstMenuItem = '<li>' + '<a href="#">'
 								+ '<i class="fa fa-reply-all"></i>'
@@ -133,52 +133,73 @@ define(
 			}
 
 			function InitClickOnCategory() {
-				if (prevCatCounter === undefined) {
+                var commonModule = require('shop-common');
+
+                //console.log(commonModule.getCookie('arrayPrevCat')+" "+commonModule.getCookie('prevCatCounter')+" "+commonModule.getCookie('catid'));
+
+				/*if (prevCatCounter === undefined) {
 					initGetCookie();
-				}
+				}*/
 				try {
 					$('.shop-menu li a').click(
                         function(e) {
                             e.preventDefault();
-                            var isReturnBtn = $(this).find(
-                                    '.fa-reply-all').length;
-                            var commonModule = require('shop-common');
+                            var isReturnBtn = $(this).find('.fa-reply-all').length;
+                            var categoryid = $(this).parent().data('catid');
+                            var urlHash = document.location.hash;
 
                             if (isReturnBtn) {
-                                // alert('1-1 '+parentCounter);
-                                InitLoadCategory(prevParentId[parentCounter]);
-                                commonModule
-                                        .setCookie(
-                                                'catid',
-                                                prevParentId[parentCounter]);
+                                /*var categoryParentId = $(this).parent().data('parentid');
+                                alert(categoryParentId);
+                                InitLoadCategory(categoryParentId);*/
+
+                                //window.history.back();
+
+                                /*InitLoadCategory(prevParentId[parentCounter]);
+                                commonModule.setCookie('catid',prevParentId[parentCounter]);
                                 parentCounter--;
-                                // alert('1-2 '+parentCounter);
-                                commonModule.setCookie(
-                                        'arrayPrevCat',
-                                        prevParentId);
-                                commonModule.setCookie(
-                                        'prevCatCounter',
-                                        parentCounter);
+                                commonModule.setCookie('arrayPrevCat',prevParentId);
+                                commonModule.setCookie('prevCatCounter',parentCounter);*/
+
+                                /*var categoriesHistory = urlHash.split(';');
+                                var categoriesHistoryLength = categoriesHistory.length;
+                                var prevCategoryIndexPos = categoriesHistoryLength - 2;
+                                var prevCategoryIndex;
+
+                                if (prevCategoryIndexPos < 0){
+                                    prevCategoryIndex = 0;
+                                }else{
+                                    var hashParts = categoriesHistory[prevCategoryIndexPos].split('=');
+                                    prevCategoryIndex = hashParts[1];
+                                }
+                                InitLoadCategory(prevCategoryIndex);*/
+
+                                window.history.back();
+
                             } else {
-                                // alert('2-1 '+parentCounter);
-                                parentCounter++;
-                                // alert('2-2 '+parentCounter);
-                                prevParentId[parentCounter] = $(
-                                        this).parent().data(
-                                        'parentid');
-                                InitLoadCategory($(this).parent()
-                                        .data('catid'));
-                                commonModule.setCookie('catid', $(
-                                        this).parent()
-                                        .data('catid'));
-                                commonModule.setCookie(
-                                        'arrayPrevCat',
-                                        prevParentId);
-                                commonModule.setCookie(
-                                        'prevCatCounter',
-                                        parentCounter);
+                                /*parentCounter++;
+                                prevParentId[parentCounter] = $(this).parent().data('parentid');
+                                InitLoadCategory($(this).parent().data('catid'));
+                                commonModule.setCookie('catid', $(this).parent().data('catid'));
+                                commonModule.setCookie('arrayPrevCat',prevParentId);
+                                commonModule.setCookie('prevCatCounter',parentCounter);*/
+
+
+                                var categoriesHash;
+
+                                if(!urlHash){
+                                    categoriesHash = '#cat='+categoryid;
+                                }else{
+                                    categoriesHash = urlHash+";cat="+categoryid;
+                                }
+                                var state = {
+                                    type : 'category',
+                                    categoriesHash: categoriesHash
+                                };
+                                window.history.pushState(state,null,'shop.jsp'+categoriesHash);
+                                InitLoadCategory(categoryid);
                             }
-									});
+                        });
 				} catch (e) {
 					alert(e + " Функция InitClickOnCategory");
 				}
@@ -187,6 +208,6 @@ define(
 			return {
 				createProductsTableHtml : createProductsTableHtml,
 				InitLoadCategory : InitLoadCategory,
-				InitClickOnCategory : InitClickOnCategory,
+				InitClickOnCategory : InitClickOnCategory
 			}
 		});
