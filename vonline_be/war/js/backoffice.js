@@ -705,8 +705,8 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
                         $('.import-field-dropdown .dropdown-toggle').click(function(e){
                             e.preventDefault();
-                            var coordX = e.pageX-130;
                             var coordY = e.pageY-30;
+                            var coordX = e.screenX-130;
                             $(this).parent().find('.dropdown-menu').css({'left':coordX,'top':coordY});
                         });
 

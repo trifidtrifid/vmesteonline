@@ -113,3 +113,50 @@
   margin-right: 15px;
   float: right;
 }
+@media all and (max-width: 650px) {
+  .modal-auth {
+    width: 100% !important;
+    left: 0 !important;
+    margin-left: 0 !important;
+    height: 320px !important;
+  }
+  .modal-auth .container {
+    width: 90%;
+  }
+  .login-forms {
+    width: 100%;
+  }
+  .registration-form {
+    width: 49%;
+    height: 290px !important;
+  }
+  .registration-form h1 {
+    font-size: 20px;
+    padding: 8px;
+  }
+  .registration-form input {
+    width: 98% !important;
+  }
+  .registration-form .set-new-password .btn {
+    padding: 2px 0;
+    font-size: 12px;
+    margin-right: 0;
+    float: none;
+    display: inline-block;
+    width: 48%;
+  }
+  .registration-form label {
+    font-size: 12px;
+    width: auto !important;
+  }
+}
+@media all and (max-width: 380px) {
+  .registration-form h1 {
+    font-size: 14px;
+  }
+  .registration-form .btn-submit {
+    width: 100px;
+    margin-left: -50px;
+    font-size: 14px;
+  }
+}
