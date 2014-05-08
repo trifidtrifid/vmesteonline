@@ -334,7 +334,7 @@ define(
                                 if(!packsObj.errorFlag){
                                     var basketProductsContainer = ($(this).closest('.catalog-order').length) ?
                                         $(this).closest('.catalog-order') : $(this).closest('.catalog-confirm');
-                                    spinnerModule.updateWeightAndAmount(orderId,basketProductsContainer);
+                                    spinnerModule.updateWeightAndAmount(orderId,basketProductsContainer,packsObj.updateInfo);
 
                                     currentModal.modal('hide');
                                 }
@@ -542,13 +542,22 @@ define(
 
         function countAmount(sel,orderDetails){
             try{
-                var summa = 0;
+                /*var summa = 0;
                 sel.find('.td-summa').each(function(){
                     summa += parseFloat($(this).text());
-                });
+                });*/
                 var orderId = $('.tab-pane.active').data('orderid');
 
                 var myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
+                var summa = myOrderDetails.totalCost;
+
+                if(!summa){
+                    summa = 0;
+                    sel.find('.td-summa').each(function(){
+                        summa += parseFloat($(this).text());
+                    });
+                }
+
                 summa += myOrderDetails.deliveryCost;
             }catch(e){
                 //alert(e+" Функция countAmount");

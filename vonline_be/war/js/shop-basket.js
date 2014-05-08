@@ -576,8 +576,8 @@ define(
 
                 (commonModule.getPacksLength(packs) <= 1) ? currentSpinner.spinner('enable'):currentSpinner.spinner('disable');
 
-                thriftModule.client.setOrderLine(orderId,currentProduct.id,newSpinnerVal,'',packs);
-                 myOrderDetails = thriftModule.client.getOrderDetails(orderId);
+                myOrderDetails = thriftModule.client.setOrderLine(orderId,currentProduct.id,newSpinnerVal,'',packs);
+                 //myOrderDetails = thriftModule.client.getOrderDetails(orderId);
 
                 currentTab.find('.weight span').text(commonModule.getOrderWeight(orderId,myOrderDetails));
 
@@ -586,8 +586,8 @@ define(
                 currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order'),myOrderDetails));
             }else{
                 // если такого товара еще нет
-                thriftModule.client.setOrderLine(orderId,currentProduct.id,currentProduct.qnty,'',packs);
-                myOrderDetails = thriftModule.client.getOrderDetails(orderId);
+                myOrderDetails = thriftModule.client.setOrderLine(orderId,currentProduct.id,currentProduct.qnty,'',packs);
+                //myOrderDetails = thriftModule.client.getOrderDetails(orderId);
 
                 AddSingleProductToBasket(currentProduct,currentProduct.qnty,0,myOrderDetails);
 
