@@ -1405,6 +1405,9 @@ height 50px
   color: #000;
   cursor: default;
 }
+.backoffice .order-products .catalog {
+  position: static;
+}
 .backoffice .back-orders-top .form-group {
   margin-right: 565px;
 }

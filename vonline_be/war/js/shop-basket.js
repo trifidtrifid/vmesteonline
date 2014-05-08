@@ -732,7 +732,7 @@ define(
 
                 if (!$('.country-delivery').val() || !$('.city-delivery').val() || !street || !building || !flat){
                     $('.alert-delivery-phone').hide();
-                    $('.alert-delivery-addr').text('Введите полный адресс доставки !').show();
+                    $('.alert-delivery-addr').text('Введите полный адрес доставки !').show();
                 }else{
                     var addressText =  street + " " + building;
                     var deliveryAddress = defaultAddressForCourier = thriftModule.client.createDeliveryAddress(addressText,parseInt(flat),0,0,0);
@@ -781,12 +781,12 @@ define(
                 if ($(this).hasClass('courier-delivery')){
                     //если доставка курьером
 
-                    //var homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
+                    var homeAddress = thriftModule.userClient.getUserContacts().homeAddress;
+                    if(!userAddresses.length) defaultAddressForCourier = null;
                     if (!defaultAddressForCourier){
-                        /*if(homeAddress){
+                        if(homeAddress){
                             defaultAddressForCourier = homeAddress;
-                        }else*/
-                        if (userAddresses.length){
+                        }else if (userAddresses.length){
                             defaultAddressForCourier = thriftModule.client.getUserDeliveryAddress(userAddresses[0]);
                         }
                     }
