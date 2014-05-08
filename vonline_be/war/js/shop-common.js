@@ -170,8 +170,8 @@ define(
                 selector.click(function(e,isHistoryNav){
                     e.preventDefault();
 
-                    var isCatalog = ($(this).closest('.catalog').length) ? true : false,
-                        isOrdersHistory = ($(this).closest('.order-products').length) ? true : false,
+                    var  isOrdersHistory = ($(this).closest('.order-products').length) ? true : false,
+                        isCatalog = ($(this).closest('.catalog').length && !isOrdersHistory) ? true : false,
                         isBasket = ($(this).closest('.catalog-order').length || $(this).closest('.catalog-confirm').length) ? true : false;
 
                     var productSelector = $(this).closest('.product'),
@@ -328,13 +328,17 @@ define(
 
                                 var orderId = $('.tab-pane.active').data('orderid');
 
-                                spinnerModule.singleSetOrderLine(productSelector,orderId,productId);
+                                var fromModal = true;
+                                var packsObj = spinnerModule.singleSetOrderLine(productSelector,orderId,productId,fromModal);
 
-                                var basketProductsContainer = ($(this).closest('.catalog-order').length) ?
-                                    $(this).closest('.catalog-order') : $(this).closest('.catalog-confirm');
-                                spinnerModule.updateWeightAndAmount(orderId,basketProductsContainer);
+                                if(!packsObj.errorFlag){
+                                    var basketProductsContainer = ($(this).closest('.catalog-order').length) ?
+                                        $(this).closest('.catalog-order') : $(this).closest('.catalog-confirm');
+                                    spinnerModule.updateWeightAndAmount(orderId,basketProductsContainer);
 
-                                currentModal.modal('hide');
+                                    currentModal.modal('hide');
+                                }
+
                                 return false;
                             });
                         }
@@ -426,7 +430,6 @@ define(
             selector.find('.prepack-open').click(function(e){
                 e.preventDefault();
 
-                //var spinnerStep = $(this).parent().prev().find('.spinner1').data('step');
                 var spinnerStep = $(this).closest('.modal-footer').find('>.qnty .spinner1').data('step');
                 var isBasket = options.isBasket,
                     productSelector = options.productSelector,
@@ -452,11 +455,10 @@ define(
                 spinnerModule.InitSpinner(currentPrepackLine.find('.packs .spinner1'), 1,isBasket);
                 spinnerModule.InitSpinner(currentPrepackLine.find('.qnty .spinner1'), spinnerStep,isBasket,spinnerStep);
 
-                var addedPackVal = currentPrepackLine.find('.packs .ace-spinner').spinner('value');
-                var addedQntyVal = parseFloat(currentPrepackLine.find('.qnty .ace-spinner').spinner('value')).toFixed(1);
-                var qnty;
+                /*var addedPackVal = currentPrepackLine.find('.packs .ace-spinner').spinner('value');
+                var addedQntyVal = parseFloat(currentPrepackLine.find('.qnty .ace-spinner').spinner('value')).toFixed(1);*/
 
-                if (isBasket){
+                /*if (isBasket){
                     //если мы в корзине
                     // нужно сделать setOrderLine
                     var orderId = $('.tab-pane.active').data('orderid'),
@@ -482,9 +484,12 @@ define(
                         packs[addedQntyVal] = addedPackVal;
 
                         thriftModule.client.setOrderLine(orderId,productId,qnty,'',packs);
+
                         productSelector.find('.td-spinner .ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
-                        var sum = qnty*productSelector.find('.td-price').text();
+
+                    var sum = qnty*productSelector.find('.td-price').text();
                         productSelector.find('.td-summa').text(sum.toFixed(1));
+
                         $('.itogo-right span').text(countAmount($('.catalog-order'),0));
                     }
                 }else{
@@ -492,8 +497,17 @@ define(
                     qnty = productSelector.find('.td-spinner .ace-spinner').spinner('value');
                     qnty += addedPackVal*addedQntyVal;
                     productSelector.find('.td-spinner .ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
-                }
-                productSelector.find('.td-spinner .ace-spinner').spinner('disable');
+                }*/
+
+                /*var qnty = productSelector.find('.td-spinner .ace-spinner').spinner('value');
+                qnty += addedPackVal*addedQntyVal*/
+
+                /*var sum = qnty*productSelector.find('.td-price').text();
+                productSelector.find('.td-summa').text(sum.toFixed(1));
+                productSelector.find('.td-spinner .ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));*/
+
+                //productSelector.find('.td-spinner .ace-spinner').spinner('disable');
+
                 spinnerModule.initRemovePrepackLine(currentPrepackLine.find('.prepack-item .remove-prepack-line'),productId,productSelector);
                 currentPrepackLine.removeClass('no-init');
 
