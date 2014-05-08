@@ -659,6 +659,12 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                                 }
                                 break;
                         }
+
+                        //использую эти переменные для меню дроплауна, которое
+                        //должно быть неизменным независимо от кол-ва загруженных столбцов
+                        var dropdownColArrayMenu = dropdownColArray.slice(0);
+                        var dropdownColArrayMenuFieldType = dropdownColArrayFieldType.slice(0);
+
                         var begin,end;
                         if(colCount < counter ){
                             // если стобцов в таблице меньше чем default удаляем лишние default столбцы
@@ -683,7 +689,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
                         var importHtml = '<table><thead>' +
                             '<tr>' +
-                            createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType)+
+                            createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType,dropdownColArrayMenu,dropdownColArrayMenuFieldType)+
                             '</tr>'+
                             '</thead>' +
                             '<tbody>'+
@@ -750,17 +756,19 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             });
         }
 
-        function createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType){
+        function createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType,dropdownColArrayMenu,dropdownColArrayMenuFieldType){
 
             var importDropdownLine = "";
             var importDropdownLineLength = dropdownColArray.length;
+            var dropdownColArrayMenuLength = dropdownColArrayMenu.length;
+            //alert(importDropdownLineLength+" "+dropdownColArrayMenuLength);
 
             var importDropdownMenu = "",
                 haveSkip = false;
-            for(var i = 0; i < importDropdownLineLength; i++){
-                if(!haveSkip) importDropdownMenu += '<li data-fieldtype="'+ dropdownColArrayFieldType[i] +'"><a href="#">'+ dropdownColArray[i] +'</a></li>';
+            for(var i = 0; i < dropdownColArrayMenuLength; i++){
+                if(!haveSkip) importDropdownMenu += '<li data-fieldtype="'+ dropdownColArrayMenuFieldType[i] +'"><a href="#">'+ dropdownColArrayMenu[i] +'</a></li>';
 
-                if(dropdownColArray[i] == skipConst){
+                if(dropdownColArrayMenu[i] == skipConst){
                     // на случай если добавляется таблица с большим чем Default кол-вом стобцов, чтобы SKIP не
                     // дублировался в dropdown
                     haveSkip = true;

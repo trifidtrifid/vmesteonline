@@ -213,6 +213,10 @@
                     <div class="error-info"></div>
 
                     <div class="import-show">
+                        <div class="import-btn-top">
+                            <span class="confirm-info"></span>
+                            <a class="btn btn-primary btn-sm no-border import-btn" href="#">Импортировать</a>
+                        </div>
                         <h3>Поставьте соответствие данных и столбцов</h3>
                         <div class="import-table">
 

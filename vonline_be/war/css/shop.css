@@ -1439,6 +1439,13 @@ height 50px
 .import .import-show {
   display: none;
 }
+.import .import-show .import-btn-top {
+  float: right;
+  margin-top: -5px;
+}
+.import .import-show .import-btn-top .import-btn {
+  margin-bottom: 0;
+}
 .import .import-show .import-btn {
   margin-bottom: 10px;
 }
