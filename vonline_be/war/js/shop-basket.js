@@ -425,7 +425,9 @@ define(
                 initBtnOrderClick($('.confirm-order .btn-order'),optionsForBtnOrderClick);
 
                 $('.confirm-order .btn-cancel').click(function(){
-                    $('.back-to-shop').trigger('click');
+                    //$('.back-to-shop').trigger('click');
+                    $('.page.shop-confirm').hide();
+                    window.history.back();
                 });
 
             }).show();

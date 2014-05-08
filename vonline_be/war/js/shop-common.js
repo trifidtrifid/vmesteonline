@@ -1,7 +1,7 @@
 define(
     'shop-common',
-    ['jquery','flexslider','shop-initThrift','shop-basket','shop-spinner','shop-orders','bootstrap'],
-    function( $ ,flexsliderModule,thriftModule,basketModule,spinnerModule,ordersModule ){
+    ['jquery','flexslider','shop-initThrift','shop-basket','shop-spinner','shop-orders','shop-category','bootstrap'],
+    function( $ ,flexsliderModule,thriftModule,basketModule,spinnerModule,categoryModule,ordersModule ){
 
         var noPhotoPic = "i/no-photo.png";
         // возвращает cookie с именем name, если есть, если нет, то undefined
@@ -627,8 +627,6 @@ define(
         function setCatalogTopOffset(){
             var catalogTop = $('.shop-products .form-group').height()+$('.shop-menu').height()+$('.catalog-head').height()+$('.navbar').height();
             var catalogBottom = $('.wrap footer').height();
-            //alert($('.shop-products .form-group').height()+" "+$('.shop-menu').height()+" "+$('.catalog-head').height()+" "+$('.navbar').height());
-            //alert(catalogTop+" "+catalogBottom);
             var h = $(window).height() - catalogTop - catalogBottom-30;
             $('.catalog').css('height',h);
         }
@@ -642,14 +640,20 @@ define(
                 var state;
 
                 if($(this).hasClass('back-to-shop')){
-                        shopOrders.hide();
-                        $('.shop-confirm').hide();
-                        $('.main-container-inner').show();
-                        $('.navbar .nav li.active').removeClass('active');
-                        $('.navbar .nav li:eq(0)').addClass('active');
-                        $('.shop-products').show(function(){
-                            setSidebarHeight();
-                        });
+                    shopOrders.hide();
+                    $('.shop-confirm').hide();
+                    $('.main-container-inner').show();
+                    $('.navbar .nav li.active').removeClass('active');
+                    $('.navbar .nav li:eq(0)').addClass('active');
+                    var shopProducts = $('.shop-products');
+                    if(shopProducts.find('.shop-menu .shopmenu-back').length){
+                        // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
+                        var categoryModule = require('shop-category');
+                        categoryModule.InitLoadCategory(0);
+                    }
+                    shopProducts.show(function(){
+                        //setSidebarHeight();
+                    });
                     state = {
                         type : 'default'
                     };

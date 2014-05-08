@@ -82,7 +82,7 @@ define(
 
 					if (productCategories[0] && productCategories[0].parentId != 0
 							|| productCategories[0] === undefined) {
-						firstMenuItem = '<li>' + '<a href="#">'
+						firstMenuItem = '<li>' + '<a class="shopmenu-back" href="#">'
 								+ '<i class="fa fa-reply-all"></i>'
 								+ '<span>Назад</span>' + '</a>' + '</li>';
 					}
@@ -120,6 +120,23 @@ define(
                 commonModule.setCatalogTopOffset();
             }
 
+            function LoadCategoryByURLHash(URLHash){
+                var categoriesHistory = URLHash.split(';');
+                var categoriesHistoryLength = categoriesHistory.length;
+                var prevCategoryIndexPos = categoriesHistoryLength - 1;
+                var prevCategoryId;
+
+                if (prevCategoryIndexPos < 0){
+                    // загружаем корневую
+                    prevCategoryId = 0;
+                }else{
+                    // загружаем родителя
+                    var hashParts = categoriesHistory[prevCategoryIndexPos].split('=');
+                    prevCategoryId = hashParts[1];
+                }
+                InitLoadCategory(prevCategoryId);
+            }
+
 /*			function initGetCookie() {
 				var commonModule = require('shop-common');
 				prevCatCounter = commonModule.getCookie('prevCatCounter');
@@ -144,9 +161,11 @@ define(
 					$('.shop-menu li a').click(
                         function(e) {
                             e.preventDefault();
-                            var isReturnBtn = $(this).find('.fa-reply-all').length;
+                            var isReturnBtn = $(this).hasClass('shopmenu-back');
                             var categoryid = $(this).parent().data('catid');
-                            var urlHash = document.location.hash;
+                            var urlHash = document.location.hash,
+                            categoriesHash;
+
 
                             if (isReturnBtn) {
                                 /*var categoryParentId = $(this).parent().data('parentid');
@@ -174,7 +193,11 @@ define(
                                 }
                                 InitLoadCategory(prevCategoryIndex);*/
 
-                                window.history.back();
+                                //window.history.back();
+                                categoriesHash = document.location.hash.split(';');
+                                categoriesHash.pop();
+                                categoriesHash = categoriesHash.join(';');
+                                LoadCategoryByURLHash(categoriesHash);
 
                             } else {
                                 /*parentCounter++;
@@ -184,21 +207,20 @@ define(
                                 commonModule.setCookie('arrayPrevCat',prevParentId);
                                 commonModule.setCookie('prevCatCounter',parentCounter);*/
 
-
-                                var categoriesHash;
-
                                 if(!urlHash){
                                     categoriesHash = '#cat='+categoryid;
                                 }else{
                                     categoriesHash = urlHash+";cat="+categoryid;
                                 }
-                                var state = {
-                                    type : 'category',
-                                    categoriesHash: categoriesHash
-                                };
-                                window.history.pushState(state,null,'shop.jsp'+categoriesHash);
                                 InitLoadCategory(categoryid);
+
                             }
+
+                            var state = {
+                                type : 'category',
+                                categoriesHash: categoriesHash
+                            };
+                            window.history.pushState(state,null,'shop.jsp'+categoriesHash);
                         });
 				} catch (e) {
 					alert(e + " Функция InitClickOnCategory");
@@ -208,6 +230,7 @@ define(
 			return {
 				createProductsTableHtml : createProductsTableHtml,
 				InitLoadCategory : InitLoadCategory,
-				InitClickOnCategory : InitClickOnCategory
+				InitClickOnCategory : InitClickOnCategory,
+                LoadCategoryByURLHash: LoadCategoryByURLHash
 			}
 		});
