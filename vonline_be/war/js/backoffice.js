@@ -698,6 +698,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             '</table>';
 
                         $('.import-table').html("").prepend(importHtml).parent().show();
+                        DoubleScroll(document.getElementById('doublescroll'));
 
                         initShowFullText();
                         initCloseFullText();
@@ -843,6 +844,9 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
         var skipConst = "SKIP";
         $('.import-btn').click(function(e){
             e.preventDefault();
+            //$('.container').css({'cursor': 'url(../i/wait1.png),wait'});
+            //$('.container').addClass('wait');
+            //alert('1');
 
             var dropdowns = $('.import-field-dropdown');
             var dropdownLength = dropdowns.length;
@@ -911,10 +915,15 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 dataSet.data = temp;
 
                 try{
+
+                    //alert('1');
                     thriftModule.clientBO.importData(dataSet);
+                    //alert('2');
+                    //$('.container').css('cursor','default');
                     confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
 
                 }catch(e){
+                    //$('.container').css('cursor','default');
                     confirmInfo.text('Ошибка импорта.').show();
 
                 }
@@ -1220,5 +1229,23 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             $(this).parent().addClass('active');
             setSidebarHeight();
         });
+
+        function DoubleScroll(element) {
+            var scrollbar= document.createElement('div');
+            scrollbar.appendChild(document.createElement('div'));
+            scrollbar.style.overflow= 'auto';
+            scrollbar.style.overflowY= 'hidden';
+            scrollbar.firstChild.style.width= element.scrollWidth+'px';
+            scrollbar.firstChild.style.paddingTop= '1px';
+            scrollbar.firstChild.style.marginTop= '-5px';
+            scrollbar.firstChild.appendChild(document.createTextNode('\xA0'));
+            scrollbar.onscroll= function() {
+                element.scrollLeft= scrollbar.scrollLeft;
+            };
+            element.onscroll= function() {
+                scrollbar.scrollLeft= element.scrollLeft;
+            };
+            element.parentNode.insertBefore(scrollbar, element);
+        }
 
     });

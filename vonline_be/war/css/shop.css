@@ -7,6 +7,10 @@ body {
   background: #fff;
   height: 100%;
 }
+.wait {
+  background: #f00;
+  cursor: url("../i/wait1.png"), wait;
+}
 a {
   outline: none !important;
 }
@@ -1461,8 +1465,8 @@ height 50px
   float: none;
 }
 .import .import-show .import-table {
-  overflow-x: auto;
-  overflow-y: visible;
+/*overflow-x auto
+      overflow-y visible*/
   margin-bottom: 10px;
 }
 .import .import-show .import-table.y-overflow-hidden {
@@ -1545,4 +1549,13 @@ height 50px
 .import,
 .export {
   display: none;
+}
+#doublescroll {
+  overflow: auto;
+  overflow-y: hidden;
+}
+#doublescroll p {
+  margin: 0;
+  padding: 1em;
+  white-space: nowrap;
 }

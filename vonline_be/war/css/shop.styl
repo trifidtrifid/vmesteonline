@@ -11,6 +11,14 @@ html
 body
   background #fff
   height 100%
+  //cursor progress
+  //cursor url(../i/wait1.png),wait
+  //cursor: url(images/sniper.cur), pointer;
+  //cursor url("../i/wait1.png")
+
+.wait
+  background red
+  cursor url(../i/wait1.png),wait
 
 a
   outline none !important
@@ -1210,8 +1218,8 @@ height 50px
         font-size 12px
         float none
     .import-table
-      overflow-x auto
-      overflow-y visible
+      /*overflow-x auto
+      overflow-y visible*/
       //position relative
       margin-bottom 10px
       &.y-overflow-hidden
@@ -1283,3 +1291,6 @@ height 50px
 .import
 .export
   display none
+
+#doublescroll { overflow: auto; overflow-y: hidden; }
+#doublescroll p { margin: 0; padding: 1em; white-space: nowrap; }

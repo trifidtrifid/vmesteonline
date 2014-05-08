@@ -203,6 +203,11 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             $('.modal-login').modal();
         });
 
+        $('.navbar-brand').click(function(){
+           $('.back-to-shop a').trigger('click');
+            return false;
+        });
+
     }catch(e){
         //alert(e + ' Ошибка в простых обработчиках');
     }
