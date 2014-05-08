@@ -50,7 +50,7 @@ define(
                         commonModule.openModalAuth();
                     }else{
 
-                    var productsListPart = thriftModule.client.getProducts(0,10,0);
+                    var productsListPart = thriftModule.client.getProducts(0,1000,0);
                     var products = productsListPart.products;
                     var productsLength = products.length;
                     var packs = [];
@@ -91,7 +91,7 @@ define(
             $('.form-group').submit(function(e){
                 e.preventDefault();
                 var searchWord = $('#search').val().toLowerCase();
-                var productsListPart = thriftModule.client.getProducts(0,10,0);
+                var productsListPart = thriftModule.client.getProducts(0,1000,0);
                 var products = productsListPart.products;
                 var productsLength = products.length;
                 var searchedProducts = [];
@@ -110,7 +110,6 @@ define(
                 commonModule.markAddedProduct();
                 var basketModule = require('shop-basket');
                 basketModule.InitAddToBasket($('.fa-shopping-cart'));
-                categoryModule.InitClickOnCategory();
             });
 
             /* автозаполнение адреса доставки  */

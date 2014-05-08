@@ -133,7 +133,7 @@ define(
 			}*/
 
 			function InitClickOnCategory() {
-                var commonModule = require('shop-common');
+                //var commonModule = require('shop-common');
 
                 //console.log(commonModule.getCookie('arrayPrevCat')+" "+commonModule.getCookie('prevCatCounter')+" "+commonModule.getCookie('catid'));
 
