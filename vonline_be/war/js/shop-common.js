@@ -177,12 +177,13 @@ define(
                     var productSelector = $(this).closest('.product'),
                     name= $(this).find('.product-name').text(),
                     productId = productSelector.data('productid');
+                    var imgArr = $(this).find('img').attr('src').split('?');
 
                     var product= {
                         name : name,
                         price : productSelector.find('.product-price').text(),
                         unitName: productSelector.find('.unit-name').text(),
-                        imageURL : $(this).find('img').attr('src')
+                        imageURL : imgArr[0]
                     };
 
                     var currentModal = $(this).find('+.modal');
