@@ -392,7 +392,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			if (vfar.getUserId() != voUser.getId())
 				throw new InvalidOperation(VoError.IncorrectParametrs, "can't save avatar");
 
-			Image origImage = ImagesServiceFactory.makeImageFromFilename(vfar.getFileName().toString());
+			Image origImage = ImagesServiceFactory.makeImageFromFilename(vfar.getGSFileName().toString());
 			Transform resize = ImagesServiceFactory.makeResize(95, 95);
 			String topicAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
 
