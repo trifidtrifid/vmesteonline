@@ -61,6 +61,12 @@ public class VoFileAccess extends HttpServlet {
 				pm.deletePersistent(far);
 				
 			} else if (far.isPublic() || far.getUserId() == serviceImpl.getCurrentUserId(pm)) {
+			
+				resp.setHeader("Pragma-directive", "cache");
+				resp.setHeader("Cache-directive", "cache");
+				resp.setHeader("Cache-control", "cache");
+				resp.setHeader("Pragma", "cache");
+				resp.setHeader("Expires", "1000000");
 				StorageHelper.sendFileResponse(req, resp);
 
 			} else {
