@@ -858,7 +858,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             e.preventDefault();
             //$('.container').css({'cursor': 'url(../i/wait1.png),wait'});
             //$('.container').addClass('wait');
-            $('.loading').show(0);
+            //$('.loading').show(0);
 
             var dropdowns = $('.import-field-dropdown');
             var dropdownLength = dropdowns.length;
@@ -930,7 +930,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
                     //alert('1');
                     thriftModule.clientBO.importData(dataSet);
-                    $('.loading').hide(0);
+                    //$('.loading').hide(0);
                     //alert('2');
                     //$('.container').css('cursor','default');
                     confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
