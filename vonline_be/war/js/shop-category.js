@@ -40,7 +40,7 @@ define(
 							+ '<a href="#" class="product-link">'
 							+ '<div class="product-pic"><img src="'
 							+ myPic
-							+ '" alt="картинка"/></div>'
+							+ '?w=40&h=40" alt="картинка"/></div>'
 							+ '<span><span class="product-name">'
 							+ productsList[i].name
 							+ '</span>'
@@ -100,8 +100,7 @@ define(
 					$('.shop-menu ul').html(firstMenuItem).append(shopMenu);
 
 					/* новый список товаров */
-					var productsList = thriftModule.client.getProducts(0, 1000,
-							catID).products;
+					var productsList = thriftModule.client.getProducts(0, 1000, catID).products;
 					$('.main-content .catalog table tbody').html("").append(
 							createProductsTableHtml(productsList));
 					commonModule.markAddedProduct();

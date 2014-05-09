@@ -343,7 +343,7 @@
                                             <div class="product-pic">
                                             <c:choose>
                                                 <c:when test="${product.imageURL != null}">
-                                                    <img src="${product.imageURL}" alt="картинка1"/>
+                                                    <img src="${product.imageURL}?w=40&h=40" alt="картинка1"/>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <img src="i/no-photo.png" alt="нет фото"/>

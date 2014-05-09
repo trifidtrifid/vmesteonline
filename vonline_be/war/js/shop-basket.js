@@ -617,7 +617,7 @@ define(
                     '</tr>'+
                     '</table>'+
                     '<a href="#" class="product-link no-init">'+
-                    '<span><img src="'+ myPic +'" alt="картинка"/></span>'+
+                    '<span><img src="'+ myPic +'?w=40&h=40" alt="картинка"/></span>'+
                     '<div class="product-right-descr product-name">'+
                     currentProduct.name+
                     '</div>'+
