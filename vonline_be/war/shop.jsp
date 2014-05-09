@@ -340,6 +340,7 @@
                                 <td></td>
                             </tr>
                             </thead>--%>
+<<<<<<< HEAD
 					<c:forEach var="product" items="${products}">
 						<tr data-productid="${product.id}" data-prepack="${product.prepackRequired}" class="product">
 							<td><a href="#" class="product-link">
@@ -387,6 +388,96 @@
 				</table>
 			</div>
 			<div class="orders-list"></div>
+=======
+                            <c:forEach var="product" items="${products}">
+                                <tr data-productid="${product.id}" data-prepack="${product.prepackRequired}" class="product">
+                                    <td>
+                                        <a href="#" class="product-link">
+                                            <div class="product-pic">
+                                            <c:choose>
+                                                <c:when test="${product.imageURL != null}">
+                                                    <%--<img src="${product.imageURL}?w=40&h=40" alt="${product.name}"/>--%>
+                                                    <div class="mypic"></div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <img src="i/no-photo.png" alt="нет фото"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            </div>
+
+                                            <span>
+                                            <span class="product-name">${product.name}</span>
+                                            ${product.shortDescr}
+                                            </span>
+                                        </a>
+                                        <div class="modal">
+                                        </div>
+                                    </td>
+                                    <td class="product-price">${product.price}</td>
+                                    <td class="td-spinner">
+                                        <input type="text" class="input-mini spinner1" data-step="${product.minClientPack}" />
+                                        <span class="added-text">добавлен</span>
+                                    </td>
+                                    <td class="td-unit">
+                                        <span class="unit-name">${product.unitName}</span>
+                                    </td>
+                                    <td class="td-basket">
+                                        <a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>
+                                        <span href="#" title="Продукт уже у вас в корзине" class="fa fa-check"></span>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+
+                        </table>
+                    </section>
+                </div>
+                <div class="shop-orders">
+
+                    <%--<a href="#" class="back-to-shop shop-trigger">Вернуться в магазин</a>--%>
+                    <h1>Заказы</h1>
+                    <div class="orders-tbl-wrap">
+                    <table>
+                        <tr>
+                            <td class="td1"></td>
+                            <td class="td2">N</td>
+                            <td class="td3">Дата</td>
+                            <td class="td4">Статус</td>
+                            <td class="td5">Доставка</td>
+                            <td class="td9">Цена<br> доставки</td>
+                            <td class="td8">Вес(кг)</td>
+                            <td class="td6">Сумма</td>
+                            <td class="td7"></td>
+                        </tr>
+                    </table>
+                    </div>
+                    <div class="orders-list">
+                    </div>
+                </div>
+
+            </div>
+            <div class="clear"></div>
+        </div>
+            <div class="page shop-confirm"></div>
+            <div class="page shop-profile"></div>
+            <div class="page shop-orderEnd"></div>
+            <div class="page shop-editPersonal"></div>
+    </div>
+
+        <div class="modal modal-error">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <p>Произошла ошибка работы приложения. Наши программисты уже получили всю необходимую информацию.
+                Приносим извинения за доставленные неудобства.</p>
+                <p>Для продолжения работы перезагрузите страницу.</p>
+                <div class="details-block">
+                    <a href="#" class="error-details-link no-init">Детали</a>
+                    <div id="error-details" class="error-info"></div>
+                </div>
+            </div>
+        </div>
+
+		<div class="modal modal-auth">
+>>>>>>> FE
 		</div>
 
 	</div>
