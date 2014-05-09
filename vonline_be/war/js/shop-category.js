@@ -3,8 +3,9 @@ define(
 		[ 'jquery', 'shop-initThrift', 'shop-basket', 'shop-common',
 				'shop-spinner' ],
 		function($, thriftModule, basketModule, commonModule, spinnerModule) {
+            //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 
-			var prevParentId = [], parentCounter = 0, prevCatCounter;
+            var prevParentId = [], parentCounter = 0, prevCatCounter;
 
 			// var commonModule = require('shop-common');
 			/*
@@ -39,7 +40,7 @@ define(
 							+ '<a href="#" class="product-link">'
 							+ '<div class="product-pic"><img src="'
 							+ myPic
-							+ '" alt="картинка"/></div>'
+							+ '?w=40&h=40" alt="'+ productsList[i].name +'"/></div>'
 							+ '<span><span class="product-name">'
 							+ productsList[i].name
 							+ '</span>'
@@ -79,10 +80,9 @@ define(
 					var shopMenu = '';
 					var firstMenuItem = "";
 
-					if (productCategories[0]
-							&& productCategories[0].parentId != 0
+					if (productCategories[0] && productCategories[0].parentId != 0
 							|| productCategories[0] === undefined) {
-						firstMenuItem = '<li>' + '<a href="#">'
+						firstMenuItem = '<li>' + '<a class="shopmenu-back" href="#">'
 								+ '<i class="fa fa-reply-all"></i>'
 								+ '<span>Назад</span>' + '</a>' + '</li>';
 					}
@@ -100,8 +100,7 @@ define(
 					$('.shop-menu ul').html(firstMenuItem).append(shopMenu);
 
 					/* новый список товаров */
-					var productsList = thriftModule.client.getProducts(0, 1000,
-							catID).products;
+					var productsList = thriftModule.client.getProducts(0, 1000, catID).products;
 					$('.main-content .catalog table tbody').html("").append(
 							createProductsTableHtml(productsList));
 					commonModule.markAddedProduct();
@@ -120,7 +119,24 @@ define(
                 commonModule.setCatalogTopOffset();
             }
 
-			function initGetCookie() {
+            function LoadCategoryByURLHash(URLHash){
+                var categoriesHistory = URLHash.split(';');
+                var categoriesHistoryLength = categoriesHistory.length;
+                var prevCategoryIndexPos = categoriesHistoryLength - 1;
+                var prevCategoryId;
+
+                if (prevCategoryIndexPos < 0){
+                    // загружаем корневую
+                    prevCategoryId = 0;
+                }else{
+                    // загружаем родителя
+                    var hashParts = categoriesHistory[prevCategoryIndexPos].split('=');
+                    prevCategoryId = hashParts[1];
+                }
+                InitLoadCategory(prevCategoryId);
+            }
+
+/*			function initGetCookie() {
 				var commonModule = require('shop-common');
 				prevCatCounter = commonModule.getCookie('prevCatCounter');
 				if (prevCatCounter !== undefined) {
@@ -130,55 +146,83 @@ define(
 				if (arrayPrevCatCookie !== undefined) {
 					prevParentId = arrayPrevCatCookie.split(',');
 				}
-			}
+			}*/
 
 			function InitClickOnCategory() {
-				if (prevCatCounter === undefined) {
+                //var commonModule = require('shop-common');
+
+                //console.log(commonModule.getCookie('arrayPrevCat')+" "+commonModule.getCookie('prevCatCounter')+" "+commonModule.getCookie('catid'));
+
+				/*if (prevCatCounter === undefined) {
 					initGetCookie();
-				}
+				}*/
 				try {
 					$('.shop-menu li a').click(
                         function(e) {
                             e.preventDefault();
-                            var isReturnBtn = $(this).find(
-                                    '.fa-reply-all').length;
-                            var commonModule = require('shop-common');
+
+                            var isReturnBtn = $(this).hasClass('shopmenu-back');
+                            var categoryid = $(this).parent().data('catid');
+                            var urlHash = document.location.hash,
+                            categoriesHash;
+
 
                             if (isReturnBtn) {
-                                // alert('1-1 '+parentCounter);
-                                InitLoadCategory(prevParentId[parentCounter]);
-                                commonModule
-                                        .setCookie(
-                                                'catid',
-                                                prevParentId[parentCounter]);
+                                /*var categoryParentId = $(this).parent().data('parentid');
+                                alert(categoryParentId);
+                                InitLoadCategory(categoryParentId);*/
+
+                                //window.history.back();
+
+                                /*InitLoadCategory(prevParentId[parentCounter]);
+                                commonModule.setCookie('catid',prevParentId[parentCounter]);
                                 parentCounter--;
-                                // alert('1-2 '+parentCounter);
-                                commonModule.setCookie(
-                                        'arrayPrevCat',
-                                        prevParentId);
-                                commonModule.setCookie(
-                                        'prevCatCounter',
-                                        parentCounter);
+                                commonModule.setCookie('arrayPrevCat',prevParentId);
+                                commonModule.setCookie('prevCatCounter',parentCounter);*/
+
+                                /*var categoriesHistory = urlHash.split(';');
+                                var categoriesHistoryLength = categoriesHistory.length;
+                                var prevCategoryIndexPos = categoriesHistoryLength - 2;
+                                var prevCategoryIndex;
+
+                                if (prevCategoryIndexPos < 0){
+                                    prevCategoryIndex = 0;
+                                }else{
+                                    var hashParts = categoriesHistory[prevCategoryIndexPos].split('=');
+                                    prevCategoryIndex = hashParts[1];
+                                }
+                                InitLoadCategory(prevCategoryIndex);*/
+
+                                //window.history.back();
+                                categoriesHash = document.location.hash.split(';');
+                                categoriesHash.pop();
+                                categoriesHash = categoriesHash.join(';');
+                                LoadCategoryByURLHash(categoriesHash);
+
                             } else {
-                                // alert('2-1 '+parentCounter);
-                                parentCounter++;
-                                // alert('2-2 '+parentCounter);
-                                prevParentId[parentCounter] = $(
-                                        this).parent().data(
-                                        'parentid');
-                                InitLoadCategory($(this).parent()
-                                        .data('catid'));
-                                commonModule.setCookie('catid', $(
-                                        this).parent()
-                                        .data('catid'));
-                                commonModule.setCookie(
-                                        'arrayPrevCat',
-                                        prevParentId);
-                                commonModule.setCookie(
-                                        'prevCatCounter',
-                                        parentCounter);
+                                /*parentCounter++;
+                                prevParentId[parentCounter] = $(this).parent().data('parentid');
+                                InitLoadCategory($(this).parent().data('catid'));
+                                commonModule.setCookie('catid', $(this).parent().data('catid'));
+                                commonModule.setCookie('arrayPrevCat',prevParentId);
+                                commonModule.setCookie('prevCatCounter',parentCounter);*/
+
+                                if(!urlHash){
+                                    categoriesHash = '#cat='+categoryid;
+                                }else{
+                                    categoriesHash = urlHash+";cat="+categoryid;
+                                }
+                                InitLoadCategory(categoryid);
+
                             }
-									});
+
+                            var state = {
+                                type : 'category',
+                                categoriesHash: categoriesHash
+                            };
+                            window.history.pushState(state,null,'shop.jsp'+categoriesHash);
+
+                        });
 				} catch (e) {
 					alert(e + " Функция InitClickOnCategory");
 				}
@@ -188,5 +232,6 @@ define(
 				createProductsTableHtml : createProductsTableHtml,
 				InitLoadCategory : InitLoadCategory,
 				InitClickOnCategory : InitClickOnCategory,
+                LoadCategoryByURLHash: LoadCategoryByURLHash
 			}
 		});

@@ -46,7 +46,7 @@
         //out.print('2');
     }
 
-    Cookie cookies [] = request.getCookies();
+    /*Cookie cookies [] = request.getCookies();
     String cookieName = "catid";
     Cookie catIdCookie = null;
     if (cookies != null) {
@@ -66,10 +66,10 @@
         }
     }catch(Exception e){
         catId = 0;
-    }
+    }*/
 
-    List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(catId);
-    ProductListPart productsListPart = shopService.getProducts(0,1000,catId);
+    List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(0);
+    ProductListPart productsListPart = shopService.getProducts(0,1000,0);
     if (productsListPart.products.size() > 0){
         pageContext.setAttribute("products",productsListPart.products);
     }
@@ -343,7 +343,7 @@
                                             <div class="product-pic">
                                             <c:choose>
                                                 <c:when test="${product.imageURL != null}">
-                                                    <img src="${product.imageURL}" alt="картинка1"/>
+                                                    <img src="${product.imageURL}?w=40&h=40" alt="${product.name}"/>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <img src="i/no-photo.png" alt="нет фото"/>
@@ -439,6 +439,9 @@
             <div>Вместе Онлайн (c) 2014</div>
         </div>
     </footer>
+    </div>
+    <div class="loading">
+        <img src="i/loading.gif" alt="загрузка">
     </div>
 	<!-- общие библиотеки -->
 	<%--<script src="js/lib/jquery-2.0.3.min.js"></script>--%>

@@ -59,7 +59,9 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
         var day = 3600*24;
 
         function showAllOrders(){
+            try{
             var orders = thriftModule.client.getOrdersByStatus(0,nowTime+180*day,0);
+
             $('.orders-list').html("").append(createOrdersHtml(orders));
 
             var ordersNoInit = $('.orders-no-init');
@@ -70,6 +72,9 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             statusFilterFlag = 0;
             dateFilterFlag = 0;
             searchFilterFlag = 0;
+            }catch(e){
+
+            }
         }
         showAllOrders();
 
@@ -270,6 +275,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
         }
 
 
+        try{
         var dPicker = $('#date-picker-1');
         var dPickerExport = $('.datepicker-export');
 
@@ -302,6 +308,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             $('#back-search').val('Поиск по имени клиента или номеру телефона');
             dPicker.val('Фильтр по дате');
         });
+        }catch(e){}
 
         /* сброс */
         $('#date-picker-2,#date-picker-3,#date-picker-4').val('Фильтр по дате');
@@ -611,6 +618,9 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                      },*/
                     success: function(html) {
                         fileUrl = html;
+
+                        $('.loading').show(0);
+
                         var matrixAsList = thriftModule.clientBO.parseCSVfile(fileUrl);
                         elems = matrixAsList.elems;
                         rowCount = matrixAsList.rowCount;
@@ -659,6 +669,12 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                                 }
                                 break;
                         }
+
+                        //использую эти переменные для меню дроплауна, которое
+                        //должно быть неизменным независимо от кол-ва загруженных столбцов
+                        var dropdownColArrayMenu = dropdownColArray.slice(0);
+                        var dropdownColArrayMenuFieldType = dropdownColArrayFieldType.slice(0);
+
                         var begin,end;
                         if(colCount < counter ){
                             // если стобцов в таблице меньше чем default удаляем лишние default столбцы
@@ -683,7 +699,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
                         var importHtml = '<table><thead>' +
                             '<tr>' +
-                            createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType)+
+                            createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType,dropdownColArrayMenu,dropdownColArrayMenuFieldType)+
                             '</tr>'+
                             '</thead>' +
                             '<tbody>'+
@@ -692,14 +708,15 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             '</table>';
 
                         $('.import-table').html("").prepend(importHtml).parent().show();
+                        DoubleScroll(document.getElementById('doublescroll'));
 
                         initShowFullText();
                         initCloseFullText();
 
                         $('.import-field-dropdown .dropdown-toggle').click(function(e){
                             e.preventDefault();
-                            var coordX = e.pageX-130;
                             var coordY = e.pageY-30;
+                            var coordX = e.screenX-130;
                             $(this).parent().find('.dropdown-menu').css({'left':coordX,'top':coordY});
                         });
 
@@ -722,6 +739,8 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             //currentDropdown.find('.btn-group-text').text(fieldName).closest('.btn').dataset.fieldtype = fieldType;
                             //alert(currentDropdown.find('.btn-group-text').text(fieldName).closest('.btn').data('fieldtype'));
                         });
+
+                        $('.loading').hide(0);
                     }
                 });
 
@@ -750,17 +769,19 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             });
         }
 
-        function createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType){
+        function createImportDropdownLine(dropdownColArray,dropdownColArrayFieldType,dropdownColArrayMenu,dropdownColArrayMenuFieldType){
 
             var importDropdownLine = "";
             var importDropdownLineLength = dropdownColArray.length;
+            var dropdownColArrayMenuLength = dropdownColArrayMenu.length;
+            //alert(importDropdownLineLength+" "+dropdownColArrayMenuLength);
 
             var importDropdownMenu = "",
                 haveSkip = false;
-            for(var i = 0; i < importDropdownLineLength; i++){
-                if(!haveSkip) importDropdownMenu += '<li data-fieldtype="'+ dropdownColArrayFieldType[i] +'"><a href="#">'+ dropdownColArray[i] +'</a></li>';
+            for(var i = 0; i < dropdownColArrayMenuLength; i++){
+                if(!haveSkip) importDropdownMenu += '<li data-fieldtype="'+ dropdownColArrayMenuFieldType[i] +'"><a href="#">'+ dropdownColArrayMenu[i] +'</a></li>';
 
-                if(dropdownColArray[i] == skipConst){
+                if(dropdownColArrayMenu[i] == skipConst){
                     // на случай если добавляется таблица с большим чем Default кол-вом стобцов, чтобы SKIP не
                     // дублировался в dropdown
                     haveSkip = true;
@@ -835,6 +856,9 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
         var skipConst = "SKIP";
         $('.import-btn').click(function(e){
             e.preventDefault();
+            //$('.container').css({'cursor': 'url(../i/wait1.png),wait'});
+            //$('.container').addClass('wait');
+            $('.loading').show(0);
 
             var dropdowns = $('.import-field-dropdown');
             var dropdownLength = dropdowns.length;
@@ -903,10 +927,16 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 dataSet.data = temp;
 
                 try{
+
+                    //alert('1');
                     thriftModule.clientBO.importData(dataSet);
+                    $('.loading').hide(0);
+                    //alert('2');
+                    //$('.container').css('cursor','default');
                     confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
 
                 }catch(e){
+                    //$('.container').css('cursor','default');
                     confirmInfo.text('Ошибка импорта.').show();
 
                 }
@@ -1212,5 +1242,23 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             $(this).parent().addClass('active');
             setSidebarHeight();
         });
+
+        function DoubleScroll(element) {
+            var scrollbar= document.createElement('div');
+            scrollbar.appendChild(document.createElement('div'));
+            scrollbar.style.overflow= 'auto';
+            scrollbar.style.overflowY= 'hidden';
+            scrollbar.firstChild.style.width= element.scrollWidth+'px';
+            scrollbar.firstChild.style.paddingTop= '1px';
+            scrollbar.firstChild.style.marginTop= '-5px';
+            scrollbar.firstChild.appendChild(document.createTextNode('\xA0'));
+            scrollbar.onscroll= function() {
+                element.scrollLeft= scrollbar.scrollLeft;
+            };
+            element.onscroll= function() {
+                scrollbar.scrollLeft= element.scrollLeft;
+            };
+            element.parentNode.insertBefore(scrollbar, element);
+        }
 
     });

@@ -71,7 +71,7 @@
 
     <div class="navbar-container" id="navbar-container">
     <div class="navbar-header pull-left">
-        <a href="#" class="navbar-brand">
+        <a href="shop.jsp" class="navbar-brand">
             <img src="<c:out value="${logoURL}" />" alt="лого">
         </a><!-- /.brand -->
     </div><!-- /.navbar-header -->
@@ -213,8 +213,13 @@
                     <div class="error-info"></div>
 
                     <div class="import-show">
+                        <div class="import-btn-top">
+                            <span class="confirm-info"></span>
+                            <a class="btn btn-primary btn-sm no-border import-btn" href="#">Импортировать</a>
+                        </div>
                         <h3>Поставьте соответствие данных и столбцов</h3>
-                        <div class="import-table">
+
+                        <div id="doublescroll" class="import-table">
 
                         </div>
                         <div>
@@ -423,7 +428,9 @@
         <div class="page shop-editPersonal"></div>
 
     </div>
-
+    <div class="loading">
+        <img src="i/loading.gif" alt="загрузка">
+    </div>
 </div>
 <!-- общие библиотеки -->
 
