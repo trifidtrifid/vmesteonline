@@ -242,7 +242,6 @@
 				<div class="page shop-editPersonal"></div>
 			</div>
 
-			<<<<<<< HEAD
 			<div class="modal modal-error">
 				<div class="modal-body">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -254,7 +253,6 @@
 					</div>
 				</div>
 			</div>
-			=======
 			<div id="day2" class="tab-pane">
 				<ul class="catalog-order">
 					<c:forEach var="orderLine" items="${orderLines}">
@@ -296,7 +294,7 @@
 			</div>
 		</div>
 	</div>
-	--%>
+
 
 	</aside>
 	<div class="main-content">
@@ -488,26 +486,10 @@
 	<div class="page shop-orderEnd"></div>
 	<div class="page shop-editPersonal"></div>
 	</div>
-	>>>>>>> 68df44abcf3d0c91c3ee0ea71ac02dd68af7c3ab
 
 	<div class="modal modal-auth"></div>
 
 	</div>
-	<footer>
-		<div class="container">
-			<div class="footer-menu">
-				<ul>
-					<li><a href="#">О сайте</a></li>
-					<li><a href="#">Правила</a></li>
-					<li><a href="#">Контакты</a></li>
-					<li><a href="#">В начало</a></li>
-				</ul>
-			</div>
-			<div>Вместе Онлайн (c) 2014</div>
-		</div>
-	</footer>
-	</div>
-	<<<<<<< HEAD =======
 	<footer>
 		<div class="container">
 			<div class="footer-menu">
