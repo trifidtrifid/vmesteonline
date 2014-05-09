@@ -74,8 +74,7 @@ define(
 				try {
 					/* замена меню категорий */
 					var commonModule = require('shop-common');
-					var productCategories = thriftModule.client
-							.getProductCategories(catID);
+					var productCategories = thriftModule.client.getProductCategories(catID);
 					var categoriesLength = productCategories.length;
 					var shopMenu = '';
 					var firstMenuItem = "";
@@ -118,7 +117,8 @@ define(
 				basketModule.InitAddToBasket($('.fa-shopping-cart'));
 				InitClickOnCategory();
 				commonModule.setSidebarHeight();
-			}
+                commonModule.setCatalogTopOffset();
+            }
 
 			function initGetCookie() {
 				var commonModule = require('shop-common');
@@ -137,48 +137,47 @@ define(
 					initGetCookie();
 				}
 				try {
-					$('.shop-menu li a')
-							.click(
-									function(e) {
-										e.preventDefault();
-										var isReturnBtn = $(this).find(
-												'.fa-reply-all').length;
-										var commonModule = require('shop-common');
+					$('.shop-menu li a').click(
+                        function(e) {
+                            e.preventDefault();
+                            var isReturnBtn = $(this).find(
+                                    '.fa-reply-all').length;
+                            var commonModule = require('shop-common');
 
-										if (isReturnBtn) {
-											// alert('1-1 '+parentCounter);
-											InitLoadCategory(prevParentId[parentCounter]);
-											commonModule
-													.setCookie(
-															'catid',
-															prevParentId[parentCounter]);
-											parentCounter--;
-											// alert('1-2 '+parentCounter);
-											commonModule.setCookie(
-													'arrayPrevCat',
-													prevParentId);
-											commonModule.setCookie(
-													'prevCatCounter',
-													parentCounter);
-										} else {
-											// alert('2-1 '+parentCounter);
-											parentCounter++;
-											// alert('2-2 '+parentCounter);
-											prevParentId[parentCounter] = $(
-													this).parent().data(
-													'parentid');
-											InitLoadCategory($(this).parent()
-													.data('catid'));
-											commonModule.setCookie('catid', $(
-													this).parent()
-													.data('catid'));
-											commonModule.setCookie(
-													'arrayPrevCat',
-													prevParentId);
-											commonModule.setCookie(
-													'prevCatCounter',
-													parentCounter);
-										}
+                            if (isReturnBtn) {
+                                // alert('1-1 '+parentCounter);
+                                InitLoadCategory(prevParentId[parentCounter]);
+                                commonModule
+                                        .setCookie(
+                                                'catid',
+                                                prevParentId[parentCounter]);
+                                parentCounter--;
+                                // alert('1-2 '+parentCounter);
+                                commonModule.setCookie(
+                                        'arrayPrevCat',
+                                        prevParentId);
+                                commonModule.setCookie(
+                                        'prevCatCounter',
+                                        parentCounter);
+                            } else {
+                                // alert('2-1 '+parentCounter);
+                                parentCounter++;
+                                // alert('2-2 '+parentCounter);
+                                prevParentId[parentCounter] = $(
+                                        this).parent().data(
+                                        'parentid');
+                                InitLoadCategory($(this).parent()
+                                        .data('catid'));
+                                commonModule.setCookie('catid', $(
+                                        this).parent()
+                                        .data('catid'));
+                                commonModule.setCookie(
+                                        'arrayPrevCat',
+                                        prevParentId);
+                                commonModule.setCookie(
+                                        'prevCatCounter',
+                                        parentCounter);
+                            }
 									});
 				} catch (e) {
 					alert(e + " Функция InitClickOnCategory");

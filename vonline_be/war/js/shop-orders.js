@@ -94,14 +94,14 @@ define(
                     var tempDate = new Date(orders[i].date*1000);
                     // форматирование статуса заказа
                     var orderStatus;
-                    var orderLinks = "";
+                    //var orderLinks = "";
                     switch(orders[i].status){
                         case 0:
                             orderStatus = "Неизвестен" ;
                             break
                         case 1:
                             orderStatus = "Не подтвержден" ;
-                            orderLinks = "<a href='#' class='order-confirm'>Подтвердить</a><br><a href='#' class='order-edit'>Изменить</a>"
+                            //orderLinks = "<a href='#' class='order-confirm'>Подтвердить</a><br><a href='#' class='order-edit'>Изменить</a>"
                             break
                         case 2:
                             orderStatus = "Подтвержден" ;
@@ -154,7 +154,6 @@ define(
                         '<td class="td3">'+ orderDay +"."+orderMonth+"<br> ("+weekDay+ ')</td>'+
                         '<td class="td4">'+
                         '<div class="order-status">'+orderStatus +'</div>'+
-                        '<div>'+ orderLinks +'</div>'+
                         '</td>'+
                         '<td class="td5">'+ orderDelivery +'<br> ' +
                         orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
@@ -358,7 +357,7 @@ define(
                 }
             });
 
-            $('.order-confirm').click(function(e){
+/*            $('.order-confirm').click(function(e){
                 e.preventDefault();
 
                 var currentOrder = $(this).closest('.order-item');
@@ -396,13 +395,13 @@ define(
                 var basketModule = require('shop-basket');
                 basketModule.GoToConfirm(catalogHtml,amount,spinnerValue,date,weight);
 
-                /*thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
+                *//*thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
                 thriftModule.client.confirmOrder();
                 alert('Заказ подтвержден !');
                 $(this).closest('td').find('.order-status').text('Подтвержден');
-                $(this).parent().remove();*/
+                $(this).parent().remove();*//*
 
-            });
+            });*/
         }
 
         function initShowMoreOrders(orders){

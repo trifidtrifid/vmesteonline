@@ -18,21 +18,22 @@ define(
                 }
             });
 
-            var shopArray = thriftModule.client.getShops();
-            var currentShop = thriftModule.client.getShop(shopArray[0].id);
-            var arr = thriftModule.client.getProductsByCategories(currentShop.id);
-            var arrLength = arr.length;
-            var counter = 0,
-                dataSearch = [];
-            for(var i = 0; i < arrLength ;i++){
-                var childLength = arr[i].childs.length;
-                for(var j = 0; j < childLength; j++){
-                    dataSearch[counter++]={
-                        label : arr[i].childs[j].name,
-                        category: arr[i].name
+            if($('.login-page').length == 0) {
+                var shopArray = thriftModule.client.getShops();
+                var currentShop = thriftModule.client.getShop(shopArray[0].id);
+                var arr = thriftModule.client.getProductsByCategories(currentShop.id);
+                var arrLength = arr.length;
+                var counter = 0,
+                    dataSearch = [];
+                for (var i = 0; i < arrLength; i++) {
+                    var childLength = arr[i].childs.length;
+                    for (var j = 0; j < childLength; j++) {
+                        dataSearch[counter++] = {
+                            label: arr[i].childs[j].name,
+                            category: arr[i].name
+                        }
                     }
                 }
-            }
 
             $( "#search" ).catcomplete({
                 delay: 0,
@@ -84,6 +85,8 @@ define(
 
                 }
             });
+
+            }
 
             $('.form-group').submit(function(e){
                 e.preventDefault();

@@ -12,7 +12,7 @@
 	HttpSession sess = request.getSession();
     pageContext.setAttribute("auth",true);
     try {
-        AuthServiceImpl.checkIfAuthorised(sess.getId());
+        //AuthServiceImpl.checkIfAuthorised(sess.getId());
         UserServiceImpl userService = new UserServiceImpl(request.getSession());
         ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
         if( null == ShortUserInfo){
@@ -29,8 +29,10 @@
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
-    Shop shop = shopService.getShop(ArrayShops.get(0).id);
-    pageContext.setAttribute("logoURL", shop.logoURL);
+    if(ArrayShops != null && ArrayShops.size() > 0){
+        Shop shop = shopService.getShop(ArrayShops.get(0).id);
+        pageContext.setAttribute("logoURL", shop.logoURL);
+    }
 
     OrderDetails currentOrderDetails;
     try{
@@ -71,7 +73,9 @@
     if (productsListPart.products.size() > 0){
         pageContext.setAttribute("products",productsListPart.products);
     }
-    pageContext.setAttribute("productCategories", ArrayProductCategory);
+    if(ArrayProductCategory.size() > 0){
+        pageContext.setAttribute("productCategories", ArrayProductCategory);
+    }
 
     //String productURL = new String( productsListPart.products.get(0).imageURL);
 
@@ -310,9 +314,20 @@
                             </c:forEach>
                         </ul>
                     </nav>
+                    <section class="catalog-head">
+                        <table>
+                            <tr>
+                                <td>Название</td>
+                                <td class="product-price">Цена (руб)</td>
+                                <td class="td-spinner">Количество</td>
+                                <td class="td-unit">Ед.изм</td>
+                                <td class="td-basket"></td>
+                            </tr>
+                        </table>
+                    </section>
                     <section class="catalog">
                         <table>
-                            <thead>
+                            <%--<thead>
                             <tr>
                                 <td>Название</td>
                                 <td>Цена (руб)</td>
@@ -320,7 +335,7 @@
                                 <td>Ед.изм</td>
                                 <td></td>
                             </tr>
-                            </thead>
+                            </thead>--%>
                             <c:forEach var="product" items="${products}">
                                 <tr data-productid="${product.id}" data-prepack="${product.prepackRequired}" class="product">
                                     <td>
@@ -349,10 +364,10 @@
                                         <input type="text" class="input-mini spinner1" data-step="${product.minClientPack}" />
                                         <span class="added-text">добавлен</span>
                                     </td>
-                                    <td>
+                                    <td class="td-unit">
                                         <span class="unit-name">${product.unitName}</span>
                                     </td>
-                                    <td>
+                                    <td class="td-basket">
                                         <a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>
                                         <span href="#" title="Продукт уже у вас в корзине" class="fa fa-check"></span>
                                     </td>

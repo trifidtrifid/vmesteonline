@@ -455,8 +455,7 @@
 		<section class="settings">
 			<h3>Настройки</h3>
 			<div class="tabbable">
-				<ul class="nav nav-tabs padding-12 tab-color-blue background-blue"
-					id="myTab4">
+				<ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
 					<li class="active"><a data-toggle="tab" href="#private">Приватность</a>
 					</li>
 
@@ -579,8 +578,7 @@
 		<section class="edit-personal">
 			<h3>Редактировать профиль</h3>
 			<div class="tabbable">
-				<ul class="nav nav-tabs padding-12 tab-color-blue background-blue"
-					id="myTab4">
+				<ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab5">
 					<li class="active"><a data-toggle="tab" href="#main">Основное</a>
 					</li>
 
@@ -610,8 +608,8 @@
 							</select>
 						</div>
 						<div>
-							<label for="form-field-select-2">Дата рождения</label> <select
-								class="form-control" id="form-field-select-2">
+							<label for="form-field-select-6">Дата рождения</label> <select
+								class="form-control" id="form-field-select-6">
 								<option value="">&nbsp;</option>
 								<option value="AL">Никому</option>
 								<option value="AK">Васе</option>

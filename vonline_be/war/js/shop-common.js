@@ -331,7 +331,8 @@ define(
                         }
 
                         currentModal.find('.close').click(function(e,isHistoryNav){
-                            if (!isHistoryNav) {
+                            //isCatalog
+                            if (!isHistoryNav && isCatalog) {
                                 window.history.back();
                             }
                         });
@@ -360,7 +361,7 @@ define(
                     //var beginHash = (isBasket || isOrdersHistory) ? "p-basket" : "p";
                     var beginHash = "p";
 
-                    if (!isHistoryNav){
+                    if (!isHistoryNav && isCatalog){
                         var state = {
                             type : 'modal',
                             productid : productId
@@ -372,7 +373,7 @@ define(
                     currentModal.find('.product-fullDescr').hide();
 
                     $('.modal-backdrop').click(function(){
-                        window.history.back();
+                        if (isCatalog) window.history.back();
                         $('.modal.in .close').trigger('click');
                     });
 
@@ -591,6 +592,15 @@ define(
             }
         }
 
+        function setCatalogTopOffset(){
+            var catalogTop = $('.shop-products .form-group').height()+$('.shop-menu').height()+$('.catalog-head').height()+$('.navbar').height();
+            var catalogBottom = $('.wrap footer').height();
+            //alert($('.shop-products .form-group').height()+" "+$('.shop-menu').height()+" "+$('.catalog-head').height()+" "+$('.navbar').height());
+            //alert(catalogTop+" "+catalogBottom);
+            var h = $(window).height() - catalogTop - catalogBottom-30;
+            $('.catalog').css('height',h);
+        }
+
         $('.shop-trigger').click(function(e,isHistoryNav){
             e.preventDefault();
             //try{
@@ -707,7 +717,8 @@ define(
             isValidEmail: isValidEmail,
             changeShortUserInfo: changeShortUserInfo,
             getOrderWeight: getOrderWeight,
-            identificateModal: identificateModal
+            identificateModal: identificateModal,
+            setCatalogTopOffset: setCatalogTopOffset
         }
     }
 );

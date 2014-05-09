@@ -16,7 +16,7 @@ service AuthService {
 	bool checkEmailRegistered(1:string email),
 	bool checkIfEmailConfirmed(1:string email),
 	void sendConfirmCode(1:string to, 2:string resourcefileName) throws (1:error.InvalidOperation exc),
-	void confirmRequest(1:string email, 2:string confirmCode, 3:optional string newPassword) throws (1:error.InvalidOperation exc),
+	void confirmRequest(1:string email, 2:string confirmCode, 3:string newPassword) throws (1:error.InvalidOperation exc),
 	
 	//session as a storage of current user position
 	void setCurrentAttribute( 1:map<i32,i64> typeValueMap) throws (1:error.InvalidOperation exc),
