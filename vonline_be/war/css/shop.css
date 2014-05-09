@@ -1023,6 +1023,29 @@ height 50px
     margin-left: 0;
   }
 }
+@media all and (max-width: 660px) {
+  .product .modal {
+    width: 100%;
+    left: 0;
+    margin-left: 0;
+  }
+  .product .modal .modal-footer {
+    width: 100%;
+    right: 0;
+    text-align: center;
+  }
+  .product .modal .modal-footer >span {
+    float: left;
+  }
+  .product .modal .modal-footer .full-descr {
+    clear: both;
+    margin-left: -130px;
+  }
+  .product .modal .product-slider .slider img {
+    max-width: 120px;
+    max-height: 120px;
+  }
+}
 @media screen and (device-width: 320px) {
   .container {
     width: 100%;
