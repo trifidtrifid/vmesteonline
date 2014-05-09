@@ -99,7 +99,7 @@ define(
 
             });
 
-            $('.main-container').css('min-height', w.height()-45);
+            $('.main-container').css('min-height', w.height()-115);
 
         }
 
@@ -129,7 +129,7 @@ define(
             }
             /**/
 
-            $('.main-container').css('min-height', $(window).height()-45);
+            $('.main-container').css('min-height', $(window).height()-115);
 
             $('.sendConfirmCode').click(function(e){
                 e.preventDefault();

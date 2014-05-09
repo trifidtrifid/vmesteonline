@@ -652,7 +652,7 @@ define(
                         categoryModule.InitLoadCategory(0);
                     }
                     shopProducts.show(function(){
-                        //setSidebarHeight();
+                        setSidebarHeight();
                     });
                     state = {
                         type : 'default'

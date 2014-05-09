@@ -220,6 +220,8 @@ define(
                         orderProducts.slideToggle(200,function(){
                             if ($('.main-content').height() > $(window).height()){
                                 $('#sidebar, .shop-right').css('height', $('.main-content').height()+45);
+                            }else{
+                                $('#sidebar, .shop-right').css('height', '100%');
                             }
                         });
                         if ($(this).hasClass('fa-plus')){
