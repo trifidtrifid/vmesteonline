@@ -1,12 +1,3 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="java.util.List"%>
-<%@ page import="com.vmesteonline.be.Group"%>
-<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.google.appengine.api.users.UserService"%>
-<%@ page import="com.google.appengine.api.users.UserServiceFactory"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -45,18 +36,6 @@
                     <a href="#" class="remember-link">Забыли пароль ?</a>
                     <div class="error-info login-error"></div>
                 </div>
-<%--                <div class="set-new-password">
-                    <div>
-                        <label for="password">Новый пароль</label>
-                        <input type="password" id="newPassword"/>
-                    </div>
-                    <div>
-                        <label for="confirmCode">Код</label>
-                        <input type="text" id="confirmCode"/>
-                    </div>
-                    <button class="btn btn-primary btn-sm no-border useConfirmCode">Подтвердить</button>
-                    <button class="btn btn-primary btn-sm no-border sendConfirmCode">Получить код</button>
-                </div>--%>
                 <button id="go" class="btn-submit btn-sm no-border">Войти</button>
             </div>
         </form>
@@ -97,7 +76,6 @@
 <script src="/gen-js/userservice_types.js" type="text/javascript"></script>
 <script src="/gen-js/UserService.js" type="text/javascript"></script>
 <!-- --- -->
-<%--<script type="text/javascript" src="js/login.js"></script>--%>
 <script type="text/javascript" data-main="/js/shop.js" src="/js/require.js"></script>
 
 </body>

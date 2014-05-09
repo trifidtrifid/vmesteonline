@@ -118,7 +118,7 @@ public class StorageHelperTest extends StorageHelper {
 			}
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			StorageHelperTest.getFile(newImageUrl, baos);
+			StorageHelperTest.getFile(newImageUrl, baos, null);
 			baos.close();
 			ByteArrayInputStream is2 = new ByteArrayInputStream(baos.toByteArray());
 			
@@ -134,7 +134,7 @@ public class StorageHelperTest extends StorageHelper {
 			newImageUrl = StorageHelper.saveImage(origURL, asi.getCurrentUserId(), true, null);
 			
 			 baos = new ByteArrayOutputStream();
-			StorageHelperTest.getFile(newImageUrl, baos);
+			StorageHelperTest.getFile(newImageUrl, baos, null);
 			baos.close();
 			String content = new String(baos.toByteArray());
 			Assert.assertEquals(origURL, content);

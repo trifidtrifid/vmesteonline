@@ -30,7 +30,7 @@ define(
                     ordersProductsHtml += '<tr class="product" data-prepack="'+ orderLines[j].product.prepackRequired +'" data-productid="'+ orderLines[j].product.id +'">'+
                         '<td>'+
                         '<a href="#" class="product-link">'+
-                        '<div class="product-pic"><img src="'+ myPic +'" alt="картинка"/></div>'+
+                        '<div class="product-pic"><img src="'+ myPic + '?w=40&h=40" alt="'+ orderLines[j].product.name +'"/></div>'+
                         '<span>'+
                         '<span class="product-name">'+orderLines[j].product.name+'</span>'+
                         orderLines[j].product.shortDescr +
@@ -220,6 +220,8 @@ define(
                         orderProducts.slideToggle(200,function(){
                             if ($('.main-content').height() > $(window).height()){
                                 $('#sidebar, .shop-right').css('height', $('.main-content').height()+45);
+                            }else{
+                                $('#sidebar, .shop-right').css('height', '100%');
                             }
                         });
                         if ($(this).hasClass('fa-plus')){

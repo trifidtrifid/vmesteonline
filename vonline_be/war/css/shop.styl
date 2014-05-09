@@ -11,6 +11,14 @@ html
 body
   background #fff
   height 100%
+  //cursor progress
+  //cursor url(../i/wait1.png),wait
+  //cursor: url(images/sniper.cur), pointer;
+  //cursor url("../i/wait1.png")
+
+.wait
+  background red
+  cursor url(../i/wait1.png),wait
 
 a
   outline none !important
@@ -183,7 +191,11 @@ transform()
     .basket-bottom
       .btn
         float right
-        margin 15px 10px 0 0
+        margin 1px 10px 0 0
+      .refresh
+        float left
+        cursor pointer
+        margin 10px 0 0 5px
   .catalog-order
     max-height 320px
     overflow-y auto
@@ -477,6 +489,8 @@ th.next
     .order-products
       margin 10px 10px 0 0
       display none
+      .catalog
+        position static
     .order-edit
     .order-confirm
       font-size 12px
@@ -825,7 +839,11 @@ height 50px
   .main-content
     margin-right 0
   .catalog table tr td:first-child
+  .catalog-head table td:first-child
     width 450px
+  .catalog-head table td.td-basket
+    width 35px
+    padding-right 50px
 
 @media all and (max-width: 768px),screen and (device-width: 320px)
   .sidebar#sidebar
@@ -847,6 +865,24 @@ height 50px
     width 758px
     .main-content
       margin-left 0
+
+@media all and (max-width: 660px)
+  .product .modal
+    width 100%
+    left 0
+    margin-left 0
+    .modal-footer
+      width 100%
+      right 0
+      text-align center
+      >span
+        float left
+      .full-descr
+        clear both
+        margin-left -130px
+    .product-slider .slider img
+      max-width 120px
+      max-height 120px
 
 @media screen and (device-width: 320px)
    .container
@@ -961,6 +997,12 @@ height 50px
           display inline-block
           vertical-align middle
           margin-left 40px
+  .refresh
+    float right
+    cursor pointer
+    margin 10px 10px 0 0
+    clear right
+    font-size 14px
   .itogo-right
   .weight-right
     float right
@@ -1153,6 +1195,8 @@ height 50px
       text-decoration none
       color #000000
       cursor default
+    .catalog
+      position static
   .back-orders-top
     .form-group
       margin-right 565px
@@ -1179,6 +1223,11 @@ height 50px
     display none
   .import-show
     display none
+    .import-btn-top
+      float right
+      margin-top -5px
+      .import-btn
+        margin-bottom 0
     .import-btn
       margin-bottom 10px
     .import-field-dropdown
@@ -1191,8 +1240,8 @@ height 50px
         font-size 12px
         float none
     .import-table
-      overflow-x auto
-      overflow-y visible
+      /*overflow-x auto
+      overflow-y visible*/
       //position relative
       margin-bottom 10px
       &.y-overflow-hidden
@@ -1264,3 +1313,21 @@ height 50px
 .import
 .export
   display none
+
+#doublescroll { overflow: auto; overflow-y: hidden; }
+
+.loading
+  //background rgba(0, 0, 0, .05)
+  //opacity .1
+  position absolute
+  width 100%
+  height 100%
+  top 0
+  left 0
+  display none
+  img
+    width 50px
+    display block
+    position absolute
+    left 50%
+    top 50%

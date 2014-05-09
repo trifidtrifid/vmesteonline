@@ -1,9 +1,7 @@
 define(
     'shop-common',
-    ['jquery','flexslider','shop-initThrift','shop-basket','shop-spinner','shop-orders','bootstrap'],
-    function( $ ,flexsliderModule,thriftModule,basketModule,spinnerModule,ordersModule ){
-
-        //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
+    ['jquery','flexslider','shop-initThrift','shop-basket','shop-spinner','shop-orders','shop-category','bootstrap'],
+    function( $ ,flexsliderModule,thriftModule,basketModule,spinnerModule,categoryModule,ordersModule ){
 
         var noPhotoPic = "i/no-photo.png";
         // возвращает cookie с именем name, если есть, если нет, то undefined
@@ -172,22 +170,32 @@ define(
                 selector.click(function(e,isHistoryNav){
                     e.preventDefault();
 
+                    var  isOrdersHistory = ($(this).closest('.order-products').length) ? true : false,
+                        isCatalog = ($(this).closest('.catalog').length && !isOrdersHistory) ? true : false,
+                        isBasket = ($(this).closest('.catalog-order').length || $(this).closest('.catalog-confirm').length) ? true : false;
+
                     var productSelector = $(this).closest('.product'),
                     name= $(this).find('.product-name').text(),
                     productId = productSelector.data('productid');
+                    var imgArr = $(this).find('img').attr('src').split('?');
 
                     var product= {
                         name : name,
                         price : productSelector.find('.product-price').text(),
                         unitName: productSelector.find('.unit-name').text(),
-                        imageURL : $(this).find('img').attr('src')
+                        imageURL : imgArr[0]
                     };
 
-                    var productDetails = thriftModule.client.getProductDetails(productId);
-                    var imagesSet = productDetails.imagesURLset;
-                    var options = productDetails.optionsMap;
-                    var boolPrepackRequired = productSelector.data('prepack');
                     var currentModal = $(this).find('+.modal');
+                    var isModalWasOpen = currentModal.find('.modal-body').length;
+                    var boolPrepackRequired = productSelector.data('prepack');
+
+                    if (!isModalWasOpen){
+
+                        var productDetails = thriftModule.client.getProductDetails(productId);
+                        var imagesSet = productDetails.imagesURLset;
+                        var options = productDetails.optionsMap;
+
 
                     if(imagesSet.length){
                         //var oldHeight = currentModal.height();
@@ -274,14 +282,6 @@ define(
                         '</div>'+
                         '</div>';
 
-
-                    var isModalWasOpen = currentModal.find('.modal-body').length;
-
-                    var isCatalog = ($(this).closest('.catalog').length) ? true : false,
-                        isOrdersHistory = ($(this).closest('.order-products').length) ? true : false,
-                        isBasket = ($(this).closest('.catalog-order').length || $(this).closest('.catalog-confirm').length) ? true : false;
-
-                    if (!isModalWasOpen){
                         // если еще не открывали popup
                         currentModal.append(popupHtml);
                         var currentSpinnerValue,currentSpinnerStep;
@@ -326,7 +326,21 @@ define(
                         if(isBasket){
                             //если это popup для корзины
                             currentModal.find('.fa-shopping-cart').click(function(){
-                                currentModal.modal('hide');
+
+                                var orderId = $('.tab-pane.active').data('orderid');
+
+                                var fromModal = true;
+                                var packsObj = spinnerModule.singleSetOrderLine(productSelector,orderId,productId,fromModal);
+
+                                if(!packsObj.errorFlag){
+                                    var basketProductsContainer = ($(this).closest('.catalog-order').length) ?
+                                        $(this).closest('.catalog-order') : $(this).closest('.catalog-confirm');
+                                    spinnerModule.updateWeightAndAmount(orderId,basketProductsContainer,packsObj.updateInfo);
+
+                                    currentModal.modal('hide');
+                                }
+
+                                return false;
                             });
                         }
 
@@ -417,7 +431,6 @@ define(
             selector.find('.prepack-open').click(function(e){
                 e.preventDefault();
 
-                //var spinnerStep = $(this).parent().prev().find('.spinner1').data('step');
                 var spinnerStep = $(this).closest('.modal-footer').find('>.qnty .spinner1').data('step');
                 var isBasket = options.isBasket,
                     productSelector = options.productSelector,
@@ -443,11 +456,10 @@ define(
                 spinnerModule.InitSpinner(currentPrepackLine.find('.packs .spinner1'), 1,isBasket);
                 spinnerModule.InitSpinner(currentPrepackLine.find('.qnty .spinner1'), spinnerStep,isBasket,spinnerStep);
 
-                var addedPackVal = currentPrepackLine.find('.packs .ace-spinner').spinner('value');
-                var addedQntyVal = parseFloat(currentPrepackLine.find('.qnty .ace-spinner').spinner('value')).toFixed(1);
-                var qnty;
+                /*var addedPackVal = currentPrepackLine.find('.packs .ace-spinner').spinner('value');
+                var addedQntyVal = parseFloat(currentPrepackLine.find('.qnty .ace-spinner').spinner('value')).toFixed(1);*/
 
-                if (isBasket){
+                /*if (isBasket){
                     //если мы в корзине
                     // нужно сделать setOrderLine
                     var orderId = $('.tab-pane.active').data('orderid'),
@@ -473,9 +485,12 @@ define(
                         packs[addedQntyVal] = addedPackVal;
 
                         thriftModule.client.setOrderLine(orderId,productId,qnty,'',packs);
+
                         productSelector.find('.td-spinner .ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
-                        var sum = qnty*productSelector.find('.td-price').text();
+
+                    var sum = qnty*productSelector.find('.td-price').text();
                         productSelector.find('.td-summa').text(sum.toFixed(1));
+
                         $('.itogo-right span').text(countAmount($('.catalog-order'),0));
                     }
                 }else{
@@ -483,8 +498,17 @@ define(
                     qnty = productSelector.find('.td-spinner .ace-spinner').spinner('value');
                     qnty += addedPackVal*addedQntyVal;
                     productSelector.find('.td-spinner .ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
-                }
-                productSelector.find('.td-spinner .ace-spinner').spinner('disable');
+                }*/
+
+                /*var qnty = productSelector.find('.td-spinner .ace-spinner').spinner('value');
+                qnty += addedPackVal*addedQntyVal*/
+
+                /*var sum = qnty*productSelector.find('.td-price').text();
+                productSelector.find('.td-summa').text(sum.toFixed(1));
+                productSelector.find('.td-spinner .ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));*/
+
+                //productSelector.find('.td-spinner .ace-spinner').spinner('disable');
+
                 spinnerModule.initRemovePrepackLine(currentPrepackLine.find('.prepack-item .remove-prepack-line'),productId,productSelector);
                 currentPrepackLine.removeClass('no-init');
 
@@ -519,13 +543,22 @@ define(
 
         function countAmount(sel,orderDetails){
             try{
-                var summa = 0;
+                /*var summa = 0;
                 sel.find('.td-summa').each(function(){
                     summa += parseFloat($(this).text());
-                });
+                });*/
                 var orderId = $('.tab-pane.active').data('orderid');
 
                 var myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
+                var summa = myOrderDetails.totalCost;
+
+                if(!summa){
+                    summa = 0;
+                    sel.find('.td-summa').each(function(){
+                        summa += parseFloat($(this).text());
+                    });
+                }
+
                 summa += myOrderDetails.deliveryCost;
             }catch(e){
                 //alert(e+" Функция countAmount");
@@ -595,8 +628,6 @@ define(
         function setCatalogTopOffset(){
             var catalogTop = $('.shop-products .form-group').height()+$('.shop-menu').height()+$('.catalog-head').height()+$('.navbar').height();
             var catalogBottom = $('.wrap footer').height();
-            //alert($('.shop-products .form-group').height()+" "+$('.shop-menu').height()+" "+$('.catalog-head').height()+" "+$('.navbar').height());
-            //alert(catalogTop+" "+catalogBottom);
             var h = $(window).height() - catalogTop - catalogBottom-30;
             $('.catalog').css('height',h);
         }
@@ -610,14 +641,20 @@ define(
                 var state;
 
                 if($(this).hasClass('back-to-shop')){
-                        shopOrders.hide();
-                        $('.shop-confirm').hide();
-                        $('.main-container-inner').show();
-                        $('.navbar .nav li.active').removeClass('active');
-                        $('.navbar .nav li:eq(0)').addClass('active');
-                        $('.shop-products').show(function(){
-                            setSidebarHeight();
-                        });
+                    shopOrders.hide();
+                    $('.shop-confirm').hide();
+                    $('.main-container-inner').show();
+                    $('.navbar .nav li.active').removeClass('active');
+                    $('.navbar .nav li:eq(0)').addClass('active');
+                    var shopProducts = $('.shop-products');
+                    if(shopProducts.find('.shop-menu .shopmenu-back').length){
+                        // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
+                        var categoryModule = require('shop-category');
+                        categoryModule.InitLoadCategory(0);
+                    }
+                    shopProducts.show(function(){
+                        setSidebarHeight();
+                    });
                     state = {
                         type : 'default'
                     };

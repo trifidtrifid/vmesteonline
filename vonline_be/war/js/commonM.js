@@ -99,7 +99,7 @@ define(
 
             });
 
-            $('.main-container').css('min-height', w.height()-45);
+            $('.main-container').css('min-height', w.height()-115);
 
         }
 
@@ -110,7 +110,12 @@ define(
                 $('.page').hide();
 
                 $('.shop-editPersonal').load("ajax/ajax-editPersonal.jsp .dynamic",function(){
+                    $('.loading').show(0);
+
                     SetJSForEditPersonal();
+
+                    $('.loading').hide(0);
+
                 }).show();
             });
 
@@ -129,7 +134,7 @@ define(
             }
             /**/
 
-            $('.main-container').css('min-height', $(window).height()-45);
+            $('.main-container').css('min-height', $(window).height()-115);
 
             $('.sendConfirmCode').click(function(e){
                 e.preventDefault();

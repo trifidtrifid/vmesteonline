@@ -53,6 +53,8 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
         modules.spinnerModule.initProductsSpinner();
 
+
+        /* history */
         var urlHash = document.location.hash;
 
         var state = {
@@ -67,6 +69,18 @@ require(["jquery",'shop-modules','commonM','loginModule'],
                 var hashParts = urlHash.split('=');
                 modules.shopCommonModule.identificateModal(hashParts[1]);
 
+            }else if (urlHash.indexOf('cat=') != -1){
+                // значит категория
+                var categoriesHistory = urlHash.split(';');
+                var categoriesHistoryLength = categoriesHistory.length;
+                for(var i = 0; i < categoriesHistoryLength; i++){
+                    hashParts = categoriesHistory[i].split('=');
+                    $('.shop-menu li').each(function(){
+                        if($(this).data('catid') == hashParts[1]){
+                            $(this).find('a').trigger('click');
+                        }
+                    });
+                }
             }else if (urlHash == '#orders-history'){
 
                 $('.shop-trigger.go-to-orders').trigger('click');
@@ -92,11 +106,37 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         function makeHistoryNav(e){
             // действия для корректной навигации по истории
             var isHistoryNav = true;
-            //alert('makeHistory '+e.state.locationModal);
+            //alert('makeHistory '+e.state.type+" "+e.state.categoriesHash);
             if(e.state){
                 if(e.state.type == 'modal'){
 
+                    $('.page').hide();
+                    $('.page.main-container-inner').show();
+                    $('.shop-orders').hide();
+                    $('.shop-products').show();
                     modules.shopCommonModule.identificateModal(e.state.productid,isHistoryNav);
+
+                }else if(e.state.type == 'category'){
+
+                    $('.page').hide();
+                    $('.page.main-container-inner').show();
+                    $('.shop-orders').hide();
+                    $('.shop-products').show();
+                    modules.categoryModule.LoadCategoryByURLHash(e.state.categoriesHash);
+                    /*var categoriesHistory = e.state.categoriesHash.split(';');
+                    var categoriesHistoryLength = categoriesHistory.length;
+                    var prevCategoryIndexPos = categoriesHistoryLength - 1;
+                    var prevCategoryIndex;
+
+                    if (prevCategoryIndexPos < 0){
+                        // загружаем корневую
+                        prevCategoryIndex = 0;
+                    }else{
+                        // загружаем родителя
+                        var hashParts = categoriesHistory[prevCategoryIndexPos].split('=');
+                        prevCategoryIndex = hashParts[1];
+                    }
+                    modules.categoryModule.InitLoadCategory(prevCategoryIndex);*/
 
                 }else if(e.state.type == 'page'){
 
@@ -122,9 +162,12 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
                     $('.shop-trigger.back-to-shop').trigger('click',[isHistoryNav]);
                     $('.modal.in .close').trigger('click',[isHistoryNav]);
+                    //modules.categoryModule.InitLoadCategory(0);
                 }
             }
         }
+
+        /* --- */
 
     /* простые обработчики событий */
         loginModule.initLogin();
@@ -173,6 +216,11 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
         $('.login-link').click(function(){
             $('.modal-login').modal();
+        });
+
+        $('.navbar-brand').click(function(){
+           $('.back-to-shop a').trigger('click');
+            return false;
         });
 
     }catch(e){

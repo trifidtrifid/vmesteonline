@@ -626,7 +626,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		if (null != dataUrl) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try {
-				StorageHelper.getFile(dataUrl, baos);
+				StorageHelper.getFile(dataUrl, baos, null);
 				baos.close();
 			} catch (IOException e) {
 				throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read data from URL:" + dataUrl + ". " + e.getLocalizedMessage());
@@ -764,6 +764,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			List<List<String>> toFieldsData = new ArrayList<List<String>>();
 			
 			for (VoOrder voOrder : olist) {
+				
+				if( voOrder.getStatus() != OrderStatus.CONFIRMED )
+					continue;
 				
 				OrderDescription od = new OrderDescription();
 				od.orderId = voOrder.getId();
@@ -1273,7 +1276,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	public MatrixAsList parseCSVfile(String url) throws InvalidOperation, TException {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			StorageHelper.getFile(url, baos);
+			StorageHelper.getFile(url, baos, null);
 			baos.close();
 			List<List<String>> matrix = CSVHelper.parseCSV(baos.toByteArray(), null, null, null);
 			int rowSize = 0;

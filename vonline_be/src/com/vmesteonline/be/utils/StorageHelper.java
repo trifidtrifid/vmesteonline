@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +31,7 @@ import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
+import com.vmesteonline.be.jdo2.VoFileAccessRecord.VersionCreator;
 
 public class StorageHelper {
 
@@ -93,7 +95,7 @@ public class StorageHelper {
 				is = new ByteArrayInputStream(urlOrContent);
 				fname = (null==fileName || 0 == fileName.trim().length()) ? 
 						numberToString((long) (Math.random() * Long.MAX_VALUE)) : 
-							URLEncoder.encode(fileName);
+							URLEncoder.encode(fileName,"UTF-8");
 			}
 
 			return saveImage(fname, contentType, ownerId, isPublic, is, _pm);
@@ -124,7 +126,7 @@ public class StorageHelper {
 					userId = oldFile.getUserId();
 				if (null == isPublic)
 					isPublic = oldFile.isPublic();
-				deleteImage(oldFile.getFileName());
+				deleteImage(oldFile.getGSFileName());
 			} catch (JDOObjectNotFoundException onfe) {
 			}
 			return saveImage(urlOrContent, userId, isPublic, pm);
@@ -155,13 +157,14 @@ public class StorageHelper {
 	}
 
 	// ===================================================================================================================
-	public static boolean getFile(String url, OutputStream os) throws IOException {
+	public static boolean getFile(String url, OutputStream os, Map<String, String[]> params) throws IOException {
 		long oldFileId = getFileId(url);
 		PersistenceManager pm = PMF.getPm();
 		try {
 			try {
 				VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
-				getFile(vfar.getFileName(), os);
+				VoFileAccessRecord version = vfar.getVersion( params, pm );
+				getFile( (version == null ? vfar : version).getGSFileName(), os);
 				return true;
 			} catch (JDOObjectNotFoundException onfe) {
 				return false;
@@ -173,15 +176,17 @@ public class StorageHelper {
 
 	// ===================================================================================================================
 	public static void sendFileResponse(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		logger.fine("Got request: URL:"+req.getQueryString());
 		long oldFileId = getFileId(req.getRequestURI());
 		PersistenceManager pm = PMF.getPm();
 		try {
 			try {
 				VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
 				resp.setStatus(HttpServletResponse.SC_OK);
-				resp.setContentType(vfar.getContentType()+"; filename='"+vfar.getFileName().getObjectName()+"'");
-				resp.addHeader( "Content-Disposition", "attachment; filename="+vfar.getFileName().getObjectName());
-				getFile(vfar.getFileName(), resp.getOutputStream());
+				resp.setContentType(vfar.getContentType()+"; filename='"+vfar.getFileName()+"'");
+				resp.addHeader( "Content-Disposition", "attachment; filename="+vfar.getFileName());
+				VoFileAccessRecord theVersion = vfar.getVersion( req.getParameterMap(), pm);
+				getFile( theVersion.getGSFileName(), resp.getOutputStream());
 			} catch (JDOObjectNotFoundException onfe) {
 				resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not Found");
 			}
@@ -192,7 +197,7 @@ public class StorageHelper {
 
 	// ===================================================================================================================
 
-	private static void getFile(GcsFilename fileName, OutputStream outputStream) throws IOException {
+	public static void getFile(GcsFilename fileName, OutputStream outputStream ) throws IOException {
 		GcsInputChannel readChannel = gcsService.openPrefetchingReadChannel(fileName, 0, BUFFER_SIZE);
 		StorageHelper.streamCopy(Channels.newInputStream(readChannel), outputStream);
 	}
@@ -209,19 +214,22 @@ public class StorageHelper {
 			if (null == _pm)
 				pm.close();
 		}
-		GcsOutputChannel outputChannel = null;
 		try {
-			outputChannel = gcsService.createOrReplace(vfar.getFileName(), GcsFileOptions.getDefaultInstance());
-			streamCopy(is, Channels.newOutputStream(outputChannel));
+			saveFileData(is, vfar);
 			int liop; // append with '.bin' extension if no extension is set
 			String url = getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? 
-					(contentType.equals("binary/stream") ? "dat" : new ContentType(contentType).getSubType()) : fileName.substring(liop + 1));
-			logger.log(Level.FINEST, "File '" + fileName + "' stored with GSNAme:" + vfar.getFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
+					(contentType.equals("binary/stream") ? "dat" : new ContentType(vfar.getContentType()).getSubType()) : fileName.substring(liop + 1));
+			logger.log(Level.FINEST, "File '" + vfar.getFileName() + "' stored with GSNAme:" + vfar.getGSFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
 			return url;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IOException("Failed to save file. " + e.getMessage(), e);
 		}
+	}
+
+	public static void saveFileData(InputStream is, VoFileAccessRecord vfar) throws IOException {
+		GcsOutputChannel outputChannel = gcsService.createOrReplace(vfar.getGSFileName(), GcsFileOptions.getDefaultInstance());
+		streamCopy(is, Channels.newOutputStream(outputChannel));
 	}
 
 	// =====================================================================================================================
@@ -232,7 +240,7 @@ public class StorageHelper {
 		try {
 			try {
 				VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
-				deleteImage(oldFile.getFileName());
+				deleteImage(oldFile.getGSFileName());
 				return true;
 			} catch (JDOObjectNotFoundException onfe) {
 				return false;
@@ -278,6 +286,21 @@ public class StorageHelper {
 	public static long stringToNumber(String str) {
 		str = str.replace("_", "/") + "=";
 		return new BigInteger(Base64.decode(str)).longValue();
+	}
+//===================================================================================================================
+
+	public static VersionCreator getVersionCreator(VoFileAccessRecord orig, ContentType ct, PersistenceManager pm) {
+		if( ct.getPrimaryType().equalsIgnoreCase("image"))
+			return new ImageConverterVersionCreator(orig,ct,pm);
+		
+		final VoFileAccessRecord original = orig;
+		//create default creator that just returns the original 
+		return new VersionCreator( ) {
+			@Override
+			public VoFileAccessRecord createParametrizedVersion(Map<String, String[]> params, boolean createIfNotExists) {
+				return original;
+			}
+		};
 	}
 
 }

@@ -7,6 +7,10 @@ body {
   background: #fff;
   height: 100%;
 }
+.wait {
+  background: #f00;
+  cursor: url("../i/wait1.png"), wait;
+}
 a {
   outline: none !important;
 }
@@ -181,7 +185,12 @@ footer .footer-menu li {
 }
 .shop-right .tabs-days .basket-bottom .btn {
   float: right;
-  margin: 15px 10px 0 0;
+  margin: 1px 10px 0 0;
+}
+.shop-right .tabs-days .basket-bottom .refresh {
+  float: left;
+  cursor: pointer;
+  margin: 10px 0 0 5px;
 }
 .shop-right .catalog-order {
   max-height: 320px;
@@ -543,6 +552,9 @@ th.next,
 .shop-orders .order-item .order-products {
   margin: 10px 10px 0 0;
   display: none;
+}
+.shop-orders .order-item .order-products .catalog {
+  position: static;
 }
 .shop-orders .order-item .order-edit,
 .shop-orders .order-item .order-confirm {
@@ -974,8 +986,13 @@ height 50px
   .main-content {
     margin-right: 0;
   }
-  .catalog table tr td:first-child {
+  .catalog table tr td:first-child,
+  .catalog-head table td:first-child {
     width: 450px;
+  }
+  .catalog-head table td.td-basket {
+    width: 35px;
+    padding-right: 50px;
   }
 }
 @media all and (max-width: 768px),screen and (device-width: 320px) {
@@ -1009,6 +1026,29 @@ height 50px
   }
   .container .main-content {
     margin-left: 0;
+  }
+}
+@media all and (max-width: 660px) {
+  .product .modal {
+    width: 100%;
+    left: 0;
+    margin-left: 0;
+  }
+  .product .modal .modal-footer {
+    width: 100%;
+    right: 0;
+    text-align: center;
+  }
+  .product .modal .modal-footer >span {
+    float: left;
+  }
+  .product .modal .modal-footer .full-descr {
+    clear: both;
+    margin-left: -130px;
+  }
+  .product .modal .product-slider .slider img {
+    max-width: 120px;
+    max-height: 120px;
   }
 }
 @media screen and (device-width: 320px) {
@@ -1151,6 +1191,13 @@ height 50px
   display: inline-block;
   vertical-align: middle;
   margin-left: 40px;
+}
+.confirm-order .refresh {
+  float: right;
+  cursor: pointer;
+  margin: 10px 10px 0 0;
+  clear: right;
+  font-size: 14px;
 }
 .confirm-order .itogo-right,
 .confirm-order .weight-right {
@@ -1390,6 +1437,9 @@ height 50px
   color: #000;
   cursor: default;
 }
+.backoffice .order-products .catalog {
+  position: static;
+}
 .backoffice .back-orders-top .form-group {
   margin-right: 565px;
 }
@@ -1421,6 +1471,13 @@ height 50px
 .import .import-show {
   display: none;
 }
+.import .import-show .import-btn-top {
+  float: right;
+  margin-top: -5px;
+}
+.import .import-show .import-btn-top .import-btn {
+  margin-bottom: 0;
+}
 .import .import-show .import-btn {
   margin-bottom: 10px;
 }
@@ -1436,8 +1493,8 @@ height 50px
   float: none;
 }
 .import .import-show .import-table {
-  overflow-x: auto;
-  overflow-y: visible;
+/*overflow-x auto
+      overflow-y visible*/
   margin-bottom: 10px;
 }
 .import .import-show .import-table.y-overflow-hidden {
@@ -1520,4 +1577,23 @@ height 50px
 .import,
 .export {
   display: none;
+}
+#doublescroll {
+  overflow: auto;
+  overflow-y: hidden;
+}
+.loading {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: none;
+}
+.loading img {
+  width: 50px;
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
 }
