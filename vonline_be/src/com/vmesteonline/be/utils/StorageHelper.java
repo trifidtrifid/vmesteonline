@@ -176,6 +176,7 @@ public class StorageHelper {
 
 	// ===================================================================================================================
 	public static void sendFileResponse(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		logger.fine("Got request: URL:"+req.getQueryString());
 		long oldFileId = getFileId(req.getRequestURI());
 		PersistenceManager pm = PMF.getPm();
 		try {

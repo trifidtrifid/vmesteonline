@@ -765,6 +765,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 			for (VoOrder voOrder : olist) {
 				
+				if( voOrder.getStatus() != OrderStatus.CONFIRMED )
+					continue;
+				
 				OrderDescription od = new OrderDescription();
 				od.orderId = voOrder.getId();
 				od.date = new Date( ((long)date) * 1000L ).toString();

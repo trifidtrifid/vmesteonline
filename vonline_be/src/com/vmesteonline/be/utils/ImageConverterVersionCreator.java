@@ -51,6 +51,7 @@ public class ImageConverterVersionCreator implements VersionCreator {
 		String versionKey = "image:"+widthDigitsStr+"x"+heightDigitsStr;
 		VoFileAccessRecord version = original.getVersion(versionKey);
 		
+		logger.debug("Image '"+original.getFileName()+"' with scale to "+widthDigitsStr+"x"+heightDigitsStr+" requested");
 		if( version == null && createIfNotExists ) {
 			GcsFilename fileName = original.getGSFileName();
 /*			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
