@@ -440,6 +440,9 @@
         </div>
     </footer>
     </div>
+    <div class="loading">
+        <img src="i/loading.gif" alt="загрузка">
+    </div>
 	<!-- общие библиотеки -->
 	<%--<script src="js/lib/jquery-2.0.3.min.js"></script>--%>
 	<%--<script src="js/lib/bootstrap.js"></script>--%>

@@ -160,6 +160,7 @@ define(
 					$('.shop-menu li a').click(
                         function(e) {
                             e.preventDefault();
+
                             var isReturnBtn = $(this).hasClass('shopmenu-back');
                             var categoryid = $(this).parent().data('catid');
                             var urlHash = document.location.hash,
@@ -220,6 +221,7 @@ define(
                                 categoriesHash: categoriesHash
                             };
                             window.history.pushState(state,null,'shop.jsp'+categoriesHash);
+
                         });
 				} catch (e) {
 					alert(e + " Функция InitClickOnCategory");

@@ -59,7 +59,9 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
         var day = 3600*24;
 
         function showAllOrders(){
+            try{
             var orders = thriftModule.client.getOrdersByStatus(0,nowTime+180*day,0);
+
             $('.orders-list').html("").append(createOrdersHtml(orders));
 
             var ordersNoInit = $('.orders-no-init');
@@ -70,6 +72,9 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             statusFilterFlag = 0;
             dateFilterFlag = 0;
             searchFilterFlag = 0;
+            }catch(e){
+
+            }
         }
         showAllOrders();
 
@@ -270,6 +275,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
         }
 
 
+        try{
         var dPicker = $('#date-picker-1');
         var dPickerExport = $('.datepicker-export');
 
@@ -302,6 +308,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             $('#back-search').val('Поиск по имени клиента или номеру телефона');
             dPicker.val('Фильтр по дате');
         });
+        }catch(e){}
 
         /* сброс */
         $('#date-picker-2,#date-picker-3,#date-picker-4').val('Фильтр по дате');
@@ -611,6 +618,9 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                      },*/
                     success: function(html) {
                         fileUrl = html;
+
+                        $('.loading').show(0);
+
                         var matrixAsList = thriftModule.clientBO.parseCSVfile(fileUrl);
                         elems = matrixAsList.elems;
                         rowCount = matrixAsList.rowCount;
@@ -729,6 +739,8 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             //currentDropdown.find('.btn-group-text').text(fieldName).closest('.btn').dataset.fieldtype = fieldType;
                             //alert(currentDropdown.find('.btn-group-text').text(fieldName).closest('.btn').data('fieldtype'));
                         });
+
+                        $('.loading').hide(0);
                     }
                 });
 
@@ -846,7 +858,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             e.preventDefault();
             //$('.container').css({'cursor': 'url(../i/wait1.png),wait'});
             //$('.container').addClass('wait');
-            //alert('1');
+            $('.loading').show(0);
 
             var dropdowns = $('.import-field-dropdown');
             var dropdownLength = dropdowns.length;
@@ -918,6 +930,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
                     //alert('1');
                     thriftModule.clientBO.importData(dataSet);
+                    $('.loading').hide(0);
                     //alert('2');
                     //$('.container').css('cursor','default');
                     confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();

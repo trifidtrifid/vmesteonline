@@ -428,7 +428,9 @@
         <div class="page shop-editPersonal"></div>
 
     </div>
-
+    <div class="loading">
+        <img src="i/loading.gif" alt="загрузка">
+    </div>
 </div>
 <!-- общие библиотеки -->
 
