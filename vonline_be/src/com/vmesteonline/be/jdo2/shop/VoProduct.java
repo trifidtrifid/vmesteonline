@@ -553,4 +553,9 @@ public class VoProduct {
 	public Long getImportId() {
 		return importId;
 	}
+
+	public String getUnitName() {
+		return unitName;
+	}
+	
 }

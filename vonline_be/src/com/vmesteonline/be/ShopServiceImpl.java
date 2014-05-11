@@ -1,8 +1,12 @@
 package com.vmesteonline.be;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +57,7 @@ import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.shop.ShopFEService;
+import com.vmesteonline.be.utils.EMailHelper;
 import com.vmesteonline.be.utils.VoHelper;
 //import com.google.api.client.util.Sets;
 
@@ -398,11 +403,76 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			currentOrder.setStatus(OrderStatus.CONFIRMED);
 			if( null!=comment ) currentOrder.setComment(comment);
 			// unset current order
+			sendConfirmationMessage( currentOrder, pm );
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0);
 			pm.makePersistent(currentOrder);
 			return currentOrder.getId();
 		} finally {
 			pm.close();
+		}
+	}
+
+	private void sendConfirmationMessage(VoOrder currentOrder, PersistenceManager pm) {
+		
+		//create OrderDescriptionHTML
+		
+		VoShop shop = pm.getObjectById(VoShop.class, currentOrder.getShopId());
+		VoUser shopOwner = pm.getObjectById(VoUser.class, shop.getOwnerId());
+		VoUser customer = currentOrder.getUser();
+		
+		String htmlBody = "<!DOCTYPE html><html><head><style>table, th, td{ border-collapse:collapse;border:1px solid black;}"
+				+ "th, td{padding:5px;}</style></head><body>";
+		htmlBody += "<h2>Заказ от <a href=\"mailto:"+customer.getEmail()+"\">"+customer.getName() +" "+customer.getLastName() +" "+"</a></h2>";
+		htmlBody += "<p>Номер заказа: "+ currentOrder.getId()+" </p>";
+		htmlBody += "<br/>Дата реализации: "+ new SimpleDateFormat("yyyy-MM-dd").format(new Date((long)currentOrder.getDate() * 1000L));
+		htmlBody += "<br/>Стоимость доставки: "+ currentOrder.getTotalCost()+" руб";
+		htmlBody += "<br/>Вес: "+ currentOrder.getWeightGramm()/1000+" кг";
+		htmlBody += "<br/>Контактный номер: "+customer.getMobilePhone();
+		htmlBody += "<br/>"+(currentOrder.getDelivery() == DeliveryType.SELF_PICKUP ? "Самовывоз" : "Доставка: " + currentOrder.getDeliveryTo().getAddressText(pm));
+		
+		String comment = currentOrder.getComment();
+		if( null!= comment && comment.trim().length() > 0)
+			htmlBody += "<br/>Коментарий: "+comment;
+		
+		htmlBody += "<br/><table><caption>Состав заказа</caption>";
+		htmlBody += "<tr><th>Код товара</th><th>Производитель</th><th>Наименование</th><th>Кол-во</th><th>Развес</th><th>Стоимость</th><th>Комментарий</th></tr>";
+		for (Long lineId: currentOrder.getOrderLines().values()) {
+			VoOrderLine orderLine = pm.getObjectById(VoOrderLine.class, lineId);
+			VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProductId());
+			VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducer());
+		
+			htmlBody += "<tr>";
+			htmlBody += "<td>" + product.getImportId() + "</td>";
+			htmlBody += "<td>" + producer.getName() + "</td>";
+			htmlBody += "<td>" + product.getName() + "</td>";
+			htmlBody += "<td>" + orderLine.getQuantity()+" "+product.getUnitName()+"</td>";
+			if( product.isPrepackRequired() && null!=orderLine.getPackets() && orderLine.getPackets().size() > 0 ){
+				String packets = "";
+				for( Entry<Double,Integer> packE : orderLine.getPackets().entrySet() )
+					packets += packE.getKey() + " x " + packE.getValue()+"; ";
+				htmlBody += "<td>" + packets + "</td>";
+			} else {
+				htmlBody += "<td>-</td>";
+			}
+			htmlBody += "<td>" + orderLine.getPrice() + "</td>";
+			htmlBody += "<td>" + null == orderLine.getComment() ? "-" : orderLine.getComment() + "</td>";
+			htmlBody += "</tr>";
+		}
+		htmlBody += "</table></html>";
+		
+		htmlBody += "<p>Спасибо за ваш заказ!</p>";
+		htmlBody += "--</br>"+shop.getName()+"<br/>";
+		if( null!=shopOwner.getMobilePhone()) 
+			htmlBody += "Вопросы по тел.:"+shopOwner.getMobilePhone()+"<br/>";
+		htmlBody += "mailto:"+shopOwner.getEmail()+"<br/>";
+		
+		String subject = shop.getName() + " Заказ# "+currentOrder.getId()+ " Подтвержден.";
+		try {
+			EMailHelper.sendSimpleEMail( customer.getEmail(), subject, htmlBody);
+			EMailHelper.sendSimpleEMail( shopOwner.getEmail(), subject, htmlBody);
+		} catch (IOException e) {
+			logger.error("FAiled to send Email : "+subject+" Reason: "+e);
+			e.printStackTrace();
 		}
 	}
 
