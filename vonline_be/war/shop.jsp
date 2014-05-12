@@ -157,6 +157,7 @@
                     <div class="hide-right">×</div>
                     <div class="sidebar-title">
                     </div>
+                    div.
 
                 </aside>
                 <div class="main-content">

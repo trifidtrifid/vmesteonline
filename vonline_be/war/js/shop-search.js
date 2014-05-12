@@ -21,7 +21,7 @@ define(
             if($('.login-page').length == 0) {
                 /*var shopArray = thriftModule.client.getShops();
                 var currentShop = thriftModule.client.getShop(shopArray[0].id);*/
-                var currentShopID =$('.main-container.shop').attr('id'); 
+                var currentShopID =$('.main-container.shop').attr('id');
 
                 var arr = thriftModule.client.getProductsByCategories(currentShopID);
                 var arrLength = arr.length;

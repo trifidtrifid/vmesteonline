@@ -116,7 +116,6 @@ define(
 				basketModule.InitAddToBasket($('.fa-shopping-cart'));
 				InitClickOnCategory();
 				commonModule.setSidebarHeight();
-                commonModule.setCatalogTopOffset();
             }
 
             function LoadCategoryByURLHash(URLHash){

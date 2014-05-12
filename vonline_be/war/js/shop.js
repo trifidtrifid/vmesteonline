@@ -31,12 +31,13 @@ require.config({
 
 require(["jquery",'shop-modules','commonM','loginModule'],
     function($,modules,commonM,loginModule) {
-        modules.shopCommonModule.setCatalogTopOffset();
+        //modules.shopCommonModule.setCatalogTopOffset();
 
         if(globalUserAuth){
             modules.shopCommonModule.initBasketInReload();
-            var catalogHeight = $('.catalog').height();
-            $('.catalog-order').css('max-height',catalogHeight-100)
+            var catalogHeight = $(window).height() - $('.navbar').height() - $('footer').height();
+
+            $('.catalog-order').css('max-height',catalogHeight-215)
         }
         modules.categoryModule.InitClickOnCategory();
         // переключение между категориями

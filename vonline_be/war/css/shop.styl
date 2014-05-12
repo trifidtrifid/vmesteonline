@@ -32,9 +32,8 @@ footer
   background #fff
   width 100%
   bottom 0
+  border-top 1px solid #ccc
   .container
-    border 1px solid #ccc
-    border-bottom 0
     padding 10px 0
   .footer-menu
     ul
@@ -76,6 +75,9 @@ transform()
   height 100%
 
 .navbar
+  position fixed
+  left 0
+  width 100%
   a.navbar-brand
     padding 0
   img
@@ -143,6 +145,7 @@ transform()
 .shop
   border-left 1px solid #ccc
   border-right 1px solid #ccc
+  margin-top 45px
 
 .main-content
   margin-right 480px
@@ -154,8 +157,10 @@ transform()
   position relative
 
 .shop-right
-  float right
+  position fixed
+  height 100%
   width 470px
+  margin-top -45px
   //width 30%
   border 0
   border-left 1px solid #ccc
@@ -169,7 +174,7 @@ transform()
   .hide-right
     display none
   .tabs-days
-    margin-top 84px
+    margin-top 129px
     text-align center
     .nav span
       display block
@@ -389,7 +394,6 @@ th.next
 
 .catalog
   overflow auto
-  position absolute
   width 100%
   table
     width 100%
@@ -1183,6 +1187,7 @@ height 50px
 .backoffice .main-content
   margin-left 200px
   margin-right 0
+  margin-top 45px
 
 .backoffice
   .plus-minus

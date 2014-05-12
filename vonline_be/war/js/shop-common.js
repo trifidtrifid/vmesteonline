@@ -625,12 +625,12 @@ define(
             }
         }
 
-        function setCatalogTopOffset(){
+        /*function setCatalogTopOffset(){
             var catalogTop = $('.shop-products .form-group').height()+$('.shop-menu').height()+$('.catalog-head').height()+$('.navbar').height();
             var catalogBottom = $('.wrap footer').height();
             var h = $(window).height() - catalogTop - catalogBottom-30;
             $('.catalog').css('height',h);
-        }
+        }*/
 
         $('.shop-trigger').click(function(e,isHistoryNav){
             e.preventDefault();
@@ -755,8 +755,7 @@ define(
             isValidEmail: isValidEmail,
             changeShortUserInfo: changeShortUserInfo,
             getOrderWeight: getOrderWeight,
-            identificateModal: identificateModal,
-            setCatalogTopOffset: setCatalogTopOffset
+            identificateModal: identificateModal
         }
     }
 );
