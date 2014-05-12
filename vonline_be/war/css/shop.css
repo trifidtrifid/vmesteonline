@@ -995,7 +995,7 @@ height 50px
     padding-right: 50px;
   }
 }
-@media all and (max-width: 768px),screen and (device-width: 320px) {
+@media all and (max-width: 768px), screen and (device-width: 320px) {
   .sidebar#sidebar {
     margin-left: -190px;
   }
@@ -1596,10 +1596,4 @@ height 50px
   position: absolute;
   left: 50%;
   top: 50%;
-}
-.mypic {
-  background: url("../i/sprite.png");
-  background-position: 0 0;
-  width: 40px;
-  height: 40px;
 }
