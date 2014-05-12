@@ -132,9 +132,6 @@ define(
 
         commonModule.changeShortUserInfo();
         $('.user-info').after('<i class="icon-caret-down"></i>');
-        /*var shortUserInfo = thriftModule.userClient.getShortUserInfo();
-        var shortUserInfoHtml =  shortUserInfo.firstName +' '+ shortUserInfo.lastName;
-        $('.user-info').html(shortUserInfoHtml).after('<i class="icon-caret-down"></i>');*/
 
         var dropdownToggle = $('.dropdown-toggle');
         dropdownToggle.removeClass('no-login');
@@ -149,6 +146,7 @@ define(
         basketModule.callbacks.fire(basketModule.selectorForCallbacks);
         basketModule.callbacks.empty();
     }
+
     }
         return {initLogin: initLogin}
     }

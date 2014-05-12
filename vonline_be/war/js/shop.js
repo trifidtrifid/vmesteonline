@@ -8,7 +8,6 @@ require.config({
         "ace_elements": "lib/ace-elements.min",
         "flexslider": "lib/jquery.flexslider-min",
         "jquery_ui": "lib/jquery-ui-1.10.3.full.min"
-        //"uriAnchor": "lib/jquery.uriAnchor"
     },
     shim:{
       'ace_spinner':{
@@ -22,11 +21,7 @@ require.config({
     'bootstrap':{
         deps: ['jquery'],
         exports: 'bootstrap'
-    },/*
-    'uriAnchor':{
-        deps: ['jquery'],
-        exports: 'uriAnchor'
-    },*/
+    },
     'flexslider':{
         deps: ['jquery'],
         exports: 'flexslider'
@@ -193,6 +188,14 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         hideRight.click(function(){
             $(this).parent().animate({'right':'-470px'},200);
             showRight.animate({'right':'-28px'},200).removeClass('active');
+        });
+
+        $('.user-short a').click(function(e){
+            e.preventDefault();
+
+            if($(this).hasClass('no-login')){
+                modules.shopCommonModule.openModalAuth();
+            }
         });
 
         $('.dropdown-menu li a').click(function(e){
