@@ -165,7 +165,7 @@ footer .footer-menu li {
   display: none;
 }
 .shop-right .tabs-days {
-  margin-top: 129px;
+  margin-top: 109px;
   text-align: center;
 }
 .shop-right .tabs-days .nav span {
@@ -383,11 +383,11 @@ th.next,
 .shop-menu ul li {
   list-style: none;
   float: left;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   display: inline-block;
   margin-left: 5px;
-  width: 80px;
-  height: 65px;
+  width: 95px;
+  height: 55px;
   text-align: center;
   line-height: 14px;
   font-size: 11px;
@@ -398,12 +398,28 @@ th.next,
 .shop-menu ul li a {
   display: block;
   font-size: 20px;
+  line-height: 46px;
+  height: 50px;
+  border: 1px solid #438eb9;
 }
 .shop-menu ul li a:hover {
   text-decoration: none;
 }
 .shop-menu ul li a span {
   font-size: 12px;
+  line-height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.shop-menu ul li a .fa {
+  display: none;
+}
+.shop-menu ul li a.shopmenu-back {
+  border: 0;
+  line-height: 20px;
+  font-size: 26px;
+}
+.shop-menu ul li a.shopmenu-back .fa {
   display: block;
 }
 .catalog-head table {
