@@ -18,13 +18,13 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoFileAccessRecord {
 
-	private String gcsFileName;
+	private String fileName;
 
 
 	public VoFileAccessRecord( long userId, boolean isPublic, String fileName, String contentType, String versionKey, VoFileAccessRecord parent) {
-		this.gcsFileName = (this.userId=userId) + "_" + ((this.isPublic=isPublic) ? "public" : "private")+(System.currentTimeMillis() % 10000) +"_"+fileName.replaceAll("[^A-Za-z0-9._]", "");
-		if(this.gcsFileName.length() > 128) this.gcsFileName = this.gcsFileName.substring(1,128);
-		this.fileName=fileName;
+		this.fileName = (this.userId=userId) + "_" + ((this.isPublic=isPublic) ? "public" : "private")+(System.currentTimeMillis() % 10000) +"_"+fileName.replaceAll("[^A-Za-z0-9._]", "");
+		if(this.fileName.length() > 128) this.fileName = this.fileName.substring(1,128);
+		this.publicFileName=fileName;
 		this.bucket = "vmesteonline.appspot.com";
 		this.contentType = contentType;
 		this.createdAt = (int)(System.currentTimeMillis() / 1000L); 
@@ -48,10 +48,10 @@ public class VoFileAccessRecord {
 	}
 
 	public String getFileName(){
-		return fileName == null ? gcsFileName : fileName;
+		return publicFileName == null ? fileName : publicFileName;
 	}
 	public GcsFilename getGSFileName() {
-		return new GcsFilename(bucket, gcsFileName);
+		return new GcsFilename(bucket, fileName);
 	}
 
 	
@@ -79,7 +79,7 @@ public class VoFileAccessRecord {
 	
 	@Persistent
 	@Unindexed
-	private String fileName;
+	private String publicFileName;
 	
 	@Persistent
 	@Unindexed
@@ -95,17 +95,19 @@ public class VoFileAccessRecord {
 	}
 	
 	private VoFileAccessRecord getVersion(Map<String, String[]> params, PersistenceManager pm, boolean createIfNotExists) {
-		if( null!=contentType){
-			try {
-				ContentType ct = new ContentType(contentType);
-				if( null !=  ct){
-					VersionCreator vc  = StorageHelper.getVersionCreator( this, ct, pm );
-					if( null != vc ){
-						return vc.createParametrizedVersion( params, createIfNotExists);
+		if( null != params && params.size() != 0 ) {
+			if( null!=contentType){
+				try {
+					ContentType ct = new ContentType(contentType);
+					if( null !=  ct){
+						VersionCreator vc  = StorageHelper.getVersionCreator( this, ct, pm );
+						if( null != vc ){
+							return vc.createParametrizedVersion( params, createIfNotExists);
+						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 		return this;

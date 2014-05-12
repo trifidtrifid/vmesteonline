@@ -46,28 +46,6 @@
         //out.print('2');
     }
 
-    /*Cookie cookies [] = request.getCookies();
-    String cookieName = "catid";
-    Cookie catIdCookie = null;
-    if (cookies != null) {
-        for (int i = 0; i < cookies.length; i++) {
-            if (cookies[i].getName().equals (cookieName)) {
-                catIdCookie = cookies[i];
-            }
-        }
-    }
-
-    long catId = 0;
-
-    try{
-        if (catIdCookie != null){catId = Long.parseLong(catIdCookie.getValue());}
-        if (catId != 0){
-            pageContext.setAttribute("innerCategoryFlag",true);
-        }
-    }catch(Exception e){
-        catId = 0;
-    }*/
-
     List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(0);
     ProductListPart productsListPart = shopService.getProducts(0,1000,0);
     if (productsListPart.products.size() > 0){
@@ -76,8 +54,6 @@
     if(ArrayProductCategory.size() > 0){
         pageContext.setAttribute("productCategories", ArrayProductCategory);
     }
-
-    //String productURL = new String( productsListPart.products.get(0).imageURL);
 
 %>
 
@@ -147,7 +123,7 @@
 									<a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
 										<%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
                                         <span class="user-info">
-                                            Привет,	Гость
+                                            Войти
 									</span>
 									</a>
 								</c:otherwise>

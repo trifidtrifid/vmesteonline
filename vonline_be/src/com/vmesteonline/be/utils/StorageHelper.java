@@ -1,6 +1,7 @@
 package com.vmesteonline.be.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,8 +12,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -20,6 +21,7 @@ import javax.mail.internet.ContentType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.datanucleus.util.Base64;
 
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
@@ -29,6 +31,7 @@ import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
+import com.vmesteonline.be.ServiceImpl;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord.VersionCreator;
@@ -176,22 +179,46 @@ public class StorageHelper {
 
 	// ===================================================================================================================
 	public static void sendFileResponse(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		long oldFileId = getFileId(req.getRequestURI());
-		PersistenceManager pm = PMF.getPm();
-		try {
+		String queryString = req.getRequestURI();
+		logger.debug("Got request: URL:"+queryString);
+		
+		byte[] fileData;
+		//req.getParameter("useCache")
+		Object response = null != queryString ? 
+				ServiceImpl.getObjectFromCache(queryString) : null;
+
+		if( null!=response && response instanceof byte[] ){
+			fileData = (byte[])response;
+			logger.debug("Get '"+queryString+"' from cache.");
+			
+		} else {
+			long oldFileId = getFileId(req.getRequestURI());
+			PersistenceManager pm = PMF.getPm();
 			try {
-				VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
-				resp.setStatus(HttpServletResponse.SC_OK);
-				resp.setContentType(vfar.getContentType()+"; filename='"+vfar.getFileName()+"'");
-				resp.addHeader( "Content-Disposition", "attachment; filename="+vfar.getFileName());
-				VoFileAccessRecord theVersion = vfar.getVersion( req.getParameterMap(), pm);
-				getFile( theVersion.getGSFileName(), resp.getOutputStream());
-			} catch (JDOObjectNotFoundException onfe) {
-				resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not Found");
+				try {
+					VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+					resp.setStatus(HttpServletResponse.SC_OK);
+					resp.setContentType(vfar.getContentType()+"; filename='"+vfar.getFileName()+"'");
+					resp.addHeader( "Content-Disposition", "attachment; filename="+vfar.getFileName());
+					VoFileAccessRecord theVersion = vfar.getVersion( req.getParameterMap(), pm );
+					
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					getFile( theVersion.getGSFileName(), baos);
+					baos.close();
+					fileData = baos.toByteArray();
+					if( null != queryString)
+						ServiceImpl.putObjectToCache(queryString, fileData);
+					
+				} catch (JDOObjectNotFoundException onfe) {
+					resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not Found");
+					return;
+				}
+				
+			} finally {
+				pm.close();
 			}
-		} finally {
-			pm.close();
 		}
+		resp.getOutputStream().write(fileData);
 	}
 
 	// ===================================================================================================================
@@ -218,7 +245,7 @@ public class StorageHelper {
 			int liop; // append with '.bin' extension if no extension is set
 			String url = getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? 
 					(contentType.equals("binary/stream") ? "dat" : new ContentType(vfar.getContentType()).getSubType()) : fileName.substring(liop + 1));
-			logger.log(Level.FINEST, "File '" + vfar.getFileName() + "' stored with GSNAme:" + vfar.getGSFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
+			logger.debug( "File '" + vfar.getFileName() + "' stored with GSNAme:" + vfar.getGSFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
 			return url;
 		} catch (Exception e) {
 			e.printStackTrace();

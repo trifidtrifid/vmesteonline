@@ -39,7 +39,8 @@ define(
 
         function SetJSForEditPersonal(){
             /* history*/
-            if (window.history.state.pageName != 'edit-profile'){
+            var urlHash = document.location.hash;
+            if (urlHash != '#edit-profile'){
                 var state = {
                     type : 'page',
                     pageName: 'edit-profile'
@@ -125,7 +126,8 @@ define(
 
             }else{
             /* history*/
-            if (window.history.state.pageName != 'profile'){
+            var urlHash = document.location.hash;
+            if (urlHash != '#profile'){
                 var state = {
                     type : 'page',
                     pageName: 'profile'

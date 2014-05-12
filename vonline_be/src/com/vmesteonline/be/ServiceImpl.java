@@ -42,7 +42,7 @@ public class ServiceImpl {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <T> T getObjectFromCache(Object key) {
+	public static <T> T getObjectFromCache(Object key) {
 		T rslt = null;
 		if (null != cache && cache.containsKey(key)) {
 			try {
@@ -55,7 +55,7 @@ public class ServiceImpl {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <T> T removeObjectFromCache(Object key) {
+	public static <T> T removeObjectFromCache(Object key) {
 		T rslt = null;
 		if (null != cache && cache.containsKey(key)) {
 			try {
@@ -68,7 +68,7 @@ public class ServiceImpl {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <T extends Serializable> void putObjectToCache(Object key, T value) {
+	public static <T extends Serializable> void putObjectToCache(Object key, T value) {
 		if (null != cache) {
 			try {
 				cache.put(key, value);

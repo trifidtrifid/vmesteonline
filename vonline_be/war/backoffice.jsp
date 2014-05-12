@@ -96,7 +96,7 @@
                             <a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
                                 <%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
                                 <span class="user-info">
-                                    Привет,	Гость
+                                    Войти
 									</span>
                             </a>
                         </c:otherwise>

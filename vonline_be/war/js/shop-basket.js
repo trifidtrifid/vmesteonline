@@ -350,7 +350,9 @@ define(
 
             $('.shop-confirm').load('ajax/ajax-confirmOrder.html .dynamic',function(){
                 /* history */
-                if (window.history.state.pageName != 'confirm-order'){
+                var urlHash = document.location.hash;
+                if (urlHash != '#confirm-order'){
+                    // safari не понимает объект window.history.state
                     var state = {
                         type : 'page',
                         pageName: 'confirm-order'

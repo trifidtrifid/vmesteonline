@@ -147,7 +147,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 			try {
 				String body = "Вы зарегистрировались на сайте www.vomoloko.ru. Ваш логин " + email + " ваш проль: " + password + ". Удачных Вам покупок!";
-				EMailHelper.sendSimpleEMail("trifid@vmesteonline.ru", email, body, "Вы успешно зарегестрированы на сайте www.vomoloko.ru");
+				EMailHelper.sendSimpleEMail( email, body, "Вы успешно зарегестрированы на сайте www.vomoloko.ru");
 			} catch (Exception e) {
 				logger.warn("can't send email to " + email + " " + e.getMessage());
 				e.printStackTrace();
@@ -232,7 +232,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			fis.read(content);
 			fis.close();
 
-			EMailHelper.sendSimpleEMail("Во! <trifid@vmesteonline.ru>", to, "Код для смены пароля на сайте Во!",
+			EMailHelper.sendSimpleEMail(to, "Код для смены пароля на сайте Во!",
 					new String(content, "UTF-8").replace("%code%", "" + code).replace("%name%", vu.getName() + " " + vu.getLastName()));
 			logger.info("Code to change password is: " + code);
 

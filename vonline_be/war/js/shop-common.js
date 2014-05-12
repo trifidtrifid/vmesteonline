@@ -662,7 +662,8 @@ define(
 
                 }else{
                     /* history */
-                    if (!isHistoryNav && window.history.state.pageName != 'orders-history'){
+                    var urlHash = document.location.hash;
+                    if (urlHash != '#orders-history'){
                         state = {
                             type : 'page',
                             pageName: 'orders-history'
