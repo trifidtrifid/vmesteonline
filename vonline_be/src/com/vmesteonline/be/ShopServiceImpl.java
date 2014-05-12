@@ -125,7 +125,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 	// ======================================================================================================================
 	@Override
-	public OrderDate getNextOrderDate(int afterDate) throws InvalidOperation, TException {
+	public OrderDate getNextOrderDate(int afterDate) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
@@ -335,9 +335,11 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 	// ======================================================================================================================
 	@Override
-	public long createOrder(int date, String comment) throws InvalidOperation {
-		if (date < System.currentTimeMillis() / 1000L)
-			throw new InvalidOperation(VoError.IncorrectParametrs, "Order could not be created for the past");
+	public Order createOrder(int date, String comment) throws InvalidOperation {
+		if( 0 == date ) 
+			date = getNextOrderDate( (int)(System.currentTimeMillis() / 1000L)).orderDate;
+		else if (date < System.currentTimeMillis() / 1000L)
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Order could not be created for the past");
 
 		date -= date % 86400;
 		PersistenceManager pm = PMF.getPm();
@@ -352,7 +354,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			long id = voOrder.getId();
 
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), id, pm);
-			return id;
+			return voOrder.getOrder();
 		} finally {
 			pm.close();
 		}

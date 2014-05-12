@@ -738,8 +738,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 			// import get all of orders for the shop by date
 			Query q = pm.newQuery(VoOrder.class);
-			q.setFilter("shopId == " + shop.getId() + (0 == date ? "" : " && date == " + date)
-					+ (deliveryType == DeliveryType.UNKNOWN || null == deliveryType ? "" : " && delivery == '" + deliveryType.toString() + "'"));
+			q.setFilter("shopId == " + shop.getId() + (0 == date ? "" : " && date == " + date) + 
+					" && status == '" + OrderStatus.CONFIRMED.toString() + "'" +
+					(deliveryType == DeliveryType.UNKNOWN || null == deliveryType ? "" : " && delivery == '" + deliveryType.toString() + "'"));
 
 			List<VoOrder> olist = (List<VoOrder>) q.execute();
 
@@ -998,8 +999,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			// import get all of orders for the shop by date
 			Query q = pm.newQuery(VoOrder.class);
-			q.setFilter("shopId == " + shop.getId() + " && date == " + date
-					+ (deliveryType == DeliveryType.UNKNOWN ? "" : " && delivery == '" + deliveryType.toString() + "'"));
+			q.setFilter("shopId == " + shop.getId() + " && date == " + date +
+					" && status == '" + OrderStatus.CONFIRMED.toString() + "'" +
+					(deliveryType == DeliveryType.UNKNOWN ? "" : " && delivery == '" + deliveryType.toString() + "'"));
 
 			List<VoOrder> olist = (List<VoOrder>) q.execute();
 			if( olist.size() == 0 ){
@@ -1108,8 +1110,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			// import get all of orders for the shop by date
 			Query q = pm.newQuery(VoOrder.class);
-			q.setFilter("shopId == " + shop.getId() + " && date == " + date
-					+ (deliveryType == DeliveryType.UNKNOWN ? "" : " && delivery == '" + deliveryType.toString() + "'"));
+			q.setFilter("shopId == " + shop.getId() + " && date == " + date +
+					" && status == '" + OrderStatus.CONFIRMED.toString() + "'" +
+					(deliveryType == DeliveryType.UNKNOWN ? "" : " && delivery == '" + deliveryType.toString() + "'"));
 
 			List<VoOrder> olist = (List<VoOrder>) q.execute();
 			if( olist.size() == 0 ){

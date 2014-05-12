@@ -180,7 +180,7 @@ service ShopFEService {
 	/**
 	* Method returns id of new order and set is as a current
 	**/
-	i64 createOrder(1:i32 date, 2:string comment ) throws (1:error.InvalidOperation exc),
+	Order createOrder(1:i32 date, 2:string comment ) throws (1:error.InvalidOperation exc),
 	void updateOrder( 1:i64 orderId, 2:i32 date, 3:string comment) throws (1:error.InvalidOperation exc),
 	i64 cancelOrder(1:i64 orderId) throws (1:error.InvalidOperation exc),
 	i64 deleteOrder(1:i64 orderId) throws (1:error.InvalidOperation exc),
