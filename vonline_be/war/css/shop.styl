@@ -526,13 +526,25 @@ th.next
       font-size 12px
   .btn-primary
     margin 2px
-    //float right
-    display inline-block
+    float right
+    //display inline-block
   .more-orders
     text-align center
     margin 20px 0 0 0
     a
       font-size 16px
+
+.order-bottom
+  margin-top 5px
+  .order-delivery
+    font-size 16px
+    margin-right 190px
+    height 34px
+    line-height 34px
+    span
+      display inline-block
+      vertical-align middle
+      line-height 16px
 
 .ace-spinner
   display inline-block
@@ -553,24 +565,19 @@ th.next
     border 1px solid #ccc
     padding 5px 0
   .td1
-    width 3%
+    width 4%
   .td2
-    width 19%
+    width 28%
   .td3
-    width 7%
-  .td4
     width 12%
-  .td5
-    width 21%
+  .td4
+    width 22%
   .td6
-    width 7%
-  .td7
-    width 19%//186
-    border 0
+    width 12%
   .td8
-    width 6%
-  .td9
     width 9%
+  .td9
+    width 12%
 
 
 .orders-tbl-wrap
@@ -586,25 +593,19 @@ th.next
       border 1px solid #ccc
       padding 5px 0
   .td1
-    width 3%
+    width 4%
   .td2
-    width 19%
+    width 28%
   .td3
-    width 7%
-  .td4
     width 12%
-  .td5
-    width 21%
+  .td4
+    width 22%
   .td6
-    width 7%
-  .td7
-    width 19%
-    border 1px solid #fff
-    background #fff
+    width 12%
   .td8
-    width 6%
-  .td9
     width 9%
+  .td9
+    width 12%
 
 .ace-spinner
   width 90px !important
@@ -1220,6 +1221,12 @@ height 50px
     font-size 24px
     &:hover
       text-decoration none
+  .order-item
+    margin-bottom 15px
+    .order-bottom
+      margin-top 0
+      .order-delivery
+        margin-right 0
   .order-products
     display none
     .product-link

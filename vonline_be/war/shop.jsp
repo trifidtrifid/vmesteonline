@@ -252,11 +252,9 @@
                                 <td class="td2">N</td>
                                 <td class="td3">Дата</td>
                                 <td class="td4">Статус</td>
-                                <td class="td5">Доставка</td>
-                                <td class="td9">Цена<br> доставки</td>
+                                <td class="td9">Цена доставки</td>
                                 <td class="td8">Вес(кг)</td>
                                 <td class="td6">Сумма</td>
-                                <td class="td7"></td>
                             </tr>
                         </table>
                         </div>

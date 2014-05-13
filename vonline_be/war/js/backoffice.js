@@ -238,7 +238,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             '<tbody>'+
                             '<tr>'+
                             '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
-                            '<td class="td2">'+i+'. Заказ '+orders[i].id +'</td>'+
+                            '<td class="td2">'+orders[i].id +'</td>'+
                             '<td class="td8 user-name">'+
                             orders[i].userName +
                             '</td>'+
@@ -246,16 +246,19 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             '<td class="td4">'+
                             '<div class="order-status">'+orderStatus +'</div>'+
                             '</td>'+
-                            '<td class="td5"><span class="delivery-status">'+ orderDelivery +'</span><br> ' +
-                            orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
-                            orderDetails.deliveryTo.flatNo+
-                            '</td>'+
+                            /*'<td class="td5">+
+                            '</td>'+*/
                             '<td class="td9">'+ orderDetails.deliveryCost +'</td>'+
                             '<td class="td8">'+ (orderDetails.weightGramm/1000).toFixed(1) +'</td>'+
                             '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
                             '</tr>'+
                             '</tbody>'+
                             '</table>'+
+                            '<div class="order-bottom">' +
+                            '<div class="order-delivery"><span><b>Доставка:</b> '+ orderDelivery +',  ' +
+                            orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
+                            orderDetails.deliveryTo.flatNo +'</span></div>'+
+                            '</div>'+
                             '<div class="order-products">'+
                             '</div>'+
                             '</div>';

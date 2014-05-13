@@ -151,24 +151,31 @@ define(
                         '<tr>'+
                         '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
                         '<td class="td2">'+orders[i].id+'</td>'+
-                        '<td class="td3">'+ orderDay +"."+orderMonth+"<br> ("+weekDay+ ')</td>'+
+                        '<td class="td3">'+ orderDay +"."+orderMonth+" ("+weekDay+ ')</td>'+
                         '<td class="td4">'+
                         '<div class="order-status">'+orderStatus +'</div>'+
                         '</td>'+
-                        '<td class="td5">'+ orderDelivery +'<br> ' +
+                        /*'<td class="td5">'+ orderDelivery +'<br> ' +
                         orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
                         orderDetails.deliveryTo.flatNo+
-                        '</td>'+
+                        '</td>'+*/
                         '<td class="td9">'+ orderDetails.deliveryCost +'</td>'+
                         '<td class="td8">'+ (orderDetails.weightGramm/1000).toFixed(1) +'</td>'+
                         '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
-                        '<td class="td7">'+
+                        /*'<td class="td7">'+
                         '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
                         '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить</button>'+
-                        '</td>'+
+                        '</td>'+*/
                         '</tr>'+
                         '</tbody>'+
                         '</table>'+
+                        '<div class="order-bottom">' +
+                        '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
+                        '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить</button>' +
+                        '<div class="order-delivery"><span><b>Доставка:</b> '+ orderDelivery +',  ' +
+                        orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
+                        orderDetails.deliveryTo.flatNo +'</span></div>'+
+                        '</div>'+
                         '<div class="order-products">'+
                         '</div>'+
                         '</div>';
