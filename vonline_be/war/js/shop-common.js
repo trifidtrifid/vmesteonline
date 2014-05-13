@@ -721,7 +721,7 @@ define(
             var modalIn = $('.modal.in');
             if(modalIn.length) modalIn.modal('hide');
             var modalAuth = $('.modal-auth');
-            modalAuth.load('login.jsp .container',function(){
+            modalAuth.load('login.jsp .login-container',function(){
                 var closeHtml = '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
                 modalAuth.find('.reg-form').prepend(closeHtml);
 

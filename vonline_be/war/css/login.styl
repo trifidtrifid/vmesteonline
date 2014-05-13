@@ -1,6 +1,34 @@
 @import 'common.css'
 
 /* страница регистрации */
+.widget-box
+  visibility hidden
+  display none
+  &.visible
+    visibility visible
+    display block
+
+.login-box
+.signup-box
+.forgot-box
+  padding 6px
+  background-color #394557
+  .widget-body
+    background #f7f7f7
+    .widget-main
+      padding 16px 36px 16px 36px
+  fieldset
+    text-align center
+  .btn-primary
+  .btn-success
+  .btn-danger
+    float none !important
+    font-size 16px
+
+.email-forgot-error
+.password-new-error
+  margin-bottom 10px
+
 .login-page .container
   min-width 0
 .login-forms
@@ -75,10 +103,7 @@
   input[type="file"]
   .captcha
     display inline-block
-  .email-alert
-    color #ff0000
-    display none
-    text-align center
+
   .set-new-password
     display none
     clear right

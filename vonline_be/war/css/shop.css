@@ -1153,10 +1153,10 @@ height 50px
 }
 /* popup логина */
 .modal-auth {
-  width: 644px;
+  width: 375px;
   overflow: hidden;
-  height: 290px;
-  margin-left: -327px;
+  height: 100%;
+  margin-left: -187px;
   background: none;
 }
 .modal-auth .login-forms {

@@ -18,7 +18,7 @@ define(
                 }
             });
 
-            if($('.login-page').length == 0) {
+            if($('.login-layout').length == 0) {
                 /*var shopArray = thriftModule.client.getShops();
                 var currentShop = thriftModule.client.getShop(shopArray[0].id);*/
                 var currentShopID =$('.main-container.shop').attr('id');

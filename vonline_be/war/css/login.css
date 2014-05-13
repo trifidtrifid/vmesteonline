@@ -1,5 +1,50 @@
 @import 'common.css';
 /* страница регистрации */
+.widget-box {
+  visibility: hidden;
+  display: none;
+}
+.widget-box.visible {
+  visibility: visible;
+  display: block;
+}
+.login-box,
+.signup-box,
+.forgot-box {
+  padding: 6px;
+  background-color: #394557;
+}
+.login-box .widget-body,
+.signup-box .widget-body,
+.forgot-box .widget-body {
+  background: #f7f7f7;
+}
+.login-box .widget-body .widget-main,
+.signup-box .widget-body .widget-main,
+.forgot-box .widget-body .widget-main {
+  padding: 16px 36px 16px 36px;
+}
+.login-box fieldset,
+.signup-box fieldset,
+.forgot-box fieldset {
+  text-align: center;
+}
+.login-box .btn-primary,
+.signup-box .btn-primary,
+.forgot-box .btn-primary,
+.login-box .btn-success,
+.signup-box .btn-success,
+.forgot-box .btn-success,
+.login-box .btn-danger,
+.signup-box .btn-danger,
+.forgot-box .btn-danger {
+  float: none !important;
+  font-size: 16px;
+}
+.email-forgot-error,
+.password-new-error {
+  margin-bottom: 10px;
+}
 .login-page .container {
   min-width: 0;
 }
@@ -91,11 +136,6 @@
 .registration-form input[type="file"],
 .registration-form .captcha {
   display: inline-block;
-}
-.registration-form .email-alert {
-  color: #f00;
-  display: none;
-  text-align: center;
 }
 .registration-form .set-new-password {
   display: none;

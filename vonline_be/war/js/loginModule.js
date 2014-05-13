@@ -4,15 +4,15 @@ define(
     function( $,thriftModule,basketModule, commonModule ){
         function initLogin(){
 
-    $('.login-form .btn-submit').click(function(e){
+    $('.login-box .btn-primary').click(function(e){
         e.preventDefault();
         login($(this));
     });
-    $('.reg-form .btn-submit').click(function(e){
+    $('.signup-box .btn-success').click(function(e){
         e.preventDefault();
         reg($(this));
     });
-    $('.remember-link').click(function(e){
+/*    $('.remember-link').click(function(e){
         e.preventDefault();
         var setNewPassword = $('.set-new-password');
         if(setNewPassword.css('display')=='none'){
@@ -30,42 +30,44 @@ define(
             });
             $(this).text('Забыли пароль ?');
         }
-    });
+    });*/
+
     $('.sendConfirmCode').click(function(e){
         e.preventDefault();
 
-        var to = $('#uname').val();
+        var to = $('#email-forgot').val();
         if (!to){
-            $('.login-error').text('Введите пожалуйста e-mail').removeClass('info-good').show();
+            $('.email-forgot-error').text('Введите пожалуйста e-mail').removeClass('info-good').show();
         }else{
             var resourcefileName = "mailTemplates/changePasswordConfirm.html";
             try{
                 thriftModule.authClient.sendConfirmCode(to,resourcefileName);
-                $('.login-error').text('На ваш e-mail отправлен код').addClass('info-good').show();
+                $('.email-forgot-error').text('На ваш e-mail отправлен код').addClass('info-good').show();
             }catch(e){
-                $('.login-error').text('Такой e-mail не зарегистрирован').removeClass('info-good').show();
+                $('.email-forgot-error').text('Такой e-mail не зарегистрирован').removeClass('info-good').show();
             }
         }
-        $('.login-form').height('280px');
+        //$('.login-form').height('280px');
 
     });
+
     $('.useConfirmCode').click(function(e){
         e.preventDefault();
 
-        var email = $('#uname').val();
+        var email = $('#email-forgot').val();
         var confirmCode = $('#confirmCode').val();
-        var newPassword = $('#password').val();
-        var loginError = $('.login-error');
+        var newPassword = $('#password-new').val();
+        var error = $('.password-new-error');
 
         try{
             thriftModule.authClient.confirmRequest(email,confirmCode,newPassword);
-            loginError.hide();
+            error.hide();
         }catch(e){
-            loginError.text('Неверный код подтверждения !').removeClass('info-good').show();
-            $('.login-form').height('280px');
+            error.text('Неверный код подтверждения !').removeClass('info-good').show();
+            //$('.login-form').height('280px');
         }
-        if(loginError.css('display') == 'none'){
-            login($('.login-form .btn-submit'));
+        if(error.css('display') == 'none'){
+            login($('.login-box .btn-primary'));
         }
     });
 
@@ -119,6 +121,24 @@ define(
        if (emailAlert.css('display') == 'block'){
            emailAlert.hide();
        }
+    });
+
+    function show_box(id) {
+        $('.widget-box.visible').removeClass('visible');
+        $('#'+id).addClass('visible');
+    }
+
+    $('.forgot-password-link').click(function(){
+        show_box('forgot-box');
+        return false;
+    });
+    $('.user-signup-link').click(function(){
+        show_box('signup-box');
+        return false;
+    });
+    $('.back-to-login-link').click(function(){
+        show_box('login-box');
+        return false;
     });
 
     function AuthRealTime(selector){
