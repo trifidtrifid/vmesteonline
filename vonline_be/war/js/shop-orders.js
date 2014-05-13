@@ -246,9 +246,10 @@ define(
                     oldOrderId = tabPaneActive.data('orderid');
                     var basketModule = require('shop-basket');
                     if (!oldOrderId){
-                        var nextDate = basketModule.getNextDate();
-                        var nextDateStr = new Date(nextDate*1000);
-                        oldOrderId = thriftModule.client.createOrder(nextDate);
+                        //var nextDate = basketModule.getNextDate();
+                        var oldOrder = thriftModule.client.createOrder(0);
+                        oldOrderId = oldOrder.id;
+                        var nextDateStr = new Date(oldOrder.date*1000);
                         basketModule.addTabToBasketHtml(nextDateStr,oldOrderId);
                         tabPaneActive = $('.tab-pane.active')
                     }

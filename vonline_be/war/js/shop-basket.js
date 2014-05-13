@@ -185,11 +185,11 @@ define(
                         if (!errorPrepack){
                             if ($('.tabs-days').length == 0){
                              // если это первый товар в корзине
-                                var nextDate = getNextDate();
-                                var nextDateStr = new Date(nextDate*1000);
+                                //var nextDate = getNextDate();
                                 //alert(nextDate);
-                                orderId = thriftModule.client.createOrder(nextDate);
-                                addTabToBasketHtml(nextDateStr,orderId,orderDetails);
+                                var order = thriftModule.client.createOrder(0);
+                                var nextDateStr = new Date(order.date*1000);
+                                addTabToBasketHtml(nextDateStr,order.id,orderDetails);
                              }
                             AddProductToBasketCommon(currentProduct,packs);
                             currentProductSelector.addClass('added');

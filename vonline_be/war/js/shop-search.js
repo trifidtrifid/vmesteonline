@@ -72,10 +72,10 @@ define(
                             //var basketModule = require('shop-basket');
                             if ($('.tabs-days').length == 0){
                                 // если это первый товар в корзине
-                                var nextDate = basketModule.getNextDate();
-                                var nextDateStr = new Date(nextDate*1000);
-                                var orderId = thriftModule.client.createOrder(nextDate);
-                                basketModule.addTabToBasketHtml(nextDateStr,orderId);
+                                //var nextDate = basketModule.getNextDate();
+                                var order = thriftModule.client.createOrder(0);
+                                var nextDateStr = new Date(order.date*1000);
+                                basketModule.addTabToBasketHtml(nextDateStr,order.id);
                             }
 
                             basketModule.AddProductToBasketCommon(products[i],packs);
