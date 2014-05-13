@@ -150,7 +150,7 @@ define(
                         '<tbody>'+
                         '<tr>'+
                         '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
-                        '<td class="td2">'+i+'. Заказ '+orders[i].id+'</td>'+
+                        '<td class="td2">'+orders[i].id+'</td>'+
                         '<td class="td3">'+ orderDay +"."+orderMonth+"<br> ("+weekDay+ ')</td>'+
                         '<td class="td4">'+
                         '<div class="order-status">'+orderStatus +'</div>'+

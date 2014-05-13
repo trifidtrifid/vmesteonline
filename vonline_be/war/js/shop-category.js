@@ -91,7 +91,7 @@ define(
 						shopMenu += '<li data-parentid="'
 								+ productCategories[i].parentId
 								+ '" data-catid="' + productCategories[i].id
-								+ '">' + '<a href="#">'
+								+ '">' + '<a href="#" class="btn btn-app btn-info btn-sm">'
 								+ '<i class="fa fa-beer"></i>' + '<span>'
 								+ productCategories[i].name + '</span>'
 								+ '</a>' + '</li>';

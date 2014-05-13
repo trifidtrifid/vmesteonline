@@ -111,6 +111,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
                     $('.shop-orders').hide();
                     $('.shop-products').show();
                     modules.shopCommonModule.identificateModal(e.state.productid,isHistoryNav);
+                    $('footer').addClass('short-footer');
 
                 }else if(e.state.type == 'category'){
 
@@ -119,20 +120,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
                     $('.shop-orders').hide();
                     $('.shop-products').show();
                     modules.categoryModule.LoadCategoryByURLHash(e.state.categoriesHash);
-                    /*var categoriesHistory = e.state.categoriesHash.split(';');
-                    var categoriesHistoryLength = categoriesHistory.length;
-                    var prevCategoryIndexPos = categoriesHistoryLength - 1;
-                    var prevCategoryIndex;
-
-                    if (prevCategoryIndexPos < 0){
-                        // загружаем корневую
-                        prevCategoryIndex = 0;
-                    }else{
-                        // загружаем родителя
-                        var hashParts = categoriesHistory[prevCategoryIndexPos].split('=');
-                        prevCategoryIndex = hashParts[1];
-                    }
-                    modules.categoryModule.InitLoadCategory(prevCategoryIndex);*/
+                    $('footer').addClass('short-footer');
 
                 }else if(e.state.type == 'page'){
 
@@ -191,11 +179,18 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             showRight.animate({'right':'-28px'},200).removeClass('active');
         });
 
-        $('.user-short a').click(function(e){
+       w.resize(function(){
+            (w.width() > 973) ? shopRight.css('right','0') : shopRight.css('right','-470px');
+        });
+
+        $('.user-short a.dropdown-toggle').click(function(e){
             e.preventDefault();
+            //alert('1');
 
             if($(this).hasClass('no-login')){
                 modules.shopCommonModule.openModalAuth();
+            }else{
+                $(this).closest('.navbar').toggleClass('over-rightbar');
             }
         });
 
@@ -225,6 +220,14 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         $('.navbar-brand').click(function(){
            $('.back-to-shop a').trigger('click');
             return false;
+        });
+
+        $('html,body').click(function(e){
+            //e.stopPropagation();
+
+            if ($('.user-short').hasClass('open')){
+                $('.navbar').removeClass('over-rightbar');
+            }
         });
 
     }catch(e){

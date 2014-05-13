@@ -708,6 +708,8 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             '</table>';
 
                         $('.import-table').html("").prepend(importHtml).parent().show();
+
+                        $('.top-scroll').remove();
                         DoubleScroll(document.getElementById('doublescroll'));
 
                         initShowFullText();
@@ -1259,6 +1261,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 scrollbar.scrollLeft= element.scrollLeft;
             };
             element.parentNode.insertBefore(scrollbar, element);
+            $(element).prev().addClass('top-scroll');
         }
 
     });

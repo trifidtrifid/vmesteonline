@@ -349,6 +349,7 @@ define(
         function GoToConfirm(catalogHtml,amount,spinnerValue,date,weight){
 
             $('.shop-confirm').load('ajax/ajax-confirmOrder.html .dynamic',function(){
+                $('footer').removeClass('short-footer');
                 /* history */
                 var urlHash = document.location.hash;
                 if (urlHash != '#confirm-order'){

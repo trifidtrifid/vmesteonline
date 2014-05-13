@@ -36,6 +36,9 @@ footer .footer-menu li {
   margin: 0 10px;
   display: inline-block;
 }
+footer.short-footer .container {
+  margin-right: 470px;
+}
 .btn-primary,
 .header-color-blue2 {
   background-color: #438eb9 !important;
@@ -61,6 +64,9 @@ footer .footer-menu li {
   position: fixed;
   left: 0;
   width: 100%;
+}
+.navbar.over-rightbar {
+  z-index: 1031;
 }
 .navbar a.navbar-brand {
   padding: 0;
@@ -148,11 +154,11 @@ footer .footer-menu li {
   position: fixed;
   height: 100%;
   width: 470px;
-  margin-top: -45px;
+  right: 0;
+  z-index: 1030;
   border: 0;
   border-left: 1px solid #ccc;
   padding-bottom: 20px;
-  right: 0;
 }
 .shop-right:before {
   border: 0;
@@ -165,7 +171,7 @@ footer .footer-menu li {
   display: none;
 }
 .shop-right .tabs-days {
-  margin-top: 109px;
+  margin-top: 76px;
   text-align: center;
 }
 .shop-right .tabs-days .nav span {
@@ -265,6 +271,10 @@ footer .footer-menu li {
 .shop-right .btn-grey {
   margin-left: 186px;
   margin-right: 10px;
+}
+.shop-right .basket-backdrop {
+  display: none;
+  opacity: 0.5;
 }
 .tabs-right > .nav-tabs > li > a {
   min-width: 40px;
@@ -373,6 +383,9 @@ th.next,
 .ui-menu-item a:hover {
   text-decoration: none;
 }
+.form-search {
+  margin-bottom: 10px;
+}
 .shop-menu {
   overflow: auto;
   min-height: 55px;
@@ -385,8 +398,8 @@ th.next,
   float: left;
   margin-bottom: 10px;
   display: inline-block;
-  margin-left: 5px;
-  width: 95px;
+  margin-left: 1px;
+  width: 100px;
   height: 55px;
   text-align: center;
   line-height: 14px;
@@ -398,9 +411,12 @@ th.next,
 .shop-menu ul li a {
   display: block;
   font-size: 20px;
-  line-height: 46px;
+  line-height: 28px !important;
   height: 50px;
+  width: 100px !important;
+  padding: 8px 5px !important;
   border: 1px solid #438eb9;
+  white-space: normal;
 }
 .shop-menu ul li a:hover {
   text-decoration: none;
@@ -416,7 +432,7 @@ th.next,
 }
 .shop-menu ul li a.shopmenu-back {
   border: 0;
-  line-height: 20px;
+  line-height: 10px !important;
   font-size: 26px;
 }
 .shop-menu ul li a.shopmenu-back .fa {
@@ -963,7 +979,6 @@ height 50px
 }
 @media all and (max-width: 990px) {
   .shop-right {
-    position: fixed;
     margin-top: -45px;
     height: 100%;
     right: -470px;
@@ -1044,7 +1059,7 @@ height 50px
     transform: rotate(90deg);
   }
   .container {
-    width: 758px;
+    width: 100%;
   }
   .container .main-content {
     margin-left: 0;

@@ -157,12 +157,12 @@
                     <div class="hide-right">×</div>
                     <div class="sidebar-title">
                     </div>
-                    div.
 
+                    <div class="modal-backdrop basket-backdrop"></div>
                 </aside>
                 <div class="main-content">
                     <div class="shop-products">
-                        <form method="post" action="#" class="form-group has-info">
+                        <form method="post" action="#" class="form-group has-info form-search">
                             <span class="block input-icon input-icon-right">
                                 <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
                                 <a href="#" class="icon-search icon-on-right bigger-110"></a>
@@ -180,7 +180,7 @@
                                 </c:if>
                                 <c:forEach var="productCategory" items="${productCategories}">
                                     <li data-parentid="${productCategory.parentId}" data-catid="${productCategory.id}">
-                                        <a href="#">
+                                        <a href="#" class="btn btn-app btn-info btn-sm">
                                             <i class="fa fa-beer"></i>
                                             <span>${productCategory.name}</span>
                                         </a>
@@ -290,7 +290,7 @@
 		</div>
 
 	</div>
-    <footer>
+    <footer class="short-footer">
         <div class="container">
             <div class="footer-menu">
                 <ul>

@@ -125,6 +125,7 @@ define(
                 $('.edit-personal-link').trigger('click');
 
             }else{
+                $('footer').removeClass('short-footer');
             /* history*/
             var urlHash = document.location.hash;
             if (urlHash != '#profile'){

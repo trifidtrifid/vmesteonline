@@ -42,6 +42,8 @@ footer
       list-style none
       margin 0 10px
       display inline-block
+  &.short-footer .container
+    margin-right 470px
 
 transform()
   -moz-transform rotate(arguments); /* Для Firefox */
@@ -78,6 +80,8 @@ transform()
   position fixed
   left 0
   width 100%
+  &.over-rightbar
+    z-index 1031
   a.navbar-brand
     padding 0
   img
@@ -160,12 +164,13 @@ transform()
   position fixed
   height 100%
   width 470px
-  margin-top -45px
+  right 0
+  //margin-top -45px
+  z-index 1030
   //width 30%
   border 0
   border-left 1px solid #ccc
   padding-bottom 20px
-  right 0
   &:before
     border 0
     border-left 1px solid #ccc
@@ -174,7 +179,7 @@ transform()
   .hide-right
     display none
   .tabs-days
-    margin-top 109px
+    margin-top 76px
     text-align center
     .nav span
       display block
@@ -256,6 +261,9 @@ transform()
   .btn-grey
     margin-left 186px
     margin-right 10px
+  .basket-backdrop
+    display none
+    opacity .5
 
 .tabs-right > .nav-tabs > li > a
   min-width 40px
@@ -345,6 +353,9 @@ th.next
 .ui-menu-item a:hover
   text-decoration none
 
+.form-search
+  margin-bottom 10px
+
 .shop-menu
   overflow auto
   min-height 55px
@@ -355,8 +366,8 @@ th.next
       float left
       margin-bottom 10px
       display inline-block
-      margin-left 5px
-      width 95px
+      margin-left 1px
+      width 100px
       height 55px
       text-align center
       line-height 14px
@@ -367,9 +378,12 @@ th.next
       a
         display block
         font-size 20px
-        line-height 46px
+        line-height 28px !important
         height 50px
+        width 100px !important
+        padding 8px 5px !important
         border 1px solid #438eb9
+        white-space normal
         &:hover
           text-decoration none
         span
@@ -381,7 +395,7 @@ th.next
           display none
         &.shopmenu-back
           border 0
-          line-height 20px
+          line-height 10px !important
           font-size 26px
           .fa
             display block
@@ -822,7 +836,6 @@ height 50px
 
 @media all and (max-width: 990px)
   .shop-right
-    position fixed
     margin-top -45px
     height 100%
     right -470px
@@ -878,7 +891,8 @@ height 50px
       padding 0 10px
       transform 90deg;
   .container
-    width 758px
+    //width 758px
+    width 100%
     .main-content
       margin-left 0
 

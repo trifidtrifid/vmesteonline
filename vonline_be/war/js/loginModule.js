@@ -137,6 +137,7 @@ define(
         dropdownToggle.removeClass('no-login');
 
         $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
+            //alert('2');
             $(this).parent().removeClass('open');
         });
 

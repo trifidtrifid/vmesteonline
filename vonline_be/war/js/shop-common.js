@@ -349,6 +349,7 @@ define(
                             if (!isHistoryNav && isCatalog) {
                                 window.history.back();
                             }
+                            $('.basket-backdrop').hide();
                         });
 
                     }else{
@@ -383,12 +384,17 @@ define(
                         window.history.pushState(state,null,'shop.jsp#'+ beginHash +'='+productId);
                     }
                     currentModal.modal();
+                    if(isBasket){
+                        $('.modal-backdrop').hide();
+                        $('.modal-backdrop.basket-backdrop').show();
+                    }
                     fullDescrHeight = currentModal.find('.product-fullDescr').height();
                     currentModal.find('.product-fullDescr').hide();
 
                     $('.modal-backdrop').click(function(){
                         if (isCatalog) window.history.back();
                         $('.modal.in .close').trigger('click');
+                        $(this).hide();
                     });
 
                     var carousel = currentModal.find('.carousel');
@@ -638,12 +644,14 @@ define(
                 var shopOrders = $('.shop-orders');
                 var ordersList = $('.orders-list');
                 $('.page').hide();
+                $('footer').addClass('short-footer');
                 var state;
 
                 if($(this).hasClass('back-to-shop')){
                     shopOrders.hide();
                     $('.shop-confirm').hide();
                     $('.main-container-inner').show();
+
                     $('.navbar .nav li.active').removeClass('active');
                     $('.navbar .nav li:eq(0)').addClass('active');
                     var shopProducts = $('.shop-products');
@@ -710,7 +718,6 @@ define(
         });
 
         function openModalAuth(){
-            //$('.modal.in .close').trigger('click');
             var modalIn = $('.modal.in');
             if(modalIn.length) modalIn.modal('hide');
             var modalAuth = $('.modal-auth');
