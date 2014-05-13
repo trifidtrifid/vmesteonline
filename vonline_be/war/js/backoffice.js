@@ -9,7 +9,8 @@ require.config({
         "flexslider": "lib/jquery.flexslider-min",
         "ace_spinner": "lib/fuelux/fuelux.spinner",
         "datepicker-backoffice": "bootstrap-datepicker-backoffice",
-        "datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru"
+        "datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru",
+        "multiselect": "lib/jquery.multiselect.min"
     },
     shim:{
         'ace_spinner':{
@@ -35,6 +36,10 @@ require.config({
         'flexslider':{
             deps: ['jquery'],
             exports: 'flexslider'
+        },
+        'multiselect':{
+            deps: ['jquery','jquery_ui'],
+            exports: 'multiselect'
         }
     }
 });
@@ -47,7 +52,7 @@ var deliveryFilterFlag= 0,
     dateFilterFlag = 0,
     searchFilterFlag = 0;
 
-require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicker-ru','bootstrap'],
+require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
     function($,thriftModule,commonM) {
 
         commonM.init();
@@ -959,6 +964,16 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
         /* export */
 
+
+        $('.export-orders-checklist select, .export-products-checklist select, .export-packs-checklist select').multiselect({
+            noneSelectedText: "Опции",
+            selectedText: "Опции (# выбрано)",
+            checkAllText: "Выбрать все",
+            uncheckAllText: "Отменить все"
+        });
+        $('.ui-multiselect').addClass('btn btn-sm btn-info no-border');
+        $('.ui-multiselect .ui-icon').addClass('icon-caret-down');
+
         $('.export .nav-tabs').find('li').click(function(){
             var ind = $(this).index();
 
@@ -966,7 +981,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             setSidebarHeight(contentH);
         });
 
-        $('.check-all .lbl').click(function(){
+/*        $('.check-all .lbl').click(function(){
             //var tab = $('#orders');
             var tab = $(this).closest('.back-tab');
 
@@ -984,7 +999,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 tab.find('.checkbox:not(".check-all") input').prop('checked',true);
                 checkbox.addClass('uncheck').find('.lbl').text('uncheck all');
             }
-        });
+        });*/
 
         $('.export-btn').click(function(e){
             e.preventDefault();
@@ -1079,24 +1094,40 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             var headColArray = [];
             counter = 0;
 
+            var delimiterIndexes = [];
+            var orderCheckboxes = $('.ui-multiselect-menu:eq(0) .ui-multiselect-checkboxes li');
+
+            orderCheckboxes.each(function(){
+                if($(this).hasClass('ui-multiselect-optgroup-label')){
+                    delimiterIndexes[counter++] = $(this).index();
+                }
+            });
+
             switch (exportType){
                 case 'orders':
-                    currentCheckbox =  $('.export-orders-checklist .checkbox.active');
+                    var myCheckboxes = orderCheckboxes.slice(delimiterIndexes[0]+1,delimiterIndexes[1]);
+                    currentCheckbox = myCheckboxes.find('input[aria-selected="true"]');
                     break;
                 case 'orderLine':
-                    currentCheckbox =  $('.export-orderLine-checklist .checkbox.active');
+                    myCheckboxes = orderCheckboxes.slice(delimiterIndexes[1]+1);
+                    currentCheckbox = myCheckboxes.find('input[aria-selected="true"]');
                     break;
                 case 'products':
-                    currentCheckbox =  $('.export-products-checklist .checkbox.active');
+                    var productsCheckboxes = $('.ui-multiselect-menu:eq(1) .ui-multiselect-checkboxes li');
+                    currentCheckbox =  productsCheckboxes.find('input[aria-selected="true"]');
+                    //currentCheckbox =  $('.export-products-checklist .checkbox.active');
                     break;
                 case "packs":
-                    currentCheckbox =  $('.export-packs-checklist .checkbox.active');
+                    var packsCheckboxes = $('.ui-multiselect-menu:eq(2) .ui-multiselect-checkboxes li');
+                    currentCheckbox =  packsCheckboxes.find('input[aria-selected="true"]');
                     break;
             }
 
+            counter = 0;
             currentCheckbox.each(function(){
-                fieldsMap[fieldsCounter++] = parseInt($(this).data('exchange'));
-                headColArray[counter++] = $(this).find('.lbl').text();
+                //fieldsMap[fieldsCounter++] = parseInt($(this).data('exchange'));
+                fieldsMap[fieldsCounter++] = parseInt($(this).val());
+                headColArray[counter++] = $(this).find('+span').text();
             });
 
             return {fieldsMap: fieldsMap,headColArray: headColArray }

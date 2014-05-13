@@ -264,16 +264,66 @@
                             <div class="input-group">
                                 <input class="form-control date-picker datepicker-export" id="date-picker-2" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                             </div>
-                            <div class="error-info"></div>
 
-                            <div class="checkbox check-all">
+                            <div class="export-orders-checklist">
+                                <select multiple>
+                                <optgroup label="Order">
+                                    <%
+                                        for( int val = ExchangeFieldType.ORDER_ID.getValue(); val < ExchangeFieldType.ORDER_LINE_ID.getValue(); val ++ ){
+                                            ExchangeFieldType value = ExchangeFieldType.findByValue(val);
+                                            if(null!=value){
+                                                if(value.name() == "ORDER_PRICE_TYPE" || value.name() == "ORDER_PAYMENT_TYPE"
+                                                  || value.name() == "ORDER_PAYMENT_STATUS" || value.name() == "ORDER_USER_ID"){
+                                    %>
+                                                    <option value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                                <% } else{ %>
+                                                    <option selected="selected" value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+
+                                        <%--<div class="checkbox"  data-exchange="<%=value.getValue()%>">
+                                            <label>
+                                                <input name="form-field-checkbox" type="checkbox" class="ace">
+                                                <span class="lbl"><%=value.name()%> </span>
+                                            </label>
+                                        </div>--%>
+                                        <%}}}%>
+
+                                </optgroup>
+                                <optgroup label="Order_Line">
+                                        <%for( int val = ExchangeFieldType.ORDER_LINE_ID.getValue(); val < ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val ++ ){
+                                            ExchangeFieldType value = ExchangeFieldType.findByValue(val);
+                                            if(null!=value){
+                                            if(value.name() == "ORDER_LINE_ID" || value.name() == "ORDER_LINE_OPRDER_ID"
+                                                || value.name() == "ORDER_LINE_PRODUCT_ID" || value.name() == "ORDER_LINE_PRODUCER_ID"
+                                                || value.name() == "ORDER_LINE_PRODUCT_ID" || value.name() == "ORDER_LINE_PRODUCER_ID"){
+                                                    %>
+
+                                            <option value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                            <% } else{ %>
+                                            <option selected="selected" value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                       <%-- <div class="checkbox"  data-exchange="<%=value.getValue()%>">
+                                            <label>
+                                                <input name="form-field-checkbox" type="checkbox" class="ace">
+                                                <span class="lbl"><%=value.name()%> </span>
+                                            </label>
+                                        </div>--%>
+                                        <%}}}%>
+                                </optgroup>
+                                </select>
+
+                            </div>
+
+                            <%--<div class="checkbox check-all">
                                 <label>
                                     <input name="form-field-checkbox" type="checkbox" class="ace">
                                     <span class="lbl"> check all</span>
                                 </label>
-                            </div>
+                            </div>--%>
 
-                            <div class="export-orders-checklist"> <%
+                            <%--<div class="export-orders-checklist"> <%
 
                                 for( int val = ExchangeFieldType.ORDER_ID.getValue(); val < ExchangeFieldType.ORDER_LINE_ID.getValue(); val ++ ){
                                     ExchangeFieldType value = ExchangeFieldType.findByValue(val);
@@ -286,9 +336,9 @@
                                         </label>
                                     </div>
                                 <%}}%>
-                            </div>
+                            </div>--%>
 
-                            <div class="export-orderLine-checklist">
+                            <%--<div class="export-orderLine-checklist">
                                 <%for( int val = ExchangeFieldType.ORDER_LINE_ID.getValue(); val < ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val ++ ){
                                 ExchangeFieldType value = ExchangeFieldType.findByValue(val);
                                 if(null!=value){%>
@@ -301,7 +351,8 @@
                                 </div>
                                 <%}}%>
 
-                            </div>
+                            </div>--%>
+                            <div class="error-info"></div>
 
                             <div class="export-btn-line">
                                 <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
@@ -334,29 +385,39 @@
                             <div class="input-group">
                                 <input class="form-control date-picker datepicker-export" id="date-picker-3" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                             </div>
-                            <div class="error-info"></div>
 
-                            <div class="checkbox check-all">
+                            <%--<div class="checkbox check-all">
                                 <label>
                                     <input name="form-field-checkbox" type="checkbox" class="ace">
                                     <span class="lbl"> check all</span>
                                 </label>
-                            </div>
+                            </div>--%>
 
                             <div class="export-products-checklist">
-                                <%for( int val = ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val < ExchangeFieldType.TOTAL_PACK_SIZE.getValue(); val ++ ){
-                                    ExchangeFieldType value = ExchangeFieldType.findByValue(val);
-                                    if(null!=value){%>
+                                <select multiple>
 
-                                <div class="checkbox"  data-exchange="<%=value.getValue()%>">
+                                    <%for( int val = ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val < ExchangeFieldType.TOTAL_PACK_SIZE.getValue(); val ++ ){
+                                        ExchangeFieldType value = ExchangeFieldType.findByValue(val);
+                                        if(null!=value){
+                                            if(value.name() == "TOTAL_PROUCT_ID" || value.name() == "TOTAL_PRODUCER_ID"){
+                                    %>
+
+                                    <option value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                    <% } else{ %>
+                                    <option selected="selected" value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                    <%}}}%>
+                                </select>
+                                <%--<div class="checkbox"  data-exchange="<%=value.getValue()%>">
                                     <label>
                                         <input name="form-field-checkbox" type="checkbox" class="ace">
                                         <span class="lbl"><%=value.name()%> </span>
                                     </label>
-                                </div>
-                                <%}}%>
+                                </div>--%>
 
                             </div>
+                            <div class="error-info"></div>
 
                             <div class="export-btn-line">
                                 <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
@@ -388,29 +449,26 @@
                             <div class="input-group">
                                 <input class="form-control date-picker datepicker-export" id="date-picker-4" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                             </div>
-                            <div class="error-info"></div>
 
-                            <div class="checkbox check-all">
-                                <label>
-                                    <input name="form-field-checkbox" type="checkbox" class="ace">
-                                    <span class="lbl"> check all</span>
-                                </label>
-                            </div>
 
                             <div class="export-packs-checklist">
+                                <select multiple>
                                 <%for( int val = ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val <= ExchangeFieldType.TOTAL_DELIVERY_TYPE.getValue(); val ++ ){
                                     ExchangeFieldType value = ExchangeFieldType.findByValue(val);
-                                    if(null!=value){%>
+                                    if(null!=value){
+                                        if(value.name() == "TOTAL_PROUCT_ID" || value.name() == "TOTAL_PRODUCER_ID"|| value.name() == "TOTAL_DELIVERY_TYPE"){
+                                %>
 
-                                <div class="checkbox"  data-exchange="<%=value.getValue()%>">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"><%=value.name()%> </span>
-                                    </label>
-                                </div>
-                                <%}}%>
+                                <option value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                <% } else{ %>
+                                <option selected="selected" value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                <%}}}%>
+                                </select>
 
                             </div>
+                            <div class="error-info"></div>
 
                             <div class="export-btn-line">
                                 <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
