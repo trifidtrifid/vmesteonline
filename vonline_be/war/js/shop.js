@@ -183,7 +183,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         var docWidth = $(document).width();
         var catWidth = $('.catalog').width();
 
-        alert(screenWidth+" "+docWidth+" "+catWidth+" "+showRight.css('display')+" "+shopRight.css('right'));
+        alert(screenWidth+" "+docWidth+" "+catWidth+" "+showRight.css('right')+" "+shopRight.css('right'));
 
         w.resize(function(){
            //alert(screenHeight+" "+showRight.css('display'));
