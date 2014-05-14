@@ -163,6 +163,9 @@ define(
             }
 
             markAddedProduct();
+
+            var catalogHeight = $(window).height() - $('.navbar').height() - $('footer').height();
+            $('.catalog-order').css('max-height',catalogHeight-215);
         }
 
         function InitProductDetailPopup(selector){

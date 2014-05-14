@@ -35,9 +35,8 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
         if(globalUserAuth){
             modules.shopCommonModule.initBasketInReload();
-            var catalogHeight = $(window).height() - $('.navbar').height() - $('footer').height();
-
-            $('.catalog-order').css('max-height',catalogHeight-215)
+            /*var catalogHeight = $(window).height() - $('.navbar').height() - $('footer').height();
+            $('.catalog-order').css('max-height',catalogHeight-215)*/
         }
         modules.categoryModule.InitClickOnCategory();
         // переключение между категориями
@@ -159,10 +158,10 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         var w = $(window),
             showRight = $('.show-right'),
             hideRight = $('.hide-right'),
-            shopRight = $('.shop-right'),
-            showRightTop = (w.height()-showRight.width())/ 2;
+            shopRight = $('.shop-right');
+            //showRightTop = (w.height()-showRight.width())/ 2;
 
-        showRight.css('top',showRightTop);
+        //showRight.css('top',showRightTop);
         shopRight.css('min-height', w.height()-115);
 
         showRight.click(function(){
@@ -179,12 +178,25 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             showRight.animate({'right':'-28px'},200).removeClass('active');
         });
 
-       w.resize(function(){
+        var screenHeight = $(window).height();
+        var screenWidth = $(window).width();
+        var docWidth = $(document).width();
+        var catWidth = $('.catalog').width();
+
+        alert(screenWidth+" "+docWidth+" "+catWidth+" "+showRight.css('display')+" "+shopRight.css('right'));
+
+        w.resize(function(){
+           //alert(screenHeight+" "+showRight.css('display'));
+            alert('resize');
+
             if (w.width() > 980){
                 //alert('1 '+w.width());
                shopRight.css('right','0');
                }else{
                 //alert('2 '+w.width());
+
+                //alert(screenHeight/2 - 40);
+               //showRight.css('top',screenHeight/2 - 40);
                shopRight.css('right','-470px');
            }
         });
