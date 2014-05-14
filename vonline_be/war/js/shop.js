@@ -161,7 +161,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             shopRight = $('.shop-right'),
             shopRightWidth = 470;
 
-
         shopRight.css('min-height', w.height()-115);
 
         showRight.click(function(){
@@ -180,13 +179,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             showRight.animate({'right':'-31px'},200).removeClass('active');
         });
 
-        var screenHeight = $(window).height();
-        var screenWidth = $(window).width();
-        var docWidth = $(document).width();
-        var catWidth = $('.catalog').width();
-
-
-        //alert(screenWidth+" "+docWidth+" "+catWidth+" "+showRight.css('display')+" "+shopRight.css('right'));
         w.resize(function(){
             var width = w.width();
 

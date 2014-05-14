@@ -1039,6 +1039,9 @@ height 50px
   footer.short-footer .container {
     margin-right: 0;
   }
+  .close {
+    font-size: 30px;
+  }
 }
 @media all and (max-width: 768px), screen and (device-width: 320px) {
   .sidebar#sidebar {

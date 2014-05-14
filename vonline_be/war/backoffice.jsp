@@ -280,13 +280,6 @@
                                                 <% } else{ %>
                                                     <option selected="selected" value="<%=value.getValue()%>"><%=value.name()%> </option>
 
-
-                                        <%--<div class="checkbox"  data-exchange="<%=value.getValue()%>">
-                                            <label>
-                                                <input name="form-field-checkbox" type="checkbox" class="ace">
-                                                <span class="lbl"><%=value.name()%> </span>
-                                            </label>
-                                        </div>--%>
                                         <%}}}%>
 
                                 </optgroup>
@@ -304,54 +297,12 @@
                                             <% } else{ %>
                                             <option selected="selected" value="<%=value.getValue()%>"><%=value.name()%> </option>
 
-                                       <%-- <div class="checkbox"  data-exchange="<%=value.getValue()%>">
-                                            <label>
-                                                <input name="form-field-checkbox" type="checkbox" class="ace">
-                                                <span class="lbl"><%=value.name()%> </span>
-                                            </label>
-                                        </div>--%>
                                         <%}}}%>
                                 </optgroup>
                                 </select>
 
                             </div>
 
-                            <%--<div class="checkbox check-all">
-                                <label>
-                                    <input name="form-field-checkbox" type="checkbox" class="ace">
-                                    <span class="lbl"> check all</span>
-                                </label>
-                            </div>--%>
-
-                            <%--<div class="export-orders-checklist"> <%
-
-                                for( int val = ExchangeFieldType.ORDER_ID.getValue(); val < ExchangeFieldType.ORDER_LINE_ID.getValue(); val ++ ){
-                                    ExchangeFieldType value = ExchangeFieldType.findByValue(val);
-                                    if(null!=value){%>
-                                    
-                                    <div class="checkbox"  data-exchange="<%=value.getValue()%>">
-                                        <label>
-                                            <input name="form-field-checkbox" type="checkbox" class="ace">
-                                            <span class="lbl"><%=value.name()%> </span>
-                                        </label>
-                                    </div>
-                                <%}}%>
-                            </div>--%>
-
-                            <%--<div class="export-orderLine-checklist">
-                                <%for( int val = ExchangeFieldType.ORDER_LINE_ID.getValue(); val < ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val ++ ){
-                                ExchangeFieldType value = ExchangeFieldType.findByValue(val);
-                                if(null!=value){%>
-
-                                <div class="checkbox"  data-exchange="<%=value.getValue()%>">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"><%=value.name()%> </span>
-                                    </label>
-                                </div>
-                                <%}}%>
-
-                            </div>--%>
                             <div class="error-info"></div>
 
                             <div class="export-btn-line">
@@ -409,12 +360,6 @@
 
                                     <%}}}%>
                                 </select>
-                                <%--<div class="checkbox"  data-exchange="<%=value.getValue()%>">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"><%=value.name()%> </span>
-                                    </label>
-                                </div>--%>
 
                             </div>
                             <div class="error-info"></div>

@@ -142,7 +142,7 @@
         }
     }
 
-    function getStringDate(date){
+/*    function getStringDate(date){
         var dateStr = new Date(date*1000);
 
         var orderDay = dateStr.getDate();
@@ -154,15 +154,15 @@
 
         return orderDay+"."+orderMonth+"."+orderYear;
 
-    }
+    }*/
 
-    function AdditionallyOrderToggle(){
+/*    function AdditionallyOrderToggle(){
         var additionallyOrder = $('.additionally-order');
         if (additionallyOrder.hasClass('hide')){
             additionallyOrder.removeClass('hide');
             $('.empty-basket').addClass('hide');
         }
-    }
+    }*/
 
     function initOrderDay(createOrdersHtml,initOrderPlusMinus,setSidebarHeight,filterByStatus,filterByDelivery,filterBySearch){
         try{
