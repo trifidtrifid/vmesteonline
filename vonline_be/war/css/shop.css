@@ -74,6 +74,9 @@ footer.short-footer .container {
 .navbar img {
   height: 45px;
 }
+.ace-nav>li {
+  vertical-align: top;
+}
 .ace-nav>li a {
   padding: 11px 12px 0 12px;
   line-height: 1.428571429;
@@ -980,15 +983,16 @@ height 50px
   .show-right {
     display: block;
     position: fixed;
+    z-index: 11;
     top: 40%;
-    right: -28px;
+    right: -31px;
     border-radius: 5px 5px 0 0;
     cursor: pointer;
     font-size: 16px;
     letter-spacing: 1px;
     border: 1px solid #ccc;
     background: #ccc;
-    padding: 0 10px;
+    padding: 4px 15px;
     -moz-transform: rotate(-90deg);
 /* Для Firefox */
     -ms-transform: rotate(-90deg);
@@ -1003,6 +1007,7 @@ height 50px
     margin-top: -45px;
     height: 100%;
     right: -470px;
+    display: none;
     z-index: 10;
     padding: 0 0 20px 0;
     padding-top: 65px;
@@ -1015,7 +1020,8 @@ height 50px
   .shop-right .hide-right {
     display: block;
     position: absolute;
-    top: 10px;
+    top: 50px;
+    font-size: 30px;
     right: 10px;
     cursor: pointer;
   }
@@ -1088,6 +1094,25 @@ height 50px
   .product .modal .product-slider .slider img {
     max-width: 120px;
     max-height: 120px;
+  }
+}
+@media all and (max-width: 460px) {
+  .ace-nav>li.user-short {
+    float: none !important;
+  }
+  .navbar .navbar-header.pull-right {
+    float: right !important;
+  }
+  .navbar-header:after {
+    clear: none !important;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .ace-nav>li a {
+    padding-top: 10px !important;
+  }
+  .ace-nav>li.user-short a {
+    padding-top: 3px !important;
   }
 }
 @media screen and (device-width: 320px) {

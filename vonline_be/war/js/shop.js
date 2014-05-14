@@ -158,24 +158,26 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         var w = $(window),
             showRight = $('.show-right'),
             hideRight = $('.hide-right'),
-            shopRight = $('.shop-right');
-            //showRightTop = (w.height()-showRight.width())/ 2;
+            shopRight = $('.shop-right'),
+            shopRightWidth = 470;
 
-        //showRight.css('top',showRightTop);
+
         shopRight.css('min-height', w.height()-115);
 
         showRight.click(function(){
             if (!$(this).hasClass('active')){
-                $(this).animate({'right':'442px'},200).addClass('active');
-                $(this).parent().animate({'right':0},200);
+                $(this).animate({'right':'439px'},200).addClass('active');
+                shopRight.css('display','block').animate({'right':0},200);
             }else{
                 hideRight.trigger('click');
             }
         });
 
         hideRight.click(function(){
-            $(this).parent().animate({'right':'-470px'},200);
-            showRight.animate({'right':'-28px'},200).removeClass('active');
+            shopRight.animate({'right':-shopRightWidth},200,function(){
+                $(this).css('display','none');
+            });
+            showRight.animate({'right':'-31px'},200).removeClass('active');
         });
 
         var screenHeight = $(window).height();
@@ -183,23 +185,40 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         var docWidth = $(document).width();
         var catWidth = $('.catalog').width();
 
-        alert(screenWidth+" "+docWidth+" "+catWidth+" "+showRight.css('display')+" "+shopRight.css('right'));
+        //alert(screenWidth+" "+docWidth+" "+catWidth+" "+showRight.css('display')+" "+shopRight.css('right'));
 
         w.resize(function(){
-           //alert(screenHeight+" "+showRight.css('display'));
-            alert('resize');
+            var width = w.width();
 
-            if (w.width() > 980){
-                //alert('1 '+w.width());
-               shopRight.css('right','0');
-               }else{
-                //alert('2 '+w.width());
+            if (width > 980){
+               shopRight.css({
+                   'right':'0',
+                   'display':'block'
+               });
+           }else{
+               shopRight.css('right',-shopRightWidth);
+               showRight.css({'right':'-31px'}).removeClass('active');
+            }
 
-                //alert(screenHeight/2 - 40);
-               //showRight.css('top',screenHeight/2 - 40);
-               shopRight.css('right','-470px');
-           }
+            setShopRightWidthOnSmallPhone(width);
         });
+
+        function setShopRightWidthOnSmallPhone(width){
+            if (width < 470){
+                shopRightWidth = width;
+            }else{
+                shopRightWidth = 470;
+            }
+            shopRight.width(shopRightWidth);
+        }
+        setShopRightWidthOnSmallPhone(w.width());
+
+       /* var planshetRotate = function(){
+        };
+
+        window.addEventListener( 'orientationchange', planshetRotate, false );
+        window.onorientationchange = planshetRotate;*/
+
 
         $('.user-short a.dropdown-toggle').click(function(e){
             e.preventDefault();
