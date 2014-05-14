@@ -180,7 +180,13 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         });
 
        w.resize(function(){
-            (w.width() > 973) ? shopRight.css('right','0') : shopRight.css('right','-470px');
+            if (w.width() > 980){
+                //alert('1 '+w.width());
+               shopRight.css('right','0');
+               }else{
+                //alert('2 '+w.width());
+               shopRight.css('right','-470px');
+           }
         });
 
         $('.user-short a.dropdown-toggle').click(function(e){

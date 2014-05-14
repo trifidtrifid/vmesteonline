@@ -7,7 +7,7 @@
 		<title>Логин</title>
 
 		<meta name="description" content="User login page" />
-		<meta name="viewport" content="width=device-width, initial-scale=2.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <link rel="stylesheet" href="css/style.css"/>
         <script src="./js/lib/jquery-2.0.3.min.js" type="text/javascript"></script>
