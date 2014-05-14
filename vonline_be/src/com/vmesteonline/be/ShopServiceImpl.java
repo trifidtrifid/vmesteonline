@@ -427,7 +427,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		htmlBody += "<h2>Заказ от <a href=\"mailto:"+customer.getEmail()+"\">"+customer.getName() +" "+customer.getLastName() +" "+"</a></h2>";
 		htmlBody += "<p>Номер заказа: "+ currentOrder.getId()+" </p>";
 		htmlBody += "<br/>Дата реализации: "+ new SimpleDateFormat("yyyy-MM-dd").format(new Date((long)currentOrder.getDate() * 1000L));
-		htmlBody += "<br/>Стоимость доставки: "+ currentOrder.getTotalCost()+" руб";
+		htmlBody += "<br/>Стоимость: "+ currentOrder.getTotalCost()+" руб";
+		if( currentOrder.getDeliveryCost() > 0) htmlBody += "<br/>Из них доставка: "+ currentOrder.getDeliveryCost()+" руб";
 		htmlBody += "<br/>Вес: "+ currentOrder.getWeightGramm()/1000+" кг";
 		htmlBody += "<br/>Контактный номер: "+customer.getMobilePhone();
 		htmlBody += "<br/>"+(currentOrder.getDelivery() == DeliveryType.SELF_PICKUP ? "Самовывоз" : "Доставка: " + currentOrder.getDeliveryTo().getAddressText(pm));

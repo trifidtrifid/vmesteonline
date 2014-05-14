@@ -134,7 +134,7 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 			PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 			try {
 				PostalAddress pa = getPostalAddress(pm);
-				building.setAddressString( pa.getCity().getName() + " " + pa.getStreet().getName() + " д." + building.getFullNo() + " кв." + flatNo + " [э." + floor + " п. "
+				building.setAddressString( pa.getCity().getName() + " " + pa.getStreet().getName() + " д." + building.getFullNo() + " кв. " + flatNo + " [э." + floor + " п. "
 						+ staircase + "]");
 				return building.getAddressString();
 			} finally {
@@ -142,7 +142,7 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 					pm.close();
 			}
 		} else {
-			return building.getAddressString();
+			return building.getAddressString() + " кв. " + flatNo + " [этаж " + floor + " подъезд "+ staircase + "]";
 		}
 	}
 

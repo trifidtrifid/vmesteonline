@@ -514,7 +514,7 @@ public class ShopServiceImplTest {
 			} catch (InvalidOperation e) {
 				Assert.assertEquals(e.what, VoError.ShopNotOrderDate);
 			}
-			long lastOrder = si.createOrder(now + 6 * day, "aaaa");
+			long lastOrder = si.createOrder(now + 6 * day, "aaaa").getId();
 
 			List<Order> orders = si.getOrders(now - 10 * day, now + 10 * day);
 			Assert.assertEquals(orders.size(), 2);
@@ -757,7 +757,7 @@ public class ShopServiceImplTest {
 			setAllDates();
 			date = si.getNextOrderDate( date ).orderDate;
 
-			long order = si.createOrder(date = si.getNextOrderDate( date ).orderDate, "aaaa");
+			long order = si.createOrder(date = si.getNextOrderDate( date ).orderDate, "aaaa").getId();
 			Map<DeliveryType, Double> newDeliveryCosts = new HashMap<DeliveryType, Double>();
 			newDeliveryCosts.put(DeliveryType.LONG_RANGE, 10.0D);
 			newDeliveryCosts.put(DeliveryType.SHORT_RANGE, 5.0D);
@@ -797,7 +797,7 @@ public class ShopServiceImplTest {
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
 			setAllDates();
 			date = si.getNextOrderDate(date).orderDate;
-			long order = si.createOrder(date, "aaaa");
+			long order = si.createOrder(date, "aaaa").getId();
 
 			Map<PaymentType, Double> newPaymentCosts = new HashMap<PaymentType, Double>();
 			newPaymentCosts.put(PaymentType.CREDIT_CARD, 10.0D);
@@ -836,7 +836,7 @@ public class ShopServiceImplTest {
 			dateDateTypeMap.put(date, DateType.NEXT_ORDER);
 			setAllDates();
 			date = si.getNextOrderDate(date).orderDate;
-			long order = si.createOrder(date, "aaaa");
+			long order = si.createOrder(date, "aaaa").getId();
 			si.setOrderDeliveryAddress(0, userAddress2);
 			OrderDetails orderDetails = si.getOrderDetails(order);
 			Assert.assertEquals(orderDetails.getDeliveryTo(), userAddress2);
@@ -863,7 +863,7 @@ public class ShopServiceImplTest {
 			setAllDates();
 			date = si.getNextOrderDate( (int) (System.currentTimeMillis() / 1000L) + 1000).orderDate;
 
-			long order = si.createOrder(date, "aaaa");
+			long order = si.createOrder(date, "aaaa").getId();
 			PaymentStatus ps = si.getOrderDetails(order).getPaymentStatus();
 			Assert.assertEquals(ps, PaymentStatus.WAIT);
 			sbi.setOrderPaymentStatus(order, PaymentStatus.COMPLETE);
