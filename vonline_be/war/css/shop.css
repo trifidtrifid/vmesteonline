@@ -150,6 +150,9 @@ footer.short-footer .container {
   height: 100%;
   position: relative;
 }
+.show-right {
+  display: none;
+}
 .shop-right {
   position: fixed;
   height: 100%;
@@ -163,9 +166,6 @@ footer.short-footer .container {
 .shop-right:before {
   border: 0;
   border-left: 1px solid #ccc;
-}
-.shop-right .show-right {
-  display: none;
 }
 .shop-right .hide-right {
   display: none;
@@ -977,20 +977,7 @@ height 50px
   }
 }
 @media all and (max-width: 990px) {
-  .shop-right {
-    margin-top: -45px;
-    height: 100%;
-    right: -470px;
-    z-index: 10;
-    padding: 0 0 20px 0;
-    padding-top: 65px;
-    border-bottom: 1px solid #ccc;
-    overflow: auto;
-  }
-  .shop-right:before {
-    display: none;
-  }
-  .shop-right .show-right {
+  .show-right {
     display: block;
     position: fixed;
     top: 40%;
@@ -1011,6 +998,19 @@ height 50px
     -o-transform: rotate(-90deg);
 /* Для Opera */
     transform: rotate(-90deg);
+  }
+  .shop-right {
+    margin-top: -45px;
+    height: 100%;
+    right: -470px;
+    z-index: 10;
+    padding: 0 0 20px 0;
+    padding-top: 65px;
+    border-bottom: 1px solid #ccc;
+    overflow: auto;
+  }
+  .shop-right:before {
+    display: none;
   }
   .shop-right .hide-right {
     display: block;

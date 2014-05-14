@@ -150,10 +150,10 @@
 		<div class="main-container shop dynamic" id="${shopID}">
             <div class="page main-container-inner">
 
+                <div class="show-right">
+                    Заказы
+                </div>
                 <aside class="sidebar shop-right">
-                    <div class="show-right">
-                        Заказы
-                    </div>
                     <div class="hide-right">×</div>
                     <div class="sidebar-title">
                     </div>

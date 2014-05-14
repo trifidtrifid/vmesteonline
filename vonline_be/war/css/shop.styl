@@ -160,6 +160,10 @@ transform()
   height 100%
   position relative
 
+
+.show-right
+  display none
+
 .shop-right
   position fixed
   height 100%
@@ -174,8 +178,6 @@ transform()
   &:before
     border 0
     border-left 1px solid #ccc
-  .show-right
-    display none
   .hide-right
     display none
   .tabs-days
@@ -836,6 +838,19 @@ height 50px
     padding-right 30px
 
 @media all and (max-width: 990px)
+  .show-right
+    display block
+    position fixed
+    top: 40%
+    right -28px
+    border-radius 5px 5px 0 0
+    cursor pointer
+    font-size 16px
+    letter-spacing 1px
+    border 1px solid #ccc
+    background #ccc
+    padding 0 10px
+    transform -90deg;
   .shop-right
     margin-top -45px
     height 100%
@@ -847,19 +862,6 @@ height 50px
     overflow auto
     &:before
       display none
-    .show-right
-      display block
-      position fixed
-      top: 40%
-      right -28px
-      border-radius 5px 5px 0 0
-      cursor pointer
-      font-size 16px
-      letter-spacing 1px
-      border 1px solid #ccc
-      background #ccc
-      padding 0 10px
-      transform -90deg;
     .hide-right
       display block;
       position absolute
