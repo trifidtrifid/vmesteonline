@@ -1,8 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<<<<<<< HEAD
-=======
-<!DOCTYPE html>
->>>>>>> master
 
 <!DOCTYPE html>
 <html>

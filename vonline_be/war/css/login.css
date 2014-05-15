@@ -1,10 +1,10 @@
 @import 'common.css';
 /* страница регистрации */
-.widget-box {
+.login-container .widget-box {
   visibility: hidden;
   display: none;
 }
-.widget-box.visible {
+.login-container .widget-box.visible {
   visibility: visible;
   display: block;
 }
