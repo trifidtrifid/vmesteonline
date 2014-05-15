@@ -1573,6 +1573,7 @@ height 50px
 .import .import-show .import-table {
 /*overflow-x auto
       overflow-y visible*/
+  position: relative;
   margin-bottom: 10px;
 }
 .import .import-show .import-table.y-overflow-hidden {

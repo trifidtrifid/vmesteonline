@@ -725,8 +725,17 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
                         $('.import-field-dropdown .dropdown-toggle').click(function(e){
                             e.preventDefault();
-                            var coordY = e.pageY-30;
-                            var coordX = e.screenX-130;
+
+                            var ind = $(this).closest('td').index();
+                            var coordX = 0, tdIndex = 0;
+                            $('.import-table table').find('td').each(function(){
+                                if (tdIndex < ind){
+                                    coordX += $(this).width();
+                                }
+                                tdIndex ++;
+                            });
+
+                            var coordY = 30;
                             $(this).parent().find('.dropdown-menu').css({'left':coordX,'top':coordY});
                         });
 
@@ -987,7 +996,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             var deliveryText = currentTab.find('.export-delivery-dropdown .btn-group-text').text();
             //var selectOrderDate = currentTab.find('.datepicker-export').data('selectorderdate');
             var selectOrderDate = currentTab.find('.datepicker-export').attr('data-selectorderdate');
-            
+
             if(!selectOrderDate){
                 currentTab.find('.error-info').text('Пожалуйста, укажите дату с заказом.').show();
             }else{
