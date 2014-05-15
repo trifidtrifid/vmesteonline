@@ -224,12 +224,13 @@ public class VoProductCategory {
 		this.name = newCategoryInfo.name;
 		this.setDescr(newCategoryInfo.descr);
 		this.logoURLset = new ArrayList<String>();
-		for (String bb : newCategoryInfo.logoURLset) {
-			try {
-				this.logoURLset.add(StorageHelper.saveImage(bb, userId, true, pm));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		if( null!= newCategoryInfo.logoURLset )
+			for (String bb : newCategoryInfo.logoURLset) {
+				try {
+					this.logoURLset.add(StorageHelper.saveImage(bb, userId, true, pm));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 		}
 	}
 
