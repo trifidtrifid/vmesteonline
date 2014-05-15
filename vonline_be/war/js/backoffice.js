@@ -942,27 +942,17 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 dataSet.date = nowTime;
                 dataSet.data = temp;
 
-                try{
 
-                    //alert('1');
-                    //$('body').animate({background: 'red'},function(){
                     $('.loading').fadeIn(function(){
-                        thriftModule.clientBO.importData(dataSet);
-                        confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
+                        try{
+                            thriftModule.clientBO.importData(dataSet);
+                            confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
+                        }catch(e){
+                            confirmInfo.text('Ошибка импорта.').show();
+                        }
                         $('.loading').fadeOut(0);
                         setTimeout(hideConfirm,3000);
-
                     });
-                    //$('.loading').hide(0);
-                    //$('.loading').removeClass('loading-show');
-                    //alert('2');
-                    //$('.container').css('cursor','default');
-
-                }catch(e){
-                    //$('.container').css('cursor','default');
-                    confirmInfo.text('Ошибка импорта.').show();
-
-                }
 
                 function hideConfirm(){
                     $('.confirm-info').hide();
