@@ -432,7 +432,10 @@
 
     </div>
     <div class="loading">
-        <img src="i/loading.gif" alt="загрузка">
+        <div class="loading-inside">
+            <img src="i/wait1.png" alt="загрузка">
+            <span>Подождите, идет загрузка ...</span>
+        </div>
     </div>
 </div>
 <!-- общие библиотеки -->

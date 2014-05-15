@@ -627,8 +627,6 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                     success: function(html) {
                         fileUrl = html;
 
-                        $('.loading').show(0);
-
                         var matrixAsList = thriftModule.clientBO.parseCSVfile(fileUrl);
                         elems = matrixAsList.elems;
                         rowCount = matrixAsList.rowCount;
@@ -759,7 +757,6 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             //alert(currentDropdown.find('.btn-group-text').text(fieldName).closest('.btn').data('fieldtype'));
                         });
 
-                        $('.loading').hide(0);
                     }
                 });
 
@@ -877,7 +874,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             e.preventDefault();
             //$('.container').css({'cursor': 'url(../i/wait1.png),wait'});
             //$('.container').addClass('wait');
-            //$('.loading').show(0);
+            //$('.loading').addClass('loading-show');
 
             var dropdowns = $('.import-field-dropdown');
             var dropdownLength = dropdowns.length;
@@ -948,11 +945,18 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 try{
 
                     //alert('1');
-                    thriftModule.clientBO.importData(dataSet);
+                    //$('body').animate({background: 'red'},function(){
+                    $('.loading').fadeIn(function(){
+                        thriftModule.clientBO.importData(dataSet);
+                        confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
+                        $('.loading').fadeOut(0);
+                        setTimeout(hideConfirm,3000);
+
+                    });
                     //$('.loading').hide(0);
+                    //$('.loading').removeClass('loading-show');
                     //alert('2');
                     //$('.container').css('cursor','default');
-                    confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
 
                 }catch(e){
                     //$('.container').css('cursor','default');
@@ -963,7 +967,6 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 function hideConfirm(){
                     $('.confirm-info').hide();
                 }
-                setTimeout(hideConfirm,3000);
 
             }
 

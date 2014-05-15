@@ -177,7 +177,7 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         });
 
         var planshetRotate = function(){
-            
+
             var height = w.height();
 
             var catalogHeight = height - $('.navbar').height() - $('footer').height();
