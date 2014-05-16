@@ -20,8 +20,6 @@ define(
                 var orderLinedLength = orderLines.length;
 
                 for (var j = 0; j < orderLinedLength; j++){
-                    //var productDetails = thriftModule.client.getProductDetails(orderLines[j].product.id);
-                    //var imagesSet = productDetails.imagesURLset;
                     var unitName = "";
                     var myPic;
                     commonModule = require('shop-common');
@@ -94,14 +92,12 @@ define(
                     var tempDate = new Date(orders[i].date*1000);
                     // форматирование статуса заказа
                     var orderStatus;
-                    //var orderLinks = "";
                     switch(orders[i].status){
                         case 0:
                             orderStatus = "Неизвестен" ;
                             break
                         case 1:
                             orderStatus = "Не подтвержден" ;
-                            //orderLinks = "<a href='#' class='order-confirm'>Подтвердить</a><br><a href='#' class='order-edit'>Изменить</a>"
                             break
                         case 2:
                             orderStatus = "Подтвержден" ;
@@ -155,17 +151,9 @@ define(
                         '<td class="td4">'+
                         '<div class="order-status">'+orderStatus +'</div>'+
                         '</td>'+
-                        /*'<td class="td5">'+ orderDelivery +'<br> ' +
-                        orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
-                        orderDetails.deliveryTo.flatNo+
-                        '</td>'+*/
                         '<td class="td9">'+ orderDetails.deliveryCost +'</td>'+
                         '<td class="td8">'+ (orderDetails.weightGramm/1000).toFixed(1) +'</td>'+
                         '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
-                        /*'<td class="td7">'+
-                        '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
-                        '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить</button>'+
-                        '</td>'+*/
                         '</tr>'+
                         '</tbody>'+
                         '</table>'+
@@ -182,7 +170,6 @@ define(
                 }
                 var haveMore = ordersLength%listLength;
                 if (haveMore && haveMore != ordersLength){
-                    //$('.more-orders').show();
                     ordersHtml += '<div class="more-orders"><a href="#">Показать еще</a></div>';
                 }else{
                     $('.more-orders').hide();
@@ -253,7 +240,6 @@ define(
                     oldOrderId = tabPaneActive.data('orderid');
                     var basketModule = require('shop-basket');
                     if (!oldOrderId){
-                        //var nextDate = basketModule.getNextDate();
                         var oldOrder = thriftModule.client.createOrder(0);
                         oldOrderId = oldOrder.id;
                         var nextDateStr = new Date(oldOrder.date*1000);
@@ -319,10 +305,6 @@ define(
                         orderId : $(this).closest('.order-item').data('orderid')
                     };
                     AddOrdersToBasket(orderData);
-                    /*basketModule.flagFromBasketClick = 1;
-                    datepickerModule.dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,basketModule.AddSingleProductToBasket,AddOrdersToBasket,basketModule.AddProductToBasketCommon);
-                    datepickerModule.dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click').datepicker('triggerFlagBasket');
-                    basketModule.flagFromBasketClick = 0;*/
                 });
                 selector.find('.add-order-btn').click(function(){
                     var orderData= {
@@ -331,9 +313,6 @@ define(
                         orderId : $(this).closest('.order-item').data('orderid')
                     };
                     if ($('.additionally-order').hasClass('hide')){
-                        /*basketModule.flagFromBasketClick = 1;
-                        datepickerModule.dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,basketModule.AddSingleProductToBasket,AddOrdersToBasket,basketModule.AddProductToBasketCommon);
-                        datepickerModule.dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');*/
                     }else{
                         AddOrdersToBasket(orderData);
                     }
@@ -367,51 +346,6 @@ define(
                 }
             });
 
-/*            $('.order-confirm').click(function(e){
-                e.preventDefault();
-
-                var currentOrder = $(this).closest('.order-item');
-                var orderId = currentOrder.data('orderid');
-
-                var amount = currentOrder.find('.td6').text();
-
-                if (currentOrder.find('.catalog').length == 0){
-                    var orderDetails = thriftModule.client.getOrderDetails(orderId);
-                    currentOrder.find('.order-products').append(createOrdersProductHtml(orderDetails));
-                }
-
-                var catalogHtml = "";
-                var spinnerValue = [], spinnerStep = [], counter = 0;
-                var weight;
-
-                $('.tabs-days .tab-pane.active').removeClass('active');
-                $('.tabs-days .tab-pane').each(function(){
-                   if ($(this).data('orderid') == orderId){
-                       $(this).addClass('active');
-                       catalogHtml = $(this).find('.catalog-order').html();
-                       weight = $(this).find('.weight span').text();
-
-                       $(this).find('.catalog-order td .spinner1').each(function(){
-                           spinnerValue[counter] = $(this).closest('.ace-spinner').spinner('value');
-                           spinnerStep[counter++] = $(this).data('step');
-                       });
-                   }
-                });
-
-                $('.page').hide();
-
-                var date = currentOrder.find('.td3').text();
-
-                var basketModule = require('shop-basket');
-                basketModule.GoToConfirm(catalogHtml,amount,spinnerValue,date,weight);
-
-                *//*thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
-                thriftModule.client.confirmOrder();
-                alert('Заказ подтвержден !');
-                $(this).closest('td').find('.order-status').text('Подтвержден');
-                $(this).parent().remove();*//*
-
-            });*/
         }
 
         function initShowMoreOrders(orders){

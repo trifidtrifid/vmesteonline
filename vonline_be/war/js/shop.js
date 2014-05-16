@@ -97,7 +97,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         function makeHistoryNav(e){
             // действия для корректной навигации по истории
             var isHistoryNav = true;
-            //alert('makeHistory '+e.state.type+" "+e.state.categoriesHash);
             if(e.state){
                 if(e.state.type == 'modal'){
 
@@ -141,7 +140,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
                     $('.shop-trigger.back-to-shop').trigger('click',[isHistoryNav]);
                     $('.modal.in .close').trigger('click',[isHistoryNav]);
-                    //modules.categoryModule.InitLoadCategory(0);
                 }
             }
         }
@@ -188,7 +186,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
         var resizeWidthOld = w.width();
         w.resize(function(){
-            //alert('1 '+w.height()+" "+$('.catalog-order').height()+" "+shopRight.css('height')+" "+shopRight.css('min-height'));
             var width = w.width();
 
             if (width > 980){
@@ -279,9 +276,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
 
       window.onerror = function(message, source, lineno) {
-            /*alert("Ошибка:"+message +"\n" +
-                "файл:" + source + "\n" +
-                "строка:" + lineno);*/
           $('.modal.in').find('.close').trigger('click');
             var errorDetails = $('#error-details');
             var modalError= $('.modal-error');

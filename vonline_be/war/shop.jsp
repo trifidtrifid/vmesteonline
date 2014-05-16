@@ -41,7 +41,6 @@
         currentOrderDetails = shopService.getOrderDetails(order.id);
         List<OrderLine> orderLines = currentOrderDetails.odrerLines;
         pageContext.setAttribute("orderLines", orderLines);
-        //out.print(order.id);
     } catch(InvalidOperation ioe){
         currentOrderDetails = null;
         //out.print('2');
@@ -122,7 +121,6 @@
 								</c:when>
 								<c:otherwise>
 									<a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
-										<%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
                                         <span class="user-info">
                                             Войти
 									</span>
@@ -305,10 +303,6 @@
     <div class="loading">
         <img src="i/loading.gif" alt="загрузка">
     </div>
-	<!-- общие библиотеки -->
-	<%--<script src="js/lib/jquery-2.0.3.min.js"></script>--%>
-	<%--<script src="js/lib/bootstrap.js"></script>--%>
-    <!-- файлы thrift -->
     <script src="/js/thrift.js" type="text/javascript"></script>
     <script src="/gen-js/bedata_types.js" type="text/javascript"></script>
 
@@ -321,24 +315,9 @@
     <script src="/gen-js/AuthService.js" type="text/javascript"></script>
     <script src="/gen-js/userservice_types.js" type="text/javascript"></script>
     <script src="/gen-js/UserService.js" type="text/javascript"></script>
-    <!-- -->
 
-<%--	<!-- конкретные плагины -->
-	<script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
-	<script src="js/lib/fuelux/fuelux.spinner.min.js"></script>
-	<script src="js/lib/jquery.flexslider-min.js"></script>
-
-	<!-- -->
-	<script src="js/lib/ace-extra.min.js"></script>
-	<script src="js/lib/ace-elements.min.js"></script>--%>
-	<!-- собственные скрипты  -->
-<%--
-	<script src="js/login.js"></script>
---%>
-	<%--<script src="js/common.js"></script>--%>
     <script type="text/javascript" data-main="/js/shop.js" src="/js/require.js"></script>
 
-    <%--<script src="js/shop.js"></script>--%>
 
 </body>
 </html>

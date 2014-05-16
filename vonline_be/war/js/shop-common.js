@@ -148,7 +148,6 @@ define(
                 var orderLines = orderDetails.odrerLines;
                 var orderLinesLength = orderDetails.odrerLines.length;
                 for(var j = 0; j < orderLinesLength; j++){
-                    //currentProduct,spinnerValue,spinnerDisable
                     var spinnerDisable;
                     var packs = orderLines[j].packs;
                     var packsQnty = 0;
@@ -202,7 +201,6 @@ define(
 
 
                     if(imagesSet.length){
-                        //var oldHeight = currentModal.height();
                         currentModal.height('275px');
                     }
 
@@ -465,59 +463,6 @@ define(
                 spinnerModule.InitSpinner(currentPrepackLine.find('.packs .spinner1'), 1,isBasket);
                 spinnerModule.InitSpinner(currentPrepackLine.find('.qnty .spinner1'), spinnerStep,isBasket,spinnerStep);
 
-                /*var addedPackVal = currentPrepackLine.find('.packs .ace-spinner').spinner('value');
-                var addedQntyVal = parseFloat(currentPrepackLine.find('.qnty .ace-spinner').spinner('value')).toFixed(1);*/
-
-                /*if (isBasket){
-                    //если мы в корзине
-                    // нужно сделать setOrderLine
-                    var orderId = $('.tab-pane.active').data('orderid'),
-                        orderDetails = thriftModule.client.getOrderDetails(orderId),
-                        orderLinesLength = orderDetails.odrerLines.length,
-                        packs, reCount = true;
-
-                    for (var i = 0; i < orderLinesLength; i++){
-                        if (orderDetails.odrerLines[i].product.id == productId){
-                            // если это наш продукт в заказе
-                            var tempPacks = orderDetails.odrerLines[i].packs;
-                            if (tempPacks && tempPacks[parseFloat(spinnerStep).toFixed(1)]){
-                                reCount = false;
-                                productSelector.find('.error-prepack').text('Товар не возможно добавить: вы создали две линни с одинаковым количеством продукта').show();
-                            }
-                            packs = tempPacks;
-                            qnty = orderDetails.odrerLines[i].quantity;
-                        }
-                    }
-                    if (reCount) {
-                        productSelector.find('.error-prepack').hide();
-                        qnty += addedPackVal*addedQntyVal;
-                        packs[addedQntyVal] = addedPackVal;
-
-                        thriftModule.client.setOrderLine(orderId,productId,qnty,'',packs);
-
-                        productSelector.find('.td-spinner .ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
-
-                    var sum = qnty*productSelector.find('.td-price').text();
-                        productSelector.find('.td-summa').text(sum.toFixed(1));
-
-                        $('.itogo-right span').text(countAmount($('.catalog-order'),0));
-                    }
-                }else{
-                    // если в таблице продуктов
-                    qnty = productSelector.find('.td-spinner .ace-spinner').spinner('value');
-                    qnty += addedPackVal*addedQntyVal;
-                    productSelector.find('.td-spinner .ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));
-                }*/
-
-                /*var qnty = productSelector.find('.td-spinner .ace-spinner').spinner('value');
-                qnty += addedPackVal*addedQntyVal*/
-
-                /*var sum = qnty*productSelector.find('.td-price').text();
-                productSelector.find('.td-summa').text(sum.toFixed(1));
-                productSelector.find('.td-spinner .ace-spinner').spinner('value',parseFloat(qnty).toFixed(1));*/
-
-                //productSelector.find('.td-spinner .ace-spinner').spinner('disable');
-
                 spinnerModule.initRemovePrepackLine(currentPrepackLine.find('.prepack-item .remove-prepack-line'),productId,productSelector);
                 currentPrepackLine.removeClass('no-init');
 
@@ -552,10 +497,6 @@ define(
 
         function countAmount(sel,orderDetails){
             try{
-                /*var summa = 0;
-                sel.find('.td-summa').each(function(){
-                    summa += parseFloat($(this).text());
-                });*/
                 var orderId = $('.tab-pane.active').data('orderid');
 
                 var myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
@@ -611,7 +552,6 @@ define(
         function getPacksLength(packs){
             var counter = 0;
             for(var p in packs){
-                //alert(p+" "+packs[p]);
                 if(p && packs[p]){
                     counter++;
                 }
@@ -622,7 +562,6 @@ define(
         function setSidebarHeight(){
             try{
                 var mainContent = $('.main-content');
-                //alert(mainContent.height()+" "+$(window).height());
 
                 if (mainContent.height() > $(window).height()-45){
                     $('.shop-right').css('height', mainContent.height()+45);
@@ -634,12 +573,6 @@ define(
             }
         }
 
-        /*function setCatalogTopOffset(){
-            var catalogTop = $('.shop-products .form-group').height()+$('.shop-menu').height()+$('.catalog-head').height()+$('.navbar').height();
-            var catalogBottom = $('.wrap footer').height();
-            var h = $(window).height() - catalogTop - catalogBottom-30;
-            $('.catalog').css('height',h);
-        }*/
 
         $('.shop-trigger').click(function(e,isHistoryNav){
             e.preventDefault();
@@ -686,7 +619,6 @@ define(
                     if (!globalUserAuth){
                         var basketModule = require('shop-basket');
                         basketModule.callbacks.add(ordersModule.GoToOrdersTrigger);
-                        //$('.modal-auth').modal();
                         openModalAuth();
                     }else{
                         $('.shop-products').hide();
@@ -695,7 +627,6 @@ define(
                         var nowTime = parseInt(new Date().getTime()/1000);
                         nowTime -= nowTime%86400;
                         var day = 3600*24;
-                        //var orders = thriftModule.client.getOrders(0,nowTime+90*day);
                         var orders = thriftModule.client.getMyOrdersByStatus(0,nowTime+90*day,0);
                         ordersModule.initVarForMoreOrders();
 

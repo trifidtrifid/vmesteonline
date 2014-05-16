@@ -12,25 +12,6 @@ define(
         e.preventDefault();
         reg($(this));
     });
-/*    $('.remember-link').click(function(e){
-        e.preventDefault();
-        var setNewPassword = $('.set-new-password');
-        if(setNewPassword.css('display')=='none'){
-            $('label[for="password"]').html('<b>Новый пароль</b>');
-            $('.login-form .btn-submit').hide();
-            setNewPassword.slideDown();
-            $(this).text('Вспомнил пароль !');
-            $('.login-error').hide();
-        }else{
-            setNewPassword.slideUp(function(){
-                $('.login-form .btn-submit').show();
-                $('.login-error').hide();
-                $('label[for="password"]').html('Пароль');
-                $('.login-form').height('258px');
-            });
-            $(this).text('Забыли пароль ?');
-        }
-    });*/
 
     $('.sendConfirmCode').click(function(e){
         e.preventDefault();
@@ -47,7 +28,6 @@ define(
                 $('.email-forgot-error').text('Такой e-mail не зарегистрирован').removeClass('info-good').show();
             }
         }
-        //$('.login-form').height('280px');
 
     });
 
@@ -64,7 +44,6 @@ define(
             error.hide();
         }catch(e){
             error.text('Неверный код подтверждения !').removeClass('info-good').show();
-            //$('.login-form').height('280px');
         }
         if(error.css('display') == 'none'){
             login($('.login-box .btn-primary'));
@@ -78,7 +57,6 @@ define(
             if (accessGranted) {
                 $('.login-error').hide();
                 if (selector.closest('.modal-auth').length > 0){
-                    //document.location.replace("/shop.jsp");
                     AuthRealTime(selector);
                 }else{
                     document.location.replace("./shop.jsp");
@@ -108,7 +86,6 @@ define(
             var userId = thriftModule.authClient.registerNewUser($("#login").val(), "", $("#pass").val(), $("#email").val());
             thriftModule.authClient.login($("#email").val(), $("#pass").val());
             if ( selector.closest('.modal-auth').length > 0) {
-                //document.location.replace("/shop.jsp");
                 AuthRealTime(selector);
             }else{
                 document.location.replace("/shop.jsp");
@@ -157,7 +134,6 @@ define(
         dropdownToggle.removeClass('no-login');
 
         $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
-            //alert('2');
             $(this).parent().removeClass('open');
         });
 
