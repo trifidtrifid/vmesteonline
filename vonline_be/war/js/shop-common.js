@@ -175,7 +175,8 @@ define(
 
                     var  isOrdersHistory = ($(this).closest('.order-products').length) ? true : false,
                         isCatalog = ($(this).closest('.catalog').length && !isOrdersHistory) ? true : false,
-                        isBasket = ($(this).closest('.catalog-order').length || $(this).closest('.catalog-confirm').length) ? true : false;
+                        isConfirm = ($(this).closest('.catalog-confirm').length) ? true : false,
+                        isBasket = ($(this).closest('.catalog-order').length || isConfirm) ? true : false;
 
                     var productSelector = $(this).closest('.product'),
                     name= $(this).find('.product-name').text(),
@@ -291,7 +292,6 @@ define(
 
                         if (isBasket || isOrdersHistory){
                             // если мы в корзине или на странице заказов
-                            //($(this).closest('.order-products').length > 0) ? isBasket = false : isBasket = true ;
                             if (boolPrepackRequired){
                                 var isFirstModal = true;
                                 spinnerModule.initPrepackRequiredInModal($(this),currentModal,productSelector,isFirstModal,isBasket);
@@ -341,6 +341,7 @@ define(
                                     spinnerModule.updateWeightAndAmount(orderId,basketProductsContainer,packsObj.updateInfo);
 
                                     currentModal.modal('hide');
+                                    $('.basket-backdrop').hide();
                                 }
 
                                 return false;
@@ -376,7 +377,6 @@ define(
                             }
                         }
                     }
-                    //var beginHash = (isBasket || isOrdersHistory) ? "p-basket" : "p";
                     var beginHash = "p";
 
                     if (!isHistoryNav && isCatalog){
@@ -387,7 +387,7 @@ define(
                         window.history.pushState(state,null,'shop.jsp#'+ beginHash +'='+productId);
                     }
                     currentModal.modal();
-                    if(isBasket){
+                    if(isBasket && !isConfirm){
                         $('.modal-backdrop').hide();
                         $('.modal-backdrop.basket-backdrop').show();
                     }
