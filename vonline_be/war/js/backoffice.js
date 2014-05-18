@@ -921,9 +921,9 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                     var fieldName = $(this).find('.btn-group-text').text();
                     if(fieldName != skipConst){
                         //alert(fieldsCounter+ " " + $(this).find('.btn .btn-group-text').text() +" "+ $(this).find('.btn').data('fieldtype'));
-                        fieldsMap[fieldsCounter++] = parseInt($(this).find('.btn').data('fieldtype'));
+                        fieldsMap[fieldsCounter] = parseInt($(this).find('.btn').data('fieldtype'));
                     }
-                    //fieldsCounter++;
+                    fieldsCounter++;
                 });
                 /*$('.checkbox.active:not(".check-all")').each(function(){
                  fieldsMap[fieldsCounter++] = parseInt($(this).data('exchange'));

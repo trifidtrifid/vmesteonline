@@ -154,7 +154,10 @@ public class VoProducer {
 		try {
 			VoHelper.copyIfNotNull(this, "descr", newInfoWithOldId.descr);
 			VoHelper.copyIfNotNull(this, "homeURL", newInfoWithOldId.homeURL);
-			VoHelper.replaceURL(this, "logoURL", newInfoWithOldId.logoURL, userId, isPublic, pm);
+			try {
+				VoHelper.replaceURL(this, "logoURL", newInfoWithOldId.logoURL, userId, isPublic, pm);
+			} catch (Exception e) {
+			}
 			VoHelper.copyIfNotNull(this, "name", newInfoWithOldId.name);
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
