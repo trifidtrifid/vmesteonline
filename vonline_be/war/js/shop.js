@@ -31,12 +31,9 @@ require.config({
 
 require(["jquery",'shop-modules','commonM','loginModule'],
     function($,modules,commonM,loginModule) {
-        //modules.shopCommonModule.setCatalogTopOffset();
 
         if(globalUserAuth){
             modules.shopCommonModule.initBasketInReload();
-            /*var catalogHeight = $(window).height() - $('.navbar').height() - $('footer').height();
-            $('.catalog-order').css('max-height',catalogHeight-215)*/
         }
         modules.categoryModule.InitClickOnCategory();
         // переключение между категориями
@@ -47,7 +44,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         modules.shopCommonModule.InitProductDetailPopup($('.catalog .product-link'));
         modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
         modules.spinnerModule.initProductsSpinner();
-
 
         /* history */
         var urlHash = document.location.hash;
@@ -152,8 +148,9 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
         /* --- */
 
-    /* простые обработчики событий */
         loginModule.initLogin();
+
+    /* простые обработчики событий */
     try{
         var w = $(window),
             showRight = $('.show-right'),
@@ -179,7 +176,19 @@ require(["jquery",'shop-modules','commonM','loginModule'],
             showRight.animate({'right':'-31px'},200).removeClass('active');
         });
 
+        var planshetRotate = function(){
+
+            var height = w.height();
+
+            var catalogHeight = height - $('.navbar').height() - $('footer').height();
+            $('.catalog-order').css('max-height',catalogHeight-215);
+            shopRight.css('min-height', height-115);
+
+        };
+
+        var resizeWidthOld = w.width();
         w.resize(function(){
+            //alert('1 '+w.height()+" "+$('.catalog-order').height()+" "+shopRight.css('height')+" "+shopRight.css('min-height'));
             var width = w.width();
 
             if (width > 980){
@@ -188,11 +197,18 @@ require(["jquery",'shop-modules','commonM','loginModule'],
                    'display':'block'
                });
            }else{
-               shopRight.css('right',-shopRightWidth);
-               showRight.css({'right':'-31px'}).removeClass('active');
+                if(width != resizeWidthOld){
+                    // чтобы не срабатывал ресайз  при обычом скролле (для планшета)
+                    shopRight.css('right',-shopRightWidth);
+                    showRight.css({'right':'-31px'}).removeClass('active');
+                }
             }
 
+            // симуляция пворота для смартфонов, не поддерживающих событие поворота
+            if(screen.width < 321 || screen.height < 321) planshetRotate();
+
             setShopRightWidthOnSmallPhone(width);
+            resizeWidthOld = width
         });
 
         function setShopRightWidthOnSmallPhone(width){
@@ -205,11 +221,8 @@ require(["jquery",'shop-modules','commonM','loginModule'],
         }
         setShopRightWidthOnSmallPhone(w.width());
 
-       /* var planshetRotate = function(){
-        };
-
         window.addEventListener( 'orientationchange', planshetRotate, false );
-        window.onorientationchange = planshetRotate;*/
+        window.onorientationchange = planshetRotate;
 
 
         $('.user-short a.dropdown-toggle').click(function(e){

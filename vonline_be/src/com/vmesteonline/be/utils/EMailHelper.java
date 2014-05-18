@@ -14,11 +14,11 @@ public class EMailHelper {
 	
 	private static String fromAddress = "Во! <trifid@vmesteonline.ru>";
 
-	public static void sendSimpleEMail( String to, String subject, String body) throws IOException {
+	public static void sendSimpleEMail( String from, String to, String subject, String body) throws IOException {
 		
 		logger.debug("Try to send MEssage to '"+to+"' from '"+fromAddress+"' Subj: '"+subject+"'");
 		MailService mailService = MailServiceFactory.getMailService();
-		Message message = new Message(fromAddress, to, subject, body);
+		Message message = new Message(from, to, subject, body);
 		message.setHtmlBody(body);
 		mailService.send(message);
 		logger.debug("MEssage sent to '"+to+"' from '"+fromAddress+"' Subj: '"+subject+"'");
@@ -26,4 +26,9 @@ public class EMailHelper {
 			logger.debug("MEssage body was: "+body);
 		}
 	}
+	
+	public static void sendSimpleEMail( String to, String subject, String body) throws IOException {
+		sendSimpleEMail( fromAddress, to, subject, body);
+	}
+		
 }

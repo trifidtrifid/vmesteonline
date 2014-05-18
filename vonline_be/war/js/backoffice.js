@@ -627,8 +627,6 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                     success: function(html) {
                         fileUrl = html;
 
-                        $('.loading').show(0);
-
                         var matrixAsList = thriftModule.clientBO.parseCSVfile(fileUrl);
                         elems = matrixAsList.elems;
                         rowCount = matrixAsList.rowCount;
@@ -759,7 +757,6 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             //alert(currentDropdown.find('.btn-group-text').text(fieldName).closest('.btn').data('fieldtype'));
                         });
 
-                        $('.loading').hide(0);
                     }
                 });
 
@@ -877,7 +874,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             e.preventDefault();
             //$('.container').css({'cursor': 'url(../i/wait1.png),wait'});
             //$('.container').addClass('wait');
-            //$('.loading').show(0);
+            //$('.loading').addClass('loading-show');
 
             var dropdowns = $('.import-field-dropdown');
             var dropdownLength = dropdowns.length;
@@ -924,9 +921,9 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                     var fieldName = $(this).find('.btn-group-text').text();
                     if(fieldName != skipConst){
                         //alert(fieldsCounter+ " " + $(this).find('.btn .btn-group-text').text() +" "+ $(this).find('.btn').data('fieldtype'));
-                        fieldsMap[fieldsCounter++] = parseInt($(this).find('.btn').data('fieldtype'));
+                        fieldsMap[fieldsCounter] = parseInt($(this).find('.btn').data('fieldtype'));
                     }
-                    //fieldsCounter++;
+                    fieldsCounter++;
                 });
                 /*$('.checkbox.active:not(".check-all")').each(function(){
                  fieldsMap[fieldsCounter++] = parseInt($(this).data('exchange'));
@@ -945,25 +942,21 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                 dataSet.date = nowTime;
                 dataSet.data = temp;
 
-                try{
 
-                    //alert('1');
-                    thriftModule.clientBO.importData(dataSet);
-                    //$('.loading').hide(0);
-                    //alert('2');
-                    //$('.container').css('cursor','default');
-                    confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
-
-                }catch(e){
-                    //$('.container').css('cursor','default');
-                    confirmInfo.text('Ошибка импорта.').show();
-
-                }
+                    $('.loading').fadeIn(function(){
+                        try{
+                            thriftModule.clientBO.importData(dataSet);
+                            confirmInfo.text('Данные успешно импортированы.').addClass('info-good').show();
+                        }catch(e){
+                            confirmInfo.text('Ошибка импорта.').show();
+                        }
+                        $('.loading').fadeOut(0);
+                        setTimeout(hideConfirm,3000);
+                    });
 
                 function hideConfirm(){
                     $('.confirm-info').hide();
                 }
-                setTimeout(hideConfirm,3000);
 
             }
 

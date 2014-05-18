@@ -5,18 +5,6 @@ define(
 		function($, thriftModule, basketModule, commonModule, spinnerModule) {
             //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 
-            var prevParentId = [], parentCounter = 0, prevCatCounter;
-
-			// var commonModule = require('shop-common');
-			/*
-			 * if(commonModule){ alert('1'); var prevCatCounter =
-			 * commonModule.getCookie('prevCatCounter'); if (prevCatCounter !==
-			 * undefined){ parentCounter = parseInt(prevCatCounter); } var
-			 * arrayPrevCatCookie = commonModule.getCookie('arrayPrevCat'); if
-			 * (arrayPrevCatCookie !== undefined){ prevParentId =
-			 * arrayPrevCatCookie.split(','); } }
-			 */
-
 			function createProductsTableHtml(productsList) {
 				var productListLength = productsList.length;
 				var productsHtml = '';
@@ -135,29 +123,11 @@ define(
                 InitLoadCategory(prevCategoryId);
             }
 
-/*			function initGetCookie() {
-				var commonModule = require('shop-common');
-				prevCatCounter = commonModule.getCookie('prevCatCounter');
-				if (prevCatCounter !== undefined) {
-					parentCounter = parseInt(prevCatCounter);
-				}
-				var arrayPrevCatCookie = commonModule.getCookie('arrayPrevCat');
-				if (arrayPrevCatCookie !== undefined) {
-					prevParentId = arrayPrevCatCookie.split(',');
-				}
-			}*/
-
 			function InitClickOnCategory() {
-                //var commonModule = require('shop-common');
-
-                //console.log(commonModule.getCookie('arrayPrevCat')+" "+commonModule.getCookie('prevCatCounter')+" "+commonModule.getCookie('catid'));
-
-				/*if (prevCatCounter === undefined) {
-					initGetCookie();
-				}*/
 				try {
 					$('.shop-menu li a').click(
                         function(e) {
+
                             e.preventDefault();
 
                             var isReturnBtn = $(this).hasClass('shopmenu-back');
@@ -167,45 +137,13 @@ define(
 
 
                             if (isReturnBtn) {
-                                /*var categoryParentId = $(this).parent().data('parentid');
-                                alert(categoryParentId);
-                                InitLoadCategory(categoryParentId);*/
 
-                                //window.history.back();
-
-                                /*InitLoadCategory(prevParentId[parentCounter]);
-                                commonModule.setCookie('catid',prevParentId[parentCounter]);
-                                parentCounter--;
-                                commonModule.setCookie('arrayPrevCat',prevParentId);
-                                commonModule.setCookie('prevCatCounter',parentCounter);*/
-
-                                /*var categoriesHistory = urlHash.split(';');
-                                var categoriesHistoryLength = categoriesHistory.length;
-                                var prevCategoryIndexPos = categoriesHistoryLength - 2;
-                                var prevCategoryIndex;
-
-                                if (prevCategoryIndexPos < 0){
-                                    prevCategoryIndex = 0;
-                                }else{
-                                    var hashParts = categoriesHistory[prevCategoryIndexPos].split('=');
-                                    prevCategoryIndex = hashParts[1];
-                                }
-                                InitLoadCategory(prevCategoryIndex);*/
-
-                                //window.history.back();
                                 categoriesHash = document.location.hash.split(';');
                                 categoriesHash.pop();
                                 categoriesHash = categoriesHash.join(';');
                                 LoadCategoryByURLHash(categoriesHash);
 
                             } else {
-                                /*parentCounter++;
-                                prevParentId[parentCounter] = $(this).parent().data('parentid');
-                                InitLoadCategory($(this).parent().data('catid'));
-                                commonModule.setCookie('catid', $(this).parent().data('catid'));
-                                commonModule.setCookie('arrayPrevCat',prevParentId);
-                                commonModule.setCookie('prevCatCounter',parentCounter);*/
-
                                 if(!urlHash){
                                     categoriesHash = '#cat='+categoryid;
                                 }else{
