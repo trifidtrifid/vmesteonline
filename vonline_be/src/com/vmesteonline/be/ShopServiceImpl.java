@@ -438,7 +438,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			htmlBody += "<br/>Коментарий: "+comment;
 		
 		htmlBody += "<br/><table><caption>Состав заказа</caption>";
-		htmlBody += "<tr><th>Код товара</th><th>Производитель</th><th>Наименование</th><th>Кол-во</th><th>Развес</th><th>Стоимость</th><th>Комментарий</th></tr>";
+		htmlBody += "<tr><th>Код товара</th><th>Производитель</th><th>Наименование</th><th>Кол-во</th><th>Развес</th><th>Стоимость</th><th>Цена</th><th>Комментарий</th></tr>";
 		for (Long lineId: currentOrder.getOrderLines().values()) {
 			VoOrderLine orderLine = pm.getObjectById(VoOrderLine.class, lineId);
 			VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProductId());
@@ -458,9 +458,15 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				htmlBody += "<td>-</td>";
 			}
 			htmlBody += "<td>" + orderLine.getPrice() + "</td>";
+			htmlBody += "<td>" + VoHelper.roundDouble( orderLine.getPrice() * orderLine.getQuantity(), 2 )  + "</td>";
 			htmlBody += "<td>" + null == orderLine.getComment() ? "-" : orderLine.getComment() + "</td>";
 			htmlBody += "</tr>";
 		}
+		
+		htmlBody += "<tr>"
+				+ "<td/><td/><td/><td/><td/><td><b>Итого:</b></td><td><b>"
+				+ VoHelper.roundDouble( currentOrder.getTotalCost() - currentOrder.getDeliveryCost(), 2)+ "</b></td><td/>";
+		htmlBody += "</tr>";
 		htmlBody += "</table></html>";
 		
 		htmlBody += "<p>Спасибо за ваш заказ!</p>";

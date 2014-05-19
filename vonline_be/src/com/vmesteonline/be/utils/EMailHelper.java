@@ -12,7 +12,7 @@ public class EMailHelper {
 	
 	private static Logger logger = Logger.getLogger(EMailHelper.class);
 	
-	private static String fromAddress = "Во! <trifid@vmesteonline.ru>";
+	private static String fromAddress = "Во! <marina@vomoloko.ru>";
 
 	public static void sendSimpleEMail( String from, String to, String subject, String body) throws IOException {
 		
