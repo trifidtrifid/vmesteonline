@@ -471,8 +471,13 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		
 		String subject = shop.getName() + " Заказ# "+currentOrder.getId()+ " Подтвержден.";
 		try {
-			EMailHelper.sendSimpleEMail( customer.getEmail(), subject, htmlBody);
 			EMailHelper.sendSimpleEMail( shopOwner.getEmail(), subject, htmlBody);
+		} catch (IOException e) {
+			logger.error("FAiled to send Email : "+subject+" Reason: "+e);
+			e.printStackTrace();
+		}
+		try {
+			EMailHelper.sendSimpleEMail( shopOwner.getEmail(), customer.getEmail(), subject, htmlBody);
 		} catch (IOException e) {
 			logger.error("FAiled to send Email : "+subject+" Reason: "+e);
 			e.printStackTrace();

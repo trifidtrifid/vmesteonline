@@ -82,7 +82,7 @@
         return (Date.parse('15 '+strMonth+" "+year));
     }
 
-    var orders;
+    //var orders;
     function SetOrderDates(currentCal){
         try{
         var metaTime = parseInt(getMetaDate(currentCal.picker)/1000);
