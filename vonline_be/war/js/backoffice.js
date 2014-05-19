@@ -50,10 +50,11 @@ require.config({
 var deliveryFilterFlag= 0,
     statusFilterFlag = 0,
     dateFilterFlag = 0,
-    searchFilterFlag = 0;
+    searchFilterFlag = 0,
+    orders;
 
-require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
-    function($,thriftModule,commonM) {
+require(["jquery",'shop-initThrift','commonM','shop-orders','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
+    function($,thriftModule,commonM,ordersModule) {
 
         commonM.init();
 
@@ -65,7 +66,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
         function showAllOrders(){
             try{
-            var orders = thriftModule.client.getOrdersByStatus(0,nowTime+180*day,0);
+            orders = thriftModule.client.getOrdersByStatus(0,nowTime+180*day,0);
 
             $('.orders-list').html("").append(createOrdersHtml(orders));
 
@@ -89,20 +90,14 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
                 var orderItem = $(this).closest('.order-item');
                 var orderProducts = orderItem.find('.order-products');
-                var orderDetails = thriftModule.client.getOrderDetails(orderItem.data('orderid'));
-                var orderLines = orderDetails.odrerLines;
-                var orderLinesLength = orderLines.length;
-                //var order = thriftModule.client.getOrder(orderItem.data('orderid'));
+
 
                 if (orderProducts.find('.catalog').length == 0){
+                    var orderId = orderItem.data('orderid');
+                    var orderDetails = thriftModule.client.getOrderDetails(orderId);
+
+                    ordersModule.showOrderDetails(orderItem,orderId,orderDetails);
                     orderProducts.append(createOrdersProductHtml(orderDetails));
-
-                    /*for (var i = 0; i < orderLinesLength; i++){
-                        InitSpinner(orderProducts.find('tbody tr:eq('+ i +') .spinner1'),orderLines[i].quantity);
-                    }*/
-
-                    //InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
-                    //InitProductDetailPopup(orderProducts.find('.product-link'));
                 }
 
                 orderProducts.slideToggle(200,function(){
@@ -189,7 +184,6 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                     var tempDate = new Date(orders[i].date*1000);
                     // форматирование статуса заказа
                     var orderStatus;
-                    var orderLinks = "";
                     switch(orders[i].status){
                         case 0:
                             orderStatus = "Неизвестен" ;
@@ -214,7 +208,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             break
                     }
                     // форматирование типа доставки
-                    var orderDetails = thriftModule.client.getOrderDetails(orders[i].id);
+                    /*var orderDetails = thriftModule.client.getOrderDetails(orders[i].id);
                     var orderDelivery;
                     switch(orderDetails.delivery){
                         case 0:
@@ -229,8 +223,8 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                         case 3:
                             orderDelivery = "Курьер далеко";
                             break
-                    }
-                    if (orderDetails.deliveryTo){
+                    }*/
+                    //if (orderDetails.deliveryTo){
 
                         var orderDay = tempDate.getDate();
                         orderDay = (orderDay < 10)? "0" + orderDay: orderDay;
@@ -253,21 +247,19 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                             '</td>'+
                             /*'<td class="td5">+
                             '</td>'+*/
-                            '<td class="td9">'+ orderDetails.deliveryCost +'</td>'+
-                            '<td class="td8">'+ (orderDetails.weightGramm/1000).toFixed(1) +'</td>'+
+                            '<td class="td9"></td>'+
+                            '<td class="td8"></td>'+
                             '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
                             '</tr>'+
                             '</tbody>'+
                             '</table>'+
                             '<div class="order-bottom">' +
-                            '<div class="order-delivery"><span><b>Доставка:</b> '+ orderDelivery +',  ' +
-                            orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
-                            orderDetails.deliveryTo.flatNo +'</span></div>'+
+                            '<div class="order-delivery"></div>'+
                             '</div>'+
                             '<div class="order-products">'+
                             '</div>'+
                             '</div>';
-                    }
+                    //}
                 }
                 /*var haveMore = ordersLength%listLength;
                  if (haveMore && haveMore != ordersLength){
@@ -288,7 +280,8 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
         var dPickerExport = $('.datepicker-export');
 
         globalUserAuth = true;
-        dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
+
+            dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
             $(this).prev().focus();
         });
         console.log('---------------------');
@@ -297,7 +290,8 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
             $(this).prev().focus();
         });
 
-        var datepickerFunc = {
+
+            var datepickerFunc = {
             createOrdersHtml: createOrdersHtml,
             initOrderPlusMinus: initOrderPlusMinus,
             setSidebarHeight: setSidebarHeight,
@@ -308,6 +302,7 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
 
         dPicker.datepicker('setVarOrderDates',datepickerFunc);
         dPickerExport.datepicker('setVarOrderDates',datepickerFunc);
+
 
         $('.reset-filters').click(function(){
             showAllOrders();
@@ -732,8 +727,9 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                                 }
                                 tdIndex ++;
                             });
+                            coordX -= $('.import-table').scrollLeft();
 
-                            var coordY = 30;
+                            var coordY = 94;
                             $(this).parent().find('.dropdown-menu').css({'left':coordX,'top':coordY});
                         });
 
@@ -770,8 +766,8 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                     var coordX = e.pageX-330;
                     var coordY = e.pageY-90;
                 }else{
-                    coordX = e.pageX-130;
-                    coordY = e.pageY-30;
+                    coordX = e.pageX-200;
+                    coordY = e.pageY-200;
                 }
                 $('.full-text').hide();
                 $(this).parent().find('.full-text').css({'left':coordX,'top':coordY}).show();
@@ -925,9 +921,6 @@ require(["jquery",'shop-initThrift','commonM','datepicker-backoffice','datepicke
                     }
                     fieldsCounter++;
                 });
-                /*$('.checkbox.active:not(".check-all")').each(function(){
-                 fieldsMap[fieldsCounter++] = parseInt($(this).data('exchange'));
-                 });*/
 
                 var importElement = new com.vmesteonline.be.shop.bo.ImportElement;
                 importElement.type = ImExType;

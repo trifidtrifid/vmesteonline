@@ -116,7 +116,7 @@ define(
                             break
                     }
                     // форматирование типа доставки
-                    var orderDetails = thriftModule.client.getOrderDetails(orders[i].id);
+                    /*var orderDetails = thriftModule.client.getOrderDetails(orders[i].id);
                     var orderDelivery;
                     switch(orderDetails.delivery){
                         case 0:
@@ -131,7 +131,7 @@ define(
                         case 3:
                             orderDelivery = "Курьер далеко";
                             break
-                    }
+                    }*/
                     var orderDay = tempDate.getDate();
                     orderDay = (orderDay < 10)? "0" + orderDay: orderDay;
 
@@ -151,8 +151,8 @@ define(
                         '<td class="td4">'+
                         '<div class="order-status">'+orderStatus +'</div>'+
                         '</td>'+
-                        '<td class="td9">'+ orderDetails.deliveryCost +'</td>'+
-                        '<td class="td8">'+ (orderDetails.weightGramm/1000).toFixed(1) +'</td>'+
+                        '<td class="td9"></td>'+
+                        '<td class="td8"></td>'+
                         '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
                         '</tr>'+
                         '</tbody>'+
@@ -160,9 +160,7 @@ define(
                         '<div class="order-bottom">' +
                         '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
                         '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить</button>' +
-                        '<div class="order-delivery"><span><b>Доставка:</b> '+ orderDelivery +',  ' +
-                        orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
-                        orderDetails.deliveryTo.flatNo +'</span></div>'+
+                        '<div class="order-delivery"></div>'+
                         '</div>'+
                         '<div class="order-products">'+
                         '</div>'+
@@ -180,6 +178,34 @@ define(
             return ordersHtml;
         }
 
+
+        function showOrderDetails(orderItem,orderid,details)
+        {
+            var orderDetails = (details) ? details : thriftModule.client.getOrderDetails(orderid);
+            orderItem.find('.td9').text(orderDetails.deliveryCost);
+            orderItem.find('.td8').text((orderDetails.weightGramm/1000).toFixed(1));
+
+            var orderDelivery;
+            switch(orderDetails.delivery){
+                case 0:
+                    orderDelivery = "Неизвестно";
+                    break;
+                case 1:
+                    orderDelivery = "Самовывоз";
+                    break;
+                case 2:
+                    orderDelivery = "Курьер рядом";
+                    break;
+                case 3:
+                    orderDelivery = "Курьер далеко";
+                    break
+            }
+
+            orderItem.find('.order-delivery').html('<span><b>Доставка:</b> '+ orderDelivery +',  ' +
+            orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
+            orderDetails.deliveryTo.flatNo +'</span>');
+        }
+
         function initOrderPlusMinus(selector){
                 try{
                     selector.find('.plus-minus').click(function(e){
@@ -187,11 +213,15 @@ define(
 
                         var orderItem = $(this).closest('.order-item');
                         var orderProducts = orderItem.find('.order-products');
-                        var orderDetails = thriftModule.client.getOrderDetails(orderItem.data('orderid'));
-                        var orderLines = orderDetails.odrerLines;
-                        var orderLinesLength = orderLines.length;
+                        var orderId = orderItem.data('orderid');
 
                         if (orderProducts.find('.catalog').length == 0){
+
+                            var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                            var orderLines = orderDetails.odrerLines;
+                            var orderLinesLength = orderLines.length;
+
+                            showOrderDetails(orderItem,orderId,orderDetails);
                             orderProducts.append(createOrdersProductHtml(orderDetails));
 
                             for (var i = 0; i < orderLinesLength; i++){
@@ -385,7 +415,8 @@ define(
             initVarForMoreOrders: initVarForMoreOrders,
             initOrdersLinks: initOrdersLinks,
             initShowMoreOrders: initShowMoreOrders,
-            GoToOrdersTrigger: GoToOrdersTrigger
+            GoToOrdersTrigger: GoToOrdersTrigger,
+            showOrderDetails : showOrderDetails
         }
     }
 );

@@ -1548,6 +1548,7 @@ height 50px
 }
 .import .import-show {
   display: none;
+  position: relative;
 }
 .import .import-show .import-btn-top {
   float: right;
@@ -1573,7 +1574,6 @@ height 50px
 .import .import-show .import-table {
 /*overflow-x auto
       overflow-y visible*/
-  position: relative;
   margin-bottom: 10px;
 }
 .import .import-show .import-table.y-overflow-hidden {

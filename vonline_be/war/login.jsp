@@ -41,7 +41,7 @@
 												<fieldset>
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">
-															<input type="text" id="uname" class="form-control" placeholder="Логин" />
+															<input type="text" id="uname" class="form-control" placeholder="Ваш email" />
 															<i class="icon-user"></i>
 														</span>
 													</label>
