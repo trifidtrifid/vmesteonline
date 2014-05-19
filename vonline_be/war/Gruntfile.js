@@ -1,23 +1,25 @@
 module.exports = function(grunt) {
 
-  // Project configuration.
-  grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
-    uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-      },
-      build: {
-        src: 'src/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>.min.js'
-      }
-    }
-  });
+    // Задачи
+    grunt.initConfig({
+        // Сжимаем
+        uglify: {
+            main: {
+                files: {
+                    // Результат задачи concat
+                    'build/shop.min.js': 'js/shop.js',
+                    'build/shop-common.min.js': 'js/shop-common.js'
+                }
+            }
+        }
+    });
 
-  // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-contrib-uglify');
+    // Загрузка плагинов, установленных с помощью npm install
+    //grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    //grunt.loadNpmTasks('grunt-contrib-requirejs');
 
-  // Default task(s).
-  grunt.registerTask('default', ['uglify']);
+    // Задача по умолчанию
+    grunt.registerTask('default', ['uglify']);
 
 };
