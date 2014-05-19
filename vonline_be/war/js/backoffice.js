@@ -122,6 +122,7 @@ require(["jquery",'shop-initThrift','commonM','shop-orders','datepicker-backoffi
                     '<td>Название</td>'+
                     '<td>Цена (руб)</td>'+
                     '<td>Количество</td>'+
+                    '<td>Стоимость</td>'+
                     '<td>Ед.изм</td>'+
                     '<td></td>'+
                     '</tr>'+
@@ -152,6 +153,7 @@ require(["jquery",'shop-initThrift','commonM','shop-orders','datepicker-backoffi
                         '<td class="td-spinner">'+
                         orderLines[j].quantity+
                         '</td>'+
+                        '<td class="orderLine-amount"><span>'+(orderLines[j].product.price*orderLines[j].quantity).toFixed(1)+'</span></td>'+
                         '<td><span class="unit-name">'+unitName+'</span></td>'+
                         '</tr>';
 
