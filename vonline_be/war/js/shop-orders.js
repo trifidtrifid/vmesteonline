@@ -12,6 +12,7 @@ define(
                     '<td>Название</td>'+
                     '<td>Цена (руб)</td>'+
                     '<td>Количество</td>'+
+                    '<td>Стоимость</td>'+
                     '<td>Ед.изм</td>'+
                     '<td></td>'+
                     '</tr>'+
@@ -54,6 +55,7 @@ define(
                     }
 
                     ordersProductsHtml += '<span class="added-text">добавлен</span></td>'+
+                        '<td class="orderLine-amount"><span>'+(orderLines[j].product.price*orderLines[j].quantity).toFixed(1)+'</span></td>'+
                         '<td><span class="unit-name">'+unitName+'</span></td>';
 
                     if(!noEdit){
