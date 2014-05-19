@@ -12,7 +12,6 @@ define(
         }
 
         function cleanBasket(){
-            //$('.catalog-order').html('');
             var commonModule = require('shop-common');
             commonModule.remarkAddedProduct();
             if($('.tab-pane').length > 1){
@@ -185,8 +184,6 @@ define(
                         if (!errorPrepack){
                             if ($('.tabs-days').length == 0){
                              // если это первый товар в корзине
-                                //var nextDate = getNextDate();
-                                //alert(nextDate);
                                 var order = thriftModule.client.createOrder(0);
                                 var nextDateStr = new Date(order.date*1000);
                                 addTabToBasketHtml(nextDateStr,order.id,orderDetails);
@@ -286,7 +283,6 @@ define(
                     '<span>'+orderDay+'.'+orderMonth+'</span>'+
                     '</a>'+
                     '</li>';
-                //alert('1 '+tabDays.length);
                 tabDays.find('.nav-tabs').append(html);
                 html = '<div id="day'+orderId+'" data-orderid="'+ orderId +'" class="tab-pane active">'+
                     '<div class="basket-head">'+
@@ -362,7 +358,6 @@ define(
                 }
                 /* --- */
                 var myDate;
-                //$('.main-container').css('min-height', $(window).height()-45);
 
                 var orderId = $('.tab-pane.active').data('orderid');
 
@@ -449,7 +444,6 @@ define(
                     $('#phone-delivery').focus();
 
                 }else{
-                    //var userContacts = thriftModule.userClient.getUserContacts();
                     var haveError = 0;
                     try{
                         if (options.userContacts.mobilePhone != phoneDelivery.val()){
@@ -468,13 +462,11 @@ define(
 
                     if(!haveError){
                         alertDeliveryPhone.hide();
-                        //alert('Ваш заказ принят !');
                         cleanBasket();
                         $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
 
                             $('.page').hide();
                             $(this).show();
-                            //$('.main-container').css('min-height', $(window).height()-45);
 
                             var order = thriftModule.client.getOrder(orderId);
                             orderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
@@ -582,7 +574,6 @@ define(
                 (commonModule.getPacksLength(packs) <= 1) ? currentSpinner.spinner('enable'):currentSpinner.spinner('disable');
 
                 myOrderDetails = thriftModule.client.setOrderLine(orderId,currentProduct.id,newSpinnerVal,'',packs);
-                 //myOrderDetails = thriftModule.client.getOrderDetails(orderId);
 
                 currentTab.find('.weight span').text(commonModule.getOrderWeight(orderId,myOrderDetails));
 
@@ -592,7 +583,6 @@ define(
             }else{
                 // если такого товара еще нет
                 myOrderDetails = thriftModule.client.setOrderLine(orderId,currentProduct.id,currentProduct.qnty,'',packs);
-                //myOrderDetails = thriftModule.client.getOrderDetails(orderId);
 
                 AddSingleProductToBasket(currentProduct,currentProduct.qnty,0,myOrderDetails);
 
@@ -662,7 +652,6 @@ define(
                 var now = parseInt(new Date()/1000);
                 now -= now%86400;
                 var nextDate = thriftModule.client.getNextOrderDate(now);
-                //alert(nextDate.orderDate);
             }catch(e){
                 alert(e + ' Функция SetFreeDates');
             }
@@ -674,12 +663,9 @@ define(
         var triggerDelivery = 0;
 
         function writeAddress(address){
-            //if(address.country){
             $('.input-delivery .delivery-address').text(address.country.name + ", " + address.city.name + ", "
                 + address.street.name + " " + address.building.fullNo + ", кв. " + address.flatNo);
-            /*}else{
-                $('.input-delivery .delivery-address').text(address);
-            }*/
+
         }
 
         var mapWidthConst = 400;

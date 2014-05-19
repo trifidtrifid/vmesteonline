@@ -8,9 +8,7 @@ define(
 			function createProductsTableHtml(productsList) {
 				var productListLength = productsList.length;
 				var productsHtml = '';
-				//var productDetails;
 				for (i = 0; i < productListLength; i++) {
-					//productDetails = thriftModule.client.getProductDetails(productsList[i].id);
 					var unitName = "";
 					if (productsList[i].unitName) {
 						unitName = productsList[i].unitName;
@@ -135,9 +133,7 @@ define(
                             var urlHash = document.location.hash,
                             categoriesHash;
 
-
                             if (isReturnBtn) {
-
                                 categoriesHash = document.location.hash.split(';');
                                 categoriesHash.pop();
                                 categoriesHash = categoriesHash.join(';');

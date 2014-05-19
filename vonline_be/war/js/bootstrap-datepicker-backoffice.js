@@ -33,23 +33,8 @@
 
     function getMetaDate(calendarPicker){
         try {
-            /*var strDate;
-
-            switch (calendarID){
-                case 'date':
-                    $calSelector = $('#date-picker-2');
-                    break;
-                case 'products':
-                    $calSelector = $('#date-picker-3');
-                    break;
-                case 'packs':
-                    $calSelector = $('#date-picker-4');
-                    break;
-            }*/
 
             var strDate = calendarPicker.find('.datepicker-days .switch').text().split(" ");
-            // если календарь заказов
-//            strDate = $('.datepicker:eq(0)').find('.datepicker-days .switch').text().split(" ");
 
         var strMonth="";
         var year = strDate[1];
@@ -97,7 +82,7 @@
         return (Date.parse('15 '+strMonth+" "+year));
     }
 
-    var orders;
+    //var orders;
     function SetOrderDates(currentCal){
         try{
         var metaTime = parseInt(getMetaDate(currentCal.picker)/1000);
@@ -142,28 +127,6 @@
         }
     }
 
-/*    function getStringDate(date){
-        var dateStr = new Date(date*1000);
-
-        var orderDay = dateStr.getDate();
-        var orderMonth = dateStr.getMonth()+1;
-        var orderYear = dateStr.getFullYear();
-
-        orderDay = (orderDay < 10) ? "0" + orderDay : orderDay;
-        orderMonth = (orderMonth < 10) ? "0" + orderMonth : orderMonth;
-
-        return orderDay+"."+orderMonth+"."+orderYear;
-
-    }*/
-
-/*    function AdditionallyOrderToggle(){
-        var additionallyOrder = $('.additionally-order');
-        if (additionallyOrder.hasClass('hide')){
-            additionallyOrder.removeClass('hide');
-            $('.empty-basket').addClass('hide');
-        }
-    }*/
-
     function initOrderDay(createOrdersHtml,initOrderPlusMinus,setSidebarHeight,filterByStatus,filterByDelivery,filterBySearch){
         try{
         $('.order-day').click(function(){
@@ -180,7 +143,6 @@
                 var orderList = [];
                 var counter = 0;
                 for (var i = 0; i < ordersLength; i++){
-                    //alert(orders[i].date + " "+orderDate);
                     if (orders[i].date == orderDate){
                         orderList[counter++] = orders[i];
                     }
@@ -198,8 +160,6 @@
                 dateFilterFlag = 1;
                 var shopOrdersList = $('.orders-list');
                 shopOrdersList.html('').append(createOrdersHtml(orderList));
-
-                //initOrderPlusMinus(shopOrdersList);
 
                 var ordersNoInit = $('.orders-no-init');
                 initOrderPlusMinus(ordersNoInit);

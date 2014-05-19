@@ -166,7 +166,6 @@ define(
             });
 
             var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
-            //var userAddresses = thriftModule.userClient.getUserAddresses();
 
             var userAddressesLength = userAddresses.length;
 
@@ -251,7 +250,6 @@ define(
 
                 if(!currentForm.prev().hasClass('add-user-address')){
                     // если сохраняем при редактировании
-                    //thriftModule.client.createDeliveryAddress(deliveryAddress.street.name+" "+deliveryAddress.building.fullNo,deliveryAddress.flatNo,0,0,0);
                     try{
                         deliveryAddress = thriftModule.client.createDeliveryAddress(street+" "+building,flatNo,0,0,0);
                         currentForm.find('.error-info').hide();
@@ -294,7 +292,6 @@ define(
                     }
 
                 }
-                    //commonModule.addAddressToBase(currentForm);
                     if(!badAddress) {
                         commonModule.addAddressToBase(currentForm,deliveryAddress);
                         currentForm.slideUp();
@@ -343,7 +340,6 @@ define(
                     var ind = $(this).data('index');
                     var currAddr;
                     currAddr = (currentAddress) ? currentAddress : userAddresses[ind];
-                    //thriftModule.userClient.deleteUserAddress(currAddr);
                     thriftModule.client.deleteDeliveryAddress(currAddr);
                 });
                 userAddressItem.find('+.form-edit').slideUp();
@@ -361,7 +357,6 @@ define(
             e.stopPropagation();
 
             var ind = $(this).parent().index();
-            //var dynamic = $('.dynamic');
             if (ind == 0){
                 $('.page').hide();
                 $('.shop-profile').load("ajax/ajax-profile.jsp .dynamic",function(){

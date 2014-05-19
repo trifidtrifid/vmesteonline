@@ -85,7 +85,6 @@
                     <c:choose>
                         <c:when test="${auth}">
                             <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                                <%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
                                 <span class="user-info">
                                     <c:out value="${firstName}" /> <c:out value="${lastName}" />
                                 </span>
@@ -94,7 +93,6 @@
                         </c:when>
                         <c:otherwise>
                             <a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
-                                <%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
                                 <span class="user-info">
                                     Войти
 									</span>
@@ -102,8 +100,6 @@
                         </c:otherwise>
                     </c:choose>
                     <ul	class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                        <%--<li><a href="#"> <i class="icon-cog"></i> Настройки
-                        </a></li>--%>
 
                         <li><a href="#"> <i class="icon-user"></i> Профиль
                         </a></li>
@@ -337,13 +333,6 @@
                                 <input class="form-control date-picker datepicker-export" id="date-picker-3" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                             </div>
 
-                            <%--<div class="checkbox check-all">
-                                <label>
-                                    <input name="form-field-checkbox" type="checkbox" class="ace">
-                                    <span class="lbl"> check all</span>
-                                </label>
-                            </div>--%>
-
                             <div class="export-products-checklist">
                                 <select multiple>
 
@@ -438,10 +427,6 @@
         </div>
     </div>
 </div>
-<!-- общие библиотеки -->
-
-<%--<script src="js/lib/jquery-2.0.3.min.js"></script>--%>
-<%--<script src="js/lib/bootstrap.js"></script>--%>
 
 
 <!-- файлы thrift -->
@@ -458,18 +443,6 @@
 <script src="/gen-js/userservice_types.js" type="text/javascript"></script>
 <script src="/gen-js/UserService.js" type="text/javascript"></script>
 <!-- -->
-
-<%--<!-- конкретные плагины -->
-<script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
-
-<script src="js/bootstrap-datepicker-backoffice.js"></script>
-<script src="js/lib/date-time/locales/bootstrap-datepicker.ru.js"></script>
-<!-- -->
-<!-- собственные скрипты  -->
-<script src="js/lib/ace-extra.min.js"></script>
-<script src="js/lib/ace-elements.min.js"></script>
-<script src="js/common.js"></script>
-<script src="js/backoffice.js"></script>--%>
 
 <script type="text/javascript" data-main="/js/backoffice.js" src="/js/require.js"></script>
 
