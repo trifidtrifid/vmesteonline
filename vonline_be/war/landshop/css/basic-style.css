@@ -513,3 +513,64 @@ PRINT STYLESHEET
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 }
+
+
+
+/* own styles */
+.shops{
+    position: relative;
+}
+.shops-block-title{
+    position: absolute;
+    background: #fff;
+    padding: 5px 15px;
+    top: -16px;
+}
+.shops ul{
+    padding: 0;
+    margin: 0;
+}
+.shops ul li{
+    list-style: none;
+    text-align: left;
+    clear: left;
+    margin-top: 15px;
+    overflow: auto;
+}
+.shops ul li a{
+    text-decoration: none;
+}
+.shops ul li a:hover p{
+   text-decoration: underline;
+}
+.shops ul li img{
+    float: left;
+    max-width: 100px;
+    max-height: 100px;
+}
+.shops ul li .shop-right{
+    margin-left: 110px;
+    display: block;
+}
+.shops ul li h3{
+    margin-top: 0;
+    line-height: 16px;
+}
+.shops ul li p{
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+.shops ul li .voice-counter{
+    width: 100px;
+    text-align: right;
+    float: left;
+    font-weight: bold;
+    font-size: 30px;
+    margin-top: 2px;
+    color: #000;
+}
+.shops ul li .btn{
+    display: block;
+    margin-left: 10px;
+    margin-top: 0;
+}
