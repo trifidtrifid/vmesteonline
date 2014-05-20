@@ -1,6 +1,6 @@
 define(
-    'shop-orders',
-    ['jquery','shop-initThrift','shop-basket','shop-common','shop-spinner'],
+    'shop-orders.min',
+    ['jquery','shop-initThrift.min','shop-basket.min','shop-common.min','shop-spinner.min'],
     function( $,thriftModule,basketModule,commonModule,spinnerModule ){
 
         function createOrdersProductHtml(orderDetails,noEdit){

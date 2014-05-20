@@ -316,7 +316,7 @@
     <script src="/gen-js/userservice_types.js" type="text/javascript"></script>
     <script src="/gen-js/UserService.js" type="text/javascript"></script>
 
-    <script type="text/javascript" data-main="/js/shop.js" src="/js/require.js"></script>
+    <script type="text/javascript" data-main="/build/shop.min.js" src="/js/require.js"></script>
 
 
 </body>

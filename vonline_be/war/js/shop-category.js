@@ -1,7 +1,7 @@
 define(
-		'shop-category',
-		[ 'jquery', 'shop-initThrift', 'shop-basket', 'shop-common',
-				'shop-spinner' ],
+		'shop-category.min',
+		[ 'jquery', 'shop-initThrift.min', 'shop-basket.min', 'shop-common.min',
+				'shop-spinner.min' ],
 		function($, thriftModule, basketModule, commonModule, spinnerModule) {
             //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 

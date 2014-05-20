@@ -1,6 +1,6 @@
 define(
-    'shop-basket',
-    ['jquery','shop-initThrift','shop-spinner','shop-common','shop-search','shop-orders'],
+    'shop-basket.min',
+    ['jquery','shop-initThrift.min','shop-spinner.min','shop-common.min','shop-search.min','shop-orders.min'],
     function( $,thriftModule,spinnerModule,commonModule,searchModule,ordersModule ){
 
 
@@ -104,7 +104,7 @@ define(
                     if (!globalUserAuth){
                         // если пользователь не залогинен
                         selectorForCallbacks = $(this);
-                        var commonModule = require('shop-common');
+                        var commonModule = require('shop-common.min');
                         commonModule.openModalAuth();
                     }else{
                         // если пользователь залогинен

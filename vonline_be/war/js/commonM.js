@@ -1,6 +1,6 @@
 define(
-    'commonM',
-    ['jquery','shop-initThrift','shop-search','shop-common'],
+    'commonM.min',
+    ['jquery','shop-initThrift.min','shop-search.min','shop-common.min'],
     function( $,thriftModule,searchModule, commonModule ){
 
         function init(){

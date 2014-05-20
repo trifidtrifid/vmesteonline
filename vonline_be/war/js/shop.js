@@ -1,13 +1,13 @@
 require.config({
-    baseUrl: "/js",
+    baseUrl: "/build",
     paths: {
-        "jquery"   : "lib/jquery-2.0.3.min",
-        "ace_spinner": "lib/fuelux/fuelux.spinner",
-        "bootstrap": "lib/bootstrap",
-        "ace_extra": "lib/ace-extra.min",
-        "ace_elements": "lib/ace-elements.min",
-        "flexslider": "lib/jquery.flexslider-min",
-        "jquery_ui": "lib/jquery-ui-1.10.3.full.min"
+        "jquery"   : "../js/lib/jquery-2.0.3.min",
+        "ace_spinner": "../js/lib/fuelux/fuelux.spinner",
+        "bootstrap": "../js/lib/bootstrap",
+        "ace_extra": "../js/lib/ace-extra.min",
+        "ace_elements": "../js/lib/ace-elements.min",
+        "flexslider": "../js/lib/jquery.flexslider-min",
+        "jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min"
     },
     shim:{
       'ace_spinner':{
@@ -29,7 +29,7 @@ require.config({
     }
 });
 
-require(["jquery",'shop-modules','commonM','loginModule'],
+require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
     function($,modules,commonM,loginModule) {
 
         if(globalUserAuth){

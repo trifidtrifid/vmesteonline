@@ -1,6 +1,6 @@
 define(
-    'shop-search',
-    ['jquery','jquery_ui','shop-initThrift','shop-basket','shop-orders','shop-category','shop-common','shop-spinner'],
+    'shop-search.min',
+    ['jquery','jquery_ui','shop-initThrift.min','shop-basket.min','shop-orders.min','shop-category.min','shop-common.min','shop-spinner.min'],
     function( $,jquery_ui,thriftModule,basketModule,ordersModule,categoryModule,commonModule,spinnerModule ){
 
         try{
