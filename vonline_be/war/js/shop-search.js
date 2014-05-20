@@ -39,8 +39,8 @@ define(
                 delay: 0,
                 source: dataSearch,
                 select: function(event,ui){
-                    var basketModule = require('shop-basket');
-                    var commonModule = require('shop-common');
+                    var basketModule = require('shop-basket.min');
+                    var commonModule = require('shop-common.min');
 
                     if (!globalUserAuth){
                         // если пользователь не залогинен
@@ -101,10 +101,10 @@ define(
 
                 /* подключение событий */
                 spinnerModule.initProductsSpinner();
-                var commonModule = require('shop-common');
+                var commonModule = require('shop-common.min');
                 commonModule.InitProductDetailPopup($('.product-link'));
                 commonModule.markAddedProduct();
-                var basketModule = require('shop-basket');
+                var basketModule = require('shop-basket.min');
                 basketModule.InitAddToBasket($('.fa-shopping-cart'));
             });
 

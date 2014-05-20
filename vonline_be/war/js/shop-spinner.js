@@ -216,7 +216,7 @@ define(
                         if(!isBasket){
                             // если конфирм, то нужно обновить basket
                             var price = productSelector.find('.td-price').text();
-                            var commonModule = require('shop-common');
+                            var commonModule = require('shop-common.min');
                             $('.catalog-order .product').each(function(){
 
                                 if ($(this).data('productid') == productSelector.data('productid')){
@@ -253,13 +253,13 @@ define(
 
             if(weightType){
                 if(weight >= bigWeight){
-                    var basketModule = require('shop-basket');
+                    var basketModule = require('shop-basket.min');
                     basketModule.setDeliveryCost(orderId,orderDetails,basketProductsContainer);
                     weightType = 0;
                 }
             }else{
                 if(weight < bigWeight){
-                    basketModule = require('shop-basket');
+                    basketModule = require('shop-basket.min');
                     basketModule.setDeliveryCost(orderId,orderDetails,basketProductsContainer);
                     weightType = 1;
                 }
@@ -302,7 +302,7 @@ define(
         function updateWeightAndAmount(orderId,basketProductsContainer,orderInfo){
             var orderDetails = (orderInfo) ? orderInfo : thriftModule.client.getOrderDetails(orderId);
 
-            var commonModule = require('shop-common');
+            var commonModule = require('shop-common.min');
             var currentPane = $('.tab-pane.active');
             var orderWeight = commonModule.getOrderWeight(orderId,orderDetails);
             var amount = commonModule.countAmount(basketProductsContainer,orderDetails);

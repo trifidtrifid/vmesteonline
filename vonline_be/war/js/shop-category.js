@@ -14,7 +14,7 @@ define(
 						unitName = productsList[i].unitName;
 					}
 					var myPic;
-					var commonModule = require('shop-common');
+					var commonModule = require('shop-common.min');
 					(productsList[i].imageURL) ? myPic = productsList[i].imageURL
 							: myPic = commonModule.noPhotoPic;
 					productsHtml += '<tr class="product" data-prepack="'
@@ -60,7 +60,7 @@ define(
 			function InitLoadCategory(catID) {
 				try {
 					/* замена меню категорий */
-					var commonModule = require('shop-common');
+					var commonModule = require('shop-common.min');
 					var productCategories = thriftModule.client.getProductCategories(catID);
 					var categoriesLength = productCategories.length;
 					var shopMenu = '';
@@ -97,7 +97,7 @@ define(
 
 				/* подключение событий */
 				spinnerModule.initProductsSpinner();
-				var basketModule = require('shop-basket');
+				var basketModule = require('shop-basket.min');
 				commonModule.InitProductDetailPopup($('.product-link'));
 				basketModule.InitAddToBasket($('.fa-shopping-cart'));
 				InitClickOnCategory();

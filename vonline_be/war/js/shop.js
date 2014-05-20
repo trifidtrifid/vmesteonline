@@ -1,9 +1,9 @@
 require.config({
     baseUrl: "/build",
     paths: {
-        "jquery"   : "../js/lib/jquery-2.0.3.min",
+        "jquery"   : "../js/lib/jquery-2.1.1.min",
         "ace_spinner": "../js/lib/fuelux/fuelux.spinner",
-        "bootstrap": "../js/lib/bootstrap",
+        "bootstrap": "../js/lib/bootstrap.min",
         "ace_extra": "../js/lib/ace-extra.min",
         "ace_elements": "../js/lib/ace-elements.min",
         "flexslider": "../js/lib/jquery.flexslider-min",

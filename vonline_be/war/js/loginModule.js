@@ -138,7 +138,7 @@ define(
 
         // callbacks
         commonModule.initBasketInReload();
-        var basketModule = require('shop-basket');
+        var basketModule = require('shop-basket.min');
         basketModule.callbacks.fire(basketModule.selectorForCallbacks);
         basketModule.callbacks.empty();
     }

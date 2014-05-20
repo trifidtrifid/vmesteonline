@@ -593,7 +593,7 @@ define(
                     var shopProducts = $('.shop-products');
                     if(shopProducts.find('.shop-menu .shopmenu-back').length){
                         // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
-                        var categoryModule = require('shop-category');
+                        var categoryModule = require('shop-category.min');
                         categoryModule.InitLoadCategory(0);
                     }
                     shopProducts.show(function(){
@@ -615,9 +615,9 @@ define(
                         window.history.pushState(state,null,'shop.jsp#'+state.pageName);
                     }
                     /**/
-                    var ordersModule = require('shop-orders');
+                    var ordersModule = require('shop-orders.min');
                     if (!globalUserAuth){
-                        var basketModule = require('shop-basket');
+                        var basketModule = require('shop-basket.min');
                         basketModule.callbacks.add(ordersModule.GoToOrdersTrigger);
                         openModalAuth();
                     }else{

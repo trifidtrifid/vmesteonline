@@ -4,37 +4,69 @@ module.exports = function(grunt) {
     grunt.initConfig({
         // Сжимаем
         uglify: {
-            main: {
+            static_mappings: {
                 files: {
                     'build/shop.min.js': 'js/shop.js',
-                    'build/shop-common.min.js': 'js/shop-common.js',
-                    'build/shop-basket.min.js': 'js/shop-basket.js',
-                    'build/shop-orders.min.js': 'js/shop-orders.js',
-                    'build/shop-spinner.min.js': 'js/shop-spinner.js',
-                    'build/shop-search.min.js': 'js/shop-search.js',
-                    'build/shop-category.min.js': 'js/shop-category.js',
-                    'build/shop-modules.min.js': 'js/shop-modules.js',
+                    'build/backoffice.min.js': 'js/backoffice.js',
                     'build/loginModule.min.js': 'js/loginModule.js',
                     'build/commonM.min.js': 'js/commonM.js',
-                    'build/shop-initThrift.min.js': 'js/shop-initThrift.js'
+                    'build/thrift.min.js': 'js/thrift.js'
                 }
+            },
+            dynamic_mappings: {
+                files: [
+                    {
+                        expand: true,     // Enable dynamic expansion.
+                        cwd: 'js/',      // Src matches are relative to this path.
+                        src: ['shop-*.js'], // Actual pattern(s) to match.
+                        dest: 'build/',   // Destination path prefix.
+                        ext: '.min.js'   // Dest filepaths will have this extension.
+                    },
+                    {
+                        expand: true,     // Enable dynamic expansion.
+                        cwd: 'gen-js/',      // Src matches are relative to this path.
+                        src: ['*.js','*.*.js'], // Actual pattern(s) to match.
+                        dest: 'build/gen-js',   // Destination path prefix.
+                        ext: '.js'   // Dest filepaths will have this extension.
+                    }
+                ]
+            },
+            special: {
+                files: {
+                    'build/gen-js/shop.bo_types.js': 'gen-js/shop.bo_types.js',
+                    'js/lib/bootstrap.min.js': 'js/lib/bootstrap.js'
+                }
+            }
+        },
+        cssmin: {
+            minify: {
+                expand: true,
+                cwd: 'css/',
+                src: ['*.css', '!*.min.css'],
+                dest: 'build/',
+                ext: '.min.css'
             }
         },
         watch: {
             scripts: {
                 files: ['js/*.js'],
-                tasks: ['default']
+                tasks: ['uglify']
+            },
+            css:{
+                files: ['css/*.css'],
+                tasks: ['cssmin']
             }
         }
     });
 
     // Загрузка плагинов, установленных с помощью npm install
     //grunt.loadNpmTasks('grunt-contrib-concat');
+
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    //grunt.loadNpmTasks('grunt-contrib-requirejs');
 
     // Задача по умолчанию
-    grunt.registerTask('default', ['uglify','watch']);
+    grunt.registerTask('default', ['uglify','cssmin','watch']);
 
 };

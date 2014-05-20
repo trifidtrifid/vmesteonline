@@ -69,7 +69,7 @@ define(
                 userInfo.lastName = newSurname;
                 userContacts.mobilePhone = newPhone;
 
-                var commonModule = require('shop-common');
+                var commonModule = require('shop-common.min');
                 if (commonModule.isValidEmail(newEmail)){
                     userContacts.email = newEmail;
                 }else{
@@ -242,7 +242,7 @@ define(
                 }else{
                     currentForm.find('.error-info').hide();
 
-                var commonModule = require('shop-common');
+                var commonModule = require('shop-common.min');
 
                 var street = currentForm.find('.street-delivery').val();
                 var building = currentForm.find('.building-delivery').val();

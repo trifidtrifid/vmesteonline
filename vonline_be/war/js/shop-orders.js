@@ -23,7 +23,7 @@ define(
                 for (var j = 0; j < orderLinedLength; j++){
                     var unitName = "";
                     var myPic;
-                    commonModule = require('shop-common');
+                    commonModule = require('shop-common.min');
                     (orderLines[j].product.imageURL) ? myPic = orderLines[j].product.imageURL : myPic = commonModule.noPhotoPic;
                     if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
                     ordersProductsHtml += '<tr class="product" data-prepack="'+ orderLines[j].product.prepackRequired +'" data-productid="'+ orderLines[j].product.id +'">'+
@@ -46,7 +46,7 @@ define(
                     }else{
                         ordersProductsHtml += '<input type="text"';
 
-                        var commonModule = require('shop-common');
+                        var commonModule = require('shop-common.min');
                         if (orderLines[j].packs && commonModule.getPacksLength(orderLines[j].packs) > 1){
                             ordersProductsHtml += 'disabled="disabled"';
                         }
@@ -140,7 +140,7 @@ define(
                     var orderMonth = tempDate.getMonth()+1;
                     orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
 
-                    var basketModule = require('shop-basket');
+                    var basketModule = require('shop-basket.min');
                     var weekDay = basketModule.getWeekDay(tempDate.getDay());
 
                     ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
@@ -259,8 +259,8 @@ define(
                                 }
                             }
 
-                            var basketModule = require('shop-basket');
-                            var commonModule = require('shop-common');
+                            var basketModule = require('shop-basket.min');
+                            var commonModule = require('shop-common.min');
                             basketModule.InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
                             commonModule.InitProductDetailPopup(orderProducts.find('.product-link'));
                             commonModule.markAddedProduct();
@@ -293,7 +293,7 @@ define(
                     spinVal, i,
                     tabPaneActive = $('.tab-pane.active'),
                     oldOrderId = tabPaneActive.data('orderid');
-                    var basketModule = require('shop-basket');
+                    var basketModule = require('shop-basket.min');
                     if (!oldOrderId){
                         var oldOrder = thriftModule.client.createOrder(0);
                         oldOrderId = oldOrder.id;
@@ -322,7 +322,7 @@ define(
                     curProd = orderLines[i].product;
                     spinVal = orderLines[i].quantity;
                     spinnerDisable = false;
-                    var commonModule = require('shop-common');
+                    var commonModule = require('shop-common.min');
                     if(orderLines[i].packs && commonModule.getPacksLength(orderLines[i].packs) > 1){
                         spinnerDisable = true;
                     }
@@ -418,7 +418,7 @@ define(
                     initOrderBtns(ordersNoInit);
                     ordersNoInit.removeClass('orders-no-init');
                     offsetOrders += lengthOrders;
-                    var commonModule = require('shop-common');
+                    var commonModule = require('shop-common.min');
                     commonModule.setSidebarHeight();
                 });
             }catch(e){

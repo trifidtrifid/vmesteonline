@@ -1,16 +1,16 @@
 require.config({
-    baseUrl: "/js",
+    baseUrl: "/build",
     paths: {
-        "jquery"   : "lib/jquery-2.0.3.min",
-        "bootstrap": "lib/bootstrap",
-        "ace_extra": "lib/ace-extra.min",
-        "ace_elements": "lib/ace-elements.min",
-        "jquery_ui": "lib/jquery-ui-1.10.3.full.min",
-        "flexslider": "lib/jquery.flexslider-min",
-        "ace_spinner": "lib/fuelux/fuelux.spinner",
-        "datepicker-backoffice": "bootstrap-datepicker-backoffice",
-        "datepicker-ru": "lib/date-time/locales/bootstrap-datepicker.ru",
-        "multiselect": "lib/jquery.multiselect.min"
+        "jquery"   : "../js/lib/jquery-2.1.1.min",
+        "bootstrap": "../js/lib/bootstrap.min",
+        "ace_extra": "../js/lib/ace-extra.min",
+        "ace_elements": "../js/lib/ace-elements.min",
+        "jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min",
+        "flexslider": "../js/lib/jquery.flexslider-min",
+        "ace_spinner": "../js/lib/fuelux/fuelux.spinner",
+        "datepicker-backoffice": "../js/bootstrap-datepicker-backoffice",
+        "datepicker-ru": "../js/lib/date-time/locales/bootstrap-datepicker.ru",
+        "multiselect": "../js/lib/jquery.multiselect.min"
     },
     shim:{
         'ace_spinner':{
@@ -53,7 +53,7 @@ var deliveryFilterFlag= 0,
     searchFilterFlag = 0,
     orders;
 
-require(["jquery",'shop-initThrift','commonM','shop-orders','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
+require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
     function($,thriftModule,commonM,ordersModule) {
 
         commonM.init();

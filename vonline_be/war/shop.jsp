@@ -62,7 +62,7 @@
 <head>
 <meta charset="utf-8" />
 <title>Магазин</title>
-<link rel="stylesheet" href="/css/shop.css" />
+<link rel="stylesheet" href="build/shop.min.css" />
 <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -300,20 +300,20 @@
         </div>
     </footer>
     </div>
-    <script src="/js/thrift.js" type="text/javascript"></script>
-    <script src="/gen-js/bedata_types.js" type="text/javascript"></script>
+    <script src="/build/thrift.min.js" type="text/javascript"></script>
+    <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
 
-    <script src="/gen-js/shop_types.js" type="text/javascript"></script>
-    <script src="/gen-js/ShopFEService.js" type="text/javascript"></script>
-    <script src="/gen-js/shop.bo_types.js" type="text/javascript"></script>
-    <script src="/gen-js/ShopBOService.js" type="text/javascript"></script>
+    <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
+    <script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
+    <script src="/build/gen-js/shop.bo_types.js" type="text/javascript"></script>
+    <script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>
 
-    <script src="/gen-js/authservice_types.js" type="text/javascript"></script>
-    <script src="/gen-js/AuthService.js" type="text/javascript"></script>
-    <script src="/gen-js/userservice_types.js" type="text/javascript"></script>
-    <script src="/gen-js/UserService.js" type="text/javascript"></script>
+    <script src="/build/gen-js/authservice_types.js" type="text/javascript"></script>
+    <script src="/build/gen-js/AuthService.js" type="text/javascript"></script>
+    <script src="/build/gen-js/userservice_types.js" type="text/javascript"></script>
+    <script src="/build/gen-js/UserService.js" type="text/javascript"></script>
 
-    <script type="text/javascript" data-main="/build/shop.min.js" src="/js/require.js"></script>
+    <script type="text/javascript" data-main="/build/shop.min.js" src="/js/require.min.js"></script>
 
 
 </body>
