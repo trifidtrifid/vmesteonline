@@ -300,9 +300,6 @@
         </div>
     </footer>
     </div>
-    <div class="loading">
-        <img src="i/loading.gif" alt="загрузка">
-    </div>
     <script src="/js/thrift.js" type="text/javascript"></script>
     <script src="/gen-js/bedata_types.js" type="text/javascript"></script>
 

@@ -160,6 +160,7 @@ define(
                         '</tbody>'+
                         '</table>'+
                         '<div class="order-bottom">' +
+                        '<a href="#" title="Удалить" class="delete-order-from-history">&times;</a>'+
                         '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
                         '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить</button>' +
                         '<div class="order-delivery"></div>'+
@@ -206,6 +207,28 @@ define(
             orderItem.find('.order-delivery').html('<span><b>Доставка:</b> '+ orderDelivery +',  ' +
             orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
             orderDetails.deliveryTo.flatNo +'</span>');
+        }
+
+        function deleteOrderFromHistory(){
+          $('.delete-order-from-history').click(function(e){
+              e.preventDefault();
+
+              var orderItem = $(this).closest('.order-item');
+              var orderId = orderItem.data('orderid');
+              var productId;
+
+              if (!orderItem.find('.product').length){
+                  orderItem.find('.plus-minus').trigger('click');
+              }
+              orderItem.find('.product').each(function(){
+                  productId = $(this).data('productid');
+                  thriftModule.client.removeOrderLine(orderId,productId);
+              });
+
+              thriftModule.client.deleteOrder(orderId);
+
+              $(this).closest('.order-item').slideUp();
+          });
         }
 
         function initOrderPlusMinus(selector){
@@ -362,7 +385,7 @@ define(
             lengthOrders = 10;
         }
 
-        function initOrdersLinks(){
+/*        function initOrdersLinks(){
             $('.order-edit').click(function(e){
                 e.preventDefault();
 
@@ -378,7 +401,7 @@ define(
                 }
             });
 
-        }
+        }*/
 
         function initShowMoreOrders(orders){
             try{
@@ -415,10 +438,11 @@ define(
             AddOrdersToBasket: AddOrdersToBasket,
             initOrderBtns: initOrderBtns,
             initVarForMoreOrders: initVarForMoreOrders,
-            initOrdersLinks: initOrdersLinks,
+            //initOrdersLinks: initOrdersLinks,
             initShowMoreOrders: initShowMoreOrders,
             GoToOrdersTrigger: GoToOrdersTrigger,
-            showOrderDetails : showOrderDetails
+            showOrderDetails : showOrderDetails,
+            deleteOrderFromHistory : deleteOrderFromHistory
         }
     }
 );
