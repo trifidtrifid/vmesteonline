@@ -126,13 +126,13 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			for (FullProductInfo fpi : products) {
 				
 				FullProductInfo fpir = fpi.details.categories == null || fpi.details.categories.size() == 0 ? fpi : VoProduct.updateCategoriesByImportId(shopId, fpi, pm);
-				if( 0 != fpir.details.producerId){
-					VoProducer producer = VoProducer.getByImportId(shopId, fpir.details.producerId, pm);
+				if( 0 != fpir.product.producerId){
+					VoProducer producer = VoProducer.getByImportId(shopId, fpir.product.producerId, pm);
 					if (null == producer)
-						throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to find Producer:" + fpir.details.producerId + " of product:"
+						throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to find Producer:" + fpir.product.producerId + " of product:"
 								+ fpi.product.getId());
 	
-					fpir.details.producerId = producer.getId();
+					fpir.product.producerName = producer.getName();
 				}
 
 				if (0 != fpi.product.getId() && null != (voProduct = VoProduct.getByImportedId(shopId, fpir.product.id, pm))) {

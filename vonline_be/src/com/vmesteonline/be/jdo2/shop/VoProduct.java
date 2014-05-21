@@ -55,7 +55,7 @@ public class VoProduct {
 			try {
 				String imageURL2 = newInfo.product.getImageURL();
 				this.imageURL = null == imageURL2 ? null : StorageHelper.saveImage(imageURL2, userId, true, _pm);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				//setImageURL(null);
 			}
@@ -168,9 +168,8 @@ public class VoProduct {
 			}
 			vp.topicSet = details.getTopicSet();
 
-			pm.getObjectById(VoProducer.class, details.getProducerId());
-			vp.producerId = details.getProducerId();
-
+			/*VoProducer producer = */pm.getObjectById(VoProducer.class, product.getProducerId());
+			vp.producerId = product.getProducerId();
 			vp.minClientPack = product.minClientPack;
 			vp.minProducerPack = details.minProducerPack;
 			vp.prepackRequired = product.prepackRequired;
@@ -250,8 +249,8 @@ public class VoProduct {
 				pm.getObjectById(VoTopic.class, topicId);
 				this.topicSet.add(topicId);
 			}
-			pm.getObjectById(VoProducer.class, details.getProducerId());
-			this.producerId = details.getProducerId();
+			pm.getObjectById(VoProducer.class, product.getProducerId());
+			this.producerId = product.getProducerId();
 
 			pm.makePersistent(this);
 
@@ -265,13 +264,14 @@ public class VoProduct {
 	}
 
 	// =====================================================================================================================
-	public Product getProduct() {
+	public Product getProduct(PersistenceManager pm) {
 		//@TODO the price should depend on shop type of day of order. Now use INET version if set, RETAIL otherwise and regular at last
 		double thePrice = pricesMap == null || pricesMap.size() == 0 ? price : 
 			null == pricesMap.get(PriceType.INET.getValue()) ? 
 					pricesMap.get(PriceType.RETAIL.getValue()) == null ? price : pricesMap.get(PriceType.RETAIL.getValue()) :
 						pricesMap.get(PriceType.INET.getValue());
-		return new Product(id.getId(), name, shortDescr, weight, imageURL, thePrice, unitName, minClientPack, shopId, prepackRequired);
+		VoProducer producer = pm.getObjectById(VoProducer.class, getProducerId());
+		return new Product(id.getId(), name, shortDescr, weight, imageURL, thePrice, unitName, minClientPack, shopId, prepackRequired,producerId, producer.getName());
 	}
 
 	public ProductDetails getProductDetails() {
@@ -280,7 +280,6 @@ public class VoProduct {
 		productDetails.setCategories(getCategories());
 		productDetails.setPricesMap(convertToPriceTypeMap(pricesMap, new HashMap<PriceType, Double>()));
 		productDetails.setOptionsMap(optionsMap);
-		productDetails.setProducerId(producerId);
 		productDetails.setFullDescr(fullDescr.getValue());
 		productDetails.setTopicSet(getTopicSet());
 		productDetails.setImagesURLset(getImagesURLset());

@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jdo.PersistenceManager;
+
+import com.vmesteonline.be.jdo2.shop.VoProducer;
 import com.vmesteonline.be.shop.FullProductInfo;
 import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Product;
@@ -44,9 +47,11 @@ public class ProductDescription {
 	public Set<String> knownNames;
 	public String unitName;
 	
-	public FullProductInfo getFullProductInfo(){
+	public FullProductInfo getFullProductInfo(PersistenceManager pm){
+		VoProducer producer = pm.getObjectById(VoProducer.class, producerId);
 	//the last argument is the Shop id but it is unknown here
-		Product product = new Product(id, name, shortDescr, weight, imageURL, price, unitName,minClientPack,0,prepackRequired); 
+		Product product = new Product(id, name, shortDescr, weight, imageURL, price, unitName,minClientPack,0,
+				prepackRequired, producerId, producer.getName()); 
 		
 		Map<PriceType, Double> pricesMap = new HashMap<PriceType, Double>();
 		if( null != priceRetail ) pricesMap.put(PriceType.RETAIL, priceRetail);
@@ -57,7 +62,7 @@ public class ProductDescription {
 		List<Long> topics = VoHelper.convertSet(topicSet, new ArrayList<Long>(), new Long(0));
 		List<Long> categoriesSet = VoHelper.convertSet(categories, new ArrayList<Long>(), new Long(0));
 		ProductDetails details = new ProductDetails(categoriesSet, fullDescr, imagesURLset, pricesMap , optionsMap, topics, 
-				producerId, minProducerPack, knownNames );
+				minProducerPack, knownNames );
 		FullProductInfo fpi = new FullProductInfo(product, details);
 		return fpi;
 	}

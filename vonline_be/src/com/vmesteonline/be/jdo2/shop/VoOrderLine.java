@@ -48,7 +48,7 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 	}
 
 	public OrderLine getOrderLine( PersistenceManager pm) {
-		OrderLine orderLine = new OrderLine(pm.getObjectById(VoProduct.class, productId).getProduct(), quantity, price);
+		OrderLine orderLine = new OrderLine(pm.getObjectById(VoProduct.class, productId).getProduct(pm), quantity, price);
 		orderLine.product.price = price;
 		if( null!=comment && comment.length() > 0 ) orderLine.setComment(comment);
 		if( packets != null && packets.size() > 0 ) orderLine.setPacks(packets);

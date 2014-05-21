@@ -202,7 +202,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		List<VoProduct> vpl = (List<VoProduct>) pm.newQuery(VoProduct.class, "categories == " + categoryId).execute();
 
 		for (VoProduct product : vpl) {
-			rslt.add(product.getProduct());
+			rslt.add(product.getProduct(pm));
 		}
 		return rslt;
 	}
@@ -458,7 +458,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				htmlBody += "<td>-</td>";
 			}
 			htmlBody += "<td>" + orderLine.getPrice() + "</td>";
-			htmlBody += "<td>" + null == orderLine.getComment() ? "-" : orderLine.getComment() + "</td>";
+			htmlBody += "<td>" + (null == orderLine.getComment() || orderLine.getComment().trim().length() == 0 ? "-" : orderLine.getComment()) + "</td>";
 			htmlBody += "</tr>";
 		}
 		htmlBody += "</table></html>";
