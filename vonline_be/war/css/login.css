@@ -1,5 +1,8 @@
 @import 'common.css';
 /* страница регистрации */
+.login-layout .main-content {
+  border: 0;
+}
 .login-container .widget-box {
   visibility: hidden;
   display: none;

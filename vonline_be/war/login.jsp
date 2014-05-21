@@ -9,8 +9,8 @@
 		<meta name="description" content="User login page" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link rel="stylesheet" href="css/style.css"/>
-        <script src="./js/lib/jquery-2.0.3.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="build/style.min.css"/>
+        <script src="./js/lib/jquery-2.1.1.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             globalUserAuth = false;
         </script>
@@ -221,49 +221,20 @@
 			</div>
 		</div><!-- /.main-container -->
 
-		<!-- basic scripts -->
-
-		<!--[if !IE]> -->
-
-		<script type="text/javascript">
-			window.jQuery || document.write("<script src='assets/js/jquery-2.0.3.min.js'>"+"<"+"/script>");
-		</script>
-
-		<!-- <![endif]-->
-
-		<!--[if IE]>
-<script type="text/javascript">
- window.jQuery || document.write("<script src='assets/js/jquery-1.10.2.min.js'>"+"<"+"/script>");
-</script>
-<![endif]-->
-
-		<script type="text/javascript">
-			if("ontouchend" in document) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
-		</script>
-
-		<!-- inline scripts related to this page -->
-
-		<%--<script type="text/javascript">
-			function show_box(id) {
-			 jQuery('.widget-box.visible').removeClass('visible');
-			 jQuery('#'+id).addClass('visible');
-			}
-		</script>--%>
-
         <!-- файлы thrift  -->
-        <script src="/js/thrift.js" type="text/javascript"></script>
-        <script src="/gen-js/bedata_types.js" type="text/javascript"></script>
+        <script src="/build/thrift.min.js" type="text/javascript"></script>
+        <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
 
-        <script src="/gen-js/shop_types.js" type="text/javascript"></script>
-        <script src="/gen-js/ShopFEService.js" type="text/javascript"></script>
-        <script src="/gen-js/shop.bo_types.js" type="text/javascript"></script>
-        <script src="/gen-js/ShopBOService.js" type="text/javascript"></script>
+        <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
+        <script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
+        <script src="/build/gen-js/shop.bo_types.js" type="text/javascript"></script>
+        <script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>
 
-        <script src="/gen-js/authservice_types.js" type="text/javascript"></script>
-        <script src="/gen-js/AuthService.js" type="text/javascript"></script>
-        <script src="/gen-js/userservice_types.js" type="text/javascript"></script>
-        <script src="/gen-js/UserService.js" type="text/javascript"></script>
+        <script src="/build/gen-js/authservice_types.js" type="text/javascript"></script>
+        <script src="/build/gen-js/AuthService.js" type="text/javascript"></script>
+        <script src="/build/gen-js/userservice_types.js" type="text/javascript"></script>
+        <script src="/build/gen-js/UserService.js" type="text/javascript"></script>
         <!-- --- -->
-        <script type="text/javascript" data-main="/js/shop.js" src="/js/require.js"></script>
+        <script type="text/javascript" data-main="/build/shop.min.js" src="/js/require.min.js"></script>
 	</body>
 </html>
