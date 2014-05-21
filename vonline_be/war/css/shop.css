@@ -450,7 +450,7 @@ th.next,
   text-align: center;
 }
 .catalog-head table td:first-child {
-  width: 60%;
+  width: 50%;
   text-align: left;
 }
 .catalog-head table td.td-basket {
@@ -461,6 +461,9 @@ th.next,
 }
 .catalog-head table td.td-spinner {
   width: 20%;
+}
+.catalog-head table td.orderLine-amount {
+  width: 10%;
 }
 .catalog-head table td.td-unit {
   width: 5%;
@@ -509,7 +512,7 @@ th.next,
 }
 .catalog table tr td:first-child {
   text-align: left;
-  width: 60%;
+  width: 50%;
   padding-left: 5px;
 }
 .catalog table tr td.td-basket {
@@ -520,6 +523,9 @@ th.next,
 }
 .catalog table tr td.td-spinner {
   width: 20%;
+}
+.catalog table tr td.orderLine-amount {
+  width: 10%;
 }
 .catalog table tr td.td-unit {
   width: 5%;
@@ -617,7 +623,7 @@ th.next,
 }
 .order-bottom .order-delivery {
   font-size: 16px;
-  margin-right: 190px;
+  margin-right: 210px;
   height: 34px;
   line-height: 34px;
 }
@@ -625,6 +631,15 @@ th.next,
   display: inline-block;
   vertical-align: middle;
   line-height: 16px;
+}
+.order-bottom .delete-order-from-history {
+  float: right;
+  margin: 0 5px;
+  font-size: 24px;
+  color: #f00;
+}
+.order-bottom .delete-order-from-history:hover {
+  text-decoration: none;
 }
 .ace-spinner {
   display: inline-block;

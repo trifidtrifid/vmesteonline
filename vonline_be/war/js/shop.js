@@ -32,6 +32,8 @@ require.config({
 require(["jquery",'shop-modules','commonM','loginModule'],
     function($,modules,commonM,loginModule) {
 
+        modules.spinnerModule.initProductsSpinner();
+
         if(globalUserAuth){
             modules.shopCommonModule.initBasketInReload();
         }
@@ -43,7 +45,6 @@ require(["jquery",'shop-modules','commonM','loginModule'],
 
         modules.shopCommonModule.InitProductDetailPopup($('.catalog .product-link'));
         modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
-        modules.spinnerModule.initProductsSpinner();
 
         /* history */
         var urlHash = document.location.hash;

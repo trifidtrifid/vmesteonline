@@ -636,7 +636,8 @@ define(
 
                         InitProductDetailPopup($('.shop-orders .product-link'));
                         ordersModule.initShowMoreOrders(orders);
-                        ordersModule.initOrdersLinks();
+                        //ordersModule.initOrdersLinks();
+                        ordersModule.deleteOrderFromHistory();
                         var ordersNoInit = $('.orders-no-init');
                         ordersModule.initOrderPlusMinus(ordersNoInit);
                         ordersModule.initOrderBtns(ordersNoInit);

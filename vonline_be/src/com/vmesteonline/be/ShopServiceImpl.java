@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -202,7 +203,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		List<VoProduct> vpl = (List<VoProduct>) pm.newQuery(VoProduct.class, "categories == " + categoryId).execute();
 
 		for (VoProduct product : vpl) {
-			rslt.add(product.getProduct());
+			rslt.add(product.getProduct(pm));
 		}
 		return rslt;
 	}
@@ -384,11 +385,16 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
-			if (null != currentOrder.getOrderLines() && 0 != currentOrder.getOrderLines().size()) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, "Only an ampry order could be deleted!");
+			Map<Long, Long> orderLines = currentOrder.getOrderLines();
+			if (null != orderLines && 0 != orderLines.size()) {
+				for( Iterator<Entry<Long, Long>> oli = orderLines.entrySet().iterator(); oli.hasNext(); ){
+					Long olid = oli.next().getValue();
+					pm.deletePersistent( pm.getObjectById(VoOrderLine.class, olid));
+				}
 			}
 			// unset current order
-			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0, pm);
+			if( 0==orderId) 
+				setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0, pm);
 			pm.deletePersistent(currentOrder);
 			return 0;
 		} finally {
@@ -458,8 +464,12 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				htmlBody += "<td>-</td>";
 			}
 			htmlBody += "<td>" + orderLine.getPrice() + "</td>";
+<<<<<<< HEAD
 			htmlBody += "<td>" + VoHelper.roundDouble( orderLine.getPrice() * orderLine.getQuantity(), 2 )  + "</td>";
 			htmlBody += "<td>" + null == orderLine.getComment() ? "-" : orderLine.getComment() + "</td>";
+=======
+			htmlBody += "<td>" + (null == orderLine.getComment() || orderLine.getComment().trim().length() == 0 ? "-" : orderLine.getComment()) + "</td>";
+>>>>>>> FE
 			htmlBody += "</tr>";
 		}
 		
