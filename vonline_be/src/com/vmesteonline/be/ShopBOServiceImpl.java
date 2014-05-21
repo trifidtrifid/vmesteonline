@@ -132,7 +132,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 						throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to find Producer:" + fpir.product.producerId + " of product:"
 								+ fpi.product.getId());
 	
-					fpir.product.producerName = producer.getName();
+					fpir.product.producerId = producer.getId();
 				}
 
 				if (0 != fpi.product.getId() && null != (voProduct = VoProduct.getByImportedId(shopId, fpir.product.id, pm))) {

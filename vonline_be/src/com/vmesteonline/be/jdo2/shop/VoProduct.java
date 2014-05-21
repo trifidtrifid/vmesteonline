@@ -270,8 +270,7 @@ public class VoProduct {
 			null == pricesMap.get(PriceType.INET.getValue()) ? 
 					pricesMap.get(PriceType.RETAIL.getValue()) == null ? price : pricesMap.get(PriceType.RETAIL.getValue()) :
 						pricesMap.get(PriceType.INET.getValue());
-		VoProducer producer = pm.getObjectById(VoProducer.class, getProducerId());
-		return new Product(id.getId(), name, shortDescr, weight, imageURL, thePrice, unitName, minClientPack, shopId, prepackRequired,producerId, producer.getName());
+		return new Product(id.getId(), name, shortDescr, weight, imageURL, thePrice, unitName, minClientPack, shopId, prepackRequired,producerId);
 	}
 
 	public ProductDetails getProductDetails() {

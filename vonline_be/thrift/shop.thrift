@@ -65,7 +65,6 @@ struct Product {
 	9:i64 shopId,
 	10:bool prepackRequired,
 	11:i64 producerId,
-	12:string producerName,
 }
 
 struct FullProductInfo {
