@@ -464,12 +464,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				htmlBody += "<td>-</td>";
 			}
 			htmlBody += "<td>" + orderLine.getPrice() + "</td>";
-<<<<<<< HEAD
 			htmlBody += "<td>" + VoHelper.roundDouble( orderLine.getPrice() * orderLine.getQuantity(), 2 )  + "</td>";
 			htmlBody += "<td>" + null == orderLine.getComment() ? "-" : orderLine.getComment() + "</td>";
-=======
-			htmlBody += "<td>" + (null == orderLine.getComment() || orderLine.getComment().trim().length() == 0 ? "-" : orderLine.getComment()) + "</td>";
->>>>>>> FE
 			htmlBody += "</tr>";
 		}
 		
