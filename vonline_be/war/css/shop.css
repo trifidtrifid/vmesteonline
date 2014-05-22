@@ -395,7 +395,20 @@ th.next,
 }
 .producer-dropdown button {
   width: 184px;
-  padding: 6px 9px;
+  padding: 5px 9px;
+}
+.producer-dropdown button .btn-group-text {
+  width: 148px;
+  overflow: hidden;
+}
+.producer-dropdown button .icon-caret-down {
+  position: relative;
+  top: 2px;
+}
+.producer-dropdown button .icon-caret-down,
+.producer-dropdown button .btn-group-text {
+  display: inline-block;
+  vertical-align: middle;
 }
 .producer-dropdown .dropdown-menu {
   margin-left: -70px;

@@ -111,7 +111,7 @@ define(
                 $('.main-content .catalog table tbody').html("").append(categoryModule.createProductsTableHtml(searchedProducts));
 
                 /* подключение событий */
-                spinnerModule.initProductsSpinner(); 
+                spinnerModule.initProductsSpinner();
                 var commonModule = require('shop-common.min');
                 commonModule.InitProductDetailPopup($('.product-link'));
                 commonModule.markAddedProduct();
