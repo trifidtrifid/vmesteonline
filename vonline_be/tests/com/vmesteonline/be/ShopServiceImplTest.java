@@ -328,11 +328,11 @@ public class ShopServiceImplTest {
 			optionsMap2.put("цвет", "черный");
 			optionsMap2.put("вкус", "мерзкий");
 
-			productsList.add(new FullProductInfo(new Product(1, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан", 1000, shopId, true), new ProductDetails(
-					categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 3000, new HashSet<String>())));
+			productsList.add(new FullProductInfo(new Product(1, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан", 1000, shopId, true, 1), new ProductDetails(
+					categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 3000, new HashSet<String>())));
 
-			productsList.add(new FullProductInfo(new Product(2, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000, shopId, true), new ProductDetails(
-					categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 3000, new HashSet<String>())));
+			productsList.add(new FullProductInfo(new Product(2, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000, shopId, true, 2), new ProductDetails(
+					categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 3000, new HashSet<String>())));
 
 			List<Long> upProductsIdl = sbi.uploadProducts(productsList, shopId, true);
 			// expects to get all of products
@@ -371,8 +371,7 @@ public class ShopServiceImplTest {
 			Assert.assertEquals(product2Details.getTopicSet(), topic2Set);
 			Assert.assertEquals(product2Details.getOptionsMap(), optionsMap2);
 			Assert.assertEquals(product2Details.getPricesMap(), pricesMap2);
-			Assert.assertEquals(product2Details.getProducerId(), prod2Id);
-
+			
 		} catch (TException e) {
 			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
@@ -669,6 +668,28 @@ public class ShopServiceImplTest {
 			fail("Exception thrown: " + e.getMessage());
 		}
 	}
+	
+	@Test
+	public void testDeleteOrder(){
+		try {
+
+			int now = (int) (System.currentTimeMillis() / 1000L);
+			int day = 3600 * 24;
+			List<Long> upProductsIdl;
+
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Long shopId = sbi.registerShop(shop);
+
+			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
+			si.setOrderLine(0, upProductsIdl.get(0), 10D, "", null);
+			si.setOrderLine(0, upProductsIdl.get(1), 20D, "", null);
+			si.deleteOrder(0);
+			
+		} catch (TException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
 
 	private List<Long> createCategoriesAndProductsAndOrder(int now, int day, Long shopId) throws TException {
 		List<Long> upProductsIdl;
@@ -720,11 +741,11 @@ public class ShopServiceImplTest {
 		optionsMap2.put("цвет", "черный");
 		optionsMap2.put("вкус", "мерзкий");
 
-		productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан", 1000, shopId, true), new ProductDetails(
-				categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 1, 3000, new HashSet<String>())));
+		productsList.add(new FullProductInfo(new Product(0, "Пролукт 1", "Описание продукта 1", 100D, LOGO, 11D, "стакан", 1000, shopId, true, 1), new ProductDetails(
+				categories1, "dsfsdfsdf", images3, pricesMap1, optionsMap1, topicSet, 3000, new HashSet<String>())));
 
-		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000, shopId, true), new ProductDetails(
-				categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 2, 3000, new HashSet<String>())));
+		productsList.add(new FullProductInfo(new Product(0, "Пролукт 2", "Описание продукта 2", 200D, LOGO, 12D, "кг", 1000, shopId, true, 2), new ProductDetails(
+				categories2, "dsfsdfsdssssf", images2, pricesMap2, optionsMap2, topic2Set, 3000, new HashSet<String>())));
 
 		upProductsIdl = sbi.uploadProducts(productsList, shopId, true);
 

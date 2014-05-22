@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -202,7 +203,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		List<VoProduct> vpl = (List<VoProduct>) pm.newQuery(VoProduct.class, "categories == " + categoryId).execute();
 
 		for (VoProduct product : vpl) {
-			rslt.add(product.getProduct());
+			rslt.add(product.getProduct(pm));
 		}
 		return rslt;
 	}
@@ -384,11 +385,16 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
-			if (null != currentOrder.getOrderLines() && 0 != currentOrder.getOrderLines().size()) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, "Only an ampry order could be deleted!");
+			Map<Long, Long> orderLines = currentOrder.getOrderLines();
+			if (null != orderLines && 0 != orderLines.size()) {
+				for( Iterator<Entry<Long, Long>> oli = orderLines.entrySet().iterator(); oli.hasNext(); ){
+					Long olid = oli.next().getValue();
+					pm.deletePersistent( pm.getObjectById(VoOrderLine.class, olid));
+				}
 			}
 			// unset current order
-			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0, pm);
+			if( 0==orderId) 
+				setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0, pm);
 			pm.deletePersistent(currentOrder);
 			return 0;
 		} finally {
@@ -438,7 +444,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			htmlBody += "<br/>Коментарий: "+comment;
 		
 		htmlBody += "<br/><table><caption>Состав заказа</caption>";
-		htmlBody += "<tr><th>Код товара</th><th>Производитель</th><th>Наименование</th><th>Кол-во</th><th>Развес</th><th>Стоимость</th><th>Комментарий</th></tr>";
+		htmlBody += "<tr><th>Код товара</th><th>Производитель</th><th>Наименование</th><th>Кол-во</th><th>Развес</th><th>Стоимость</th><th>Цена</th><th>Комментарий</th></tr>";
 		for (Long lineId: currentOrder.getOrderLines().values()) {
 			VoOrderLine orderLine = pm.getObjectById(VoOrderLine.class, lineId);
 			VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProductId());
@@ -458,9 +464,15 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				htmlBody += "<td>-</td>";
 			}
 			htmlBody += "<td>" + orderLine.getPrice() + "</td>";
+			htmlBody += "<td>" + VoHelper.roundDouble( orderLine.getPrice() * orderLine.getQuantity(), 2 )  + "</td>";
 			htmlBody += "<td>" + null == orderLine.getComment() ? "-" : orderLine.getComment() + "</td>";
 			htmlBody += "</tr>";
 		}
+		
+		htmlBody += "<tr>"
+				+ "<td/><td/><td/><td/><td/><td><b>Итого:</b></td><td><b>"
+				+ VoHelper.roundDouble( currentOrder.getTotalCost() - currentOrder.getDeliveryCost(), 2)+ "</b></td><td/>";
+		htmlBody += "</tr>";
 		htmlBody += "</table></html>";
 		
 		htmlBody += "<p>Спасибо за ваш заказ!</p>";
