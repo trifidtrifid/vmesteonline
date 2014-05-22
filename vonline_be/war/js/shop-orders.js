@@ -3,6 +3,9 @@ define(
     ['jquery','shop-initThrift.min','shop-basket.min','shop-common.min','shop-spinner.min'],
     function( $,thriftModule,basketModule,commonModule,spinnerModule ){
 
+        var producers;
+        var producersLength;
+
         function createOrdersProductHtml(orderDetails,noEdit){
             try{
                 var ordersProductsHtml = '<section class="catalog">'+
@@ -10,6 +13,7 @@ define(
                     '<thead>'+
                     '<tr>'+
                     '<td>Название</td>'+
+                    '<td>Производитель</td>'+
                     '<td>Цена (руб)</td>'+
                     '<td>Количество</td>'+
                     '<td>Стоимость</td>'+
@@ -20,9 +24,22 @@ define(
                 var orderLines = orderDetails.odrerLines;
                 var orderLinedLength = orderLines.length;
 
+                producers = (producers) ? producers : thriftModule.client.getProducers();
+                producersLength = (producersLength) ? producersLength : producers.length;
+
                 for (var j = 0; j < orderLinedLength; j++){
                     var unitName = "";
-                    var myPic;
+                    var myPic,
+                        producerName,producerId;
+
+                    for(var i = 0; i < producersLength; i++){
+                        if(producers[i].id == orderLines[j].product.producerId){
+                            producerName = producers[i].name;
+                            producerId = producers[i].id;
+                            break;
+                        }
+                    }
+
                     commonModule = require('shop-common.min');
                     (orderLines[j].product.imageURL) ? myPic = orderLines[j].product.imageURL : myPic = commonModule.noPhotoPic;
                     if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
@@ -38,6 +55,7 @@ define(
                         '<div class="modal">'+
                         '</div>'+
                         '</td>'+
+                        '<td class="td-producer" data-producerid="'+ producerId +'">'+ producerName +'</td>'+
                         '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
                         '<td class="td-spinner">';
 
@@ -384,24 +402,6 @@ define(
             offsetOrders = 10;
             lengthOrders = 10;
         }
-
-/*        function initOrdersLinks(){
-            $('.order-edit').click(function(e){
-                e.preventDefault();
-
-                var confirmed = confirm('Ваша текущая корзина будет заменена этим заказом. Вы согласны ?');
-                if(confirmed){
-                    thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
-                    var orderData= {
-                        itsOrder: true,
-                        itsAppend: false,
-                        orderId : $(this).closest('.order-item').data('orderid')
-                    };
-                    AddOrdersToBasket(orderData);
-                }
-            });
-
-        }*/
 
         function initShowMoreOrders(orders){
             try{

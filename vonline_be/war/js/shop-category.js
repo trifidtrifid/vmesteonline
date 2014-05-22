@@ -1,12 +1,12 @@
 define(
 		'shop-category.min',
 		[ 'jquery', 'shop-initThrift.min', 'shop-basket.min', 'shop-common.min',
-				'shop-spinner.min' ],
-		function($, thriftModule, basketModule, commonModule, spinnerModule) {
+				'shop-spinner.min','shop-search.min' ],
+		function($, thriftModule, basketModule, commonModule, spinnerModule, searchModule) {
             //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 
-            //var producers = thriftModule.client.getProducers();
-            //var producersLength = producers.length;
+            var producers;
+            var producersLength;
 
 			function createProductsTableHtml(productsList) {
 				var productListLength = productsList.length;
@@ -16,13 +16,17 @@ define(
 					if (productsList[i].unitName) {
 						unitName = productsList[i].unitName;
 					}
-                    var producerName;
-                    /*for(var j = 0; j < producersLength; j++){
+                    var producerName,producerId;
+                    producers = (producers) ? producers : thriftModule.client.getProducers();
+                    producersLength = (producersLength) ? producersLength : producers.length;
+
+                    for(var j = 0; j < producersLength; j++){
                         if(producers[j].id == productsList[i].producerId){
                             producerName = producers[j].name;
+                            producerId = producers[j].id;
                             break;
                         }
-                    }*/
+                    }
 					var myPic;
 					var commonModule = require('shop-common.min');
 					(productsList[i].imageURL) ? myPic = productsList[i].imageURL
@@ -46,7 +50,7 @@ define(
 							+ '<div class="modal">'
 							+ '</div>'
 							+ '</td>'
-							+ '<td class="td-producer">'
+							+ '<td class="td-producer" data-producerid="'+ producerId +'">'
                             + producerName
 							+ '</td>'
 							+ '<td class="product-price">'
@@ -100,9 +104,14 @@ define(
 
 					/* новый список товаров */
 					var productsList = thriftModule.client.getProducts(0, 1000, catID).products;
-					$('.main-content .catalog table tbody').html("").append(
-							createProductsTableHtml(productsList));
+					$('.main-content .catalog table tbody').html("").append(createProductsTableHtml(productsList));
 					commonModule.markAddedProduct();
+
+                    var producerDropdownId = $('.producer-dropdown .btn').data('producerid');
+                    if(producerDropdownId != 0){
+                        var searchModule = require('shop-search.min');
+                        searchModule.filterByProducer(producerDropdownId);
+                    }
 
 				} catch (e) {
 					alert(e + " Функция InitLoadCategory");

@@ -113,6 +113,8 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepic
             });
         }
 
+        var producers;
+        var producersLength;
         function createOrdersProductHtml(orderDetails){
             try{
                 var ordersProductsHtml = '<section class="catalog">'+
@@ -120,6 +122,7 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepic
                     '<thead>'+
                     '<tr>'+
                     '<td>Название</td>'+
+                    '<td>Производитель</td>'+
                     '<td>Цена (руб)</td>'+
                     '<td>Количество</td>'+
                     '<td>Стоимость</td>'+
@@ -130,10 +133,23 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepic
                 var orderLines = orderDetails.odrerLines;
                 var orderLinedLength = orderLines.length;
 
+                producers = (producers) ? producers : thriftModule.client.getProducers();
+                producersLength = (producersLength) ? producersLength : producers.length;
+
                 for (var j = 0; j < orderLinedLength; j++){
                     //var productDetails = thriftModule.client.getProductDetails(orderLines[j].product.id);
                     //var imagesSet = productDetails.imagesURLset;
-                    var unitName = "";
+                    var unitName = "",
+                        producerName,producerId;
+
+                    for(var i = 0; i < producersLength; i++){
+                        if(producers[i].id == orderLines[j].product.producerId){
+                            producerName = producers[i].name;
+                            producerId = producers[i].id;
+                            break;
+                        }
+                    }
+
                     if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
                     var myPic;
                     (orderLines[j].product.imageURL) ? myPic = orderLines[j].product.imageURL : myPic = 'i/no-photo.png';
@@ -149,6 +165,7 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepic
                         '<div class="modal">'+
                         '</div>'+
                         '</td>'+
+                        '<td class="td-producer" data-producerid="'+ producerId +'">'+ producerName +'</td>'+
                         '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
                         '<td class="td-spinner">'+
                         orderLines[j].quantity+

@@ -164,7 +164,7 @@
                 <div class="main-content">
                     <div class="shop-products">
                         <div class="btn-group producer-dropdown">
-                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
                                 <span class="btn-group-text">Поиск по производителю</span>
                                 <span class="icon-caret-down icon-on-right"></span>
                             </button>

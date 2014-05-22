@@ -98,6 +98,7 @@ define(
             $('.form-search').submit(function(e){
                 e.preventDefault();
                 var searchWord = $('#search').val().toLowerCase();
+                document.location.hash = searchWord;
                 var productsListPart = thriftModule.client.getProducts(0,1000,0);
                 var products = productsListPart.products;
                 var productsLength = products.length;
@@ -121,28 +122,30 @@ define(
 
             $('.producer-dropdown .dropdown-menu').find('li').click(function(){
                 var producerId = $(this).data('producerid');
+                $(this).closest('.btn-group').find('.btn').data('producerid',producerId);
+
+                var urlHash = document.location.hash;
+                if(urlHash){
+                    categoryModule.LoadCategoryByURLHash(urlHash);
+                }else{
+                    categoryModule.InitLoadCategory(0);
+                }
 
                 if(producerId != 0){
-                    $('.catalog').find('.product').each(function(){
-                        if($(this).find('.td-producer').data('producerid') != producerId){
-                            $(this).slideUp();
-                        }
-                    });
-                }else{
-                    var urlHash = document.location.hash,
-                        catId;
-                   /* if (urlHash.indexOf('cat=') != -1){
-                        var urlHashParts = urlHash.split(';');
-                        var urlHashPartsLength = urlHashParts.length;
-                        catId = urlHashParts[urlHashPartsLength-1].split('=')[1];
-                    }else{
-                        catId = 0;
-                    }*/
-                    categoryModule.LoadCategoryByURLHash(urlHash);
-
+                    filterByProducer(producerId);
                 }
 
             });
+
+            function filterByProducer(producerId){
+                $('.catalog').find('.product').each(function(){
+                    console.log($(this).find('.td-producer').data('producerid'));
+
+                    if($(this).find('.td-producer').data('producerid') != producerId){
+                        $(this).slideUp(0);
+                    }
+                });
+            }
 
             /* автозаполнение адреса доставки  */
             function initAutocompleteAddress(selector){
@@ -252,7 +255,8 @@ define(
             alert(e+ " Ошибка shop-search")
         }
         return {
-            initAutocompleteAddress: initAutocompleteAddress
+            initAutocompleteAddress: initAutocompleteAddress,
+            filterByProducer : filterByProducer
         }
 
     }
