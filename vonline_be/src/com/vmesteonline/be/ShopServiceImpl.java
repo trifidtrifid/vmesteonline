@@ -385,6 +385,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
+			if( currentOrder.getStatus() == OrderStatus.CONFIRMED )
+				throw new InvalidOperation( VoError.IncorrectParametrs, "Confirmed orders could not be deleted.");
+			
 			Map<Long, Long> orderLines = currentOrder.getOrderLines();
 			if (null != orderLines && 0 != orderLines.size()) {
 				for( Iterator<Entry<Long, Long>> oli = orderLines.entrySet().iterator(); oli.hasNext(); ){
