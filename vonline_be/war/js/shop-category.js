@@ -5,6 +5,9 @@ define(
 		function($, thriftModule, basketModule, commonModule, spinnerModule) {
             //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 
+            //var producers = thriftModule.client.getProducers();
+            //var producersLength = producers.length;
+
 			function createProductsTableHtml(productsList) {
 				var productListLength = productsList.length;
 				var productsHtml = '';
@@ -13,6 +16,13 @@ define(
 					if (productsList[i].unitName) {
 						unitName = productsList[i].unitName;
 					}
+                    var producerName;
+                    /*for(var j = 0; j < producersLength; j++){
+                        if(producers[j].id == productsList[i].producerId){
+                            producerName = producers[j].name;
+                            break;
+                        }
+                    }*/
 					var myPic;
 					var commonModule = require('shop-common.min');
 					(productsList[i].imageURL) ? myPic = productsList[i].imageURL
@@ -35,6 +45,9 @@ define(
 							+ '</a>'
 							+ '<div class="modal">'
 							+ '</div>'
+							+ '</td>'
+							+ '<td class="td-producer">'
+                            + producerName
 							+ '</td>'
 							+ '<td class="product-price">'
 							+ productsList[i].price

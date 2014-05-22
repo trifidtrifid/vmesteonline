@@ -330,10 +330,13 @@ define(
 
                     // действия для окргуления и избежания неправильного ввода (0 например)
                     var currentValue = $(this).closest('.ace-spinner').spinner('value');
+                    var step = $(this).data('step');
                     if (currentValue == 0 || currentValue === undefined){
-                        currentValue = ($(this).data('step')) ? $(this).data('step') : 1;
+                        currentValue = (step) ? step : 1;
                     }
                     if(currentValue) currentValue = parseFloat(currentValue).toFixed(1);
+                    var extra = currentValue%step;
+                    if(extra != 0) currentValue.
                     $(this).closest('.ace-spinner').spinner('value',currentValue);
 
                     if (oldSpinnerValue != currentValue){

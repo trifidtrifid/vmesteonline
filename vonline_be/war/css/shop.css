@@ -388,6 +388,16 @@ th.next,
 }
 .form-search {
   margin-bottom: 10px;
+  margin-right: 190px;
+}
+.producer-dropdown {
+  float: right;
+}
+.producer-dropdown button {
+  padding: 6px 9px;
+}
+.producer-dropdown .dropdown-menu {
+  margin-left: -70px;
 }
 .shop-menu {
   overflow: auto;

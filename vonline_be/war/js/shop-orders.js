@@ -215,15 +215,15 @@ define(
 
               var orderItem = $(this).closest('.order-item');
               var orderId = orderItem.data('orderid');
-              var productId;
+              //var productId;
 
-              if (!orderItem.find('.product').length){
+              /*if (!orderItem.find('.product').length){
                   orderItem.find('.plus-minus').trigger('click');
               }
               orderItem.find('.product').each(function(){
                   productId = $(this).data('productid');
                   thriftModule.client.removeOrderLine(orderId,productId);
-              });
+              });*/
 
               thriftModule.client.deleteOrder(orderId);
 

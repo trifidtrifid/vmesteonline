@@ -30,6 +30,7 @@ define(
                     for (var j = 0; j < childLength; j++) {
                         dataSearch[counter++] = {
                             label: arr[i].childs[j].name,
+                            productId: arr[i].childs[j].id,
                             category: arr[i].name
                         }
                     }
@@ -39,10 +40,20 @@ define(
                 delay: 0,
                 source: dataSearch,
                 select: function(event,ui){
-                    var basketModule = require('shop-basket.min');
+                    event.preventDefault();
+
+                    //var basketModule = require('shop-basket.min');
                     var commonModule = require('shop-common.min');
 
-                    if (!globalUserAuth){
+                    $('.form-search').trigger('submit');
+
+                    $('.catalog .product').each(function(){
+                       if($(this).data('productid') == ui.item['productId']){
+                           $(this).find('.product-link').trigger('click');
+                       }
+                    });
+
+                    /*if (!globalUserAuth){
                         // если пользователь не залогинен
                         basketModule.selectorForCallbacks = $(this);
                         basketModule.callbacks.add(basketModule.BasketTrigger);
@@ -77,14 +88,14 @@ define(
                             commonModule.markAddedProduct();
                         }
                     }
-                    }
+                    }*/
 
                 }
             });
 
             }
 
-            $('.form-group').submit(function(e){
+            $('.form-search').submit(function(e){
                 e.preventDefault();
                 var searchWord = $('#search').val().toLowerCase();
                 var productsListPart = thriftModule.client.getProducts(0,1000,0);
@@ -106,6 +117,31 @@ define(
                 commonModule.markAddedProduct();
                 var basketModule = require('shop-basket.min');
                 basketModule.InitAddToBasket($('.fa-shopping-cart'));
+            });
+
+            $('.producer-dropdown .dropdown-menu').find('li').click(function(){
+                var producerId = $(this).data('producerid');
+
+                if(producerId != 0){
+                    $('.catalog').find('.product').each(function(){
+                        if($(this).find('.td-producer').data('producerid') != producerId){
+                            $(this).slideUp();
+                        }
+                    });
+                }else{
+                    var urlHash = document.location.hash,
+                        catId;
+                   /* if (urlHash.indexOf('cat=') != -1){
+                        var urlHashParts = urlHash.split(';');
+                        var urlHashPartsLength = urlHashParts.length;
+                        catId = urlHashParts[urlHashPartsLength-1].split('=')[1];
+                    }else{
+                        catId = 0;
+                    }*/
+                    categoryModule.LoadCategoryByURLHash(urlHash);
+
+                }
+
             });
 
             /* автозаполнение адреса доставки  */

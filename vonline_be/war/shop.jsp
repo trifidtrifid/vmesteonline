@@ -55,6 +55,9 @@
         pageContext.setAttribute("productCategories", ArrayProductCategory);
     }
 
+    List<Producer> producersList = shopService.getProducers();
+    pageContext.setAttribute("producersList", producersList);
+
 %>
 
 <!DOCTYPE html>
@@ -160,6 +163,20 @@
                 </aside>
                 <div class="main-content">
                     <div class="shop-products">
+                        <div class="btn-group producer-dropdown">
+                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                <span class="btn-group-text">Поиск по производителю</span>
+                                <span class="icon-caret-down icon-on-right"></span>
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-blue">
+                                <c:forEach var="producer" items="${producersList}">
+                                    <li data-producerid="${producer.id}"><a href="#">${producer.name}</a></li>
+                                </c:forEach>
+                                <li class="divider"></li>
+                                <li data-producerid="0"><a href="#">Все производители</a></li>
+                            </ul>
+                        </div>
                         <form method="post" action="#" class="form-group has-info form-search">
                             <span class="block input-icon input-icon-right">
                                 <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
@@ -190,6 +207,7 @@
                             <table>
                                 <tr>
                                     <td>Название</td>
+                                    <td>Производитель</td>
                                     <td class="product-price">Цена (руб)</td>
                                     <td class="td-spinner">Количество</td>
                                     <td class="td-unit">Ед.изм</td>
@@ -221,6 +239,13 @@
                                             </a>
                                             <div class="modal">
                                             </div>
+                                        </td>
+                                        <td class="td-producer" data-producerid="${product.producerId}">
+                                            <c:forEach var="producer" items="${producersList}">
+                                                <c:if test="${producer.id == product.producerId}">
+                                                    ${producer.name}
+                                                </c:if>
+                                            </c:forEach>
                                         </td>
                                         <td class="product-price">${product.price}</td>
                                         <td class="td-spinner">
