@@ -336,7 +336,7 @@ define(
                     }
                     if(currentValue) currentValue = parseFloat(currentValue).toFixed(1);
                     var extra = currentValue%step;
-                    if(extra != 0) currentValue.
+                    if(extra) currentValue = Math.ceil(currentValue);
                     $(this).closest('.ace-spinner').spinner('value',currentValue);
 
                     if (oldSpinnerValue != currentValue){
