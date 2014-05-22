@@ -481,7 +481,7 @@ th.next,
   padding-right: 50px;
 }
 .catalog-head table td.td-producer {
-  width: 12%;
+  width: 22%;
 }
 .catalog-head table td.product-price {
   width: 10%;
@@ -546,7 +546,7 @@ th.next,
   width: 35px;
 }
 .catalog table tr td.td-producer {
-  width: 12%;
+  width: 22%;
 }
 .catalog table tr td.product-price {
   width: 10%;
@@ -585,7 +585,7 @@ th.next,
 }
 .catalog table tr td .product-link span {
   display: inline-block;
-  width: 80%;
+  width: 70%;
   vertical-align: middle;
   line-height: 14px;
 }

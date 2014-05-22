@@ -109,6 +109,7 @@ define(
                     }
                 }
                 $('.main-content .catalog table tbody').html("").append(categoryModule.createProductsTableHtml(searchedProducts));
+                $('.main-content .catalog').addClass('searched').attr('data-searchWord',searchWord);
 
                 /* подключение событий */
                 spinnerModule.initProductsSpinner();
@@ -123,11 +124,19 @@ define(
                 var producerId = $(this).data('producerid');
                 $(this).closest('.btn-group').find('.btn').data('producerid',producerId);
 
-                var urlHash = document.location.hash;
-                if(urlHash){
-                    categoryModule.LoadCategoryByURLHash(urlHash);
+                var catalog = $('.catalog');
+                if(catalog.hasClass('searched')){
+                    var searchWord = catalog.data('searchWord');
+
+                    $('.form-search').trigger('submit');
+
                 }else{
-                    categoryModule.InitLoadCategory(0);
+                    var urlHash = document.location.hash;
+                    if(urlHash){
+                        categoryModule.LoadCategoryByURLHash(urlHash);
+                    }else{
+                        categoryModule.InitLoadCategory(0);
+                    }
                 }
 
                 if(producerId != 0){

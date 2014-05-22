@@ -207,7 +207,7 @@
                             <table>
                                 <tr>
                                     <td>Название</td>
-                                    <td>Производитель</td>
+                                    <td class="td-producer">Производитель</td>
                                     <td class="product-price">Цена (руб)</td>
                                     <td class="td-spinner">Количество</td>
                                     <td class="td-unit">Ед.изм</td>

@@ -150,6 +150,9 @@ define(
 
                             e.preventDefault();
 
+                            // очищаем если был поиск
+                            $('.main-content .catalog').removeClass('searched').removeAttr('data-searchWord');
+
                             var isReturnBtn = $(this).hasClass('shopmenu-back');
                             var categoryid = $(this).parent().data('catid');
                             var urlHash = document.location.hash,
