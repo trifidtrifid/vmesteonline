@@ -98,7 +98,6 @@ define(
             $('.form-search').submit(function(e){
                 e.preventDefault();
                 var searchWord = $('#search').val().toLowerCase();
-                document.location.hash = searchWord;
                 var productsListPart = thriftModule.client.getProducts(0,1000,0);
                 var products = productsListPart.products;
                 var productsLength = products.length;
@@ -112,7 +111,7 @@ define(
                 $('.main-content .catalog table tbody').html("").append(categoryModule.createProductsTableHtml(searchedProducts));
 
                 /* подключение событий */
-                spinnerModule.initProductsSpinner();
+                spinnerModule.initProductsSpinner(); 
                 var commonModule = require('shop-common.min');
                 commonModule.InitProductDetailPopup($('.product-link'));
                 commonModule.markAddedProduct();
