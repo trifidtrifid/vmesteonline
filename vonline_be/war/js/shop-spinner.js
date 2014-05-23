@@ -336,7 +336,11 @@ define(
                     }
                     if(currentValue) currentValue = parseFloat(currentValue).toFixed(1);
                     var extra = currentValue%step;
-                    if(extra) currentValue = Math.ceil(currentValue);
+                    if(extra){
+                       // currentValue = Math.ceil(currentValue);
+                        currentValue = currentValue - extra + step;
+                    }
+
                     $(this).closest('.ace-spinner').spinner('value',currentValue);
 
                     if (oldSpinnerValue != currentValue){
@@ -423,7 +427,7 @@ define(
 
                     $(this).closest('.prepack-line').slideUp(function(){
                         var oldHeight = $(this).closest('.modal').height();
-                        $(this).closest('.modal').height(oldHeight - 53).css('min-height','268px');
+                        $(this).closest('.modal').height(oldHeight - 53);//css('min-height','268px');
                         if (counterForSetFlag <= 2){
                             $('.error-prepack').hide();
                         }
@@ -461,7 +465,8 @@ define(
             }
 
             if(isFirstModal){
-                var modalHeight = (currentModal.height > 265) ? currentModal.height :  265;
+                //var modalHeight = (currentModal.height() > 265) ? currentModal.height() :  265;
+                var modalHeight = currentModal.height();
 
                 if(productSelector.find('.td-spinner .spinner1').attr('disabled') != 'disabled'){
                     var val = linkSelector.closest('.product').find('.td-spinner .ace-spinner').spinner('value');
@@ -521,6 +526,7 @@ define(
                                     currentPrepackLine.removeClass('no-init');
 
                                     modalHeight += 53;
+                                    alert(modalHeight);
                                     currentModal.height(modalHeight);
                                 }
                             }

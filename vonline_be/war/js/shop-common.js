@@ -277,15 +277,22 @@ define(
 
 
                     popupHtml += '<div class="prepack-list"></div><br>'+
-                        '<div class="error-info error-prepack"></div>'+
-                        '<a href="#" class="btn btn-primary btn-sm no-border full-descr">Подробное описание</a>'+
-                        "<div class='product-fullDescr'>"+ productDetails.fullDescr +"</div>"+
-                        '</div>'+
+                        '<div class="error-info error-prepack"></div>';
+
+                    if(productDetails.fullDescr){
+                        popupHtml += '<a href="#" class="btn btn-primary btn-sm no-border full-descr">Подробное описание</a>'+
+                        "<div class='product-fullDescr'>"+ productDetails.fullDescr +"</div>";
+                    }
+
+                        popupHtml += '</div>'+
                         '</div>'+
                         '</div>';
 
                         // если еще не открывали popup
                         currentModal.append(popupHtml);
+                        if(!productDetails.fullDescr){
+                            currentModal.addClass('withoutFullDescr');
+                        }
                         var currentSpinnerValue,currentSpinnerStep;
 
                         if (isBasket || isOrdersHistory){
@@ -369,9 +376,10 @@ define(
                                 //чтобы высота была корректной у добавленного товара
                                 (productSelector.hasClass('added')) ? prepackLineLength = 0 : prepackLineLength = currentModal.find('.prepack-line').length;
 
-                                var modalHeight = 268;
+                                //var modalHeight = 268;
+                                /*var modalHeight = currentModal.height();
                                 modalHeight += prepackLineLength*53;
-                                currentModal.height(modalHeight);
+                                currentModal.height(modalHeight);*/
                             }
                         }
                     }
@@ -475,7 +483,9 @@ define(
         var fullDescrHeight;
         function initFullDescrClick(selector){
 
-            selector.find('.full-descr').click(function(){
+            selector.find('.full-descr').click(function(e){
+                e.preventDefault();
+
                 var fullDescr = $('.product-fullDescr');
                 var oldHeight;
                 oldHeight = $(this).closest('.modal').height();
@@ -636,7 +646,6 @@ define(
 
                         InitProductDetailPopup($('.shop-orders .product-link'));
                         ordersModule.initShowMoreOrders(orders);
-                        //ordersModule.initOrdersLinks();
                         ordersModule.deleteOrderFromHistory();
                         var ordersNoInit = $('.orders-no-init');
                         ordersModule.initOrderPlusMinus(ordersNoInit);

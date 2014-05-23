@@ -6,54 +6,54 @@ module.exports = function(grunt) {
         uglify: {
             static_mappings: {
                 files: {
-                    'build/shop.min.js': 'js/shop.js',
-                    'build/backoffice.min.js': 'js/backoffice.js',
-                    'build/loginModule.min.js': 'js/loginModule.js',
-                    'build/commonM.min.js': 'js/commonM.js',
-                    'build/thrift.min.js': 'js/thrift.js'
+                    'war/build/shop.min.js': 'war/js/shop.js',
+                    'war/build/backoffice.min.js': 'war/js/backoffice.js',
+                    'war/build/loginModule.min.js': 'war/js/loginModule.js',
+                    'war/build/commonM.min.js': 'war/js/commonM.js',
+                    'war/build/thrift.min.js': 'war/js/thrift.js'
                 }
             },
             dynamic_mappings: {
                 files: [
                     {
                         expand: true,     // Enable dynamic expansion.
-                        cwd: 'js/',      // Src matches are relative to this path.
+                        cwd: 'war/js/',      // Src matches are relative to this path.
                         src: ['shop-*.js'], // Actual pattern(s) to match.
-                        dest: 'build/',   // Destination path prefix.
+                        dest: 'war/build/',   // Destination path prefix.
                         ext: '.min.js'   // Dest filepaths will have this extension.
                     },
                     {
                         expand: true,     // Enable dynamic expansion.
-                        cwd: 'gen-js/',      // Src matches are relative to this path.
+                        cwd: 'war/gen-js/',      // Src matches are relative to this path.
                         src: ['*.js','*.*.js'], // Actual pattern(s) to match.
-                        dest: 'build/gen-js',   // Destination path prefix.
+                        dest: 'war/build/gen-js',   // Destination path prefix.
                         ext: '.js'   // Dest filepaths will have this extension.
                     }
                 ]
             },
             special: {
                 files: {
-                    'build/gen-js/shop.bo_types.js': 'gen-js/shop.bo_types.js',
-                    'js/lib/bootstrap.min.js': 'js/lib/bootstrap.js'
+                    'war/build/gen-js/shop.bo_types.js': 'war/gen-js/shop.bo_types.js',
+                    'war/js/lib/bootstrap.min.js': 'war/js/lib/bootstrap.js'
                 }
             }
         },
         cssmin: {
             minify: {
                 expand: true,
-                cwd: 'css/',
+                cwd: 'war/css/',
                 src: ['*.css', '!*.min.css'],
-                dest: 'build/',
+                dest: 'war/build/',
                 ext: '.min.css'
             }
         },
         watch: {
             scripts: {
-                files: ['js/*.js'],
+                files: ['war/js/*.js'],
                 tasks: ['uglify']
             },
             css:{
-                files: ['css/*.css'],
+                files: ['war/css/*.css'],
                 tasks: ['cssmin']
             }
         }

@@ -177,9 +177,13 @@ define(
                         '</tr>'+
                         '</tbody>'+
                         '</table>'+
-                        '<div class="order-bottom">' +
-                        '<a href="#" title="Удалить" class="delete-order-from-history">&times;</a>'+
-                        '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
+                        '<div class="order-bottom">';
+
+                    if(orderStatus != "Подтвержден"){
+                        ordersHtml += '<a href="#" title="Удалить" class="delete-order-from-history">&times;</a>';
+                    }
+
+                    ordersHtml += '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
                         '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить</button>' +
                         '<div class="order-delivery"></div>'+
                         '</div>'+
@@ -412,7 +416,6 @@ define(
                     var itsMoreOrders = true;
                     orderList.append(createOrdersHtml(orders,itsMoreOrders));
                     initShowMoreOrders(orders);
-                    initOrdersLinks();
                     var ordersNoInit = $('.orders-no-init');
                     initOrderPlusMinus(ordersNoInit);
                     initOrderBtns(ordersNoInit);
@@ -438,7 +441,6 @@ define(
             AddOrdersToBasket: AddOrdersToBasket,
             initOrderBtns: initOrderBtns,
             initVarForMoreOrders: initVarForMoreOrders,
-            //initOrdersLinks: initOrdersLinks,
             initShowMoreOrders: initShowMoreOrders,
             GoToOrdersTrigger: GoToOrdersTrigger,
             showOrderDetails : showOrderDetails,

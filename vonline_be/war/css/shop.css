@@ -777,6 +777,12 @@ th.next,
 .modal.modal-with-prepack {
   height: 265px;
 }
+.modal.withoutFullDescr {
+  height: 205px;
+}
+.modal.modal-with-prepack.withoutFullDescr {
+  height: 215px;
+}
 .modal .close {
   outline: none;
 }

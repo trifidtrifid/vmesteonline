@@ -97,6 +97,8 @@ define(
 
             $('.form-search').submit(function(e){
                 e.preventDefault();
+                $('.ui-autocomplete').hide();
+
                 var searchWord = $('#search').val().toLowerCase();
                 var productsListPart = thriftModule.client.getProducts(0,1000,0);
                 var products = productsListPart.products;
