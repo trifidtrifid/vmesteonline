@@ -47,7 +47,7 @@ public class ProductDescription {
 	public Set<String> knownNames;
 	public String unitName;
 	
-	public FullProductInfo getFullProductInfo(PersistenceManager pm){
+	public FullProductInfo getFullProductInfo(){
 		
 	//the last argument is the Shop id but it is unknown here
 		Product product = new Product(id, name, shortDescr, weight, imageURL, price, unitName,minClientPack,0,
