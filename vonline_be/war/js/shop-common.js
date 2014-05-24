@@ -394,11 +394,21 @@ define(
                     }
                     currentModal.modal();
                     if(isBasket && !isConfirm){
+                        // открываем backdrop из сайдбара
                         $('.modal-backdrop').hide();
                         $('.modal-backdrop.basket-backdrop').show();
                     }
                     fullDescrHeight = currentModal.find('.product-fullDescr').height();
                     currentModal.find('.product-fullDescr').hide();
+
+                    var productOptionsHeight = $('.product-text').height();
+                    if(productOptionsHeight > 90){
+                        var addHeight = productOptionsHeight - 90;
+                        var currentModalHeight = currentModal.height();
+                        currentModal.height(currentModalHeight + addHeight);
+                    }else{
+                        $('.product-text').height(90);
+                    }
 
                     $('.modal-backdrop').click(function(){
                         if (isCatalog) window.history.back();
