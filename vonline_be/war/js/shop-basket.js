@@ -1,13 +1,10 @@
 define(
     'shop-basket.min',
-    ['jquery','shop-initThrift.min','shop-spinner.min','shop-common.min','shop-search.min','shop-orders.min'],
+    ['jquery','shop-initThrift.min','shop-spinner.min','shop-common.min','shop-search.min','shop-orders.min','bootbox'],
     function( $,thriftModule,spinnerModule,commonModule,searchModule,ordersModule ){
-
+//
 
         function isValidPhone(myPhone) {
-            //return /^\+\d{2}\(\d{3}\)\d{3}-\d{2}-\d{2}$/.test(myPhone);
-            //return /^8\-(?:\(\d{4}\)\-\d{6}|\(\d{3}\)\-\d{3}\-\d{2}\-\d{2})$/.test(myPhone);
-            //return /^((((\(\d{3}\))|(\d{3}-))\d{3}-\d{4})|(\+?\d{1,3}((-| |\.)(\(\d{1,4}\)(-| |\.|^)?)?\d{1,8}){1,5}))(( )?(x|ext)\d{1,5}){0,1}$/.test(myPhone);
             return /^(\+?\d+)?\s*(\(\d+\))?[\s-]*([\d-]*)$/.test(myPhone);
         }
 
@@ -304,15 +301,36 @@ define(
 
             var activeOrder = $('.tabs-days .tab-pane.active');
 
-            activeOrder.find('.btn-cancel').click(function(e){
+            /*activeOrder.find('.btn-cancel').click(function(e){
                 e.preventDefault();
 
                 var quest = confirm('Вы действительно хотите отменить заказ ?');
+
                 if (quest){
                     var orderId = $('.tab-pane.active').data('orderid');
                     cleanBasket();
                     thriftModule.client.cancelOrder(orderId);
                 }
+            });*/
+
+            activeOrder.find('.btn-cancel').on(ace.click_event, function(e) {
+                e.preventDefault();
+
+                bootbox.setDefaults({
+                   locale : 'ru'
+                });
+                bootbox.confirm("Вы действительно хотите отменить заказ ?", function(result) {
+                    if(result) {
+                        var orderId = $('.tab-pane.active').data('orderid');
+                        cleanBasket();
+                        thriftModule.client.cancelOrder(orderId);
+                    }
+                });
+
+                $('.modal-backdrop').click(function(){
+                    $('.modal.in .close').trigger('click');
+                    $(this).hide();
+                });
             });
 
             activeOrder.find('.btn-order').click(function(e){

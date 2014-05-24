@@ -7,7 +7,8 @@ require.config({
         "ace_extra": "../js/lib/ace-extra.min",
         "ace_elements": "../js/lib/ace-elements.min",
         "flexslider": "../js/lib/jquery.flexslider-min",
-        "jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min"
+        "jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min",
+        "bootbox":"../js/bootbox.min"
     },
     shim:{
       'ace_spinner':{
@@ -25,6 +26,10 @@ require.config({
     'flexslider':{
         deps: ['jquery'],
         exports: 'flexslider'
+    },
+    'bootbox':{
+        deps: ['jquery','bootstrap'],
+        exports: 'bootbox'
     }
     }
 });

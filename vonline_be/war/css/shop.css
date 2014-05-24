@@ -1005,6 +1005,36 @@ height 50px
   left: 10px;
   font-size: 16px;
 }
+.modal.bootbox {
+  height: 125px;
+  width: 460px;
+  margin-left: -230px;
+}
+.modal.bootbox .modal-dialog {
+  padding: 0;
+  width: 460px;
+}
+.modal.bootbox .modal-dialog .modal-content {
+  border: 0;
+  padding: 0;
+}
+.modal.bootbox .modal-dialog .modal-content .modal-body {
+  padding: 20px;
+}
+.modal.bootbox .modal-dialog .modal-content .modal-footer {
+  position: static;
+  height: auto;
+  width: auto;
+  margin: 0;
+  padding: 0 5px 0 0;
+}
+.modal.bootbox .modal-dialog .modal-content .modal-footer .btn {
+  float: right;
+  margin: 15px 10px 0 0;
+}
+.modal.bootbox .close {
+  margin: -15px -10px 0 0 !important;
+}
 .sidebar#sidebar {
   height: 100%;
   left: 0;
