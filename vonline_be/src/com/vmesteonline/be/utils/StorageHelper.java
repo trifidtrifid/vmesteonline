@@ -179,7 +179,7 @@ public class StorageHelper {
 
 	// ===================================================================================================================
 	public static void sendFileResponse(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		String queryString = req.getRequestURI();
+		String queryString = req.getRequestURI()+(req.getQueryString() == null ? "" : "?"+req.getQueryString());
 		logger.debug("Got request: URL:"+queryString);
 		
 		byte[] fileData;
