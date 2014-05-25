@@ -58,6 +58,7 @@ import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.shop.ShopFEService;
+import com.vmesteonline.be.shop.UserShopRole;
 import com.vmesteonline.be.utils.EMailHelper;
 import com.vmesteonline.be.utils.VoHelper;
 //import com.google.api.client.util.Sets;
@@ -1294,6 +1295,40 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		}
 		return false;
 	}	
-	
+//======================================================================================================================
+
 	public Class getAuthRecordClass(){ return VoShopAccess.class; }
+//======================================================================================================================
+
+	@Override
+	public UserShopRole getUserShopRole(long shopId) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			long currentUserId = getCurrentUserId(pm);
+			if(shopId == 0) shopId = ShopServiceHelper.getCurrentShopId( this, pm );
+			List<VoShopAccess> rslt = (List<VoShopAccess>) pm.newQuery(VoShopAccess.class,"userId=="+currentUserId+" && shopId=="+shopId).execute();
+			if( rslt.size() == 0)
+				return pm.getObjectById(VoShop.class, shopId).getOwnerId() == currentUserId ? UserShopRole.BACKOFFICER : UserShopRole.CUSTOMER;
+			
+			long access = 0;
+			for( VoShopAccess vsa: rslt){
+				access |= vsa.getPermissionBits();
+			}
+			return (access & VoShopAccessRoles.ADMIN) == VoShopAccessRoles.ADMIN ? UserShopRole.ADMIN :
+				pm.getObjectById(VoShop.class, shopId).getOwnerId() == currentUserId ||
+				(access & VoShopAccessRoles.CATALOGUE) == VoShopAccessRoles.CATALOGUE ||
+				(access & VoShopAccessRoles.REPORT) == VoShopAccessRoles.REPORT ||
+				(access & VoShopAccessRoles.BILLING) == VoShopAccessRoles.BILLING ?
+						UserShopRole.BACKOFFICER : 
+							UserShopRole.CUSTOMER;
+			
+		} catch (Exception e) {
+			logger.info("Failed to get USer ROLE: "+e);
+			return UserShopRole.UNKNOWN;
+			
+		} finally {
+			pm.close();
+		}
+	}
 }
+
