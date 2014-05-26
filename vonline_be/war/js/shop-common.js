@@ -410,7 +410,7 @@ define(
                     var productH3Height = currentModal.find('.product-descr h3').height();
                     var modalFooterHeight = currentModal.find('.modal-footer').height();
                     var summaryHeight = modalFooterHeight + productH3Height+productOptionsHeight+60;
-                    if(summaryHeight > 250) currentModal.height(summaryHeight);
+                    if(summaryHeight > 230) currentModal.height(summaryHeight); //
 
                     /*if(productOptionsHeight > 90){
                         var addHeight = productOptionsHeight - 90;
@@ -610,11 +610,12 @@ define(
             //try{
                 var shopOrders = $('.shop-orders');
                 var ordersList = $('.orders-list');
-                $('.page').hide();
-                $('footer').addClass('short-footer');
                 var state;
 
                 if($(this).hasClass('back-to-shop')){
+                    $('.page').hide();
+                    $('footer').addClass('short-footer');
+
                     shopOrders.hide();
                     $('.shop-confirm').hide();
                     $('.main-container-inner').show();
@@ -652,6 +653,9 @@ define(
                         basketModule.callbacks.add(ordersModule.GoToOrdersTrigger);
                         openModalAuth();
                     }else{
+                        $('.page').hide();
+                        $('footer').addClass('short-footer');
+
                         $('.shop-products').hide();
                         $('.shop-confirm').hide();
                         $('.main-container-inner').show();
