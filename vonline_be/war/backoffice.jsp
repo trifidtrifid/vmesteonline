@@ -35,8 +35,10 @@
     List<Shop> ArrayShops = shopService.getShops();
     if(ArrayShops != null && ArrayShops.size() > 0){
         Shop shop = shopService.getShop(ArrayShops.get(0).id);
+        UserShopRole userRole = shopService.getUserShopRole(shop.id);
         pageContext.setAttribute("logoURL", shop.logoURL);
         pageContext.setAttribute("shopID", shop.id);
+        pageContext.setAttribute("userRole", userRole);
     }
 
     int now = (int) (System.currentTimeMillis() / 1000L);
@@ -64,7 +66,8 @@
     <![endif]-->
 </head>
 <body>
-<div class="container backoffice">
+
+<div class="container backoffice <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN'}"> noAccess </c:if> ">
     <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
         try{ace.settings.check('navbar' , 'fixed')}catch(e){}

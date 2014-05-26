@@ -7,6 +7,9 @@ define(
         function isValidPhone(myPhone) {
             return /^(\+?\d+)?\s*(\(\d+\))?[\s-]*([\d-]*)$/.test(myPhone);
         }
+        bootbox.setDefaults({
+            locale : 'ru'
+        });
 
         function cleanBasket(){
             var commonModule = require('shop-common.min');
@@ -316,9 +319,6 @@ define(
             activeOrder.find('.btn-cancel').on(ace.click_event, function(e,deleteOrderFromHistory) {
                 e.preventDefault();
 
-                bootbox.setDefaults({
-                   locale : 'ru'
-                });
                 bootbox.confirm("Вы действительно хотите отменить заказ ?", function(result) {
                     if(result) {
                         var orderId = $('.tab-pane.active').data('orderid');

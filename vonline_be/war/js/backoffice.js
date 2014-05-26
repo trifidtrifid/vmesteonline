@@ -60,10 +60,11 @@ var deliveryFilterFlag= 0,
 
 require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
     function($,thriftModule,commonM,ordersModule) {
-
-        /*var shopId = $('.backoffice').attr('id');
-        var userRole = thriftModule.client.getUserShopRole(shopId);
-        alert(userRole);*/
+if($('.container.backoffice').hasClass('noAccess')){
+    bootbox.alert("У вас нет прав доступа !", function() {
+        document.location.replace("./shop.jsp");
+    });
+}else{
 
         commonM.init();
 
@@ -301,7 +302,6 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepic
             }
             return ordersHtml;
         }
-
 
         try{
         var dPicker = $('#date-picker-1');
@@ -1302,5 +1302,6 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepic
             element.parentNode.insertBefore(scrollbar, element);
             $(element).prev().addClass('top-scroll');
         }
+}
 
     });
