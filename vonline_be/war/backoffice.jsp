@@ -36,6 +36,7 @@
     if(ArrayShops != null && ArrayShops.size() > 0){
         Shop shop = shopService.getShop(ArrayShops.get(0).id);
         pageContext.setAttribute("logoURL", shop.logoURL);
+        pageContext.setAttribute("shopID", shop.id);
     }
 
     int now = (int) (System.currentTimeMillis() / 1000L);
@@ -115,7 +116,7 @@
         </div>
     </div><!-- /.container -->
     </div>
-    <div class="main-container backoffice dynamic" id="main-container">
+    <div class="main-container backoffice dynamic" id="${shopID}">
         <div class="page main-container-inner">
             <aside class="sidebar" id="sidebar">
                 <script type="text/javascript">

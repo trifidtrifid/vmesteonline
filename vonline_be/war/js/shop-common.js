@@ -50,6 +50,11 @@ define(
             }
         }
 
+
+        /*var shopId = $('.shop').attr('id');
+        var userRole = thriftModule.client.getUserShopRole(shopId);*/
+
+
         function getOrderWeight(orderId,orderDetails){
             var myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
             return (myOrderDetails.weightGramm/1000).toFixed(1);

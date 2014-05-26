@@ -279,8 +279,6 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
         //alert(e + ' Ошибка в простых обработчиках');
     }
 
-
-
       window.onerror = function(message, source, lineno) {
           $('.modal.in').find('.close').trigger('click');
             var errorDetails = $('#error-details');

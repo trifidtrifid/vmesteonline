@@ -61,6 +61,10 @@ var deliveryFilterFlag= 0,
 require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
     function($,thriftModule,commonM,ordersModule) {
 
+        /*var shopId = $('.backoffice').attr('id');
+        var userRole = thriftModule.client.getUserShopRole(shopId);
+        alert(userRole);*/
+
         commonM.init();
 
         var w = $(window);

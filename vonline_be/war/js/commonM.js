@@ -30,7 +30,7 @@ define(
 
         $('.nav-list a,.navbar .nav a:not(".dropdown-toggle")').click(function(e){
             var isBackoffise = $(this).closest('.backoffice').length;
-            if(!isBackoffise) e.preventDefault();
+            if(!isBackoffise && !$(this).hasClass('bo-link')) e.preventDefault();
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
         });

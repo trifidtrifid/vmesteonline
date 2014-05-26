@@ -31,8 +31,11 @@
     List<Shop> ArrayShops = shopService.getShops();
     if(ArrayShops != null && ArrayShops.size() > 0){
         Shop shop = shopService.getShop(ArrayShops.get(0).id);
+        UserShopRole userRole = shopService.getUserShopRole(shop.id);
         pageContext.setAttribute("logoURL", shop.logoURL);
         pageContext.setAttribute("shopID", shop.id);
+        pageContext.setAttribute("userRole", userRole);
+        //out.print(userRole);
     }
 
     OrderDetails currentOrderDetails;
@@ -110,6 +113,12 @@
 								Магазин </a></li>
                         <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
                             Заказы </a></li>
+
+                        <c:if test="${userRole == 'BACKOFFICER' || userRole == 'ADMIN'}">
+                        <li><a class="btn btn-info no-border bo-link" href="backoffice.jsp">
+                            Админка</a></li>
+                        </c:if>
+
 						<li class="user-short light-blue">
                             <c:choose>
 								<c:when test="${auth}">
