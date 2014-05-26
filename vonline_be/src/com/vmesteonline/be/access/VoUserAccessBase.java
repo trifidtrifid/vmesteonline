@@ -51,4 +51,9 @@ public class VoUserAccessBase {
 	@Unindexed
 	private long permissionBits;
 
+
+	public long getPermissionBits() {
+		return permissionBits;
+	}
+
 }

@@ -63,6 +63,7 @@ import com.vmesteonline.be.shop.ProductCategory;
 import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
+import com.vmesteonline.be.shop.UserShopRole;
 import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
@@ -1588,4 +1589,22 @@ public class ShopServiceImplTest {
 		}
 	}
 
+	@Test
+	public void testGetUserShopRole() {
+
+		int now = (int) (System.currentTimeMillis() / 1000L);
+		int day = 3600 * 24;
+		List<Long> upProductsIdl;
+
+		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+		try {
+			
+			UserShopRole userShopRole = si.getUserShopRole(sbi.registerShop(shop));
+			Assert.assertEquals(userShopRole, UserShopRole.BACKOFFICER);
+
+		} catch (InvalidOperation e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
