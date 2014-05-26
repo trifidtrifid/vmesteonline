@@ -834,7 +834,6 @@ th.next,
   margin-top: 0;
 }
 .modal .product-text {
-  overflow: auto;
   text-align: left;
 }
 .modal .product-options {
@@ -849,9 +848,11 @@ th.next,
 }
 .modal .modal-footer {
   position: absolute;
-  height: 60px;
-  top: 125px;
+  overflow: auto;
+  min-height: 55px;
+  margin-top: 0;
   right: 10px;
+  bottom: 10px;
   width: 430px;
   background: #fff;
   text-align: left;
@@ -1114,7 +1115,7 @@ height 50px
   }
   .catalog-head table td.td-basket {
     width: 35px;
-    padding-right: 50px;
+    padding-right: 0;
   }
   footer.short-footer .container {
     margin-right: 0;

@@ -51,7 +51,7 @@ define(
         }
 
 
-        /*var shopId = $('.shop').attr('id');
+       /* var shopId = $('.shop').attr('id');
         var userRole = thriftModule.client.getUserShopRole(shopId);*/
 
 
@@ -406,14 +406,20 @@ define(
                     fullDescrHeight = currentModal.find('.product-fullDescr').height();
                     currentModal.find('.product-fullDescr').hide();
 
-                    var productOptionsHeight = $('.product-text').height();
-                    if(productOptionsHeight > 90){
+                    var productOptionsHeight = currentModal.find('.product-text').height();
+                    var productH3Height = currentModal.find('.product-descr h3').height();
+                    var modalFooterHeight = currentModal.find('.modal-footer').height();
+                    var summaryHeight = modalFooterHeight + productH3Height+productOptionsHeight+60;
+                    if(summaryHeight > 250) currentModal.height(summaryHeight);
+
+                    /*if(productOptionsHeight > 90){
                         var addHeight = productOptionsHeight - 90;
                         var currentModalHeight = currentModal.height();
-                        currentModal.height(currentModalHeight + addHeight);
+                        //alert(modalFooterHeight+" "+productH3Height+" "+productOptionsHeight);
+                        currentModal.height(modalFooterHeight + productH3Height+productOptionsHeight+60);
                     }else{
                         $('.product-text').height(90);
-                    }
+                    }*/
 
                     $('.modal-backdrop').click(function(){
                         if (isCatalog) window.history.back();
@@ -507,12 +513,12 @@ define(
                 var newHeight;
 
                 if(fullDescr.css('display') == 'none'){
-                    newHeight = oldHeight + fullDescrHeight+10;
+                    newHeight = oldHeight + fullDescrHeight;
                     $(this).closest('.modal').height(newHeight);
-                    fullDescr.show(200);
+                    fullDescr.show(0);
                 }else{
-                    newHeight = oldHeight - fullDescrHeight - 10;
-                    fullDescr.hide(200,function(){
+                    newHeight = oldHeight - fullDescrHeight;
+                    fullDescr.hide(0,function(){
                         $(this).closest('.modal').height(newHeight);
                     });
                 }
