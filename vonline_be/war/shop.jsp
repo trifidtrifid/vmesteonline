@@ -114,10 +114,13 @@
                         <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
                             Заказы </a></li>
 
-                        <c:if test="${userRole == 'BACKOFFICER' || userRole == 'ADMIN'}">
-                        <li><a class="btn btn-info no-border bo-link" href="backoffice.jsp">
-                            Админка</a></li>
+
+                        <li><a class="btn btn-info no-border bo-link
+                        <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN'}">
+                        hidden
                         </c:if>
+                        " href="backoffice.jsp">
+                            Админка</a></li>
 
 						<li class="user-short light-blue">
                             <c:choose>

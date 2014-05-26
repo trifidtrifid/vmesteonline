@@ -136,6 +136,11 @@ define(
             $(this).parent().removeClass('open');
         });
 
+        var shopId = $('.shop').attr('id');
+        var userRole = thriftModule.client.getUserShopRole(shopId);
+        if(userRole == 2 || userRole == 99){
+            $('.bo-link').removeClass('hidden');
+        }
         // callbacks
         commonModule.initBasketInReload();
         var basketModule = require('shop-basket.min');
