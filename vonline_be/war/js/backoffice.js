@@ -60,6 +60,7 @@ var deliveryFilterFlag= 0,
 
 require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
     function($,thriftModule,commonM,ordersModule) {
+
 if($('.container.backoffice').hasClass('noAccess')){
     bootbox.alert("У вас нет прав доступа !", function() {
         document.location.replace("./shop.jsp");

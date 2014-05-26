@@ -1,3 +1,22 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.List"%>
+<%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
+<%@ page import="com.vmesteonline.be.InvalidOperation"%>
+<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
+<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
+<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
+<%@ page import="com.vmesteonline.be.shop.*"%>
+
+<%
+    ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
+
+    List<Shop> ArrayShops = shopService.getShops();
+    if(ArrayShops != null && ArrayShops.size() > 0){
+        pageContext.setAttribute("shops", ArrayShops);
+}
+%>
+
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -67,14 +86,14 @@ padding:20px;
     <header class="wrapper clearfix">
 		       
         <div id="banner">        
-        	<div id="logo"><a href="basic.html"><img src="images/basic-logo.svg" alt="logo"></a></div> 
+        	<div id="logo"><a href="basic.jsp"><img src="images/basic-logo.svg" alt="logo"></a></div>
         </div>
         
         <!-- main navigation -->
         <nav id="topnav" role="navigation">
         <div class="menu-toggle">Menu</div>  
         	<ul class="srt-menu" id="menu-main-navigation">
-            <li class="current"><a href="basic.html">Home page</a></li>
+            <li class="current"><a href="basic.jsp">Home page</a></li>
             <li><a href="basic-internal.html">Internal page demo</a></li>
 			<li><a href="#">menu item 3</a>
 				<ul>
@@ -181,7 +200,19 @@ padding:20px;
         <div class="grid_6 shops">
             <div class="shops-block-title">Подключенные магазины</div>
             <ul>
-                <li>
+                <c:forEach var="shop" items="${shops}">
+                    <li>
+                        <a href="../shop.jsp">
+                            <img src="${shop.logoURL}" alt="логотип"/>
+                        <span class="shop-right">
+                            <h3>${shop.name}</h3>
+                            <p>${shop.descr}</p>
+                        </span>
+                        </a>
+                    </li>
+                </c:forEach>
+
+                <%--<li>
                     <a href="#">
                         <img src="images/basic-pic3.jpg" alt="картинка"/>
                         <span class="shop-right">
@@ -198,7 +229,7 @@ padding:20px;
                             <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
                         </span>
                     </a>
-                </li>
+                </li>--%>
             </ul>
         </div>
         <div class="grid_6 shops">
