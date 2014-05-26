@@ -65,7 +65,7 @@ public class VoShopAccessRoles extends VoUserAccessBaseRoles {
 
 		//Unregistered User 
 		fillRoleMethods( methodsAccessMask, VoUserAccessBaseRoles.ANYBODY, new String[] {
-				"getProducers", "parseCSVfile","getShops","getShop","getDates","getNextOrderDate","getProducer","getProductCategories","getProducts","getProductDetails","getProductsByCategories"
+				"getUserShopRole", "getProducers", "parseCSVfile","getShops","getShop","getDates","getNextOrderDate","getProducer","getProductCategories","getProducts","getProductDetails","getProductsByCategories"
 		});
 	}
 	
