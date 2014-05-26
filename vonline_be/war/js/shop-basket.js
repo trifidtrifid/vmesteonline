@@ -313,7 +313,7 @@ define(
                 }
             });*/
 
-            activeOrder.find('.btn-cancel').on(ace.click_event, function(e) {
+            activeOrder.find('.btn-cancel').on(ace.click_event, function(e,deleteOrderFromHistory) {
                 e.preventDefault();
 
                 bootbox.setDefaults({
@@ -324,6 +324,7 @@ define(
                         var orderId = $('.tab-pane.active').data('orderid');
                         cleanBasket();
                         thriftModule.client.cancelOrder(orderId);
+                        if(deleteOrderFromHistory) thriftModule.client.deleteOrder(orderId);
                     }
                 });
 

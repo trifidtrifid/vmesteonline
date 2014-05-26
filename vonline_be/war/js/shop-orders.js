@@ -237,14 +237,17 @@ define(
 
               var orderItem = $(this).closest('.order-item');
               var orderId = orderItem.data('orderid');
+              var activeOrder = $('.tab-pane.active');
 
-              if($('.tab-pane.active').data('orderid') == orderId){
-                  thriftModule.client.cancelOrder(orderId);
+              if(activeOrder.data('orderid') == orderId){
+                  activeOrder.find('.btn-cancel').trigger('click',true);
+
+                  /*thriftModule.client.cancelOrder(orderId);
                   var basketModule = require('shop-basket.min');
-                  basketModule.cleanBasket();
+                  basketModule.cleanBasket();*/ //
+              }else{
+                  thriftModule.client.deleteOrder(orderId);
               }
-
-              thriftModule.client.deleteOrder(orderId);
 
               $(this).closest('.order-item').slideUp();
           });

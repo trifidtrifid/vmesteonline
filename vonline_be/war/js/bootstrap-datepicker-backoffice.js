@@ -123,7 +123,12 @@
             }
         }
         }catch(e){
-            alert(e + ' Функция SetOrderDates');
+            //alert(e + ' Функция SetOrderDates');
+
+            /*bootbox.setDefaults({
+                locale : 'ru'
+            });
+            bootbox.alert("Ошибка функции SetOrderDates");*/
         }
     }
 

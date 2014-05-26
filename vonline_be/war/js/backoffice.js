@@ -10,7 +10,8 @@ require.config({
         "ace_spinner": "../js/lib/fuelux/fuelux.spinner",
         "datepicker-backoffice": "../js/bootstrap-datepicker-backoffice",
         "datepicker-ru": "../js/lib/date-time/locales/bootstrap-datepicker.ru",
-        "multiselect": "../js/lib/jquery.multiselect.min"
+        "multiselect": "../js/lib/jquery.multiselect.min",
+        "bootbox":"../js/bootbox.min"
     },
     shim:{
         'ace_spinner':{
@@ -40,6 +41,10 @@ require.config({
         'multiselect':{
             deps: ['jquery','jquery_ui'],
             exports: 'multiselect'
+        },
+        'bootbox':{
+            deps: ['jquery','bootstrap'],
+            exports: 'bootbox'
         }
     }
 });

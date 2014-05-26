@@ -27,10 +27,19 @@ define(
 
             selector.on('focusout',function(){
 
-                if($(this).val() != oldSpinnerValue){
+                var currentValue = $(this).val();
+                var step = $(this).data('step');
+
+                if(currentValue != oldSpinnerValue){
+                    var extra = currentValue%step;
+                    if(extra){
+                        currentValue = currentValue - extra + step;
+                    }
+                    $(this).closest('.ace-spinner').spinner('value',currentValue);
+
                     $(this).trigger('change');
                 }
-
+                oldSpinnerValue = currentValue;
             });
 
             selector.on('change',function(e){
@@ -45,7 +54,7 @@ define(
 
                 if (oldSpinnerValue != currentValue){
                     // чтобы не обрабатывать щелчки ниже 1
-                    oldSpinnerValue = currentValue;
+                    //oldSpinnerValue = currentValue;
                     var productSelector = $(this).closest('.product');
                     productSelector.addClass('wasChanged');
 
@@ -320,10 +329,19 @@ define(
 
             selector.on('focusout',function(){
 
-                if($(this).val() != oldSpinnerValue){
+                var currentValue = $(this).val();
+                var step = $(this).data('step');
+
+                if(currentValue != oldSpinnerValue){
+                    var extra = currentValue%step;
+                     if(extra){
+                        currentValue = currentValue - extra + step;
+                     }
+                    $(this).closest('.ace-spinner').spinner('value',currentValue);
+
                     $(this).trigger('change');
                 }
-
+                oldSpinnerValue = currentValue;
             });
             try{
                 selector.on('change',function(e){
@@ -335,19 +353,12 @@ define(
                         currentValue = (step) ? step : 1;
                     }
                     if(currentValue) currentValue = parseFloat(currentValue).toFixed(1);
-                    var extra = currentValue%step;
-                    if(extra){
-                       // currentValue = Math.ceil(currentValue);
-                        currentValue = currentValue - extra + step;
-                    }
-
                     $(this).closest('.ace-spinner').spinner('value',currentValue);
 
                     if (oldSpinnerValue != currentValue){
                         // чтобы не обрабатывать щелчки ниже 1
-                    oldSpinnerValue = currentValue;
+                    //oldSpinnerValue = currentValue;
                     var productSelector = $(this).closest('.product');
-                    oldSpinnerValue = currentValue;
 
                     var qnty = $(this).val();
                     var isModalWindow = $(this).closest('.modal').length > 0;
