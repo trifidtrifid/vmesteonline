@@ -329,13 +329,13 @@ define(
 
             selector.on('focusout',function(){
 
-                var currentValue = $(this).val();
+                var currentValue = $(this).closest('.ace-spinner').spinner('value');
                 var step = $(this).data('step');
 
                 if(currentValue != oldSpinnerValue){
                     var extra = currentValue%step;
                      if(extra){
-                        currentValue = currentValue - extra + step;
+                        currentValue = currentValue - extra + parseFloat(step);
                      }
                     $(this).closest('.ace-spinner').spinner('value',currentValue);
 
