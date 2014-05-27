@@ -41,47 +41,72 @@ define(
                     inConfirm = $(this).closest('.confirm-order').length > 0;
                     (inConfirm) ? currentProductList = $(this).closest('.catalog-confirm').find('.product'):
                         currentProductList = selector.closest('.catalog-order').find('.product');
+                    var btnCancel = $(this).closest('.confirm-order').find('.additionally-order .btn-cancel');
 
-                    $(this).closest('.product').slideUp(function(){
-                        var productId = $(this).data('productid');
-
-                        $('.catalog').find('.added').each(function(){
-                           if ($(this).data('productid') == productId){
-                               $(this).removeClass('added');
-                           }
-                        });
-
-                        var commonModule = require('shop-common.min');
+                    if (currentProductList.length == 1){
                         if(inConfirm){
-                            // если на странице конфирма, то обновляем и корзину на главной
-                            myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
+                            var productSelector = $(this);
+                            bootbox.confirm("Вы действительно хотите отменить заказ ?", function(result) {
+                                if(result) {
+                                    var deleteOrder = true,
+                                        back = true;
+                                    productSlideUp(productSelector,deleteOrder,back);
 
-                            $('.tabs-days .tab-content .catalog-order').find('.product').each(function(){
-                                if($(this).data('productid') == productId){
-                                    $(this).css('display','none').detach();
+                                }
+                            });
+                        }else{
+                            var deleteOrder = true;
+                            productSlideUp($(this),deleteOrder);
+                        }
+                    }else{
+                        productSlideUp($(this));
+                    }
+
+                    function productSlideUp(selector,deleteOrder,back){
+                        selector.closest('.product').slideUp(function(){
+                            var productId = $(this).data('productid');
+
+                            $('.catalog').find('.added').each(function(){
+                                if ($(this).data('productid') == productId){
+                                    $(this).removeClass('added');
                                 }
                             });
 
-                            $('.itogo-right span').text(commonModule.countAmount(currentTab.find('.catalog-order'),myOrderDetails));
-                        }
+                            var commonModule = require('shop-common.min');
+                            if(inConfirm){
+                                // если на странице конфирма, то обновляем и корзину на главной
+                                myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
 
-                        $(this).detach();
+                                $('.tabs-days .tab-content .catalog-order').find('.product').each(function(){
+                                    if($(this).data('productid') == productId){
+                                        $(this).css('display','none').detach();
+                                    }
+                                });
 
-                        thriftModule.client.removeOrderLine(orderId,$(this).closest('.product').data('productid'));
-                        myOrderDetails = thriftModule.client.getOrderDetails(orderId);
+                                $('.itogo-right span').text(commonModule.countAmount(currentTab.find('.catalog-order'),myOrderDetails));
+                            }
 
-                        currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order'),myOrderDetails));
+                            $(this).detach();
 
-                        if (currentProductList.length == 1){
-                            // если это был последний товар в корзине
-                            currentTab.closest('.tabs-days').hide().remove();
-                            thriftModule.client.deleteOrder(orderId);
-                        }
+                            thriftModule.client.removeOrderLine(orderId,$(this).closest('.product').data('productid'));
+                            myOrderDetails = thriftModule.client.getOrderDetails(orderId);
 
-                        var weight = commonModule.getOrderWeight(orderId,myOrderDetails);
-                        currentTab.find('.weight span').text(weight);
-                        $('.weight-right span').text(weight);
-                    });
+                            currentTab.find('.amount span').text(commonModule.countAmount(currentTab.find('.catalog-order'),myOrderDetails));
+
+                            var weight = commonModule.getOrderWeight(orderId,myOrderDetails);
+                            currentTab.find('.weight span').text(weight);
+                            $('.weight-right span').text(weight);
+
+                            if (deleteOrder){
+                                currentTab.closest('.tabs-days').hide().remove();
+                                thriftModule.client.deleteOrder(orderId);
+                            }
+                            if(back){
+                                btnCancel.trigger('click');
+                            }
+                        });
+                    }
+
 
                 });
             }catch(e){
@@ -338,6 +363,8 @@ define(
                 e.preventDefault();
 
                 var currentTab = $('.tab-pane.active');
+                currentTab.find('.refresh').trigger('click');
+
                 var commonModule = require('shop-common.min');
                 var amount = commonModule.countAmount(currentTab.find('.catalog-order'),orderDetails);
                 var weight = $('.weight span').text();
@@ -386,6 +413,7 @@ define(
                 var shops = thriftModule.client.getShops();
                 var shop = thriftModule.client.getShop(shops[0].id);
                 var shopAddress = shop.address;
+
                 switch (orderDetails.delivery){
                     case 1:
                         checkboxDeliveryType.find('input:not(".courier-delivery")').prop('checked',true);
@@ -399,6 +427,10 @@ define(
                         showDeliveryDropdown(orderId,userAddresses);
                         break;
                 }
+
+                var confirmOrder = $('.confirm-order .catalog-confirm');
+                confirmOrder.html(catalogHtml);
+
                 setDeliveryCost(orderId,orderDetails);
                 initRadioBtnClick(shopAddress);
 
@@ -406,9 +438,6 @@ define(
                 $('.order-date span').text(myDate);
                 $('.itogo-right span').text(amount);
                 $('.weight-right span').text(weight);
-
-                var confirmOrder = $('.confirm-order .catalog-confirm');
-                confirmOrder.html(catalogHtml);
 
                 // на случай если в корзине уже открывали попап, удаляем его, чтобы не
                 // вносить путаницу
@@ -446,6 +475,7 @@ define(
                     $('.page.shop-confirm').hide();
                     window.history.back();
                 });
+
 
             }).show();
         }
@@ -853,7 +883,7 @@ define(
 
             var commonModule = require('shop-common.min');
 
-            var container = (basketProductsContainer) ? basketProductsContainer : $('.catalog-confirm') ;
+            var container = (basketProductsContainer) ? basketProductsContainer : $('.catalog-confirm');
             $('.itogo-right span,.amount span').text(commonModule.countAmount(container,orderDetails));
         }
 
