@@ -531,7 +531,7 @@ define(
                 var orderId = $('.tab-pane.active').data('orderid');
 
                 var myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
-                var summa = myOrderDetails.totalCost;
+                var summa = myOrderDetails.totalCost; // ошибка: у OrderDerails нет totalCost
 
                 if(!summa){
                     summa = 0;
