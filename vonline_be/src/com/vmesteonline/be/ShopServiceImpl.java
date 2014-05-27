@@ -1053,6 +1053,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		
 		try {
 			Query pcq = pm.newQuery(VoOrder.class);
+			pcq.setOrdering("createdAt desc");
 			List<VoOrder> ps;
 			if( 0!=userId){
 				pcq.setFilter("user == :key && shopId == " + shopId + " && date >= " + dateFrom + 
