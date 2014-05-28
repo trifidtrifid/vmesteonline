@@ -206,3 +206,10 @@
     font-size: 14px;
   }
 }
+.signup-shop textarea {
+  width: 100%;
+  height: 70px;
+}
+.signup-shop .file-label {
+  text-align: left;
+}
