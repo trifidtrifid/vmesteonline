@@ -19,6 +19,7 @@ define(
             }else{
                 InitSpinnerChange(selector);
             }
+            //
 
         }
 
