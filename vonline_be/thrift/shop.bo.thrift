@@ -62,7 +62,10 @@ service ShopBOService {
 	i64 registerProduct( 1:shop.FullProductInfo fpi, 2:i64 shopId ) throws (1:error.InvalidOperation exc),
 	
 	void setShopDeliveryByWeightIncrement( 1:i64 shopId, 2:map<i32,i32> deliveryByWeightIncrement) throws (1:error.InvalidOperation exc),
+	//Map where the key is a DeliveryType and the value is the minimum distance between the shop and deliivery address. 
 	void setShopDeliveryCostByDistance( 1:i64 shopId, 2:map<i32,double> deliveryCostByDistance) throws (1:error.InvalidOperation exc),
+	//The method defines a map to choise the cheapest DeliveryType if Full Address string representation matches it. Full address representation 
+	// contains city name, street name, house and flat number
 	void setShopDeliveryTypeAddressMasks( 1:i64 shopId, 2:map<shop.DeliveryType,string> deliveryTypeAddressMasks) throws (1:error.InvalidOperation exc),
 	
 	/**
