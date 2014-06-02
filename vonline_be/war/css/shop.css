@@ -1729,6 +1729,116 @@ height 50px
 .export .export-btn-line {
   margin-top: 15px;
 }
+.bo-settings fieldset input,
+.bo-settings fieldset textarea {
+  margin-bottom: 5px;
+}
+.bo-settings fieldset .file-label {
+  margin-top: -40px !important;
+}
+.bo-settings h5 {
+  margin-top: 20px;
+}
+.bo-settings .radio {
+  margin-top: 20px;
+}
+.bo-settings .delivery-price-type {
+  padding-left: 30px;
+}
+.bo-settings .delivery-price-type.delivery-weight {
+  padding-left: 50px;
+}
+.bo-settings .delivery-price-type span {
+  display: inline-block;
+  margin-left: 5px;
+  margin-right: 15px;
+}
+.bo-settings .delivery-price-type .add-delivery-interval {
+  display: inline-block;
+  font-size: 30px;
+  position: relative;
+  top: 6px;
+}
+.bo-settings .delivery-price-type .add-delivery-interval:hover {
+  text-decoration: none;
+}
+.bo-settings .delivery-area-dropdown button {
+  width: 158px;
+  margin-right: 35px !important;
+  height: 29px;
+  position: relative;
+  top: -1px;
+}
+.bo-settings input[type=checkbox].ace+.lbl::before,
+.bo-settings input[type=radio].ace+.lbl::before {
+  vertical-align: top;
+  margin-right: 5px;
+}
+.bo-settings .shedule-date,
+.bo-settings .shedule-confirm {
+  display: inline-block;
+}
+.bo-settings .shedule-confirm {
+  margin-left: 10px;
+  margin-top: 10px;
+  position: relative;
+  top: 4px;
+}
+.bo-settings .shedule-confirm input {
+  width: 50px;
+  display: inline-block;
+  margin: 0 10px;
+}
+.bo-settings .shedule-delivery .datepicker {
+  margin-left: 0;
+  background: #d6f7f7;
+}
+.bo-edit table {
+  width: 100%;
+}
+.bo-edit table td {
+  text-align: right;
+}
+.bo-edit table input {
+  width: 100%;
+}
+.bo-edit table .remove-item {
+  display: inline-block;
+  font-size: 24px;
+  color: #f00;
+}
+.bo-edit table .remove-item:hover {
+  text-decoration: none;
+}
+/* админка */
+.adminka table {
+  width: 100%;
+  margin-top: 20px;
+}
+.adminka table td {
+  border: 1px solid #ccc;
+  padding-left: 10px;
+}
+.adminka table .td-icon {
+  text-align: center;
+  padding-left: 0;
+  width: 5%;
+}
+.adminka table .fa:hover,
+.adminka table .remove-item:hover {
+  text-decoration: none;
+}
+.adminka table .fa {
+  display: inline-block;
+  font-size: 20px;
+}
+.adminka table .remove-item {
+  color: #f00;
+  font-size: 30px;
+}
+.adminka-users {
+  display: none;
+}
 .full-text {
   display: none;
   position: absolute;
@@ -1752,7 +1862,9 @@ height 50px
   margin-left: 10px;
 }
 .import,
-.export {
+.export,
+.bo-settings,
+.bo-edit {
   display: none;
 }
 #doublescroll {

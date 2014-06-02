@@ -188,8 +188,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Задача по умолчанию
-    grunt.registerTask('default', ['uglify','concat','watch']);
-    grunt.registerTask('css', ['cssmin']);
+    grunt.registerTask('default', ['uglify','cssmin','concat','watch']);
+    grunt.registerTask('css', ['cssmin','watch']);
     grunt.registerTask('watcher', ['watch']);
 
 };
