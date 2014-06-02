@@ -1,7 +1,8 @@
 define(
     'shop-common.min',
     ['jquery','flexslider','shop-initThrift.min','shop-basket.min','shop-spinner.min','shop-orders.min','shop-category.min','bootstrap'],
-    function( $ ,flexsliderModule,thriftModule,basketModule,spinnerModule,categoryModule,ordersModule ){
+    //['jquery','shop-initThrift.min','shop-basket.min','shop-spinner.min','shop-orders.min','shop-category.min'],
+    function( $ ,flexslider, thriftModule,basketModule,spinnerModule,categoryModule,ordersModule ){
 
         var noPhotoPic = "i/no-photo.png";
         // возвращает cookie с именем name, если есть, если нет, то undefined

@@ -38,6 +38,22 @@ module.exports = function(grunt) {
                 }
             }
         },
+        concat: {
+            options: {
+                separator: ';'
+            },
+            dist: {
+                src: [/*'war/js/lib/jquery-2.1.1.min.js','war/js/lib/fuelux/fuelux.spinner.js','war/js/lib/ace-extra.min.js',
+                    'war/js/lib/ace-elements.min.js','war/js/lib/jquery.flexslider-min.js','war/js/lib/jquery-ui-1.10.3.full.min.js',
+                    'war/js/bootbox.min.js',*/
+                    'war/build/thrift.min.js','war/build/gen-js/bedata_types.js','war/build/gen-js/shop_types.js',
+                    'war/build/gen-js/ShopFEService.js','war/build/gen-js/shop.bo_types.js','war/build/gen-js/ShopBOService.js',
+                    'war/build/gen-js/authservice_types.js','war/build/gen-js/AuthService.js','war/build/gen-js/userservice_types.js',
+                    'war/build/gen-js/UserService.js',
+                    'war/build/shop-*.js','war/build/loginModule.min.js','war/build/commonM.min.js','war/build/shop.min.js'],
+                dest: 'war/build/build.js'
+            }
+        },
         cssmin: {
             minify: {
                 expand: true,
@@ -60,13 +76,12 @@ module.exports = function(grunt) {
     });
 
     // Загрузка плагинов, установленных с помощью npm install
-    //grunt.loadNpmTasks('grunt-contrib-concat');
-
+    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Задача по умолчанию
-    grunt.registerTask('default', ['uglify','cssmin','watch']);
+    grunt.registerTask('default', ['uglify','concat']);
 
 };

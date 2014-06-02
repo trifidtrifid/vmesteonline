@@ -80,7 +80,7 @@
     <![endif]-->
 
 
-    <script src="/build/thrift.min.js" type="text/javascript"></script>
+    <%--<script src="/build/thrift.min.js" type="text/javascript"></script>
     <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
 
     <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
@@ -91,9 +91,10 @@
     <script src="/build/gen-js/authservice_types.js" type="text/javascript"></script>
     <script src="/build/gen-js/AuthService.js" type="text/javascript"></script>
     <script src="/build/gen-js/userservice_types.js" type="text/javascript"></script>
-    <script src="/build/gen-js/UserService.js" type="text/javascript"></script>
+    <script src="/build/gen-js/UserService.js" type="text/javascript"></script>--%>
 
-    <script type="text/javascript" data-main="/build/shop.min.js" src="/js/require.min.js"></script>
+    <%--<script type="text/javascript" data-main="/build/shop.min.js" src="/js/require.min.js"></script>--%>
+    <script type="text/javascript" data-main="/build/build.js" src="/js/require.min.js"></script>
 
     <script type="text/javascript">
 	globalUserAuth = false;
@@ -354,6 +355,16 @@
     </footer>
     </div>
 
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-51489479-1', 'vomoloko.ru');
+        ga('send', 'pageview');
+
+    </script>
 
 </body>
 </html>

@@ -1,6 +1,7 @@
 define(
     'shop-basket.min',
     ['jquery','shop-initThrift.min','shop-spinner.min','shop-common.min','shop-search.min','shop-orders.min','bootbox'],
+    //['jquery','shop-initThrift.min','shop-spinner.min','shop-common.min','shop-search.min','shop-orders.min'],
     function( $,thriftModule,spinnerModule,commonModule,searchModule,ordersModule ){
 //
 

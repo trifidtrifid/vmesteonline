@@ -4,7 +4,7 @@ require.config({
         "jquery"   : "../js/lib/jquery-2.1.1.min",
         "ace_spinner": "../js/lib/fuelux/fuelux.spinner",
         "bootstrap": "../js/lib/bootstrap.min",
-        "ace_extra": "../js/lib/ace-extra.min",
+        //"ace_extra": "../js/lib/ace-extra.min",
         "ace_elements": "../js/lib/ace-elements.min",
         "flexslider": "../js/lib/jquery.flexslider-min",
         "jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min",
@@ -12,7 +12,7 @@ require.config({
     },
     shim:{
       'ace_spinner':{
-         deps: ['jquery',"ace_extra","ace_elements","jquery_ui"],
+         deps: ['jquery',"ace_elements","jquery_ui"],
          exports: 'ace_spinner'
       },
       'jquery_ui':{
