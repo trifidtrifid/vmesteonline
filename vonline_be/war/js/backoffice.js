@@ -262,6 +262,11 @@ if($('.container.backoffice').hasClass('noAccess')){
                         var orderMonth = tempDate.getMonth()+1;
                         orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
 
+                    var deleteClass = "";
+                    if(orderStatus == "Подтвержден"){
+                        deleteClass = "passive";
+                    }
+
                         ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
                             '<table class="orders-tbl">'+
                             '<tbody>'+
@@ -280,6 +285,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                             '<td class="td9"></td>'+
                             '<td class="td8"></td>'+
                             '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
+                            '<td class="td1"><a href="#" title="Удалить заказ" class="delete-order '+deleteClass+'">&times;</a></td>'+
                             '</tr>'+
                             '</tbody>'+
                             '</table>'+
@@ -303,6 +309,18 @@ if($('.container.backoffice').hasClass('noAccess')){
             }
             return ordersHtml;
         }
+
+        $('.delete-order').click(function(e){
+            e.preventDefault();
+
+            if(!$(this).hasClass('passive')){
+                var orderItem = $(this).closest('.order-item');
+                var orderId = orderItem.data('orderid');
+
+                thriftModule.client.deleteOrder(orderId);
+                orderItem.slideUp();
+            }
+        });
 
         try{
         var dPicker = $('#date-picker-1');

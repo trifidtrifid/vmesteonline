@@ -208,7 +208,7 @@ define(
         {
             var orderDetails = (details) ? details : thriftModule.client.getOrderDetails(orderid);
             orderItem.find('.td9').text(orderDetails.deliveryCost);
-            orderItem.find('.td8').text((orderDetails.weightGramm/1000).toFixed(1));
+            orderItem.find('.td8:not(.user-name)').text((orderDetails.weightGramm/1000).toFixed(1));
 
             var orderDelivery;
             switch(orderDetails.delivery){

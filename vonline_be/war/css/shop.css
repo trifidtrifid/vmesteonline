@@ -1591,6 +1591,19 @@ height 50px
 .backoffice .order-item .order-bottom .order-delivery {
   margin-right: 0;
 }
+.backoffice .order-item .delete-order {
+  font-size: 20px;
+  color: #f00;
+  display: block;
+  padding: 0 3px;
+}
+.backoffice .order-item .delete-order:hover {
+  text-decoration: none;
+}
+.backoffice .order-item .delete-order.passive {
+  cursor: default;
+  color: #ccc;
+}
 .backoffice .order-products {
   display: none;
 }
