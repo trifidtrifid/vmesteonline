@@ -120,17 +120,20 @@ public class StorageHelper {
 	// ===================================================================================================================
 
 	public static String replaceImage(String urlOrContent, String oldURL, long userId, Boolean isPublic, PersistenceManager _pm) throws IOException {
-		long oldFileId = getFileId(oldURL);
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
 		try {
-			try {
-				VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
-				if (0 == userId)
-					userId = oldFile.getUserId();
-				if (null == isPublic)
-					isPublic = oldFile.isPublic();
-				deleteImage(oldFile.getGSFileName());
-			} catch (JDOObjectNotFoundException onfe) {
+			if( null != oldURL ){
+			long oldFileId = getFileId(oldURL);
+			
+				try {
+					VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+					if (0 == userId)
+						userId = oldFile.getUserId();
+					if (null == isPublic)
+						isPublic = oldFile.isPublic();
+					deleteImage(oldFile.getGSFileName());
+				} catch (JDOObjectNotFoundException onfe) {
+				}
 			}
 			return saveImage(urlOrContent, userId, isPublic, pm);
 		} finally {
