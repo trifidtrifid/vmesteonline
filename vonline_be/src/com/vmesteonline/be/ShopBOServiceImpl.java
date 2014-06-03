@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -116,6 +118,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	public List<Long> uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		List<Long> productIds;
+		
 		try {
 			if (0 == shopId)
 				shopId = ShopServiceHelper.getCurrentShopId( this, pm );
@@ -145,6 +148,12 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				productIds.add(voProduct.getId());
 			}
 			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(shopId));
+			
+			List<VoProductCategory> pcl = (List<VoProductCategory>)pm.newQuery( VoProductCategory.class, "shopId=="+shopId).execute();
+			for( VoProductCategory category: pcl){
+				removeObjectFromCache(ShopServiceHelper.getProcutsOfCategoryCacheKey(category.getId(), shopId));
+			}
+			removeObjectFromCache(ShopServiceHelper.getProcutsOfCategoryCacheKey(0, shopId));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
