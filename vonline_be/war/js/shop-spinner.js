@@ -1,7 +1,8 @@
 define(
     'shop-spinner.min',
     ['jquery','ace_spinner','shop-initThrift.min','shop-common.min','shop-basket.min'],
-    function( $,aceSpinner,thriftModule,commonModule,basketModule ){
+    //['jquery','shop-initThrift.min','shop-common.min','shop-basket.min'],
+    function( $,ace_spinner,thriftModule,commonModule,basketModule ){
 
         function InitSpinner(selector,spinnerValue,isBasket,spinnerStep){
             try{

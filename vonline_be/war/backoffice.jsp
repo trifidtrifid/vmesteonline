@@ -144,6 +144,16 @@
                             <span class="menu-text"> Экспорт </span>
                         </a>
                     </li>
+                    <li>
+                        <a href="#">
+                            <span class="menu-text"> Настройки </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="menu-text"> Редактирование </span>
+                        </a>
+                    </li>
                 </ul><!-- /.nav-list -->
             </aside>
 
@@ -416,6 +426,138 @@
                             <div class="export-table">
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="bo-settings back-tab signup-shop">
+                    <h2>Общая информация</h2>
+                    <fieldset>
+                        <label class="block clearfix">
+                            <span class="block input-icon input-icon-right">
+                                <input type="email" id="email" class="form-control" placeholder="Название магазина" />
+                            </span>
+                        </label>
+
+                        <label class="block clearfix">
+                            <span class="block input-icon input-icon-right">
+                                <textarea name="descr" id="descr" cols="30" rows="10">Описание</textarea>
+                            </span>
+                        </label>
+
+                        <label class="block clearfix">
+                            <span class="block input-icon input-icon-right">
+                                <textarea name="descr" id="address" cols="30" rows="10">Адрес</textarea>
+                            </span>
+                        </label>
+
+
+                        <label class="block clearfix">
+                            <span class="block input-icon input-icon-right">
+                                <div class="ace-file-input">
+                                    <input type="file" id="id-input-file-2">
+                                </div>
+                            </span>
+                        </label>
+
+                        <label class="block clearfix">
+                            <span class="block input-icon input-icon-right">
+                                <input type="email" id="price-delivery" class="form-control" placeholder="Стоимость доставки" />
+                            </span>
+                        </label>
+
+                    </fieldset>
+
+                    <h2>Расписание завоза</h2>
+                    <div class="shedule-delivery">
+                        <div id="date-picker-6"></div>
+                        <div class="shedule-confirm"><span>подтверждать заказ за</span><input type="text" placeholder="2"><span>дня до доставки</span></div>
+                    </div>
+
+                    <h2>Доставка</h2>
+                    <h5>Стоимость доставки в зависимости от расстояния</h5>
+                    <div class="radio">
+                        <label>
+                            <input name="form-field-radio" type="radio" checked="checked" class="ace">
+                            <span class="lbl"> Стоимость в интервалах (например 100 р до 10км, 200р при > 10км)</span>
+                        </label>
+                        <div class="delivery-interval delivery-price-type">
+                            <input type="text" placeholder="Интервал"><span>км</span>
+                            <input type="text" placeholder="Стоимость"><span>руб</span>
+                            <a href="#" class="add-delivery-interval add-interval">+</a>
+                        </div>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input name="form-field-radio" type="radio" checked="checked" class="ace">
+                            <span class="lbl"> Стоимость в зависимости от населенного пункта/района (например Кудрово -100р, Пушкин - 150р)</span>
+                        </label>
+                        <div class="delivery-area  delivery-price-type">
+                            <div class="btn-group delivery-area-dropdown">
+                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                    <span class="btn-group-text">Населенный пункт</span>
+                                    <span class="icon-caret-down icon-on-right"></span>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-blue">
+                                    <li><a href="#">Кудрово</a></li>
+                                    <li><a href="#">Пушкин</a></li>
+                                    <li><a href="#">Оккервиль</a></li>
+                                </ul>
+                            </div>
+
+                            <input type="text" placeholder="Стоимость"><span>руб</span>
+                            <a href="#" class="add-delivery-interval add-interval">+</a>
+                        </div>
+                    </div>
+                    <h5>Стоиомтсь доставки в зависимости от веса заказа</h5>
+                        <div class="delivery-weight delivery-price-type">
+                            <input type="text" placeholder="Интервал"><span>кг</span>
+                            <input type="text" placeholder="Стоимость"><span>руб</span>
+                            <a href="#" class="add-delivery-interval add-interval">+</a>
+                        </div>
+
+                        <br>
+                    <a class="btn btn-primary btn-sm no-border" href="#">Сохранить</a>
+                </div>
+                <div class="bo-edit back-tab">
+                    <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab5">
+                        <li class="active">
+                            <a data-toggle="tab" href="#edit-product">Продукты</a>
+                        </li>
+
+                        <li>
+                            <a data-toggle="tab" href="#edit-category">Категории</a>
+                        </li>
+
+                        <li>
+                            <a data-toggle="tab" href="#edit-producer">Производители</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="edit-product" class="tab-pane active">
+                            <a class="edit-add" href="#">Добавить</a>
+                            <table>
+                                <tr>
+                                    <td><input type="text" placeholder="название"/></td>
+                                    <td><input type="text" placeholder="описание"/></td>
+                                    <td><input type="text" placeholder="родитель"/></td>
+                                    <td><a href="#" title="Удалить" class="remove-item">&times;</a></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" placeholder="название"/></td>
+                                    <td><input type="text" placeholder="описание"/></td>
+                                    <td><input type="text" placeholder="родитель"/></td>
+                                    <td><a href="#" title="Удалить" class="remove-item">&times;</a></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" placeholder="название"/></td>
+                                    <td><input type="text" placeholder="описание"/></td>
+                                    <td><input type="text" placeholder="родитель"/></td>
+                                    <td><a href="#" title="Удалить" class="remove-item">&times;</a></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div id="edit-category" class="tab-pane"></div>
+                        <div id="edit-producer" class="tab-pane"></div>
                     </div>
                 </div>
             </div>

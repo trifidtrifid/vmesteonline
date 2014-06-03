@@ -262,6 +262,11 @@ if($('.container.backoffice').hasClass('noAccess')){
                         var orderMonth = tempDate.getMonth()+1;
                         orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
 
+                    var deleteClass = "";
+                    if(orderStatus == "Подтвержден"){
+                        deleteClass = "passive";
+                    }
+
                         ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
                             '<table class="orders-tbl">'+
                             '<tbody>'+
@@ -280,6 +285,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                             '<td class="td9"></td>'+
                             '<td class="td8"></td>'+
                             '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
+                            '<td class="td1"><a href="#" title="Удалить заказ" class="delete-order '+deleteClass+'">&times;</a></td>'+
                             '</tr>'+
                             '</tbody>'+
                             '</table>'+
@@ -304,6 +310,18 @@ if($('.container.backoffice').hasClass('noAccess')){
             return ordersHtml;
         }
 
+        $('.delete-order').click(function(e){
+            e.preventDefault();
+
+            if(!$(this).hasClass('passive')){
+                var orderItem = $(this).closest('.order-item');
+                var orderId = orderItem.data('orderid');
+
+                thriftModule.client.deleteOrder(orderId);
+                orderItem.slideUp();
+            }
+        });
+
         try{
         var dPicker = $('#date-picker-1');
         var dPickerExport = $('.datepicker-export');
@@ -316,6 +334,9 @@ if($('.container.backoffice').hasClass('noAccess')){
         console.log('---------------------');
 
         dPickerExport.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
+            $(this).prev().focus();
+        });
+        $('#date-picker-6').datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
             $(this).prev().focus();
         });
 
@@ -897,9 +918,6 @@ if($('.container.backoffice').hasClass('noAccess')){
         var skipConst = "SKIP";
         $('.import-btn').click(function(e){
             e.preventDefault();
-            //$('.container').css({'cursor': 'url(../i/wait1.png),wait'});
-            //$('.container').addClass('wait');
-            //$('.loading').addClass('loading-show');
 
             var dropdowns = $('.import-field-dropdown');
             var dropdownLength = dropdowns.length;
@@ -1265,7 +1283,7 @@ if($('.container.backoffice').hasClass('noAccess')){
             }
         }
 
-        $('.nav-list a').click(function(e){
+        $('.container.backoffice .nav-list a').click(function(e){
             e.preventDefault();
             $('.back-tab').hide();
             var index = $(this).parent().index();
@@ -1279,10 +1297,47 @@ if($('.container.backoffice').hasClass('noAccess')){
                 case 2:
                     $('.export').show();
                     break;
+                case 3:
+                    $('.bo-settings').show();
+                    break;
+                case 4:
+                    $('.bo-edit').show();
+                    break;
             }
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
             setSidebarHeight();
+        });
+
+    $('#id-input-file-2').ace_file_input({
+        style:'well',
+        btn_choose:'Загрузить логотип',
+        btn_change:null,
+        no_icon:'icon-cloud-upload',
+        droppable:true,
+        thumbnail:'large'//large | fit
+        //,icon_remove:null//set null, to hide remove/reset button
+        /**,before_change:function(files, dropped) {
+						//Check an example below
+						//or examples/file-upload.html
+						return true;
+					}*/
+        /**,before_remove : function() {
+						return true;
+					}*/
+        ,
+        preview_error : function(filename, error_code) {
+            //name of the file that failed
+            //error_code values
+            //1 = 'FILE_LOAD_FAILED',
+            //2 = 'IMAGE_LOAD_FAILED',
+            //3 = 'THUMBNAIL_FAILED'
+            //alert(error_code);
+        }
+
+    }).on('change', function(){
+            //console.log($(this).data('ace_input_files'));
+            //console.log($(this).data('ace_input_method'));
         });
 
         function DoubleScroll(element) {

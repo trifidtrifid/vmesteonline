@@ -206,10 +206,32 @@
     font-size: 14px;
   }
 }
+.signup-shop .login-container {
+  width: 480px;
+}
 .signup-shop textarea {
   width: 100%;
   height: 70px;
 }
 .signup-shop .file-label {
   text-align: left;
+}
+.signup-shop .file-label .file-name {
+  padding-left: 5px;
+}
+.signup-shop .fa {
+  position: absolute;
+  font-size: 16px;
+  top: 8px;
+  right: 5px;
+}
+.signup-shop .fa.fa-image {
+  position: static;
+}
+.signup-shop .ace-file-input {
+  height: auto;
+}
+.signup-shop .ace-file-input .file-label {
+  text-align: center;
+  margin-top: -30px;
 }

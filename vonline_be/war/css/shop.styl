@@ -1321,6 +1321,16 @@ height 50px
       margin-top 0
       .order-delivery
         margin-right 0
+    .delete-order
+      font-size 20px
+      color #ff0000
+      display block
+      padding 0 3px
+      &:hover
+        text-decoration none
+      &.passive
+        cursor default
+        color #ccc
   .order-products
     display none
     .product-link
@@ -1422,6 +1432,96 @@ height 50px
         text-align center
   .export-btn-line
     margin-top 15px
+.bo-settings
+  fieldset
+    input
+    textarea
+      margin-bottom 5px
+    .file-label
+      margin-top -40px !important
+  h5
+    margin-top 20px
+  .radio
+    margin-top 20px
+  .delivery-price-type
+    padding-left 30px
+    &.delivery-weight
+      padding-left 50px //
+    span
+      display inline-block
+      margin-left 5px
+      margin-right 15px
+    .add-delivery-interval
+      display inline-block
+      font-size 30px
+      position relative
+      top 6px
+      &:hover
+        text-decoration none
+  .delivery-area-dropdown button//
+    width 158px
+    margin-right 35px !important
+    height 29px
+    position relative
+    top -1px
+  input[type=checkbox].ace+.lbl::before, input[type=radio].ace+.lbl::before
+    vertical-align top
+    margin-right 5px
+  .shedule-date
+  .shedule-confirm
+    display inline-block
+  .shedule-confirm
+    margin-left 10px
+    margin-top 10px
+    position relative
+    top 4px
+    input
+      width 50px //
+      display inline-block
+      margin 0 10px
+  .shedule-delivery
+    .datepicker
+      margin-left 0
+      background #D6F7F7
+.bo-edit
+  table
+    width 100%
+    td
+      text-align right
+    input
+      width 100%
+    .remove-item
+      display inline-block
+      font-size 24px
+      color #ff0000
+      &:hover
+        text-decoration none
+
+/* админка */
+.adminka
+  table
+    width 100%
+    margin-top 20px
+    td
+      border 1px solid #ccc
+      padding-left 10px
+    .td-icon
+      text-align center
+      padding-left 0
+      width 5%
+    .fa:hover
+    .remove-item:hover
+      text-decoration none
+    .fa
+      display inline-block
+      font-size 20px
+    .remove-item
+      color #ff0000
+      font-size 30px
+
+.adminka-users
+  display none
+
 
 .full-text
   display none
@@ -1446,6 +1546,8 @@ height 50px
 
 .import
 .export
+.bo-settings
+.bo-edit
   display none
 
 #doublescroll { overflow: auto; overflow-y: hidden; }
