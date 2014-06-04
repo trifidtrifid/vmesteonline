@@ -55,6 +55,7 @@ import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Producer;
 import com.vmesteonline.be.shop.ProductCategory;
 import com.vmesteonline.be.shop.Shop;
+import com.vmesteonline.be.shop.UserShopRole;
 import com.vmesteonline.be.shop.bo.DataSet;
 import com.vmesteonline.be.shop.bo.ExchangeFieldType;
 import com.vmesteonline.be.shop.bo.ImExType;
@@ -1385,7 +1386,39 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			pm.close();
 		}	
 	}
-	
+//======================================================================================================================
+
 	public Class getAuthRecordClass(){ return VoShopAccess.class; }
+
+	//======================================================================================================================
+
+	@Override
+	public UserInfo setUserShopRole(long shopId, String email, UserShopRole role) throws InvalidOperation, TException {
+		
+		return null;
+	}
+//======================================================================================================================
+
+	@Override
+	public void deleteProduct(long productId, long shopId) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		
+	}
+//======================================================================================================================
+
+	@Override
+	public void deleteCategory(long categoryId, long shopId) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		
+	}
+//======================================================================================================================
+
+	@Override
+	public void deleteProducer(long producerId, long shopId) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		
+	}
+//======================================================================================================================
+	
 	
 }

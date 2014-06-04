@@ -55,11 +55,17 @@ struct DataSet {
 
 service ShopBOService {
 	//backend functions=================================================================================================
+	bedata.UserInfo setUserShopRole(1:i64 shopId, 2:string email, 3:shop.UserShopRole role ) throws (1:error.InvalidOperation exc),
 	
 	i64 registerShop( 1:shop.Shop shop) throws (1:error.InvalidOperation exc),
 	i64 registerProductCategory( 1:shop.ProductCategory productCategory, 2:i64 shopId) throws (1:error.InvalidOperation exc),
 	i64 registerProducer( 1:shop.Producer producer, 2:i64 shopId, ) throws (1:error.InvalidOperation exc),
 	i64 registerProduct( 1:shop.FullProductInfo fpi, 2:i64 shopId ) throws (1:error.InvalidOperation exc),
+	
+	void deleteProduct( 1:i64 productId, 2:i64 shopId ) throws (1:error.InvalidOperation exc),
+	void deleteCategory( 1:i64 categoryId, 2:i64 shopId ) throws (1:error.InvalidOperation exc),
+	void deleteProducer( 1:i64 producerId, 2:i64 shopId ) throws (1:error.InvalidOperation exc),
+	
 	
 	void setShopDeliveryByWeightIncrement( 1:i64 shopId, 2:map<i32,i32> deliveryByWeightIncrement) throws (1:error.InvalidOperation exc),
 	//Map where the key is a DeliveryType and the value is the minimum distance between the shop and deliivery address. 
@@ -85,7 +91,6 @@ service ShopBOService {
 	list<shop.Order> getFullOrders(1:i32 dateFrom, 2:i32 dateTo, 3:i64 userId, 4:i64 shopId) throws (1:error.InvalidOperation exc),
 	void updateOrderStatusesById( 1:map<i64,shop.OrderStatus> orderStatusMap ) throws (1:error.InvalidOperation exc),
 	
-	//void setDates( 1:map<i32,DateType> dateDateTypeMap),
 	void setDate( 1:shop.OrderDates dates ) throws (1:error.InvalidOperation exc), 
 	void removeDate( 1:shop.OrderDates dates ) throws (1:error.InvalidOperation exc), 
 	
