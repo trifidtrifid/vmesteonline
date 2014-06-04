@@ -1401,7 +1401,14 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public void deleteProduct(long productId, long shopId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
+		PersistenceManager pm = PMF.getPm();
+		try {
+			pm.getObjectById(VoProduct.class, productId).markDeteled();
+		} catch ( JDOObjectNotFoundException onfe ) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No product found by ID:"+shopId);
+		} finally {
+			pm.close();
+		}
 		
 	}
 //======================================================================================================================

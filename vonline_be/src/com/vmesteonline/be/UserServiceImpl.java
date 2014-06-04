@@ -311,8 +311,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
-
-	
 	
 	@Override
 	public UserInfo getUserInfoExt(long userId) throws InvalidOperation, TException {

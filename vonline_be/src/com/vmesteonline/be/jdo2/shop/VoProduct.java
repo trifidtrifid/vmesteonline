@@ -43,6 +43,7 @@ public class VoProduct {
 
 	VoProduct(long productId) {
 		this.id = KeyFactory.createKey(VoProduct.class.getSimpleName(), productId);
+		importId = 0;
 	}
 
 	// =====================================================================================================================
@@ -189,6 +190,16 @@ public class VoProduct {
 		}
 	}
 
+	// =====================================================================================================================
+
+	public void markDeteled(){
+		importId = -1;
+	}
+	
+	public boolean isDeteled(){
+		return importId == -1;
+	}
+	
 	// =====================================================================================================================
 	public VoProduct(long shopId, FullProductInfo fpi) throws InvalidOperation {
 		this(shopId, fpi, null);

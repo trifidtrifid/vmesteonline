@@ -5,7 +5,7 @@ include "error.thrift"
 enum DateType { CLEAN=0, NEXT_ORDER=1, SPECIAL_PRICE=2, CLOSED=3  }
 enum DeliveryType { UNKNOWN=0, SELF_PICKUP=1, SHORT_RANGE=2, LONG_RANGE=3 }
 enum PaymentType { UNKNOWN=0, CASH=1, CREDIT_CARD=2, TRANSFER=3, SHOP_CREDIT=5 }
-enum UserShopRole { UNKNOWN=0, CUSTOMER=1, BACKOFFICER=2, ADMIN=99 }
+enum UserShopRole { UNKNOWN=0, CUSTOMER=1, BACKOFFICER=2, OWNER=3, ADMIN=99 }
 
 struct Shop {
 	1:i64 id,

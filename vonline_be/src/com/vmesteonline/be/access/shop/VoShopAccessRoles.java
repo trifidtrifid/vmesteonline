@@ -34,14 +34,17 @@ public class VoShopAccessRoles extends VoUserAccessBaseRoles {
 		fillRoleMethods( methodsAccessMask, CATALOGUE, new String[] {
 				"registerProductCategory","registerProducer","registerProduct",
 				"uploadProducts","uploadProductCategoies",
-				"setProductPrices","updateProduct","updateCategory","updateProducer","importData"
+				"setProductPrices","updateProduct","updateCategory","updateProducer","importData",
+				"deleteProduct", "deleteCategory", "deleteProducer",
+				"registerProduct","registerProducer","registerProductCategory"
 		});
 				
 
 		//shop Options
 		fillRoleMethods( methodsAccessMask, ADMIN, new String[] {
 			"setShopDeliveryByWeightIncrement","setShopDeliveryCostByDistance","setShopDeliveryTypeAddressMasks",
-			"setDate","removeDate","setDeliveryCost","setPaymentTypesCosts","updateShop"
+			"setDate","removeDate","setDeliveryCost","setPaymentTypesCosts","updateShop",
+			"setUserShopRole"
 		});
 
 
