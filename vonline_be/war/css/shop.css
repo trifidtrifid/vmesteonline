@@ -1736,68 +1736,111 @@ height 50px
 .bo-settings fieldset .file-label {
   margin-top: -40px !important;
 }
+.bo-settings fieldset .file-label.selected {
+  margin-right: 10px;
+}
+.bo-settings fieldset .file-label .file-name {
+  text-align: left !important;
+}
+.bo-settings fieldset .remove {
+  margin-right: 10px;
+}
 .bo-settings h5 {
   margin-top: 20px;
 }
 .bo-settings .radio {
   margin-top: 20px;
 }
-.bo-settings .delivery-price-type {
+.bo-settings #settings-delivery .delivery-price-type {
   padding-left: 30px;
 }
-.bo-settings .delivery-price-type.delivery-weight {
+.bo-settings #settings-delivery .delivery-price-type input {
+  display: inline-block;
+}
+.bo-settings #settings-delivery .delivery-price-type.delivery-weight {
   padding-left: 50px;
 }
-.bo-settings .delivery-price-type span {
+.bo-settings #settings-delivery .delivery-price-type span {
   display: inline-block;
   margin-left: 5px;
   margin-right: 15px;
 }
-.bo-settings .delivery-price-type .add-delivery-interval {
+.bo-settings #settings-delivery .delivery-price-type .add-delivery-interval {
   display: inline-block;
   font-size: 30px;
   position: relative;
   top: 6px;
 }
-.bo-settings .delivery-price-type .add-delivery-interval:hover {
+.bo-settings #settings-delivery .delivery-price-type .add-delivery-interval:hover {
   text-decoration: none;
 }
-.bo-settings .delivery-area-dropdown button {
+.bo-settings #settings-delivery .delivery-area-dropdown button {
   width: 158px;
   margin-right: 35px !important;
   height: 29px;
   position: relative;
   top: -1px;
 }
-.bo-settings input[type=checkbox].ace+.lbl::before,
-.bo-settings input[type=radio].ace+.lbl::before {
+.bo-settings #settings-delivery input[type=checkbox].ace+.lbl::before,
+.bo-settings #settings-delivery input[type=radio].ace+.lbl::before {
   vertical-align: top;
   margin-right: 5px;
 }
-.bo-settings .shedule-date,
-.bo-settings .shedule-confirm {
+.bo-settings #settings-delivery .new-interval {
+  display: none;
+}
+.bo-settings #settings-delivery .remove-interval {
+  color: #f00;
+  font-size: 30px;
+}
+.bo-settings #settings-shedule .shedule-date,
+.bo-settings #settings-shedule .shedule-confirm {
   display: inline-block;
 }
-.bo-settings .shedule-confirm {
+.bo-settings #settings-shedule .shedule-confirm {
   margin-left: 10px;
   margin-top: 10px;
   position: relative;
   top: 4px;
 }
-.bo-settings .shedule-confirm input {
+.bo-settings #settings-shedule .shedule-confirm input {
   width: 50px;
   display: inline-block;
   margin: 0 10px;
 }
-.bo-settings .shedule-delivery .datepicker {
+.bo-settings #settings-shedule .datepicker {
   margin-left: 0;
   background: #d6f7f7;
+  width: 450px;
+}
+.bo-settings #settings-shedule .datepicker td {
+  padding: 3px 0 !important;
+}
+.bo-settings #settings-shedule .datepicker td.selected {
+  background: #f00;
+  position: relative;
+}
+.bo-settings #settings-shedule .datepicker td.selected .remove-date {
+  position: absolute;
+  color: #f00;
+  font-size: 14px;
+  top: 0;
+  right: 0;
+}
+.bo-edit .table-add-product {
+  display: none;
 }
 .bo-edit table {
   width: 100%;
+  margin: 15px 0 10px 0;
 }
 .bo-edit table td {
   text-align: right;
+}
+.bo-edit table thead td {
+  text-align: left;
+  background: #eff3f8;
+  padding: 3px;
 }
 .bo-edit table input {
   width: 100%;

@@ -1358,6 +1358,112 @@ if($('.container.backoffice').hasClass('noAccess')){
             element.parentNode.insertBefore(scrollbar, element);
             $(element).prev().addClass('top-scroll');
         }
+
+    /* settings */
+    $('.settings-item .btn-save').click(function(){
+        var id = $(this).closest('.settings-item').attr('id');
+
+        switch(id) {
+            case "settings-common":
+                var settingsCommon = $('#settings-common');
+                var newShopInfo = new com.vmesteonline.be.shop.Shop();
+                newShopInfo.name = settingsCommon.find($('#name')).val();
+                newShopInfo.descr = settingsCommon.find($('#descr')).val();
+                newShopInfo.address = thriftModule.client.createDeliveryAddress(settingsCommon.find($('#address')).val());
+
+                thriftModule.clientBO.updateShop(newShopInfo);
+                break;
+            case "settings-shedule":
+                var dates = new com.vmesteonline.be.shop.OrderDates();
+                dates.type = new com.vmesteonline.be.shop.OrderDatesType;
+                dates.orderDay = "";
+                dates.orderBefore = $('#days-before').val(); // перевести в правильный формат
+                dates.eachOddEven = "";
+                dates.priceTypeToUse = "";
+
+                thriftModule.clientBO.setDate(dates);
+                break;
+            case "settings-delivery":
+                break;
+        }
+    });
+    $('.shedule-dates .day').click(function(){
+        alert('1');
+        $(this).addClass('selected');
+        alert('2');
+        $(this).append("<a class='remove-date' href='#'>&times;</a>");
+
+        $('.remove-date').click(function(){
+           $(this).parent().removeClass('selected');
+           $(this).hide().detach();
+        });
+    });
+    $('.add-interval').click(function(e){
+        e.preventDefault();
+
+        var isDeliveryType = $(this).closest('.delivery-price-type').hasClass('delivery-interval');
+        var newInterval;
+        if(isDeliveryType){
+
+            newInterval = '<div class="delivery-interval new-interval delivery-price-type">'+
+                '<input type="text" placeholder="Интервал"><span>км</span>&nbsp;'+
+                '<input type="text" placeholder="Стоимость"><span>руб</span>&nbsp;'+
+                '<a href="#" class="add-delivery-interval remove-interval">&ndash;</a>'+
+                '</div>';
+        }else{
+            newInterval = '<div class="delivery-weight new-interval delivery-price-type">'+
+                '<input type="text" placeholder="Интервал"><span>кг</span>&nbsp;'+
+                '<input type="text" placeholder="Стоимость"><span>руб</span>&nbsp;'+
+                '<a href="#" class="add-delivery-interval remove-interval">&ndash;</a>'+
+                '</div>';
+        }
+       $(this).closest('.delivery-price-type').after(newInterval);
+
+        $('.new-interval .remove-interval').click(function(e){
+            e.preventDefault();
+
+            $(this).closest('.new-interval').slideUp(200,function(){
+              $(this).detach();
+            });
+        });
+
+        $('.new-interval').slideDown().removeClass('.new-interval');
+    });
+
+    /* edit */
+    $('.edit-show-add').click(function(e){
+        e.preventDefault();
+
+        $('.table-add-product').slideToggle();
+    });
+    $('.edit-add').click(function(e){
+        e.preventDefault();
+
+    });
+    $('#edit-product table input').change(function(){
+        $(this).closest('tr').addClass('changed');
+    });
+    $('.save-products').click(function(e){
+        e.preventDefault();
+
+        $('#edit-product table .changed').each(function(){
+
+            var productInfo = new com.vmesteonline.be.shop.FullProductInfo();
+            productInfo.product = new com.vmesteonline.be.shop.Product();
+            productInfo.details = new com.vmesteonline.be.shop.ProductDetails();
+
+            productInfo.product.id = $(this).closest('tr').attr('id');
+            productInfo.product.name = $(this).find('td:eq(0) input').val();
+            productInfo.product.shortDescr = $(this).find('td:eq(1) input').val();
+            productInfo.product.weight = $(this).find('td:eq(2) input').val();
+            productInfo.product.price = $(this).find('td:eq(3) input').val();
+            alert($(this).find('td:eq(3) input').val());
+
+            thriftModule.clientBO.updateProduct(productInfo);
+        });
+
+
+    })
 }
 
     });

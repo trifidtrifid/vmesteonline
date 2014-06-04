@@ -39,6 +39,7 @@
         pageContext.setAttribute("logoURL", shop.logoURL);
         pageContext.setAttribute("shopID", shop.id);
         pageContext.setAttribute("userRole", userRole);
+        pageContext.setAttribute("shop", shop);
     }
 
     int now = (int) (System.currentTimeMillis() / 1000L);
@@ -46,6 +47,11 @@
     List<Order> orders = shopService.getOrders(0, now + 180*day);
     if(orders.size() > 0 ){
         pageContext.setAttribute("orders", orders);
+    }
+
+    ProductListPart productsList = shopService.getProducts(0,1000,0);
+    if(productsList != null && productsList.length > 0){
+        pageContext.setAttribute("products", productsList.products);
     }
 
 %>
@@ -429,23 +435,24 @@
                     </div>
                 </div>
                 <div class="bo-settings back-tab signup-shop">
+                    <div id="settings-common" class="settings-item">
                     <h2>Общая информация</h2>
                     <fieldset>
                         <label class="block clearfix">
                             <span class="block input-icon input-icon-right">
-                                <input type="email" id="email" class="form-control" placeholder="Название магазина" />
+                                <input type="text" id="name" class="form-control" value="${shop.name}" />
                             </span>
                         </label>
 
                         <label class="block clearfix">
                             <span class="block input-icon input-icon-right">
-                                <textarea name="descr" id="descr" cols="30" rows="10">Описание</textarea>
+                                <textarea name="descr" id="descr" cols="30" rows="10">${shop.descr}</textarea>
                             </span>
                         </label>
 
                         <label class="block clearfix">
                             <span class="block input-icon input-icon-right">
-                                <textarea name="descr" id="address" cols="30" rows="10">Адрес</textarea>
+                                <textarea name="address" id="address" cols="30" rows="10">${shop.address.street.name} ${shop.address.building.fullNo}, офис ${shop.address.flatNo}</textarea>
                             </span>
                         </label>
 
@@ -460,63 +467,68 @@
 
                         <label class="block clearfix">
                             <span class="block input-icon input-icon-right">
-                                <input type="email" id="price-delivery" class="form-control" placeholder="Стоимость доставки" />
+                                <input type="text" id="price-delivery" class="form-control" value="1" />
                             </span>
                         </label>
-
                     </fieldset>
-
-                    <h2>Расписание завоза</h2>
-                    <div class="shedule-delivery">
-                        <div id="date-picker-6"></div>
-                        <div class="shedule-confirm"><span>подтверждать заказ за</span><input type="text" placeholder="2"><span>дня до доставки</span></div>
+                        <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
                     </div>
 
-                    <h2>Доставка</h2>
-                    <h5>Стоимость доставки в зависимости от расстояния</h5>
-                    <div class="radio">
-                        <label>
-                            <input name="form-field-radio" type="radio" checked="checked" class="ace">
-                            <span class="lbl"> Стоимость в интервалах (например 100 р до 10км, 200р при > 10км)</span>
-                        </label>
-                        <div class="delivery-interval delivery-price-type">
-                            <input type="text" placeholder="Интервал"><span>км</span>
-                            <input type="text" placeholder="Стоимость"><span>руб</span>
-                            <a href="#" class="add-delivery-interval add-interval">+</a>
+                    <div id="settings-shedule" class="settings-item">
+                        <h2>Расписание завоза</h2>
+                        <div id="date-picker-6" class="shedule-dates"></div>
+                        <div class="shedule-confirm"><span>подтверждать заказ за</span><input type="text" id="days-before" value="2"><span>дня до доставки</span></div>
+                        <br>
+                        <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
+                    </div>
+
+                    <div id="settings-delivery" class="settings-item">
+                        <h2>Доставка</h2>
+                        <h5>Стоимость доставки в зависимости от расстояния</h5>
+                        <div class="radio">
+                            <label>
+                                <input name="form-field-radio" type="radio" checked="checked" class="ace">
+                                <span class="lbl"> Стоимость в интервалах (например 100 р до 10км, 200р при > 10км)</span>
+                            </label>
+                            <div class="delivery-interval delivery-price-type">
+                                <input type="text" placeholder="Интервал"><span>км</span>
+                                <input type="text" placeholder="Стоимость"><span>руб</span>
+                                <a href="#" class="add-delivery-interval add-interval">+</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input name="form-field-radio" type="radio" checked="checked" class="ace">
-                            <span class="lbl"> Стоимость в зависимости от населенного пункта/района (например Кудрово -100р, Пушкин - 150р)</span>
-                        </label>
-                        <div class="delivery-area  delivery-price-type">
-                            <div class="btn-group delivery-area-dropdown">
-                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                                    <span class="btn-group-text">Населенный пункт</span>
-                                    <span class="icon-caret-down icon-on-right"></span>
-                                </button>
+                        <div class="radio">
+                            <label>
+                                <input name="form-field-radio" type="radio" checked="checked" class="ace">
+                                <span class="lbl"> Стоимость в зависимости от расстояния</span>
+                            </label>
+                            <div class="delivery-area  delivery-price-type">
+                                <div class="btn-group delivery-area-dropdown">
+                                    <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                        <span class="btn-group-text">Населенный пункт</span>
+                                        <span class="icon-caret-down icon-on-right"></span>
+                                    </button>
 
-                                <ul class="dropdown-menu dropdown-blue">
-                                    <li><a href="#">Кудрово</a></li>
-                                    <li><a href="#">Пушкин</a></li>
-                                    <li><a href="#">Оккервиль</a></li>
-                                </ul>
+                                    <ul class="dropdown-menu dropdown-blue">
+                                        <li><a href="#">Кудрово</a></li>
+                                        <li><a href="#">Пушкин</a></li>
+                                        <li><a href="#">Оккервиль</a></li>
+                                    </ul>
+                                </div>
+
+                                <input type="text" placeholder="Стоимость"><span>руб</span>
+                                <a href="#" class="add-delivery-interval add-interval">+</a>
+                            </div>
+                        </div>
+                        <h5>Стоиомтсь доставки в зависимости от веса заказа</h5>
+                            <div class="delivery-weight delivery-price-type">
+                                <input type="text" placeholder="Интервал"><span>кг</span>
+                                <input type="text" placeholder="Стоимость"><span>руб</span>
+                                <a href="#" class="add-delivery-interval add-interval">+</a>
                             </div>
 
-                            <input type="text" placeholder="Стоимость"><span>руб</span>
-                            <a href="#" class="add-delivery-interval add-interval">+</a>
-                        </div>
+                            <br>
+                        <a class="btn btn-primary btn-sm no-border" href="#">Сохранить</a>
                     </div>
-                    <h5>Стоиомтсь доставки в зависимости от веса заказа</h5>
-                        <div class="delivery-weight delivery-price-type">
-                            <input type="text" placeholder="Интервал"><span>кг</span>
-                            <input type="text" placeholder="Стоимость"><span>руб</span>
-                            <a href="#" class="add-delivery-interval add-interval">+</a>
-                        </div>
-
-                        <br>
-                    <a class="btn btn-primary btn-sm no-border" href="#">Сохранить</a>
                 </div>
                 <div class="bo-edit back-tab">
                     <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab5">
@@ -534,9 +546,41 @@
                     </ul>
                     <div class="tab-content">
                         <div id="edit-product" class="tab-pane active">
-                            <a class="edit-add" href="#">Добавить</a>
+                            <a class="btn btn-sm no-border btn-primary edit-show-add" href="#">Добавить продукт</a>
+                            <%--<a class="btn btn-sm btn-primary no-border save-products" href="#">Сохранить изменения</a>--%>
+
+                            <div class="table-add-product">
+                                <table>
+                                    <tr>
+                                        <td><input type="text" placeholder="Название"/></td>
+                                        <td><input type="text" placeholder="Описание"/></td>
+                                        <td><input type="text" placeholder="Вес"/></td>
+                                        <td><input type="text" placeholder="Цена"/></td>
+                                    </tr>
+                                </table>
+                                <a class="btn btn-sm no-border btn-primary edit-add" href="#">Добавить</a>
+                            </div>
+
                             <table>
+                                <thead>
                                 <tr>
+                                    <td>Название</td>
+                                    <td>Описание</td>
+                                    <td>Вес</td>
+                                    <td>Цена</td>
+                                </tr>
+                                </thead>
+                                <c:forEach var="product" items="${products}">
+                                    <tr id="${product.id}">
+                                        <td><input type="text" value="${product.name}"/></td>
+                                        <td><input type="text" value="${product.shortDescr}"/></td>
+                                        <td><input type="text" value="${product.weight}"/></td>
+                                        <td><input type="text" value="${product.price}"/></td>
+                                        <td><a href="#" title="Удалить" class="remove-item">&times;</a></td>
+                                    </tr>
+                                </c:forEach>
+
+                                <%--<tr>
                                     <td><input type="text" placeholder="название"/></td>
                                     <td><input type="text" placeholder="описание"/></td>
                                     <td><input type="text" placeholder="родитель"/></td>
@@ -553,8 +597,9 @@
                                     <td><input type="text" placeholder="описание"/></td>
                                     <td><input type="text" placeholder="родитель"/></td>
                                     <td><a href="#" title="Удалить" class="remove-item">&times;</a></td>
-                                </tr>
+                                </tr>--%>
                             </table>
+                            <a class="btn btn-sm btn-primary no-border save-products" href="#">Сохранить изменения</a>
                         </div>
                         <div id="edit-category" class="tab-pane"></div>
                         <div id="edit-producer" class="tab-pane"></div>

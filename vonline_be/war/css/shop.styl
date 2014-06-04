@@ -1439,55 +1439,88 @@ height 50px
       margin-bottom 5px
     .file-label
       margin-top -40px !important
+      &.selected
+        margin-right 10px
+      .file-name
+        text-align left !important
+    .remove
+      margin-right 10px
   h5
     margin-top 20px
   .radio
     margin-top 20px
-  .delivery-price-type
-    padding-left 30px
-    &.delivery-weight
-      padding-left 50px //
-    span
-      display inline-block
-      margin-left 5px
-      margin-right 15px
-    .add-delivery-interval
-      display inline-block
-      font-size 30px
+  #settings-delivery
+    .delivery-price-type
+      padding-left 30px
+      input
+        display inline-block
+      &.delivery-weight
+        padding-left 50px //
+      span
+        display inline-block
+        margin-left 5px
+        margin-right 15px
+      .add-delivery-interval
+        display inline-block
+        font-size 30px
+        position relative
+        top 6px
+        &:hover
+          text-decoration none
+    .delivery-area-dropdown button//
+      width 158px
+      margin-right 35px !important
+      height 29px
       position relative
-      top 6px
-      &:hover
-        text-decoration none
-  .delivery-area-dropdown button//
-    width 158px
-    margin-right 35px !important
-    height 29px
-    position relative
-    top -1px
-  input[type=checkbox].ace+.lbl::before, input[type=radio].ace+.lbl::before
-    vertical-align top
-    margin-right 5px
-  .shedule-date
-  .shedule-confirm
-    display inline-block
-  .shedule-confirm
-    margin-left 10px
-    margin-top 10px
-    position relative
-    top 4px
-    input
-      width 50px //
+      top -1px
+    input[type=checkbox].ace+.lbl::before, input[type=radio].ace+.lbl::before
+      vertical-align top
+      margin-right 5px
+    .new-interval
+      display none
+    .remove-interval
+      color #ff0000
+      font-size 30px
+  #settings-shedule
+    .shedule-date
+    .shedule-confirm
       display inline-block
-      margin 0 10px
-  .shedule-delivery
+    .shedule-confirm
+      margin-left 10px
+      margin-top 10px
+      position relative
+      top 4px
+      input
+        width 50px //
+        display inline-block
+        margin 0 10px
     .datepicker
       margin-left 0
       background #D6F7F7
+      width 450px
+      td
+        padding 3px 0 !important
+        &.selected
+          background red
+          position relative
+          .remove-date
+            position absolute
+            color #ff0000
+            font-size 14px
+            top 0
+            right 0
 .bo-edit
+  .table-add-product
+    display none
   table
     width 100%
+    margin 15px 0 10px 0
     td
       text-align right
+    thead td
+      text-align left
+      background #EFF3F8
+      padding 3px
     input
       width 100%
     .remove-item

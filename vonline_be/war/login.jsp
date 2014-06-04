@@ -221,20 +221,6 @@
 			</div>
 		</div><!-- /.main-container -->
 
-        <!-- файлы thrift  -->
-        <script src="/build/thrift.min.js" type="text/javascript"></script>
-        <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
-
-        <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
-        <script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
-        <script src="/build/gen-js/shop.bo_types.js" type="text/javascript"></script>
-        <script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>
-
-        <script src="/build/gen-js/authservice_types.js" type="text/javascript"></script>
-        <script src="/build/gen-js/AuthService.js" type="text/javascript"></script>
-        <script src="/build/gen-js/userservice_types.js" type="text/javascript"></script>
-        <script src="/build/gen-js/UserService.js" type="text/javascript"></script>
-        <!-- --- -->
-        <script type="text/javascript" data-main="/build/shop.min.js" src="/js/require.min.js"></script>
+        <script type="text/javascript" data-main="/build/build.js" src="/js/require.min.js"></script>
 	</body>
 </html>

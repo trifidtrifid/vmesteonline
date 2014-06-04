@@ -11,9 +11,10 @@
 <%
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
-    List<Shop> ArrayShops = shopService.getShops();
+       List<Shop> ArrayShops = shopService.getShops();
     if(ArrayShops != null && ArrayShops.size() > 0){
         pageContext.setAttribute("shops", ArrayShops);
+        out.print('s');
 }
 %>
 
@@ -202,8 +203,8 @@ padding:20px;
             <ul>
                 <c:forEach var="shop" items="${shops}">
                     <li>
-                        <a href="../shop.jsp">
-                            <img src="${shop.logoURL}" alt="логотип"/>
+                        <a href="../about-shop.jsp">
+                            <%--<img src="${shop.logoURL}" alt="логотип"/>--%>
                         <span class="shop-right">
                             <h3>${shop.name}</h3>
                             <p>${shop.descr}</p>
