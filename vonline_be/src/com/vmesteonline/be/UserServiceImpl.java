@@ -311,6 +311,18 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
+	
+	@Override
+	public UserInfo getUserInfoExt(long userId) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			return pm.getObjectById(VoUser.class, userId).getUserInfo();
+		} catch( JDOObjectNotFoundException onfe){
+			throw new InvalidOperation(VoError.NotAuthorized, "No access to user Info");
+		} finally {
+			pm.close();
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

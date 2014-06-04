@@ -204,7 +204,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		List<VoProduct> vpl = (List<VoProduct>) pm.newQuery(VoProduct.class, "categories == " + categoryId).execute();
 
 		for (VoProduct product : vpl) {
-			rslt.add(product.getProduct(pm));
+			if(!product.isDeteled())
+				rslt.add(product.getProduct(pm));
 		}
 		return rslt;
 	}
@@ -1168,7 +1169,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 						if(!cpm.containsKey(catId)){
 							cpm.put(catId, new ArrayList<IdName>());
 						}
-						cpm.get(catId).add( new IdName( voProduct.getId(), voProduct.getName()));
+						if(!voProduct.isDeteled())
+							cpm.get(catId).add( new IdName( voProduct.getId(), voProduct.getName()));
 					}
 				}
 				//Load all categories and filter them by products
@@ -1309,7 +1311,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			if(shopId == 0) shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 			List<VoShopAccess> rslt = (List<VoShopAccess>) pm.newQuery(VoShopAccess.class,"userId=="+currentUserId+" && shopId=="+shopId).execute();
 			if( rslt.size() == 0)
-				return pm.getObjectById(VoShop.class, shopId).getOwnerId() == currentUserId ? UserShopRole.BACKOFFICER : UserShopRole.CUSTOMER;
+				return pm.getObjectById(VoShop.class, shopId).getOwnerId() == currentUserId ? UserShopRole.OWNER : UserShopRole.CUSTOMER;
 			
 			long access = 0;
 			for( VoShopAccess vsa: rslt){

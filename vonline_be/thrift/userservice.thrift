@@ -29,6 +29,7 @@ service UserService {
 
 //для отображения информации о пользователе на странице профайла. 
 	bedata.UserInfo getUserInfo() throws (1:error.InvalidOperation exc),
+	bedata.UserInfo getUserInfoExt(1:i64 userId) throws (1:error.InvalidOperation exc),
 
 //для изменения информации о пользователе на странице профайла. 
 	void updateUserInfo(1:bedata.UserInfo userInfo) throws (1:error.InvalidOperation exc),
