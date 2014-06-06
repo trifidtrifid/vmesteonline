@@ -26,6 +26,7 @@ import org.apache.thrift.TException;
 
 import com.vmesteonline.be.access.VoUserAccessBaseRoles;
 import com.vmesteonline.be.access.shop.VoShopAccess;
+import com.vmesteonline.be.access.shop.VoShopAccessManager;
 import com.vmesteonline.be.access.shop.VoShopAccessRoles;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -1394,8 +1395,39 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public UserInfo setUserShopRole(long shopId, String email, UserShopRole role) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			List<VoUser> vul = (List<VoUser>) pm.newQuery(VoUser.class,"email=="+email).execute();
+			if( vul.size() == 0 )
+				throw new InvalidOperation(VoError.IncorrectParametrs, "No user found by email:"+email);
+			
+			VoUser user = vul.get(0);
+			VoShop shop = pm.getObjectById(VoShop.class, shopId);
+			
+			List<VoShopAccess> rslt = (List<VoShopAccess>) pm.newQuery(VoShopAccess.class,"userId=="+user.getId()+" && shopId=="+shopId).execute();
+			if( rslt.size() != 0){
+				pm.deletePersistentAll(rslt); //clear all permissions for the user;
+			}
+				
+			if( role == UserShopRole.OWNER){
+				shop.setOwnerId(user.getId());
+				pm.makePersistent(shop);
+				
+			} else if( role == UserShopRole.OWNER){
+			
+				VoShopAccessManager.createAccessBillingManager(user.getId(), shop.getId());
+				VoShopAccessManager.createAccessReportManager(user.getId(), shop.getId());
+				VoShopAccessManager.createAccessCatalogManager(user.getId(), shop.getId());
+				
+			}
+			return user.getUserInfo();
+			
+		} catch (JDOObjectNotFoundException ex){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "FAiled to set role: " + ex);
+		} finally {
+			pm.close();
+		}
 		
-		return null;
 	}
 //======================================================================================================================
 

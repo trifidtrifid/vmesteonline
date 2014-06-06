@@ -4,11 +4,18 @@ import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
+import com.vmesteonline.be.ServiceImpl;
 import com.vmesteonline.be.access.VoUserAccessBase;
+import com.vmesteonline.be.shop.UserShopRole;
 
 @PersistenceCapable
 @Inheritance(customStrategy = "complete-table")
 public class VoShopAccess extends VoUserAccessBase {
+	
+	public VoShopAccess(long shopId,long userId){
+		super.userId = userId;
+		super.categoryId = ServiceImpl.ServiceCategoryID.SHOP_SI.ordinal();
+	}
 	
 	@Persistent
 	private long shopId;
