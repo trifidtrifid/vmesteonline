@@ -36,7 +36,7 @@ public class VoShopAccessRoles extends VoUserAccessBaseRoles {
 				"uploadProducts","uploadProductCategoies",
 				"setProductPrices","updateProduct","updateCategory","updateProducer","importData",
 				"deleteProduct", "deleteCategory", "deleteProducer",
-				"registerProduct","registerProducer","registerProductCategory"
+				"registerProduct","registerProducer","registerProductCategory", "getAllCategories"
 		});
 				
 

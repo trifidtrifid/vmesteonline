@@ -371,7 +371,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Street> getStreets(long cityId) throws InvalidOperation, TException {
+	public List<Street> getStreets(long cityId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			List<Street> cl = new ArrayList<Street>();
@@ -394,7 +394,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Building> getBuildings(long streetId) throws InvalidOperation, TException {
+	public List<Building> getBuildings(long streetId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			List<Building> cl = new ArrayList<Building>();
@@ -453,7 +453,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
-	public FullAddressCatalogue getAddressCatalogue() throws InvalidOperation, TException {
+	public FullAddressCatalogue getAddressCatalogue() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 

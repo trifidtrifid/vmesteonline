@@ -21,6 +21,7 @@ import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.UserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
+import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.utils.Defaults;
 
@@ -175,22 +176,34 @@ public class VoUser extends GeoLocation {
 
 	// TODO should test removing
 	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) {
-		VoBuilding building = null;
-
+		
+		//remove user from old group
 		if (null != this.getAddress()) { // location already set, so user should
 																			// be removed first
-			building = this.address.getBuilding();
-			if (null != building)
-				building.removeUser(this);
+			VoBuilding oldBuilding = this.address.getBuilding();
+			if (null != oldBuilding)
+				oldBuilding.removeUser(this);
 		}
-		pm.retrieve(userAddress);
+		
 		// building from new address
-		building = userAddress.getBuilding();
+		VoBuilding building = userAddress.getBuilding();
 		if (null != building)
 			building.addUser(this);
+		else 
+			throw new RuntimeException("Incorrect address");
+		
+		//check if location is set
+		if( null == building.getLatitude() || 0 == building.getLatitude().intValue() ){
+			try {
+				VoGeocoder.getPosition(building);
+				
+			} catch (InvalidOperation e) {
+				e.printStackTrace();
+			}
+		}
 
 		this.address = userAddress;
-		if (null != building) {
+		
 			pm.retrieve(building);
 			VoUserGroup home = userAddress.getUserHomeGroup();
 			if(null!=home){
@@ -211,9 +224,7 @@ public class VoUser extends GeoLocation {
 					}
 				}
 			}
-		} else {
-			groups = new ArrayList<VoUserGroup>();
-		}
+		
 		addDeliveryAddress( 0L, "домой", userAddress );
 
 		pm.makePersistent(this);
@@ -222,7 +233,6 @@ public class VoUser extends GeoLocation {
 
 	private void addDeliveryAddress(long l, String string, VoPostalAddress userAddress) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	// *****
