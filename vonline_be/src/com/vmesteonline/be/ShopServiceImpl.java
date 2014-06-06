@@ -1333,5 +1333,20 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			pm.close();
 		}
 	}
+
+	@Override
+	public List<ProductCategory> getAllCategories(long shopId) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			List<VoProductCategory> vpcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class, "shopId=="+shopId).execute();
+			List<ProductCategory> pcl = new ArrayList<ProductCategory>();
+			for( VoProductCategory vpc: vpcl){
+				pcl.add(vpc.getProductCategory());
+			}
+			return pcl;
+		} finally {
+			pm.close();
+		}
+	}
 }
 

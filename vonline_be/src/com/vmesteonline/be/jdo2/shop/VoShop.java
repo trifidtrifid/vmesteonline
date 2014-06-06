@@ -88,7 +88,8 @@ public class VoShop {
 
 	public Shop getShop() {
 		List<Long> topicIds = new ArrayList<Long>();
-		topicIds.addAll(getTopics());
+		List<Long> topicss = getTopics();
+		if(null!=topicss) topicIds.addAll(topicss);
 		Shop shop = new Shop(id.getId(), name, descr.getValue(), null == address ? null : address.getPostalAddress(), logoURL, ownerId, topicIds, tags,
 				convertToDeliveryTypeMap(deliveryCosts, new HashMap<DeliveryType, Double>()), convertToPaymentTypeMap(paymentTypes,
 						new HashMap<PaymentType, Double>()));

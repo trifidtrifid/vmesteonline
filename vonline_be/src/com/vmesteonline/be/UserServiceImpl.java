@@ -313,7 +313,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 	
 	@Override
-	public UserInfo getUserInfoExt(long userId) throws InvalidOperation, TException {
+	public UserInfo getUserInfoExt(long userId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			return pm.getObjectById(VoUser.class, userId).getUserInfo();
@@ -326,7 +326,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<City> getCities(long countryId) throws InvalidOperation, TException {
+	public List<City> getCities(long countryId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 
