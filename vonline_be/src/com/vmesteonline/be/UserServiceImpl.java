@@ -299,6 +299,28 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
+	
+	@Override
+	public UserContacts getUserContactsExt(long userId) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser u = pm.getObjectById(VoUser.class, userId);
+			UserContacts uc = new UserContacts();
+			if (u.getAddress() == null) {
+				uc.setAddressStatus(UserStatus.UNCONFIRMED);
+			} else {
+				uc.setHomeAddress(u.getAddress().getPostalAddress());
+			}
+			uc.setEmail(u.getEmail());
+			uc.setMobilePhone(u.getMobilePhone());
+			return uc;
+		} catch (JDOObjectNotFoundException ioe){ 
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Access denied");
+			
+		} finally {
+			pm.close();
+		}
+	}
 
 	@Override
 	public UserInfo getUserInfo() throws InvalidOperation {
