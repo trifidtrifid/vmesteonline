@@ -27,7 +27,7 @@
 							<div class="space-6"></div>
 
 							<div class="position-relative">
-								<div id="signup-box" class="signup-box widget-box no-border visible">
+								<div class="reg-shop signup-box widget-box no-border visible">
 									<div class="widget-body">
 										<div class="widget-main">
 											<h4 class="header green lighter bigger">
@@ -41,7 +41,7 @@
 												<fieldset>
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">
-															<input type="email" id="email" class="form-control" placeholder="Название магазина" />
+															<input type="text" id="name" class="form-control" placeholder="Название магазина" />
 															<i class="fa fa-shopping-cart"></i>
 														</span>
 													</label>
@@ -55,7 +55,7 @@
 
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">
-                                                            <textarea name="descr" id="address" cols="30" rows="10">Адрес</textarea>
+                                                            <textarea name="address" id="address" cols="30" rows="10">Адрес</textarea>
 															<i class="fa fa-map-marker"></i>
 														</span>
 													</label>
@@ -72,7 +72,7 @@
 
                                                     <label class="block clearfix">
 														<span class="block input-icon input-icon-right">
-															<input type="email" id="price-delivery" class="form-control" placeholder="Стоимость доставки" />
+															<input type="text" id="price-delivery" class="form-control" placeholder="Стоимость доставки" />
 															<i class="fa fa-dropbox"></i>
 														</span>
                                                     </label>
@@ -101,43 +101,83 @@
 			</div>
 		</div><!-- /.main-container -->
 
-        <!-- файлы thrift  -->
-        <script src="/build/thrift.min.js" type="text/javascript"></script>
-        <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
+        <!-- файлы thrift -->
+        <script src="js/thrift.js" type="text/javascript"></script>
+        <script src="gen-js/bedata_types.js" type="text/javascript"></script>
 
-        <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
-        <script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
-        <script src="/build/gen-js/shop.bo_types.js" type="text/javascript"></script>
-        <script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>
+        <script src="gen-js/shop_types.js" type="text/javascript"></script>
+        <script src="gen-js/ShopFEService.js" type="text/javascript"></script>
+        <script src="gen-js/shop.bo_types.js" type="text/javascript"></script>
+        <script src="gen-js/ShopBOService.js" type="text/javascript"></script>
 
-        <script src="/build/gen-js/authservice_types.js" type="text/javascript"></script>
-        <script src="/build/gen-js/AuthService.js" type="text/javascript"></script>
-        <script src="/build/gen-js/userservice_types.js" type="text/javascript"></script>
-        <script src="/build/gen-js/UserService.js" type="text/javascript"></script>
-        <!-- --- -->
-        <script src="js/lib/jquery-ui-1.10.3.custom.min.js"></script>
-        <script src="js/lib/jquery.ui.touch-punch.min.js"></script>
-        <script src="js/lib/chosen.jquery.min.js"></script>
-        <script src="js/lib/fuelux/fuelux.spinner.min.js"></script>
-        <script src="js/lib/date-time/bootstrap-datepicker.min.js"></script>
-        <script src="js/lib/date-time/bootstrap-timepicker.min.js"></script>
-        <script src="js/lib/date-time/moment.min.js"></script>
-        <script src="js/lib/date-time/daterangepicker.min.js"></script>
-        <%--<script src="js/lib/bootstrap-colorpicker.min.js"></script>--%>
-        <script src="js/lib/jquery.knob.min.js"></script>
-        <script src="js/lib/jquery.autosize.min.js"></script>
-        <script src="js/lib/jquery.inputlimiter.1.3.1.min.js"></script>
-
-        <script src="js/lib/jquery.maskedinput.min.js"></script>
-        <script src="js/lib/bootstrap-tag.min.js"></script>
+        <script src="gen-js/authservice_types.js" type="text/javascript"></script>
+        <script src="gen-js/AuthService.js" type="text/javascript"></script>
+        <script src="gen-js/userservice_types.js" type="text/javascript"></script>
+        <script src="gen-js/UserService.js" type="text/javascript"></script>
+        <!-- -->
 
         <script src="js/lib/bootstrap.min.js"></script>
-        <script src="js/lib/ace-extra.min.js"></script>
         <script src="js/lib/ace-elements.min.js"></script>
-        <script src="js/lib/ace.min.js"></script>
 
+        <%--<script type="text/javascript" data-main="/build/build.js" src="/js/require.min.js"></script>--%>
         <script>
             $(document).ready(function(){
+                var transport = new Thrift.Transport("/thrift/ShopBOService");
+                var protocol = new Thrift.Protocol(transport);
+                var clientBO = new com.vmesteonline.be.shop.bo.ShopBOServiceClient(protocol);
+
+                transport = new Thrift.Transport("/thrift/ShopService");
+                protocol = new Thrift.Protocol(transport);
+                var client = new com.vmesteonline.be.shop.ShopFEServiceClient(protocol);
+
+                $('.reg-shop .btn-success').click(function(e){
+                    e.preventDefault();
+
+                    var deliveryAddress = client.createDeliveryAddress("Ленинградская 7 ",0,0,0);
+
+                    /*var deliveryAddress = new com.vmesteonline.be.PostalAddress();
+
+                    var country = new com.vmesteonline.be.Country();
+                    country.id = 9999999999999999;
+                    country.name = "Россия";
+                    var city = new com.vmesteonline.be.City();
+                    city.id = 8888888888888888;
+                    city.countryId = 9999999999999999;
+                    city.name = "Питер";
+                    var street = new com.vmesteonline.be.Street();
+                    street.id = 7777777777777777;
+                    street.cityId = 8888888888888888;
+                    street.name = "улица";
+                    var building = new com.vmesteonline.be.Building();
+                    building.id = 6666666666666666;
+                    building.streetId = 7777777777777777;
+                    building.fullNo = "3";
+
+                    deliveryAddress.country = country;
+                    deliveryAddress.city = city;
+                    deliveryAddress.street = street;
+                    deliveryAddress.building = building;
+                    deliveryAddress.staircase = 0;
+                    deliveryAddress.floor= 0;
+                    deliveryAddress.flatNo = 1;*/
+
+                    var shop = new com.vmesteonline.be.shop.Shop;
+
+                    var name = $('#name').val();
+                    var descr = $('#descr').val();
+                    var logoURL = $('#descr').val();
+
+                    shop.id = 1111111111111111;
+                    shop.name = name;
+                    shop.descr = descr;
+                    shop.address = deliveryAddress;
+                    shop.logoURL = logoURL;
+                    shop.ownerId = 4714705859903488;
+
+                    clientBO.registerShop(shop);
+
+                });
+
                 $('#id-input-file-2').ace_file_input({
                     style:'well',
                     btn_choose:'Загрузить логотип',
@@ -169,20 +209,7 @@
                             //console.log($(this).data('ace_input_method'));
                         });
 
-                /*$('#id-input-file-2').ace_file_input({
-                    no_file:'Выберите логотип',
-                    btn_choose:'Обзор',
-                    btn_change:'Заменить',
-                    droppable:false,
-                    onchange:null,
-                    thumbnail: 'large' //false //| true | large
-                    //whitelist:'gif|png|jpg|jpeg'
-                    //blacklist:'exe|php'
-                    //onchange:''
-                    //
-                });*/
             });
         </script>
-        <%--<script type="text/javascript" data-main="/build/shop.min.js" src="/js/require.min.js"></script>--%>
 	</body>
 </html>

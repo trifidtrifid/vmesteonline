@@ -1439,55 +1439,249 @@ height 50px
       margin-bottom 5px
     .file-label
       margin-top -40px !important
+      &.selected
+        margin-right 10px
+      .file-name
+        text-align left !important
+    .remove
+      margin-right 10px
   h5
     margin-top 20px
   .radio
     margin-top 20px
-  .delivery-price-type
-    padding-left 30px
-    &.delivery-weight
-      padding-left 50px //
-    span
+  .logo-container
+    position relative
+    width 200px
+    height 200px
+    line-height 200px
+    text-align center
+    img
+      //margin-left 10px
+      max-width 200px
+      max-height 200px
       display inline-block
-      margin-left 5px
-      margin-right 15px
-    .add-delivery-interval
-      display inline-block
+      vertical-align middle //
+    .settings-logo
+      position absolute
+      top 0
+      bottom 0
+      .file-label
+        background rgba(255,255,255,0.1)
+        width 200px
+        height 200px
+        &:before
+          background rgba(0,0,0,0.4)
+          color #fff
+          width 100%
+          font-weight normal
+          position absolute
+          bottom 0
+          height 30px
+          line-height 30px
+          top auto
+          margin 0
+        .file-name
+          height 100%
+          text-align center !important
+          line-height 200px
+          padding-left 0
+          &:after
+            height 30px
+            line-height 30px
+  #settings-delivery
+    .delivery-price-type
+      padding-left 30px
+      input
+        display inline-block
+      &.delivery-weight
+        padding-left 50px //
+      span
+        display inline-block
+        margin-left 5px
+        margin-right 15px
+      .add-delivery-interval
+        display inline-block
+        font-size 30px
+        position relative
+        top 6px
+        &:hover
+          text-decoration none
+    .delivery-area
+      margin-top 10px
+      span
+        display inline-block
+        font-size 14px 
+    input[type=checkbox].ace+.lbl::before, input[type=radio].ace+.lbl::before
+      vertical-align top
+      margin-right 5px
+    .new-interval
+      display none
+    .remove-interval
+      color #ff0000
       font-size 30px
-      position relative
-      top 6px
-      &:hover
-        text-decoration none
-  .delivery-area-dropdown button//
-    width 158px
-    margin-right 35px !important
-    height 29px
-    position relative
-    top -1px
-  input[type=checkbox].ace+.lbl::before, input[type=radio].ace+.lbl::before
-    vertical-align top
-    margin-right 5px
-  .shedule-date
-  .shedule-confirm
-    display inline-block
-  .shedule-confirm
-    margin-left 10px
-    margin-top 10px
-    position relative
-    top 4px
-    input
-      width 50px //
+  #settings-shedule
+    .shedule-date
+    .shedule-confirm
       display inline-block
-      margin 0 10px
-  .shedule-delivery
+    .shedule-confirm
+      margin-left 10px
+      margin-top 10px
+      position relative
+      top 4px
+      input
+        width 50px //
+        display inline-block
+        margin 0 10px
     .datepicker
       margin-left 0
       background #D6F7F7
+      width 450px
+      td
+        padding 3px 0 !important
+        &.selected
+          background #ffbabf
+          position relative
+          .remove-date
+            position absolute
+            color #ff0000
+            font-size 16px//
+            top -12px
+            right -5px
+            z-index 100
+            &:hover
+              text-decoration none
 .bo-edit
+  .table-add //
+    display none
+  .table-overflow
+    width 100%
+    overflow-x scroll
+    margin-bottom 10px
+  .products-table
+    overflow-y hidden
+    tbody td
+      border-bottom 1px solid #ccc
   table
     width 100%
+    margin 15px 0 10px 0 //
     td
-      text-align right
+      min-width 100px //
+      textarea
+        width 100%
+    thead td
+      text-align left
+      background #EFF3F8
+      padding 3px
+    .product-
+      &name
+      &shortDescr
+      &fullDescr
+        min-width 200px
+      &imageURL
+        min-width 100px
+        height 100px
+        text-align center
+        position relative //
+        img
+          max-width 100px
+          max-height 100px
+        .ace-file-input
+          position absolute
+          top 0
+          bottom 0
+          input
+            height 0
+          .file-label
+            height 100px
+            opacity 0 //
+            line-height 100px
+            border none
+          .file-name
+            display inline-block
+            vertical-align middle //
+            &:after
+              display none
+      &imagesSet
+        min-width 200px
+        position relative
+        img
+          max-width 50px
+          max-height 50px
+        .images-set
+          position relative
+        .image-item
+          position relative //
+        .ace-file-input
+          input
+            height 0
+          .file-label
+            height 30px
+            line-height 20px
+            border 0
+            width 70%
+            margin 0 auto
+            &:before
+              font-size 14px
+              margin 0
+              color #428bca
+              font-weight normal
+          .file-name
+            display inline-block
+            vertical-align middle //
+            &:after
+              display none
+          .remove
+            z-index 100
+            width 16px
+            height 16px
+            border-width 2px
+            i
+              display block
+              font-size 10px //
+        .ace-file-input.added
+          display inline-block
+          width 60px
+          height 60px
+          margin-bottom 0
+          .file-label
+            height auto
+            width 100% //
+      &categories
+        min-width 150px
+        .categories-dropdown
+          width 100%
+      &weight
+      &price
+      &pack
+      &unitName
+        min-width 100px
+      &prepack
+        min-width 30px //
+      &options
+        td
+          border 0 //
+        td.td-remove-options
+          min-width 30px //
+          .remove-item
+            font-size 16px
+      &remove
+        min-width 30px
+        text-align center
+    .removing
+      background #ffe3db
+    .map-item
+      position relative
+      display inline-block
+      padding 5px //
+      border-radius 4px
+      background #eff3f8
+      margin 0 2px
+      margin-bottom 7px
+      .remove-item
+        font-size 16px
+        position absolute
+        top -10px
+        right -5px
     input
       width 100%
     .remove-item
@@ -1496,7 +1690,12 @@ height 50px
       color #ff0000
       &:hover
         text-decoration none
-
+  #edit-category
+    td
+      vertical-align top //
+    .category-parent
+      width 20%
+      text-align center //
 /* админка */
 .adminka
   table
@@ -1504,7 +1703,11 @@ height 50px
     margin-top 20px
     td
       border 1px solid #ccc
-      padding-left 10px
+      padding 10px
+      line-height 16px
+      width 30%
+      &.td-icon
+        width 5%
     .td-icon
       text-align center
       padding-left 0
@@ -1515,9 +1718,26 @@ height 50px
     .fa
       display inline-block
       font-size 20px
+    .update-admins-link
+      font-size 20px
+      &:hover
+        text-decoration none
     .remove-item
       color #ff0000
       font-size 30px
+    .update-owner-line
+    .update-admins-line
+      display none
+      margin-top 10px
+      input
+        width 200px
+        margin-right 15px
+        margin-bottom 10px
+        height 34px
+        position relative
+        top 2px
+    .update-owner-link
+      font-size 14px
 
 .adminka-users
   display none

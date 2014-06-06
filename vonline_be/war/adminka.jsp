@@ -7,6 +7,7 @@
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
+<%@ page import="com.vmesteonline.be.UserInfo"%>
 <%@ page import="com.vmesteonline.be.shop.*"%>
 <%@ page import="com.vmesteonline.be.shop.bo.*"%>
 
@@ -30,10 +31,13 @@
         return;
     }
 
+
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
     if(ArrayShops != null && ArrayShops.size() > 0){
+        pageContext.setAttribute("shops", ArrayShops);
+
         Shop shop = shopService.getShop(ArrayShops.get(0).id);
         UserShopRole userRole = shopService.getUserShopRole(shop.id);
         pageContext.setAttribute("logoURL", shop.logoURL);
@@ -47,6 +51,11 @@
     if(orders.size() > 0 ){
         pageContext.setAttribute("orders", orders);
     }
+
+
+%>
+<%
+
 
 %>
 <!DOCTYPE html>
@@ -146,7 +155,24 @@
                 <div class="adminka-shops back-tab">
                     <a class="btn btn-primary btn-sm no-border create-shop" href="#">Создать магазин</a>
                     <table>
-                        <tr>
+                        <c:forEach var="shop" items="${shops}">
+                            <tr id="${shop.id}">
+                                <td class="shop-name">${shop.name}</td>
+                                <td class="owner-name">
+                                    <span></span>
+                                    <a class="update-owner-link fa fa-pencil" href="#"></a>
+                                </td>
+                                <%--<td class="owner-contacts">Контакты владельца</td>--%>
+                                <td class="shop-admins">
+                                    администраторы
+                                    <a class="update-admins-link" href="#">+</a>
+                                </td>
+                                <%--<td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>--%>
+                                <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
+                            </tr>
+                        </c:forEach>
+
+                        <%--<tr>
                             <td>Название магазина</td>
                             <td>Валаделец</td>
                             <td>Контакты владельца</td>
@@ -166,7 +192,7 @@
                             <td>Контакты владельца</td>
                             <td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>
                             <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
-                        </tr>
+                        </tr>--%>
                     </table>
                 </div>
                 <div class="adminka-users back-tab">

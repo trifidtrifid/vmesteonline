@@ -178,149 +178,8 @@
 			<!-- /.container -->
 		</div>
 		<div class="main-container shop dynamic" id="${shopID}">
-            <div class="page main-container-inner">
-
-                <div class="show-right">
-                    Заказы
-                </div>
-                <aside class="sidebar shop-right">
-                    <div class="hide-right">×</div>
-                    <div class="sidebar-title">
-                    </div>
-
-                    <div class="modal-backdrop basket-backdrop"></div>
-                </aside>
-                <div class="main-content">
-                    <div class="shop-products">
-                        <div class="btn-group producer-dropdown">
-                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                <span class="btn-group-text">Поиск по производителю</span>
-                                <span class="icon-caret-down icon-on-right"></span>
-                            </button>
-
-                            <ul class="dropdown-menu dropdown-blue">
-                                <c:forEach var="producer" items="${producersList}">
-                                    <li data-producerid="${producer.id}"><a href="#">${producer.name}</a></li>
-                                </c:forEach>
-                                <li class="divider"></li>
-                                <li data-producerid="0"><a href="#">Все производители</a></li>
-                            </ul>
-                        </div>
-                        <form method="post" action="#" class="form-group has-info form-search">
-                            <span class="block input-icon input-icon-right">
-                                <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
-                                <a href="#" class="icon-search icon-on-right bigger-110"></a>
-                            </span>
-                        </form>
-                        <nav class="shop-menu">
-                            <ul>
-                                <c:if test="${innerCategoryFlag}">
-                                    <li>
-                                        <a href="#">
-                                        <i class="fa fa-reply-all"></i>
-                                        <span>Назад</span>
-                                        </a>
-                                    </li>
-                                </c:if>
-                                <c:forEach var="productCategory" items="${productCategories}">
-                                    <li data-parentid="${productCategory.parentId}" data-catid="${productCategory.id}">
-                                        <a href="#" class="btn btn-app btn-info btn-sm">
-                                            <i class="fa fa-beer"></i>
-                                            <span>${productCategory.name}</span>
-                                        </a>
-                                    </li>
-                                </c:forEach>
-                            </ul>
-                        </nav>
-                        <section class="catalog-head">
-                            <table>
-                                <tr>
-                                    <td>Название</td>
-                                    <td class="td-producer">Производитель</td>
-                                    <td class="product-price">Цена (руб)</td>
-                                    <td class="td-spinner">Количество</td>
-                                    <td class="td-unit">Ед.изм</td>
-                                    <td class="td-basket"></td>
-                                </tr>
-                            </table>
-                        </section>
-                        <section class="catalog">
-                            <table>
-                                <c:forEach var="product" items="${products}">
-                                    <tr data-productid="${product.id}" data-prepack="${product.prepackRequired}" class="product">
-                                        <td>
-                                            <a href="#" class="product-link">
-                                                <div class="product-pic">
-                                                <c:choose>
-                                                    <c:when test="${product.imageURL != null}">
-                                                        <img src="${product.imageURL}?w=40&h=40" alt="${product.name}"/>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <img src="i/no-photo.png" alt="нет фото"/>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                                </div>
-
-                                                <span>
-                                                <span class="product-name">${product.name}</span>
-                                                ${product.shortDescr}
-                                                </span>
-                                            </a>
-                                            <div class="modal">
-                                            </div>
-                                        </td>
-                                        <td class="td-producer" data-producerid="${product.producerId}">
-                                            <c:forEach var="producer" items="${producersList}">
-                                                <c:if test="${producer.id == product.producerId}">
-                                                    ${producer.name}
-                                                </c:if>
-                                            </c:forEach>
-                                        </td>
-                                        <td class="product-price">${product.price}</td>
-                                        <td class="td-spinner">
-                                            <input type="text" class="input-mini spinner1" data-step="${product.minClientPack}" />
-                                            <span class="added-text">добавлен</span>
-                                        </td>
-                                        <td class="td-unit">
-                                            <span class="unit-name">${product.unitName}</span>
-                                        </td>
-                                        <td class="td-basket">
-                                            <a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>
-                                            <span href="#" title="Продукт уже у вас в корзине" class="fa fa-check"></span>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-
-                            </table>
-                        </section>
-                    </div>
-                    <div class="shop-orders">
-
-                        <h1>Заказы</h1>
-                        <div class="orders-tbl-wrap">
-                        <table>
-                            <tr>
-                                <td class="td1"></td>
-                                <td class="td2">N</td>
-                                <td class="td3">Дата</td>
-                                <td class="td4">Статус</td>
-                                <td class="td9">Цена доставки</td>
-                                <td class="td8">Вес(кг)</td>
-                                <td class="td6">Сумма</td>
-                            </tr>
-                        </table>
-                        </div>
-                        <div class="orders-list">
-                        </div>
-                    </div>
-
-                </div>
-                <div class="clear"></div>
-            </div>
-            <div class="page shop-confirm"></div>
-            <div class="page shop-profile"></div>
-            <div class="page shop-orderEnd"></div>
-            <div class="page shop-editPersonal"></div>
+            <h1>Магазин название</h1>
+            <p>о магазине</p>
         </div>
 
         <div class="modal modal-error">
@@ -340,12 +199,11 @@
 		</div>
 
 	</div>
-    <footer class="short-footer">
+    <footer>
         <div class="container">
             <div class="footer-menu">
                 <ul>
                     <li><a href="#">О сайте</a></li>
-                    <li><a href="about-shop.jsp">О магазине</a></li>
                     <li><a href="#">Правила</a></li>
                     <li><a href="#">Контакты</a></li>
                     <li><a href="#">В начало</a></li>
