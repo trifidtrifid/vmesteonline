@@ -651,6 +651,9 @@ if($('.container.backoffice').hasClass('noAccess')){
                 var fd = new FormData();
                 var input = $('.form-import #import-data');
                 fd.append( 'data', input[0].files[0]);
+                /*for(var p in input[0].files[0]){
+                    alert(p+" "+ input[0].files[0][p]);
+                }*/
 
                 $.ajax({
                     type: "POST",
@@ -1383,7 +1386,7 @@ if($('.container.backoffice').hasClass('noAccess')){
         $(this).addClass('selected');
         if($(this).find('.remove-date').length == 0){
             $(this).append("<a class='remove-date' href='#'>&times;</a>");
-        }        
+        }
 
         $(this).find('.remove-date').click(function(e){
             e.preventDefault();
