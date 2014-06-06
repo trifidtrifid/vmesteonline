@@ -82,6 +82,8 @@ public class VoGeocoder {
 									pm.makePersistent(rightStreet);
 								}
 								building.setStreetId(rightStreet.getId());
+								building.setLocation( new BigDecimal(longitude), new BigDecimal(lattitude));
+								
 								// check if old street has a buildings
 								List<VoBuilding> buildings = (List<VoBuilding>) pm.newQuery(VoBuilding.class, "streetId == :key").execute(street.getId());
 								if (buildings.size() == 0) {

@@ -299,6 +299,28 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
+	
+	@Override
+	public UserContacts getUserContactsExt(long userId) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser u = pm.getObjectById(VoUser.class, userId);
+			UserContacts uc = new UserContacts();
+			if (u.getAddress() == null) {
+				uc.setAddressStatus(UserStatus.UNCONFIRMED);
+			} else {
+				uc.setHomeAddress(u.getAddress().getPostalAddress());
+			}
+			uc.setEmail(u.getEmail());
+			uc.setMobilePhone(u.getMobilePhone());
+			return uc;
+		} catch (JDOObjectNotFoundException ioe){ 
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Access denied");
+			
+		} finally {
+			pm.close();
+		}
+	}
 
 	@Override
 	public UserInfo getUserInfo() throws InvalidOperation {
@@ -349,7 +371,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Street> getStreets(long cityId) throws InvalidOperation, TException {
+	public List<Street> getStreets(long cityId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			List<Street> cl = new ArrayList<Street>();
@@ -372,7 +394,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Building> getBuildings(long streetId) throws InvalidOperation, TException {
+	public List<Building> getBuildings(long streetId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			List<Building> cl = new ArrayList<Building>();
@@ -431,7 +453,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
-	public FullAddressCatalogue getAddressCatalogue() throws InvalidOperation, TException {
+	public FullAddressCatalogue getAddressCatalogue() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 

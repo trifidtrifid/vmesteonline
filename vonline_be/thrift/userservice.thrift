@@ -36,6 +36,7 @@ service UserService {
 
 //для отображения контактов пользователя на странице профайла. 
 	bedata.UserContacts getUserContacts() throws (1:error.InvalidOperation exc),
+	bedata.UserContacts getUserContactsExt(1:i64 userId) throws (1:error.InvalidOperation exc),
 
 //для изменения контактов пользователя на странице профайла. 
 	void updateUserContacts(1:bedata.UserContacts contacts) throws (1:error.InvalidOperation exc),
