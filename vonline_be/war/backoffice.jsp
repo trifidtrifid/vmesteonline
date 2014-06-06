@@ -7,6 +7,7 @@
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
+<%@ page import="com.vmesteonline.be.IdNameChilds"%>
 <%@ page import="com.vmesteonline.be.shop.*"%>
 <%@ page import="com.vmesteonline.be.shop.bo.*"%>
 
@@ -52,6 +53,13 @@
     ProductListPart productsList = shopService.getProducts(0,1000,0);
     if(productsList != null && productsList.length > 0){
         pageContext.setAttribute("products", productsList.products);
+    }
+
+    //List<ProductCategory> categoriesList = shopService.getProductCategories(0);
+    List<IdNameChilds> categoriesList = shopService.getProductsByCategories(0);
+
+    if(categoriesList != null && categoriesList.size() > 0){
+        pageContext.setAttribute("categories", categoriesList);
     }
 
 %>
@@ -142,7 +150,7 @@
                     </li>
                     <li>
                         <a href="#">
-                            <span class="menu-text"> Импорт </span>
+                            <span class="menu-text"> Продукты/категории </span>
                         </a>
                     </li>
                     <li>
@@ -152,12 +160,12 @@
                     </li>
                     <li>
                         <a href="#">
-                            <span class="menu-text"> Настройки </span>
+                            <span class="menu-text"> Импорт </span>
                         </a>
                     </li>
                     <li>
                         <a href="#">
-                            <span class="menu-text"> Редактирование </span>
+                            <span class="menu-text"> Настройки </span>
                         </a>
                     </li>
                 </ul><!-- /.nav-list -->
@@ -457,19 +465,16 @@
                         </label>
 
 
-                        <label class="block clearfix">
-                            <span class="block input-icon input-icon-right">
-                                <div class="ace-file-input">
-                                    <input type="file" id="id-input-file-2">
-                                </div>
-                            </span>
+                        <label class="block clearfix logo-container">
+                            <img src="${shop.logoURL}" alt="логотип"/>
+                            <input type="file" id="settings-logo">
                         </label>
 
-                        <label class="block clearfix">
+                        <%--<label class="block clearfix">
                             <span class="block input-icon input-icon-right">
                                 <input type="text" id="price-delivery" class="form-control" value="1" />
                             </span>
-                        </label>
+                        </label>--%>
                     </fieldset>
                         <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
                     </div>
@@ -502,7 +507,7 @@
                                 <span class="lbl"> Стоимость в зависимости от расстояния</span>
                             </label>
                             <div class="delivery-area  delivery-price-type">
-                                <div class="btn-group delivery-area-dropdown">
+                                <%--<div class="btn-group delivery-area-dropdown">
                                     <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
                                         <span class="btn-group-text">Населенный пункт</span>
                                         <span class="icon-caret-down icon-on-right"></span>
@@ -513,10 +518,11 @@
                                         <li><a href="#">Пушкин</a></li>
                                         <li><a href="#">Оккервиль</a></li>
                                     </ul>
-                                </div>
-
-                                <input type="text" placeholder="Стоимость"><span>руб</span>
-                                <a href="#" class="add-delivery-interval add-interval">+</a>
+                                </div>--%>
+                                <span>Близко</span><input type="text" placeholder="Стоимость"><span>руб</span>
+                            </div>
+                            <div class="delivery-area  delivery-price-type">
+                                <span>Далеко</span><input type="text" placeholder="Стоимость"><span>руб</span>
                             </div>
                         </div>
                         <h5>Стоиомтсь доставки в зависимости от веса заказа</h5>
@@ -547,15 +553,125 @@
                     <div class="tab-content">
                         <div id="edit-product" class="tab-pane active">
                             <a class="btn btn-sm no-border btn-primary edit-show-add" href="#">Добавить продукт</a>
-                            <%--<a class="btn btn-sm btn-primary no-border save-products" href="#">Сохранить изменения</a>--%>
 
-                            <div class="table-add-product">
+                            <div class="table-add table-add-product">
+                                <div class="table-overflow">
                                 <table>
                                     <tr>
-                                        <td><input type="text" placeholder="Название"/></td>
-                                        <td><input type="text" placeholder="Описание"/></td>
-                                        <td><input type="text" placeholder="Вес"/></td>
-                                        <td><input type="text" placeholder="Цена"/></td>
+                                        <td class="product-name">
+                                            <textarea>Название продукта</textarea> </td>
+                                        <td class="product-shortDescr">
+                                            <textarea>Сокр. описание</textarea>
+                                        </td>
+                                        <td class="product-fullDescr">
+                                            <textarea>Полное описание</textarea>
+                                        </td>
+                                        <td class="product-imageURL">
+                                            <input type="file" id="imageURL-add">
+                                            <img src="i/no-photo.png" alt="картинка"/>
+                                        </td>
+                                        <td class="product-imagesSet">
+                                            <input type="file" id="imageURLSet-add">
+                                        </td>
+                                        <td class="product-categories"><a href="#">Добавить категорию</a></td>
+                                        <td class="product-weight"><input type="text" value="Вес"/></td>
+                                        <td class="product-price"><input type="text" value="Цена"/></td>
+                                        <td class="product-initName"><input type="text" value="Ед.изм"/></td>
+                                        <td class="product-pack"><input type="text" value="Мин.шаг"/></td>
+                                        <td class="product-options">
+                                            <table>
+                                                <tr>
+                                                    <td><input type='text' placeholder="опция"></td>
+                                                    <td><input type='text' placeholder="описание"></td>
+                                                    <td class='td-remove-options'><a href='' class='remove-options-item remove-item'>&times;</a></td>
+                                                    </tr>
+                                            </table>
+                                            <a href='#' class='add-options-item add-item'>Добавить</a>
+                                        </td>
+                                        <td class="product-prepack">
+                                            <label>
+                                            <input type="checkbox"/>
+                                                <span>Весовой</span>
+                                            </label>
+                                        </td>
+                                        <td class="product-producer"><input type="text" value="Производитель"/></td>
+                                    </tr>
+                                </table>
+                                </div>
+                                <a class="btn btn-sm no-border btn-primary edit-add" href="#">Добавить</a>
+                            </div>
+
+
+                            <div class="table-overflow products-table" id="doublescroll-2">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <td>Название</td>
+                                        <td>Сокр. описание</td>
+                                        <td>Полное описание</td>
+                                        <td>Аватар</td>
+                                        <td>Другие изображения</td>
+                                        <td>Категории</td>
+                                        <td>Вес</td>
+                                        <td>Цена</td>
+                                        <td>Ед.изм</td>
+                                        <td>Мин.шаг</td>
+                                        <td>Опции</td>
+                                        <td>Весовой</td>
+                                        <td>Производитель</td>
+                                    </tr>
+                                    </thead>
+                                    <c:forEach var="product" items="${products}">
+                                        <tr id="${product.id}">
+                                            <td class="product-name">
+                                                <textarea>${product.name}</textarea> </td>
+                                            <td class="product-shortDescr">
+                                                <textarea>${product.shortDescr}</textarea>
+                                            </td>
+                                            <td class="product-fullDescr">
+                                                <textarea></textarea>
+                                            </td>
+                                            <td class="product-imageURL">
+                                                <input type="file" id="imageURL-${product.id}">
+                                                <c:choose>
+                                                    <c:when test="${product.imageURL != null}">
+                                                        <img src="${product.imageURL}" alt="картинка"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <img src="i/no-photo.png" alt="картинка"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td class="product-imagesSet">
+                                                <input type="file" id="imagesSetURL">
+                                            </td>
+                                            <td class="product-categories"></td>
+                                            <td class="product-weight"><input type="text" value="${product.weight}"/></td>
+                                            <td class="product-price"><input type="text" value="${product.price}"/></td>
+                                            <td class="product-initName"><input type="text" value="${product.unitName}"/></td>
+                                            <td class="product-pack"><input type="text" value="${product.minClientPack}"/></td>
+                                            <td class="product-options"></td>
+                                            <td class="product-prepack">
+                                                <input type="checkbox" <c:if test="${product.prepackRequired}"> checked </c:if> />
+                                            </td>
+                                            <td class="product-producer"><input type="text" value="${product.producerId}"/></td>
+                                            <td class="product-remove"><a href="#" title="Удалить" class="remove-item">&times;</a></td>
+                                        </tr>
+                                    </c:forEach>
+
+                                </table>
+                            </div>
+                            <a class="btn btn-sm btn-primary no-border save-products" href="#">Сохранить изменения</a>
+                        </div>
+                        <div id="edit-category" class="tab-pane">
+                            <a class="btn btn-sm no-border btn-primary edit-show-add" href="#">Добавить категорию</a>
+
+                            <div class="table-add table-add-category">
+                                <table>
+                                    <tr>
+                                        <td><textarea>Название</textarea></td>
+                                        <td><textarea>Описание</textarea></td>
+                                        <td class="category-parent"></td>
                                     </tr>
                                 </table>
                                 <a class="btn btn-sm no-border btn-primary edit-add" href="#">Добавить</a>
@@ -566,42 +682,23 @@
                                 <tr>
                                     <td>Название</td>
                                     <td>Описание</td>
-                                    <td>Вес</td>
-                                    <td>Цена</td>
+                                    <td>Родительская категория</td>
                                 </tr>
                                 </thead>
-                                <c:forEach var="product" items="${products}">
-                                    <tr id="${product.id}">
-                                        <td><input type="text" value="${product.name}"/></td>
-                                        <td><input type="text" value="${product.shortDescr}"/></td>
-                                        <td><input type="text" value="${product.weight}"/></td>
-                                        <td><input type="text" value="${product.price}"/></td>
-                                        <td><a href="#" title="Удалить" class="remove-item">&times;</a></td>
+                                <c:forEach var="category" items="${categories}">
+                                    <tr id="${category.id}">
+                                        <td class="category-name"><textarea>${category.name}</textarea></td>
+                                        <td class="category-descr"><textarea>Описание</textarea></td>
+                                        <td class="category-parent">
+
+                                        </td>
                                     </tr>
                                 </c:forEach>
 
-                                <%--<tr>
-                                    <td><input type="text" placeholder="название"/></td>
-                                    <td><input type="text" placeholder="описание"/></td>
-                                    <td><input type="text" placeholder="родитель"/></td>
-                                    <td><a href="#" title="Удалить" class="remove-item">&times;</a></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="text" placeholder="название"/></td>
-                                    <td><input type="text" placeholder="описание"/></td>
-                                    <td><input type="text" placeholder="родитель"/></td>
-                                    <td><a href="#" title="Удалить" class="remove-item">&times;</a></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="text" placeholder="название"/></td>
-                                    <td><input type="text" placeholder="описание"/></td>
-                                    <td><input type="text" placeholder="родитель"/></td>
-                                    <td><a href="#" title="Удалить" class="remove-item">&times;</a></td>
-                                </tr>--%>
                             </table>
                             <a class="btn btn-sm btn-primary no-border save-products" href="#">Сохранить изменения</a>
+
                         </div>
-                        <div id="edit-category" class="tab-pane"></div>
                         <div id="edit-producer" class="tab-pane"></div>
                     </div>
                 </div>

@@ -1751,6 +1751,51 @@ height 50px
 .bo-settings .radio {
   margin-top: 20px;
 }
+.bo-settings .logo-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  line-height: 200px;
+  text-align: center;
+}
+.bo-settings .logo-container img {
+  max-width: 200px;
+  max-height: 200px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.bo-settings .logo-container .settings-logo {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+.bo-settings .logo-container .settings-logo .file-label {
+  background: rgba(255,255,255,0.1);
+  width: 200px;
+  height: 200px;
+}
+.bo-settings .logo-container .settings-logo .file-label:before {
+  background: rgba(0,0,0,0.4);
+  color: #fff;
+  width: 100%;
+  font-weight: normal;
+  position: absolute;
+  bottom: 0;
+  height: 30px;
+  line-height: 30px;
+  top: auto;
+  margin: 0;
+}
+.bo-settings .logo-container .settings-logo .file-label .file-name {
+  height: 100%;
+  text-align: center !important;
+  line-height: 200px;
+  padding-left: 0;
+}
+.bo-settings .logo-container .settings-logo .file-label .file-name:after {
+  height: 30px;
+  line-height: 30px;
+}
 .bo-settings #settings-delivery .delivery-price-type {
   padding-left: 30px;
 }
@@ -1774,12 +1819,12 @@ height 50px
 .bo-settings #settings-delivery .delivery-price-type .add-delivery-interval:hover {
   text-decoration: none;
 }
-.bo-settings #settings-delivery .delivery-area-dropdown button {
-  width: 158px;
-  margin-right: 35px !important;
-  height: 29px;
-  position: relative;
-  top: -1px;
+.bo-settings #settings-delivery .delivery-area {
+  margin-top: 10px;
+}
+.bo-settings #settings-delivery .delivery-area span {
+  display: inline-block;
+  font-size: 14px;
 }
 .bo-settings #settings-delivery input[type=checkbox].ace+.lbl::before,
 .bo-settings #settings-delivery input[type=radio].ace+.lbl::before {
@@ -1817,30 +1862,187 @@ height 50px
   padding: 3px 0 !important;
 }
 .bo-settings #settings-shedule .datepicker td.selected {
-  background: #f00;
+  background: #ffbabf;
   position: relative;
 }
 .bo-settings #settings-shedule .datepicker td.selected .remove-date {
   position: absolute;
   color: #f00;
-  font-size: 14px;
-  top: 0;
-  right: 0;
+  font-size: 16px;
+  top: -12px;
+  right: -5px;
+  z-index: 100;
 }
-.bo-edit .table-add-product {
+.bo-settings #settings-shedule .datepicker td.selected .remove-date:hover {
+  text-decoration: none;
+}
+.bo-edit .table-add {
   display: none;
+}
+.bo-edit .table-overflow {
+  width: 100%;
+  overflow-x: scroll;
+  margin-bottom: 10px;
+}
+.bo-edit .products-table {
+  overflow-y: hidden;
+}
+.bo-edit .products-table tbody td {
+  border-bottom: 1px solid #ccc;
 }
 .bo-edit table {
   width: 100%;
   margin: 15px 0 10px 0;
 }
 .bo-edit table td {
-  text-align: right;
+  min-width: 100px;
+}
+.bo-edit table td textarea {
+  width: 100%;
 }
 .bo-edit table thead td {
   text-align: left;
   background: #eff3f8;
   padding: 3px;
+}
+.bo-edit table .product-name,
+.bo-edit table .product-shortDescr,
+.bo-edit table .product-fullDescr {
+  min-width: 200px;
+}
+.bo-edit table .product-imageURL {
+  min-width: 100px;
+  height: 100px;
+  text-align: center;
+  position: relative;
+}
+.bo-edit table .product-imageURL img {
+  max-width: 100px;
+  max-height: 100px;
+}
+.bo-edit table .product-imageURL .ace-file-input {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+.bo-edit table .product-imageURL .ace-file-input input {
+  height: 0;
+}
+.bo-edit table .product-imageURL .ace-file-input .file-label {
+  height: 100px;
+  opacity: 0;
+  line-height: 100px;
+  border: none;
+}
+.bo-edit table .product-imageURL .ace-file-input .file-name {
+  display: inline-block;
+  vertical-align: middle;
+}
+.bo-edit table .product-imageURL .ace-file-input .file-name:after {
+  display: none;
+}
+.bo-edit table .product-imagesSet {
+  min-width: 200px;
+  position: relative;
+}
+.bo-edit table .product-imagesSet img {
+  max-width: 50px;
+  max-height: 50px;
+}
+.bo-edit table .product-imagesSet .images-set {
+  position: relative;
+}
+.bo-edit table .product-imagesSet .image-item {
+  position: relative;
+}
+.bo-edit table .product-imagesSet .ace-file-input input {
+  height: 0;
+}
+.bo-edit table .product-imagesSet .ace-file-input .file-label {
+  height: 30px;
+  line-height: 20px;
+  border: 0;
+  width: 70%;
+  margin: 0 auto;
+}
+.bo-edit table .product-imagesSet .ace-file-input .file-label:before {
+  font-size: 14px;
+  margin: 0;
+  color: #428bca;
+  font-weight: normal;
+}
+.bo-edit table .product-imagesSet .ace-file-input .file-name {
+  display: inline-block;
+  vertical-align: middle;
+}
+.bo-edit table .product-imagesSet .ace-file-input .file-name:after {
+  display: none;
+}
+.bo-edit table .product-imagesSet .ace-file-input .remove {
+  z-index: 100;
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+.bo-edit table .product-imagesSet .ace-file-input .remove i {
+  display: block;
+  font-size: 10px;
+}
+.bo-edit table .product-imagesSet .ace-file-input.added {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 0;
+}
+.bo-edit table .product-imagesSet .ace-file-input.added .file-label {
+  height: auto;
+  width: 100%;
+}
+.bo-edit table .product-categories {
+  min-width: 150px;
+}
+.bo-edit table .product-categories .categories-dropdown {
+  width: 100%;
+}
+.bo-edit table .product-weight,
+.bo-edit table .product-price,
+.bo-edit table .product-pack,
+.bo-edit table .product-unitName {
+  min-width: 100px;
+}
+.bo-edit table .product-prepack {
+  min-width: 30px;
+}
+.bo-edit table .product-options td {
+  border: 0;
+}
+.bo-edit table .product-options td.td-remove-options {
+  min-width: 30px;
+}
+.bo-edit table .product-options td.td-remove-options .remove-item {
+  font-size: 16px;
+}
+.bo-edit table .product-remove {
+  min-width: 30px;
+  text-align: center;
+}
+.bo-edit table .removing {
+  background: #ffe3db;
+}
+.bo-edit table .map-item {
+  position: relative;
+  display: inline-block;
+  padding: 5px;
+  border-radius: 4px;
+  background: #eff3f8;
+  margin: 0 2px;
+  margin-bottom: 7px;
+}
+.bo-edit table .map-item .remove-item {
+  font-size: 16px;
+  position: absolute;
+  top: -10px;
+  right: -5px;
 }
 .bo-edit table input {
   width: 100%;
@@ -1853,6 +2055,13 @@ height 50px
 .bo-edit table .remove-item:hover {
   text-decoration: none;
 }
+.bo-edit #edit-category td {
+  vertical-align: top;
+}
+.bo-edit #edit-category .category-parent {
+  width: 20%;
+  text-align: center;
+}
 /* админка */
 .adminka table {
   width: 100%;
@@ -1860,7 +2069,12 @@ height 50px
 }
 .adminka table td {
   border: 1px solid #ccc;
-  padding-left: 10px;
+  padding: 10px;
+  line-height: 16px;
+  width: 30%;
+}
+.adminka table td.td-icon {
+  width: 5%;
 }
 .adminka table .td-icon {
   text-align: center;
@@ -1875,9 +2089,32 @@ height 50px
   display: inline-block;
   font-size: 20px;
 }
+.adminka table .update-admins-link {
+  font-size: 20px;
+}
+.adminka table .update-admins-link:hover {
+  text-decoration: none;
+}
 .adminka table .remove-item {
   color: #f00;
   font-size: 30px;
+}
+.adminka table .update-owner-line,
+.adminka table .update-admins-line {
+  display: none;
+  margin-top: 10px;
+}
+.adminka table .update-owner-line input,
+.adminka table .update-admins-line input {
+  width: 200px;
+  margin-right: 15px;
+  margin-bottom: 10px;
+  height: 34px;
+  position: relative;
+  top: 2px;
+}
+.adminka table .update-owner-link {
+  font-size: 14px;
 }
 .adminka-users {
   display: none;
