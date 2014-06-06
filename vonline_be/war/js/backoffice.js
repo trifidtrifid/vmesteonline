@@ -1617,11 +1617,11 @@ if($('.container.backoffice').hasClass('noAccess')){
 
     function getCategoriesHtml(){
         var shopId = $('.backoffice.dynamic').attr('id');
-        var IdNameChilds = thriftModule.client.getProductsByCategories(shopId);
-        var IdNameChildsLength = IdNameChilds.length;
+        var categories = thriftModule.client.getAllCategories(shopId);
+        var categoriesLength = categories.length;
         var categoriesListHtml = '';
-        for(var i = 0; i < IdNameChildsLength; i++){
-            categoriesListHtml += '<li><a href="#">'+IdNameChilds[i].name+'</a></li>';
+        for(var i = 0; i < categoriesLength; i++){
+            categoriesListHtml += '<li id="'+ categories[i].id +'"><a href="#">'+categories[i].name+'</a></li>';
         }
 
         var categoriesHtml = '<div class="btn-group categories-dropdown">'+

@@ -7,7 +7,6 @@
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.IdNameChilds"%>
 <%@ page import="com.vmesteonline.be.shop.*"%>
 <%@ page import="com.vmesteonline.be.shop.bo.*"%>
 
@@ -37,6 +36,13 @@
     if(ArrayShops != null && ArrayShops.size() > 0){
         Shop shop = shopService.getShop(ArrayShops.get(0).id);
         UserShopRole userRole = shopService.getUserShopRole(shop.id);
+
+        List<ProductCategory> categoriesList = shopService.getAllCategories(shop.id);
+
+        if(categoriesList != null && categoriesList.size() > 0){
+            pageContext.setAttribute("categories", categoriesList);
+        }
+
         pageContext.setAttribute("logoURL", shop.logoURL);
         pageContext.setAttribute("shopID", shop.id);
         pageContext.setAttribute("userRole", userRole);
@@ -55,12 +61,7 @@
         pageContext.setAttribute("products", productsList.products);
     }
 
-    //List<ProductCategory> categoriesList = shopService.getProductCategories(0);
-    List<IdNameChilds> categoriesList = shopService.getProductsByCategories(0);
 
-    if(categoriesList != null && categoriesList.size() > 0){
-        pageContext.setAttribute("categories", categoriesList);
-    }
 
 %>
 <!DOCTYPE html>
@@ -688,7 +689,7 @@
                                 <c:forEach var="category" items="${categories}">
                                     <tr id="${category.id}">
                                         <td class="category-name"><textarea>${category.name}</textarea></td>
-                                        <td class="category-descr"><textarea>Описание</textarea></td>
+                                        <td class="category-descr"><textarea>${category.descr}</textarea></td>
                                         <td class="category-parent">
 
                                         </td>
