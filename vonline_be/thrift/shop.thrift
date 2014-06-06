@@ -164,6 +164,8 @@ service ShopFEService {
 	/** THe method returns full list of products that are included to current category and all subcategories, 
 	* if categoryID is set then the current category would be set. 
 	**/ 
+	list<ProductCategory> getAllCategories(1:i64 shopId) throws (1:error.InvalidOperation exc),
+	
 	ProductListPart getProducts(1:i32 offset, 2:i32 length, 3:i64 categoryId ) throws (1:error.InvalidOperation exc),
 	ProductDetails getProductDetails( 1:i64 productId ) throws (1:error.InvalidOperation exc),
 	list<bedata.IdNameChilds> getProductsByCategories(1:i64 shopId) throws (1:error.InvalidOperation exc),
