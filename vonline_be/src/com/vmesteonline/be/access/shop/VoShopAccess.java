@@ -14,6 +14,7 @@ public class VoShopAccess extends VoUserAccessBase {
 	
 	public VoShopAccess(long shopId,long userId){
 		super.userId = userId;
+		this.shopId = shopId; 
 		super.categoryId = ServiceImpl.ServiceCategoryID.SHOP_SI.ordinal();
 	}
 	

@@ -1310,8 +1310,11 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			long currentUserId = getCurrentUserId(pm);
 			if(shopId == 0) shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 			List<VoShopAccess> rslt = (List<VoShopAccess>) pm.newQuery(VoShopAccess.class,"userId=="+currentUserId+" && shopId=="+shopId).execute();
+			if( pm.getObjectById(VoShop.class, shopId).getOwnerId() == currentUserId )
+				return UserShopRole.OWNER;
+			
 			if( rslt.size() == 0)
-				return pm.getObjectById(VoShop.class, shopId).getOwnerId() == currentUserId ? UserShopRole.OWNER : UserShopRole.CUSTOMER;
+				return UserShopRole.CUSTOMER;
 			
 			long access = 0;
 			for( VoShopAccess vsa: rslt){

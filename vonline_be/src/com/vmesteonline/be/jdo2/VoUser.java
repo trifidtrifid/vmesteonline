@@ -217,6 +217,12 @@ public class VoUser extends GeoLocation {
 				ug.setLatitude(home.getLatitude());
 				ug.setLongitude(home.getLongitude());
 			}
+		} else {
+			groups = new ArrayList<VoUserGroup>();
+			groups.add(home);
+			for( VoGroup group: Defaults.defaultGroups ){
+				groups.add(new VoUserGroup(this, group));
+			}
 		}
 		
 		addDeliveryAddress( 0L, "домой", userAddress );

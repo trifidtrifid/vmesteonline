@@ -135,7 +135,7 @@ public class StorageHelper {
 				} catch (JDOObjectNotFoundException onfe) {
 				}
 			}
-			return saveImage(urlOrContent, userId, isPublic, pm);
+			return saveImage(urlOrContent.getBytes(), "image/jpeg", userId, isPublic, pm, "img.jpeg");
 		} finally {
 			if (null == _pm)
 				pm.close();
