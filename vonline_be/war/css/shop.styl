@@ -1610,7 +1610,7 @@ height 50px
         .images-set
           position relative
         .image-item
-          position relative //
+          position relative
         .ace-file-input
           input
             height 0
@@ -1664,6 +1664,9 @@ height 50px
           min-width 30px //
           .remove-item
             font-size 16px
+      &producer
+        >span
+          display block
       &remove
         min-width 30px
         text-align center
@@ -1686,16 +1689,32 @@ height 50px
       width 100%
     .remove-item
       display inline-block
-      font-size 24px
+      font-size 20px
       color #ff0000
       &:hover
         text-decoration none
   #edit-category
     td
       vertical-align top //
+      width 36%
+      padding 10px
     .category-parent
       width 20%
       text-align center //
+    .category-remove
+      width 4%
+      text-align center
+    .dropdown-menu
+      margin-left -50px
+  #edit-producer
+    td
+      width 48%
+      padding 10px
+      textarea
+        min-height 100px
+    .producer-remove
+      width 4%
+      text-align center
 /* админка */
 .adminka
   table
@@ -1705,10 +1724,10 @@ height 50px
       border 1px solid #ccc
       padding 10px
       line-height 16px
-      width 30%
+      width 24%
       &.td-icon
-        width 5%
-    .td-icon
+        width 4%
+    .td-icon //
       text-align center
       padding-left 0
       width 5%
@@ -1738,6 +1757,21 @@ height 50px
         top 2px
     .update-owner-link
       font-size 14px
+    .admin-item
+      padding 5px
+      position relative
+      display inline-block
+      margin 0 3px 5px 3px
+      background #eff3f8
+      .remove-admin-item
+        position absolute
+        top -8px
+        font-size 16px
+        right -5px
+        color #ff0000
+        &:hover
+          text-decoration none
+
 
 .adminka-users
   display none

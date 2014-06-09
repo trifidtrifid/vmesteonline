@@ -33,7 +33,6 @@
 
     function getMetaDate(calendarPicker){
         try {
-
             var strDate = calendarPicker.find('.datepicker-days .switch').text().split(" ");
 
         var strMonth="";

@@ -46,6 +46,13 @@
 														</span>
 													</label>
 
+                                                    <label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="email" id="email" class="form-control" placeholder="Email владельца" />
+															<i class="icon-envelope"></i>
+														</span>
+                                                    </label>
+
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">
                                                             <textarea name="descr" id="descr" cols="30" rows="10">Описание</textarea>
@@ -66,14 +73,6 @@
                                                             <div class="ace-file-input">
                                                                 <input type="file" id="id-input-file-2">
                                                             </div>
-
-														</span>
-                                                    </label>
-
-                                                    <label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="text" id="price-delivery" class="form-control" placeholder="Стоимость доставки" />
-															<i class="fa fa-dropbox"></i>
 														</span>
                                                     </label>
 
@@ -133,48 +132,43 @@
                 $('.reg-shop .btn-success').click(function(e){
                     e.preventDefault();
 
-                    var deliveryAddress = client.createDeliveryAddress("Ленинградская 7 ",0,0,0);
+                    var name = $('#name').val(),
+                    descr = $('#descr').val(),
+                    logoURL = $('.ace-file-input .file-name img').css('background-image'),
+                    address = $('#address').val();
 
-                    /*var deliveryAddress = new com.vmesteonline.be.PostalAddress();
+                    $('.email-alert').removeClass('info-good').addClass('error-info');
 
-                    var country = new com.vmesteonline.be.Country();
-                    country.id = 9999999999999999;
-                    country.name = "Россия";
-                    var city = new com.vmesteonline.be.City();
-                    city.id = 8888888888888888;
-                    city.countryId = 9999999999999999;
-                    city.name = "Питер";
-                    var street = new com.vmesteonline.be.Street();
-                    street.id = 7777777777777777;
-                    street.cityId = 8888888888888888;
-                    street.name = "улица";
-                    var building = new com.vmesteonline.be.Building();
-                    building.id = 6666666666666666;
-                    building.streetId = 7777777777777777;
-                    building.fullNo = "3";
+                    if(name == ""){
+                        $('.error-info').text('Вы не указали имя.').show();
+                    }else if(descr == ""){
+                        $('.error-info').text('Вы не указали описание.').show();
+                    }else if(address == ""){
+                        $('.error-info').text('Вы не указали адрес.').show();
+                    }else if(!logoURL){
+                        $('.error-info').text('Вы не выбрали доготип.').show();
+                    }else{
+                        try{
+                            var deliveryAddress = client.createDeliveryAddress(address,0,0,0);
+                            $('.error-info').hide();
 
-                    deliveryAddress.country = country;
-                    deliveryAddress.city = city;
-                    deliveryAddress.street = street;
-                    deliveryAddress.building = building;
-                    deliveryAddress.staircase = 0;
-                    deliveryAddress.floor= 0;
-                    deliveryAddress.flatNo = 1;*/
+                            var shop = new com.vmesteonline.be.shop.Shop;
+                            shop.id = 0;
+                            shop.name = name;
+                            shop.descr = descr;
+                            shop.address = deliveryAddress;
+                            shop.logoURL = logoURL;
 
-                    var shop = new com.vmesteonline.be.shop.Shop;
+                            var shopId = clientBO.registerShop(shop);
 
-                    var name = $('#name').val();
-                    var descr = $('#descr').val();
-                    var logoURL = $('#descr').val();
+                            var ownerEmail = $('#email').val();
+                            clientBO.setUserShopRole(shopId ,ownerEmail,3);
 
-                    shop.id = 1111111111111111;
-                    shop.name = name;
-                    shop.descr = descr;
-                    shop.address = deliveryAddress;
-                    shop.logoURL = logoURL;
-                    shop.ownerId = 4714705859903488;
-
-                    clientBO.registerShop(shop);
+                            $('.email-alert').removeClass('error-info').addClass('info-good').text("Магазин успешно зарегистрирован.").show();
+                        } catch(e){
+                            $('.error-info').text('Вы указали не существующий адрес.').show();
+                        }
+                    }
 
                 });
 
@@ -184,29 +178,10 @@
                     btn_change:null,
                     no_icon:'icon-cloud-upload',
                     droppable:true,
-                    thumbnail:'large'//large | fit
-                    //,icon_remove:null//set null, to hide remove/reset button
-                    /**,before_change:function(files, dropped) {
-						//Check an example below
-						//or examples/file-upload.html
-						return true;
-					}*/
-                    /**,before_remove : function() {
-						return true;
-					}*/
-                    ,
-                    preview_error : function(filename, error_code) {
-                        //name of the file that failed
-                        //error_code values
-                        //1 = 'FILE_LOAD_FAILED',
-                        //2 = 'IMAGE_LOAD_FAILED',
-                        //3 = 'THUMBNAIL_FAILED'
-                        //alert(error_code);
-                    }
+                    thumbnail:'large'
 
                 }).on('change', function(){
-                            //console.log($(this).data('ace_input_files'));
-                            //console.log($(this).data('ace_input_method'));
+                            $('.error-info').hide();
                         });
 
             });

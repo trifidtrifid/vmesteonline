@@ -42,7 +42,6 @@
         if(categoriesList != null && categoriesList.size() > 0){
             pageContext.setAttribute("categories", categoriesList);
         }
-
         pageContext.setAttribute("logoURL", shop.logoURL);
         pageContext.setAttribute("shopID", shop.id);
         pageContext.setAttribute("userRole", userRole);
@@ -59,6 +58,11 @@
     ProductListPart productsList = shopService.getProducts(0,1000,0);
     if(productsList != null && productsList.length > 0){
         pageContext.setAttribute("products", productsList.products);
+    }
+
+    List<Producer> producersList = shopService.getProducers();
+    if(producersList != null && producersList.size() > 0){
+        pageContext.setAttribute("producers", producersList);
     }
 
 
@@ -82,7 +86,7 @@
 </head>
 <body>
 
-<div class="container backoffice <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN'}"> noAccess </c:if> ">
+<div class="container backoffice <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}"> noAccess </c:if> ">
     <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
         try{ace.settings.check('navbar' , 'fixed')}catch(e){}
@@ -491,50 +495,39 @@
                     <div id="settings-delivery" class="settings-item">
                         <h2>Доставка</h2>
                         <h5>Стоимость доставки в зависимости от расстояния</h5>
-                        <div class="radio">
+                        <div class="radio delivery-interval-container">
                             <label>
                                 <input name="form-field-radio" type="radio" checked="checked" class="ace">
                                 <span class="lbl"> Стоимость в интервалах (например 100 р до 10км, 200р при > 10км)</span>
                             </label>
-                            <div class="delivery-interval delivery-price-type">
+                            <%--<div class="delivery-interval delivery-price-type">
                                 <input type="text" placeholder="Интервал"><span>км</span>
                                 <input type="text" placeholder="Стоимость"><span>руб</span>
                                 <a href="#" class="add-delivery-interval add-interval">+</a>
-                            </div>
+                            </div>--%>
                         </div>
-                        <div class="radio">
+                        <div class="radio delivery-area-container">
                             <label>
                                 <input name="form-field-radio" type="radio" checked="checked" class="ace">
                                 <span class="lbl"> Стоимость в зависимости от расстояния</span>
                             </label>
-                            <div class="delivery-area  delivery-price-type">
-                                <%--<div class="btn-group delivery-area-dropdown">
-                                    <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                                        <span class="btn-group-text">Населенный пункт</span>
-                                        <span class="icon-caret-down icon-on-right"></span>
-                                    </button>
-
-                                    <ul class="dropdown-menu dropdown-blue">
-                                        <li><a href="#">Кудрово</a></li>
-                                        <li><a href="#">Пушкин</a></li>
-                                        <li><a href="#">Оккервиль</a></li>
-                                    </ul>
-                                </div>--%>
+                            <%--<div class="delivery-area  delivery-price-type">
                                 <span>Близко</span><input type="text" placeholder="Стоимость"><span>руб</span>
                             </div>
                             <div class="delivery-area  delivery-price-type">
                                 <span>Далеко</span><input type="text" placeholder="Стоимость"><span>руб</span>
-                            </div>
+                            </div>--%>
                         </div>
                         <h5>Стоиомтсь доставки в зависимости от веса заказа</h5>
-                            <div class="delivery-weight delivery-price-type">
-                                <input type="text" placeholder="Интервал"><span>кг</span>
-                                <input type="text" placeholder="Стоимость"><span>руб</span>
-                                <a href="#" class="add-delivery-interval add-interval">+</a>
+                            <div class="delivery-weight-container">
+                                <%--<div class="delivery-weight delivery-price-type">
+                                    <input type="text" placeholder="Интервал"><span>кг</span>
+                                    <input type="text" placeholder="Стоимость"><span>руб</span>
+                                    <a href="#" class="add-delivery-interval add-interval">+</a>
+                                </div>--%>
                             </div>
-
                             <br>
-                        <a class="btn btn-primary btn-sm no-border" href="#">Сохранить</a>
+                        <a class="btn btn-primary btn-sm no-border btn-save" href="#">Сохранить</a>
                     </div>
                 </div>
                 <div class="bo-edit back-tab">
@@ -575,10 +568,10 @@
                                             <input type="file" id="imageURLSet-add">
                                         </td>
                                         <td class="product-categories"><a href="#">Добавить категорию</a></td>
-                                        <td class="product-weight"><input type="text" value="Вес"/></td>
-                                        <td class="product-price"><input type="text" value="Цена"/></td>
-                                        <td class="product-initName"><input type="text" value="Ед.изм"/></td>
-                                        <td class="product-pack"><input type="text" value="Мин.шаг"/></td>
+                                        <td class="product-weight"><input type="text" placeholder="Вес"/></td>
+                                        <td class="product-price"><input type="text" placeholder="Цена"/></td>
+                                        <td class="product-unitName"><input type="text" placeholder="Ед.изм"/></td>
+                                        <td class="product-pack"><input type="text" placeholder="Мин.шаг"/></td>
                                         <td class="product-options">
                                             <table>
                                                 <tr>
@@ -595,11 +588,26 @@
                                                 <span>Весовой</span>
                                             </label>
                                         </td>
-                                        <td class="product-producer"><input type="text" value="Производитель"/></td>
+                                        <td class="product-producer">
+                                        <%--    <input type="text" value="Производитель"/>--%>
+                                            <div class="btn-group producers-dropdown">
+                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                                    <span class="btn-group-text">Выбрать производителя</span>
+                                                    <span class="icon-caret-down icon-on-right"></span>
+                                                </button>
+
+                                                <ul class="dropdown-menu dropdown-blue">
+                                                    <c:forEach var="producer" items="${producers}">
+                                                        <li data-producerid="${producer.id}"><a href="#">${producer.name}</a></li>
+                                                    </c:forEach>
+                                                </ul>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </table>
                                 </div>
                                 <a class="btn btn-sm no-border btn-primary edit-add" href="#">Добавить</a>
+                                <span class="error-info"></span>
                             </div>
 
 
@@ -649,13 +657,13 @@
                                             <td class="product-categories"></td>
                                             <td class="product-weight"><input type="text" value="${product.weight}"/></td>
                                             <td class="product-price"><input type="text" value="${product.price}"/></td>
-                                            <td class="product-initName"><input type="text" value="${product.unitName}"/></td>
+                                            <td class="product-unitName"><input type="text" value="${product.unitName}"/></td>
                                             <td class="product-pack"><input type="text" value="${product.minClientPack}"/></td>
                                             <td class="product-options"></td>
                                             <td class="product-prepack">
                                                 <input type="checkbox" <c:if test="${product.prepackRequired}"> checked </c:if> />
                                             </td>
-                                            <td class="product-producer"><input type="text" value="${product.producerId}"/></td>
+                                            <td class="product-producer" data-producerid="${product.producerId}"></td>
                                             <td class="product-remove"><a href="#" title="Удалить" class="remove-item">&times;</a></td>
                                         </tr>
                                     </c:forEach>
@@ -670,37 +678,69 @@
                             <div class="table-add table-add-category">
                                 <table>
                                     <tr>
-                                        <td><textarea>Название</textarea></td>
-                                        <td><textarea>Описание</textarea></td>
+                                        <td class="category-name"><textarea>Название</textarea></td>
+                                        <td class="category-descr"><textarea>Описание</textarea></td>
                                         <td class="category-parent"></td>
                                     </tr>
                                 </table>
                                 <a class="btn btn-sm no-border btn-primary edit-add" href="#">Добавить</a>
                             </div>
 
-                            <table>
+                            <table class="category-table">
                                 <thead>
                                 <tr>
                                     <td>Название</td>
                                     <td>Описание</td>
                                     <td>Родительская категория</td>
+                                    <td></td>
                                 </tr>
                                 </thead>
                                 <c:forEach var="category" items="${categories}">
                                     <tr id="${category.id}">
                                         <td class="category-name"><textarea>${category.name}</textarea></td>
                                         <td class="category-descr"><textarea>${category.descr}</textarea></td>
-                                        <td class="category-parent">
-
+                                        <td class="category-parent" data-parentid="${category.parentId}">
                                         </td>
+                                        <td class="category-remove"><a href="#" class="remove-item">&times;</a></td>
                                     </tr>
                                 </c:forEach>
 
                             </table>
-                            <a class="btn btn-sm btn-primary no-border save-products" href="#">Сохранить изменения</a>
+                            <a class="btn btn-sm btn-primary no-border save-categories" href="#">Сохранить изменения</a>
 
                         </div>
-                        <div id="edit-producer" class="tab-pane"></div>
+                        <div id="edit-producer" class="tab-pane">
+                            <a class="btn btn-sm no-border btn-primary edit-show-add" href="#">Добавить производителя</a>
+
+                            <div class="table-add table-add-producer">
+                                <table>
+                                    <tr>
+                                        <td class="producer-name"><textarea>Название</textarea></td>
+                                        <td class="producer-descr"><textarea>Описание</textarea></td>
+                                    </tr>
+                                </table>
+                                <a class="btn btn-sm no-border btn-primary edit-add" href="#">Добавить</a>
+                            </div>
+
+                            <table class="producer-table">
+                                <thead>
+                                <tr>
+                                    <td>Название</td>
+                                    <td>Описание</td>
+                                    <td></td>
+                                </tr>
+                                </thead>
+                                <c:forEach var="producer" items="${producers}">
+                                    <tr id="${producer.id}">
+                                        <td class="producer-name"><textarea>${producer.name}</textarea></td>
+                                        <td class="producer-descr"><textarea>${producer.descr}</textarea></td>
+                                        <td class="producer-remove"><a href="#" class="remove-item">&times;</a></td>
+                                    </tr>
+                                </c:forEach>
+
+                            </table>
+                            <a class="btn btn-sm btn-primary no-border save-producers" href="#">Сохранить изменения</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -720,6 +760,7 @@
 
 <!-- файлы thrift -->
 <script src="/build/thrift.min.js" type="text/javascript"></script>
+
 <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
 
 <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>

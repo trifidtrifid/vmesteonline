@@ -1303,6 +1303,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                     break;
                 case 4:
                     $('.bo-settings').show();
+                    initSettings();
                     break;
             }
             $(this).closest('ul').find('.active').removeClass('active');
@@ -1333,100 +1334,282 @@ if($('.container.backoffice').hasClass('noAccess')){
     /* -------------------- SETTINGS --------------------*/
     /* --------------------------------------------------*/
 
-    $('#settings-logo').ace_file_input({
-        style:'well',
-        btn_choose:'Изменить логотип',
-        btn_change:null,
-        no_icon:'',
-        droppable:true,
-        thumbnail:'large',
-        icon_remove:null
-    }).on('change', function(){
-            $('.logo-container>img').hide();
-    }).parent().addClass('settings-logo');
+
+    function initSettings(){
+        $('#settings-logo').ace_file_input({
+            style:'well',
+            btn_choose:'Изменить логотип',
+            btn_change:null,
+            no_icon:'',
+            droppable:true,
+            thumbnail:'large',
+            icon_remove:null
+        }).on('change', function(){
+                $('.logo-container>img').hide();
+            }).parent().addClass('settings-logo');
 
 
-    $('#date-picker-6').datepicker({
-        autoclose:true,
-        language:'ru'
-    });
+        $('#date-picker-6').datepicker({
+            autoclose:true,
+            language:'ru'
+        });
 
-    $('.settings-item .btn-save').click(function(){
+        var shopid = $('.backoffice.dynamic').attr('id');
+        var myShop = thriftModule.client.getShop(shopid);
+
+        /* настройки даты */
+            // пока что нет функции для вывода на БЕ
+            // () зкомменчена
+
+        /* настройки доставки */
+        var deliveryCostByDistance = myShop.deliveryCostByDistance,
+            deliveryCostByDistanceHtml = "";
+        for(var p in deliveryCostByDistance){
+            deliveryCostByDistanceHtml += '<div class="delivery-interval delivery-price-type">'+
+                '<input type="text" value="'+ p +'"><span>км</span>'+
+                    '<input type="text" value="'+ deliveryCostByDistance[p] +'"><span>руб</span>'+
+                        '<a href="#" class="add-delivery-interval add-interval">+</a>'+
+                    '</div>';
+        }
+        if(deliveryCostByDistanceHtml == ""){
+            deliveryCostByDistanceHtml += '<div class="delivery-interval delivery-price-type">'+
+                '<input type="text" placeholder="Интервал"><span>км</span>'+
+                '<input type="text" placeholder="Стоимость"><span>руб</span>'+
+                '<a href="#" class="add-delivery-interval add-interval">+</a>'+
+                '</div>';
+        }
+        $('.delivery-interval-container').append(deliveryCostByDistanceHtml);
+        //----------------
+        var deliveryByWeightIncrement = myShop.deliveryByWeightIncrement,
+            deliveryByWeightIncrementHtml = "";
+        for(var p in deliveryByWeightIncrement){
+            deliveryByWeightIncrementHtml += '<div class="delivery-weight delivery-price-type">'+
+                '<input type="text" value="'+ p +'"><span>кг</span>'+
+                '<input type="text" value="'+ deliveryByWeightIncrement[p] +'"><span>руб</span>'+
+                '<a href="#" class="add-delivery-interval add-interval">+</a>'+
+                '</div>';
+        }
+        if(deliveryByWeightIncrementHtml == ""){
+            deliveryByWeightIncrementHtml += '<div class="delivery-weight delivery-price-type">'+
+                '<input type="text" placeholder="Интервал"><span>кг</span>'+
+                '<input type="text" placeholder="Стоимость"><span>руб</span>'+
+                '<a href="#" class="add-delivery-interval add-interval">+</a>'+
+                '</div>';
+        }
+        $('.delivery-weight-container').append(deliveryByWeightIncrementHtml);
+        //----------------
+        var deliveryTypeAddressMasks = myShop.deliveryTypeAddressMasks,
+            deliveryTypeAddressMasksHtml = "";
+        for(var p in deliveryTypeAddressMasks){
+            deliveryTypeAddressMasksHtml += '<div class="delivery-area  delivery-price-type">'+
+                '<span>'+ p +'</span><input type="text" value="'+ deliveryTypeAddressMasks[p] +'"><span>руб</span>'+
+                '</div>';
+        }
+        if(deliveryTypeAddressMasksHtml == ""){
+            deliveryTypeAddressMasksHtml += '<div class="delivery-area  delivery-price-type">'+
+                '<span>Близко</span><input type="text" placeholder="Стоимость"><span>руб</span>'+
+                '</div>'+
+                '<div class="delivery-area  delivery-price-type">'+
+                '<span>Далеко</span><input type="text" placeholder="Стоимость"><span>руб</span>'+
+                '</div>';
+        }
+        $('.delivery-area-container').append(deliveryTypeAddressMasksHtml);
+
+        $('.add-interval').click(function(e){
+            e.preventDefault();
+
+            var isDeliveryType = $(this).closest('.delivery-price-type').hasClass('delivery-interval');
+            var newInterval;
+            if(isDeliveryType){
+
+                newInterval = '<div class="delivery-interval new-interval delivery-price-type">'+
+                    '<input type="text" placeholder="Интервал"><span>км</span>&nbsp;'+
+                    '<input type="text" placeholder="Стоимость"><span>руб</span>&nbsp;'+
+                    '<a href="#" class="add-delivery-interval remove-interval">&ndash;</a>'+
+                    '</div>';
+            }else{
+                newInterval = '<div class="delivery-weight new-interval delivery-price-type">'+
+                    '<input type="text" placeholder="Интервал"><span>кг</span>&nbsp;'+
+                    '<input type="text" placeholder="Стоимость"><span>руб</span>&nbsp;'+
+                    '<a href="#" class="add-delivery-interval remove-interval">&ndash;</a>'+
+                    '</div>';
+            }
+            $(this).closest('.delivery-price-type').after(newInterval);
+
+            $('.new-interval .remove-interval').click(function(e){
+                e.preventDefault();
+
+                $(this).closest('.new-interval').slideUp(200,function(){
+                    $(this).detach();
+                });
+            });
+
+            $('.new-interval').slideDown().removeClass('.new-interval');
+        });
+    }
+
+    $('.settings-item .btn-save').click(function(e){
+        e.preventDefault();
         var id = $(this).closest('.settings-item').attr('id');
 
         switch(id) {
             case "settings-common":
                 var settingsCommon = $('#settings-common');
-                var newShopInfo = new com.vmesteonline.be.shop.Shop();
+                var newShopInfo = myShop;
+
                 newShopInfo.name = settingsCommon.find($('#name')).val();
                 newShopInfo.descr = settingsCommon.find($('#descr')).val();
                 newShopInfo.address = thriftModule.client.createDeliveryAddress(settingsCommon.find($('#address')).val());
+
+                var newLogo = $('.logo-container .file-name img');
+                newLogo.length ? newShopInfo.logoURL = newLogo.css('background-image') :
+                    newShopInfo.logoURL = $('.logo-container>img').attr('src');
 
                 thriftModule.clientBO.updateShop(newShopInfo);
                 break;
             case "settings-shedule":
                 var dates = new com.vmesteonline.be.shop.OrderDates();
-                dates.type = new com.vmesteonline.be.shop.OrderDatesType;
-                dates.orderDay = "";
-                dates.orderBefore = $('#days-before').val(); // перевести в правильный формат
-                dates.eachOddEven = "";
-                dates.priceTypeToUse = "";
+                dates.type = com.vmesteonline.be.shop.OrderDatesType.ORDER_WEEKLY;
 
-                thriftModule.clientBO.setDate(dates);
+                var day = 3600*24;
+                dates.orderBefore = parseInt($('#days-before').val())*day;
+                /*dates.eachOddEven = "";
+                dates.priceTypeToUse = "";*/
+
+                $('.shedule-dates .selected').each(function(){
+                    dates.orderDay = $(this).data('date');
+
+                    thriftModule.clientBO.setDate(dates);
+                });
                 break;
             case "settings-delivery":
+                newShopInfo = myShop;
+
+                var deliveryCostByDistance = [];
+                $('.delivery-interval').each(function(){
+                    var key = parseInt($(this).find('input:eq(0)').val()),
+                     value = parseFloat($(this).find('input:eq(1)').val());
+
+                    if(key && value) deliveryCostByDistance[key] = value;
+                    console.log("key "+key+"; value "+value);
+                });
+
+                newShopInfo.deliveryCostByDistance = deliveryCostByDistance;
+
+                var deliveryTypeAddressMasks = [],
+                    counter = 0;
+                $('.delivery-area').each(function(){
+                    var key;
+                    counter ? key = com.vmesteonline.be.shop.DeliveryType.SHORT_RANGE : key = com.vmesteonline.be.shop.DeliveryType.LONG_RANGE;
+                    counter++;
+                    var value = $(this).find('input:eq(0)').val();
+
+                    if(value) deliveryTypeAddressMasks[key] = value;
+                });
+                newShopInfo.deliveryTypeAddressMasks = deliveryTypeAddressMasks;
+
+                var deliveryByWeightIncrement = [];
+                $('.delivery-weight').each(function(){
+                    var key = parseInt($(this).find('input:eq(0)').val()),
+                        value = parseInt($(this).find('input:eq(1)').val());
+
+                    if(key && value) deliveryByWeightIncrement[key] = value;
+                });
+                newShopInfo.deliveryByWeightIncrement = deliveryByWeightIncrement;
+
+                thriftModule.clientBO.updateShop(newShopInfo);
                 break;
         }
     });
 
     $('.shedule-dates td').click(function(e){
         e.preventDefault();
-        e.stopPropagation();
 
-        $(this).addClass('selected');
-        if($(this).find('.remove-date').length == 0){
-            $(this).append("<a class='remove-date' href='#'>&times;</a>");
-        }
+        if(!$(this).hasClass('new') && !$(this).hasClass('old')){
 
-        $(this).find('.remove-date').click(function(e){
-            e.preventDefault();
             e.stopPropagation();
 
-           $(this).parent().removeClass('selected');
-           $(this).hide().detach();
-        });
-    });
-    $('.add-interval').click(function(e){
-        e.preventDefault();
+            $(this).addClass('selected');
 
-        var isDeliveryType = $(this).closest('.delivery-price-type').hasClass('delivery-interval');
-        var newInterval;
-        if(isDeliveryType){
+            var selectedDay = $(this).text();
+            var metaTime = parseInt(getMetaDate_ver2($(this).closest('.shedule-dates'),selectedDay)/1000);
+            metaTime -= metaTime%86400;
+            //var day = 3600*24;
 
-            newInterval = '<div class="delivery-interval new-interval delivery-price-type">'+
-                '<input type="text" placeholder="Интервал"><span>км</span>&nbsp;'+
-                '<input type="text" placeholder="Стоимость"><span>руб</span>&nbsp;'+
-                '<a href="#" class="add-delivery-interval remove-interval">&ndash;</a>'+
-                '</div>';
-        }else{
-            newInterval = '<div class="delivery-weight new-interval delivery-price-type">'+
-                '<input type="text" placeholder="Интервал"><span>кг</span>&nbsp;'+
-                '<input type="text" placeholder="Стоимость"><span>руб</span>&nbsp;'+
-                '<a href="#" class="add-delivery-interval remove-interval">&ndash;</a>'+
-                '</div>';
-        }
-       $(this).closest('.delivery-price-type').after(newInterval);
+            $(this).attr('data-date',metaTime);
 
-        $('.new-interval .remove-interval').click(function(e){
-            e.preventDefault();
 
-            $(this).closest('.new-interval').slideUp(200,function(){
-              $(this).detach();
+            if($(this).find('.remove-date').length == 0){
+                $(this).append("<a class='remove-date' href='#'>&times;</a>");
+            }
+
+            $(this).find('.remove-date').click(function(e){
+                e.preventDefault();
+                e.stopPropagation();
+
+                var dates = new com.vmesteonline.be.shop.OrderDates();
+                dates.type = com.vmesteonline.be.shop.OrderDatesType.ORDER_WEEKLY;
+
+                var day = 3600*24;
+                dates.orderBefore = parseInt($('#days-before').val())*day;
+                dates.orderDay = $(this).parent().data('date');
+
+                thriftModule.clientBO.removeDate(dates);
+               $(this).parent().removeClass('selected');
+               $(this).hide().detach();
             });
-        });
-
-        $('.new-interval').slideDown().removeClass('.new-interval');
+        }
     });
+
+    function getMetaDate_ver2(calendarPicker,day){
+        try {
+            var strDate = calendarPicker.find('.datepicker-days .switch').text().split(" ");
+
+            var strMonth="";
+            var year = strDate[1];
+            switch(strDate[0]){
+                case 'Январь':
+                    strMonth = "Jan";
+                    break;
+                case 'Февраль':
+                    strMonth = "Feb";
+                    break;
+                case 'Март':
+                    strMonth = "March";
+                    break;
+                case 'Апрель':
+                    strMonth = "Apr";
+                    break;
+                case 'Май':
+                    strMonth = "May";
+                    break;
+                case 'Июнь':
+                    strMonth = "June";
+                    break;
+                case 'Июль':
+                    strMonth = "July";
+                    break;
+                case 'Август':
+                    strMonth = "Aug";
+                    break;
+                case 'Сентябрь':
+                    strMonth = "Sen";
+                    break;
+                case 'Октябрь':
+                    strMonth = "Oct";
+                    break;
+                case 'Ноябрь':
+                    strMonth = "Nov";
+                    break;
+                case 'Декабрь':
+                    strMonth = "Dec";
+                    break;
+            }
+        } catch(e){
+            alert(e + ' Функция getMetaDate');
+        }
+        return (Date.parse(day+" "+strMonth+" "+year));
+    }
 
 
     /* ----------------------------------------------*/
@@ -1436,92 +1619,167 @@ if($('.container.backoffice').hasClass('noAccess')){
     /* добавление нового продукта  */
 
     $('.edit-show-add').click(function(e){
+
         e.preventDefault();
 
         $(this).find('+.table-add').slideToggle();
 
-        //------------------
+        var currentPane =$(this).closest('.tab-pane').attr('id');
+        switch (currentPane){
+            case "edit-product" :
+                //------------------
 
-        var tr = $('.table-add-product table tr');
-        $('#imageURL-add').ace_file_input({
-            style:'well',
-            btn_choose:'',
-            btn_change:null,
-            no_icon:'',
-            droppable:true,
-            icon_remove:null,
-            thumbnail:'large'
-        }).on('change', function(){
-                tr.find('.product-imageURL .file-label').css('opacity',1);
-                tr.find('.product-imageURL>img').hide();
-            });
+                var tr = $('.table-add-product table tr');
+                $('#imageURL-add').ace_file_input({
+                    style:'well',
+                    btn_choose:'',
+                    btn_change:null,
+                    no_icon:'',
+                    droppable:true,
+                    icon_remove:null,
+                    thumbnail:'large'
+                }).on('change', function(){
+                        tr.find('.product-imageURL .file-label').css('opacity',1);
+                        tr.find('.product-imageURL>img').hide();
+                    });
 
-        //------------------
+                //------------------
 
-        $('#imageURLSet-add').ace_file_input({
-            style:'well',
-            btn_choose:'Добавить изображение',
-            btn_change:null,
-            no_icon:'',
-            droppable:true,
-            thumbnail:'large'
-        }).on('change', function(){
-            var el = $(this);
-            setAddUrlImageSet(0,0,el)
-        });
-        initRemoveImageSetItem($('.table-add-product table .product-imagesSet'));
+                $('#imageURLSet-add').ace_file_input({
+                    style:'well',
+                    btn_choose:'Добавить изображение',
+                    btn_change:null,
+                    no_icon:'',
+                    droppable:true,
+                    thumbnail:'large'
+                }).on('change', function(){
+                        var el = $(this);
+                        setAddUrlImageSet(0,0,el)
+                    });
+                initRemoveImageSetItem($('.table-add-product table .product-imagesSet'));
 
-        //------------------
+                //------------------
 
-        var categoriesHtml = getCategoriesHtml();
+                var categoriesHtml = getCategoriesHtml();
 
-        var categoryTd = $('.table-add-product .product-categories');
-        categoryTd.html(categoriesHtml);
-        initRemoveCategoryItem(categoryTd);
-        initDropdownClick(categoryTd);
+                var categoryTd = $('.table-add-product .product-categories');
+                categoryTd.html(categoriesHtml);
+                initRemoveCategoryItem(categoryTd);
+                initCategoryDropdownClick(categoryTd);
 
-        //------------------
+                //------------------
 
-        var optionsTd = $('.table-add-product .product-options');
-        initRemoveOptionsItem(optionsTd);
-        initAddOptionsItem(optionsTd);
+                var optionsTd = $('.table-add-product .product-options');
+                initRemoveOptionsItem(optionsTd);
+                initAddOptionsItem(optionsTd);
+
+                //------------------
+
+                $(this).find('+.table-add .product-producer .dropdown-menu a').click(function(){
+                    var producerId = $(this).parent().data('producerid');
+                    $(this).closest('td').attr('data-producerid',producerId);
+                });
+                break;
+            case "edit-category" :
+                break;
+            case "edit-producer" :
+        }
+
+
     });
 
-    $('.table-add-product .edit-add').click(function(){
+    $('.table-add-product .edit-add').click(function(e){
+        e.preventDefault();
+
         var shopId = $('.backoffice.dynamic').attr('id');
+        var tableLine = $(this).closest('.table-add-product').find('table tr'),
+            isAdd = true;
+        var productInfo = createProductInfoObject(tableLine,isAdd);
+
+        if(!productInfo.product.producerId){
+            $('.error-info').text('Вы не указали производителя !').show();
+        }else{
+            $('.error-info').hide();
+            thriftModule.clientBO.registerProduct(productInfo, shopId);
+            console.log('5');
+
+            $(this).closest('.table-add-product').slideUp(function(){
+                var newLine = tableLine.clone();
+                newLine.addClass('hidden');
+                $('.product-table table tbody').prepend(newLine);
+                newLine.slideDown();
+            });
+        }
+
+    });
+
+    function createProductInfoObject(tableLine,isAdd){
         var productInfo = new com.vmesteonline.be.shop.FullProductInfo();
         productInfo.product = new com.vmesteonline.be.shop.Product();
         productInfo.details = new com.vmesteonline.be.shop.ProductDetails();
-        var tableLine = $(this).closest('.table-add-product').find('table tr');
 
-        productInfo.product.id = $(this).closest('tr').attr('id');
+        isAdd ? productInfo.product.id = 0 : productInfo.product.id = tableLine.attr('id');
+        console.log('productInfo.product.id '+tableLine.attr('id'));
+
         productInfo.product.name = tableLine.find('.product-name textarea').val();
         productInfo.product.shortDescr = tableLine.find('.product-shortDescr textarea').val();
 
-        productInfo.product.imageURL = "";//tableLine.find('.product-shortDescr textarea').val();
+        productInfo.product.producerId = tableLine.find('.product-producer').data('producerid');
 
-        productInfo.product.weight = tableLine.find('.product-weight input').val();
-        productInfo.product.price = tableLine.find('.product-price input').val();
+        var loadedLogo = tableLine.find('.product-imageURL .file-name img');
+        loadedLogo.length ? productInfo.product.imageURL = loadedLogo.css('background-image')
+            : productInfo.product.imageURL = tableLine.find('.product-imageURL>img').attr('src');
+
+        tableLine.find('.product-weight input').val() ?
+            productInfo.product.weight = parseFloat(tableLine.find('.product-weight input').val()) :
+            productInfo.product.weight = 0;
+
+        tableLine.find('.product-price input').val() ?
+            productInfo.product.price = parseFloat(tableLine.find('.product-price input').val()):
+            productInfo.product.price = 0;
+
         productInfo.product.unitName = tableLine.find('.product-unitName input').val();
-        productInfo.product.minClientPack = tableLine.find('.product-pack input').val();
+
+        tableLine.find('.product-pack input').val() ?
+            productInfo.product.minClientPack = parseFloat(tableLine.find('.product-pack input').val()):
+            productInfo.product.minClientPack = 0;
+
         productInfo.product.prepackRequired = tableLine.find('.product-prepack input').attr('checked') ? true : false;
-        productInfo.product.producerId = tableLine.find('.product-producer input').val();
+
+        console.log('productInfo.product.id '+productInfo.product.id);
 
         productInfo.details.fullDescr = tableLine.find('.product-fullDescr textarea').val();
-        productInfo.details.imagesURLset = tableLine.find('.product-fullDescr textarea').val();
-        productInfo.details.categories = tableLine.find('.product-fullDescr textarea').val();
-        productInfo.details.options = tableLine.find('.product-fullDescr textarea').val();
 
-        thriftModule.clientBO.registerProduct(productInfo, shopId);
+        var counter = 0;
+        var isImagesLoaded = tableLine.find('.product-imagesSet').find('.file-name img').length;
+        if(isImagesLoaded){
+            var imagesURLset = [];
 
-        $(this).closest('.table-add-product').slideUp(function(){
-            var newLine = tableLine.clone();
-            newLine.addClass('hidden');
-            $('.product-table table tbody').prepend(newLine);
-            newLine.slideDown();
+            tableLine.find('.product-imagesSet .ace-file-input.added').each(function(){
+                imagesURLset[counter++] = $(this).find('.file-name img').css('background-image');
+            });
+
+            productInfo.details.imagesURLset = imagesURLset;
+        }
+        console.log('2');
+
+        counter = 0;
+        var categoriesIdList = [];
+        tableLine.find('.product-categories .category-item').each(function(){
+            categoriesIdList[counter++] = $(this).data('categoryid');
         });
+        productInfo.details.categories = categoriesIdList;
+        console.log('3');
 
-    });
+        var optionsMap = [];
+        tableLine.find('.product-options table tr').each(function(){
+            optionsMap[$(this).find('td:eq(0)').text()] = $(this).find('td:eq(1)').text();
+        });
+        productInfo.details.options = optionsMap;
+        console.log('4');
+
+        return productInfo;
+    }
 
     /* первоначальное заполнение таблицы продуктов */
 
@@ -1551,9 +1809,9 @@ if($('.container.backoffice').hasClass('noAccess')){
                 categoriesLength = categories.length,
                 categoriesHtml = "";
             for(var i = 0; i < categoriesLength; i++){
-                categoriesHtml += "<div class='category-item map-item'>"+
+                categoriesHtml += "<div class='category-item map-item' data-categoryid='"+ categories[i] +"'>"+
                     "<a href='#' class='remove-category-item remove-item'>&times</a>"+
-                    categories[i]+
+                    getCategoriesHtml(categories[i]).name+
                     "</div>";
             }
 
@@ -1570,6 +1828,30 @@ if($('.container.backoffice').hasClass('noAccess')){
                     "</tr>";
             }
             optionsHtml += "</table><a href='#' class='add-options-item add-item'>Добавить</a>";
+            // -------------
+            var currentProducer,
+                producerId = $(this).find('.product-producer').data('producerid'),
+                producersList = thriftModule.client.getProducers(),
+                producersListLength = producersList.length,
+                producersListHtml = "";
+            for(var i = 0; i < producersListLength; i++ ){
+                if(producersList[i].id == producerId){
+                    currentProducer = producersList[i];
+                }
+                producersListHtml += "<li data-producerid='"+ producersList[i].id +"'><a href='#'>"+ producersList[i].name +"</a></li>";
+            }
+            var producersHtml = "<span>" + currentProducer.name + "</span>"+
+                '<div class="btn-group producers-dropdown">'+
+                '<button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">'+
+                '<span class="btn-group-text">Изменить</span>'+
+                '<span class="icon-caret-down icon-on-right"></span>'+
+                '</button>'+
+                '<ul class="dropdown-menu dropdown-blue">'+
+                producersListHtml+
+                '</ul>'+
+                '</div>';
+
+
             // -------------
 
             var tr = $(this);
@@ -1607,34 +1889,48 @@ if($('.container.backoffice').hasClass('noAccess')){
 
             $(this).find('.product-categories').html(categoriesHtml);
             initRemoveCategoryItem($(this));
-            initDropdownClick($(this));
+            initCategoryDropdownClick($(this));
 
             $(this).find('.product-options').html(optionsHtml);
             initRemoveOptionsItem($(this));
             initAddOptionsItem($(this));
+
+            $(this).find('.product-producer').html(producersHtml);
+            initChangeProducer($(this));
         });
     }
 
-    function getCategoriesHtml(){
+    function getCategoriesHtml(searchCategory){
         var shopId = $('.backoffice.dynamic').attr('id');
         var categories = thriftModule.client.getAllCategories(shopId);
         var categoriesLength = categories.length;
         var categoriesListHtml = '';
-        for(var i = 0; i < categoriesLength; i++){
-            categoriesListHtml += '<li id="'+ categories[i].id +'"><a href="#">'+categories[i].name+'</a></li>';
+        if(searchCategory){
+            var searchedCategory;
+            for(var i = 0; i < categoriesLength; i++){
+                if(categories[i].id == searchCategory){
+                    searchedCategory = categories[i];
+                }
+            }
+
+            return searchedCategory;
+        }else{
+            for(var i = 0; i < categoriesLength; i++){
+                categoriesListHtml += '<li data-categoryid="'+ categories[i].id +'"><a href="#">'+categories[i].name+'</a></li>';
+            }
+
+            var categoriesHtml = '<div class="btn-group categories-dropdown">'+
+                '<button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">'+
+                '<span class="btn-group-text">Добавить</span>'+
+                '<span class="icon-caret-down icon-on-right"></span>'+
+                '</button>'+
+                '<ul class="dropdown-menu dropdown-blue">'+
+                categoriesListHtml+
+                '</ul>'+
+                '</div>';
+
+            return categoriesHtml;
         }
-
-        var categoriesHtml = '<div class="btn-group categories-dropdown">'+
-            '<button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">'+
-            '<span class="btn-group-text">Добавить</span>'+
-            '<span class="icon-caret-down icon-on-right"></span>'+
-            '</button>'+
-            '<ul class="dropdown-menu dropdown-blue">'+
-            categoriesListHtml+
-            '</ul>'+
-            '</div>';
-
-        return categoriesHtml;
     }
 
     function setAddUrlImageSet(productId,imagesURLSetLength,el){
@@ -1693,10 +1989,11 @@ if($('.container.backoffice').hasClass('noAccess')){
         });
     }
 
-    function initDropdownClick(selector){
+    function initCategoryDropdownClick(selector){
         selector.find('.categories-dropdown .dropdown-menu a').click(function(e){
             e.preventDefault();
-            var newCategoryItemHtml = '<div class="category-item map-item"><a href="#" class="remove-category-item remove-item">×</a>'+ $(this).text() +'</div>';
+            var newCategoryItemHtml = '<div class="category-item map-item" data-categoryid="'+ $(this).closest('li').data('categoryid') +'">' +
+                '<a href="#" class="remove-category-item remove-item">×</a>'+ $(this).text() +'</div>';
             $(this).closest('td').find('.categories-dropdown').before(newCategoryItemHtml);
 
             initRemoveCategoryItem($(this).closest('td'));
@@ -1726,39 +2023,185 @@ if($('.container.backoffice').hasClass('noAccess')){
         });
     }
 
-    /* сохранение изменений в таблице продуктов */
+    function initChangeProducer(selector){
+        selector.find('.producers-dropdown .dropdown-menu a').click(function(e){
+            e.preventDefault();
 
-    $('#edit-product table input').change(function(){
-        $(this).closest('tr').addClass('changed');
-    });
+            var producerName = $(this).text();
+            var producerId = $(this).closest('li').data('producerid');
+            $(this).closest('td').attr('id',producerId).find('>span').text(producerName);
+        });
+    }
+
+    /* сохранение изменений в таблице продуктов */
 
     $('.save-products').click(function(e){
         e.preventDefault();
 
         $('#edit-product table .changed').each(function(){
 
-            var productInfo = new com.vmesteonline.be.shop.FullProductInfo();
-            productInfo.product = new com.vmesteonline.be.shop.Product();
-            productInfo.details = new com.vmesteonline.be.shop.ProductDetails();
-
-            productInfo.product.id = $(this).closest('tr').attr('id');
-            productInfo.product.name = $(this).find('td:eq(0) input').val();
-            productInfo.product.shortDescr = $(this).find('td:eq(1) input').val();
-            productInfo.product.weight = $(this).find('td:eq(2) input').val();
-            productInfo.product.price = $(this).find('td:eq(3) input').val();
+            var tableLine = $(this),
+                isAdd = false;
+            var productInfo = createProductInfoObject(tableLine,isAdd);
 
             thriftModule.clientBO.updateProduct(productInfo);
         });
     });
 
+    $('#edit-product .products-table table tr,#edit-category .category-table tr, #edit-producer .producer-table tr').click(function(){
+        $(this).addClass('changed');
+    });
+
     /* редактирование категорий */
+    function setParentCategory(selector){
+        var newCategory = selector.text();
+        var categoryId = selector.closest('li').data('categoryid');
+        selector.closest('.category-parent').attr('data-parentid',categoryId).find('.btn-group-text').text(newCategory);
+    }
 
     $('.category-parent').each(function(){
        var categoriesHtml = getCategoriesHtml();
-       $(this).html(categoriesHtml);
-        $(this).find('.btn-group-text').text('Выбрать');
+        $(this).html(categoriesHtml);
+
+        $(this).find('.btn-group-text').text('Выбрать родительскую');
+
+        $(this).find('.dropdown-menu a').click(function(e){
+            e.preventDefault();
+
+            setParentCategory($(this));
+
+        });
+
+        if($(this).closest('.table-add').length == 0){
+            var parentId = $(this).data('parentid');
+
+            $(this).find('.dropdown-menu li').each(function(){
+                if($(this).data('categoryid') == parentId){
+                    setParentCategory($(this));
+                }
+            })
+        }
+
     });
 
+    $('.table-add-category .edit-add').click(function(e){
+        e.preventDefault();
+
+        var shopId = $('.backoffice.dynamic').attr('id');
+        var tableLine = $(this).closest('.table-add-category').find('table tr'),
+            isAdd = true;
+        var productCategory = createCategoryObject(tableLine,isAdd);
+
+        /*if(!productInfo.product.producerId){
+            $('.error-info').text('Вы не указали производителя !').show();
+        }else{*/
+            $('.error-info').hide();
+            thriftModule.clientBO.registerProductCategory(productCategory, shopId);
+
+            $(this).closest('.table-add-category').slideUp(function(){
+                var newLine = tableLine.clone();
+                newLine.addClass('hidden');
+                $('.product-table table tbody').prepend(newLine);
+                newLine.slideDown();
+            });
+        //}
+    });
+
+    function createCategoryObject(tableLine,isAdd){
+        var productCategory = new com.vmesteonline.be.shop.ProductCategory();
+
+        isAdd ? productCategory.id = 0 : productCategory.id = tableLine.attr('id');
+        productCategory.name = tableLine.find('.category-name textarea').val();
+        productCategory.descr = tableLine.find('.category-descr textarea').val();
+        productCategory.parentId = tableLine.find('.category-parent').data('parentid');
+
+        return productCategory;
+    }
+
+    $('.save-categories').click(function(e){
+        e.preventDefault();
+
+        $('.category-table tr.changed').each(function(){
+            var tableLine = $(this),
+                isAdd = false;
+
+            var productCategory = createCategoryObject(tableLine,isAdd);
+            thriftModule.clientBO.updateCategory(productCategory);
+        })
+    });
+
+    $('.category-remove a').click(function(e){
+        e.preventDefault();
+
+        var categoryId = $(this).closest('tr').attr('id');
+        var shopId = $('.backoffice.dynamic').attr('id');
+
+        $(this).closest('tr').addClass('removing').fadeOut(600,function(){
+            $(this).detach();
+        });
+
+        thriftModule.clientBO.deleteCategory(categoryId,shopId);
+    });
+
+    /* редактирование производителей */
+
+    $('.table-add-producer .edit-add').click(function(e){
+        e.preventDefault();
+
+        var shopId = $('.backoffice.dynamic').attr('id');
+        var tableLine = $(this).closest('.table-add-producer').find('table tr'),
+            isAdd = true;
+        var producer = createProducerObject(tableLine,isAdd);
+
+        /*if(!productInfo.product.producerId){
+         $('.error-info').text('Вы не указали производителя !').show();
+         }else{*/
+        $('.error-info').hide();
+        thriftModule.clientBO.registerProducer(producer, shopId);
+
+        $(this).closest('.table-add-producer').slideUp(function(){
+            var newLine = tableLine.clone();
+            newLine.addClass('hidden');
+            $('.product-table table tbody').prepend(newLine);
+            newLine.slideDown();
+        });
+        //}
+    });
+
+    function createProducerObject(tableLine,isAdd){
+        var producer = new com.vmesteonline.be.shop.Producer();
+
+        isAdd ? producer.id = 0 : producer.id = tableLine.attr('id');
+        producer.name = tableLine.find('.category-name textarea').val();
+        producer.descr = tableLine.find('.category-descr textarea').val();
+
+        return producer;
+    }
+
+    $('.save-producers').click(function(e){
+        e.preventDefault();
+
+        $('.producer-table tr.changed').each(function(){
+            var tableLine = $(this),
+                isAdd = false;
+
+            var producer = createProducerObject(tableLine,isAdd);
+            thriftModule.clientBO.updateProducer(producer);
+        })
+    });
+
+    $('.producer-remove a').click(function(e){
+        e.preventDefault();
+
+        var producerId = $(this).closest('tr').attr('id');
+        var shopId = $('.backoffice.dynamic').attr('id');
+
+        $(this).closest('tr').addClass('removing').fadeOut(600,function(){
+            $(this).detach();
+        });
+
+        thriftModule.clientBO.deleteProducer(producerId,shopId);
+    });
 }
 
         /* -------------------------------------------------*/
@@ -1770,15 +2213,32 @@ if($('.container.backoffice').hasClass('noAccess')){
             var shop = thriftModule.client.getShop(shopId);
             var userInfo = thriftModule.userClient.getUserInfoExt(shop.ownerId);
 
-            $('.owner-name span').text(userInfo.firstName+" "+userInfo.lastName);
-            //$('.owner-contacts').text(userInfo.firstName+" "+userInfo.lastName);
+            var userContacts = getUserContacts(shop.ownerId);
+
+            $('.owner-name span').text(userInfo.firstName+" "+userInfo.lastName); //
+            $('.owner-contacts').html(userContacts);
+
         });
+
+        function getUserContacts(userId,withoutBr){
+
+            var userContacts = thriftModule.userClient.getUserContactsExt(userId);
+
+            var delimeter;
+            withoutBr ? delimeter = "; " : delimeter = "<br>";
+            var userContactsText = "Email: "+userContacts.email;
+            userContacts.mobilePhone ? userContactsText += delimeter+" Телефон: "+userContacts.mobilePhone : false;
+            userContacts.homeAddress ? userContactsText += delimeter+ " Адрес: "+userContacts.homeAddress.street.name+" "+
+                userContacts.homeAddress.building.fullNo+", "+ userContacts.homeAddress.flatNo : false;
+
+            return userContactsText;
+        }
 
         $('.update-owner-link').click(function(e){
             e.preventDefault();
 
             var updateHtml = "<div class='update-owner-line'>" +
-                "<input type='text' id='owner-email' placeholder='email нового владельца'>" +
+                "<input type='text' class='owner-email' placeholder='email нового владельца'>" +
                 "<a href='#' class='btn btn-sm no-border btn-primary btn-update'>Изменить</a>"+
                 "</div>";
             var td = $(this).closest('td');
@@ -1787,23 +2247,29 @@ if($('.container.backoffice').hasClass('noAccess')){
             }
             td.find('.update-owner-line').slideToggle();
 
-            td.find('.btn-update').click(function(){
-                var shopId = $(this).attr('id');
-                var shop = thriftModule.client.getShop(shopId);
+            td.find('.btn-update').one('click',function(e){
+                e.preventDefault();
 
-                var ownerEmail = $('#owner-email').val();
-                shop.ownerId = x;
+                var shopId = $(this).closest('tr').attr('id');
+                var ownerEmail = $(this).closest('td').find('.owner-email').val();
 
-                thriftModule.clientBO.updateShop(shop);
+                var newOwnerInfo = thriftModule.clientBO.setUserShopRole(shopId ,ownerEmail,3);
+                td.find('.update-owner-line').slideToggle();
+
+                updateOwnerHtml(td,newOwnerInfo);
             });
-
         });
 
-        $('.update-admins-link').click(function(e){
+        function updateOwnerHtml(selector,newOwnerInfo){
+            selector.find('span').text(newOwnerInfo.firstName+" "+newOwnerInfo.lastName);
+            selector.closest('tr').find('.owner-contacts').html(getUserContacts(newOwnerInfo.id));
+        }
+
+       /* $('.update-admins-link').click(function(e){
             e.preventDefault();
 
             var updateHtml = "<div class='update-admins-line'>" +
-                "<input type='text' id='owner-email' placeholder='email нового админа'>" +
+                "<input type='text' class='admin-email' placeholder='email нового админа'>" +
                 "<a href='#' class='btn btn-sm no-border btn-primary btn-update'>Добавить</a>"+
                 "</div>";
             var td = $(this).closest('td');
@@ -1812,10 +2278,43 @@ if($('.container.backoffice').hasClass('noAccess')){
             }
             td.find('.update-admins-line').slideToggle();
 
-            td.find('.btn-update').click(function(){
+            td.find('.btn-update').one('click',function(){
+                e.preventDefault();
 
+                var shopId = $(this).closest('tr').attr('id');
+                var adminEmail = $(this).closest('td').find('.admin-email').val();
+
+                var newAdminInfo = thriftModule.clientBO.setUserShopRole(shopId ,adminEmail,2);
+                td.find('.update-admins-line').slideToggle();
+
+                updateAdminHtml(td,newAdminInfo,adminEmail);
             });
         });
+
+        function updateAdminHtml(selector,newAdminInfo,adminEmail){
+
+            var adminHtml = "<span class='admin-item new'><a href='#' class='remove-admin-item'>&times;</a>"+
+                newAdminInfo.firstName+" "+newAdminInfo.lastName+
+            "</span>";
+
+            selector.prepend(adminHtml);
+            var withoutBr = true;
+            selector.find('.admin-item.new').append(" ("+getUserContacts(newAdminInfo.id,withoutBr)+")");
+
+            selector.find('.admin-item.new .remove-admin-item').click(function(e){
+                e.preventDefault();
+                var shopId = selector.closest('tr').attr('id');
+
+                thriftModule.clientBO.setUserShopRole(shopId ,adminEmail,1);
+                $(this).parent().fadeOut(function(){
+                    $(this).detach();
+                });
+
+            });
+
+            selector.find('.admin-item.new').removeClass('new');
+
+        }*/
 
         $('.adminka .nav-list a').click(function(e){
             e.preventDefault();

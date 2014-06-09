@@ -204,7 +204,7 @@ padding:20px;
                 <c:forEach var="shop" items="${shops}">
                     <li>
                         <a href="../about-shop.jsp">
-                            <%--<img src="${shop.logoURL}" alt="логотип"/>--%>
+                            <img src="${shop.logoURL}" alt="логотип"/>
                         <span class="shop-right">
                             <h3>${shop.name}</h3>
                             <p>${shop.descr}</p>
