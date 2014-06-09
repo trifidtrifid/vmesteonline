@@ -1590,11 +1590,54 @@ public class ShopServiceImplTest {
 	}
 
 	@Test
+	public void testSetUserShopRole() {
+		int now = (int) (System.currentTimeMillis() / 1000L);
+		int day = 3600 * 24;
+		List<Long> upProductsIdl;
+
+		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+		try {
+			
+			long shopId = sbi.registerShop(shop);
+
+			UserShopRole userShopRole = si.getUserShopRole(shopId);
+			Assert.assertEquals(userShopRole, UserShopRole.OWNER);
+			
+			long userId = asi.registerNewUser("fn1", "ln1", "pswd1", "eml1", userHomeLocation);
+			Assert.assertTrue(asi.login("eml1", "pswd1"));
+			userShopRole = si.getUserShopRole(shopId);
+			Assert.assertEquals(userShopRole, UserShopRole.CUSTOMER);
+			
+			sbi.setUserShopRole(shop.getId(), "eml1", UserShopRole.BACKOFFICER );
+			userShopRole = si.getUserShopRole(shopId);
+			Assert.assertEquals(userShopRole, UserShopRole.BACKOFFICER);
+			
+			sbi.setUserShopRole(shop.getId(), "eml1", UserShopRole.CUSTOMER );
+			userShopRole = si.getUserShopRole(shopId);
+			Assert.assertEquals(userShopRole, UserShopRole.CUSTOMER);
+			
+			sbi.setUserShopRole(shop.getId(), "eml1", UserShopRole.OWNER );
+			userShopRole = si.getUserShopRole(shopId);
+			Assert.assertEquals(userShopRole, UserShopRole.OWNER);
+			
+			sbi.setUserShopRole(shop.getId(), "eml1", UserShopRole.CUSTOMER );
+			userShopRole = si.getUserShopRole(shopId);
+			Assert.assertEquals(userShopRole, UserShopRole.CUSTOMER);
+			
+			sbi.setUserShopRole(shop.getId(), "eml1", UserShopRole.ADMIN );
+			userShopRole = si.getUserShopRole(shopId);
+			Assert.assertEquals(userShopRole, UserShopRole.ADMIN);
+			
+		} catch (InvalidOperation e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
 	public void testGetUserShopRole() {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		int day = 3600 * 24;
-		List<Long> upProductsIdl;
 
 		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
 		try {
@@ -1606,5 +1649,6 @@ public class ShopServiceImplTest {
 			e.printStackTrace();
 		}
 	}
+	
 	
 }

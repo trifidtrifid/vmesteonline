@@ -203,27 +203,27 @@ public class VoUser extends GeoLocation {
 		}
 
 		this.address = userAddress;
-		
-			pm.retrieve(building);
-			VoUserGroup home = userAddress.getUserHomeGroup();
-			if(null!=home){
-				this.setLatitude(home.getLatitude());
-				this.setLongitude(home.getLongitude());
-				if (null != groups && !groups.isEmpty()) {
-					for (VoUserGroup ug : groups) {
-						ug.setLatitude(home.getLatitude());
-						ug.setLongitude(home.getLongitude());
-					}
-				}
-			} else {
-				groups = new ArrayList<VoUserGroup>();
-				if(null!=Defaults.defaultGroups){
-					for (VoGroup grp : Defaults.defaultGroups) {
-						if (!grp.isHome())
-							groups.add(new VoUserGroup(this, grp));
-					}
-				}
+
+		VoUserGroup home = userAddress.getUserHomeGroup();
+		if(null==home){
+			home = new VoUserGroup(this, new VoGroup("Подъезд",0));
+			home.setLongitude(building.getLongitude());
+			home.setLatitude(building.getLatitude());
+		}
+		this.setLatitude(home.getLatitude());
+		this.setLongitude(home.getLongitude());
+		if (null != groups && !groups.isEmpty()) {
+			for (VoUserGroup ug : groups) {
+				ug.setLatitude(home.getLatitude());
+				ug.setLongitude(home.getLongitude());
 			}
+		} else {
+			groups = new ArrayList<VoUserGroup>();
+			groups.add(home);
+			for( VoGroup group: Defaults.defaultGroups ){
+				groups.add(new VoUserGroup(this, group));
+			}
+		}
 		
 		addDeliveryAddress( 0L, "домой", userAddress );
 
@@ -231,8 +231,8 @@ public class VoUser extends GeoLocation {
 		pm.makePersistent(building);
 	}
 
-	private void addDeliveryAddress(long l, String string, VoPostalAddress userAddress) {
-		// TODO Auto-generated method stub
+	private void addDeliveryAddress(long l, String name, VoPostalAddress userAddress) {
+		this.deliveryAddresses.put(name, userAddress);
 	}
 
 	// *****

@@ -61,14 +61,17 @@ public class VoShopAccessRoles extends VoUserAccessBaseRoles {
 
 		//Registered User
 		fillRoleMethods( methodsAccessMask, CUSTOMER, new String[] {
-			"getMyOrdersByStatus","getOrder","getOrderDetails","createOrder","updateOrder","cancelOrder","deleteOrder","confirmOrder","appendOrder","mergeOrder",
+			"getMyOrdersByStatus","getOrder","getOrderDetails","createOrder","updateOrder","cancelOrder",
+			"deleteOrder","confirmOrder","appendOrder","mergeOrder",
 			"setOrderLine","removeOrderLine","setOrderDeliveryType","setOrderPaymentType",
-			"setOrderDeliveryAddress","createDeliveryAddress","getUserDeliveryAddresses","getUserDeliveryAddress","deleteDeliveryAddress","getDeliveryAddressViewURL"
+			"setOrderDeliveryAddress","createDeliveryAddress","getUserDeliveryAddresses","getUserDeliveryAddress",
+			"deleteDeliveryAddress","getDeliveryAddressViewURL"
 		});
 
 		//Unregistered User 
 		fillRoleMethods( methodsAccessMask, VoUserAccessBaseRoles.ANYBODY, new String[] {
-				"getUserShopRole", "getProducers", "parseCSVfile","getShops","getShop","getDates","getNextOrderDate","getProducer","getProductCategories","getProducts","getProductDetails","getProductsByCategories"
+				"getUserShopRole", "getProducers", "parseCSVfile","getShops","getShop","getDates","getNextOrderDate","getProducer",
+				"getProductCategories","getProducts","getProductDetails","getProductsByCategories"
 		});
 	}
 	

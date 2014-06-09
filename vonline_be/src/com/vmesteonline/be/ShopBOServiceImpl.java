@@ -1394,30 +1394,41 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	//======================================================================================================================
 
 	@Override
-	public UserInfo setUserShopRole(long shopId, String email, UserShopRole role) throws InvalidOperation, TException {
+	public UserInfo setUserShopRole(long shopId, String email, UserShopRole role) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			List<VoUser> vul = (List<VoUser>) pm.newQuery(VoUser.class,"email=="+email).execute();
+			List<VoUser> vul = (List<VoUser>) pm.newQuery(VoUser.class,"email=='"+email+"'").execute();
 			if( vul.size() == 0 )
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No user found by email:"+email);
 			
 			VoUser user = vul.get(0);
 			VoShop shop = pm.getObjectById(VoShop.class, shopId);
 			
-			List<VoShopAccess> rslt = (List<VoShopAccess>) pm.newQuery(VoShopAccess.class,"userId=="+user.getId()+" && shopId=="+shopId).execute();
+			long userId = user.getId();
+			
+				
+			List<VoShopAccess> rslt = (List<VoShopAccess>) pm.newQuery(VoShopAccess.class,"userId=="+userId+" && shopId=="+shopId).execute();
 			if( rslt.size() != 0){
 				pm.deletePersistentAll(rslt); //clear all permissions for the user;
 			}
+			
+			if( userId == shop.getOwnerId() && role != UserShopRole.OWNER )
+				shop.setOwnerId( 0L );
 				
 			if( role == UserShopRole.OWNER){
-				shop.setOwnerId(user.getId());
+				shop.setOwnerId(userId);
+				VoShopAccessManager.createAccessForShopOwner( userId, shopId);
 				pm.makePersistent(shop);
 				
-			} else if( role == UserShopRole.OWNER){
+			} else if( role == UserShopRole.BACKOFFICER){
 			
-				VoShopAccessManager.createAccessBillingManager(user.getId(), shop.getId());
-				VoShopAccessManager.createAccessReportManager(user.getId(), shop.getId());
-				VoShopAccessManager.createAccessCatalogManager(user.getId(), shop.getId());
+				VoShopAccessManager.createAccessBillingManager(userId, shopId);
+				VoShopAccessManager.createAccessReportManager(userId, shopId);
+				VoShopAccessManager.createAccessCatalogManager(userId, shopId);
+				
+			} else if( role == UserShopRole.ADMIN){
+				
+				VoShopAccessManager.createAccessForShopOwner( userId,shopId);
 				
 			}
 			return user.getUserInfo();
@@ -1432,7 +1443,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 //======================================================================================================================
 
 	@Override
-	public void deleteProduct(long productId, long shopId) throws InvalidOperation, TException {
+	public void deleteProduct(long productId, long shopId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			pm.getObjectById(VoProduct.class, productId).markDeteled();
