@@ -128,7 +128,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	protected Key id;
 */
-	@Persistent
+	@Persistent(serialized = "true")
 	@Unindexed
 	protected byte[] content;
 
