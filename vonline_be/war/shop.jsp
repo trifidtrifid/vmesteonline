@@ -119,6 +119,7 @@
 					<a href="#" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
+                    <a href="about-shop.jsp" class="about-shop">О магазине</a>
 					<!-- /.brand -->
 				</div>
 				<!-- /.navbar-header -->

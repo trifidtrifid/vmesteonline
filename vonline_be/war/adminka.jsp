@@ -52,7 +52,6 @@
         pageContext.setAttribute("orders", orders);
     }
 
-
 %>
 <%
 
@@ -143,17 +142,12 @@
                             <span class="menu-text"> Магазины </span>
                         </a>
                     </li>
-                    <li>
-                        <a href="#">
-                            <span class="menu-text"> Пользователи </span>
-                        </a>
-                    </li>
                 </ul><!-- /.nav-list -->
             </aside>
 
             <div class="main-content">
                 <div class="adminka-shops back-tab">
-                    <a class="btn btn-primary btn-sm no-border create-shop" href="#">Создать магазин</a>
+                    <a class="btn btn-primary btn-sm no-border create-shop" href="regShop.jsp">Создать магазин</a>
                     <table>
                         <c:forEach var="shop" items="${shops}">
                             <tr id="${shop.id}">
@@ -162,63 +156,14 @@
                                     <span></span>
                                     <a class="update-owner-link fa fa-pencil" href="#"></a>
                                 </td>
-                                <%--<td class="owner-contacts">Контакты владельца</td>--%>
-                                <td class="shop-admins">
-                                    администраторы
+                                <td class="owner-contacts"></td>
+                               <%-- <td class="shop-admins">
                                     <a class="update-admins-link" href="#">+</a>
-                                </td>
-                                <%--<td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>--%>
+                                </td>--%>
                                 <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
                             </tr>
                         </c:forEach>
 
-                        <%--<tr>
-                            <td>Название магазина</td>
-                            <td>Валаделец</td>
-                            <td>Контакты владельца</td>
-                            <td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>
-                            <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
-                        </tr>
-                        <tr>
-                            <td>Название магазина</td>
-                            <td>Валаделец</td>
-                            <td>Контакты владельца</td>
-                            <td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>
-                            <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
-                        </tr>
-                        <tr>
-                            <td>Название магазина</td>
-                            <td>Валаделец</td>
-                            <td>Контакты владельца</td>
-                            <td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>
-                            <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
-                        </tr>--%>
-                    </table>
-                </div>
-                <div class="adminka-users back-tab">
-                    <a class="btn btn-primary btn-sm no-border create-shop" href="#">Создать пользователя</a>
-                    <table>
-                        <tr>
-                            <td>Имя</td>
-                            <td>Email</td>
-                            <td>Права доступа</td>
-                            <td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>
-                            <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
-                        </tr>
-                        <tr>
-                            <td>Имя</td>
-                            <td>Email</td>
-                            <td>Права доступа</td>
-                            <td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>
-                            <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
-                        </tr>
-                        <tr>
-                            <td>Имя</td>
-                            <td>Email</td>
-                            <td>Права доступа</td>
-                            <td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>
-                            <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
-                        </tr>
                     </table>
                 </div>
             </div>
@@ -241,7 +186,7 @@
 <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
 
 <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
-<script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
+<script src="/gen-js/ShopFEService.js" type="text/javascript"></script>
 <script src="/build/gen-js/shop.bo_types.js" type="text/javascript"></script>
 <script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>
 
