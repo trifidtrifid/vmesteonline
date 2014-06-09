@@ -1,36 +1,36 @@
 require.config({
     baseUrl: "/build",
     paths: {
-        "jquery"   : "../js/lib/jquery-2.1.1.min",
-        "ace_spinner": "../js/lib/fuelux/fuelux.spinner",
-        "bootstrap": "../js/lib/bootstrap.min",
-        //"ace_extra": "../js/lib/ace-extra.min",
-        "ace_elements": "../js/lib/ace-elements.min",
-        "flexslider": "../js/lib/jquery.flexslider-min",
-        "jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min",
-        "bootbox":"../js/bootbox.min"
+        //"jquery"   : "../js/lib/jquery-2.1.1.min",
+        //"ace_spinner": "../js/lib/fuelux/fuelux.spinner",
+        //"bootstrap": "../js/lib/bootstrap.min",
+        ////"ace_extra": "../js/lib/ace-extra.min",
+        //"ace_elements": "../js/lib/ace-elements.min",
+        //"flexslider": "../js/lib/jquery.flexslider-min",
+        //"jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min",
+        //"bootbox":"../js/bootbox.min"
     },
     shim:{
-      'ace_spinner':{
+      /*'ace_spinner':{
          deps: ['jquery',"ace_elements","jquery_ui"],
          exports: 'ace_spinner'
-      },
-      'jquery_ui':{
+      },*/
+     /* 'jquery_ui':{
           deps: ['jquery'],
           exports: 'jquery_ui'
-      },
-    'bootstrap':{
+      },*/
+    /*'bootstrap':{
         deps: ['jquery'],
         exports: 'bootstrap'
-    },
-    'flexslider':{
+    },*/
+    /*'flexslider':{
         deps: ['jquery'],
         exports: 'flexslider'
-    },
-    'bootbox':{
+    },*/
+    /*'bootbox':{
         deps: ['jquery','bootstrap'],
         exports: 'bootbox'
-    }
+    }*/
     }
 });
 

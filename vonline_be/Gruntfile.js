@@ -91,8 +91,8 @@ module.exports = function(grunt) {
             },
             special: {
                 files: {
-                    'war/build/gen-js/shop.bo_types.js': 'war/gen-js/shop.bo_types.js',
-                    'war/js/lib/bootstrap.min.js': 'war/js/lib/bootstrap.js'
+                    'war/build/gen-js/shop.bo_types.js': 'war/gen-js/shop.bo_types.js'
+                    //'war/js/lib/bootstrap.min.js': 'war/js/lib/bootstrap.js'
                 }
             }
         },
@@ -101,9 +101,9 @@ module.exports = function(grunt) {
                 separator: ';'
             },
             dist: {
-                src: [/*'war/js/lib/jquery-2.1.1.min.js','war/js/lib/fuelux/fuelux.spinner.js','war/js/lib/ace-extra.min.js',
-                    'war/js/lib/ace-elements.min.js','war/js/lib/jquery.flexslider-min.js','war/js/lib/jquery-ui-1.10.3.full.min.js',
-                    'war/js/bootbox.min.js',*/
+                src: ['war/build/jquery.js','war/build/jquery_ui.js','war/build/bootstrap.js',
+                    'war/build/ace-elements.js','war/build/ace_spinner.js',/*'war/js/lib/ace-extra.min.js',*/
+                    'war/build/flexslider.js','war/build/bootbox.js',
                     'war/build/thrift.min.js','war/build/gen-js/bedata_types.js','war/build/gen-js/shop_types.js',
                     'war/build/gen-js/ShopFEService.js','war/build/gen-js/shop.bo_types.js','war/build/gen-js/ShopBOService.js',
                     'war/build/gen-js/authservice_types.js','war/build/gen-js/AuthService.js','war/build/gen-js/userservice_types.js',

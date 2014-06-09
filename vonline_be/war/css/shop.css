@@ -70,6 +70,15 @@ footer.short-footer .container {
 }
 .navbar a.navbar-brand {
   padding: 0;
+  display: inline-block;
+  float: none;
+}
+.navbar a.about-shop {
+  display: inline-block;
+  color: #fff;
+}
+.navbar a.about-shop:hover {
+  text-decoration: none;
 }
 .navbar img {
   height: 45px;
