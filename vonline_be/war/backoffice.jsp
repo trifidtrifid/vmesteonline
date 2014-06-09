@@ -497,34 +497,18 @@
                         <h5>Стоимость доставки в зависимости от расстояния</h5>
                         <div class="radio delivery-interval-container">
                             <label>
-                                <input name="form-field-radio" type="radio" checked="checked" class="ace">
+                                <%--<input name="form-field-radio" type="radio" checked="checked" class="ace">--%>
                                 <span class="lbl"> Стоимость в интервалах (например 100 р до 10км, 200р при > 10км)</span>
                             </label>
-                            <%--<div class="delivery-interval delivery-price-type">
-                                <input type="text" placeholder="Интервал"><span>км</span>
-                                <input type="text" placeholder="Стоимость"><span>руб</span>
-                                <a href="#" class="add-delivery-interval add-interval">+</a>
-                            </div>--%>
                         </div>
                         <div class="radio delivery-area-container">
                             <label>
-                                <input name="form-field-radio" type="radio" checked="checked" class="ace">
+                                <%--<input name="form-field-radio" type="radio" checked="checked" class="ace">--%>
                                 <span class="lbl"> Стоимость в зависимости от расстояния</span>
                             </label>
-                            <%--<div class="delivery-area  delivery-price-type">
-                                <span>Близко</span><input type="text" placeholder="Стоимость"><span>руб</span>
-                            </div>
-                            <div class="delivery-area  delivery-price-type">
-                                <span>Далеко</span><input type="text" placeholder="Стоимость"><span>руб</span>
-                            </div>--%>
                         </div>
                         <h5>Стоиомтсь доставки в зависимости от веса заказа</h5>
                             <div class="delivery-weight-container">
-                                <%--<div class="delivery-weight delivery-price-type">
-                                    <input type="text" placeholder="Интервал"><span>кг</span>
-                                    <input type="text" placeholder="Стоимость"><span>руб</span>
-                                    <a href="#" class="add-delivery-interval add-interval">+</a>
-                                </div>--%>
                             </div>
                             <br>
                         <a class="btn btn-primary btn-sm no-border btn-save" href="#">Сохранить</a>
@@ -568,28 +552,8 @@
                                             <input type="file" id="imageURLSet-add">
                                         </td>
                                         <td class="product-categories"><a href="#">Добавить категорию</a></td>
-                                        <td class="product-weight"><input type="text" placeholder="Вес"/></td>
-                                        <td class="product-price"><input type="text" placeholder="Цена"/></td>
-                                        <td class="product-unitName"><input type="text" placeholder="Ед.изм"/></td>
-                                        <td class="product-pack"><input type="text" placeholder="Мин.шаг"/></td>
-                                        <td class="product-options">
-                                            <table>
-                                                <tr>
-                                                    <td><input type='text' placeholder="опция"></td>
-                                                    <td><input type='text' placeholder="описание"></td>
-                                                    <td class='td-remove-options'><a href='' class='remove-options-item remove-item'>&times;</a></td>
-                                                    </tr>
-                                            </table>
-                                            <a href='#' class='add-options-item add-item'>Добавить</a>
-                                        </td>
-                                        <td class="product-prepack">
-                                            <label>
-                                            <input type="checkbox"/>
-                                                <span>Весовой</span>
-                                            </label>
-                                        </td>
                                         <td class="product-producer">
-                                        <%--    <input type="text" value="Производитель"/>--%>
+                                            <%--    <input type="text" value="Производитель"/>--%>
                                             <div class="btn-group producers-dropdown">
                                                 <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
                                                     <span class="btn-group-text">Выбрать производителя</span>
@@ -602,6 +566,26 @@
                                                     </c:forEach>
                                                 </ul>
                                             </div>
+                                        </td>
+                                        <td class="product-weight"><input type="text" placeholder="Вес"/></td>
+                                        <td class="product-price"><input type="text" placeholder="Цена"/></td>
+                                        <td class="product-unitName"><input type="text" placeholder="Ед.изм"/></td>
+                                        <td class="product-pack"><input type="text" placeholder="Мин.шаг"/></td>
+                                        <td class="product-options">
+                                            <table>
+                                                <tr>
+                                                    <td><input type='text' placeholder="опция"></td>
+                                                    <td><input type='text' placeholder="описание"></td>
+                                                    <td class='td-remove-options'><a href='' class='remove-options-item remove-item'>&times;</a></td>
+                                                </tr>
+                                            </table>
+                                            <a href='#' class='add-options-item add-item'>Добавить</a>
+                                        </td>
+                                        <td class="product-prepack">
+                                            <label>
+                                            <input type="checkbox"/>
+                                                <span>Весовой</span>
+                                            </label>
                                         </td>
                                     </tr>
                                 </table>
@@ -621,13 +605,13 @@
                                         <td>Аватар</td>
                                         <td>Другие изображения</td>
                                         <td>Категории</td>
+                                        <td>Производитель</td>
                                         <td>Вес</td>
                                         <td>Цена</td>
                                         <td>Ед.изм</td>
                                         <td>Мин.шаг</td>
                                         <td>Опции</td>
                                         <td>Весовой</td>
-                                        <td>Производитель</td>
                                     </tr>
                                     </thead>
                                     <c:forEach var="product" items="${products}">
@@ -655,6 +639,7 @@
                                                 <input type="file" id="imagesSetURL">
                                             </td>
                                             <td class="product-categories"></td>
+                                            <td class="product-producer" data-producerid="${product.producerId}"></td>
                                             <td class="product-weight"><input type="text" value="${product.weight}"/></td>
                                             <td class="product-price"><input type="text" value="${product.price}"/></td>
                                             <td class="product-unitName"><input type="text" value="${product.unitName}"/></td>
@@ -663,7 +648,6 @@
                                             <td class="product-prepack">
                                                 <input type="checkbox" <c:if test="${product.prepackRequired}"> checked </c:if> />
                                             </td>
-                                            <td class="product-producer" data-producerid="${product.producerId}"></td>
                                             <td class="product-remove"><a href="#" title="Удалить" class="remove-item">&times;</a></td>
                                         </tr>
                                     </c:forEach>

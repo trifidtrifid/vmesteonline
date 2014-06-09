@@ -142,17 +142,12 @@
                             <span class="menu-text"> Магазины </span>
                         </a>
                     </li>
-                    <li>
-                        <a href="#">
-                            <span class="menu-text"> Пользователи </span>
-                        </a>
-                    </li>
                 </ul><!-- /.nav-list -->
             </aside>
 
             <div class="main-content">
                 <div class="adminka-shops back-tab">
-                    <a class="btn btn-primary btn-sm no-border create-shop" href="#">Создать магазин</a>
+                    <a class="btn btn-primary btn-sm no-border create-shop" href="regShop.jsp">Создать магазин</a>
                     <table>
                         <c:forEach var="shop" items="${shops}">
                             <tr id="${shop.id}">
@@ -169,32 +164,6 @@
                             </tr>
                         </c:forEach>
 
-                    </table>
-                </div>
-                <div class="adminka-users back-tab">
-                    <a class="btn btn-primary btn-sm no-border create-shop" href="#">Создать пользователя</a>
-                    <table>
-                        <tr>
-                            <td>Имя</td>
-                            <td>Email</td>
-                            <td>Права доступа</td>
-                            <td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>
-                            <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
-                        </tr>
-                        <tr>
-                            <td>Имя</td>
-                            <td>Email</td>
-                            <td>Права доступа</td>
-                            <td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>
-                            <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
-                        </tr>
-                        <tr>
-                            <td>Имя</td>
-                            <td>Email</td>
-                            <td>Права доступа</td>
-                            <td class="td-icon"><a href="#" class="fa fa-pencil"></a></td>
-                            <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
-                        </tr>
                     </table>
                 </div>
             </div>

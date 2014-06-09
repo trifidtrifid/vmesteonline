@@ -60,16 +60,34 @@ var deliveryFilterFlag= 0,
 
 require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
     function($,thriftModule,commonM,ordersModule) {
+        var w = $(window);
+
+        function setSidebarHeight(contentH){
+            try{
+
+                var mainContent = $('.main-content');
+                var contH = (contentH) ? contentH : mainContent.height(),
+                    wHeight = w.height();
+                //alert(contH+" "+w.height());
+
+                if (contH > wHeight){
+                    contH = (contentH) ? contentH+100 : mainContent.height()+45;
+                    $('#sidebar').css('height', contH);
+                }else{
+                    $('#sidebar').css('height', wHeight);
+                }
+            }catch(e){
+                alert(e+" Функция setSidebarHeight");
+            }
+        }
 
 if($('.container.backoffice').hasClass('noAccess')){
     bootbox.alert("У вас нет прав доступа !", function() {
         document.location.replace("./shop.jsp");
     });
-}else{
+}else if (!$('.backoffice.dynamic').hasClass('adminka')){
 
         commonM.init();
-
-        var w = $(window);
 
         var nowTime = parseInt(new Date().getTime()/1000);
         nowTime -= nowTime%86400;
@@ -1102,7 +1120,7 @@ if($('.container.backoffice').hasClass('noAccess')){
 
                     if(!dataSet.data) currentTab.find('.confirm-info').text('Нет данных на такое сочетание даты и типа доставки.').show();
 
-                    setSidebarHeight();
+                    setSidebarHeight(0);
 
                 }catch(e){
                     currentTab.find('.confirm-info').text('Ошибка экспорта.').show();
@@ -1264,23 +1282,6 @@ if($('.container.backoffice').hasClass('noAccess')){
 
         /* /export */
 
-        function setSidebarHeight(contentH){
-            try{
-
-                var mainContent = $('.main-content');
-                var contH = (contentH) ? contentH : mainContent.height();
-                //alert(contH+" "+w.height());
-
-                if (contH > w.height()){
-                    contH = (contentH) ? contentH+100 : mainContent.height()+45;
-                    $('#sidebar').css('height', contH);
-                }else{
-                    $('#sidebar').css('height', '100%');
-                }
-            }catch(e){
-                alert(e+" Функция setSidebarHeight");
-            }
-        }
 
         $('.container.backoffice .nav-list a').click(function(e){
             e.preventDefault();
@@ -1292,8 +1293,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                     break;
                 case 1:
                     $('.bo-edit').show();
-                    FillProductDetails();
-                    DoubleScroll(document.getElementById('doublescroll-2')); //
+                    if(!isEditInitSet) initEdit();
                     break;
                 case 2:
                     $('.export').show();
@@ -1303,7 +1303,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                     break;
                 case 4:
                     $('.bo-settings').show();
-                    initSettings();
+                    if(!isSettingsInitSet) initSettings();
                     break;
             }
             $(this).closest('ul').find('.active').removeClass('active');
@@ -1446,7 +1446,7 @@ if($('.container.backoffice').hasClass('noAccess')){
 
             $('.new-interval').slideDown().removeClass('.new-interval');
         });
-    }
+
 
     $('.settings-item .btn-save').click(function(e){
         e.preventDefault();
@@ -1611,298 +1611,45 @@ if($('.container.backoffice').hasClass('noAccess')){
         return (Date.parse(day+" "+strMonth+" "+year));
     }
 
+    isSettingsInitSet = 1;
+    }
 
+
+    function setDropdownWithoutOverFlow(dropdownSelector,tableContainerSelector,coordY,coordXOffset){
+        dropdownSelector.find('.dropdown-toggle').click(function(e){
+            e.preventDefault();
+
+            var ind = $(this).closest('td').index();
+            var coordX = 0, tdIndex = 0;
+            tableContainerSelector.find('table').find('td').each(function(){
+                if (tdIndex < ind){
+                    coordX += $(this).width();
+                }
+                tdIndex ++;
+            });
+
+            var offset = coordXOffset || 0;
+            coordX -= tableContainerSelector.scrollLeft() + offset;
+
+            $(this).parent().find('.dropdown-menu').css({'left':coordX,'top':coordY});
+        });
+    }
     /* ----------------------------------------------*/
     /* -------------------- EDIT --------------------*/
     /* ----------------------------------------------*/
 
-    /* добавление нового продукта  */
+    var isProductInitSet = 0,
+        isCategoryInitSet = 0,
+        isProducerInitSet = 0,
+        isEditInitSet = 0,
+        isSettingsInitSet = 0;
 
-    $('.edit-show-add').click(function(e){
-
-        e.preventDefault();
-
-        $(this).find('+.table-add').slideToggle();
-
-        var currentPane =$(this).closest('.tab-pane').attr('id');
-        switch (currentPane){
-            case "edit-product" :
-                //------------------
-
-                var tr = $('.table-add-product table tr');
-                $('#imageURL-add').ace_file_input({
-                    style:'well',
-                    btn_choose:'',
-                    btn_change:null,
-                    no_icon:'',
-                    droppable:true,
-                    icon_remove:null,
-                    thumbnail:'large'
-                }).on('change', function(){
-                        tr.find('.product-imageURL .file-label').css('opacity',1);
-                        tr.find('.product-imageURL>img').hide();
-                    });
-
-                //------------------
-
-                $('#imageURLSet-add').ace_file_input({
-                    style:'well',
-                    btn_choose:'Добавить изображение',
-                    btn_change:null,
-                    no_icon:'',
-                    droppable:true,
-                    thumbnail:'large'
-                }).on('change', function(){
-                        var el = $(this);
-                        setAddUrlImageSet(0,0,el)
-                    });
-                initRemoveImageSetItem($('.table-add-product table .product-imagesSet'));
-
-                //------------------
-
-                var categoriesHtml = getCategoriesHtml();
-
-                var categoryTd = $('.table-add-product .product-categories');
-                categoryTd.html(categoriesHtml);
-                initRemoveCategoryItem(categoryTd);
-                initCategoryDropdownClick(categoryTd);
-
-                //------------------
-
-                var optionsTd = $('.table-add-product .product-options');
-                initRemoveOptionsItem(optionsTd);
-                initAddOptionsItem(optionsTd);
-
-                //------------------
-
-                $(this).find('+.table-add .product-producer .dropdown-menu a').click(function(){
-                    var producerId = $(this).parent().data('producerid');
-                    $(this).closest('td').attr('data-producerid',producerId);
-                });
-                break;
-            case "edit-category" :
-                break;
-            case "edit-producer" :
-        }
-
-
-    });
-
-    $('.table-add-product .edit-add').click(function(e){
-        e.preventDefault();
-
-        var shopId = $('.backoffice.dynamic').attr('id');
-        var tableLine = $(this).closest('.table-add-product').find('table tr'),
-            isAdd = true;
-        var productInfo = createProductInfoObject(tableLine,isAdd);
-
-        if(!productInfo.product.producerId){
-            $('.error-info').text('Вы не указали производителя !').show();
-        }else{
-            $('.error-info').hide();
-            thriftModule.clientBO.registerProduct(productInfo, shopId);
-            console.log('5');
-
-            $(this).closest('.table-add-product').slideUp(function(){
-                var newLine = tableLine.clone();
-                newLine.addClass('hidden');
-                $('.product-table table tbody').prepend(newLine);
-                newLine.slideDown();
-            });
-        }
-
-    });
-
-    function createProductInfoObject(tableLine,isAdd){
-        var productInfo = new com.vmesteonline.be.shop.FullProductInfo();
-        productInfo.product = new com.vmesteonline.be.shop.Product();
-        productInfo.details = new com.vmesteonline.be.shop.ProductDetails();
-
-        isAdd ? productInfo.product.id = 0 : productInfo.product.id = tableLine.attr('id');
-        console.log('productInfo.product.id '+tableLine.attr('id'));
-
-        productInfo.product.name = tableLine.find('.product-name textarea').val();
-        productInfo.product.shortDescr = tableLine.find('.product-shortDescr textarea').val();
-
-        productInfo.product.producerId = tableLine.find('.product-producer').data('producerid');
-
-        var loadedLogo = tableLine.find('.product-imageURL .file-name img');
-        loadedLogo.length ? productInfo.product.imageURL = loadedLogo.css('background-image')
-            : productInfo.product.imageURL = tableLine.find('.product-imageURL>img').attr('src');
-
-        tableLine.find('.product-weight input').val() ?
-            productInfo.product.weight = parseFloat(tableLine.find('.product-weight input').val()) :
-            productInfo.product.weight = 0;
-
-        tableLine.find('.product-price input').val() ?
-            productInfo.product.price = parseFloat(tableLine.find('.product-price input').val()):
-            productInfo.product.price = 0;
-
-        productInfo.product.unitName = tableLine.find('.product-unitName input').val();
-
-        tableLine.find('.product-pack input').val() ?
-            productInfo.product.minClientPack = parseFloat(tableLine.find('.product-pack input').val()):
-            productInfo.product.minClientPack = 0;
-
-        productInfo.product.prepackRequired = tableLine.find('.product-prepack input').attr('checked') ? true : false;
-
-        console.log('productInfo.product.id '+productInfo.product.id);
-
-        productInfo.details.fullDescr = tableLine.find('.product-fullDescr textarea').val();
-
-        var counter = 0;
-        var isImagesLoaded = tableLine.find('.product-imagesSet').find('.file-name img').length;
-        if(isImagesLoaded){
-            var imagesURLset = [];
-
-            tableLine.find('.product-imagesSet .ace-file-input.added').each(function(){
-                imagesURLset[counter++] = $(this).find('.file-name img').css('background-image');
-            });
-
-            productInfo.details.imagesURLset = imagesURLset;
-        }
-        console.log('2');
-
-        counter = 0;
-        var categoriesIdList = [];
-        tableLine.find('.product-categories .category-item').each(function(){
-            categoriesIdList[counter++] = $(this).data('categoryid');
-        });
-        productInfo.details.categories = categoriesIdList;
-        console.log('3');
-
-        var optionsMap = [];
-        tableLine.find('.product-options table tr').each(function(){
-            optionsMap[$(this).find('td:eq(0)').text()] = $(this).find('td:eq(1)').text();
-        });
-        productInfo.details.options = optionsMap;
-        console.log('4');
-
-        return productInfo;
-    }
-
-    /* первоначальное заполнение таблицы продуктов */
-
-    function FillProductDetails(){
-        var productsTable = $('.products-table>table'),
-            productDetails;
-        productsTable.find('tbody tr').each(function(){
-           var productId = $(this).attr('id');
-            productDetails = thriftModule.client.getProductDetails(productId);
-
-            // -------------
-            var imagesURLSet = productDetails.imagesURLset,
-                imagesURLSetLength = imagesURLSet.length,
-                imagesURLSetHtml = "<div class='images-set'>";
-            if(imagesURLSetLength != 0){
-                for(var i = 0; i < imagesURLSetLength; i++){
-                    imagesURLSetHtml += "<div class='image-item map-item'>" +
-                        "<a href='#' class='remove-image-item remove-item'>&times</a>"+
-                        "<img src='"+ imagesURLSet[i] +"'>"+
-                        "</div>";
-                }
-            }
-            imagesURLSetHtml += "</div>"+
-                "<input type='file' id='imagesURLSet-"+ productId+"-"+imagesURLSetLength +"'>";
-            // -------------
-            var categories = productDetails.categories,
-                categoriesLength = categories.length,
-                categoriesHtml = "";
-            for(var i = 0; i < categoriesLength; i++){
-                categoriesHtml += "<div class='category-item map-item' data-categoryid='"+ categories[i] +"'>"+
-                    "<a href='#' class='remove-category-item remove-item'>&times</a>"+
-                    getCategoriesHtml(categories[i]).name+
-                    "</div>";
-            }
-
-            categoriesHtml += getCategoriesHtml();
-            // -------------
-            var options = productDetails.optionsMap,
-                //optionsLength = options.length,
-                optionsHtml = "<table>";
-            for(var p in options){
-                optionsHtml += "<tr>" +
-                    "<td><input type='text' value='"+ p +"'></td>" +
-                    "<td><input type='text' value='"+ options[p] +"'></td>" +
-                    "<td class='td-remove-options'><a href='' class='remove-options-item remove-item'>&times;</a></td>" +
-                    "</tr>";
-            }
-            optionsHtml += "</table><a href='#' class='add-options-item add-item'>Добавить</a>";
-            // -------------
-            var currentProducer,
-                producerId = $(this).find('.product-producer').data('producerid'),
-                producersList = thriftModule.client.getProducers(),
-                producersListLength = producersList.length,
-                producersListHtml = "";
-            for(var i = 0; i < producersListLength; i++ ){
-                if(producersList[i].id == producerId){
-                    currentProducer = producersList[i];
-                }
-                producersListHtml += "<li data-producerid='"+ producersList[i].id +"'><a href='#'>"+ producersList[i].name +"</a></li>";
-            }
-            var producersHtml = "<span>" + currentProducer.name + "</span>"+
-                '<div class="btn-group producers-dropdown">'+
-                '<button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">'+
-                '<span class="btn-group-text">Изменить</span>'+
-                '<span class="icon-caret-down icon-on-right"></span>'+
-                '</button>'+
-                '<ul class="dropdown-menu dropdown-blue">'+
-                producersListHtml+
-                '</ul>'+
-                '</div>';
-
-
-            // -------------
-
-            var tr = $(this);
-            $('#imageURL-'+productId).ace_file_input({
-                style:'well',
-                btn_choose:'',
-                btn_change:null,
-                no_icon:'',
-                droppable:true,
-                icon_remove:null,
-                thumbnail:'large'
-            }).on('change', function(){
-                tr.find('.product-imageURL .file-label').css('opacity',1);
-                tr.find('.product-imageURL>img').hide();
-            });
-
-            $(this).find('.product-fullDescr textarea').val(productDetails.fullDescr);
-
-            $(this).find('.product-imagesSet').html(imagesURLSetHtml);
-
-            $('#imagesURLSet-' + productId + "-" + imagesURLSetLength).ace_file_input({
-                style:'well',
-                btn_choose:'Добавить', //
-                btn_change:null,
-                no_icon:'',
-                droppable:true,
-                //icon_remove:null,
-                thumbnail:'large'
-            }).on('change', function(){
-                    var el = $(this);
-                    setAddUrlImageSet(productId,imagesURLSetLength,el);
-                });
-            initRemoveImageSetItem($(this).find('.ace-file-input'));
-
-
-            $(this).find('.product-categories').html(categoriesHtml);
-            initRemoveCategoryItem($(this));
-            initCategoryDropdownClick($(this));
-
-            $(this).find('.product-options').html(optionsHtml);
-            initRemoveOptionsItem($(this));
-            initAddOptionsItem($(this));
-
-            $(this).find('.product-producer').html(producersHtml);
-            initChangeProducer($(this));
-        });
-    }
+    var shopId = $('.backoffice.dynamic').attr('id'),
+        allCategories = thriftModule.client.getAllCategories(shopId);
 
     function getCategoriesHtml(searchCategory){
-        var shopId = $('.backoffice.dynamic').attr('id');
-        var categories = thriftModule.client.getAllCategories(shopId);
+        //var shopId = $('.backoffice.dynamic').attr('id');
+        var categories = allCategories;
         var categoriesLength = categories.length;
         var categoriesListHtml = '';
         if(searchCategory){
@@ -1933,280 +1680,640 @@ if($('.container.backoffice').hasClass('noAccess')){
         }
     }
 
-    function setAddUrlImageSet(productId,imagesURLSetLength,el){
-        if(!el.parent().hasClass('added')){
-            el.parent().addClass('added');
-            imagesURLSetLength++;
-            var newInputHtml = "<input type='file' class='new-input' id='imagesURLSet-"+ productId+"-"+imagesURLSetLength +"'>";
-            el.parent().after(newInputHtml);
+    var allCategoriesHtml = getCategoriesHtml(),
+        allProducers = thriftModule.client.getProducers();
 
-            $('#imagesURLSet-' + productId + "-" + imagesURLSetLength).ace_file_input({
-                style:'well',
-                btn_choose:'Добавить', //
-                btn_change:null,
-                no_icon:'',
-                droppable:true,
-                //icon_remove:null,
-                thumbnail:'large'
-            }).on('change',function(){
-                var el = $(this);
-                setAddUrlImageSet(productId,imagesURLSetLength,el);
-            });
-            initRemoveImageSetItem(el.parent());
-        }
-    }
+    function initEdit(){
 
-    function initRemoveImageSetItem(selector){
-        selector.find('.remove').click(function(e){
+     if (!isProductInitSet) initEditProduct();
+
+     /* общие */
+    if(!isEditInitSet){
+
+         $('.edit-show-add').click(function(e){
+
             e.preventDefault();
 
-            $(this).closest('.ace-file-input').hide().detach();
+            $(this).find('+.table-add').slideToggle();
 
-        })
-    }
+            var currentPane =$(this).closest('.tab-pane').attr('id');
+            switch (currentPane){
+                case "edit-product" :
+                    //------------------
 
-    /* действия внутри таблицы продуктов */
+                    var tr = $('.table-add-product table tr');
+                    $('#imageURL-add').ace_file_input({
+                        style:'well',
+                        btn_choose:'',
+                        btn_change:null,
+                        no_icon:'',
+                        droppable:true,
+                        icon_remove:null,
+                        thumbnail:'large'
+                    }).on('change', function(){
+                            tr.find('.product-imageURL .file-label').css('opacity',1);
+                            tr.find('.product-imageURL>img').hide();
+                        });
 
-    $('.product-remove a').click(function(e){
-        e.preventDefault();
+                    //------------------
 
-        var productId = $(this).closest('tr').attr('id');
-        var shopId = $('.backoffice.dynamic').attr('id');
+                    $('#imageURLSet-add').ace_file_input({
+                        style:'well',
+                        btn_choose:'Добавить изображение',
+                        btn_change:null,
+                        no_icon:'',
+                        droppable:true,
+                        thumbnail:'large'
+                    }).on('change', function(){
+                            var el = $(this);
+                            setAddUrlImageSet(0,0,el)
+                        });
+                    initRemoveImageSetItem($('.table-add-product table .product-imagesSet'));
 
-       $(this).closest('tr').addClass('removing').fadeOut(600,function(){
-           $(this).detach();
-       });
+                    //------------------
 
-        thriftModule.clientBO.deleteProduct(productId,shopId);
-    });
+                    var categoriesHtml = allCategoriesHtml;
 
-    function initRemoveCategoryItem(selector){
-        selector.find('.remove-category-item').click(function(e){
-            e.preventDefault();
+                    var categoryTd = $('.table-add-product .product-categories');
+                    categoryTd.html(categoriesHtml);
+                    initRemoveCategoryItem(categoryTd);
+                    initCategoryDropdownClick(categoryTd);
+                    var tableSelector = $('.table-add-product .table-overflow');
+                    setDropdownWithoutOverFlow(tableSelector.find('.categories-dropdown'),tableSelector,84);
+/*                    $('.categories-dropdown .dropdown-toggle').click(function(e){
+                        e.preventDefault();
 
-            $(this).closest('.map-item').fadeOut(200);
+                        var ind = $(this).closest('td').index();
+                        var coordX = 0, tdIndex = 0;
+                        $('.table-add-product table').find('td').each(function(){
+                            if (tdIndex < ind){
+                                coordX += $(this).width();
+                            }
+                            tdIndex ++;
+                        });
+                        coordX -= $('.table-add-product').scrollLeft();
+
+                        var coordY = 134;
+                        $(this).parent().find('.dropdown-menu').css({'left':coordX,'top':coordY});
+                    });*/
+
+                    //------------------
+
+                    var optionsTd = $('.table-add-product .product-options');
+                    initRemoveOptionsItem(optionsTd);
+                    initAddOptionsItem(optionsTd);
+                    setDropdownWithoutOverFlow(tableSelector.find('.producers-dropdown'),tableSelector,84);
+
+                    //------------------
+
+                    $(this).find('+.table-add .product-producer .dropdown-menu a').click(function(){
+                        var producerId = $(this).parent().data('producerid');
+                        $(this).closest('td').attr('data-producerid',producerId);
+                    });
+                    break;
+                case "edit-category" :
+                    break;
+                case "edit-producer" :
+                    break;
+            }
+
 
         });
+
+         $('.bo-edit .nav-tabs a').click(function(){
+            var ind = $(this).parent().index();
+
+             switch(ind){
+                 case 1:
+                     if (!isCategoryInitSet) initEditCategory();
+                     break;
+                 case 2:
+                     if (!isProducerInitSet) initEditProducer();
+                     break;
+             }
+         });
     }
 
-    function initCategoryDropdownClick(selector){
-        selector.find('.categories-dropdown .dropdown-menu a').click(function(e){
-            e.preventDefault();
-            var newCategoryItemHtml = '<div class="category-item map-item" data-categoryid="'+ $(this).closest('li').data('categoryid') +'">' +
-                '<a href="#" class="remove-category-item remove-item">×</a>'+ $(this).text() +'</div>';
-            $(this).closest('td').find('.categories-dropdown').before(newCategoryItemHtml);
+     /* редактирование продуктов */
 
-            initRemoveCategoryItem($(this).closest('td'));
-        });
-    }
+     function initEditProduct(){
 
-    function initRemoveOptionsItem(selector){
-        selector.find('.remove-options-item').click(function(e){
-            e.preventDefault();
+         FillProductDetails();
 
-            $(this).closest('tr').slideUp(200,function(){
-                $(this).detach();
-            });
-        })
-    }
+         DoubleScroll(document.getElementById('doublescroll-2'));
 
-    function initAddOptionsItem(selector){
-        selector.find('.add-options-item ').click(function(e){
-            e.preventDefault();
-            var newOptionsLine = '<tr>' +
-                '<td><input type="text" value=""></td>' +
-                '<td><input type="text" value=""></td>' +
-                '<td class="td-remove-options"><a href="" class="remove-options-item remove-item">×</a></td>' +
-                '</tr>';
-            $(this).closest('td').find('table tbody').append(newOptionsLine);
-            initRemoveOptionsItem($(this).closest('td'));
-        });
-    }
+         /* добавление нового продукта  */
 
-    function initChangeProducer(selector){
-        selector.find('.producers-dropdown .dropdown-menu a').click(function(e){
-            e.preventDefault();
+         $('.table-add-product .edit-add').click(function(e){
+             e.preventDefault();
 
-            var producerName = $(this).text();
-            var producerId = $(this).closest('li').data('producerid');
-            $(this).closest('td').attr('id',producerId).find('>span').text(producerName);
-        });
-    }
+             var shopId = $('.backoffice.dynamic').attr('id');
+             var tableLine = $(this).closest('.table-add-product').find('table tr'),
+                 isAdd = true;
+             var productInfo = createProductInfoObject(tableLine,isAdd);
 
-    /* сохранение изменений в таблице продуктов */
+             if(!productInfo.product.producerId){
+                 $('.error-info').text('Вы не указали производителя !').show();
+             }else{
+                 $('.error-info').hide();
+                 thriftModule.clientBO.registerProduct(productInfo, shopId);
+                 console.log('5');
 
-    $('.save-products').click(function(e){
-        e.preventDefault();
+                 $(this).closest('.table-add-product').slideUp(function(){
+                     var newLine = tableLine.clone();
+                     newLine.addClass('hidden');
+                     $('.product-table table tbody').prepend(newLine);
+                     newLine.slideDown();
+                 });
+             }
 
-        $('#edit-product table .changed').each(function(){
+         });
 
-            var tableLine = $(this),
-                isAdd = false;
-            var productInfo = createProductInfoObject(tableLine,isAdd);
+         function createProductInfoObject(tableLine,isAdd){
+             var productInfo = new com.vmesteonline.be.shop.FullProductInfo();
+             productInfo.product = new com.vmesteonline.be.shop.Product();
+             productInfo.details = new com.vmesteonline.be.shop.ProductDetails();
 
-            thriftModule.clientBO.updateProduct(productInfo);
-        });
-    });
+             isAdd ? productInfo.product.id = 0 : productInfo.product.id = tableLine.attr('id');
+             console.log('productInfo.product.id '+tableLine.attr('id'));
 
-    $('#edit-product .products-table table tr,#edit-category .category-table tr, #edit-producer .producer-table tr').click(function(){
-        $(this).addClass('changed');
-    });
+             productInfo.product.name = tableLine.find('.product-name textarea').val();
+             productInfo.product.shortDescr = tableLine.find('.product-shortDescr textarea').val();
+
+             productInfo.product.producerId = tableLine.find('.product-producer').data('producerid');
+
+             var loadedLogo = tableLine.find('.product-imageURL .file-name img');
+             loadedLogo.length ? productInfo.product.imageURL = loadedLogo.css('background-image')
+                 : productInfo.product.imageURL = tableLine.find('.product-imageURL>img').attr('src');
+
+             tableLine.find('.product-weight input').val() ?
+                 productInfo.product.weight = parseFloat(tableLine.find('.product-weight input').val()) :
+                 productInfo.product.weight = 0;
+
+             tableLine.find('.product-price input').val() ?
+                 productInfo.product.price = parseFloat(tableLine.find('.product-price input').val()):
+                 productInfo.product.price = 0;
+
+             productInfo.product.unitName = tableLine.find('.product-unitName input').val();
+
+             tableLine.find('.product-pack input').val() ?
+                 productInfo.product.minClientPack = parseFloat(tableLine.find('.product-pack input').val()):
+                 productInfo.product.minClientPack = 0;
+
+             productInfo.product.prepackRequired = tableLine.find('.product-prepack input').attr('checked') ? true : false;
+
+             console.log('productInfo.product.id '+productInfo.product.id);
+
+             productInfo.details.fullDescr = tableLine.find('.product-fullDescr textarea').val();
+
+             var counter = 0;
+             var isImagesLoaded = tableLine.find('.product-imagesSet').find('.file-name img').length;
+             if(isImagesLoaded){
+                 var imagesURLset = [];
+
+                 tableLine.find('.product-imagesSet .ace-file-input.added').each(function(){
+                     imagesURLset[counter++] = $(this).find('.file-name img').css('background-image');
+                 });
+
+                 productInfo.details.imagesURLset = imagesURLset;
+             }
+             console.log('2');
+
+             counter = 0;
+             var categoriesIdList = [];
+             tableLine.find('.product-categories .category-item').each(function(){
+                 categoriesIdList[counter++] = $(this).data('categoryid');
+             });
+             productInfo.details.categories = categoriesIdList;
+             console.log('3');
+
+             var optionsMap = [];
+             tableLine.find('.product-options table tr').each(function(){
+                 optionsMap[$(this).find('td:eq(0)').text()] = $(this).find('td:eq(1)').text();
+             });
+             productInfo.details.options = optionsMap;
+             console.log('4');
+
+             return productInfo;
+         }
+
+         /* первоначальное заполнение таблицы продуктов */
+
+         function FillProductDetails(){
+             var productsTable = $('.products-table>table'),
+                 productDetails;
+             productsTable.find('tbody tr').each(function(){
+                 var productId = $(this).attr('id');
+                 productDetails = thriftModule.client.getProductDetails(productId);
+
+                 // -------------
+                 var imagesURLSet = productDetails.imagesURLset,
+                     imagesURLSetLength = imagesURLSet.length,
+                     imagesURLSetHtml = "<div class='images-set'>";
+                 if(imagesURLSetLength != 0){
+                     for(var i = 0; i < imagesURLSetLength; i++){
+                         imagesURLSetHtml += "<div class='image-item map-item'>" +
+                             "<a href='#' class='remove-image-item remove-item'>&times</a>"+
+                             "<img src='"+ imagesURLSet[i] +"'>"+
+                             "</div>";
+                     }
+                 }
+                 imagesURLSetHtml += "</div>"+
+                     "<input type='file' id='imagesURLSet-"+ productId+"-"+imagesURLSetLength +"'>";
+                 // -------------
+                 var categories = productDetails.categories,
+                     categoriesLength = categories.length,
+                     categoriesHtml = "";
+                 for(var i = 0; i < categoriesLength; i++){
+                     categoriesHtml += "<div class='category-item map-item' data-categoryid='"+ categories[i] +"'>"+
+                         "<a href='#' class='remove-category-item remove-item'>&times</a>"+
+                         getCategoriesHtml(categories[i]).name+
+                         "</div>";
+                 }
+
+                 categoriesHtml += allCategoriesHtml;
+                 // -------------
+                 var options = productDetails.optionsMap,
+                 //optionsLength = options.length,
+                     optionsHtml = "<table><tbody>";
+                 for(var p in options){
+                     optionsHtml += "<tr>" +
+                         "<td><input type='text' value='"+ p +"'></td>" +
+                         "<td><input type='text' value='"+ options[p] +"'></td>" +
+                         "<td class='td-remove-options'><a href='' class='remove-options-item remove-item'>&times;</a></td>" +
+                         "</tr>";
+                 }
+                 optionsHtml += "</tbody></table><a href='#' class='add-options-item add-item'>Добавить</a>";
+                 // -------------
+                 var currentProducer,
+                     producerId = $(this).find('.product-producer').data('producerid'),
+                     producersList = allProducers,
+                     producersListLength = producersList.length,
+                     producersListHtml = "";
+                 for(var i = 0; i < producersListLength; i++ ){
+                     if(producersList[i].id == producerId){
+                         currentProducer = producersList[i];
+                     }
+                     producersListHtml += "<li data-producerid='"+ producersList[i].id +"'><a href='#'>"+ producersList[i].name +"</a></li>";
+                 }
+                 var producersHtml = "<span>" + currentProducer.name + "</span>"+
+                     '<div class="btn-group producers-dropdown">'+
+                     '<button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">'+
+                     '<span class="btn-group-text">Изменить</span>'+
+                     '<span class="icon-caret-down icon-on-right"></span>'+
+                     '</button>'+
+                     '<ul class="dropdown-menu dropdown-blue">'+
+                     producersListHtml+
+                     '</ul>'+
+                     '</div>';
+
+
+                 // -------------
+
+                 var tr = $(this);
+                 $('#imageURL-'+productId).ace_file_input({
+                     style:'well',
+                     btn_choose:'',
+                     btn_change:null,
+                     no_icon:'',
+                     droppable:true,
+                     icon_remove:null,
+                     thumbnail:'large'
+                 }).on('change', function(){
+                         tr.find('.product-imageURL .file-label').css('opacity',1);
+                         tr.find('.product-imageURL>img').hide();
+                     });
+
+                 $(this).find('.product-fullDescr textarea').val(productDetails.fullDescr);
+
+                 $(this).find('.product-imagesSet').html(imagesURLSetHtml);
+
+                 $('#imagesURLSet-' + productId + "-" + imagesURLSetLength).ace_file_input({
+                     style:'well',
+                     btn_choose:'Добавить', //
+                     btn_change:null,
+                     no_icon:'',
+                     droppable:true,
+                     //icon_remove:null,
+                     thumbnail:'large'
+                 }).on('change', function(){
+                         var el = $(this);
+                         setAddUrlImageSet(productId,imagesURLSetLength,el);
+                     });
+                 initRemoveImageSetItem($(this).find('.ace-file-input'));
+
+
+                 $(this).find('.product-categories').html(categoriesHtml);
+                 initRemoveCategoryItem($(this));
+                 initCategoryDropdownClick($(this));
+
+                 $(this).find('.product-options').html(optionsHtml);
+                 initRemoveOptionsItem($(this));
+                 initAddOptionsItem($(this));
+
+                 $(this).find('.product-producer').html(producersHtml);
+                 initChangeProducer($(this));
+             });
+         }
+
+         /* действия внутри таблицы продуктов */
+
+         $('.product-remove a').click(function(e){
+             e.preventDefault();
+
+             var productId = $(this).closest('tr').attr('id');
+             var shopId = $('.backoffice.dynamic').attr('id');
+
+             $(this).closest('tr').addClass('removing').fadeOut(600,function(){
+                 $(this).detach();
+             });
+
+             thriftModule.clientBO.deleteProduct(productId,shopId);
+         });
+
+         function initChangeProducer(selector){
+             selector.find('.producers-dropdown .dropdown-menu a').click(function(e){
+                 e.preventDefault();
+
+                 var producerName = $(this).text();
+                 var producerId = $(this).closest('li').data('producerid');
+                 $(this).closest('td').attr('id',producerId).find('>span').text(producerName);
+             });
+         }
+
+         /* сохранение изменений в таблице продуктов */
+
+         $('.save-products').click(function(e){
+             e.preventDefault();
+
+             $('#edit-product table .changed').each(function(){
+
+                 var tableLine = $(this),
+                     isAdd = false;
+                 var productInfo = createProductInfoObject(tableLine,isAdd);
+
+                 thriftModule.clientBO.updateProduct(productInfo);
+             });
+         });
+
+         $('#edit-product .products-table table tr,#edit-category .category-table tr, #edit-producer .producer-table tr').click(function(){
+             $(this).addClass('changed');
+         });
+
+         isProductInitSet = 1;
+     }
+
+     function initRemoveImageSetItem(selector){
+         selector.find('.remove').click(function(e){
+             e.preventDefault();
+
+             $(this).closest('.ace-file-input').hide().detach();
+
+         })
+     }
+
+     function setAddUrlImageSet(productId,imagesURLSetLength,el){
+         if(!el.parent().hasClass('added')){
+             el.parent().addClass('added');
+             imagesURLSetLength++;
+             var newInputHtml = "<input type='file' class='new-input' id='imagesURLSet-"+ productId+"-"+imagesURLSetLength +"'>";
+             el.parent().after(newInputHtml);
+
+             $('#imagesURLSet-' + productId + "-" + imagesURLSetLength).ace_file_input({
+                 style:'well',
+                 btn_choose:'Добавить', //
+                 btn_change:null,
+                 no_icon:'',
+                 droppable:true,
+                 //icon_remove:null,
+                 thumbnail:'large'
+             }).on('change',function(){
+                     var el = $(this);
+                     setAddUrlImageSet(productId,imagesURLSetLength,el);
+                 });
+             initRemoveImageSetItem(el.parent());
+         }
+     }
+
+     function initRemoveCategoryItem(selector){
+         selector.find('.remove-category-item').click(function(e){
+             e.preventDefault();
+
+             $(this).closest('.map-item').fadeOut(200);
+
+         });
+     }
+
+     function initCategoryDropdownClick(selector){
+         selector.find('.categories-dropdown .dropdown-menu a').click(function(e){
+             e.preventDefault();
+             var newCategoryItemHtml = '<div class="category-item map-item" data-categoryid="'+ $(this).closest('li').data('categoryid') +'">' +
+                 '<a href="#" class="remove-category-item remove-item">×</a>'+ $(this).text() +'</div>';
+             $(this).closest('td').find('.categories-dropdown').before(newCategoryItemHtml);
+
+             initRemoveCategoryItem($(this).closest('td'));
+         });
+     }
+
+     function initRemoveOptionsItem(selector){
+         selector.find('.remove-options-item').click(function(e){
+             e.preventDefault();
+
+             $(this).closest('tr').slideUp(200,function(){
+                 $(this).detach();
+             });
+         })
+     }
+
+     function initAddOptionsItem(selector){
+         selector.find('.add-options-item ').click(function(e){
+             e.preventDefault();
+             var newOptionsLine = '<tr>' +
+                 '<td><input type="text" value=""></td>' +
+                 '<td><input type="text" value=""></td>' +
+                 '<td class="td-remove-options"><a href="" class="remove-options-item remove-item">×</a></td>' +
+                 '</tr>';
+
+             $(this).closest('td').find('table tbody').append(newOptionsLine);
+
+             initRemoveOptionsItem($(this).closest('td'));
+         });
+     }
 
     /* редактирование категорий */
-    function setParentCategory(selector){
-        var newCategory = selector.text();
-        var categoryId = selector.closest('li').data('categoryid');
-        selector.closest('.category-parent').attr('data-parentid',categoryId).find('.btn-group-text').text(newCategory);
-    }
 
-    $('.category-parent').each(function(){
-       var categoriesHtml = getCategoriesHtml();
-        $(this).html(categoriesHtml);
+     function initEditCategory() {
 
-        $(this).find('.btn-group-text').text('Выбрать родительскую');
+        function setParentCategory(selector){
+            var newCategory = selector.text();
+            var categoryId = selector.closest('li').data('categoryid');
+            selector.closest('.category-parent').attr('data-parentid',categoryId).find('.btn-group-text').text(newCategory);
+        }
 
-        $(this).find('.dropdown-menu a').click(function(e){
-            e.preventDefault();
+        $('.category-parent').each(function(){
+           //var categoriesHtml = getCategoriesHtml();
+            $(this).html(allCategoriesHtml);
 
-            setParentCategory($(this));
+            $(this).find('.btn-group-text').text('Выбрать родительскую');
+
+            $(this).find('.dropdown-menu a').click(function(e){
+                e.preventDefault();
+
+                setParentCategory($(this));
+
+            });
+
+            if($(this).closest('.table-add').length == 0){
+                var parentId = $(this).data('parentid');
+
+                $(this).find('.dropdown-menu li').each(function(){
+                    if($(this).data('categoryid') == parentId){
+                        setParentCategory($(this));
+                    }
+                })
+            }
 
         });
 
-        if($(this).closest('.table-add').length == 0){
-            var parentId = $(this).data('parentid');
+        $('.table-add-category .edit-add').click(function(e){
+            e.preventDefault();
 
-            $(this).find('.dropdown-menu li').each(function(){
-                if($(this).data('categoryid') == parentId){
-                    setParentCategory($(this));
-                }
-            })
+            var shopId = $('.backoffice.dynamic').attr('id');
+            var tableLine = $(this).closest('.table-add-category').find('table tr'),
+                isAdd = true;
+            var productCategory = createCategoryObject(tableLine,isAdd);
+
+            /*if(!productInfo.product.producerId){
+                $('.error-info').text('Вы не указали производителя !').show();
+            }else{*/
+                $('.error-info').hide();
+                thriftModule.clientBO.registerProductCategory(productCategory, shopId);
+
+                $(this).closest('.table-add-category').slideUp(function(){
+                    var newLine = tableLine.clone();
+                    newLine.addClass('hidden');
+                    $('.product-table table tbody').prepend(newLine);
+                    newLine.slideDown();
+                });
+            //}
+        });
+
+        function createCategoryObject(tableLine,isAdd){
+            var productCategory = new com.vmesteonline.be.shop.ProductCategory();
+
+            isAdd ? productCategory.id = 0 : productCategory.id = tableLine.attr('id');
+            productCategory.name = tableLine.find('.category-name textarea').val();
+            productCategory.descr = tableLine.find('.category-descr textarea').val();
+            productCategory.parentId = tableLine.find('.category-parent').attr('data-parentid');
+
+            return productCategory;
         }
 
-    });
+        $('.save-categories').click(function(e){
+            e.preventDefault();
 
-    $('.table-add-category .edit-add').click(function(e){
-        e.preventDefault();
+            $('.category-table tr.changed').each(function(){
+                var tableLine = $(this),
+                    isAdd = false;
 
-        var shopId = $('.backoffice.dynamic').attr('id');
-        var tableLine = $(this).closest('.table-add-category').find('table tr'),
-            isAdd = true;
-        var productCategory = createCategoryObject(tableLine,isAdd);
+                var productCategory = createCategoryObject(tableLine,isAdd);
+                thriftModule.clientBO.updateCategory(productCategory);
 
-        /*if(!productInfo.product.producerId){
-            $('.error-info').text('Вы не указали производителя !').show();
-        }else{*/
+            })
+        });
+
+        $('.category-remove a').click(function(e){
+            e.preventDefault();
+
+            var categoryId = $(this).closest('tr').attr('id');
+            var shopId = $('.backoffice.dynamic').attr('id');
+
+            $(this).closest('tr').addClass('removing').fadeOut(600,function(){
+                $(this).detach();
+            });
+
+            thriftModule.clientBO.deleteCategory(categoryId,shopId);
+        });
+
+         isCategoryInitSet = 1;
+     }
+
+    /* редактирование производителей */
+
+     function initEditProducer(){
+
+        $('.table-add-producer .edit-add').click(function(e){
+            e.preventDefault();
+
+            var shopId = $('.backoffice.dynamic').attr('id');
+            var tableLine = $(this).closest('.table-add-producer').find('table tr'),
+                isAdd = true;
+            var producer = createProducerObject(tableLine,isAdd);
+
+            /*if(!productInfo.product.producerId){
+             $('.error-info').text('Вы не указали производителя !').show();
+             }else{*/
             $('.error-info').hide();
-            thriftModule.clientBO.registerProductCategory(productCategory, shopId);
+            thriftModule.clientBO.registerProducer(producer, shopId);
 
-            $(this).closest('.table-add-category').slideUp(function(){
+            $(this).closest('.table-add-producer').slideUp(function(){
                 var newLine = tableLine.clone();
                 newLine.addClass('hidden');
                 $('.product-table table tbody').prepend(newLine);
                 newLine.slideDown();
             });
-        //}
-    });
-
-    function createCategoryObject(tableLine,isAdd){
-        var productCategory = new com.vmesteonline.be.shop.ProductCategory();
-
-        isAdd ? productCategory.id = 0 : productCategory.id = tableLine.attr('id');
-        productCategory.name = tableLine.find('.category-name textarea').val();
-        productCategory.descr = tableLine.find('.category-descr textarea').val();
-        productCategory.parentId = tableLine.find('.category-parent').data('parentid');
-
-        return productCategory;
-    }
-
-    $('.save-categories').click(function(e){
-        e.preventDefault();
-
-        $('.category-table tr.changed').each(function(){
-            var tableLine = $(this),
-                isAdd = false;
-
-            var productCategory = createCategoryObject(tableLine,isAdd);
-            thriftModule.clientBO.updateCategory(productCategory);
-        })
-    });
-
-    $('.category-remove a').click(function(e){
-        e.preventDefault();
-
-        var categoryId = $(this).closest('tr').attr('id');
-        var shopId = $('.backoffice.dynamic').attr('id');
-
-        $(this).closest('tr').addClass('removing').fadeOut(600,function(){
-            $(this).detach();
+            //}
         });
 
-        thriftModule.clientBO.deleteCategory(categoryId,shopId);
-    });
+        function createProducerObject(tableLine,isAdd){
+            var producer = new com.vmesteonline.be.shop.Producer();
 
-    /* редактирование производителей */
+            isAdd ? producer.id = 0 : producer.id = tableLine.attr('id');
+            producer.name = tableLine.find('.producer-name textarea').val();
+            producer.descr = tableLine.find('.producer-descr textarea').val();
 
-    $('.table-add-producer .edit-add').click(function(e){
-        e.preventDefault();
+            return producer;
+        }
 
-        var shopId = $('.backoffice.dynamic').attr('id');
-        var tableLine = $(this).closest('.table-add-producer').find('table tr'),
-            isAdd = true;
-        var producer = createProducerObject(tableLine,isAdd);
+        $('.save-producers').click(function(e){
+            e.preventDefault();
 
-        /*if(!productInfo.product.producerId){
-         $('.error-info').text('Вы не указали производителя !').show();
-         }else{*/
-        $('.error-info').hide();
-        thriftModule.clientBO.registerProducer(producer, shopId);
+            $('.producer-table tr.changed').each(function(){
+                var tableLine = $(this),
+                    isAdd = false;
 
-        $(this).closest('.table-add-producer').slideUp(function(){
-            var newLine = tableLine.clone();
-            newLine.addClass('hidden');
-            $('.product-table table tbody').prepend(newLine);
-            newLine.slideDown();
-        });
-        //}
-    });
-
-    function createProducerObject(tableLine,isAdd){
-        var producer = new com.vmesteonline.be.shop.Producer();
-
-        isAdd ? producer.id = 0 : producer.id = tableLine.attr('id');
-        producer.name = tableLine.find('.category-name textarea').val();
-        producer.descr = tableLine.find('.category-descr textarea').val();
-
-        return producer;
-    }
-
-    $('.save-producers').click(function(e){
-        e.preventDefault();
-
-        $('.producer-table tr.changed').each(function(){
-            var tableLine = $(this),
-                isAdd = false;
-
-            var producer = createProducerObject(tableLine,isAdd);
-            thriftModule.clientBO.updateProducer(producer);
-        })
-    });
-
-    $('.producer-remove a').click(function(e){
-        e.preventDefault();
-
-        var producerId = $(this).closest('tr').attr('id');
-        var shopId = $('.backoffice.dynamic').attr('id');
-
-        $(this).closest('tr').addClass('removing').fadeOut(600,function(){
-            $(this).detach();
+                var producer = createProducerObject(tableLine,isAdd);
+                thriftModule.clientBO.updateProducer(producer);
+            })
         });
 
-        thriftModule.clientBO.deleteProducer(producerId,shopId);
-    });
-}
+        $('.producer-remove a').click(function(e){
+            e.preventDefault();
+
+            var producerId = $(this).closest('tr').attr('id');
+            var shopId = $('.backoffice.dynamic').attr('id');
+
+            $(this).closest('tr').addClass('removing').fadeOut(600,function(){
+                $(this).detach();
+            });
+
+            thriftModule.clientBO.deleteProducer(producerId,shopId);
+        });
+
+         isProducerInitSet = 1;
+     }
+
+     isEditInitSet = 1;
+ }
+
+}else{
 
         /* -------------------------------------------------*/
         /* -------------------- ADMINKA --------------------*/
         /* -------------------------------------------------*/
+
+        var contentH = $('body').height();
+        setSidebarHeight(contentH);
 
         $('.adminka-shops table tr').each(function(){
             var shopId = $(this).attr('id');
@@ -2331,5 +2438,7 @@ if($('.container.backoffice').hasClass('noAccess')){
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
         });
+}
+
 
     });

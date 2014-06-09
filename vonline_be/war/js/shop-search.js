@@ -19,7 +19,7 @@ define(
                 }
             });
 
-            if($('.login-layout').length == 0) {
+            if($('.login-layout').length == 0 && $('.backoffice').length == 0) {
                 var currentShopID =$('.main-container.shop').attr('id');
 
                 var arr = thriftModule.client.getProductsByCategories(currentShopID);
@@ -53,43 +53,6 @@ define(
                            $(this).find('.product-link').trigger('click');
                        }
                     });
-
-                    /*if (!globalUserAuth){
-                        // если пользователь не залогинен
-                        basketModule.selectorForCallbacks = $(this);
-                        basketModule.callbacks.add(basketModule.BasketTrigger);
-                        commonModule.openModalAuth();
-                    }else{
-
-                    var productsListPart = thriftModule.client.getProducts(0,1000,0);
-                    var products = productsListPart.products;
-                    var productsLength = products.length;
-                    var packs = [];
-
-                    for(var i = 0; i < productsLength; i++){
-
-                        if(products[i].name == ui.item['label']){
-
-                            products[i].qnty = products[i].minClientPack;
-                            products[i].prepackLine = [];
-
-                            if(products[i].prepackRequired){
-                                packs[products[i].minClientPack] = 1;
-                            }
-
-                            if ($('.tabs-days').length == 0){
-                                // если это первый товар в корзине
-                                var order = thriftModule.client.createOrder(0);
-                                var nextDateStr = new Date(order.date*1000);
-                                basketModule.addTabToBasketHtml(nextDateStr,order.id);
-                            }
-
-                            basketModule.AddProductToBasketCommon(products[i],packs);
-
-                            commonModule.markAddedProduct();
-                        }
-                    }
-                    }*/
 
                 }
             });

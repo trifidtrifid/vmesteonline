@@ -1884,6 +1884,16 @@ height 50px
   overflow-x: scroll;
   margin-bottom: 10px;
 }
+.bo-edit .table-add-product {
+  position: relative;
+}
+.bo-edit .table-add-product .categories-dropdown,
+.bo-edit .table-add-product .producers-dropdown {
+  position: static !important;
+}
+.bo-edit .table-add-product .dropdown-menu {
+  top: 0;
+}
 .bo-edit .products-table {
   overflow-y: hidden;
 }
