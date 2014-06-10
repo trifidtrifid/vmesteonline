@@ -660,7 +660,7 @@
 	<script src="js/lib/markdown/bootstrap-markdown.min.js"></script>
 	<script src="js/lib/jquery.hotkeys.min.js"></script>
 	<script src="js/lib/bootstrap-wysiwyg.min.js"></script>
-	<script src="js/lib/bootbox.min.js"></script>
+	<script src="js/bootbox.min.js"></script>
 	<!-- -->
 	<script src="js/lib/jquery.scrollTo.min.js"></script>
 
