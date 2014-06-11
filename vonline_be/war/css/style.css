@@ -411,7 +411,7 @@ h1 {
 .wysiwyg-editor a {
   cursor: pointer;
 }
-@media all and (max-width: 768px),screen and (device-width: 320px) {
+@media all and (max-width: 768px), screen and (device-width: 320px) {
   .sidebar#sidebar {
     margin-left: -190px;
   }
@@ -461,4 +461,38 @@ h1 {
 }
 .create-topic .wysiwyg-editor {
   border-left: 1px solid #ccc;
+}
+/* новые стили после редизайна 11.06.14 */
+.lenta-item {
+  margin-bottom: 20px;
+}
+.lenta-item .first-message {
+  border: 1px solid #d7dbdd;
+  position: relative;
+  padding: 5px;
+}
+.lenta-item .first-message .user {
+  float: left;
+}
+.lenta-item .first-message .user img {
+  width: 100px;
+}
+.lenta-item .first-message .body {
+  margin-left: 110px;
+}
+.lenta-item .first-message .body .time {
+  float: right;
+}
+.lenta-item .first-message .body .tools {
+  position: absolute;
+  right: 5px;
+}
+.lenta-item .dialogs {
+  clear: left;
+  margin: 0 0 0 110px;
+  padding-top: 15px;
+  padding-right: 0;
+}
+.lenta-item .message-textarea {
+  width: 99%;
 }
