@@ -347,7 +347,7 @@
             <div class="footer-menu">
                 <ul>
                     <li><a href="#">О сайте</a></li>
-                    <li><a href="about-shop.jsp">О магазине</a></li>
+                    <li><a href="#" class="about-shop-link">О магазине</a></li>
                     <li><a href="#">Правила</a></li>
                     <li><a href="#">Контакты</a></li>
                     <li><a href="#">В начало</a></li>
