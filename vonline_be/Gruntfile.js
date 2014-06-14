@@ -124,51 +124,51 @@ module.exports = function(grunt) {
         watch: {
             shop:{
                 files: ['war/js/shop.js'],
-                tasks: ['uglify:shop']
+                tasks: ['uglify:shop','concat']
             },
             backoffice:{
                 files: ['war/js/backoffice.js'],
-                tasks: ['uglify:backoffice']
+                tasks: ['uglify:backoffice','concat']
             },
             loginModule:{
                 files: ['war/js/loginModule.js'],
-                tasks: ['uglify:loginModule']
+                tasks: ['uglify:loginModule','concat']
             },
             commonM:{
                 files: ['war/js/commonM.js'],
-                tasks: ['uglify:commonM']
+                tasks: ['uglify:commonM','concat']
             },
             shopCommon:{
                 files: ['war/js/shop-common.js'],
-                tasks: ['uglify:shopCommon']
+                tasks: ['uglify:shopCommon','concat']
             },
             shopBasket:{
                 files: ['war/js/shop-basket.js'],
-                tasks: ['uglify:shopBasket']
+                tasks: ['uglify:shopBasket','concat']
             },
             shopCategory:{
                 files: ['war/js/shop-category.js'],
-                tasks: ['uglify:shopCategory']
+                tasks: ['uglify:shopCategory','concat']
             },
             shopSearch:{
                 files: ['war/js/shop-search.js'],
-                tasks: ['uglify:shopSearch']
+                tasks: ['uglify:shopSearch','concat']
             },
             shopOrders:{
                 files: ['war/js/shop-orders.js'],
-                tasks: ['uglify:shopOrders']
+                tasks: ['uglify:shopOrders','concat']
             },
             shopSpinner:{
                 files: ['war/js/shop-spinner.js'],
-                tasks: ['uglify:shopSpinner']
+                tasks: ['uglify:shopSpinner','concat']
             },
             shopinitThrift:{
                 files: ['war/js/shop-initThrift.js'],
-                tasks: ['uglify:shopinitThrift']
+                tasks: ['uglify:shopinitThrift','concat']
             },
             shopModules:{
                 files: ['war/js/shop-modules.js'],
-                tasks: ['uglify:shopModules']
+                tasks: ['uglify:shopModules','concat']
             },
             /*scripts: {
                 files: ['war/js*//*.js'],

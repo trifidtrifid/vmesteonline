@@ -116,7 +116,7 @@
 
 			<div class="navbar-container" id="navbar-container">
 				<div class="navbar-header pull-left">
-					<a href="#" class="navbar-brand">
+					<a href="/" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
 					<!-- /.brand -->
@@ -177,7 +177,7 @@
 			</div>
 			<!-- /.container -->
 		</div>
-		<div class="main-container shop dynamic" id="${shopID}">
+		<div class="main-container shop dynamic page-about-shop" id="${shopID}">
             <h1>Магазин название</h1>
             <p>о магазине</p>
         </div>

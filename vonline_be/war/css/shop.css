@@ -73,11 +73,11 @@ footer.short-footer .container {
   display: inline-block;
   float: none;
 }
-.navbar a.about-shop {
+.navbar a.about-shop-link {
   display: inline-block;
   color: #fff;
 }
-.navbar a.about-shop:hover {
+.navbar a.about-shop-link:hover {
   text-decoration: none;
 }
 .navbar img {

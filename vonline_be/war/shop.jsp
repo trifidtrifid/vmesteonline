@@ -116,10 +116,10 @@
 
 			<div class="navbar-container" id="navbar-container">
 				<div class="navbar-header pull-left">
-					<a href="#" class="navbar-brand">
+					<a href="/" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
-                    <a href="about-shop.jsp" class="about-shop">О магазине</a>
+                    <a href="#" class="about-shop-link">О магазине</a>
 					<!-- /.brand -->
 				</div>
 				<!-- /.navbar-header -->
@@ -322,6 +322,7 @@
             <div class="page shop-profile"></div>
             <div class="page shop-orderEnd"></div>
             <div class="page shop-editPersonal"></div>
+            <div class="page shop-about"></div>
         </div>
 
         <div class="modal modal-error">
