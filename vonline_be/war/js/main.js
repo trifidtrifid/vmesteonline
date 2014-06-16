@@ -329,7 +329,7 @@ $('.fa-sitemap').click(function(){
             }
             widget.find('+.widget-box').slideToggle(200);
 
-            SetCreateMessageClick($('.wysiwig-box .btn-primary'));
+            //SetCreateMessageClick($('.wysiwig-box .btn-primary'));
         });
     }
 
@@ -1009,14 +1009,38 @@ function AutoReplaceLinkAndVideo(str) {
         $('.talks-title-block').addClass('hide');
         $('.create-topic-btn').addClass('hide');
 
-        if(1){
+        var talksBlock = $(this).closest('.tab-pane').find('.talks-block');
+
+        if(talksBlock.find('.talks-single').length == 0){
             $(this).closest('.tab-pane').find('.talks-block').load('ajax-forum/talks-single.jsp .talks-single',function(){
 
-            }).removeClass('hide');
+                $('.plus-minus').click(function(e){
+                    e.preventDefault();
 
-        }else{
+                    if($(this).hasClass('fa-plus')){
 
+                        $(this).removeClass('fa-plus').addClass('fa-minus');
+                        $(this).closest('.dd-item').find('>.dd-list').slideDown();
+
+                    }else{
+
+                        $(this).removeClass('fa-minus').addClass('fa-plus');
+                        $(this).closest('.dd-item').find('>.dd-list').slideUp();
+                    }
+
+                });
+
+
+                SetShowEditorClick($('.answer-link'));
+
+                /*$('.answer-link').click(function(e){
+                    e.preventDefault();
+
+
+                });*/
+            });
         }
+        talksBlock.removeClass('hide');
     });
 
 

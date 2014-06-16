@@ -528,3 +528,6 @@ h1 {
 .talks-block {
   clear: right;
 }
+.dd-item .dd-list {
+  display: none;
+}
