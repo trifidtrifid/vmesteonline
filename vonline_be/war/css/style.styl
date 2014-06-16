@@ -173,6 +173,7 @@ transform()
 
 .widget-main
   overflow auto
+  padding 0
   padding-bottom 5px
 
 .fa:hover{
@@ -183,7 +184,7 @@ transform()
   //margin-left 10px
   margin-bottom 10px
   .topic-descr
-    border 1px solid rgb(80, 144, 193)
+    border-bottom 1px solid rgb(80, 144, 193)
     border-radius main-radius
     .topic-header-left
       display none
@@ -228,6 +229,9 @@ transform()
         vertical-align middle
     .topic-right
       margin-left 115px
+      h2
+        margin-top 0
+        font-size 20px
       .fa-relations
         float right
         font-size 16px
@@ -254,10 +258,14 @@ transform()
       float left
       text-align center
       width 95px
+      .plus-minus
+        font-size 30px
+        margin-top 5px
       img
         width 95px
       .topic-author
         font-size 14px
+        text-align left
       .author-rating
         a
           display inline-block
@@ -355,7 +363,6 @@ transform()
     display none
 
 .dd>.dd-list>.topic-item
-  margin-left 10px
   &.list-view
     .dd-list
       padding-left 0
@@ -433,3 +440,26 @@ transform()
     padding-right 0
   .message-textarea
     width 99%
+
+.create-topic-btn
+  float right
+  margin-bottom 15px
+
+.create-topic
+  display none
+
+.talks-title
+  clear right
+  padding 10px
+  border-top 1px solid rgb(80, 144, 193)
+  .talks-title-left
+    float left
+    a
+      font-weight bold
+      font-size 16px
+  .talks-title-right
+    float right
+
+.talks-block
+  clear right
+

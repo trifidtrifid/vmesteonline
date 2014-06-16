@@ -182,7 +182,7 @@
 					</nav>
 					<div class="dynamic">
 						<div class="forum-wrap">
-                            <section class="forum">
+                            <section class="forum page">
                                 <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab5">
                                     <li class="active">
                                         <a data-toggle="tab" href="#porch1">Подъезд</a>
@@ -856,6 +856,133 @@
                                     </div>
                                     <div class="tab-pane" id="quarter1"></div>
                                     <div class="tab-pane" id="area1"></div>
+                                </div>
+                            </section>
+                            <section class="page talks hide">
+                                <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab6">
+                                    <li class="active">
+                                        <a data-toggle="tab" href="#porch2">Подъезд</a>
+                                    </li>
+
+                                    <li class="">
+                                        <a data-toggle="tab" href="#floor2">Этаж</a>
+                                    </li>
+
+                                    <li class="">
+                                        <a data-toggle="tab" href="#quarter2">Квартал</a>
+                                    </li>
+                                    <li class="">
+                                        <a data-toggle="tab" href="#area2">Район</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+
+                                    <a class="btn btn-primary btn-sm no-border clearfix create-topic-btn" href="#">Создать тему</a>
+
+                                    <section class="create-topic">
+                                        <h1>Создание темы</h1>
+                                        <div class="has-info form-group">
+                                            <input type="text" class="width-100 head" value="Заголовок"
+                                                   onblur="if(this.value=='') this.value='Заголовок';"
+                                                   onfocus="if(this.value=='Заголовок') this.value='';" />
+                                        </div>
+                                        <div class="widget-box wysiwig-box">
+                                            <div class="widget-header widget-header-small  header-color-blue2">
+
+                                            </div>
+
+                                            <div class="widget-body">
+                                                <div class="widget-main no-padding">
+                                                    <div class="wysiwyg-editor"></div>
+                                                </div>
+
+                                                <div class="widget-toolbox padding-4 clearfix">
+                                                    <div class="btn-group">
+                                                        <button data-toggle="dropdown"
+                                                                class="btn btn-info btn-sm dropdown-toggle no-border">
+                                                            <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
+                                                        </button>
+
+                                                        <ul class="dropdown-menu dropdown-yellow">
+                                                            <li><a href="#">Видео</a></li>
+
+                                                            <li><a href="#">Фотографию</a></li>
+
+                                                            <li><a href="#">Документ</a></li>
+
+                                                            <li><a href="#">Опрос</a></li>
+                                                        </ul>
+                                                    </div>
+
+                                                    <div class="btn-group pull-right">
+                                                        <button class="btn btn-sm btn-primary">
+                                                            <i class="icon-globe bigger-125"></i> Создать <i
+                                                                class="icon-arrow-right icon-on-right bigger-125"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <div class="tab-pane active" id="porch2">
+
+                                        <section class="talks-title-block">
+                                            <div class="talks-title clearfix">
+                                                <div class="talks-title-left load-talk">
+                                                    <div><a href="#">Проблемы в намшем доме !</a></div>
+                                                    <div>74 сообщения</div>
+                                                </div>
+                                                <div class="talks-title-right">
+                                                    <div>Последнее обновление:</div>
+                                                    <div>18 июля 2014 23:01</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="talks-title clearfix">
+                                                <div class="talks-title-left">
+                                                    <div><a href="#">Проблемы в намшем доме !</a></div>
+                                                    <div>74 сообщения</div>
+                                                </div>
+                                                <div class="talks-title-right">
+                                                    <div>Последнее обновление:</div>
+                                                    <div>18 июля 2014 23:01</div>
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <section class="talks-block hide"> </section>
+
+                                    </div>
+
+                                    <div class="tab-pane" id="floor2">
+
+                                        <div class="talks-title clearfix">
+                                            <div class="talks-title-left">
+                                                <div><a href="#">Проблемы в намшем доме !</a></div>
+                                                <div>74 сообщения</div>
+                                            </div>
+                                            <div class="talks-title-right">
+                                                <div>Последнее обновление:</div>
+                                                <div>18 июля 2014 23:01</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="talks-title clearfix">
+                                            <div class="talks-title-left">
+                                                <div><a href="#">Проблемы в намшем доме !</a></div>
+                                                <div>74 сообщения</div>
+                                            </div>
+                                            <div class="talks-title-right">
+                                                <div>Последнее обновление:</div>
+                                                <div>18 июля 2014 23:01</div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="tab-pane" id="quarter2"></div>
+                                    <div class="tab-pane" id="area2"></div>
                                 </div>
                             </section>
 
