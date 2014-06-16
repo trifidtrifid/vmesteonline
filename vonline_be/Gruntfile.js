@@ -6,62 +6,62 @@ module.exports = function(grunt) {
         uglify: {
             shop:{
                 files: {
-                    'war/build/shop.min.js': 'war/js/shop.js'
+                    'war/build/shop.min.js': 'war/js/shop/shop.js'
                 }
             },
             backoffice:{
                 files: {
-                    'war/build/backoffice.min.js': 'war/js/backoffice.js'
+                    'war/build/backoffice.min.js': 'war/js/shop/backoffice.js'
                 }
             },
             loginModule:{
                 files: {
-                    'war/build/loginModule.min.js': 'war/js/loginModule.js'
+                    'war/build/loginModule.min.js': 'war/js/shop/loginModule.js'
                 }
             },
             commonM:{
                 files: {
-                    'war/build/commonM.min.js': 'war/js/commonM.js'
+                    'war/build/commonM.min.js': 'war/js/shop/commonM.js'
                 }
             },
             shopCommon:{
                 files: {
-                    'war/build/shop-common.min.js': 'war/js/shop-common.js'
+                    'war/build/shop-common.min.js': 'war/js/shop/shop-common.js'
                 }
             },
             shopBasket:{
                 files: {
-                    'war/build/shop-basket.min.js': 'war/js/shop-basket.js'
+                    'war/build/shop-basket.min.js': 'war/js/shop/shop-basket.js'
                 }
             },
             shopCategory:{
                 files: {
-                    'war/build/shop-category.min.js': 'war/js/shop-category.js'
+                    'war/build/shop-category.min.js': 'war/js/shop/shop-category.js'
                 }
             },
             shopSearch:{
                 files: {
-                    'war/build/shop-search.min.js': 'war/js/shop-search.js'
+                    'war/build/shop-search.min.js': 'war/js/shop/shop-search.js'
                 }
             },
             shopOrders:{
                 files: {
-                    'war/build/shop-orders.min.js': 'war/js/shop-orders.js'
+                    'war/build/shop-orders.min.js': 'war/js/shop/shop-orders.js'
                 }
             },
             shopSpinner:{
                 files: {
-                    'war/build/shop-spinner.min.js': 'war/js/shop-spinner.js'
+                    'war/build/shop-spinner.min.js': 'war/js/shop/shop-spinner.js'
                 }
             },
             shopinitThrift:{
                 files: {
-                    'war/build/shop-initThrift.min.js': 'war/js/shop-initThrift.js'
+                    'war/build/shop-initThrift.min.js': 'war/js/shop/shop-initThrift.js'
                 }
             },
             shopModules:{
                 files: {
-                    'war/build/shop-modules.min.js': 'war/js/shop-modules.js'
+                    'war/build/shop-modules.min.js': 'war/js/shop/shop-modules.js'
                 }
             },
             /*modules: {
@@ -123,51 +123,51 @@ module.exports = function(grunt) {
         },
         watch: {
             shop:{
-                files: ['war/js/shop.js'],
+                files: ['war/js/shop/shop.js'],
                 tasks: ['uglify:shop','concat']
             },
             backoffice:{
-                files: ['war/js/backoffice.js'],
+                files: ['war/js/shop/backoffice.js'],
                 tasks: ['uglify:backoffice','concat']
             },
             loginModule:{
-                files: ['war/js/loginModule.js'],
+                files: ['war/js/shop/loginModule.js'],
                 tasks: ['uglify:loginModule','concat']
             },
             commonM:{
-                files: ['war/js/commonM.js'],
+                files: ['war/js/shop/commonM.js'],
                 tasks: ['uglify:commonM','concat']
             },
             shopCommon:{
-                files: ['war/js/shop-common.js'],
+                files: ['war/js/shop/shop-common.js'],
                 tasks: ['uglify:shopCommon','concat']
             },
             shopBasket:{
-                files: ['war/js/shop-basket.js'],
+                files: ['war/js/shop/shop-basket.js'],
                 tasks: ['uglify:shopBasket','concat']
             },
             shopCategory:{
-                files: ['war/js/shop-category.js'],
+                files: ['war/js/shop/shop-category.js'],
                 tasks: ['uglify:shopCategory','concat']
             },
             shopSearch:{
-                files: ['war/js/shop-search.js'],
+                files: ['war/js/shop/shop-search.js'],
                 tasks: ['uglify:shopSearch','concat']
             },
             shopOrders:{
-                files: ['war/js/shop-orders.js'],
+                files: ['war/js/shop/shop-orders.js'],
                 tasks: ['uglify:shopOrders','concat']
             },
             shopSpinner:{
-                files: ['war/js/shop-spinner.js'],
+                files: ['war/js/shop/shop-spinner.js'],
                 tasks: ['uglify:shopSpinner','concat']
             },
             shopinitThrift:{
-                files: ['war/js/shop-initThrift.js'],
+                files: ['war/js/shop/shop-initThrift.js'],
                 tasks: ['uglify:shopinitThrift','concat']
             },
             shopModules:{
-                files: ['war/js/shop-modules.js'],
+                files: ['war/js/shop/shop-modules.js'],
                 tasks: ['uglify:shopModules','concat']
             },
             /*scripts: {
