@@ -58,7 +58,8 @@ define(
                 if (selector.closest('.modal-auth').length > 0){
                     AuthRealTime(selector);
                 }else{
-                    document.location.replace("./shop.jsp");
+                    //document.location.replace("./shop.jsp");
+                    document.location.replace("./main.jsp");
                 }
             } else {
                 result.val(session.error);

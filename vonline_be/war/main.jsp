@@ -27,7 +27,7 @@
 	 	AuthServiceImpl.checkIfAuthorised(sess.getId());
 	} catch (InvalidOperation ioe) {
 		response.sendRedirect("/login.jsp");
-		return; 
+		return;
 	}
 
     UserServiceImpl userService = new UserServiceImpl(request.getSession());
