@@ -54,9 +54,9 @@ $('.fa-sitemap').click(function(){
     w.resize(function(){
         if ($(this).width() > 753){
             sidebar.css({'marginLeft':'0'});
-            $('.main-content').css('margin-left','190px');
+            $('.main-content').css('margin-left','190px').css('margin-right','190px');
         }else{
-            sidebar.css({'marginLeft':'-190px'});
+            sidebar.css({'marginLeft':'-190px','marginRight':'-190px'});
             $('.main-content').css('margin-left','0');
         }
     });
@@ -805,14 +805,14 @@ $('.fa-sitemap').click(function(){
 
         //убираем сайдбар при прокрутке
         if (w.width()>785){
-            if (scrollTop > 270){
+            if (scrollTop > 370){
                 $('.sidebar').hide();
-                $('.main-content').css('margin-left','0');
+                $('.main-content').css({'margin-left':0,'margin-right':0});
                 $('.widget-header h2').css('min-width','994px');
                 staffCounterForGoodTopicsHeight++;
             }else {
                 $('.sidebar').show();
-                $('.main-content').css('margin-left','190px');
+                $('.main-content').css('margin-left','190px').css('margin-right','190px');
                 $('.widget-header h2').css('min-width','804px');
                 staffCounterForGoodTopicsHeight=0;
             }
@@ -956,28 +956,31 @@ function AutoReplaceLinkAndVideo(str) {
     $('.nav-list a').click(function(e){
         e.preventDefault();
 
+        $(this).closest('.nav-list').find('.active').removeClass('active');
+        $(this).parent().addClass('active');
         $('.page').addClass('hide');
         var ind = $(this).parent().index();
 
         switch (ind){
             case 0:
                 $('.forum').removeClass('hide');
+                $('.create-topic-btn').addClass('hide');
+                $('.main-content-top').removeClass('hide');
                 break;
             case 1:
                 $('.talks').removeClass('hide');
+                $('.main-content-top').removeClass('hide');
+                $('.create-topic-btn').removeClass('hide');
                 break;
             case 2:
                 break;
         }
     });
 
-    $('.create-topic-btn').click(function(e){
+    $('.create-topic-btn a').click(function(e){
         e.preventDefault();
 
-        $('.tab-pane').addClass('hide');
-        $(this).hide();
-
-        $(this).closest('.tab-content').find('.create-topic').show();
+        $(this).closest('.main-content').find('.create-topic').removeClass('hide');
 
         if(!$('.create-topic').find('.wysiwyg-toolbar').length) SetWysiwig($('.create-topic .wysiwyg-editor'));
 
@@ -1008,11 +1011,12 @@ function AutoReplaceLinkAndVideo(str) {
 
         $('.talks-title-block').addClass('hide');
         $('.create-topic-btn').addClass('hide');
+        $('.create-topic').addClass('hide');
 
-        var talksBlock = $(this).closest('.tab-pane').find('.talks-block');
+        var talksBlock = $(this).closest('.talks').find('.talks-block');
 
         if(talksBlock.find('.talks-single').length == 0){
-            $(this).closest('.tab-pane').find('.talks-block').load('ajax-forum/talks-single.jsp .talks-single',function(){
+            talksBlock.load('ajax/forum/talks-single.jsp .talks-single',function(){
 
                 $('.plus-minus').click(function(e){
                     e.preventDefault();
@@ -1042,6 +1046,91 @@ function AutoReplaceLinkAndVideo(str) {
         }
         talksBlock.removeClass('hide');
     });
+
+    $('.private-messages-link').click(function(e){
+        e.preventDefault();
+
+        $('.sidebar .nav .active').removeClass('active');
+        $(this).closest('.ace-nav').find('.active').removeClass('active');
+        $(this).parent().addClass('active');
+        $('.page').addClass('hide');
+        $('.main-content-top').addClass('hide');
+        var privateMessages = $('.dynamic .private-messages');
+
+        if (!privateMessages.hasClass('isLoaded')) {
+            privateMessages.load('ajax/forum/private-messages.jsp .private-messages',function(){
+                initPrivateMessages();
+            });
+        }
+
+        privateMessages.removeClass('hide').addClass('isLoaded');
+    });
+
+    $('.nextdoors-link').click(function(e){
+        e.preventDefault();
+
+        $('.sidebar .nav .active').removeClass('active');
+        $(this).closest('.ace-nav').find('.active').removeClass('active');
+        $(this).parent().addClass('active');
+        $('.page').addClass('hide');
+        $('.main-content-top').addClass('hide');
+        var nextdoors = $('.dynamic .nextdoors');
+
+        if (!nextdoors.hasClass('isLoaded')) {
+            nextdoors.load('ajax/forum/nextdoors.jsp .nextdoors',function(){
+                initNextdoors();
+            });
+        }
+
+        nextdoors.removeClass('hide').addClass('isLoaded');
+    });
+
+    function initPrivateMessages(){};
+
+    function initNextdoors(){};
+
+    function initProfile(){
+        $('#profile-ava').ace_file_input({
+            style:'well',
+            btn_choose:'Изменить фото',
+            btn_change:null,
+            no_icon:'',
+            droppable:true,
+            thumbnail:'large',
+            icon_remove:null
+        }).on('change', function(){
+                $('.logo-container>img').hide();
+            });
+
+    };
+
+    $('.user-menu li a').click(function(e){
+        e.preventDefault();
+
+        $('.ace-nav').find('.active').removeClass('active');
+        $('.nav-list').find('.active').removeClass('active');
+       var ind = $(this).parent().index();
+
+        switch(ind){
+            case 0:
+                break;
+            case 1:
+                $('.page').addClass('hide');
+                $('.main-content-top').addClass('hide');
+                var profile = $('.dynamic .profile');
+
+                if (!profile.hasClass('isLoaded')) {
+                    profile.load('ajax/forum/profile.jsp .profile',function(){
+                        initProfile();
+                    });
+                }
+
+                profile.removeClass('hide').addClass('isLoaded');
+                break;
+        }
+    });
+
+
 
 
 });
