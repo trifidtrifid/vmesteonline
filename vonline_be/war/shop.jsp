@@ -94,7 +94,7 @@
     <script src="/build/gen-js/UserService.js" type="text/javascript"></script>--%>
 
     <%--<script type="text/javascript" data-main="/build/shop.min.js" src="/js/require.min.js"></script>--%>
-    <script type="text/javascript" data-main="/build/build.js" src="/js/require.min.js"></script>
+    <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
 
     <script type="text/javascript">
 	globalUserAuth = false;

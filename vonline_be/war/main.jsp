@@ -27,7 +27,7 @@
 	 	AuthServiceImpl.checkIfAuthorised(sess.getId());
 	} catch (InvalidOperation ioe) {
 		response.sendRedirect("/login.jsp");
-		return; 
+		return;
 	}
 
     UserServiceImpl userService = new UserServiceImpl(request.getSession());
@@ -1475,9 +1475,11 @@
 	<script src="gen-js/authservice_types.js" type="text/javascript"></script>
 	<script src="gen-js/AuthService.js" type="text/javascript"></script>
 	<!-- -->
+
+    <script src="js/forum/angular/angular.min.js"></script>
 	<!-- собственные скрипты  -->
 	<script src="js/common.js"></script>
-	<script src="js/main.js"></script>
+	<script src="js/forum/main.js"></script>
 
 </body>
 
