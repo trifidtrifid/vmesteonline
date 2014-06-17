@@ -2,6 +2,7 @@ package com.vmesteonline.be;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -38,8 +39,17 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		try {
 
 			VoSession session = getSession(httpSessId, pm);
-			if (null == session || 0 == session.getUserId())
+			
+			if (null == session || 0 == session.getUserId() ){
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
+			}
+			try {
+				pm.getObjectById(VoUser.class,session.getUserId());
+			} catch (Exception e) {
+				session.setUserId(null);
+				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
+			}
+
 		} finally {
 			pm.close();
 		}
@@ -77,13 +87,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 				logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
 				VoSession currentSession = getCurrentSession(pm);
-				if(null==currentSession) 
+				if (null == currentSession)
 					currentSession = new VoSession(sessionStorage.getId(), u);
-				else 
+				else
 					currentSession.setUser(u);
 				/*
-				 * sess.setLatitude(u.getLatitude());
-				 * sess.setLongitude(u.getLongitude());
+				 * sess.setLatitude(u.getLatitude()); sess.setLongitude(u.getLongitude());
 				 */
 				pm.makePersistent(currentSession);
 				return true;
@@ -134,6 +143,14 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				List<VoUserGroup> groups = user.getGroups();
 				logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + locationId + " home group: "
 						+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
+			}
+
+			try {
+				String body = "<h2>"+firstname+" "+lastname+"</h2><br/>Вы зарегистрировались на сайте www.vomoloko.ru. Ваш логин " + email +".<br/> Удачных Вам покупок!";
+				EMailHelper.sendSimpleEMail( email, "Вы зарегестрированы на Bo! сайте", body);
+			} catch (Exception e) {
+				logger.warn("can't send email to " + email + " " + e.getMessage());
+				e.printStackTrace();
 			}
 			return user.getId();
 
@@ -215,13 +232,13 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			fis.read(content);
 			fis.close();
 
-			EMailHelper.sendSimpleEMail("Во! <info@vmesteonline.ru>", to, "Код для смены пароля на сайте Во!",
+			EMailHelper.sendSimpleEMail(to, "Код для смены пароля на сайте Во!",
 					new String(content, "UTF-8").replace("%code%", "" + code).replace("%name%", vu.getName() + " " + vu.getLastName()));
 			logger.info("Code to change password is: " + code);
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to send email to '" + to + "'. " + to);
+			throw new InvalidOperation(VoError.GeneralError, "Failed to send email to '" + to + "'. " + e);
 
 		} finally {
 			pm.close();
@@ -258,19 +275,21 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		}
 	}
 
-//======================================================================================================================
-	
-	private static final Set<String> publicMethods = new HashSet<String>( Arrays.asList( new String[] {
-			
-		"methodName"
-		
-	})); 
+	// ======================================================================================================================
+
+	private static final Set<String> publicMethods = new HashSet<String>(Arrays.asList(new String[] {
+
+	"methodName"
+
+	}));
+
 	@Override
 	public boolean isPublicMethod(String method) {
-		return true;//publicMethods.contains(method);
+		return true;// publicMethods.contains(method);
 	}
-//======================================================================================================================
-	
+
+	// ======================================================================================================================
+
 	@Override
 	public long categoryId() {
 		return ServiceCategoryID.AUTH_SI.ordinal();

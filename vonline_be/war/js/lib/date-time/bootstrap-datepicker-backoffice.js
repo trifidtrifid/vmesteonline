@@ -18,8 +18,6 @@
  * limitations under the License.
  * ========================================================= */
 
- var currentOrderId; // глобальная переменаная, чтобы была видна в shop.js
-
 !function( $ ) {
 
 	function UTCDate(){

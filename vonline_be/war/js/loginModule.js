@@ -1,71 +1,51 @@
 define(
-    'loginModule',
-    ['jquery','shop-initThrift','shop-basket','shop-common'],
+    'loginModule.min',
+    ['jquery','shop-initThrift.min','shop-basket.min','shop-common.min'],
     function( $,thriftModule,basketModule, commonModule ){
         function initLogin(){
-
-    $('.login-form .btn-submit').click(function(e){
+    $('#login-box .btn-primary').click(function(e){
         e.preventDefault();
         login($(this));
     });
-    $('.reg-form .btn-submit').click(function(e){
+    $('#signup-box .btn-success').click(function(e){
         e.preventDefault();
         reg($(this));
     });
-    $('.remember-link').click(function(e){
-        e.preventDefault();
-        var setNewPassword = $('.set-new-password');
-        if(setNewPassword.css('display')=='none'){
-            $('label[for="password"]').html('<b>Новый пароль</b>');
-            $('.login-form .btn-submit').hide();
-            setNewPassword.slideDown();
-            $(this).text('Вспомнил пароль !');
-            $('.login-error').hide();
-        }else{
-            setNewPassword.slideUp(function(){
-                $('.login-form .btn-submit').show();
-                $('.login-error').hide();
-                $('label[for="password"]').html('Пароль');
-                $('.login-form').height('258px');
-            });
-            $(this).text('Забыли пароль ?');
-        }
-    });
+
     $('.sendConfirmCode').click(function(e){
         e.preventDefault();
 
-        var to = $('#uname').val();
+        var to = $('#email-forgot').val();
         if (!to){
-            $('.login-error').text('Введите пожалуйста e-mail').removeClass('info-good').show();
+            $('.email-forgot-error').text('Введите пожалуйста e-mail').removeClass('info-good').show();
         }else{
             var resourcefileName = "mailTemplates/changePasswordConfirm.html";
             try{
                 thriftModule.authClient.sendConfirmCode(to,resourcefileName);
-                $('.login-error').text('На ваш e-mail отправлен код').addClass('info-good').show();
+                $('.email-forgot-error').text('На ваш e-mail отправлен код').addClass('info-good').show();
             }catch(e){
-                $('.login-error').text('Такой e-mail не зарегистрирован').removeClass('info-good').show();
+                $('.email-forgot-error').text('Такой e-mail не зарегистрирован').removeClass('info-good').show();
             }
         }
-        $('.login-form').height('280px');
 
     });
+
     $('.useConfirmCode').click(function(e){
         e.preventDefault();
 
-        var email = $('#uname').val();
+        var email = $('#email-forgot').val();
         var confirmCode = $('#confirmCode').val();
-        var newPassword = $('#password').val();
-        var loginError = $('.login-error');
+        var newPassword = $('#password-new').val();
+        var error = $('.password-new-error');
 
         try{
             thriftModule.authClient.confirmRequest(email,confirmCode,newPassword);
-            loginError.hide();
+            error.hide();
         }catch(e){
-            loginError.text('Неверный код подтверждения !').removeClass('info-good').show();
-            $('.login-form').height('280px');
+            error.text('Неверный код подтверждения !').removeClass('info-good').show();
         }
-        if(loginError.css('display') == 'none'){
-            login($('.login-form .btn-submit'));
+        if(error.css('display') == 'none'){
+            login($('.login-box .btn-primary'));
         }
     });
 
@@ -76,10 +56,9 @@ define(
             if (accessGranted) {
                 $('.login-error').hide();
                 if (selector.closest('.modal-auth').length > 0){
-                    //document.location.replace("/shop.jsp");
                     AuthRealTime(selector);
                 }else{
-                    document.location.replace("/shop.jsp");
+                    document.location.replace("./shop.jsp");
                 }
             } else {
                 result.val(session.error);
@@ -106,7 +85,6 @@ define(
             var userId = thriftModule.authClient.registerNewUser($("#login").val(), "", $("#pass").val(), $("#email").val());
             thriftModule.authClient.login($("#email").val(), $("#pass").val());
             if ( selector.closest('.modal-auth').length > 0) {
-                //document.location.replace("/shop.jsp");
                 AuthRealTime(selector);
             }else{
                 document.location.replace("/shop.jsp");
@@ -121,6 +99,24 @@ define(
        }
     });
 
+    function show_box(id) {
+        $('.widget-box.visible').removeClass('visible');
+        $('#'+id).addClass('visible');
+    }
+
+    $('.forgot-password-link').click(function(){
+        show_box('forgot-box');
+        return false;
+    });
+    $('.user-signup-link').click(function(){
+        show_box('signup-box');
+        return false;
+    });
+    $('.back-to-login-link').click(function(){
+        show_box('login-box');
+        return false;
+    });
+
     function AuthRealTime(selector){
 
         globalUserAuth = true;
@@ -132,22 +128,26 @@ define(
 
         commonModule.changeShortUserInfo();
         $('.user-info').after('<i class="icon-caret-down"></i>');
-        /*var shortUserInfo = thriftModule.userClient.getShortUserInfo();
-        var shortUserInfoHtml =  shortUserInfo.firstName +' '+ shortUserInfo.lastName;
-        $('.user-info').html(shortUserInfoHtml).after('<i class="icon-caret-down"></i>');*/
 
         var dropdownToggle = $('.dropdown-toggle');
         dropdownToggle.removeClass('no-login');
+
         $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
-            $(this).parent().addClass('open');
+            $(this).parent().removeClass('open');
         });
 
+        var shopId = $('.shop').attr('id');
+        var userRole = thriftModule.client.getUserShopRole(shopId);
+        if(userRole == 2 || userRole == 99){
+            $('.bo-link').removeClass('hidden');
+        }
         // callbacks
         commonModule.initBasketInReload();
-        var basketModule = require('shop-basket');
+        var basketModule = require('shop-basket.min');
         basketModule.callbacks.fire(basketModule.selectorForCallbacks);
         basketModule.callbacks.empty();
     }
+
     }
         return {initLogin: initLogin}
     }

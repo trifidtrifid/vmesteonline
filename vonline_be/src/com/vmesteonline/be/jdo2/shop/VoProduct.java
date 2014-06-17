@@ -16,6 +16,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import org.apache.log4j.Logger;
+
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
@@ -29,50 +31,65 @@ import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Product;
 import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.utils.StorageHelper;
+import com.vmesteonline.be.utils.VoHelper;
 
 @PersistenceCapable
 public class VoProduct {
 
+	//private static Logger logger = Logger.getLogger(VoProduct.class);
+	
 	private VoProduct() {
 	}
 
 	VoProduct(long productId) {
 		this.id = KeyFactory.createKey(VoProduct.class.getSimpleName(), productId);
+		importId = 0;
 	}
 
 	// =====================================================================================================================
 	public void update(FullProductInfo newInfo, long userId, PersistenceManager _pm) throws InvalidOperation {
-		this.name = newInfo.product.name;
-		this.shortDescr = newInfo.product.shortDescr;
-		this.weight = newInfo.product.weight;
-		this.minClientPack = newInfo.product.minClientPack;
 		try {
-			String imageURL2 = newInfo.product.getImageURL();
-			this.imageURL = null == imageURL2 ? null : StorageHelper.saveImage(imageURL2, userId, true, _pm);
-		} catch (IOException e) {
-			e.printStackTrace();
-			//setImageURL(null);
-		}
-		this.price = newInfo.product.price;
-		this.setFullDescr(newInfo.details.fullDescr);
-		this.imagesURLset = new ArrayList<String>();
-		for (String imgURL : newInfo.details.getImagesURLset())
+			VoHelper.copyIfNotNull(this, "name", newInfo.product.name);
+			VoHelper.copyIfNotNull(this, "shortDescr",newInfo.product.shortDescr);
+			VoHelper.copyIfNotNull(this, "weight",newInfo.product.weight);
+			VoHelper.copyIfNotNull(this, "minClientPack",newInfo.product.minClientPack);
 			try {
-				this.imagesURLset.add(StorageHelper.saveImage(imgURL, userId, true, _pm));
-			} catch (IOException ie) {
-				ie.printStackTrace();
-				//throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
+				String imageURL2 = newInfo.product.getImageURL();
+				this.imageURL = null == imageURL2 ? null : StorageHelper.replaceImage( imageURL2, this.imageURL, userId, true, _pm);
+			} catch (Exception e) {
+				e.printStackTrace();
+				//setImageURL(null);
+			}
+			VoHelper.copyIfNotNull(this, "price",newInfo.product.price);
+			VoHelper.copyIfNotNull(this, "fullDescr",newInfo.details.fullDescr);
+			if(null!=newInfo.details.getImagesURLset()){
+				this.imagesURLset = new ArrayList<String>();
+			
+				for (String imgURL : newInfo.details.getImagesURLset())
+					try {
+						this.imagesURLset.add(StorageHelper.saveImage(imgURL, userId, true, _pm));
+					} catch (IOException ie) {
+						ie.printStackTrace();
+						//throw new InvalidOperation(VoError.IncorrectParametrs, ie.getMessage());
+					}
 			}
 
-		this.pricesMap = convertFromPriceTypeMap(newInfo.details.getPricesMap(), new HashMap<Integer, Double>());
-		;
-		this.optionsMap = newInfo.details.optionsMap;
-		this.topicSet = new ArrayList<Long>();
-		if (null != newInfo.details.getTopicSet())
-			this.topicSet.addAll(newInfo.details.getTopicSet());
-		this.unitName = newInfo.product.unitName;
-
-		updateCategoriesList(newInfo, _pm);
+			if( null!=newInfo.details.getPricesMap() ) 
+				this.pricesMap.putAll( convertFromPriceTypeMap(newInfo.details.getPricesMap(), new HashMap<Integer, Double>()) );
+			
+			VoHelper.copyIfNotNull(this, "optionsMap", newInfo.details.optionsMap);
+			
+			if (null != newInfo.details.getTopicSet()){
+				this.topicSet = new ArrayList<Long>();
+				this.topicSet.addAll(newInfo.details.getTopicSet());
+			}
+			VoHelper.copyIfNotNull(this, "unitName", newInfo.product.unitName);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		}
+		_pm.makePersistent(this);
+		
+		if( null!=newInfo.details.categories &&  0 != newInfo.details.categories.size() ) updateCategoriesList(newInfo, _pm);
 	}
 
 	// =====================================================================================================================
@@ -132,7 +149,7 @@ public class VoProduct {
 						try {
 							vp.imagesURLset.add(StorageHelper.saveImage(imgURL, shop.ownerId, true, _pm));
 						} catch (Throwable ie) {
-							ie.printStackTrace();
+							//logger.warn("Failed to update image from URL: '"+imgURL+"'. "+ie.getMessage());
 							// throw new InvalidOperation(VoError.IncorrectParametrs,
 							// ie.getMessage());
 						}
@@ -152,12 +169,11 @@ public class VoProduct {
 			}
 			vp.topicSet = details.getTopicSet();
 
-			pm.getObjectById(VoProducer.class, details.getProducerId());
-			vp.producerId = details.getProducerId();
-
+			/*VoProducer producer = */pm.getObjectById(VoProducer.class, product.getProducerId());
+			vp.producerId = product.getProducerId();
 			vp.minClientPack = product.minClientPack;
 			vp.minProducerPack = details.minProducerPack;
-			vp.prepackRequired = details.prepackRequired;
+			vp.prepackRequired = product.prepackRequired;
 			vp.knownNames = new HashSet<String>();
 			if (details.knownNames != null)
 				for (String name : details.knownNames) {
@@ -174,6 +190,16 @@ public class VoProduct {
 		}
 	}
 
+	// =====================================================================================================================
+
+	public void markDeteled(){
+		importId = -1;
+	}
+	
+	public boolean isDeteled(){
+		return importId == -1;
+	}
+	
 	// =====================================================================================================================
 	public VoProduct(long shopId, FullProductInfo fpi) throws InvalidOperation {
 		this(shopId, fpi, null);
@@ -201,7 +227,7 @@ public class VoProduct {
 		this.importId = product.id;
 		this.minClientPack = product.minClientPack;
 		this.minProducerPack = details.minProducerPack;
-		this.prepackRequired = details.prepackRequired;
+		this.prepackRequired = product.prepackRequired;
 		
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
@@ -234,8 +260,8 @@ public class VoProduct {
 				pm.getObjectById(VoTopic.class, topicId);
 				this.topicSet.add(topicId);
 			}
-			pm.getObjectById(VoProducer.class, details.getProducerId());
-			this.producerId = details.getProducerId();
+			pm.getObjectById(VoProducer.class, product.getProducerId());
+			this.producerId = product.getProducerId();
 
 			pm.makePersistent(this);
 
@@ -249,8 +275,13 @@ public class VoProduct {
 	}
 
 	// =====================================================================================================================
-	public Product getProduct() {
-		return new Product(id.getId(), name, shortDescr, weight, imageURL, price, unitName, minClientPack, shopId);
+	public Product getProduct(PersistenceManager pm) {
+		//@TODO the price should depend on shop type of day of order. Now use INET version if set, RETAIL otherwise and regular at last
+		double thePrice = pricesMap == null || pricesMap.size() == 0 ? price : 
+			null == pricesMap.get(PriceType.INET.getValue()) ? 
+					pricesMap.get(PriceType.RETAIL.getValue()) == null ? price : pricesMap.get(PriceType.RETAIL.getValue()) :
+						pricesMap.get(PriceType.INET.getValue());
+		return new Product(id.getId(), name, shortDescr, weight, imageURL, thePrice, unitName, minClientPack, shopId, prepackRequired,producerId);
 	}
 
 	public ProductDetails getProductDetails() {
@@ -259,15 +290,58 @@ public class VoProduct {
 		productDetails.setCategories(getCategories());
 		productDetails.setPricesMap(convertToPriceTypeMap(pricesMap, new HashMap<PriceType, Double>()));
 		productDetails.setOptionsMap(optionsMap);
-		productDetails.setProducerId(producerId);
 		productDetails.setFullDescr(fullDescr.getValue());
 		productDetails.setTopicSet(getTopicSet());
 		productDetails.setImagesURLset(getImagesURLset());
-		productDetails.setPrepackRequired(prepackRequired);
 		productDetails.setKnownNames(knownNames);
 
 		return productDetails;
 	}
+
+	
+	public long getProducerId() {
+		return producerId;
+	}
+
+	public void setProducerId(long producerId) {
+		this.producerId = producerId;
+	}
+
+	public void setId(Key id) {
+		this.id = id;
+	}
+
+	public void setFullDescr(Text fullDescr) {
+		this.fullDescr = fullDescr;
+	}
+
+	public void setShopId(long shopId) {
+		this.shopId = shopId;
+	}
+
+	public void setMinClientPack(double minClientPack) {
+		this.minClientPack = minClientPack;
+	}
+	public void setMinClientPack(Double minClientPack) {
+		this.minClientPack = minClientPack;
+	}
+
+	public void setMinProducerPack(double minProducerPack) {
+		this.minProducerPack = minProducerPack;
+	}
+
+	public void setKnownNames(Set<String> knownNames) {
+		this.knownNames = knownNames;
+	}
+
+	public void setUnitName(String unitName) {
+		this.unitName = unitName;
+	}
+
+	public void setImportId(long importId) {
+		this.importId = importId;
+	}
+
 
 	// =====================================================================================================================
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -398,6 +472,9 @@ public class VoProduct {
 		return weight;
 	}
 
+	public void setWeight(Double weight) {
+		this.weight = weight;
+	}
 	public void setWeight(double weight) {
 		this.weight = weight;
 	}
@@ -419,6 +496,9 @@ public class VoProduct {
 	}
 
 	public void setPrice(double price) {
+		this.price = price;
+	}
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
@@ -543,4 +623,9 @@ public class VoProduct {
 	public Long getImportId() {
 		return importId;
 	}
+
+	public String getUnitName() {
+		return unitName;
+	}
+	
 }

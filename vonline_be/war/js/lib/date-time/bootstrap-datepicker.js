@@ -276,7 +276,7 @@
         }
     }
 
-    function initOrderDay(initVarForMoreOrders,createOrdersHtml,initShowMoreOrders,initOrderPlusMinus,initOrderBtns,setSidebarHeight,initOrdersLinks){
+    function initOrderDay(initVarForMoreOrders,createOrdersHtml,initShowMoreOrders,initOrderPlusMinus,initOrderBtns,setSidebarHeight){
         try{
         $('.order-day').click(function(){
             var orderDate = parseInt($(this).attr('id'));
@@ -299,7 +299,6 @@
             initOrderPlusMinus(shopOrdersList);
             initOrderBtns(shopOrdersList);
             setSidebarHeight();
-            initOrdersLinks();
         });
         }catch(e){
             alert(e + ' Функция initOrderDay');
@@ -776,7 +775,7 @@
                 initFreeDay(this.currentProduct,this.spinnerValue,this.orderData,this.packs,this.AddSingleProductToBasket,this.AddOrdersToBasket,this.AddProductToBasketCommon);
             }else{
                 SetOrderDates();
-               initOrderDay(this.initVarForMoreOrders,this.createOrdersHtml,this.initShowMoreOrders,this.initOrderPlusMinus,this.initOrderBtns,this.setSidebarHeight,this.initOrdersLinks)
+               initOrderDay(this.initVarForMoreOrders,this.createOrdersHtml,this.initShowMoreOrders,this.initOrderPlusMinus,this.initOrderBtns,this.setSidebarHeight)
             }
 		},
 
@@ -1107,7 +1106,6 @@
             this.initOrderPlusMinus = datepickerFunc.initOrderPlusMinus;
             this.initOrderBtns = datepickerFunc.initOrderBtns;
             this.setSidebarHeight = datepickerFunc.setSidebarHeight;
-            this.initOrdersLinks = datepickerFunc.initOrdersLinks;
         }
 	};
 

@@ -13,22 +13,16 @@ import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
-import com.google.appengine.api.images.Image;
-import com.google.appengine.api.images.ImagesService;
-import com.google.appengine.api.images.ImagesServiceFactory;
-import com.google.appengine.api.images.Transform;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.AuthServiceImpl;
-import com.vmesteonline.be.FullAddressCatalogue;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.PostalAddress;
+import com.vmesteonline.be.ShopBOServiceImpl;
 import com.vmesteonline.be.ShopServiceImpl;
-import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.VoError;
+import com.vmesteonline.be.access.shop.VoShopAccessManager;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.GeoLocation;
-import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoRubric;
@@ -48,17 +42,16 @@ import com.vmesteonline.be.jdo2.shop.VoProducer;
 import com.vmesteonline.be.jdo2.shop.VoProduct;
 import com.vmesteonline.be.jdo2.shop.VoProductCategory;
 import com.vmesteonline.be.jdo2.shop.VoShop;
-import com.vmesteonline.be.shop.DataSet;
-import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
-import com.vmesteonline.be.shop.ExchangeFieldType;
-import com.vmesteonline.be.shop.ImExType;
-import com.vmesteonline.be.shop.ImportElement;
 import com.vmesteonline.be.shop.OrderDates;
 import com.vmesteonline.be.shop.OrderDatesType;
 import com.vmesteonline.be.shop.PaymentType;
 import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Shop;
+import com.vmesteonline.be.shop.bo.DataSet;
+import com.vmesteonline.be.shop.bo.ExchangeFieldType;
+import com.vmesteonline.be.shop.bo.ImExType;
+import com.vmesteonline.be.shop.bo.ImportElement;
 
 @SuppressWarnings("unchecked")
 public class Defaults {
@@ -67,6 +60,7 @@ public class Defaults {
 	private static final String COUNTRY = "Россия";
 	public static List<VoGroup> defaultGroups;
 	public static List<VoRubric> defaultRubrics;
+	private static String shopDataStorage = "http://localhost:8888/data/vomoloko_catalog/";
 
 	public static String user1lastName = "Afamily";
 	public static String user1name = "Aname";
@@ -131,7 +125,7 @@ public class Defaults {
 			try {
 				pm.deletePersistent(i);
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 	}
@@ -174,6 +168,7 @@ public class Defaults {
 		try {
 			ShopServiceImpl ssi = new ShopServiceImpl("123");
 			AuthServiceImpl asi = new AuthServiceImpl("123");
+			ShopBOServiceImpl sbsi = new ShopBOServiceImpl("123");
 			asi.login(user1email, user1pass);
 
 			PersistenceManager pm = PMF.getPm();
@@ -182,7 +177,7 @@ public class Defaults {
 			try {
 
 				VoCity vocity = pm.getExtent(VoCity.class).iterator().next();
-				VoStreet street = new VoStreet(vocity, "г. Пушкин, Детскосельский бульвар");
+				VoStreet street = new VoStreet(vocity, "г. Пушкин, Детскосельский бульвар",pm);
 				VoBuilding building = new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0"), pm);
 				VoPostalAddress voPostalAddress = new VoPostalAddress(building, (byte) 1, (byte) 1, (byte) 1,
 						"Угол ул. Железнодоррожная и Детскосельского бульвара");
@@ -215,25 +210,27 @@ public class Defaults {
 
 			Map<PaymentType, Double> paymentTypes = new TreeMap<PaymentType, Double>();
 
-			long shop = ssi.registerShop(new Shop(10, "Во!Молоко", "Магазин свежей молочной продукции Вологодского края", postalAddress,
+			long shop = sbsi.registerShop(new Shop(10, "Во!Молоко", "Магазин свежей молочной продукции Вологодского края", postalAddress,
 					"http://vomoloko.ru/img/logo.jpg", userId, topicSet, tags, deliveryCosts, paymentTypes));
+			
+			VoShopAccessManager.createAccessForShopOwner(userId, shop);
 
 			ssi.getShop(shop); // to make it current
 			// set dates
 			// next order is MONday and THursday 
 			// closed date is monday and thursday but shifted 1 step ago
 			
-			ssi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 3, 0, PriceType.INET));
-			ssi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 4, 0, PriceType.INET));
+			sbsi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 4, 0, PriceType.INET));
+			sbsi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 3, 0, PriceType.INET));
 
 			Map<Integer, Integer> deliveryByWeightIncrement = new HashMap<Integer, Integer>();
 			deliveryByWeightIncrement.put(15000, 50); // 50 rub each 10 kg
-			ssi.setShopDeliveryByWeightIncrement(shop, deliveryByWeightIncrement);
+			sbsi.setShopDeliveryByWeightIncrement(shop, deliveryByWeightIncrement);
 
 			Map<DeliveryType, String> deliveryTypeAddressMasks = new HashMap<DeliveryType, String>();
 			deliveryTypeAddressMasks.put(DeliveryType.SHORT_RANGE, ".*(Пушкин|Павловск|Шушары|Колпино).*");
 			deliveryTypeAddressMasks.put(DeliveryType.LONG_RANGE, ".*");
-			ssi.setShopDeliveryTypeAddressMasks(shop, deliveryTypeAddressMasks);
+			sbsi.setShopDeliveryTypeAddressMasks(shop, deliveryTypeAddressMasks);
 
 			DataSet ds = new DataSet();
 			ds.date = (int) (System.currentTimeMillis() / 1000L);
@@ -243,7 +240,7 @@ public class Defaults {
 			loadCategories(ds);
 			loadProducts(ds);
 
-			ssi.importData(ds);
+			sbsi.importData(ds);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -253,42 +250,48 @@ public class Defaults {
 	// ======================================================================================================================
 
 	private static void loadProducts(DataSet ds) throws IOException {
-		ImportElement importData;
-		String imgURL;
-		/*
-		 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT,
-		 * PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
-		 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL,
-		 * PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
-		 * PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
-		 */
-		List<ExchangeFieldType> productFieldsOrder = new ArrayList<ExchangeFieldType>();
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_ID);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_NAME);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_SHORT_DESCRIPTION);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_WEIGHT);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_IMAGEURL);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_CATEGORY_IDS);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_FULL_DESCRIPTION);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_IMAGE_URLS);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_RETAIL);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_INET);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_VIP);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_SPECIAL);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_OPIONSAVP);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_TOPICS);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRODUCER_ID);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_MIN_CLN_PACK);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_MIN_PROD_PACK);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_PREPACK_REQ);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_KNOWN_NAMES);
-		productFieldsOrder.add(ExchangeFieldType.PRODUCT_UNIT_NAME);
-
-		importData = new ImportElement(ImExType.IMPORT_PRODUCTS, "product.csv", VoHelper.listToMap(productFieldsOrder));
-		importData.setUrl(StorageHelper.saveImage("http://localhost:8888/data/products_1000_sheksna.csv", userId, false, null));
-
-		ds.addToData(importData);
+		
+		String[] products = new String[] {"products_1000_sheksna_new.csv"/*, "products_1000_vmk_new.csv", "products_3000_sheksnahleb_new.csv", 
+			"products_4000_volkonditerka_new.csv", "products_5000_atag_new.csv", "products_6000_sokol_new.csv", "products_7000_mgk_new.csv", 
+			"products_8000_tarnoga_new.csv"*/};
+		
+		for( String pFile : products ){
+			ImportElement importData;
+			/*
+			 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT,
+			 * PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
+			 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL,
+			 * PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
+			 * PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
+			 */
+			List<ExchangeFieldType> productFieldsOrder = new ArrayList<ExchangeFieldType>();
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_ID);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_NAME);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_SHORT_DESCRIPTION);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_WEIGHT);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_IMAGEURL);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_CATEGORY_IDS);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_FULL_DESCRIPTION);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_IMAGE_URLS);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_RETAIL);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_INET);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_VIP);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRICE_SPECIAL);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_OPIONSAVP);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_TOPICS);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PRODUCER_ID);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_MIN_CLN_PACK);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_MIN_PROD_PACK);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PREPACK_REQ);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_KNOWN_NAMES);
+			productFieldsOrder.add(ExchangeFieldType.PRODUCT_UNIT_NAME);
+	
+			importData = new ImportElement(ImExType.IMPORT_PRODUCTS, pFile, VoHelper.listToMap(productFieldsOrder));
+			importData.setUrl(StorageHelper.saveImage(shopDataStorage+pFile, userId, false, null));
+	
+			ds.addToData(importData);
+		}
 	}
 
 	// ======================================================================================================================
@@ -305,7 +308,7 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
 
 		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage("http://localhost:8888/data/product_categories.csv", userId, false, null));
+		importData.setUrl(StorageHelper.saveImage(shopDataStorage+"product_categories.csv", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -315,7 +318,7 @@ public class Defaults {
 	private static void loadProducers(DataSet ds) throws IOException {
 		List<ExchangeFieldType> fieldsOrder;
 		ImportElement importData;
-		String imgURL;
+	
 		fieldsOrder = new ArrayList<ExchangeFieldType>();
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_ID);
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_NAME);
@@ -324,7 +327,7 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
 
 		importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage("http://localhost:8888/data/producers.csv", userId, false, null));
+		importData.setUrl(StorageHelper.saveImage(shopDataStorage+"producers.csv ", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -378,7 +381,6 @@ public class Defaults {
 		} catch (Exception e1) {
 
 		}
-		userId = user2Id;
 		try {
 			user3Id = asi.registerNewUser(user3name, user3lastName, user3pass, user3email, locCodes.get(2));
 		} catch (Exception e) {
@@ -389,11 +391,12 @@ public class Defaults {
 
 	// ======================================================================================================================
 	private static List<String> initializeTestLocations() throws InvalidOperation {
-		List<String> locations = new ArrayList<String>();
-		VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY), CITY), "Республиканская");
 		PersistenceManager pm = PMF.getPm();
 
 		try {
+			List<String> locations = new ArrayList<String>();
+			VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY,pm), "Республиканская", pm);
+			
 			pm.makePersistent(street);
 			VoPostalAddress[] addresses;
 			addresses = new VoPostalAddress[] {

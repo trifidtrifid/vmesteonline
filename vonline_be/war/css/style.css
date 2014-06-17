@@ -181,6 +181,7 @@ h1 {
 }
 .widget-main {
   overflow: auto;
+  padding: 0;
   padding-bottom: 5px;
 }
 .fa:hover {
@@ -190,7 +191,7 @@ h1 {
   margin-bottom: 10px;
 }
 .topic-item .topic-descr {
-  border: 1px solid #5090c1;
+  border-bottom: 1px solid #5090c1;
   border-radius: 2px;
 }
 .topic-item .topic-descr .topic-header-left {
@@ -247,6 +248,10 @@ h1 {
 .topic-item .topic-descr .topic-right {
   margin-left: 115px;
 }
+.topic-item .topic-descr .topic-right h2 {
+  margin-top: 0;
+  font-size: 20px;
+}
 .topic-item .topic-descr .topic-right .fa-relations {
   float: right;
   font-size: 16px;
@@ -281,11 +286,16 @@ h1 {
   text-align: center;
   width: 95px;
 }
+.topic-item .topic-descr .topic-left .plus-minus {
+  font-size: 30px;
+  margin-top: 5px;
+}
 .topic-item .topic-descr .topic-left img {
   width: 95px;
 }
 .topic-item .topic-descr .topic-left .topic-author {
   font-size: 14px;
+  text-align: left;
 }
 .topic-item .topic-descr .topic-left .author-rating a {
   display: inline-block;
@@ -395,9 +405,6 @@ h1 {
 .widget-header.fixed .topic-header-date {
   display: none;
 }
-.dd>.dd-list>.topic-item {
-  margin-left: 10px;
-}
 .dd>.dd-list>.topic-item.list-view .dd-list {
   padding-left: 0;
 }
@@ -411,7 +418,7 @@ h1 {
 .wysiwyg-editor a {
   cursor: pointer;
 }
-@media all and (max-width: 768px),screen and (device-width: 320px) {
+@media all and (max-width: 768px), screen and (device-width: 320px) {
   .sidebar#sidebar {
     margin-left: -190px;
   }
@@ -461,4 +468,66 @@ h1 {
 }
 .create-topic .wysiwyg-editor {
   border-left: 1px solid #ccc;
+}
+/* новые стили после редизайна 11.06.14 */
+.lenta-item {
+  margin-bottom: 20px;
+}
+.lenta-item .first-message {
+  border: 1px solid #d7dbdd;
+  position: relative;
+  padding: 5px;
+}
+.lenta-item .first-message .user {
+  float: left;
+}
+.lenta-item .first-message .user img {
+  width: 100px;
+}
+.lenta-item .first-message .body {
+  margin-left: 110px;
+}
+.lenta-item .first-message .body .time {
+  float: right;
+}
+.lenta-item .first-message .body .tools {
+  position: absolute;
+  right: 5px;
+}
+.lenta-item .dialogs {
+  clear: left;
+  margin: 0 0 0 110px;
+  padding-top: 15px;
+  padding-right: 0;
+}
+.lenta-item .message-textarea {
+  width: 99%;
+}
+.create-topic-btn {
+  float: right;
+  margin-bottom: 15px;
+}
+.create-topic {
+  display: none;
+}
+.talks-title {
+  clear: right;
+  padding: 10px;
+  border-top: 1px solid #5090c1;
+}
+.talks-title .talks-title-left {
+  float: left;
+}
+.talks-title .talks-title-left a {
+  font-weight: bold;
+  font-size: 16px;
+}
+.talks-title .talks-title-right {
+  float: right;
+}
+.talks-block {
+  clear: right;
+}
+.dd-item .dd-list {
+  display: none;
 }

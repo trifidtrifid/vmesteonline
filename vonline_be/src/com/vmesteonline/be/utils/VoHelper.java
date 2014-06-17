@@ -18,7 +18,7 @@ import javax.jdo.PersistenceManager;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.GeoLocation;
-import com.vmesteonline.be.shop.MatrixAsList;
+import com.vmesteonline.be.MatrixAsList;
 
 public class VoHelper {
 
@@ -126,7 +126,7 @@ public class VoHelper {
 
 	// ===================================================================================================================
 	public static void copyIfNotNull(Object owner, String fieldName, Object objToCopy) throws NoSuchFieldException {
-		if (null != objToCopy) {
+		if (null != objToCopy && objToCopy instanceof Number && ((Number)objToCopy).doubleValue() != 0.0 ) {
 			Field field = null;
 			try {
 				field = owner.getClass().getField(fieldName);
@@ -306,17 +306,22 @@ public class VoHelper {
 		List<String> list = new ArrayList<String>();
 		
 		if(0!=matrix.size()){
-				for( int row = 0; row < matrix.size(); row ++) {
+			int maxRowLen = 0;
+			for( int row = 0; row < matrix.size(); row ++)
+				if( maxRowLen < matrix.get(row).size() )
+					maxRowLen = matrix.get(row).size();
 			
+			for( int row = 0; row < matrix.size(); row ++) {
+		
 				List<String> rowVal = matrix.get(row);
+				
 				for (String val : rowVal) {
 					if( !list.add( null == val ? "" : val)) {
 						throw new RuntimeException( "Implemetation ERROR! Collection must support add method without check of elemnts uniqueless!");
 					}
 				}
-			}
-			if( list.size() % matrix.size() != 0 ){
-				throw new RuntimeException( "Implemetation ERROR! Matrix must be square!");
+				while(0 != list.size() % maxRowLen)
+					list.add("");
 			}
 		}
 		return new MatrixAsList(matrix.size(), list);

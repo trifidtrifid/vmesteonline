@@ -14,16 +14,19 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import com.vmesteonline.be.access.VoUserAccessBase;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoBaseMessage;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 
 public class ServiceImpl {
 
-	protected enum ServiceCategoryID {
+	public enum ServiceCategoryID {
 		BASE_SI, AUTH_SI, USER_SI, MESSAGE_SI, SHOP_SI
-	};
+	}
+	public Class getAuthRecordClass(){ return VoUserAccessBase.class; }
 
 	private static Cache cache;
 	public static Logger logger;
@@ -39,7 +42,7 @@ public class ServiceImpl {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <T> T getObjectFromCache(Object key) {
+	public static <T> T getObjectFromCache(Object key) {
 		T rslt = null;
 		if (null != cache && cache.containsKey(key)) {
 			try {
@@ -52,7 +55,7 @@ public class ServiceImpl {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <T> T removeObjectFromCache(Object key) {
+	public static <T> T removeObjectFromCache(Object key) {
 		T rslt = null;
 		if (null != cache && cache.containsKey(key)) {
 			try {
@@ -65,7 +68,7 @@ public class ServiceImpl {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <T extends Serializable> void putObjectToCache(Object key, T value) {
+	public static <T extends Serializable> void putObjectToCache(Object key, T value) {
 		if (null != cache) {
 			try {
 				cache.put(key, value);
@@ -254,5 +257,10 @@ public class ServiceImpl {
 	 */
 	public long categoryId() {
 		return ServiceCategoryID.BASE_SI.ordinal();
+	}
+	
+
+	public boolean accessAllowed(VoUserAccessBase voUserAccessBase, long currentUserId, long categoryId, String method, PersistenceManager pm) {
+		return true;
 	}
 }

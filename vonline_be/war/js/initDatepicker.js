@@ -16,7 +16,6 @@ define(
             initOrderPlusMinus: ordersModule.initOrderPlusMinus,
             initOrderBtns: ordersModule.initOrderBtns,
             setSidebarHeight: commonModule.setSidebarHeight,
-            initOrdersLinks: ordersModule.initOrdersLinks
         };
 
         dPicker.datepicker('setVarOrderDates',datepickerFunc);

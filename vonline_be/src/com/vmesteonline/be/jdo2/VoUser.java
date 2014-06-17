@@ -2,7 +2,10 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -18,6 +21,7 @@ import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.UserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
+import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.utils.Defaults;
 
@@ -36,7 +40,7 @@ public class VoUser extends GeoLocation {
 		this.likesNum = 0;
 		this.unlikesNum = 0;
 		this.rubrics = new ArrayList<VoRubric>();
-		this.deliveryAddresses = new ArrayList<VoPostalAddress>();
+		this.deliveryAddresses = new HashMap<String,VoPostalAddress>();
 		this.confirmCode = 0;
 		this.emailConfirmed = false;
 		this.avatarMessage = Defaults.defaultAvatarTopicUrl;
@@ -147,6 +151,10 @@ public class VoUser extends GeoLocation {
 		this.confirmCode = confirmCode;
 	}
 
+	public VoPostalAddress getDeliveryAddress( String key ) {
+		return deliveryAddresses!=null ? deliveryAddresses.get(key) : null;
+	}
+	
 	public void setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
 		Key addressKey = VoPostalAddress.getKeyValue(locCode);
 		try {
@@ -168,49 +176,63 @@ public class VoUser extends GeoLocation {
 
 	// TODO should test removing
 	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) {
-		VoBuilding building = null;
-
+		
+		//remove user from old group
 		if (null != this.getAddress()) { // location already set, so user should
 																			// be removed first
-			building = this.address.getBuilding();
-			if (null != building)
-				building.removeUser(this);
+			VoBuilding oldBuilding = this.address.getBuilding();
+			if (null != oldBuilding)
+				oldBuilding.removeUser(this);
 		}
-		pm.retrieve(userAddress);
+		
 		// building from new address
-		building = userAddress.getBuilding();
+		VoBuilding building = userAddress.getBuilding();
 		if (null != building)
 			building.addUser(this);
+		else 
+			throw new RuntimeException("Incorrect address");
+		
+		//check if location is set
+		if( null == building.getLatitude() || 0 == building.getLatitude().intValue() ){
+			try {
+				VoGeocoder.getPosition(building);
+				
+			} catch (InvalidOperation e) {
+				e.printStackTrace();
+			}
+		}
 
 		this.address = userAddress;
-		if (null != building) {
-			pm.retrieve(building);
-			VoUserGroup home = userAddress.getUserHomeGroup();
-			if(null!=home){
-				this.setLatitude(home.getLatitude());
-				this.setLongitude(home.getLongitude());
-				if (null != groups && !groups.isEmpty()) {
-					for (VoUserGroup ug : groups) {
-						ug.setLatitude(home.getLatitude());
-						ug.setLongitude(home.getLongitude());
-					}
-				}
-			} else {
-				groups = new ArrayList<VoUserGroup>();
-				if(null!=Defaults.defaultGroups){
-					for (VoGroup grp : Defaults.defaultGroups) {
-						if (!grp.isHome())
-							groups.add(new VoUserGroup(this, grp));
-					}
-				}
+
+		VoUserGroup home = userAddress.getUserHomeGroup();
+		if(null==home){
+			home = new VoUserGroup(this, new VoGroup("Подъезд",0));
+			home.setLongitude(building.getLongitude());
+			home.setLatitude(building.getLatitude());
+		}
+		this.setLatitude(home.getLatitude());
+		this.setLongitude(home.getLongitude());
+		if (null != groups && !groups.isEmpty()) {
+			for (VoUserGroup ug : groups) {
+				ug.setLatitude(home.getLatitude());
+				ug.setLongitude(home.getLongitude());
 			}
 		} else {
 			groups = new ArrayList<VoUserGroup>();
+			groups.add(home);
+			for( VoGroup group: Defaults.defaultGroups ){
+				groups.add(new VoUserGroup(this, group));
+			}
 		}
-		addPostalAddress(userAddress);
+		
+		addDeliveryAddress( 0L, "домой", userAddress );
 
 		pm.makePersistent(this);
 		pm.makePersistent(building);
+	}
+
+	private void addDeliveryAddress(long l, String name, VoPostalAddress userAddress) {
+		this.deliveryAddresses.put(name, userAddress);
 	}
 
 	// *****
@@ -231,12 +253,24 @@ public class VoUser extends GeoLocation {
 		pm.makePersistent(this);
 	}
 
-	public void addPostalAddress(VoPostalAddress pa) {
-		deliveryAddresses.add(pa);
+	public void addDeliveryAddress( VoPostalAddress pa, String textKey ) throws InvalidOperation {
+		if(deliveryAddresses==null)
+			deliveryAddresses = new HashMap<String,VoPostalAddress>();
+		deliveryAddresses.put(textKey, pa);
+	}
+	
+	public boolean removeDeliveryAddress( String key ){
+		return null == deliveryAddresses ? false : deliveryAddresses.remove(key) != null;
 	}
 
-	public List<VoPostalAddress> getAddresses() {
-		return deliveryAddresses;
+	public List<String> getAddresses() {
+		List<String> out = new ArrayList<String>();
+		if(null!=deliveryAddresses && deliveryAddresses.size() > 0){
+			Set<String> keySet = deliveryAddresses.keySet();
+			if( null!=keySet && keySet.size() > 0 ) 
+				out.addAll( keySet);
+		} 
+		return out;
 	}
 
 	public boolean isEmailConfirmed() {
@@ -260,7 +294,7 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	@Unowned
-	private List<VoPostalAddress> deliveryAddresses;
+	private Map<String,VoPostalAddress> deliveryAddresses;
 
 	@Persistent
 	@Unindexed
@@ -325,7 +359,8 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	private String avatarProfileShort;
-
+	
+	
 	public String getAvatarMessage() {
 		return avatarMessage;
 	}

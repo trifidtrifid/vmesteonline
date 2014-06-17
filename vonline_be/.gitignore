@@ -1,12 +1,13 @@
-/out
-/.classpath
-/.idea
-/thrift/thrift.exe
-
+/.google_apis
+/
+.settings
+/
 .classpath
+/
 .project
+
 /bin
 
 vonline_be.iml
 /WEB-INF
-.google_apis/
+

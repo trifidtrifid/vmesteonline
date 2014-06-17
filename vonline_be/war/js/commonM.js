@@ -1,6 +1,6 @@
 define(
-    'commonM',
-    ['jquery','shop-initThrift','shop-search','shop-common'],
+    'commonM.min',
+    ['jquery','shop-initThrift.min','shop-search.min','shop-common.min'],
     function( $,thriftModule,searchModule, commonModule ){
 
         function init(){
@@ -29,7 +29,8 @@ define(
         });
 
         $('.nav-list a,.navbar .nav a:not(".dropdown-toggle")').click(function(e){
-            e.preventDefault();
+            var isBackoffise = $(this).closest('.backoffice').length;
+            if(!isBackoffise && !$(this).hasClass('bo-link')) e.preventDefault();
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
         });
@@ -37,7 +38,16 @@ define(
         /* переключения на настройки, профиль и выход */
 
         function SetJSForEditPersonal(){
-            //$('#date-picker-birthday').datepickerSimple({startView: 2, viewMode: 2,autoclose:true, language:'ru'});
+            /* history*/
+            var urlHash = document.location.hash;
+            if (urlHash != '#edit-profile'){
+                var state = {
+                    type : 'page',
+                    pageName: 'edit-profile'
+                };
+                window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+            }
+            /**/
 
             $('.save-changes').click(function(e){
                 e.preventDefault();
@@ -59,7 +69,7 @@ define(
                 userInfo.lastName = newSurname;
                 userContacts.mobilePhone = newPhone;
 
-                var commonModule = require('shop-common');
+                var commonModule = require('shop-common.min');
                 if (commonModule.isValidEmail(newEmail)){
                     userContacts.email = newEmail;
                 }else{
@@ -81,29 +91,53 @@ define(
                 commonModule.changeShortUserInfo(userInfo);
 
                 function hideSaveStatus(){
-                    $('.save-status').removeClass('active')
+                    $('.save-status').removeClass('active');
+                    $('.shop-editPersonal').hide();
+                    $('.user-menu li:eq(0) a').trigger('click');
                 }
                 setTimeout(hideSaveStatus,2000);
             }
 
             });
 
-            $('.main-container').css('min-height', w.height()-45);
+            $('.main-container').css('min-height', w.height()-115);
 
         }
 
-        function SetJSForProfile(){
-
-            $('.main-container').css('min-height', $(window).height()-45);
+        function SetJSForProfile(isEditPersonal){
 
             $('.edit-personal-link').click(function(e){
                 e.preventDefault();
                 $('.page').hide();
 
                 $('.shop-editPersonal').load("ajax/ajax-editPersonal.jsp .dynamic",function(){
+                    $('.loading').show(0);
+
                     SetJSForEditPersonal();
+
+                    $('.loading').hide(0);
+
                 }).show();
             });
+
+            if (isEditPersonal){
+
+                $('.edit-personal-link').trigger('click');
+
+            }else{
+                $('footer').removeClass('short-footer');
+            /* history*/
+            var urlHash = document.location.hash;
+            if (urlHash != '#profile'){
+                var state = {
+                    type : 'page',
+                    pageName: 'profile'
+                };
+                window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+            }
+            /**/
+
+            $('.main-container').css('min-height', $(window).height()-115);
 
             $('.sendConfirmCode').click(function(e){
                 e.preventDefault();
@@ -131,16 +165,22 @@ define(
                 }
             });
 
-            var userAddresses = thriftModule.userClient.getUserAddresses();
+            var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
+
             var userAddressesLength = userAddresses.length;
+
             if(userAddressesLength > 0){
-                var userAddressesHtml = "";
+                var userAddressesHtml = "",
+                    address;
                 for(var i = 0; i < userAddressesLength; i++){
+                    address = thriftModule.client.getUserDeliveryAddress(userAddresses[i]);
                     userAddressesHtml +='<div class="user-address-item" data-index="'+ i +'">'+
                         '<span>'+
-                        userAddresses[i].country.name+", "+userAddresses[i].city.name+", "+userAddresses[i].street.name+" "+userAddresses[i].building.fullNo+", кв. "+userAddresses[i].flatNo+
+                        //userAddresses[i]+
+                        address.street.name+" "+address.building.fullNo+", кв. "+address.flatNo+
                         '</span>'+
                         '<a href="#" class="edit-user-addr">редактировать</a>'+
+                        '<a href="#" title="Удалить" class="remove-user-addr">&times;</a>'+
                     '</div>';
                 }
                 $('.user-addresses').prepend(userAddressesHtml);
@@ -171,6 +211,7 @@ define(
 
 
             });
+            }
         }
 
         function WriteAddress(selector,address){
@@ -201,38 +242,61 @@ define(
                 }else{
                     currentForm.find('.error-info').hide();
 
-                currentForm.slideUp();
+                var commonModule = require('shop-common.min');
 
-                var commonModule = require('shop-common');
-                var deliveryAddress = commonModule.addAddressToBase(currentForm);
+                var street = currentForm.find('.street-delivery').val();
+                var building = currentForm.find('.building-delivery').val();
+                var deliveryAddress, badAddress = false;
 
                 if(!currentForm.prev().hasClass('add-user-address')){
+                    // если сохраняем при редактировании
+                    try{
+                        deliveryAddress = thriftModule.client.createDeliveryAddress(street+" "+building,flatNo,0,0,0);
+                        currentForm.find('.error-info').hide();
 
-                currentForm.prev().find('span').text(deliveryAddress.country.name + ", " + deliveryAddress.city.name + ", "
-                    + deliveryAddress.street.name + " " + deliveryAddress.building.fullNo + ", кв. " + deliveryAddress.flatNo);
+                        currentForm.prev().find('span').text(deliveryAddress.street.name + " " + deliveryAddress.building.fullNo + ", кв. " + deliveryAddress.flatNo);
 
-                    if (addressForDelete) thriftModule.userClient.deleteUserAddress(addressForDelete);
-                    thriftModule.userClient.addUserAddress(deliveryAddress);
+                        if (addressForDelete) thriftModule.client.deleteDeliveryAddress(addressForDelete.street.name+" "+addressForDelete.building.fullNo);
+
+                    }catch(e){
+                        badAddress = true;
+                        currentForm.find('.error-info').text('Такого адреса не существует !').show();
+                    }
 
                 }else{
-                    var ind = $('.user-address-item').length;
-                    if(!ind){ind = 1;}
-                    var newAddressesHtml ='<div class="user-address-item no-init" data-index="'+ ind +'">'+
-                        '<span>'+
-                        deliveryAddress.country.name + ", " + deliveryAddress.city.name + ", "
-                        + deliveryAddress.street.name + " " + deliveryAddress.building.fullNo + ", кв. " + deliveryAddress.flatNo+
-                        '</span>'+
-                        '<a href="#" class="edit-user-addr">редактировать</a>'+
-                        '</div>';
-                   $('.user-addresses').prepend(newAddressesHtml);
+                    //если сохраняем при добавлении
+                    try{
+                        deliveryAddress = thriftModule.client.createDeliveryAddress(street+" "+building,flatNo,0,0,0);
+                        currentForm.find('.error-info').hide();
 
-                    thriftModule.userClient.addUserAddress(deliveryAddress);
-                    var userAddresses = thriftModule.userClient.getUserAddresses();
+                        var ind = $('.user-address-item').length;
+                        if(!ind){ind = 1;}
+                        var newAddressesHtml ='<div class="user-address-item no-init" data-index="'+ ind +'">'+
+                            '<span>'+
+                            deliveryAddress.street.name + " " + deliveryAddress.building.fullNo + ", кв. " + deliveryAddress.flatNo+
+                            '</span>'+
+                            '<a href="#" class="edit-user-addr">редактировать</a>'+
+                            '<a href="#" title="Удалить" class="remove-user-addr">&times;</a>'+
+                            '</div>';
+                        $('.user-addresses').prepend(newAddressesHtml);
 
-                    var noInit = $('.user-address-item.no-init');
-                    initEditAddress(noInit,userAddresses,deliveryAddress);
-                    noInit.removeClass('no-init');
+                        var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
+
+                        var noInit = $('.user-address-item.no-init');
+                        initEditAddress(noInit,userAddresses,deliveryAddress);
+                        noInit.removeClass('no-init');
+
+                    }catch(e){
+                        badAddress = true;
+                        currentForm.find('.error-info').text('Такого адреса не существует !').show();
+                    }
+
                 }
+                    if(!badAddress) {
+                        commonModule.addAddressToBase(currentForm,deliveryAddress);
+                        currentForm.slideUp();
+                    }
+
                 }
             });
         }
@@ -253,7 +317,7 @@ define(
                     var currentForm = currentAddrItem.find('+.form-edit');
 
                     var ind = currentAddrItem.data('index');
-                    if(!currentAddress){currAddr = userAddresses[ind];}
+                    if(!currentAddress){currAddr = thriftModule.client.getUserDeliveryAddress(userAddresses[ind]);}
 
                     WriteAddress(currentForm,currAddr);
                     var addressForDelete = commonModule.addAddressToBase(currentForm);
@@ -267,21 +331,36 @@ define(
                 });
 
             });
+
+            selector.find('.remove-user-addr').click(function(e){
+                e.preventDefault();
+
+                var userAddressItem = $(this).closest('.user-address-item');
+                userAddressItem.slideUp(function(){
+                    var ind = $(this).data('index');
+                    var currAddr;
+                    currAddr = (currentAddress) ? currentAddress : userAddresses[ind];
+                    thriftModule.client.deleteDeliveryAddress(currAddr);
+                });
+                userAddressItem.find('+.form-edit').slideUp();
+            })
         }
 
-        $('.user-menu a').click(function(e){
+
+        $('.user-menu a').click(function(e,loadEditPersonal){
             e.preventDefault();
+            var isEditPersonal = (loadEditPersonal) ? loadEditPersonal : false;
+
             $('.navbar .nav .active').removeClass('active');
 
             $(this).closest('.user-short').removeClass('open');
             e.stopPropagation();
 
             var ind = $(this).parent().index();
-            //var dynamic = $('.dynamic');
             if (ind == 0){
                 $('.page').hide();
                 $('.shop-profile').load("ajax/ajax-profile.jsp .dynamic",function(){
-                    SetJSForProfile();
+                    SetJSForProfile(isEditPersonal);
                 }).show();
             } else {
                 thriftModule.authClient.logout();
@@ -290,14 +369,13 @@ define(
             }
         });
 
-        $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
+        $('.user-short .dropdown-toggle.no-login').click(function(){
                 $(this).parent().addClass('open');
-            });
+        });
 
         commonModule.setSidebarHeight();
 
         }
-
 
         return {
             init: init

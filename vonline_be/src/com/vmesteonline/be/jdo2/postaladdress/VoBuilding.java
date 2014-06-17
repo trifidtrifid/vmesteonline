@@ -33,7 +33,7 @@ public class VoBuilding implements Comparable<VoBuilding> {
 			users = new ArrayList<VoUser>();
 			this.longitude = longitude.toPlainString();
 			this.latitude = latitude.toPlainString();
-			this.addressString = vs.getName() + ", " + fullNo;
+			this.addressString = vs.getCity().getCountry().getName() + "," + vs.getCity().getName() + "," + vs.getName() + ", " + fullNo;
 			vs.addBuilding(this);
 			
 		} else {
@@ -43,6 +43,7 @@ public class VoBuilding implements Comparable<VoBuilding> {
 			this.longitude = oldbg.getLongitude().toPlainString();
 			this.latitude = oldbg.getLatitude().toPlainString();
 			this.addressString = oldbg.getAddressString();
+			pm.makePersistent(this);
 		}
 	}
 
@@ -167,4 +168,11 @@ public class VoBuilding implements Comparable<VoBuilding> {
 		return new BigDecimal(latitude);
 	}
 
+	public void setAddressString(String addressString) {
+		this.addressString = addressString;
+	}
+
+	public void setStreetId(Key streetId) {
+		this.streetId = streetId;
+	}
 }

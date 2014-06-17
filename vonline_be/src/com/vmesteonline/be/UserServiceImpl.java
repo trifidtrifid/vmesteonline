@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.jdo.Extent;
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.http.HttpSession;
@@ -150,15 +151,20 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public List<Group> getUserGroups() throws InvalidOperation {
 		try {
 
-			long userId = getCurrentUserId();
 			PersistenceManager pm = PMF.getPm();
+			
 			try {
-				VoUser user = pm.getObjectById(VoUser.class, userId);
-
-				if (user == null) {
-					logger.error("can't find user by id " + Long.toString(userId));
+				long userId = getCurrentUserId(pm);
+				
+				VoUser user;
+				try {
+					user = pm.getObjectById(VoUser.class, userId);
+				} catch (JDOObjectNotFoundException e) {
+					logger.info("Current user doues not exists. Not found by Id.");
+					getCurrentSession(pm).setUserId(null);
 					throw new InvalidOperation(VoError.NotAuthorized, "can't find user by id");
 				}
+
 				logger.info("find user email " + user.getEmail() + " name " + user.getName());
 
 				if (user.getGroups() == null) {
@@ -222,7 +228,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			List<String> locations = new ArrayList<String>();
 			for (VoPostalAddress pa : postalAddresses) {
 				pm.retrieve(pa);
-				locations.add("" + pa.getAddressCode());
+				if (pa.getBuilding() != null)
+					locations.add("" + pa.getAddressCode());
 			}
 			return locations;
 		} finally {
@@ -239,12 +246,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoPostalAddress addr = new VoPostalAddress(newAddress, pm);
 			VoUser currentUser = getCurrentUser(pm);
 
-			List<VoPostalAddress> addrs = currentUser.getAddresses();
-
-			for (Iterator<VoPostalAddress> iter = addrs.listIterator(); iter.hasNext();) {
-				VoPostalAddress tmpAddr = iter.next();
-				if (tmpAddr.equals(addr))
-					iter.remove();
+			List<String> addresses = currentUser.getAddresses();
+			
+			for(String addrName : addresses) {
+				if( currentUser.getDeliveryAddress(addrName).equals(addr) ){
+					currentUser.removeDeliveryAddress(addrName);
+				}
 			}
 
 		} catch (Exception e) {
@@ -292,6 +299,28 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
+	
+	@Override
+	public UserContacts getUserContactsExt(long userId) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser u = pm.getObjectById(VoUser.class, userId);
+			UserContacts uc = new UserContacts();
+			if (u.getAddress() == null) {
+				uc.setAddressStatus(UserStatus.UNCONFIRMED);
+			} else {
+				uc.setHomeAddress(u.getAddress().getPostalAddress());
+			}
+			uc.setEmail(u.getEmail());
+			uc.setMobilePhone(u.getMobilePhone());
+			return uc;
+		} catch (JDOObjectNotFoundException ioe){ 
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Access denied");
+			
+		} finally {
+			pm.close();
+		}
+	}
 
 	@Override
 	public UserInfo getUserInfo() throws InvalidOperation {
@@ -304,10 +333,22 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
+	
+	@Override
+	public UserInfo getUserInfoExt(long userId) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			return pm.getObjectById(VoUser.class, userId).getUserInfo();
+		} catch( JDOObjectNotFoundException onfe){
+			throw new InvalidOperation(VoError.NotAuthorized, "No access to user Info");
+		} finally {
+			pm.close();
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<City> getCities(long countryId) throws InvalidOperation, TException {
+	public List<City> getCities(long countryId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 
@@ -330,7 +371,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Street> getStreets(long cityId) throws InvalidOperation, TException {
+	public List<Street> getStreets(long cityId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			List<Street> cl = new ArrayList<Street>();
@@ -353,7 +394,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Building> getBuildings(long streetId) throws InvalidOperation, TException {
+	public List<Building> getBuildings(long streetId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			List<Building> cl = new ArrayList<Building>();
@@ -385,7 +426,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			if (vfar.getUserId() != voUser.getId())
 				throw new InvalidOperation(VoError.IncorrectParametrs, "can't save avatar");
 
-			Image origImage = ImagesServiceFactory.makeImageFromFilename(vfar.getFileName().toString());
+			Image origImage = ImagesServiceFactory.makeImageFromFilename(vfar.getGSFileName().toString());
 			Transform resize = ImagesServiceFactory.makeResize(95, 95);
 			String topicAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
 
@@ -412,7 +453,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
-	public FullAddressCatalogue getAddressCatalogue() throws InvalidOperation, TException {
+	public FullAddressCatalogue getAddressCatalogue() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 
@@ -427,7 +468,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			for (VoCity voc : vocis) {
 				cil.add(voc.getCity());
 			}
-
+		
 			Extent<VoStreet> voss = pm.getExtent(VoStreet.class);
 			List<Street> sl = new ArrayList<Street>();
 			for (VoStreet voc : voss) {
@@ -470,7 +511,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no country with the same name
-			VoCountry vc = new VoCountry(name);
+			VoCountry vc = new VoCountry(name,pm);
 			Query q = pm.newQuery(VoCountry.class);
 			q.setFilter("name == '" + name + "'");
 			List<VoCountry> countries = (List<VoCountry>) q.execute();
@@ -495,20 +536,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public City createNewCity(long countryId, String name) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			// TODO check that there is no country with the same name
 			VoCountry vco = pm.getObjectById(VoCountry.class, countryId);
-			Query q = pm.newQuery(VoCity.class);
-			q.setFilter("country == " + countryId + " &&  name == '" + name + "'");
-			List<VoCity> cities = (List<VoCity>) q.execute();
-			if (cities.size() > 0) {
-				logger.info("City was NOT created. The same City was registered. Return an old one: " + cities.get(0));
-				return cities.get(0).getCity();
-			} else {
-				logger.info("City '" + name + "'was created.");
-				VoCity vc = new VoCity(vco, name);
-				pm.makePersistent(vco);
-				return vc.getCity();
-			}
+			return new VoCity(vco, name, pm).getCity();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewCity. " + e.getMessage());
@@ -523,20 +552,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no street with the same name
-			VoCity vc = null;
-			vc = pm.getObjectById(VoCity.class, cityId);
-			Query q = pm.newQuery(VoStreet.class);
-			q.setFilter("city == " + cityId + " && name == '" + name + "'");
-			List<VoStreet> streets = (List<VoStreet>) q.execute();
-			if (streets.size() > 0) {
-				logger.info("Street was NOT created. The same sreet was registered. Return an old one: " + streets.get(0));
-				return streets.get(0).getStreet();
-			} else {
-				logger.info("Street '" + name + "'was created.");
-				VoStreet vs = new VoStreet(vc, name);
-				pm.makePersistent(vs);
-				return vs.getStreet();
-			}
+			VoCity vc = pm.getObjectById(VoCity.class, cityId);
+			return new VoStreet(vc, name,pm).getStreet();
+		
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewStreet. " + e.getMessage());
@@ -562,17 +580,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				logger.info("VoBuilding '" + fullNo + "'was created.");
 				VoBuilding voBuilding = new VoBuilding(vs, fullNo, new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
 						new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude), pm);
-				if (longitude != null && lattitude != null) {
-					if (longitude.isEmpty() || lattitude.isEmpty()) { // calculate
-						// location
-						try {
-							Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
-							voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
-						} catch (Exception e) {
-							e.printStackTrace();
-							throw new InvalidOperation(VoError.GeneralError, "FAiled to determine location of the building." + e.getMessage());
-						}
-
+				if (longitude == null || lattitude == null || longitude.isEmpty() || lattitude.isEmpty()) { // calculate
+					// location
+					try {
+						Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
+						voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new InvalidOperation(VoError.GeneralError, "FAiled to determine location of the building." + e.getMessage());
 					}
 				}
 				pm.makePersistent(voBuilding);
@@ -592,7 +607,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			pm.retrieve(currentUser);
-			currentUser.addPostalAddress(new VoPostalAddress(newAddress, pm));
+			currentUser.addDeliveryAddress(new VoPostalAddress(newAddress, pm),null);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -609,8 +624,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			Set<PostalAddress> pas = new HashSet<PostalAddress>();
-			for (VoPostalAddress pa : currentUser.getAddresses()) {
-				pas.add(pa.getPostalAddress(pm));
+			for (String pa : currentUser.getAddresses()) {
+				pas.add(currentUser.getDeliveryAddress(pa).getPostalAddress());
 			}
 			return pas;
 		} catch (Exception e) {

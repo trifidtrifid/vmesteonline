@@ -25,7 +25,8 @@ client = new com.vmesteonline.be.messageservice.MessageServiceClient(protocol);
         rubricID,
         lastTopicId,
         FlagOfEndTopics = 1,
-        forum = $('.forum-wrap').html();
+        forum = $('.forum-wrap').html(),
+        sidebar = $('#sidebar');
     /* константы */
     var heightOfMessagesForLoadNew = 760;
     /* --------------------- */
@@ -63,7 +64,7 @@ $('.fa-sitemap').click(function(){
 /* --- */
 
     /* переключение между группами и рубриками */
-   $('.submenu .btn,.nav-list a').click(function(e){
+/*   $('.submenu .btn,.nav-list a').click(function(e){
     e.preventDefault();
 
        var dynamic = $('.dynamic');
@@ -89,7 +90,7 @@ $('.fa-sitemap').click(function(){
        ddList.html('').append(TopicHtmlConstructor(topicsContent,topicLen));
        SetCreateTopicBtn();
        SetTopicEvents($('.dd>.dd-list>.topic-item'));
-});
+});*/
 
     function SetLikeClick(selector){
         selector.click(function(e){
@@ -328,7 +329,7 @@ $('.fa-sitemap').click(function(){
             }
             widget.find('+.widget-box').slideToggle(200);
 
-            SetCreateMessageClick($('.wysiwig-box .btn-primary'));
+            //SetCreateMessageClick($('.wysiwig-box .btn-primary'));
         });
     }
 
@@ -921,33 +922,126 @@ function AutoReplaceLinkAndVideo(str) {
 
     /* переключение на создание топика */
     function SetCreateTopicBtn(){
-        $('.create-topic-show').click(function(){
-    var dynamic = $('.dynamic');
-    var activeGroupItem = $('.submenu .active .btn');
-    var activeRubricItem = $('.nav-list .active a');
-    var createTopicHtml = $('.create-topic-wrap').html();
+    $('.create-topic-show').click(function(){
+        var dynamic = $('.dynamic');
+        var activeGroupItem = $('.submenu .active .btn');
+        var activeRubricItem = $('.nav-list .active a');
+        var createTopicHtml = $('.create-topic-wrap').html();
 
-    dynamic.html(createTopicHtml);
+        dynamic.html(createTopicHtml);
 
-    SetWysiwig($('.create-topic .wysiwyg-editor'));
+        if(!$('.create-topic').find('.wysiwyg-toolbar').length) SetWysiwig($('.create-topic .wysiwyg-editor'));
 
-    $('.create-topic .wysiwig-box .btn-primary').click(function(){
-        var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
-        message = message.replace(new RegExp('&nbsp;','g'),' ');
-        message = message.replace(new RegExp('<div>','g'),'<div> ');
-        var head = $('.head').val();
-        var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
-        messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
-        var groupID = activeGroupItem.data('groupid');
-        var rubricID = activeRubricItem.data('rubricid');
-        client.createTopic(groupID,head,1,messageWithGoodLinks,0,0,rubricID,1);
-        activeGroupItem.trigger('click');
-        activeRubricItem.trigger('click');
-    });
+        $('.create-topic .wysiwig-box .btn-primary').click(function(){
+            var message = $(this).closest('.widget-body').find('.wysiwyg-editor').html();
+            message = message.replace(new RegExp('&nbsp;','g'),' ');
+            message = message.replace(new RegExp('<div>','g'),'<div> ');
+            var head = $('.head').val();
+            var messageWithGoodLinks = AutoReplaceLinkAndVideo(message);
+            messageWithGoodLinks = messageWithGoodLinks.replace(new RegExp('undefined','g'),"");
+            var groupID = activeGroupItem.data('groupid');
+            var rubricID = activeRubricItem.data('rubricid');
+            client.createTopic(groupID,head,1,messageWithGoodLinks,0,0,rubricID,1);
+            activeGroupItem.trigger('click');
+            activeRubricItem.trigger('click');
+        });
 });
     }
     SetCreateTopicBtn();
 
+
+
+    /* добавленное после обновления 11.06.14 */
+
+    $('.nav-list a').click(function(e){
+        e.preventDefault();
+
+        $('.page').addClass('hide');
+        var ind = $(this).parent().index();
+
+        switch (ind){
+            case 0:
+                $('.forum').removeClass('hide');
+                break;
+            case 1:
+                $('.talks').removeClass('hide');
+                break;
+            case 2:
+                break;
+        }
+    });
+
+    $('.create-topic-btn').click(function(e){
+        e.preventDefault();
+
+        $('.tab-pane').addClass('hide');
+        $(this).hide();
+
+        $(this).closest('.tab-content').find('.create-topic').show();
+
+        if(!$('.create-topic').find('.wysiwyg-toolbar').length) SetWysiwig($('.create-topic .wysiwyg-editor'));
+
+        $('.create-topic .wysiwig-box .btn-primary').click(function(e){
+            e.preventDefault();
+
+            hideCreateTopic();
+
+        });
+
+    });
+
+    function hideCreateTopic(){
+
+        $('.tab-pane').removeClass('hide');
+        $('.tab-content').find('.create-topic-btn').show();
+        $('.tab-content').find('.create-topic').hide();
+    }
+
+    $('.talks .nav-tabs li').click(function(e){
+        e.preventDefault();
+
+        hideCreateTopic();
+    });
+
+    $('.load-talk a').click(function(e){
+        e.preventDefault();
+
+        $('.talks-title-block').addClass('hide');
+        $('.create-topic-btn').addClass('hide');
+
+        var talksBlock = $(this).closest('.tab-pane').find('.talks-block');
+
+        if(talksBlock.find('.talks-single').length == 0){
+            $(this).closest('.tab-pane').find('.talks-block').load('ajax-forum/talks-single.jsp .talks-single',function(){
+
+                $('.plus-minus').click(function(e){
+                    e.preventDefault();
+
+                    if($(this).hasClass('fa-plus')){
+
+                        $(this).removeClass('fa-plus').addClass('fa-minus');
+                        $(this).closest('.dd-item').find('>.dd-list').slideDown();
+
+                    }else{
+
+                        $(this).removeClass('fa-minus').addClass('fa-plus');
+                        $(this).closest('.dd-item').find('>.dd-list').slideUp();
+                    }
+
+                });
+
+
+                SetShowEditorClick($('.answer-link'));
+
+                /*$('.answer-link').click(function(e){
+                    e.preventDefault();
+
+
+                });*/
+            });
+        }
+        talksBlock.removeClass('hide');
+    });
 
 
 });

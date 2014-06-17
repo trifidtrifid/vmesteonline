@@ -1,5 +1,56 @@
 @import 'common.css';
 /* страница регистрации */
+.login-layout .main-content {
+  border: 0;
+}
+.login-container .widget-box {
+  visibility: hidden;
+  display: none;
+}
+.login-container .widget-box.visible {
+  visibility: visible;
+  display: block;
+}
+.login-box,
+.signup-box,
+.forgot-box {
+  padding: 6px;
+  background-color: #394557;
+}
+.login-box .widget-body,
+.signup-box .widget-body,
+.forgot-box .widget-body {
+  background: #f7f7f7;
+}
+.login-box .widget-body .widget-main,
+.signup-box .widget-body .widget-main,
+.forgot-box .widget-body .widget-main {
+  padding: 16px 36px 16px 36px;
+}
+.login-box fieldset,
+.signup-box fieldset,
+.forgot-box fieldset {
+  text-align: center;
+}
+.login-box .btn-primary,
+.signup-box .btn-primary,
+.forgot-box .btn-primary,
+.login-box .btn-success,
+.signup-box .btn-success,
+.forgot-box .btn-success,
+.login-box .btn-danger,
+.signup-box .btn-danger,
+.forgot-box .btn-danger {
+  float: none !important;
+  font-size: 16px;
+}
+.email-forgot-error,
+.password-new-error {
+  margin-bottom: 10px;
+}
+.login-page .container {
+  min-width: 0;
+}
 .login-forms {
   width: 650px;
   margin: 30px auto;
@@ -89,11 +140,6 @@
 .registration-form .captcha {
   display: inline-block;
 }
-.registration-form .email-alert {
-  color: #f00;
-  display: none;
-  text-align: center;
-}
 .registration-form .set-new-password {
   display: none;
   clear: right;
@@ -112,4 +158,80 @@
 #selectGroup {
   margin-right: 15px;
   float: right;
+}
+@media all and (max-width: 650px) {
+  .modal-auth {
+    width: 100% !important;
+    left: 0 !important;
+    margin-left: 0 !important;
+    height: 320px !important;
+  }
+  .modal-auth .container {
+    width: 90%;
+  }
+  .login-forms {
+    width: 100%;
+  }
+  .registration-form {
+    width: 49%;
+    height: 290px !important;
+  }
+  .registration-form h1 {
+    font-size: 20px;
+    padding: 8px;
+  }
+  .registration-form input {
+    width: 98% !important;
+  }
+  .registration-form .set-new-password .btn {
+    padding: 2px 0;
+    font-size: 12px;
+    margin-right: 0;
+    float: none;
+    display: inline-block;
+    width: 48%;
+  }
+  .registration-form label {
+    font-size: 12px;
+    width: auto !important;
+  }
+}
+@media all and (max-width: 380px) {
+  .registration-form h1 {
+    font-size: 14px;
+  }
+  .registration-form .btn-submit {
+    width: 100px;
+    margin-left: -50px;
+    font-size: 14px;
+  }
+}
+.signup-shop .login-container {
+  width: 480px;
+}
+.signup-shop textarea {
+  width: 100%;
+  height: 70px;
+}
+.signup-shop .file-label {
+  text-align: left;
+}
+.signup-shop .file-label .file-name {
+  padding-left: 5px;
+}
+.signup-shop .fa {
+  position: absolute;
+  font-size: 16px;
+  top: 8px;
+  right: 5px;
+}
+.signup-shop .fa.fa-image {
+  position: static;
+}
+.signup-shop .ace-file-input {
+  height: auto;
+}
+.signup-shop .ace-file-input .file-label {
+  text-align: center;
+  margin-top: -37px;
 }

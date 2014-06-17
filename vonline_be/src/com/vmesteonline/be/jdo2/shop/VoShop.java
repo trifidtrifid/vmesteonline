@@ -88,7 +88,8 @@ public class VoShop {
 
 	public Shop getShop() {
 		List<Long> topicIds = new ArrayList<Long>();
-		topicIds.addAll(getTopics());
+		List<Long> topicss = getTopics();
+		if(null!=topicss) topicIds.addAll(topicss);
 		Shop shop = new Shop(id.getId(), name, descr.getValue(), null == address ? null : address.getPostalAddress(), logoURL, ownerId, topicIds, tags,
 				convertToDeliveryTypeMap(deliveryCosts, new HashMap<DeliveryType, Double>()), convertToPaymentTypeMap(paymentTypes,
 						new HashMap<PaymentType, Double>()));
@@ -427,6 +428,9 @@ public class VoShop {
 	}
 //======================================================================================================================
 	public PriceType getPriceType(int date) throws InvalidOperation {
+		
+		date -= date % 86400;
+		
 		Calendar now = Calendar.getInstance();
 		Calendar theDate = Calendar.getInstance();
 		theDate.setTimeInMillis(((long)date)*1000L);
@@ -437,10 +441,10 @@ public class VoShop {
 				( d.eachOddEven == 0 || 
 						d.eachOddEven == 1 && 1 == theDate.get(Calendar.WEEK_OF_YEAR) % 2  ||
 						d.eachOddEven == 2 && 0 == theDate.get(Calendar.WEEK_OF_YEAR) % 2 ) ) {
-				if( now.getTimeInMillis() < theDate.getTimeInMillis() - 86400000L * (long)d.orderBefore )
+				if( now.getTimeInMillis() < theDate.getTimeInMillis() - 86400000L * (long)(d.orderBefore - 1) - now.get(Calendar.ZONE_OFFSET) )
 					return d.getPriceTypeToUse();
 				
-			} else if( d.type == OrderDatesType.ORDER_MOUNTHLY &
+			} else if( d.type == OrderDatesType.ORDER_MOUNTHLY &&
 					( d.eachOddEven == 0 || 
 					d.eachOddEven == 1 && 1 == theDate.get(Calendar.MONTH) % 2  ||
 					d.eachOddEven == 2 && 0 == theDate.get(Calendar.MONTH) % 2 ) ) {
@@ -454,8 +458,11 @@ public class VoShop {
 	//=====================================================================================================================
 	
 	public OrderDate getNextOrderDate(int afterDate) throws InvalidOperation {
-		Calendar theDate = Calendar.getInstance();
-		theDate.setTimeInMillis(((long)afterDate)*1000L);
+		
+		afterDate -= afterDate % 86400;
+		
+		Calendar afterDateCldr = Calendar.getInstance();
+		afterDateCldr.setTimeInMillis(((long)afterDate)*1000L);
 		int closestDelta = 1000;
 		PriceType pt = PriceType.INET;
 
@@ -463,31 +470,31 @@ public class VoShop {
 			int delta;
 			
 			if( d.type == OrderDatesType.ORDER_WEEKLY ){
-				int ddow = theDate.get(Calendar.DAY_OF_WEEK); //day of week of the date
-				int dobow = d.orderDay - d.orderBefore; //day of week for order before
-				if( dobow < 0 ) 
-					dobow = 7 - dobow;
-				delta = ddow > dobow ? 7 - ddow + dobow : dobow - ddow;
+				int afterDateDayOfWeek = afterDateCldr.get(Calendar.DAY_OF_WEEK); //day of week of the date
+				int scheduleDayOfWeek = d.orderDay - d.orderBefore; //day of week for order before
+				if( scheduleDayOfWeek < 0 ) 
+					scheduleDayOfWeek = 7 + scheduleDayOfWeek;
+				delta = afterDateDayOfWeek > scheduleDayOfWeek ? 7 - afterDateDayOfWeek + scheduleDayOfWeek : scheduleDayOfWeek - afterDateDayOfWeek;
 				
-				if( 1 == d.eachOddEven && 1 == theDate.get(Calendar.WEEK_OF_YEAR % 2 ) || 
-						2 == d.eachOddEven && 0 == theDate.get(Calendar.WEEK_OF_YEAR % 2 ) || 
+				if( 1 == d.eachOddEven && 1 == afterDateCldr.get(Calendar.WEEK_OF_YEAR % 2 ) || 
+						2 == d.eachOddEven && 0 == afterDateCldr.get(Calendar.WEEK_OF_YEAR % 2 ) || 
 						0 == d.eachOddEven );
 				else
 					delta += 7;
 				
 			} else { //d.type == OrderDatesType.ORDER_MONTHLY
 				
-				int ddow = theDate.get(Calendar.DAY_OF_WEEK); //day of week of the date
+				int ddow = afterDateCldr.get(Calendar.DAY_OF_WEEK); //day of week of the date
 				int dobow = d.orderDay - d.orderBefore; //day of week for order before
 				if( dobow < 0 ) 
-					dobow = theDate.getActualMaximum(Calendar.DAY_OF_MONTH) - dobow;
-				delta = ddow > dobow ? theDate.getActualMaximum(Calendar.DAY_OF_MONTH) - ddow + dobow : dobow - ddow;
+					dobow = afterDateCldr.getActualMaximum(Calendar.DAY_OF_MONTH) - dobow;
+				delta = ddow > dobow ? afterDateCldr.getActualMaximum(Calendar.DAY_OF_MONTH) - ddow + dobow : dobow - ddow;
 				
-				if( 1 == d.eachOddEven && 1 == theDate.get(Calendar.MONTH % 2 ) || 
-						2 == d.eachOddEven && 0 == theDate.get(Calendar.MONTH % 2 ) || 
+				if( 1 == d.eachOddEven && 1 == afterDateCldr.get(Calendar.MONTH % 2 ) || 
+						2 == d.eachOddEven && 0 == afterDateCldr.get(Calendar.MONTH % 2 ) || 
 						0 == d.eachOddEven );
 				else
-					delta += theDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+					delta += afterDateCldr.getActualMaximum(Calendar.DAY_OF_MONTH);
 			} 
 			delta += d.orderBefore; 
 					
@@ -501,7 +508,7 @@ public class VoShop {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No order dates found in nearest 1000 days after " + 
 		new Date(1000L * (long)afterDate));
 		
-		return new OrderDate( afterDate+closestDelta * 86400, pt);
+		return new OrderDate( afterDate + closestDelta * 86400, pt);
 	}
 
 	/*

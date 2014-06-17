@@ -74,11 +74,26 @@
 .user-descr .text-area .user-body .user-addresses .add-user-address {
   margin: 10px 0;
 }
+.user-descr .text-area .user-body .user-addresses .edit-user-addr {
+  vertical-align: middle;
+  display: inline-block;
+}
+.user-descr .text-area .user-body .user-addresses .remove-user-addr {
+  color: #f00;
+  vertical-align: middle;
+  margin-left: 5px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px;
+}
 .user-descr .text-area .user-body .form-edit {
   display: none;
 }
 .user-descr .text-area .user-body .form-edit .ui-helper-hidden-accessible {
   display: none;
+}
+.user-descr .text-area .user-body .form-edit input {
+  margin-bottom: 10px;
 }
 .short.form-control {
   width: 75px !important;
@@ -112,8 +127,5 @@
   }
   .user-descr .ava-area .fa {
     font-size: 20px;
-  }
-  .user-descr .text-area {
-    margin: 0 180px 0 130px;
   }
 }

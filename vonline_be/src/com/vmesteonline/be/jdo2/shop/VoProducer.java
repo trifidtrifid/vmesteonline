@@ -45,10 +45,12 @@ public class VoProducer {
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
 		try {
-			this.logoURL = StorageHelper.saveImage(producer.getLogoURL(), userId, true, _pm);
+			String logoURL2 = producer.getLogoURL();
+			this.logoURL = logoURL2 == null || logoURL2.trim().isEmpty() ? null : StorageHelper.saveImage(logoURL2, userId, true, _pm);
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: "+e);
+			//e.printStackTrace();
+			
+			//throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: "+e);
 		}
 		
 		try {
@@ -146,13 +148,25 @@ public class VoProducer {
 				+ homeURL + "]";
 	}
 	
+//=====================================================================================================================
 
+	public void markDeteled(){
+		importId = -1;
+	}
+	
+	public boolean isDeteled(){
+		return importId == -1;
+	}
+	
 	public void update(Producer newInfoWithOldId, long userId, boolean isPublic, PersistenceManager pm) throws InvalidOperation {
 		this.id = KeyFactory.createKey(this.getClass().getSimpleName(), newInfoWithOldId.id);
 		try {
 			VoHelper.copyIfNotNull(this, "descr", newInfoWithOldId.descr);
 			VoHelper.copyIfNotNull(this, "homeURL", newInfoWithOldId.homeURL);
-			VoHelper.replaceURL(this, "logoURL", newInfoWithOldId.logoURL, userId, isPublic, pm);
+			try {
+				VoHelper.replaceURL(this, "logoURL", newInfoWithOldId.logoURL, userId, isPublic, pm);
+			} catch (Exception e) {
+			}
 			VoHelper.copyIfNotNull(this, "name", newInfoWithOldId.name);
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();

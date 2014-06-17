@@ -13,8 +13,7 @@ service UserService {
 
 //получение групп пользователя
 	list<bedata.Group> getUserGroups() throws (1:error.InvalidOperation exc),
-	list<bedata.Rubric> getUserRubrics() throws (1:error.InvalidOperation exc),
-	
+	list<bedata.Rubric> getUserRubrics() throws (1:error.InvalidOperation exc),	
 	
 	bool setUserAddress( 1:bedata.PostalAddress newAddress )throws (1:error.InvalidOperation exc),
 	bool addUserAddress( 1:bedata.PostalAddress newAddress )throws (1:error.InvalidOperation exc),
@@ -30,12 +29,14 @@ service UserService {
 
 //для отображения информации о пользователе на странице профайла. 
 	bedata.UserInfo getUserInfo() throws (1:error.InvalidOperation exc),
+	bedata.UserInfo getUserInfoExt(1:i64 userId) throws (1:error.InvalidOperation exc),
 
 //для изменения информации о пользователе на странице профайла. 
 	void updateUserInfo(1:bedata.UserInfo userInfo) throws (1:error.InvalidOperation exc),
 
 //для отображения контактов пользователя на странице профайла. 
 	bedata.UserContacts getUserContacts() throws (1:error.InvalidOperation exc),
+	bedata.UserContacts getUserContactsExt(1:i64 userId) throws (1:error.InvalidOperation exc),
 
 //для изменения контактов пользователя на странице профайла. 
 	void updateUserContacts(1:bedata.UserContacts contacts) throws (1:error.InvalidOperation exc),
@@ -55,6 +56,5 @@ service UserService {
 	bedata.City createNewCity( 1:i64 countryId, 2:string name) throws (1:error.InvalidOperation exc),
 	bedata.Street createNewStreet( 1:i64 cityId, 2:string name) throws (1:error.InvalidOperation exc),
 	bedata.Building createNewBuilding( 1:i64 streetId, 2:string fullNo, 3:string longitude, 4:string lattitude) throws (1:error.InvalidOperation exc),
-	
 	
 }

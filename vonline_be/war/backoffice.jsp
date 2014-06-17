@@ -2,11 +2,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
+<%@ page import="com.vmesteonline.be.ShopBOServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.shop.*"%>
+<%@ page import="com.vmesteonline.be.shop.bo.*"%>
 
 <%
     HttpSession sess = request.getSession();
@@ -15,67 +17,55 @@
     AuthServiceImpl.checkIfAuthorised(sess.getId());
     UserServiceImpl userService = new UserServiceImpl(request.getSession());
     ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+    if( null == ShortUserInfo){
+        sess.invalidate();
+        throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
+    }
     pageContext.setAttribute("firstName",ShortUserInfo.firstName);
     pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
     //pageContext.setAttribute("auth",false);
         response.sendRedirect("/login.jsp");
+        sess.setAttribute("successLoginURL", request.getQueryString());
         return;
     }
-
 
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
-    Shop shop = shopService.getShop(ArrayShops.get(0).id);
-    pageContext.setAttribute("logoURL", shop.logoURL);
+    if(ArrayShops != null && ArrayShops.size() > 0){
+        Shop shop = shopService.getShop(ArrayShops.get(0).id);
+        UserShopRole userRole = shopService.getUserShopRole(shop.id);
 
-    //OrderDetails currentOrderDetails;
-    //try{
+        List<ProductCategory> categoriesList = shopService.getAllCategories(shop.id);
+
+        if(categoriesList != null && categoriesList.size() > 0){
+            pageContext.setAttribute("categories", categoriesList);
+        }
+        pageContext.setAttribute("logoURL", shop.logoURL);
+        pageContext.setAttribute("shopID", shop.id);
+        pageContext.setAttribute("userRole", userRole);
+        pageContext.setAttribute("shop", shop);
+    }
 
     int now = (int) (System.currentTimeMillis() / 1000L);
     int day = 3600 * 24;
     List<Order> orders = shopService.getOrders(0, now + 180*day);
-    pageContext.setAttribute("orders", orders);
-
-    /*currentOrderDetails = shopService.getOrderDetails(order.id);
-    List<OrderLine> orderLines = currentOrderDetails.odrerLines;
-    pageContext.setAttribute("orderLines", orderLines);
-    } catch(InvalidOperation ioe){
-    currentOrderDetails = null;
-    }*/
-
-   /* Cookie cookies [] = request.getCookies();
-    String cookieName = "catid";
-    Cookie catIdCookie = null;
-    if (cookies != null) {
-    for (int i = 0; i < cookies.length; i++) {
-    if (cookies[i].getName().equals (cookieName)) {
-    catIdCookie = cookies[i];
-    }
-    }
+    if(orders.size() > 0 ){
+        pageContext.setAttribute("orders", orders);
     }
 
-    long catId = 0;
-
-    try{
-    if (catIdCookie != null){catId = Long.parseLong(catIdCookie.getValue());}
-    if (catId != 0){
-    pageContext.setAttribute("innerCategoryFlag",true);
-    }
-    }catch(Exception e){
-    catId = 0;
+    ProductListPart productsList = shopService.getProducts(0,1000,0);
+    if(productsList != null && productsList.length > 0){
+        pageContext.setAttribute("products", productsList.products);
     }
 
-    List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(catId);
-    ProductListPart productsListPart = shopService.getProducts(0,10,catId);
-    if (productsListPart.products.size() > 0){
-    pageContext.setAttribute("products",productsListPart.products);
+    List<Producer> producersList = shopService.getProducers();
+    if(producersList != null && producersList.size() > 0){
+        pageContext.setAttribute("producers", producersList);
     }
-    pageContext.setAttribute("productCategories", ArrayProductCategory);*/
 
-    //String productURL = new String( productsListPart.products.get(0).imageURL);
-    //out.print(ArrayProductCategory.get(1).id);
+
 
 %>
 <!DOCTYPE html>
@@ -83,7 +73,7 @@
 <head>
 <meta charset="utf-8" />
   <title>Бэкоффис</title>
-  <link rel="stylesheet" href="css/shop.css"/>
+  <link rel="stylesheet" href="/build/shop.min.css"/>
     <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -95,7 +85,8 @@
     <![endif]-->
 </head>
 <body>
-<div class="container backoffice">
+
+<div class="container backoffice <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}"> noAccess </c:if> ">
     <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
         try{ace.settings.check('navbar' , 'fixed')}catch(e){}
@@ -103,7 +94,7 @@
 
     <div class="navbar-container" id="navbar-container">
     <div class="navbar-header pull-left">
-        <a href="#" class="navbar-brand">
+        <a href="shop.jsp" class="navbar-brand">
             <img src="<c:out value="${logoURL}" />" alt="лого">
         </a><!-- /.brand -->
     </div><!-- /.navbar-header -->
@@ -117,7 +108,6 @@
                     <c:choose>
                         <c:when test="${auth}">
                             <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                                <%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
                                 <span class="user-info">
                                     <c:out value="${firstName}" /> <c:out value="${lastName}" />
                                 </span>
@@ -126,16 +116,13 @@
                         </c:when>
                         <c:otherwise>
                             <a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
-                                <%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
                                 <span class="user-info">
-                                    Привет,	Гость
+                                    Войти
 									</span>
                             </a>
                         </c:otherwise>
                     </c:choose>
                     <ul	class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                        <%--<li><a href="#"> <i class="icon-cog"></i> Настройки
-                        </a></li>--%>
 
                         <li><a href="#"> <i class="icon-user"></i> Профиль
                         </a></li>
@@ -151,8 +138,8 @@
         </div>
     </div><!-- /.container -->
     </div>
-    <div class="main-container backoffice dynamic" id="main-container">
-        <div class="main-container-inner">
+    <div class="main-container backoffice dynamic" id="${shopID}">
+        <div class="page main-container-inner">
             <aside class="sidebar" id="sidebar">
                 <script type="text/javascript">
                     try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
@@ -168,12 +155,22 @@
                     </li>
                     <li>
                         <a href="#">
-                            <span class="menu-text"> Импорт </span>
+                            <span class="menu-text"> Продукты/категории </span>
                         </a>
                     </li>
                     <li>
                         <a href="#">
                             <span class="menu-text"> Экспорт </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="menu-text"> Импорт </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="menu-text"> Настройки </span>
                         </a>
                     </li>
                 </ul><!-- /.nav-list -->
@@ -245,8 +242,13 @@
                     <div class="error-info"></div>
 
                     <div class="import-show">
+                        <div class="import-btn-top">
+                            <span class="confirm-info"></span>
+                            <a class="btn btn-primary btn-sm no-border import-btn" href="#">Импортировать</a>
+                        </div>
                         <h3>Поставьте соответствие данных и столбцов</h3>
-                        <div class="import-table">
+
+                        <div id="doublescroll" class="import-table">
 
                         </div>
                         <div>
@@ -254,43 +256,6 @@
                             <span class="confirm-info"></span>
                         </div>
                     </div>
-<%--                    <section class="catalog">
-                        <table>
-                            <thead>
-                            <tr>
-                                <td>Название</td>
-                                <td>Цена (руб)</td>
-                                <td>Количество</td>
-                                <td>Ед.изм</td>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-
-                            <tr data-productid="6139672929501184">
-                                <td>
-                                    <a href="#" class="product-link">
-                                        <img src="" alt="картинка">
-                                            <span>
-                                            <span>Творог 5% весовой</span>
-                                            Творог 5% на развес, ГОСТ Р 52096
-                                            </span>
-                                    </a>
-                                    <div class="modal">
-                                    </div>
-                                </td>
-                                <td class="product-price">38.0</td>
-                                <td>
-                                    <input type="text" class="input-mini spinner1 spinner-input form-control" maxlength="3">
-                                </td>
-                                <td>
-                                    <span class="unit-name">гр</span>
-                                </td>
-                            </tr>
-
-
-                            </tbody></table>
-                    </section>--%>
                 </div>
                 <div class="export back-tab tabbable">
                     <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
@@ -328,189 +293,46 @@
                             <div class="input-group">
                                 <input class="form-control date-picker datepicker-export" id="date-picker-2" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                             </div>
+
+                            <div class="export-orders-checklist">
+                                <select multiple>
+                                <optgroup label="Order">
+                                    <%
+                                        for( int val = ExchangeFieldType.ORDER_ID.getValue(); val < ExchangeFieldType.ORDER_LINE_ID.getValue(); val ++ ){
+                                            ExchangeFieldType value = ExchangeFieldType.findByValue(val);
+                                            if(null!=value){
+                                                if(value.name() == "ORDER_PRICE_TYPE" || value.name() == "ORDER_PAYMENT_TYPE"
+                                                  || value.name() == "ORDER_PAYMENT_STATUS" || value.name() == "ORDER_USER_ID"){
+                                    %>
+                                                    <option value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                                <% } else{ %>
+                                                    <option selected="selected" value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                        <%}}}%>
+
+                                </optgroup>
+                                <optgroup label="Order_Line">
+                                        <%for( int val = ExchangeFieldType.ORDER_LINE_ID.getValue(); val < ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val ++ ){
+                                            ExchangeFieldType value = ExchangeFieldType.findByValue(val);
+                                            if(null!=value){
+                                            if(value.name() == "ORDER_LINE_ID" || value.name() == "ORDER_LINE_OPRDER_ID"
+                                                || value.name() == "ORDER_LINE_PRODUCT_ID" || value.name() == "ORDER_LINE_PRODUCER_ID"
+                                                || value.name() == "ORDER_LINE_PRODUCT_ID" || value.name() == "ORDER_LINE_PRODUCER_ID"){
+                                                    %>
+
+                                            <option value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                            <% } else{ %>
+                                            <option selected="selected" value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                        <%}}}%>
+                                </optgroup>
+                                </select>
+
+                            </div>
+
                             <div class="error-info"></div>
-
-                            <div class="checkbox check-all">
-                                <label>
-                                    <input name="form-field-checkbox" type="checkbox" class="ace">
-                                    <span class="lbl"> check all</span>
-                                </label>
-                            </div>
-
-                            <%--<c:forEach var="rubric" items="${}">
-                                <li><a href="#" data-rubricid="${rubric.id}"> <span
-                                        class="menu-text">${rubric.visibleName}</span> <b>(3)</b>
-                                </a></li>
-                            </c:forEach>--%>
-
-                            <div class="export-orders-checklist"> <%
-
-                                for( int val = ExchangeFieldType.ORDER_ID.getValue(); val < ExchangeFieldType.ORDER_LINE_ID.getValue(); val ++ ){
-                                    ExchangeFieldType value = ExchangeFieldType.findByValue(val);
-                                    if(null!=value){%>
-                                    
-                                    <div class="checkbox"  data-exchange="<%=value.getValue()%>">
-                                        <label>
-                                            <input name="form-field-checkbox" type="checkbox" class="ace">
-                                            <span class="lbl"><%=value.name()%> </span>
-                                        </label>
-                                    </div>
-                                <%}}%>
-                            </div>
-                                <%--<div class="checkbox"  data-exchange="1001">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_DATE</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1002">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_STATUS</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1003">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_PRICE_TYPE</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1004">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_TOTAL_COST</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1005">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_CREATED</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1006">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_DELIVERY_TYPE</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1007">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_DELIVERY_COST</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1008">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_DELIVERY_ADDRESS</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1009">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_PAYMENT_TYPE</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1010">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_PAYMENT_STATUS</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1011">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_COMMENT</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1012">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_USER_ID</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1013">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_USER_NAME</span>
-                                    </label>
-                                </div>
-                            </div>--%>
-
-                            <div class="export-orderLine-checklist">
-                                <%for( int val = ExchangeFieldType.ORDER_LINE_ID.getValue(); val < ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val ++ ){
-                                ExchangeFieldType value = ExchangeFieldType.findByValue(val);
-                                if(null!=value){%>
-
-                                <div class="checkbox"  data-exchange="<%=value.getValue()%>">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"><%=value.name()%> </span>
-                                    </label>
-                                </div>
-                                <%}}%>
-
-                                <%--<div class="checkbox"  data-exchange="1100">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_LINE_ID</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1101">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_LINE_QUANTITY</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1102">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_LINE_OPRDER_ID</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1103">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_LINE_PRODUCT_ID</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1104">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_LINE_PRODUCT_NAME</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1105">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_LINE_PRODUCER_ID</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1106">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_LINE_PRODUCER_NAME</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1107">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_LINE_PRICE</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1108">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_LINE_COMMENT</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="1109">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> ORDER_LINE_PACKETS</span>
-                                    </label>
-                                </div>--%>
-                            </div>
 
                             <div class="export-btn-line">
                                 <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
@@ -543,83 +365,26 @@
                             <div class="input-group">
                                 <input class="form-control date-picker datepicker-export" id="date-picker-3" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                             </div>
-                            <div class="error-info"></div>
-
-                            <div class="checkbox check-all">
-                                <label>
-                                    <input name="form-field-checkbox" type="checkbox" class="ace">
-                                    <span class="lbl"> check all</span>
-                                </label>
-                            </div>
 
                             <div class="export-products-checklist">
-                                <%for( int val = ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val < ExchangeFieldType.TOTAL_PACK_SIZE.getValue(); val ++ ){
-                                    ExchangeFieldType value = ExchangeFieldType.findByValue(val);
-                                    if(null!=value){%>
+                                <select multiple>
 
-                                <div class="checkbox"  data-exchange="<%=value.getValue()%>">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"><%=value.name()%> </span>
-                                    </label>
-                                </div>
-                                <%}}%>
+                                    <%for( int val = ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val < ExchangeFieldType.TOTAL_PACK_SIZE.getValue(); val ++ ){
+                                        ExchangeFieldType value = ExchangeFieldType.findByValue(val);
+                                        if(null!=value){
+                                            if(value.name() == "TOTAL_PROUCT_ID" || value.name() == "TOTAL_PRODUCER_ID"){
+                                    %>
 
-                                <%--<div class="checkbox"  data-exchange="2000">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_PROUCT_ID</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="2001">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_PRODUCT_NAME</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="2002">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_PRODUCER_ID</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="2003">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_PRODUCER_NAME</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="2004">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_PRODUCT_MIN_PACK</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="2005">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_ORDERED</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="2006">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_MIN_QUANTITY</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="2007">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_REST</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="2008">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_PREPACK_REQUIRED</span>
-                                    </label>
-                                </div>--%>
+                                    <option value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                    <% } else{ %>
+                                    <option selected="selected" value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                    <%}}}%>
+                                </select>
+
                             </div>
+                            <div class="error-info"></div>
 
                             <div class="export-btn-line">
                                 <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
@@ -651,47 +416,26 @@
                             <div class="input-group">
                                 <input class="form-control date-picker datepicker-export" id="date-picker-4" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                             </div>
-                            <div class="error-info"></div>
 
-                            <div class="checkbox check-all">
-                                <label>
-                                    <input name="form-field-checkbox" type="checkbox" class="ace">
-                                    <span class="lbl"> check all</span>
-                                </label>
-                            </div>
 
                             <div class="export-packs-checklist">
+                                <select multiple>
                                 <%for( int val = ExchangeFieldType.TOTAL_PROUCT_ID.getValue(); val <= ExchangeFieldType.TOTAL_DELIVERY_TYPE.getValue(); val ++ ){
                                     ExchangeFieldType value = ExchangeFieldType.findByValue(val);
-                                    if(null!=value){%>
+                                    if(null!=value){
+                                        if(value.name() == "TOTAL_PROUCT_ID" || value.name() == "TOTAL_PRODUCER_ID"|| value.name() == "TOTAL_DELIVERY_TYPE"){
+                                %>
 
-                                <div class="checkbox"  data-exchange="<%=value.getValue()%>">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"><%=value.name()%> </span>
-                                    </label>
-                                </div>
-                                <%}}%>
+                                <option value="<%=value.getValue()%>"><%=value.name()%> </option>
 
-                                <%--<div class="checkbox"  data-exchange="2009">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_PACK_SIZE</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="2010">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_PACK_QUANTYTY</span>
-                                    </label>
-                                </div>
-                                <div class="checkbox"  data-exchange="2011">
-                                    <label>
-                                        <input name="form-field-checkbox" type="checkbox" class="ace">
-                                        <span class="lbl"> TOTAL_DELIVERY_TYPE</span>
-                                    </label>
-                                </div>--%>
+                                <% } else{ %>
+                                <option selected="selected" value="<%=value.getValue()%>"><%=value.name()%> </option>
+
+                                <%}}}%>
+                                </select>
+
                             </div>
+                            <div class="error-info"></div>
 
                             <div class="export-btn-line">
                                 <a class="btn btn-primary btn-sm no-border export-btn" href="#">Создать отчет</a>
@@ -703,39 +447,319 @@
                         </div>
                     </div>
                 </div>
+                <div class="bo-settings back-tab signup-shop">
+                    <div id="settings-common" class="settings-item">
+                    <h2>Общая информация</h2>
+                    <fieldset>
+                        <label class="block clearfix">
+                            <span class="block input-icon input-icon-right">
+                                <input type="text" id="name" class="form-control" value="${shop.name}" />
+                            </span>
+                        </label>
+
+                        <label class="block clearfix">
+                            <span class="block input-icon input-icon-right">
+                                <textarea name="descr" id="descr" cols="30" rows="10">${shop.descr}</textarea>
+                            </span>
+                        </label>
+
+                        <label class="block clearfix">
+                            <span class="block input-icon input-icon-right">
+                                <textarea name="address" id="address" cols="30" rows="10">${shop.address.street.name} ${shop.address.building.fullNo}, офис ${shop.address.flatNo}</textarea>
+                            </span>
+                        </label>
+
+
+                        <label class="block clearfix logo-container">
+                            <img src="${shop.logoURL}" alt="логотип"/>
+                            <input type="file" id="settings-logo">
+                        </label>
+
+                        <%--<label class="block clearfix">
+                            <span class="block input-icon input-icon-right">
+                                <input type="text" id="price-delivery" class="form-control" value="1" />
+                            </span>
+                        </label>--%>
+                    </fieldset>
+                        <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
+                    </div>
+
+                    <div id="settings-shedule" class="settings-item">
+                        <h2>Расписание завоза</h2>
+                        <div id="date-picker-6" class="shedule-dates"></div>
+                        <div class="shedule-confirm"><span>подтверждать заказ за</span><input type="text" id="days-before" value="2"><span>дня до доставки</span></div>
+                        <br>
+                        <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
+                    </div>
+
+                    <div id="settings-delivery" class="settings-item">
+                        <h2>Доставка</h2>
+                        <h5>Стоимость доставки в зависимости от расстояния</h5>
+                        <div class="radio delivery-interval-container">
+                            <label>
+                                <%--<input name="form-field-radio" type="radio" checked="checked" class="ace">--%>
+                                <span class="lbl"> Стоимость в интервалах (например 100 р до 10км, 200р при > 10км)</span>
+                            </label>
+                        </div>
+                        <div class="radio delivery-area-container">
+                            <label>
+                                <%--<input name="form-field-radio" type="radio" checked="checked" class="ace">--%>
+                                <span class="lbl"> Стоимость в зависимости от расстояния</span>
+                            </label>
+                        </div>
+                        <h5>Стоиомтсь доставки в зависимости от веса заказа</h5>
+                            <div class="delivery-weight-container">
+                            </div>
+                            <br>
+                        <a class="btn btn-primary btn-sm no-border btn-save" href="#">Сохранить</a>
+                    </div>
+                </div>
+                <div class="bo-edit back-tab">
+                    <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab5">
+                        <li class="active">
+                            <a data-toggle="tab" href="#edit-product">Продукты</a>
+                        </li>
+
+                        <li>
+                            <a data-toggle="tab" href="#edit-category">Категории</a>
+                        </li>
+
+                        <li>
+                            <a data-toggle="tab" href="#edit-producer">Производители</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="edit-product" class="tab-pane active">
+                            <a class="btn btn-sm no-border btn-primary edit-show-add" href="#">Добавить продукт</a>
+
+                            <div class="table-add table-add-product">
+                                <div class="table-overflow">
+                                <table>
+                                    <tr>
+                                        <td class="product-name">
+                                            <textarea>Название продукта</textarea> </td>
+                                        <td class="product-shortDescr">
+                                            <textarea>Сокр. описание</textarea>
+                                        </td>
+                                        <td class="product-fullDescr">
+                                            <textarea>Полное описание</textarea>
+                                        </td>
+                                        <td class="product-imageURL">
+                                            <input type="file" id="imageURL-add">
+                                            <img src="i/no-photo.png" alt="картинка"/>
+                                        </td>
+                                        <td class="product-imagesSet">
+                                            <input type="file" id="imageURLSet-add">
+                                        </td>
+                                        <td class="product-categories"><a href="#">Добавить категорию</a></td>
+                                        <td class="product-producer">
+                                            <%--    <input type="text" value="Производитель"/>--%>
+                                            <div class="btn-group producers-dropdown">
+                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                                    <span class="btn-group-text">Выбрать производителя</span>
+                                                    <span class="icon-caret-down icon-on-right"></span>
+                                                </button>
+
+                                                <ul class="dropdown-menu dropdown-blue">
+                                                    <c:forEach var="producer" items="${producers}">
+                                                        <li data-producerid="${producer.id}"><a href="#">${producer.name}</a></li>
+                                                    </c:forEach>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td class="product-weight"><input type="text" placeholder="Вес"/></td>
+                                        <td class="product-price"><input type="text" placeholder="Цена"/></td>
+                                        <td class="product-unitName"><input type="text" placeholder="Ед.изм"/></td>
+                                        <td class="product-pack"><input type="text" placeholder="Мин.шаг"/></td>
+                                        <td class="product-options">
+                                            <table>
+                                                <tr>
+                                                    <td><input type='text' placeholder="опция"></td>
+                                                    <td><input type='text' placeholder="описание"></td>
+                                                    <td class='td-remove-options'><a href='' class='remove-options-item remove-item'>&times;</a></td>
+                                                </tr>
+                                            </table>
+                                            <a href='#' class='add-options-item add-item'>Добавить</a>
+                                        </td>
+                                        <td class="product-prepack">
+                                            <label>
+                                            <input type="checkbox"/>
+                                                <span>Весовой</span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </div>
+                                <a class="btn btn-sm no-border btn-primary edit-add" href="#">Добавить</a>
+                                <span class="error-info"></span>
+                            </div>
+
+
+                            <div class="table-overflow products-table" id="doublescroll-2">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <td>Название</td>
+                                        <td>Сокр. описание</td>
+                                        <td>Полное описание</td>
+                                        <td>Аватар</td>
+                                        <td>Другие изображения</td>
+                                        <td>Категории</td>
+                                        <td>Производитель</td>
+                                        <td>Вес</td>
+                                        <td>Цена</td>
+                                        <td>Ед.изм</td>
+                                        <td>Мин.шаг</td>
+                                        <td>Опции</td>
+                                        <td>Весовой</td>
+                                    </tr>
+                                    </thead>
+                                    <c:forEach var="product" items="${products}">
+                                        <tr id="${product.id}">
+                                            <td class="product-name">
+                                                <textarea>${product.name}</textarea> </td>
+                                            <td class="product-shortDescr">
+                                                <textarea>${product.shortDescr}</textarea>
+                                            </td>
+                                            <td class="product-fullDescr">
+                                                <textarea></textarea>
+                                            </td>
+                                            <td class="product-imageURL">
+                                                <input type="file" id="imageURL-${product.id}">
+                                                <c:choose>
+                                                    <c:when test="${product.imageURL != null}">
+                                                        <img src="${product.imageURL}" alt="картинка"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <img src="i/no-photo.png" alt="картинка"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td class="product-imagesSet">
+                                                <input type="file" id="imagesSetURL">
+                                            </td>
+                                            <td class="product-categories"></td>
+                                            <td class="product-producer" data-producerid="${product.producerId}"></td>
+                                            <td class="product-weight"><input type="text" value="${product.weight}"/></td>
+                                            <td class="product-price"><input type="text" value="${product.price}"/></td>
+                                            <td class="product-unitName"><input type="text" value="${product.unitName}"/></td>
+                                            <td class="product-pack"><input type="text" value="${product.minClientPack}"/></td>
+                                            <td class="product-options"></td>
+                                            <td class="product-prepack">
+                                                <input type="checkbox" <c:if test="${product.prepackRequired}"> checked </c:if> />
+                                            </td>
+                                            <td class="product-remove"><a href="#" title="Удалить" class="remove-item">&times;</a></td>
+                                        </tr>
+                                    </c:forEach>
+
+                                </table>
+                            </div>
+                            <a class="btn btn-sm btn-primary no-border save-products" href="#">Сохранить изменения</a>
+                        </div>
+                        <div id="edit-category" class="tab-pane">
+                            <a class="btn btn-sm no-border btn-primary edit-show-add" href="#">Добавить категорию</a>
+
+                            <div class="table-add table-add-category">
+                                <table>
+                                    <tr>
+                                        <td class="category-name"><textarea>Название</textarea></td>
+                                        <td class="category-descr"><textarea>Описание</textarea></td>
+                                        <td class="category-parent"></td>
+                                    </tr>
+                                </table>
+                                <a class="btn btn-sm no-border btn-primary edit-add" href="#">Добавить</a>
+                            </div>
+
+                            <table class="category-table">
+                                <thead>
+                                <tr>
+                                    <td>Название</td>
+                                    <td>Описание</td>
+                                    <td>Родительская категория</td>
+                                    <td></td>
+                                </tr>
+                                </thead>
+                                <c:forEach var="category" items="${categories}">
+                                    <tr id="${category.id}">
+                                        <td class="category-name"><textarea>${category.name}</textarea></td>
+                                        <td class="category-descr"><textarea>${category.descr}</textarea></td>
+                                        <td class="category-parent" data-parentid="${category.parentId}">
+                                        </td>
+                                        <td class="category-remove"><a href="#" class="remove-item">&times;</a></td>
+                                    </tr>
+                                </c:forEach>
+
+                            </table>
+                            <a class="btn btn-sm btn-primary no-border save-categories" href="#">Сохранить изменения</a>
+
+                        </div>
+                        <div id="edit-producer" class="tab-pane">
+                            <a class="btn btn-sm no-border btn-primary edit-show-add" href="#">Добавить производителя</a>
+
+                            <div class="table-add table-add-producer">
+                                <table>
+                                    <tr>
+                                        <td class="producer-name"><textarea>Название</textarea></td>
+                                        <td class="producer-descr"><textarea>Описание</textarea></td>
+                                    </tr>
+                                </table>
+                                <a class="btn btn-sm no-border btn-primary edit-add" href="#">Добавить</a>
+                            </div>
+
+                            <table class="producer-table">
+                                <thead>
+                                <tr>
+                                    <td>Название</td>
+                                    <td>Описание</td>
+                                    <td></td>
+                                </tr>
+                                </thead>
+                                <c:forEach var="producer" items="${producers}">
+                                    <tr id="${producer.id}">
+                                        <td class="producer-name"><textarea>${producer.name}</textarea></td>
+                                        <td class="producer-descr"><textarea>${producer.descr}</textarea></td>
+                                        <td class="producer-remove"><a href="#" class="remove-item">&times;</a></td>
+                                    </tr>
+                                </c:forEach>
+
+                            </table>
+                            <a class="btn btn-sm btn-primary no-border save-producers" href="#">Сохранить изменения</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+        <div class="page shop-profile"></div>
+        <div class="page shop-editPersonal"></div>
 
+    </div>
+    <div class="loading">
+        <div class="loading-inside">
+            <img src="i/wait1.png" alt="загрузка">
+            <span>Подождите, идет загрузка ...</span>
+        </div>
+    </div>
 </div>
-<!-- общие библиотеки -->
-<script src="js/lib/jquery-2.0.3.min.js"></script>
-<script src="js/lib/bootstrap.min.js"></script>
+
 
 <!-- файлы thrift -->
-<script src="js/thrift.js" type="text/javascript"></script>
-<script src="gen-js/bedata_types.js" type="text/javascript"></script>
-<script src="gen-js/shop_types.js" type="text/javascript"></script>
-<script src="gen-js/ShopService.js" type="text/javascript"></script>
-<script src="gen-js/authservice_types.js" type="text/javascript"></script>
-<script src="gen-js/AuthService.js" type="text/javascript"></script>
-<script src="gen-js/userservice_types.js" type="text/javascript"></script>
-<script src="gen-js/UserService.js" type="text/javascript"></script>
+<script src="/build/thrift.min.js" type="text/javascript"></script>
+
+<script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
+
+<script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
+<script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
+<script src="/build/gen-js/shop.bo_types.js" type="text/javascript"></script>
+<script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>
+
+<script src="/build/gen-js/authservice_types.js" type="text/javascript"></script>
+<script src="/build/gen-js/AuthService.js" type="text/javascript"></script>
+<script src="/build/gen-js/userservice_types.js" type="text/javascript"></script>
+<script src="/build/gen-js/UserService.js" type="text/javascript"></script>
 <!-- -->
 
-<!-- конкретные плагины -->
-<script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
-<script src="js/lib/fuelux/fuelux.spinner.min.js"></script>
-<script src="js/lib/date-time/bootstrap-datepicker-backoffice.js"></script>
-<script src="js/lib/date-time/locales/bootstrap-datepicker.ru.js"></script>
-<script src="js/lib/jquery.flexslider-min.js"></script>
+<script type="text/javascript" data-main="/build/backoffice.min.js" src="/js/require.min.js"></script>
 
-<!-- -->
-<!-- собственные скрипты  -->
-<script src="js/lib/ace-extra.min.js"></script>
-<script src="js/lib/ace-elements.min.js"></script>
-<script src="js/common.js"></script>
-<script src="js/backoffice.js"></script>
 
 </body>
 </html>

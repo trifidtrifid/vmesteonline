@@ -97,4 +97,20 @@ struct Rubric{
 	4: string description,
 }
 
+struct MatrixAsList {
+	1:i32 rowCount,
+	2:list<string> elems
+}
+
+struct IdName {
+	1:i64 id,
+	2:string name,
+}
+
+struct IdNameChilds {
+	1:i64 id,
+	2:string name,
+	3:list<IdName> childs,
+}
+
 

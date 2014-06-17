@@ -1,10 +1,14 @@
 define(
-    'shop-initThrift',
+    'shop-initThrift.min',
     ['jquery'],
     function( $ ){
         var transport = new Thrift.Transport("/thrift/ShopService");
         var protocol = new Thrift.Protocol(transport);
-        var client = new com.vmesteonline.be.shop.ShopServiceClient(protocol);
+        var client = new com.vmesteonline.be.shop.ShopFEServiceClient(protocol);
+
+        transport = new Thrift.Transport("/thrift/ShopBOService");
+        protocol = new Thrift.Protocol(transport);
+        var clientBO = new com.vmesteonline.be.shop.bo.ShopBOServiceClient(protocol);
 
         transport = new Thrift.Transport("/thrift/UserService");
         protocol = new Thrift.Protocol(transport);
@@ -16,6 +20,7 @@ define(
 
         return {
             client: client,
+            clientBO: clientBO,
             userClient: userClient,
             authClient: authClient
         }

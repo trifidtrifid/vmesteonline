@@ -108,7 +108,7 @@ public class VoSession {
 	}
 
 	public void setUserId(Long userId) {
-		this.userId = userId;
+		this.userId = null == userId ? 0 : userId;
 	}
 
 	public long getSessionAttribute(CurrentAttributeType type) {
@@ -117,7 +117,8 @@ public class VoSession {
 	}
 
 	public void setSessionAttribute(int key, long value) {
-		if(null==curAttrMap) curAttrMap = new HashMap<Integer, Long>();
+		if (null == curAttrMap)
+			curAttrMap = new HashMap<Integer, Long>();
 		curAttrMap.put(key, value);
 	}
 
@@ -127,7 +128,6 @@ public class VoSession {
 
 	public Map<Integer, Long> getSessionAttributes() {
 		return curAttrMap;
-
 	}
 
 	@Override

@@ -1,0 +1,1 @@
+"undefined"==typeof com&&(com={}),"undefined"==typeof com.vmesteonline&&(com.vmesteonline={}),"undefined"==typeof com.vmesteonline.be&&(com.vmesteonline.be={}),com.vmesteonline.be.CurrentAttributeType={CATEGORY:1,RUBRIC:2,GROUP:3,SHOP:14,PRODUCT_CATEGORY:15,ORDER:16};

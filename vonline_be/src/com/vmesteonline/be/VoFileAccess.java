@@ -59,8 +59,16 @@ public class VoFileAccess extends HttpServlet {
 				StorageHelper.deleteImage(req.getRequestURI(), pm);
 				resp.setStatus(HttpServletResponse.SC_OK);
 				pm.deletePersistent(far);
+				
 			} else if (far.isPublic() || far.getUserId() == serviceImpl.getCurrentUserId(pm)) {
+			
+				resp.setHeader("Pragma-directive", "cache");
+				resp.setHeader("Cache-directive", "cache");
+				resp.setHeader("Cache-control", "cache");
+				resp.setHeader("Pragma", "cache");
+				resp.setHeader("Expires", "1000000");
 				StorageHelper.sendFileResponse(req, resp);
+
 			} else {
 				resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 			}
@@ -69,6 +77,7 @@ public class VoFileAccess extends HttpServlet {
 			resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.why);
 			logger.warn("Failed to process request:" + e.getMessage() + " ");
 			e.printStackTrace();
+			
 		} finally {
 			pm.close();
 		}

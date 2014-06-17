@@ -21,7 +21,7 @@ public class MySQLJDBCConnector extends JDBCConnector {
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
 
 			JDBC_DRIVER = "com.mysql.jdbc.GoogleDriver";
-			DB_URL = "jdbc:google:mysql://psyched-edge-414:vonline-cloud-sql/vonline";
+			DB_URL = "jdbc:google:mysql://vmesteonline:sqldb/vonline";
 		} else {
 			// Local MySQL instance to use during development.
 			JDBC_DRIVER = "com.mysql.jdbc.Driver";

@@ -1,17 +1,22 @@
 define(
-    'shop-orders',
-    ['jquery','shop-initThrift','shop-basket','shop-common','shop-spinner'],
+    'shop-orders.min',
+    ['jquery','shop-initThrift.min','shop-basket.min','shop-common.min','shop-spinner.min'],
     function( $,thriftModule,basketModule,commonModule,spinnerModule ){
 
-        function createOrdersProductHtml(orderDetails){
+        var producers;
+        var producersLength;
+
+        function createOrdersProductHtml(orderDetails,noEdit){
             try{
                 var ordersProductsHtml = '<section class="catalog">'+
                     '<table>'+
                     '<thead>'+
                     '<tr>'+
                     '<td>Название</td>'+
+                    '<td>Производитель</td>'+
                     '<td>Цена (руб)</td>'+
                     '<td>Количество</td>'+
+                    '<td>Стоимость</td>'+
                     '<td>Ед.изм</td>'+
                     '<td></td>'+
                     '</tr>'+
@@ -19,45 +24,65 @@ define(
                 var orderLines = orderDetails.odrerLines;
                 var orderLinedLength = orderLines.length;
 
+                producers = (producers) ? producers : thriftModule.client.getProducers();
+                producersLength = (producersLength) ? producersLength : producers.length;
+
                 for (var j = 0; j < orderLinedLength; j++){
-                    //var productDetails = thriftModule.client.getProductDetails(orderLines[j].product.id);
-                    //var imagesSet = productDetails.imagesURLset;
                     var unitName = "";
-                    var myPic;
-                    commonModule = require('shop-common');
+                    var myPic,
+                        producerName,producerId;
+
+                    for(var i = 0; i < producersLength; i++){
+                        if(producers[i].id == orderLines[j].product.producerId){
+                            producerName = producers[i].name;
+                            producerId = producers[i].id;
+                            break;
+                        }
+                    }
+
+                    commonModule = require('shop-common.min');
                     (orderLines[j].product.imageURL) ? myPic = orderLines[j].product.imageURL : myPic = commonModule.noPhotoPic;
                     if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
-                    ordersProductsHtml += '<tr data-productid="'+ orderLines[j].product.id +'">'+
+                    ordersProductsHtml += '<tr class="product" data-prepack="'+ orderLines[j].product.prepackRequired +'" data-productid="'+ orderLines[j].product.id +'">'+
                         '<td>'+
                         '<a href="#" class="product-link">'+
-                        '<div class="product-pic"><img src="'+ myPic +'" alt="картинка"/></div>'+
+                        '<div class="product-pic"><img src="'+ myPic + '?w=40&h=40" alt="'+ orderLines[j].product.name +'"/></div>'+
                         '<span>'+
-                        '<span>'+orderLines[j].product.name+'</span>'+
+                        '<span class="product-name">'+orderLines[j].product.name+'</span>'+
                         orderLines[j].product.shortDescr +
                         '</span>'+
                         '</a>'+
                         '<div class="modal">'+
                         '</div>'+
                         '</td>'+
+                        '<td class="td-producer" data-producerid="'+ producerId +'">'+ producerName +'</td>'+
                         '<td class="product-price">'+ orderLines[j].product.price +'</td>'+
-                        '<td>'+
-                        '<input type="text"';
+                        '<td class="td-spinner">';
 
-                    var commonModule = require('shop-common');
-                    if (orderLines[j].packs && commonModule.getPacksLength(orderLines[j].packs) > 1){
-                        ordersProductsHtml += 'disabled="disabled"';
+                    if(noEdit){
+                        ordersProductsHtml += orderLines[j].quantity;
+                    }else{
+                        ordersProductsHtml += '<input type="text"';
+
+                        var commonModule = require('shop-common.min');
+                        if (orderLines[j].packs && commonModule.getPacksLength(orderLines[j].packs) > 1){
+                            ordersProductsHtml += 'disabled="disabled"';
+                        }
+
+                        ordersProductsHtml += ' data-step="'+  orderLines[j].product.minClientPack +'" class="input-mini spinner1" />';
                     }
 
-                    ordersProductsHtml += ' data-step="'+  orderLines[j].product.minClientPack +'" class="input-mini spinner1" />'+
-                        '</td>'+
-                        '<td><span class="unit-name">'+unitName+'</span></td>'+
-                        '<td>'+
+                    ordersProductsHtml += '<span class="added-text">добавлен</span></td>'+
+                        '<td class="orderLine-amount"><span>'+(orderLines[j].product.price*orderLines[j].quantity).toFixed(1)+'</span></td>'+
+                        '<td><span class="unit-name">'+unitName+'</span></td>';
+
+                    if(!noEdit){
+                        ordersProductsHtml += '<td>'+
                         '<a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>'+
-                        '</td>'+
-                        '</tr>';
-
-
-
+                        '<span href="#" title="Продукт уже у вас в корзине" class="fa fa-check"></span>'+
+                        '</td>';
+                    }
+                    ordersProductsHtml +=  '</tr>';
                 }
                 ordersProductsHtml += '</table>'+
                     '</section>';
@@ -87,14 +112,12 @@ define(
                     var tempDate = new Date(orders[i].date*1000);
                     // форматирование статуса заказа
                     var orderStatus;
-                    var orderLinks = "";
                     switch(orders[i].status){
                         case 0:
                             orderStatus = "Неизвестен" ;
                             break
                         case 1:
                             orderStatus = "Не подтвержден" ;
-                            orderLinks = "<a href='#' class='order-confirm'>Подтвердить</a><br><a href='#' class='order-edit'>Изменить</a>"
                             break
                         case 2:
                             orderStatus = "Подтвержден" ;
@@ -113,7 +136,7 @@ define(
                             break
                     }
                     // форматирование типа доставки
-                    var orderDetails = thriftModule.client.getOrderDetails(orders[i].id);
+                    /*var orderDetails = thriftModule.client.getOrderDetails(orders[i].id);
                     var orderDelivery;
                     switch(orderDetails.delivery){
                         case 0:
@@ -128,14 +151,14 @@ define(
                         case 3:
                             orderDelivery = "Курьер далеко";
                             break
-                    }
+                    }*/
                     var orderDay = tempDate.getDate();
                     orderDay = (orderDay < 10)? "0" + orderDay: orderDay;
 
                     var orderMonth = tempDate.getMonth()+1;
                     orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
 
-                    var basketModule = require('shop-basket');
+                    var basketModule = require('shop-basket.min');
                     var weekDay = basketModule.getWeekDay(tempDate.getDay());
 
                     ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
@@ -143,33 +166,33 @@ define(
                         '<tbody>'+
                         '<tr>'+
                         '<td class="td1"><a class="fa fa-plus plus-minus" href="#"></a></td>'+
-                        '<td class="td2">'+i+'. Заказ '+orders[i].id+'</td>'+
-                        '<td class="td3">'+ orderDay +"."+orderMonth+"<br> ("+weekDay+ ')</td>'+
+                        '<td class="td2">'+orders[i].id+'</td>'+
+                        '<td class="td3">'+ orderDay +"."+orderMonth+" ("+weekDay+ ')</td>'+
                         '<td class="td4">'+
                         '<div class="order-status">'+orderStatus +'</div>'+
-                        '<div>'+ orderLinks +'</div>'+
                         '</td>'+
-                        '<td class="td5">'+ orderDelivery +'<br> ' +
-                        orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
-                        orderDetails.deliveryTo.flatNo+
-                        '</td>'+
-                        '<td class="td9">'+ orderDetails.deliveryCost +'</td>'+
-                        '<td class="td8">'+ orderDetails.weightGramm +'</td>'+
+                        '<td class="td9"></td>'+
+                        '<td class="td8"></td>'+
                         '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
-                        '<td class="td7">'+
-                        '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
-                        '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить</button>'+
-                        '</td>'+
                         '</tr>'+
                         '</tbody>'+
                         '</table>'+
+                        '<div class="order-bottom">';
+
+                    if(orderStatus != "Подтвержден"){
+                        ordersHtml += '<a href="#" title="Удалить" class="delete-order-from-history">&times;</a>';
+                    }
+
+                    ordersHtml += '<button class="btn btn-sm btn-primary no-border repeat-order-btn">Повторить</button>'+
+                        '<button class="btn btn-sm btn-primary no-border add-order-btn">Добавить</button>' +
+                        '<div class="order-delivery"></div>'+
+                        '</div>'+
                         '<div class="order-products">'+
                         '</div>'+
                         '</div>';
                 }
                 var haveMore = ordersLength%listLength;
                 if (haveMore && haveMore != ordersLength){
-                    //$('.more-orders').show();
                     ordersHtml += '<div class="more-orders"><a href="#">Показать еще</a></div>';
                 }else{
                     $('.more-orders').hide();
@@ -180,6 +203,56 @@ define(
             return ordersHtml;
         }
 
+
+        function showOrderDetails(orderItem,orderid,details)
+        {
+            var orderDetails = (details) ? details : thriftModule.client.getOrderDetails(orderid);
+            orderItem.find('.td9').text(orderDetails.deliveryCost);
+            orderItem.find('.td8:not(.user-name)').text((orderDetails.weightGramm/1000).toFixed(1));
+
+            var orderDelivery;
+            switch(orderDetails.delivery){
+                case 0:
+                    orderDelivery = "Неизвестно";
+                    break;
+                case 1:
+                    orderDelivery = "Самовывоз";
+                    break;
+                case 2:
+                    orderDelivery = "Курьер рядом";
+                    break;
+                case 3:
+                    orderDelivery = "Курьер далеко";
+                    break
+            }
+
+            orderItem.find('.order-delivery').html('<span><b>Доставка:</b> '+ orderDelivery +',  ' +
+            orderDetails.deliveryTo.city.name+", "+orderDetails.deliveryTo.street.name+" "+orderDetails.deliveryTo.building.fullNo+", кв."+
+            orderDetails.deliveryTo.flatNo +'</span>');
+        }
+
+        function deleteOrderFromHistory(){
+          $('.delete-order-from-history').click(function(e){
+              e.preventDefault();
+
+              var orderItem = $(this).closest('.order-item');
+              var orderId = orderItem.data('orderid');
+              var activeOrder = $('.tab-pane.active');
+
+              if(activeOrder.data('orderid') == orderId){
+                  activeOrder.find('.btn-cancel').trigger('click',true);
+
+                  /*thriftModule.client.cancelOrder(orderId);
+                  var basketModule = require('shop-basket.min');
+                  basketModule.cleanBasket();*/ //
+              }else{
+                  thriftModule.client.deleteOrder(orderId);
+              }
+
+              $(this).closest('.order-item').slideUp();
+          });
+        }
+
         function initOrderPlusMinus(selector){
                 try{
                     selector.find('.plus-minus').click(function(e){
@@ -187,11 +260,15 @@ define(
 
                         var orderItem = $(this).closest('.order-item');
                         var orderProducts = orderItem.find('.order-products');
-                        var orderDetails = thriftModule.client.getOrderDetails(orderItem.data('orderid'));
-                        var orderLines = orderDetails.odrerLines;
-                        var orderLinesLength = orderLines.length;
+                        var orderId = orderItem.data('orderid');
 
                         if (orderProducts.find('.catalog').length == 0){
+
+                            var orderDetails = thriftModule.client.getOrderDetails(orderId);
+                            var orderLines = orderDetails.odrerLines;
+                            var orderLinesLength = orderLines.length;
+
+                            showOrderDetails(orderItem,orderId,orderDetails);
                             orderProducts.append(createOrdersProductHtml(orderDetails));
 
                             for (var i = 0; i < orderLinesLength; i++){
@@ -204,8 +281,8 @@ define(
                                 }
                             }
 
-                            var basketModule = require('shop-basket');
-                            var commonModule = require('shop-common');
+                            var basketModule = require('shop-basket.min');
+                            var commonModule = require('shop-common.min');
                             basketModule.InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
                             commonModule.InitProductDetailPopup(orderProducts.find('.product-link'));
                             commonModule.markAddedProduct();
@@ -214,6 +291,8 @@ define(
                         orderProducts.slideToggle(200,function(){
                             if ($('.main-content').height() > $(window).height()){
                                 $('#sidebar, .shop-right').css('height', $('.main-content').height()+45);
+                            }else{
+                                $('#sidebar, .shop-right').css('height', '100%');
                             }
                         });
                         if ($(this).hasClass('fa-plus')){
@@ -234,13 +313,15 @@ define(
                 var orderDetails,
                     curProd,
                     spinVal, i,
-                    oldOrderId = $('.tab-pane.active').data('orderid');
-                    var basketModule = require('shop-basket');
+                    tabPaneActive = $('.tab-pane.active'),
+                    oldOrderId = tabPaneActive.data('orderid');
+                    var basketModule = require('shop-basket.min');
                     if (!oldOrderId){
-                        var nextDate = basketModule.getNextDate();
-                        var nextDateStr = new Date(nextDate*1000);
-                        oldOrderId = thriftModule.client.createOrder(nextDate,'asd',0);
+                        var oldOrder = thriftModule.client.createOrder(0);
+                        oldOrderId = oldOrder.id;
+                        var nextDateStr = new Date(oldOrder.date*1000);
                         basketModule.addTabToBasketHtml(nextDateStr,oldOrderId);
+                        tabPaneActive = $('.tab-pane.active')
                     }
 
                 if (addType == 'replace'){
@@ -251,7 +332,7 @@ define(
                         curProd = orderLines[i].product;
                         spinVal = orderLines[i].quantity;
                         var packs = orderLines[i].packs;
-                        thriftModule.client.setOrderLine(oldOrderId,curProd.id,spinVal,"asd",packs);
+                        thriftModule.client.setOrderLine(oldOrderId,curProd.id,spinVal,"",packs);
                     }
                 }else if (addType == 'append'){
                     orderDetails = thriftModule.client.appendOrder(oldOrderId,orderId);
@@ -263,13 +344,14 @@ define(
                     curProd = orderLines[i].product;
                     spinVal = orderLines[i].quantity;
                     spinnerDisable = false;
-                    var commonModule = require('shop-common');
+                    var commonModule = require('shop-common.min');
                     if(orderLines[i].packs && commonModule.getPacksLength(orderLines[i].packs) > 1){
                         spinnerDisable = true;
                     }
                     basketModule.AddSingleProductToBasket(curProd,spinVal,spinnerDisable);
                 }
                 commonModule.markAddedProduct();
+                tabPaneActive.find('.weight span').text(commonModule.getOrderWeight(orderId));
             }catch(e){
                 alert(e+" Функция addSingleOrderToBasket");
             }
@@ -300,10 +382,6 @@ define(
                         orderId : $(this).closest('.order-item').data('orderid')
                     };
                     AddOrdersToBasket(orderData);
-                    /*basketModule.flagFromBasketClick = 1;
-                    datepickerModule.dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,basketModule.AddSingleProductToBasket,AddOrdersToBasket,basketModule.AddProductToBasketCommon);
-                    datepickerModule.dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click').datepicker('triggerFlagBasket');
-                    basketModule.flagFromBasketClick = 0;*/
                 });
                 selector.find('.add-order-btn').click(function(){
                     var orderData= {
@@ -312,9 +390,6 @@ define(
                         orderId : $(this).closest('.order-item').data('orderid')
                     };
                     if ($('.additionally-order').hasClass('hide')){
-                        /*basketModule.flagFromBasketClick = 1;
-                        datepickerModule.dPicker.datepicker('setVarFreeDays',0, 0, orderData,0,basketModule.AddSingleProductToBasket,AddOrdersToBasket,basketModule.AddProductToBasketCommon);
-                        datepickerModule.dPicker.datepicker('triggerFlagBasket').trigger('focus').trigger('click');*/
                     }else{
                         AddOrdersToBasket(orderData);
                     }
@@ -332,65 +407,6 @@ define(
             lengthOrders = 10;
         }
 
-        function initOrdersLinks(){
-            $('.order-edit').click(function(e){
-                e.preventDefault();
-
-                var confirmed = confirm('Ваша текущая корзина будет заменена этим заказом. Вы согласны ?');
-                if(confirmed){
-                    thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
-                    var orderData= {
-                        itsOrder: true,
-                        itsAppend: false,
-                        orderId : $(this).closest('.order-item').data('orderid')
-                    };
-                    AddOrdersToBasket(orderData);
-                }
-            });
-
-            $('.order-confirm').click(function(e){
-                e.preventDefault();
-
-                var currentOrder = $(this).closest('.order-item');
-                var orderId = currentOrder.data('orderid');
-
-                var amount = currentOrder.find('.td6').text();
-
-                if (currentOrder.find('.catalog').length == 0){
-                    var orderDetails = thriftModule.client.getOrderDetails(orderId);
-                    currentOrder.find('.order-products').append(createOrdersProductHtml(orderDetails));
-                }
-
-                var catalogHtml = "";
-                var spinnerValue = [], spinnerStep = [], counter = 0;
-
-                $('.tabs-days .tab-pane').each(function(){
-                   if ($(this).data('orderid') == orderId){
-                       catalogHtml = $(this).find('.catalog-order').html();
-
-                       $(this).find('.catalog-order td .spinner1').each(function(){
-                           spinnerValue[counter] = $(this).closest('.ace-spinner').spinner('value');
-                           spinnerStep[counter++] = $(this).data('step');
-                       });
-                   }
-                });
-
-                $('.page').hide();
-
-                var date = currentOrder.find('.td3').text();
-
-                var basketModule = require('shop-basket');
-                basketModule.GoToConfirm(catalogHtml,amount,spinnerValue,date);
-
-                /*thriftModule.client.getOrder($(this).closest('.order-item').data('orderid'));
-                thriftModule.client.confirmOrder();
-                alert('Заказ подтвержден !');
-                $(this).closest('td').find('.order-status').text('Подтвержден');
-                $(this).parent().remove();*/
-
-            });
-        }
-
         function initShowMoreOrders(orders){
             try{
                 $('.more-orders').click(function(e){
@@ -400,13 +416,12 @@ define(
                     var itsMoreOrders = true;
                     orderList.append(createOrdersHtml(orders,itsMoreOrders));
                     initShowMoreOrders(orders);
-                    initOrdersLinks();
                     var ordersNoInit = $('.orders-no-init');
                     initOrderPlusMinus(ordersNoInit);
                     initOrderBtns(ordersNoInit);
                     ordersNoInit.removeClass('orders-no-init');
                     offsetOrders += lengthOrders;
-                    var commonModule = require('shop-common');
+                    var commonModule = require('shop-common.min');
                     commonModule.setSidebarHeight();
                 });
             }catch(e){
@@ -426,9 +441,10 @@ define(
             AddOrdersToBasket: AddOrdersToBasket,
             initOrderBtns: initOrderBtns,
             initVarForMoreOrders: initVarForMoreOrders,
-            initOrdersLinks: initOrdersLinks,
             initShowMoreOrders: initShowMoreOrders,
-            GoToOrdersTrigger: GoToOrdersTrigger
+            GoToOrdersTrigger: GoToOrdersTrigger,
+            showOrderDetails : showOrderDetails,
+            deleteOrderFromHistory : deleteOrderFromHistory
         }
     }
 );

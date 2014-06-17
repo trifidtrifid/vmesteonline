@@ -1,9 +1,8 @@
 define(
-    'shop-common',
-    ['jquery','flexslider','shop-initThrift','shop-basket','shop-spinner','shop-orders'],
-    function( $ ,flexsliderModule,thriftModule,basketModule,spinnerModule,ordersModule ){
-
-        //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
+    'shop-common.min',
+    ['jquery','flexslider','shop-initThrift.min','shop-basket.min','shop-spinner.min','shop-orders.min','shop-category.min','bootstrap'],
+    //['jquery','shop-initThrift.min','shop-basket.min','shop-spinner.min','shop-orders.min','shop-category.min'],
+    function( $ ,flexslider, thriftModule,basketModule,spinnerModule,categoryModule,ordersModule ){
 
         var noPhotoPic = "i/no-photo.png";
         // возвращает cookie с именем name, если есть, если нет, то undefined
@@ -52,10 +51,20 @@ define(
             }
         }
 
-        function addAddressToBase(currentForm){
+
+       /* var shopId = $('.shop').attr('id');
+        var userRole = thriftModule.client.getUserShopRole(shopId);*/
+
+
+        function getOrderWeight(orderId,orderDetails){
+            var myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
+            return (myOrderDetails.weightGramm/1000).toFixed(1);
+        }
+
+        function addAddressToBase(currentForm,address){
             var countries = thriftModule.userClient.getCounties();
             var countriesLength = countries.length;
-            var inputCountry = currentForm.find('.country-delivery').val();
+            var inputCountry = (address) ? address.country.name : currentForm.find('.country-delivery').val();
             var country,countryId = 0;
             for (var i = 0; i < countriesLength; i++){
                 if (countries[i].name == inputCountry){
@@ -70,7 +79,7 @@ define(
 
             var cities = thriftModule.userClient.getCities(countryId);
             var citiesLength = cities.length;
-            var inputCity = currentForm.find('.city-delivery').val();
+            var inputCity = (address) ? address.city.name : currentForm.find('.city-delivery').val();
             var city,cityId = 0;
             for (i = 0; i < citiesLength; i++){
                 if (cities[i].name == inputCity){
@@ -85,7 +94,7 @@ define(
 
             var streets = thriftModule.userClient.getStreets(cityId);
             var streetsLength = streets.length;
-            var inputStreet = currentForm.find('.street-delivery').val();
+            var inputStreet = (address) ? address.street.name : currentForm.find('.street-delivery').val();
             var street,streetId = 0;
             for (i = 0; i < streetsLength; i++){
                 if (streets[i].name == inputStreet){
@@ -100,7 +109,7 @@ define(
 
             var buildings = thriftModule.userClient.getBuildings(streetId);
             var buildingsLength = buildings.length;
-            var inputBuilding = currentForm.find('.building-delivery').val();
+            var inputBuilding = (address) ? address.building.fullNo : currentForm.find('.building-delivery').val();
 
             var building,buildingId = 0;
             for (i = 0; i < buildingsLength; i++){
@@ -121,7 +130,7 @@ define(
             deliveryAddress.building = building;
             deliveryAddress.staircase = 0;
             deliveryAddress.floor= 0;
-            deliveryAddress.flatNo = parseInt(currentForm.find('.flat-delivery').val());
+            deliveryAddress.flatNo = parseInt((address) ? address.flatNo : currentForm.find('.flat-delivery').val());
             deliveryAddress.comment = $('#order-comment').val();
 
             return deliveryAddress;
@@ -138,14 +147,13 @@ define(
             for(var i = 0; i < currentOrdersLength; i++){
                 var orderid = currentOrders[i].id;
 
-                basketModule.addTabToBasketHtml(new Date(currentOrders[i].date*1000),orderid);
                 var orderDetails = thriftModule.client.getOrderDetails(orderid);
-                $('.tab-pane.active').find('.weight span').text(orderDetails.weightGramm);
+                basketModule.addTabToBasketHtml(new Date(currentOrders[i].date*1000),orderid,orderDetails);
+                $('.tab-pane.active').find('.weight span').text(getOrderWeight(orderid,orderDetails));
 
                 var orderLines = orderDetails.odrerLines;
                 var orderLinesLength = orderDetails.odrerLines.length;
                 for(var j = 0; j < orderLinesLength; j++){
-                    //currentProduct,spinnerValue,spinnerDisable
                     var spinnerDisable;
                     var packs = orderLines[j].packs;
                     var packsQnty = 0;
@@ -153,52 +161,59 @@ define(
                         if(packs[p] > 1){packsQnty = 1}
                     }
 
-                    (getPacksLength(packs) > 1 || packsQnty ) ? spinnerDisable=true : spinnerDisable=false;
-                    basketModule.AddSingleProductToBasket(orderLines[j].product,orderLines[j].quantity,spinnerDisable);
+                    spinnerDisable = (getPacksLength(packs) > 1 || packsQnty ) ? true : false;
+                    basketModule.AddSingleProductToBasket(orderLines[j].product,orderLines[j].quantity,spinnerDisable,orderDetails);
 
                 }
             }
 
             markAddedProduct();
+
+            var catalogHeight = $(window).height() - $('.navbar').height() - $('footer').height();
+            $('.catalog-order').css('max-height',catalogHeight-215);
         }
 
         function InitProductDetailPopup(selector){
             try{
-                selector.click(function(e){
+                selector.click(function(e,isHistoryNav){
                     e.preventDefault();
 
-                    var productSelector,
-                        name;
-                    if ($(this).closest('tr').length > 0 ){
-                        // если таблица
-                        productSelector = $(this).closest('tr');
-                        name = $(this).find('span span').text();
-                    }else{
-                        // если в корзине
-                        productSelector = $(this).closest('li');
-                        name= $(this).find('.product-right-descr').text()
-                    }
+                    var  isOrdersHistory = ($(this).closest('.order-products').length) ? true : false,
+                        isCatalog = ($(this).closest('.catalog').length && !isOrdersHistory) ? true : false,
+                        isConfirm = ($(this).closest('.catalog-confirm').length) ? true : false,
+                        isBasket = ($(this).closest('.catalog-order').length || isConfirm) ? true : false;
+
+                    var productSelector = $(this).closest('.product'),
+                    name= $(this).find('.product-name').text(),
+                    productId = productSelector.data('productid');
+                    var imgArr = $(this).find('img').attr('src').split('?');
 
                     var product= {
                         name : name,
                         price : productSelector.find('.product-price').text(),
                         unitName: productSelector.find('.unit-name').text(),
-                        imageURL : $(this).find('img').attr('src')
+                        imageURL : imgArr[0]
                     };
-                    var productDetails = thriftModule.client.getProductDetails(productSelector.data('productid'));
-                    var imagesSet = productDetails.imagesURLset;
-                    var options = productDetails.optionsMap;
+
                     var currentModal = $(this).find('+.modal');
+                    var isModalWasOpen = currentModal.find('.modal-body').length;
+                    var boolPrepackRequired = productSelector.data('prepack');
+
+                    if (!isModalWasOpen){
+
+                        var productDetails = thriftModule.client.getProductDetails(productId);
+                        var imagesSet = productDetails.imagesURLset;
+                        var options = productDetails.optionsMap;
+
 
                     if(imagesSet.length){
-                        //var oldHeight = currentModal.height();
                         currentModal.height('275px');
                     }
 
-                    if (productDetails.prepackRequired){
+                    if (boolPrepackRequired){
                         currentModal.addClass('modal-with-prepack');
                     }
-                    var spinnerStep = productSelector.find('td>.ace-spinner .spinner1').data('step');
+                    var spinnerStep = productSelector.find('.td-spinner .spinner1').data('step');
                     var popupHtml = "";
                     popupHtml += '<div class="modal-body">'+
                         '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+
@@ -242,10 +257,8 @@ define(
                         popupHtml += '<div>'+p+" "+options[p]+'</div>';
                     }
                     popupHtml += '</div>';
-                    /*productDetails.fullDescr+
-                     '</div>';*/
 
-                    if (productDetails.prepackRequired){
+                    if (boolPrepackRequired){
                         popupHtml += '<div class="modal-footer with-prepack">'+
                             '<span>Цена: '+product.price+'</span>'+
                             '<div class="prepack-item packs">'+
@@ -253,7 +266,7 @@ define(
                             '<span>упаковок</span>'+
                             '</div>'+
                             '<div class="prepack-item">по</div>'+
-                            '<div class="prepack-item">'+
+                            '<div class="prepack-item qnty">'+
                             '<input type="text" data-step="'+ spinnerStep +'" class="input-mini spinner1" />'+
                             '<span>'+ product.unitName +'</span>'+
                             '</div>'+
@@ -270,150 +283,149 @@ define(
 
 
                     popupHtml += '<div class="prepack-list"></div><br>'+
-                        '<div class="error-info error-prepack"></div>'+
-                        '<a href="#" class="btn btn-primary btn-sm no-border full-descr">Подробное описание</a>'+
-                        "<div class='product-fullDescr'>"+ productDetails.fullDescr +"</div>"+
-                        '</div>'+
+                        '<div class="error-info error-prepack"></div>';
+
+                    if(productDetails.fullDescr){
+                        popupHtml += '<a href="#" class="btn btn-primary btn-sm no-border full-descr">Подробное описание</a>'+
+                        "<div class='product-fullDescr'>"+ productDetails.fullDescr +"</div>";
+                    }
+
+                        popupHtml += '</div>'+
                         '</div>'+
                         '</div>';
 
-
-                    var fullDescrHeight;
-                    if (currentModal.find('.modal-body').length == 0){
                         // если еще не открывали popup
                         currentModal.append(popupHtml);
-                        if ($(this).closest('tr').length == 0 || $(this).closest('.order-products').length > 0){
+                        if(!productDetails.fullDescr){
+                            currentModal.addClass('withoutFullDescr');
+                        }
+                        var currentSpinnerValue,currentSpinnerStep;
+
+                        if (isBasket || isOrdersHistory){
                             // если мы в корзине или на странице заказов
-                            var isBasket;
-                            ($(this).closest('.order-products').length > 0) ? isBasket = false : isBasket = true ;
-                            if (productDetails.prepackRequired){
+                            if (boolPrepackRequired){
                                 var isFirstModal = true;
                                 spinnerModule.initPrepackRequiredInModal($(this),currentModal,productSelector,isFirstModal,isBasket);
                             }else{
                                 //если обычный товар
-                                spinnerModule.InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),isBasket,productSelector.find('td>.ace-spinner .spinner1').data('step'));
+                                currentSpinnerValue = productSelector.find('.ace-spinner').spinner('value');
+                                currentSpinnerStep = productSelector.find('.td-spinner .spinner1').data('step');
+                                spinnerModule.InitSpinner(currentModal.find('.spinner1'), currentSpinnerValue,isBasket,currentSpinnerStep);
                             }
-                            if($(this).closest('.order-products').length > 0){
+                            if(isOrdersHistory){
                                 // если на странице истории заказов, то нужно инициализировать AddToBasket
                                 basketModule.InitAddToBasket(currentModal.find('.fa-shopping-cart'));
                             }
                         }else{
                             // если не в корзине
-                            if (productDetails.prepackRequired){
-                                spinnerModule.InitSpinner(currentModal.find('.prepack-item.packs .spinner1'), 1);
-                                spinnerModule.InitSpinner(currentModal.find('.prepack-item:not(".packs") .spinner1'), productSelector.find('.ace-spinner').spinner('value'),0,spinnerStep);
+                            currentSpinnerValue = productSelector.find('.ace-spinner').spinner('value');
+                            if (boolPrepackRequired){
+                                spinnerModule.InitSpinner(currentModal.find('.packs .spinner1'), 1);
+                                spinnerModule.InitSpinner(currentModal.find('.qnty .spinner1'),currentSpinnerValue,0,spinnerStep);
                             }else{
-                                spinnerModule.InitSpinner(currentModal.find('.spinner1'), productSelector.find('.ace-spinner').spinner('value'),0,spinnerStep);
+                                spinnerModule.InitSpinner(currentModal.find('.spinner1'),currentSpinnerValue,0,spinnerStep);
                             }
                             basketModule.InitAddToBasket(currentModal.find('.fa-shopping-cart'));
                         }
-                        currentModal.find('.prepack-open').click(function(e){
-                            e.preventDefault();
 
-                            var spinnerStep = $(this).parent().prev().find('.spinner1').data('step');
+                        var optionsForPrepackOpenClick = {
+                                isBasket : isBasket,
+                                productSelector : productSelector,
+                                productId : productId
+                        };
+                        initPrepackOpenClick(currentModal,optionsForPrepackOpenClick);
 
-                            var prepackHtml = '<div class="prepack-line no-init">' +
-                                '<div class="prepack-item packs">'+
-                                '<input type="text" class="input-mini spinner1 prepack" />'+
-                                '<span>упаковок</span>'+
-                                '</div>'+
-                                '<div class="prepack-item">по</div>'+
-                                '<div class="prepack-item">'+
-                                '<input type="text" data-step="'+ spinnerStep +'" class="input-mini spinner1" />'+
-                                '<span>'+ $(this).closest('.prepack-item').prev().find('span').text() +'</span>'+
-                                '</div>'+
-                                '<div class="prepack-item">'+
-                                '<a href="#" class="close" title="Удалить">×</a>'+
-                                '</div>'+
-                                '</div>';
-                            $(this).closest('.modal-footer').find('.prepack-list').append(prepackHtml);
-                            var currentPrepackLine = $('.prepack-line.no-init');
-                            var itsBasket;
-                            ($(this).closest('tr').length == 0) ? itsBasket = 1 : itsBasket = 0;
-                            spinnerModule.InitSpinner(currentPrepackLine.find('.prepack-item.packs .spinner1'), 1,itsBasket);
-                            spinnerModule.InitSpinner(currentPrepackLine.find('.prepack-item:not(".packs") .spinner1'), spinnerStep,itsBasket,spinnerStep);
-                            var productId = $(this).closest('tr').data('productid');
+                        initFullDescrClick(currentModal);
 
-                            if ($(this).closest('tr').length == 0){
-                                //если мы в корзине
-                                // нужно сделать setOrderLine
-                                var orderId = $('.tab-pane.active').data('orderid');
-                                var orderDetails = thriftModule.client.getOrderDetails(orderId);
-                                var orderLinesLength = orderDetails.odrerLines.length;
-                                productId = $(this).closest('li').data('productid');
-                                var packs,qnty;
-                                var reCount = true;
-                                for (var i = 0; i < orderLinesLength; i++){
-                                    if (orderDetails.odrerLines[i].product.id == productId){
-                                        // если это наш продукт в заказе
-                                        var tempPacks = orderDetails.odrerLines[i].packs;
-                                        if (tempPacks && tempPacks[parseFloat(spinnerStep).toFixed(1)]){
-                                            reCount = false;
-                                            productSelector.find('.error-prepack').text('Товар не возможно добавить: вы создали две линни с одинаковым количеством продукта').show();
-                                        }
-                                        packs = tempPacks;
-                                        qnty = orderDetails.odrerLines[i].quantity;
-                                    }
-                                }
-                                var addedPackVal = currentPrepackLine.find('.packs .ace-spinner').spinner('value');
-                                var addedQntyVal = parseFloat(currentPrepackLine.find('.prepack-item:not(".packs") .ace-spinner').spinner('value')).toFixed(1);
-                                if (reCount) {
-                                    productSelector.find('.error-prepack').hide();
-                                    qnty += addedPackVal*addedQntyVal;
-                                    packs[addedQntyVal] = addedPackVal;
-                                    /*for(var p in packs){
-                                     alert(p+" "+packs[p]);
-                                     }*/
-                                    thriftModule.client.setOrderLine(orderId,productId,qnty,'sdf',packs);
-                                    productSelector.find('td>.ace-spinner').spinner('value',qnty);
-                                    productSelector.find('.td-summa').text((qnty*productSelector.find('.td-price').text()).toFixed(1));
-                                    $('.itogo-right span').text(countAmount($('.catalog-order')));
-                                }
-                            }
-                            productSelector.find('td>.ace-spinner').spinner('disable');
-                            spinnerModule.initRemovePrepackLine(currentPrepackLine.find('.prepack-item .close'),productId,productSelector);
-                            currentPrepackLine.removeClass('no-init');
-
-                            var oldHeight = $(this).closest('.modal').height();
-                            $(this).closest('.modal').height(oldHeight + 53);
-
-                        });
-                        currentModal.find('.full-descr').click(function(){
-                            var fullDescr = $('.product-fullDescr');
-                            var oldHeight;
-                            oldHeight = $(this).closest('.modal').height();
-                            if(fullDescr.css('display') == 'none'){
-                                $(this).closest('.modal').height(oldHeight + fullDescrHeight+10);
-                                fullDescr.show(200);
-                            }else{
-                                //fullDescrHeight = $(this).closest('.modal').find('.product-fullDescr').height();
-                                fullDescr.hide(200,function(){
-                                    $(this).closest('.modal').height(oldHeight - fullDescrHeight-10);
-                                });
-                            }
-                        });
-                        if($(this).closest('.catalog-order').length > 0){
+                        if(isBasket){
                             //если это popup для корзины
                             currentModal.find('.fa-shopping-cart').click(function(){
-                                currentModal.modal('hide');
+
+                                var orderId = $('.tab-pane.active').data('orderid');
+
+                                var fromModal = true;
+                                var packsObj = spinnerModule.singleSetOrderLine(productSelector,orderId,productId,fromModal);
+
+                                if(!packsObj.errorFlag){
+                                    var basketProductsContainer = ($(this).closest('.catalog-order').length) ?
+                                        $(this).closest('.catalog-order') : $(this).closest('.catalog-confirm');
+                                    spinnerModule.updateWeightAndAmount(orderId,basketProductsContainer,packsObj.updateInfo);
+
+                                    currentModal.modal('hide');
+                                    $('.basket-backdrop').hide();
+                                }
+
+                                return false;
                             });
                         }
+
+                        currentModal.find('.close').click(function(e,isHistoryNav){
+                            //isCatalog
+                            if (!isHistoryNav && isCatalog) {
+                                window.history.back();
+                            }
+                            $('.basket-backdrop').hide();
+                        });
+
                     }else{
                         //если popup уже открывали
-                        if ($(this).closest('tr').length == 0 || $(this).closest('.order-products').length > 0){
+                        if (isBasket || isOrdersHistory){
                             // если мы в корзине или на странице заказов
-                            if (productDetails.prepackRequired){
+                            if (boolPrepackRequired){
                                 isFirstModal = false;
                                 spinnerModule.initPrepackRequiredInModal($(this),currentModal,productSelector,isFirstModal);
                             }
+                        }else{
+                            if (boolPrepackRequired){
+                                var prepackLineLength;
+
+                                //чтобы высота была корректной у добавленного товара
+                                (productSelector.hasClass('added')) ? prepackLineLength = 0 : prepackLineLength = currentModal.find('.prepack-line').length;
+
+                                //var modalHeight = 268;
+                                /*var modalHeight = currentModal.height();
+                                modalHeight += prepackLineLength*53;
+                                currentModal.height(modalHeight);*/
+                            }
                         }
                     }
+                    var beginHash = "p";
+
+                    if (!isHistoryNav && isCatalog){
+                        var state = {
+                            type : 'modal',
+                            productid : productId
+                        };
+                        window.history.pushState(state,null,'shop.jsp#'+ beginHash +'='+productId);
+                    }
                     currentModal.modal();
+                    if(isBasket && !isConfirm){
+                        // открываем backdrop из сайдбара
+                        $('.modal-backdrop').hide();
+                        $('.modal-backdrop.basket-backdrop').show();
+                    }
                     fullDescrHeight = currentModal.find('.product-fullDescr').height();
                     currentModal.find('.product-fullDescr').hide();
 
+                    var productOptionsHeight = currentModal.find('.product-text').height();
+                    var productH3Height = currentModal.find('.product-descr h3').height();
+                    var modalFooterHeight = currentModal.find('.modal-footer').height();
+                    var summaryHeight = modalFooterHeight + productH3Height+productOptionsHeight+60;
+                    if(summaryHeight > 230) currentModal.height(summaryHeight); //
+
+                    /*if(productOptionsHeight > 90){
+                        var addHeight = productOptionsHeight - 90;
+                        var currentModalHeight = currentModal.height();
+                        //alert(modalFooterHeight+" "+productH3Height+" "+productOptionsHeight);
+                        currentModal.height(modalFooterHeight + productH3Height+productOptionsHeight+60);
+                    }else{
+                        $('.product-text').height(90);
+                    }*/
+
                     $('.modal-backdrop').click(function(){
+                        if (isCatalog) window.history.back();
                         $('.modal.in .close').trigger('click');
+                        $(this).hide();
                     });
 
                     var carousel = currentModal.find('.carousel');
@@ -443,16 +455,93 @@ define(
             }
         }
 
-        function countAmount(sel){
+        function identificateModal(productId,historyBool){
+            var isHistoryNav = (historyBool) ? historyBool : false;
+            $('.catalog .product').each(function(){
+                if($(this).data('productid') == productId){
+                    $(this).find('.product-link').trigger('click',[isHistoryNav]);
+                }
+            })
+        }
+
+        function initPrepackOpenClick(selector,options){
+            selector.find('.prepack-open').click(function(e){
+                e.preventDefault();
+
+                var spinnerStep = $(this).closest('.modal-footer').find('>.qnty .spinner1').data('step');
+                var isBasket = options.isBasket,
+                    productSelector = options.productSelector,
+                    productId = options.productId;
+
+                var prepackHtml = '<div class="prepack-line no-init">' +
+                    '<div class="prepack-item packs">'+
+                    '<input type="text" class="input-mini spinner1 prepack" />'+
+                    '<span>упаковок</span>'+
+                    '</div>'+
+                    '<div class="prepack-item">по</div>'+
+                    '<div class="prepack-item qnty">'+
+                    '<input type="text" data-step="'+ spinnerStep +'" class="input-mini spinner1" />'+
+                    '<span>'+ $(this).closest('.prepack-item').prev().find('span').text() +'</span>'+
+                    '</div>'+
+                    '<div class="prepack-item">'+
+                    '<a href="#" class="remove-prepack-line" title="Удалить">×</a>'+
+                    '</div>'+
+                    '</div>';
+                $(this).closest('.modal-footer').find('.prepack-list').append(prepackHtml);
+                var currentPrepackLine = $('.prepack-line.no-init');
+
+                spinnerModule.InitSpinner(currentPrepackLine.find('.packs .spinner1'), 1,isBasket);
+                spinnerModule.InitSpinner(currentPrepackLine.find('.qnty .spinner1'), spinnerStep,isBasket,spinnerStep);
+
+                spinnerModule.initRemovePrepackLine(currentPrepackLine.find('.prepack-item .remove-prepack-line'),productId,productSelector);
+                currentPrepackLine.removeClass('no-init');
+
+                var oldHeight = $(this).closest('.modal').height();
+                $(this).closest('.modal').height(oldHeight + 53);
+
+            });
+        }
+
+        var fullDescrHeight;
+        function initFullDescrClick(selector){
+
+            selector.find('.full-descr').click(function(e){
+                e.preventDefault();
+
+                var fullDescr = $('.product-fullDescr');
+                var oldHeight;
+                oldHeight = $(this).closest('.modal').height();
+                var newHeight;
+
+                if(fullDescr.css('display') == 'none'){
+                    newHeight = oldHeight + fullDescrHeight;
+                    $(this).closest('.modal').height(newHeight);
+                    fullDescr.show(0);
+                }else{
+                    newHeight = oldHeight - fullDescrHeight;
+                    fullDescr.hide(0,function(){
+                        $(this).closest('.modal').height(newHeight);
+                    });
+                }
+            });
+
+        }
+
+        function countAmount(sel,orderDetails){
             try{
-                var summa = 0;
-                sel.find('.td-summa').each(function(){
-                    summa += parseFloat($(this).text());
-                });
                 var orderId = $('.tab-pane.active').data('orderid');
 
-                var orderDetails = thriftModule.client.getOrderDetails(orderId);
-                summa += orderDetails.deliveryCost;
+                var myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
+                var summa = myOrderDetails.totalCost; // ошибка: у OrderDerails нет totalCost
+
+                if(!summa){
+                    summa = 0;
+                    sel.find('.td-summa').each(function(){
+                        summa += parseFloat($(this).text());
+                    });
+                }
+
+                summa += myOrderDetails.deliveryCost;
             }catch(e){
                 //alert(e+" Функция countAmount");
             }
@@ -495,7 +584,6 @@ define(
         function getPacksLength(packs){
             var counter = 0;
             for(var p in packs){
-                //alert(p+" "+packs[p]);
                 if(p && packs[p]){
                     counter++;
                 }
@@ -505,10 +593,9 @@ define(
 
         function setSidebarHeight(){
             try{
-
                 var mainContent = $('.main-content');
 
-                if (mainContent.height() > $(window).height()){
+                if (mainContent.height() > $(window).height()-45){
                     $('.shop-right').css('height', mainContent.height()+45);
                 }else{
                     $('.shop-right').css('height', '100%');
@@ -518,44 +605,74 @@ define(
             }
         }
 
-        $('.shop-trigger').click(function(e){
+
+        $('.shop-trigger').click(function(e,isHistoryNav){
             e.preventDefault();
             //try{
                 var shopOrders = $('.shop-orders');
                 var ordersList = $('.orders-list');
-                $('.page').hide();
+                var state;
 
                 if($(this).hasClass('back-to-shop')){
+                    $('.page').hide();
+                    $('footer').addClass('short-footer');
+
                     shopOrders.hide();
                     $('.shop-confirm').hide();
                     $('.main-container-inner').show();
-                    $('.nav li.active').addClass('active');
-                    $('.nav li:eq(0)').addClass('active');
-                    $('.shop-products').show(function(){
+
+                    $('.navbar .nav li.active').removeClass('active');
+                    $('.navbar .nav li:eq(0)').addClass('active');
+                    var shopProducts = $('.shop-products');
+                    if(shopProducts.find('.shop-menu .shopmenu-back').length){
+                        // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
+                        var categoryModule = require('shop-category.min');
+                        categoryModule.InitLoadCategory(0);
+                    }
+                    shopProducts.show(function(){
                         setSidebarHeight();
                     });
+                    state = {
+                        type : 'default'
+                    };
+                    window.history.pushState(state,null,'shop.jsp');
+
                 }else{
-                    var ordersModule = require('shop-orders');
+                    /* history */
+                    var urlHash = document.location.hash;
+                    if (urlHash != '#orders-history'){
+                        state = {
+                            type : 'page',
+                            pageName: 'orders-history'
+                        };
+                        window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+                    }
+                    /**/
+                    var ordersModule = require('shop-orders.min');
                     if (!globalUserAuth){
-                        var basketModule = require('shop-basket');
+                        var basketModule = require('shop-basket.min');
                         basketModule.callbacks.add(ordersModule.GoToOrdersTrigger);
-                        //$('.modal-auth').modal();
                         openModalAuth();
                     }else{
+                        $('.page').hide();
+                        $('footer').addClass('short-footer');
+
                         $('.shop-products').hide();
                         $('.shop-confirm').hide();
                         $('.main-container-inner').show();
                         var nowTime = parseInt(new Date().getTime()/1000);
                         nowTime -= nowTime%86400;
                         var day = 3600*24;
-                        var orders = thriftModule.client.getOrders(0,nowTime+90*day);
+                        var orders = thriftModule.client.getMyOrdersByStatus(0,nowTime+90*day,0);
                         ordersModule.initVarForMoreOrders();
+
                         // если всегда делать createOrdersHtml, то странциа заказов будет обновляться в реальном времени
                         // а так можно оптимизировать и не делать createOrderHtml каждый раз при перезагрузке
                         ordersList.html('').append(ordersModule.createOrdersHtml(orders));
-                        InitProductDetailPopup($('.product-link'));
+
+                        InitProductDetailPopup($('.shop-orders .product-link'));
                         ordersModule.initShowMoreOrders(orders);
-                        ordersModule.initOrdersLinks();
+                        ordersModule.deleteOrderFromHistory();
                         var ordersNoInit = $('.orders-no-init');
                         ordersModule.initOrderPlusMinus(ordersNoInit);
                         ordersModule.initOrderBtns(ordersNoInit);
@@ -571,9 +688,10 @@ define(
         });
 
         function openModalAuth(){
-            $('.modal.in .close').trigger('click');
+            var modalIn = $('.modal.in');
+            if(modalIn.length) modalIn.modal('hide');
             var modalAuth = $('.modal-auth');
-            modalAuth.load('login.jsp .container',function(){
+            modalAuth.load('login.jsp .login-container',function(){
                 var closeHtml = '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
                 modalAuth.find('.reg-form').prepend(closeHtml);
 
@@ -593,8 +711,7 @@ define(
         }
 
         function changeShortUserInfo(newUserInfo){
-            var shortUserInfo;
-            (newUserInfo) ? shortUserInfo = newUserInfo : shortUserInfo = thriftModule.userClient.getShortUserInfo();
+            var shortUserInfo = (newUserInfo) ?  newUserInfo : thriftModule.userClient.getShortUserInfo();
             var shortUserInfoHtml =  shortUserInfo.firstName +' '+ shortUserInfo.lastName;
             $('.user-info').html(shortUserInfoHtml);
         }
@@ -613,7 +730,9 @@ define(
             remarkAddedProduct: remarkAddedProduct,
             addAddressToBase: addAddressToBase,
             isValidEmail: isValidEmail,
-            changeShortUserInfo: changeShortUserInfo
+            changeShortUserInfo: changeShortUserInfo,
+            getOrderWeight: getOrderWeight,
+            identificateModal: identificateModal
         }
     }
 );

@@ -505,4 +505,20 @@ public class UserServiceImplTest extends UserServiceImpl {
 			fail("Exception " + e.getMessage());
 		}
 	}
+	
+	@Test
+	public void testsetGetUserInfoExt() {
+		try {
+			
+			UserInfo userInfoExt = usi.getUserInfoExt(userId);
+			Assert.assertEquals(userInfoExt.firstName, "fn");
+			Assert.assertEquals(userInfoExt.lastName, "ln");
+			
+			
+			// Assert.assertTrue(userHomeAddress.equals(newAddress));
+		} catch (InvalidOperation e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		}
+	}
 }
