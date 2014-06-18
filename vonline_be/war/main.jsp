@@ -56,7 +56,7 @@
 <head>
 <meta charset="utf-8" />
 <title>Главная</title>
-<link rel="stylesheet" href="build/style.min.css" />
+<link rel="stylesheet" href="css/style.css" />
 
 <script src="js/lib/jquery-2.1.1.min.js"></script>
 <!--[if lt IE 9]>
@@ -80,36 +80,28 @@
 
     <div class="navbar-container" id="navbar-container">
         <div class="navbar-header pull-left">
-            <a href="#" class="navbar-brand"> <small> <i
-                    class="icon-leaf"></i> Ace Admin
-            </small>
+            <a href="#" class="navbar-brand">
+                <small> <i class="icon-leaf"></i> Ace Admin </small>
             </a>
-            <!-- /.brand -->
         </div>
-        <!-- /.navbar-header -->
 
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
-                <li class="active"><a class="btn btn-info no-border" href="#">
-                    Сообщения </a></li>
+                <li><a class="btn btn-info no-border private-messages-link" href="#">Личные сообщения </a></li>
 
-                <li><a class="btn btn-info no-border" href="#"> Архив </a></li>
+                <li><a class="btn btn-info no-border nextdoors-link" href="#"> Соседи </a></li>
 
-                <li><a class="btn btn-info no-border" href="#"> Избранное
-                </a></li>
-                <li><a class="btn btn-info no-border" href="/shop.jsp">
-                    Магазин </a></li>
+                <li class="user-short light-blue">
+                    <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                        <img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />
+                        <span class="user-info">
+                            <small><c:out value="${firstName}" /></small>
+                            <c:out value="${lastName}" />
+                        </span>
+                        <i class="icon-caret-down"></i>
+                    </a>
 
-                <li class="user-short light-blue"><a data-toggle="dropdown"
-                                                     href="#" class="dropdown-toggle"> <img class="nav-user-photo"
-                                                                                            src="i/avatars/user.jpg" alt="Jason's Photo" /> <span
-                        class="user-info"> <small><c:out
-                        value="${firstName}" /></small> <c:out value="${lastName}" />
-							</span> <i class="icon-caret-down"></i>
-                </a>
-
-                    <ul
-                            class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                    <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                         <li><a href="settings.html"> <i class="icon-cog"></i>
                             Настройки
                         </a></li>
@@ -124,11 +116,15 @@
                         </a></li>
                     </ul></li>
             </ul>
-            <!-- /.ace-nav -->
         </div>
-        <!-- /.navbar-header -->
+
+        <form method="post" action="#" class="form-group has-info form-search">
+            <span class="block input-icon input-icon-right">
+                <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
+                <a href="#" class="icon-search icon-on-right bigger-110"></a>
+            </span>
+        </form>
     </div>
-    <!-- /.container -->
 </div>
 
 	<div class="container">
@@ -143,9 +139,9 @@
 						}
 					</script>
 					<ul class="nav nav-list">
-                        <li><a href="#"> <span class="menu-text">Лента</span> </a></li>
+                        <li><a href="#"> <span class="menu-text">Новости</span> </a></li>
                         <li><a href="#"> <span class="menu-text">Обсуждения</span> </a></li>
-                        <li><a href="#"> <span class="menu-text">Личные сообщения</span> </a></li>
+                        <li><a href="#"> <span class="menu-text">Услуги и объявления</span> </a></li>
 						<%--<c:forEach var="rubric" items="${rubrics}">
 							<li><a href="#" data-rubricid="${rubric.id}"> <span
 									class="menu-text">${rubric.visibleName}</span> <b>(3)</b>
@@ -155,836 +151,447 @@
 					</ul>
 					<!-- /.nav-list -->
 				</aside>
-				<div class="main-content">
-					<nav class="submenu">
-						<ul>
-							<%--<c:forEach var="group" items="${groups}">
-								<li><a class="btn btn-sm btn-info no-border"
-									data-groupid="${group.id}" href="#">${group.visibleName}</a></li>
-							</c:forEach>--%>
-							<%--<li class="btn-group">
-								<button data-toggle="dropdown"
-									class="btn btn-info btn-sm dropdown-toggle no-border">
-									<span class="btn-group-text">Действие</span> <span
-										class="icon-caret-down icon-on-right"></span>
-								</button>
+                <aside class="sidebar-right">
+                    <div class="importantly-top">
+                        Важно
+                    </div>
+                    <ul>
+                        <li>
+                            <div class="importantly-left"><img src="i/avatars/avatar.png" alt="картинка"/></div>
+                            <div class="importantly-right">
+                                <h3>Ольга Янина</h3>
+                                <p>Уважаемые соседи, 16 мая будет отключена горячая вода на один день</p>
+                                <a href="#">Перейти к записи</a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="importantly-left"><img src="i/avatars/avatar.png" alt="картинка"/></div>
+                            <div class="importantly-right">
+                                <h3>Ольга Янина</h3>
+                                <p>Уважаемые соседи, 16 мая будет отключена горячая вода на один день</p>
+                                <a href="#">Перейти к записи</a>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="importantly-bottom">
+                        Больше важных сообщений нет
+                    </div>
 
-								<ul class="dropdown-menu dropdown-yellow">
-									<li><a href="#">Действие 1</a></li>
+                </aside>
+				<div class="main-content dynamic">
 
-									<li><a href="#">Действие 2</a></li>
+                    <div class="main-content-top">
+                        <div class="page-title pull-left">Новости</div>
 
-									<li><a href="#">Что-то еще</a></li>
-								</ul>
-							</li>--%>
-						</ul>
-						<div class="clear"></div>
-					</nav>
-					<div class="dynamic">
+                        <nav class="submenu pull-right clearfix">
+                            <button class="btn btn-sm btn-info no-border pull-right">Квартал</button>
+                            <button class="btn btn-sm btn-info no-border pull-right">Дом</button>
+                            <button class="btn btn-sm btn-info no-border pull-right">Парадная</button>
+                            <button class="btn btn-sm btn-info no-border pull-right">Все</button>
+                        </nav>
+
+                        <div class="create-topic-btn hide pull-right">
+                            <a class="btn btn-primary btn-sm no-border clearfix" href="#">Создать тему</a>
+                        </div>
+                    </div>
+
 						<div class="forum-wrap">
                             <section class="forum page">
-                                <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab5">
-                                    <li class="active">
-                                        <a data-toggle="tab" href="#porch1">Подъезд</a>
-                                    </li>
+                                <div class="message-input clearfix">
+                                    <textarea name="" id="" cols="30" rows="10">Написать сообщение</textarea>
+                                    <div class="message-input-bottom">
+                                        <a class="btn btn-sm no-border btn-primary pull-right" href="#">Отправить</a>
+                                        <div class="btn-group attach-dropdown pull-left">
+                                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                                <span class="btn-group-text">Прикрепить</span>
+                                                <span class="icon-caret-down icon-on-right"></span>
+                                            </button>
 
-                                    <li class="">
-                                        <a data-toggle="tab" href="#floor1">Этаж</a>
-                                    </li>
-
-                                    <li class="">
-                                        <a data-toggle="tab" href="#quarter1">Квартал</a>
-                                    </li>
-                                    <li class="">
-                                        <a data-toggle="tab" href="#area1">Район</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
-
-                                    <div class="tab-pane active" id="porch1">
-
-                                        <div class="lenta-item">
-
-                                            <div class="first-message clearfix">
-                                                <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                </div>
-
-                                                <div class="body">
-                                                    <div class="time">
-                                                        <i class="icon-time"></i>
-                                                        <span class="green">4 sec</span>
-                                                    </div>
-
-                                                    <div class="name">
-                                                        <a href="#">Alexa</a>
-                                                    </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                    <div class="tools">
-                                                        <a href="#" class="btn btn-minier btn-info">
-                                                            <i class="icon-only icon-share-alt"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="dialogs">
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="John's Avatar" src="i/avatars/avatar.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="blue">38 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">John</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Bob's Avatar" src="i/avatars/user.jpg">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="orange">2 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Bob</a>
-                                                            <span class="label label-info arrowed arrowed-in-right">admin</span>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="grey">3 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Jim</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="input-group">
-                                                <%--<input placeholder="Введите сообщение..." type="text" class="form-control" name="message">--%>
-                                                    <textarea name="message" class="message-textarea"></textarea>
-                                                <span class="input-group-btn">
-                                                    <button class="btn btn-sm btn-info no-radius no-border" type="button">
-                                                        <i class="icon-share-alt"></i>
-                                                        Отправить
-                                                    </button>
-                                                </span>
-                                            </div>
-
+                                            <ul class="dropdown-menu dropdown-blue">
+                                                <li><a href="#">Видео</a></li>
+                                                <li><a href="#">Документ</a></li>
+                                                <li><a href="#">Изображение</a></li>
+                                                <li><a href="#">Опрос</a></li>
+                                            </ul>
                                         </div>
+                                        <div class="hashtag pull-left">
+                                            <span>группа</span>
+                                            <div class="btn-group hashtag-dropdown">
+                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                                    <span class="btn-group-text">#Дом</span>
+                                                    <span class="icon-caret-down icon-on-right"></span>
+                                                </button>
 
-                                        <div class="lenta-item">
-
-                                            <div class="first-message clearfix">
-                                                <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                </div>
-
-                                                <div class="body">
-                                                    <div class="time">
-                                                        <i class="icon-time"></i>
-                                                        <span class="green">4 sec</span>
-                                                    </div>
-
-                                                    <div class="name">
-                                                        <a href="#">Alexa</a>
-                                                    </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                    <div class="tools">
-                                                        <a href="#" class="btn btn-minier btn-info">
-                                                            <i class="icon-only icon-share-alt"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
+                                                <ul class="dropdown-menu dropdown-blue">
+                                                    <li><a href="#">#Парадная</a></li>
+                                                    <li><a href="#">#Квартал</a></li>
+                                                </ul>
                                             </div>
-
-                                            <div class="dialogs">
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="John's Avatar" src="i/avatars/avatar.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="blue">38 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">John</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Bob's Avatar" src="i/avatars/user.jpg">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="orange">2 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Bob</a>
-                                                            <span class="label label-info arrowed arrowed-in-right">admin</span>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="grey">3 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Jim</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="input-group">
-                                                <textarea name="message" class="message-textarea"></textarea>
-                                                <span class="input-group-btn">
-                                                    <button class="btn btn-sm btn-info no-radius no-border" type="button">
-                                                        <i class="icon-share-alt"></i>
-                                                        Отправить
-                                                    </button>
-                                                </span>
-                                            </div>
-
                                         </div>
 
                                     </div>
+                                </div>
 
-                                    <div class="tab-pane" id="floor1">
+                                <div class="lenta">
+                                    <div class="lenta-item">
 
-                                        <div class="lenta-item">
+                                        <div class="first-message clearfix">
+                                            <div class="user">
+                                                <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
+                                            </div>
 
-                                            <div class="first-message clearfix">
+                                            <div class="body">
+                                                <span class="label label-lg label-pink arrowed lenta-item-hashtag">Парадная</span>
+
+                                                <div class="name">
+                                                    <a href="#">Alexa</a>
+                                                </div>
+                                                <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
+                                                <div class="lenta-item-bottom">
+                                                    <span>17.02.2014 23:01</span>
+                                                    <a href="#">Ответить</a>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="dialogs">
+                                            <div class="itemdiv dialogdiv">
                                                 <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar.png">
+                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
                                                 </div>
 
                                                 <div class="body">
-                                                    <div class="time">
-                                                        <i class="icon-time"></i>
-                                                        <span class="green">4 sec</span>
+
+                                                    <div class="name">
+                                                        <a href="#">Alexa</a>
                                                     </div>
+                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
+
+                                                    <div class="lenta-item-bottom">
+                                                        <span>17.02.2014 23:01</span>
+                                                        <a href="#">Ответить</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="itemdiv dialogdiv">
+                                                <div class="user">
+                                                    <img alt="John's Avatar" src="i/avatars/avatar.png">
+                                                </div>
+
+                                                <div class="body">
 
                                                     <div class="name">
                                                         <a href="#">John</a>
                                                     </div>
+                                                    <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
+
+                                                    <div class="lenta-item-bottom">
+                                                        <span>17.02.2014 23:01</span>
+                                                        <a href="#">Ответить</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="itemdiv dialogdiv">
+                                                <div class="user">
+                                                    <img alt="Bob's Avatar" src="i/avatars/user.jpg">
+                                                </div>
+
+                                                <div class="body">
+
+                                                    <div class="name">
+                                                        <a href="#">Bob</a>
+                                                        <span class="label label-info arrowed arrowed-in-right">admin</span>
+                                                    </div>
                                                     <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
 
-                                                    <div class="tools">
-                                                        <a href="#" class="btn btn-minier btn-info">
-                                                            <i class="icon-only icon-share-alt"></i>
-                                                        </a>
+                                                    <div class="lenta-item-bottom">
+                                                        <span>17.02.2014 23:01</span>
+                                                        <a href="#">Ответить</a>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="dialogs">
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
+                                            <div class="itemdiv dialogdiv">
+                                                <div class="user">
+                                                    <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
                                                 </div>
 
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="John's Avatar" src="i/avatars/avatar.png">
+                                                <div class="body">
+
+                                                    <div class="name">
+                                                        <a href="#">Jim</a>
                                                     </div>
+                                                    <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
 
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="blue">38 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">John</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Bob's Avatar" src="i/avatars/user.jpg">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="orange">2 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Bob</a>
-                                                            <span class="label label-info arrowed arrowed-in-right">admin</span>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="grey">3 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Jim</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
+                                                    <div class="lenta-item-bottom">
+                                                        <span>17.02.2014 23:01</span>
+                                                        <a href="#">Ответить</a>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="input-group">
-                                                <%--<input placeholder="Введите сообщение..." type="text" class="form-control" name="message">--%>
-                                                <textarea name="message" class="message-textarea"></textarea>
-                                                    <span class="input-group-btn">
-                                                        <button class="btn btn-sm btn-info no-radius no-border" type="button">
-                                                            <i class="icon-share-alt"></i>
-                                                            Отправить
-                                                        </button>
-                                                    </span>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="lenta-item">
-
-                                            <div class="first-message clearfix">
+                                            <div class="itemdiv dialogdiv">
                                                 <div class="user">
                                                     <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
                                                 </div>
 
                                                 <div class="body">
-                                                    <div class="time">
-                                                        <i class="icon-time"></i>
-                                                        <span class="green">4 sec</span>
+
+                                                    <div class="name">
+                                                        <a href="#">Alexa</a>
                                                     </div>
+                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+
+                                                    <div class="lenta-item-bottom">
+                                                        <span>17.02.2014 23:01</span>
+                                                        <a href="#">Ответить</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="input-group">
+                                            <%--<input placeholder="Введите сообщение..." type="text" class="form-control" name="message">--%>
+                                            <textarea name="message" class="message-textarea"></textarea>
+                                                        <span class="input-group-btn">
+                                                            <button class="btn btn-sm btn-info no-radius no-border" type="button">
+                                                                <i class="icon-share-alt"></i>
+                                                                Отправить
+                                                            </button>
+                                                        </span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="lenta-item">
+
+                                        <div class="first-message clearfix">
+                                            <div class="user">
+                                                <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
+                                            </div>
+
+                                            <div class="body">
+                                                <span class="label label-lg label-yellow arrowed lenta-item-hashtag">Район</span>
+
+                                                <div class="name">
+                                                    <a href="#">Alexa</a>
+                                                </div>
+                                                <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
+
+                                                <div class="lenta-item-bottom">
+                                                    <span>17.02.2014 23:01</span>
+                                                    <a href="#">Ответить</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="dialogs">
+                                            <div class="itemdiv dialogdiv">
+                                                <div class="user">
+                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
+                                                </div>
+
+                                                <div class="body">
 
                                                     <div class="name">
                                                         <a href="#">Alexa</a>
                                                     </div>
                                                     <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
 
-                                                    <div class="tools">
-                                                        <a href="#" class="btn btn-minier btn-info">
-                                                            <i class="icon-only icon-share-alt"></i>
-                                                        </a>
+                                                    <div class="lenta-item-bottom">
+                                                        <span>17.02.2014 23:01</span>
+                                                        <a href="#">Ответить</a>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="dialogs">
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
+                                            <div class="itemdiv dialogdiv">
+                                                <div class="user">
+                                                    <img alt="John's Avatar" src="i/avatars/avatar.png">
                                                 </div>
 
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="John's Avatar" src="i/avatars/avatar.png">
+                                                <div class="body">
+
+                                                    <div class="name">
+                                                        <a href="#">John</a>
                                                     </div>
+                                                    <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
 
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="blue">38 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">John</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Bob's Avatar" src="i/avatars/user.jpg">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="orange">2 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Bob</a>
-                                                            <span class="label label-info arrowed arrowed-in-right">admin</span>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="grey">3 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Jim</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
+                                                    <div class="lenta-item-bottom">
+                                                        <span>17.02.2014 23:01</span>
+                                                        <a href="#">Ответить</a>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="input-group">
-                                                <textarea name="message" class="message-textarea"></textarea>
-                                                    <span class="input-group-btn">
-                                                        <button class="btn btn-sm btn-info no-radius no-border" type="button">
-                                                            <i class="icon-share-alt"></i>
-                                                            Отправить
-                                                        </button>
-                                                    </span>
+                                            <div class="itemdiv dialogdiv">
+                                                <div class="user">
+                                                    <img alt="Bob's Avatar" src="i/avatars/user.jpg">
+                                                </div>
+
+                                                <div class="body">
+
+                                                    <div class="name">
+                                                        <a href="#">Bob</a>
+                                                        <span class="label label-info arrowed arrowed-in-right">admin</span>
+                                                    </div>
+                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
+
+                                                    <div class="lenta-item-bottom">
+                                                        <span>17.02.2014 23:01</span>
+                                                        <a href="#">Ответить</a>
+                                                    </div>
+                                                </div>
                                             </div>
 
+                                            <div class="itemdiv dialogdiv">
+                                                <div class="user">
+                                                    <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
+                                                </div>
+
+                                                <div class="body">
+
+                                                    <div class="name">
+                                                        <a href="#">Jim</a>
+                                                    </div>
+                                                    <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
+
+                                                    <div class="lenta-item-bottom">
+                                                        <span>17.02.2014 23:01</span>
+                                                        <a href="#">Ответить</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="itemdiv dialogdiv">
+                                                <div class="user">
+                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
+                                                </div>
+
+                                                <div class="body">
+
+                                                    <div class="name">
+                                                        <a href="#">Alexa</a>
+                                                    </div>
+                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+
+                                                    <div class="lenta-item-bottom">
+                                                        <span>17.02.2014 23:01</span>
+                                                        <a href="#">Ответить</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="input-group">
+                                            <textarea name="message" class="message-textarea"></textarea>
+                                                        <span class="input-group-btn">
+                                                            <button class="btn btn-sm btn-info no-radius no-border" type="button">
+                                                                <i class="icon-share-alt"></i>
+                                                                Отправить
+                                                            </button>
+                                                        </span>
                                         </div>
 
                                     </div>
-                                    <div class="tab-pane" id="quarter1"></div>
-                                    <div class="tab-pane" id="area1"></div>
+
+                                    <div class="talks-title clearfix">
+                                        <div class="talks-title-left load-talk">
+                                            <div><a href="#">Проблемы в намшем доме !</a></div>
+                                            <div>74 сообщения</div>
+                                        </div>
+                                        <div class="talks-title-right">
+                                            <div>Последнее обновление:</div>
+                                            <div>18 июля 2014 23:01</div>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </section>
-                            <section class="page talks hide">
-                                <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab6">
-                                    <li class="active">
-                                        <a data-toggle="tab" href="#porch2">Подъезд</a>
-                                    </li>
 
-                                    <li class="">
-                                        <a data-toggle="tab" href="#floor2">Этаж</a>
-                                    </li>
+                            <section class="talks page hide">
 
-                                    <li class="">
-                                        <a data-toggle="tab" href="#quarter2">Квартал</a>
-                                    </li>
-                                    <li class="">
-                                        <a data-toggle="tab" href="#area2">Район</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
+                                <section class="create-topic hide">
+                                    <div class="has-info form-group">
+                                        <input type="text" class="width-100 head" value="Заголовок"
+                                               onblur="if(this.value=='') this.value='Заголовок';"
+                                               onfocus="if(this.value=='Заголовок') this.value='';" />
+                                    </div>
+                                    <div class="widget-box wysiwig-box">
+                                        <div class="widget-header widget-header-small  header-color-blue2">
 
-                                    <a class="btn btn-primary btn-sm no-border clearfix create-topic-btn" href="#">Создать тему</a>
-
-                                    <section class="create-topic">
-                                        <h1>Создание темы</h1>
-                                        <div class="has-info form-group">
-                                            <input type="text" class="width-100 head" value="Заголовок"
-                                                   onblur="if(this.value=='') this.value='Заголовок';"
-                                                   onfocus="if(this.value=='Заголовок') this.value='';" />
                                         </div>
-                                        <div class="widget-box wysiwig-box">
-                                            <div class="widget-header widget-header-small  header-color-blue2">
 
+                                        <div class="widget-body">
+                                            <div class="widget-main no-padding">
+                                                <div class="wysiwyg-editor"></div>
                                             </div>
 
-                                            <div class="widget-body">
-                                                <div class="widget-main no-padding">
-                                                    <div class="wysiwyg-editor"></div>
+                                            <div class="widget-toolbox padding-4 clearfix">
+                                                <div class="btn-group">
+                                                    <button data-toggle="dropdown"
+                                                            class="btn btn-info btn-sm dropdown-toggle no-border">
+                                                        <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-yellow">
+                                                        <li><a href="#">Видео</a></li>
+
+                                                        <li><a href="#">Фотографию</a></li>
+
+                                                        <li><a href="#">Документ</a></li>
+
+                                                        <li><a href="#">Опрос</a></li>
+                                                    </ul>
                                                 </div>
 
-                                                <div class="widget-toolbox padding-4 clearfix">
-                                                    <div class="btn-group">
-                                                        <button data-toggle="dropdown"
-                                                                class="btn btn-info btn-sm dropdown-toggle no-border">
-                                                            <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
-                                                        </button>
-
-                                                        <ul class="dropdown-menu dropdown-yellow">
-                                                            <li><a href="#">Видео</a></li>
-
-                                                            <li><a href="#">Фотографию</a></li>
-
-                                                            <li><a href="#">Документ</a></li>
-
-                                                            <li><a href="#">Опрос</a></li>
-                                                        </ul>
-                                                    </div>
-
-                                                    <div class="btn-group pull-right">
-                                                        <button class="btn btn-sm btn-primary">
-                                                            <i class="icon-globe bigger-125"></i> Создать <i
-                                                                class="icon-arrow-right icon-on-right bigger-125"></i>
-                                                        </button>
-                                                    </div>
+                                                <div class="btn-group pull-right">
+                                                    <button class="btn btn-sm btn-primary">
+                                                        <i class="icon-globe bigger-125"></i> Создать <i
+                                                            class="icon-arrow-right icon-on-right bigger-125"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
-                                    </section>
+                                    </div>
+                                </section>
 
-                                    <div class="tab-pane active" id="porch2">
-
-                                        <section class="talks-title-block">
-                                            <div class="talks-title clearfix">
-                                                <div class="talks-title-left load-talk">
-                                                    <div><a href="#">Проблемы в намшем доме !</a></div>
-                                                    <div>74 сообщения</div>
-                                                </div>
-                                                <div class="talks-title-right">
-                                                    <div>Последнее обновление:</div>
-                                                    <div>18 июля 2014 23:01</div>
-                                                </div>
-                                            </div>
-
-                                            <div class="talks-title clearfix">
-                                                <div class="talks-title-left">
-                                                    <div><a href="#">Проблемы в намшем доме !</a></div>
-                                                    <div>74 сообщения</div>
-                                                </div>
-                                                <div class="talks-title-right">
-                                                    <div>Последнее обновление:</div>
-                                                    <div>18 июля 2014 23:01</div>
-                                                </div>
-                                            </div>
-                                        </section>
-
-                                        <section class="talks-block hide"> </section>
-
+                                <section class="talks-title-block">
+                                    <div class="talks-title">
+                                        <div class="talks-title-left load-talk">
+                                            <div><a href="#">Проблемы в намшем доме !</a></div>
+                                            <div>74 сообщения</div>
+                                        </div>
+                                        <div class="talks-title-right">
+                                            <div>Последнее обновление:</div>
+                                            <div>18 июля 2014 23:01</div>
+                                        </div>
                                     </div>
 
-                                    <div class="tab-pane" id="floor2">
-
-                                        <div class="talks-title clearfix">
-                                            <div class="talks-title-left">
-                                                <div><a href="#">Проблемы в намшем доме !</a></div>
-                                                <div>74 сообщения</div>
-                                            </div>
-                                            <div class="talks-title-right">
-                                                <div>Последнее обновление:</div>
-                                                <div>18 июля 2014 23:01</div>
-                                            </div>
+                                    <div class="talks-title">
+                                        <div class="talks-title-left">
+                                            <div><a href="#">Проблемы в намшем доме !</a></div>
+                                            <div>74 сообщения</div>
                                         </div>
-
-                                        <div class="talks-title clearfix">
-                                            <div class="talks-title-left">
-                                                <div><a href="#">Проблемы в намшем доме !</a></div>
-                                                <div>74 сообщения</div>
-                                            </div>
-                                            <div class="talks-title-right">
-                                                <div>Последнее обновление:</div>
-                                                <div>18 июля 2014 23:01</div>
-                                            </div>
+                                        <div class="talks-title-right">
+                                            <div>Последнее обновление:</div>
+                                            <div>18 июля 2014 23:01</div>
                                         </div>
-
-
                                     </div>
-                                    <div class="tab-pane" id="quarter2"></div>
-                                    <div class="tab-pane" id="area2"></div>
-                                </div>
+                                </section>
+
+                                <section class="talks-block hide"> </section>
+
                             </section>
+
+                            <section class="private-messages page hide"></section>
+
+                            <section class="nextdoors page hide"></section>
+
+                            <section class="profile page hide"></section>
 
 							<%--<section class="forum">
 								<section class="options">
@@ -1099,7 +706,7 @@
 							</section>--%>
 
 						</div>
-					</div>
+
 				</div>
 			</div>
 		</div>
@@ -1478,7 +1085,7 @@
 
     <script src="js/forum/angular/angular.min.js"></script>
 	<!-- собственные скрипты  -->
-	<script src="js/common.js"></script>
+	<%--<script src="js/common.js"></script>--%>
 	<script src="js/forum/main.js"></script>
 
 </body>

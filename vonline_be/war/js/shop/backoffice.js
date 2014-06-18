@@ -8,7 +8,7 @@ require.config({
         "jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min",
         "flexslider": "../js/lib/jquery.flexslider-min",
         "ace_spinner": "../js/lib/fuelux/fuelux.spinner",
-        "datepicker-backoffice": "../js/bootstrap-datepicker-backoffice",
+        "datepicker-backoffice": "../js/shop/bootstrap-datepicker-backoffice",
         "datepicker-ru": "../js/lib/date-time/locales/bootstrap-datepicker.ru",
         "multiselect": "../js/lib/jquery.multiselect.min",
         "bootbox":"../js/bootbox.min"
