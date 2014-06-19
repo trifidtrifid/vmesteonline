@@ -44,6 +44,7 @@ import com.vmesteonline.be.messageservice.TopicListPart;
 import com.vmesteonline.be.messageservice.UserMessage;
 import com.vmesteonline.be.messageservice.UserOpinion;
 import com.vmesteonline.be.messageservice.UserTopic;
+import com.vmesteonline.be.messageservice.WallItem;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
@@ -55,6 +56,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public MessageServiceImpl(String sessId) throws InvalidOperation {
 		super(sessId);
 		initDb();
+	}
+
+	@Override
+	public List<WallItem> getWallItems(long groupId) throws InvalidOperation {
+		List<WallItem> wallItems = new ArrayList<WallItem>();
+		
+		return wallItems;
 	}
 
 	@SuppressWarnings("unchecked")
