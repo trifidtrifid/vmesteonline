@@ -204,9 +204,9 @@
 						<div class="forum-wrap">
                             <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta">
                                 <div class="message-input clearfix">
-                                    <textarea name="" id="" cols="30" rows="10">Написать сообщение</textarea>
+                                    <textarea name="" id="" cols="30" rows="10" ng-model="lenta.wallMessageContent"></textarea>
                                     <div class="message-input-bottom">
-                                        <a class="btn btn-sm no-border btn-primary pull-right" href="#">Отправить</a>
+                                        <a class="btn btn-sm no-border btn-primary pull-right" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
                                         <div class="btn-group attach-dropdown pull-left">
                                             <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
                                                 <span class="btn-group-text">Прикрепить</span>
@@ -223,14 +223,13 @@
                                         <div class="hashtag pull-left">
                                             <span>группа</span>
                                             <div class="btn-group hashtag-dropdown">
-                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                                    <span class="btn-group-text">#Дом</span>
+                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                                    <span class="btn-group-text"># {{lenta.selectedGroup.visibleName}}</span>
                                                     <span class="icon-caret-down icon-on-right"></span>
                                                 </button>
 
                                                 <ul class="dropdown-menu dropdown-blue">
-                                                    <li><a href="#">#Парадная</a></li>
-                                                    <li><a href="#">#Квартал</a></li>
+                                                    <li ng-repeat="group in lenta.groups"><a href="#" ng-click="lenta.selectGroupInDropdown(group.id,lenta)"># {{group.visibleName}}</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -239,7 +238,7 @@
                                 </div>
 
                                 <div class="lenta">
-                                    <div class="lenta-item">
+                                    <div class="lenta-item" ng-repeat="wallItem in lenta.wallItems">
 
                                         <div class="first-message clearfix">
                                             <div class="user">
@@ -252,9 +251,9 @@
                                                 <div class="name">
                                                     <a href="#">Alexa</a>
                                                 </div>
-                                                <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
+                                                <div class="text">{{wallItem.topic.message.content}}</div>
                                                 <div class="lenta-item-bottom">
-                                                    <span>17.02.2014 23:01</span>
+                                                    <span>{{wallItem.topic.message.created|date}}</span>
                                                     <a href="#">Ответить</a>
                                                 </div>
 
@@ -262,7 +261,7 @@
                                         </div>
 
                                         <div class="dialogs">
-                                            <div class="itemdiv dialogdiv">
+                                            <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
                                                 <div class="user">
                                                     <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
                                                 </div>
@@ -272,16 +271,16 @@
                                                     <div class="name">
                                                         <a href="#">Alexa</a>
                                                     </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
+                                                    <div class="text">{{wallMessage.content}}</div>
 
                                                     <div class="lenta-item-bottom">
-                                                        <span>17.02.2014 23:01</span>
-                                                        <a href="#">Ответить</a>
+                                                        <span>{{wallMessage.created}}</span>
+                                                        <a href="#" ng-click="lenta.goToAnswerInput($event)">Ответить</a>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="itemdiv dialogdiv">
+                                            <%--<div class="itemdiv dialogdiv">
                                                 <div class="user">
                                                     <img alt="John's Avatar" src="i/avatars/avatar.png">
                                                 </div>
@@ -356,14 +355,14 @@
                                                         <a href="#">Ответить</a>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>--%>
                                         </div>
 
                                         <div class="input-group">
                                             <%--<input placeholder="Введите сообщение..." type="text" class="form-control" name="message">--%>
-                                            <textarea name="message" class="message-textarea"></textarea>
+                                            <textarea name="message" class="message-textarea" ng-model="wallItem.commentText"></textarea>
                                                         <span class="input-group-btn">
-                                                            <button class="btn btn-sm btn-info no-radius no-border" type="button">
+                                                            <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
                                                                 <i class="icon-share-alt"></i>
                                                                 Отправить
                                                             </button>
@@ -372,139 +371,7 @@
 
                                     </div>
 
-                                    <div class="lenta-item">
-
-                                        <div class="first-message clearfix">
-                                            <div class="user">
-                                                <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                            </div>
-
-                                            <div class="body">
-                                                <span class="label label-lg label-yellow arrowed lenta-item-hashtag">Район</span>
-
-                                                <div class="name">
-                                                    <a href="#">Alexa</a>
-                                                </div>
-                                                <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                <div class="lenta-item-bottom">
-                                                    <span>17.02.2014 23:01</span>
-                                                    <a href="#">Ответить</a>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="dialogs">
-                                            <div class="itemdiv dialogdiv">
-                                                <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                </div>
-
-                                                <div class="body">
-
-                                                    <div class="name">
-                                                        <a href="#">Alexa</a>
-                                                    </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                    <div class="lenta-item-bottom">
-                                                        <span>17.02.2014 23:01</span>
-                                                        <a href="#">Ответить</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="itemdiv dialogdiv">
-                                                <div class="user">
-                                                    <img alt="John's Avatar" src="i/avatars/avatar.png">
-                                                </div>
-
-                                                <div class="body">
-
-                                                    <div class="name">
-                                                        <a href="#">John</a>
-                                                    </div>
-                                                    <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                    <div class="lenta-item-bottom">
-                                                        <span>17.02.2014 23:01</span>
-                                                        <a href="#">Ответить</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="itemdiv dialogdiv">
-                                                <div class="user">
-                                                    <img alt="Bob's Avatar" src="i/avatars/user.jpg">
-                                                </div>
-
-                                                <div class="body">
-
-                                                    <div class="name">
-                                                        <a href="#">Bob</a>
-                                                        <span class="label label-info arrowed arrowed-in-right">admin</span>
-                                                    </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                    <div class="lenta-item-bottom">
-                                                        <span>17.02.2014 23:01</span>
-                                                        <a href="#">Ответить</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="itemdiv dialogdiv">
-                                                <div class="user">
-                                                    <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
-                                                </div>
-
-                                                <div class="body">
-
-                                                    <div class="name">
-                                                        <a href="#">Jim</a>
-                                                    </div>
-                                                    <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                    <div class="lenta-item-bottom">
-                                                        <span>17.02.2014 23:01</span>
-                                                        <a href="#">Ответить</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="itemdiv dialogdiv">
-                                                <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                </div>
-
-                                                <div class="body">
-
-                                                    <div class="name">
-                                                        <a href="#">Alexa</a>
-                                                    </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-
-                                                    <div class="lenta-item-bottom">
-                                                        <span>17.02.2014 23:01</span>
-                                                        <a href="#">Ответить</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="input-group">
-                                            <textarea name="message" class="message-textarea"></textarea>
-                                                        <span class="input-group-btn">
-                                                            <button class="btn btn-sm btn-info no-radius no-border" type="button">
-                                                                <i class="icon-share-alt"></i>
-                                                                Отправить
-                                                            </button>
-                                                        </span>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="talks-title clearfix">
+<%--                                    <div class="talks-title clearfix">
                                         <div class="talks-title-left load-talk">
                                             <div><a href="#">Проблемы в намшем доме !</a></div>
                                             <div>74 сообщения</div>
@@ -513,7 +380,7 @@
                                             <div>Последнее обновление:</div>
                                             <div>18 июля 2014 23:01</div>
                                         </div>
-                                    </div>
+                                    </div>--%>
                                 </div>
 
                             </section>
@@ -555,7 +422,7 @@
                                                 </button>
 
                                                 <ul class="dropdown-menu dropdown-blue">
-                                                    <li ng-repeat="group in talks.groups"><a href="#" ng-click="talks.selectGroupInDropdown(group.id)"># {{group.visibleName}}</a></li>
+                                                    <li ng-repeat="group in talks.groups"><a href="#" ng-click="talks.selectGroupInDropdown(group.id,talks)"># {{group.visibleName}}</a></li>
                                                 </ul>
                                             </div>
                                         </div>

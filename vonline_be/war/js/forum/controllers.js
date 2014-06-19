@@ -167,7 +167,42 @@ angular.module('forum.controllers', [])
         this.groups = userClientGroups ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         this.selectedGroup = this.groups[0];
 
-        //var wallItems = messageClient.getWallItems(this.selectedGroup.id);
+        this.wallMessageContent = "Написать сообщение";
+        this.wallItems = messageClient.getWallItems(this.selectedGroup.id);
+        var wallItemsLength;
+        this.wallItems ? wallItemsLength = this.wallItems.length :
+            wallItemsLength = 0;
+        var wall = this;
+
+        for(var i = 0; i < wallItemsLength; i++){
+            wall.wallItems[i].commentText = "Введите сообщение";
+        }
+
+        this.selectGroupInDropdown = selectGroupInDropdown;
+
+        this.goToAnswerInput = function(event){
+            event.preventDefault();
+
+
+        };
+
+        this.createWallMessage = function(event){
+            event.preventDefault();
+
+            var newWallMessage = messageClient.createTopic(wall.selectedGroup.id," ",5,wall.wallMessageContent);
+            wall.wallMessageContent = "Написать сообщение";
+
+            wall.wallItems.push(newWallMessage);
+        };
+
+        this.createWallComment = function(event,wallItem){
+            event.preventDefault();
+
+            var newWallComment = messageClient.createMessage(wallItem.topic.id,0,wall.selectedGroup.id,5,wallItem.commentText);
+            wallItem.commentText = "Введите сообщение";
+
+            wall.wallItems.messages.push(newWallComment);
+        };
 
     })
     .controller('TalksController',function($rootScope) {
@@ -244,13 +279,7 @@ angular.module('forum.controllers', [])
             }
         };
 
-        talk.selectGroupInDropdown = function(groupId){
-            for(var i = 0; i < groupsLength; i++){
-                if(groupId == groups[i].id){
-                    talk.selectedGroup = talk.groups[i];
-                }
-            }
-        }
+        talk.selectGroupInDropdown = selectGroupInDropdown;
 
         talk.addSingleTalk = function(){
             var newTopic = messageClient.createTopic(talk.selectedGroup.id,talk.subject,1,talk.content);
@@ -359,4 +388,12 @@ function initProfile(){
             $('.logo-container>img').hide();
         });
 
+}
+function selectGroupInDropdown(groupId,objCtrl){
+    var groupsLength = objCtrl.groups.length;
+    for(var i = 0; i < groupsLength; i++){
+        if(groupId == objCtrl.groups[i].id){
+            objCtrl.selectedGroup = objCtrl.groups[i];
+        }
+    }
 }
