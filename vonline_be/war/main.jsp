@@ -106,7 +106,7 @@
                             Настройки
                         </a></li>
 
-                        <li><a href="profile.html"> <i class="icon-user"></i>
+                        <li><a href="#" ng-click="navbar.goToProfile($event)"> <i class="icon-user"></i>
                             Профиль
                         </a></li>
 
@@ -147,6 +147,11 @@
 									class="menu-text">${rubric.visibleName}</span> <b>(3)</b>
 							</a></li>
 						</c:forEach>--%>
+                        <%--<c:forEach var="group" items="${groups}">
+                            <li><a href="#" data-rubricid="${group.id}"> <span
+                                    class="menu-text">${group.visibleName}</span> <b>(3)</b>
+                            </a></li>
+                        </c:forEach>--%>
 
 					</ul>
 				</aside>
@@ -183,10 +188,12 @@
                         <div class="page-title pull-left">Новости</div>
 
                         <nav class="submenu pull-right clearfix">
-                            <button class="btn btn-sm btn-info no-border pull-right">Квартал</button>
-                            <button class="btn btn-sm btn-info no-border pull-right">Дом</button>
+                            <button class="btn btn-sm btn-info no-border pull-right" ng-repeat="group in mainContentTop.groups"
+                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="mainContentTop.selectGroup(group.id)">{{group.visibleName}}</button>
+
+                            <%--<button class="btn btn-sm btn-info no-border pull-right">Дом</button>
                             <button class="btn btn-sm btn-info no-border pull-right">Парадная</button>
-                            <button class="btn btn-sm btn-info no-border pull-right">Все</button>
+                            <button class="btn btn-sm btn-info no-border pull-right">Все</button>--%>
                         </nav>
 
                         <div class="create-topic-btn pull-right" ng-show="base.talksIsActive">
@@ -517,10 +524,10 @@
                                     <div class="has-info form-group">
                                         <input type="text" class="width-100 head" value="Заголовок"
                                                onblur="if(this.value=='') this.value='Заголовок';"
-                                               onfocus="if(this.value=='Заголовок') this.value='';" />
+                                               onfocus="if(this.value=='Заголовок') this.value='';" ng-model="base.subject" />
                                     </div>
                                     <div class="topic-body">
-                                        <textarea>Напишите что-нибудь</textarea>
+                                        <textarea ng-model="base.content"></textarea>
                                         <div class="btn-group">
                                             <button data-toggle="dropdown"
                                                     class="btn btn-info btn-sm dropdown-toggle no-border">
@@ -539,7 +546,7 @@
                                         </div>
 
                                         <div class="btn-group pull-right">
-                                            <button class="btn btn-sm btn-primary">
+                                            <button class="btn btn-sm btn-primary" ng-click="base.addSingleTalk()">
                                                 Создать
                                             </button>
                                         </div>
@@ -585,14 +592,14 @@
 
                                 <section class="talks-title-block" ng-show="talks.isTitles">
 
-                                    <div class="talks-title" ng-repeat="talk in talks.topics">
+                                    <div class="talks-title" ng-repeat="talk in talks.topics" id="{{talk.id}}">
                                         <div class="talks-title-left load-talk">
-                                            <div><a href="#" ng-click="talks.showFullTalk($event)">{{talk.name}} Проблемы в намшем доме !</a></div>
-                                            <div>74 сообщения</div>
+                                            <div><a href="#" ng-click="talks.showFullTalk($event)">{{talk.subject}}</a></div>
+                                            <div>{{talk.messageNum}} сообщений</div>
                                         </div>
                                         <div class="talks-title-right">
                                             <div>Последнее обновление:</div>
-                                            <div>18 июля 2014 23:01</div>
+                                            <div>{{talk.lastUpdate}}</div>
                                         </div>
                                     </div>
 

@@ -6,8 +6,13 @@ angular.module('forum.controllers', [])
         var base = this;
         base.nextdoorsLoadStatus = "";
         base.privateMessagesLoadStatus = "";
+        base.profileLoadStatus = "";
+
         base.mainContentTopIsHide = false;
         base.createTopicIsHide = true;
+
+        base.content = "Напишите что-нибудь";
+        base.subject = "Заголовок";
 
         resetPages(base);
         base.lentaIsActive = true;
@@ -17,6 +22,10 @@ angular.module('forum.controllers', [])
 
             base.createTopicIsHide ? base.createTopicIsHide = false : base.createTopicIsHide = true;
 
+        };
+
+        base.addSingleTalk = function(){
+            messageClient.createTopic(0,base.subject,1,base.content);
         };
 
         $rootScope.base = base;
@@ -75,6 +84,29 @@ angular.module('forum.controllers', [])
 
             };
 
+        this.goToProfile = function(event){
+            event.preventDefault();
+
+            $rootScope.leftbar.tab = 0;
+
+            resetPages($rootScope.base);
+            $rootScope.base.profileIsActive = true;
+
+            resetAceNavBtns(navbar);
+            $rootScope.base.mainContentTopIsHide = true;
+
+            var profile = $('.dynamic .profile');
+
+            if ($rootScope.base.profileLoadStatus == "") {
+                profile.load('ajax/forum/profile.jsp .profile',function(){
+                    initProfile();
+                });
+            }
+
+            $rootScope.base.profileLoadStatus = "isLoaded";
+
+        };
+
   })
   .controller('leftBarController',function($rootScope) {
 
@@ -115,6 +147,20 @@ angular.module('forum.controllers', [])
     .controller('rightBarController',function() {
     })
     .controller('mainContentTopController',function() {
+        this.groups = userClient.getUserGroups().reverse();
+        var groups = this.groups,
+            groupsLength = groups.length;
+
+        this.isSet = function(groupId){
+            //return groupId ===
+        };
+        this.selectGroup = function(groupId){
+            for(var i = 0; i < groupsLength; i++){
+                if (groups[i].id == groupId){
+                    groups[i].selected = true;
+                }
+            }
+        };
     })
     .controller('LentaController',function() {
     })
@@ -122,7 +168,7 @@ angular.module('forum.controllers', [])
         var talk = this;
         talk.isTitles = true;
         talk.isTalksLoaded = false;
-        talk.topics = 
+        talk.topics = messageClient.getTopics(0,0,0,0,0).topics;
 
         talk.showFullTalk = function(event){
             event.preventDefault();
@@ -168,6 +214,15 @@ angular.module('forum.controllers', [])
 
 
 /* functions */
+
+var transport = new Thrift.Transport("/thrift/MessageService");
+var protocol = new Thrift.Protocol(transport);
+var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(protocol);
+
+transport = new Thrift.Transport("/thrift/UserService");
+protocol = new Thrift.Protocol(transport);
+var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
+
 function resetPages(base){
     base.nextdoorsIsActive = false;
     base.privateMessagesIsActive = false;
@@ -179,4 +234,18 @@ function resetPages(base){
 function resetAceNavBtns(navbar){
     navbar.nextdoorsBtnStatus = "";
     navbar.privateMessagesBtnStatus = "";
+}
+function initProfile(){
+    $('#profile-ava').ace_file_input({
+        style:'well',
+        btn_choose:'Изменить фото',
+        btn_change:null,
+        no_icon:'',
+        droppable:true,
+        thumbnail:'large',
+        icon_remove:null
+    }).on('change', function(){
+            $('.logo-container>img').hide();
+        });
+
 }

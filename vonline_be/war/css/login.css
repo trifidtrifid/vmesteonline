@@ -2,6 +2,7 @@
 /* страница регистрации */
 .login-layout .main-content {
   border: 0;
+  margin-right: 0;
 }
 .login-container .widget-box {
   visibility: hidden;

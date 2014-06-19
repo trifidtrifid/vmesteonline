@@ -509,6 +509,13 @@ h1 {
 .itemdiv.dialogdiv > .body {
   padding-bottom: 28px;
 }
+.btn.active:after {
+  border-bottom: 0;
+}
+.btn-info.no-border.active {
+  background: #4184af !important;
+  border-color: #4184af !important;
+}
 .message-input {
   padding: 10px;
   margin-bottom: 20px;
