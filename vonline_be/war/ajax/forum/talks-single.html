@@ -23,7 +23,7 @@
                                         </h2>
                                     <p>{{talks.fullTalkTopic.message.content}}</p>
                                         <div class="message-bottom">
-                                            <span class="topic-header-date">{{talks.fullTalkTopic.message.created}}</span>
+                                            <span class="topic-header-date">{{talks.fullTalkTopic.message.created|date}}</span>
                                             <a class="answer-link" href="#" ng-click="talks.showAnswerInput($event)">Ответить</a>
                                         </div>
                                 </div>
@@ -52,7 +52,7 @@
                                             <h2><a href="#">Автор автор</a></h2>
                                             <p>{{firstMessage.content}}</p>
                                             <div class="message-bottom">
-                                                <span class="topic-header-date">{{firstMessage.created}}</span>
+                                                <span class="topic-header-date">{{firstMessage.created|date:'short'}}</span>
                                                 <a class="answer-link" href="#" ng-click="talks.showMessageAnswerInput($event,firstMessage.id)">Ответить</a>
                                             </div>
                                         </div>

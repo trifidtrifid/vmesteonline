@@ -224,7 +224,9 @@ angular.module('forum.controllers', [])
             groupsLength = groups.length;
         talk.selectedGroup = talk.groups[0];
         talk.topics = messageClient.getTopics(talk.selectedGroup.id,0,0,0,10).topics;
-        var topicLength = talk.topics.length;
+        var topicLength;
+        talk.topics ? topicLength = talk.topics.length : topicLength = 0;
+        if(!talk.topics) talk.topics = [];
 
         talk.showFullTalk = function(event,talkId){
             event.preventDefault();
