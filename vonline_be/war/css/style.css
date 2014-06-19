@@ -435,6 +435,10 @@ h1 {
 .dd>.dd-list>.topic-item.list-view .dd-list {
   padding-left: 0;
 }
+.dd>.dd-list>.topic-item >.topic-descr {
+  background: #ddedf6;
+  padding: 5px;
+}
 .dd>.dd-list>.topic-item.list-view>.dd-list {
   padding-left: 30px;
 }
@@ -596,10 +600,18 @@ h1 {
 }
 .talks-block {
   padding: 0 10px;
-}
-.dd-item .dd-list {
-  display: none;
 /* private-messages */
+}
+.talks-block .answer-input textarea {
+  width: 88%;
+  margin-bottom: 10px;
+}
+.talks-block .widget-main {
+  position: relative;
+}
+.talks-block .message-bottom {
+  position: absolute;
+  bottom: 5px;
 }
 .private-messages {
   padding: 10px;

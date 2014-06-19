@@ -11,22 +11,10 @@ angular.module('forum.controllers', [])
         base.mainContentTopIsHide = false;
         base.createTopicIsHide = true;
 
-        base.content = "Напишите что-нибудь";
-        base.subject = "Заголовок";
+        base.isTalkTitles = true;
 
         resetPages(base);
         base.lentaIsActive = true;
-
-        base.showCreateTopic = function(event){
-            event.preventDefault();
-
-            base.createTopicIsHide ? base.createTopicIsHide = false : base.createTopicIsHide = true;
-
-        };
-
-        base.addSingleTalk = function(){
-            messageClient.createTopic(0,base.subject,1,base.content);
-        };
 
         $rootScope.base = base;
     })
@@ -130,6 +118,7 @@ angular.module('forum.controllers', [])
             case 2:
                 $rootScope.base.mainContentTopIsHide = false;
                 $rootScope.base.talksIsActive = true;
+                $rootScope.base.isTalkTitles = true;
                 break;
             case 3:
                 $rootScope.base.servicesIsActive = true;
@@ -146,10 +135,11 @@ angular.module('forum.controllers', [])
   })
     .controller('rightBarController',function() {
     })
-    .controller('mainContentTopController',function() {
-        this.groups = userClient.getUserGroups().reverse();
+    .controller('mainContentTopController',function($rootScope) {
+        this.groups = userClientGroups ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         var groups = this.groups,
             groupsLength = groups.length;
+        groups[groupsLength-1].selected = true;
 
         this.isSet = function(groupId){
             //return groupId ===
@@ -161,24 +151,76 @@ angular.module('forum.controllers', [])
                 }
             }
         };
-    })
-    .controller('LentaController',function() {
-    })
-    .controller('TalksController',function() {
-        var talk = this;
-        talk.isTitles = true;
-        talk.isTalksLoaded = false;
-        talk.topics = messageClient.getTopics(0,0,0,0,0).topics;
 
-        talk.showFullTalk = function(event){
+        /*this.createTopicIsHide = true;
+        $rootScope.createTopicIsHide = this.createTopicIsHide;
+        var mainContentTop = this;*/
+
+        this.showCreateTopic = function(event){
             event.preventDefault();
 
-            talk.isTitles = false;
+            $rootScope.base.createTopicIsHide ? $rootScope.base.createTopicIsHide = false : $rootScope.base.createTopicIsHide = true;
+
+        };
+    })
+    .controller('LentaController',function() {
+        this.groups = userClientGroups ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
+        this.selectedGroup = this.groups[0];
+
+        //var wallItems = messageClient.getWallItems(this.selectedGroup.id);
+
+    })
+    .controller('TalksController',function($rootScope) {
+        var talk = this;
+        talk.isTalksLoaded = false;
+        talk.groups = userClientGroups ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
+
+        talk.content = "Напишите что-нибудь";
+        talk.subject = "Заголовок";
+
+        talk.fullTalkTopic = {};
+        talk.fullTalkTopic.answerInputIsShow = false;
+        talk.fullTalkMessages = {};
+        talk.fullTalkFirstMessages = [];
+        //talk.fullTalkFirstMessages.answerInputIsShow = false;
+        talk.answerFirstMessage = "Ваш ответ";
+
+        var groups = this.groups,
+            groupsLength = groups.length;
+        talk.selectedGroup = talk.groups[0];
+        talk.topics = messageClient.getTopics(talk.selectedGroup.id,0,0,0,10).topics;
+        var topicLength = talk.topics.length;
+
+        talk.showFullTalk = function(event,talkId){
+            event.preventDefault();
+
+            for(var i = 0; i < topicLength; i++){
+                if(talkId == talk.topics[i].id){
+                    talk.fullTalkTopic = talk.topics[i];
+                }
+            }
+            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,10).messages;
+            var fullTalkFirstMessagesLength;
+            talk.fullTalkFirstMessages ?
+                fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length:
+                fullTalkFirstMessagesLength = 0;
+            if(talk.fullTalkFirstMessages === null) talk.fullTalkFirstMessages = [];
+
+            for(var i = 0; i < fullTalkFirstMessagesLength; i++){
+                talk.fullTalkFirstMessages[i].answerInputIsShow = false;
+                talk.fullTalkFirstMessages[i].isTreeOpen = false;
+            }
+
+            talk.fullTalkMessages = messageClient.getMessages(talkId,talk.selectedGroup.id,1,0,0,10);
+
+            $rootScope.base.isTalkTitles = false;
+            $rootScope.base.mainContentTopIsHide = true;
+            $rootScope.base.createTopicIsHide = true;
 
             var talksBlock = $('.talks').find('.talks-block');
 
             if(!talk.isTalksLoaded){
-                talksBlock.load('ajax/forum/talks-single.jsp .talks-single',function(){
+                /*talksBlock.load('ajax/forum/talks-single.jsp .talks-single',function(){
 
                     talk.isTreeOpen = false;
 
@@ -198,9 +240,77 @@ angular.module('forum.controllers', [])
                     };
                     //SetShowEditorClick($('.answer-link'));
 
-                });
+                });*/
             }
         };
+
+        talk.selectGroupInDropdown = function(groupId){
+            for(var i = 0; i < groupsLength; i++){
+                if(groupId == groups[i].id){
+                    talk.selectedGroup = talk.groups[i];
+                }
+            }
+        }
+
+        talk.addSingleTalk = function(){
+            var newTopic = messageClient.createTopic(talk.selectedGroup.id,talk.subject,1,talk.content);
+
+            $rootScope.base.createTopicIsHide = true;
+
+            talk.topics.unshift(newTopic);
+
+        };
+
+        talk.showAnswerInput = function(event){
+            event.preventDefault();
+
+            talk.fullTalkTopic.answerInputIsShow ?
+                talk.fullTalkTopic.answerInputIsShow = false :
+                talk.fullTalkTopic.answerInputIsShow = true ;
+        };
+
+        talk.showMessageAnswerInput = function(event,messageId){
+            event.preventDefault();
+
+            if(!talk.fullTalkFirstMessages) talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,10).messages;
+            var fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length;
+
+            for(var i = 0; i < fullTalkFirstMessagesLength; i++){
+                if(messageId == talk.fullTalkFirstMessages[i].id){
+                    talk.fullTalkFirstMessages[i].answerInputIsShow ?
+                    talk.fullTalkFirstMessages[i].answerInputIsShow = false :
+                    talk.fullTalkFirstMessages[i].answerInputIsShow = true;
+                }
+            }
+        };
+
+        talk.addSingleFirstMessage = function(event,topicId){
+            event.preventDefault();
+
+            talk.fullTalkTopic.answerInputIsShow = false;
+
+            var newMessage = messageClient.createMessage(topicId,0,talk.selectedGroup.id,1,talk.answerFirstMessage);
+
+            talk.fullTalkFirstMessages ?
+                talk.fullTalkFirstMessages.push(newMessage):
+                talk.fullTalkFirstMessages[0] = newMessage;
+
+        };
+
+        talk.toggleTree = function($event,messageId){
+            event.preventDefault();
+
+            if(!talk.fullTalkFirstMessages) talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,10).messages;
+            var fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length;
+
+            for(var i = 0; i < fullTalkFirstMessagesLength; i++){
+                if(messageId == talk.fullTalkFirstMessages[i].id){
+                    talk.fullTalkFirstMessages[i].isTreeOpen ?
+                        talk.fullTalkFirstMessages[i].isTreeOpen = false :
+                        talk.fullTalkFirstMessages[i].isTreeOpen = true ;
+                }
+            }
+        }
 
     })
     .controller('ServicesController',function() {
@@ -222,6 +332,7 @@ var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(
 transport = new Thrift.Transport("/thrift/UserService");
 protocol = new Thrift.Protocol(transport);
 var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
+var userClientGroups;// = userClient.getUserGroups();
 
 function resetPages(base){
     base.nextdoorsIsActive = false;

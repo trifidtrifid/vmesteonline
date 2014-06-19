@@ -197,7 +197,7 @@
                         </nav>
 
                         <div class="create-topic-btn pull-right" ng-show="base.talksIsActive">
-                            <a class="btn btn-primary btn-sm no-border clearfix" href="#" ng-click="base.showCreateTopic($event)">Создать тему</a>
+                            <a class="btn btn-primary btn-sm no-border clearfix" href="#" ng-click="mainContentTop.showCreateTopic($event)">Создать тему</a>
                         </div>
                     </div>
 
@@ -524,11 +524,12 @@
                                     <div class="has-info form-group">
                                         <input type="text" class="width-100 head" value="Заголовок"
                                                onblur="if(this.value=='') this.value='Заголовок';"
-                                               onfocus="if(this.value=='Заголовок') this.value='';" ng-model="base.subject" />
+                                               onfocus="if(this.value=='Заголовок') this.value='';" ng-model="talks.subject" />
                                     </div>
-                                    <div class="topic-body">
-                                        <textarea ng-model="base.content"></textarea>
-                                        <div class="btn-group">
+                                    <div class="topic-body clearfix">
+                                        <textarea ng-model="talks.content"></textarea>
+
+                                        <div class="btn-group pull-left">
                                             <button data-toggle="dropdown"
                                                     class="btn btn-info btn-sm dropdown-toggle no-border">
                                                 <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
@@ -545,8 +546,24 @@
                                             </ul>
                                         </div>
 
+                                        <div class="hashtag pull-left">
+                                            <span>группа</span>
+                                            <div class="btn-group hashtag-dropdown">
+                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                                    <span class="btn-group-text"># {{talks.selectedGroup.visibleName}}</span>
+                                                    <span class="icon-caret-down icon-on-right"></span>
+                                                </button>
+
+                                                <ul class="dropdown-menu dropdown-blue">
+                                                    <li ng-repeat="group in talks.groups"><a href="#" ng-click="talks.selectGroupInDropdown(group.id)"># {{group.visibleName}}</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+
+
                                         <div class="btn-group pull-right">
-                                            <button class="btn btn-sm btn-primary" ng-click="base.addSingleTalk()">
+                                            <button class="btn btn-sm btn-primary" ng-click="talks.addSingleTalk()">
                                                 Создать
                                             </button>
                                         </div>
@@ -590,11 +607,11 @@
                                     </div>--%>
                                 </section>
 
-                                <section class="talks-title-block" ng-show="talks.isTitles">
+                                <section class="talks-title-block" ng-show="base.isTalkTitles">
 
                                     <div class="talks-title" ng-repeat="talk in talks.topics" id="{{talk.id}}">
                                         <div class="talks-title-left load-talk">
-                                            <div><a href="#" ng-click="talks.showFullTalk($event)">{{talk.subject}}</a></div>
+                                            <div><a href="#" ng-click="talks.showFullTalk($event,talk.id)">{{talk.subject}}</a></div>
                                             <div>{{talk.messageNum}} сообщений</div>
                                         </div>
                                         <div class="talks-title-right">
@@ -615,7 +632,9 @@
                                     </div>--%>
                                 </section>
 
-                                <section class="talks-block" ng-hide="talks.isTitles"> </section>
+                                <section class="talks-block" ng-hide="base.isTalkTitles">
+                                    <div ng-include="'ajax/forum/talks-single.html'"></div>
+                                </section>
 
                             </section>
 

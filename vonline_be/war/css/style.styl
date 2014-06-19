@@ -394,6 +394,9 @@ transform()
   &.list-view
     .dd-list
       padding-left 0
+  >.topic-descr
+    background #ddedf6
+    padding 5px
 
 .dd>.dd-list>.topic-item.list-view>.dd-list
   padding-left 30px
@@ -523,10 +526,15 @@ transform()
 
 .talks-block
   padding 0 10px
-
-.dd-item .dd-list
-  display none
-
+  .answer-input
+    textarea
+      width 88%
+      margin-bottom 10px
+  .widget-main
+    position relative
+  .message-bottom
+    position absolute
+    bottom 5px
 
   /* private-messages */
 .private-messages
