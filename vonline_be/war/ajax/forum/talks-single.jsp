@@ -271,7 +271,8 @@
                                                                 <a href="#">
                                                                     <img src="i/avatars/clint.jpg" alt="картинка" /></a>
                                                                 <div class="topic-author">
-                                                                    <a class="fa fa-plus plus-minus <c:if test="${topic.messageNum == 0}">hide</c:if>" href="#"></a>
+                                                                    <a class="fa fa-plus plus-minus <c:if test="${topic.messageNum == 0}">hide</c:if>" ng-class="{fa-plus:!talks.isTreeOpen}" ng-class="{fa-minus: talks.isTreeOpen}"
+                                                                       ng-click="talks.toggleInsideTreeOfMessages()" href="#"></a>
                                                                 </div>
                                                             </div>
                                                             <div class="topic-right">
@@ -287,7 +288,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <ol class="dd-list">
+                                                <ol class="dd-list" ng-show="talks.isTreeOpen">
 
                                                     <li class="dd-item dd2-item topic-item"	data-topicid="${topic.id}">
                                                         <div class="dd2-content widget-box topic-descr">

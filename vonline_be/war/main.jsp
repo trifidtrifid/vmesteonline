@@ -52,7 +52,7 @@
 %>
 
 <!DOCTYPE html>
-<html>
+<html ng-app="forum">
 <head>
 <meta charset="utf-8" />
 <title>Главная</title>
@@ -69,7 +69,7 @@
     </script>
     <![endif]-->
 </head>
-<body>
+<body ng-controller="baseController as base">
 <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
         try {
@@ -78,7 +78,7 @@
         }
     </script>
 
-    <div class="navbar-container" id="navbar-container">
+    <div class="navbar-container" id="navbar-container" ng-controller="navbarController as navbar">
         <div class="navbar-header pull-left">
             <a href="#" class="navbar-brand">
                 <small> <i class="icon-leaf"></i> Ace Admin </small>
@@ -87,9 +87,9 @@
 
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
-                <li><a class="btn btn-info no-border private-messages-link" href="#">Личные сообщения </a></li>
+                <li ng-class="navbar.privateMessagesBtnStatus"><a class="btn btn-info no-border private-messages-link" ng-click="navbar.goToPrivateMessages($event)" href="#">Личные сообщения </a></li>
 
-                <li><a class="btn btn-info no-border nextdoors-link" href="#"> Соседи </a></li>
+                <li ng-class="navbar.nextdoorsBtnStatus"><a class="btn btn-info no-border nextdoors-link" href="#" ng-click="navbar.goToNextdoors($event)"> Соседи</a></li>
 
                 <li class="user-short light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
@@ -131,7 +131,7 @@
 
 		<div class="main-container" id="main-container">
 			<div class="main-container-inner">
-				<aside class="sidebar" id="sidebar">
+				<aside class="sidebar" id="sidebar" ng-controller="leftBarController as leftbar">
 					<script type="text/javascript">
 						try {
 							ace.settings.check('sidebar', 'fixed')
@@ -139,9 +139,9 @@
 						}
 					</script>
 					<ul class="nav nav-list">
-                        <li><a href="#"> <span class="menu-text">Новости</span> </a></li>
-                        <li><a href="#"> <span class="menu-text">Обсуждения</span> </a></li>
-                        <li><a href="#"> <span class="menu-text">Услуги и объявления</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(1)}"><a href="#" ng-click="leftbar.setTab($event,1)"> <span class="menu-text">Новости</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(2)}"><a href="#" ng-click="leftbar.setTab($event,2)"> <span class="menu-text">Обсуждения</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(3)}"><a href="#" ng-click="leftbar.setTab($event,3)"> <span class="menu-text">Услуги и объявления</span> </a></li>
 						<%--<c:forEach var="rubric" items="${rubrics}">
 							<li><a href="#" data-rubricid="${rubric.id}"> <span
 									class="menu-text">${rubric.visibleName}</span> <b>(3)</b>
@@ -149,9 +149,8 @@
 						</c:forEach>--%>
 
 					</ul>
-					<!-- /.nav-list -->
 				</aside>
-                <aside class="sidebar-right">
+                <aside class="sidebar-right" ng-controller="rightBarController as rightbar">
                     <div class="importantly-top">
                         Важно
                     </div>
@@ -180,7 +179,7 @@
                 </aside>
 				<div class="main-content dynamic">
 
-                    <div class="main-content-top">
+                    <div class="main-content-top" ng-hide="base.mainContentTopIsHide" ng-controller="mainContentTopController as mainContentTop">
                         <div class="page-title pull-left">Новости</div>
 
                         <nav class="submenu pull-right clearfix">
@@ -190,13 +189,13 @@
                             <button class="btn btn-sm btn-info no-border pull-right">Все</button>
                         </nav>
 
-                        <div class="create-topic-btn hide pull-right">
-                            <a class="btn btn-primary btn-sm no-border clearfix" href="#">Создать тему</a>
+                        <div class="create-topic-btn pull-right" ng-show="base.talksIsActive">
+                            <a class="btn btn-primary btn-sm no-border clearfix" href="#" ng-click="base.showCreateTopic($event)">Создать тему</a>
                         </div>
                     </div>
 
 						<div class="forum-wrap">
-                            <section class="forum page">
+                            <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta">
                                 <div class="message-input clearfix">
                                     <textarea name="" id="" cols="30" rows="10">Написать сообщение</textarea>
                                     <div class="message-input-bottom">
@@ -512,15 +511,40 @@
 
                             </section>
 
-                            <section class="talks page hide">
+                            <section class="talks page" ng-show="base.talksIsActive" ng-controller="TalksController as talks">
 
-                                <section class="create-topic hide">
+                                <section class="create-topic" ng-hide="base.createTopicIsHide">
                                     <div class="has-info form-group">
                                         <input type="text" class="width-100 head" value="Заголовок"
                                                onblur="if(this.value=='') this.value='Заголовок';"
                                                onfocus="if(this.value=='Заголовок') this.value='';" />
                                     </div>
-                                    <div class="widget-box wysiwig-box">
+                                    <div class="topic-body">
+                                        <textarea>Напишите что-нибудь</textarea>
+                                        <div class="btn-group">
+                                            <button data-toggle="dropdown"
+                                                    class="btn btn-info btn-sm dropdown-toggle no-border">
+                                                <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
+                                            </button>
+
+                                            <ul class="dropdown-menu dropdown-yellow">
+                                                <li><a href="#">Видео</a></li>
+
+                                                <li><a href="#">Фотографию</a></li>
+
+                                                <li><a href="#">Документ</a></li>
+
+                                                <li><a href="#">Опрос</a></li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="btn-group pull-right">
+                                            <button class="btn btn-sm btn-primary">
+                                                Создать
+                                            </button>
+                                        </div>
+                                    </div>
+<%--                                    <div class="widget-box wysiwig-box">
                                         <div class="widget-header widget-header-small  header-color-blue2">
 
                                         </div>
@@ -556,13 +580,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>--%>
                                 </section>
 
-                                <section class="talks-title-block">
-                                    <div class="talks-title">
+                                <section class="talks-title-block" ng-show="talks.isTitles">
+
+                                    <div class="talks-title" ng-repeat="talk in talks.topics">
                                         <div class="talks-title-left load-talk">
-                                            <div><a href="#">Проблемы в намшем доме !</a></div>
+                                            <div><a href="#" ng-click="talks.showFullTalk($event)">{{talk.name}} Проблемы в намшем доме !</a></div>
                                             <div>74 сообщения</div>
                                         </div>
                                         <div class="talks-title-right">
@@ -571,27 +596,29 @@
                                         </div>
                                     </div>
 
-                                    <div class="talks-title">
+                                    <%--<div class="talks-title">
                                         <div class="talks-title-left">
-                                            <div><a href="#">Проблемы в намшем доме !</a></div>
+                                            <div><a href="#" ng-click="talks.showFullTalk($event)">Проблемы в намшем доме !</a></div>
                                             <div>74 сообщения</div>
                                         </div>
                                         <div class="talks-title-right">
                                             <div>Последнее обновление:</div>
                                             <div>18 июля 2014 23:01</div>
                                         </div>
-                                    </div>
+                                    </div>--%>
                                 </section>
 
-                                <section class="talks-block hide"> </section>
+                                <section class="talks-block" ng-hide="talks.isTitles"> </section>
 
                             </section>
 
-                            <section class="private-messages page hide"></section>
+                            <section class="services page" ng-show="base.servicesIsActive" ng-controller="ServicesController as services"></section>
 
-                            <section class="nextdoors page hide"></section>
+                            <section class="private-messages page" ng-show="base.privateMessagesIsActive" ng-controller="privateMessagesController as privateMessages"></section>
 
-                            <section class="profile page hide"></section>
+                            <section class="nextdoors page" ng-class="base.nextdoorsLoadStatus" ng-show="base.nextdoorsIsActive" ng-controller="nextdoorsController as nextdoors"></section>
+
+                            <section class="profile page" ng-show="base.profileIsActive" ng-controller="ProfileController as profile"></section>
 
 							<%--<section class="forum">
 								<section class="options">
@@ -712,6 +739,7 @@
 		</div>
 
 	</div>
+
 	<div class="wysiwig-wrap">
 		<div class="widget-box wysiwig-box">
 			<div class="widget-header widget-header-small  header-color-blue2">
@@ -1083,10 +1111,12 @@
 	<script src="gen-js/AuthService.js" type="text/javascript"></script>
 	<!-- -->
 
-    <script src="js/forum/angular/angular.min.js"></script>
+    <script src="js/forum/angular/angular.js"></script>
 	<!-- собственные скрипты  -->
 	<%--<script src="js/common.js"></script>--%>
-	<script src="js/forum/main.js"></script>
+	<%--<script src="js/forum/main.js"></script>--%>
+<script src="js/forum/controllers.js"></script>
+	<script src="js/forum/app.js"></script>
 
 </body>
 
