@@ -487,16 +487,6 @@
                                         </div>
                                     </div>
 
-                                    <%--<div class="talks-title">
-                                        <div class="talks-title-left">
-                                            <div><a href="#" ng-click="talks.showFullTalk($event)">Проблемы в намшем доме !</a></div>
-                                            <div>74 сообщения</div>
-                                        </div>
-                                        <div class="talks-title-right">
-                                            <div>Последнее обновление:</div>
-                                            <div>18 июля 2014 23:01</div>
-                                        </div>
-                                    </div>--%>
                                 </section>
 
                                 <section class="talks-block" ng-hide="base.isTalkTitles">
