@@ -220,7 +220,8 @@ angular.module('forum.controllers', [])
         //talk.fullTalkFirstMessages.answerInputIsShow = false;
         talk.answerFirstMessage = "Ваш ответ";
         var fullTalkFirstMessagesLength,
-            fullTalkMessagesLength;
+            fullTalkMessagesLength,
+            talkId;
 
         var groups = this.groups,
             groupsLength = groups.length;
@@ -229,11 +230,12 @@ angular.module('forum.controllers', [])
 
         if(!talk.topics) talk.topics = [];
 
-        talk.showFullTalk = function(event,talkId){
+        talk.showFullTalk = function(event,talkIdOutside){
             event.preventDefault();
 
             var topicLength;
             talk.topics ? topicLength = talk.topics.length : topicLength = 0;
+            talkId = talkIdOutside;
 
             for(var i = 0; i < topicLength; i++){
                 if(talkId == talk.topics[i].id){
@@ -250,21 +252,7 @@ angular.module('forum.controllers', [])
             for(var i = 0; i < fullTalkFirstMessagesLength; i++){
                 talk.fullTalkFirstMessages[i].answerInputIsShow = false;
                 talk.fullTalkFirstMessages[i].isTreeOpen = false;
-            }
-
-            talk.fullTalkMessages = messageClient.getMessages(talkId,talk.selectedGroup.id,1,4653133208748032,0,1000).messages;
-            //alert(messageClient.getMessages(talkId,talk.selectedGroup.id,1,0,0,1000).totalSize);
-            talk.fullTalkMessages ?
-                fullTalkMessagesLength = talk.fullTalkMessages.length:
-                fullTalkMessagesLength = 0;
-            if(talk.fullTalkMessages === null) talk.fullTalkMessages = [];
-
-            for(var i = 0; i < fullTalkMessagesLength; i++){
-                talk.fullTalkMessages[i].answerInputIsShow = false;
-                talk.fullTalkMessages[i].isTreeOpen = true;
-                talk.fullTalkMessages[i].isOpen = true;
-                talk.fullTalkMessages[i].isParentOpen = true;
-                talk.fullTalkMessages[i].answerMessage = "Ваш ответ";
+                talk.fullTalkFirstMessages[i].isLoaded = false;
             }
 
             $rootScope.base.isTalkTitles = false;
@@ -317,7 +305,7 @@ angular.module('forum.controllers', [])
                 talk.fullTalkTopic.answerInputIsShow = true ;
         };
 
-        talk.showMessageAnswerInput = function(event,message,talkId){
+        talk.showMessageAnswerInput = function(event,message){
             event.preventDefault();
 
             if(message.parentId == 0){
@@ -361,9 +349,12 @@ angular.module('forum.controllers', [])
         talk.addSingleMessage = function(event,topicId,message){
             event.preventDefault();
 
+            talk.fullTalkMessages = messageClient.getMessages(talkId,talk.selectedGroup.id,1,message.id,0,1000).messages;
             talk.fullTalkMessages ?
                 fullTalkMessagesLength = talk.fullTalkMessages.length:
                 fullTalkMessagesLength = 0;
+
+            var newMessage,answer;
 
             if(message.parentId == 0){
                 for(var i = 0; i < fullTalkFirstMessagesLength; i++){
@@ -373,10 +364,10 @@ angular.module('forum.controllers', [])
                     }
                 }
 
-                var newMessage = messageClient.createMessage(topicId,message.id,talk.selectedGroup.id,1,talk.answerFirstMessage);
+                answer = talk.answerFirstMessage;
+                message.isTreeOpen = true;
 
             }else{
-                var answer;
                 for(var i = 0; i < fullTalkMessagesLength; i++){
                     if(talk.fullTalkMessages[i].id == message.id){
                         talk.fullTalkMessages[i].answerInputIsShow = false;
@@ -387,35 +378,62 @@ angular.module('forum.controllers', [])
                     }
                 }
 
-                newMessage = messageClient.createMessage(topicId,message.id,talk.selectedGroup.id,1,answer);
-
             }
+            newMessage = messageClient.createMessage(topicId,message.id,talk.selectedGroup.id,1,answer,0,0,0);
 
-            talk.fullTalkMessages ?
+            /*talk.fullTalkMessages ?
                 talk.fullTalkMessages.push(newMessage):
-                talk.fullTalkMessages[0] = newMessage;
+                talk.fullTalkMessages[0] = newMessage;*/
+
+            talk.fullTalkMessages = messageClient.getMessages(talkId,talk.selectedGroup.id,1,message.id,0,10).messages;
 
             fullTalkMessagesLength = talk.fullTalkMessages.length;
+
+            for(var i = 0; i < fullTalkMessagesLength; i++){
+                talk.fullTalkMessages[i].answerInputIsShow = false;
+                talk.fullTalkMessages[i].isTreeOpen = true;
+                talk.fullTalkMessages[i].isOpen = true;
+                talk.fullTalkMessages[i].isParentOpen = true;
+                talk.fullTalkMessages[i].answerMessage = "Ваш ответ";
+            }
+
+            /*fullTalkMessagesLength = talk.fullTalkMessages.length;
             for(var i = 0; i < fullTalkMessagesLength; i++){
                 talk.fullTalkMessages[i].answerMessage = "Ваш ответ";
-            };
+            }*/
 
         };
 
         talk.toggleTreeFirstMessage = function($event,messageId){
             event.preventDefault();
-
-            if(!talk.fullTalkFirstMessages) talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,10).messages;
-            var fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length;
+            var currentIndex;
 
             for(var i = 0; i < fullTalkFirstMessagesLength; i++){
                 if(messageId == talk.fullTalkFirstMessages[i].id){
                     talk.fullTalkFirstMessages[i].isTreeOpen ?
-                        talk.fullTalkFirstMessages[i].isTreeOpen = true :
+                        talk.fullTalkFirstMessages[i].isTreeOpen = false :
                         talk.fullTalkFirstMessages[i].isTreeOpen = true ;
+                    currentIndex = i;
                 }
             }
-        }
+
+            // --------
+
+            talk.fullTalkMessages = messageClient.getMessages(talkId,talk.selectedGroup.id,1,messageId,0,1000).messages;
+            talk.fullTalkMessages ?
+                fullTalkMessagesLength = talk.fullTalkMessages.length:
+                fullTalkMessagesLength = 0;
+            if(talk.fullTalkMessages === null) talk.fullTalkMessages = [];
+
+                for(var i = 0; i < fullTalkMessagesLength; i++){
+                    talk.fullTalkMessages[i].answerInputIsShow = false;
+                    talk.fullTalkMessages[i].isTreeOpen = true;
+                    talk.fullTalkMessages[i].isOpen = true;
+                    talk.fullTalkMessages[i].isParentOpen = true;
+                    talk.fullTalkMessages[i].answerMessage = "Ваш ответ";
+                }
+
+        };
 
         talk.toggleTree = function($event,message){
             event.preventDefault();
