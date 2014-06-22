@@ -51,7 +51,7 @@
                                             <p>{{firstMessage.content}}</p>
                                             <div class="message-bottom">
                                                 <span class="topic-header-date">{{firstMessage.created|date:'short'}}</span>
-                                                <a class="answer-link" href="#" ng-click="talks.showMessageAnswerInput($event,firstMessage,talk.id)">Ответить</a>
+                                                <a class="answer-link" href="#" ng-click="talks.showMessageAnswerInput($event,firstMessage)">Ответить</a>
                                             </div>
                                         </div>
                                     </div>
@@ -64,7 +64,7 @@
                             </div>
                             <ol class="dd-list" ng-show="firstMessage.isTreeOpen">
 
-                                <li class="dd-item dd2-item topic-item" ng-repeat="message in talks.fullTalkMessages"
+                                <li class="dd-item dd2-item topic-item" ng-repeat="message in talks.fullTalkMessages[firstMessage.id]"
                                     ng-style="{'margin-left': {{message.offset*30-30}}}" ng-show="message.isOpen && message.isParentOpen">
                                     <div class="dd2-content widget-box topic-descr">
                                         <div class="widget-body">
@@ -74,7 +74,7 @@
                                                         <img src="i/avatars/clint.jpg" alt="картинка" /></a>
                                                     <div class="topic-author">
                                                         <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !message.isTreeOpen,'fa-minus' : message.isTreeOpen}"
-                                                           ng-click="talks.toggleTree($event,message)"></a>
+                                                           ng-click="talks.toggleTree($event,message,firstMessage)"></a>
                                                     </div>
                                                 </div>
                                                 <div class="topic-right">
@@ -82,14 +82,14 @@
                                                     <p>{{message.content}}</p>
                                                     <div class="message-bottom">
                                                         <span class="topic-header-date">{{message.created}}</span>
-                                                        <a class="answer-link" href="#" ng-click="talks.showMessageAnswerInput($event,message,talk.id)">Ответить</a>
+                                                        <a class="answer-link" href="#" ng-click="talks.showMessageAnswerInput($event,firstMessage,message)">Ответить</a>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="answer-input" ng-show="message.answerInputIsShow">
                                                 <textarea ng-model="message.answerMessage"></textarea>
-                                                <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,message)">Отправить</a>
+                                                <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,firstMessage,message)">Отправить</a>
                                             </div>
                                         </div>
                                     </div>
