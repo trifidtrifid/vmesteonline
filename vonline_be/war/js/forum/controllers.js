@@ -95,6 +95,15 @@ angular.module('forum.controllers', [])
 
         };
 
+        this.logout = function(event){
+            event.preventDefault();
+
+            authClient.logout();
+
+            document.location.replace("login.jsp");
+
+        }
+
   })
   .controller('leftBarController',function($rootScope) {
 
@@ -138,7 +147,7 @@ angular.module('forum.controllers', [])
     .controller('mainContentTopController',function($rootScope) {
         var topCtrl = this;
 
-        topCtrl.groups = userClientGroups ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
+        topCtrl.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         var groups = topCtrl.groups,
             groupsLength = groups.length;
        // topCtrl.allGroupsBtn = {};
@@ -185,7 +194,7 @@ angular.module('forum.controllers', [])
     })
     .controller('LentaController',function($rootScope) {
         var lenta = this;
-        lenta.groups = userClientGroups ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
+        lenta.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroup = lenta.selectedGroupInTop = $rootScope.currentGroup;
 
         lenta.wallMessageContent = "Написать сообщение";
@@ -270,7 +279,7 @@ angular.module('forum.controllers', [])
         * */
         var talk = this;
         talk.isTalksLoaded = false;
-        talk.groups = userClientGroups ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
+        talk.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
 
         talk.content = "Напишите что-нибудь";
         talk.subject = "Заголовок";
@@ -606,7 +615,12 @@ var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(
 transport = new Thrift.Transport("/thrift/UserService");
 protocol = new Thrift.Protocol(transport);
 var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
+
 var userClientGroups = userClient.getUserGroups();
+
+transport = new Thrift.Transport("/thrift/AuthService");
+protocol = new Thrift.Protocol(transport);
+var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
 
 function resetPages(base){
     base.nextdoorsIsActive = false;

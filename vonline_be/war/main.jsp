@@ -3,19 +3,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ServiceImpl"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageService"%>
 <%@ page import="com.vmesteonline.be.Group"%>
 <%@ page import="com.vmesteonline.be.Rubric"%>
 <%@ page import="com.vmesteonline.be.messageservice.TopicListPart"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageListPart"%>
 <%@ page import="com.vmesteonline.be.messageservice.Topic"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.messageservice.Message"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageType"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
-<%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="java.util.ArrayList"%>
 
@@ -23,32 +17,36 @@
 
 <%
 	HttpSession sess = request.getSession();
+    pageContext.setAttribute("auth",true);
+
 	try {
 	 	AuthServiceImpl.checkIfAuthorised(sess.getId());
+        UserServiceImpl userService = new UserServiceImpl(request.getSession());
+
+        List<Group> Groups = userService.getUserGroups();
+        List<Rubric> Rubrics = userService.getUserRubrics();
+        ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+        MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
+        //MessageType mesType = MessageType.BASE;
+
+        TopicListPart Topics = new TopicListPart( new ArrayList<Topic>(), 0);
+        if( Groups.size() > 0 && Rubrics.size() > 0 )
+            Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
+
+        //out.print(ShortUserInfo.firstName);
+
+        pageContext.setAttribute("groups",Groups);
+        pageContext.setAttribute("rubrics",Rubrics);
+        pageContext.setAttribute("topics",Topics.topics);
+        pageContext.setAttribute("firstName",ShortUserInfo.firstName);
+        pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 	} catch (InvalidOperation ioe) {
+        pageContext.setAttribute("auth",false);
 		response.sendRedirect("/login.jsp");
 		return;
 	}
 
-    UserServiceImpl userService = new UserServiceImpl(request.getSession());
 
-    List<Group> Groups = userService.getUserGroups();
-    List<Rubric> Rubrics = userService.getUserRubrics();
-    ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-    MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
-    //MessageType mesType = MessageType.BASE;
-
-    TopicListPart Topics = new TopicListPart( new ArrayList<Topic>(), 0);
-    if( Groups.size() > 0 && Rubrics.size() > 0 )
-    	Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
-    	
-    //out.print(ShortUserInfo.firstName);
-
-    pageContext.setAttribute("groups",Groups);
-    pageContext.setAttribute("rubrics",Rubrics);
-    pageContext.setAttribute("topics",Topics.topics);
-    pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-    pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 %>
 
 <!DOCTYPE html>
@@ -68,6 +66,12 @@
         document.createElement('nav');
     </script>
     <![endif]-->
+    <script type="text/javascript">
+        globalUserAuth = false;
+        <c:if test="${auth}">
+        globalUserAuth = true;
+        </c:if>
+    </script>
 </head>
 <body ng-controller="baseController as base">
 <div class="navbar navbar-default" id="navbar">
@@ -112,7 +116,7 @@
 
                         <li class="divider"></li>
 
-                        <li><a href="#"> <i class="icon-off"></i> Выход
+                        <li><a href="#"  ng-click="navbar.logout($event)"> <i class="icon-off"></i> Выход
                         </a></li>
                     </ul></li>
             </ul>
