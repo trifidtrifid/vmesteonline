@@ -284,88 +284,12 @@
                                                         <div class="text">{{wallMessage.content}}</div>
 
                                                         <div class="lenta-item-bottom">
-                                                            <span>{{wallMessage.created}}</span>
+                                                            <span>{{wallMessage.createdEdit}}</span>
                                                             <a href="#" ng-click="lenta.goToAnswerInput($event,wallItem)">Ответить</a>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <%--<div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="John's Avatar" src="i/avatars/avatar.png">
-                                                    </div>
-
-                                                    <div class="body">
-
-                                                        <div class="name">
-                                                            <a href="#">John</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="lenta-item-bottom">
-                                                            <span>17.02.2014 23:01</span>
-                                                            <a href="#">Ответить</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Bob's Avatar" src="i/avatars/user.jpg">
-                                                    </div>
-
-                                                    <div class="body">
-
-                                                        <div class="name">
-                                                            <a href="#">Bob</a>
-                                                            <span class="label label-info arrowed arrowed-in-right">admin</span>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="lenta-item-bottom">
-                                                            <span>17.02.2014 23:01</span>
-                                                            <a href="#">Ответить</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
-                                                    </div>
-
-                                                    <div class="body">
-
-                                                        <div class="name">
-                                                            <a href="#">Jim</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="lenta-item-bottom">
-                                                            <span>17.02.2014 23:01</span>
-                                                            <a href="#">Ответить</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-
-                                                        <div class="lenta-item-bottom">
-                                                            <span>17.02.2014 23:01</span>
-                                                            <a href="#">Ответить</a>
-                                                        </div>
-                                                    </div>
-                                                </div>--%>
                                             </div>
 
                                             <div class="input-group">
@@ -390,23 +314,13 @@
                                                 </div>
                                                 <div class="talks-title-right">
                                                     <div>Последнее обновление:</div>
-                                                    <div>{{wallItem.topic.message.created}}</div>
+                                                    <div>{{wallItem.topic.lastUpdateEdit}}</div>
                                                 </div>
                                             </div>
                                         </div>
 
                                     </div>
 
-<%--                                    <div class="talks-title clearfix">
-                                        <div class="talks-title-left load-talk">
-                                            <div><a href="#">Проблемы в намшем доме !</a></div>
-                                            <div>74 сообщения</div>
-                                        </div>
-                                        <div class="talks-title-right">
-                                            <div>Последнее обновление:</div>
-                                            <div>18 июля 2014 23:01</div>
-                                        </div>
-                                    </div>--%>
                                 </div>
 
                             </section>
@@ -512,7 +426,7 @@
                                         </div>
                                         <div class="talks-title-right">
                                             <div>Последнее обновление:</div>
-                                            <div>{{talk.lastUpdate}}</div>
+                                            <div>{{talk.lastUpdateEdit}}</div>
                                         </div>
                                     </div>
 

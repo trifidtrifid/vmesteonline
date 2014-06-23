@@ -21,7 +21,7 @@
                                         </h2>
                                     <p>{{talks.fullTalkTopic.message.content}}</p>
                                         <div class="message-bottom">
-                                            <span class="topic-header-date">{{talks.fullTalkTopic.message.created|date}}</span>
+                                            <span class="topic-header-date">{{talks.fullTalkTopic.message.createdEdit}}</span>
                                             <a class="answer-link" href="#" ng-click="talks.showTopicAnswerInput($event)">Ответить</a>
                                         </div>
                                 </div>
@@ -52,7 +52,7 @@
                                             <h2><a href="#">Автор автор</a></h2>
                                             <p>{{firstMessage.content}}</p>
                                             <div class="message-bottom">
-                                                <span class="topic-header-date">{{firstMessage.created|date:'short'}}</span>
+                                                <span class="topic-header-date">{{firstMessage.createdEdit}}</span>
                                                 <a class="answer-link" href="#" ng-click="talks.showMessageAnswerInput($event,firstMessage)">Ответить</a>
                                             </div>
                                         </div>
@@ -85,7 +85,7 @@
                                                     <h2><a href="#">Автор автор</a></h2>
                                                     <p>{{message.content}}</p>
                                                     <div class="message-bottom">
-                                                        <span class="topic-header-date">{{message.created}}</span>
+                                                        <span class="topic-header-date">{{message.createdEdit}}</span>
                                                         <a class="answer-link" href="#" ng-click="talks.showMessageAnswerInput($event,firstMessage,message)">Ответить</a>
                                                     </div>
                                                 </div>

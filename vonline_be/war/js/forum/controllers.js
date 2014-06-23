@@ -216,6 +216,15 @@ angular.module('forum.controllers', [])
 
         for(var i = 0; i < wallItemsLength; i++){
             lenta.wallItems[i].commentText = "Введите сообщение";
+            if(lenta.wallItems[i].topic.message.type == 1){
+                lenta.wallItems[i].topic.lastUpdateEdit = getTiming(lenta.wallItems[i].topic.lastUpdate);
+            }else if(lenta.wallItems[i].topic.message.type == 5){
+                var mesLen = lenta.wallItems[i].messages.length;
+                for(var j = 0; j < mesLen; j++){
+                    lenta.wallItems[i].messages[j].createdEdit = getTiming(lenta.wallItems[i].messages[j].created);
+                }
+            }
+
         }
 
         lenta.selectGroupInDropdown = selectGroupInDropdown;
@@ -308,6 +317,13 @@ angular.module('forum.controllers', [])
         talk.selectedGroup = talk.groups[0];
         talk.topics = messageClient.getTopics(talk.selectedGroup.id,0,0,0,1000).topics;
 
+        var topicLength;
+        talk.topics ? topicLength = talk.topics.length : topicLength = 0;
+
+        for(var i = 0; i < topicLength;i++){
+            talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
+        }
+
         if(!talk.topics) talk.topics = [];
 
         talk.showFullTalk = function(event,talkOutside){
@@ -321,6 +337,7 @@ angular.module('forum.controllers', [])
             for(var i = 0; i < topicLength; i++){
                 if(talkId == talk.topics[i].id){
                     talk.fullTalkTopic = talk.topics[i];
+                    talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
                 }
             }
 
@@ -336,6 +353,7 @@ angular.module('forum.controllers', [])
                 talk.fullTalkFirstMessages[i].isTreeOpen = false;
                 talk.fullTalkFirstMessages[i].isLoaded = false;
                 talk.fullTalkFirstMessages[i].answerMessage = "Ваш ответ";
+                talk.fullTalkFirstMessages[i].createdEdit = getTiming(talk.fullTalkFirstMessages[i].created);
             }
 
             $rootScope.base.isTalkTitles = false;
@@ -400,13 +418,7 @@ angular.module('forum.controllers', [])
                     firstMessage.answerInputIsShow = false :
                     firstMessage.answerInputIsShow = true;
 
-                /*for(var i = 0; i < fullTalkFirstMessagesLength; i++){
-                    if(firstMessage.id == talk.fullTalkFirstMessages[i].id){
-                        talk.fullTalkFirstMessages[i].answerInputIsShow ?
-                        talk.fullTalkFirstMessages[i].answerInputIsShow = false :
-                        talk.fullTalkFirstMessages[i].answerInputIsShow = true;
-                    }
-                }*/
+
             }else{
                 // если простое сообщение
                 if(!talk.fullTalkMessages[firstMessage.id]) talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,1000).messages;
@@ -415,13 +427,7 @@ angular.module('forum.controllers', [])
                     message.answerInputIsShow = false :
                     message.answerInputIsShow = true;
 
-                /*for(var i = 0; i <  fullTalkMessagesLength; i++){
-                    if(message.id == talk.fullTalkMessages[firstMessage.id][i].id){
-                        talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow ?
-                            talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false :
-                            talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = true;
-                    }
-                }*/
+
             }
         };
 
@@ -431,6 +437,7 @@ angular.module('forum.controllers', [])
             talk.fullTalkTopic.answerInputIsShow = false;
 
             var newMessage = messageClient.createMessage(topicId,0,talk.selectedGroup.id,1,talk.answerFirstMessage);
+            newMessage.createdEdit = getTiming(newMessage.created);
 
             talk.fullTalkFirstMessages ?
                 talk.fullTalkFirstMessages.push(newMessage):
@@ -457,13 +464,7 @@ angular.module('forum.controllers', [])
                 firstMessage.answerMessage = "Ваш ответ";
                 parentId = firstMessage.id;
 
-                /*for(var i = 0; i < fullTalkFirstMessagesLength; i++){
-                    if(talk.fullTalkFirstMessages[i].id == firstMessage.id){
-                        talk.fullTalkFirstMessages[i].answerInputIsShow = false;
-                        talk.fullTalkFirstMessages[i].isTreeOpen = true;
-                        talk.fullTalkFirstMessages[i].answerMessage = "Ваш ответ";
-                    }
-                }*/
+
 
             }else{
                 // если добавляем к простому сообщению
@@ -473,6 +474,7 @@ angular.module('forum.controllers', [])
                         talk.fullTalkMessages[firstMessage.id][i].isTreeOpen = true;
                         talk.fullTalkMessages[firstMessage.id][i].isOpen = true;
                         talk.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
+                        talk.fullTalkMessages[firstMessage.id][i].createdEdit = getTiming(talk.fullTalkMessages[firstMessage.id][i].created);
                         answer = talk.fullTalkMessages[firstMessage.id][i].answerMessage;
                     }
                 }
@@ -496,6 +498,7 @@ angular.module('forum.controllers', [])
                 talk.fullTalkMessages[firstMessage.id][i].isTreeOpen = true;
                 talk.fullTalkMessages[firstMessage.id][i].isOpen = true;
                 talk.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
+                talk.fullTalkMessages[firstMessage.id][i].createdEdit = getTiming(talk.fullTalkMessages[firstMessage.id][i].created);
                 talk.fullTalkMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
             }
 
@@ -513,13 +516,6 @@ angular.module('forum.controllers', [])
                 firstMessage.isTreeOpen = false :
                 firstMessage.isTreeOpen = true ;
 
-            /*for(var i = 0; i < fullTalkFirstMessagesLength; i++){
-                if(firstMessage.id == talk.fullTalkFirstMessages[i].id){
-                    talk.fullTalkFirstMessages[i].isTreeOpen ?
-                        talk.fullTalkFirstMessages[i].isTreeOpen = false :
-                        talk.fullTalkFirstMessages[i].isTreeOpen = true ;
-                }
-            }*/
 
             // --------
 
@@ -534,6 +530,7 @@ angular.module('forum.controllers', [])
                     talk.fullTalkMessages[firstMessage.id][i].isTreeOpen = true;
                     talk.fullTalkMessages[firstMessage.id][i].isOpen = true;
                     talk.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
+                    talk.fullTalkMessages[firstMessage.id][i].createdEdit = getTiming(talk.fullTalkMessages[firstMessage.id][i].created);
                     talk.fullTalkMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
                 }
 
@@ -630,6 +627,11 @@ angular.module('forum.controllers', [])
     });
 
 
+var minute = 60*1000,
+    hour = minute*60,
+    day = hour*24,
+    threeDays = day*3;
+
 /* functions */
 
 var transport = new Thrift.Transport("/thrift/MessageService");
@@ -679,4 +681,26 @@ function selectGroupInDropdown(groupId,objCtrl){
             objCtrl.selectedGroup = objCtrl.groups[i];
         }
     }
+}
+function getTiming(messageObjDate){
+    var now = Date.parse(new Date());
+
+    var timing = (now - messageObjDate*1000);
+
+    if(timing < minute){
+        timing = "только что";
+    }else if(timing < hour){
+        timing = new Date(timing);
+        timing = timing.getMinutes()+" мин назад";
+    }else if(timing < day){
+        timing = new Date(timing);
+        timing = timing.getHours()+" часов назад";
+    }else if(timing < threeDays){
+        timing = new Date(timing);
+        timing = timing.getDate()+" дней назад";
+    }else{
+        timing = new Date(messageObjDate*1000);
+    }
+
+    return timing;
 }
