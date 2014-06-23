@@ -196,7 +196,7 @@
 <script src="/build/gen-js/UserService.js" type="text/javascript"></script>
 <!-- -->
 
-<script type="text/javascript" data-main="/build/backoffice.min.js" src="/js/require.min.js"></script>
+<script type="text/javascript" data-main="/build/backoffice.min.js" src="/js/shop/require.min.js"></script>
 <script type="text/javascript" src="js/lib/jquery-2.1.1.min.js"></script>
 <script>
     $(document).ready(function(){

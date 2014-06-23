@@ -37,6 +37,7 @@ public class VoProductCategory {
 
 		this.name = name;
 		this.setDescr(descr);
+		
 		if (null != logoURLset) {
 			this.logoURLset = new ArrayList<String>();
 			for (String bb : logoURLset) {
@@ -56,10 +57,11 @@ public class VoProductCategory {
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
 		try {
 			if (0 != parentId) {
-				pm.getObjectById(VoProductCategory.class, parentId);
+				VoProductCategory parent = pm.getObjectById(VoProductCategory.class, parentId);
+				this.setParent(parent);
+			} else  {
+				this.setParentId(parentId);
 			}
-			this.setParentId(parentId);
-
 			if (null != topicSet)
 				for (long tid : topicSet) {
 					pm.getObjectById(VoTopic.class, tid);
@@ -165,6 +167,26 @@ public class VoProductCategory {
 	@Unindexed
 	private int productCount;
 	
+	@Persistent
+	@Unindexed
+	private List<Long> parentPath; 
+	
+	public void setParent(VoProductCategory parent){
+		if( null!=parent){
+			parentPath = new ArrayList<Long>();
+			if(null!=parent.getParentPath()) 
+				parentPath.addAll( parent.getParentPath() );
+			parentPath.add(parent.getId());
+			parentId = parent.getId();
+		} else {
+			parentId = 0;
+			parentPath = null;
+		}
+	}
+	
+	public List<Long> getParentPath(){ 
+		return parentPath;
+	}
 
 	public long getId() {
 		return id.getId();
@@ -224,6 +246,12 @@ public class VoProductCategory {
 		this.name = newCategoryInfo.name;
 		this.setDescr(newCategoryInfo.descr);
 		this.logoURLset = new ArrayList<String>();
+		if( this.parentId != newCategoryInfo.getParentId()){
+			VoProductCategory parentCategory = pm.getObjectById(VoProductCategory.class, newCategoryInfo.parentId);
+			this.setParent(parentCategory);
+		} 
+		//TODO if category moved all child should update their parentPath
+	
 		if( null!= newCategoryInfo.logoURLset )
 			for (String bb : newCategoryInfo.logoURLset) {
 				try {
@@ -248,4 +276,17 @@ public class VoProductCategory {
 
 		return null;
 	}
+	
+	// =====================================================================================================================
+
+	public void markDeleted(){
+		importId = -1;
+	}
+	
+	public boolean isDeleted(){
+		return importId == -1;
+	}
+	
+
+
 }

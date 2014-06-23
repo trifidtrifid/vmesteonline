@@ -148,15 +148,17 @@ public class VoProducer {
 				+ homeURL + "]";
 	}
 	
-//=====================================================================================================================
+	// =====================================================================================================================
 
-	public void markDeteled(){
+	public void markDeleted(){
 		importId = -1;
 	}
 	
-	public boolean isDeteled(){
+	public boolean isDeleted(){
 		return importId == -1;
 	}
+	
+
 	
 	public void update(Producer newInfoWithOldId, long userId, boolean isPublic, PersistenceManager pm) throws InvalidOperation {
 		this.id = KeyFactory.createKey(this.getClass().getSimpleName(), newInfoWithOldId.id);
@@ -187,4 +189,5 @@ public class VoProducer {
 		}
 		return null;
 	}
+	
 }
