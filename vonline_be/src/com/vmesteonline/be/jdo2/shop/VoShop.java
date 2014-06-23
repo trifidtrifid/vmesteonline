@@ -405,25 +405,27 @@ public class VoShop {
 		return out;
 	}
 
-	public void update(Shop newShopWithOldId, long userId, boolean isPublic, PersistenceManager pm) throws InvalidOperation, IOException {
+	public void update(Shop ns, long userId, boolean isPublic, PersistenceManager pm) throws InvalidOperation, IOException {
+		
+		if(  null!=ns.getAddress() && !ns.getAddress().equals(address.getPostalAddress()) )
+			this.setAddress( new VoPostalAddress( ns.getAddress(), pm ));
+		if( ns.getOwnerId() != 0L && ns.getOwnerId() != this.ownerId )
+			this.setOwnerId(ns.getOwnerId());
+		
 		try {
-			VoHelper.copyIfNotNull(this, "name", newShopWithOldId.name);
-			VoHelper.copyIfNotNull(this, "descr", newShopWithOldId.descr);
-			VoHelper.replaceURL(this, "logoURL", newShopWithOldId.logoURL, userId, isPublic, pm);
+			VoHelper.copyIfNotNull(this, "name", ns.name);
+			VoHelper.copyIfNotNull(this, "descr", ns.descr);
+			VoHelper.replaceURL(this, "logoURL", ns.logoURL, userId, isPublic, pm);
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
 		}
 
-		if (0 != newShopWithOldId.ownerId)
-			this.ownerId = newShopWithOldId.ownerId;
-		this.address = new VoPostalAddress(newShopWithOldId.getAddress(), pm);
-
-		if (null == (this.tags = newShopWithOldId.tags))
+		if (null == (this.tags = ns.tags))
 			this.tags = new ArrayList<String>();
 
-		if (null != newShopWithOldId.topicSet) {
+		if (null != ns.topicSet) {
 			this.topics = new ArrayList<Long>();
-			this.topics.addAll(newShopWithOldId.topicSet);
+			this.topics.addAll(ns.topicSet);
 		}
 	}
 //======================================================================================================================

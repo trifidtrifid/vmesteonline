@@ -204,7 +204,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		List<VoProduct> vpl = (List<VoProduct>) pm.newQuery(VoProduct.class, "categories == " + categoryId).execute();
 
 		for (VoProduct product : vpl) {
-			if(!product.isDeteled())
+			if(!product.isDeleted())
 				rslt.add(product.getProduct(pm));
 		}
 		return rslt;
@@ -453,7 +453,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		for (Long lineId: currentOrder.getOrderLines().values()) {
 			VoOrderLine orderLine = pm.getObjectById(VoOrderLine.class, lineId);
 			VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProductId());
-			VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducer());
+			VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducerId());
 		
 			htmlBody += "<tr>";
 			htmlBody += "<td>" + product.getImportId() + "</td>";
@@ -1169,16 +1169,18 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 						if(!cpm.containsKey(catId)){
 							cpm.put(catId, new ArrayList<IdName>());
 						}
-						if(!voProduct.isDeteled())
+						if(!voProduct.isDeleted())
 							cpm.get(catId).add( new IdName( voProduct.getId(), voProduct.getName()));
 					}
 				}
 				//Load all categories and filter them by products
 				List<VoProductCategory> vpcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class, "shopId=="+shopId).execute();
 				for (VoProductCategory voProductCategory : vpcl) {
-					long nextCatId = voProductCategory.getId();
-					if(cpm.containsKey(nextCatId)){
-						catwithProcuts.add( new IdNameChilds(nextCatId, voProductCategory.getName(), cpm.get(nextCatId)));
+					if( !voProductCategory.isDeleted() ){
+						long nextCatId = voProductCategory.getId();
+						if(cpm.containsKey(nextCatId)){
+							catwithProcuts.add( new IdNameChilds(nextCatId, voProductCategory.getName(), cpm.get(nextCatId)));
+						}
 					}
 				}
 			} finally {

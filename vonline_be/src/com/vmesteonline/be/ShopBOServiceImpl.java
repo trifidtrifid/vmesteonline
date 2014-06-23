@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -99,7 +100,8 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 					pm);
 			productCategory.setId(voProductCategory.getId());
 			pm.makePersistent(voShop);
-			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(shopId));
+			
+			removeCategoryFromCache(shopId, voProductCategory.getId(), pm);
 			
 			return voProductCategory.getId();
 		} catch (JDOObjectNotFoundException onfe) {
@@ -107,6 +109,20 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} finally {
 			pm.close();
 		}
+	}
+//======================================================================================================================
+	private void removeCategoryFromCache(long shopId, Long voProductCategoryId, PersistenceManager pm) throws InvalidOperation {
+		removeCategoryFromCache( shopId, Arrays.asList( new Long[] {voProductCategoryId}),pm);
+	}
+//======================================================================================================================
+	
+	private void removeCategoryFromCache(long shopId, List<Long> voProductCategoryIdList, PersistenceManager pm) throws InvalidOperation {
+		Set<Long> parentList = getAllParentCategories( shopId, voProductCategoryIdList, pm );
+		
+		for(Long catId: parentList){
+			removeObjectFromCache(ShopServiceHelper.getProcutsOfCategoryCacheKey(catId, shopId));
+		}
+		removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(shopId));
 	}
 
 	// ======================================================================================================================
@@ -499,11 +515,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			VoProduct vop = pm.getObjectById(VoProduct.class, newInfoWithOldId.getProduct().getId());
 			long cuid = getCurrentUserId(pm);
 			vop.update(newInfoWithOldId, cuid, pm);
-			for( Long catId: vop.getCategories())
-				removeObjectFromCache(ShopServiceHelper.getProcutsOfCategoryCacheKey(catId, vop.getShopId()));
 			
-			removeObjectFromCache(ShopServiceHelper.getProcutsOfCategoryCacheKey(0, vop.getShopId()));
-			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(vop.getShopId()));
+			removeCategoryFromCache(vop.getShopId(), vop.getCategories(), pm);
+			
 			pm.makePersistent(vop);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update product: " + e.getMessage());
@@ -542,7 +556,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			vopc.update(newCategoryInfo, cuid, pm);
 			pm.makePersistent(vopc);
 			
-			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(vopc.getShopId()));
+			removeCategoryFromCache(vopc.getShopId(), vopc.getId(), pm);
 			
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update CAtegory: " + e.getMessage());
@@ -550,6 +564,28 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			if (null == _pm)
 				pm.close();
 		}
+	}
+
+	// ======================================================================================================================
+
+	private Set<Long> getAllParentCategories(long shopId, List<Long> asList, PersistenceManager pm) throws InvalidOperation {
+		Set<Long> cats = new HashSet<Long>();
+		List<VoProductCategory> categories = (List<VoProductCategory>)pm.newQuery(VoProductCategory.class,"shopId=="+shopId).execute();
+		Map<Long,VoProductCategory> catMap = new HashMap<Long, VoProductCategory>();
+		for( VoProductCategory pc: categories){
+			catMap.put(pc.getId(), pc);
+		}
+		for( Long nextCatId : asList){
+			Long catToAdd = nextCatId; 
+			do { //go up to the root
+				VoProductCategory cat = catMap.get(catToAdd);
+				if( null==cat ) 
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid update can't find category by ID="+catToAdd);
+				cats.add(catToAdd = cat.getParent());
+				
+			} while( catToAdd != 0 ); //until the root is achieved 
+		}
+		return cats;
 	}
 
 	// ======================================================================================================================
@@ -722,11 +758,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		try {
 			VoShop shop = _shop == null ? ShopServiceHelper.getCurrentShop( this, pm ) : _shop;
 			VoProduct product = VoProduct.createObject(shop, fpi, pm);
-			for( Long catId: product.getCategories())
-				removeObjectFromCache(ShopServiceHelper.getProcutsOfCategoryCacheKey(catId, product.getShopId()));
 			
-			removeObjectFromCache(ShopServiceImpl.createShopProductsByCategoryKey(shop.getId()));
-			
+			removeCategoryFromCache(product.getShopId(), product.getCategories(), pm);
+						
 			return product.getId();
 		} finally {
 			if (_pm == null)
@@ -805,6 +839,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				ArrayList<OrderLineDescription> oldl = new ArrayList<OrderLineDescription>();
 				Map<Long,Double> productQM = new TreeMap<Long, Double>();
 				
+				
 				if( !usersMap.containsKey(od.userId) ){ 
 					ordersMap.put( od.userId, new TreeMap<Long, Map<Long,Double>>());
 					usersMap.put(od.userId,user);
@@ -831,7 +866,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 						// TODO optimize count of requests to DB
 						old.productId = vol.getProductId();
 						old.productName = vop.getName();
-						old.producerId = vop.getProducer();
+						old.producerId = vop.getProducerId();
 	
 						VoProducer vopr = pm.getObjectById(VoProducer.class, old.producerId);
 						old.producerName = vopr.getName();
@@ -948,7 +983,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		
 		for( VoProduct nextProduct : productsList.values() ){
 			lineOfProductNames.add(nextProduct.getName());
-			lineOfProductVendors.add(pm.getObjectById(VoProducer.class,nextProduct.getProducer()).getName());
+			lineOfProductVendors.add(pm.getObjectById(VoProducer.class,nextProduct.getProducerId()).getName());
 			lineOfProductId.add(""+nextProduct.getId());
 			lineOfProductImportId.add(""+nextProduct.getImportId());
 		}
@@ -1033,7 +1068,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 					// TODO optimize DB requests count
 					VoOrderLine vopl = pm.getObjectById(VoOrderLine.class, volid);
 					VoProduct product = pm.getObjectById(VoProduct.class, vopl.getProductId());
-					VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducer());
+					VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducerId());
 
 					ProductOrderDescription pod;
 
@@ -1150,7 +1185,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 					if (!product.isPrepackRequired())
 						continue; // skip product that does not require prepacking
 
-					VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducer());
+					VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducerId());
 
 					ProductOrderDescription pod;
 
@@ -1446,27 +1481,87 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	public void deleteProduct(long productId, long shopId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			pm.getObjectById(VoProduct.class, productId).markDeteled();
+			VoProduct vop = pm.getObjectById(VoProduct.class, productId);
+			List<VoOrderLine> orderLines = (List<VoOrderLine>)pm.newQuery(VoOrderLine.class,"productId=="+productId).execute();
+			if( orderLines.size() > 0 ) {
+				logger.info("Product '"+vop.getName()+"' marked as deleted. It was orderd ["+orderLines.size()+"]");
+				vop.markDeleted();
+			} else {
+				logger.info("Product '"+vop.getName()+"' deleted.");
+				pm.deletePersistent(vop);
+			}
+			removeCategoryFromCache(shopId, vop.getCategories(), pm);
+			
 		} catch ( JDOObjectNotFoundException onfe ) {
-			throw new InvalidOperation(VoError.IncorrectParametrs, "No product found by ID:"+shopId);
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No product found by ID:"+productId);
 		} finally {
 			pm.close();
 		}
-		
 	}
 //======================================================================================================================
 
 	@Override
 	public void deleteCategory(long categoryId, long shopId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoProductCategory voc = pm.getObjectById(VoProductCategory.class, categoryId);
+			long parentId = voc.getParent();
+			
+			List<VoProductCategory> childCategories = (List<VoProductCategory>)pm.newQuery(VoProductCategory.class,"parentId=="+categoryId).execute();
+			List<VoProduct> productsOfCategory = (List<VoProduct>)pm.newQuery(VoProduct.class,"categories=="+categoryId).execute();
+			if( childCategories.size() > 0 || productsOfCategory.size() > 0 ) {
+				for( VoProductCategory vpc: childCategories )
+					if( !vpc.isDeleted() ){
+						throw new InvalidOperation(VoError.IncorrectParametrs, "CAtegory can't be deleted. It has not deleted child category '"+vpc.getName()+"'. ");
+					}
+				for( VoProduct vp: productsOfCategory )
+					if( !vp.isDeleted() ){
+						throw new InvalidOperation(VoError.IncorrectParametrs, "CAtegory can't be deleted. It has not deleted product '"+vp.getName()+"'. ");
+					}
+				logger.info("Category '"+voc.getName()+"' marked as deleted. It has deleted categories["+childCategories.size()+"] and/or products["+productsOfCategory.size()+"]");
+				voc.markDeleted();
+				
+			} else {
+				logger.info("Category '"+voc.getName()+"' comlitely deleted.");
+				pm.deletePersistent(voc);
+			}
+			
+			removeCategoryFromCache(shopId, parentId, pm);
+				
+			
+		} catch ( JDOObjectNotFoundException onfe ) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No category found by ID:"+categoryId);
+		} finally {
+			pm.close();
+		}	
 	}
 //======================================================================================================================
 
 	@Override
 	public void deleteProducer(long producerId, long shopId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoProducer vopr = pm.getObjectById(VoProducer.class, producerId);
+			List<VoProduct> productsOfProducer = (List<VoProduct>)pm.newQuery(VoProduct.class,"producerId=="+producerId).execute();
+			if( productsOfProducer.size() > 0 ) {
 		
+				for( VoProduct vp: productsOfProducer )
+					if( !vp.isDeleted() ){
+						throw new InvalidOperation(VoError.IncorrectParametrs, "Producer can't be deleted. It has not deleted product '"+vp.getName()+"'. ");
+					}
+				logger.info("Producer '"+vopr.getName()+"' marked as deleted. It has deleted products["+productsOfProducer.size()+"]");
+				vopr.markDeleted();
+				
+			} else {
+				logger.info("Producer '"+vopr.getName()+"' comlitely deleted.");
+				pm.deletePersistent(vopr);
+			}
+			
+		} catch ( JDOObjectNotFoundException onfe ) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No producer found by ID:"+producerId);
+		} finally {
+			pm.close();
+		}
 	}
 //======================================================================================================================
 	
