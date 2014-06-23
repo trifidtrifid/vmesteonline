@@ -478,7 +478,7 @@
 
                                     <div class="talks-title" ng-repeat="talk in talks.topics" id="{{talk.id}}">
                                         <div class="talks-title-left load-talk">
-                                            <div><a href="#" ng-click="talks.showFullTalk($event,talk.id)">{{talk.subject}}</a></div>
+                                            <div><a href="#" ng-click="talks.showFullTalk($event,talk)">{{talk.subject}}</a></div>
                                             <div>{{talk.messageNum}} сообщений</div>
                                         </div>
                                         <div class="talks-title-right">

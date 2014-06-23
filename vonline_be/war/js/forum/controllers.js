@@ -259,18 +259,20 @@ angular.module('forum.controllers', [])
 
         if(!talk.topics) talk.topics = [];
 
-        talk.showFullTalk = function(event,talkIdOutside){
+        talk.showFullTalk = function(event,talkOutside){
             event.preventDefault();
 
             var topicLength;
             talk.topics ? topicLength = talk.topics.length : topicLength = 0;
-            talkId = talkIdOutside;
+            //talk.fullTalkTopic = talkOutside;
 
+            talkId = talkOutside.id;
             for(var i = 0; i < topicLength; i++){
                 if(talkId == talk.topics[i].id){
                     talk.fullTalkTopic = talk.topics[i];
                 }
             }
+
             talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
 
             talk.fullTalkFirstMessages ?
@@ -334,7 +336,6 @@ angular.module('forum.controllers', [])
                 talk.fullTalkTopic.answerInputIsShow = true ;
         };
 
-        /* здесь по поволу fullTalkMessages*/
         talk.showMessageAnswerInput = function(event,firstMessage,message){
             event.preventDefault();
 
@@ -343,25 +344,32 @@ angular.module('forum.controllers', [])
                 if(!talk.fullTalkFirstMessages) talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
                 var fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length;
 
-                for(var i = 0; i < fullTalkFirstMessagesLength; i++){
+                firstMessage.answerInputIsShow ?
+                    firstMessage.answerInputIsShow = false :
+                    firstMessage.answerInputIsShow = true;
+
+                /*for(var i = 0; i < fullTalkFirstMessagesLength; i++){
                     if(firstMessage.id == talk.fullTalkFirstMessages[i].id){
                         talk.fullTalkFirstMessages[i].answerInputIsShow ?
                         talk.fullTalkFirstMessages[i].answerInputIsShow = false :
                         talk.fullTalkFirstMessages[i].answerInputIsShow = true;
                     }
-                }
+                }*/
             }else{
                 // если простое сообщение
                 if(!talk.fullTalkMessages[firstMessage.id]) talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,1000).messages;
                 var  fullTalkMessagesLength = talk.fullTalkMessages[firstMessage.id].length;
+                message.answerInputIsShow ?
+                    message.answerInputIsShow = false :
+                    message.answerInputIsShow = true;
 
-                for(var i = 0; i <  fullTalkMessagesLength; i++){
+                /*for(var i = 0; i <  fullTalkMessagesLength; i++){
                     if(message.id == talk.fullTalkMessages[firstMessage.id][i].id){
                         talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow ?
                             talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false :
                             talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = true;
                     }
-                }
+                }*/
             }
         };
 
@@ -440,33 +448,35 @@ angular.module('forum.controllers', [])
 
         };
 
-        talk.toggleTreeFirstMessage = function($event,firstMessageId){
+        talk.toggleTreeFirstMessage = function($event,firstMessage){
             event.preventDefault();
-            var currentIndex;
 
-            for(var i = 0; i < fullTalkFirstMessagesLength; i++){
-                if(firstMessageId == talk.fullTalkFirstMessages[i].id){
+            firstMessage.isTreeOpen ?
+                firstMessage.isTreeOpen = false :
+                firstMessage.isTreeOpen = true ;
+
+            /*for(var i = 0; i < fullTalkFirstMessagesLength; i++){
+                if(firstMessage.id == talk.fullTalkFirstMessages[i].id){
                     talk.fullTalkFirstMessages[i].isTreeOpen ?
                         talk.fullTalkFirstMessages[i].isTreeOpen = false :
                         talk.fullTalkFirstMessages[i].isTreeOpen = true ;
-                    currentIndex = i;
                 }
-            }
+            }*/
 
             // --------
 
-            talk.fullTalkMessages[firstMessageId] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessageId,0,1000).messages;
-            talk.fullTalkMessages[firstMessageId] ?
-                fullTalkMessagesLength = talk.fullTalkMessages[firstMessageId].length:
+            talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,1000).messages;
+            talk.fullTalkMessages[firstMessage.id] ?
+                fullTalkMessagesLength = talk.fullTalkMessages[firstMessage.id].length:
                 fullTalkMessagesLength = 0;
-            if(talk.fullTalkMessages[firstMessageId] === null) talk.fullTalkMessages[firstMessageId] = [];
+            if(talk.fullTalkMessages[firstMessage.id] === null) talk.fullTalkMessages[firstMessage.id] = [];
 
                 for(var i = 0; i < fullTalkMessagesLength; i++){
-                    talk.fullTalkMessages[firstMessageId][i].answerInputIsShow = false;
-                    talk.fullTalkMessages[firstMessageId][i].isTreeOpen = true;
-                    talk.fullTalkMessages[firstMessageId][i].isOpen = true;
-                    talk.fullTalkMessages[firstMessageId][i].isParentOpen = true;
-                    talk.fullTalkMessages[firstMessageId][i].answerMessage = "Ваш ответ";
+                    talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
+                    talk.fullTalkMessages[firstMessage.id][i].isTreeOpen = true;
+                    talk.fullTalkMessages[firstMessage.id][i].isOpen = true;
+                    talk.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
+                    talk.fullTalkMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
                 }
 
         };
@@ -542,7 +552,6 @@ angular.module('forum.controllers', [])
                     afterCurrentIndex = true;
                 }
             }
-            console.log("-----------------------");
         }
 
     })
