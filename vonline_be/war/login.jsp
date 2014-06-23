@@ -221,6 +221,6 @@
 			</div>
 		</div><!-- /.main-container -->
 
-        <script type="text/javascript" data-main="/build/build.js" src="/js/require.min.js"></script>
+        <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
 	</body>
 </html>
