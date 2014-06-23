@@ -278,7 +278,7 @@
 
                                                     <div class="lenta-item-bottom">
                                                         <span>{{wallMessage.created}}</span>
-                                                        <a href="#" ng-click="lenta.goToAnswerInput($event)">Ответить</a>
+                                                        <a href="#" ng-click="lenta.goToAnswerInput($event,wallItem)">Ответить</a>
                                                     </div>
                                                 </div>
                                             </div>

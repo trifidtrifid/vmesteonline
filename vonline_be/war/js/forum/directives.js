@@ -3,9 +3,11 @@
 /* Directives */
 
 
-angular.module('myApp.directives', []).
-  directive('appVersion', ['version', function(version) {
+angular.module('forum.directives', []).
+  directive('ngFocus', ['version', function(version) {
     return function(scope, elm, attrs) {
       elm.text(version);
+
+       elm.focus();
     };
   }]);

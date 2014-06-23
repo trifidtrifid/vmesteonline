@@ -17,6 +17,7 @@ angular.module('forum.controllers', [])
         base.lentaIsActive = true;
 
         $rootScope.base = base;
+        $rootScope.currentPage = 'lenta';
     })
   .controller('navbarController', function($rootScope) {
         this.privateMessagesBtnStatus = "";
@@ -123,14 +124,17 @@ angular.module('forum.controllers', [])
 
                 $rootScope.base.mainContentTopIsHide = false;
                 $rootScope.base.lentaIsActive = true;
+                $rootScope.currentPage = 'lenta';
                 break;
             case 2:
                 $rootScope.base.mainContentTopIsHide = false;
                 $rootScope.base.talksIsActive = true;
                 $rootScope.base.isTalkTitles = true;
+                $rootScope.currentPage = 'talks';
                 break;
             case 3:
                 $rootScope.base.servicesIsActive = true;
+                $rootScope.currentPage = 'services';
                 break;
             default :
                 break;
@@ -177,7 +181,11 @@ angular.module('forum.controllers', [])
 
             //$rootScope.currentMessages = messageClient.getWallItems(groupId);
             $rootScope.currentGroup = group;
-            $rootScope.wallChangeGroup(group.id);
+            if($rootScope.currentPage == 'lenta'){
+                $rootScope.wallChangeGroup(group.id);
+            }else if($rootScope.currentPage == 'talks'){
+                $rootScope.talksChangeGroup(group.id);
+            }
 
         };
 
@@ -200,6 +208,7 @@ angular.module('forum.controllers', [])
         lenta.wallMessageContent = "Написать сообщение";
 
         lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
+        console.log("1 "+lenta.wallItems.length);
 
         var wallItemsLength;
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
@@ -225,6 +234,7 @@ angular.module('forum.controllers', [])
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
                 lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
+                console.log("2 "+lenta.wallItems.length);
             }
 
         };
@@ -594,6 +604,13 @@ angular.module('forum.controllers', [])
                 }
             }
         }
+
+        $rootScope.talksChangeGroup = function(groupId){
+
+            talk.topics = messageClient.getTopics(groupId,0,0,0,1000).topics;
+            console.log("topics "+talk.topics.length);
+
+        };
 
     })
     .controller('ServicesController',function() {
