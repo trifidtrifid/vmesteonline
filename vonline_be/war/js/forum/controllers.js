@@ -335,6 +335,7 @@ angular.module('forum.controllers', [])
                 talk.fullTalkFirstMessages[i].answerInputIsShow = false;
                 talk.fullTalkFirstMessages[i].isTreeOpen = false;
                 talk.fullTalkFirstMessages[i].isLoaded = false;
+                talk.fullTalkFirstMessages[i].answerMessage = "Ваш ответ";
             }
 
             $rootScope.base.isTalkTitles = false;
@@ -449,16 +450,20 @@ angular.module('forum.controllers', [])
 
             if(!message){
                 // если добавляем к сообщению первого уровня
-                for(var i = 0; i < fullTalkFirstMessagesLength; i++){
+
+                answer = firstMessage.answerMessage;
+                firstMessage.isTreeOpen = true;
+                firstMessage.answerInputIsShow = false;
+                firstMessage.answerMessage = "Ваш ответ";
+                parentId = firstMessage.id;
+
+                /*for(var i = 0; i < fullTalkFirstMessagesLength; i++){
                     if(talk.fullTalkFirstMessages[i].id == firstMessage.id){
                         talk.fullTalkFirstMessages[i].answerInputIsShow = false;
                         talk.fullTalkFirstMessages[i].isTreeOpen = true;
+                        talk.fullTalkFirstMessages[i].answerMessage = "Ваш ответ";
                     }
-                }
-
-                answer = talk.answerFirstMessage;
-                firstMessage.isTreeOpen = true;
-                parentId = firstMessage.id;
+                }*/
 
             }else{
                 // если добавляем к простому сообщению
@@ -482,7 +487,9 @@ angular.module('forum.controllers', [])
 
             talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,10).messages;
 
-            fullTalkMessagesLength = talk.fullTalkMessages[firstMessage.id].length;
+            talk.fullTalkMessages[firstMessage.id] ?
+                fullTalkMessagesLength = talk.fullTalkMessages[firstMessage.id].length :
+                fullTalkMessagesLength = 0;
 
             for(var i = 0; i < fullTalkMessagesLength; i++){
                 talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;

@@ -380,11 +380,11 @@
                                             <div class="talks-title">
                                                 <div class="talks-title-left load-talk">
                                                     <div><a href="#" ng-click="wallitem.showFullTalk($event,talk)">{{wallItem.topic.subject}}</a></div>
-                                                    <div>{{wallItem.topic.message.messageNum}} сообщений</div>
+                                                    <div>{{wallItem.topic.messageNum}} сообщений</div>
                                                 </div>
                                                 <div class="talks-title-right">
                                                     <div>Последнее обновление:</div>
-                                                    <div>{{wallItem.topic.message.lastUpdate}}</div>
+                                                    <div>{{wallItem.topic.message.created}}</div>
                                                 </div>
                                             </div>
                                         </div>
