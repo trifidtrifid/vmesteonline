@@ -27,7 +27,9 @@
                                 </div>
                             </div>
                             <div class="answer-input" ng-show="talks.fullTalkTopic.answerInputIsShow">
-                                <textarea ng-model="talks.answerFirstMessage"></textarea>
+                                <textarea ng-model="talks.answerFirstMessage"
+                                          onblur="if(this.value=='') this.value='Ваш ответ';"
+                                          onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
                                 <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleFirstMessage($event,talks.fullTalkTopic.id)">Отправить</a>
                             </div>
                         </div>
@@ -57,7 +59,9 @@
                                     </div>
 
                                     <div class="answer-input" ng-show="firstMessage.answerInputIsShow">
-                                        <textarea ng-model="firstMessage.answerMessage"></textarea>
+                                        <textarea ng-model="firstMessage.answerMessage"
+                                            onblur="if(this.value=='') this.value='Ваш ответ';"
+                                            onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
                                         <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,firstMessage)">Отправить</a>
                                     </div>
                                 </div>
@@ -88,7 +92,9 @@
                                             </div>
 
                                             <div class="answer-input" ng-show="message.answerInputIsShow">
-                                                <textarea ng-model="message.answerMessage"></textarea>
+                                                <textarea ng-model="message.answerMessage"
+                                                          onblur="if(this.value=='') this.value='Ваш ответ';"
+                                                          onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
                                                 <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,firstMessage,message)">Отправить</a>
                                             </div>
                                         </div>

@@ -610,7 +610,7 @@ angular.module('forum.controllers', [])
                     afterCurrentIndex = true;
                 }
             }
-        }
+        };
 
         $rootScope.talksChangeGroup = function(groupId){
 

@@ -207,22 +207,26 @@
 						<div class="forum-wrap">
                             <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta">
                                 <div class="message-input clearfix">
-                                    <textarea name="" id="" cols="30" rows="10" ng-model="lenta.wallMessageContent"></textarea>
-                                    <div class="message-input-bottom">
-                                        <a class="btn btn-sm no-border btn-primary pull-right" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
-                                        <div class="btn-group attach-dropdown pull-left">
-                                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                                <span class="btn-group-text">Прикрепить</span>
-                                                <span class="icon-caret-down icon-on-right"></span>
-                                            </button>
+                                    <textarea ng-model="lenta.wallMessageContent"
+                                        onblur="if(this.value=='') this.value='Написать сообщение';"
+                                        onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
 
-                                            <ul class="dropdown-menu dropdown-blue">
-                                                <li><a href="#">Видео</a></li>
-                                                <li><a href="#">Документ</a></li>
-                                                <li><a href="#">Изображение</a></li>
-                                                <li><a href="#">Опрос</a></li>
-                                            </ul>
+                                    <div class="message-input-bottom">
+                                        <div class="btn-group attach-dropdown pull-right">
+                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                        <span class="btn-group-text">Прикрепить</span>
+                                        <span class="icon-caret-down icon-on-right"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-blue">
+                                        <li><a href="#">Видео</a></li>
+                                        <li><a href="#">Документ</a></li>
+                                        <li><a href="#">Изображение</a></li>
+                                        <li><a href="#">Опрос</a></li>
+                                        </ul>
                                         </div>
+                                        <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
+
                                         <div class="hashtag pull-left">
                                             <span>группа</span>
                                             <div class="btn-group hashtag-dropdown">
@@ -366,7 +370,9 @@
 
                                             <div class="input-group">
                                                 <%--<input placeholder="Введите сообщение..." type="text" class="form-control" name="message">--%>
-                                                <textarea name="message" class="message-textarea" ng-model="wallItem.commentText"></textarea>
+                                                <textarea name="message" class="message-textarea" ng-model="wallItem.commentText"
+                                                    onblur="if(this.value=='') this.value='Ваш ответ';"
+                                                    onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
                                                             <span class="input-group-btn">
                                                                 <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
                                                                     <i class="icon-share-alt"></i>
@@ -414,23 +420,14 @@
                                                onfocus="if(this.value=='Заголовок') this.value='';" ng-model="talks.subject" />
                                     </div>
                                     <div class="topic-body clearfix">
-                                        <textarea ng-model="talks.content"></textarea>
+                                        <textarea ng-model="talks.content"
+                                            onblur="if(this.value=='') this.value='Сообщение';"
+                                            onfocus="if(this.value=='Сообщение') this.value='';"></textarea>
 
                                         <div class="btn-group pull-left">
-                                            <button data-toggle="dropdown"
-                                                    class="btn btn-info btn-sm dropdown-toggle no-border">
-                                                <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
-                                            </button>
-
-                                            <ul class="dropdown-menu dropdown-yellow">
-                                                <li><a href="#">Видео</a></li>
-
-                                                <li><a href="#">Фотографию</a></li>
-
-                                                <li><a href="#">Документ</a></li>
-
-                                                <li><a href="#">Опрос</a></li>
-                                            </ul>
+                                        <button class="btn btn-sm btn-primary" ng-click="talks.addSingleTalk()">
+                                        Создать
+                                        </button>
                                         </div>
 
                                         <div class="hashtag pull-left">
@@ -448,12 +445,24 @@
                                         </div>
 
 
-
                                         <div class="btn-group pull-right">
-                                            <button class="btn btn-sm btn-primary" ng-click="talks.addSingleTalk()">
-                                                Создать
-                                            </button>
+                                        <button data-toggle="dropdown"
+                                        class="btn btn-info btn-sm dropdown-toggle no-border">
+                                        <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-yellow">
+                                        <li><a href="#">Видео</a></li>
+
+                                        <li><a href="#">Фотографию</a></li>
+
+                                        <li><a href="#">Документ</a></li>
+
+                                        <li><a href="#">Опрос</a></li>
+                                        </ul>
                                         </div>
+
+
                                     </div>
 <%--                                    <div class="widget-box wysiwig-box">
                                         <div class="widget-header widget-header-small  header-color-blue2">
