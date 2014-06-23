@@ -9,7 +9,15 @@
 <%@ page import="com.vmesteonline.be.shop.*"%>
 
 <%
+   // HttpServletRequest httpReq = (HttpServletRequest)request;
+    //String url = httpReq.getContextPath();
+    //String url = httpReq.getRequestURI();
+    //String url = httpReq.getPathInfo();
+
+//    out.print(url);
+
 	HttpSession sess = request.getSession();
+
     pageContext.setAttribute("auth",true);
     try {
         //AuthServiceImpl.checkIfAuthorised(sess.getId());
@@ -79,21 +87,6 @@
     </script>
     <![endif]-->
 
-
-    <%--<script src="/build/thrift.min.js" type="text/javascript"></script>
-    <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
-
-    <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
-    <script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
-    <script src="/build/gen-js/shop.bo_types.js" type="text/javascript"></script>
-    <script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>
-
-    <script src="/build/gen-js/authservice_types.js" type="text/javascript"></script>
-    <script src="/build/gen-js/AuthService.js" type="text/javascript"></script>
-    <script src="/build/gen-js/userservice_types.js" type="text/javascript"></script>
-    <script src="/build/gen-js/UserService.js" type="text/javascript"></script>--%>
-
-    <%--<script type="text/javascript" data-main="/build/shop.min.js" src="/js/require.min.js"></script>--%>
     <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
 
     <script type="text/javascript">
@@ -104,6 +97,7 @@
 </script>
 </head>
 <body>
+<%--<c:out value="${pageContext.request.requestURL}" />--%>
     <div class="wrap">
 	<div class="main container">
 		<div class="navbar navbar-default" id="navbar">

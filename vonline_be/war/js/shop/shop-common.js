@@ -614,6 +614,15 @@ define(
                 var state;
 
                 if($(this).hasClass('back-to-shop')){
+                    //var urlHash = document.location.hash;
+
+                    if($('.catalog .ace-spinner').length == 0){
+
+                        document.location.replace("./shop.jsp");
+
+
+
+                    }else{
                     $('.page').hide();
                     $('footer').addClass('short-footer');
 
@@ -636,7 +645,7 @@ define(
                         type : 'default'
                     };
                     window.history.pushState(state,null,'shop.jsp');
-
+                    }
                 }else{
                     /* history */
                     var urlHash = document.location.hash;

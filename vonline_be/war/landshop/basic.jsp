@@ -163,10 +163,6 @@ padding:20px;
         </div>
     </section><!-- end hero area -->
 
-
-
-
-
 <!-- main content area -->   
 <div id="main" class="wrapper">
     

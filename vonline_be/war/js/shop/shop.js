@@ -37,6 +37,25 @@ require.config({
 require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
     function($,modules,commonM,loginModule) {
 
+        $('.about-shop-link').click(function(e){
+            e.preventDefault();
+
+            $('.page').hide();
+
+            $('.shop-about').load("ajax/about-shop.jsp .dynamic",function(){
+                $(this).show();
+                $('footer').removeClass('short-footer');
+            });
+        });
+
+        var urlHash = document.location.hash;
+        if (urlHash == '#about-shop'){
+
+            $('footer .about-shop-link').trigger('click');
+
+        }else{
+            $('.page').show();
+
         modules.spinnerModule.initProductsSpinner();
 
         if(globalUserAuth){
@@ -52,7 +71,6 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
         modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
 
         /* history */
-        var urlHash = document.location.hash;
 
         var state = {
             type : 'default'
@@ -60,16 +78,6 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
 
         if($('.login-page').length == 0 && $('.page-about-shop').length == 0) window.history.replaceState(state,null,'shop.jsp');
 
-        $('.about-shop-link').click(function(e){
-            e.preventDefault();
-
-            $('.page').hide();
-
-            $('.shop-about').load("ajax/about-shop.jsp .dynamic",function(){
-                $(this).show();
-                $('footer').removeClass('short-footer');
-            });
-        });
 
         if (urlHash){
             if (urlHash.indexOf('p=') != -1){
@@ -105,10 +113,6 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             }else if (urlHash == '#confirm-order'){
 
                 $('.basket-bottom .btn-order').trigger('click');
-
-            }else if (urlHash == '#about-shop'){
-
-                $('footer .about-shop-link').trigger('click');
 
             }
         }
@@ -330,4 +334,5 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             });
 
         };
+    }
     });
