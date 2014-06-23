@@ -113,7 +113,7 @@
 					<a href="/" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
-                    <a href="#" class="about-shop-link">О магазине</a>
+                    <a href="about-shop.jsp#${shopID}" class="about-shop-link">О магазине</a>
 					<!-- /.brand -->
 				</div>
 				<!-- /.navbar-header -->
@@ -341,7 +341,7 @@
             <div class="footer-menu">
                 <ul>
                     <li><a href="#">О сайте</a></li>
-                    <li><a href="#" class="about-shop-link">О магазине</a></li>
+                    <li><a href="about-shop.jsp#${shopID}" class="about-shop-link">О магазине</a></li>
                     <li><a href="#">Правила</a></li>
                     <li><a href="#">Контакты</a></li>
                     <li><a href="#">В начало</a></li>

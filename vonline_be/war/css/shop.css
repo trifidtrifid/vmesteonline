@@ -1556,6 +1556,13 @@ height 50px
   margin-top: 15px;
   border-top: 1px solid #438eb9;
 }
+/* page-about-shop*/
+.page-about-shop .page {
+  display: none;
+}
+.page-about-shop .shop-about {
+  display: block;
+}
 /* error */
 .modal-error {
   height: 130px;
@@ -1575,9 +1582,6 @@ height 50px
 }
 .modal-error .error-details-link {
   float: right;
-}
-.page {
-  display: none;
 }
 /* backoffice */
 .backoffice .main-content {

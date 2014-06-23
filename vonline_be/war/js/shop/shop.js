@@ -37,7 +37,7 @@ require.config({
 require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
     function($,modules,commonM,loginModule) {
 
-        $('.about-shop-link').click(function(e){
+        /*$('.about-shop-link').click(function(e){
             e.preventDefault();
 
             $('.page').hide();
@@ -46,15 +46,7 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                 $(this).show();
                 $('footer').removeClass('short-footer');
             });
-        });
-
-        var urlHash = document.location.hash;
-        if (urlHash == '#about-shop'){
-
-            $('footer .about-shop-link').trigger('click');
-
-        }else{
-            $('.page').show();
+        });*/
 
         modules.spinnerModule.initProductsSpinner();
 
@@ -71,6 +63,7 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
         modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
 
         /* history */
+        var urlHash = document.location.hash;
 
         var state = {
             type : 'default'
@@ -113,6 +106,10 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             }else if (urlHash == '#confirm-order'){
 
                 $('.basket-bottom .btn-order').trigger('click');
+
+            }if (urlHash == '#about-shop'){
+
+                $('footer .about-shop-link').trigger('click');
 
             }
         }
@@ -334,5 +331,5 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             });
 
         };
-    }
+
     });
