@@ -189,11 +189,10 @@
 
                         <nav class="submenu pull-right clearfix">
                             <button class="btn btn-sm btn-info no-border pull-right" ng-repeat="group in mainContentTop.groups"
-                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="mainContentTop.selectGroup(group.id)">{{group.visibleName}}</button>
+                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="mainContentTop.selectGroup(group)">{{group.visibleName}}</button>
 
-                            <%--<button class="btn btn-sm btn-info no-border pull-right">Дом</button>
-                            <button class="btn btn-sm btn-info no-border pull-right">Парадная</button>
-                            <button class="btn btn-sm btn-info no-border pull-right">Все</button>--%>
+                            <%--<button class="btn btn-sm btn-info no-border pull-right all-groups-btn"
+                                    ng-class="{active : mainContentTop.allGroupsBtn.selected}" ng-click="mainContentTop.selectGroup(group,1)">Все</button>--%>
                         </nav>
 
                         <div class="create-topic-btn pull-right" ng-show="base.talksIsActive">

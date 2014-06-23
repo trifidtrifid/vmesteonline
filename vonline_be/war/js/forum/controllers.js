@@ -136,73 +136,105 @@ angular.module('forum.controllers', [])
     .controller('rightBarController',function() {
     })
     .controller('mainContentTopController',function($rootScope) {
-        this.groups = userClientGroups ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
-        var groups = this.groups,
-            groupsLength = groups.length;
-        groups[groupsLength-1].selected = true;
+        var topCtrl = this;
 
-        this.isSet = function(groupId){
+        topCtrl.groups = userClientGroups ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
+        var groups = topCtrl.groups,
+            groupsLength = groups.length;
+       // topCtrl.allGroupsBtn = {};
+        //topCtrl.allGroupsBtn.selected = true;
+        groups[0].selected = true;
+        $rootScope.currentGroup = groups[0];
+
+        topCtrl.isSet = function(groupId){
             //return groupId ===
         };
-        this.selectGroup = function(groupId){
+
+        topCtrl.selectGroup = function(group){
+            var groupId;
+
             for(var i = 0; i < groupsLength; i++){
-                if (groups[i].id == groupId){
-                    groups[i].selected = true;
-                }
+                groups[i].selected = false;
             }
+
+            /*if(isAllBtn){
+                topCtrl.allGroupsBtn.selected = true;
+                groupId = 0;
+            }else{*/
+                //topCtrl.allGroupsBtn.selected = false;
+                group.selected = true;
+                groupId = group.id;
+            //}
+
+            //$rootScope.currentMessages = messageClient.getWallItems(groupId);
+            $rootScope.currentGroup = group;
+            $rootScope.wallChangeGroup(group.id);
+
         };
 
         /*this.createTopicIsHide = true;
         $rootScope.createTopicIsHide = this.createTopicIsHide;
         var mainContentTop = this;*/
 
-        this.showCreateTopic = function(event){
+        topCtrl.showCreateTopic = function(event){
             event.preventDefault();
 
             $rootScope.base.createTopicIsHide ? $rootScope.base.createTopicIsHide = false : $rootScope.base.createTopicIsHide = true;
 
         };
     })
-    .controller('LentaController',function() {
-        this.groups = userClientGroups ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
-        this.selectedGroup = this.groups[0];
+    .controller('LentaController',function($rootScope) {
+        var lenta = this;
+        lenta.groups = userClientGroups ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
+        lenta.selectedGroup = lenta.selectedGroupInTop = $rootScope.currentGroup;
 
-        this.wallMessageContent = "Написать сообщение";
-        this.wallItems = messageClient.getWallItems(this.selectedGroup.id);
+        lenta.wallMessageContent = "Написать сообщение";
+
+        lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
+
         var wallItemsLength;
-        this.wallItems ? wallItemsLength = this.wallItems.length :
+        lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
-        var wall = this;
 
         for(var i = 0; i < wallItemsLength; i++){
-            wall.wallItems[i].commentText = "Введите сообщение";
+            lenta.wallItems[i].commentText = "Введите сообщение";
         }
 
-        this.selectGroupInDropdown = selectGroupInDropdown;
+        lenta.selectGroupInDropdown = selectGroupInDropdown;
 
-        this.goToAnswerInput = function(event){
+        lenta.goToAnswerInput = function(event){
             event.preventDefault();
-
 
         };
 
-        this.createWallMessage = function(event){
+        lenta.createWallMessage = function(event){
             event.preventDefault();
 
-            var newWallMessage = messageClient.createTopic(wall.selectedGroup.id," ",5,wall.wallMessageContent);
-            wall.wallMessageContent = "Написать сообщение";
+            console.log(lenta.selectedGroup.id+" "+lenta.wallMessageContent);
+            var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
+            lenta.wallMessageContent = "Написать сообщение";
 
-            wall.wallItems.push(newWallMessage);
+            if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
+                lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
+            }
+
         };
 
-        this.createWallComment = function(event,wallItem){
+        lenta.createWallComment = function(event,wallItem){
             event.preventDefault();
 
-            var newWallComment = messageClient.createMessage(wallItem.topic.id,0,wall.selectedGroup.id,5,wallItem.commentText);
+            var newWallComment = messageClient.createMessage(wallItem.topic.id,0,lenta.selectedGroupInTop.id,5,wallItem.commentText);
             wallItem.commentText = "Введите сообщение";
 
-            wall.wallItems.messages.push(newWallComment);
+            //console.log(lenta.wallItems+" "+lenta.wallItems.topic);
+            wallItem.messages.push(newWallComment);
         };
+
+        $rootScope.wallChangeGroup = function(groupId){
+
+            lenta.wallItems = messageClient.getWallItems(groupId);
+
+        }
 
     })
     .controller('TalksController',function($rootScope) {
@@ -574,7 +606,7 @@ var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(
 transport = new Thrift.Transport("/thrift/UserService");
 protocol = new Thrift.Protocol(transport);
 var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
-var userClientGroups;// = userClient.getUserGroups();
+var userClientGroups = userClient.getUserGroups();
 
 function resetPages(base){
     base.nextdoorsIsActive = false;
