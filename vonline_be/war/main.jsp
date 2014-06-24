@@ -262,7 +262,7 @@
                                                     <div class="name">
                                                         <a href="#">Alexa</a>
                                                     </div>
-                                                    <div class="text" data-at="{{wallItem.topic.message.type}}" ng-cloak>{{wallItem.topic.message.content}}</div>
+                                                    <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>
                                                     <div class="lenta-item-bottom">
                                                         <span ng-cloak>{{wallItem.topic.message.createdEdit}}</span>
                                                         <a href="#">Ответить</a>
@@ -294,7 +294,6 @@
                                             </div>
 
                                             <div class="input-group">
-                                                <%--<input placeholder="Введите сообщение..." type="text" class="form-control" name="message">--%>
                                                 <textarea name="message" class="message-textarea" ng-model="wallItem.commentText"
                                                     onblur="if(this.value=='') this.value='Ваш ответ';"
                                                     onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>

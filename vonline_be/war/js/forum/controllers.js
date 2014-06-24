@@ -208,7 +208,7 @@ angular.module('forum.controllers', [])
         lenta.wallMessageContent = "Написать сообщение";
 
         lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
-        console.log("1 "+lenta.wallItems.length);
+        //console.log("1 "+lenta.wallItems.length);
 
         var wallItemsLength;
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
@@ -226,11 +226,11 @@ angular.module('forum.controllers', [])
         lenta.createWallMessage = function(event){
             event.preventDefault();
 
-            console.log(lenta.selectedGroup.id+" "+lenta.wallMessageContent);
+            //console.log(lenta.selectedGroup.id+" "+lenta.wallMessageContent);
             var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
             lenta.wallMessageContent = "Написать сообщение";
             newWallMessage.message.createdEdit = getTiming(newWallMessage.message.created);
-            var newWallItem = com.vmesteonline.be.messageservice.WallItem;
+            var newWallItem = new com.vmesteonline.be.messageservice.WallItem;
             newWallItem.topic = newWallMessage;
             newWallItem.messages = [];
             newWallItem.commentText = "Ваш ответ";
@@ -240,6 +240,7 @@ angular.module('forum.controllers', [])
                     lenta.wallItems.unshift(newWallItem):
                     lenta.wallItems[0] = newWallItem;
 
+                //console.log(lenta.wallItems.length);
                 /*lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
                 initWallItem();*/
             }
