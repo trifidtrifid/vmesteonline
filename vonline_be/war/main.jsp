@@ -263,7 +263,7 @@
                                                     </div>
                                                     <div class="text" data-at="{{wallItem.topic.message.type}}">{{wallItem.topic.message.content}}</div>
                                                     <div class="lenta-item-bottom">
-                                                        <span>{{wallItem.topic.message.created|date}}</span>
+                                                        <span>{{wallItem.topic.message.createdEdit}}</span>
                                                         <a href="#">Ответить</a>
                                                     </div>
 
