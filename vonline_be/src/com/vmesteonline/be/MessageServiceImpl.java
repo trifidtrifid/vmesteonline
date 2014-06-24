@@ -81,8 +81,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
 
 					MessageListPart mlp = getMessagesAsList(tpc.id, 0, MessageType.BASE, 0, false, 10000);
-					logger.info("find msgs " + mlp.messages.size());
-					
+					if (mlp.totalSize > 0)
+						logger.info("find msgs " + mlp.messages.size());
+
 					WallItem wi = new WallItem(mlp.messages, tpc);
 					wallItems.add(wi);
 				}
