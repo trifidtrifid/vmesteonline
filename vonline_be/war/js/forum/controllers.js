@@ -110,12 +110,12 @@ angular.module('forum.controllers', [])
 
     $rootScope.leftbar = this;
 
-    this.tab = 1;
+    $rootScope.leftbar.tab = 1;
 
-    this.setTab = function(event,newValue){
+    $rootScope.setTab = function(event,newValue){
         event.preventDefault();
 
-        this.tab = newValue;
+        $rootScope.leftbar.tab = newValue;
         resetPages($rootScope.base);
         resetAceNavBtns($rootScope.navbar);
 
@@ -263,6 +263,43 @@ angular.module('forum.controllers', [])
 
         };
 
+/*        lenta.showFullTalk = function(event,talkOutside){
+            event.preventDefault();
+            var talk = {},
+                fullTalkFirstMessagesLength;
+
+            var topicLength;
+            talk.topics ? topicLength = talk.topics.length : topicLength = 0;
+            //talk.fullTalkTopic = talkOutside;
+
+            var talkId = talkOutside.id;
+
+            talk.fullTalkTopic = talkOutside;
+            talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
+
+            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
+
+            talk.fullTalkFirstMessages ?
+                fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length:
+                fullTalkFirstMessagesLength = 0;
+            if(talk.fullTalkFirstMessages === null) talk.fullTalkFirstMessages = [];
+
+            for(var i = 0; i < fullTalkFirstMessagesLength; i++){
+                talk.fullTalkFirstMessages[i].answerInputIsShow = false;
+                talk.fullTalkFirstMessages[i].isTreeOpen = false;
+                talk.fullTalkFirstMessages[i].isLoaded = false;
+                talk.fullTalkFirstMessages[i].answerMessage = "Ваш ответ";
+                talk.fullTalkFirstMessages[i].createdEdit = getTiming(talk.fullTalkFirstMessages[i].created);
+            }
+
+            $rootScope.base.isTalkTitles = false;
+            $rootScope.base.mainContentTopIsHide = true;
+            $rootScope.base.createTopicIsHide = true;
+
+            var talksBlock = $('.talks').find('.talks-block');
+
+        };*/
+
         $rootScope.wallChangeGroup = function(groupId){
 
             lenta.wallItems = messageClient.getWallItems(groupId);
@@ -353,8 +390,10 @@ angular.module('forum.controllers', [])
 
         if(!talk.topics) talk.topics = [];
 
-        talk.showFullTalk = function(event,talkOutside){
-            event.preventDefault();
+        $rootScope.showFullTalk = function(event,talkOutside){
+            //event.preventDefault();
+
+            $rootScope.setTab(event,2);
 
             var topicLength;
             talk.topics ? topicLength = talk.topics.length : topicLength = 0;
@@ -732,7 +771,7 @@ function getTiming(messageObjDate){
         timing = new Date(timing);
         timeTemp = timing.getHours();
         if(timeTemp == 1 || timeTemp == 0){
-            timing = timeTemp + " час назад";
+            timing = "1 час назад";
         }else if(timeTemp > 1 && timeTemp < 5){
             timing = timeTemp + " часа назад";
         }else{

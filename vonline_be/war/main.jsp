@@ -144,9 +144,9 @@
 						}
 					</script>
 					<ul class="nav nav-list">
-                        <li ng-class="{active:leftbar.isSet(1)}"><a href="#" ng-click="leftbar.setTab($event,1)"> <span class="menu-text">Новости</span> </a></li>
-                        <li ng-class="{active:leftbar.isSet(2)}"><a href="#" ng-click="leftbar.setTab($event,2)"> <span class="menu-text">Обсуждения</span> </a></li>
-                        <li ng-class="{active:leftbar.isSet(3)}"><a href="#" ng-click="leftbar.setTab($event,3)"> <span class="menu-text">Услуги и объявления</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(1)}"><a href="#" ng-click="setTab($event,1)"> <span class="menu-text">Новости</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(2)}"><a href="#" ng-click="setTab($event,2)"> <span class="menu-text">Обсуждения</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(3)}"><a href="#" ng-click="setTab($event,3)"> <span class="menu-text">Услуги и объявления</span> </a></li>
 						<%--<c:forEach var="rubric" items="${rubrics}">
 							<li><a href="#" data-rubricid="${rubric.id}"> <span
 									class="menu-text">${rubric.visibleName}</span> <b>(3)</b>
@@ -310,7 +310,7 @@
                                         <div class="wallitem-topic" ng-switch-when="1">
                                             <div class="talks-title">
                                                 <div class="talks-title-left load-talk">
-                                                    <div><a href="#" ng-click="wallitem.showFullTalk($event,talk)">{{wallItem.topic.subject}}</a></div>
+                                                    <div><a href="#" ng-click="showFullTalk($event,wallItem.topic)">{{wallItem.topic.subject}}</a></div>
                                                     <div>{{wallItem.topic.messageNum}} сообщений</div>
                                                 </div>
                                                 <div class="talks-title-right">
@@ -422,7 +422,7 @@
 
                                     <div class="talks-title" ng-repeat="talk in talks.topics" id="{{talk.id}}">
                                         <div class="talks-title-left load-talk">
-                                            <div><a href="#" ng-click="talks.showFullTalk($event,talk)">{{talk.subject}}</a></div>
+                                            <div><a href="#" ng-click="showFullTalk($event,talk)">{{talk.subject}}</a></div>
                                             <div>{{talk.messageNum}} сообщений</div>
                                         </div>
                                         <div class="talks-title-right">
