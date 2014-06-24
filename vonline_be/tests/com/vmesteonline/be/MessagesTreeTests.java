@@ -175,6 +175,8 @@ public class MessagesTreeTests extends MessagesTree {
 		}
 	}
 
+
+	
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
 }
