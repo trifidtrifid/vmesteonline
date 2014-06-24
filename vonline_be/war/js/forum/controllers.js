@@ -253,7 +253,7 @@ angular.module('forum.controllers', [])
             /*var newWallItem = com.vmesteonline.be.messageservice.WallItem;
             newWallItem.topic = newWallMessage;
             newWallItem.messages = [];*/
-            console.log(lenta.wallItems.length);
+            //console.log(lenta.wallItems.length);
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
                 /*lenta.wallItems ?
@@ -513,7 +513,7 @@ angular.module('forum.controllers', [])
                 talk.fullTalkMessages.push(newMessage):
                 talk.fullTalkMessages[0] = newMessage;*/
 
-            talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,10).messages;
+            talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,1000).messages;
 
             talk.fullTalkMessages[firstMessage.id] ?
                 fullTalkMessagesLength = talk.fullTalkMessages[firstMessage.id].length :
