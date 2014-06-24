@@ -214,26 +214,6 @@ angular.module('forum.controllers', [])
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
 
-        function initWallItem(){
-            for(var i = 0; i < wallItemsLength; i++){
-                lenta.wallItems[i].commentText = "Ваш ответ";
-                if(lenta.wallItems[i].topic.message.type == 1){
-                    lenta.wallItems[i].topic.lastUpdateEdit = getTiming(lenta.wallItems[i].topic.lastUpdate);
-                }else if(lenta.wallItems[i].topic.message.type == 5){
-                    lenta.wallItems[i].topic.message.createdEdit = getTiming(lenta.wallItems[i].topic.message.created);
-
-                    var mesLen;
-                    lenta.wallItems[i].messages ?
-                        mesLen = lenta.wallItems[i].messages.length:
-                        mesLen = 0;
-
-                    for(var j = 0; j < mesLen; j++){
-                        lenta.wallItems[i].messages[j].createdEdit = getTiming(lenta.wallItems[i].messages[j].created);
-                    }
-                }
-            }
-        }
-
         initWallItem();
 
         lenta.selectGroupInDropdown = selectGroupInDropdown;
@@ -250,19 +230,18 @@ angular.module('forum.controllers', [])
             var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
             lenta.wallMessageContent = "Написать сообщение";
             newWallMessage.message.createdEdit = getTiming(newWallMessage.message.created);
-            /*var newWallItem = com.vmesteonline.be.messageservice.WallItem;
+            var newWallItem = com.vmesteonline.be.messageservice.WallItem;
             newWallItem.topic = newWallMessage;
-            newWallItem.messages = [];*/
-            //console.log(lenta.wallItems.length);
+            newWallItem.messages = [];
+            newWallItem.commentText = "Ваш ответ";
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
-                /*lenta.wallItems ?
-                    lenta.wallItems.push(newWallItem):
-                    lenta.wallItems[0] = newWallItem;*/
+                lenta.wallItems ?
+                    lenta.wallItems.unshift(newWallItem):
+                    lenta.wallItems[0] = newWallItem;
 
-                lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
-                initWallItem();
-                console.log(lenta.wallItems.length);
+                /*lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
+                initWallItem();*/
             }
         };
 
@@ -288,6 +267,33 @@ angular.module('forum.controllers', [])
 
             lenta.wallItems = messageClient.getWallItems(groupId);
 
+            initWallItem();
+
+        };
+
+        function initWallItem(){
+            for(var i = 0; i < wallItemsLength; i++){
+
+                lenta.wallItems[i].commentText = "Ваш ответ";
+
+                //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
+                lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.message.groupId);
+
+                if(lenta.wallItems[i].topic.message.type == 1){
+                    lenta.wallItems[i].topic.lastUpdateEdit = getTiming(lenta.wallItems[i].topic.lastUpdate);
+                }else if(lenta.wallItems[i].topic.message.type == 5){
+                    lenta.wallItems[i].topic.message.createdEdit = getTiming(lenta.wallItems[i].topic.message.created);
+
+                    var mesLen;
+                    lenta.wallItems[i].messages ?
+                        mesLen = lenta.wallItems[i].messages.length:
+                        mesLen = 0;
+
+                    for(var j = 0; j < mesLen; j++){
+                        lenta.wallItems[i].messages[j].createdEdit = getTiming(lenta.wallItems[i].messages[j].created);
+                    }
+                }
+            }
         }
 
     })
@@ -343,12 +349,7 @@ angular.module('forum.controllers', [])
         talk.selectedGroup = talk.groups[0];
         talk.topics = messageClient.getTopics(talk.selectedGroup.id,0,0,0,1000).topics;
 
-        var topicLength;
-        talk.topics ? topicLength = talk.topics.length : topicLength = 0;
-
-        for(var i = 0; i < topicLength;i++){
-            talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
-        }
+        initTalks();
 
         if(!talk.topics) talk.topics = [];
 
@@ -638,9 +639,19 @@ angular.module('forum.controllers', [])
         $rootScope.talksChangeGroup = function(groupId){
 
             talk.topics = messageClient.getTopics(groupId,0,0,0,1000).topics;
-            console.log("topics "+talk.topics.length);
+
+            initTalks();
 
         };
+
+        function initTalks(){
+            var topicLength;
+            talk.topics ? topicLength = talk.topics.length : topicLength = 0;
+
+            for(var i = 0; i < topicLength;i++){
+                talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
+            }
+        }
 
     })
     .controller('ServicesController',function() {
@@ -744,4 +755,17 @@ function getTiming(messageObjDate){
     }
 
     return timing;
+}
+
+function getLabel(groupsArray,groupId){
+    var groupsArrayLen = groupsArray.length;
+    var label="";
+    for(var i = 0; i < groupsArrayLen; i++){
+        console.log(groupsArray[i].id+" "+groupId);
+        if(groupsArray[i].id == groupId){
+            label = groupsArray[i].visibleName;
+        }
+    }
+
+    return label;
 }
