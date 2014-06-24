@@ -214,7 +214,7 @@ angular.module('forum.controllers', [])
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
 
-        function setWallItem(){
+        function initWallItem(){
             for(var i = 0; i < wallItemsLength; i++){
                 lenta.wallItems[i].commentText = "Ваш ответ";
                 if(lenta.wallItems[i].topic.message.type == 1){
@@ -234,7 +234,7 @@ angular.module('forum.controllers', [])
             }
         }
 
-        setWallItem();
+        initWallItem();
 
         lenta.selectGroupInDropdown = selectGroupInDropdown;
 
@@ -261,11 +261,9 @@ angular.module('forum.controllers', [])
                     lenta.wallItems[0] = newWallItem;*/
 
                 lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
-                setWallItem();
+                initWallItem();
                 console.log(lenta.wallItems.length);
-
             }
-
         };
 
         lenta.createWallComment = function(event,wallItem){
@@ -276,9 +274,14 @@ angular.module('forum.controllers', [])
             newWallComment.createdEdit = getTiming(newWallComment.created);
 
             //console.log(lenta.wallItems+" "+lenta.wallItems.topic);
-            wallItem.messages ?
-            wallItem.messages.push(newWallComment):
-            wallItem.messages[0] = newWallComment;
+            if(wallItem.messages){
+                wallItem.messages.push(newWallComment);
+            }else{
+                wallItem.messages = [];
+                wallItem.messages[0] = newWallComment;
+            }
+
+
         };
 
         $rootScope.wallChangeGroup = function(groupId){
@@ -717,7 +720,7 @@ function getTiming(messageObjDate){
     }else if(timing < day){
         timing = new Date(timing);
         timeTemp = timing.getHours();
-        if(timeTemp == 1){
+        if(timeTemp == 1 || timeTemp == 0){
             timing = timeTemp + " час назад";
         }else if(timeTemp > 1 && timeTemp < 5){
             timing = timeTemp + " часа назад";
