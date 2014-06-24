@@ -70,7 +70,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				pm.retrieve(user);
 				VoUserGroup group = user.getGroupById(groupId);
 				// todo add last loaded and length
-				List<VoTopic> topics = getTopics(group, MessageType.WALL, 0, 10, pm);
+				List<VoTopic> topics = getTopics(group, MessageType.WALL, 0, 10000, pm);
 
 				if (topics.isEmpty()) {
 					logger.fine("can't find any topics");
