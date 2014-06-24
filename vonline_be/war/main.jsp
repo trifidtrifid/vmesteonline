@@ -260,12 +260,12 @@
                                                     <span class="label label-lg label-pink arrowed lenta-item-hashtag">{{wallItem.label}}</span>
 
                                                     <div class="name">
-                                                        <a href="#">Alexa</a>
+                                                        <a href="#">{{wallItem.topic.authorName}}</a>
                                                     </div>
                                                     <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>
                                                     <div class="lenta-item-bottom">
                                                         <span ng-cloak>{{wallItem.topic.message.createdEdit}}</span>
-                                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)" class="a1">Ответить</a>
+                                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)" class="a1">Комментировать</a>
                                                     </div>
 
                                                 </div>
@@ -280,7 +280,7 @@
                                                     <div class="body">
 
                                                         <div class="name">
-                                                            <a href="#">Alexa</a>
+                                                            <a href="#">{{wallMessage.authorName}}</a>
                                                         </div>
                                                         <div class="text" ng-cloak>{{wallMessage.content}}</div>
 
