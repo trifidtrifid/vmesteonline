@@ -73,7 +73,7 @@
         </c:if>
     </script>
 </head>
-<body ng-controller="baseController as base">
+<body ng-controller="baseController as base" ng-cloak>
 <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
         try {
@@ -205,7 +205,7 @@
                     </div>
 
 						<div class="forum-wrap">
-                            <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta">
+                            <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta" ng-cloak>
                                 <div class="message-input clearfix">
                                     <textarea ng-model="lenta.wallMessageContent"
                                         onblur="if(this.value=='') this.value='Написать сообщение';"

@@ -627,11 +627,6 @@ angular.module('forum.controllers', [])
     });
 
 
-var minute = 60*1000,
-    hour = minute*60,
-    day = hour*24,
-    threeDays = day*3;
-
 /* functions */
 
 var transport = new Thrift.Transport("/thrift/MessageService");
@@ -683,9 +678,13 @@ function selectGroupInDropdown(groupId,objCtrl){
     }
 }
 function getTiming(messageObjDate){
-    var now = Date.parse(new Date());
-
-    var timing = (now - messageObjDate*1000);
+    var minute = 60*1000,
+        hour = minute*60,
+        day = hour*24,
+        threeDays = day* 3,
+        now = Date.parse(new Date()),
+        timing = (now - messageObjDate*1000),
+        timeTemp;
 
     if(timing < minute){
         timing = "только что";
@@ -694,12 +693,28 @@ function getTiming(messageObjDate){
         timing = timing.getMinutes()+" мин назад";
     }else if(timing < day){
         timing = new Date(timing);
-        timing = timing.getHours()+" часов назад";
+        timeTemp = timing.getHours();
+        if(timeTemp == 1){
+            timing = timeTemp + " час назад";
+        }else if(timeTemp > 1 && timeTemp < 5){
+            timing = timeTemp + " часа назад";
+        }else{
+            timing = timeTemp + " часов назад";
+        }
     }else if(timing < threeDays){
         timing = new Date(timing);
-        timing = timing.getDate()+" дней назад";
+        timeTemp = timing.getDate();
+        if(timeTemp == 1){
+            timing = timeTemp+" день назад";
+        }else{
+            timing = timeTemp+" дней назад";
+        }
     }else{
-        timing = new Date(messageObjDate*1000);
+        timeTemp = new Date(messageObjDate*1000).toLocaleDateString();
+        var arr = timeTemp.split('.');
+        if(arr[0].length == 1) arr[0] = "0"+arr[0];
+        if(arr[1].length == 1) arr[1] = "0"+arr[1];
+        timing = arr[0]+"."+arr[1]+"."+arr[2];
     }
 
     return timing;
