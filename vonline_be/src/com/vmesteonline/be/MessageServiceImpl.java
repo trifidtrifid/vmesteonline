@@ -188,7 +188,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				+ " and longitude >= " + VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
 				+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
 				+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() + " and radius >= " + group.getRadius()
-				+ " order by createTime";
+				+ " order by createTime desc";
 		List<VoTopic> topics = new ArrayList<VoTopic>();
 		try {
 			ResultSet rs = con.executeQuery(req);
