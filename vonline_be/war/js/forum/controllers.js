@@ -234,6 +234,8 @@ angular.module('forum.controllers', [])
             newWallItem.topic = newWallMessage;
             newWallItem.messages = [];
             newWallItem.commentText = "Ваш ответ";
+            newWallItem.answerShow = false;
+            newWallItem.autofocus = "";
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
                 lenta.wallItems ?
@@ -261,6 +263,20 @@ angular.module('forum.controllers', [])
                 wallItem.messages[0] = newWallComment;
             }
 
+
+        };
+
+        lenta.showAnswerInput = function(event,wallItem){
+            event.preventDefault();
+
+            wallItem.answerShow ?
+                wallItem.answerShow = false :
+                wallItem.answerShow = true ;
+
+            wallItem.autofocus = "autofocus";
+
+            //alert(document.getElementsByName('answerInput'+wallItem.topic.id).length);
+            document.getElementsByName('answerInput'+wallItem.topic.id)[0].focus();
 
         };
 
@@ -313,6 +329,7 @@ angular.module('forum.controllers', [])
             for(var i = 0; i < wallItemsLength; i++){
 
                 lenta.wallItems[i].commentText = "Ваш ответ";
+                lenta.wallItems[i].answerShow = false;
 
                 //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
                 lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.message.groupId);
@@ -808,4 +825,8 @@ function getLabel(groupsArray,groupId){
     }
 
     return label;
+}
+
+function setFocus(){
+    $('.message-textarea').focus();
 }
