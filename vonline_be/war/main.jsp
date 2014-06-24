@@ -286,18 +286,19 @@
 
                                                         <div class="lenta-item-bottom">
                                                             <span ng-cloak>{{wallMessage.createdEdit}}</span>
-                                                            <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)">Ответить</a>
+                                                            <a href="#" ng-click="lenta.showAnswerInput($event,wallItem,wallMessage)">Ответить</a>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                             </div>
 
-                                            <div class="input-group" ng-show="wallItem.answerShow">
-                                                <textarea name="answerInput{{wallItem.topic.id}}" class="message-textarea" ng-model="wallItem.commentText"
+                                            <div class="input-group"> <%--  ng-show="wallItem.answerShow" --%>
+                                                <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea" ng-model="wallItem.commentText"
+                                                          ng-hasfocus="wallItem.answerShow" ng-show="wallItem.answerShow"
                                                     onblur="if(this.value=='') this.value='Ваш ответ';"
                                                     onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
-                                                    <span class="input-group-btn">
+                                                    <span class="input-group-btn" ng-show="wallItem.answerShow">
                                                         <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
                                                             <i class="icon-share-alt"></i>
                                                             Отправить
@@ -941,7 +942,10 @@
 	<!-- собственные скрипты  -->
 	<%--<script src="js/common.js"></script>--%>
 	<%--<script src="js/forum/main.js"></script>--%>
+<script src="js/forum/directives.js"></script>
 <script src="js/forum/controllers.js"></script>
+
+
 	<script src="js/forum/app.js"></script>
 
 </body>

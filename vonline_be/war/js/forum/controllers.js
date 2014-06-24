@@ -235,7 +235,6 @@ angular.module('forum.controllers', [])
             newWallItem.messages = [];
             newWallItem.commentText = "Ваш ответ";
             newWallItem.answerShow = false;
-            newWallItem.autofocus = "";
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
                 lenta.wallItems ?
@@ -266,56 +265,19 @@ angular.module('forum.controllers', [])
 
         };
 
-        lenta.showAnswerInput = function(event,wallItem){
+        lenta.showAnswerInput = function(event,wallItem,wallMessage){
             event.preventDefault();
 
             wallItem.answerShow ?
                 wallItem.answerShow = false :
                 wallItem.answerShow = true ;
 
-            wallItem.autofocus = "autofocus";
-
-            //alert(document.getElementsByName('answerInput'+wallItem.topic.id).length);
-            document.getElementsByName('answerInput'+wallItem.topic.id)[0].focus();
-
-        };
-
-/*        lenta.showFullTalk = function(event,talkOutside){
-            event.preventDefault();
-            var talk = {},
-                fullTalkFirstMessagesLength;
-
-            var topicLength;
-            talk.topics ? topicLength = talk.topics.length : topicLength = 0;
-            //talk.fullTalkTopic = talkOutside;
-
-            var talkId = talkOutside.id;
-
-            talk.fullTalkTopic = talkOutside;
-            talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
-
-            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
-
-            talk.fullTalkFirstMessages ?
-                fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length:
-                fullTalkFirstMessagesLength = 0;
-            if(talk.fullTalkFirstMessages === null) talk.fullTalkFirstMessages = [];
-
-            for(var i = 0; i < fullTalkFirstMessagesLength; i++){
-                talk.fullTalkFirstMessages[i].answerInputIsShow = false;
-                talk.fullTalkFirstMessages[i].isTreeOpen = false;
-                talk.fullTalkFirstMessages[i].isLoaded = false;
-                talk.fullTalkFirstMessages[i].answerMessage = "Ваш ответ";
-                talk.fullTalkFirstMessages[i].createdEdit = getTiming(talk.fullTalkFirstMessages[i].created);
+            if(wallMessage){
+                var authorName = userClient.getUserInfoExt(wallMessage.authorId).firstName;
+                wallItem.commentText = authorName+", ";
             }
 
-            $rootScope.base.isTalkTitles = false;
-            $rootScope.base.mainContentTopIsHide = true;
-            $rootScope.base.createTopicIsHide = true;
-
-            var talksBlock = $('.talks').find('.talks-block');
-
-        };*/
+        };
 
         $rootScope.wallChangeGroup = function(groupId){
 
@@ -827,6 +789,3 @@ function getLabel(groupsArray,groupId){
     return label;
 }
 
-function setFocus(){
-    $('.message-textarea').focus();
-}
