@@ -3,19 +3,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ServiceImpl"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageService"%>
 <%@ page import="com.vmesteonline.be.Group"%>
 <%@ page import="com.vmesteonline.be.Rubric"%>
 <%@ page import="com.vmesteonline.be.messageservice.TopicListPart"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageListPart"%>
 <%@ page import="com.vmesteonline.be.messageservice.Topic"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.messageservice.Message"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageType"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
-<%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="java.util.ArrayList"%>
 
@@ -23,32 +17,36 @@
 
 <%
 	HttpSession sess = request.getSession();
+    pageContext.setAttribute("auth",true);
+
 	try {
 	 	AuthServiceImpl.checkIfAuthorised(sess.getId());
+        UserServiceImpl userService = new UserServiceImpl(request.getSession());
+
+        List<Group> Groups = userService.getUserGroups();
+        List<Rubric> Rubrics = userService.getUserRubrics();
+        ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+        MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
+        //MessageType mesType = MessageType.BASE;
+
+        TopicListPart Topics = new TopicListPart( new ArrayList<Topic>(), 0);
+        if( Groups.size() > 0 && Rubrics.size() > 0 )
+            Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
+
+        //out.print(ShortUserInfo.firstName);
+
+        pageContext.setAttribute("groups",Groups);
+        pageContext.setAttribute("rubrics",Rubrics);
+        pageContext.setAttribute("topics",Topics.topics);
+        pageContext.setAttribute("firstName",ShortUserInfo.firstName);
+        pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 	} catch (InvalidOperation ioe) {
+        pageContext.setAttribute("auth",false);
 		response.sendRedirect("/login.jsp");
 		return;
 	}
 
-    UserServiceImpl userService = new UserServiceImpl(request.getSession());
 
-    List<Group> Groups = userService.getUserGroups();
-    List<Rubric> Rubrics = userService.getUserRubrics();
-    ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-    MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
-    //MessageType mesType = MessageType.BASE;
-
-    TopicListPart Topics = new TopicListPart( new ArrayList<Topic>(), 0);
-    if( Groups.size() > 0 && Rubrics.size() > 0 )
-    	Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
-    	
-    //out.print(ShortUserInfo.firstName);
-
-    pageContext.setAttribute("groups",Groups);
-    pageContext.setAttribute("rubrics",Rubrics);
-    pageContext.setAttribute("topics",Topics.topics);
-    pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-    pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 %>
 
 <!DOCTYPE html>
@@ -68,8 +66,14 @@
         document.createElement('nav');
     </script>
     <![endif]-->
+    <script type="text/javascript">
+        globalUserAuth = false;
+        <c:if test="${auth}">
+        globalUserAuth = true;
+        </c:if>
+    </script>
 </head>
-<body ng-controller="baseController as base">
+<body ng-controller="baseController as base" ng-cloak>
 <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
         try {
@@ -112,7 +116,7 @@
 
                         <li class="divider"></li>
 
-                        <li><a href="#"> <i class="icon-off"></i> Выход
+                        <li><a href="#"  ng-click="navbar.logout($event)"> <i class="icon-off"></i> Выход
                         </a></li>
                     </ul></li>
             </ul>
@@ -189,11 +193,10 @@
 
                         <nav class="submenu pull-right clearfix">
                             <button class="btn btn-sm btn-info no-border pull-right" ng-repeat="group in mainContentTop.groups"
-                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="mainContentTop.selectGroup(group.id)">{{group.visibleName}}</button>
+                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="mainContentTop.selectGroup(group)">{{group.visibleName}}</button>
 
-                            <%--<button class="btn btn-sm btn-info no-border pull-right">Дом</button>
-                            <button class="btn btn-sm btn-info no-border pull-right">Парадная</button>
-                            <button class="btn btn-sm btn-info no-border pull-right">Все</button>--%>
+                            <%--<button class="btn btn-sm btn-info no-border pull-right all-groups-btn"
+                                    ng-class="{active : mainContentTop.allGroupsBtn.selected}" ng-click="mainContentTop.selectGroup(group,1)">Все</button>--%>
                         </nav>
 
                         <div class="create-topic-btn pull-right" ng-show="base.talksIsActive">
@@ -202,24 +205,28 @@
                     </div>
 
 						<div class="forum-wrap">
-                            <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta">
+                            <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta" ng-cloak>
                                 <div class="message-input clearfix">
-                                    <textarea name="" id="" cols="30" rows="10" ng-model="lenta.wallMessageContent"></textarea>
-                                    <div class="message-input-bottom">
-                                        <a class="btn btn-sm no-border btn-primary pull-right" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
-                                        <div class="btn-group attach-dropdown pull-left">
-                                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                                <span class="btn-group-text">Прикрепить</span>
-                                                <span class="icon-caret-down icon-on-right"></span>
-                                            </button>
+                                    <textarea ng-model="lenta.wallMessageContent"
+                                        onblur="if(this.value=='') this.value='Написать сообщение';"
+                                        onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
 
-                                            <ul class="dropdown-menu dropdown-blue">
-                                                <li><a href="#">Видео</a></li>
-                                                <li><a href="#">Документ</a></li>
-                                                <li><a href="#">Изображение</a></li>
-                                                <li><a href="#">Опрос</a></li>
-                                            </ul>
+                                    <div class="message-input-bottom">
+                                        <div class="btn-group attach-dropdown pull-right">
+                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                        <span class="btn-group-text">Прикрепить</span>
+                                        <span class="icon-caret-down icon-on-right"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-blue">
+                                        <li><a href="#">Видео</a></li>
+                                        <li><a href="#">Документ</a></li>
+                                        <li><a href="#">Изображение</a></li>
+                                        <li><a href="#">Опрос</a></li>
+                                        </ul>
                                         </div>
+                                        <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
+
                                         <div class="hashtag pull-left">
                                             <span>группа</span>
                                             <div class="btn-group hashtag-dropdown">
@@ -238,149 +245,82 @@
                                 </div>
 
                                 <div class="lenta">
-                                    <div class="lenta-item" ng-repeat="wallItem in lenta.wallItems">
+                                    <div class="lenta-item" ng-repeat="wallItem in lenta.wallItems"
+                                            ng-switch on="wallItem.topic.message.type">
 
-                                        <div class="first-message clearfix">
-                                            <div class="user">
-                                                <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                            </div>
+                                        <div class="wallitem-message" ng-switch-when="5">
 
-                                            <div class="body">
-                                                <span class="label label-lg label-pink arrowed lenta-item-hashtag">Парадная</span>
-
-                                                <div class="name">
-                                                    <a href="#">Alexa</a>
-                                                </div>
-                                                <div class="text">{{wallItem.topic.message.content}}</div>
-                                                <div class="lenta-item-bottom">
-                                                    <span>{{wallItem.topic.message.created|date}}</span>
-                                                    <a href="#">Ответить</a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-                                        <div class="dialogs">
-                                            <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
+                                            <div class="first-message clearfix">
                                                 <div class="user">
                                                     <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
                                                 </div>
 
                                                 <div class="body">
+                                                    <span class="label label-lg label-pink arrowed lenta-item-hashtag">Парадная</span>
 
                                                     <div class="name">
                                                         <a href="#">Alexa</a>
                                                     </div>
-                                                    <div class="text">{{wallMessage.content}}</div>
-
+                                                    <div class="text" data-at="{{wallItem.topic.message.type}}">{{wallItem.topic.message.content}}</div>
                                                     <div class="lenta-item-bottom">
-                                                        <span>{{wallMessage.created}}</span>
-                                                        <a href="#" ng-click="lenta.goToAnswerInput($event)">Ответить</a>
+                                                        <span>{{wallItem.topic.message.createdEdit}}</span>
+                                                        <a href="#">Ответить</a>
                                                     </div>
+
                                                 </div>
                                             </div>
 
-                                            <%--<div class="itemdiv dialogdiv">
-                                                <div class="user">
-                                                    <img alt="John's Avatar" src="i/avatars/avatar.png">
+                                            <div class="dialogs">
+                                                <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
+                                                    <div class="user">
+                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
+                                                    </div>
+
+                                                    <div class="body">
+
+                                                        <div class="name">
+                                                            <a href="#">Alexa</a>
+                                                        </div>
+                                                        <div class="text">{{wallMessage.content}}</div>
+
+                                                        <div class="lenta-item-bottom">
+                                                            <span>{{wallMessage.createdEdit}}</span>
+                                                            <a href="#" ng-click="lenta.goToAnswerInput($event,wallItem)">Ответить</a>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
-                                                <div class="body">
-
-                                                    <div class="name">
-                                                        <a href="#">John</a>
-                                                    </div>
-                                                    <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                    <div class="lenta-item-bottom">
-                                                        <span>17.02.2014 23:01</span>
-                                                        <a href="#">Ответить</a>
-                                                    </div>
-                                                </div>
                                             </div>
 
-                                            <div class="itemdiv dialogdiv">
-                                                <div class="user">
-                                                    <img alt="Bob's Avatar" src="i/avatars/user.jpg">
-                                                </div>
-
-                                                <div class="body">
-
-                                                    <div class="name">
-                                                        <a href="#">Bob</a>
-                                                        <span class="label label-info arrowed arrowed-in-right">admin</span>
-                                                    </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                    <div class="lenta-item-bottom">
-                                                        <span>17.02.2014 23:01</span>
-                                                        <a href="#">Ответить</a>
-                                                    </div>
-                                                </div>
+                                            <div class="input-group">
+                                                <%--<input placeholder="Введите сообщение..." type="text" class="form-control" name="message">--%>
+                                                <textarea name="message" class="message-textarea" ng-model="wallItem.commentText"
+                                                    onblur="if(this.value=='') this.value='Ваш ответ';"
+                                                    onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
+                                                                    <i class="icon-share-alt"></i>
+                                                                    Отправить
+                                                                </button>
+                                                            </span>
                                             </div>
-
-                                            <div class="itemdiv dialogdiv">
-                                                <div class="user">
-                                                    <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
-                                                </div>
-
-                                                <div class="body">
-
-                                                    <div class="name">
-                                                        <a href="#">Jim</a>
-                                                    </div>
-                                                    <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                    <div class="lenta-item-bottom">
-                                                        <span>17.02.2014 23:01</span>
-                                                        <a href="#">Ответить</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="itemdiv dialogdiv">
-                                                <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                </div>
-
-                                                <div class="body">
-
-                                                    <div class="name">
-                                                        <a href="#">Alexa</a>
-                                                    </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-
-                                                    <div class="lenta-item-bottom">
-                                                        <span>17.02.2014 23:01</span>
-                                                        <a href="#">Ответить</a>
-                                                    </div>
-                                                </div>
-                                            </div>--%>
                                         </div>
 
-                                        <div class="input-group">
-                                            <%--<input placeholder="Введите сообщение..." type="text" class="form-control" name="message">--%>
-                                            <textarea name="message" class="message-textarea" ng-model="wallItem.commentText"></textarea>
-                                                        <span class="input-group-btn">
-                                                            <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
-                                                                <i class="icon-share-alt"></i>
-                                                                Отправить
-                                                            </button>
-                                                        </span>
+                                        <div class="wallitem-topic" ng-switch-when="1">
+                                            <div class="talks-title">
+                                                <div class="talks-title-left load-talk">
+                                                    <div><a href="#" ng-click="wallitem.showFullTalk($event,talk)">{{wallItem.topic.subject}}</a></div>
+                                                    <div>{{wallItem.topic.messageNum}} сообщений</div>
+                                                </div>
+                                                <div class="talks-title-right">
+                                                    <div>Последнее обновление:</div>
+                                                    <div>{{wallItem.topic.lastUpdateEdit}}</div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                     </div>
 
-<%--                                    <div class="talks-title clearfix">
-                                        <div class="talks-title-left load-talk">
-                                            <div><a href="#">Проблемы в намшем доме !</a></div>
-                                            <div>74 сообщения</div>
-                                        </div>
-                                        <div class="talks-title-right">
-                                            <div>Последнее обновление:</div>
-                                            <div>18 июля 2014 23:01</div>
-                                        </div>
-                                    </div>--%>
                                 </div>
 
                             </section>
@@ -394,23 +334,14 @@
                                                onfocus="if(this.value=='Заголовок') this.value='';" ng-model="talks.subject" />
                                     </div>
                                     <div class="topic-body clearfix">
-                                        <textarea ng-model="talks.content"></textarea>
+                                        <textarea ng-model="talks.content"
+                                            onblur="if(this.value=='') this.value='Сообщение';"
+                                            onfocus="if(this.value=='Сообщение') this.value='';"></textarea>
 
                                         <div class="btn-group pull-left">
-                                            <button data-toggle="dropdown"
-                                                    class="btn btn-info btn-sm dropdown-toggle no-border">
-                                                <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
-                                            </button>
-
-                                            <ul class="dropdown-menu dropdown-yellow">
-                                                <li><a href="#">Видео</a></li>
-
-                                                <li><a href="#">Фотографию</a></li>
-
-                                                <li><a href="#">Документ</a></li>
-
-                                                <li><a href="#">Опрос</a></li>
-                                            </ul>
+                                        <button class="btn btn-sm btn-primary" ng-click="talks.addSingleTalk()">
+                                        Создать
+                                        </button>
                                         </div>
 
                                         <div class="hashtag pull-left">
@@ -428,12 +359,24 @@
                                         </div>
 
 
-
                                         <div class="btn-group pull-right">
-                                            <button class="btn btn-sm btn-primary" ng-click="talks.addSingleTalk()">
-                                                Создать
-                                            </button>
+                                        <button data-toggle="dropdown"
+                                        class="btn btn-info btn-sm dropdown-toggle no-border">
+                                        <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-yellow">
+                                        <li><a href="#">Видео</a></li>
+
+                                        <li><a href="#">Фотографию</a></li>
+
+                                        <li><a href="#">Документ</a></li>
+
+                                        <li><a href="#">Опрос</a></li>
+                                        </ul>
                                         </div>
+
+
                                     </div>
 <%--                                    <div class="widget-box wysiwig-box">
                                         <div class="widget-header widget-header-small  header-color-blue2">
@@ -478,12 +421,12 @@
 
                                     <div class="talks-title" ng-repeat="talk in talks.topics" id="{{talk.id}}">
                                         <div class="talks-title-left load-talk">
-                                            <div><a href="#" ng-click="talks.showFullTalk($event,talk.id)">{{talk.subject}}</a></div>
+                                            <div><a href="#" ng-click="talks.showFullTalk($event,talk)">{{talk.subject}}</a></div>
                                             <div>{{talk.messageNum}} сообщений</div>
                                         </div>
                                         <div class="talks-title-right">
                                             <div>Последнее обновление:</div>
-                                            <div>{{talk.lastUpdate}}</div>
+                                            <div>{{talk.lastUpdateEdit}}</div>
                                         </div>
                                     </div>
 
