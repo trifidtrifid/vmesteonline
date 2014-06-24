@@ -25,6 +25,7 @@ import com.vmesteonline.be.messageservice.MessageListPart;
 import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.messageservice.TopicListPart;
+import com.vmesteonline.be.messageservice.WallItem;
 import com.vmesteonline.be.utils.Defaults;
 
 public class MessageServiceTests {
@@ -184,6 +185,22 @@ public class MessageServiceTests {
 			Assert.assertNotNull(rTopic.topics.get(0).userInfo);
 			Assert.assertEquals(Defaults.user1name, rTopic.topics.get(0).userInfo.firstName);
 			Assert.assertEquals(Defaults.user1lastName, rTopic.topics.get(0).userInfo.lastName);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+
+	}
+
+	@Test
+	public void testGetWallItems() {
+
+		try {
+			Topic tpc = createTopic();
+			List<WallItem> rTopic = msi.getWallItems(homeGroup.getId());
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(1, rTopic.size());
 
 		} catch (Exception e) {
 			e.printStackTrace();
