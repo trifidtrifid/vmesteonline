@@ -1,4 +1,4 @@
-package com.vmesteonline.be;
+/*package com.vmesteonline.be;
 
 import com.google.api.client.extensions.appengine.datastore.AppEngineDataStoreFactory;
 import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
@@ -24,9 +24,9 @@ class Utils {
 	public static String clnScrts = "{" + "\"web\": {" + "\"client_id\": \"290786477692.apps.googleusercontent.com\","
 			+ "\"client_secret\": \"IiK6TuzttYzupLD7vlAVWr5P\" " + "}" + "}";
 
-	/**
+	*//**
 	 * Global instance of the {@link DataStoreFactory}. The best practice is to make it a single globally shared instance across your application.
-	 */
+	 *//*
 	private static final AppEngineDataStoreFactory DATA_STORE_FACTORY = AppEngineDataStoreFactory.getDefaultInstance();
 
 	private static GoogleClientSecrets clientSecrets = null;
@@ -54,3 +54,4 @@ class Utils {
 		return requestUrl.build();
 	}
 }
+*/

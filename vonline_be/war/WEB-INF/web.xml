@@ -5,14 +5,14 @@
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 
-	<servlet>
+	<!-- servlet>
 		<servlet-name>oauth</servlet-name>
 		<servlet-class>com.vmesteonline.hello.OAuthServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>oauth</servlet-name>
 		<url-pattern>/oauth</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping-->
 	
 	<servlet>
 		<servlet-name>AuthSericeServlet</servlet-name>

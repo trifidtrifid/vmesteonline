@@ -49,6 +49,13 @@ struct UserTopic {
 	7: bool isread
 }
 
+struct Poll {
+	1:	i64 pollId,
+	2:	list<String> names,
+	2:	list<i32> values,
+}
+
+
 struct Topic {
 	1: i64 id,
 	2: string subject, 
@@ -63,15 +70,9 @@ struct Topic {
 	11: optional i64 communityId, //ссылка на сообщество
 	12: UserTopic usertTopic,
 	13: bedata.ShortUserInfo userInfo,
-	15: optional i32 childUnreadMsgs, 	
+	14: Poll poll, 	
 }
 
-struct RubricCounter {
-	1:	i64 rubric,
-	2:	MessageType messageType,
-	3:	i32 newTopicNum,
-	4:	i32 newMessageNum
-}
 
 struct GroupUpdates {
 	1:map<i64,RubricCounter> groupCounters 
@@ -117,7 +118,9 @@ list<WallItem> getWallItems(1:i64 groupId)	 throws (1:error.InvalidOperation exc
 * Cоздание нового или обновление старого сообщения
 **/	 
 	i64 postMessage( 1:Message msg ) throws (1:error.InvalidOperation exc),
-	  
+
+	i64 createPoll( 1:Poll poll) throws (1:error.InvalidOperation exc),
+
 	Topic createTopic(
 		1: i64 groupId, //идентификатор пользовтельской группы, в которой он размещает топик 
 		2: string subject, 
