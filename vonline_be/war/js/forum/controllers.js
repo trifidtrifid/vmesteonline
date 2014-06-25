@@ -235,10 +235,10 @@ angular.module('forum.controllers', [])
             newWallMessage.message.type = 5;
             newWallMessage.message.content = lenta.wallMessageContent;
             newWallMessage.message.id = 0;
-            newWallMessage.message.parentId = 0;
-            newWallMessage.message.topicId = 0;
-            newWallMessage.message.authorId = 0;
-            newWallMessage.subject = "1";
+            //newWallMessage.message.parentId = 0;
+            //newWallMessage.message.topicId = 0;
+            //newWallMessage.message.authorId = 0;
+            newWallMessage.subject = "";
             newWallMessage.id = 0;
             messageClient.postTopic(newWallMessage);
 
@@ -247,7 +247,7 @@ angular.module('forum.controllers', [])
             newWallMessage.message.createdEdit = getTiming(newWallMessage.message.created);
             var newWallItem = new com.vmesteonline.be.messageservice.WallItem;
             newWallItem.topic = newWallMessage;
-            newWallItem.topic.authorName = getAuthorName(newWallItem.topic.message.authorId);
+            newWallItem.topic.authorName = getAuthorName();
             newWallItem.messages = [];
             newWallItem.commentText = "Ваш ответ";
             newWallItem.answerShow = false;
@@ -841,7 +841,13 @@ function getLabel(groupsArray,groupId){
     return label;
 }
 function getAuthorName(authorId){
-    var user = userClient.getUserInfoExt(authorId);
+    var user;
+    if(authorId){
+        user = userClient.getUserInfoExt(authorId);
+    }else{
+        user = userClient.getShortUserInfo();
+    }
+
     return user.firstName+" "+user.lastName;
 }
 function getTagColor(labelName){
