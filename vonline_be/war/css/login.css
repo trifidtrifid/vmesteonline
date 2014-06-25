@@ -256,28 +256,16 @@
 .login-forum .login-container {
   width: 100%;
   max-width: 375px;
-}
-.login-forum .login-container .btn {
-  border: 2px solid #fff;
-  background-color: transparent !important;
-}
-.login-forum .login-container input {
-  border: 2px solid #fff;
-  color: #fff;
-  background-color: transparent;
-}
-.login-forum .login-container input::-webkit-input-placeholder {
-  color: #fff;
-}
-.login-forum .login-container input:-moz-placeholder {
-  color: #fff;
-}
-.login-forum .login-container i {
-  color: #fff;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0 0 15px rgba(0,0,0,0.5);
+/*input::-webkit-input-placeholder
+      color #fff
+    input:-moz-placeholder
+      color #fff*/
 }
 .login-forum .login-container .or {
   text-align: center;
-  color: #fff;
   margin: 5px 0;
   font-size: 20px;
 }
@@ -287,12 +275,10 @@
 .login-forum .login-container .tools .checkbox {
   display: inline-block;
   padding-left: 0;
-  color: #fff;
   margin: 0;
   line-height: 16px;
 }
 .login-forum .login-container .tools a {
-  color: #fff;
   font-size: 14px;
   margin-left: 10px;
   vertical-align: middle;
@@ -310,7 +296,8 @@
   background: transparent;
 }
 .login-forum .login-container .widget-box .widget-main {
-  background: transparent;
+  border-radius: 3px;
+  padding: 25px 36px;
 }
 .help-text {
   font-size: 12px;
