@@ -204,6 +204,8 @@ angular.module('forum.controllers', [])
         var lenta = this;
         lenta.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroup = lenta.selectedGroupInTop = $rootScope.currentGroup;
+        lenta.isPollShow = false;
+        lenta.pollInputs = [0,1];
 
         lenta.wallMessageContent = "Написать сообщение";
 
@@ -278,6 +280,13 @@ angular.module('forum.controllers', [])
                 var authorName = userClient.getUserInfoExt(wallMessage.authorId).firstName;
                 wallItem.commentText = authorName+", ";
             }
+
+        };
+
+        lenta.addPollInput = function(event){
+            event.preventDefault();
+
+            lenta.pollInputs.push(lenta.pollInputs.length);
 
         };
 

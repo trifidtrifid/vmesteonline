@@ -537,6 +537,23 @@ h1 {
 .message-input .hashtag {
   margin-left: 10px;
 }
+.message-input .create-poll {
+  margin-bottom: 10px;
+}
+.message-input .create-poll input {
+  width: 100%;
+  margin-bottom: 5px;
+}
+.message-input .create-poll .poll-readonly {
+  cursor: text;
+}
+.message-input .create-poll .poll-cancel {
+  font-size: 24px;
+  margin-top: -10px;
+}
+.message-input .create-poll .poll-cancel:hover {
+  text-decoration: none;
+}
 .lenta-item {
   margin-bottom: 20px;
 }
