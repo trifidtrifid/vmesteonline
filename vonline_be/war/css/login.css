@@ -236,3 +236,90 @@
   text-align: center;
   margin-top: -37px;
 }
+.login-forum {
+  background: url("../i/login-bg.jpg") top center;
+  background-size: 100% 100%;
+  padding-top: 100px;
+}
+.login-forum .login-left {
+  text-align: center;
+  color: #fff;
+  padding-top: 20px;
+}
+.login-forum .login-left h1 {
+  font-size: 28px;
+}
+.login-forum .login-left img {
+  width: 100%;
+  max-width: 400px;
+}
+.login-forum .login-container {
+  width: 100%;
+  max-width: 375px;
+}
+.login-forum .login-container .btn {
+  border: 2px solid #fff;
+  background-color: transparent !important;
+}
+.login-forum .login-container input {
+  border: 2px solid #fff;
+  color: #fff;
+  background-color: transparent;
+}
+.login-forum .login-container input::-webkit-input-placeholder {
+  color: #fff;
+}
+.login-forum .login-container input:-moz-placeholder {
+  color: #fff;
+}
+.login-forum .login-container i {
+  color: #fff;
+}
+.login-forum .login-container .or {
+  text-align: center;
+  color: #fff;
+  margin: 5px 0;
+  font-size: 20px;
+}
+.login-forum .login-container .tools {
+  margin-bottom: 15px;
+}
+.login-forum .login-container .tools .checkbox {
+  display: inline-block;
+  padding-left: 0;
+  color: #fff;
+  margin: 0;
+  line-height: 16px;
+}
+.login-forum .login-container .tools a {
+  color: #fff;
+  font-size: 14px;
+  margin-left: 10px;
+  vertical-align: middle;
+  display: inline-block;
+}
+.login-forum .login-container .tools a:hover {
+  text-decoration: none;
+}
+.login-forum .login-container .widget-box {
+  padding: 0;
+  background: transparent;
+  position: static;
+}
+.login-forum .login-container .widget-box .widget-body {
+  background: transparent;
+}
+.login-forum .login-container .widget-box .widget-main {
+  background: transparent;
+}
+.help-text {
+  font-size: 12px;
+  color: #fff;
+  text-align: center;
+}
+.help-text img {
+  display: inline-block;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 15px;
+}

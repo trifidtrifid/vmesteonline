@@ -101,7 +101,7 @@ angular.module('forum.controllers', [])
 
             authClient.logout();
 
-            document.location.replace("login.jsp");
+            document.location.replace("login.html");
 
         }
 
@@ -204,6 +204,8 @@ angular.module('forum.controllers', [])
         var lenta = this;
         lenta.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroup = lenta.selectedGroupInTop = $rootScope.currentGroup;
+        lenta.isPollShow = false;
+        lenta.pollInputs = [0,1];
 
         lenta.wallMessageContent = "Написать сообщение";
 
@@ -236,6 +238,7 @@ angular.module('forum.controllers', [])
             newWallItem.messages = [];
             newWallItem.commentText = "Ваш ответ";
             newWallItem.answerShow = false;
+            newWallItem.isFocus = false;
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
                 lenta.wallItems ?
@@ -273,11 +276,21 @@ angular.module('forum.controllers', [])
             /*wallItem.answerShow ?
                 wallItem.answerShow = false :*/
                 wallItem.answerShow = true ;
+                wallItem.isFocus = true ;
 
             if(wallMessage){
                 var authorName = userClient.getUserInfoExt(wallMessage.authorId).firstName;
                 wallItem.commentText = authorName+", ";
+            }else{
+                wallItem.commentText = "";
             }
+
+        };
+
+        lenta.addPollInput = function(event){
+            event.preventDefault();
+
+            lenta.pollInputs.push(lenta.pollInputs.length);
 
         };
 
@@ -294,6 +307,7 @@ angular.module('forum.controllers', [])
 
                 lenta.wallItems[i].commentText = "Ваш ответ";
                 lenta.wallItems[i].answerShow = false;
+                lenta.wallItems[i].isFocus = false;
 
                 //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
                 lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.message.groupId);

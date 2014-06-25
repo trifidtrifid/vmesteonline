@@ -42,7 +42,7 @@
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 	} catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
-		response.sendRedirect("/login.jsp");
+		response.sendRedirect("/login.html");
 		return;
 	}
 
@@ -212,6 +212,17 @@
                                         onblur="if(this.value=='') this.value='Написать сообщение';"
                                         onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
 
+                                    <div class="create-poll" ng-show="lenta.isPollShow">
+                                        <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="lenta.isPollShow = false">&times;</a>
+                                        <h5>Тема опроса:</h5>
+                                        <input type="text"/>
+                                        <h5>Варианты ответов:</h5>
+                                        <div ng-repeat="input in lenta.pollInputs">
+                                            <input type="text"/>
+                                        </div>
+                                        <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="lenta.addPollInput($event)"/>
+                                    </div>
+
                                     <div class="message-input-bottom">
                                         <div class="btn-group attach-dropdown pull-right">
                                         <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
@@ -223,7 +234,7 @@
                                         <li><a href="#">Видео</a></li>
                                         <li><a href="#">Документ</a></li>
                                         <li><a href="#">Изображение</a></li>
-                                        <li><a href="#">Опрос</a></li>
+                                        <li><a href="#" ng-click="lenta.isPollShow = true;lenta.pollInputs=[0,1]">Опрос</a></li>
                                         </ul>
                                         </div>
                                         <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
@@ -243,6 +254,8 @@
                                         </div>
 
                                     </div>
+
+
                                 </div>
 
                                 <div class="lenta">
@@ -295,7 +308,7 @@
 
                                             <div class="input-group"> <%--  ng-show="wallItem.answerShow" --%>
                                                 <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea" ng-model="wallItem.commentText"
-                                                          ng-hasfocus="wallItem.answerShow" ng-show="wallItem.answerShow"
+                                                          ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow"
                                                     onblur="if(this.value=='') this.value='Ваш ответ';"
                                                     onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
                                                     <span class="input-group-btn" ng-show="wallItem.answerShow">
