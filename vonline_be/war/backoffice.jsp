@@ -7,8 +7,14 @@
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.shop.*"%>
 <%@ page import="com.vmesteonline.be.shop.bo.*"%>
+<%@ page import="com.vmesteonline.be.shop.Shop"%>
+<%@ page import="com.vmesteonline.be.shop.UserShopRole"%>
+<%@ page import="com.vmesteonline.be.shop.ProductCategory"%>
+<%@ page import="com.vmesteonline.be.shop.Producer"%>
+<%@ page import="com.vmesteonline.be.shop.Product"%>
+<%@ page import="com.vmesteonline.be.shop.ProductListPart"%>
+<%@ page import="com.vmesteonline.be.shop.Order"%>
 
 <%
     HttpSession sess = request.getSession();

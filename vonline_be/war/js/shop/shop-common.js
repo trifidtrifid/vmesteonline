@@ -614,31 +614,39 @@ define(
                 var state;
 
                 if($(this).hasClass('back-to-shop')){
-                    $('.page').hide();
-                    $('footer').addClass('short-footer');
+                    if($('.catalog .ace-spinner').length == 0){
+                        // если мы еще не загружали главную страницу
+                        // например при заходе из basic.jsp
 
-                    shopOrders.hide();
-                    $('.shop-confirm').hide();
-                    $('.main-container-inner').show();
+                        document.location.replace("./shop.jsp");
 
-                    $('.navbar .nav li.active').removeClass('active');
-                    $('.navbar .nav li:eq(0)').addClass('active');
-                    var shopProducts = $('.shop-products');
-                    if(shopProducts.find('.shop-menu .shopmenu-back').length){
-                        // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
-                        var categoryModule = require('shop-category.min');
-                        categoryModule.InitLoadCategory(0);
+                    }else{
+
+                        $('.page').hide();
+                        $('footer').addClass('short-footer');
+
+                        shopOrders.hide();
+                        $('.shop-confirm').hide();
+                        $('.main-container-inner').show();
+
+                        $('.navbar .nav li.active').removeClass('active');
+                        $('.navbar .nav li:eq(0)').addClass('active');
+                        var shopProducts = $('.shop-products');
+                        if(shopProducts.find('.shop-menu .shopmenu-back').length){
+                            // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
+                            var categoryModule = require('shop-category.min');
+                            categoryModule.InitLoadCategory(0);
+                        }
+                        shopProducts.show(function(){
+                            setSidebarHeight();
+                        });
+                        state = {
+                            type : 'default'
+                        };
+                        window.history.pushState(state,null,'shop.jsp');
                     }
-                    shopProducts.show(function(){
-                        setSidebarHeight();
-                    });
-                    state = {
-                        type : 'default'
-                    };
-                    window.history.pushState(state,null,'shop.jsp');
-
                 }else{
-                    /* history */
+                        /* history */
                     var urlHash = document.location.hash;
                     if (urlHash != '#orders-history'){
                         state = {
@@ -680,6 +688,7 @@ define(
                         shopOrders.show();
                         setSidebarHeight();
                     }
+
                 }
             markAddedProduct();
             /*}catch(e){

@@ -45,11 +45,11 @@ public class VoTopic extends VoBaseMessage {
 
 	public Topic getTopic() {
 
-		Message msg = new Message(id.getId(), 0L, type, getId(), 0L, authorId.getId(), createdAt, editedAt, new String(content), likesNum, unlikesNum,
+		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, new String(content), likesNum, unlikesNum,
 				links, tags, null, 0, null);
 
 		return new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(),
-				null, null);
+				null, null, null);
 	}
 
 	public int getMessageNum() {

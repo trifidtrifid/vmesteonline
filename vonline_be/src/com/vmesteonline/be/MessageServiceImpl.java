@@ -39,6 +39,7 @@ import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageListPart;
 import com.vmesteonline.be.messageservice.MessageService.Iface;
 import com.vmesteonline.be.messageservice.MessageType;
+import com.vmesteonline.be.messageservice.Poll;
 import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.messageservice.TopicListPart;
 import com.vmesteonline.be.messageservice.UserMessage;
@@ -79,7 +80,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic();
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
-
+					
 					MessageListPart mlp = getMessagesAsList(tpc.id, 0, MessageType.BASE, 0, false, 10000);
 					if (mlp.totalSize > 0)
 						logger.info("find msgs " + mlp.messages.size());
@@ -116,7 +117,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			if (lastLoadedId != 0) {
 				List<VoMessage> subLst = null;
 				for (int i = 0; i < voMsgs.size() - 1; i++) {
-					if (voMsgs.get(i).getId() == lastLoadedId)
+					if (voMsgs.get(i).getId()
+							== lastLoadedId)
 						subLst = voMsgs.subList(i + 1, voMsgs.size());
 				}
 				voMsgs = (subLst == null) ? new ArrayList<VoMessage>() : subLst;
@@ -236,6 +238,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				mlp.totalSize = topics.size();
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic();
+					
 
 					VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
 					if (voUserTopic == null) {
@@ -309,11 +312,28 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
+	public Topic createTopic(long groupId, String subject, MessageType type, String content, Map<MessageType, Long> linkedMessages,
+			Map<Long, String> tags, long rubricId, long communityId) throws TException {
+
+		int now = (int) (System.currentTimeMillis() / 1000L);
+		Message msg = new Message(0, 0, type, 0, groupId, getCurrentUserId(), now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
+				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+		Topic topic = new Topic(0, subject, msg, 0, 0, 0, now, 0, 0, new UserTopic(), null, null);
+		topic.setRubricId(rubricId);
+		postTopic(topic);
+		return topic;
+	}
+
+	@Override
 	public long postTopic(Topic topic) throws InvalidOperation {
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			try {
 				if (0 == topic.getId()) {
+					int now = (int) (System.currentTimeMillis() / 1000L);
+					topic.lastUpdate = now; 
+					topic.message.created = now;
 					VoTopic votopic = new VoTopic(topic);
 					pm.makePersistent(votopic);
 					topic.setId(votopic.getId());
@@ -354,18 +374,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic(), false);
 	}
 
-	@Override
-	public Topic createTopic(long groupId, String subject, MessageType type, String content, Map<MessageType, Long> linkedMessages,
-			Map<Long, String> tags, long rubricId, long communityId) throws TException {
-
-		int now = (int) (System.currentTimeMillis() / 1000L);
-		Message msg = new Message(0, 0, type, 0, groupId, getCurrentUserId(), now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
-				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
-		Topic topic = new Topic(0, subject, msg, 0, 0, 0, now, 0, 0, new UserTopic(), null);
-		topic.setRubricId(rubricId);
-		postTopic(topic);
-		return topic;
-	}
 
 	/**
 	 * checkUpdates запрашивает наличие обновлений с момента предыдущего
@@ -495,6 +503,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
+	
+	@Override
+	public long createPoll(Poll poll) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	private static MessageListPart createMlp(List<VoMessage> lst, long userId, PersistenceManager pm, int length) throws InvalidOperation {
 
 		if (lst.size() > length)
@@ -576,12 +591,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		/* TODO Implement user notification */
 	}
 
-	@Override
-	public GroupUpdates getUpdates() throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	private void updateTopic(Topic topic) throws InvalidOperation {
 
 		PersistenceManagerFactory pmf = PMF.get();
