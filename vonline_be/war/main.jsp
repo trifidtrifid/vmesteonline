@@ -72,6 +72,7 @@
         globalUserAuth = true;
         </c:if>
     </script>
+    <script src="js/forum/angular/angular.js"></script>
 </head>
 <body ng-controller="baseController as base" ng-cloak>
 <div class="navbar navbar-default" id="navbar">
@@ -143,9 +144,9 @@
 						}
 					</script>
 					<ul class="nav nav-list">
-                        <li ng-class="{active:leftbar.isSet(1)}"><a href="#" ng-click="leftbar.setTab($event,1)"> <span class="menu-text">Новости</span> </a></li>
-                        <li ng-class="{active:leftbar.isSet(2)}"><a href="#" ng-click="leftbar.setTab($event,2)"> <span class="menu-text">Обсуждения</span> </a></li>
-                        <li ng-class="{active:leftbar.isSet(3)}"><a href="#" ng-click="leftbar.setTab($event,3)"> <span class="menu-text">Услуги и объявления</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(1)}"><a href="#" ng-click="setTab($event,1)"> <span class="menu-text">Новости</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(2)}"><a href="#" ng-click="setTab($event,2)"> <span class="menu-text">Обсуждения</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(3)}"><a href="#" ng-click="setTab($event,3)"> <span class="menu-text">Услуги и объявления</span> </a></li>
 						<%--<c:forEach var="rubric" items="${rubrics}">
 							<li><a href="#" data-rubricid="${rubric.id}"> <span
 									class="menu-text">${rubric.visibleName}</span> <b>(3)</b>
@@ -192,7 +193,7 @@
                         <div class="page-title pull-left">Новости</div>
 
                         <nav class="submenu pull-right clearfix">
-                            <button class="btn btn-sm btn-info no-border pull-right" ng-repeat="group in mainContentTop.groups"
+                            <button class="btn btn-sm btn-info no-border pull-right ng-cloak" ng-repeat="group in mainContentTop.groups"
                             id="{{group.id}}" ng-class="{active : group.selected}" ng-click="mainContentTop.selectGroup(group)">{{group.visibleName}}</button>
 
                             <%--<button class="btn btn-sm btn-info no-border pull-right all-groups-btn"
@@ -231,12 +232,12 @@
                                             <span>группа</span>
                                             <div class="btn-group hashtag-dropdown">
                                                 <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                                                    <span class="btn-group-text"># {{lenta.selectedGroup.visibleName}}</span>
+                                                    <span class="btn-group-text" ng-cloak># {{lenta.selectedGroup.visibleName}}</span>
                                                     <span class="icon-caret-down icon-on-right"></span>
                                                 </button>
 
                                                 <ul class="dropdown-menu dropdown-blue">
-                                                    <li ng-repeat="group in lenta.groups"><a href="#" ng-click="lenta.selectGroupInDropdown(group.id,lenta)"># {{group.visibleName}}</a></li>
+                                                    <li ng-repeat="group in lenta.groups"><a href="#" ng-click="lenta.selectGroupInDropdown(group.id,lenta)" ng-cloak># {{group.visibleName}}</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -256,14 +257,14 @@
                                                 </div>
 
                                                 <div class="body">
-                                                    <span class="label label-lg label-pink arrowed lenta-item-hashtag">Парадная</span>
+                                                    <span class="label label-lg label-pink arrowed lenta-item-hashtag">{{wallItem.label}}</span>
 
                                                     <div class="name">
                                                         <a href="#">Alexa</a>
                                                     </div>
-                                                    <div class="text" data-at="{{wallItem.topic.message.type}}">{{wallItem.topic.message.content}}</div>
+                                                    <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>
                                                     <div class="lenta-item-bottom">
-                                                        <span>{{wallItem.topic.message.createdEdit}}</span>
+                                                        <span ng-cloak>{{wallItem.topic.message.createdEdit}}</span>
                                                         <a href="#">Ответить</a>
                                                     </div>
 
@@ -281,10 +282,10 @@
                                                         <div class="name">
                                                             <a href="#">Alexa</a>
                                                         </div>
-                                                        <div class="text">{{wallMessage.content}}</div>
+                                                        <div class="text" ng-cloak>{{wallMessage.content}}</div>
 
                                                         <div class="lenta-item-bottom">
-                                                            <span>{{wallMessage.createdEdit}}</span>
+                                                            <span ng-cloak>{{wallMessage.createdEdit}}</span>
                                                             <a href="#" ng-click="lenta.goToAnswerInput($event,wallItem)">Ответить</a>
                                                         </div>
                                                     </div>
@@ -293,7 +294,6 @@
                                             </div>
 
                                             <div class="input-group">
-                                                <%--<input placeholder="Введите сообщение..." type="text" class="form-control" name="message">--%>
                                                 <textarea name="message" class="message-textarea" ng-model="wallItem.commentText"
                                                     onblur="if(this.value=='') this.value='Ваш ответ';"
                                                     onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
@@ -309,7 +309,7 @@
                                         <div class="wallitem-topic" ng-switch-when="1">
                                             <div class="talks-title">
                                                 <div class="talks-title-left load-talk">
-                                                    <div><a href="#" ng-click="wallitem.showFullTalk($event,talk)">{{wallItem.topic.subject}}</a></div>
+                                                    <div><a href="#" ng-click="showFullTalk($event,wallItem.topic)">{{wallItem.topic.subject}}</a></div>
                                                     <div>{{wallItem.topic.messageNum}} сообщений</div>
                                                 </div>
                                                 <div class="talks-title-right">
@@ -421,7 +421,7 @@
 
                                     <div class="talks-title" ng-repeat="talk in talks.topics" id="{{talk.id}}">
                                         <div class="talks-title-left load-talk">
-                                            <div><a href="#" ng-click="talks.showFullTalk($event,talk)">{{talk.subject}}</a></div>
+                                            <div><a href="#" ng-click="showFullTalk($event,talk)">{{talk.subject}}</a></div>
                                             <div>{{talk.messageNum}} сообщений</div>
                                         </div>
                                         <div class="talks-title-right">
@@ -937,7 +937,7 @@
 	<script src="gen-js/AuthService.js" type="text/javascript"></script>
 	<!-- -->
 
-    <script src="js/forum/angular/angular.js"></script>
+
 	<!-- собственные скрипты  -->
 	<%--<script src="js/common.js"></script>--%>
 	<%--<script src="js/forum/main.js"></script>--%>
