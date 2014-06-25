@@ -111,6 +111,7 @@ h1 {
 .sidebar-right ul li {
   border-top: 1px solid #438eb9;
   padding: 5px;
+  list-style: none;
 }
 .sidebar-right ul li:first-child {
   border-top: 0;
@@ -535,6 +536,14 @@ h1 {
 }
 .lenta-item {
   margin-bottom: 20px;
+}
+.lenta-item .wallitem-message,
+.lenta-item .wallitem-topic {
+  margin: 0 10px;
+}
+.lenta-item .wallitem-message {
+  padding-top: 10px;
+  border-top: 1px solid #5090c1;
 }
 .lenta-item .first-message {
   border: 1px solid #d7dbdd;

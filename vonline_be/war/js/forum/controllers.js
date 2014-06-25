@@ -110,12 +110,12 @@ angular.module('forum.controllers', [])
 
     $rootScope.leftbar = this;
 
-    this.tab = 1;
+    $rootScope.leftbar.tab = 1;
 
-    this.setTab = function(event,newValue){
+    $rootScope.setTab = function(event,newValue){
         event.preventDefault();
 
-        this.tab = newValue;
+        $rootScope.leftbar.tab = newValue;
         resetPages($rootScope.base);
         resetAceNavBtns($rootScope.navbar);
 
@@ -208,24 +208,13 @@ angular.module('forum.controllers', [])
         lenta.wallMessageContent = "Написать сообщение";
 
         lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
-        console.log("1 "+lenta.wallItems.length);
+        //console.log("1 "+lenta.wallItems.length);
 
         var wallItemsLength;
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
 
-        for(var i = 0; i < wallItemsLength; i++){
-            lenta.wallItems[i].commentText = "Введите сообщение";
-            if(lenta.wallItems[i].topic.message.type == 1){
-                lenta.wallItems[i].topic.lastUpdateEdit = getTiming(lenta.wallItems[i].topic.lastUpdate);
-            }else if(lenta.wallItems[i].topic.message.type == 5){
-                var mesLen = lenta.wallItems[i].messages.length;
-                for(var j = 0; j < mesLen; j++){
-                    lenta.wallItems[i].messages[j].createdEdit = getTiming(lenta.wallItems[i].messages[j].created);
-                }
-            }
-
-        }
+        initWallItem();
 
         lenta.selectGroupInDropdown = selectGroupInDropdown;
 
@@ -237,31 +226,112 @@ angular.module('forum.controllers', [])
         lenta.createWallMessage = function(event){
             event.preventDefault();
 
-            console.log(lenta.selectedGroup.id+" "+lenta.wallMessageContent);
+            //console.log(lenta.selectedGroup.id+" "+lenta.wallMessageContent);
             var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
             lenta.wallMessageContent = "Написать сообщение";
+            newWallMessage.message.createdEdit = getTiming(newWallMessage.message.created);
+            var newWallItem = new com.vmesteonline.be.messageservice.WallItem;
+            newWallItem.topic = newWallMessage;
+            newWallItem.messages = [];
+            newWallItem.commentText = "Ваш ответ";
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
-                lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
-                console.log("2 "+lenta.wallItems.length);
-            }
+                lenta.wallItems ?
+                    lenta.wallItems.unshift(newWallItem):
+                    lenta.wallItems[0] = newWallItem;
 
+                //console.log(lenta.wallItems.length);
+                /*lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
+                initWallItem();*/
+            }
         };
 
         lenta.createWallComment = function(event,wallItem){
             event.preventDefault();
 
             var newWallComment = messageClient.createMessage(wallItem.topic.id,0,lenta.selectedGroupInTop.id,5,wallItem.commentText);
-            wallItem.commentText = "Введите сообщение";
+            wallItem.commentText = "Ваш ответ";
+            newWallComment.createdEdit = getTiming(newWallComment.created);
 
             //console.log(lenta.wallItems+" "+lenta.wallItems.topic);
-            wallItem.messages.push(newWallComment);
+            if(wallItem.messages){
+                wallItem.messages.push(newWallComment);
+            }else{
+                wallItem.messages = [];
+                wallItem.messages[0] = newWallComment;
+            }
+
+
         };
+
+/*        lenta.showFullTalk = function(event,talkOutside){
+            event.preventDefault();
+            var talk = {},
+                fullTalkFirstMessagesLength;
+
+            var topicLength;
+            talk.topics ? topicLength = talk.topics.length : topicLength = 0;
+            //talk.fullTalkTopic = talkOutside;
+
+            var talkId = talkOutside.id;
+
+            talk.fullTalkTopic = talkOutside;
+            talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
+
+            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
+
+            talk.fullTalkFirstMessages ?
+                fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length:
+                fullTalkFirstMessagesLength = 0;
+            if(talk.fullTalkFirstMessages === null) talk.fullTalkFirstMessages = [];
+
+            for(var i = 0; i < fullTalkFirstMessagesLength; i++){
+                talk.fullTalkFirstMessages[i].answerInputIsShow = false;
+                talk.fullTalkFirstMessages[i].isTreeOpen = false;
+                talk.fullTalkFirstMessages[i].isLoaded = false;
+                talk.fullTalkFirstMessages[i].answerMessage = "Ваш ответ";
+                talk.fullTalkFirstMessages[i].createdEdit = getTiming(talk.fullTalkFirstMessages[i].created);
+            }
+
+            $rootScope.base.isTalkTitles = false;
+            $rootScope.base.mainContentTopIsHide = true;
+            $rootScope.base.createTopicIsHide = true;
+
+            var talksBlock = $('.talks').find('.talks-block');
+
+        };*/
 
         $rootScope.wallChangeGroup = function(groupId){
 
             lenta.wallItems = messageClient.getWallItems(groupId);
 
+            initWallItem();
+
+        };
+
+        function initWallItem(){
+            for(var i = 0; i < wallItemsLength; i++){
+
+                lenta.wallItems[i].commentText = "Ваш ответ";
+
+                //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
+                lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.message.groupId);
+
+                if(lenta.wallItems[i].topic.message.type == 1){
+                    lenta.wallItems[i].topic.lastUpdateEdit = getTiming(lenta.wallItems[i].topic.lastUpdate);
+                }else if(lenta.wallItems[i].topic.message.type == 5){
+                    lenta.wallItems[i].topic.message.createdEdit = getTiming(lenta.wallItems[i].topic.message.created);
+
+                    var mesLen;
+                    lenta.wallItems[i].messages ?
+                        mesLen = lenta.wallItems[i].messages.length:
+                        mesLen = 0;
+
+                    for(var j = 0; j < mesLen; j++){
+                        lenta.wallItems[i].messages[j].createdEdit = getTiming(lenta.wallItems[i].messages[j].created);
+                    }
+                }
+            }
         }
 
     })
@@ -300,7 +370,7 @@ angular.module('forum.controllers', [])
         talk.isTalksLoaded = false;
         talk.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
 
-        talk.content = "Напишите что-нибудь";
+        talk.content = "Сообщение";
         talk.subject = "Заголовок";
 
         talk.fullTalkTopic = {};
@@ -317,17 +387,14 @@ angular.module('forum.controllers', [])
         talk.selectedGroup = talk.groups[0];
         talk.topics = messageClient.getTopics(talk.selectedGroup.id,0,0,0,1000).topics;
 
-        var topicLength;
-        talk.topics ? topicLength = talk.topics.length : topicLength = 0;
-
-        for(var i = 0; i < topicLength;i++){
-            talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
-        }
+        initTalks();
 
         if(!talk.topics) talk.topics = [];
 
-        talk.showFullTalk = function(event,talkOutside){
-            event.preventDefault();
+        $rootScope.showFullTalk = function(event,talkOutside){
+            //event.preventDefault();
+
+            $rootScope.setTab(event,2);
 
             var topicLength;
             talk.topics ? topicLength = talk.topics.length : topicLength = 0;
@@ -487,7 +554,7 @@ angular.module('forum.controllers', [])
                 talk.fullTalkMessages.push(newMessage):
                 talk.fullTalkMessages[0] = newMessage;*/
 
-            talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,10).messages;
+            talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,1000).messages;
 
             talk.fullTalkMessages[firstMessage.id] ?
                 fullTalkMessagesLength = talk.fullTalkMessages[firstMessage.id].length :
@@ -612,9 +679,19 @@ angular.module('forum.controllers', [])
         $rootScope.talksChangeGroup = function(groupId){
 
             talk.topics = messageClient.getTopics(groupId,0,0,0,1000).topics;
-            console.log("topics "+talk.topics.length);
+
+            initTalks();
 
         };
+
+        function initTalks(){
+            var topicLength;
+            talk.topics ? topicLength = talk.topics.length : topicLength = 0;
+
+            for(var i = 0; i < topicLength;i++){
+                talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
+            }
+        }
 
     })
     .controller('ServicesController',function() {
@@ -626,11 +703,6 @@ angular.module('forum.controllers', [])
     .controller('ProfileController',function() {
     });
 
-
-var minute = 60*1000,
-    hour = minute*60,
-    day = hour*24,
-    threeDays = day*3;
 
 /* functions */
 
@@ -683,9 +755,13 @@ function selectGroupInDropdown(groupId,objCtrl){
     }
 }
 function getTiming(messageObjDate){
-    var now = Date.parse(new Date());
-
-    var timing = (now - messageObjDate*1000);
+    var minute = 60*1000,
+        hour = minute*60,
+        day = hour*24,
+        threeDays = day* 3,
+        now = Date.parse(new Date()),
+        timing = (now - messageObjDate*1000),
+        timeTemp;
 
     if(timing < minute){
         timing = "только что";
@@ -694,13 +770,42 @@ function getTiming(messageObjDate){
         timing = timing.getMinutes()+" мин назад";
     }else if(timing < day){
         timing = new Date(timing);
-        timing = timing.getHours()+" часов назад";
+        timeTemp = timing.getHours();
+        if(timeTemp == 1 || timeTemp == 0){
+            timing = "1 час назад";
+        }else if(timeTemp > 1 && timeTemp < 5){
+            timing = timeTemp + " часа назад";
+        }else{
+            timing = timeTemp + " часов назад";
+        }
     }else if(timing < threeDays){
         timing = new Date(timing);
-        timing = timing.getDate()+" дней назад";
+        timeTemp = timing.getDate();
+        if(timeTemp == 1){
+            timing = timeTemp+" день назад";
+        }else{
+            timing = timeTemp+" дней назад";
+        }
     }else{
-        timing = new Date(messageObjDate*1000);
+        timeTemp = new Date(messageObjDate*1000).toLocaleDateString();
+        var arr = timeTemp.split('.');
+        if(arr[0].length == 1) arr[0] = "0"+arr[0];
+        if(arr[1].length == 1) arr[1] = "0"+arr[1];
+        timing = arr[0]+"."+arr[1]+"."+arr[2];
     }
 
     return timing;
+}
+
+function getLabel(groupsArray,groupId){
+    var groupsArrayLen = groupsArray.length;
+    var label="";
+    for(var i = 0; i < groupsArrayLen; i++){
+        console.log(groupsArray[i].id+" "+groupId);
+        if(groupsArray[i].id == groupId){
+            label = groupsArray[i].visibleName;
+        }
+    }
+
+    return label;
 }

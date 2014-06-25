@@ -70,7 +70,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				pm.retrieve(user);
 				VoUserGroup group = user.getGroupById(groupId);
 				// todo add last loaded and length
-				List<VoTopic> topics = getTopics(group, MessageType.WALL, 0, 10, pm);
+				List<VoTopic> topics = getTopics(group, MessageType.WALL, 0, 10000, pm);
 
 				if (topics.isEmpty()) {
 					logger.fine("can't find any topics");
@@ -188,7 +188,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				+ " and longitude >= " + VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
 				+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
 				+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() + " and radius >= " + group.getRadius()
-				+ " order by createTime";
+				+ " order by createTime desc";
 		List<VoTopic> topics = new ArrayList<VoTopic>();
 		try {
 			ResultSet rs = con.executeQuery(req);
