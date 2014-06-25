@@ -235,6 +235,7 @@ angular.module('forum.controllers', [])
             newWallMessage.message.type = 5;
             newWallMessage.message.content = lenta.wallMessageContent;
             newWallMessage.message.id = 0;
+            newWallMessage.message.created = Date.parse(new Date());
             //newWallMessage.message.parentId = 0;
             //newWallMessage.message.topicId = 0;
             //newWallMessage.message.authorId = 0;
