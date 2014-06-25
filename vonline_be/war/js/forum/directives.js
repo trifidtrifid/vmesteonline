@@ -14,7 +14,8 @@ angular.module('forum.directives', []).
             });
 
             element.bind('blur', function() {
-                //scope.$apply(attrs.ngHasfocus + " = false");
+                scope.wallItem.isFocus = false;
+                scope.$apply(attrs.ngHasfocus + " = false");
                 //scope.$apply(attrs.ngShow + " = false");
             });
 

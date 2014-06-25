@@ -308,7 +308,7 @@
 
                                             <div class="input-group"> <%--  ng-show="wallItem.answerShow" --%>
                                                 <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea" ng-model="wallItem.commentText"
-                                                          ng-hasfocus="wallItem.answerShow" ng-show="wallItem.answerShow"
+                                                          ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow"
                                                     onblur="if(this.value=='') this.value='Ваш ответ';"
                                                     onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
                                                     <span class="input-group-btn" ng-show="wallItem.answerShow">
