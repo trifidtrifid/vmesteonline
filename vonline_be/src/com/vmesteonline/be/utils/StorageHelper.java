@@ -9,9 +9,12 @@ import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.util.Map;
+
+
 
 
 
@@ -95,10 +98,21 @@ public class StorageHelper {
 				fname = url.getFile();
 
 			} catch (MalformedURLException e) {
-				is = new ByteArrayInputStream(urlOrContent);
-				fname = (null==fileName || 0 == fileName.trim().length()) ? 
+				String contentString = new String(urlOrContent);
+				String[] split = contentString.split("[():;,]");
+				if( split.length >= 5 && split[0].equalsIgnoreCase("URL") && split[1].equalsIgnoreCase("data")){
+					if( split[3].equals("base64")){
+						is = new ByteArrayInputStream( Base64.decode(split[4]));
+						contentType = split[2];
+					} 
+				}
+				if( null == is )
+					is = new ByteArrayInputStream(urlOrContent);
+				
+				fname = ( null==fileName || 0 == fileName.trim().length()) ? 
 						numberToString((long) (Math.random() * Long.MAX_VALUE)) : 
-							URLEncoder.encode(fileName,"UTF-8");
+							URLEncoder.encode (fileName, "UTF-8");
+				
 			}
 
 			return saveImage(fname, contentType, ownerId, isPublic, is, _pm);
@@ -120,6 +134,9 @@ public class StorageHelper {
 	// ===================================================================================================================
 
 	public static String replaceImage(String urlOrContent, String oldURL, long userId, Boolean isPublic, PersistenceManager _pm) throws IOException {
+		
+		if(  urlOrContent.equals( oldURL ) ) return oldURL;
+		
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
 		try {
 			if( null != oldURL ){
