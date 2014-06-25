@@ -42,7 +42,7 @@
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 	} catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
-		response.sendRedirect("/login.jsp");
+		response.sendRedirect("/login.html");
 		return;
 	}
 

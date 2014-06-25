@@ -101,7 +101,7 @@ angular.module('forum.controllers', [])
 
             authClient.logout();
 
-            document.location.replace("login.jsp");
+            document.location.replace("login.html");
 
         }
 
