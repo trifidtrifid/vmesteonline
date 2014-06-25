@@ -27,6 +27,9 @@ h1 {
 .navbar-container {
   text-align: center;
 }
+.navbar-container .navbar-brand img {
+  width: 170px;
+}
 .form-search {
   display: inline-block;
   width: 40%;

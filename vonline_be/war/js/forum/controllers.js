@@ -232,8 +232,10 @@ angular.module('forum.controllers', [])
             newWallMessage.message.createdEdit = getTiming(newWallMessage.message.created);
             var newWallItem = new com.vmesteonline.be.messageservice.WallItem;
             newWallItem.topic = newWallMessage;
+            newWallItem.topic.authorName = getAuthorName(newWallItem.topic.message.authorId);
             newWallItem.messages = [];
             newWallItem.commentText = "Ваш ответ";
+            newWallItem.answerShow = false;
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
                 lenta.wallItems ?
@@ -252,6 +254,7 @@ angular.module('forum.controllers', [])
             var newWallComment = messageClient.createMessage(wallItem.topic.id,0,lenta.selectedGroupInTop.id,5,wallItem.commentText);
             wallItem.commentText = "Ваш ответ";
             newWallComment.createdEdit = getTiming(newWallComment.created);
+            newWallComment.authorName = getAuthorName(newWallComment.authorId);
 
             //console.log(lenta.wallItems+" "+lenta.wallItems.topic);
             if(wallItem.messages){
@@ -264,42 +267,19 @@ angular.module('forum.controllers', [])
 
         };
 
-/*        lenta.showFullTalk = function(event,talkOutside){
+        lenta.showAnswerInput = function(event,wallItem,wallMessage){
             event.preventDefault();
-            var talk = {},
-                fullTalkFirstMessagesLength;
 
-            var topicLength;
-            talk.topics ? topicLength = talk.topics.length : topicLength = 0;
-            //talk.fullTalkTopic = talkOutside;
+            /*wallItem.answerShow ?
+                wallItem.answerShow = false :*/
+                wallItem.answerShow = true ;
 
-            var talkId = talkOutside.id;
-
-            talk.fullTalkTopic = talkOutside;
-            talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
-
-            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
-
-            talk.fullTalkFirstMessages ?
-                fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length:
-                fullTalkFirstMessagesLength = 0;
-            if(talk.fullTalkFirstMessages === null) talk.fullTalkFirstMessages = [];
-
-            for(var i = 0; i < fullTalkFirstMessagesLength; i++){
-                talk.fullTalkFirstMessages[i].answerInputIsShow = false;
-                talk.fullTalkFirstMessages[i].isTreeOpen = false;
-                talk.fullTalkFirstMessages[i].isLoaded = false;
-                talk.fullTalkFirstMessages[i].answerMessage = "Ваш ответ";
-                talk.fullTalkFirstMessages[i].createdEdit = getTiming(talk.fullTalkFirstMessages[i].created);
+            if(wallMessage){
+                var authorName = userClient.getUserInfoExt(wallMessage.authorId).firstName;
+                wallItem.commentText = authorName+", ";
             }
 
-            $rootScope.base.isTalkTitles = false;
-            $rootScope.base.mainContentTopIsHide = true;
-            $rootScope.base.createTopicIsHide = true;
-
-            var talksBlock = $('.talks').find('.talks-block');
-
-        };*/
+        };
 
         $rootScope.wallChangeGroup = function(groupId){
 
@@ -313,6 +293,7 @@ angular.module('forum.controllers', [])
             for(var i = 0; i < wallItemsLength; i++){
 
                 lenta.wallItems[i].commentText = "Ваш ответ";
+                lenta.wallItems[i].answerShow = false;
 
                 //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
                 lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.message.groupId);
@@ -321,6 +302,7 @@ angular.module('forum.controllers', [])
                     lenta.wallItems[i].topic.lastUpdateEdit = getTiming(lenta.wallItems[i].topic.lastUpdate);
                 }else if(lenta.wallItems[i].topic.message.type == 5){
                     lenta.wallItems[i].topic.message.createdEdit = getTiming(lenta.wallItems[i].topic.message.created);
+                    lenta.wallItems[i].topic.authorName = getAuthorName(lenta.wallItems[i].topic.message.authorId);
 
                     var mesLen;
                     lenta.wallItems[i].messages ?
@@ -329,6 +311,7 @@ angular.module('forum.controllers', [])
 
                     for(var j = 0; j < mesLen; j++){
                         lenta.wallItems[i].messages[j].createdEdit = getTiming(lenta.wallItems[i].messages[j].created);
+                        lenta.wallItems[i].messages[j].authorName = getAuthorName(lenta.wallItems[i].messages[j].authorId);
                     }
                 }
             }
@@ -808,4 +791,8 @@ function getLabel(groupsArray,groupId){
     }
 
     return label;
+}
+function getAuthorName(authorId){
+    var user = userClient.getUserInfoExt(authorId);
+    return user.firstName+" "+user.lastName;
 }

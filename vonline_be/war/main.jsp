@@ -86,7 +86,7 @@
     <div class="navbar-container" id="navbar-container" ng-controller="navbarController as navbar">
         <div class="navbar-header pull-left">
             <a href="#" class="navbar-brand">
-                <small> <i class="icon-leaf"></i> Ace Admin </small>
+                <img src="i/logo.png" alt="логотип"/>
             </a>
         </div>
 
@@ -260,12 +260,12 @@
                                                     <span class="label label-lg label-pink arrowed lenta-item-hashtag">{{wallItem.label}}</span>
 
                                                     <div class="name">
-                                                        <a href="#">Alexa</a>
+                                                        <a href="#">{{wallItem.topic.authorName}}</a>
                                                     </div>
                                                     <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>
                                                     <div class="lenta-item-bottom">
                                                         <span ng-cloak>{{wallItem.topic.message.createdEdit}}</span>
-                                                        <a href="#">Ответить</a>
+                                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)" class="a1">Комментировать</a>
                                                     </div>
 
                                                 </div>
@@ -280,29 +280,30 @@
                                                     <div class="body">
 
                                                         <div class="name">
-                                                            <a href="#">Alexa</a>
+                                                            <a href="#">{{wallMessage.authorName}}</a>
                                                         </div>
                                                         <div class="text" ng-cloak>{{wallMessage.content}}</div>
 
                                                         <div class="lenta-item-bottom">
                                                             <span ng-cloak>{{wallMessage.createdEdit}}</span>
-                                                            <a href="#" ng-click="lenta.goToAnswerInput($event,wallItem)">Ответить</a>
+                                                            <a href="#" ng-click="lenta.showAnswerInput($event,wallItem,wallMessage)">Ответить</a>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                             </div>
 
-                                            <div class="input-group">
-                                                <textarea name="message" class="message-textarea" ng-model="wallItem.commentText"
+                                            <div class="input-group"> <%--  ng-show="wallItem.answerShow" --%>
+                                                <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea" ng-model="wallItem.commentText"
+                                                          ng-hasfocus="wallItem.answerShow" ng-show="wallItem.answerShow"
                                                     onblur="if(this.value=='') this.value='Ваш ответ';"
-                                                    onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
-                                                            <span class="input-group-btn">
-                                                                <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
-                                                                    <i class="icon-share-alt"></i>
-                                                                    Отправить
-                                                                </button>
-                                                            </span>
+                                                    onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
+                                                    <span class="input-group-btn" ng-show="wallItem.answerShow">
+                                                        <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
+                                                            <i class="icon-share-alt"></i>
+                                                            Отправить
+                                                        </button>
+                                                    </span>
                                             </div>
                                         </div>
 
@@ -941,7 +942,10 @@
 	<!-- собственные скрипты  -->
 	<%--<script src="js/common.js"></script>--%>
 	<%--<script src="js/forum/main.js"></script>--%>
+<script src="js/forum/directives.js"></script>
 <script src="js/forum/controllers.js"></script>
+
+
 	<script src="js/forum/app.js"></script>
 
 </body>

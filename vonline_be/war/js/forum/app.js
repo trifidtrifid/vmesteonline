@@ -4,8 +4,8 @@
 angular.module('forum', [
  /* 'ngRoute',
   'forum.filters',
-  'forum.services',
-  'forum.directives',*/
+  'forum.services',*/
+  'forum.directives',
   'forum.controllers'
 ]);
 
