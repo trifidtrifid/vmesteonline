@@ -259,10 +259,6 @@
   box-shadow: 0 0 15px rgba(0,0,0,0.5);
   -webkit-box-shadow: 0 0 15px rgba(0,0,0,0.5);
   -moz-box-shadow: 0 0 15px rgba(0,0,0,0.5);
-/*input::-webkit-input-placeholder
-      color #fff
-    input:-moz-placeholder
-      color #fff*/
 }
 .login-forum .login-container .or {
   text-align: center;

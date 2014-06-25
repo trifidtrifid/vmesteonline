@@ -229,15 +229,20 @@ angular.module('forum.controllers', [])
             event.preventDefault();
 
             //console.log(lenta.selectedGroup.id+" "+lenta.wallMessageContent);
-            /*var topicObj = new com.vmesteonline.be.messageservice.Topic;
-            topicObj.message = new com.vmesteonline.be.messageservice.Message;
-            topicObj.message.groupId = lenta.selectedGroup.id;
-            topicObj.message.type = 5;
-            topicObj.message.content = lenta.wallMessageContent;
-            topicObj.subject = "";
-            messageClient.postTopic(topicObj);*/
+            var newWallMessage = new com.vmesteonline.be.messageservice.Topic;
+            newWallMessage.message = new com.vmesteonline.be.messageservice.Message;
+            newWallMessage.message.groupId = lenta.selectedGroup.id;
+            newWallMessage.message.type = 5;
+            newWallMessage.message.content = lenta.wallMessageContent;
+            newWallMessage.message.id = 0;
+            newWallMessage.message.parentId = 0;
+            newWallMessage.message.topicId = 0;
+            newWallMessage.message.authorId = 0;
+            newWallMessage.subject = "1";
+            newWallMessage.id = 0;
+            messageClient.postTopic(newWallMessage);
 
-            var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
+            //var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
             lenta.wallMessageContent = "Написать сообщение";
             newWallMessage.message.createdEdit = getTiming(newWallMessage.message.created);
             var newWallItem = new com.vmesteonline.be.messageservice.WallItem;
@@ -248,6 +253,7 @@ angular.module('forum.controllers', [])
             newWallItem.answerShow = false;
             newWallItem.isFocus = false;
             newWallItem.label = getLabel(lenta.groups,lenta.selectedGroup.id);
+            newWallItem.tagColor = getTagColor(newWallItem.label);
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
                 lenta.wallItems ?
@@ -318,8 +324,11 @@ angular.module('forum.controllers', [])
                 lenta.wallItems[i].answerShow = false;
                 lenta.wallItems[i].isFocus = false;
 
+
                 //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
                 lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.message.groupId);
+
+                lenta.wallItems[i].tagColor = getTagColor(lenta.wallItems[i].label);
 
                 if(lenta.wallItems[i].topic.message.type == 1){
                     lenta.wallItems[i].topic.lastUpdateEdit = getTiming(lenta.wallItems[i].topic.lastUpdate);
@@ -834,4 +843,24 @@ function getLabel(groupsArray,groupId){
 function getAuthorName(authorId){
     var user = userClient.getUserInfoExt(authorId);
     return user.firstName+" "+user.lastName;
+}
+function getTagColor(labelName){
+    var color;
+    switch(labelName){
+        case "Мой район":
+            color = 'label-pink';
+            break;
+        case "Мои соседи":
+            color = 'label-success';
+            break;
+        case "Мой дом":
+            color = 'label-yellow';
+            break;
+        case "Парадная 1":
+            color = 'label-purple';
+            break;
+        default :
+            break;
+    }
+    return color;
 }
