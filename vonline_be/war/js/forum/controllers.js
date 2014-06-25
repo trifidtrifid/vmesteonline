@@ -229,15 +229,15 @@ angular.module('forum.controllers', [])
             event.preventDefault();
 
             //console.log(lenta.selectedGroup.id+" "+lenta.wallMessageContent);
-            var topicObj = new com.vmesteonline.be.messageservice.Topic;
+            /*var topicObj = new com.vmesteonline.be.messageservice.Topic;
             topicObj.message = new com.vmesteonline.be.messageservice.Message;
             topicObj.message.groupId = lenta.selectedGroup.id;
             topicObj.message.type = 5;
             topicObj.message.content = lenta.wallMessageContent;
             topicObj.subject = "";
-            messageClient.postTopic(topicObj);
+            messageClient.postTopic(topicObj);*/
 
-            //var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
+            var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
             lenta.wallMessageContent = "Написать сообщение";
             newWallMessage.message.createdEdit = getTiming(newWallMessage.message.created);
             var newWallItem = new com.vmesteonline.be.messageservice.WallItem;
@@ -247,6 +247,7 @@ angular.module('forum.controllers', [])
             newWallItem.commentText = "Ваш ответ";
             newWallItem.answerShow = false;
             newWallItem.isFocus = false;
+            newWallItem.label = getLabel(lenta.groups,lenta.selectedGroup.id);
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
                 lenta.wallItems ?
