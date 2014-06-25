@@ -229,7 +229,15 @@ angular.module('forum.controllers', [])
             event.preventDefault();
 
             //console.log(lenta.selectedGroup.id+" "+lenta.wallMessageContent);
-            var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
+            var topicObj = new com.vmesteonline.be.messageservice.Topic;
+            topicObj.message = new com.vmesteonline.be.messageservice.Message;
+            topicObj.message.groupId = lenta.selectedGroup.id;
+            topicObj.message.type = 5;
+            topicObj.message.content = lenta.wallMessageContent;
+            topicObj.subject = "";
+            messageClient.postTopic(topicObj);
+
+            //var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
             lenta.wallMessageContent = "Написать сообщение";
             newWallMessage.message.createdEdit = getTiming(newWallMessage.message.created);
             var newWallItem = new com.vmesteonline.be.messageservice.WallItem;
@@ -740,6 +748,22 @@ function initProfile(){
         icon_remove:null
     }).on('change', function(){
             $('.logo-container>img').hide();
+            //userClient.updateUserAvatar();
+        console.log($(this).data('ace_input_files'));
+        setTimeout(saveNewAva,1000);
+
+        function saveNewAva(){
+            //console.log($('.ace-file-input').find('.file-name img').css('background-image'));
+            var imgBase64 = $('.ace-file-input').find('.file-name img').css('background-image');
+
+           /* var fd = new FormData();
+            var input = $('#profile-ava');
+            console.log(input[0].files[0]);
+            fd.append( 'data', input[0].files[0]);*/
+
+            userClient.updateUserAvatar(imgBase64);
+        }
+        //console.log($('#profile-ava').find('.file-name img').length);
         });
 
 }

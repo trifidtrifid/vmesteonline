@@ -47,7 +47,7 @@
                 <div class="user-body">
                     <div class="user-body-left pull-left">
                         <label class="block clearfix logo-container">
-                            <img src="../../i/avatars/clint.jpg" alt="логотип"/>
+                            <img src="<c:out value="${userInfo.avatar}"/>" alt="логотип"/>
                             <input type="file" id="profile-ava">
                         </label>
                         <%--<img src="../../i/avatars/avatar1.png" alt="аватарка"/>--%>
@@ -58,7 +58,7 @@
                         <div><span>День рождения:</span> <c:out value="${userInfo.birthday}"/></div>
                         <h3>Контактная информация</h3>
                         <div><span>Телефон:</span> <c:out value="${userContacts.mobilePhone}"/></div>
-                        <div><span>Email:</span> <c:out value="${userContacts.email}"/></div>                        
+                        <div><span>Email:</span> <c:out value="${userContacts.email}"/></div>
                     </div>
                 </div>
             </div>
