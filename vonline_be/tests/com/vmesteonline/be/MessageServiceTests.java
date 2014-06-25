@@ -25,6 +25,8 @@ import com.vmesteonline.be.messageservice.MessageListPart;
 import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.messageservice.TopicListPart;
+import com.vmesteonline.be.messageservice.UserMessage;
+import com.vmesteonline.be.messageservice.UserTopic;
 import com.vmesteonline.be.messageservice.WallItem;
 import com.vmesteonline.be.utils.Defaults;
 
@@ -49,8 +51,12 @@ public class MessageServiceTests {
 	String topicSubject = "Test topic";
 
 	private Topic createTopic() throws Exception {
-		return msi.createTopic(homeGroup.getId(), topicSubject, MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages,
-				noTags, topicRubric.getId(), 0L);
+
+		Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
+				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+		Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
+		msi.postTopic(topic);
+		return topic;
 	}
 
 	private Topic createTopic(long groupId) throws Exception {
@@ -89,7 +95,7 @@ public class MessageServiceTests {
 	}
 
 	@Test
-	public void testCreateTopicAndTwoReplies() {
+	public void testCreateTopticAndTwoReplies() {
 		// create locations
 		try {
 			VoUser user1 = asi.getUserByEmail(Defaults.user1email, pm);
@@ -97,8 +103,8 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
 			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic", noLinkedMessages,
+					noTags, 0L);
 
 			Assert.assertEquals(msg.getTopicId(), topic.getId());
 			Assert.assertEquals(msg.getParentId(), topic.getMessage().getId());
@@ -127,10 +133,10 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
 			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
-			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic", noLinkedMessages,
+					noTags, 0L);
+			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic", noLinkedMessages,
+					noTags, 0L);
 			TopicListPart tlp = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertEquals(2, tlp.topics.get(0).getMessageNum());
 
@@ -152,8 +158,8 @@ public class MessageServiceTests {
 					noLinkedMessages, noTags, 0L);
 			msg = msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the third message in the topic",
 					noLinkedMessages, noTags, 0L);
-			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the fourth message in the topic",
-					noLinkedMessages, noTags, 0L);
+			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the fourth message in the topic", noLinkedMessages,
+					noTags, 0L);
 
 			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
 			Assert.assertNotNull(mlp);
@@ -255,10 +261,10 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Message msg = msi.createMessage(topic.getId(), 0, user1homeGroupId, MessageType.BASE, "Content of the first message in the topic",
 					noLinkedMessages, noTags, 0L);
-			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2homeGroupId, MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
-			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2homeGroupId, MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
+			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
 			Message msg3 = msi.createMessage(topic.getId(), 0, user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
 					noLinkedMessages, noTags, 0L);
 

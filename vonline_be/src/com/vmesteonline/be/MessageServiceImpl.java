@@ -334,6 +334,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					int now = (int) (System.currentTimeMillis() / 1000L);
 					topic.lastUpdate = now; 
 					topic.message.created = now;
+					topic.message.authorId = getCurrentUserId();
+
 					VoTopic votopic = new VoTopic(topic);
 					pm.makePersistent(votopic);
 					topic.setId(votopic.getId());
