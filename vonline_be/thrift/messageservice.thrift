@@ -51,8 +51,8 @@ struct UserTopic {
 
 struct Poll {
 	1:	i64 pollId,
-	2:	list<String> names,
-	2:	list<i32> values,
+	2:	list<string> names,
+	3:	list<i32> values
 }
 
 
@@ -73,10 +73,6 @@ struct Topic {
 	14: Poll poll, 	
 }
 
-
-struct GroupUpdates {
-	1:map<i64,RubricCounter> groupCounters 
-}
 
 struct TopicListPart {
 	1:list<Topic> topics,
@@ -139,7 +135,6 @@ list<WallItem> getWallItems(1:i64 groupId)	 throws (1:error.InvalidOperation exc
 	 * При наличии обновлений возвращается 0 
 	 **/
 	i32 checkUpdates( 1:i32 lastResposeTimestamp ) throws (1:error.InvalidOperation exc),
-	GroupUpdates getUpdates() throws (1:error.InvalidOperation exc),
 
 	TopicListPart getTopics( 1:i64 groupId , 2:i64 rubricId, 3:i32 commmunityId, 4:i64 lastLoadedTopicId, 5:i32 length) throws (1:error.InvalidOperation exc),
 	/**

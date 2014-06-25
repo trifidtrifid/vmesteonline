@@ -49,7 +49,7 @@ public class VoTopic extends VoBaseMessage {
 				links, tags, null, 0, null);
 
 		return new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(),
-				null, null);
+				null, null, null);
 	}
 
 	public int getMessageNum() {
