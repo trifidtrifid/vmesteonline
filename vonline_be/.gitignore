@@ -7,7 +7,12 @@
 .project
 
 /bin
+<<<<<<< HEAD
 
 vonline_be.iml
 /WEB-INF
 .externalToolBuilders/
+=======
+/.project
+.externalToolBuilders/
+>>>>>>> master

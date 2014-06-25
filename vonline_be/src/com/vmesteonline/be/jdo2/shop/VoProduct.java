@@ -49,6 +49,19 @@ public class VoProduct {
 	// =====================================================================================================================
 	public void update(FullProductInfo newInfo, long userId, PersistenceManager _pm) throws InvalidOperation {
 		try {
+			
+			VoHelper.copyIfNotNull(this, "weight", newInfo.product.weight);
+			VoHelper.copyIfNotNull(this, "shortDescr", newInfo.product.shortDescr);
+
+			if(null!=newInfo.details.pricesMap)
+				for( Entry<PriceType, Double> pme : newInfo.details.pricesMap.entrySet())
+					this.pricesMap.put( pme.getKey().getValue(), pme.getValue());
+
+			VoHelper.copyIfNotNull(this, "producerId", newInfo.product.producerId);
+			VoHelper.copyIfNotNull(this, "minClientPack", newInfo.product.minClientPack);
+			VoHelper.copyIfNotNull(this, "minProducerPack", newInfo.details.minProducerPack);
+			VoHelper.copyIfNotNull(this, "prepackRequired", newInfo.product.prepackRequired);
+			
 			VoHelper.copyIfNotNull(this, "name", newInfo.product.name);
 			VoHelper.copyIfNotNull(this, "shortDescr",newInfo.product.shortDescr);
 			VoHelper.copyIfNotNull(this, "weight",newInfo.product.weight);
@@ -62,6 +75,7 @@ public class VoProduct {
 			}
 			VoHelper.copyIfNotNull(this, "price",newInfo.product.price);
 			VoHelper.copyIfNotNull(this, "fullDescr",newInfo.details.fullDescr);
+			
 			if(null!=newInfo.details.getImagesURLset()){
 				this.imagesURLset = new ArrayList<String>();
 			
@@ -192,11 +206,11 @@ public class VoProduct {
 
 	// =====================================================================================================================
 
-	public void markDeteled(){
+	public void markDeleted(){
 		importId = -1;
 	}
 	
-	public boolean isDeteled(){
+	public boolean isDeleted(){
 		return importId == -1;
 	}
 	
@@ -550,11 +564,7 @@ public class VoProduct {
 		this.topicSet = topicSet;
 	}
 
-	public long getProducer() {
-		return producerId;
-	}
-
-	public void setProducer(Long producer) {
+	public void setProducerId(Long producer) {
 		this.producerId = producer;
 	}
 
