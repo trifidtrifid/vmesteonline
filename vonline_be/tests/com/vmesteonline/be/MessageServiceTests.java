@@ -23,6 +23,7 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageListPart;
 import com.vmesteonline.be.messageservice.MessageType;
+import com.vmesteonline.be.messageservice.Poll;
 import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.messageservice.TopicListPart;
 import com.vmesteonline.be.messageservice.UserMessage;
@@ -103,8 +104,8 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
 			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic", noLinkedMessages,
-					noTags, 0L);
+			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
 
 			Assert.assertEquals(msg.getTopicId(), topic.getId());
 			Assert.assertEquals(msg.getParentId(), topic.getMessage().getId());
@@ -133,10 +134,10 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
 			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic", noLinkedMessages,
-					noTags, 0L);
-			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic", noLinkedMessages,
-					noTags, 0L);
+			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic",
+					noLinkedMessages, noTags, 0L);
+			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
+					noLinkedMessages, noTags, 0L);
 			TopicListPart tlp = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
 			Assert.assertEquals(2, tlp.topics.get(0).getMessageNum());
 
@@ -158,8 +159,8 @@ public class MessageServiceTests {
 					noLinkedMessages, noTags, 0L);
 			msg = msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the third message in the topic",
 					noLinkedMessages, noTags, 0L);
-			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the fourth message in the topic", noLinkedMessages,
-					noTags, 0L);
+			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the fourth message in the topic",
+					noLinkedMessages, noTags, 0L);
 
 			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
 			Assert.assertNotNull(mlp);
@@ -261,10 +262,10 @@ public class MessageServiceTests {
 			Topic topic = createTopic();
 			Message msg = msi.createMessage(topic.getId(), 0, user1homeGroupId, MessageType.BASE, "Content of the first message in the topic",
 					noLinkedMessages, noTags, 0L);
-			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
-					noLinkedMessages, noTags, 0L);
-			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2homeGroupId, MessageType.BASE,
+					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
+			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2homeGroupId, MessageType.BASE,
+					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
 			Message msg3 = msi.createMessage(topic.getId(), 0, user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
 					noLinkedMessages, noTags, 0L);
 
@@ -348,6 +349,75 @@ public class MessageServiceTests {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());
 		}
+	}
+
+	@Test
+	public void testPostTopicWithPoll() {
+
+		try {
+			Poll poll = createPoll();
+
+			Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
+					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll);
+			msi.postTopic(topic);
+
+			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
+			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(1, rTopic.totalSize);
+			Assert.assertNotNull(rTopic.topics.get(0).poll);
+			Assert.assertEquals(poll.subject, rTopic.topics.get(0).poll.subject);
+			Assert.assertEquals(poll.names.get(0), rTopic.topics.get(0).poll.names.get(0));
+			Assert.assertEquals(1, rTopic.topics.get(0).poll.values.get(0).intValue());
+			Assert.assertEquals(2, rTopic.topics.get(0).poll.values.get(1).intValue());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testdoPoll() {
+
+		try {
+			Poll poll = createPoll();
+
+			Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
+					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll);
+			topic = msi.postTopic(topic);
+
+			msi.doPoll(topic.poll.pollId, 0);			
+			msi.doPoll(topic.poll.pollId, 1);			
+			msi.doPoll(topic.poll.pollId, 1);			
+			
+			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
+			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(1, rTopic.totalSize);
+			Assert.assertNotNull(rTopic.topics.get(0).poll);
+			Assert.assertEquals(poll.subject, rTopic.topics.get(0).poll.subject);
+			Assert.assertEquals(poll.names.get(0), rTopic.topics.get(0).poll.names.get(0));
+			Assert.assertEquals(2, rTopic.topics.get(0).poll.values.get(0).intValue());
+			Assert.assertEquals(4, rTopic.topics.get(0).poll.values.get(1).intValue());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+	}
+	private Poll createPoll() {
+		Poll poll = new Poll();
+		poll.subject = "test poll";
+		poll.values = new ArrayList<Integer>();
+		poll.values.add(1);
+		poll.values.add(2);
+		poll.names = new ArrayList<String>();
+		poll.names.add("first");
+		poll.names.add("second");
+		return poll;
 	}
 
 	@Test

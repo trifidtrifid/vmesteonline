@@ -45,8 +45,8 @@ public class VoTopic extends VoBaseMessage {
 
 	public Topic getTopic() {
 
-		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, new String(content), likesNum, unlikesNum,
-				links, tags, null, 0, null);
+		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, new String(content), likesNum,
+				unlikesNum, links, tags, null, 0, null);
 
 		return new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(),
 				null, null, null);
@@ -124,6 +124,14 @@ public class VoTopic extends VoBaseMessage {
 		unlikesNum += unlikesDelta;
 	}
 
+	public Long getPollId() {
+		return pollId;
+	}
+
+	public void setPollId(Long pollId) {
+		this.pollId = pollId;
+	}
+
 	@Override
 	public String toString() {
 		return "VoTopic [id=" + id + ", message=" + content.toString() + ", messageNum=" + messageNum + "]";
@@ -142,13 +150,20 @@ public class VoTopic extends VoBaseMessage {
 	private int usersNum;
 
 	@Persistent
+	@Unindexed
 	private int lastUpdate;
 
 	@Persistent
+	@Unindexed
 	private Long rubricId;
 
 	@Persistent
+	@Unindexed
 	private Long userGroupId;
+
+	@Persistent
+	@Unindexed
+	private Long pollId;
 
 	@Persistent
 	@Unindexed

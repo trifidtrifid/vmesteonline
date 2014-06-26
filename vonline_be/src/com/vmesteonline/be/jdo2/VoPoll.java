@@ -1,5 +1,7 @@
 package com.vmesteonline.be.jdo2;
 
+import java.util.List;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -7,53 +9,52 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.vmesteonline.be.messageservice.Poll;
 
 @PersistenceCapable
 public class VoPoll {
 
-	public static final int RADIUS_FOR_UNKNOWNS = 2000000; // whole world
-
-	public VoPoll(String visibleName, int radius) {
-		this(visibleName, radius, false);
+	public VoPoll(Poll poll) {
+		subject = poll.subject;
+		names = poll.names;
+		values = poll.values;
 	}
 
-	public VoPoll(String visibleName, int radius, boolean subscribedByDefault) {
-		this.visibleName = visibleName;
-		this.radius = radius;
-		this.subscribedByDefault = subscribedByDefault;
+	public Poll getPoll() {
+		Poll poll = new Poll(getId(), names, values, subject);
+		return poll;
 	}
 
-	public VoPoll clone() {
-		VoPoll gr = new VoPoll(visibleName, radius);
-		return gr;
+	public String getSubject() {
+		return subject;
 	}
 
-	public Key getId() {
-		return id;
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public List<String> getNames() {
+		return names;
+	}
+
+	public void setNames(List<String> names) {
+		this.names = names;
+	}
+
+	public List<Integer> getValues() {
+		return values;
+	}
+
+	public void setValues(List<Integer> values) {
+		this.values = values;
+	}
+
+	public long getId() {
+		return id.getId();
 	}
 
 	public void setId(Key id) {
 		this.id = id;
-	}
-
-	public String getVisibleName() {
-		return visibleName;
-	}
-
-	public void setVisibleName(String visibleName) {
-		this.visibleName = visibleName;
-	}
-
-	public int getRadius() {
-		return radius;
-	}
-
-	public void setRadius(int radius) {
-		this.radius = radius;
-	}
-
-	public boolean isHome() {
-		return radius == 0;
 	}
 
 	@PrimaryKey
@@ -62,18 +63,14 @@ public class VoPoll {
 
 	@Persistent
 	@Unindexed
-	private String visibleName;
+	private String subject;
 
 	@Persistent
-	private int radius;
+	@Unindexed
+	private List<String> names;
 
 	@Persistent
-	private boolean subscribedByDefault;
-
-	@Override
-	public String toString() {
-		return "VoGroup [id=" + id + ", visibleName=" + visibleName + ", radius=" + radius + ", subscribedByDefault=" + subscribedByDefault + "]";
-	}
-
+	@Unindexed
+	private List<Integer> values;
 
 }
