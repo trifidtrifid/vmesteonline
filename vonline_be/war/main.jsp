@@ -208,7 +208,7 @@
 						<div class="forum-wrap">
                             <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta" ng-cloak>
                                 <div class="message-input clearfix">
-                                    <textarea ng-model="lenta.wallMessageContent"
+                                    <textarea ng-model="lenta.wallMessageContent" class="no-resize"
                                         onblur="if(this.value=='') this.value='Написать сообщение';"
                                         onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
 
@@ -325,7 +325,7 @@
                                             </div>
 
                                             <div class="input-group"> <%--  ng-show="wallItem.answerShow" --%>
-                                                <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea" ng-model="wallItem.commentText"
+                                                <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallItem.commentText"
                                                           ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow"
                                                     onblur="if(this.value=='') this.value='Ваш ответ';"
                                                     onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
@@ -367,7 +367,7 @@
                                                onfocus="if(this.value=='Заголовок') this.value='';" ng-model="talks.subject" />
                                     </div>
                                     <div class="topic-body clearfix">
-                                        <textarea ng-model="talks.content"
+                                        <textarea ng-model="talks.content" class="no-resize"
                                             onblur="if(this.value=='') this.value='Сообщение';"
                                             onfocus="if(this.value=='Сообщение') this.value='';"></textarea>
 

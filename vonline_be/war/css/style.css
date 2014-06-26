@@ -524,6 +524,9 @@ h1 {
   background: #4184af !important;
   border-color: #4184af !important;
 }
+.no-resize {
+  resize: none;
+}
 .message-input {
   padding: 10px;
   margin-bottom: 20px;
