@@ -205,7 +205,17 @@ angular.module('forum.controllers', [])
         lenta.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroup = lenta.selectedGroupInTop = $rootScope.currentGroup;
         lenta.isPollShow = false;
-        lenta.pollInputs = [0,1];
+        //lenta.pollInputs = [0,1];
+        lenta.pollInputs = [
+            {
+            counter : 0,
+            name:""
+            },
+            {
+            counter : 1,
+            name:""
+            }
+        ];
 
         lenta.wallMessageContent = "Написать сообщение";
 
@@ -236,11 +246,24 @@ angular.module('forum.controllers', [])
             newWallMessage.message.content = lenta.wallMessageContent;
             newWallMessage.message.id = 0;
             newWallMessage.message.created = Date.parse(new Date());
-            //newWallMessage.message.parentId = 0;
-            //newWallMessage.message.topicId = 0;
-            //newWallMessage.message.authorId = 0;
+
             newWallMessage.subject = "";
             newWallMessage.id = 0;
+
+            var poll;
+            if(lenta.isPollShow){
+                poll = new com.vmesteonline.be.messageservice.Poll;
+                poll.id = 0;
+                poll.names = [];
+                var pollInputsLength = lenta.pollInputs.length;
+                for(var i = 0; i < pollInputsLength; i++){
+                    poll.names[i] = lenta.pollInputs[i].name;
+                }
+                newWallMessage.poll = poll;
+                //messageClient.createPoll(poll);
+                newWallMessage.metaType = "poll";
+            }
+
             messageClient.postTopic(newWallMessage);
 
             //var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
@@ -306,8 +329,39 @@ angular.module('forum.controllers', [])
         lenta.addPollInput = function(event){
             event.preventDefault();
 
-            lenta.pollInputs.push(lenta.pollInputs.length);
+            var newInput = {counter : 0, name:"" };
+            lenta.pollInputs.push(newInput);
 
+        };
+
+        lenta.showPoll = function(event){
+            event.preventDefault();
+
+            lenta.isPollShow = true;
+            lenta.pollInputs = [
+                {
+                    counter : 0,
+                    name:""
+                },
+                {
+                    counter : 1,
+                    name:""
+                }
+            ];
+        };
+
+        lenta.createPoll = function(event,poll){
+            event.preventDefault();
+            //wallItem.topic.poll.choose
+            poll.values = [];
+            var pollNamesLength = poll.names.length;
+            for(var i = 0; i < pollNamesLength; i++){
+                i == wallItem.topic.poll.choose ?
+                    poll.values[i] = 1 :
+                    poll.values[i] = 0 ;
+            }
+
+            messageClient.createPoll(poll);
         };
 
         $rootScope.wallChangeGroup = function(groupId){
@@ -324,6 +378,7 @@ angular.module('forum.controllers', [])
                 lenta.wallItems[i].commentText = "Ваш ответ";
                 lenta.wallItems[i].answerShow = false;
                 lenta.wallItems[i].isFocus = false;
+                console.log("--"+lenta.wallItems[i].topic.poll);
 
 
                 //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
@@ -332,10 +387,14 @@ angular.module('forum.controllers', [])
                 lenta.wallItems[i].tagColor = getTagColor(lenta.wallItems[i].label);
 
                 if(lenta.wallItems[i].topic.message.type == 1){
+
                     lenta.wallItems[i].topic.lastUpdateEdit = getTiming(lenta.wallItems[i].topic.lastUpdate);
+
                 }else if(lenta.wallItems[i].topic.message.type == 5){
+
                     lenta.wallItems[i].topic.message.createdEdit = getTiming(lenta.wallItems[i].topic.message.created);
                     lenta.wallItems[i].topic.authorName = getAuthorName(lenta.wallItems[i].topic.message.authorId);
+                    lenta.wallItems[i].topic.metaType = "message";
 
                     var mesLen;
                     lenta.wallItems[i].messages ?
@@ -345,6 +404,13 @@ angular.module('forum.controllers', [])
                     for(var j = 0; j < mesLen; j++){
                         lenta.wallItems[i].messages[j].createdEdit = getTiming(lenta.wallItems[i].messages[j].created);
                         lenta.wallItems[i].messages[j].authorName = getAuthorName(lenta.wallItems[i].messages[j].authorId);
+                    }
+
+
+                    if(lenta.wallItems[i].topic.poll != null){
+                        //значит это опрос
+                        lenta.wallItems[i].topic.metaType = "poll";
+                        //lenta.wallItems[i].pollNames = lenta.wallItems[i].topic.poll.names;
                     }
                 }
             }
@@ -388,6 +454,18 @@ angular.module('forum.controllers', [])
 
         talk.content = "Сообщение";
         talk.subject = "Заголовок";
+
+        talk.isPollShow = false;
+        talk.pollInputs = [
+            {
+                counter : 0,
+                name:""
+            },
+            {
+                counter : 1,
+                name:""
+            }
+        ];
 
         talk.fullTalkTopic = {};
         talk.fullTalkTopic.answerInputIsShow = false;
@@ -473,7 +551,33 @@ angular.module('forum.controllers', [])
         talk.selectGroupInDropdown = selectGroupInDropdown;
 
         talk.addSingleTalk = function(){
-            var newTopic = messageClient.createTopic(talk.selectedGroup.id,talk.subject,1,talk.content);
+            var newWallMessage = new com.vmesteonline.be.messageservice.Topic;
+            newWallMessage.message = new com.vmesteonline.be.messageservice.Message;
+            newWallMessage.message.groupId = talk.selectedGroup.id;
+            newWallMessage.message.type = 5;
+            newWallMessage.message.content = talk.wallMessageContent;
+            newWallMessage.message.id = 0;
+            newWallMessage.message.created = Date.parse(new Date());
+
+            newWallMessage.subject = "";
+            newWallMessage.id = 0;
+
+            var poll;
+            if(talk.isPollShow){
+                poll = new com.vmesteonline.be.messageservice.Poll;
+                poll.id = 0;
+                poll.names = [];
+                var pollInputsLength = talk.pollInputs.length;
+                for(var i = 0; i < pollInputsLength; i++){
+                    poll.names[i] = talk.pollInputs[i].name;
+                }
+                newWallMessage.poll = poll;
+                newWallMessage.metaType = "poll";
+            }
+
+            messageClient.postTopic(newWallMessage);
+
+            //var newTopic = messageClient.createTopic(talk.selectedGroup.id,talk.subject,1,talk.content);
 
             $rootScope.base.createTopicIsHide = true;
 
@@ -760,7 +864,7 @@ function initProfile(){
     }).on('change', function(){
             $('.logo-container>img').hide();
             //userClient.updateUserAvatar();
-        console.log($(this).data('ace_input_files'));
+
         setTimeout(saveNewAva,1000);
 
         function saveNewAva(){
@@ -833,7 +937,7 @@ function getLabel(groupsArray,groupId){
     var groupsArrayLen = groupsArray.length;
     var label="";
     for(var i = 0; i < groupsArrayLen; i++){
-        console.log(groupsArray[i].id+" "+groupId);
+
         if(groupsArray[i].id == groupId){
             label = groupsArray[i].visibleName;
         }
