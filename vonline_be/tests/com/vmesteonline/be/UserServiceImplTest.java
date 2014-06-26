@@ -8,11 +8,10 @@ import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 
-import junit.framework.Assert;
-
 import org.apache.thrift.TException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assert;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -22,9 +21,8 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.VoHelper;
 
-public class UserServiceImplTest extends UserServiceImpl {
+public class UserServiceImplTest extends TestWorkAround {
 
-	private static final String SESSION_ID = "11111111111111111111111";
 	private static final String COMMENT = "Комент";
 	private static final String BUILDING_NO = "31";
 	private static final String STREET = "шоссе Революции";
@@ -32,12 +30,8 @@ public class UserServiceImplTest extends UserServiceImpl {
 	private static final String CITY = "Saint-Petersburg";
 	private static final String COUNTRY = "Russia";
 
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
-
-	private AuthServiceImpl asi;
 	private String userHomeLocation;
 	private long userId;
-	private UserServiceImpl usi;
 	Country newCountry;
 	City newCity;
 	Street newStreet;
@@ -47,13 +41,9 @@ public class UserServiceImplTest extends UserServiceImpl {
 	@Before
 	public void setUp() throws Exception {
 
-		helper.setUp();
-		Assert.assertTrue(Defaults.initDefaultData());
+		Assert.assertTrue(init());
 		// register and login current user
 		// Initialize USer Service
-		sessionStorage = new SessionIdStorage(SESSION_ID);
-		asi = new AuthServiceImpl(SESSION_ID);
-		usi = new UserServiceImpl(SESSION_ID);
 
 		List<String> userLocation = UserServiceImpl.getLocationCodesForRegistration();
 		Assert.assertNotNull(userLocation);
@@ -196,11 +186,11 @@ public class UserServiceImplTest extends UserServiceImpl {
 			try {
 
 				asi.login(Defaults.user1email, Defaults.user1pass);
-				VoUser uA = getCurrentUser(pmA);
+				VoUser uA = asi.getCurrentUser(pmA);
 				List<VoUserGroup> voUserGroupsA = uA.getGroups();
 
 				asi.login(Defaults.user3email, Defaults.user3pass);
-				VoUser uB = getCurrentUser(pmB);
+				VoUser uB = asi.getCurrentUser(pmB);
 				List<VoUserGroup> voUserGroupsB = uB.getGroups();
 
 				Assert.assertEquals(5, voUserGroupsB.size());
@@ -218,8 +208,10 @@ public class UserServiceImplTest extends UserServiceImpl {
 				Assert.assertEquals(5000, voUserGroupsA.get(4).getRadius());
 
 				/*
-				 * Assert.assertEquals(voUserGroupsA.get(0).getLongitude(), new BigDecimal("59.9331461"));
-				 * Assert.assertEquals(voUserGroupsB.get(0).getLongitude(), new BigDecimal("59.9331462"));
+				 * Assert.assertEquals(voUserGroupsA.get(0).getLongitude(), new
+				 * BigDecimal("59.9331461"));
+				 * Assert.assertEquals(voUserGroupsB.get(0).getLongitude(), new
+				 * BigDecimal("59.9331462"));
 				 */System.out.print("max = " + VoHelper.getLongitudeMax(voUserGroupsA.get(0).getLongitude(), 200).toPlainString() + " origin = "
 						+ voUserGroupsA.get(0).getLongitude() + "\n");
 				System.out.print("lat max = " + VoHelper.getLatitudeMax(voUserGroupsA.get(0).getLatitude(), 200).toPlainString() + " origin = "
@@ -462,7 +454,7 @@ public class UserServiceImplTest extends UserServiceImpl {
 			Assert.assertEquals(2, userAddresses.size());
 
 			usi.deleteUserAddress(newAddress1);
-			
+
 			userAddresses = usi.getUserAddresses();
 			Assert.assertEquals(1, userAddresses.size());
 
@@ -505,20 +497,32 @@ public class UserServiceImplTest extends UserServiceImpl {
 			fail("Exception " + e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testsetGetUserInfoExt() {
 		try {
-			
+
 			UserInfo userInfoExt = usi.getUserInfoExt(userId);
 			Assert.assertEquals(userInfoExt.firstName, "fn");
 			Assert.assertEquals(userInfoExt.lastName, "ln");
-			
-			
+
 			// Assert.assertTrue(userHomeAddress.equals(newAddress));
 		} catch (InvalidOperation e) {
 			e.printStackTrace();
 			fail("Exception " + e.getMessage());
 		}
 	}
+
+	@Test
+	public void testGetNeighbors() {
+		try {
+			asi.login(Defaults.user1email, Defaults.user1pass);
+			List<ShortUserInfo> user = usi.getNeighbors(getUserGroupId(Defaults.user1email, Defaults.radiusHome));
+			Assert.assertEquals(3, user.size());
+		} catch (InvalidOperation e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		}
+	}
+
 }

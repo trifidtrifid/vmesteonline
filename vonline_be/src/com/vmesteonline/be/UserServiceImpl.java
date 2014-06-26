@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -152,10 +151,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 
 			PersistenceManager pm = PMF.getPm();
-			
+
 			try {
 				long userId = getCurrentUserId(pm);
-				
+
 				VoUser user;
 				try {
 					user = pm.getObjectById(VoUser.class, userId);
@@ -247,9 +246,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoUser currentUser = getCurrentUser(pm);
 
 			List<String> addresses = currentUser.getAddresses();
-			
-			for(String addrName : addresses) {
-				if( currentUser.getDeliveryAddress(addrName).equals(addr) ){
+
+			for (String addrName : addresses) {
+				if (currentUser.getDeliveryAddress(addrName).equals(addr)) {
 					currentUser.removeDeliveryAddress(addrName);
 				}
 			}
@@ -282,6 +281,26 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
+	public List<ShortUserInfo> getNeighbors(long groupId) throws InvalidOperation {
+
+		PersistenceManager pm = PMF.getPm();
+		List<ShortUserInfo> lsp = new ArrayList<ShortUserInfo>();
+		try {
+			VoUser user = getCurrentUser(pm);
+			List<VoUser> users = user.getAddress().getBuilding().getUsers();
+			for (VoUser voUser : users) {
+				lsp.add(voUser.getShortUserInfo());
+			}
+			return lsp;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "can't find neighbors. e: " + e.getMessage());
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
 	public UserContacts getUserContacts() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -299,7 +318,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
-	
+
 	@Override
 	public UserContacts getUserContactsExt(long userId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -314,9 +333,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			uc.setEmail(u.getEmail());
 			uc.setMobilePhone(u.getMobilePhone());
 			return uc;
-		} catch (JDOObjectNotFoundException ioe){ 
+		} catch (JDOObjectNotFoundException ioe) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Access denied");
-			
+
 		} finally {
 			pm.close();
 		}
@@ -333,13 +352,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
-	
+
 	@Override
 	public UserInfo getUserInfoExt(long userId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			return pm.getObjectById(VoUser.class, userId).getUserInfo();
-		} catch( JDOObjectNotFoundException onfe){
+		} catch (JDOObjectNotFoundException onfe) {
 			throw new InvalidOperation(VoError.NotAuthorized, "No access to user Info");
 		} finally {
 			pm.close();
@@ -431,11 +450,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			String topicAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
 
 			resize = ImagesServiceFactory.makeResize(40, 40);
-			String shortProfileAvatarUrl = StorageHelper
-					.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
+			String shortProfileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(),
+					true, pm);
 
 			resize = ImagesServiceFactory.makeResize(200, 200);
-			String profileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
+			String profileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true,
+					pm);
 
 			voUser.setAvatarTopic(topicAvatarUrl);
 			voUser.setAvatarMessage(topicAvatarUrl);
@@ -468,7 +488,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			for (VoCity voc : vocis) {
 				cil.add(voc.getCity());
 			}
-		
+
 			Extent<VoStreet> voss = pm.getExtent(VoStreet.class);
 			List<Street> sl = new ArrayList<Street>();
 			for (VoStreet voc : voss) {
@@ -511,7 +531,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no country with the same name
-			VoCountry vc = new VoCountry(name,pm);
+			VoCountry vc = new VoCountry(name, pm);
 			Query q = pm.newQuery(VoCountry.class);
 			q.setFilter("name == '" + name + "'");
 			List<VoCountry> countries = (List<VoCountry>) q.execute();
@@ -553,8 +573,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			// TODO check that there is no street with the same name
 			VoCity vc = pm.getObjectById(VoCity.class, cityId);
-			return new VoStreet(vc, name,pm).getStreet();
-		
+			return new VoStreet(vc, name, pm).getStreet();
+
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewStreet. " + e.getMessage());
@@ -607,7 +627,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			pm.retrieve(currentUser);
-			currentUser.addDeliveryAddress(new VoPostalAddress(newAddress, pm),null);
+			currentUser.addDeliveryAddress(new VoPostalAddress(newAddress, pm), null);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

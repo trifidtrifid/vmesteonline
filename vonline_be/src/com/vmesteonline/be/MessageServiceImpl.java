@@ -80,6 +80,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				}
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic();
+					if (voTopic.getPollId() != 0) {
+						VoPoll voPoll = pm.getObjectById(VoPoll.class, voTopic.getPollId());
+						tpc.poll = voPoll.getPoll();
+					}
+
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
 
 					MessageListPart mlp = getMessagesAsList(tpc.id, 0, MessageType.BASE, 0, false, 10000);
