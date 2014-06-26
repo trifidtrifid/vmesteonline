@@ -218,7 +218,7 @@
                                         <input type="text"/>
                                         <h5>Варианты ответов:</h5>
                                         <div ng-repeat="input in lenta.pollInputs">
-                                            <input type="text"/>
+                                            <input ng-model="input.name" type="text"/>
                                         </div>
                                         <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="lenta.addPollInput($event)"/>
                                     </div>
@@ -234,7 +234,7 @@
                                         <li><a href="#">Видео</a></li>
                                         <li><a href="#">Документ</a></li>
                                         <li><a href="#">Изображение</a></li>
-                                        <li><a href="#" ng-click="lenta.isPollShow = true;lenta.pollInputs=[0,1]">Опрос</a></li>
+                                        <li><a href="#" ng-click="lenta.showPoll($event)">Опрос</a></li>
                                         </ul>
                                         </div>
                                         <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
@@ -264,19 +264,36 @@
 
                                         <div class="wallitem-message" ng-switch-when="5">
 
-                                            <div class="first-message clearfix">
+                                            <div class="first-message clearfix" >
                                                 <div class="user">
                                                     <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
                                                 </div>
 
-                                                <div class="body">
+                                                <div class="body" ng-switch on="wallItem.topic.metaType">
                                                     <span class="label label-lg arrowed lenta-item-hashtag"
                                                             ng-class="wallItem.tagColor">{{wallItem.label}}</span>
 
                                                     <div class="name">
                                                         <a href="#">{{wallItem.topic.authorName}}</a>
                                                     </div>
-                                                    <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>
+
+                                                    <div class="text" ng-switch-when="message" ng-cloak>{{wallItem.topic.message.content}}</div>
+
+                                                    <div class="poll" ng-switch-when="poll" ng-cloak>
+
+                                                        <%--<h5>{{wallItem.topic.poll.subject}}</h5>--%>
+
+                                                        <div class="radio" ng-repeat="variant in wallItem.topic.poll.names">
+                                                            <label>
+                                                                <input name="poll-variant" ng-model="wallItem.topic.poll.choose" value="$index" type="radio" class="ace">
+                                                                <span class="lbl">{{variant}}</span>
+                                                            </label>
+                                                        </div>
+
+                                                        <button class="btn btn-sm btn-primary no-border" ng-click="lenta.createPoll($event,wallItem.topic.poll)">Голосовать</button>
+
+                                                    </div>
+
                                                     <div class="lenta-item-bottom">
                                                         <span ng-cloak>{{wallItem.topic.message.createdEdit}}</span>
                                                         <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)" class="a1">Комментировать</a>
@@ -320,6 +337,7 @@
                                                     </span>
                                             </div>
                                         </div>
+
 
                                         <div class="wallitem-topic" ng-switch-when="1">
                                             <div class="talks-title">
