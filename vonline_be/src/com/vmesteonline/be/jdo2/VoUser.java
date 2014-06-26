@@ -40,7 +40,7 @@ public class VoUser extends GeoLocation {
 		this.likesNum = 0;
 		this.unlikesNum = 0;
 		this.rubrics = new ArrayList<VoRubric>();
-		this.deliveryAddresses = new HashMap<String,VoPostalAddress>();
+		this.deliveryAddresses = new HashMap<String, VoPostalAddress>();
 		this.confirmCode = 0;
 		this.emailConfirmed = false;
 		this.avatarMessage = Defaults.defaultAvatarTopicUrl;
@@ -151,10 +151,10 @@ public class VoUser extends GeoLocation {
 		this.confirmCode = confirmCode;
 	}
 
-	public VoPostalAddress getDeliveryAddress( String key ) {
-		return deliveryAddresses!=null ? deliveryAddresses.get(key) : null;
+	public VoPostalAddress getDeliveryAddress(String key) {
+		return deliveryAddresses != null ? deliveryAddresses.get(key) : null;
 	}
-	
+
 	public void setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
 		Key addressKey = VoPostalAddress.getKeyValue(locCode);
 		try {
@@ -166,37 +166,37 @@ public class VoUser extends GeoLocation {
 	}
 
 	/**
-	 * MEthod set current postal address of the user and register user in the building
+	 * MEthod set current postal address of the user and register user in the
+	 * building
 	 * 
 	 * @param userAddress
-	 *          newUSer postal address
+	 *            newUSer postal address
 	 * @param pm
-	 *          - PersistenceManager to manage the objects
+	 *            - PersistenceManager to manage the objects
 	 */
 
 	// TODO should test removing
 	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) {
-		
-		//remove user from old group
+
+		// remove user from old group
 		if (null != this.getAddress()) { // location already set, so user should
-																			// be removed first
+											// be removed first
 			VoBuilding oldBuilding = this.address.getBuilding();
 			if (null != oldBuilding)
 				oldBuilding.removeUser(this);
 		}
-		
+
 		// building from new address
 		VoBuilding building = userAddress.getBuilding();
-		if (null != building)
-			building.addUser(this);
-		else 
+		if (null == building)
 			throw new RuntimeException("Incorrect address");
-		
-		//check if location is set
-		if( null == building.getLatitude() || 0 == building.getLatitude().intValue() ){
+
+		building.addUser(this);
+
+		// check if location is set
+		if (null == building.getLatitude() || 0 == building.getLatitude().intValue()) {
 			try {
 				VoGeocoder.getPosition(building);
-				
 			} catch (InvalidOperation e) {
 				e.printStackTrace();
 			}
@@ -204,35 +204,22 @@ public class VoUser extends GeoLocation {
 
 		this.address = userAddress;
 
-		VoUserGroup home = userAddress.getUserHomeGroup();
-		if(null==home){
-			home = new VoUserGroup(this, new VoGroup("Подъезд",0));
-			home.setLongitude(building.getLongitude());
-			home.setLatitude(building.getLatitude());
-		}
-		this.setLatitude(home.getLatitude());
-		this.setLongitude(home.getLongitude());
+		this.setLatitude(building.getLongitude());
+		this.setLongitude(building.getLatitude());
 		if (null != groups && !groups.isEmpty()) {
 			for (VoUserGroup ug : groups) {
-				ug.setLatitude(home.getLatitude());
-				ug.setLongitude(home.getLongitude());
+				ug.setLatitude(building.getLongitude());
+				ug.setLongitude(building.getLatitude());
 			}
 		} else {
 			groups = new ArrayList<VoUserGroup>();
-			groups.add(home);
-			for( VoGroup group: Defaults.defaultGroups ){
+			for (VoGroup group : Defaults.defaultGroups) {
 				groups.add(new VoUserGroup(this, group));
 			}
 		}
-		
-		addDeliveryAddress( 0L, "домой", userAddress );
 
 		pm.makePersistent(this);
 		pm.makePersistent(building);
-	}
-
-	private void addDeliveryAddress(long l, String name, VoPostalAddress userAddress) {
-		this.deliveryAddresses.put(name, userAddress);
 	}
 
 	// *****
@@ -240,7 +227,7 @@ public class VoUser extends GeoLocation {
 
 		VoBuilding building = null;
 		if (null != this.getAddress()) { // location already set, so user should
-																			// be removed first
+											// be removed first
 			building = this.address.getBuilding();
 			if (null != building)
 				building.removeUser(this);
@@ -253,23 +240,23 @@ public class VoUser extends GeoLocation {
 		pm.makePersistent(this);
 	}
 
-	public void addDeliveryAddress( VoPostalAddress pa, String textKey ) throws InvalidOperation {
-		if(deliveryAddresses==null)
-			deliveryAddresses = new HashMap<String,VoPostalAddress>();
+	public void addDeliveryAddress(VoPostalAddress pa, String textKey) throws InvalidOperation {
+		if (deliveryAddresses == null)
+			deliveryAddresses = new HashMap<String, VoPostalAddress>();
 		deliveryAddresses.put(textKey, pa);
 	}
-	
-	public boolean removeDeliveryAddress( String key ){
+
+	public boolean removeDeliveryAddress(String key) {
 		return null == deliveryAddresses ? false : deliveryAddresses.remove(key) != null;
 	}
 
 	public List<String> getAddresses() {
 		List<String> out = new ArrayList<String>();
-		if(null!=deliveryAddresses && deliveryAddresses.size() > 0){
+		if (null != deliveryAddresses && deliveryAddresses.size() > 0) {
 			Set<String> keySet = deliveryAddresses.keySet();
-			if( null!=keySet && keySet.size() > 0 ) 
-				out.addAll( keySet);
-		} 
+			if (null != keySet && keySet.size() > 0)
+				out.addAll(keySet);
+		}
 		return out;
 	}
 
@@ -290,11 +277,10 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private String birthday;
 
-	
 	@Persistent
 	@Unindexed
 	@Unowned
-	private Map<String,VoPostalAddress> deliveryAddresses;
+	private Map<String, VoPostalAddress> deliveryAddresses;
 
 	@Persistent
 	@Unindexed
@@ -359,8 +345,7 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	private String avatarProfileShort;
-	
-	
+
 	public String getAvatarMessage() {
 		return avatarMessage;
 	}
@@ -436,7 +421,7 @@ public class VoUser extends GeoLocation {
 
 	public String toFullString() {
 		return "VoUser [id=" + getId() + ", address=" + address + ", longitude=" + getLongitude() + ", latitude=" + getLatitude() + ", name=" + name
-				+ ", lastName=" + lastName + ", email=" + email + ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum=" + topicsNum
-				+ ", likesNum=" + likesNum + ", unlikesNum=" + unlikesNum + "]";
+				+ ", lastName=" + lastName + ", email=" + email + ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum="
+				+ topicsNum + ", likesNum=" + likesNum + ", unlikesNum=" + unlikesNum + "]";
 	}
 }

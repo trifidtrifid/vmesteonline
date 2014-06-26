@@ -31,28 +31,9 @@ import com.vmesteonline.be.messageservice.UserTopic;
 import com.vmesteonline.be.messageservice.WallItem;
 import com.vmesteonline.be.utils.Defaults;
 
-public class MessageServiceTests {
-
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig(),
-			new LocalBlobstoreServiceTestConfig());
-	public static String sessionId = "11111111111111111111111";
-
-	AuthServiceImpl asi;
-	UserServiceImpl usi;
-	MessageServiceImpl msi;
-	HashMap<MessageType, Long> noLinkedMessages = new HashMap<MessageType, Long>();
-	TreeMap<Long, String> noTags = new TreeMap<Long, String>();
-	PersistenceManager pm;
-
-	Group homeGroup;
-	Group group200m;
-	Group group2000m;
-
-	Rubric topicRubric;
-	String topicSubject = "Test topic";
+public class MessageServiceTests extends TestWorkAround {
 
 	private Topic createTopic() throws Exception {
-
 		Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
 				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
 		Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
@@ -68,32 +49,12 @@ public class MessageServiceTests {
 
 	@Before
 	public void setUp() throws Exception {
-		helper.setUp();
-		Assert.assertTrue(Defaults.initDefaultData());
-
-		pm = PMF.get().getPersistenceManager();
-		asi = new AuthServiceImpl(sessionId);
-		Assert.assertTrue(asi.login(Defaults.user1email, Defaults.user1pass));
-		usi = new UserServiceImpl(sessionId);
-		msi = new MessageServiceImpl(sessionId);
-		List<Rubric> userRubrics = usi.getUserRubrics();
-		Assert.assertTrue(userRubrics.size() > 0);
-		Assert.assertTrue(userRubrics.get(0) != null);
-		topicRubric = userRubrics.get(0);
-
-		List<Group> userGroups = usi.getUserGroups();
-		Assert.assertTrue(userGroups.size() > 0);
-		Assert.assertTrue(userGroups.get(0) != null);
-		homeGroup = userGroups.get(1);
-		group200m = userGroups.get(2);
-		group2000m = userGroups.get(3);
+		Assert.assertTrue(init());
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		if (pm != null)
-			pm.close();
-		helper.tearDown();
+		close();
 	}
 
 	@Test
@@ -380,6 +341,33 @@ public class MessageServiceTests {
 	}
 
 	@Test
+	public void testPostTopicWithPollWallItem() {
+
+		try {
+			Poll poll = createPoll();
+
+			Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
+					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll);
+			msi.postTopic(topic);
+
+			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
+			List<WallItem> rTopic = msi.getWallItems(grId);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(1, rTopic.size());
+			Assert.assertNotNull(rTopic.get(0).topic.poll);
+			Assert.assertEquals(poll.subject, rTopic.get(0).topic.poll.subject);
+			Assert.assertEquals(poll.names.get(0), rTopic.get(0).topic.poll.names.get(0));
+			Assert.assertEquals(1, rTopic.get(0).topic.poll.values.get(0).intValue());
+			Assert.assertEquals(2, rTopic.get(0).topic.poll.values.get(1).intValue());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+	}
+
+	@Test
 	public void testdoPoll() {
 
 		try {
@@ -472,16 +460,6 @@ public class MessageServiceTests {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());
 		}
-	}
-
-	long getUserGroupId(String email, int radius) {
-		VoUser user = asi.getUserByEmail(email, pm);
-		for (VoUserGroup ug : user.getGroups()) {
-			if (ug.getRadius() == radius) {
-				return ug.getId();
-			}
-		}
-		return 0L;
 	}
 
 	@Test

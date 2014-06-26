@@ -18,13 +18,13 @@ import java.util.Vector;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
-import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assert;
 
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
