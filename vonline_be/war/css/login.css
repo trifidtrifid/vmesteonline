@@ -307,8 +307,12 @@
   margin-bottom: 15px;
 /* registration forum */
 }
-.reg-forum {
-  padding-top: 60px;
+.reg-forum header {
+  padding: 20px 0;
+  border-bottom: 1px solid #438eb9;
+}
+.reg-forum header img {
+  width: 200px;
 }
 .reg-forum .row {
   margin: 0;
