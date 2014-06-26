@@ -15,11 +15,29 @@
                                     <div class="topic-author">
                                     </div>
                                 </div>
-                                <div class="topic-right">
+                                <div class="topic-right" ng-switch on="talks.fullTalkTopic.metaType">
                                         <h2>
                                             <span>{{talks.fullTalkTopic.subject}}</span>
                                         </h2>
-                                    <p>{{talks.fullTalkTopic.message.content}}</p>
+
+                                    <p ng-switch-when="message">{{talks.fullTalkTopic.message.content}}</p>
+
+                                    <div class="poll" ng-switch-when="poll" ng-cloak>
+                                        <div class="text" ng-cloak>{{talks.fullTalkTopic.message.content}}</div>
+
+                                        <h5>{{talks.fullTalkTopic.poll.subject}}</h5>
+
+                                        <div class="radio" ng-repeat="variant in talks.fullTalkTopic.poll.editNames">
+                                            <label>
+                                                <input name="poll-variant-{{talks.fullTalkTopic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
+                                                <span class="lbl">{{variant.name}}</span>
+                                            </label>
+                                        </div>
+
+                                        <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,talks.fullTalkTopic.poll)">Голосовать</button>
+
+                                    </div>
+
                                         <div class="message-bottom">
                                             <span class="topic-header-date">{{talks.fullTalkTopic.message.createdEdit}}</span>
                                             <a class="answer-link" href="#" ng-click="talks.showTopicAnswerInput($event)">Ответить</a>
