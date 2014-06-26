@@ -385,18 +385,6 @@ angular.module('forum.controllers', [])
                     if(lenta.wallItems[i].topic.poll != null){
                         //значит это опрос
                         setPollEditNames(lenta.wallItems[i].topic);
-                        /*lenta.wallItems[i].topic.poll.editNames = [];
-                        var namesLength;
-                        lenta.wallItems[i].topic.poll.names ?
-                            namesLength = lenta.wallItems[i].topic.poll.names.length:
-                            namesLength = 0;
-                        for(var j = 0; j < namesLength; j++){
-                            lenta.wallItems[i].topic.poll.editNames[j] = {
-                                id : j,
-                                value: 0,
-                                name : lenta.wallItems[i].topic.poll.names[j]
-                            }
-                        }*/
 
                         lenta.wallItems[i].topic.metaType = "poll";
                     }
