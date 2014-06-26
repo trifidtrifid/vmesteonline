@@ -3,7 +3,7 @@ $(document).ready(function(){
     var protocol = new Thrift.Protocol(transport);
     var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
 
-    $('#login-box .btn-primary').click(function(e){
+    $('#login-box .btn-login').click(function(e){
         e.preventDefault();
         login($(this));
     });

@@ -270,7 +270,8 @@
                                                 </div>
 
                                                 <div class="body">
-                                                    <span class="label label-lg label-pink arrowed lenta-item-hashtag">{{wallItem.label}}</span>
+                                                    <span class="label label-lg arrowed lenta-item-hashtag"
+                                                            ng-class="wallItem.tagColor">{{wallItem.label}}</span>
 
                                                     <div class="name">
                                                         <a href="#">{{wallItem.topic.authorName}}</a>
