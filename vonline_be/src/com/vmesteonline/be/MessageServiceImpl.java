@@ -315,19 +315,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public Topic createTopic(long groupId, String subject, MessageType type, String content, Map<MessageType, Long> linkedMessages,
-			Map<Long, String> tags, long rubricId, long communityId) throws TException {
-
-		int now = (int) (System.currentTimeMillis() / 1000L);
-		Message msg = new Message(0, 0, type, 0, groupId, getCurrentUserId(), now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
-				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
-		Topic topic = new Topic(0, subject, msg, 0, 0, 0, now, 0, 0, new UserTopic(), null, null);
-		topic.setRubricId(rubricId);
-		postTopic(topic);
-		return topic;
-	}
-
-	@Override
 	public Topic postTopic(Topic topic) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();

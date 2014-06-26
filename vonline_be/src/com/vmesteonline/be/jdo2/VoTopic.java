@@ -163,7 +163,7 @@ public class VoTopic extends VoBaseMessage {
 
 	@Persistent
 	@Unindexed
-	private Long pollId;
+	private long pollId;
 
 	@Persistent
 	@Unindexed

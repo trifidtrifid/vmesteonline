@@ -56,13 +56,14 @@ public class MessageServiceTests {
 		Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
 				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
 		Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
-		msi.postTopic(topic);
-		return topic;
+		return msi.postTopic(topic);
 	}
 
 	private Topic createTopic(long groupId) throws Exception {
-		return msi.createTopic(groupId, topicSubject, MessageType.BASE, "Content of the first topic is a simple string", noLinkedMessages, noTags,
-				topicRubric.getId(), 0L);
+		Message msg = new Message(groupId, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
+				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+		Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
+		return msi.postTopic(topic);
 	}
 
 	@Before
@@ -389,10 +390,10 @@ public class MessageServiceTests {
 			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll);
 			topic = msi.postTopic(topic);
 
-			msi.doPoll(topic.poll.pollId, 0);			
-			msi.doPoll(topic.poll.pollId, 1);			
-			msi.doPoll(topic.poll.pollId, 1);			
-			
+			msi.doPoll(topic.poll.pollId, 0);
+			msi.doPoll(topic.poll.pollId, 1);
+			msi.doPoll(topic.poll.pollId, 1);
+
 			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
 			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
@@ -408,6 +409,7 @@ public class MessageServiceTests {
 			fail("Exception thrown." + e.getMessage());
 		}
 	}
+
 	private Poll createPoll() {
 		Poll poll = new Poll();
 		poll.subject = "test poll";
@@ -519,37 +521,4 @@ public class MessageServiceTests {
 		}
 
 	}
-
-	@Test
-	public void testGetMessagesBiggerGroupDifferentUsers() {
-		try {
-
-			Topic topic = createTopic(getUserGroupId(Defaults.user1email, 2000));
-			asi.login(Defaults.user2email, Defaults.user2pass);
-			Message msg1 = msi.createMessage(topic.getId(), 0, getUserGroupId(Defaults.user1email, 20), MessageType.BASE,
-					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
-			asi.login(Defaults.user1email, Defaults.user1pass);
-			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), getUserGroupId(Defaults.user1email, 20), MessageType.BASE,
-					"Content of the first message in the topic", noLinkedMessages, noTags, 0L);
-
-			asi.login(Defaults.user2email, Defaults.user2pass);
-			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), getUserGroupId(Defaults.user2email, 2000), MessageType.BASE, 0, false, 20);
-			Assert.assertNotNull(mlp);
-			Assert.assertEquals(0, mlp.totalSize);
-
-			mlp = msi.getFirstLevelMessages(topic.getId(), getUserGroupId(Defaults.user2email, 20), MessageType.BASE, 0, false, 20);
-			Assert.assertNotNull(mlp);
-			Assert.assertEquals(1, mlp.totalSize);
-
-			mlp = msi.getFirstLevelMessages(topic.getId(), getUserGroupId(Defaults.user2email, 0), MessageType.BASE, 0, false, 20);
-			Assert.assertNotNull(mlp);
-			Assert.assertEquals(0, mlp.totalSize);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception thrown." + e.getMessage());
-		}
-
-	}
-
 }
