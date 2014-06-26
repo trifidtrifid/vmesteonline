@@ -260,7 +260,6 @@ angular.module('forum.controllers', [])
                     poll.names[i] = lenta.pollInputs[i].name;
                 }
                 newWallMessage.poll = poll;
-                //messageClient.createPoll(poll);
                 newWallMessage.metaType = "poll";
             }
 
@@ -378,8 +377,11 @@ angular.module('forum.controllers', [])
                 lenta.wallItems[i].commentText = "Ваш ответ";
                 lenta.wallItems[i].answerShow = false;
                 lenta.wallItems[i].isFocus = false;
-                console.log("--"+lenta.wallItems[i].topic.poll);
 
+                /*var temp = messageClient.getTopics(lenta.selectedGroup.id,0,0,0,1000);
+                console.log(temp.topics.length);
+                if(temp.topics[i]) console.log("--"+temp.topics[i].poll);*/
+                console.log("--"+lenta.wallItems[i].topic.poll);
 
                 //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
                 lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.message.groupId);
