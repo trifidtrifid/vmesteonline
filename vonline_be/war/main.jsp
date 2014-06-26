@@ -487,7 +487,9 @@
 
                             <section class="private-messages page" ng-show="base.privateMessagesIsActive" ng-controller="privateMessagesController as privateMessages"></section>
 
-                            <section class="nextdoors page" ng-class="base.nextdoorsLoadStatus" ng-show="base.nextdoorsIsActive" ng-controller="nextdoorsController as nextdoors"></section>
+                            <section class="nextdoors page" ng-init="base.mainContentTopIsHide = false" ng-class="base.nextdoorsLoadStatus" ng-show="base.nextdoorsIsActive" ng-controller="nextdoorsController as nextdoors">
+                                
+                            </section>
 
                             <section class="profile page" ng-show="base.profileIsActive" ng-controller="ProfileController as profile"></section>
 
