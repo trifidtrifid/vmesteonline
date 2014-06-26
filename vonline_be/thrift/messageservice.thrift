@@ -52,7 +52,8 @@ struct UserTopic {
 struct Poll {
 	1:	i64 pollId,
 	2:	list<string> names,
-	3:	list<i32> values
+	3:	list<i32> values,
+	4: 	string subject
 }
 
 
@@ -115,19 +116,8 @@ list<WallItem> getWallItems(1:i64 groupId)	 throws (1:error.InvalidOperation exc
 **/	 
 	i64 postMessage( 1:Message msg ) throws (1:error.InvalidOperation exc),
 
-	i64 createPoll( 1:Poll poll) throws (1:error.InvalidOperation exc),
-
-	Topic createTopic(
-		1: i64 groupId, //идентификатор пользовтельской группы, в которой он размещает топик 
-		2: string subject, 
-		3: MessageType type, // 'тип один из (сообщение, чат)',
-		4: string content, // 'содержание сообщения',
-		5: map<MessageType,i64> linkedMessages,
-		6: map<i64,string> tags
-		7: i64 rubricId, //ссылка на рубрику
-		8: i64 communityId) //ссылка на сообщество
-	
-	i64 postTopic( 1: Topic topic ) throws (1:error.InvalidOperation exc),  
+	Poll doPoll( 1:i64 pollId, 2:i32 item) throws (1:error.InvalidOperation exc),
+	Topic postTopic( 1: Topic topic ) throws (1:error.InvalidOperation exc),  
 	 
 	 /**
 	 * checkUpdates запрашивает наличие обновлений с момента предыдущего запроса, который возвращает сервер в ответе

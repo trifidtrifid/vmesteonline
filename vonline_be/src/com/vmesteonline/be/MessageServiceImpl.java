@@ -26,6 +26,7 @@ import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.data.VoDatastoreHelper;
 import com.vmesteonline.be.jdo2.VoBaseMessage;
 import com.vmesteonline.be.jdo2.VoMessage;
+import com.vmesteonline.be.jdo2.VoPoll;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoTopic;
@@ -80,7 +81,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic();
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
-					
+
 					MessageListPart mlp = getMessagesAsList(tpc.id, 0, MessageType.BASE, 0, false, 10000);
 					if (mlp.totalSize > 0)
 						logger.info("find msgs " + mlp.messages.size());
@@ -117,8 +118,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			if (lastLoadedId != 0) {
 				List<VoMessage> subLst = null;
 				for (int i = 0; i < voMsgs.size() - 1; i++) {
-					if (voMsgs.get(i).getId()
-							== lastLoadedId)
+					if (voMsgs.get(i).getId() == lastLoadedId)
 						subLst = voMsgs.subList(i + 1, voMsgs.size());
 				}
 				voMsgs = (subLst == null) ? new ArrayList<VoMessage>() : subLst;
@@ -238,7 +238,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				mlp.totalSize = topics.size();
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic();
-					
 
 					VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
 					if (voUserTopic == null) {
@@ -259,6 +258,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 					}
 
+					if (voTopic.getPollId() != 0) {
+						VoPoll voPoll = pm.getObjectById(VoPoll.class, voTopic.getPollId());
+						tpc.poll = voPoll.getPoll();
+					}
 					tpc.usertTopic = voUserTopic.getUserTopic();
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
 					tpc.setMessageNum(voUserTopic.getMessagesCount());
@@ -312,33 +315,29 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public Topic createTopic(long groupId, String subject, MessageType type, String content, Map<MessageType, Long> linkedMessages,
-			Map<Long, String> tags, long rubricId, long communityId) throws TException {
+	public Topic postTopic(Topic topic) throws InvalidOperation {
 
-		int now = (int) (System.currentTimeMillis() / 1000L);
-		Message msg = new Message(0, 0, type, 0, groupId, getCurrentUserId(), now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
-				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
-		Topic topic = new Topic(0, subject, msg, 0, 0, 0, now, 0, 0, new UserTopic(), null, null);
-		topic.setRubricId(rubricId);
-		postTopic(topic);
-		return topic;
-	}
-
-	@Override
-	public long postTopic(Topic topic) throws InvalidOperation {
-		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			try {
 				if (0 == topic.getId()) {
 					int now = (int) (System.currentTimeMillis() / 1000L);
-					topic.lastUpdate = now; 
+					topic.lastUpdate = now;
 					topic.message.created = now;
 					topic.message.authorId = getCurrentUserId();
 
 					VoTopic votopic = new VoTopic(topic);
+
+					if (topic.poll != null) {
+						VoPoll poll = new VoPoll(topic.poll);
+						pm.makePersistent(poll);
+						votopic.setPollId(poll.getId());
+						topic.poll.pollId = poll.getId();
+					}
+
 					pm.makePersistent(votopic);
 					topic.setId(votopic.getId());
+
 					VoUser user = getCurrentUser(pm);
 					VoUserGroup ug = user.getGroupById(votopic.getUserGroupId());
 					votopic.setLongitude(ug.getLongitude());
@@ -351,7 +350,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				} else {
 					updateTopic(topic);
 				}
-				return topic.getId();
+				return topic;
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.GeneralError, "can't create topic. " + e);
@@ -375,7 +374,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic(), true);
 		return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic(), false);
 	}
-
 
 	/**
 	 * checkUpdates запрашивает наличие обновлений с момента предыдущего
@@ -505,11 +503,20 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
-	
 	@Override
-	public long createPoll(Poll poll) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
+	public Poll doPoll(long pollId, int item) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoPoll poll = pm.getObjectById(VoPoll.class, pollId);
+			poll.getValues().set(item, poll.getValues().get(item) + 1);
+			return poll.getPoll();
+		} catch (Exception e) {
+			logger.severe("can't do poll. " + e.getMessage());
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.IncorrectParametrs, "incorect parametr for poll");
+		} finally {
+			pm.close();
+		}
 	}
 
 	private static MessageListPart createMlp(List<VoMessage> lst, long userId, PersistenceManager pm, int length) throws InvalidOperation {
@@ -593,7 +600,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		/* TODO Implement user notification */
 	}
 
-	
 	private void updateTopic(Topic topic) throws InvalidOperation {
 
 		PersistenceManagerFactory pmf = PMF.get();

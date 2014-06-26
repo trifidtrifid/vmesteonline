@@ -37,8 +37,11 @@ import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.shop.VoOrder;
 import com.vmesteonline.be.jdo2.shop.VoOrderLine;
+import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.messageservice.Topic;
+import com.vmesteonline.be.messageservice.UserMessage;
+import com.vmesteonline.be.messageservice.UserTopic;
 import com.vmesteonline.be.shop.bo.DataSet;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
@@ -146,9 +149,16 @@ public class ShopServiceImplTest {
 		if(userGroups.size() > 0 ){
 			long gId = userGroups.get(0).getId();
 	
-			topic = msi.createTopic(gId, "AAA", MessageType.BASE, "", new HashMap<MessageType, Long>(), new HashMap<Long, String>(), usi.getUserRubrics()
-					.get(0).getId(), 0);
-	
+			Message msg = new Message(0, 0, MessageType.BASE, 0, gId, 0, 0, 0, "", 0, 0,
+					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+			Topic tpc = new Topic(0, "AAA", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
+			topic = msi.postTopic(tpc);
+
+			/*
+			 * topic = msi.createTopic(gId, "AAA", MessageType.BASE, "", new
+			 * HashMap<MessageType, Long>(), new HashMap<Long, String>(),
+			 * usi.getUserRubrics() .get(0).getId(), 0);
+			 */	
 			topicSet.add(topic.getId());
 		} 
 		Country country = usi.getCounties().get(0);
