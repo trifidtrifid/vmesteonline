@@ -55,7 +55,12 @@ angular.module('forum.controllers', [])
             }
 
             //console.log(poll.pollId+"--"+item);
-            poll = messageClient.doPoll(poll.pollId,item);
+            //poll = {};
+            var tempPoll = messageClient.doPoll(poll.pollId,item);
+            poll.alreadyPoll = true;
+            poll.values = tempPoll.values;
+
+            console.log("000"+poll.alreadyPoll);
             setPollEditNames(poll);
 
         };
@@ -942,7 +947,9 @@ function getLabel(groupsArray,groupId){
 function getAuthorName(authorId){
     var user;
     if(authorId){
-        user = userClient.getUserInfoExt(authorId);
+        //user = userClient.getUserInfoExt(authorId);
+        //user = userClient.getUserProfile(authorId).userInfo;
+        user = userClient.getShortUserInfo();
     }else{
         user = userClient.getShortUserInfo();
     }
@@ -998,6 +1005,7 @@ function postTopic(obj,isWall){
     newTopic.subject = subject;
     newTopic.id = 0;
     newTopic.metaType = "message";
+    newTopic.messageNum = 0;
 
     var poll;
     if(obj.isPollShow){
@@ -1006,6 +1014,7 @@ function postTopic(obj,isWall){
         poll.editNames = [];
         poll.names = [];
         poll.subject = obj.pollSubject;
+        poll.alreadyPoll = false;
         var pollInputsLength = obj.pollInputs.length;
         for(var i = 0; i < pollInputsLength; i++){
             poll.names[i] = obj.pollInputs[i].name;
@@ -1056,15 +1065,17 @@ function setPollEditNames(poll){
 
     // нужно знать полный amount для вычисления процентной длины
     for(var j = 0; j < namesLength; j++){
-        if(poll.values[j]) {
+        if(poll && poll.values && poll.values[j]) {
             amount += poll.values[j];
         }
     }
 
     for(var j = 0; j < namesLength; j++){
-        if(poll.values[j]) {
+        if(poll && poll.values && poll.values[j]) {
             votersNum = poll.values[j];
             votersPercent = votersNum*100/amount;
+        }else{
+            votersNum = votersPercent = 0;
         }
 
         poll.editNames[j] = {
@@ -1072,11 +1083,11 @@ function setPollEditNames(poll){
             value: 0,
             name : poll.names[j],
             votersNum : votersNum,
-            votersPercent: votersPercent
+            votersPercent: votersPercent+"%"
         };
 
         console.log('---');
-        console.log(poll.names[j]+" "+poll.values[j]);
+        //console.log(poll.names[j]+" "+poll.values[j]);
         console.log('---');
     }
     poll.amount = amount;

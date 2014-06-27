@@ -572,12 +572,17 @@ h1 {
   display: inline-block;
   color: #8ba1bc;
   width: 84%;
+  text-align: center;
+  line-height: 15px;
+  background-color: #f7f7f7;
 }
 .poll-results .poll-result-item .poll-row .poll-row-line .poll-line-percent {
   background-color: #dae1e8;
+  height: 15px;
 }
 .poll-results .poll-result-item .poll-row .poll-row-line .poll-line-number {
-  background-color: #f7f7f7;
+  height: 15px;
+  margin-top: -15px;
 }
 .poll-results .poll-result-item .poll-row .poll-row-percent {
   display: inline-block;
@@ -620,6 +625,9 @@ h1 {
 }
 .lenta-item .first-message .poll .lbl:before {
   margin-right: 10px;
+}
+.lenta-item .first-message .poll h5 {
+  font-family: tahoma, arial;
 }
 .lenta-item .dialogs {
   clear: left;
@@ -688,6 +696,12 @@ h1 {
 }
 .talks-block .poll {
   padding-bottom: 30px;
+}
+.talks-block .poll .radio .lbl:before {
+  margin-right: 10px;
+}
+.talks-block .poll h5 {
+  font-family: tahoma, arial;
 }
 .private-messages {
   padding: 10px;
