@@ -319,7 +319,7 @@ angular.module('forum.controllers', [])
             var newWallComment = messageClient.createMessage(wallItem.topic.id,0,lenta.selectedGroupInTop.id,5,wallItem.commentText);
             wallItem.commentText = "Ваш ответ";
             newWallComment.createdEdit = getTiming(newWallComment.created);
-            newWallComment.authorName = getAuthorName(newWallComment.authorId);
+            newWallComment.authorName = getAuthorName(newWallComment.userInfo);
 
             //console.log(lenta.wallItems+" "+lenta.wallItems.topic);
             if(wallItem.messages){
@@ -376,7 +376,7 @@ angular.module('forum.controllers', [])
                 }else if(lenta.wallItems[i].topic.message.type == 5){
 
                     lenta.wallItems[i].topic.message.createdEdit = getTiming(lenta.wallItems[i].topic.message.created);
-                    lenta.wallItems[i].topic.authorName = getAuthorName(lenta.wallItems[i].topic.message.authorId);
+                    lenta.wallItems[i].topic.authorName = getAuthorName(lenta.wallItems[i].topic.message.userInfo);
                     lenta.wallItems[i].topic.metaType = "message";
 
                     var mesLen;
@@ -386,7 +386,7 @@ angular.module('forum.controllers', [])
 
                     for(var j = 0; j < mesLen; j++){
                         lenta.wallItems[i].messages[j].createdEdit = getTiming(lenta.wallItems[i].messages[j].created);
-                        lenta.wallItems[i].messages[j].authorName = getAuthorName(lenta.wallItems[i].messages[j].authorId);
+                        lenta.wallItems[i].messages[j].authorName = getAuthorName(lenta.wallItems[i].messages[j].userInfo);
                     }
 
 
@@ -944,17 +944,13 @@ function getLabel(groupsArray,groupId){
 
     return label;
 }
-function getAuthorName(authorId){
-    var user;
-    if(authorId){
-        //user = userClient.getUserInfoExt(authorId);
-        //user = userClient.getUserProfile(authorId).userInfo;
-        user = userClient.getShortUserInfo();
-    }else{
-        user = userClient.getShortUserInfo();
+function getAuthorName(userInfo){
+    var userInf = userInfo;
+    if(!userInfo){
+        userInf = userClient.getShortUserInfo();
     }
 
-    return user.firstName+" "+user.lastName;
+    return userInf.firstName+" "+userInf.lastName;
 }
 function getTagColor(labelName){
     var color;
