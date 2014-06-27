@@ -208,19 +208,19 @@
 						<div class="forum-wrap">
                             <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta" ng-cloak>
                                 <div class="message-input clearfix">
-                                    <textarea ng-model="lenta.wallMessageContent"
+                                    <textarea ng-model="lenta.wallMessageContent" class="no-resize"
                                         onblur="if(this.value=='') this.value='Написать сообщение';"
                                         onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
 
                                     <div class="create-poll" ng-show="lenta.isPollShow">
-                                        <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="lenta.isPollShow = false">&times;</a>
+                                        <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="lenta.isPollShow = false;lenta.isPollAvailable = true;">&times;</a>
                                         <h5>Тема опроса:</h5>
-                                        <input type="text"/>
+                                        <input type="text" ng-model="lenta.pollSubject"/>
                                         <h5>Варианты ответов:</h5>
                                         <div ng-repeat="input in lenta.pollInputs">
                                             <input ng-model="input.name" type="text"/>
                                         </div>
-                                        <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="lenta.addPollInput($event)"/>
+                                        <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,lenta)"/>
                                     </div>
 
                                     <div class="message-input-bottom">
@@ -234,7 +234,7 @@
                                         <li><a href="#">Видео</a></li>
                                         <li><a href="#">Документ</a></li>
                                         <li><a href="#">Изображение</a></li>
-                                        <li><a href="#" ng-click="lenta.showPoll($event)">Опрос</a></li>
+                                        <li><a href="#" ng-click="base.showPoll($event,lenta)" ng-show="lenta.isPollAvailable">Опрос</a></li>
                                         </ul>
                                         </div>
                                         <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
@@ -280,17 +280,18 @@
                                                     <div class="text" ng-switch-when="message" ng-cloak>{{wallItem.topic.message.content}}</div>
 
                                                     <div class="poll" ng-switch-when="poll" ng-cloak>
+                                                        <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>
 
-                                                        <%--<h5>{{wallItem.topic.poll.subject}}</h5>--%>
+                                                        <h5>{{wallItem.topic.poll.subject}}</h5>
 
-                                                        <div class="radio" ng-repeat="variant in wallItem.topic.poll.names">
+                                                        <div class="radio" ng-repeat="variant in wallItem.topic.poll.editNames">
                                                             <label>
-                                                                <input name="poll-variant" ng-model="wallItem.topic.poll.choose" value="$index" type="radio" class="ace">
-                                                                <span class="lbl">{{variant}}</span>
+                                                                <input name="poll-variant-{{wallItem.topic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
+                                                                <span class="lbl">{{variant.name}}</span>
                                                             </label>
                                                         </div>
 
-                                                        <button class="btn btn-sm btn-primary no-border" ng-click="lenta.createPoll($event,wallItem.topic.poll)">Голосовать</button>
+                                                        <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,wallItem.topic.poll)">Голосовать</button>
 
                                                     </div>
 
@@ -325,7 +326,7 @@
                                             </div>
 
                                             <div class="input-group"> <%--  ng-show="wallItem.answerShow" --%>
-                                                <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea" ng-model="wallItem.commentText"
+                                                <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallItem.commentText"
                                                           ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow"
                                                     onblur="if(this.value=='') this.value='Ваш ответ';"
                                                     onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
@@ -367,9 +368,20 @@
                                                onfocus="if(this.value=='Заголовок') this.value='';" ng-model="talks.subject" />
                                     </div>
                                     <div class="topic-body clearfix">
-                                        <textarea ng-model="talks.content"
+                                        <textarea ng-model="talks.content" class="no-resize"
                                             onblur="if(this.value=='') this.value='Сообщение';"
                                             onfocus="if(this.value=='Сообщение') this.value='';"></textarea>
+
+                                        <div class="create-poll" ng-show="talks.isPollShow">
+                                            <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="talks.isPollShow = false;talks.isPollAvailable = true;">&times;</a>
+                                            <h5>Тема опроса:</h5>
+                                            <input type="text" ng-model="talks.pollSubject"/>
+                                            <h5>Варианты ответов:</h5>
+                                            <div ng-repeat="input in talks.pollInputs">
+                                                <input ng-model="input.name" type="text"/>
+                                            </div>
+                                            <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,talks)"/>
+                                        </div>
 
                                         <div class="btn-group pull-left">
                                         <button class="btn btn-sm btn-primary" ng-click="talks.addSingleTalk()">
@@ -405,7 +417,7 @@
 
                                         <li><a href="#">Документ</a></li>
 
-                                        <li><a href="#">Опрос</a></li>
+                                        <li><a href="#" ng-click="base.showPoll($event,talks)" ng-show="talks.isPollAvailable">Опрос</a></li>
                                         </ul>
                                         </div>
 

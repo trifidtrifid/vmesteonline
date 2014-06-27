@@ -16,6 +16,47 @@ angular.module('forum.controllers', [])
         resetPages(base);
         base.lentaIsActive = true;
 
+        base.addPollInput = function(event,obj){
+            event.preventDefault();
+
+            var newInput = {counter : 0, name:"" };
+            obj.pollInputs.push(newInput);
+
+        };
+
+        base.showPoll = function(event,obj){
+            event.preventDefault();
+
+            obj.isPollShow = true;
+            obj.pollInputs = [
+                {
+                    counter : 0,
+                    name:""
+                },
+                {
+                    counter : 1,
+                    name:""
+                }
+            ];
+            obj.isPollAvailable = false;
+        };
+
+        base.doPoll = function(event,poll){
+            event.preventDefault();
+            poll.values = [];
+            var pollNamesLength = poll.editNames.length;
+            var item;
+
+            for(var i = 0; i < pollNamesLength; i++){
+                if(poll.editNames[i].value == 1) item = i;
+                /*poll.values[i] = 1 :
+                 poll.values[i] = 0 ;*/
+            }
+
+            console.log(poll.pollId+"--"+item);
+            messageClient.doPoll(poll.pollId,item);
+        };
+
         $rootScope.base = base;
         $rootScope.currentPage = 'lenta';
     })
@@ -205,7 +246,7 @@ angular.module('forum.controllers', [])
         lenta.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroup = lenta.selectedGroupInTop = $rootScope.currentGroup;
         lenta.isPollShow = false;
-        //lenta.pollInputs = [0,1];
+        lenta.pollSubject = "";
         lenta.pollInputs = [
             {
             counter : 0,
@@ -216,6 +257,7 @@ angular.module('forum.controllers', [])
             name:""
             }
         ];
+        lenta.isPollAvailable = true;
 
         lenta.wallMessageContent = "Написать сообщение";
 
@@ -238,39 +280,12 @@ angular.module('forum.controllers', [])
         lenta.createWallMessage = function(event){
             event.preventDefault();
 
-            //console.log(lenta.selectedGroup.id+" "+lenta.wallMessageContent);
-            var newWallMessage = new com.vmesteonline.be.messageservice.Topic;
-            newWallMessage.message = new com.vmesteonline.be.messageservice.Message;
-            newWallMessage.message.groupId = lenta.selectedGroup.id;
-            newWallMessage.message.type = 5;
-            newWallMessage.message.content = lenta.wallMessageContent;
-            newWallMessage.message.id = 0;
-            newWallMessage.message.created = Date.parse(new Date());
+            var isWall = 1,
+                newTopic = postTopic(lenta,isWall);
 
-            newWallMessage.subject = "";
-            newWallMessage.id = 0;
-
-            var poll;
-            if(lenta.isPollShow){
-                poll = new com.vmesteonline.be.messageservice.Poll;
-                poll.id = 0;
-                poll.names = [];
-                var pollInputsLength = lenta.pollInputs.length;
-                for(var i = 0; i < pollInputsLength; i++){
-                    poll.names[i] = lenta.pollInputs[i].name;
-                }
-                newWallMessage.poll = poll;
-                //messageClient.createPoll(poll);
-                newWallMessage.metaType = "poll";
-            }
-
-            messageClient.postTopic(newWallMessage);
-
-            //var newWallMessage = messageClient.createTopic(lenta.selectedGroup.id," 1",5,lenta.wallMessageContent);
-            lenta.wallMessageContent = "Написать сообщение";
-            newWallMessage.message.createdEdit = getTiming(newWallMessage.message.created);
             var newWallItem = new com.vmesteonline.be.messageservice.WallItem;
-            newWallItem.topic = newWallMessage;
+            newWallItem.topic = newTopic;
+            console.log("++"+newWallItem.topic.message.content);
             newWallItem.topic.authorName = getAuthorName();
             newWallItem.messages = [];
             newWallItem.commentText = "Ваш ответ";
@@ -326,44 +341,6 @@ angular.module('forum.controllers', [])
 
         };
 
-        lenta.addPollInput = function(event){
-            event.preventDefault();
-
-            var newInput = {counter : 0, name:"" };
-            lenta.pollInputs.push(newInput);
-
-        };
-
-        lenta.showPoll = function(event){
-            event.preventDefault();
-
-            lenta.isPollShow = true;
-            lenta.pollInputs = [
-                {
-                    counter : 0,
-                    name:""
-                },
-                {
-                    counter : 1,
-                    name:""
-                }
-            ];
-        };
-
-        lenta.createPoll = function(event,poll){
-            event.preventDefault();
-            //wallItem.topic.poll.choose
-            poll.values = [];
-            var pollNamesLength = poll.names.length;
-            for(var i = 0; i < pollNamesLength; i++){
-                i == wallItem.topic.poll.choose ?
-                    poll.values[i] = 1 :
-                    poll.values[i] = 0 ;
-            }
-
-            messageClient.createPoll(poll);
-        };
-
         $rootScope.wallChangeGroup = function(groupId){
 
             lenta.wallItems = messageClient.getWallItems(groupId);
@@ -378,8 +355,6 @@ angular.module('forum.controllers', [])
                 lenta.wallItems[i].commentText = "Ваш ответ";
                 lenta.wallItems[i].answerShow = false;
                 lenta.wallItems[i].isFocus = false;
-                console.log("--"+lenta.wallItems[i].topic.poll);
-
 
                 //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
                 lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.message.groupId);
@@ -409,8 +384,9 @@ angular.module('forum.controllers', [])
 
                     if(lenta.wallItems[i].topic.poll != null){
                         //значит это опрос
+                        setPollEditNames(lenta.wallItems[i].topic);
+
                         lenta.wallItems[i].topic.metaType = "poll";
-                        //lenta.wallItems[i].pollNames = lenta.wallItems[i].topic.poll.names;
                     }
                 }
             }
@@ -456,6 +432,7 @@ angular.module('forum.controllers', [])
         talk.subject = "Заголовок";
 
         talk.isPollShow = false;
+        talk.pollSubject = "";
         talk.pollInputs = [
             {
                 counter : 0,
@@ -466,6 +443,7 @@ angular.module('forum.controllers', [])
                 name:""
             }
         ];
+        talk.isPollAvailable = true;
 
         talk.fullTalkTopic = {};
         talk.fullTalkTopic.answerInputIsShow = false;
@@ -500,6 +478,12 @@ angular.module('forum.controllers', [])
                     talk.fullTalkTopic = talk.topics[i];
                     talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
                 }
+            }
+            if(talk.fullTalkTopic.poll != null){
+                setPollEditNames(talk.fullTalkTopic);
+                talk.fullTalkTopic.metaType = "poll";
+            }else{
+                talk.fullTalkTopic.metaType = "message";
             }
 
             talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
@@ -551,33 +535,40 @@ angular.module('forum.controllers', [])
         talk.selectGroupInDropdown = selectGroupInDropdown;
 
         talk.addSingleTalk = function(){
-            var newWallMessage = new com.vmesteonline.be.messageservice.Topic;
-            newWallMessage.message = new com.vmesteonline.be.messageservice.Message;
-            newWallMessage.message.groupId = talk.selectedGroup.id;
-            newWallMessage.message.type = 5;
-            newWallMessage.message.content = talk.wallMessageContent;
-            newWallMessage.message.id = 0;
-            newWallMessage.message.created = Date.parse(new Date());
+            var isWall = 0,
+                newTopic = postTopic(talk,isWall);
+            /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
+            newTopic.message = new com.vmesteonline.be.messageservice.Message;
+            newTopic.message.groupId = talk.selectedGroup.id;
+            newTopic.message.type = 1;
+            newTopic.message.content = talk.content;
+            newTopic.message.id = 0;
+            newTopic.message.created = Date.parse(new Date());
 
-            newWallMessage.subject = "";
-            newWallMessage.id = 0;
+            newTopic.subject = talk.subject;
+            newTopic.id = 0;
 
             var poll;
             if(talk.isPollShow){
                 poll = new com.vmesteonline.be.messageservice.Poll;
-                poll.id = 0;
+                poll.pollId = 0;
                 poll.names = [];
                 var pollInputsLength = talk.pollInputs.length;
                 for(var i = 0; i < pollInputsLength; i++){
                     poll.names[i] = talk.pollInputs[i].name;
                 }
-                newWallMessage.poll = poll;
-                newWallMessage.metaType = "poll";
+                newTopic.poll = poll;
+                newTopic.metaType = "poll";
             }
 
-            messageClient.postTopic(newWallMessage);
+            newTopic = messageClient.postTopic(newTopic);
 
-            //var newTopic = messageClient.createTopic(talk.selectedGroup.id,talk.subject,1,talk.content);
+            if(talk.isPollShow){
+                poll.pollId = newTopic.poll.pollId;
+                talk.isPollShow = false;
+                talk.pollSubject= "";
+                talk.isPollAvailable = true;
+            }*/
 
             $rootScope.base.createTopicIsHide = true;
 
@@ -974,4 +965,92 @@ function getTagColor(labelName){
             break;
     }
     return color;
+}
+
+function postTopic(obj,isWall){
+    var messageType,
+        messageContent,
+        subject;
+    if (isWall){
+        messageType = 5;
+        messageContent = obj.wallMessageContent;
+        obj.wallMessageContent = "Написать сообщение";
+        subject = "";
+    }else{
+        messageType = 1;
+        messageContent = obj.content;
+        obj.content = "Сообщение";
+        subject = obj.subject;
+    }
+    console.log(messageContent+" "+messageType+" "+subject);
+
+    var newTopic = new com.vmesteonline.be.messageservice.Topic;
+    newTopic.message = new com.vmesteonline.be.messageservice.Message;
+    newTopic.message.groupId = obj.selectedGroup.id;
+    newTopic.message.type = messageType;
+    newTopic.message.content = messageContent;
+    newTopic.message.id = 0;
+    newTopic.message.created = Date.parse(new Date());
+
+    newTopic.subject = subject;
+    newTopic.id = 0;
+    newTopic.metaType = "message";
+
+    var poll;
+    if(obj.isPollShow){
+        poll = new com.vmesteonline.be.messageservice.Poll;
+        poll.pollId = 0;
+        poll.editNames = [];
+        poll.names = [];
+        poll.subject = obj.pollSubject;
+        var pollInputsLength = obj.pollInputs.length;
+        for(var i = 0; i < pollInputsLength; i++){
+            poll.names[i] = obj.pollInputs[i].name;
+            poll.editNames[i] = {
+                id: i,
+                name: obj.pollInputs[i].name
+            }
+        }
+
+        newTopic.poll = poll;
+        newTopic.metaType = "poll";
+    }
+
+    var tempTopic = messageClient.postTopic(newTopic);
+    newTopic.id = tempTopic.id;
+
+    if(obj.isPollShow){
+        newTopic.poll.pollId = tempTopic.poll.pollId;
+        obj.isPollShow = false;
+        obj.pollSubject= "";
+        obj.isPollAvailable = true;
+    }
+    if (isWall) {
+        newTopic.message.createdEdit = getTiming(newTopic.message.created);
+    }else{
+        newTopic.lastUpdateEdit = getTiming(newTopic.message.created);
+    }
+
+    console.log(messageContent+" "+messageType+" "+subject);
+    console.log("---");
+    console.log(newTopic.message.content);
+
+    return newTopic;
+
+}
+
+function setPollEditNames(obj){
+    // obj.wallItems[i].topic
+    obj.poll.editNames = [];
+    var namesLength;
+    obj.poll.names ?
+        namesLength = obj.poll.names.length:
+        namesLength = 0;
+    for(var j = 0; j < namesLength; j++){
+        obj.poll.editNames[j] = {
+            id : j,
+            value: 0,
+            name : obj.poll.names[j]
+        }
+    }
 }

@@ -15,11 +15,29 @@
                                     <div class="topic-author">
                                     </div>
                                 </div>
-                                <div class="topic-right">
+                                <div class="topic-right" ng-switch on="talks.fullTalkTopic.metaType">
                                         <h2>
                                             <span>{{talks.fullTalkTopic.subject}}</span>
                                         </h2>
-                                    <p>{{talks.fullTalkTopic.message.content}}</p>
+
+                                    <p ng-switch-when="message">{{talks.fullTalkTopic.message.content}}</p>
+
+                                    <div class="poll" ng-switch-when="poll" ng-cloak>
+                                        <div class="text" ng-cloak>{{talks.fullTalkTopic.message.content}}</div>
+
+                                        <h5>{{talks.fullTalkTopic.poll.subject}}</h5>
+
+                                        <div class="radio" ng-repeat="variant in talks.fullTalkTopic.poll.editNames">
+                                            <label>
+                                                <input name="poll-variant-{{talks.fullTalkTopic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
+                                                <span class="lbl">{{variant.name}}</span>
+                                            </label>
+                                        </div>
+
+                                        <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,talks.fullTalkTopic.poll)">Голосовать</button>
+
+                                    </div>
+
                                         <div class="message-bottom">
                                             <span class="topic-header-date">{{talks.fullTalkTopic.message.createdEdit}}</span>
                                             <a class="answer-link" href="#" ng-click="talks.showTopicAnswerInput($event)">Ответить</a>
@@ -27,7 +45,7 @@
                                 </div>
                             </div>
                             <div class="answer-input" ng-show="talks.fullTalkTopic.answerInputIsShow">
-                                <textarea ng-model="talks.answerFirstMessage"
+                                <textarea ng-model="talks.answerFirstMessage" class="no-resize"
                                           onblur="if(this.value=='') this.value='Ваш ответ';"
                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
                                 <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleFirstMessage($event,talks.fullTalkTopic.id)">Отправить</a>
@@ -59,7 +77,7 @@
                                     </div>
 
                                     <div class="answer-input" ng-show="firstMessage.answerInputIsShow">
-                                        <textarea ng-model="firstMessage.answerMessage"
+                                        <textarea ng-model="firstMessage.answerMessage" class="no-resize"
                                             onblur="if(this.value=='') this.value='Ваш ответ';"
                                             onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
                                         <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,firstMessage)">Отправить</a>
@@ -92,7 +110,7 @@
                                             </div>
 
                                             <div class="answer-input" ng-show="message.answerInputIsShow">
-                                                <textarea ng-model="message.answerMessage"
+                                                <textarea ng-model="message.answerMessage" class="no-resize"
                                                           onblur="if(this.value=='') this.value='Ваш ответ';"
                                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
                                                 <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,firstMessage,message)">Отправить</a>
