@@ -60,6 +60,8 @@ angular.module('forum.controllers', [])
 
         };
 
+        base.pageTitle = "Новости";
+
         $rootScope.base = base;
         $rootScope.currentPage = 'lenta';
     })
@@ -79,7 +81,7 @@ angular.module('forum.controllers', [])
 
             resetAceNavBtns(navbar);
             navbar.nextdoorsBtnStatus = "active";
-            $rootScope.base.mainContentTopIsHide = true;
+            $rootScope.base.pageTitle = "";
 
             var nextdoors = $('.dynamic .nextdoors');
 
@@ -198,8 +200,6 @@ angular.module('forum.controllers', [])
         topCtrl.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         var groups = topCtrl.groups,
             groupsLength = groups.length;
-       // topCtrl.allGroupsBtn = {};
-        //topCtrl.allGroupsBtn.selected = true;
         groups[0].selected = true;
         $rootScope.currentGroup = groups[0];
 

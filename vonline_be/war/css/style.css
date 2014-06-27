@@ -18,6 +18,9 @@ h1 {
 .header-color-blue2 {
   background-color: #438eb9 !important;
 }
+.overflow-auto {
+  overflow: auto;
+}
 .container {
   padding: 0;
   max-width: 1240px;
@@ -148,7 +151,6 @@ h1 {
   font-size: 20px;
 }
 .main-content-top {
-  overflow: auto;
   border-bottom: 1px solid #ccc;
 }
 .submenu {
@@ -718,7 +720,7 @@ h1 {
   margin-left: 320px;
 }
 .nextdoors {
-  padding: 10px;
+  padding: 5px;
 }
 .nextdoors .form-search {
   margin-bottom: 20px;
@@ -729,7 +731,6 @@ h1 {
   overflow: auto;
   border: 1px solid #ccc;
   margin-bottom: 10px;
-/* profle */
 }
 .nextdoors .nextdoor-single .nextdoor-left span {
   display: block;
@@ -739,6 +740,10 @@ h1 {
 }
 .nextdoors .nextdoor-single .nextdoor-left .nextdoor-name {
   margin-left: 90px;
+}
+.nextdoors .nextdoors-amount {
+  margin: 15px 0 0 0;
+/* profle */
 }
 .user-body .user-body-left .logo-container {
   position: relative;

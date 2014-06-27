@@ -189,8 +189,9 @@
                 </aside>
 				<div class="main-content dynamic">
 
-                    <div class="main-content-top" ng-hide="base.mainContentTopIsHide" ng-controller="mainContentTopController as mainContentTop">
-                        <div class="page-title pull-left">Новости</div>
+                    <div class="main-content-top" ng-hide="base.mainContentTopIsHide" ng-controller="mainContentTopController as mainContentTop"
+                         ng-class="{'overflow-auto' : base.pageTitle.length}">
+                        <div class="page-title pull-left" ng-show="base.pageTitle.length">{{base.pageTitle}}</div>
 
                         <nav class="submenu pull-right clearfix">
                             <button class="btn btn-sm btn-info no-border pull-right ng-cloak" ng-repeat="group in mainContentTop.groups"
