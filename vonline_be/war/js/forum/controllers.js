@@ -343,7 +343,11 @@ angular.module('forum.controllers', [])
                 wallItem.isFocus = true ;
 
             if(wallMessage){
-                var authorName = userClient.getUserInfoExt(wallMessage.authorId).firstName;
+                //var authorName = userClient.getUserInfoExt(wallMessage.authorId).firstName;
+                var authorName;
+                wallMessage.userInfo ?
+                    authorName = wallMessage.userInfo.firstName :
+                    authorName = wallMessage.authorName.split(' ')[0];
                 wallItem.commentText = authorName+", ";
             }else{
                 wallItem.commentText = "";

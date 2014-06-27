@@ -322,7 +322,7 @@
 
                                                     <div class="lenta-item-bottom">
                                                         <span ng-cloak>{{wallItem.topic.message.createdEdit}}</span>
-                                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)" class="a1">Комментировать</a>
+                                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)">Комментировать</a>
                                                     </div>
 
                                                 </div>
