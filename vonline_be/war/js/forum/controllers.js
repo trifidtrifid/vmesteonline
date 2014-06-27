@@ -176,12 +176,14 @@ angular.module('forum.controllers', [])
                 $rootScope.base.mainContentTopIsHide = false;
                 $rootScope.base.lentaIsActive = true;
                 $rootScope.currentPage = 'lenta';
+                $rootScope.base.pageTitle = "Новости";
                 break;
             case 2:
                 $rootScope.base.mainContentTopIsHide = false;
                 $rootScope.base.talksIsActive = true;
                 $rootScope.base.isTalkTitles = true;
                 $rootScope.currentPage = 'talks';
+                $rootScope.base.pageTitle = "Обсуждения";
                 break;
             case 3:
                 $rootScope.base.servicesIsActive = true;
