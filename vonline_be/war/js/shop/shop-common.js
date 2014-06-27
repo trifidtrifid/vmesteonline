@@ -706,7 +706,7 @@ define(
 
                 // запускаем скрипты логина через ajax
                 $.ajax({
-                    url: 'js/login.js',
+                    url: 'js/shop/login.js',
                     dataType: 'script'
                 });
 
