@@ -279,19 +279,43 @@
 
                                                     <div class="text" ng-switch-when="message" ng-cloak>{{wallItem.topic.message.content}}</div>
 
-                                                    <div class="poll" ng-switch-when="poll" ng-cloak>
-                                                        <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>
+                                                    <div class="poll" ng-switch-when="poll" ng-switch on="wallItem.topic.poll.alreadyPoll" ng-cloak>
+                                                        <div class="text" ng-cloak>{{wallItem.topic.message.content}} {{wallItem.topic.poll.alreadyPoll}}</div>
 
                                                         <h5>{{wallItem.topic.poll.subject}}</h5>
 
-                                                        <div class="radio" ng-repeat="variant in wallItem.topic.poll.editNames">
-                                                            <label>
-                                                                <input name="poll-variant-{{wallItem.topic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
-                                                                <span class="lbl">{{variant.name}}</span>
-                                                            </label>
-                                                        </div>
+                                                        <!-- -->
 
-                                                        <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,wallItem.topic.poll)">Голосовать</button>
+                                                        <div class="poll-do" ng-switch-when="false">
+
+                                                            <div class="radio" ng-repeat="variant in wallItem.topic.poll.editNames">
+                                                                <label>
+                                                                    <input name="poll-variant-{{wallItem.topic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
+                                                                    <span class="lbl">{{variant.name}}</span>
+                                                                </label>
+                                                            </div>
+
+                                                            <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,wallItem.topic.poll)">Голосовать</button>
+
+                                                        </div>
+                                                        <!-- -->
+
+                                                        <div class="poll-results" ng-switch-when="true">
+
+                                                            <div class="poll-result-item"  ng-repeat="variant in wallItem.topic.poll.editNames">
+                                                                <div class="poll-result-variant">{{variant.name}}</div>
+                                                                <div class="poll-row">
+                                                                    <div class="poll-row-line">
+                                                                        <div class="poll-line-percent" ng-style="{width: variant.votersPercent}"></div>
+                                                                        <div class="poll-line-number" style="width: 100%">{{variant.votersNum}}</div>
+                                                                    </div>
+                                                                    <div class="poll-row-percent">{{variant.votersPercent}}%</div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="poll-result-amount">Проголосовало <span>{{wallItem.topic.poll.amount}}</span> человек</div>
+
+                                                        </div>
 
                                                     </div>
 
@@ -487,7 +511,7 @@
 
                             <section class="private-messages page" ng-show="base.privateMessagesIsActive" ng-controller="privateMessagesController as privateMessages"></section>
 
-                            <section class="nextdoors page" ng-init="base.mainContentTopIsHide = false" ng-class="base.nextdoorsLoadStatus" ng-show="base.nextdoorsIsActive" ng-controller="nextdoorsController as nextdoors">
+                            <section class="nextdoors page" ng-class="base.nextdoorsLoadStatus" ng-show="base.nextdoorsIsActive" ng-controller="nextdoorsController as nextdoors">
                                 
                             </section>
 
@@ -613,7 +637,7 @@
 
 	</div>
 
-	<div class="wysiwig-wrap">
+	<%--<div class="wysiwig-wrap">
 		<div class="widget-box wysiwig-box">
 			<div class="widget-header widget-header-small  header-color-blue2">
 
@@ -952,7 +976,7 @@
 			</div>
 			<a class="btn btn-primary no-border" href="#">Сохранить</a>
 		</section>
-	</div>
+	</div>--%>
 
 
 	<!-- общие библиотеки -->

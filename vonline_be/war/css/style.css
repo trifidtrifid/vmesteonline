@@ -560,6 +560,27 @@ h1 {
 .create-poll .poll-cancel:hover {
   text-decoration: none;
 }
+.poll-results .poll-result-item {
+  margin-bottom: 10px;
+}
+.poll-results .poll-result-item .poll-result-variant {
+  font-size: 14px;
+}
+.poll-results .poll-result-item .poll-row .poll-row-line {
+  display: inline-block;
+  color: #8ba1bc;
+  width: 84%;
+}
+.poll-results .poll-result-item .poll-row .poll-row-line .poll-line-percent {
+  background-color: #dae1e8;
+}
+.poll-results .poll-result-item .poll-row .poll-row-line .poll-line-number {
+  background-color: #f7f7f7;
+}
+.poll-results .poll-result-item .poll-row .poll-row-percent {
+  display: inline-block;
+  width: 15%;
+}
 .lenta-item {
   margin-bottom: 20px;
 }
