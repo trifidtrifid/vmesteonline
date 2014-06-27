@@ -101,12 +101,12 @@ public class UserServiceImplTest extends TestWorkAround {
 
 			VoUser voUserA = asi.getCurrentUser(pm);
 			UserProfile ui = usi.getUserProfile(voUserA.getId());
-
+			Assert.assertNotNull(ui);
+			Assert.assertNotNull(ui.userInfo);
+			Assert.assertNotNull(ui.contacts);
 			Assert.assertEquals(voUserA.getId(), ui.userInfo.userId);
 			Assert.assertEquals(Defaults.user1name, ui.userInfo.firstName);
 			Assert.assertEquals(Defaults.user1lastName, ui.userInfo.lastName); //
-
-			fail("should implement");
 
 		} catch (Exception e) {
 			e.printStackTrace();

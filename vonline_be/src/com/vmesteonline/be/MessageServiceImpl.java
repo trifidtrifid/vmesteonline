@@ -5,11 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
@@ -19,7 +16,6 @@ import javax.jdo.Query;
 import org.apache.thrift.TException;
 
 import com.google.appengine.api.datastore.KeyFactory;
-import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
@@ -35,7 +31,6 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.VoUserMessage;
 import com.vmesteonline.be.jdo2.VoUserObject;
 import com.vmesteonline.be.jdo2.VoUserTopic;
-import com.vmesteonline.be.messageservice.GroupUpdates;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageListPart;
 import com.vmesteonline.be.messageservice.MessageService.Iface;
@@ -45,7 +40,6 @@ import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.messageservice.TopicListPart;
 import com.vmesteonline.be.messageservice.UserMessage;
 import com.vmesteonline.be.messageservice.UserOpinion;
-import com.vmesteonline.be.messageservice.UserTopic;
 import com.vmesteonline.be.messageservice.WallItem;
 import com.vmesteonline.be.utils.VoHelper;
 
@@ -344,7 +338,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId()
 							+ "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + ","
 							+ votopic.getCreatedAt() + ");");
-					newTopicNotify(votopic);
 				} else {
 					updateTopic(topic);
 				}
@@ -419,7 +412,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			} finally {
 				pm.close();
 			}
-			newMessageNotify(vomsg);
 			msg.setId(vomsg.getId());
 		} else {
 			updateMessage(msg);
@@ -593,14 +585,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
-	private void newMessageNotify(VoMessage vomsg) throws InvalidOperation, TException {
-		// TODO notify users about new message POSTED!
-	}
-
-	private void newTopicNotify(VoTopic votopic) {
-		/* TODO Implement user notification */
-	}
-
 	private void updateTopic(Topic topic) throws InvalidOperation {
 
 		PersistenceManagerFactory pmf = PMF.get();
@@ -632,14 +616,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	protected JDBCConnector con;
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.MessageServceImpl");
-
-	// ======================================================================================================================
-
-	private static final Set<String> publicMethods = new HashSet<String>(Arrays.asList(new String[] {
-
-	"allMethods are public"
-
-	}));
 
 	@Override
 	public boolean isPublicMethod(String method) {

@@ -2,7 +2,6 @@ package com.vmesteonline.be;
 import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.protocol.TJSONProtocol;
 
-import com.vmesteonline.be.AuthService.Processor;
 import com.vmesteonline.be.access.VoServiceMapAccessValidator;
 
 public class AuthSericeServlet extends VoServlet {

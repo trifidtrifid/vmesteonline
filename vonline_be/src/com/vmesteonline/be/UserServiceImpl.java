@@ -261,8 +261,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@Override
 	public UserProfile getUserProfile(long userId) throws InvalidOperation {
-		// TODO Auto-generated method stub
-		return null;
+
+		PersistenceManager pm = PMF.getPm();
+		VoUser user = getCurrentUser(pm);
+		UserProfile up = user.getUserProfile();
+
+		return up;
 	}
 
 	@Override

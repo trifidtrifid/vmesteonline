@@ -18,7 +18,10 @@ import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.RelationsType;
 import com.vmesteonline.be.ShortUserInfo;
+import com.vmesteonline.be.UserContacts;
 import com.vmesteonline.be.UserInfo;
+import com.vmesteonline.be.UserProfile;
+import com.vmesteonline.be.UserStatus;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
@@ -51,6 +54,18 @@ public class VoUser extends GeoLocation {
 
 	}
 
+	public UserProfile getUserProfile() {
+		UserProfile up = new UserProfile();
+		up.contacts = getContacts();
+		up.userInfo = getUserInfo();
+
+		return up;
+	}
+
+	public UserContacts getContacts() {
+		return new UserContacts(getId(), UserStatus.CONFIRMED, null, mobilePhone, email);
+	}
+
 	public void setBirthday(String birthday) {
 		this.birthday = birthday;
 	}
@@ -64,7 +79,7 @@ public class VoUser extends GeoLocation {
 	}
 
 	public UserInfo getUserInfo() {
-		return new UserInfo(getId(), name, lastName, 0, 0, avatarProfile);
+		return new UserInfo(getId(), name, lastName, 0, gender, avatarProfile);
 	}
 
 	public VoUserGroup getGroupById(long id) throws InvalidOperation {
@@ -298,6 +313,10 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	private String lastName;
+
+	@Persistent
+	@Unindexed
+	private int gender;
 
 	@Persistent
 	private String email;

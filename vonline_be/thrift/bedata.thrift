@@ -90,7 +90,6 @@ struct UserContacts{
 }
 
 struct Children{
-	1: i64 userId,
 	2: string name,
 	3: i32 birthday
 }
@@ -98,7 +97,6 @@ struct Children{
 enum PetType { CAT=0, DOG=1, BIRD=2, OTHER=3}
 
 struct Pet{
-	1: i64 userId,
 	2: PetType type,
 	3: string breed
 }
@@ -106,7 +104,6 @@ struct Pet{
 enum RelationsType { MARRIED=0, NOTMARRIED=1, UNKNOWN=3 }
 struct UserFamily{
 
-	1: i64 userId,
 	2: RelationsType relations,
 	3: list<Children> childs,
 	4: list<Pet> pets,

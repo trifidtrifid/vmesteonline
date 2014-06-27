@@ -2,12 +2,8 @@ package com.vmesteonline.be;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -16,7 +12,6 @@ import javax.jdo.Query;
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
-import com.vmesteonline.be.ServiceImpl.ServiceCategoryID;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
@@ -39,12 +34,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		try {
 
 			VoSession session = getSession(httpSessId, pm);
-			
-			if (null == session || 0 == session.getUserId() ){
+
+			if (null == session || 0 == session.getUserId()) {
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
 			}
 			try {
-				pm.getObjectById(VoUser.class,session.getUserId());
+				pm.getObjectById(VoUser.class, session.getUserId());
 			} catch (Exception e) {
 				session.setUserId(null);
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
@@ -146,8 +141,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			}
 
 			try {
-				String body = "<h2>"+firstname+" "+lastname+"</h2><br/>Вы зарегистрировались на сайте www.vmesteonline.ru. Ваш логин " + email +".<br/>";
-				EMailHelper.sendSimpleEMail( email, "Вы зарегестрированы на Bo! сайте", body);
+				String body = "<h2>" + firstname + " " + lastname + "</h2><br/>Вы зарегистрировались на сайте www.vmesteonline.ru. Ваш логин "
+						+ email + ".<br/>";
+				EMailHelper.sendSimpleEMail(email, "Вы зарегестрированы на Bo! сайте", body);
 			} catch (Exception e) {
 				logger.warn("can't send email to " + email + " " + e.getMessage());
 				e.printStackTrace();
@@ -275,14 +271,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		}
 	}
 
-	// ======================================================================================================================
-
-	private static final Set<String> publicMethods = new HashSet<String>(Arrays.asList(new String[] {
-
-	"methodName"
-
-	}));
-
+	//TODO what is this?
 	@Override
 	public boolean isPublicMethod(String method) {
 		return true;// publicMethods.contains(method);
