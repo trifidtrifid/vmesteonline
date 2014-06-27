@@ -22,7 +22,7 @@ public class VoPoll {
 	}
 
 	public Poll getPoll() {
-		Poll poll = new Poll(getId(), names, values, subject);
+		Poll poll = new Poll(getId(), names, values, subject, false);
 		return poll;
 	}
 
