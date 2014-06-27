@@ -55,7 +55,12 @@ angular.module('forum.controllers', [])
             }
 
             //console.log(poll.pollId+"--"+item);
-            poll = messageClient.doPoll(poll.pollId,item);
+            //poll = {};
+            var tempPoll = messageClient.doPoll(poll.pollId,item);
+            poll.alreadyPoll = true;
+            poll.values = tempPoll.values;
+
+            console.log("000"+poll.alreadyPoll);
             setPollEditNames(poll);
 
         };
@@ -171,12 +176,14 @@ angular.module('forum.controllers', [])
                 $rootScope.base.mainContentTopIsHide = false;
                 $rootScope.base.lentaIsActive = true;
                 $rootScope.currentPage = 'lenta';
+                $rootScope.base.pageTitle = "Новости";
                 break;
             case 2:
                 $rootScope.base.mainContentTopIsHide = false;
                 $rootScope.base.talksIsActive = true;
                 $rootScope.base.isTalkTitles = true;
                 $rootScope.currentPage = 'talks';
+                $rootScope.base.pageTitle = "Обсуждения";
                 break;
             case 3:
                 $rootScope.base.servicesIsActive = true;
@@ -314,7 +321,7 @@ angular.module('forum.controllers', [])
             var newWallComment = messageClient.createMessage(wallItem.topic.id,0,lenta.selectedGroupInTop.id,5,wallItem.commentText);
             wallItem.commentText = "Ваш ответ";
             newWallComment.createdEdit = getTiming(newWallComment.created);
-            newWallComment.authorName = getAuthorName(newWallComment.authorId);
+            newWallComment.authorName = getAuthorName(newWallComment.userInfo);
 
             //console.log(lenta.wallItems+" "+lenta.wallItems.topic);
             if(wallItem.messages){
@@ -336,7 +343,11 @@ angular.module('forum.controllers', [])
                 wallItem.isFocus = true ;
 
             if(wallMessage){
-                var authorName = userClient.getUserInfoExt(wallMessage.authorId).firstName;
+                //var authorName = userClient.getUserInfoExt(wallMessage.authorId).firstName;
+                var authorName;
+                wallMessage.userInfo ?
+                    authorName = wallMessage.userInfo.firstName :
+                    authorName = wallMessage.authorName.split(' ')[0];
                 wallItem.commentText = authorName+", ";
             }else{
                 wallItem.commentText = "";
@@ -371,7 +382,7 @@ angular.module('forum.controllers', [])
                 }else if(lenta.wallItems[i].topic.message.type == 5){
 
                     lenta.wallItems[i].topic.message.createdEdit = getTiming(lenta.wallItems[i].topic.message.created);
-                    lenta.wallItems[i].topic.authorName = getAuthorName(lenta.wallItems[i].topic.message.authorId);
+                    lenta.wallItems[i].topic.authorName = getAuthorName(lenta.wallItems[i].topic.message.userInfo);
                     lenta.wallItems[i].topic.metaType = "message";
 
                     var mesLen;
@@ -381,7 +392,7 @@ angular.module('forum.controllers', [])
 
                     for(var j = 0; j < mesLen; j++){
                         lenta.wallItems[i].messages[j].createdEdit = getTiming(lenta.wallItems[i].messages[j].created);
-                        lenta.wallItems[i].messages[j].authorName = getAuthorName(lenta.wallItems[i].messages[j].authorId);
+                        lenta.wallItems[i].messages[j].authorName = getAuthorName(lenta.wallItems[i].messages[j].userInfo);
                     }
 
 
@@ -939,15 +950,13 @@ function getLabel(groupsArray,groupId){
 
     return label;
 }
-function getAuthorName(authorId){
-    var user;
-    if(authorId){
-        user = userClient.getUserInfoExt(authorId);
-    }else{
-        user = userClient.getShortUserInfo();
+function getAuthorName(userInfo){
+    var userInf = userInfo;
+    if(!userInfo){
+        userInf = userClient.getShortUserInfo();
     }
 
-    return user.firstName+" "+user.lastName;
+    return userInf.firstName+" "+userInf.lastName;
 }
 function getTagColor(labelName){
     var color;
@@ -998,6 +1007,7 @@ function postTopic(obj,isWall){
     newTopic.subject = subject;
     newTopic.id = 0;
     newTopic.metaType = "message";
+    newTopic.messageNum = 0;
 
     var poll;
     if(obj.isPollShow){
@@ -1006,6 +1016,7 @@ function postTopic(obj,isWall){
         poll.editNames = [];
         poll.names = [];
         poll.subject = obj.pollSubject;
+        poll.alreadyPoll = false;
         var pollInputsLength = obj.pollInputs.length;
         for(var i = 0; i < pollInputsLength; i++){
             poll.names[i] = obj.pollInputs[i].name;
@@ -1056,15 +1067,17 @@ function setPollEditNames(poll){
 
     // нужно знать полный amount для вычисления процентной длины
     for(var j = 0; j < namesLength; j++){
-        if(poll.values[j]) {
+        if(poll && poll.values && poll.values[j]) {
             amount += poll.values[j];
         }
     }
 
     for(var j = 0; j < namesLength; j++){
-        if(poll.values[j]) {
+        if(poll && poll.values && poll.values[j]) {
             votersNum = poll.values[j];
             votersPercent = votersNum*100/amount;
+        }else{
+            votersNum = votersPercent = 0;
         }
 
         poll.editNames[j] = {
@@ -1072,11 +1085,11 @@ function setPollEditNames(poll){
             value: 0,
             name : poll.names[j],
             votersNum : votersNum,
-            votersPercent: votersPercent
+            votersPercent: votersPercent+"%"
         };
 
         console.log('---');
-        console.log(poll.names[j]+" "+poll.values[j]);
+        //console.log(poll.names[j]+" "+poll.values[j]);
         console.log('---');
     }
     poll.amount = amount;

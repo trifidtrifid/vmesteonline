@@ -22,19 +22,42 @@
 
                                     <p ng-switch-when="message">{{talks.fullTalkTopic.message.content}}</p>
 
-                                    <div class="poll" ng-switch-when="poll" ng-cloak>
+                                    <div class="poll" ng-switch-when="poll"  ng-switch on="talks.fullTalkTopic.poll.alreadyPoll" ng-cloak>
                                         <div class="text" ng-cloak>{{talks.fullTalkTopic.message.content}}</div>
 
                                         <h5>{{talks.fullTalkTopic.poll.subject}}</h5>
 
-                                        <div class="radio" ng-repeat="variant in talks.fullTalkTopic.poll.editNames">
-                                            <label>
-                                                <input name="poll-variant-{{talks.fullTalkTopic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
-                                                <span class="lbl">{{variant.name}}</span>
-                                            </label>
+                                        <div class="poll-do" ng-switch-when="false">
+
+                                            <div class="radio" ng-repeat="variant in talks.fullTalkTopic.poll.editNames">
+                                                <label>
+                                                    <input name="poll-variant-{{talks.fullTalkTopic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
+                                                    <span class="lbl">{{variant.name}}</span>
+                                                </label>
+                                            </div>
+
+                                            <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,talks.fullTalkTopic.poll)">Голосовать</button>
+
                                         </div>
 
-                                        <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,talks.fullTalkTopic.poll)">Голосовать</button>
+                                        <!-- -->
+
+                                        <div class="poll-results" ng-switch-when="true">
+
+                                            <div class="poll-result-item"  ng-repeat="variant in talks.fullTalkTopic.poll.editNames">
+                                                <div class="poll-result-variant">{{variant.name}}</div>
+                                                <div class="poll-row">
+                                                    <div class="poll-row-line">
+                                                        <div class="poll-line-percent" ng-style="{width: variant.votersPercent}"></div>
+                                                        <div class="poll-line-number" style="width: 100%">{{variant.votersNum}}</div>
+                                                    </div>
+                                                    <div class="poll-row-percent">{{variant.votersPercent}}</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="poll-result-amount">Проголосовало <span>{{talks.fullTalkTopic.poll.amount}}</span> человек</div>
+
+                                        </div>
 
                                     </div>
 

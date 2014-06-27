@@ -281,7 +281,7 @@
                                                     <div class="text" ng-switch-when="message" ng-cloak>{{wallItem.topic.message.content}}</div>
 
                                                     <div class="poll" ng-switch-when="poll" ng-switch on="wallItem.topic.poll.alreadyPoll" ng-cloak>
-                                                        <div class="text" ng-cloak>{{wallItem.topic.message.content}} {{wallItem.topic.poll.alreadyPoll}}</div>
+                                                        <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>
 
                                                         <h5>{{wallItem.topic.poll.subject}}</h5>
 
@@ -310,7 +310,7 @@
                                                                         <div class="poll-line-percent" ng-style="{width: variant.votersPercent}"></div>
                                                                         <div class="poll-line-number" style="width: 100%">{{variant.votersNum}}</div>
                                                                     </div>
-                                                                    <div class="poll-row-percent">{{variant.votersPercent}}%</div>
+                                                                    <div class="poll-row-percent">{{variant.votersPercent}}</div>
                                                                 </div>
                                                             </div>
 
@@ -322,7 +322,7 @@
 
                                                     <div class="lenta-item-bottom">
                                                         <span ng-cloak>{{wallItem.topic.message.createdEdit}}</span>
-                                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)" class="a1">Комментировать</a>
+                                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)">Комментировать</a>
                                                     </div>
 
                                                 </div>

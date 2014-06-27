@@ -504,10 +504,15 @@ transform()
         display inline-block
         color #8BA1BC
         width 84%
+        text-align center
+        line-height 15px
+        background-color #F7F7F7
         .poll-line-percent
           background-color #DAE1E8
+          height 15px
         .poll-line-number
-          background-color #F7F7F7
+          height 15px
+          margin-top -15px
       .poll-row-percent
         display inline-block
         width 15%
@@ -539,6 +544,8 @@ transform()
       padding-bottom 20px
       .lbl:before
         margin-right 10px
+      h5
+        font-family tahoma, arial
   .dialogs
     clear left
     margin 0 0 0 30px
@@ -592,6 +599,10 @@ transform()
     bottom 5px
   .poll
     padding-bottom 30px
+    .radio .lbl:before
+      margin-right 10px
+    h5
+      font-family tahoma, arial
 
   /* private-messages */
 .private-messages
