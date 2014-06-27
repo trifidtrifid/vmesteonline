@@ -17,14 +17,15 @@
 	<h2>Reset to defaults</h2>
 
 	<%
-	Defaults.initDefaultData();
-/* 	if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Production) {
+	if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Production) {
 		Defaults.initDefaultData();
+	
+//		Defaults.initializeShop();
 	} else {
- */		%>
+		%>
 		<h1>THIS IS PRODUCTION YOU NEVER SHOULD USE init.jsp!</h1>
 		<%
-	//}
+	}
 	%>
 
 </body>

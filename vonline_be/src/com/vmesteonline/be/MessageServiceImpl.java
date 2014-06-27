@@ -79,7 +79,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic();
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
-					
+
 					MessageListPart mlp = getMessagesAsList(tpc.id, 0, MessageType.BASE, 0, false, 10000);
 					if (mlp.totalSize > 0)
 						logger.info("find msgs " + mlp.messages.size());
@@ -236,7 +236,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				mlp.totalSize = topics.size();
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic();
-					
 
 					VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
 					if (voUserTopic == null) {
