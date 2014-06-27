@@ -1,6 +1,7 @@
 package com.vmesteonline.be.jdo2;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -21,7 +22,7 @@ public class VoPoll {
 	}
 
 	public Poll getPoll() {
-		Poll poll = new Poll(getId(), names, values, subject);
+		Poll poll = new Poll(getId(), names, values, subject, false);
 		return poll;
 	}
 
@@ -72,5 +73,9 @@ public class VoPoll {
 	@Persistent
 	@Unindexed
 	private List<Integer> values;
+
+	@Persistent
+	@Unindexed
+	private Set<Long> alreadyPoll;
 
 }
