@@ -53,7 +53,8 @@ struct Poll {
 	1:	i64 pollId,
 	2:	list<string> names,
 	3:	list<i32> values,
-	4: 	string subject
+	4: 	string subject,
+	5:	bool alreadyPoll
 }
 
 
