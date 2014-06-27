@@ -67,47 +67,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	private static String emailreg = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
 	private static String phonereg = "[\\d-.()+ ]{7,21}";
 
-	@Override
-	public void updateUserContacts(UserContacts contacts) throws InvalidOperation {
-
-		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser user = getCurrentUser(pm);
-			if (null != contacts.getMobilePhone())
-				if (contacts.getMobilePhone().matches(phonereg))
-					user.setMobilePhone(contacts.getMobilePhone());
-				else
-					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Phone format '" + contacts.getMobilePhone()
-							+ "'. Should have format like 79219876543, +7(821)1234567, etc");
-
-			if (null != contacts.getEmail() && !contacts.getEmail().trim().equalsIgnoreCase(user.getEmail())) {
-				if (contacts.getEmail().matches(emailreg)) {
-					user.setEmail(contacts.getEmail());
-					user.setEmailConfirmed(false);
-				} else
-					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Email format '" + contacts.getEmail() + "'. ");
-			}
-			if (null != contacts.getHomeAddress()) {
-				VoPostalAddress pa = new VoPostalAddress(contacts.getHomeAddress(), pm);
-
-				if (user.getAddress() == null || pa.getId() != user.getAddress().getId()) {
-					try {
-						user.setLocation(pa.getAddressCode(), pm);
-					} catch (InvalidOperation e) {
-						e.printStackTrace();
-						throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.why);
-					} catch (Exception e) {
-						e.printStackTrace();
-						throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.getMessage());
-					}
-				}
-			}
-			pm.makePersistent(user);
-		} finally {
-			pm.close();
-		}
-	}
-
 	// TODO this method is forbidden should be removed. use getShortProfile
 	// instead
 	@Override
@@ -301,6 +260,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
+	public UserProfile getUserProfile(long userId) throws InvalidOperation {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public UserContacts getUserContacts() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -320,6 +285,71 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
+	public void changePassword(String oldPwd, String newPwd) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updatePrivacy(UserPrivacy privacy) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateContacts(UserContacts contacts) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser user = getCurrentUser(pm);
+			if (null != contacts.getMobilePhone())
+				if (contacts.getMobilePhone().matches(phonereg))
+					user.setMobilePhone(contacts.getMobilePhone());
+				else
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Phone format '" + contacts.getMobilePhone()
+							+ "'. Should have format like 79219876543, +7(821)1234567, etc");
+
+			if (null != contacts.getEmail() && !contacts.getEmail().trim().equalsIgnoreCase(user.getEmail())) {
+				if (contacts.getEmail().matches(emailreg)) {
+					user.setEmail(contacts.getEmail());
+					user.setEmailConfirmed(false);
+				} else
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Email format '" + contacts.getEmail() + "'. ");
+			}
+			if (null != contacts.getHomeAddress()) {
+				VoPostalAddress pa = new VoPostalAddress(contacts.getHomeAddress(), pm);
+
+				if (user.getAddress() == null || pa.getId() != user.getAddress().getId()) {
+					try {
+						user.setLocation(pa.getAddressCode(), pm);
+					} catch (InvalidOperation e) {
+						e.printStackTrace();
+						throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.why);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.getMessage());
+					}
+				}
+			}
+			pm.makePersistent(user);
+		} finally {
+			pm.close();
+		}
+
+	}
+
+	@Override
+	public void updateFamily(UserFamily family) throws InvalidOperation {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateInterests(UserInterests interests) throws InvalidOperation {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public UserContacts getUserContactsExt(long userId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -336,30 +366,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (JDOObjectNotFoundException ioe) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Access denied");
 
-		} finally {
-			pm.close();
-		}
-	}
-
-	@Override
-	public UserInfo getUserInfo() throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser u = getCurrentUser(pm);
-			UserInfo ui = u.getUserInfo();
-			return ui;
-		} finally {
-			pm.close();
-		}
-	}
-
-	@Override
-	public UserInfo getUserInfoExt(long userId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			return pm.getObjectById(VoUser.class, userId).getUserInfo();
-		} catch (JDOObjectNotFoundException onfe) {
-			throw new InvalidOperation(VoError.NotAuthorized, "No access to user Info");
 		} finally {
 			pm.close();
 		}

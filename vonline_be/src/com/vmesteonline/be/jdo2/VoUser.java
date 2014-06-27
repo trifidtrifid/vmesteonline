@@ -64,7 +64,7 @@ public class VoUser extends GeoLocation {
 	}
 
 	public UserInfo getUserInfo() {
-		return new UserInfo(getId(), name, lastName, 0, getAvatarProfile(), birthday, relations);
+		return new UserInfo(getId(), name, lastName, 0, 0, avatarProfile);
 	}
 
 	public VoUserGroup getGroupById(long id) throws InvalidOperation {

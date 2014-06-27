@@ -100,15 +100,13 @@ public class UserServiceImplTest extends TestWorkAround {
 			asi.login(Defaults.user1email, Defaults.user1pass);
 
 			VoUser voUserA = asi.getCurrentUser(pm);
-			UserInfo ui = usi.getUserInfo();
+			UserProfile ui = usi.getUserProfile(voUserA.getId());
 
-			Assert.assertEquals(voUserA.getId(), ui.getId());
-			Assert.assertEquals(Defaults.user1name, ui.getFirstName());
-			Assert.assertEquals(Defaults.user1lastName, ui.getLastName());
-			// Assert.assertEquals(Defaults.user1lastName, ui.());
+			Assert.assertEquals(voUserA.getId(), ui.userInfo.userId);
+			Assert.assertEquals(Defaults.user1name, ui.userInfo.firstName);
+			Assert.assertEquals(Defaults.user1lastName, ui.userInfo.lastName); //
 
-			// Assert.assertEquals("Республиканская, 32/3", ui.getAddress());
-			// fail("should implement");
+			fail("should implement");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -118,35 +116,35 @@ public class UserServiceImplTest extends TestWorkAround {
 		}
 	}
 
-	@Test
-	public void testUpdateUserInfo() {
+	/*	@Test
+		public void testUpdateUserInfo() {
 
-		PersistenceManager pm = PMF.getPm();
-		try {
-			asi.login(Defaults.user1email, Defaults.user1pass);
+			PersistenceManager pm = PMF.getPm();
+			try {
+				asi.login(Defaults.user1email, Defaults.user1pass);
 
-			UserInfo ui = new UserInfo();
-			ui.birthday = "1984-07-18";
-			ui.firstName = "FirstName";
-			ui.lastName = "LastName";
-			ui.relations = RelationsType.MARRIED;
-			usi.updateUserInfo(ui);
+				UserInfo ui = new UserInfo();
+				ui.birthday = "1984-07-18";
+				ui.firstName = "FirstName";
+				ui.lastName = "LastName";
+				ui.relations = RelationsType.MARRIED;
+				usi.updateUserInfo(ui);
 
-			UserInfo uiBack = usi.getUserInfo();
+				UserInfo uiBack = usi.getUserInfo();
 
-			Assert.assertEquals(ui.birthday, uiBack.birthday);
-			Assert.assertEquals(ui.firstName, uiBack.firstName);
-			Assert.assertEquals(ui.lastName, uiBack.lastName);
-			Assert.assertEquals(ui.relations, uiBack.relations);
+				Assert.assertEquals(ui.birthday, uiBack.birthday);
+				Assert.assertEquals(ui.firstName, uiBack.firstName);
+				Assert.assertEquals(ui.lastName, uiBack.lastName);
+				Assert.assertEquals(ui.relations, uiBack.relations);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} finally {
-			pm.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			} finally {
+				pm.close();
+			}
 		}
-	}
-
+	*/
 	@Test
 	public void testUpdateUserContacts() {
 
@@ -157,7 +155,7 @@ public class UserServiceImplTest extends TestWorkAround {
 			UserContacts uc = new UserContacts();
 			uc.email = "z@z";
 			uc.mobilePhone = "7921336";
-			usi.updateUserContacts(uc);
+			usi.updateContacts(uc);
 
 			UserContacts ucBack = usi.getUserContacts();
 
@@ -487,24 +485,9 @@ public class UserServiceImplTest extends TestWorkAround {
 			byte floor = 2, flat = 3, staircase = 1;
 			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase, floor, flat, COMMENT);
 
-			usi.updateUserContacts(new UserContacts(UserStatus.CONFIRMED, null, "8(812)123-45-67", "a@b.com"));
-			usi.updateUserContacts(new UserContacts(UserStatus.CONFIRMED, newAddress, null, null));
-			usi.updateUserContacts(new UserContacts(UserStatus.CONFIRMED, newAddress, "+7 812 123-45-67", " a@b.com"));
-
-			// Assert.assertTrue(userHomeAddress.equals(newAddress));
-		} catch (InvalidOperation e) {
-			e.printStackTrace();
-			fail("Exception " + e.getMessage());
-		}
-	}
-
-	@Test
-	public void testsetGetUserInfoExt() {
-		try {
-
-			UserInfo userInfoExt = usi.getUserInfoExt(userId);
-			Assert.assertEquals(userInfoExt.firstName, "fn");
-			Assert.assertEquals(userInfoExt.lastName, "ln");
+			usi.updateContacts(new UserContacts(userId, UserStatus.CONFIRMED, null, "8(812)123-45-67", "a@b.com"));
+			usi.updateContacts(new UserContacts(userId, UserStatus.CONFIRMED, newAddress, null, null));
+			usi.updateContacts(new UserContacts(userId, UserStatus.CONFIRMED, newAddress, "+7 812 123-45-67", " a@b.com"));
 
 			// Assert.assertTrue(userHomeAddress.equals(newAddress));
 		} catch (InvalidOperation e) {

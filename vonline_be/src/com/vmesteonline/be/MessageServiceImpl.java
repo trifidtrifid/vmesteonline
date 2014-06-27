@@ -79,11 +79,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					return wallItems;
 				}
 				for (VoTopic voTopic : topics) {
-					Topic tpc = voTopic.getTopic();
-					if (voTopic.getPollId() != 0) {
-						VoPoll voPoll = pm.getObjectById(VoPoll.class, voTopic.getPollId());
-						tpc.poll = voPoll.getPoll();
-					}
+					Topic tpc = voTopic.getTopic(user.getId(), pm);
 
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
 
@@ -242,7 +238,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				}
 				mlp.totalSize = topics.size();
 				for (VoTopic voTopic : topics) {
-					Topic tpc = voTopic.getTopic();
+					Topic tpc = voTopic.getTopic(user.getId(), pm);
 
 					VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
 					if (voUserTopic == null) {
@@ -263,10 +259,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 					}
 
-					if (voTopic.getPollId() != 0) {
-						VoPoll voPoll = pm.getObjectById(VoPoll.class, voTopic.getPollId());
-						tpc.poll = voPoll.getPoll();
-					}
 					tpc.usertTopic = voUserTopic.getUserTopic();
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
 					tpc.setMessageNum(voUserTopic.getMessagesCount());
@@ -334,7 +326,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					VoTopic votopic = new VoTopic(topic);
 
 					if (topic.poll != null) {
-						
+
 						VoPoll poll = VoPoll.create(topic.poll);
 						pm.makePersistent(poll);
 						votopic.setPollId(poll.getId());
@@ -510,11 +502,15 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public Poll doPoll(long pollId, int item) throws InvalidOperation {
+		long userId = getCurrentUserId();
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoPoll poll = pm.getObjectById(VoPoll.class, pollId);
-			poll.getValues().set(item, poll.getValues().get(item) + 1);
-			return poll.getPoll();
+			if (!poll.isAlreadyPoll(userId)) {
+				poll.getValues().set(item, poll.getValues().get(item) + 1);
+				poll.doPoll(userId);
+			}
+			return poll.getPoll(userId);
 		} catch (Exception e) {
 			logger.severe("can't do poll. " + e.getMessage());
 			e.printStackTrace();

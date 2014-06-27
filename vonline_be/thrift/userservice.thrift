@@ -27,19 +27,10 @@ service UserService {
 //для отображения короткой информации о пользователе в сообщениях, топиках и т.д. другим пользователям
 	bedata.ShortProfile getShortProfile() throws (1:error.InvalidOperation exc),
 
-//для отображения информации о пользователе на странице профайла. 
-	bedata.UserInfo getUserInfo() throws (1:error.InvalidOperation exc),
-	bedata.UserInfo getUserInfoExt(1:i64 userId) throws (1:error.InvalidOperation exc),
-
-//для изменения информации о пользователе на странице профайла. 
-	void updateUserInfo(1:bedata.UserInfo userInfo) throws (1:error.InvalidOperation exc),
-
 //для отображения контактов пользователя на странице профайла. 
 	bedata.UserContacts getUserContacts() throws (1:error.InvalidOperation exc),
 	bedata.UserContacts getUserContactsExt(1:i64 userId) throws (1:error.InvalidOperation exc),
 
-//для изменения контактов пользователя на странице профайла. 
-	void updateUserContacts(1:bedata.UserContacts contacts) throws (1:error.InvalidOperation exc),
 	
 //для обновления пользовательского аватара в профайле. 
 	void updateUserAvatar(1:string url) throws (1:error.InvalidOperation exc),
@@ -47,6 +38,20 @@ service UserService {
 	
 //для получения списка соседей пользователя. 
 	list<bedata.ShortUserInfo> getNeighbors(1:i64 groupId) throws (1:error.InvalidOperation exc),
+	
+	
+	bedata.UserProfile getUserProfile(1:i64 userId) throws (1:error.InvalidOperation exc),
+	
+	//для изменения информации о пользователе на странице профайла. 
+	void updateUserInfo(1:bedata.UserInfo userInfo) throws (1:error.InvalidOperation exc),
+	void changePassword(1:string oldPwd, 2:string newPwd) throws (1:error.InvalidOperation exc),
+	void updatePrivacy(1:bedata.UserPrivacy privacy) throws (1:error.InvalidOperation exc),
+	//для изменения контактов пользователя на странице профайла. 
+	void updateContacts(1:bedata.UserContacts contacts) throws (1:error.InvalidOperation exc),
+	void updateFamily(1:bedata.UserFamily family) throws (1:error.InvalidOperation exc),
+	void updateInterests(1:bedata.UserInterests interests) throws (1:error.InvalidOperation exc),
+	
+	
 	
 	list<bedata.Country> getCounties() throws (1:error.InvalidOperation exc),
 	list<bedata.City> getCities(1:i64 countryId) throws (1:error.InvalidOperation exc),
