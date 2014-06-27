@@ -358,8 +358,8 @@ public class MessageServiceTests extends TestWorkAround {
 			Assert.assertNotNull(rTopic.get(0).topic.poll);
 			Assert.assertEquals(poll.subject, rTopic.get(0).topic.poll.subject);
 			Assert.assertEquals(poll.names.get(0), rTopic.get(0).topic.poll.names.get(0));
-			Assert.assertEquals(1, rTopic.get(0).topic.poll.values.get(0).intValue());
-			Assert.assertEquals(2, rTopic.get(0).topic.poll.values.get(1).intValue());
+			Assert.assertEquals(0, rTopic.get(0).topic.poll.values.get(0).intValue());
+			Assert.assertEquals(0, rTopic.get(0).topic.poll.values.get(1).intValue());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -389,8 +389,8 @@ public class MessageServiceTests extends TestWorkAround {
 			Assert.assertNotNull(rTopic.topics.get(0).poll);
 			Assert.assertEquals(poll.subject, rTopic.topics.get(0).poll.subject);
 			Assert.assertEquals(poll.names.get(0), rTopic.topics.get(0).poll.names.get(0));
-			Assert.assertEquals(2, rTopic.topics.get(0).poll.values.get(0).intValue());
-			Assert.assertEquals(4, rTopic.topics.get(0).poll.values.get(1).intValue());
+			Assert.assertEquals(1, rTopic.topics.get(0).poll.values.get(0).intValue());
+			Assert.assertEquals(2, rTopic.topics.get(0).poll.values.get(1).intValue());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -401,9 +401,6 @@ public class MessageServiceTests extends TestWorkAround {
 	private Poll createPoll() {
 		Poll poll = new Poll();
 		poll.subject = "test poll";
-		poll.values = new ArrayList<Integer>();
-		poll.values.add(1);
-		poll.values.add(2);
 		poll.names = new ArrayList<String>();
 		poll.names.add("first");
 		poll.names.add("second");

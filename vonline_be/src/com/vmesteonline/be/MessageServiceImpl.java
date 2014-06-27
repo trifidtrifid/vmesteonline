@@ -334,7 +334,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					VoTopic votopic = new VoTopic(topic);
 
 					if (topic.poll != null) {
-						VoPoll poll = new VoPoll(topic.poll);
+						
+						VoPoll poll = VoPoll.create(topic.poll);
 						pm.makePersistent(poll);
 						votopic.setPollId(poll.getId());
 						topic.poll.pollId = poll.getId();
@@ -408,7 +409,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public long postMessage(Message msg) throws InvalidOperation, TException {
 		long userId = getCurrentUserId();
-		System.out.print("post new message from " + userId + "\n");
 		msg.setAuthorId(userId);
 		VoMessage vomsg;
 		if (0 == msg.getId()) {
