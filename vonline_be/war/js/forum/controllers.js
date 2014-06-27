@@ -48,14 +48,19 @@ angular.module('forum.controllers', [])
             var item;
 
             for(var i = 0; i < pollNamesLength; i++){
-                if(poll.editNames[i].value == 1) item = i;
-                /*poll.values[i] = 1 :
-                 poll.values[i] = 0 ;*/
+                if(poll.editNames[i].value == 1) {
+                    item = i;
+                    break;
+                }
             }
 
-            console.log(poll.pollId+"--"+item);
-            messageClient.doPoll(poll.pollId,item);
+            //console.log(poll.pollId+"--"+item);
+            poll = messageClient.doPoll(poll.pollId,item);
+            setPollEditNames(poll);
+
         };
+
+        base.pageTitle = "Новости";
 
         $rootScope.base = base;
         $rootScope.currentPage = 'lenta';
@@ -76,7 +81,7 @@ angular.module('forum.controllers', [])
 
             resetAceNavBtns(navbar);
             navbar.nextdoorsBtnStatus = "active";
-            $rootScope.base.mainContentTopIsHide = true;
+            $rootScope.base.pageTitle = "";
 
             var nextdoors = $('.dynamic .nextdoors');
 
@@ -195,8 +200,6 @@ angular.module('forum.controllers', [])
         topCtrl.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         var groups = topCtrl.groups,
             groupsLength = groups.length;
-       // topCtrl.allGroupsBtn = {};
-        //topCtrl.allGroupsBtn.selected = true;
         groups[0].selected = true;
         $rootScope.currentGroup = groups[0];
 
@@ -384,7 +387,7 @@ angular.module('forum.controllers', [])
 
                     if(lenta.wallItems[i].topic.poll != null){
                         //значит это опрос
-                        setPollEditNames(lenta.wallItems[i].topic);
+                        setPollEditNames(lenta.wallItems[i].topic.poll);
 
                         lenta.wallItems[i].topic.metaType = "poll";
                     }
@@ -480,7 +483,7 @@ angular.module('forum.controllers', [])
                 }
             }
             if(talk.fullTalkTopic.poll != null){
-                setPollEditNames(talk.fullTalkTopic);
+                setPollEditNames(talk.fullTalkTopic.poll);
                 talk.fullTalkTopic.metaType = "poll";
             }else{
                 talk.fullTalkTopic.metaType = "message";
@@ -1039,18 +1042,42 @@ function postTopic(obj,isWall){
 
 }
 
-function setPollEditNames(obj){
+function setPollEditNames(poll){
     // obj.wallItems[i].topic
-    obj.poll.editNames = [];
-    var namesLength;
-    obj.poll.names ?
-        namesLength = obj.poll.names.length:
+    poll.editNames = [];
+    var namesLength,
+        amount = 0,
+        votersNum = 0,
+        votersPercent = 0;
+    poll.names ?
+        namesLength = poll.names.length:
         namesLength = 0;
+    console.log(poll.alreadyPoll);
+
+    // нужно знать полный amount для вычисления процентной длины
     for(var j = 0; j < namesLength; j++){
-        obj.poll.editNames[j] = {
-            id : j,
-            value: 0,
-            name : obj.poll.names[j]
+        if(poll.values[j]) {
+            amount += poll.values[j];
         }
     }
+
+    for(var j = 0; j < namesLength; j++){
+        if(poll.values[j]) {
+            votersNum = poll.values[j];
+            votersPercent = votersNum*100/amount;
+        }
+
+        poll.editNames[j] = {
+            id : j,
+            value: 0,
+            name : poll.names[j],
+            votersNum : votersNum,
+            votersPercent: votersPercent
+        };
+
+        console.log('---');
+        console.log(poll.names[j]+" "+poll.values[j]);
+        console.log('---');
+    }
+    poll.amount = amount;
 }

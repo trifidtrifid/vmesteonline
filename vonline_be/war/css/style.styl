@@ -30,6 +30,9 @@ transform()
 .header-color-blue2
   background-color #438eb9 !important
 
+.overflow-auto
+  overflow auto
+
 .container
   padding 0
   max-width 1240px
@@ -149,7 +152,6 @@ transform()
   font-size 20px
 
 .main-content-top
-  overflow auto
   border-bottom 1px solid #ccc
 .submenu
   padding 15px 10px 15px 0
@@ -492,6 +494,24 @@ transform()
     &:hover
       text-decoration none
 
+.poll-results
+  .poll-result-item
+    margin-bottom 10px
+    .poll-result-variant
+      font-size 14px
+    .poll-row
+      .poll-row-line
+        display inline-block
+        color #8BA1BC
+        width 84%
+        .poll-line-percent
+          background-color #DAE1E8
+        .poll-line-number
+          background-color #F7F7F7
+      .poll-row-percent
+        display inline-block
+        width 15%
+
 .lenta-item
   margin-bottom 20px
   .wallitem-message
@@ -599,7 +619,7 @@ transform()
 
     /* nextdoors */
 .nextdoors
-  padding 10px
+  padding 5px
   .form-search
     margin-bottom 20px
     width 100%
@@ -616,6 +636,8 @@ transform()
           width 70px
       .nextdoor-name
           margin-left 90px
+  .nextdoors-amount
+    margin 15px 0 0 0
 
     /* profle */
 .user-body
