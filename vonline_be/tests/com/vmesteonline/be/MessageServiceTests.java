@@ -389,8 +389,9 @@ public class MessageServiceTests extends TestWorkAround {
 			Assert.assertNotNull(rTopic.topics.get(0).poll);
 			Assert.assertEquals(poll.subject, rTopic.topics.get(0).poll.subject);
 			Assert.assertEquals(poll.names.get(0), rTopic.topics.get(0).poll.names.get(0));
+			Assert.assertTrue(rTopic.topics.get(0).poll.alreadyPoll);
 			Assert.assertEquals(1, rTopic.topics.get(0).poll.values.get(0).intValue());
-			Assert.assertEquals(2, rTopic.topics.get(0).poll.values.get(1).intValue());
+			Assert.assertEquals(0, rTopic.topics.get(0).poll.values.get(1).intValue());
 
 		} catch (Exception e) {
 			e.printStackTrace();

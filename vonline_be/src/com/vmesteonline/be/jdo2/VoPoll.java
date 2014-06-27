@@ -1,8 +1,10 @@
 package com.vmesteonline.be.jdo2;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -19,6 +21,7 @@ import com.vmesteonline.be.messageservice.Poll;
 public class VoPoll {
 
 	VoPoll() {
+		alreadyPoll = new TreeSet<Long>();
 	}
 
 	public static VoPoll create(Poll poll) throws InvalidOperation {
@@ -41,8 +44,8 @@ public class VoPoll {
 		return voPoll;
 	}
 
-	public Poll getPoll() {
-		Poll poll = new Poll(getId(), names, values, subject, false);
+	public Poll getPoll(long userId) {
+		Poll poll = new Poll(getId(), names, values, subject, isAlreadyPoll(userId));
 		return poll;
 	}
 
@@ -76,6 +79,14 @@ public class VoPoll {
 
 	public void setId(Key id) {
 		this.id = id;
+	}
+
+	public void doPoll(long userId) {
+		alreadyPoll.add(new Long(userId));
+	}
+
+	public boolean isAlreadyPoll(long userId) {
+		return alreadyPoll.contains(new Long(userId));
 	}
 
 	@PrimaryKey

@@ -60,25 +60,69 @@ struct ShortProfile{
 	7: string balance,
 }
 
-enum RelationsType { MARRIED=0, NOTMARRIED=1, UNKNOWN=3 }
 
-struct UserInfo{
-	1: i64 id,
-	2: string firstName,
-	3: string lastName,
-	4: i32 rating
-	5: string avatar,
-	6: string birthday,
-	7: RelationsType relations,
-}
 
 enum UserStatus { UNCONFIRMED=0, CONFIRMED=1, REQUESTED=2, WAIT_CONFIRMATION=3, HIDE=4 }
 
+struct UserInfo{
+	1: i64 userId,
+	2: string firstName,
+	3: string lastName,
+	4: i32 birthday,
+	5: i32 gender,
+	6: string avatar
+}
+
+enum PrivacyType { NONE=0, HOME=1, DISTRICT=2, EVERYBODY=3}
+
+struct UserPrivacy{
+	1: i64 userId,
+	2: PrivacyType profile,
+	3: PrivacyType contacts
+}
+
 struct UserContacts{
-	1: UserStatus addressStatus,
-	2: PostalAddress homeAddress,
-	3: string mobilePhone,
-	4: string email, 
+	1: i64 userId,
+	2: UserStatus addressStatus,
+	3: PostalAddress homeAddress,
+	4: string mobilePhone,
+	5: string email, 
+}
+
+struct Children{
+	1: i64 userId,
+	2: string name,
+	3: i32 birthday
+}
+
+enum PetType { CAT=0, DOG=1, BIRD=2, OTHER=3}
+
+struct Pet{
+	1: i64 userId,
+	2: PetType type,
+	3: string breed
+}
+
+enum RelationsType { MARRIED=0, NOTMARRIED=1, UNKNOWN=3 }
+struct UserFamily{
+
+	1: i64 userId,
+	2: RelationsType relations,
+	3: list<Children> childs,
+	4: list<Pet> pets,
+}
+
+struct UserInterests{
+	1: string userInterests,
+	2: string job,
+}
+
+struct UserProfile{
+	1: UserInfo userInfo,
+	2: UserContacts contacts,
+	3: UserFamily family,
+	4: UserPrivacy privacy, 
+	5: UserInterests interests,
 }
 
 

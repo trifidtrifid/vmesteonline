@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
@@ -43,13 +44,20 @@ public class VoTopic extends VoBaseMessage {
 		this.unlikesNum = unlikesNum;
 	}
 
-	public Topic getTopic() {
+	public Topic getTopic(long userId, PersistenceManager pm) {
 
 		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, new String(content), likesNum,
 				unlikesNum, links, tags, null, 0, null);
 
-		return new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), getUnlikes(),
-				null, null, null);
+		Topic tpc = new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(),
+				getUnlikes(), null, null, null);
+
+		if (pollId != 0) {
+			VoPoll voPoll = pm.getObjectById(VoPoll.class, pollId);
+			tpc.poll = voPoll.getPoll(userId);
+		}
+		return tpc;
+
 	}
 
 	public int getMessageNum() {
