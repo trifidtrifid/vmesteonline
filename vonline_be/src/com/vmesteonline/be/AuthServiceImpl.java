@@ -66,6 +66,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	}
 
+	
+	
 	@Override
 	public boolean login(final String email, final String password) throws InvalidOperation {
 		if (sessionStorage == null) {
@@ -80,22 +82,26 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		if (u != null) {
 			if (u.getPassword().equals(password)) {
 
-				logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
-				VoSession currentSession = getCurrentSession(pm);
-				if (null == currentSession)
-					currentSession = new VoSession(sessionStorage.getId(), u);
-				else
-					currentSession.setUser(u);
-				/*
-				 * sess.setLatitude(u.getLatitude()); sess.setLongitude(u.getLongitude());
-				 */
-				pm.makePersistent(currentSession);
+				allowUserAccess(pm, u);
 				return true;
 			} else
 				logger.info("incorrect password " + email + " pass " + password);
 
 		}
 		throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
+	}
+
+	private void allowUserAccess(PersistenceManager pm, VoUser u) throws InvalidOperation {
+		logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
+		VoSession currentSession = getCurrentSession(pm);
+		if (null == currentSession)
+			currentSession = new VoSession(sessionStorage.getId(), u);
+		else
+			currentSession.setUser(u);
+		/*
+		 * sess.setLatitude(u.getLatitude()); sess.setLongitude(u.getLongitude());
+		 */
+		pm.makePersistent(currentSession);
 	}
 
 	@SuppressWarnings("unchecked")

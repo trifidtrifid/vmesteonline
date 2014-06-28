@@ -36,6 +36,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONObject;
  import com.restfb.types.User;
  */
 public class OAuthServlet extends HttpServlet {
+
 	private static final Iterable<String> SCOPE = Arrays
 			.asList("https://www.googleapis.com/auth/userinfo.profile;https://www.googleapis.com/auth/userinfo.email".split(";"));
 
