@@ -7,6 +7,7 @@ angular.module('forum.controllers', [])
         base.nextdoorsLoadStatus = "";
         base.privateMessagesLoadStatus = "";
         base.profileLoadStatus = "";
+        base.settingsLoadStatus = "";
 
         base.mainContentTopIsHide = false;
         base.createTopicIsHide = true;
@@ -145,6 +146,28 @@ angular.module('forum.controllers', [])
 
             $rootScope.base.profileLoadStatus = "isLoaded";
 
+        };
+
+        this.goToSettings = function(event){
+            event.preventDefault();
+
+            $rootScope.leftbar.tab = 0;
+
+            resetPages($rootScope.base);
+            $rootScope.base.settingsIsActive = true;
+
+            resetAceNavBtns(navbar);
+            $rootScope.base.mainContentTopIsHide = true;
+
+            var settings = $('.dynamic .settings');
+
+            if ($rootScope.base.settingsLoadStatus == "") {
+                settings.load('ajax/forum/settings.jsp .settings',function(){
+                    //initSettings();
+                });
+            }
+
+            $rootScope.base.settingsLoadStatus = "isLoaded";
         };
 
         this.logout = function(event){
@@ -826,6 +849,8 @@ angular.module('forum.controllers', [])
     .controller('nextdoorsController',function() {
     })
     .controller('ProfileController',function() {
+    })
+    .controller('SettingsController',function() {
     });
 
 
@@ -840,6 +865,7 @@ protocol = new Thrift.Protocol(transport);
 var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
 
 var userClientGroups = userClient.getUserGroups();
+var shortUserInfo = userClient.getShortUserInfo();
 
 transport = new Thrift.Transport("/thrift/AuthService");
 protocol = new Thrift.Protocol(transport);
@@ -849,6 +875,7 @@ function resetPages(base){
     base.nextdoorsIsActive = false;
     base.privateMessagesIsActive = false;
     base.profileIsActive = false;
+    base.settingsIsActive = false;
     base.talksIsActive = false;
     base.lentaIsActive = false;
     base.servicesIsActive = false;
@@ -953,7 +980,7 @@ function getLabel(groupsArray,groupId){
 function getAuthorName(userInfo){
     var userInf = userInfo;
     if(!userInfo){
-        userInf = userClient.getShortUserInfo();
+        userInf = shortUserInfo;
     }
 
     return userInf.firstName+" "+userInf.lastName;

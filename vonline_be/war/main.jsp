@@ -107,7 +107,7 @@
                     </a>
 
                     <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                        <li><a href="settings.html"> <i class="icon-cog"></i>
+                        <li><a href="#" ng-click="navbar.goToSettings($event)"> <i class="icon-cog"></i>
                             Настройки
                         </a></li>
 
@@ -517,6 +517,8 @@
                             </section>
 
                             <section class="profile page" ng-show="base.profileIsActive" ng-controller="ProfileController as profile"></section>
+
+                            <section class="settings page" ng-show="base.settingsIsActive" ng-controller="SettingsController as settings"></section>
 
 							<%--<section class="forum">
 								<section class="options">

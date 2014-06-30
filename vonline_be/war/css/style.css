@@ -800,3 +800,10 @@ h1 {
 .user-body .user-body-right {
   margin-left: 170px;
 }
+.user-body .user-body-right .home-map {
+  padding: 0 10px 10px 0;
+}
+.user-body .user-body-right .home-map img {
+  width: 100%;
+  display: block;
+}

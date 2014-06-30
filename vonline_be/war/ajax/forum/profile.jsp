@@ -4,7 +4,6 @@
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShortProfile"%>
-<%@ page import="com.vmesteonline.be.UserInfo"%>
 <%@ page import="com.vmesteonline.be.UserContacts"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 
@@ -18,7 +17,9 @@
     boolean ifEmailConfirmed = authService.checkIfEmailConfirmed(userService.getUserContacts().email);
     pageContext.setAttribute("ifEmailConfirmed",ifEmailConfirmed);
 
-    UserInfo UserInfo = userService.getUserInfo();
+    ShortProfile UserInfo = userService.getShortProfile();
+    //UserProfile UserInfo = userService.getUserProfile(ShortProfile.id);
+
     pageContext.setAttribute("userInfo",UserInfo);
     ShortProfile shortProfile = userService.getShortProfile();
     pageContext.setAttribute("shortProfile",shortProfile);
@@ -54,11 +55,24 @@
                     </div>
                     
                     <div class="user-body-right">
-                        <div><span>Адрес проживания:</span> <c:out value="${shortProfile.address}"/></div>
-                        <div><span>День рождения:</span> <c:out value="${userInfo.birthday}"/></div>
+                        <div><span>День рождения:</span> <c:out value="${userInfo.address}"/></div>
+                        <div><span>Пол:</span> <c:out value="${userInfo.address}"/></div>
+
                         <h3>Контактная информация</h3>
                         <div><span>Телефон:</span> <c:out value="${userContacts.mobilePhone}"/></div>
                         <div><span>Email:</span> <c:out value="${userContacts.email}"/></div>
+
+                        <h3>Семья</h3>
+                        <div><span>Семейное положение:</span> <c:out value="${userContacts.mobilePhone}"/></div>
+                        <div><span>Ребенок:</span> <c:out value="${userContacts.mobilePhone}"/></div>
+                        <div><span>Питомец:</span> <c:out value="${userContacts.mobilePhone}"/></div>
+
+                        <h3>Интересы</h3>
+
+                        <h3>Домашний адрес</h3>
+                        <div><c:out value="${shortProfile.address}"/></div>
+
+                        <div class="home-map"><img src="i/map_home.jpg" alt="карта"/></div>
                     </div>
                 </div>
             </div>

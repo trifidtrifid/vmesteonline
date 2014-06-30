@@ -95,9 +95,8 @@
 .user-descr .text-area .user-body .form-edit input {
   margin-bottom: 10px;
 }
-.short.form-control {
-  width: 75px !important;
-}
+/*.short.form-control
+  width 75px !important*/
 .datepicker-simple {
   width: 470px !important;
 }
