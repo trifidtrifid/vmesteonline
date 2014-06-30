@@ -66,6 +66,65 @@ angular.module('forum.controllers', [])
 
         };
 
+        base.oldTextLength = 0;
+        base.messageChange = function(event,textareaType){
+            /*for(var p in event.target){
+             console.log(p+" "+event[p]);
+             };*/
+
+            /*console.log(event.target.clientHeight);
+            console.log(event.target.scrollHeight);
+            console.log(event.target.scrollTop);
+            console.log(event.target.value);
+            console.log(event.target.textLength);*/
+
+            var clientHeight = event.target.clientHeight,
+                scrollHeight = event.target.scrollHeight,
+                textLength = event.target.textLength,
+                clientWidth = event.target.clientWidth,
+                textLengthPX, newHeight,removeRowCount,
+                defaultHeight;
+
+            if(textareaType == 1){
+                defaultHeight = 90;
+            }else if(textareaType == 2){
+                defaultHeight = 44;
+            }
+
+            /*
+            Исходные данные:
+                На один символ приходится ~8px в ширину
+                Высота строки текста ~14px
+
+            * Здесь выполняем такие действия :
+             * 1) Считаем длину текста в пикселях
+             * 2) Определяем целое количестов строк, которые удалили
+             * 3) Определям новую высоту с учетом высоты удаленного текста
+            * */
+            if(scrollHeight > clientHeight){
+                event.target.style.height = scrollHeight+'px';
+            }else if(scrollHeight > defaultHeight){
+                //console.log('2 '+base.oldTextLength);
+                textLengthPX = (parseInt(base.oldTextLength) - textLength) * 8; // 1
+                //console.log(textLengthPX);
+                if (textLengthPX > clientWidth){
+                    //console.log('3');
+                    removeRowCount = Math.floor(textLengthPX/clientWidth); // 2
+                    //console.log(k);
+                    //console.log(event.target.style.height);
+                    newHeight = parseInt(event.target.style.height) - removeRowCount*14; // 3
+                    //console.log(newHeight);
+                    newHeight > defaultHeight ? event.target.style.height = newHeight+"px":
+                                    event.target.style.height = defaultHeight+'px';
+
+                    //console.log(event.target.style.height);
+                }
+            }else{
+                event.target.style.height = defaultHeight+'px';
+            }
+            base.oldTextLength = textLength;
+        };
+
         base.pageTitle = "Новости";
 
         $rootScope.base = base;
@@ -83,6 +142,7 @@ angular.module('forum.controllers', [])
             $rootScope.leftbar.tab = 0;
 
             resetPages($rootScope.base);
+            $rootScope.base.mainContentTopIsHide = false;
             $rootScope.base.nextdoorsIsActive = true;
 
             resetAceNavBtns(navbar);
