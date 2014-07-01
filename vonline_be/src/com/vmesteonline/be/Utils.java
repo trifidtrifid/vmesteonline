@@ -9,7 +9,6 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Preconditions;
 import com.google.api.client.util.store.DataStoreFactory;
-import com.google.api.services.plus.PlusScopes;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,7 +29,7 @@ class Utils {
 	private static final AppEngineDataStoreFactory DATA_STORE_FACTORY = AppEngineDataStoreFactory.getDefaultInstance();
 
 	private static GoogleClientSecrets clientSecrets = null;
-	private static final Set<String> SCOPES = Collections.singleton(PlusScopes.PLUS_ME);
+//	private static final Set<String> SCOPES = Collections.singleton(PlusScopes.PLUS_ME);
 	static final String MAIN_SERVLET_PATH = "/plussampleservlet";
 	static final String AUTH_CALLBACK_SERVLET_PATH = "/oauth";
 	static final NetHttpTransport HTTP_TRANSPORT = new NetHttpTransport();
@@ -44,8 +43,7 @@ class Utils {
 	}
 
 	static GoogleAuthorizationCodeFlow initializeFlow(String id, String secret) throws IOException {
-		return new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY,  id, secret, SCOPES).setDataStoreFactory(DATA_STORE_FACTORY)
-				.setAccessType("offline").build();
+		return null;//new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY,  id, secret, SCOPES).setDataStoreFactory(DATA_STORE_FACTORY).setAccessType("offline").build();
 	}
 
 	static String getRedirectUri(HttpServletRequest req) {

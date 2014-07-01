@@ -28,12 +28,12 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
-import com.restfb.DefaultFacebookClient;
+/*import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.FacebookClient.AccessToken;
 import com.restfb.types.Album;
 import com.restfb.types.User;
-
+*/
 /**
  * Entry sevlet for the Plus App Engine Sample. Demonstrates how to make an authenticated API call using OAuth2 helper classes.
  * 
@@ -108,12 +108,12 @@ public class OAuthServlet extends HttpServlet {
 
 			resp.getWriter().println("token is '" + respVals.get("access_token") + "'");
 
-			FacebookClient facebookClient = new DefaultFacebookClient(respVals.get("access_token"));
+/*			FacebookClient facebookClient = new DefaultFacebookClient(respVals.get("access_token"));
 			User user = facebookClient.fetchObject("me", User.class);
 			resp.getWriter().println("email is " + user.getEmail());
 			resp.getWriter().println("name is " + user.getName() + " " + user.getLastName());
 			resp.getWriter().println("avatar is https://graph.facebook.com/" + user.getId() + "/picture?type=large");
-		} else if (state.equals("vk")) {
+*/		} else if (state.equals("vk")) {
 
 			/*
 			 * AccessToken accessToken = new DefaultFacebookClient().obtainAppAccessToken("293608184137183", "0b93bf9f2c099da8503497d908c5aabd");
