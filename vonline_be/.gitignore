@@ -1,18 +1,8 @@
 /.google_apis
-/
-.settings
-/
-.classpath
-/
-.project
-
-/bin
-<<<<<<< HEAD
-
-vonline_be.iml
+/.settings
+/.classpath
+/.project
 /WEB-INF
-.externalToolBuilders/
-=======
+/bin
 /.project
 .externalToolBuilders/
->>>>>>> master

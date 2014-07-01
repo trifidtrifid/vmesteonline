@@ -55,10 +55,10 @@ public class OAuthServlet extends HttpServlet {
 		resp.getWriter().println("try authorize in " + state + " with code=" + authCode);
 
 		if (state.equals("google")) {
-			GoogleAuthorizationCodeFlow flow = Utils.initializeFlow("290786477692.apps.googleusercontent.com", "IiK6TuzttYzupLD7vlAVWr5P");
+			GoogleAuthorizationCodeFlow flow = Utilites.initializeFlow("290786477692.apps.googleusercontent.com", "IiK6TuzttYzupLD7vlAVWr5P");
 			GoogleTokenResponse response = flow.newTokenRequest(authCode).setRedirectUri("https://1-dot-vmesteonline.appspot.com/oauth").execute();
 			final Credential credential = flow.createAndStoreCredential(response, "userid");
-			final HttpRequestFactory requestFactory = Utils.HTTP_TRANSPORT.createRequestFactory(credential);
+			final HttpRequestFactory requestFactory = Utilites.HTTP_TRANSPORT.createRequestFactory(credential);
 			// Make an authenticated request
 			final GenericUrl url = new GenericUrl("https://www.googleapis.com/oauth2/v1/userinfo");
 			final HttpRequest request = requestFactory.buildGetRequest(url);

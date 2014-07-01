@@ -18,7 +18,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-class Utils {
+class Utilites {
 
 	public static String clnScrts = "{" + "\"web\": {" + "\"client_id\": \"290786477692.apps.googleusercontent.com\","
 			+ "\"client_secret\": \"IiK6TuzttYzupLD7vlAVWr5P\" " + "}" + "}";
