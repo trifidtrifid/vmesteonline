@@ -7,6 +7,7 @@ angular.module('forum.controllers', [])
         base.nextdoorsLoadStatus = "";
         base.privateMessagesLoadStatus = "";
         base.profileLoadStatus = "";
+        base.settingsLoadStatus = "";
 
         base.mainContentTopIsHide = false;
         base.createTopicIsHide = true;
@@ -65,6 +66,65 @@ angular.module('forum.controllers', [])
 
         };
 
+        base.oldTextLength = 0;
+        base.messageChange = function(event,textareaType){
+            /*for(var p in event.target){
+             console.log(p+" "+event[p]);
+             };*/
+
+            /*console.log(event.target.clientHeight);
+            console.log(event.target.scrollHeight);
+            console.log(event.target.scrollTop);
+            console.log(event.target.value);
+            console.log(event.target.textLength);*/
+
+            var clientHeight = event.target.clientHeight,
+                scrollHeight = event.target.scrollHeight,
+                textLength = event.target.textLength,
+                clientWidth = event.target.clientWidth,
+                textLengthPX, newHeight,removeRowCount,
+                defaultHeight;
+
+            if(textareaType == 1){
+                defaultHeight = 90;
+            }else if(textareaType == 2){
+                defaultHeight = 44;
+            }
+
+            /*
+            Исходные данные:
+                На один символ приходится ~8px в ширину
+                Высота строки текста ~14px
+
+            * Здесь выполняем такие действия :
+             * 1) Считаем длину текста в пикселях
+             * 2) Определяем целое количестов строк, которые удалили
+             * 3) Определям новую высоту с учетом высоты удаленного текста
+            * */
+            if(scrollHeight > clientHeight){
+                event.target.style.height = scrollHeight+'px';
+            }else if(scrollHeight > defaultHeight){
+                //console.log('2 '+base.oldTextLength);
+                textLengthPX = (parseInt(base.oldTextLength) - textLength) * 8; // 1
+                //console.log(textLengthPX);
+                if (textLengthPX > clientWidth){
+                    //console.log('3');
+                    removeRowCount = Math.floor(textLengthPX/clientWidth); // 2
+                    //console.log(k);
+                    //console.log(event.target.style.height);
+                    newHeight = parseInt(event.target.style.height) - removeRowCount*14; // 3
+                    //console.log(newHeight);
+                    newHeight > defaultHeight ? event.target.style.height = newHeight+"px":
+                                    event.target.style.height = defaultHeight+'px';
+
+                    //console.log(event.target.style.height);
+                }
+            }else{
+                event.target.style.height = defaultHeight+'px';
+            }
+            base.oldTextLength = textLength;
+        };
+
         base.pageTitle = "Новости";
 
         $rootScope.base = base;
@@ -82,6 +142,7 @@ angular.module('forum.controllers', [])
             $rootScope.leftbar.tab = 0;
 
             resetPages($rootScope.base);
+            $rootScope.base.mainContentTopIsHide = false;
             $rootScope.base.nextdoorsIsActive = true;
 
             resetAceNavBtns(navbar);
@@ -145,6 +206,28 @@ angular.module('forum.controllers', [])
 
             $rootScope.base.profileLoadStatus = "isLoaded";
 
+        };
+
+        this.goToSettings = function(event){
+            event.preventDefault();
+
+            $rootScope.leftbar.tab = 0;
+
+            resetPages($rootScope.base);
+            $rootScope.base.settingsIsActive = true;
+
+            resetAceNavBtns(navbar);
+            $rootScope.base.mainContentTopIsHide = true;
+
+            var settings = $('.dynamic .settings');
+
+            if ($rootScope.base.settingsLoadStatus == "") {
+                settings.load('ajax/forum/settings.jsp .settings',function(){
+                    //initSettings();
+                });
+            }
+
+            $rootScope.base.settingsLoadStatus = "isLoaded";
         };
 
         this.logout = function(event){
@@ -826,6 +909,8 @@ angular.module('forum.controllers', [])
     .controller('nextdoorsController',function() {
     })
     .controller('ProfileController',function() {
+    })
+    .controller('SettingsController',function() {
     });
 
 
@@ -840,6 +925,7 @@ protocol = new Thrift.Protocol(transport);
 var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
 
 var userClientGroups = userClient.getUserGroups();
+var shortUserInfo = userClient.getShortUserInfo();
 
 transport = new Thrift.Transport("/thrift/AuthService");
 protocol = new Thrift.Protocol(transport);
@@ -849,6 +935,7 @@ function resetPages(base){
     base.nextdoorsIsActive = false;
     base.privateMessagesIsActive = false;
     base.profileIsActive = false;
+    base.settingsIsActive = false;
     base.talksIsActive = false;
     base.lentaIsActive = false;
     base.servicesIsActive = false;
@@ -953,7 +1040,7 @@ function getLabel(groupsArray,groupId){
 function getAuthorName(userInfo){
     var userInf = userInfo;
     if(!userInfo){
-        userInf = userClient.getShortUserInfo();
+        userInf = shortUserInfo;
     }
 
     return userInf.firstName+" "+userInf.lastName;

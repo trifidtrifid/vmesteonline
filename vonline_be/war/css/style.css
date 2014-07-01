@@ -498,6 +498,7 @@ h1 {
   width: 100%;
   height: 90px;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 .create-topic >.btn-group {
   float: right;
@@ -538,6 +539,7 @@ h1 {
   width: 100%;
   height: 90px;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 .message-input .hashtag {
   margin-left: 10px;
@@ -637,6 +639,7 @@ h1 {
 }
 .lenta-item .message-textarea {
   width: 99%;
+  overflow: hidden;
 }
 .lenta-item .lenta-item-bottom {
   position: absolute;
@@ -686,6 +689,7 @@ h1 {
 .talks-block .answer-input textarea {
   width: 88%;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 .talks-block .widget-main {
   position: relative;
@@ -799,4 +803,11 @@ h1 {
 }
 .user-body .user-body-right {
   margin-left: 170px;
+}
+.user-body .user-body-right .home-map {
+  padding: 0 10px 10px 0;
+}
+.user-body .user-body-right .home-map img {
+  width: 100%;
+  display: block;
 }
