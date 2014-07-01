@@ -128,7 +128,7 @@
 
 
                         <li><a class="btn btn-info no-border bo-link
-                        <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN'}">
+                        <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}">
                         hidden
                         </c:if>
                         " href="backoffice.jsp">
