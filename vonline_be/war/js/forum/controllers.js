@@ -931,6 +931,10 @@ transport = new Thrift.Transport("/thrift/AuthService");
 protocol = new Thrift.Protocol(transport);
 var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
 
+transport = new Thrift.Transport("/thrift/fs");
+protocol = new Thrift.Protocol(transport);
+var fileClient = new com.vmesteonline.be.FileServiceClient(protocol);
+
 function resetPages(base){
     base.nextdoorsIsActive = false;
     base.privateMessagesIsActive = false;
@@ -962,13 +966,14 @@ function initProfile(){
         function saveNewAva(){
             //console.log($('.ace-file-input').find('.file-name img').css('background-image'));
             var imgBase64 = $('.ace-file-input').find('.file-name img').css('background-image');
+            var url = fileClient.saveFileContent(imgBase64,false);
 
            /* var fd = new FormData();
             var input = $('#profile-ava');
             console.log(input[0].files[0]);
             fd.append( 'data', input[0].files[0]);*/
 
-            userClient.updateUserAvatar(imgBase64);
+            userClient.updateUserAvatar(url);
         }
         //console.log($('#profile-ava').find('.file-name img').length);
         });
