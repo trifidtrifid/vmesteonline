@@ -64,4 +64,7 @@ public class FileServiceImpl extends ServiceImpl implements FileService.Iface {
 			pm.close();
 		}
 	}
+	public boolean isPublicMethod(String method) {
+		return true;
+	}
 }
