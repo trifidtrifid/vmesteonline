@@ -91,7 +91,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
 	}
 
-	private void allowUserAccess(PersistenceManager pm, VoUser u) throws InvalidOperation {
+	public void allowUserAccess(PersistenceManager pm, VoUser u) throws InvalidOperation {
 		logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
 		VoSession currentSession = getCurrentSession(pm);
 		if (null == currentSession)
