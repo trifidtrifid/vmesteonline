@@ -2,6 +2,7 @@ package com.vmesteonline.be;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
 import javax.jdo.PersistenceManager;
 
@@ -12,7 +13,7 @@ public class FileServiceImpl extends ServiceImpl implements FileService.Iface {
 
 	@Override
 	public String saveFileContent(ByteBuffer data, boolean isPublic) throws InvalidOperation {
-		return copyFileContent( new String( data.array()), isPublic );
+		return copyFileContent( new String( data.array() ), isPublic );
 	}
 
 	@Override
