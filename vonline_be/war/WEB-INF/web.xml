@@ -75,6 +75,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/market/*</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>FileService</servlet-name>
+		<servlet-class>com.vmesteonline.be.FileServiceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FileService</servlet-name>
+		<url-pattern>/thrift/fs</url-pattern>
+	</servlet-mapping>
+	
 	<welcome-file-list>
 		<welcome-file>main.jsp</welcome-file>
 	</welcome-file-list>
