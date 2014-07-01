@@ -18,9 +18,12 @@ import java.util.Map;
 
 
 
+
+
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.mail.internet.ContentType;
+import javax.mail.internet.ParseException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -138,12 +141,17 @@ public class StorageHelper {
 		if(  urlOrContent.equals( oldURL ) ) return oldURL;
 		
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
+		String contentType = "image/jpeg";
+		String fname = "img.jpeg";
 		try {
 			if( null != oldURL ){
 			long oldFileId = getFileId(oldURL);
 			
 				try {
 					VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+					contentType = oldFile.getContentType();
+					fname = oldFile.getFileName();
+					
 					if (0 == userId)
 						userId = oldFile.getUserId();
 					if (null == isPublic)
@@ -152,7 +160,7 @@ public class StorageHelper {
 				} catch (JDOObjectNotFoundException onfe) {
 				}
 			}
-			return saveImage(urlOrContent.getBytes(), "image/jpeg", userId, isPublic, pm, "img.jpeg");
+			return saveImage(urlOrContent.getBytes(), contentType, userId, isPublic, pm, fname);
 		} finally {
 			if (null == _pm)
 				pm.close();
@@ -262,15 +270,33 @@ public class StorageHelper {
 		}
 		try {
 			saveFileData(is, vfar);
-			int liop; // append with '.bin' extension if no extension is set
-			String url = getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? 
-					(contentType.equals("binary/stream") ? "dat" : new ContentType(vfar.getContentType()).getSubType()) : fileName.substring(liop + 1));
-			logger.debug( "File '" + vfar.getFileName() + "' stored with GSNAme:" + vfar.getGSFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
-			return url;
+			
+			return createFullFileName(fileName, contentType, vfar);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IOException("Failed to save file. " + e.getMessage(), e);
 		}
+	}
+	
+//===================================================================================================================
+
+	private static String createFullFileName(String fileName, String contentType, VoFileAccessRecord vfar) throws ParseException {
+		int liop = fileName.lastIndexOf('.'); // append with '.bin' extension if no extension is set
+		ContentType cType;
+		try {
+			cType = new ContentType(contentType);
+		} catch (Exception e) {
+			logger.warn("Failed to parse content type string '"+contentType+"'. Default would be used");
+			cType = new ContentType(contentType = "binary/stream");
+		}
+		String url = getURL(vfar.getId(), 
+				-1 == liop ? 	
+						(contentType.equals("binary/stream") ? 
+								"dat" : cType.getSubType())
+								: 
+								fileName.substring(liop + 1));
+		logger.debug( "File '" + vfar.getFileName() + "' stored with GSNAme:" + vfar.getGSFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
+		return url;
 	}
 
 	public static void saveFileData(InputStream is, VoFileAccessRecord vfar) throws IOException {
