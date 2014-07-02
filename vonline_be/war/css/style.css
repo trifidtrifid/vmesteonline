@@ -498,6 +498,7 @@ h1 {
   width: 100%;
   height: 90px;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 .create-topic >.btn-group {
   float: right;
@@ -538,6 +539,7 @@ h1 {
   width: 100%;
   height: 90px;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 .message-input .hashtag {
   margin-left: 10px;
@@ -572,12 +574,17 @@ h1 {
   display: inline-block;
   color: #8ba1bc;
   width: 84%;
+  text-align: center;
+  line-height: 15px;
+  background-color: #f7f7f7;
 }
 .poll-results .poll-result-item .poll-row .poll-row-line .poll-line-percent {
   background-color: #dae1e8;
+  height: 15px;
 }
 .poll-results .poll-result-item .poll-row .poll-row-line .poll-line-number {
-  background-color: #f7f7f7;
+  height: 15px;
+  margin-top: -15px;
 }
 .poll-results .poll-result-item .poll-row .poll-row-percent {
   display: inline-block;
@@ -621,6 +628,9 @@ h1 {
 .lenta-item .first-message .poll .lbl:before {
   margin-right: 10px;
 }
+.lenta-item .first-message .poll h5 {
+  font-family: tahoma, arial;
+}
 .lenta-item .dialogs {
   clear: left;
   margin: 0 0 0 30px;
@@ -629,6 +639,7 @@ h1 {
 }
 .lenta-item .message-textarea {
   width: 99%;
+  overflow: hidden;
 }
 .lenta-item .lenta-item-bottom {
   position: absolute;
@@ -678,6 +689,7 @@ h1 {
 .talks-block .answer-input textarea {
   width: 88%;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 .talks-block .widget-main {
   position: relative;
@@ -688,6 +700,12 @@ h1 {
 }
 .talks-block .poll {
   padding-bottom: 30px;
+}
+.talks-block .poll .radio .lbl:before {
+  margin-right: 10px;
+}
+.talks-block .poll h5 {
+  font-family: tahoma, arial;
 }
 .private-messages {
   padding: 10px;
@@ -785,4 +803,11 @@ h1 {
 }
 .user-body .user-body-right {
   margin-left: 170px;
+}
+.user-body .user-body-right .home-map {
+  padding: 0 10px 10px 0;
+}
+.user-body .user-body-right .home-map img {
+  width: 100%;
+  display: block;
 }

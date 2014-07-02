@@ -107,7 +107,7 @@
                     </a>
 
                     <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                        <li><a href="settings.html"> <i class="icon-cog"></i>
+                        <li><a href="#" ng-click="navbar.goToSettings($event)"> <i class="icon-cog"></i>
                             Настройки
                         </a></li>
 
@@ -209,7 +209,7 @@
 						<div class="forum-wrap">
                             <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta" ng-cloak>
                                 <div class="message-input clearfix">
-                                    <textarea ng-model="lenta.wallMessageContent" class="no-resize"
+                                    <textarea ng-model="lenta.wallMessageContent" class="no-resize" ng-keyup="base.messageChange($event,1)"
                                         onblur="if(this.value=='') this.value='Написать сообщение';"
                                         onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
 
@@ -281,7 +281,7 @@
                                                     <div class="text" ng-switch-when="message" ng-cloak>{{wallItem.topic.message.content}}</div>
 
                                                     <div class="poll" ng-switch-when="poll" ng-switch on="wallItem.topic.poll.alreadyPoll" ng-cloak>
-                                                        <div class="text" ng-cloak>{{wallItem.topic.message.content}} {{wallItem.topic.poll.alreadyPoll}}</div>
+                                                        <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>
 
                                                         <h5>{{wallItem.topic.poll.subject}}</h5>
 
@@ -310,7 +310,7 @@
                                                                         <div class="poll-line-percent" ng-style="{width: variant.votersPercent}"></div>
                                                                         <div class="poll-line-number" style="width: 100%">{{variant.votersNum}}</div>
                                                                     </div>
-                                                                    <div class="poll-row-percent">{{variant.votersPercent}}%</div>
+                                                                    <div class="poll-row-percent">{{variant.votersPercent}}</div>
                                                                 </div>
                                                             </div>
 
@@ -322,7 +322,7 @@
 
                                                     <div class="lenta-item-bottom">
                                                         <span ng-cloak>{{wallItem.topic.message.createdEdit}}</span>
-                                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)" class="a1">Комментировать</a>
+                                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)">Комментировать</a>
                                                     </div>
 
                                                 </div>
@@ -352,7 +352,7 @@
 
                                             <div class="input-group"> <%--  ng-show="wallItem.answerShow" --%>
                                                 <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallItem.commentText"
-                                                          ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow"
+                                                          ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow" ng-keyup="base.messageChange($event,1)"
                                                     onblur="if(this.value=='') this.value='Ваш ответ';"
                                                     onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
                                                     <span class="input-group-btn" ng-show="wallItem.answerShow">
@@ -393,7 +393,7 @@
                                                onfocus="if(this.value=='Заголовок') this.value='';" ng-model="talks.subject" />
                                     </div>
                                     <div class="topic-body clearfix">
-                                        <textarea ng-model="talks.content" class="no-resize"
+                                        <textarea ng-model="talks.content" class="no-resize" ng-keyup="base.messageChange($event,1)"
                                             onblur="if(this.value=='') this.value='Сообщение';"
                                             onfocus="if(this.value=='Сообщение') this.value='';"></textarea>
 
@@ -517,6 +517,8 @@
                             </section>
 
                             <section class="profile page" ng-show="base.profileIsActive" ng-controller="ProfileController as profile"></section>
+
+                            <section class="settings page" ng-show="base.settingsIsActive" ng-controller="SettingsController as settings"></section>
 
 							<%--<section class="forum">
 								<section class="options">
@@ -1007,6 +1009,8 @@
 	<script src="gen-js/UserService.js" type="text/javascript"></script>
 	<script src="gen-js/authservice_types.js" type="text/javascript"></script>
 	<script src="gen-js/AuthService.js" type="text/javascript"></script>
+    <script src="gen-js/fileutils_types.js" type="text/javascript"></script>
+    <script src="gen-js/FileService.js" type="text/javascript"></script>
 	<!-- -->
 
 

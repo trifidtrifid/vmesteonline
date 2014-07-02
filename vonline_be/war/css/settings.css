@@ -12,9 +12,14 @@
   display: inline-block;
   width: 160px;
 }
+.settings label.long,
+.edit-personal label.long {
+  width: 270px;
+}
 .settings .form-control,
 .edit-personal .form-control {
   display: inline-block;
+  vertical-align: top;
   width: 233px;
   margin: 0 0 10px 0;
 }
@@ -30,12 +35,34 @@
 }
 .settings input[type="text"],
 .edit-personal input[type="text"],
+.settings input[type="password"],
+.edit-personal input[type="password"],
 .settings input[type="email"],
-.edit-personal input[type="email"],
-.settings textarea,
-.edit-personal textarea {
+.edit-personal input[type="email"] {
   margin-bottom: 10px;
   width: 233px;
+}
+.settings textarea,
+.edit-personal textarea {
+  width: 70%;
+  margin-bottom: 10px;
+}
+.settings input.short,
+.edit-personal input.short,
+.settings textarea.short,
+.edit-personal textarea.short,
+.settings select.short,
+.edit-personal select.short {
+  width: 150px;
+  height: 29px;
+}
+.settings .settings-add-link,
+.edit-personal .settings-add-link {
+  padding-left: 170px;
+  padding-bottom: 20px;
+}
+.no-width {
+  width: auto !important;
 }
 .create-topic-wrap,
 .edit-personal-wrap,
