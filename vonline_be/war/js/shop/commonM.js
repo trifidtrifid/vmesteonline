@@ -111,7 +111,7 @@ define(
                 e.preventDefault();
                 $('.page').hide();
 
-                $('.shop-editPersonal').load("ajax/ajax-editPersonal.jsp .dynamic",function(){
+                $('.shop-editPersonal').load("../ajax/ajax-editPersonal.jsp .dynamic",function(){
                     $('.loading').show(0);
 
                     SetJSForEditPersonal();
