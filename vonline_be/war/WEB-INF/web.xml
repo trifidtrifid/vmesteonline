@@ -75,6 +75,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 
     <servlet>
+        <servlet-name>about</servlet-name>
+        <jsp-file>about-shop.jsp</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>about</servlet-name>
+        <url-pattern>/about/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>shop</servlet-name>
         <jsp-file>shop.jsp</jsp-file>
     </servlet>
@@ -82,16 +92,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <servlet-mapping>
         <servlet-name>shop</servlet-name>
         <url-pattern>/shop/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>about-shop</servlet-name>
-        <jsp-file>about-shop.jsp</jsp-file>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>about-shop</servlet-name>
-        <url-pattern>/about-shop/*</url-pattern>
     </servlet-mapping>
 
 	

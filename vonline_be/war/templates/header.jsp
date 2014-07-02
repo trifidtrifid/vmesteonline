@@ -10,7 +10,7 @@
 
 			<div class="navbar-container" id="navbar-container">
 				<div class="navbar-header pull-left">
-					<a href="/" class="navbar-brand">
+					<a href="/shop/<c:out value="${shopID}"/>" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
 					<!-- /.brand -->
@@ -20,7 +20,9 @@
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
-						<li class="back-to-shop shop-trigger"><a class="btn btn-info no-border" href="http://127.0.0.1:8888/shop/<c:out value="${shopID}" />">
+                        <li><a class="btn btn-info no-border no-prevent" href="/">
+                            Главная </a></li>
+						<li><a class="btn btn-info no-border no-prevent" href="/shop/<c:out value="${shopID}"/>">
 								Магазин </a></li>
                         <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
                             Заказы </a></li>
@@ -30,7 +32,7 @@
                         <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN'}">
                         hidden
                         </c:if>
-                        " href="backoffice.jsp">
+                        " href="/backoffice.jsp">
                             Админка</a></li>
 
 						<li class="user-short light-blue">

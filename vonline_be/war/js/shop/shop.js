@@ -69,8 +69,8 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             type : 'default'
         };
 
-        if($('.login-page').length == 0 && $('.page-about-shop').length == 0
-            && $('.shop-landing').length == 0) window.history.replaceState(state,null,'shop.jsp');
+        /*if($('.login-page').length == 0 && $('.page-about-shop').length == 0
+            && $('.shop-landing').length == 0) window.history.replaceState(state,null,'shop.jsp');*/
 
 
         if (urlHash){

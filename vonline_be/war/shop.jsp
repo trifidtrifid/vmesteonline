@@ -49,8 +49,9 @@
             Long shopId = new Long(shopIdStr);
 
             shop = shopService.getShop(shopId);
-            out.print("1");
+            //out.print("1");
         }else{
+            //out.print("2");
             shop = shopService.getShop(ArrayShops.get(0).id);
         }
         //out.print(shop.id);
@@ -93,7 +94,7 @@
 <head>
 <meta charset="utf-8" />
 <title>Магазин</title>
-<link rel="stylesheet" href="build/shop.min.css" />
+<link rel="stylesheet" href="../build/shop.min.css" />
 <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -104,7 +105,7 @@
     </script>
     <![endif]-->
 
-    <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
+    <script type="text/javascript" data-main="../build/build.js" src="../js/shop/require.min.js"></script>
 
     <script type="text/javascript">
         globalUserAuth = false;
@@ -114,7 +115,6 @@
     </script>
 </head>
 <body>
-<%--<c:out value="${pageContext.request.requestURL}" />--%>
     <div class="wrap">
 	<div class="main container">
 		<div class="navbar navbar-default" id="navbar">
@@ -127,10 +127,10 @@
 
 			<div class="navbar-container" id="navbar-container">
 				<div class="navbar-header pull-left">
-					<a href="/" class="navbar-brand">
+					<a href="/shop/<c:out value="${shopID}"/>" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
-                    <a href="about-shop.jsp#${shopID}" class="about-shop-link">О магазине</a>
+                    <a href="/about/${shopID}" class="about-shop-link">О магазине</a>
 					<!-- /.brand -->
 				</div>
 				<!-- /.navbar-header -->
@@ -138,7 +138,7 @@
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
-                        <li><a class="btn btn-info no-border main-page-link" href="/">
+                        <li><a class="btn btn-info no-border no-prevent" href="/">
                             Главная </a></li>
 						<li class="active back-to-shop shop-trigger"><a class="btn btn-info no-border" href="shop.jsp">
 								Магазин </a></li>
@@ -360,7 +360,7 @@
             <div class="footer-menu">
                 <ul>
                     <li><a href="#">О сайте</a></li>
-                    <li><a href="about-shop.jsp#${shopID}" class="about-shop-link">О магазине</a></li>
+                    <li><a href="/about/${shopID}" class="about-shop-link">О магазине</a></li>
                     <li><a href="#">Правила</a></li>
                     <li><a href="#">Контакты</a></li>
                     <li><a href="#">В начало</a></li>

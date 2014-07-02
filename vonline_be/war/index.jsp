@@ -229,7 +229,7 @@ padding:20px;
             <ul>
                 <c:forEach var="shop" items="${shops}">
                     <li>
-                        <a href="about-shop/${shop.id}">
+                        <a href="about/${shop.id}">
                             <img src="${shop.logoURL}" alt="логотип"/>
                         <span class="shop-right">
                             <h3>${shop.name}</h3>

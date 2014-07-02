@@ -31,7 +31,7 @@ define(
         $('.nav-list a,.navbar .nav a:not(".dropdown-toggle")').click(function(e){
             var isBackoffise = $(this).closest('.backoffice').length;
             if(!isBackoffise && !$(this).hasClass('bo-link')
-                && !$(this).hasClass('main-page-link')) e.preventDefault();
+                && !$(this).hasClass('no-prevent')) e.preventDefault();
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
         });
@@ -360,13 +360,13 @@ define(
             var ind = $(this).parent().index();
             if (ind == 0){
                 $('.page').hide();
-                $('.shop-profile').load("ajax/ajax-profile.jsp .dynamic",function(){
+                $('.shop-profile').load("../ajax/ajax-profile.jsp .dynamic",function(){
                     SetJSForProfile(isEditPersonal);
                 }).show();
             } else {
                 thriftModule.authClient.logout();
 
-                document.location.replace("login.jsp");
+                document.location.replace("/login.jsp");
             }
         });
 
