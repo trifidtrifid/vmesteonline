@@ -69,7 +69,8 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             type : 'default'
         };
 
-        if($('.login-page').length == 0 && $('.page-about-shop').length == 0) window.history.replaceState(state,null,'shop.jsp');
+        if($('.login-page').length == 0 && $('.page-about-shop').length == 0
+            && $('.shop-landing').length == 0) window.history.replaceState(state,null,'shop.jsp');
 
 
         if (urlHash){
@@ -253,6 +254,13 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             }else{
                 $(this).closest('.navbar').toggleClass('over-rightbar');
             }
+        });
+
+        $('.landing-login').click(function(e){
+            e.preventDefault();
+
+            alert('1');
+            modules.shopCommonModule.openModalAuth();
         });
 
         $('.dropdown-menu li a').click(function(e){

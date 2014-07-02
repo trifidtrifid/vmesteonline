@@ -710,6 +710,12 @@ define(
                     dataType: 'script'
                 });
 
+                $(this).hover(function(){
+                    $('.login-close').removeClass('hide');
+                },function(){
+                    $('.login-close').addClass('hide');
+                });
+
             }).modal();
         }
 

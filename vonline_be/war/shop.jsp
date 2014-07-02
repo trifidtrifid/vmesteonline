@@ -9,12 +9,11 @@
 <%@ page import="com.vmesteonline.be.shop.*"%>
 
 <%
-   // HttpServletRequest httpReq = (HttpServletRequest)request;
-    //String url = httpReq.getContextPath();
-    //String url = httpReq.getRequestURI();
-    //String url = httpReq.getPathInfo();
-
-//    out.print(url);
+    HttpServletRequest httpReq = (HttpServletRequest)request;
+    /*String url1 = httpReq.getContextPath();
+    String url2 = httpReq.getRequestURI();*/
+    String url = httpReq.getPathInfo();
+    //out.print(url);
 
 	HttpSession sess = request.getSession();
 
@@ -38,13 +37,31 @@
 
     List<Shop> ArrayShops = shopService.getShops();
     if(ArrayShops != null && ArrayShops.size() > 0){
-        Shop shop = shopService.getShop(ArrayShops.get(0).id);
+        Shop shop;
+        if(ArrayShops.size() > 1 && url.length() >= 17){
+            char buf[] = new char[16];
+            url.getChars(1, 17, buf, 0);
+            String shopIdStr = "";
+            for (int i = 0; i <= 15; i++) {
+                shopIdStr = shopIdStr+buf[i];
+            }
+
+            Long shopId = new Long(shopIdStr);
+
+            shop = shopService.getShop(shopId);
+            out.print("1");
+        }else{
+            shop = shopService.getShop(ArrayShops.get(0).id);
+        }
+        //out.print(shop.id);
+
         UserShopRole userRole = shopService.getUserShopRole(shop.id);
         pageContext.setAttribute("logoURL", shop.logoURL);
         pageContext.setAttribute("shopID", shop.id);
         pageContext.setAttribute("userRole", userRole);
         //out.print(userRole);
     }
+
 
     OrderDetails currentOrderDetails;
     try{
@@ -90,11 +107,11 @@
     <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
 
     <script type="text/javascript">
-	globalUserAuth = false;
-	<c:if test="${auth}">
-	globalUserAuth = true;
-	</c:if>
-</script>
+        globalUserAuth = false;
+        <c:if test="${auth}">
+        globalUserAuth = true;
+        </c:if>
+    </script>
 </head>
 <body>
 <%--<c:out value="${pageContext.request.requestURL}" />--%>
@@ -121,6 +138,8 @@
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
+                        <li><a class="btn btn-info no-border main-page-link" href="/">
+                            Главная </a></li>
 						<li class="active back-to-shop shop-trigger"><a class="btn btn-info no-border" href="shop.jsp">
 								Магазин </a></li>
                         <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
@@ -131,7 +150,7 @@
                         <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}">
                         hidden
                         </c:if>
-                        " href="backoffice.jsp">
+                        " href="/backoffice.jsp">
                             Админка</a></li>
 
 						<li class="user-short light-blue">

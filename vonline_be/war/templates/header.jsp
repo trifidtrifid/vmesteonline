@@ -20,7 +20,7 @@
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
-						<li class="back-to-shop shop-trigger"><a class="btn btn-info no-border" href="shop.jsp">
+						<li class="back-to-shop shop-trigger"><a class="btn btn-info no-border" href="http://127.0.0.1:8888/shop/<c:out value="${shopID}" />">
 								Магазин </a></li>
                         <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
                             Заказы </a></li>
