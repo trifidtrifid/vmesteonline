@@ -142,6 +142,8 @@
             <div class="page shop-profile"></div>
             <div class="page shop-orderEnd"></div>
             <div class="page shop-editPersonal"></div>
+            <div class="page shop-terms-of-orders"></div>
+            <div class="page shop-terms-of-delivery"></div>
         </div>
 
         <div class="modal modal-error">

@@ -130,7 +130,9 @@
 					<a href="/shop/<c:out value="${shopID}"/>" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
-                    <a href="/about/${shopID}" class="about-shop-link">О магазине</a>
+                    <a href="/about/${shopID}" class="about-shop-link header-link">О магазине</a>
+                    <a href="#" class="terms-of-orders header-link">Условия заказов</a>
+                    <a href="#" class="terms-of-delivery header-link">Условия доставки</a>
 					<!-- /.brand -->
 				</div>
 				<!-- /.navbar-header -->
@@ -336,6 +338,8 @@
             <div class="page shop-orderEnd"></div>
             <div class="page shop-editPersonal"></div>
             <div class="page shop-about"></div>
+            <div class="page shop-terms-of-orders"></div>
+            <div class="page shop-terms-of-delivery"></div>
         </div>
 
         <div class="modal modal-error">

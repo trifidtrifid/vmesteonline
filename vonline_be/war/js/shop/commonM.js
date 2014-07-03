@@ -347,6 +347,22 @@ define(
             })
         }
 
+        $('.header-link').click(function(){
+           var ind = $(this).index();
+            $('.page').hide();
+
+            if(ind == 2){
+                $('.shop-terms-of-orders').load("../ajax/ajax-terms-of-orders.jsp .terms-of-orders",function(){
+
+                }).show();
+            }else if(ind == 3){
+                $('.shop-terms-of-delivery').load("../ajax/ajax-terms-of-delivery.jsp .terms-of-delivery",function(){
+
+                }).show();
+
+            }
+        });
+
 
         $('.user-menu a').click(function(e,loadEditPersonal){
             e.preventDefault();

@@ -73,12 +73,14 @@ footer.short-footer .container {
   display: inline-block;
   float: none;
 }
-.navbar a.about-shop-link {
+.navbar a.header-link {
   display: inline-block;
   color: #fff;
+  margin-left: 5px;
 }
-.navbar a.about-shop-link:hover {
+.navbar a.header-link:hover {
   text-decoration: none;
+  border-bottom: 1px solid #fff;
 }
 .navbar img {
   height: 45px;

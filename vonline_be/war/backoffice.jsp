@@ -45,6 +45,7 @@
         pageContext.setAttribute("logoURL", shop.logoURL);
         pageContext.setAttribute("shopID", shop.id);
         pageContext.setAttribute("userRole", userRole);
+        //out.print(userRole);
         pageContext.setAttribute("shop", shop);
     }
 

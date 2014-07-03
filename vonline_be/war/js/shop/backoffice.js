@@ -1364,12 +1364,14 @@ if($('.container.backoffice').hasClass('noAccess')){
         /* настройки доставки */
         var deliveryCostByDistance = myShop.deliveryCostByDistance,
             deliveryCostByDistanceHtml = "";
+        console.log(myShop.name);
         for(var p in deliveryCostByDistance){
             deliveryCostByDistanceHtml += '<div class="delivery-interval delivery-price-type">'+
                 '<input type="text" value="'+ p +'"><span>км</span>'+
                     '<input type="text" value="'+ deliveryCostByDistance[p] +'"><span>руб</span>'+
                         '<a href="#" class="add-delivery-interval add-interval">+</a>'+
                     '</div>';
+            console.log('-1-1');
         }
         if(deliveryCostByDistanceHtml == ""){
             deliveryCostByDistanceHtml += '<div class="delivery-interval delivery-price-type">'+
@@ -1494,7 +1496,8 @@ if($('.container.backoffice').hasClass('noAccess')){
                     console.log("key "+key+"; value "+value);
                 });
 
-                newShopInfo.deliveryCostByDistance = deliveryCostByDistance;
+                //newShopInfo.deliveryCostByDistance = deliveryCostByDistance;
+                thriftModule.clientBO.setShopDeliveryCostByDistance(shopId,deliveryCostByDistance);
 
                 var deliveryTypeAddressMasks = [],
                     counter = 0;
@@ -1506,7 +1509,8 @@ if($('.container.backoffice').hasClass('noAccess')){
 
                     if(value) deliveryTypeAddressMasks[key] = value;
                 });
-                newShopInfo.deliveryTypeAddressMasks = deliveryTypeAddressMasks;
+                //newShopInfo.deliveryTypeAddressMasks = deliveryTypeAddressMasks;
+                thriftModule.clientBO.setShopDeliveryTypeAddressMasks(shopId,deliveryTypeAddressMasks);
 
                 var deliveryByWeightIncrement = [];
                 $('.delivery-weight').each(function(){
@@ -1515,9 +1519,11 @@ if($('.container.backoffice').hasClass('noAccess')){
 
                     if(key && value) deliveryByWeightIncrement[key] = value;
                 });
-                newShopInfo.deliveryByWeightIncrement = deliveryByWeightIncrement;
+                //newShopInfo.deliveryByWeightIncrement = deliveryByWeightIncrement;
+                thriftModule.clientBO.setShopDeliveryByWeightIncrement(shopId,deliveryByWeightIncrement);
 
-                thriftModule.clientBO.updateShop(newShopInfo);
+                //thriftModule.clientBO.updateShop(newShopInfo);
+
                 break;
         }
     });
@@ -1612,8 +1618,7 @@ if($('.container.backoffice').hasClass('noAccess')){
     }
 
     isSettingsInitSet = 1;
-    }
-
+}
 
     function setDropdownWithoutOverFlow(dropdownSelector,tableContainerSelector,coordY,coordXOffset){
         dropdownSelector.find('.dropdown-toggle').click(function(e){
@@ -1634,6 +1639,8 @@ if($('.container.backoffice').hasClass('noAccess')){
             $(this).parent().find('.dropdown-menu').css({'left':coordX,'top':coordY});
         });
     }
+
+
     /* ----------------------------------------------*/
     /* -------------------- EDIT --------------------*/
     /* ----------------------------------------------*/
@@ -2318,6 +2325,7 @@ if($('.container.backoffice').hasClass('noAccess')){
         $('.adminka-shops table tr').each(function(){
             var shopId = $(this).attr('id');
             var shop = thriftModule.client.getShop(shopId);
+            console.log(shop.ownerId);
             var userInfo = thriftModule.userClient.getUserInfoExt(shop.ownerId);
 
             var userContacts = getUserContacts(shop.ownerId);
