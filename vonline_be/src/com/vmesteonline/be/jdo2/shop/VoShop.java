@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -93,6 +95,9 @@ public class VoShop {
 		Shop shop = new Shop(id.getId(), name, descr.getValue(), null == address ? null : address.getPostalAddress(), logoURL, ownerId, topicIds, tags,
 				convertToDeliveryTypeMap(deliveryCosts, new HashMap<DeliveryType, Double>()), convertToPaymentTypeMap(paymentTypes,
 						new HashMap<PaymentType, Double>()));
+		shop.deliveryByWeightIncrement = deliveryByWeightIncrement;
+		shop.deliveryCostByDistance = deliveryCostByDistance;
+		shop.deliveryTypeAddressMasks = convertToDeliveryTypeMap( this.deliveryAddressMasksText, new HashMap<DeliveryType, String>());
 		return shop;
 	}
 
@@ -148,6 +153,30 @@ public class VoShop {
 	@Persistent
 	@Unindexed
 	private Map<Integer, Double> deliveryCostByDistance;
+	
+	@Persistent
+	@Unindexed
+	private Map<String, String> socialNetworks;
+	
+	@Persistent
+	@Unindexed
+	private String aboutShopPageContentURL;
+	
+	@Persistent
+	@Unindexed
+	private String conditionsPageContentURL;
+	
+	@Persistent
+	@Unindexed
+	private String deliveryPageContentURL;
+	
+	@Persistent
+	private boolean activated;
+	
+	@Persistent
+	@Unindexed
+	private Map<String, Set<Long>> voteResults;
+	
 	
 	@Persistent
 	@Unindexed
@@ -325,6 +354,52 @@ public class VoShop {
 		return dates;
 	}
 
+	
+	
+	public String getAboutShopPageContentURL() {
+		return aboutShopPageContentURL;
+	}
+
+	public void setAboutShopPageContentURL(String aboutShopPageContentURL) {
+		this.aboutShopPageContentURL = aboutShopPageContentURL;
+	}
+
+	public String getConditionsPageContentURL() {
+		return conditionsPageContentURL;
+	}
+
+	public void setConditionsPageContentURL(String conditionsPageContentURL) {
+		this.conditionsPageContentURL = conditionsPageContentURL;
+	}
+
+	public String getDeliveryPageContentURL() {
+		return deliveryPageContentURL;
+	}
+
+	public void setDeliveryPageContentURL(String deliveryPageContentURL) {
+		this.deliveryPageContentURL = deliveryPageContentURL;
+	}
+
+	public boolean isActivated() {
+		return activated;
+	}
+
+	public void setActivated(boolean activated) {
+		this.activated = activated;
+	}
+
+	public Map<String, String> getSocialNetworks() {
+		return socialNetworks;
+	}
+
+	public void setSocialNetworks(Map<String, String> socialNetworks) {
+		this.socialNetworks = socialNetworks;
+	}
+
+	public Map<String, Set<Long>> getVoteResults() {
+		return voteResults;
+	}
+
 	@Override
 	public String toString() {
 		return "VoShop [id=" + id + ", name=" + name + "]";
@@ -339,6 +414,7 @@ public class VoShop {
 		return type.name() + "[" + new Date(((long)date)*1000L).toLocaleString()+"]";
 	}
 
+	
 	public static Map<Integer, Double> convertFromPaymentTypeMap(Map<PaymentType, Double> in, Map<Integer, Double> out) {
 		if (null == in)
 			return out;
@@ -372,13 +448,13 @@ public class VoShop {
 		return out;
 	}
 
-	public static Map<DeliveryType, Double> convertToDeliveryTypeMap(Map<Integer, Double> in, Map<DeliveryType, Double> out) {
+	public static <T> Map<DeliveryType, T> convertToDeliveryTypeMap(Map<Integer, T> in, Map<DeliveryType, T> out) {
 		if (null == in)
 			return out;
 		if (null == out)
-			out = new HashMap<DeliveryType, Double>();
+			out = new HashMap<DeliveryType, T>();
 
-		for (Entry<Integer, Double> e : in.entrySet())
+		for (Entry<Integer, T> e : in.entrySet())
 			out.put(DeliveryType.findByValue(e.getKey()), e.getValue());
 		return out;
 	}
@@ -512,6 +588,33 @@ public class VoShop {
 		
 		return new OrderDate( afterDate + closestDelta * 86400, pt);
 	}
+	
+	//VOTING
+	public boolean canVote( long userId ){
+		if( null == voteResults ) return true;
+		for( Entry< String, Set<Long>> ve: voteResults.entrySet()){
+			if( ve.getValue() != null && ve.getValue().contains( userId ))
+				return false;
+		}
+		return true;
+	}
+	
+	public int vote( long userId, String decision ) throws InvalidOperation {
+		if( !canVote(userId) )
+			throw new InvalidOperation(VoError.IncorrectParametrs, "The user can't vote more then once");
+		
+		if( null == getVoteResults() ) 
+			voteResults = new HashMap<String, Set<Long>>();
+		
+		Set<Long> sameVoters;
+		
+		if( null == (sameVoters = voteResults.get(decision)))
+			voteResults.put(decision, sameVoters = new HashSet<Long>());
+		
+		sameVoters.add(userId);
+		return sameVoters.size();
+	}
+	
 
 	/*
 	 * public static class DateMap<T extends Serializable> extends TreeMap<Integer, T> implements Serializable {

@@ -27,6 +27,8 @@
 							<div class="space-6"></div>
 
 							<div class="position-relative">
+                                <button type="button" class="login-close pull-right hide" data-dismiss="modal" aria-hidden="true">&times;</button>
+
 								<div id="login-box" class="login-box visible widget-box no-border">
 									<div class="widget-body">
 										<div class="widget-main">
@@ -39,6 +41,8 @@
 
 											<form>
 												<fieldset>
+                                                    <a class="btn btn-sm no-border btn-primary" href="#">Войти через Вконтакте</a>
+                                                    <div class="or align-center">или</div>
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">
 															<input type="text" id="uname" class="form-control" placeholder="Ваш email" />
@@ -59,7 +63,7 @@
 
 													<div class="clearfix">
 
-														<button type="button" class="width-50 pull-right btn btn-sm btn-primary">
+														<button type="button" class="width-50 pull-right btn no-border btn-sm btn-primary">
 															<i class="icon-key"></i>
 															Войти
 														</button>

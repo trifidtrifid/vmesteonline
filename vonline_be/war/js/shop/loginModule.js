@@ -3,6 +3,7 @@ define(
     ['jquery','shop-initThrift.min','shop-basket.min','shop-common.min'],
     function( $,thriftModule,basketModule, commonModule ){
         function initLogin(){
+
     $('#login-box .btn-primary').click(function(e){
         e.preventDefault();
         login($(this));

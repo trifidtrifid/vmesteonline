@@ -93,6 +93,8 @@ service ShopBOService {
 	
 	void setDate( 1:shop.OrderDates dates ) throws (1:error.InvalidOperation exc), 
 	void removeDate( 1:shop.OrderDates dates ) throws (1:error.InvalidOperation exc), 
+	list<shop.OrderDates> getDates( ) throws (1:error.InvalidOperation exc), 
+	
 	
 	void setDeliveryCosts( 1:map<shop.DeliveryType,double> newDeliveryCosts) throws (1:error.InvalidOperation exc),
 	void setPaymentTypesCosts( 1:map<shop.PaymentType,double> newPaymentTypeCosts) throws (1:error.InvalidOperation exc),
@@ -120,4 +122,10 @@ service ShopBOService {
 		3:map<i32,ExchangeFieldType> packFields ) throws (1:error.InvalidOperation exc),
 		
 	bedata.MatrixAsList parseCSVfile( 1:string url ) throws (1:error.InvalidOperation exc),
+	
+	void activate(1:i64 shopId, 2:bool flag) throws (1:error.InvalidOperation exc),
+	
+	void setShopPages(1:shop.ShopPages pagesInfo) throws (1:error.InvalidOperation exc),
+	shop.ShopPages getShopPages() throws (1:error.InvalidOperation exc),
+	
 }

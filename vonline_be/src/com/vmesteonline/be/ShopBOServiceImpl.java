@@ -21,6 +21,7 @@ import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
+import javax.management.openmbean.InvalidOpenTypeException;
 
 import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
@@ -57,6 +58,7 @@ import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Producer;
 import com.vmesteonline.be.shop.ProductCategory;
 import com.vmesteonline.be.shop.Shop;
+import com.vmesteonline.be.shop.ShopPages;
 import com.vmesteonline.be.shop.UserShopRole;
 import com.vmesteonline.be.shop.bo.DataSet;
 import com.vmesteonline.be.shop.bo.ExchangeFieldType;
@@ -1563,6 +1565,70 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			pm.close();
 		}
 	}
+	
+	@Override
+	public void activate(long shopId, boolean flag) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			pm.getObjectById(VoShop.class, shopId).setActivated(flag);
+		} catch ( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop is defined as current");
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public List<OrderDates> getDates() throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			 return ShopServiceHelper.getCurrentShop( this, pm ).getDates();
+		} catch ( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop is defined as current");
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public void setShopPages(ShopPages pagesInfo) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoShop currentShop = ShopServiceHelper.getCurrentShop( this, pm );
+			currentShop.setAboutShopPageContentURL(pagesInfo.aboutPageContentURL);
+			currentShop.setConditionsPageContentURL(pagesInfo.conditionsPageContentURL);
+			currentShop.setDeliveryPageContentURL(pagesInfo.deliveryPageContentURL);
+			currentShop.setSocialNetworks( pagesInfo.socialNetworks);
+		} catch ( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop is defined as current");
+		} finally {
+			pm.close();
+		}
+		
+	}
+
+	@Override
+	public ShopPages getShopPages() throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoShop currentShop = ShopServiceHelper.getCurrentShop( this, pm );
+			ShopPages shopPages = new ShopPages();
+			shopPages.aboutPageContentURL = currentShop.getAboutShopPageContentURL();
+			shopPages.conditionsPageContentURL = currentShop.getConditionsPageContentURL();
+			shopPages.deliveryPageContentURL = currentShop.getDeliveryPageContentURL();
+			shopPages.socialNetworks = currentShop.getSocialNetworks();
+			return shopPages;
+			
+		} catch ( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop is defined as current");
+		} finally {
+			pm.close();
+		}
+		
+	}
+	
+	
+	
 //======================================================================================================================
 	
 	

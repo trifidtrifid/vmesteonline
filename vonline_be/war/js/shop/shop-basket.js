@@ -391,7 +391,7 @@ define(
 
         function GoToConfirm(catalogHtml,amount,spinnerValue,date,weight){
 
-            $('.shop-confirm').load('ajax/ajax-confirmOrder.html .dynamic',function(){
+            $('.shop-confirm').load('../ajax/ajax-confirmOrder.html .dynamic',function(){
                 $('footer').removeClass('short-footer');
                 /* history */
                 var urlHash = document.location.hash;
@@ -513,7 +513,7 @@ define(
                     if(!haveError){
                         alertDeliveryPhone.hide();
                         cleanBasket();
-                        $('.shop-orderEnd').load('ajax/ajax-orderEnd.html .dynamic',function(){
+                        $('.shop-orderEnd').load('../ajax/ajax-orderEnd.html .dynamic',function(){
 
                             $('.page').hide();
                             $(this).show();
