@@ -9,12 +9,11 @@
 <%@ page import="com.vmesteonline.be.shop.*"%>
 
 <%
-   // HttpServletRequest httpReq = (HttpServletRequest)request;
-    //String url = httpReq.getContextPath();
-    //String url = httpReq.getRequestURI();
-    //String url = httpReq.getPathInfo();
-
-//    out.print(url);
+    HttpServletRequest httpReq = (HttpServletRequest)request;
+    /*String url1 = httpReq.getContextPath();
+    String url2 = httpReq.getRequestURI();*/
+    String url = httpReq.getPathInfo();
+    //out.print(url);
 
 	HttpSession sess = request.getSession();
 
@@ -38,13 +37,32 @@
 
     List<Shop> ArrayShops = shopService.getShops();
     if(ArrayShops != null && ArrayShops.size() > 0){
-        Shop shop = shopService.getShop(ArrayShops.get(0).id);
+        Shop shop;
+        if(ArrayShops.size() > 1 && url.length() >= 17){
+            char buf[] = new char[16];
+            url.getChars(1, 17, buf, 0);
+            String shopIdStr = "";
+            for (int i = 0; i <= 15; i++) {
+                shopIdStr = shopIdStr+buf[i];
+            }
+
+            Long shopId = new Long(shopIdStr);
+
+            shop = shopService.getShop(shopId);
+            //out.print("1");
+        }else{
+            //out.print("2");
+            shop = shopService.getShop(ArrayShops.get(0).id);
+        }
+        //out.print(shop.id);
+
         UserShopRole userRole = shopService.getUserShopRole(shop.id);
         pageContext.setAttribute("logoURL", shop.logoURL);
         pageContext.setAttribute("shopID", shop.id);
         pageContext.setAttribute("userRole", userRole);
         //out.print(userRole);
     }
+
 
     OrderDetails currentOrderDetails;
     try{
@@ -76,7 +94,7 @@
 <head>
 <meta charset="utf-8" />
 <title>Магазин</title>
-<link rel="stylesheet" href="build/shop.min.css" />
+<link rel="stylesheet" href="../build/shop.min.css" />
 <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -87,17 +105,16 @@
     </script>
     <![endif]-->
 
-    <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
+    <script type="text/javascript" data-main="../build/build.js" src="../js/shop/require.min.js"></script>
 
     <script type="text/javascript">
-	globalUserAuth = false;
-	<c:if test="${auth}">
-	globalUserAuth = true;
-	</c:if>
-</script>
+        globalUserAuth = false;
+        <c:if test="${auth}">
+        globalUserAuth = true;
+        </c:if>
+    </script>
 </head>
 <body>
-<%--<c:out value="${pageContext.request.requestURL}" />--%>
     <div class="wrap">
 	<div class="main container">
 		<div class="navbar navbar-default" id="navbar">
@@ -110,10 +127,10 @@
 
 			<div class="navbar-container" id="navbar-container">
 				<div class="navbar-header pull-left">
-					<a href="/" class="navbar-brand">
+					<a href="/shop/<c:out value="${shopID}"/>" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
-                    <a href="about-shop.jsp#${shopID}" class="about-shop-link">О магазине</a>
+                    <a href="/about/${shopID}" class="about-shop-link">О магазине</a>
 					<!-- /.brand -->
 				</div>
 				<!-- /.navbar-header -->
@@ -121,6 +138,8 @@
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
+                        <li><a class="btn btn-info no-border no-prevent" href="/">
+                            Главная </a></li>
 						<li class="active back-to-shop shop-trigger"><a class="btn btn-info no-border" href="shop.jsp">
 								Магазин </a></li>
                         <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
@@ -128,10 +147,10 @@
 
 
                         <li><a class="btn btn-info no-border bo-link
-                        <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN'}">
+                        <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}">
                         hidden
                         </c:if>
-                        " href="backoffice.jsp">
+                        " href="/backoffice.jsp">
                             Админка</a></li>
 
 						<li class="user-short light-blue">
@@ -341,7 +360,7 @@
             <div class="footer-menu">
                 <ul>
                     <li><a href="#">О сайте</a></li>
-                    <li><a href="about-shop.jsp#${shopID}" class="about-shop-link">О магазине</a></li>
+                    <li><a href="/about/${shopID}" class="about-shop-link">О магазине</a></li>
                     <li><a href="#">Правила</a></li>
                     <li><a href="#">Контакты</a></li>
                     <li><a href="#">В начало</a></li>

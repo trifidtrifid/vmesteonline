@@ -12,11 +12,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
@@ -1349,6 +1351,62 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				pcl.add(vpc.getProductCategory());
 			}
 			return pcl;
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public boolean canVote(long shopId) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			long uid = getCurrentUserId();
+			return pm.getObjectById(VoShop.class, shopId).canVote(uid);
+		} catch ( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public int vote(long shopId, String value) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			long uid = getCurrentUserId();
+			return pm.getObjectById(VoShop.class, shopId).vote(uid, value);
+		} catch ( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public Map<String, Integer> getVotes(long shopId) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			Map<String, Set<Long>> voteResults = pm.getObjectById(VoShop.class, shopId).getVoteResults();
+			Map<String, Integer> voteRslts = new HashMap<String, Integer>();
+			if( null!=voteResults ){
+				for( Entry<String, Set<Long>> ve : voteResults.entrySet())
+					voteRslts.put(ve.getKey(), ve.getValue().size());
+			}
+			return voteRslts;
+		} catch ( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public boolean isActivated(long shopId) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			return pm.getObjectById(VoShop.class, shopId).isActivated();
+		} catch ( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
 		} finally {
 			pm.close();
 		}

@@ -1,0 +1,1 @@
+"undefined"==typeof com&&(com={}),"undefined"==typeof com.vmesteonline&&(com.vmesteonline={}),"undefined"==typeof com.vmesteonline.be&&(com.vmesteonline.be={});

@@ -101,7 +101,7 @@ public class Defaults {
 			clearGroups(pm);
 			clearLocations(pm);
 			clearUsers(pm);
-
+			initializeShop();
 			initializeRubrics(pm);
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations();
@@ -125,7 +125,7 @@ public class Defaults {
 			try {
 				pm.deletePersistent(i);
 			} catch (Exception e) {
-				//e.printStackTrace();
+				// e.printStackTrace();
 			}
 		}
 	}
@@ -177,7 +177,7 @@ public class Defaults {
 			try {
 
 				VoCity vocity = pm.getExtent(VoCity.class).iterator().next();
-				VoStreet street = new VoStreet(vocity, "г. Пушкин, Детскосельский бульвар",pm);
+				VoStreet street = new VoStreet(vocity, "г. Пушкин, Детскосельский бульвар", pm);
 				VoBuilding building = new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0"), pm);
 				VoPostalAddress voPostalAddress = new VoPostalAddress(building, (byte) 1, (byte) 1, (byte) 1,
 						"Угол ул. Железнодоррожная и Детскосельского бульвара");
@@ -212,14 +212,14 @@ public class Defaults {
 
 			long shop = sbsi.registerShop(new Shop(10, "Во!Молоко", "Магазин свежей молочной продукции Вологодского края", postalAddress,
 					"http://vomoloko.ru/img/logo.jpg", userId, topicSet, tags, deliveryCosts, paymentTypes));
-			
+
 			VoShopAccessManager.createAccessForShopOwner(userId, shop);
 
 			ssi.getShop(shop); // to make it current
 			// set dates
-			// next order is MONday and THursday 
+			// next order is MONday and THursday
 			// closed date is monday and thursday but shifted 1 step ago
-			
+
 			sbsi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 4, 0, PriceType.INET));
 			sbsi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 3, 0, PriceType.INET));
 
@@ -250,18 +250,19 @@ public class Defaults {
 	// ======================================================================================================================
 
 	private static void loadProducts(DataSet ds) throws IOException {
-		
-		String[] products = new String[] {"products_1000_sheksna_new.csv"/*, "products_1000_vmk_new.csv", "products_3000_sheksnahleb_new.csv", 
-			"products_4000_volkonditerka_new.csv", "products_5000_atag_new.csv", "products_6000_sokol_new.csv", "products_7000_mgk_new.csv", 
-			"products_8000_tarnoga_new.csv"*/};
-		
-		for( String pFile : products ){
+
+		String[] products = new String[] { "products_1000_sheksna_new.csv"/*
+																																			 * , "products_1000_vmk_new.csv" , "products_3000_sheksnahleb_new.csv" ,
+																																			 * "products_4000_volkonditerka_new.csv" , "products_5000_atag_new.csv" ,
+																																			 * "products_6000_sokol_new.csv" , "products_7000_mgk_new.csv" ,
+																																			 * "products_8000_tarnoga_new.csv"
+																																			 */};
+
+		for (String pFile : products) {
 			ImportElement importData;
 			/*
-			 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT,
-			 * PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
-			 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL,
-			 * PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
+			 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
+			 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
 			 * PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
 			 */
 			List<ExchangeFieldType> productFieldsOrder = new ArrayList<ExchangeFieldType>();
@@ -286,10 +287,10 @@ public class Defaults {
 			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PREPACK_REQ);
 			productFieldsOrder.add(ExchangeFieldType.PRODUCT_KNOWN_NAMES);
 			productFieldsOrder.add(ExchangeFieldType.PRODUCT_UNIT_NAME);
-	
+
 			importData = new ImportElement(ImExType.IMPORT_PRODUCTS, pFile, VoHelper.listToMap(productFieldsOrder));
-			importData.setUrl(StorageHelper.saveImage(shopDataStorage+pFile, userId, false, null));
-	
+			importData.setUrl(StorageHelper.saveImage(shopDataStorage + pFile, userId, false, null));
+
 			ds.addToData(importData);
 		}
 	}
@@ -308,7 +309,7 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
 
 		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage(shopDataStorage+"product_categories.csv", userId, false, null));
+		importData.setUrl(StorageHelper.saveImage(shopDataStorage + "product_categories.csv", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -318,7 +319,7 @@ public class Defaults {
 	private static void loadProducers(DataSet ds) throws IOException {
 		List<ExchangeFieldType> fieldsOrder;
 		ImportElement importData;
-	
+
 		fieldsOrder = new ArrayList<ExchangeFieldType>();
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_ID);
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_NAME);
@@ -327,7 +328,7 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
 
 		importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage(shopDataStorage+"producers.csv ", userId, false, null));
+		importData.setUrl(StorageHelper.saveImage(shopDataStorage + "producers.csv ", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -358,9 +359,8 @@ public class Defaults {
 		List<VoGroup> defGroups = (List<VoGroup>) q.execute();
 		if (defGroups.isEmpty())
 
-			for (VoGroup dg : new VoGroup[] { new VoGroup("Мой подъзд", radiusStarecase, true), new VoGroup("Мой дом", radiusHome, true),
-					new VoGroup("Соседи", radiusSmall, true), new VoGroup("Пешая доступность", radiusMedium, true),
-					new VoGroup("Быстро Доехать", radiusLarge, true) }) {
+			for (VoGroup dg : new VoGroup[] { new VoGroup("Мой дом", radiusHome, true), new VoGroup("Мои соседи", radiusMedium, true),
+					new VoGroup("Мой район", radiusLarge, true) }) {
 				defaultGroups.add(dg);
 				pm.makePersistent(dg);
 			}
@@ -395,13 +395,14 @@ public class Defaults {
 
 		try {
 			List<String> locations = new ArrayList<String>();
-			VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY,pm), "Республиканская", pm);
-			
+			VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY, pm), "Республиканская", pm);
+
 			pm.makePersistent(street);
 			VoPostalAddress[] addresses;
 			addresses = new VoPostalAddress[] {
 
-					// адресов должно быть минимум три! кол-во юзеров хардкодится выше
+					// адресов должно быть минимум три! кол-во юзеров
+					// хардкодится выше
 					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 1, (byte) 1,
 							(byte) 5, ""),
 					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 2, (byte) 1,

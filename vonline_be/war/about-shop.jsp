@@ -9,42 +9,60 @@
 <%@ page import="com.vmesteonline.be.shop.*"%>
 
 <%
-    HttpSession sess = request.getSession();
-    pageContext.setAttribute("auth",true);
-    try {
-        //AuthServiceImpl.checkIfAuthorised(sess.getId());
-        UserServiceImpl userService = new UserServiceImpl(request.getSession());
-        ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-        if( null == ShortUserInfo){
-            sess.invalidate();
-            throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
+    HttpServletRequest httpReq = (HttpServletRequest)request;
+    /*String url1 = httpReq.getContextPath();
+    String url2 = httpReq.getRequestURI();*/
+    String url = httpReq.getPathInfo();
+    //out.println(url);
+
+    if(url.length() == 17){
+        char buf[] = new char[16];
+        url.getChars(1, 17, buf, 0);
+        String shopIdStr = "";
+        for (int i = 0; i <= 15; i++) {
+            shopIdStr = shopIdStr+buf[i];
         }
-        pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-        pageContext.setAttribute("lastName",ShortUserInfo.lastName);
-    } catch (InvalidOperation ioe) {
-        pageContext.setAttribute("auth",false);
+
+        Long shopId = new Long(shopIdStr);
+        //out.println(shopId);
+
+        HttpSession sess = request.getSession();
+        pageContext.setAttribute("auth",true);
+        try {
+            //AuthServiceImpl.checkIfAuthorised(sess.getId());
+            UserServiceImpl userService = new UserServiceImpl(request.getSession());
+            ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+            if( null == ShortUserInfo){
+                sess.invalidate();
+                throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
+            }
+            pageContext.setAttribute("firstName",ShortUserInfo.firstName);
+            pageContext.setAttribute("lastName",ShortUserInfo.lastName);
+        } catch (InvalidOperation ioe) {
+            pageContext.setAttribute("auth",false);
+        }
+
+
+        ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
+
+        try{
+            Shop shop = shopService.getShop(shopId);
+            UserShopRole userRole = shopService.getUserShopRole(shop.id);
+            pageContext.setAttribute("logoURL", shop.logoURL);
+            pageContext.setAttribute("shopID", shop.id);
+            pageContext.setAttribute("userRole", userRole);
+            pageContext.setAttribute("shop", shop);
+        }catch(InvalidOperation ioe){
+
+        }
     }
-
-
-    ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
-
-    List<Shop> ArrayShops = shopService.getShops();
-    if(ArrayShops != null && ArrayShops.size() > 0){
-        Shop shop = shopService.getShop(ArrayShops.get(0).id);
-        UserShopRole userRole = shopService.getUserShopRole(shop.id);
-        pageContext.setAttribute("logoURL", shop.logoURL);
-        pageContext.setAttribute("shopID", shop.id);
-        pageContext.setAttribute("userRole", userRole);
-        //out.print(userRole);
-    }
-
 %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8" />
 <title>Магазин</title>
-<link rel="stylesheet" href="build/shop.min.css" />
+<link rel="stylesheet" href="../build/shop.min.css" />
 <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -55,7 +73,7 @@
     </script>
     <![endif]-->
 
-    <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
+    <script type="text/javascript" data-main="../build/build.js" src="../js/shop/require.min.js"></script>
 
     <script type="text/javascript">
 	globalUserAuth = false;
@@ -72,8 +90,18 @@
 
 		<div class="main-container shop dynamic" id="${shopID}">
             <div class="page shop-about">
-                <h1>Магазин название</h1>
-                <p>о магазине</p>
+                <div class="col-xs-4">
+                </div>
+                <div class="col-xs-8">
+                    <h1>Магазин "<c:out value="${shop.name}" />"</h1>
+                </div>
+                <div class="col-xs-4">
+                    <img src="<c:out value="${logoURL}" />" alt="лого">
+                </div>
+                <div class="col-xs-8">
+                    <p><c:out value="${shop.descr}" /></p>
+                    <a class="btn btn-primary no-border btn-sm" href="#">Продолжить покупки</a>
+                </div>
             </div>
             <div class="page main-container-inner">
                 <div class="show-right">

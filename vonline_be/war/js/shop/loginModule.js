@@ -3,6 +3,7 @@ define(
     ['jquery','shop-initThrift.min','shop-basket.min','shop-common.min'],
     function( $,thriftModule,basketModule, commonModule ){
         function initLogin(){
+
     $('#login-box .btn-primary').click(function(e){
         e.preventDefault();
         login($(this));
@@ -58,7 +59,8 @@ define(
                 if (selector.closest('.modal-auth').length > 0){
                     AuthRealTime(selector);
                 }else{
-                    document.location.replace("./shop.jsp");
+                    //document.location.replace("./shop.jsp");
+                    document.location.replace("./main.jsp");
                 }
             } else {
                 result.val(session.error);

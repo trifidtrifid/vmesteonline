@@ -36,6 +36,21 @@ transform()
   min-width 753px
   min-height 100%
 
+.navbar-container
+  text-align center
+  .navbar-brand img
+    width 170px
+
+.form-search
+  display inline-block
+  width 40%
+  margin 0
+  margin-top 5px
+  .icon-search
+    &:hover
+      text-decoration none
+
+
 .ace-nav>li
   a
     padding 11px 12px 0 12px
@@ -47,10 +62,14 @@ transform()
     a
       border-bottom-color #2b7dbc
 
+.ace-nav .user-menu
+  right 0 !important
+
 .ace-nav>.user-short a
   border none
   padding 3px 8px
   font-size 14px
+  text-align left
 
 .ace-nav>.user-short>a
   line-height inherit
@@ -85,54 +104,65 @@ transform()
   .show-left
     display none
 
+.sidebar-right
+  position absolute
+  right 0
+  top 0
+  width 190px
+  background #fff
+  margin-top 10px
+  border-right 1px solid #438eb9
+  h3
+    font-size 14px
+    font-family tahoma,arial
+    margin 5px 0
+  ul
+    margin-left 0
+    li
+      border-top 1px solid #438eb9
+      padding 5px
+      list-style none
+      &:first-child
+        border-top 0
+  .importantly-left
+    float left
+    width 40px
+    img
+      width 40px
+  .importantly-right
+    margin-left 50px
+    line-height 14px
+  .importantly-top
+  .importantly-bottom
+    font-size 11px
+    border-bottom 1px solid #438eb9
+    padding 5px
+    border-top 1px solid #438eb9
+  .importantly-top
+    font-size 18px
+
 .btn
   border-radius main-radius !important
 
+.page-title
+  padding 15px 0 0 10px
+  font-size 20px
+
+.main-content-top
+  overflow auto
+  border-bottom 1px solid #ccc
 .submenu
-  padding 5px 0 2px 0
-  background #d9edf7
-  >ul
-    display inline-block
-    vertical-align middle
-    margin-bottom 0
-    margin-left 5px
-    li
-      list-style none
-      display inline-block
-      margin-left 5px
-      margin-bottom 5px
-      border-top 3px solid rgb(111, 179, 224)
-      border-radius main-radius
-      a
-        font-size 14px
-        padding-top 1px
-        border-radius 0 0 main-radius main-radius !important
-      &.active
-        border-color #2b7dbc
-      &:hover
-        border-color #4f99c6
-  .btn-group
-    margin-left 5px
-    border-top 0
-    &.active .btn
-      border-color #2b7dbc
-    ul
-      padding-bottom 0
-    li
-      border-top 0
-      display block
-      margin 0
-      margin-bottom 5px
-      a
-        font-size 13px
-    .btn
-      font-size 14px
-      border 0
-      border-top 3px solid rgb(111, 179, 224)
-      height 35px
-      padding-bottom 7px
-      &:hover
-        border-color #4f99c6
+  padding 15px 10px 15px 0
+  .btn
+    display block !important
+    font-size 14px
+    margin-left 1px
+    border 0
+    border-top 3px solid rgb(111, 179, 224)
+    height 35px
+    padding-bottom 7px
+    &:hover
+      border-color #4f99c6
 
 .btn-group>.btn
   border-radius main-radius !important
@@ -168,8 +198,9 @@ transform()
   vertical-align top
 
 .main-content
-  border-right 10px solid #f2f2f2;
+  border-right 1px solid #ccc;
   min-height 200%
+  margin-right 190px
 
 .widget-main
   overflow auto
@@ -366,6 +397,9 @@ transform()
   &.list-view
     .dd-list
       padding-left 0
+  >.topic-descr
+    background #ddedf6
+    padding 5px
 
 .dd>.dd-list>.topic-item.list-view>.dd-list
   padding-left 30px
@@ -403,6 +437,12 @@ transform()
 /* создание темы */
 .create-topic
   padding 0 10px
+  background #ddedf6
+  .topic-body
+    textarea
+      width 100%
+      height 90px
+      margin-bottom 10px
   >.btn-group
     float right
     margin-left 5px
@@ -414,9 +454,35 @@ transform()
     border-left 1px solid #ccc
 
 /* новые стили после редизайна 11.06.14 */
+.itemdiv > .user > img
+  border-radius 0
+.itemdiv.dialogdiv > .body
+  padding-bottom 28px
+.btn.active:after
+  border-bottom 0
+.btn-info.no-border.active
+  background #4184AF !important
+  border-color #4184AF !important
+
+.message-input
+  padding 10px
+  margin-bottom 20px
+  background #ddedf6
+  textarea
+    width 100%
+    height 90px
+    margin-bottom 10px
+  .hashtag
+    margin-left 10px
 
 .lenta-item
   margin-bottom 20px
+  .wallitem-message
+  .wallitem-topic
+    margin 0 10px
+  .wallitem-message
+    padding-top 10px
+    border-top 1px solid rgb(80, 144, 193)
   .first-message
     border 1px solid #D7DBDD
     position relative
@@ -434,22 +500,29 @@ transform()
         right 5px
   .dialogs
     clear left
-    margin 0 0 0 110px
+    margin 0 0 0 30px
     padding-top 15px
     padding-right 0
   .message-textarea
     width 99%
+  .lenta-item-bottom
+    position absolute
+    bottom 3px
+  .lenta-item-hashtag
+    float right
 
 .create-topic-btn
-  float right
-  margin-bottom 15px
+  overflow auto
+  a
+    float right
+    margin 15px 10px 15px 0
 
 .create-topic
-  display none
+  padding 15px 10px
 
 .talks-title
-  clear right
   padding 10px
+  overflow auto
   border-top 1px solid rgb(80, 144, 193)
   .talks-title-left
     float left
@@ -460,7 +533,94 @@ transform()
     float right
 
 .talks-block
-  clear right
+  padding 0 10px
+  .answer-input
+    textarea
+      width 88%
+      margin-bottom 10px
+  .widget-main
+    position relative
+  .message-bottom
+    position absolute
+    bottom 5px
 
-.dd-item .dd-list
-  display none
+  /* private-messages */
+.private-messages
+  padding 10px
+  h2
+    margin-top 0
+  .private-message-single
+    padding 10px
+    overflow auto
+    border-bottom 1px solid #CCCCCC
+    &:first-child
+      border-top 1px solid #CCCCCC
+    .private-message-left
+      width 300px
+      .private-message-ava
+        img
+          width 70px
+      .private-message-author
+        margin-left 90px
+        a
+          &:hover
+            text-decoration none
+    .private-message-right
+      margin-left 320px
+
+    /* nextdoors */
+.nextdoors
+  padding 10px
+  .form-search
+    margin-bottom 20px
+    width 100%
+  .nextdoor-single
+    padding 10px
+    overflow auto
+    border 1px solid #ccc
+    margin-bottom 10px
+    .nextdoor-left
+      span
+        display block
+      .nextdoor-ava
+        img
+          width 70px
+      .nextdoor-name
+          margin-left 90px
+
+    /* profle */
+.user-body
+  .user-body-left
+    .logo-container
+      position relative
+    .ace-file-input
+      position absolute
+      top 0
+      bottom 0
+      left 0
+      right 0
+      input
+        height 0
+      .file-label
+        height 150px
+        width 150px
+        background rgba(255,255,255,.1)
+        line-height 100px
+        border none
+        &:before
+          background rgba(0,0,0,.4)
+          color #fff
+          bottom 0
+          top auto
+          height 30px
+          margin 0
+          font-size 14px
+          font-weight bold
+          position absolute
+      .file-name
+        display inline-block
+        vertical-align middle //
+    img
+      width 150px
+  .user-body-right
+    margin-left 170px
