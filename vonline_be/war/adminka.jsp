@@ -142,6 +142,11 @@
                             <span class="menu-text"> Магазины </span>
                         </a>
                     </li>
+                    <li>
+                        <a href="#">
+                            <span class="menu-text"> Статистика </span>
+                        </a>
+                    </li>
                 </ul><!-- /.nav-list -->
             </aside>
 

@@ -1358,8 +1358,29 @@ if($('.container.backoffice').hasClass('noAccess')){
         var myShop = thriftModule.client.getShop(shopid);
 
         /* настройки даты */
-            // пока что нет функции для вывода на БЕ
-            // () зкомменчена
+        var datesArray = thriftModule.clientBO.getDates();
+        var datesArrayLength = datesArray.length,
+            singleDate;
+
+        for(var i = 0; i < datesArrayLength; i++){
+            singleDate = datesArray[i];
+            console.log(singleDate.OrderDatesType+" -1- "+singleDate.orderDay+" -2- "
+                +singleDate.orderBefore+" -3- "+singleDate.eachOddEven+" -4- "+singleDate.priceTypeToUse)
+        }
+
+        var dates = new com.vmesteonline.be.shop.OrderDates();
+        dates.type = com.vmesteonline.be.shop.OrderDatesType.ORDER_WEEKLY;
+
+        var day = 3600*24;
+        dates.orderBefore = parseInt($('#days-before').val())*day;
+        /*dates.eachOddEven = "";
+         dates.priceTypeToUse = "";*/
+
+        $('.shedule-dates .selected').each(function(){
+            dates.orderDay = $(this).data('date');
+
+            thriftModule.clientBO.setDate(dates);
+        });
 
         /* настройки доставки */
         var deliveryCostByDistance = myShop.deliveryCostByDistance,
@@ -1403,8 +1424,14 @@ if($('.container.backoffice').hasClass('noAccess')){
         var deliveryTypeAddressMasks = myShop.deliveryTypeAddressMasks,
             deliveryTypeAddressMasksHtml = "";
         for(var p in deliveryTypeAddressMasks){
+            var deliveryType;
+            if(p == 2){
+                deliveryType = "Близко";
+            }else if(p == 3){
+                deliveryType = "Далеко";
+            }
             deliveryTypeAddressMasksHtml += '<div class="delivery-area  delivery-price-type">'+
-                '<span>'+ p +'</span><input type="text" value="'+ deliveryTypeAddressMasks[p] +'"><span>руб</span>'+
+                '<span>'+ deliveryType +'</span><input type="text" value="'+ deliveryTypeAddressMasks[p] +'"><span>руб</span>'+
                 '</div>';
         }
         if(deliveryTypeAddressMasksHtml == ""){
@@ -1449,6 +1476,10 @@ if($('.container.backoffice').hasClass('noAccess')){
             $('.new-interval').slideDown().removeClass('.new-interval');
         });
 
+        $('#settings-delivery input').focus(function(){
+            $(this).closest('.settings-delivery-container').addClass('changed');
+        });
+
 
     $('.settings-item .btn-save').click(function(e){
         e.preventDefault();
@@ -1486,43 +1517,58 @@ if($('.container.backoffice').hasClass('noAccess')){
                 break;
             case "settings-delivery":
                 newShopInfo = myShop;
+                var isDeliveryIntervalChanged = false,
+                    isDeliveryAreaChanged = false,
+                    isDeliveryWeightChanged = false;
 
-                var deliveryCostByDistance = [];
-                $('.delivery-interval').each(function(){
-                    var key = parseInt($(this).find('input:eq(0)').val()),
-                     value = parseFloat($(this).find('input:eq(1)').val());
-
-                    if(key && value) deliveryCostByDistance[key] = value;
-                    console.log("key "+key+"; value "+value);
+                $('#settings-delivery').find('.changed').each(function(){
+                   if($(this).hasClass('delivery-interval-container')){
+                       isDeliveryIntervalChanged = true;
+                   }
+                    if($(this).hasClass('delivery-area-container')){
+                        isDeliveryAreaChanged = true;
+                    }
+                    if($(this).hasClass('delivery-weight-container')){
+                        isDeliveryWeightChanged = true;
+                    }
                 });
 
-                //newShopInfo.deliveryCostByDistance = deliveryCostByDistance;
-                thriftModule.clientBO.setShopDeliveryCostByDistance(shopId,deliveryCostByDistance);
+                if(isDeliveryIntervalChanged) {
+                    var deliveryCostByDistance = [];
+                    $('.delivery-interval').each(function () {
+                        var key = parseInt($(this).find('input:eq(0)').val()),
+                            value = parseFloat($(this).find('input:eq(1)').val());
 
-                var deliveryTypeAddressMasks = [],
-                    counter = 0;
-                $('.delivery-area').each(function(){
-                    var key;
-                    counter ? key = com.vmesteonline.be.shop.DeliveryType.SHORT_RANGE : key = com.vmesteonline.be.shop.DeliveryType.LONG_RANGE;
-                    counter++;
-                    var value = $(this).find('input:eq(0)').val();
+                        if (key && value) deliveryCostByDistance[key] = value;
+                        console.log("key " + key + "; value " + value);
+                    });
 
-                    if(value) deliveryTypeAddressMasks[key] = value;
-                });
-                //newShopInfo.deliveryTypeAddressMasks = deliveryTypeAddressMasks;
-                thriftModule.clientBO.setShopDeliveryTypeAddressMasks(shopId,deliveryTypeAddressMasks);
+                    thriftModule.clientBO.setShopDeliveryCostByDistance(shopId, deliveryCostByDistance);
+                }
+                if(isDeliveryAreaChanged) {
 
-                var deliveryByWeightIncrement = [];
-                $('.delivery-weight').each(function(){
-                    var key = parseInt($(this).find('input:eq(0)').val()),
-                        value = parseInt($(this).find('input:eq(1)').val());
+                    var deliveryTypeAddressMasks = [],
+                        counter = 0;
+                    $('.delivery-area').each(function () {
+                        var key;
+                        counter ? key = com.vmesteonline.be.shop.DeliveryType.SHORT_RANGE : key = com.vmesteonline.be.shop.DeliveryType.LONG_RANGE;
+                        counter++;
+                        var value = $(this).find('input:eq(0)').val();
 
-                    if(key && value) deliveryByWeightIncrement[key] = value;
-                });
-                //newShopInfo.deliveryByWeightIncrement = deliveryByWeightIncrement;
-                thriftModule.clientBO.setShopDeliveryByWeightIncrement(shopId,deliveryByWeightIncrement);
+                        if (value) deliveryTypeAddressMasks[key] = value;
+                    });
+                    thriftModule.clientBO.setShopDeliveryTypeAddressMasks(shopId, deliveryTypeAddressMasks);
+                }
+                if(isDeliveryWeightChanged) {
+                    var deliveryByWeightIncrement = [];
+                    $('.delivery-weight').each(function () {
+                        var key = parseInt($(this).find('input:eq(0)').val()),
+                            value = parseInt($(this).find('input:eq(1)').val());
 
-                //thriftModule.clientBO.updateShop(newShopInfo);
+                        if (key && value) deliveryByWeightIncrement[key] = value;
+                    });
+                    thriftModule.clientBO.setShopDeliveryByWeightIncrement(shopId, deliveryByWeightIncrement);
+                }
 
                 break;
         }

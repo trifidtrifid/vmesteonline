@@ -494,6 +494,12 @@
                     <div id="settings-shedule" class="settings-item">
                         <h2>Расписание завоза</h2>
                         <div id="date-picker-6" class="shedule-dates"></div>
+                        <div class="shedule-confirm"><span>Периодичность доставки</span>
+                            <select name="" id="">
+                                <option>неделя</option>
+                                <option>месяц</option>
+                            </select>
+                        </div>
                         <div class="shedule-confirm"><span>подтверждать заказ за</span><input type="text" id="days-before" value="2"><span>дня до доставки</span></div>
                         <br>
                         <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
@@ -502,20 +508,20 @@
                     <div id="settings-delivery" class="settings-item">
                         <h2>Доставка</h2>
                         <h5>Стоимость доставки в зависимости от расстояния</h5>
-                        <div class="radio delivery-interval-container">
+                        <div class="radio settings-delivery-container delivery-interval-container">
                             <label>
                                 <%--<input name="form-field-radio" type="radio" checked="checked" class="ace">--%>
                                 <span class="lbl"> Стоимость в интервалах (например 100 р до 10км, 200р при > 10км)</span>
                             </label>
                         </div>
-                        <div class="radio delivery-area-container">
+                        <div class="radio settings-delivery-container delivery-area-container">
                             <label>
                                 <%--<input name="form-field-radio" type="radio" checked="checked" class="ace">--%>
                                 <span class="lbl"> Стоимость в зависимости от расстояния</span>
                             </label>
                         </div>
                         <h5>Стоиомтсь доставки в зависимости от веса заказа</h5>
-                            <div class="delivery-weight-container">
+                            <div class="settings-delivery-container delivery-weight-container">
                             </div>
                             <br>
                         <a class="btn btn-primary btn-sm no-border btn-save" href="#">Сохранить</a>
