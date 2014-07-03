@@ -3,19 +3,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ServiceImpl"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageService"%>
 <%@ page import="com.vmesteonline.be.Group"%>
 <%@ page import="com.vmesteonline.be.Rubric"%>
 <%@ page import="com.vmesteonline.be.messageservice.TopicListPart"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageListPart"%>
 <%@ page import="com.vmesteonline.be.messageservice.Topic"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.messageservice.Message"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageType"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
-<%@ page import="com.vmesteonline.be.jdo2.VoSession"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="java.util.ArrayList"%>
 
@@ -23,40 +17,44 @@
 
 <%
 	HttpSession sess = request.getSession();
+    pageContext.setAttribute("auth",true);
+
 	try {
 	 	AuthServiceImpl.checkIfAuthorised(sess.getId());
+        UserServiceImpl userService = new UserServiceImpl(request.getSession());
+
+        List<Group> Groups = userService.getUserGroups();
+        List<Rubric> Rubrics = userService.getUserRubrics();
+        ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+        MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
+        //MessageType mesType = MessageType.BASE;
+
+        TopicListPart Topics = new TopicListPart( new ArrayList<Topic>(), 0);
+        if( Groups.size() > 0 && Rubrics.size() > 0 )
+            Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
+
+        //out.print(ShortUserInfo.firstName);
+
+        pageContext.setAttribute("groups",Groups);
+        pageContext.setAttribute("rubrics",Rubrics);
+        pageContext.setAttribute("topics",Topics.topics);
+        pageContext.setAttribute("firstName",ShortUserInfo.firstName);
+        pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 	} catch (InvalidOperation ioe) {
+        pageContext.setAttribute("auth",false);
 		response.sendRedirect("/login.jsp");
-		return; 
+		return;
 	}
 
-    UserServiceImpl userService = new UserServiceImpl(request.getSession());
 
-    List<Group> Groups = userService.getUserGroups();
-    List<Rubric> Rubrics = userService.getUserRubrics();
-    ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-    MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
-    //MessageType mesType = MessageType.BASE;
-
-    TopicListPart Topics = new TopicListPart( new ArrayList<Topic>(), 0);
-    if( Groups.size() > 0 && Rubrics.size() > 0 )
-    	Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
-    	
-    //out.print(ShortUserInfo.firstName);
-
-    pageContext.setAttribute("groups",Groups);
-    pageContext.setAttribute("rubrics",Rubrics);
-    pageContext.setAttribute("topics",Topics.topics);
-    pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-    pageContext.setAttribute("lastName",ShortUserInfo.lastName);
 %>
 
 <!DOCTYPE html>
-<html>
+<html ng-app="forum">
 <head>
 <meta charset="utf-8" />
 <title>Главная</title>
-<link rel="stylesheet" href="build/style.min.css" />
+<link rel="stylesheet" href="css/style.css" />
 
 <script src="js/lib/jquery-2.1.1.min.js"></script>
 <!--[if lt IE 9]>
@@ -68,8 +66,15 @@
         document.createElement('nav');
     </script>
     <![endif]-->
+    <script type="text/javascript">
+        globalUserAuth = false;
+        <c:if test="${auth}">
+        globalUserAuth = true;
+        </c:if>
+    </script>
+    <script src="js/forum/angular/angular.js"></script>
 </head>
-<body>
+<body ng-controller="baseController as base" ng-cloak>
 <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
         try {
@@ -78,64 +83,60 @@
         }
     </script>
 
-    <div class="navbar-container" id="navbar-container">
+    <div class="navbar-container" id="navbar-container" ng-controller="navbarController as navbar">
         <div class="navbar-header pull-left">
-            <a href="#" class="navbar-brand"> <small> <i
-                    class="icon-leaf"></i> Ace Admin
-            </small>
+            <a href="#" class="navbar-brand">
+                <img src="i/logo.png" alt="логотип"/>
             </a>
-            <!-- /.brand -->
         </div>
-        <!-- /.navbar-header -->
 
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
-                <li class="active"><a class="btn btn-info no-border" href="#">
-                    Сообщения </a></li>
+                <li ng-class="navbar.privateMessagesBtnStatus"><a class="btn btn-info no-border private-messages-link" ng-click="navbar.goToPrivateMessages($event)" href="#">Личные сообщения </a></li>
 
-                <li><a class="btn btn-info no-border" href="#"> Архив </a></li>
+                <li ng-class="navbar.nextdoorsBtnStatus"><a class="btn btn-info no-border nextdoors-link" href="#" ng-click="navbar.goToNextdoors($event)"> Соседи</a></li>
 
-                <li><a class="btn btn-info no-border" href="#"> Избранное
-                </a></li>
-                <li><a class="btn btn-info no-border" href="/shop.jsp">
-                    Магазин </a></li>
+                <li class="user-short light-blue">
+                    <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                        <img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />
+                        <span class="user-info">
+                            <small><c:out value="${firstName}" /></small>
+                            <c:out value="${lastName}" />
+                        </span>
+                        <i class="icon-caret-down"></i>
+                    </a>
 
-                <li class="user-short light-blue"><a data-toggle="dropdown"
-                                                     href="#" class="dropdown-toggle"> <img class="nav-user-photo"
-                                                                                            src="i/avatars/user.jpg" alt="Jason's Photo" /> <span
-                        class="user-info"> <small><c:out
-                        value="${firstName}" /></small> <c:out value="${lastName}" />
-							</span> <i class="icon-caret-down"></i>
-                </a>
-
-                    <ul
-                            class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                    <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                         <li><a href="settings.html"> <i class="icon-cog"></i>
                             Настройки
                         </a></li>
 
-                        <li><a href="profile.html"> <i class="icon-user"></i>
+                        <li><a href="#" ng-click="navbar.goToProfile($event)"> <i class="icon-user"></i>
                             Профиль
                         </a></li>
 
                         <li class="divider"></li>
 
-                        <li><a href="#"> <i class="icon-off"></i> Выход
+                        <li><a href="#"  ng-click="navbar.logout($event)"> <i class="icon-off"></i> Выход
                         </a></li>
                     </ul></li>
             </ul>
-            <!-- /.ace-nav -->
         </div>
-        <!-- /.navbar-header -->
+
+        <form method="post" action="#" class="form-group has-info form-search">
+            <span class="block input-icon input-icon-right">
+                <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
+                <a href="#" class="icon-search icon-on-right bigger-110"></a>
+            </span>
+        </form>
     </div>
-    <!-- /.container -->
 </div>
 
 	<div class="container">
 
 		<div class="main-container" id="main-container">
 			<div class="main-container-inner">
-				<aside class="sidebar" id="sidebar">
+				<aside class="sidebar" id="sidebar" ng-controller="leftBarController as leftbar">
 					<script type="text/javascript">
 						try {
 							ace.settings.check('sidebar', 'fixed')
@@ -143,848 +144,308 @@
 						}
 					</script>
 					<ul class="nav nav-list">
-                        <li><a href="#"> <span class="menu-text">Лента</span> </a></li>
-                        <li><a href="#"> <span class="menu-text">Обсуждения</span> </a></li>
-                        <li><a href="#"> <span class="menu-text">Личные сообщения</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(1)}"><a href="#" ng-click="setTab($event,1)"> <span class="menu-text">Новости</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(2)}"><a href="#" ng-click="setTab($event,2)"> <span class="menu-text">Обсуждения</span> </a></li>
+                        <li ng-class="{active:leftbar.isSet(3)}"><a href="#" ng-click="setTab($event,3)"> <span class="menu-text">Услуги и объявления</span> </a></li>
 						<%--<c:forEach var="rubric" items="${rubrics}">
 							<li><a href="#" data-rubricid="${rubric.id}"> <span
 									class="menu-text">${rubric.visibleName}</span> <b>(3)</b>
 							</a></li>
 						</c:forEach>--%>
+                        <%--<c:forEach var="group" items="${groups}">
+                            <li><a href="#" data-rubricid="${group.id}"> <span
+                                    class="menu-text">${group.visibleName}</span> <b>(3)</b>
+                            </a></li>
+                        </c:forEach>--%>
 
 					</ul>
-					<!-- /.nav-list -->
 				</aside>
-				<div class="main-content">
-					<nav class="submenu">
-						<ul>
-							<%--<c:forEach var="group" items="${groups}">
-								<li><a class="btn btn-sm btn-info no-border"
-									data-groupid="${group.id}" href="#">${group.visibleName}</a></li>
-							</c:forEach>--%>
-							<%--<li class="btn-group">
-								<button data-toggle="dropdown"
-									class="btn btn-info btn-sm dropdown-toggle no-border">
-									<span class="btn-group-text">Действие</span> <span
-										class="icon-caret-down icon-on-right"></span>
-								</button>
+                <aside class="sidebar-right" ng-controller="rightBarController as rightbar">
+                    <div class="importantly-top">
+                        Важно
+                    </div>
+                    <ul>
+                        <li>
+                            <div class="importantly-left"><img src="i/avatars/avatar.png" alt="картинка"/></div>
+                            <div class="importantly-right">
+                                <h3>Ольга Янина</h3>
+                                <p>Уважаемые соседи, 16 мая будет отключена горячая вода на один день</p>
+                                <a href="#">Перейти к записи</a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="importantly-left"><img src="i/avatars/avatar.png" alt="картинка"/></div>
+                            <div class="importantly-right">
+                                <h3>Ольга Янина</h3>
+                                <p>Уважаемые соседи, 16 мая будет отключена горячая вода на один день</p>
+                                <a href="#">Перейти к записи</a>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="importantly-bottom">
+                        Больше важных сообщений нет
+                    </div>
 
-								<ul class="dropdown-menu dropdown-yellow">
-									<li><a href="#">Действие 1</a></li>
+                </aside>
+				<div class="main-content dynamic">
 
-									<li><a href="#">Действие 2</a></li>
+                    <div class="main-content-top" ng-hide="base.mainContentTopIsHide" ng-controller="mainContentTopController as mainContentTop">
+                        <div class="page-title pull-left">Новости</div>
 
-									<li><a href="#">Что-то еще</a></li>
-								</ul>
-							</li>--%>
-						</ul>
-						<div class="clear"></div>
-					</nav>
-					<div class="dynamic">
+                        <nav class="submenu pull-right clearfix">
+                            <button class="btn btn-sm btn-info no-border pull-right ng-cloak" ng-repeat="group in mainContentTop.groups"
+                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="mainContentTop.selectGroup(group)">{{group.visibleName}}</button>
+
+                            <%--<button class="btn btn-sm btn-info no-border pull-right all-groups-btn"
+                                    ng-class="{active : mainContentTop.allGroupsBtn.selected}" ng-click="mainContentTop.selectGroup(group,1)">Все</button>--%>
+                        </nav>
+
+                        <div class="create-topic-btn pull-right" ng-show="base.talksIsActive">
+                            <a class="btn btn-primary btn-sm no-border clearfix" href="#" ng-click="mainContentTop.showCreateTopic($event)">Создать тему</a>
+                        </div>
+                    </div>
+
 						<div class="forum-wrap">
-                            <section class="forum page">
-                                <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab5">
-                                    <li class="active">
-                                        <a data-toggle="tab" href="#porch1">Подъезд</a>
-                                    </li>
+                            <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta" ng-cloak>
+                                <div class="message-input clearfix">
+                                    <textarea ng-model="lenta.wallMessageContent"
+                                        onblur="if(this.value=='') this.value='Написать сообщение';"
+                                        onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
 
-                                    <li class="">
-                                        <a data-toggle="tab" href="#floor1">Этаж</a>
-                                    </li>
+                                    <div class="message-input-bottom">
+                                        <div class="btn-group attach-dropdown pull-right">
+                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                        <span class="btn-group-text">Прикрепить</span>
+                                        <span class="icon-caret-down icon-on-right"></span>
+                                        </button>
 
-                                    <li class="">
-                                        <a data-toggle="tab" href="#quarter1">Квартал</a>
-                                    </li>
-                                    <li class="">
-                                        <a data-toggle="tab" href="#area1">Район</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
-
-                                    <div class="tab-pane active" id="porch1">
-
-                                        <div class="lenta-item">
-
-                                            <div class="first-message clearfix">
-                                                <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                </div>
-
-                                                <div class="body">
-                                                    <div class="time">
-                                                        <i class="icon-time"></i>
-                                                        <span class="green">4 sec</span>
-                                                    </div>
-
-                                                    <div class="name">
-                                                        <a href="#">Alexa</a>
-                                                    </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                    <div class="tools">
-                                                        <a href="#" class="btn btn-minier btn-info">
-                                                            <i class="icon-only icon-share-alt"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="dialogs">
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="John's Avatar" src="i/avatars/avatar.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="blue">38 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">John</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Bob's Avatar" src="i/avatars/user.jpg">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="orange">2 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Bob</a>
-                                                            <span class="label label-info arrowed arrowed-in-right">admin</span>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="grey">3 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Jim</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="input-group">
-                                                <%--<input placeholder="Введите сообщение..." type="text" class="form-control" name="message">--%>
-                                                    <textarea name="message" class="message-textarea"></textarea>
-                                                <span class="input-group-btn">
-                                                    <button class="btn btn-sm btn-info no-radius no-border" type="button">
-                                                        <i class="icon-share-alt"></i>
-                                                        Отправить
-                                                    </button>
-                                                </span>
-                                            </div>
-
+                                        <ul class="dropdown-menu dropdown-blue">
+                                        <li><a href="#">Видео</a></li>
+                                        <li><a href="#">Документ</a></li>
+                                        <li><a href="#">Изображение</a></li>
+                                        <li><a href="#">Опрос</a></li>
+                                        </ul>
                                         </div>
+                                        <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
 
-                                        <div class="lenta-item">
+                                        <div class="hashtag pull-left">
+                                            <span>группа</span>
+                                            <div class="btn-group hashtag-dropdown">
+                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                                    <span class="btn-group-text" ng-cloak># {{lenta.selectedGroup.visibleName}}</span>
+                                                    <span class="icon-caret-down icon-on-right"></span>
+                                                </button>
 
-                                            <div class="first-message clearfix">
-                                                <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                </div>
-
-                                                <div class="body">
-                                                    <div class="time">
-                                                        <i class="icon-time"></i>
-                                                        <span class="green">4 sec</span>
-                                                    </div>
-
-                                                    <div class="name">
-                                                        <a href="#">Alexa</a>
-                                                    </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                    <div class="tools">
-                                                        <a href="#" class="btn btn-minier btn-info">
-                                                            <i class="icon-only icon-share-alt"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
+                                                <ul class="dropdown-menu dropdown-blue">
+                                                    <li ng-repeat="group in lenta.groups"><a href="#" ng-click="lenta.selectGroupInDropdown(group.id,lenta)" ng-cloak># {{group.visibleName}}</a></li>
+                                                </ul>
                                             </div>
-
-                                            <div class="dialogs">
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="John's Avatar" src="i/avatars/avatar.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="blue">38 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">John</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Bob's Avatar" src="i/avatars/user.jpg">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="orange">2 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Bob</a>
-                                                            <span class="label label-info arrowed arrowed-in-right">admin</span>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="grey">3 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Jim</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="input-group">
-                                                <textarea name="message" class="message-textarea"></textarea>
-                                                <span class="input-group-btn">
-                                                    <button class="btn btn-sm btn-info no-radius no-border" type="button">
-                                                        <i class="icon-share-alt"></i>
-                                                        Отправить
-                                                    </button>
-                                                </span>
-                                            </div>
-
                                         </div>
 
                                     </div>
-
-                                    <div class="tab-pane" id="floor1">
-
-                                        <div class="lenta-item">
-
-                                            <div class="first-message clearfix">
-                                                <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar.png">
-                                                </div>
-
-                                                <div class="body">
-                                                    <div class="time">
-                                                        <i class="icon-time"></i>
-                                                        <span class="green">4 sec</span>
-                                                    </div>
-
-                                                    <div class="name">
-                                                        <a href="#">John</a>
-                                                    </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                    <div class="tools">
-                                                        <a href="#" class="btn btn-minier btn-info">
-                                                            <i class="icon-only icon-share-alt"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="dialogs">
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="John's Avatar" src="i/avatars/avatar.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="blue">38 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">John</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Bob's Avatar" src="i/avatars/user.jpg">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="orange">2 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Bob</a>
-                                                            <span class="label label-info arrowed arrowed-in-right">admin</span>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="grey">3 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Jim</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="input-group">
-                                                <%--<input placeholder="Введите сообщение..." type="text" class="form-control" name="message">--%>
-                                                <textarea name="message" class="message-textarea"></textarea>
-                                                    <span class="input-group-btn">
-                                                        <button class="btn btn-sm btn-info no-radius no-border" type="button">
-                                                            <i class="icon-share-alt"></i>
-                                                            Отправить
-                                                        </button>
-                                                    </span>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="lenta-item">
-
-                                            <div class="first-message clearfix">
-                                                <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                </div>
-
-                                                <div class="body">
-                                                    <div class="time">
-                                                        <i class="icon-time"></i>
-                                                        <span class="green">4 sec</span>
-                                                    </div>
-
-                                                    <div class="name">
-                                                        <a href="#">Alexa</a>
-                                                    </div>
-                                                    <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                    <div class="tools">
-                                                        <a href="#" class="btn btn-minier btn-info">
-                                                            <i class="icon-only icon-share-alt"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="dialogs">
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="John's Avatar" src="i/avatars/avatar.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="blue">38 sec</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">John</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Bob's Avatar" src="i/avatars/user.jpg">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="orange">2 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Bob</a>
-                                                            <span class="label label-info arrowed arrowed-in-right">admin</span>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo massa sed ipsum porttitor facilisis.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Jim's Avatar" src="i/avatars/avatar4.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="grey">3 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Jim</a>
-                                                        </div>
-                                                        <div class="text">Raw denim you probably haven't heard of them jean shorts Austin.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="itemdiv dialogdiv">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-                                                        <div class="time">
-                                                            <i class="icon-time"></i>
-                                                            <span class="green">4 min</span>
-                                                        </div>
-
-                                                        <div class="name">
-                                                            <a href="#">Alexa</a>
-                                                        </div>
-                                                        <div class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-
-                                                        <div class="tools">
-                                                            <a href="#" class="btn btn-minier btn-info">
-                                                                <i class="icon-only icon-share-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="input-group">
-                                                <textarea name="message" class="message-textarea"></textarea>
-                                                    <span class="input-group-btn">
-                                                        <button class="btn btn-sm btn-info no-radius no-border" type="button">
-                                                            <i class="icon-share-alt"></i>
-                                                            Отправить
-                                                        </button>
-                                                    </span>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                    <div class="tab-pane" id="quarter1"></div>
-                                    <div class="tab-pane" id="area1"></div>
                                 </div>
-                            </section>
-                            <section class="page talks hide">
-                                <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab6">
-                                    <li class="active">
-                                        <a data-toggle="tab" href="#porch2">Подъезд</a>
-                                    </li>
 
-                                    <li class="">
-                                        <a data-toggle="tab" href="#floor2">Этаж</a>
-                                    </li>
+                                <div class="lenta">
+                                    <div class="lenta-item" ng-repeat="wallItem in lenta.wallItems"
+                                            ng-switch on="wallItem.topic.message.type">
 
-                                    <li class="">
-                                        <a data-toggle="tab" href="#quarter2">Квартал</a>
-                                    </li>
-                                    <li class="">
-                                        <a data-toggle="tab" href="#area2">Район</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
+                                        <div class="wallitem-message" ng-switch-when="5">
 
-                                    <a class="btn btn-primary btn-sm no-border clearfix create-topic-btn" href="#">Создать тему</a>
+                                            <div class="first-message clearfix">
+                                                <div class="user">
+                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
+                                                </div>
 
-                                    <section class="create-topic">
-                                        <h1>Создание темы</h1>
-                                        <div class="has-info form-group">
-                                            <input type="text" class="width-100 head" value="Заголовок"
-                                                   onblur="if(this.value=='') this.value='Заголовок';"
-                                                   onfocus="if(this.value=='Заголовок') this.value='';" />
-                                        </div>
-                                        <div class="widget-box wysiwig-box">
-                                            <div class="widget-header widget-header-small  header-color-blue2">
+                                                <div class="body">
+                                                    <span class="label label-lg label-pink arrowed lenta-item-hashtag">{{wallItem.label}}</span>
+
+                                                    <div class="name">
+                                                        <a href="#">{{wallItem.topic.authorName}}</a>
+                                                    </div>
+                                                    <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>
+                                                    <div class="lenta-item-bottom">
+                                                        <span ng-cloak>{{wallItem.topic.message.createdEdit}}</span>
+                                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)" class="a1">Комментировать</a>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="dialogs">
+                                                <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
+                                                    <div class="user">
+                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
+                                                    </div>
+
+                                                    <div class="body">
+
+                                                        <div class="name">
+                                                            <a href="#">{{wallMessage.authorName}}</a>
+                                                        </div>
+                                                        <div class="text" ng-cloak>{{wallMessage.content}}</div>
+
+                                                        <div class="lenta-item-bottom">
+                                                            <span ng-cloak>{{wallMessage.createdEdit}}</span>
+                                                            <a href="#" ng-click="lenta.showAnswerInput($event,wallItem,wallMessage)">Ответить</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                             </div>
 
-                                            <div class="widget-body">
-                                                <div class="widget-main no-padding">
-                                                    <div class="wysiwyg-editor"></div>
-                                                </div>
-
-                                                <div class="widget-toolbox padding-4 clearfix">
-                                                    <div class="btn-group">
-                                                        <button data-toggle="dropdown"
-                                                                class="btn btn-info btn-sm dropdown-toggle no-border">
-                                                            <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
+                                            <div class="input-group"> <%--  ng-show="wallItem.answerShow" --%>
+                                                <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea" ng-model="wallItem.commentText"
+                                                          ng-hasfocus="wallItem.answerShow" ng-show="wallItem.answerShow"
+                                                    onblur="if(this.value=='') this.value='Ваш ответ';"
+                                                    onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
+                                                    <span class="input-group-btn" ng-show="wallItem.answerShow">
+                                                        <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
+                                                            <i class="icon-share-alt"></i>
+                                                            Отправить
                                                         </button>
-
-                                                        <ul class="dropdown-menu dropdown-yellow">
-                                                            <li><a href="#">Видео</a></li>
-
-                                                            <li><a href="#">Фотографию</a></li>
-
-                                                            <li><a href="#">Документ</a></li>
-
-                                                            <li><a href="#">Опрос</a></li>
-                                                        </ul>
-                                                    </div>
-
-                                                    <div class="btn-group pull-right">
-                                                        <button class="btn btn-sm btn-primary">
-                                                            <i class="icon-globe bigger-125"></i> Создать <i
-                                                                class="icon-arrow-right icon-on-right bigger-125"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                                    </span>
                                             </div>
                                         </div>
-                                    </section>
 
-                                    <div class="tab-pane active" id="porch2">
-
-                                        <section class="talks-title-block">
-                                            <div class="talks-title clearfix">
+                                        <div class="wallitem-topic" ng-switch-when="1">
+                                            <div class="talks-title">
                                                 <div class="talks-title-left load-talk">
-                                                    <div><a href="#">Проблемы в намшем доме !</a></div>
-                                                    <div>74 сообщения</div>
+                                                    <div><a href="#" ng-click="showFullTalk($event,wallItem.topic)">{{wallItem.topic.subject}}</a></div>
+                                                    <div>{{wallItem.topic.messageNum}} сообщений</div>
                                                 </div>
                                                 <div class="talks-title-right">
                                                     <div>Последнее обновление:</div>
-                                                    <div>18 июля 2014 23:01</div>
+                                                    <div>{{wallItem.topic.lastUpdateEdit}}</div>
                                                 </div>
-                                            </div>
-
-                                            <div class="talks-title clearfix">
-                                                <div class="talks-title-left">
-                                                    <div><a href="#">Проблемы в намшем доме !</a></div>
-                                                    <div>74 сообщения</div>
-                                                </div>
-                                                <div class="talks-title-right">
-                                                    <div>Последнее обновление:</div>
-                                                    <div>18 июля 2014 23:01</div>
-                                                </div>
-                                            </div>
-                                        </section>
-
-                                        <section class="talks-block hide"> </section>
-
-                                    </div>
-
-                                    <div class="tab-pane" id="floor2">
-
-                                        <div class="talks-title clearfix">
-                                            <div class="talks-title-left">
-                                                <div><a href="#">Проблемы в намшем доме !</a></div>
-                                                <div>74 сообщения</div>
-                                            </div>
-                                            <div class="talks-title-right">
-                                                <div>Последнее обновление:</div>
-                                                <div>18 июля 2014 23:01</div>
                                             </div>
                                         </div>
 
-                                        <div class="talks-title clearfix">
-                                            <div class="talks-title-left">
-                                                <div><a href="#">Проблемы в намшем доме !</a></div>
-                                                <div>74 сообщения</div>
-                                            </div>
-                                            <div class="talks-title-right">
-                                                <div>Последнее обновление:</div>
-                                                <div>18 июля 2014 23:01</div>
-                                            </div>
-                                        </div>
-
-
                                     </div>
-                                    <div class="tab-pane" id="quarter2"></div>
-                                    <div class="tab-pane" id="area2"></div>
+
                                 </div>
+
                             </section>
+
+                            <section class="talks page" ng-show="base.talksIsActive" ng-controller="TalksController as talks">
+
+                                <section class="create-topic" ng-hide="base.createTopicIsHide">
+                                    <div class="has-info form-group">
+                                        <input type="text" class="width-100 head" value="Заголовок"
+                                               onblur="if(this.value=='') this.value='Заголовок';"
+                                               onfocus="if(this.value=='Заголовок') this.value='';" ng-model="talks.subject" />
+                                    </div>
+                                    <div class="topic-body clearfix">
+                                        <textarea ng-model="talks.content"
+                                            onblur="if(this.value=='') this.value='Сообщение';"
+                                            onfocus="if(this.value=='Сообщение') this.value='';"></textarea>
+
+                                        <div class="btn-group pull-left">
+                                        <button class="btn btn-sm btn-primary" ng-click="talks.addSingleTalk()">
+                                        Создать
+                                        </button>
+                                        </div>
+
+                                        <div class="hashtag pull-left">
+                                            <span>группа</span>
+                                            <div class="btn-group hashtag-dropdown">
+                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                                    <span class="btn-group-text"># {{talks.selectedGroup.visibleName}}</span>
+                                                    <span class="icon-caret-down icon-on-right"></span>
+                                                </button>
+
+                                                <ul class="dropdown-menu dropdown-blue">
+                                                    <li ng-repeat="group in talks.groups"><a href="#" ng-click="talks.selectGroupInDropdown(group.id,talks)"># {{group.visibleName}}</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="btn-group pull-right">
+                                        <button data-toggle="dropdown"
+                                        class="btn btn-info btn-sm dropdown-toggle no-border">
+                                        <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-yellow">
+                                        <li><a href="#">Видео</a></li>
+
+                                        <li><a href="#">Фотографию</a></li>
+
+                                        <li><a href="#">Документ</a></li>
+
+                                        <li><a href="#">Опрос</a></li>
+                                        </ul>
+                                        </div>
+
+
+                                    </div>
+<%--                                    <div class="widget-box wysiwig-box">
+                                        <div class="widget-header widget-header-small  header-color-blue2">
+
+                                        </div>
+
+                                        <div class="widget-body">
+                                            <div class="widget-main no-padding">
+                                                <div class="wysiwyg-editor"></div>
+                                            </div>
+
+                                            <div class="widget-toolbox padding-4 clearfix">
+                                                <div class="btn-group">
+                                                    <button data-toggle="dropdown"
+                                                            class="btn btn-info btn-sm dropdown-toggle no-border">
+                                                        <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-yellow">
+                                                        <li><a href="#">Видео</a></li>
+
+                                                        <li><a href="#">Фотографию</a></li>
+
+                                                        <li><a href="#">Документ</a></li>
+
+                                                        <li><a href="#">Опрос</a></li>
+                                                    </ul>
+                                                </div>
+
+                                                <div class="btn-group pull-right">
+                                                    <button class="btn btn-sm btn-primary">
+                                                        <i class="icon-globe bigger-125"></i> Создать <i
+                                                            class="icon-arrow-right icon-on-right bigger-125"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>--%>
+                                </section>
+
+                                <section class="talks-title-block" ng-show="base.isTalkTitles">
+
+                                    <div class="talks-title" ng-repeat="talk in talks.topics" id="{{talk.id}}">
+                                        <div class="talks-title-left load-talk">
+                                            <div><a href="#" ng-click="showFullTalk($event,talk)">{{talk.subject}}</a></div>
+                                            <div>{{talk.messageNum}} сообщений</div>
+                                        </div>
+                                        <div class="talks-title-right">
+                                            <div>Последнее обновление:</div>
+                                            <div>{{talk.lastUpdateEdit}}</div>
+                                        </div>
+                                    </div>
+
+                                </section>
+
+                                <section class="talks-block" ng-hide="base.isTalkTitles">
+                                    <div ng-include="'ajax/forum/talks-single.html'"></div>
+                                </section>
+
+                            </section>
+
+                            <section class="services page" ng-show="base.servicesIsActive" ng-controller="ServicesController as services"></section>
+
+                            <section class="private-messages page" ng-show="base.privateMessagesIsActive" ng-controller="privateMessagesController as privateMessages"></section>
+
+                            <section class="nextdoors page" ng-class="base.nextdoorsLoadStatus" ng-show="base.nextdoorsIsActive" ng-controller="nextdoorsController as nextdoors"></section>
+
+                            <section class="profile page" ng-show="base.profileIsActive" ng-controller="ProfileController as profile"></section>
 
 							<%--<section class="forum">
 								<section class="options">
@@ -1099,12 +560,13 @@
 							</section>--%>
 
 						</div>
-					</div>
+
 				</div>
 			</div>
 		</div>
 
 	</div>
+
 	<div class="wysiwig-wrap">
 		<div class="widget-box wysiwig-box">
 			<div class="widget-header widget-header-small  header-color-blue2">
@@ -1476,10 +938,15 @@
 	<script src="gen-js/AuthService.js" type="text/javascript"></script>
 	<!-- -->
 
-    <script src="js/forum/angular/angular.min.js"></script>
+
 	<!-- собственные скрипты  -->
-	<script src="js/common.js"></script>
-	<script src="js/forum/main.js"></script>
+	<%--<script src="js/common.js"></script>--%>
+	<%--<script src="js/forum/main.js"></script>--%>
+<script src="js/forum/directives.js"></script>
+<script src="js/forum/controllers.js"></script>
+
+
+	<script src="js/forum/app.js"></script>
 
 </body>
 

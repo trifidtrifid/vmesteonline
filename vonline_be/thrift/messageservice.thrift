@@ -2,7 +2,7 @@ include "bedata.thrift"
 include "error.thrift"
 namespace * com.vmesteonline.be.messageservice
 
-enum MessageType { BASE=1, DIALOG=2, SHOP=3, NEWS=4 }
+enum MessageType { BASE=1, DIALOG=2, SHOP=3, NEWS=4, WALL=5 }
 
 struct MessageLink {
 	1: MessageType linkType,
@@ -92,8 +92,14 @@ struct UserOpinion {
 	2: i32 dislikes,
 }
 
+struct WallItem {
+	1:list<Message> messages,
+	2:Topic topic,
+}
+
 service MessageService {
 
+list<WallItem> getWallItems(1:i64 groupId)	 throws (1:error.InvalidOperation exc)
 /**
 * МЕтод для создаия нового сообщения
 *

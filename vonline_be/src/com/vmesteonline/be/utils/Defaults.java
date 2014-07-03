@@ -177,12 +177,9 @@ public class Defaults {
 			try {
 
 				VoCity vocity = pm.getExtent(VoCity.class).iterator().next();
-				VoStreet street = new VoStreet(vocity,
-						"г. Пушкин, Детскосельский бульвар", pm);
-				VoBuilding building = new VoBuilding(street, "9А",
-						new BigDecimal("0"), new BigDecimal("0"), pm);
-				VoPostalAddress voPostalAddress = new VoPostalAddress(building,
-						(byte) 1, (byte) 1, (byte) 1,
+				VoStreet street = new VoStreet(vocity, "г. Пушкин, Детскосельский бульвар", pm);
+				VoBuilding building = new VoBuilding(street, "9А", new BigDecimal("0"), new BigDecimal("0"), pm);
+				VoPostalAddress voPostalAddress = new VoPostalAddress(building, (byte) 1, (byte) 1, (byte) 1,
 						"Угол ул. Железнодоррожная и Детскосельского бульвара");
 				pm.makePersistent(street);
 				pm.makePersistent(building);
@@ -199,8 +196,7 @@ public class Defaults {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new InvalidOperation(VoError.GeneralError,
-						"Failed to create address." + e);
+				throw new InvalidOperation(VoError.GeneralError, "Failed to create address." + e);
 			} finally {
 				pm.close();
 			}
@@ -214,10 +210,8 @@ public class Defaults {
 
 			Map<PaymentType, Double> paymentTypes = new TreeMap<PaymentType, Double>();
 
-			long shop = sbsi.registerShop(new Shop(10, "Во!Молоко",
-					"Магазин свежей молочной продукции Вологодского края",
-					postalAddress, "http://vomoloko.ru/img/logo.jpg", userId,
-					topicSet, tags, deliveryCosts, paymentTypes));
+			long shop = sbsi.registerShop(new Shop(10, "Во!Молоко", "Магазин свежей молочной продукции Вологодского края", postalAddress,
+					"http://vomoloko.ru/img/logo.jpg", userId, topicSet, tags, deliveryCosts, paymentTypes));
 
 			VoShopAccessManager.createAccessForShopOwner(userId, shop);
 
@@ -226,19 +220,15 @@ public class Defaults {
 			// next order is MONday and THursday
 			// closed date is monday and thursday but shifted 1 step ago
 
-			sbsi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY,
-					Calendar.MONDAY, 4, 0, PriceType.INET));
-			sbsi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY,
-					Calendar.THURSDAY, 3, 0, PriceType.INET));
+			sbsi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.MONDAY, 4, 0, PriceType.INET));
+			sbsi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, Calendar.THURSDAY, 3, 0, PriceType.INET));
 
 			Map<Integer, Integer> deliveryByWeightIncrement = new HashMap<Integer, Integer>();
 			deliveryByWeightIncrement.put(15000, 50); // 50 rub each 10 kg
-			sbsi.setShopDeliveryByWeightIncrement(shop,
-					deliveryByWeightIncrement);
+			sbsi.setShopDeliveryByWeightIncrement(shop, deliveryByWeightIncrement);
 
 			Map<DeliveryType, String> deliveryTypeAddressMasks = new HashMap<DeliveryType, String>();
-			deliveryTypeAddressMasks.put(DeliveryType.SHORT_RANGE,
-					".*(Пушкин|Павловск|Шушары|Колпино).*");
+			deliveryTypeAddressMasks.put(DeliveryType.SHORT_RANGE, ".*(Пушкин|Павловск|Шушары|Колпино).*");
 			deliveryTypeAddressMasks.put(DeliveryType.LONG_RANGE, ".*");
 			sbsi.setShopDeliveryTypeAddressMasks(shop, deliveryTypeAddressMasks);
 
@@ -262,31 +252,18 @@ public class Defaults {
 	private static void loadProducts(DataSet ds) throws IOException {
 
 		String[] products = new String[] { "products_1000_sheksna_new.csv"/*
-																		 * ,
-																		 * "products_1000_vmk_new.csv"
-																		 * ,
-																		 * "products_3000_sheksnahleb_new.csv"
-																		 * ,
-																		 * "products_4000_volkonditerka_new.csv"
-																		 * ,
-																		 * "products_5000_atag_new.csv"
-																		 * ,
-																		 * "products_6000_sokol_new.csv"
-																		 * ,
-																		 * "products_7000_mgk_new.csv"
-																		 * ,
-																		 * "products_8000_tarnoga_new.csv"
-																		 */};
+																																			 * , "products_1000_vmk_new.csv" , "products_3000_sheksnahleb_new.csv" ,
+																																			 * "products_4000_volkonditerka_new.csv" , "products_5000_atag_new.csv" ,
+																																			 * "products_6000_sokol_new.csv" , "products_7000_mgk_new.csv" ,
+																																			 * "products_8000_tarnoga_new.csv"
+																																			 */};
 
 		for (String pFile : products) {
 			ImportElement importData;
 			/*
-			 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION,
-			 * PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE,
-			 * PRODUCT_CATEGORY_IDS, PRODUCT_FULL_DESCRIPTION,
-			 * PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET,
-			 * PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL, PRODUCT_OPIONSAVP,
-			 * PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
+			 * PRODUCT_ID=300, PRODUCT_NAME, PRODUCT_SHORT_DESCRIPTION, PRODUCT_WEIGHT, PRODUCT_IMAGEURL, PRODUCT_PRICE, PRODUCT_CATEGORY_IDS,
+			 * PRODUCT_FULL_DESCRIPTION, PRODUCT_IMAGE_URLS, PRODUCT_PRICE_RETAIL, PRODUCT_PRICE_INET, PRODUCT_PRICE_VIP, PRODUCT_PRICE_SPECIAL,
+			 * PRODUCT_OPIONSAVP, PRODUCT_TOPICS, PRODUCT_PRODUCER_ID
 			 */
 			List<ExchangeFieldType> productFieldsOrder = new ArrayList<ExchangeFieldType>();
 			productFieldsOrder.add(ExchangeFieldType.PRODUCT_ID);
@@ -311,10 +288,8 @@ public class Defaults {
 			productFieldsOrder.add(ExchangeFieldType.PRODUCT_KNOWN_NAMES);
 			productFieldsOrder.add(ExchangeFieldType.PRODUCT_UNIT_NAME);
 
-			importData = new ImportElement(ImExType.IMPORT_PRODUCTS, pFile,
-					VoHelper.listToMap(productFieldsOrder));
-			importData.setUrl(StorageHelper.saveImage(shopDataStorage + pFile,
-					userId, false, null));
+			importData = new ImportElement(ImExType.IMPORT_PRODUCTS, pFile, VoHelper.listToMap(productFieldsOrder));
+			importData.setUrl(StorageHelper.saveImage(shopDataStorage + pFile, userId, false, null));
 
 			ds.addToData(importData);
 		}
@@ -333,11 +308,8 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_LOGOURLS);
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
 
-		ImportElement importData = new ImportElement(
-				ImExType.IMPORT_CATEGORIES, "categories.csv",
-				VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage(shopDataStorage
-				+ "product_categories.csv", userId, false, null));
+		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", VoHelper.listToMap(fieldsOrder));
+		importData.setUrl(StorageHelper.saveImage(shopDataStorage + "product_categories.csv", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -355,10 +327,8 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_LOGOURL);
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
 
-		importData = new ImportElement(ImExType.IMPORT_PRODUCERS,
-				"producers.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage(shopDataStorage
-				+ "producers.csv ", userId, false, null));
+		importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", VoHelper.listToMap(fieldsOrder));
+		importData.setUrl(StorageHelper.saveImage(shopDataStorage + "producers.csv ", userId, false, null));
 
 		ds.addToData(importData);
 	}
@@ -369,15 +339,9 @@ public class Defaults {
 		q.setFilter(" subscribedByDefault == true");
 		List<VoRubric> defRubrics = (List<VoRubric>) q.execute();
 		if (defRubrics.isEmpty()) {
-			for (VoRubric dr : new VoRubric[] {
-					new VoRubric("rubric1", "rubric first",
-							"rubric about first", true),
-					new VoRubric("rubric2", "rubric second",
-							"rubric about second", true),
-					new VoRubric("rubric3", "rubric third",
-							"rubric about third", true),
-					new VoRubric("rubric4", "rubric fourth",
-							"rubric about fourth", true) }) {
+			for (VoRubric dr : new VoRubric[] { new VoRubric("rubric1", "rubric first", "rubric about first", true),
+					new VoRubric("rubric2", "rubric second", "rubric about second", true), new VoRubric("rubric3", "rubric third", "rubric about third", true),
+					new VoRubric("rubric4", "rubric fourth", "rubric about fourth", true) }) {
 
 				pm.makePersistent(dr);
 				defaultRubrics.add(dr);
@@ -395,38 +359,30 @@ public class Defaults {
 		List<VoGroup> defGroups = (List<VoGroup>) q.execute();
 		if (defGroups.isEmpty())
 
-			for (VoGroup dg : new VoGroup[] {
-					new VoGroup("Мой подъзд", radiusStarecase, true),
-					new VoGroup("Мой дом", radiusHome, true),
-					new VoGroup("Соседи", radiusSmall, true),
-					new VoGroup("Пешая доступность", radiusMedium, true),
-					new VoGroup("Быстро Доехать", radiusLarge, true) }) {
+			for (VoGroup dg : new VoGroup[] { new VoGroup("Мой дом", radiusHome, true), new VoGroup("Мои соседи", radiusMedium, true),
+					new VoGroup("Мой район", radiusLarge, true) }) {
 				defaultGroups.add(dg);
 				pm.makePersistent(dg);
 			}
 	}
 
 	// ======================================================================================================================
-	private static void initializeUsers(List<String> locCodes)
-			throws InvalidOperation {
+	private static void initializeUsers(List<String> locCodes) throws InvalidOperation {
 		AuthServiceImpl asi = new AuthServiceImpl();
 		long user2Id, user3Id;
 		userId = user2Id = user3Id = 0;
 		try {
-			userId = asi.registerNewUser(user1name, user1lastName, user1pass,
-					user1email, locCodes.get(0));
+			userId = asi.registerNewUser(user1name, user1lastName, user1pass, user1email, locCodes.get(0));
 		} catch (Exception e) {
 			// e.printStackTrace();
 		}
 		try {
-			user2Id = asi.registerNewUser(user2name, user2lastName, user2pass,
-					user2email, locCodes.get(1));
+			user2Id = asi.registerNewUser(user2name, user2lastName, user2pass, user2email, locCodes.get(1));
 		} catch (Exception e1) {
 
 		}
 		try {
-			user3Id = asi.registerNewUser(user3name, user3lastName, user3pass,
-					user3email, locCodes.get(2));
+			user3Id = asi.registerNewUser(user3name, user3lastName, user3pass, user3email, locCodes.get(2));
 		} catch (Exception e) {
 
 		}
@@ -434,15 +390,12 @@ public class Defaults {
 	}
 
 	// ======================================================================================================================
-	private static List<String> initializeTestLocations()
-			throws InvalidOperation {
+	private static List<String> initializeTestLocations() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 
 		try {
 			List<String> locations = new ArrayList<String>();
-			VoStreet street = new VoStreet(new VoCity(
-					new VoCountry(COUNTRY, pm), CITY, pm), "Республиканская",
-					pm);
+			VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY, pm), "Республиканская", pm);
 
 			pm.makePersistent(street);
 			VoPostalAddress[] addresses;
@@ -450,30 +403,19 @@ public class Defaults {
 
 					// адресов должно быть минимум три! кол-во юзеров
 					// хардкодится выше
-					new VoPostalAddress(new VoBuilding(street, "32/3",
-							new BigDecimal(zan32k3Long), new BigDecimal(
-									zan32k3Lat), pm), (byte) 1, (byte) 1,
+					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 1, (byte) 1,
 							(byte) 5, ""),
-					new VoPostalAddress(new VoBuilding(street, "32/3",
-							new BigDecimal(zan32k3Long), new BigDecimal(
-									zan32k3Lat), pm), (byte) 2, (byte) 1,
+					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 2, (byte) 1,
 							(byte) 50, ""),
-					new VoPostalAddress(new VoBuilding(street, "35",
-							new BigDecimal("30.419684"), new BigDecimal(
-									"59.932544"), pm), (byte) 1, (byte) 11,
+					new VoPostalAddress(new VoBuilding(street, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544"), pm), (byte) 1, (byte) 11,
 							(byte) 35, ""),
-					new VoPostalAddress(new VoBuilding(street, "6",
-							new BigDecimal("30.404331"), new BigDecimal(
-									"59.934177"), pm), (byte) 1, (byte) 2,
+					new VoPostalAddress(new VoBuilding(street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177"), pm), (byte) 1, (byte) 2,
 							(byte) 25, "") };
 
 			for (VoPostalAddress pa : addresses) {
 				try {
-					Pair<String, String> position = VoGeocoder.getPosition(pa
-							.getBuilding());
-					pa.getBuilding().setLocation(
-							new BigDecimal(position.first),
-							new BigDecimal(position.second));
+					Pair<String, String> position = VoGeocoder.getPosition(pa.getBuilding());
+					pa.getBuilding().setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -484,8 +426,7 @@ public class Defaults {
 			return locations;
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError,
-					"Failed to initTestLocations. " + e.getMessage());
+			throw new InvalidOperation(VoError.GeneralError, "Failed to initTestLocations. " + e.getMessage());
 		} finally {
 			pm.close();
 		}

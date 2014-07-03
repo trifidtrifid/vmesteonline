@@ -27,7 +27,7 @@ public class VoShopAccessRoles extends VoUserAccessBaseRoles {
 		
 		//SYS Admin
 		fillRoleMethods( methodsAccessMask, VoUserAccessBaseRoles.SYS_ADMIN, new String[] {
-				"registerShop","updateShop"
+				"registerShop","updateShop", "activate"
 				});
 
 		//product/content manager
@@ -44,7 +44,7 @@ public class VoShopAccessRoles extends VoUserAccessBaseRoles {
 		fillRoleMethods( methodsAccessMask, ADMIN, new String[] {
 			"setShopDeliveryByWeightIncrement","setShopDeliveryCostByDistance","setShopDeliveryTypeAddressMasks",
 			"setDate","removeDate","setDeliveryCost","setPaymentTypesCosts","updateShop",
-			"setUserShopRole"
+			"setUserShopRole", "activate", "setShopPages" 
 		});
 
 
@@ -65,13 +65,15 @@ public class VoShopAccessRoles extends VoUserAccessBaseRoles {
 			"deleteOrder","confirmOrder","appendOrder","mergeOrder",
 			"setOrderLine","removeOrderLine","setOrderDeliveryType","setOrderPaymentType",
 			"setOrderDeliveryAddress","createDeliveryAddress","getUserDeliveryAddresses","getUserDeliveryAddress",
-			"deleteDeliveryAddress","getDeliveryAddressViewURL"
+			"deleteDeliveryAddress","getDeliveryAddressViewURL",
+			"canVote","vote"
 		});
 
 		//Unregistered User 
 		fillRoleMethods( methodsAccessMask, VoUserAccessBaseRoles.ANYBODY, new String[] {
 				"getUserShopRole", "getProducers", "parseCSVfile","getShops","getShop","getDates","getNextOrderDate","getProducer",
-				"getProductCategories","getProducts","getProductDetails","getProductsByCategories"
+				"getProductCategories","getProducts","getProductDetails","getProductsByCategories",
+				"getVotes", "isActivated", "getShopPages"
 		});
 	}
 	

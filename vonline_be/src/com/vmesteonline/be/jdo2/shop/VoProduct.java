@@ -343,6 +343,10 @@ public class VoProduct {
 	public void setMinProducerPack(double minProducerPack) {
 		this.minProducerPack = minProducerPack;
 	}
+	
+	public void setMinProducerPack(Double minProducerPack) {
+		this.minProducerPack = minProducerPack;
+	}
 
 	public void setKnownNames(Set<String> knownNames) {
 		this.knownNames = knownNames;
