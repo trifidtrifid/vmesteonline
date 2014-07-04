@@ -1360,39 +1360,94 @@ if($('.container.backoffice').hasClass('noAccess')){
         /* настройки даты */
         var datesArray = thriftModule.clientBO.getDates();
         var datesArrayLength = datesArray.length,
-            singleDate;
+            singleDate,deliveryDatesHtml = "";
 
         for(var i = 0; i < datesArrayLength; i++){
             singleDate = datesArray[i];
-            console.log(singleDate.OrderDatesType+" -1- "+singleDate.orderDay+" -2- "
+            console.log(datesArrayLength+" "+singleDate.OrderDatesType+" -1- "+singleDate.orderDay+" -2- "
                 +singleDate.orderBefore+" -3- "+singleDate.eachOddEven+" -4- "+singleDate.priceTypeToUse)
-        }
 
-        var dates = new com.vmesteonline.be.shop.OrderDates();
-        dates.type = com.vmesteonline.be.shop.OrderDatesType.ORDER_WEEKLY;
+            deliveryDatesHtml += getDatesHtml(singleDate);
 
-        var day = 3600*24;
-        dates.orderBefore = parseInt($('#days-before').val())*day;
-        /*dates.eachOddEven = "";
-         dates.priceTypeToUse = "";*/
+        };
+        $('.delivery-period').after(deliveryDatesHtml);
 
-        $('.shedule-dates .selected').each(function(){
-            dates.orderDay = $(this).data('date');
+        $('.delivery-period-dropdown a').click(function(e){
+            e.preventDefault();
+            var newDropdownHtml = "",
+                dropdownLength;
 
-            thriftModule.clientBO.setDate(dates);
+            if($(this).text() == 'неделя'){
+                dropdownLength = 7;
+            }else if (($(this).text() == 'месяц')){
+                dropdownLength = 31;
+            }
+
+            for(var i = 1; i <= dropdownLength; i++){
+                newDropdownHtml += '<li><a href="#">'+i+'</a></li>';
+            }
+
+            $('.delivery-day-dropdown').each(function(){
+                $(this).find('.dropdown-menu').html(newDropdownHtml);
+
+                $('.delivery-day-dropdown a').click(function(e){
+                    e.preventDefault();
+
+                   var dayText = $(this).text();
+
+                    $(this).closest('.btn-group').find('.btn-group-text').text(dayText);
+                });
+            });
         });
+
+        function getDatesHtml(singleDate){
+            var dropdownLength,
+                datesHtml= "";
+
+            if($('.delivery-period-dropdown .btn-group-text').text() == 'неделя'){
+                dropdownLength = 7;
+            }else{
+                dropdownLength = 31;
+            }
+
+            datesHtml += '<div class="shedule-item new-interval">';
+            if( i == 0){
+                datesHtml += '<a href="#" class="add-delivery-interval pull-right add-interval">+</a>';
+            }else{
+                datesHtml += '<a href="#" class="add-delivery-interval pull-right remove-interval">&ndash;</a>';
+            }
+
+            datesHtml += '<div class="shedule-confirm"><span>День доставки</span>'+
+                '<div class="btn-group delivery-day-dropdown">'+
+                '<button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">'+
+                '<span class="btn-group-text">'+singleDate.orderDay+'</span>'+
+                '<span class="icon-caret-down icon-on-right"></span>'+
+                '</button>'+
+                '<ul class="dropdown-menu dropdown-blue">';
+
+            for(var j = 1; j <= dropdownLength; j++){
+                datesHtml +=  '<li><a href="#">'+j+'</a></li>';
+            }
+
+            datesHtml += '</ul>'+
+                '</div>'+
+                '</div>'+
+                '<div class="shedule-confirm"><span>подтверждать заказ за</span><input type="text" class="days-before" value="'+singleDate.orderBefore+'"><span>дня до доставки</span></div>'+
+                '</div>';
+
+            return datesHtml;
+
+        }
 
         /* настройки доставки */
         var deliveryCostByDistance = myShop.deliveryCostByDistance,
             deliveryCostByDistanceHtml = "";
-        console.log(myShop.name);
         for(var p in deliveryCostByDistance){
             deliveryCostByDistanceHtml += '<div class="delivery-interval delivery-price-type">'+
                 '<input type="text" value="'+ p +'"><span>км</span>'+
                     '<input type="text" value="'+ deliveryCostByDistance[p] +'"><span>руб</span>'+
                         '<a href="#" class="add-delivery-interval add-interval">+</a>'+
                     '</div>';
-            console.log('-1-1');
         }
         if(deliveryCostByDistanceHtml == ""){
             deliveryCostByDistanceHtml += '<div class="delivery-interval delivery-price-type">'+
@@ -1447,23 +1502,34 @@ if($('.container.backoffice').hasClass('noAccess')){
         $('.add-interval').click(function(e){
             e.preventDefault();
 
-            var isDeliveryType = $(this).closest('.delivery-price-type').hasClass('delivery-interval');
+            var isDeliveryType = $(this).closest('.delivery-price-type').hasClass('delivery-interval'),
+                isDateType = $(this).closest('.shedule-item').length;
             var newInterval;
-            if(isDeliveryType){
+            if(isDateType){
 
-                newInterval = '<div class="delivery-interval new-interval delivery-price-type">'+
-                    '<input type="text" placeholder="Интервал"><span>км</span>&nbsp;'+
-                    '<input type="text" placeholder="Стоимость"><span>руб</span>&nbsp;'+
-                    '<a href="#" class="add-delivery-interval remove-interval">&ndash;</a>'+
-                    '</div>';
-            }else{
-                newInterval = '<div class="delivery-weight new-interval delivery-price-type">'+
-                    '<input type="text" placeholder="Интервал"><span>кг</span>&nbsp;'+
-                    '<input type="text" placeholder="Стоимость"><span>руб</span>&nbsp;'+
-                    '<a href="#" class="add-delivery-interval remove-interval">&ndash;</a>'+
-                    '</div>';
+                var dateObj = {};
+                    dateObj.orderDay = 1;
+                    dateObj.orderBefore = 2;
+                $(this).closest('#settings-shedule').find('.shedule-item').last().after(getDatesHtml(dateObj));
+
+            }else {
+                if (isDeliveryType) {
+
+                    newInterval = '<div class="delivery-interval new-interval delivery-price-type">' +
+                        '<input type="text" placeholder="Интервал"><span>км</span>&nbsp;' +
+                        '<input type="text" placeholder="Стоимость"><span>руб</span>&nbsp;' +
+                        '<a href="#" class="add-delivery-interval remove-interval">&ndash;</a>' +
+                        '</div>';
+                } else {
+                    newInterval = '<div class="delivery-weight new-interval delivery-price-type">' +
+                        '<input type="text" placeholder="Интервал"><span>кг</span>&nbsp;' +
+                        '<input type="text" placeholder="Стоимость"><span>руб</span>&nbsp;' +
+                        '<a href="#" class="add-delivery-interval remove-interval">&ndash;</a>' +
+                        '</div>';
+                }
+                $(this).closest('.delivery-price-type').after(newInterval);
             }
-            $(this).closest('.delivery-price-type').after(newInterval);
+
 
             $('.new-interval .remove-interval').click(function(e){
                 e.preventDefault();
@@ -1474,6 +1540,14 @@ if($('.container.backoffice').hasClass('noAccess')){
             });
 
             $('.new-interval').slideDown().removeClass('.new-interval');
+        });
+
+        $('#settings-shedule .remove-interval').click(function(e){
+            e.preventDefault();
+
+            $(this).closest('.new-interval').slideUp(200,function(){
+                $(this).detach();
+            });
         });
 
         $('#settings-delivery input').focus(function(){
@@ -1502,18 +1576,60 @@ if($('.container.backoffice').hasClass('noAccess')){
                 break;
             case "settings-shedule":
                 var dates = new com.vmesteonline.be.shop.OrderDates();
-                dates.type = com.vmesteonline.be.shop.OrderDatesType.ORDER_WEEKLY;
+                if($('.delivery-period-dropdown .btn-group-text').text() == 'неделя'){
+                    dates.type = com.vmesteonline.be.shop.OrderDatesType.ORDER_WEEKLY;
+                }else{
+                    dates.type = com.vmesteonline.be.shop.OrderDatesType.ORDER_MOUNTHLY;
+                }
 
-                var day = 3600*24;
-                dates.orderBefore = parseInt($('#days-before').val())*day;
-                /*dates.eachOddEven = "";
-                dates.priceTypeToUse = "";*/
+                $('.shedule-item').each(function(){
 
-                $('.shedule-dates .selected').each(function(){
-                    dates.orderDay = $(this).data('date');
+                    var orderDayText = $(this).find('.delivery-day-dropdown .btn-group-text').text();
+                    var orderBeforeText = $(this).find('.days-before').val();
+                    dates.orderDay = parseInt(orderDayText);
+                    dates.orderBefore = parseInt(orderBeforeText);
 
-                    thriftModule.clientBO.setDate(dates);
+                    var isAlreadyExist = false,
+                        isNotRemoved = [];
+                    for(var i = 0; i < datesArrayLength; i++){
+                        isNotRemoved[i] = false;
+                        if(dates.orderDay == datesArray[i].orderDay){
+                            isAlreadyExist = true;
+                            isNotRemoved[i] = true;
+                        }
+                    }
+
+                    /*for(var j = 0; j < datesArrayLength; j++){
+                        if(!isNotRemoved[j]) thriftModule.clientBO.removeDate(datesArray[j]);
+                    }*/
+
+                    if(!isAlreadyExist) thriftModule.clientBO.setDate(dates);
+
                 });
+
+                var sheduleItemLength = $('.shedule-item').length;
+                //if(datesArrayLength > sheduleItemLength) {
+                    for (var i = 0; i < datesArrayLength; i++) {
+                            var isRemoved = true;
+
+                        for (var j = 0; j < sheduleItemLength; j++) {
+                            var currentSheduleItem = $('.shedule-item:eq(' + j + ')');
+
+                            var orderDayText = currentSheduleItem.find('.delivery-day-dropdown .btn-group-text').text();
+                            var orderBeforeText = currentSheduleItem.find('.days-before').val();
+                            dates.orderDay = parseInt(orderDayText);
+                            dates.orderBefore = parseInt(orderBeforeText);
+
+                            if (dates.orderDay == datesArray[i].orderDay) {
+                                isRemoved = false;
+                            }
+                        }
+                        console.log(isRemoved);
+
+                        if (isRemoved) thriftModule.clientBO.removeDate(datesArray[i]);
+                    }
+                //}
+
                 break;
             case "settings-delivery":
                 newShopInfo = myShop;
