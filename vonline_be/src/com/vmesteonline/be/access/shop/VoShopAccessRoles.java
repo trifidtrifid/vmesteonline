@@ -44,7 +44,7 @@ public class VoShopAccessRoles extends VoUserAccessBaseRoles {
 		fillRoleMethods( methodsAccessMask, ADMIN, new String[] {
 			"setShopDeliveryByWeightIncrement","setShopDeliveryCostByDistance","setShopDeliveryTypeAddressMasks",
 			"setDate","removeDate","setDeliveryCost","setPaymentTypesCosts","updateShop",
-			"setUserShopRole", "activate", "setShopPages" 
+			"setUserShopRole", "activate", "setShopPages", "totalShopReturn" 
 		});
 
 

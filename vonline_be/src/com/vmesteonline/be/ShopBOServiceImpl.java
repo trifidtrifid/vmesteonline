@@ -399,7 +399,31 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	
 	@Override
 	public void removeDate(OrderDates dates) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
+		PersistenceManager pm = PMF.getPm();
+		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
+		if (null == shopId || 0 == shopId) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to removeDate. SHOP ID is not set in session context.");
+		}
+		try {
+			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
+			List<OrderDates> newDatesList = new ArrayList<OrderDates>();
+			for( OrderDates ods: voShop.getDates()){
+				if( dates.getOrderDay() != ods.getOrderDay() || 
+						dates.getPriceTypeToUse() != ods.getPriceTypeToUse() ||
+						dates.getEachOddEven() != ods.getEachOddEven() ||
+						dates.getOrderBefore() != ods.getOrderBefore() ||
+						dates.getType() != ods.getType())
+					newDatesList.add(ods);
+			}
+			logger.debug("removed "+ (voShop.getDates().size() - newDatesList.size())+" dates form shopID"+shopId);
+			voShop.setDates(newDatesList);
+			pm.makePersistent(voShop);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to getDates for shopId=" + shopId + "." + e);
+		} finally {
+			pm.close();
+		}
 		
 	}
 	
@@ -1625,6 +1649,26 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			pm.close();
 		}
 		
+	}
+
+	@Override
+	public double totalShopReturn(long shopId, int fromDate, int toDate) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoShop currentShop = pm.getObjectById(VoShop.class, shopId);
+			List<VoOrder> orders = (List<VoOrder>)pm.newQuery(VoOrder.class, "shopId=="+shopId+
+					" && status=='"+OrderStatus.CONFIRMED+
+					"' && date>="+(fromDate-fromDate%86400)+" && date<="+(toDate - toDate % 86400)).execute();
+			double total = 0D;
+			for(VoOrder vo: orders)
+				total += vo.getTotalCost() - vo.getDeliveryCost();
+			return total;
+			
+		} catch ( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop is defined as current");
+		} finally {
+			pm.close();
+		}
 	}
 	
 	

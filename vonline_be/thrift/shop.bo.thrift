@@ -128,4 +128,5 @@ service ShopBOService {
 	void setShopPages(1:shop.ShopPages pagesInfo) throws (1:error.InvalidOperation exc),
 	shop.ShopPages getShopPages() throws (1:error.InvalidOperation exc),
 	
+	double totalShopReturn(1:i64 shopId, 2:i32 fromDate, 3:i32 toDate) throws (1:error.InvalidOperation exc),
 }
