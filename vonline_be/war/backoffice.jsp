@@ -493,15 +493,41 @@
 
                     <div id="settings-shedule" class="settings-item">
                         <h2>Расписание завоза</h2>
-                        <div id="date-picker-6" class="shedule-dates"></div>
-                        <div class="shedule-confirm"><span>Периодичность доставки</span>
-                            <select name="" id="">
-                                <option>неделя</option>
-                                <option>месяц</option>
-                            </select>
+                        <%--<div id="date-picker-6" class="shedule-dates"></div>--%>
+
+                        <div class="delivery-period"><span>Периодичность доставки</span>
+                            <div class="btn-group delivery-period-dropdown">
+                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                    <span class="btn-group-text">неделя</span>
+                                    <span class="icon-caret-down icon-on-right"></span>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-blue">
+                                        <li><a href="#">неделя</a></li>
+                                        <li><a href="#">месяц</a></li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="shedule-confirm"><span>подтверждать заказ за</span><input type="text" id="days-before" value="2"><span>дня до доставки</span></div>
-                        <br>
+
+                        <%--<div class="shedule-item">
+                            <a href="#" title="Добавить день доставки" class="add-delivery-interval add-interval pull-right">+</a>
+                            <div class="shedule-confirm"><span>День доставки</span>
+                                <div class="btn-group delivery-day-dropdown">
+                                    <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                        <span class="btn-group-text">1</span>
+                                        <span class="icon-caret-down icon-on-right"></span>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-blue">
+                                        <c:forEach  var="i" begin="1" end="7">
+                                            <li><a href="#">${i}</a></li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="shedule-confirm"><span>подтверждать заказ за</span><input type="text" id="days-before" value="2"><span>дня до доставки</span></div>
+                        </div>--%>
+
                         <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
                     </div>
 

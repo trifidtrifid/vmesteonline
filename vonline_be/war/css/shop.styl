@@ -1509,6 +1509,13 @@ height 50px
           &:after
             height 30px
             line-height 30px
+  .add-delivery-interval
+    display inline-block
+    font-size 30px
+    position relative
+    top 6px
+    &:hover
+      text-decoration none
   #settings-delivery
     .delivery-price-type
       padding-left 30px
@@ -1520,13 +1527,6 @@ height 50px
         display inline-block
         margin-left 5px
         margin-right 15px
-      .add-delivery-interval
-        display inline-block
-        font-size 30px
-        position relative
-        top 6px
-        &:hover
-          text-decoration none
     .delivery-area
       margin-top 10px
       span
@@ -1541,18 +1541,27 @@ height 50px
       color #ff0000
       font-size 30px
   #settings-shedule
-    .shedule-date
-    .shedule-confirm
-      display inline-block
-    .shedule-confirm
-      margin-left 10px
+    .shedule-item
+      border 1px solid #CCCCCC
+      padding 10px
       margin-top 10px
-      position relative
-      top 4px
+      width 500px
+      .delivery-day-dropdown
+        top -2px
+        margin  0 5px
+        .dropdown-menu
+          min-width 30px
       input
         width 50px //
         display inline-block
         margin 0 10px
+      .add-delivery-interval
+        position relative
+        right -40px
+        top -7px
+    .shedule-date
+    .shedule-confirm
+      display inline-block
     .datepicker
       margin-left 0
       background #D6F7F7
@@ -1565,12 +1574,14 @@ height 50px
           .remove-date
             position absolute
             color #ff0000
-            font-size 16px//
+            font-size 16px
             top -12px
             right -5px
             z-index 100
             &:hover
               text-decoration none
+    .btn-save
+      margin-top 10px
 .bo-edit
   .table-add //
     display none
