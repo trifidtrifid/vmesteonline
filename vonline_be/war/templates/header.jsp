@@ -13,8 +13,8 @@
 					<a href="/shop/<c:out value="${shopID}"/>" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
                         <a href="/about/${shopID}" class="about-shop-link header-link">О магазине</a>
-                        <a href="#" class="terms-of-orders header-link">Условия заказов</a>
-                        <a href="#" class="terms-of-delivery header-link">Условия доставки</a>
+                        <a href="#" class="terms-of-orders header-link">Условия</a>
+                        <a href="#" class="terms-of-delivery header-link">Доставка</a>
 					</a>
 					<!-- /.brand -->
 				</div>

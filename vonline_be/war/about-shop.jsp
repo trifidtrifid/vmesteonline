@@ -100,7 +100,7 @@
                 </div>
                 <div class="col-xs-8">
                     <p><c:out value="${shop.descr}" /></p>
-                    <a class="btn btn-primary no-border btn-sm" href="#">Продолжить покупки</a>
+                    <a class="btn btn-primary no-border btn-sm" href="/shop/<c:out value="${shopID}"/>">Продолжить покупки</a>
                 </div>
             </div>
             <div class="page main-container-inner">
