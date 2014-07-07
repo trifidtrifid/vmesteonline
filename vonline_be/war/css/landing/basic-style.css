@@ -82,7 +82,7 @@ a:hover{ text-decoration:none;}
 	margin: 0 auto;
 }
 header{ 
-	padding:15px 0;
+	padding:10px 0;
     font-size: 16px;
 }
 #banner{ 
@@ -299,16 +299,13 @@ But I think that some more breathing space is good:)
 
 .wrapper{
 	max-width: 1200px; 
-	margin: .75em auto;
+	margin: 0 auto;
 }
 
 #banner{ 
 	float:left; 
 	text-align:left;
 	margin-bottom:0px;
-}
-header{
-	padding:0;
 }
 #content {  
 	float:left;
@@ -619,12 +616,12 @@ PRINT STYLESHEET
     padding: 10px 20px;
 }
 header{
-    overflow: auto;
     background: #438eb9;
 }
-header a{
+#logo a,
+header .dropdown-toggle{
     text-decoration: none;
-    color: #fff !important;
+    color: #fff;
 }
 
 .for-auth-user{
@@ -652,4 +649,23 @@ header a{
 }
 p{
     font-size: 14px;
+}
+.ace-nav > li {
+    height: auto;
+    line-height: 1.5;
+}
+.ace-nav > li > a{
+    background: none !important;
+}
+.no-login+.user-menu{
+    display: none;
+}
+.dropdown-menu.dropdown-close{
+    top: 32px;
+}
+.user-info{
+    max-width: none;
+}
+.ace-nav > li.open > a{
+    background: none !important;
 }

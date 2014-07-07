@@ -38,6 +38,7 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
     function($,modules,commonM,loginModule) {
 
         if($('.shop-landing').length){
+
             $('.landing-login').click(function (e) {
                 e.preventDefault();
 

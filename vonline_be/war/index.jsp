@@ -126,42 +126,46 @@ padding:20px;
             </div>
 
             <nav id="topnav" role="navigation">
-                <a href="#" class="landing-login">Войти</a>
-                <a href="#" class="for-auth-user landing-logout">Выйти</a>
-                <%--<div class="menu-toggle">Menu</div>
-                    <ul class="srt-menu" id="menu-main-navigation">
-                    <li class="current"><a href="index.jsp">Home page</a></li>
-                    <li><a href="basic-internal.html">Internal page demo</a></li>
-                    <li><a href="#">menu item 3</a>
-                        <ul>
-                            <li>
-                                <a href="#">menu item 3.1</a>
-                            </li>
-                            <li class="current">
-                                <a href="#">menu item 3.2</a>
-                                <ul>
-                                    <li><a href="#">menu item 3.2.1</a></li>
-                                    <li><a href="#">menu item 3.2.2 with longer link name</a></li>
-                                    <li><a href="#">menu item 3.2.3</a></li>
-                                    <li><a href="#">menu item 3.2.4</a></li>
-                                    <li><a href="#">menu item 3.2.5</a></li>
+                <%--<a href="#" class="landing-login">Войти</a>
+                <a href="#" class="for-auth-user landing-logout">Выйти</a>--%>
+
+                <div class="navbar-header pull-right" role="navigation">
+                        <ul class="nav ace-nav">
+                            <li class="user-short">
+                                <c:choose>
+                                    <c:when test="${auth}">
+                                        <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                                                <%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
+                                        <span class="user-info">
+                                            <c:out value="${firstName}" />
+                                            <c:out value="${lastName}" />
+									    </span>
+                                            <i class="icon-caret-down"></i>
+                                        </a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a data-toggle="dropdown" href="#" class="dropdown-toggle no-login landing-login">
+                                        <span class="user-info">
+                                            Войти
+									</span>
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
+                                <ul	class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+
+                                    <li><a href="#"> <i class="icon-user"></i> Профиль
+                                    </a></li>
+
+                                    <li class="divider"></li>
+
+                                    <li><a href="#" class="landing-logout"> <i class="icon-off"></i> Выход
+                                    </a></li>
                                 </ul>
                             </li>
-                            <li><a href="#">menu item 3.3</a></li>
-                            <li><a href="#">menu item 3.4</a></li>
                         </ul>
-                    </li>
-                    <li>
-                        <a href="#">menu item 4</a>
-                        <ul>
-                            <li><a href="#">menu item 4.1</a></li>
-                            <li><a href="#">menu item 4.2</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#">menu item 5</a>
-                    </li>
-                </ul> --%>
+                        <!-- /.ace-nav -->
+                    </div>
+
             </nav>
         </div>
   
@@ -321,6 +325,8 @@ padding:20px;
 
     
 </footer><!-- #end footer area -->
+
+    
 
     <div class="modal modal-auth">
     </div>

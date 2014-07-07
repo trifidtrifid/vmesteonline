@@ -363,9 +363,9 @@ define(
             }
         });
 
-
         $('.user-menu a').click(function(e,loadEditPersonal){
             e.preventDefault();
+
             var isEditPersonal = (loadEditPersonal) ? loadEditPersonal : false;
 
             $('.navbar .nav .active').removeClass('active');
@@ -395,8 +395,8 @@ define(
         function logout(){
 
             thriftModule.authClient.logout();
-
-            document.location.replace("/");
+            var href = document.location.href;
+            document.location.replace(href);
         }
 
         return {

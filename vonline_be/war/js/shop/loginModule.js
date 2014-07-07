@@ -151,7 +151,8 @@ define(
             basketModule.callbacks.fire(basketModule.selectorForCallbacks);
             basketModule.callbacks.empty();
         }else{
-            document.location.replace('/');
+            //commonModule.doExit();
+            document.location.replace("/");
         }
     }
 
