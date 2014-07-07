@@ -275,7 +275,12 @@ public class VoShop {
 		}
 		dates.add(newDates);
 	}
-
+	
+	public void setDates(List<OrderDates> newDates) {
+		
+		dates = newDates;
+	}
+	
 	public String getName() {
 		return name;
 	}
