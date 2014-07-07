@@ -1873,6 +1873,12 @@ height 50px
 .bo-settings #settings-shedule .shedule-item .delivery-day-dropdown .dropdown-menu {
   min-width: 30px;
 }
+.bo-settings #settings-shedule .shedule-item .delivery-day-dropdown .dropdown-menu .disable a {
+  color: #ccc;
+}
+.bo-settings #settings-shedule .shedule-item .delivery-day-dropdown .dropdown-menu .disable:hover {
+  background: none;
+}
 .bo-settings #settings-shedule .shedule-item input {
   width: 50px;
   display: inline-block;

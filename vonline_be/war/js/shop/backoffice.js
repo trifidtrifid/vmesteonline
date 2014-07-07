@@ -349,7 +349,6 @@ if($('.container.backoffice').hasClass('noAccess')){
             dPicker.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
             $(this).prev().focus();
         });
-        console.log('---------------------');
 
         dPickerExport.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
             $(this).prev().focus();
@@ -1364,13 +1363,36 @@ if($('.container.backoffice').hasClass('noAccess')){
 
         for(var i = 0; i < datesArrayLength; i++){
             singleDate = datesArray[i];
-            console.log(datesArrayLength+" "+singleDate.OrderDatesType+" -1- "+singleDate.orderDay+" -2- "
-                +singleDate.orderBefore+" -3- "+singleDate.eachOddEven+" -4- "+singleDate.priceTypeToUse)
 
             deliveryDatesHtml += getDatesHtml(singleDate);
 
         };
         $('.delivery-period').after(deliveryDatesHtml);
+        initClickOnDeliveryDayDropdown($('.delivery-day-dropdown a'));
+
+        function reloadDeliveryDayDropdowns(){
+            var dropdownLength,
+                datesHtml= "";
+
+            dropdownLength = getDropdownDaysLength();
+
+            var addedClass,
+                isFirstLoad = false;
+            for(var j = 1; j <= dropdownLength; j++){
+                checkUsedDays(j,isFirstLoad) ? addedClass = "disable" : addedClass = "";
+                //console.log(checkUsedDays(j,isFirstLoad)+' addedClass '+addedClass);
+
+                datesHtml +=  '<li class="'+ addedClass +'"><a href="#">'+j+'</a></li>';
+            }
+
+            $('.shedule-item').each(function(){
+                console.log('iter');
+               $(this).find('.delivery-day-dropdown .dropdown-menu').html(datesHtml);
+            });
+
+            initClickOnDeliveryDayDropdown($('.delivery-day-dropdown a'));
+
+        }
 
         $('.delivery-period-dropdown a').click(function(e){
             e.preventDefault();
@@ -1383,32 +1405,54 @@ if($('.container.backoffice').hasClass('noAccess')){
                 dropdownLength = 31;
             }
 
+            var addedClass,
+                isFirstLoad = false;
             for(var i = 1; i <= dropdownLength; i++){
-                newDropdownHtml += '<li><a href="#">'+i+'</a></li>';
+                checkUsedDays(i,isFirstLoad) ? addedClass = "disable" : addedClass = "";
+
+                newDropdownHtml += '<li class="'+ addedClass +'"><a href="#">'+i+'</a></li>';
             }
 
             $('.delivery-day-dropdown').each(function(){
+
                 $(this).find('.dropdown-menu').html(newDropdownHtml);
 
-                $('.delivery-day-dropdown a').click(function(e){
-                    e.preventDefault();
-
-                   var dayText = $(this).text();
-
-                    $(this).closest('.btn-group').find('.btn-group-text').text(dayText);
-                });
             });
+
+            initClickOnDeliveryDayDropdown($('.delivery-day-dropdown a'));
         });
 
-        function getDatesHtml(singleDate){
-            var dropdownLength,
-                datesHtml= "";
+        function initClickOnDeliveryDayDropdown(selector){
+            selector.click(function(e){
+                e.preventDefault();
 
+                if(!$(this).parent().hasClass('disable')) {
+                    var dayText = $(this).text();
+
+                    $(this).closest('.btn-group').find('.btn-group-text').text(dayText);
+
+                    reloadDeliveryDayDropdowns();
+
+                }
+            });
+        }
+
+        function getDropdownDaysLength(){
+            var dropdownLength;
             if($('.delivery-period-dropdown .btn-group-text').text() == 'неделя'){
                 dropdownLength = 7;
             }else{
                 dropdownLength = 31;
             }
+
+            return dropdownLength;
+        }
+
+        function getDatesHtml(singleDate,isAddNew){
+            var dropdownLength,
+                datesHtml= "";
+
+            dropdownLength = getDropdownDaysLength();
 
             datesHtml += '<div class="shedule-item new-interval">';
             if( i == 0){
@@ -1425,8 +1469,14 @@ if($('.container.backoffice').hasClass('noAccess')){
                 '</button>'+
                 '<ul class="dropdown-menu dropdown-blue">';
 
+            var addedClass,
+                isFirstLoad;
+
+            isAddNew ? isFirstLoad = false : isFirstLoad = true;
             for(var j = 1; j <= dropdownLength; j++){
-                datesHtml +=  '<li><a href="#">'+j+'</a></li>';
+                checkUsedDays(j,isFirstLoad) ? addedClass = "disable" : addedClass = "";
+
+                datesHtml +=  '<li class="'+ addedClass +'"><a href="#">'+j+'</a></li>';
             }
 
             datesHtml += '</ul>'+
@@ -1436,6 +1486,30 @@ if($('.container.backoffice').hasClass('noAccess')){
                 '</div>';
 
             return datesHtml;
+
+        }
+
+        function checkUsedDays(dayNumber,isFirstLoad){
+            var isUsed = false;
+            if(!isFirstLoad) {
+                $('.shedule-item').each(function () {
+                    var currentOrderDay = $(this).find('.delivery-day-dropdown .btn-group-text').text();
+                    console.log(currentOrderDay+" "+dayNumber);
+                    if (currentOrderDay == dayNumber) {
+                        console.log('!!!!');
+                        isUsed = true;
+                    }
+                });
+            }else{
+                for(var i = 0; i < datesArrayLength; i++){
+                    if(datesArray[i].orderDay == dayNumber){
+                        isUsed = true;
+                        break;
+                    }
+                }
+            }
+
+            return isUsed;
 
         }
 
@@ -1508,9 +1582,20 @@ if($('.container.backoffice').hasClass('noAccess')){
             if(isDateType){
 
                 var dateObj = {};
-                    dateObj.orderDay = 1;
+                dateObj.orderDay = 1;
+                var dropdownLength = getDropdownDaysLength(),
+                    isFirstLoad = false,
+                    isAddNew = true;
+                for(var i = 1; i < dropdownLength; i++){
+                    if(!checkUsedDays(i,isFirstLoad)){
+                        dateObj.orderDay = i;
+                        break;
+                    }
+                }
                     dateObj.orderBefore = 2;
-                $(this).closest('#settings-shedule').find('.shedule-item').last().after(getDatesHtml(dateObj));
+                $(this).closest('#settings-shedule').find('.shedule-item').last().after(getDatesHtml(dateObj,isAddNew));
+                reloadDeliveryDayDropdowns();
+                //initClickOnDeliveryDayDropdown($('.delivery-day-dropdown').last().find('a'));
 
             }else {
                 if (isDeliveryType) {
@@ -1582,6 +1667,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                     dates.type = com.vmesteonline.be.shop.OrderDatesType.ORDER_MOUNTHLY;
                 }
 
+
                 $('.shedule-item').each(function(){
 
                     var orderDayText = $(this).find('.delivery-day-dropdown .btn-group-text').text();
@@ -1593,7 +1679,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                         isNotRemoved = [];
                     for(var i = 0; i < datesArrayLength; i++){
                         isNotRemoved[i] = false;
-                        if(dates.orderDay == datesArray[i].orderDay){
+                        if(dates.orderDay == datesArray[i].orderDay && dates.orderBefore == datesArray[i].orderBefore){
                             isAlreadyExist = true;
                             isNotRemoved[i] = true;
                         }
@@ -1620,7 +1706,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                             dates.orderDay = parseInt(orderDayText);
                             dates.orderBefore = parseInt(orderBeforeText);
 
-                            if (dates.orderDay == datesArray[i].orderDay) {
+                            if (dates.orderDay == datesArray[i].orderDay && dates.orderBefore == datesArray[i].orderBefore) {
                                 isRemoved = false;
                             }
                         }
@@ -1656,7 +1742,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                             value = parseFloat($(this).find('input:eq(1)').val());
 
                         if (key && value) deliveryCostByDistance[key] = value;
-                        console.log("key " + key + "; value " + value);
+                        //console.log("key " + key + "; value " + value);
                     });
 
                     thriftModule.clientBO.setShopDeliveryCostByDistance(shopId, deliveryCostByDistance);
@@ -1986,7 +2072,6 @@ if($('.container.backoffice').hasClass('noAccess')){
              }else{
                  $('.error-info').hide();
                  thriftModule.clientBO.registerProduct(productInfo, shopId);
-                 console.log('5');
 
                  $(this).closest('.table-add-product').slideUp(function(){
                      var newLine = tableLine.clone();
@@ -2004,7 +2089,6 @@ if($('.container.backoffice').hasClass('noAccess')){
              productInfo.details = new com.vmesteonline.be.shop.ProductDetails();
 
              isAdd ? productInfo.product.id = 0 : productInfo.product.id = tableLine.attr('id');
-             console.log('productInfo.product.id '+tableLine.attr('id'));
 
              productInfo.product.name = tableLine.find('.product-name textarea').val();
              productInfo.product.shortDescr = tableLine.find('.product-shortDescr textarea').val();
@@ -2031,8 +2115,6 @@ if($('.container.backoffice').hasClass('noAccess')){
 
              productInfo.product.prepackRequired = tableLine.find('.product-prepack input').attr('checked') ? true : false;
 
-             console.log('productInfo.product.id '+productInfo.product.id);
-
              productInfo.details.fullDescr = tableLine.find('.product-fullDescr textarea').val();
 
              var counter = 0;
@@ -2046,7 +2128,6 @@ if($('.container.backoffice').hasClass('noAccess')){
 
                  productInfo.details.imagesURLset = imagesURLset;
              }
-             console.log('2');
 
              counter = 0;
              var categoriesIdList = [];
@@ -2054,14 +2135,12 @@ if($('.container.backoffice').hasClass('noAccess')){
                  categoriesIdList[counter++] = $(this).data('categoryid');
              });
              productInfo.details.categories = categoriesIdList;
-             console.log('3');
 
              var optionsMap = [];
              tableLine.find('.product-options table tr').each(function(){
                  optionsMap[$(this).find('td:eq(0)').text()] = $(this).find('td:eq(1)').text();
              });
              productInfo.details.options = optionsMap;
-             console.log('4');
 
              return productInfo;
          }
@@ -2487,7 +2566,6 @@ if($('.container.backoffice').hasClass('noAccess')){
         $('.adminka-shops table tr').each(function(){
             var shopId = $(this).attr('id');
             var shop = thriftModule.client.getShop(shopId);
-            console.log(shop.ownerId);
             var userInfo = thriftModule.userClient.getUserInfoExt(shop.ownerId);
 
             var userContacts = getUserContacts(shop.ownerId);

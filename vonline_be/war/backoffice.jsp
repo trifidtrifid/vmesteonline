@@ -528,6 +528,7 @@
                             <div class="shedule-confirm"><span>подтверждать заказ за</span><input type="text" id="days-before" value="2"><span>дня до доставки</span></div>
                         </div>--%>
 
+                        <div class="error-info"></div>
                         <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
                     </div>
 
