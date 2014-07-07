@@ -13,17 +13,50 @@ BASE (MOBILE) SIZE
 	Remember, keep it light: Speed is Important.
 */
 
-/* typography */
-body{
-	color:#666;
-	font-family:'Ubuntu', Arial, Helvetica, sans-serif; 
-	font-size:1em;
-	line-height:1.4em; 
-	font-weight:normal;
+@import '../lib/bootstrap.min.css';
+@import '../lib/font-awesome-original.css';
+@import '../lib/font-awesome.min.css';
+@import '../lib/ace-fonts.css';
+@import '../lib/ace.css';
+@import "../login.css";
+
+/* popup логина */
+
+.modal {
+    width: 660px;
+    left: 50%;
+    margin-left: -330px;
+    background: #fff;
+    top: 10%;
+    height: 250px;
+    overflow-y: auto;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: 1040;
 }
-h1, h2, h3, h4, h5, h6{
+.modal-auth {
+    width: 375px;
+    overflow: hidden;
+    height: 100%;
+    margin-left: -187px;
+    background: none;
+    top: 5%;
+}
+.modal-auth .login-forms {
+    margin: 0;
+}
+.modal-auth .login-forms form {
+    background: #fff;
+    height: 270px;
+}
+.modal-auth .close {
+    margin-right: -5px;
+}
+
+h1, h2, h3, h5, h6{
 	font-weight:normal;
-	font-family:'Droid Serif', Arial, Helvetica, sans-serif; 
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
 	line-height:1.5em;
 	margin:.45em 0;
 	padding:0;
@@ -50,6 +83,7 @@ a:hover{ text-decoration:none;}
 }
 header{ 
 	padding:15px 0;
+    font-size: 16px;
 }
 #banner{ 
 	text-align:center;
@@ -174,7 +208,6 @@ img{ max-width:100%; height:auto;}
 /*FOOTER*/
 footer{  
 	clear:both;
-	font-size:80%;
 	padding:20px 0;
 }
 footer ul{
@@ -185,17 +218,18 @@ footer ul{
 /*colors and backgrounds*/
 body{
 	background:#fff;
+    font-size: 14px;
 }
 h1, h2, h3, h4, h5, h6{
 	color:#333; 
 }
 
 footer{ 
-	background:#333;
-	color:#ccc;
+	border-top:1px solid #ccc;
+	color:#000;
 }
 footer h1, footer h2, footer h3, footer h4{ 
-	color:#CCC; 
+	color:#000;
 	margin-bottom:10px;
 }
 footer ul{
@@ -548,7 +582,7 @@ PRINT STYLESHEET
     max-width: 100px;
     max-height: 100px;
 }
-.shops ul li .shop-right{
+.shops ul li .landing-shop-right{
     margin-left: 110px;
     display: block;
 }
@@ -568,11 +602,13 @@ PRINT STYLESHEET
     font-size: 30px;
     margin-top: 2px;
     color: #000;
+    font-family: "Ubuntu",Arial;
 }
-.shops ul li .btn{
+.shops ul li .buttonlink{
     display: block;
     margin-left: 10px;
     margin-top: 0;
+    font-size: 14px;
 }
 .align-center {
     text-align: center;
@@ -584,9 +620,11 @@ PRINT STYLESHEET
 }
 header{
     overflow: auto;
+    background: #438eb9;
 }
 header a{
     text-decoration: none;
+    color: #fff !important;
 }
 
 .for-auth-user{
@@ -597,7 +635,11 @@ header a{
     color: #000 !important;
     text-align: left !important;
 }
-.user-is-auth #topnav,
+.for-auth-user.landing-logout{
+    margin-top: 0 !important;
+    color: #fff !important;
+}
+.user-is-auth .landing-login,
 .user-is-auth #hero,
 .user-is-auth #content{
     display: none;
@@ -607,4 +649,7 @@ header a{
 }
 .user-is-auth header{
     border-bottom: 1px solid #999;
+}
+p{
+    font-size: 14px;
 }

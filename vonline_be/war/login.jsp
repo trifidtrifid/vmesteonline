@@ -9,7 +9,7 @@
 		<meta name="description" content="User login page" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link rel="stylesheet" href="build/style.min.css"/>
+        <link rel="stylesheet" href="build/shop.min.css"/>
         <script src="./js/lib/jquery-2.1.1.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             globalUserAuth = false;

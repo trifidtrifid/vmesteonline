@@ -380,9 +380,7 @@ define(
                     SetJSForProfile(isEditPersonal);
                 }).show();
             } else {
-                thriftModule.authClient.logout();
-
-                document.location.replace("/login.jsp");
+                logout();
             }
         });
 
@@ -394,8 +392,16 @@ define(
 
         }
 
+        function logout(){
+
+            thriftModule.authClient.logout();
+
+            document.location.replace("/");
+        }
+
         return {
-            init: init
+            init: init,
+            logout: logout
         };
 
     });

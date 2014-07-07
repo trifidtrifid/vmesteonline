@@ -13,11 +13,25 @@
 
     ShopServiceImpl shopService = new ShopServiceImpl(sess.getId());
 
-       List<Shop> ArrayShops = shopService.getShops();
-    if(ArrayShops != null && ArrayShops.size() > 0){
+    List<Shop> ArrayShops = shopService.getShops();
+   // List<Shop> activeShops = new List<Shop>;
+    //List<Shop> noActiveShops = new List<Shop>;
+    //int activeShopsCounter = 0;
+    //int noActiveShopsCounter = 0;
+    //int ArrayShopsLength = ArrayShops.size();
+    //for (int i = 0; i <= ArrayShopsLength; i++) {
+      //  if(shopService.isActivated(ArrayShops.get(i).id)){
+        //    activeShops.add(ArrayShops.get(i));
+          //  activeShopsCounter++;
+        //}else{
+          //  noActiveShops.add(ArrayShops.get(i));
+            //noActiveShopsCounter++;
+        //}
+    //}
+
+        if(ArrayShops != null && ArrayShops.size() > 0){
         pageContext.setAttribute("shops", ArrayShops);
-        //out.print('s');
-    }
+        }
     pageContext.setAttribute("auth",true);
     try {
 
@@ -58,6 +72,7 @@
 
 <link rel="stylesheet" href="css/landing/normalize.css">
 <link rel="stylesheet" href="js/shop/landing/flexslider/flexslider.css" />
+
 <link rel="stylesheet" href="css/landing/basic-style.css">
 <%--<link rel="stylesheet" href="css/login.css">--%>
 
@@ -111,7 +126,8 @@ padding:20px;
             </div>
 
             <nav id="topnav" role="navigation">
-                <a href="login.jsp" class="landing-login">Войти</a>
+                <a href="#" class="landing-login">Войти</a>
+                <a href="#" class="for-auth-user landing-logout">Выйти</a>
                 <%--<div class="menu-toggle">Menu</div>
                     <ul class="srt-menu" id="menu-main-navigation">
                     <li class="current"><a href="index.jsp">Home page</a></li>
@@ -231,7 +247,7 @@ padding:20px;
                     <li>
                         <a href="shop/${shop.id}">
                             <img src="${shop.logoURL}" alt="логотип"/>
-                        <span class="shop-right">
+                        <span class="landing-shop-right">
                             <h3>${shop.name}</h3>
                             <p>${shop.descr}</p>
                         </span>
@@ -259,33 +275,33 @@ padding:20px;
                 </li>--%>
             </ul>
         </div>
-        <div class="grid_6 shops">
+        <div class="grid_6 shops shops-queue">
             <div class="shops-block-title">В очереди</div>
             <ul>
                 <li>
                     <a href="#">
                         <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
-                        <span class="shop-right">
+                        <span class="landing-shop-right">
                             <h3>ВоМолоко</h3>
                             <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
                         </span>
                     </a>
                     <div>
                         <span class="voice-counter">35</span>
-                        <a class="btn buttonlink" href="#">Голосовать</a>
+                        <a class="buttonlink vote-btn" href="#">Голосовать</a>
                     </div>
                 </li>
                 <li>
                     <a href="#">
                         <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
-                        <span class="shop-right">
+                        <span class="landing-shop-right">
                             <h3>ВоМолоко</h3>
                             <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
                         </span>
                     </a>
                     <div>
                         <span class="voice-counter">35</span>
-                        <a class="btn buttonlink" href="#">Голосовать</a>
+                        <a class="buttonlink vote-btn" href="#">Голосовать</a>
                     </div>
                 </li>
             </ul>
@@ -295,7 +311,6 @@ padding:20px;
     
       
   </div><!-- #end div #main .wrapper -->
-
 
 <!-- footer area -->    
 <footer>
@@ -317,10 +332,18 @@ padding:20px;
 
 <script defer src="js/shop/landing/flexslider/jquery.flexslider-min.js"></script>
 
-<!-- fire ups - read this file!  -->   
+    <script src="/build/thrift.min.js" type="text/javascript"></script>
+
+    <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
+
+    <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
+    <script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
+
+<!-- fire ups - read this file!  -->
+<%--<script type="text/javascript" data-main="/js/shop/landing/main.js" src="/js/shop/require.min.js"></script>--%>
 <script src="js/shop/landing/main.js"></script>
 
-<%--<script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>--%>
+<script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
 
 </body>
 </html>
