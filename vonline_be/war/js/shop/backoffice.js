@@ -81,6 +81,11 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepic
             }
         }
 
+
+        var nowTime = parseInt(new Date().getTime()/1000);
+        nowTime -= nowTime%86400;
+        var day = 3600*24;
+
 if($('.container.backoffice').hasClass('noAccess')){
     bootbox.alert("У вас нет прав доступа !", function() {
         document.location.replace("./shop.jsp");
@@ -88,10 +93,6 @@ if($('.container.backoffice').hasClass('noAccess')){
 }else if (!$('.backoffice.dynamic').hasClass('adminka')){
 
         commonM.init();
-
-        var nowTime = parseInt(new Date().getTime()/1000);
-        nowTime -= nowTime%86400;
-        var day = 3600*24;
 
         function showAllOrders(){
             try{
@@ -2726,6 +2727,34 @@ if($('.container.backoffice').hasClass('noAccess')){
 
         }*/
 
+    $('.adminka-statistics-period .dropdown-menu a').click(function(e){
+        e.preventDefault();
+
+        var newText = $(this).text(),
+            dateFrom, dateTo;
+        $(this).closest('.btn-group').find('.btn-group-text').text(newText);
+
+        switch(newText){
+            case "За месяц":
+                reloadShopTotal(nowTime-30*day,nowTime);
+                break;
+            case "За все время":
+                reloadShopTotal(0,nowTime);
+                break;
+        }
+    });
+
+    function reloadShopTotal(dateFrom,dateTo){
+        var shopId, total;
+        $('.adminka-statistics tr').each(function(){
+           shopId = $(this).attr('id');
+
+            total = thriftModule.clientBO.totalShopReturn(shopId,dateFrom,dateTo);
+
+            $(this).find('.shop-total').text(total);
+        });
+    };
+
         $('.adminka .nav-list a').click(function(e){
             e.preventDefault();
             $('.back-tab').hide();
@@ -2735,7 +2764,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                     $('.adminka-shops').show();
                     break;
                 case 1:
-                    $('.adminka-users').show();
+                    $('.adminka-statistics').show();
                     break;
             }
             $(this).closest('ul').find('.active').removeClass('active');

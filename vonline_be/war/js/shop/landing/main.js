@@ -36,7 +36,7 @@ $(document).ready(function(){
 
     $('.vote-btn').click(function(e){
         e.preventDefault();
-        
+
         if(!globalUserAuth){
             $('.landing-login').trigger('click');
         }else{
