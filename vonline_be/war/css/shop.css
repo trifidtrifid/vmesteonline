@@ -1841,12 +1841,21 @@ height 50px
   margin-left: 5px;
   margin-right: 15px;
 }
-.bo-settings #settings-delivery .delivery-area {
+.bo-settings #settings-delivery .delivery-area,
+.bo-settings #settings-delivery .delivery-type {
   margin-top: 10px;
 }
-.bo-settings #settings-delivery .delivery-area span {
+.bo-settings #settings-delivery .delivery-area span,
+.bo-settings #settings-delivery .delivery-type span {
   display: inline-block;
+  width: 70px;
   font-size: 14px;
+}
+.bo-settings #settings-delivery .delivery-area input[type="text"] {
+  width: 50%;
+}
+.bo-settings #settings-delivery .delivery-type input[type="text"] {
+  width: 60px;
 }
 .bo-settings #settings-delivery input[type=checkbox].ace+.lbl::before,
 .bo-settings #settings-delivery input[type=radio].ace+.lbl::before {

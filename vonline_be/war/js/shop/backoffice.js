@@ -1514,6 +1514,7 @@ if($('.container.backoffice').hasClass('noAccess')){
         }
 
         /* настройки доставки */
+
         var deliveryCostByDistance = myShop.deliveryCostByDistance,
             deliveryCostByDistanceHtml = "";
         for(var p in deliveryCostByDistance){
@@ -1572,6 +1573,32 @@ if($('.container.backoffice').hasClass('noAccess')){
                 '</div>';
         }
         $('.delivery-area-container').append(deliveryTypeAddressMasksHtml);
+        //----------------
+        var deliveryTypeCosts = myShop.deliveryCosts,
+            deliveryTypeCostsHtml = "";
+        for(var p in deliveryTypeCosts){
+            deliveryType="";
+            if(p == 1){
+                deliveryType = "Самовывоз";
+            }else if(p == 2){
+                deliveryType = "Близко";
+            }else if(p == 3){
+                deliveryType = "Далеко";
+            }
+            deliveryTypeCostsHtml += '<div class="delivery-type  delivery-price-type">'+
+                '<span>'+ deliveryType +'</span><input type="text" value="'+ deliveryTypeCosts[p] +'"><span>руб</span>'+
+                '</div>';
+        }
+        if(deliveryTypeCostsHtml == ""){
+            deliveryTypeCostsHtml += '<div class="delivery-type  delivery-price-type">'+
+                '<span>Близко</span><input type="text" placeholder="Стоимость"><span>руб</span>'+
+                '</div>'+
+                '<div class="delivery-type  delivery-price-type">'+
+                '<span>Далеко</span><input type="text" placeholder="Стоимость"><span>руб</span>'+
+                '</div>';
+        }
+        $('.delivery-type-container').append(deliveryTypeCostsHtml);
+
 
         $('.add-interval').click(function(e){
             e.preventDefault();
@@ -1721,7 +1748,8 @@ if($('.container.backoffice').hasClass('noAccess')){
                 newShopInfo = myShop;
                 var isDeliveryIntervalChanged = false,
                     isDeliveryAreaChanged = false,
-                    isDeliveryWeightChanged = false;
+                    isDeliveryWeightChanged = false,
+                    isDeliveryTypeCostsChanged = false;
 
                 $('#settings-delivery').find('.changed').each(function(){
                    if($(this).hasClass('delivery-interval-container')){
@@ -1732,6 +1760,9 @@ if($('.container.backoffice').hasClass('noAccess')){
                     }
                     if($(this).hasClass('delivery-weight-container')){
                         isDeliveryWeightChanged = true;
+                    }
+                    if($(this).hasClass('delivery-type-container')){
+                        isDeliveryTypeCostsChanged = true;
                     }
                 });
 
@@ -1771,12 +1802,36 @@ if($('.container.backoffice').hasClass('noAccess')){
                     });
                     thriftModule.clientBO.setShopDeliveryByWeightIncrement(shopId, deliveryByWeightIncrement);
                 }
+                if(isDeliveryTypeCostsChanged) {
+
+                    var deliveryTypeCosts = [];
+                        counter = 0;
+                    $('.delivery-type').each(function () {
+                        var key;
+                        switch(counter){
+                            case 0:
+                                key = com.vmesteonline.be.shop.DeliveryType.SELF_PICKUP;
+                                break;
+                            case 1:
+                                key = com.vmesteonline.be.shop.DeliveryType.SHORT_RANGE;
+                                break;
+                            case 2:
+                                key = com.vmesteonline.be.shop.DeliveryType.LONG_RANGE;
+                                break;
+                        }
+                        counter++;
+                        var value = $(this).find('input:eq(0)').val();
+
+                        if (value) deliveryTypeCosts[key] = value;
+                    });
+                    thriftModule.clientBO.setDeliveryCosts(deliveryTypeCosts);
+                }
 
                 break;
         }
     });
 
-    $('.shedule-dates td').click(function(e){
+/*    $('.shedule-dates td').click(function(e){
         e.preventDefault();
 
         if(!$(this).hasClass('new') && !$(this).hasClass('old')){
@@ -1864,7 +1919,7 @@ if($('.container.backoffice').hasClass('noAccess')){
         }
         return (Date.parse(day+" "+strMonth+" "+year));
     }
-
+*/
     isSettingsInitSet = 1;
 }
 
