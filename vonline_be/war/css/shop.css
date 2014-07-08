@@ -2222,6 +2222,19 @@ height 50px
 .adminka-statistics {
   display: none;
 }
+.adminka-statistics .date-picker {
+  width: 100px;
+  display: inline-block;
+}
+.adminka-statistics .adminka-statistics-date {
+  display: inline-block;
+}
+.adminka-statistics .adminka-statistics-date label {
+  margin: 0 10px;
+}
+.adminka-statistics .adminka-statistics-date .btn {
+  margin-left: 20px;
+}
 .full-text {
   display: none;
   position: absolute;

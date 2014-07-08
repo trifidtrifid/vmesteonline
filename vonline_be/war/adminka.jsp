@@ -173,7 +173,7 @@
                 </div>
                 <div class="adminka-statistics back-tab">
                     <h1>Оборот магазина</h1>
-                    <div class="btn-group adminka-statistics-period">
+                    <%--<div class="btn-group adminka-statistics-period">
                         <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
                             <span class="btn-group-text">Выберите период</span>
                             <span class="icon-caret-down icon-on-right"></span>
@@ -184,15 +184,18 @@
                             <li class="divider"></li>
                             <li><a href="#">За все время</a></li>
                         </ul>
-                    </div>
-                    <%--<div class="adminka-statistics-from">
-                        <label for="datepicker-from">от</label>
-                        <input class="form-control date-picker datepicker-export" id="datepicker-from" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
-                    </div>
-                    <div class="adminka-statistics-to">
-                        <label for="datepicker-from">до</label>
-                        <input class="form-control date-picker datepicker-export" id="datepicker-from" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
                     </div>--%>
+                    <div class="adminka-statistics-date">
+                        <label for="datepicker-from">от</label>
+                        <input class="form-control date-picker" id="datepicker-from" type="text" data-date-format="mm-dd-yyyy" value="Дата" onblur="if(this.value=='') this.value='Дата';" onfocus="if(this.value=='Дата') this.value='';"/>
+                    </div>
+                    <div class="adminka-statistics-date">
+                        <label for="datepicker-from">до</label>
+                        <input class="form-control date-picker" id="datepicker-to" type="text" data-date-format="mm-dd-yyyy" value="Дата" onblur="if(this.value=='') this.value='Дата';" onfocus="if(this.value=='Дата') this.value='';"/>
+                    </div>
+                    <div class="adminka-statistics-date">
+                        <button class="btn no-border btn-sm btn-primary">Показать</button>
+                    </div>
                     <table>
                         <% for( int i = 0; i < ArrayShopsSize; i ++ ){ %>
                         <%--<c:forEach var="shop" items="${shops}">--%>

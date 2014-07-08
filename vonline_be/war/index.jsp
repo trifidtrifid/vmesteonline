@@ -187,15 +187,19 @@ padding:20px;
                 <div class="flexslider">
                     <ul class="slides">
                         <li>
-                            <img src="i/landing/basic-pic1.jpg" />
+                            <img src="i/landing/slider1.jpg" />
                             <p class="flex-caption">Love Brazil !!! Sea view from Rio de Janeiro fort.</p>
                         </li>
                         <li>
-                            <a href="http://www.prowebdesign.ro"><img src="i/landing/basic-pic2.jpg" /></a>
+                            <img src="i/landing/slider2.jpg" />
                             <p class="flex-caption">El Arco Cabo Mexico. This image is wrapped in a link.</p>
                         </li>
                         <li>
-                            <img src="i/landing/basic-pic3.jpg" />
+                            <img src="i/landing/slider3.jpg" />
+                            <p class="flex-caption">Arches National Park, Utah, Usa.</p>
+                        </li>
+                        <li>
+                            <img src="i/landing/slider4.jpg" />
                             <p class="flex-caption">Arches National Park, Utah, Usa.</p>
                         </li>
                     </ul>
@@ -211,20 +215,20 @@ padding:20px;
 <!-- content area -->    
 	<section id="content" class="wide-content">
     	<div class="grid_4">
-        	<h1 class="first-header">Brazil!</h1>
-            <img src="i/landing/basic-pic1.jpg" />
+        	<h1 class="first-header">Качество!</h1>
+            <img src="i/landing/quality.jpg" />
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
         </div>
         
         <div class="grid_4">
-        	<h1 class="first-header">Mexico!</h1>
-            <img src="i/landing/basic-pic2.jpg" />
+        	<h1 class="first-header">Свежесть!</h1>
+            <img src="i/landing/fresh.jpg" />
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
         </div>
         
         <div class="grid_4">
-        	<h1 class="first-header">US!</h1>
-            <img src="i/landing/basic-pic3.jpg" />
+        	<h1 class="first-header">Удобство !</h1>
+            <img src="i/landing/usability.jpg" />
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
         </div>
 
@@ -326,7 +330,7 @@ padding:20px;
     
 </footer><!-- #end footer area -->
 
-    
+
 
     <div class="modal modal-auth">
     </div>
