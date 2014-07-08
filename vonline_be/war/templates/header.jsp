@@ -36,7 +36,7 @@
                         hidden
                         </c:if>
                         " href="/backoffice.jsp">
-                            Админка</a></li>
+                            Бэкоффис</a></li>
 
 						<li class="user-short light-blue">
                             <c:choose>

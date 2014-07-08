@@ -94,7 +94,7 @@ header{
 	background:#f3f3f3;
 	border-top:1px solid #e2e2e2;
 	border-bottom:1px solid #e2e2e2;
-	padding:20px 0;
+	padding:20px 0 0 0;
 }
 #hero h1{ 
 	line-height:1.2em;
@@ -479,7 +479,7 @@ ul.srt-menu li li li.sfHover ul {
 }
 
 .alpha{margin-left:0px;}
-.omega{margin-right:0px;}
+.omega{margin-right:0px; margin-bottom: 0;}
 .rightfloat{float:right;}
 /* @
  * tinyfluidgrid.com
