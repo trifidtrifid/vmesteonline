@@ -592,6 +592,7 @@ PRINT STYLESHEET
     font-size: 14px;
 }
 .shops ul li .voice-counter{
+    clear: left;
     width: 100px;
     text-align: right;
     float: left;

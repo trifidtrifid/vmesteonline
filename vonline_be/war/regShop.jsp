@@ -9,7 +9,7 @@
 		<meta name="description" content="User login page" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link rel="stylesheet" href="build/style.min.css"/>
+        <link rel="stylesheet" href="../build/shop.min.css"/>
         <script src="./js/lib/jquery-2.1.1.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             globalUserAuth = false;
@@ -129,10 +129,15 @@
                 protocol = new Thrift.Protocol(transport);
                 var client = new com.vmesteonline.be.shop.ShopFEServiceClient(protocol);
 
+                transport = new Thrift.Transport("/thrift/AuthService");
+                protocol = new Thrift.Protocol(transport);
+                var clientAuth = new com.vmesteonline.be.AuthServiceClient(protocol);
+
                 $('.reg-shop .btn-success').click(function(e){
                     e.preventDefault();
 
                     var name = $('#name').val(),
+                    email = $('#email').val(),
                     descr = $('#descr').val(),
                     logoURL = $('.ace-file-input .file-name img').css('background-image'),
                     address = $('#address').val();
@@ -141,12 +146,16 @@
 
                     if(name == ""){
                         $('.error-info').text('Вы не указали имя.').show();
+                    }else if(email == ""){
+                        $('.error-info').text('Вы не указали email.').show();
+                    }else if(!clientAuth.checkEmailRegistered(email)){
+                        $('.error-info').text('Пользователя с таким email не существует.').show();
                     }else if(descr == ""){
                         $('.error-info').text('Вы не указали описание.').show();
                     }else if(address == ""){
                         $('.error-info').text('Вы не указали адрес.').show();
                     }else if(!logoURL){
-                        $('.error-info').text('Вы не выбрали доготип.').show();
+                        $('.error-info').text('Вы не выбрали логотип.').show();
                     }else{
                         try{
                             var deliveryAddress = client.createDeliveryAddress(address,0,0,0);
@@ -161,7 +170,7 @@
 
                             var shopId = clientBO.registerShop(shop);
 
-                            var ownerEmail = $('#email').val();
+                            var ownerEmail = email;
                             clientBO.setUserShopRole(shopId ,ownerEmail,3);
 
                             $('.email-alert').removeClass('error-info').addClass('info-good').text("Магазин успешно зарегистрирован.").show();

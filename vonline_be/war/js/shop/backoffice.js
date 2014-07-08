@@ -2646,9 +2646,24 @@ if($('.container.backoffice').hasClass('noAccess')){
 
             var userContacts = getUserContacts(shop.ownerId);
 
-            $('.owner-name span').text(userInfo.firstName+" "+userInfo.lastName); //
-            $('.owner-contacts').html(userContacts);
+            $(this).find('.owner-name span').text(userInfo.firstName+" "+userInfo.lastName); //
+            $(this).find('.owner-contacts').html(userContacts);
 
+            if(thriftModule.client.isActivated(shopId)){
+                $(this).find('.shop-activation input').attr('checked','checked');
+            };
+
+        });
+
+        $('.shop-activation .checkbox .lbl').click(function(){
+           var shopId = $(this).closest('tr').attr('id'),
+               flag = true;
+            if ($(this).parent().find('input.ace').prop('checked')){
+                flag = false;
+            }
+            //console.log("flag "+$(this).parent().find('input.ace').prop('checked'));
+
+            thriftModule.clientBO.activate(shopId,flag);
         });
 
         function getUserContacts(userId,withoutBr){

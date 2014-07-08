@@ -17,6 +17,9 @@
 <%@ page import="com.vmesteonline.be.shop.bo.*"%>
 
 <%
+    HttpServletRequest httpReq = (HttpServletRequest)request;
+    String url = httpReq.getPathInfo();
+
     HttpSession sess = request.getSession();
     boolean isAuth = true;
     try {
@@ -42,7 +45,26 @@ if(isAuth){
 
     List<Shop> ArrayShops = shopService.getShops();
     if(ArrayShops != null && ArrayShops.size() > 0){
-        Shop shop = shopService.getShop(ArrayShops.get(0).id);
+        Shop shop;
+        if(ArrayShops.size() > 1 && url.length() >= 17){
+            char buf[] = new char[16];
+            url.getChars(1, 17, buf, 0);
+            String shopIdStr = "";
+            // 15 - кол-во символов в id магазина
+            for (int i = 0; i <= 15; i++) {
+                shopIdStr = shopIdStr+buf[i];
+            }
+
+            Long shopId = new Long(shopIdStr);
+
+            shop = shopService.getShop(shopId);
+            //out.print("1");
+        }else{
+            //out.print("2");
+            shop = shopService.getShop(ArrayShops.get(0).id);
+        }
+
+        //Shop shop = shopService.getShop(ArrayShops.get(0).id);
         UserShopRole userRole = shopService.getUserShopRole(shop.id);
 
         List<ProductCategory> categoriesList = shopService.getAllCategories(shop.id);
@@ -111,7 +133,7 @@ if(isAuth){
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
 
-                <li class="active"><a class="btn btn-info no-border" href="shop.jsp">
+                <li class="active"><a class="btn btn-info no-border" href="/shop/${shopID}">
                     Магазин </a></li>
                 <li class="user-short light-blue">
                     <c:choose>

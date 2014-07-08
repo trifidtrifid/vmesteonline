@@ -2166,10 +2166,13 @@ height 50px
   border: 1px solid #ccc;
   padding: 10px;
   line-height: 16px;
-  width: 24%;
+  width: 27%;
 }
 .adminka table td.td-icon {
   width: 4%;
+}
+.adminka table td.shop-activation {
+  width: 17%;
 }
 .adminka table .td-icon {
   text-align: center;

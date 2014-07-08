@@ -140,13 +140,13 @@
                             <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
                     <c:if test="${shopPages.aboutPageContentURL != null && shopPages.aboutPageContentURL != ''}">
-                        <a href="${shopPages.aboutPageContentURL}" class="about-shop-link header-link">О магазине</a>
+                        <a href="/${shopPages.aboutPageContentURL}" class="about-shop-link header-link">О магазине</a>
                     </c:if>
                     <c:if test="${shopPages.conditionsPageContentURL != null && shopPages.conditionsPageContentURL != ''}">
-                        <a href="${shopPages.conditionsPageContentURL}" class="terms-of-orders header-link">Условия</a>
+                        <a href="/${shopPages.conditionsPageContentURL}" class="terms-of-orders header-link">Условия</a>
                     </c:if>
                     <c:if test="${shopPages.deliveryPageContentURL != null && shopPages.deliveryPageContentURL != ''}">
-                        <a href="${shopPages.deliveryPageContentURL}" class="terms-of-delivery header-link">Доставка</a>
+                        <a href="/${shopPages.deliveryPageContentURL}" class="terms-of-delivery header-link">Доставка</a>
                     </c:if>
 
 					<!-- /.brand -->
@@ -168,7 +168,7 @@
                         <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}">
                         hidden
                         </c:if>
-                        " href="/backoffice.jsp">
+                        " href="/backoffice/${shopID}">
                             Бэкоффис</a></li>
 
 						<li class="user-short light-blue">

@@ -14,20 +14,22 @@
     ShopServiceImpl shopService = new ShopServiceImpl(sess.getId());
 
     List<Shop> ArrayShops = shopService.getShops();
-   // List<Shop> activeShops = new List<Shop>;
-    //List<Shop> noActiveShops = new List<Shop>;
-    //int activeShopsCounter = 0;
-    //int noActiveShopsCounter = 0;
-    //int ArrayShopsLength = ArrayShops.size();
-    //for (int i = 0; i <= ArrayShopsLength; i++) {
-      //  if(shopService.isActivated(ArrayShops.get(i).id)){
-        //    activeShops.add(ArrayShops.get(i));
-          //  activeShopsCounter++;
-        //}else{
-          //  noActiveShops.add(ArrayShops.get(i));
-            //noActiveShopsCounter++;
-        //}
-    //}
+    int ArrayShopsLength = ArrayShops.size();
+    Shop[] activeShops = new Shop[ArrayShopsLength];
+    Shop[] noActiveShops = new Shop[ArrayShopsLength];
+    int activeShopsCounter = 0;
+    int noActiveShopsCounter = 0;
+    for (int i = 0; i < ArrayShopsLength; i++) {
+        if(shopService.isActivated(ArrayShops.get(i).id)){
+            activeShops[activeShopsCounter] = ArrayShops.get(i);
+            activeShopsCounter++;
+        }else{
+            noActiveShops[noActiveShopsCounter] = ArrayShops.get(i);
+            noActiveShopsCounter++;
+        }
+    }
+    pageContext.setAttribute("activeShops", activeShops);
+    pageContext.setAttribute("noActiveShops", noActiveShops);
 
         if(ArrayShops != null && ArrayShops.size() > 0){
         pageContext.setAttribute("shops", ArrayShops);
@@ -251,7 +253,8 @@ padding:20px;
 
             <div class="shops-block-title">Подключенные магазины</div>
             <ul>
-                <c:forEach var="shop" items="${shops}">
+                <c:forEach var="shop" items="${activeShops}">
+                    <c:if test="${shop.id != null}">
                     <li>
                         <a href="shop/${shop.id}">
                             <img src="${shop.logoURL}" alt="логотип"/>
@@ -261,6 +264,7 @@ padding:20px;
                         </span>
                         </a>
                     </li>
+                    </c:if>
                 </c:forEach>
 
                 <%--<li>
@@ -286,7 +290,24 @@ padding:20px;
         <div class="grid_6 shops shops-queue">
             <div class="shops-block-title">В очереди</div>
             <ul>
-                <li>
+                <c:forEach var="shop" items="${noActiveShops}">
+                    <c:if test="${shop.id != null}">
+                        <li>
+                            <a href="shop/${shop.id}">
+                                <img src="${shop.logoURL}" alt="логотип"/>
+                            <span class="landing-shop-right">
+                                <h3>${shop.name}</h3>
+                                <p>${shop.descr}</p>
+                            </span>
+                            </a>
+                            <div>
+                                <span class="voice-counter">35</span>
+                                <a class="buttonlink vote-btn" href="#">Голосовать</a>
+                            </div>
+                        </li>
+                    </c:if>
+                </c:forEach>
+                <%--<li>
                     <a href="#">
                         <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
                         <span class="landing-shop-right">
@@ -298,20 +319,7 @@ padding:20px;
                         <span class="voice-counter">35</span>
                         <a class="buttonlink vote-btn" href="#">Голосовать</a>
                     </div>
-                </li>
-                <li>
-                    <a href="#">
-                        <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
-                        <span class="landing-shop-right">
-                            <h3>ВоМолоко</h3>
-                            <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
-                        </span>
-                    </a>
-                    <div>
-                        <span class="voice-counter">35</span>
-                        <a class="buttonlink vote-btn" href="#">Голосовать</a>
-                    </div>
-                </li>
+                </li>--%>
             </ul>
         </div>
     </section>

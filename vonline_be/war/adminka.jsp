@@ -160,6 +160,14 @@
                             <c:forEach var="shop" items="${shops}">
                                 <tr id="${shop.id}">
                                     <td class="shop-name">${shop.name}</td>
+                                    <td class="shop-activation">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input name="form-field-checkbox" type="checkbox" class="ace">
+                                                <span class="lbl"> Активен</span>
+                                            </label>
+                                        </div>
+                                    </td>
                                     <td class="owner-name">
                                         <span></span>
                                         <a class="update-owner-link fa fa-pencil" href="#"></a>
