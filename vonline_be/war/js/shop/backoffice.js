@@ -1358,6 +1358,14 @@ if($('.container.backoffice').hasClass('noAccess')){
         var shopid = $('.backoffice.dynamic').attr('id');
         var myShop = thriftModule.client.getShop(shopid);
 
+        /* настройки ссылок  */
+
+        var shopPages = thriftModule.clientBO.getShopPages();
+
+        if (shopPages.aboutPageContentURL) $('#settings-about-link').val(shopPages.aboutPageContentURL);
+        if (shopPages.conditionsPageContentURL) $('#settings-terms-link').val(shopPages.conditionsPageContentURL);
+        if (shopPages.deliveryPageContentURL) $('#settings-delivery-link').val(shopPages.deliveryPageContentURL);
+
         /* настройки даты */
         var datesArray = thriftModule.clientBO.getDates();
         var datesArrayLength = datesArray.length,
@@ -1668,6 +1676,9 @@ if($('.container.backoffice').hasClass('noAccess')){
             $(this).closest('.settings-delivery-container').addClass('changed');
         });
 
+        /*
+        * Сохранение
+        * */
 
     $('.settings-item .btn-save').click(function(e){
         e.preventDefault();
@@ -1687,6 +1698,13 @@ if($('.container.backoffice').hasClass('noAccess')){
                     newShopInfo.logoURL = $('.logo-container>img').attr('src');
 
                 thriftModule.clientBO.updateShop(newShopInfo);
+                break;
+            case "settings-links":
+                var pagesInfo = new com.vmesteonline.be.shop.ShopPages();
+                pagesInfo.aboutPageContentURL = $('#settings-about-link').val();
+                pagesInfo.conditionsPageContentURL = $('#settings-terms-link').val();
+                pagesInfo.deliveryPageContentURL = $('#settings-delivery-link').val();
+                thriftModule.clientBO.setShopPages(pagesInfo);
                 break;
             case "settings-shedule":
                 var dates = new com.vmesteonline.be.shop.OrderDates();

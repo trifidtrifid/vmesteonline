@@ -494,6 +494,31 @@ if(isAuth){
                         <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
                     </div>
 
+                    <div id="settings-links" class="settings-item">
+                        <h2>Ссылки</h2>
+
+                        <div class="settings-links-item">
+                            <label for="settings-about-link">
+                                О магазине
+                            </label>
+                            <input id="settings-about-link" type="text"/>
+                        </div>
+                        <div class="settings-links-item">
+                            <label for="settings-terms-link">
+                                Условия
+                            </label>
+                            <input id="settings-terms-link" type="text"/>
+                        </div>
+                        <div class="settings-links-item">
+                            <label for="settings-delivery-link">
+                                Доставка
+                            </label>
+                            <input id="settings-delivery-link" type="text"/>
+                        </div>
+
+                        <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
+                    </div>
+
                     <div id="settings-shedule" class="settings-item">
                         <h2>Расписание завоза</h2>
                         <%--<div id="date-picker-6" class="shedule-dates"></div>--%>

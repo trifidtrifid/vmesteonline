@@ -1828,6 +1828,15 @@ height 50px
 .bo-settings .add-delivery-interval:hover {
   text-decoration: none;
 }
+.bo-settings #settings-links .settings-links-item {
+  margin-bottom: 5px;
+}
+.bo-settings #settings-links .settings-links-item label {
+  width: 100px;
+}
+.bo-settings #settings-links .settings-links-item input {
+  width: 200px;
+}
 .bo-settings #settings-delivery .delivery-price-type {
   padding-left: 30px;
 }
