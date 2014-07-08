@@ -7,35 +7,44 @@
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.UserInfo"%>
 <%@ page import="com.vmesteonline.be.shop.*"%>
-<%@ page import="com.vmesteonline.be.shop.bo.*"%>
 
 <%
     HttpSession sess = request.getSession();
     pageContext.setAttribute("auth",true);
     try {
-    AuthServiceImpl.checkIfAuthorised(sess.getId());
-    UserServiceImpl userService = new UserServiceImpl(request.getSession());
-    ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-    if( null == ShortUserInfo){
-        sess.invalidate();
-        throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
-    }
-    pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-    pageContext.setAttribute("lastName",ShortUserInfo.lastName);
+        AuthServiceImpl.checkIfAuthorised(sess.getId());
+        UserServiceImpl userService = new UserServiceImpl(request.getSession());
+        ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
+        if( null == ShortUserInfo){
+            sess.invalidate();
+            throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
+        }
+        pageContext.setAttribute("firstName",ShortUserInfo.firstName);
+        pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
     //pageContext.setAttribute("auth",false);
         response.sendRedirect("/login.jsp");
-        sess.setAttribute("successLoginURL", request.getQueryString());
+        //sess.setAttribute("successLoginURL", request.getQueryString());
         return;
     }
 
 
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
+    ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
-    if(ArrayShops != null && ArrayShops.size() > 0){
+    int ArrayShopsSize = ArrayShops.size();
+
+    int now = (int) (System.currentTimeMillis() / 1000L);
+    //int day = 3600 * 24;
+    double[] totalShopArray = new double[ArrayShopsSize];
+
+    for(int i = 0; i < ArrayShopsSize; i++){
+        totalShopArray[i] = shopBOService.totalShopReturn(ArrayShops.get(i).id, 0, now);
+    }
+
+    if(ArrayShops != null && ArrayShopsSize > 0){
         pageContext.setAttribute("shops", ArrayShops);
 
         Shop shop = shopService.getShop(ArrayShops.get(0).id);
@@ -45,12 +54,6 @@
         pageContext.setAttribute("userRole", userRole);
     }
 
-    int now = (int) (System.currentTimeMillis() / 1000L);
-    int day = 3600 * 24;
-    List<Order> orders = shopService.getOrders(0, now + 180*day);
-    if(orders.size() > 0 ){
-        pageContext.setAttribute("orders", orders);
-    }
 
 %>
 <%
@@ -162,13 +165,43 @@
                                     <a class="update-owner-link fa fa-pencil" href="#"></a>
                                 </td>
                                 <td class="owner-contacts"></td>
-                               <%-- <td class="shop-admins">
-                                    <a class="update-admins-link" href="#">+</a>
-                                </td>--%>
                                 <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
                             </tr>
                         </c:forEach>
 
+                    </table>
+                </div>
+                <div class="adminka-statistics back-tab">
+                    <h1>Оборот магазина</h1>
+                    <div class="btn-group adminka-statistics-period">
+                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                            <span class="btn-group-text">Выберите период</span>
+                            <span class="icon-caret-down icon-on-right"></span>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-blue">
+                            <li><a href="#">За месяц</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">За все время</a></li>
+                        </ul>
+                    </div>
+                    <%--<div class="adminka-statistics-from">
+                        <label for="datepicker-from">от</label>
+                        <input class="form-control date-picker datepicker-export" id="datepicker-from" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
+                    </div>
+                    <div class="adminka-statistics-to">
+                        <label for="datepicker-from">до</label>
+                        <input class="form-control date-picker datepicker-export" id="datepicker-from" type="text" data-date-format="dd-mm-yyyy" value="Фильтр по дате" onblur="if(this.value=='') this.value='Фильтр по дате';" onfocus="if(this.value=='Фильтр по дате') this.value='';"/>
+                    </div>--%>
+                    <table>
+                        <% for( int i = 0; i < ArrayShopsSize; i ++ ){ %>
+                        <%--<c:forEach var="shop" items="${shops}">--%>
+                            <tr id="<%=ArrayShops.get(i).id%>">
+                                <td class="shop-name"><%=ArrayShops.get(i).name%></td>
+                                <td class="shop-total"><%=totalShopArray[i]%></td>
+                            </tr>
+                        <%--</c:forEach>--%>
+                        <% } %>
                     </table>
                 </div>
             </div>
@@ -202,28 +235,6 @@
 <!-- -->
 
 <script type="text/javascript" data-main="/build/backoffice.min.js" src="/js/shop/require.min.js"></script>
-<script type="text/javascript" src="js/lib/jquery-2.1.1.min.js"></script>
-<script>
-    $(document).ready(function(){
-
-        $('.nav-list a').click(function(e){
-            e.preventDefault();
-            $('.back-tab').hide();
-            var index = $(this).parent().index();
-            switch (index){
-                case 0:
-                    $('.adminka-shops').show();
-                    break;
-                case 1:
-                    $('.adminka-users').show();
-                    break;
-            }
-            $(this).closest('ul').find('.active').removeClass('active');
-            $(this).parent().addClass('active');
-        });
-    })
-</script>
-
 
 </body>
 </html>

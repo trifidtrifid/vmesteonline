@@ -729,7 +729,9 @@ define(
             var shortUserInfo = (newUserInfo) ?  newUserInfo : thriftModule.userClient.getShortUserInfo();
             var shortUserInfoHtml =  shortUserInfo.firstName +' '+ shortUserInfo.lastName;
             $('.user-info').html(shortUserInfoHtml);
+            $('.navbar-header .nav .bo-link').removeClass('hidden');
         }
+
 
         return{
             getCookie: getCookie,

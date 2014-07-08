@@ -119,35 +119,41 @@ define(
         return false;
     });
 
-    function AuthRealTime(selector){
+    function AuthRealTime(selector) {
 
         globalUserAuth = true;
 
-        selector.closest('.modal-auth').modal('hide');
-        // ставим shopID
-        var shops = thriftModule.client.getShops();
-        thriftModule.client.getShop(shops[0].id);
+        if ($('.shop-landing').length == 0) {
+            selector.closest('.modal-auth').modal('hide');
+            // ставим shopID
+            var shops = thriftModule.client.getShops();
+            thriftModule.client.getShop(shops[0].id);
 
-        commonModule.changeShortUserInfo();
-        $('.user-info').after('<i class="icon-caret-down"></i>');
+            commonModule.changeShortUserInfo();
+            $('.user-info').after('<i class="icon-caret-down"></i>');
 
-        var dropdownToggle = $('.dropdown-toggle');
-        dropdownToggle.removeClass('no-login');
+            var dropdownToggle = $('.dropdown-toggle');
+            dropdownToggle.removeClass('no-login');
 
-        $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
-            $(this).parent().removeClass('open');
-        });
+            $('.user-short .dropdown-toggle:not(".no-login")').click(function () {
+                $(this).parent().removeClass('open');
+            });
 
-        var shopId = $('.shop').attr('id');
-        var userRole = thriftModule.client.getUserShopRole(shopId);
-        if(userRole == 2 || userRole == 99){
-            $('.bo-link').removeClass('hidden');
+            var shopId = $('.shop').attr('id');
+            var userRole = thriftModule.client.getUserShopRole(shopId);
+            if (userRole == 2 || userRole == 99) {
+                $('.bo-link').removeClass('hidden');
+            }
+
+            // callbacks
+            commonModule.initBasketInReload();
+            var basketModule = require('shop-basket.min');
+            basketModule.callbacks.fire(basketModule.selectorForCallbacks);
+            basketModule.callbacks.empty();
+        }else{
+            //commonModule.doExit();
+            document.location.replace("/");
         }
-        // callbacks
-        commonModule.initBasketInReload();
-        var basketModule = require('shop-basket.min');
-        basketModule.callbacks.fire(basketModule.selectorForCallbacks);
-        basketModule.callbacks.empty();
     }
 
     }

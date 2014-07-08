@@ -1,3 +1,19 @@
+/*require.config({
+    baseUrl: "/build",
+    paths: {
+
+    }
+});
+
+require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
+    function($,modules,commonM,loginModule) {
+
+        $('.landing-login').click(function(){
+            modules.shopCommonModule.openModalAuth();
+        });
+
+    });*/
+
 
 // Fireup the plugins
 $(document).ready(function(){
@@ -10,35 +26,38 @@ $(document).ready(function(){
         }
       });
 
+    /*var transport = new Thrift.Transport("/thrift/ShopFEService");
+    var protocol = new Thrift.Protocol(transport);
+    var client = new com.vmesteonline.be.shop.ShopFEServiceClient(protocol);*/
 
-    /*function openModalAuth(){
-        var modalIn = $('.modal.in');
-        if(modalIn.length) modalIn.modal('hide');
-        var modalAuth = $('.modal-auth');
-        modalAuth.load('login.jsp .login-container',function(){
-            var closeHtml = '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
-            modalAuth.find('.reg-form').prepend(closeHtml);
+    $('.shops-queue ul li').each(function(){
+        var shopId = $(this).attr('id');
+    });
 
-            // запускаем скрипты логина через ajax
-            $.ajax({
-                url: 'js/shop/login.js',
-                dataType: 'script'
-            });
+    $('.vote-btn').click(function(e){
+        e.preventDefault();
 
-            $(this).hover(function(){
-                $('.login-close').removeClass('hide');
-            },function(){
-                $('.login-close').addClass('hide');
-            });
+        if(!globalUserAuth){
+            $('.landing-login').trigger('click');
+        }else{
 
-        }).modal();
-    }*/
+            var currentItem = $(this).closest('li'),
+                currentVoiceCounter = currentItem.find('.voice-counter'),
+                shopId = currentItem.attr('id'),
+                currentVoicesNum = currentVoiceCounter.text();
+
+            currentVoiceCounter.text(++currentVoicesNum);
+            client.vote(shopId,'1');
+
+        }
+    });
+
 
 });
 /**
  * Handles toggling the navigation menu for small screens.
  */
-( function() {
+/*( function() {
 	var button = document.getElementById( 'topnav' ).getElementsByTagName( 'div' )[0],
 	    menu   = document.getElementById( 'topnav' ).getElementsByTagName( 'ul' )[0];
 
@@ -63,4 +82,4 @@ $(document).ready(function(){
 			menu.className += ' toggled-on';
 		}
 	};
-} )();
+} )();*/

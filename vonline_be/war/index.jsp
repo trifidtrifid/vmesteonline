@@ -13,11 +13,25 @@
 
     ShopServiceImpl shopService = new ShopServiceImpl(sess.getId());
 
-       List<Shop> ArrayShops = shopService.getShops();
-    if(ArrayShops != null && ArrayShops.size() > 0){
+    List<Shop> ArrayShops = shopService.getShops();
+   // List<Shop> activeShops = new List<Shop>;
+    //List<Shop> noActiveShops = new List<Shop>;
+    //int activeShopsCounter = 0;
+    //int noActiveShopsCounter = 0;
+    //int ArrayShopsLength = ArrayShops.size();
+    //for (int i = 0; i <= ArrayShopsLength; i++) {
+      //  if(shopService.isActivated(ArrayShops.get(i).id)){
+        //    activeShops.add(ArrayShops.get(i));
+          //  activeShopsCounter++;
+        //}else{
+          //  noActiveShops.add(ArrayShops.get(i));
+            //noActiveShopsCounter++;
+        //}
+    //}
+
+        if(ArrayShops != null && ArrayShops.size() > 0){
         pageContext.setAttribute("shops", ArrayShops);
-        //out.print('s');
-    }
+        }
     pageContext.setAttribute("auth",true);
     try {
 
@@ -58,6 +72,7 @@
 
 <link rel="stylesheet" href="css/landing/normalize.css">
 <link rel="stylesheet" href="js/shop/landing/flexslider/flexslider.css" />
+
 <link rel="stylesheet" href="css/landing/basic-style.css">
 <%--<link rel="stylesheet" href="css/login.css">--%>
 
@@ -111,41 +126,46 @@ padding:20px;
             </div>
 
             <nav id="topnav" role="navigation">
-                <a href="login.jsp" class="landing-login">Войти</a>
-                <%--<div class="menu-toggle">Menu</div>
-                    <ul class="srt-menu" id="menu-main-navigation">
-                    <li class="current"><a href="index.jsp">Home page</a></li>
-                    <li><a href="basic-internal.html">Internal page demo</a></li>
-                    <li><a href="#">menu item 3</a>
-                        <ul>
-                            <li>
-                                <a href="#">menu item 3.1</a>
-                            </li>
-                            <li class="current">
-                                <a href="#">menu item 3.2</a>
-                                <ul>
-                                    <li><a href="#">menu item 3.2.1</a></li>
-                                    <li><a href="#">menu item 3.2.2 with longer link name</a></li>
-                                    <li><a href="#">menu item 3.2.3</a></li>
-                                    <li><a href="#">menu item 3.2.4</a></li>
-                                    <li><a href="#">menu item 3.2.5</a></li>
+                <%--<a href="#" class="landing-login">Войти</a>
+                <a href="#" class="for-auth-user landing-logout">Выйти</a>--%>
+
+                <div class="navbar-header pull-right" role="navigation">
+                        <ul class="nav ace-nav">
+                            <li class="user-short">
+                                <c:choose>
+                                    <c:when test="${auth}">
+                                        <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                                                <%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
+                                        <span class="user-info">
+                                            <c:out value="${firstName}" />
+                                            <c:out value="${lastName}" />
+									    </span>
+                                            <i class="icon-caret-down"></i>
+                                        </a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a data-toggle="dropdown" href="#" class="dropdown-toggle no-login landing-login">
+                                        <span class="user-info">
+                                            Войти
+									</span>
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
+                                <ul	class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+
+                                    <li><a href="#"> <i class="icon-user"></i> Профиль
+                                    </a></li>
+
+                                    <li class="divider"></li>
+
+                                    <li><a href="#" class="landing-logout"> <i class="icon-off"></i> Выход
+                                    </a></li>
                                 </ul>
                             </li>
-                            <li><a href="#">menu item 3.3</a></li>
-                            <li><a href="#">menu item 3.4</a></li>
                         </ul>
-                    </li>
-                    <li>
-                        <a href="#">menu item 4</a>
-                        <ul>
-                            <li><a href="#">menu item 4.1</a></li>
-                            <li><a href="#">menu item 4.2</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#">menu item 5</a>
-                    </li>
-                </ul> --%>
+                        <!-- /.ace-nav -->
+                    </div>
+
             </nav>
         </div>
   
@@ -231,7 +251,7 @@ padding:20px;
                     <li>
                         <a href="shop/${shop.id}">
                             <img src="${shop.logoURL}" alt="логотип"/>
-                        <span class="shop-right">
+                        <span class="landing-shop-right">
                             <h3>${shop.name}</h3>
                             <p>${shop.descr}</p>
                         </span>
@@ -259,33 +279,33 @@ padding:20px;
                 </li>--%>
             </ul>
         </div>
-        <div class="grid_6 shops">
+        <div class="grid_6 shops shops-queue">
             <div class="shops-block-title">В очереди</div>
             <ul>
                 <li>
                     <a href="#">
                         <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
-                        <span class="shop-right">
+                        <span class="landing-shop-right">
                             <h3>ВоМолоко</h3>
                             <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
                         </span>
                     </a>
                     <div>
                         <span class="voice-counter">35</span>
-                        <a class="btn buttonlink" href="#">Голосовать</a>
+                        <a class="buttonlink vote-btn" href="#">Голосовать</a>
                     </div>
                 </li>
                 <li>
                     <a href="#">
                         <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
-                        <span class="shop-right">
+                        <span class="landing-shop-right">
                             <h3>ВоМолоко</h3>
                             <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
                         </span>
                     </a>
                     <div>
                         <span class="voice-counter">35</span>
-                        <a class="btn buttonlink" href="#">Голосовать</a>
+                        <a class="buttonlink vote-btn" href="#">Голосовать</a>
                     </div>
                 </li>
             </ul>
@@ -295,7 +315,6 @@ padding:20px;
     
       
   </div><!-- #end div #main .wrapper -->
-
 
 <!-- footer area -->    
 <footer>
@@ -307,6 +326,8 @@ padding:20px;
     
 </footer><!-- #end footer area -->
 
+    
+
     <div class="modal modal-auth">
     </div>
 
@@ -317,10 +338,18 @@ padding:20px;
 
 <script defer src="js/shop/landing/flexslider/jquery.flexslider-min.js"></script>
 
-<!-- fire ups - read this file!  -->   
+    <script src="/build/thrift.min.js" type="text/javascript"></script>
+
+    <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
+
+    <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
+    <script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
+
+<!-- fire ups - read this file!  -->
+<%--<script type="text/javascript" data-main="/js/shop/landing/main.js" src="/js/shop/require.min.js"></script>--%>
 <script src="js/shop/landing/main.js"></script>
 
-<%--<script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>--%>
+<script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
 
 </body>
 </html>

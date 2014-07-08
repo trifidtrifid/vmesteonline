@@ -1,4 +1,5 @@
 @import 'lib/flexslider.css';
+@import 'common.css';
 @import 'login.css';
 html {
   height: 100%;
@@ -1841,12 +1842,21 @@ height 50px
   margin-left: 5px;
   margin-right: 15px;
 }
-.bo-settings #settings-delivery .delivery-area {
+.bo-settings #settings-delivery .delivery-area,
+.bo-settings #settings-delivery .delivery-type {
   margin-top: 10px;
 }
-.bo-settings #settings-delivery .delivery-area span {
+.bo-settings #settings-delivery .delivery-area span,
+.bo-settings #settings-delivery .delivery-type span {
   display: inline-block;
+  width: 70px;
   font-size: 14px;
+}
+.bo-settings #settings-delivery .delivery-area input[type="text"] {
+  width: 50%;
+}
+.bo-settings #settings-delivery .delivery-type input[type="text"] {
+  width: 60px;
 }
 .bo-settings #settings-delivery input[type=checkbox].ace+.lbl::before,
 .bo-settings #settings-delivery input[type=radio].ace+.lbl::before {
@@ -1872,6 +1882,12 @@ height 50px
 }
 .bo-settings #settings-shedule .shedule-item .delivery-day-dropdown .dropdown-menu {
   min-width: 30px;
+}
+.bo-settings #settings-shedule .shedule-item .delivery-day-dropdown .dropdown-menu .disable a {
+  color: #ccc;
+}
+.bo-settings #settings-shedule .shedule-item .delivery-day-dropdown .dropdown-menu .disable:hover {
+  background: none;
 }
 .bo-settings #settings-shedule .shedule-item input {
   width: 50px;
@@ -2203,7 +2219,7 @@ height 50px
 .adminka table .admin-item .remove-admin-item:hover {
   text-decoration: none;
 }
-.adminka-users {
+.adminka-statistics {
   display: none;
 }
 .full-text {

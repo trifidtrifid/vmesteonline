@@ -42,6 +42,7 @@
             char buf[] = new char[16];
             url.getChars(1, 17, buf, 0);
             String shopIdStr = "";
+            // 15 - кол-во символов в id магазина
             for (int i = 0; i <= 15; i++) {
                 shopIdStr = shopIdStr+buf[i];
             }

@@ -1,6 +1,7 @@
 //@import 'common.css'
 @import 'lib/flexslider.css'
-@import 'login.css' // with common.css
+@import 'common.css'
+@import 'login.css'
 
 main-radius = 2px
 second-radius = 1px
@@ -1063,7 +1064,7 @@ height 50px
   .btn
     width 150px
     display block
-    margin 5px auto 0
+    margin 5px auto 0 //
 
 /* popup логина */
 .modal-auth
@@ -1528,10 +1529,16 @@ height 50px
         margin-left 5px
         margin-right 15px
     .delivery-area
+    .delivery-type
       margin-top 10px
       span
         display inline-block
-        font-size 14px 
+        width 70px
+        font-size 14px
+    .delivery-area input[type="text"]
+      width 50%
+    .delivery-type input[type="text"]
+      width 60px
     input[type=checkbox].ace+.lbl::before, input[type=radio].ace+.lbl::before
       vertical-align top
       margin-right 5px
@@ -1551,6 +1558,11 @@ height 50px
         margin  0 5px
         .dropdown-menu
           min-width 30px
+          .disable
+            a
+              color #ccc
+            &:hover
+              background none
       input
         width 50px //
         display inline-block
@@ -1812,9 +1824,8 @@ height 50px
           text-decoration none
 
 
-.adminka-users
+.adminka-statistics
   display none
-
 
 .full-text
   display none

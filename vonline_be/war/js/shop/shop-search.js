@@ -19,7 +19,8 @@ define(
                 }
             });
 
-            if($('.login-layout').length == 0 && $('.backoffice').length == 0) {
+            if($('.login-layout').length == 0 && $('.backoffice').length == 0
+                && $('.shop-landing').length == 0) {
                 var currentShopID =$('.main-container.shop').attr('id');
 
                 var arr = thriftModule.client.getProductsByCategories(currentShopID);
