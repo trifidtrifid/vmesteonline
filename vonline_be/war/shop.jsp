@@ -38,7 +38,7 @@
     List<Shop> ArrayShops = shopService.getShops();
     if(ArrayShops != null && ArrayShops.size() > 0){
         Shop shop;
-        if(ArrayShops.size() > 1 && url.length() >= 17){
+        if(ArrayShops.size() > 1 && null!=url && url.length() >= 17){
             char buf[] = new char[16];
             url.getChars(1, 17, buf, 0);
             String shopIdStr = "";

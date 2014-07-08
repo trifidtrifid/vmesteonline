@@ -387,6 +387,8 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		}
 		try {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
+			if( null==dates.getPriceTypeToUse() )
+				dates.setPriceTypeToUse( PriceType.INET );
 			voShop.setDates(dates);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -270,6 +270,7 @@ public class VoShop {
 			if( ods.orderDay == newDates.orderDay ) {//replace the dates
 				ods.eachOddEven = newDates.eachOddEven;
 				ods.orderBefore = newDates.orderBefore;
+				ods.priceTypeToUse = newDates.priceTypeToUse;
 				return;
 			}
 		}
