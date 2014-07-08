@@ -11,7 +11,8 @@
 
 <%
     HttpSession sess = request.getSession();
-    pageContext.setAttribute("auth",true);
+    pageContext.setAttribute("isAuth",true);
+    //boolean isAuth = true;
     try {
         AuthServiceImpl.checkIfAuthorised(sess.getId());
         UserServiceImpl userService = new UserServiceImpl(request.getSession());
@@ -22,13 +23,14 @@
         }
         pageContext.setAttribute("firstName",ShortUserInfo.firstName);
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
-    } catch (InvalidOperation ioe) {
-    //pageContext.setAttribute("auth",false);
-        response.sendRedirect("/login.jsp");
-        //sess.setAttribute("successLoginURL", request.getQueryString());
-        return;
-    }
 
+    } catch (InvalidOperation ioe) {
+        //isAuth = false;
+        pageContext.setAttribute("isAuth",false);
+        //response.sendRedirect("/login.jsp");
+        //sess.setAttribute("successLoginURL", request.getQueryString());
+        //return;
+    }
 
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
     ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
@@ -53,10 +55,6 @@
         pageContext.setAttribute("shopID", shop.id);
         pageContext.setAttribute("userRole", userRole);
     }
-
-
-%>
-<%
 
 
 %>
@@ -98,7 +96,7 @@
                     Магазин </a></li>
                 <li class="user-short light-blue">
                     <c:choose>
-                        <c:when test="${auth}">
+                        <c:when test="${isAuth}">
                             <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                                 <span class="user-info">
                                     <c:out value="${firstName}" /> <c:out value="${lastName}" />
@@ -130,95 +128,96 @@
         </div>
     </div><!-- /.container -->
     </div>
-    <div class="main-container backoffice adminka dynamic">
-        <div class="page main-container-inner">
-            <aside class="sidebar" id="sidebar">
-                <script type="text/javascript">
-                    try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
-                </script>
-                <div class="show-left">
-                    Меню
-                </div>
-                <ul class="nav nav-list">
-                    <li class="active">
-                        <a href="#">
-                            <span class="menu-text"> Магазины </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span class="menu-text"> Статистика </span>
-                        </a>
-                    </li>
-                </ul><!-- /.nav-list -->
-            </aside>
 
-            <div class="main-content">
-                <div class="adminka-shops back-tab">
-                    <a class="btn btn-primary btn-sm no-border create-shop" href="regShop.jsp">Создать магазин</a>
-                    <table>
-                        <c:forEach var="shop" items="${shops}">
-                            <tr id="${shop.id}">
-                                <td class="shop-name">${shop.name}</td>
-                                <td class="owner-name">
-                                    <span></span>
-                                    <a class="update-owner-link fa fa-pencil" href="#"></a>
-                                </td>
-                                <td class="owner-contacts"></td>
-                                <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
-                            </tr>
-                        </c:forEach>
+        <div class="main-container backoffice adminka dynamic">
+            <c:if test="${isAuth}">
+            <div class="page main-container-inner">
+                <aside class="sidebar" id="sidebar">
+                    <script type="text/javascript">
+                        try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
+                    </script>
+                    <div class="show-left">
+                        Меню
+                    </div>
+                    <ul class="nav nav-list">
+                        <li class="active">
+                            <a href="#">
+                                <span class="menu-text"> Магазины </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="menu-text"> Статистика </span>
+                            </a>
+                        </li>
+                    </ul><!-- /.nav-list -->
+                </aside>
 
-                    </table>
-                </div>
-                <div class="adminka-statistics back-tab">
-                    <h1>Оборот магазина</h1>
-                    <%--<div class="btn-group adminka-statistics-period">
-                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                            <span class="btn-group-text">Выберите период</span>
-                            <span class="icon-caret-down icon-on-right"></span>
-                        </button>
+                <div class="main-content">
+                    <div class="adminka-shops back-tab">
+                        <a class="btn btn-primary btn-sm no-border create-shop" href="regShop.jsp">Создать магазин</a>
+                        <table>
+                            <c:forEach var="shop" items="${shops}">
+                                <tr id="${shop.id}">
+                                    <td class="shop-name">${shop.name}</td>
+                                    <td class="owner-name">
+                                        <span></span>
+                                        <a class="update-owner-link fa fa-pencil" href="#"></a>
+                                    </td>
+                                    <td class="owner-contacts"></td>
+                                    <td class="td-icon"><a href="#" class="remove-item">&times;</a></td>
+                                </tr>
+                            </c:forEach>
 
-                        <ul class="dropdown-menu dropdown-blue">
-                            <li><a href="#">За месяц</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">За все время</a></li>
-                        </ul>
-                    </div>--%>
-                    <div class="adminka-statistics-date">
-                        <label for="datepicker-from">от</label>
-                        <input class="form-control date-picker" id="datepicker-from" type="text" data-date-format="mm-dd-yyyy" value="Дата" onblur="if(this.value=='') this.value='Дата';" onfocus="if(this.value=='Дата') this.value='';"/>
+                        </table>
                     </div>
-                    <div class="adminka-statistics-date">
-                        <label for="datepicker-from">до</label>
-                        <input class="form-control date-picker" id="datepicker-to" type="text" data-date-format="mm-dd-yyyy" value="Дата" onblur="if(this.value=='') this.value='Дата';" onfocus="if(this.value=='Дата') this.value='';"/>
+                    <div class="adminka-statistics back-tab">
+                        <h1>Оборот магазина</h1>
+                        <div>(по умолчанию за все время)</div><br>
+                        <%--<div class="btn-group adminka-statistics-period">
+                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                <span class="btn-group-text">Выберите период</span>
+                                <span class="icon-caret-down icon-on-right"></span>
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-blue">
+                                <li><a href="#">За месяц</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">За все время</a></li>
+                            </ul>
+                        </div>--%>
+                        <div class="adminka-statistics-date">
+                            <label for="datepicker-from">от</label>
+                            <input class="form-control date-picker" id="datepicker-from" type="text" data-date-format="mm-dd-yyyy" value="Дата" onblur="if(this.value=='') this.value='Дата';" onfocus="if(this.value=='Дата') this.value='';"/>
+                        </div>
+                        <div class="adminka-statistics-date">
+                            <label for="datepicker-from">до</label>
+                            <input class="form-control date-picker" id="datepicker-to" type="text" data-date-format="mm-dd-yyyy" value="Дата" onblur="if(this.value=='') this.value='Дата';" onfocus="if(this.value=='Дата') this.value='';"/>
+                        </div>
+                        <div class="adminka-statistics-date">
+                            <button class="btn no-border btn-sm btn-primary">Показать</button>
+                        </div>
+                        <table>
+                            <% for( int i = 0; i < ArrayShopsSize; i ++ ){ %>
+                            <%--<c:forEach var="shop" items="${shops}">--%>
+                                <tr id="<%=ArrayShops.get(i).id%>">
+                                    <td class="shop-name"><%=ArrayShops.get(i).name%></td>
+                                    <td class="shop-total"><%=totalShopArray[i]%></td>
+                                </tr>
+                            <%--</c:forEach>--%>
+                            <% } %>
+                        </table>
                     </div>
-                    <div class="adminka-statistics-date">
-                        <button class="btn no-border btn-sm btn-primary">Показать</button>
-                    </div>
-                    <table>
-                        <% for( int i = 0; i < ArrayShopsSize; i ++ ){ %>
-                        <%--<c:forEach var="shop" items="${shops}">--%>
-                            <tr id="<%=ArrayShops.get(i).id%>">
-                                <td class="shop-name"><%=ArrayShops.get(i).name%></td>
-                                <td class="shop-total"><%=totalShopArray[i]%></td>
-                            </tr>
-                        <%--</c:forEach>--%>
-                        <% } %>
-                    </table>
                 </div>
             </div>
+            <div class="page shop-profile"></div>
+            <div class="page shop-editPersonal"></div>
+            </c:if>
         </div>
-        <div class="page shop-profile"></div>
-        <div class="page shop-editPersonal"></div>
 
+    <div class="modal modal-auth">
     </div>
-    <div class="loading">
-        <div class="loading-inside">
-            <img src="i/wait1.png" alt="загрузка">
-            <span>Подождите, идет загрузка ...</span>
-        </div>
-    </div>
+
 </div>
 
 
@@ -227,7 +226,7 @@
 <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
 
 <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
-<script src="/gen-js/ShopFEService.js" type="text/javascript"></script>
+<script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
 <script src="/build/gen-js/shop.bo_types.js" type="text/javascript"></script>
 <script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>
 

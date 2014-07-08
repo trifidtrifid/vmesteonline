@@ -18,7 +18,7 @@
 
 <%
     HttpSession sess = request.getSession();
-    pageContext.setAttribute("auth",true);
+    boolean isAuth = true;
     try {
     AuthServiceImpl.checkIfAuthorised(sess.getId());
     UserServiceImpl userService = new UserServiceImpl(request.getSession());
@@ -30,12 +30,14 @@
     pageContext.setAttribute("firstName",ShortUserInfo.firstName);
     pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
-    //pageContext.setAttribute("auth",false);
-        response.sendRedirect("/login.jsp");
-        sess.setAttribute("successLoginURL", request.getQueryString());
-        return;
+        isAuth = false;
+        //response.sendRedirect("/login.jsp");
+        //sess.setAttribute("successLoginURL", request.getQueryString());
+        //return;
     }
+    pageContext.setAttribute("isAuth",isAuth);
 
+if(isAuth){
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
@@ -72,7 +74,7 @@
         pageContext.setAttribute("producers", producersList);
     }
 
-
+}
 
 %>
 <!DOCTYPE html>
@@ -113,7 +115,7 @@
                     Магазин </a></li>
                 <li class="user-short light-blue">
                     <c:choose>
-                        <c:when test="${auth}">
+                        <c:when test="${isAuth}">
                             <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                                 <span class="user-info">
                                     <c:out value="${firstName}" /> <c:out value="${lastName}" />
@@ -146,6 +148,7 @@
     </div><!-- /.container -->
     </div>
     <div class="main-container backoffice dynamic" id="${shopID}">
+    <c:if test="${isAuth}">
         <div class="page main-container-inner">
             <aside class="sidebar" id="sidebar">
                 <script type="text/javascript">
@@ -778,7 +781,7 @@
         </div>
         <div class="page shop-profile"></div>
         <div class="page shop-editPersonal"></div>
-
+    </c:if>
     </div>
     <div class="loading">
         <div class="loading-inside">

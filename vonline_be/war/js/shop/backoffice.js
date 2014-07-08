@@ -58,8 +58,8 @@ var deliveryFilterFlag= 0,
     searchFilterFlag = 0,
     orders;
 
-require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
-    function($,thriftModule,commonM,ordersModule) {
+require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','shop-common.min','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
+    function($,thriftModule,commonM,ordersModule,commonModule) {
         var w = $(window);
 
         function setSidebarHeight(contentH){
@@ -86,12 +86,13 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepic
         nowTime -= nowTime%86400;
         var day = 3600*24;
 
+
 if($('.container.backoffice').hasClass('noAccess')){
+
     bootbox.alert("У вас нет прав доступа !", function() {
         document.location.replace("./shop.jsp");
     });
 }else if (!$('.backoffice.dynamic').hasClass('adminka')){
-
         commonM.init();
 
         function showAllOrders(){
@@ -2616,6 +2617,7 @@ if($('.container.backoffice').hasClass('noAccess')){
         /* -------------------- ADMINKA --------------------*/
         /* -------------------------------------------------*/
 
+
         var contentH = $('body').height();
         setSidebarHeight(contentH);
 
@@ -2758,7 +2760,14 @@ if($('.container.backoffice').hasClass('noAccess')){
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
         });
-}
 
+    $('.user-short a.no-login').click(function (e) {
+        e.preventDefault();
+
+        $(this).parent().addClass('open');
+        commonModule.openModalAuth();
+
+    });
+}
 
     });
