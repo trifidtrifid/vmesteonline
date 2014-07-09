@@ -411,8 +411,9 @@ define(
                 var orderDetails = thriftModule.client.getOrderDetails(orderId);
                 var checkboxDeliveryType = $('.delivery-right .radio');
                 checkboxDeliveryType.find('input').prop('checked',false);
-                var shops = thriftModule.client.getShops();
-                var shop = thriftModule.client.getShop(shops[0].id);
+                //var shops = thriftModule.client.getShops();
+                var shopId = $('.shop.dynamic').attr('id');
+                var shop = thriftModule.client.getShop(shopId);
                 var shopAddress = shop.address;
 
                 switch (orderDetails.delivery){

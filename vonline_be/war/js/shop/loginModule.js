@@ -131,8 +131,11 @@ define(
         if ($('.shop.dynamic').length) {
             selector.closest('.modal-auth').modal('hide');
             // ставим shopID
-            var shops = thriftModule.client.getShops();
-            thriftModule.client.getShop(shops[0].id);
+            // var shops = thriftModule.client.getShops();
+            // thriftModule.client.getShop(shops[0].id);
+
+            var shopId = $('.shop').attr('id');
+            thriftModule.client.getShop(shopId);
 
             commonModule.changeShortUserInfo();
             $('.user-info').after('<i class="icon-caret-down"></i>');
@@ -144,7 +147,7 @@ define(
                 $(this).parent().removeClass('open');
             });
 
-            var shopId = $('.shop').attr('id');
+            //var shopId = $('.shop').attr('id');
             var userRole = thriftModule.client.getUserShopRole(shopId);
             if (userRole == 2 || userRole == 99) {
                 $('.bo-link').removeClass('hidden');

@@ -97,6 +97,8 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
 
 
             if (urlHash) {
+                var urlHashArr = urlHash.split('#');
+                urlHash = urlHashArr[1];
                 if (urlHash.indexOf('p=') != -1) {
                     // значит url с modal
                     var hashParts = urlHash.split('=');
@@ -114,25 +116,25 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                             }
                         });
                     }
-                } else if (urlHash == '#orders-history') {
+                } else if (urlHash == 'orders-history') {
 
                     $('.shop-trigger.go-to-orders').trigger('click');
 
-                } else if (urlHash == '#profile') {
+                } else if (urlHash == 'profile') {
 
                     $('.user-menu a:eq(0)').trigger('click');
 
-                } else if (urlHash == '#edit-profile') {
+                } else if (urlHash == 'edit-profile') {
 
                     var loadEditPersonal = true;
                     $('.user-menu a:eq(0)').trigger('click', [loadEditPersonal]);
 
-                } else if (urlHash == '#confirm-order') {
+                } else if (urlHash == 'confirm-order') {
 
                     $('.basket-bottom .btn-order').trigger('click');
 
                 }
-                if (urlHash == '#about-shop') {
+                if (urlHash == 'about-shop') {
 
                     $('footer .about-shop-link').trigger('click');
 

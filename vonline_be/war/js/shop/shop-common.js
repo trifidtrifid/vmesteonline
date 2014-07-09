@@ -616,38 +616,32 @@ define(
                 var state;
 
                 if($(this).hasClass('back-to-shop')){
-                    if($('.catalog .ace-spinner').length == 0){
-                        // если мы еще не загружали главную страницу
-                        // например при заходе из basic.jsp
 
-                        document.location.replace("./shop.jsp");
+                    $('.page').hide();
+                    $('footer').addClass('short-footer');
 
-                    }else{
+                    shopOrders.hide();
+                    $('.shop-confirm').hide();
+                    $('.main-container-inner').show();
 
-                        $('.page').hide();
-                        $('footer').addClass('short-footer');
-
-                        shopOrders.hide();
-                        $('.shop-confirm').hide();
-                        $('.main-container-inner').show();
-
-                        $('.navbar .nav li.active').removeClass('active');
-                        //$('.navbar .nav li:eq(0)').addClass('active');
-                        $(this).addClass('active');
-                        var shopProducts = $('.shop-products');
-                        if(shopProducts.find('.shop-menu .shopmenu-back').length){
-                            // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
-                            var categoryModule = require('shop-category.min');
-                            categoryModule.InitLoadCategory(0);
-                        }
-                        shopProducts.show(function(){
-                            setSidebarHeight();
-                        });
-                        state = {
-                            type : 'default'
-                        };
-                        window.history.pushState(state,null,'shop.jsp');
+                    $('.navbar .nav li.active').removeClass('active');
+                    //$('.navbar .nav li:eq(0)').addClass('active');
+                    $(this).addClass('active');
+                    var shopProducts = $('.shop-products');
+                    if(shopProducts.find('.shop-menu .shopmenu-back').length){
+                        // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
+                        var categoryModule = require('shop-category.min');
+                        categoryModule.InitLoadCategory(0);
                     }
+                    shopProducts.show(function(){
+                        setSidebarHeight();
+                    });
+                    state = {
+                        type : 'default'
+                    };
+
+                    window.history.pushState(state,null," ");
+
                 }else if($(this).hasClass('go-to-orders')){
                         /* history */
                     var urlHash = document.location.hash;
@@ -656,7 +650,7 @@ define(
                             type : 'page',
                             pageName: 'orders-history'
                         };
-                        window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+                        window.history.pushState(state,null,urlHash+'#'+state.pageName);
                     }
                     /**/
                     var ordersModule = require('shop-orders.min');
