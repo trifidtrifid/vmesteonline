@@ -93,6 +93,47 @@ if($('.container.backoffice').hasClass('noAccess')){
         document.location.replace("/");
     });
 }else if (!$('.backoffice.dynamic').hasClass('adminka')){
+    /* history */
+    var urlHash = document.location.hash;
+
+    var state = {
+        type: 'default'
+    };
+
+    window.history.replaceState(state,null,urlHash);
+
+    window.addEventListener('popstate', makeHistoryNav, false);
+
+    function makeHistoryNav(e) {
+        // действия для корректной навигации по истории
+        var isHistoryNav = true;
+        if (e.state) {
+             if (e.state.type == 'page') {
+
+                if (e.state.pageName == 'orders-history') {
+
+                    $('.shop-trigger.go-to-orders').trigger('click', [isHistoryNav]);
+
+                } else if (e.state.pageName == 'profile') {
+
+                    $('.user-menu a:eq(0)').trigger('click');
+
+                } else if (e.state.pageName == 'edit-profile') {
+
+                    var loadEditPersonal = true;
+                    $('.user-menu a:eq(0)').trigger('click', [loadEditPersonal]);
+
+                }
+            } else if (e.state.type == 'default') {
+
+                //$('.shop-trigger.back-to-shop').trigger('click', [isHistoryNav]);
+                 $('.page').hide();
+                 $('.bo-page').show();
+                 $('.navbar-header li.active').removeClass('active');
+                 $('.bo-link').parent().addClass('active');
+            }
+        }
+    }
 
         $('.bo-link').parent().addClass('active');
 

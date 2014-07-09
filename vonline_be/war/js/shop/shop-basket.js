@@ -401,7 +401,9 @@ define(
                         type : 'page',
                         pageName: 'confirm-order'
                     };
-                    window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+                    var tempHash;
+                    (urlHash.indexOf('#') == -1) ? tempHash = urlHash : tempHash = "";
+                    window.history.pushState(state,null,tempHash+'#'+state.pageName);
                 }
                 /* --- */
                 var myDate;

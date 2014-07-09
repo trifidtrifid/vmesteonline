@@ -29,11 +29,13 @@ define(
         });
 
         $('.nav-list a,.navbar .nav a:not(".dropdown-toggle")').click(function(e){
+
             var isBackoffise = $(this).closest('.backoffice').length;
             if(!isBackoffise && !$(this).hasClass('bo-link')
                 && !$(this).hasClass('no-prevent')) e.preventDefault();
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
+
         });
         /* --- */
         /* переключения на настройки, профиль и выход */
@@ -41,12 +43,13 @@ define(
         function SetJSForEditPersonal(){
             /* history*/
             var urlHash = document.location.hash;
+
             if (urlHash != '#edit-profile'){
                 var state = {
                     type : 'page',
                     pageName: 'edit-profile'
                 };
-                window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+                window.history.pushState(state,null,'#'+state.pageName);
             }
             /**/
 
@@ -122,7 +125,6 @@ define(
             });
 
             if (isEditPersonal){
-
                 $('.edit-personal-link').trigger('click');
 
             }else{
@@ -134,7 +136,10 @@ define(
                     type : 'page',
                     pageName: 'profile'
                 };
-                window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+
+                var tempHash;
+                (urlHash.indexOf('#') == -1) ? tempHash = urlHash : tempHash = "";
+                window.history.pushState(state,null,tempHash+'#'+state.pageName);
             }
             /**/
 

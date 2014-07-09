@@ -164,6 +164,8 @@ define(
                                 categoriesHash = categoriesHash.join(';');
                                 LoadCategoryByURLHash(categoriesHash);
 
+                                if(categoriesHash.length == 0) categoriesHash = " ";
+
                             } else {
                                 if(!urlHash){
                                     categoriesHash = '#cat='+categoryid;
@@ -178,7 +180,7 @@ define(
                                 type : 'category',
                                 categoriesHash: categoriesHash
                             };
-                            window.history.pushState(state,null,'shop.jsp'+categoriesHash);
+                            window.history.pushState(state,null,categoriesHash);
 
                         });
 				} catch (e) {

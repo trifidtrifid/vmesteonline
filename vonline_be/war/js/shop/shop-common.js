@@ -389,14 +389,15 @@ define(
                             }
                         }
                     }
-                    var beginHash = "p";
+                    var beginHash = "p",
+                        urlHash = document.location.hash;
 
                     if (!isHistoryNav && isCatalog){
                         var state = {
                             type : 'modal',
                             productid : productId
                         };
-                        window.history.pushState(state,null,'shop.jsp#'+ beginHash +'='+productId);
+                        window.history.pushState(state,null,urlHash+'#'+ beginHash +'='+productId);
                     }
                     currentModal.modal();
                     if(isBasket && !isConfirm){
@@ -605,14 +606,13 @@ define(
             }
         }
 
-
         $('.shop-trigger').click(function(e,isHistoryNav) {
-            if (!$('.backoffice').length) {
+            if (!$('.backoffice').length || $(this).hasClass('go-to-orders')) {
                 e.preventDefault();
             }
             //try{
                 var shopOrders = $('.shop-orders');
-                var ordersList = $('.orders-list');
+                var ordersList = $('.shop-orders .orders-list');
                 var state;
 
                 if($(this).hasClass('back-to-shop')){
@@ -644,14 +644,6 @@ define(
 
                 }else if($(this).hasClass('go-to-orders')){
                         /* history */
-                    var urlHash = document.location.hash;
-                    if (urlHash != '#orders-history'){
-                        state = {
-                            type : 'page',
-                            pageName: 'orders-history'
-                        };
-                        window.history.pushState(state,null,urlHash+'#'+state.pageName);
-                    }
                     /**/
                     var ordersModule = require('shop-orders.min');
                     if (!globalUserAuth){
@@ -659,6 +651,17 @@ define(
                         basketModule.callbacks.add(ordersModule.GoToOrdersTrigger);
                         openModalAuth();
                     }else{
+                        var urlHash = document.location.hash;
+                        if (urlHash != '#orders-history'){
+                            state = {
+                                type : 'page',
+                                pageName: 'orders-history'
+                            };
+                            var tempHash;
+                            (urlHash.indexOf('#') == -1) ? tempHash = urlHash : tempHash = "";
+                            window.history.pushState(state,null,tempHash+'#'+state.pageName);
+                        }
+
                         $('.page').hide();
                         $('footer').addClass('short-footer');
 
