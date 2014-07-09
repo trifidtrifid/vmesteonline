@@ -58,8 +58,8 @@ var deliveryFilterFlag= 0,
     searchFilterFlag = 0,
     orders;
 
-require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
-    function($,thriftModule,commonM,ordersModule) {
+require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','shop-common.min','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
+    function($,thriftModule,commonM,ordersModule,commonModule) {
         var w = $(window);
 
         function setSidebarHeight(contentH){
@@ -86,12 +86,13 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','datepic
         nowTime -= nowTime%86400;
         var day = 3600*24;
 
+
 if($('.container.backoffice').hasClass('noAccess')){
+
     bootbox.alert("У вас нет прав доступа !", function() {
         document.location.replace("./shop.jsp");
     });
 }else if (!$('.backoffice.dynamic').hasClass('adminka')){
-
         commonM.init();
 
         function showAllOrders(){
@@ -1357,6 +1358,14 @@ if($('.container.backoffice').hasClass('noAccess')){
         var shopid = $('.backoffice.dynamic').attr('id');
         var myShop = thriftModule.client.getShop(shopid);
 
+        /* настройки ссылок  */
+
+        var shopPages = thriftModule.clientBO.getShopPages();
+
+        if (shopPages.aboutPageContentURL) $('#settings-about-link').val(shopPages.aboutPageContentURL);
+        if (shopPages.conditionsPageContentURL) $('#settings-terms-link').val(shopPages.conditionsPageContentURL);
+        if (shopPages.deliveryPageContentURL) $('#settings-delivery-link').val(shopPages.deliveryPageContentURL);
+
         /* настройки даты */
         var datesArray = thriftModule.clientBO.getDates();
         var datesArrayLength = datesArray.length,
@@ -1667,6 +1676,9 @@ if($('.container.backoffice').hasClass('noAccess')){
             $(this).closest('.settings-delivery-container').addClass('changed');
         });
 
+        /*
+        * Сохранение
+        * */
 
     $('.settings-item .btn-save').click(function(e){
         e.preventDefault();
@@ -1686,6 +1698,13 @@ if($('.container.backoffice').hasClass('noAccess')){
                     newShopInfo.logoURL = $('.logo-container>img').attr('src');
 
                 thriftModule.clientBO.updateShop(newShopInfo);
+                break;
+            case "settings-links":
+                var pagesInfo = new com.vmesteonline.be.shop.ShopPages();
+                pagesInfo.aboutPageContentURL = $('#settings-about-link').val();
+                pagesInfo.conditionsPageContentURL = $('#settings-terms-link').val();
+                pagesInfo.deliveryPageContentURL = $('#settings-delivery-link').val();
+                thriftModule.clientBO.setShopPages(pagesInfo);
                 break;
             case "settings-shedule":
                 var dates = new com.vmesteonline.be.shop.OrderDates();
@@ -2616,6 +2635,7 @@ if($('.container.backoffice').hasClass('noAccess')){
         /* -------------------- ADMINKA --------------------*/
         /* -------------------------------------------------*/
 
+
         var contentH = $('body').height();
         setSidebarHeight(contentH);
 
@@ -2626,9 +2646,24 @@ if($('.container.backoffice').hasClass('noAccess')){
 
             var userContacts = getUserContacts(shop.ownerId);
 
-            $('.owner-name span').text(userInfo.firstName+" "+userInfo.lastName); //
-            $('.owner-contacts').html(userContacts);
+            $(this).find('.owner-name span').text(userInfo.firstName+" "+userInfo.lastName); //
+            $(this).find('.owner-contacts').html(userContacts);
 
+            if(thriftModule.client.isActivated(shopId)){
+                $(this).find('.shop-activation input').attr('checked','checked');
+            };
+
+        });
+
+        $('.shop-activation .checkbox .lbl').click(function(){
+           var shopId = $(this).closest('tr').attr('id'),
+               flag = true;
+            if ($(this).parent().find('input.ace').prop('checked')){
+                flag = false;
+            }
+            //console.log("flag "+$(this).parent().find('input.ace').prop('checked'));
+
+            thriftModule.clientBO.activate(shopId,flag);
         });
 
         function getUserContacts(userId,withoutBr){
@@ -2676,58 +2711,7 @@ if($('.container.backoffice').hasClass('noAccess')){
             selector.closest('tr').find('.owner-contacts').html(getUserContacts(newOwnerInfo.id));
         }
 
-       /* $('.update-admins-link').click(function(e){
-            e.preventDefault();
-
-            var updateHtml = "<div class='update-admins-line'>" +
-                "<input type='text' class='admin-email' placeholder='email нового админа'>" +
-                "<a href='#' class='btn btn-sm no-border btn-primary btn-update'>Добавить</a>"+
-                "</div>";
-            var td = $(this).closest('td');
-            if (td.find('.update-admins-line').length == 0){
-                td.append(updateHtml);
-            }
-            td.find('.update-admins-line').slideToggle();
-
-            td.find('.btn-update').one('click',function(){
-                e.preventDefault();
-
-                var shopId = $(this).closest('tr').attr('id');
-                var adminEmail = $(this).closest('td').find('.admin-email').val();
-
-                var newAdminInfo = thriftModule.clientBO.setUserShopRole(shopId ,adminEmail,2);
-                td.find('.update-admins-line').slideToggle();
-
-                updateAdminHtml(td,newAdminInfo,adminEmail);
-            });
-        });
-
-        function updateAdminHtml(selector,newAdminInfo,adminEmail){
-
-            var adminHtml = "<span class='admin-item new'><a href='#' class='remove-admin-item'>&times;</a>"+
-                newAdminInfo.firstName+" "+newAdminInfo.lastName+
-            "</span>";
-
-            selector.prepend(adminHtml);
-            var withoutBr = true;
-            selector.find('.admin-item.new').append(" ("+getUserContacts(newAdminInfo.id,withoutBr)+")");
-
-            selector.find('.admin-item.new .remove-admin-item').click(function(e){
-                e.preventDefault();
-                var shopId = selector.closest('tr').attr('id');
-
-                thriftModule.clientBO.setUserShopRole(shopId ,adminEmail,1);
-                $(this).parent().fadeOut(function(){
-                    $(this).detach();
-                });
-
-            });
-
-            selector.find('.admin-item.new').removeClass('new');
-
-        }*/
-
-    $('.adminka-statistics-period .dropdown-menu a').click(function(e){
+    /*$('.adminka-statistics-period .dropdown-menu a').click(function(e){
         e.preventDefault();
 
         var newText = $(this).text(),
@@ -2742,6 +2726,21 @@ if($('.container.backoffice').hasClass('noAccess')){
                 reloadShopTotal(0,nowTime);
                 break;
         }
+    });*/
+
+    $('.adminka-statistics-date .btn').click(function(e){
+        e.preventDefault();
+
+        var dateFrom, dateTo;
+
+        dateFrom = Date.parse(datepickerFrom.val())/1000;
+        dateTo = Date.parse(datepickerTo.val())/1000;
+
+        dateFrom -= dateFrom%86400;
+        dateTo -= dateTo%86400;
+
+        reloadShopTotal(dateFrom,dateTo);
+
     });
 
     function reloadShopTotal(dateFrom,dateTo){
@@ -2755,6 +2754,9 @@ if($('.container.backoffice').hasClass('noAccess')){
         });
     };
 
+    var datepickerFrom = $('#datepicker-from');
+    var datepickerTo = $('#datepicker-to');
+
         $('.adminka .nav-list a').click(function(e){
             e.preventDefault();
             $('.back-tab').hide();
@@ -2765,12 +2767,40 @@ if($('.container.backoffice').hasClass('noAccess')){
                     break;
                 case 1:
                     $('.adminka-statistics').show();
+
+                    datepickerFrom.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
+                        $(this).prev().focus();
+                    });
+                    datepickerTo.datepicker({autoclose:true, language:'ru'}).next().on(ace.click_event, function(){
+                        $(this).prev().focus();
+                    });
+
+                    var lastMonth = nowTime-30*day;
+                    var tempDate = new Date(lastMonth*1000);
+
+                    var lastMonthDay = tempDate.getDate();
+                    lastMonthDay = (lastMonthDay < 10)? "0" + lastMonthDay: lastMonthDay;
+
+                    var lastMonthMonth = tempDate.getMonth()+1;
+                    lastMonthMonth = (lastMonthMonth < 10)? "0" + lastMonthMonth: lastMonthMonth;
+
+                    var lastMonthYear= tempDate.getFullYear();
+
+                    datepickerTo.datepicker('setValue', nowTime);
+                    datepickerFrom.val(lastMonthMonth+"-"+lastMonthDay+"-"+lastMonthYear);
                     break;
             }
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
         });
-}
 
+    $('.user-short a.no-login').click(function (e) {
+        e.preventDefault();
+
+        $(this).parent().addClass('open');
+        commonModule.openModalAuth();
+
+    });
+}
 
     });

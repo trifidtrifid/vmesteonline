@@ -17,8 +17,11 @@
 <%@ page import="com.vmesteonline.be.shop.bo.*"%>
 
 <%
+    HttpServletRequest httpReq = (HttpServletRequest)request;
+    String url = httpReq.getPathInfo();
+
     HttpSession sess = request.getSession();
-    pageContext.setAttribute("auth",true);
+    boolean isAuth = true;
     try {
     AuthServiceImpl.checkIfAuthorised(sess.getId());
     UserServiceImpl userService = new UserServiceImpl(request.getSession());
@@ -30,17 +33,38 @@
     pageContext.setAttribute("firstName",ShortUserInfo.firstName);
     pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
-    //pageContext.setAttribute("auth",false);
-        response.sendRedirect("/login.jsp");
-        sess.setAttribute("successLoginURL", request.getQueryString());
-        return;
+        isAuth = false;
+        //response.sendRedirect("/login.jsp");
+        //sess.setAttribute("successLoginURL", request.getQueryString());
+        //return;
     }
+    pageContext.setAttribute("isAuth",isAuth);
 
+if(isAuth){
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
     if(ArrayShops != null && ArrayShops.size() > 0){
-        Shop shop = shopService.getShop(ArrayShops.get(0).id);
+        Shop shop;
+        if(ArrayShops.size() > 1 && url.length() >= 17){
+            char buf[] = new char[16];
+            url.getChars(1, 17, buf, 0);
+            String shopIdStr = "";
+            // 15 - кол-во символов в id магазина
+            for (int i = 0; i <= 15; i++) {
+                shopIdStr = shopIdStr+buf[i];
+            }
+
+            Long shopId = new Long(shopIdStr);
+
+            shop = shopService.getShop(shopId);
+            //out.print("1");
+        }else{
+            //out.print("2");
+            shop = shopService.getShop(ArrayShops.get(0).id);
+        }
+
+        //Shop shop = shopService.getShop(ArrayShops.get(0).id);
         UserShopRole userRole = shopService.getUserShopRole(shop.id);
 
         List<ProductCategory> categoriesList = shopService.getAllCategories(shop.id);
@@ -72,7 +96,7 @@
         pageContext.setAttribute("producers", producersList);
     }
 
-
+}
 
 %>
 <!DOCTYPE html>
@@ -109,11 +133,11 @@
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
 
-                <li class="active"><a class="btn btn-info no-border" href="shop.jsp">
+                <li class="active"><a class="btn btn-info no-border" href="/shop/${shopID}">
                     Магазин </a></li>
                 <li class="user-short light-blue">
                     <c:choose>
-                        <c:when test="${auth}">
+                        <c:when test="${isAuth}">
                             <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                                 <span class="user-info">
                                     <c:out value="${firstName}" /> <c:out value="${lastName}" />
@@ -146,6 +170,7 @@
     </div><!-- /.container -->
     </div>
     <div class="main-container backoffice dynamic" id="${shopID}">
+    <c:if test="${isAuth}">
         <div class="page main-container-inner">
             <aside class="sidebar" id="sidebar">
                 <script type="text/javascript">
@@ -491,6 +516,31 @@
                         <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
                     </div>
 
+                    <div id="settings-links" class="settings-item">
+                        <h2>Ссылки</h2>
+
+                        <div class="settings-links-item">
+                            <label for="settings-about-link">
+                                О магазине
+                            </label>
+                            <input id="settings-about-link" type="text"/>
+                        </div>
+                        <div class="settings-links-item">
+                            <label for="settings-terms-link">
+                                Условия
+                            </label>
+                            <input id="settings-terms-link" type="text"/>
+                        </div>
+                        <div class="settings-links-item">
+                            <label for="settings-delivery-link">
+                                Доставка
+                            </label>
+                            <input id="settings-delivery-link" type="text"/>
+                        </div>
+
+                        <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
+                    </div>
+
                     <div id="settings-shedule" class="settings-item">
                         <h2>Расписание завоза</h2>
                         <%--<div id="date-picker-6" class="shedule-dates"></div>--%>
@@ -778,7 +828,7 @@
         </div>
         <div class="page shop-profile"></div>
         <div class="page shop-editPersonal"></div>
-
+    </c:if>
     </div>
     <div class="loading">
         <div class="loading-inside">

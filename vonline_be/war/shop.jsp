@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
+<%@ page import="com.vmesteonline.be.ShopBOServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
@@ -88,6 +89,13 @@
     List<Producer> producersList = shopService.getProducers();
     pageContext.setAttribute("producersList", producersList);
 
+    /* shopPages Links */
+
+    ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
+
+    ShopPages shopPages = shopBOService.getShopPages();
+    pageContext.setAttribute("shopPages", shopPages);
+
 %>
 
 <!DOCTYPE html>
@@ -131,9 +139,16 @@
 					<a href="/shop/<c:out value="${shopID}"/>" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
-                    <a href="/about/${shopID}" class="about-shop-link header-link">О магазине</a>
-                    <a href="#" class="terms-of-orders header-link">Условия</a>
-                    <a href="#" class="terms-of-delivery header-link">Доставка</a>
+                    <c:if test="${shopPages.aboutPageContentURL != null && shopPages.aboutPageContentURL != ''}">
+                        <a href="/${shopPages.aboutPageContentURL}" class="about-shop-link header-link">О магазине</a>
+                    </c:if>
+                    <c:if test="${shopPages.conditionsPageContentURL != null && shopPages.conditionsPageContentURL != ''}">
+                        <a href="/${shopPages.conditionsPageContentURL}" class="terms-of-orders header-link">Условия</a>
+                    </c:if>
+                    <c:if test="${shopPages.deliveryPageContentURL != null && shopPages.deliveryPageContentURL != ''}">
+                        <a href="/${shopPages.deliveryPageContentURL}" class="terms-of-delivery header-link">Доставка</a>
+                    </c:if>
+
 					<!-- /.brand -->
 				</div>
 				<!-- /.navbar-header -->
@@ -153,8 +168,8 @@
                         <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}">
                         hidden
                         </c:if>
-                        " href="/backoffice.jsp">
-                            Админка</a></li>
+                        " href="/backoffice/${shopID}">
+                            Бэкоффис</a></li>
 
 						<li class="user-short light-blue">
                             <c:choose>

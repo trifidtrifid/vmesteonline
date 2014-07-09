@@ -32,16 +32,16 @@
 								<div id="login-box" class="login-box visible widget-box no-border">
 									<div class="widget-body">
 										<div class="widget-main">
-											<h4 class="header blue lighter bigger">
+											<%--<h4 class="header blue lighter bigger">
 												<i class="icon-coffee green"></i>
 												Вход
-											</h4>
+											</h4>--%>
 
 											<div class="space-6"></div>
 
 											<form>
 												<fieldset>
-                                                    <a class="btn btn-sm no-border btn-primary" href="#">Войти через Вконтакте</a>
+                                                    <a class="btn btn-sm no-border btn-primary width-100" href="#">Войти через Вконтакте</a>
                                                     <div class="or align-center">или</div>
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">

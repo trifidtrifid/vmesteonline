@@ -94,6 +94,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <url-pattern>/shop/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>backoffice</servlet-name>
+        <jsp-file>backoffice.jsp</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>backoffice</servlet-name>
+        <url-pattern>/backoffice/*</url-pattern>
+    </servlet-mapping>
+
 	
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>

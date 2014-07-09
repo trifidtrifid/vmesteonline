@@ -37,6 +37,17 @@ require.config({
 require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
     function($,modules,commonM,loginModule) {
 
+        $('.user-short a.dropdown-toggle').click(function (e) {
+            e.preventDefault();
+            //alert('1');
+
+            if ($(this).hasClass('no-login')) {
+                modules.shopCommonModule.openModalAuth();
+            } else {
+                $(this).closest('.navbar').toggleClass('over-rightbar');
+            }
+        });
+
         if($('.shop-landing').length){
 
             $('.landing-login').click(function (e) {
@@ -249,18 +260,6 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
 
                 window.addEventListener('orientationchange', planshetRotate, false);
                 window.onorientationchange = planshetRotate;
-
-
-                $('.user-short a.dropdown-toggle').click(function (e) {
-                    e.preventDefault();
-                    //alert('1');
-
-                    if ($(this).hasClass('no-login')) {
-                        modules.shopCommonModule.openModalAuth();
-                    } else {
-                        $(this).closest('.navbar').toggleClass('over-rightbar');
-                    }
-                });
 
 
                 $('.dropdown-menu li a').click(function (e) {

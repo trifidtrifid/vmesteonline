@@ -60,7 +60,12 @@ define(
                     AuthRealTime(selector);
                 }else{
                     //document.location.replace("./shop.jsp");
-                    document.location.replace("./main.jsp");
+                    if($('.adminka').length){
+                        document.location.replace("./adminka.jsp");
+                    }else if($('.backoffice').length){
+                        document.location.replace("./backoffice.jsp");
+                    }
+
                 }
             } else {
                 result.val(session.error);
@@ -123,7 +128,7 @@ define(
 
         globalUserAuth = true;
 
-        if ($('.shop-landing').length == 0) {
+        if ($('.shop.dynamic').length) {
             selector.closest('.modal-auth').modal('hide');
             // ставим shopID
             var shops = thriftModule.client.getShops();
@@ -150,9 +155,12 @@ define(
             var basketModule = require('shop-basket.min');
             basketModule.callbacks.fire(basketModule.selectorForCallbacks);
             basketModule.callbacks.empty();
-        }else{
-            //commonModule.doExit();
+        }else if(($('.shop-landing').length) ){
             document.location.replace("/");
+        } else if(($('.adminka').length)){
+            document.location.replace("/adminka.jsp");
+        } else if(($('.backoffice.dynamic').not('.adminka').length)){
+            document.location.replace("/backoffice.jsp");
         }
     }
 

@@ -1828,6 +1828,15 @@ height 50px
 .bo-settings .add-delivery-interval:hover {
   text-decoration: none;
 }
+.bo-settings #settings-links .settings-links-item {
+  margin-bottom: 5px;
+}
+.bo-settings #settings-links .settings-links-item label {
+  width: 100px;
+}
+.bo-settings #settings-links .settings-links-item input {
+  width: 200px;
+}
 .bo-settings #settings-delivery .delivery-price-type {
   padding-left: 30px;
 }
@@ -2157,10 +2166,13 @@ height 50px
   border: 1px solid #ccc;
   padding: 10px;
   line-height: 16px;
-  width: 24%;
+  width: 27%;
 }
 .adminka table td.td-icon {
   width: 4%;
+}
+.adminka table td.shop-activation {
+  width: 17%;
 }
 .adminka table .td-icon {
   text-align: center;
@@ -2221,6 +2233,19 @@ height 50px
 }
 .adminka-statistics {
   display: none;
+}
+.adminka-statistics .date-picker {
+  width: 100px;
+  display: inline-block;
+}
+.adminka-statistics .adminka-statistics-date {
+  display: inline-block;
+}
+.adminka-statistics .adminka-statistics-date label {
+  margin: 0 10px;
+}
+.adminka-statistics .adminka-statistics-date .btn {
+  margin-left: 20px;
 }
 .full-text {
   display: none;
