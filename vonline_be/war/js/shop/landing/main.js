@@ -30,11 +30,8 @@ $(document).ready(function(){
     var protocol = new Thrift.Protocol(transport);
     var client = new com.vmesteonline.be.shop.ShopFEServiceClient(protocol);*/
 
-    $('.shops-queue ul li').each(function(){
-        var shopId = $(this).attr('id');
-    });
 
-    $('.vote-btn').click(function(e){
+    /*$('.vote-btn').click(function(e){
         e.preventDefault();
 
         if(!globalUserAuth){
@@ -50,7 +47,7 @@ $(document).ready(function(){
             client.vote(shopId,'1');
 
         }
-    });
+    });*/
 
 
 });

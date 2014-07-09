@@ -81,19 +81,20 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','shop-co
             }
         }
 
-
         var nowTime = parseInt(new Date().getTime()/1000);
         nowTime -= nowTime%86400;
         var day = 3600*24;
 
+        commonM.init();
 
 if($('.container.backoffice').hasClass('noAccess')){
 
     bootbox.alert("У вас нет прав доступа !", function() {
-        document.location.replace("./shop.jsp");
+        document.location.replace("/");
     });
 }else if (!$('.backoffice.dynamic').hasClass('adminka')){
-        commonM.init();
+
+        $('.bo-link').parent().addClass('active');
 
         function showAllOrders(){
             try{

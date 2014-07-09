@@ -1,3 +1,33 @@
+.edit-personal {
+  padding: 0 10px;
+}
+.edit-personal h3 {
+  margin-top: 0;
+  padding-top: 10px;
+}
+.edit-personal label {
+  display: inline-block;
+  width: 160px;
+}
+.edit-personal .form-control {
+  display: inline-block;
+  width: 233px;
+  margin: 0 0 10px 0;
+}
+.edit-personal .subs-group {
+  display: inline-block;
+  border-left: 1px solid #2b7dbc;
+  padding-left: 15px;
+}
+.edit-personal .checkbox label {
+  width: auto;
+}
+.edit-personal input[type="text"],
+.edit-personal input[type="email"],
+.edit-personal textarea {
+  margin-bottom: 10px;
+  width: 233px;
+}
 .user-descr {
   padding: 0 0 0 10px;
   font-size: 14px;
@@ -25,9 +55,6 @@
 .user-descr .soc-accounts .fa {
   font-size: 34px;
   margin: 10px 5px 0 5px;
-}
-.user-descr .text-area {
-  margin: 0 200px 0 215px;
 }
 .user-descr .text-area .user-head h1 {
   display: inline-block;

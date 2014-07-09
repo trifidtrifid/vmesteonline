@@ -19,6 +19,7 @@
     Shop[] noActiveShops = new Shop[ArrayShopsLength];
     int activeShopsCounter = 0;
     int noActiveShopsCounter = 0;
+
     for (int i = 0; i < ArrayShopsLength; i++) {
         if(shopService.isActivated(ArrayShops.get(i).id)){
             activeShops[activeShopsCounter] = ArrayShops.get(i);
@@ -124,7 +125,7 @@ padding:20px;
         <div class="wrapper clearfix">
 
             <div id="banner">
-                <div id="logo"><a href="index.jsp">Во!Маркет</a></div>
+                <div id="logo"><a href="/">Во!Маркет</a></div>
             </div>
 
             <nav id="topnav" role="navigation">
@@ -173,10 +174,8 @@ padding:20px;
   
     </header>
  
- 
-<!-- hero area (the grey one with a slider -->
-    <section id="hero" class="clearfix">    
-    <!-- responsive FlexSlider image slideshow -->
+    <div class="page landing-page">
+    <section id="hero" class="clearfix">
     <div class="wrapper">
         <div class="grid_5 alpha">
                 <h1>Самые удобные магазины на планете</h1>
@@ -208,90 +207,52 @@ padding:20px;
                   </div>
                 </div><!-- FlexSlider -->
         </div>
-    </section><!-- end hero area -->
+    </section>
 
-<!-- main content area -->   
-<div id="main" class="wrapper">
-    
-    
-<!-- content area -->    
-	<section id="content" class="wide-content">
-    	<div class="grid_4">
-        	<h1 class="first-header">Качество!</h1>
-            <img src="i/landing/quality.jpg" />
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
-        </div>
-        
-        <div class="grid_4">
-        	<h1 class="first-header">Свежесть!</h1>
-            <img src="i/landing/fresh.jpg" />
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
-        </div>
-        
-        <div class="grid_4">
-        	<h1 class="first-header">Удобство !</h1>
-            <img src="i/landing/usability.png" />
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
-        </div>
+    <div id="main" class="wrapper">
 
-	</section><!-- #end content area -->   
-      
-      
-    <!-- columns demo, delete it!-->
-    <section id="columnsdemo" style="margin-bottom:60px; width:100%" class="clearfix">
-        <div class="clearfix"></div>
-        <h2 class="for-auth-user">Спасибо, что выбираете нас !</h2>
 
-        <div class="grid_6 shops for-auth-user">
-            <div>Для совершения покупок, выберете магазин из списка:</div>
-        </div>
-        <div class="grid_6 shops for-auth-user">
-            <div>Какой следующий магазин должен быть подключен?</div>
-        </div>
-        
-        <div class="grid_6 shops">
+    <!-- content area -->
+        <section id="content" class="wide-content">
+            <div class="grid_4">
+                <h1 class="first-header">Качество!</h1>
+                <img src="i/landing/quality.jpg" />
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+            </div>
 
-            <div class="shops-block-title">Подключенные магазины</div>
-            <ul>
-                <c:forEach var="shop" items="${activeShops}">
-                    <c:if test="${shop.id != null}">
-                    <li>
-                        <a href="shop/${shop.id}">
-                            <img src="${shop.logoURL}" alt="логотип"/>
-                        <span class="landing-shop-right">
-                            <h3>${shop.name}</h3>
-                            <p>${shop.descr}</p>
-                        </span>
-                        </a>
-                    </li>
-                    </c:if>
-                </c:forEach>
+            <div class="grid_4">
+                <h1 class="first-header">Свежесть!</h1>
+                <img src="i/landing/fresh.jpg" />
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+            </div>
 
-                <%--<li>
-                    <a href="#">
-                        <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
-                        <span class="shop-right">
-                            <h3>ВоМолоко</h3>
-                            <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
-                        </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
-                        <span class="shop-right">
-                            <h3>ВоМолоко</h3>
-                            <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
-                        </span>
-                    </a>
-                </li>--%>
-            </ul>
-        </div>
-        <div class="grid_6 shops shops-queue">
-            <div class="shops-block-title">В очереди</div>
-            <ul>
-                <c:forEach var="shop" items="${noActiveShops}">
-                    <c:if test="${shop.id != null}">
+            <div class="grid_4">
+                <h1 class="first-header">Удобство !</h1>
+                <img src="i/landing/usability.jpg" />
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+            </div>
+
+        </section><!-- #end content area -->
+
+
+        <!-- columns demo, delete it!-->
+        <section id="columnsdemo" style="margin-bottom:60px; width:100%" class="clearfix">
+            <div class="clearfix"></div>
+            <h2 class="for-auth-user">Спасибо, что выбираете нас !</h2>
+
+            <div class="grid_6 shops for-auth-user no-left-margin">
+                <div>Для совершения покупок, выберете магазин из списка:</div>
+            </div>
+            <div class="grid_6 shops for-auth-user bigger-left-margin">
+                <div>Какой следующий магазин должен быть подключен?</div>
+            </div>
+
+            <div class="grid_6 shops active-shops no-left-margin">
+
+                <div class="shops-block-title">Подключенные магазины</div>
+                <ul>
+                    <c:forEach var="shop" items="${activeShops}">
+                        <c:if test="${shop.id != null}">
                         <li>
                             <a href="shop/${shop.id}">
                                 <img src="${shop.logoURL}" alt="логотип"/>
@@ -301,34 +262,79 @@ padding:20px;
                             </span>
                             </a>
                             <div>
-                                <span class="voice-counter">35</span>
-                                <a class="buttonlink vote-btn" href="#">Голосовать</a>
+                                <span class="voice-counter"></span>
+                                <a class="buttonlink" href="shop/${shop.id}">Перейти в магазин</a>
                             </div>
                         </li>
-                    </c:if>
-                </c:forEach>
-                <%--<li>
-                    <a href="#">
-                        <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
-                        <span class="landing-shop-right">
-                            <h3>ВоМолоко</h3>
-                            <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
-                        </span>
-                    </a>
-                    <div>
-                        <span class="voice-counter">35</span>
-                        <a class="buttonlink vote-btn" href="#">Голосовать</a>
-                    </div>
-                </li>--%>
-            </ul>
-        </div>
-    </section>
-    <!-- end columns demo -->  
-    
-      
-  </div><!-- #end div #main .wrapper -->
+                        </c:if>
+                    </c:forEach>
 
-<!-- footer area -->    
+                    <%--<li>
+                        <a href="#">
+                            <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
+                            <span class="shop-right">
+                                <h3>ВоМолоко</h3>
+                                <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
+                            <span class="shop-right">
+                                <h3>ВоМолоко</h3>
+                                <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
+                            </span>
+                        </a>
+                    </li>--%>
+                </ul>
+            </div>
+            <div class="grid_6 shops no-active-shops bigger-left-margin">
+                <div class="shops-block-title">В очереди</div>
+                <ul>
+                    <c:forEach var="shop" items="${noActiveShops}">
+                        <c:if test="${shop.id != null}">
+                            <li id="${shop.id}">
+                                <a href="shop/${shop.id}">
+                                    <img src="${shop.logoURL}" alt="логотип"/>
+                                <span class="landing-shop-right">
+                                    <h3>${shop.name}</h3>
+                                    <p>${shop.descr}</p>
+                                </span>
+                                </a>
+                                <div>
+                                    <span class="voice-counter"></span>
+                                    <a class="buttonlink vote-btn" href="#">Голосовать</a>
+                                    <span class="error-info"></span>
+                                </div>
+                            </li>
+                        </c:if>
+                    </c:forEach>
+                    <%--<li>
+                        <a href="#">
+                            <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
+                            <span class="landing-shop-right">
+                                <h3>ВоМолоко</h3>
+                                <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
+                            </span>
+                        </a>
+                        <div>
+                            <span class="voice-counter">35</span>
+                            <a class="buttonlink vote-btn" href="#">Голосовать</a>
+                        </div>
+                    </li>--%>
+                </ul>
+            </div>
+        </section>
+        <!-- end columns demo -->
+
+
+      </div>
+ </div>
+
+    <div class="page shop-profile wrapper"></div>
+    <div class="page shop-editPersonal wrapper"></div>
+
 <footer>
 	<div id="colophon" class="wrapper clearfix">
     	(c) Во!Маркет Санкт-Петербург, 2014
@@ -336,7 +342,7 @@ padding:20px;
     </div>
 
     
-</footer><!-- #end footer area -->
+</footer>
 
 
 

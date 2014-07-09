@@ -37,6 +37,10 @@ require.config({
 require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
     function($,modules,commonM,loginModule) {
 
+        var backToShop = $('.back-to-shop');
+        backToShop.removeClass('no-prevent');
+        backToShop.parent().addClass('active');
+
         $('.user-short a.dropdown-toggle').click(function (e) {
             e.preventDefault();
             //alert('1');
@@ -60,6 +64,10 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
 
                 commonM.logout();
             });
+
+            modules.shopCommonModule.initLanding();
+
+            commonM.init();
 
         }else {
 

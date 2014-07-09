@@ -19,6 +19,8 @@ BASE (MOBILE) SIZE
 @import '../lib/ace-fonts.css';
 @import '../lib/ace.css';
 @import "../login.css";
+@import "../profile.css";
+@import "../editPersonal.css";
 
 /* popup логина */
 
@@ -209,6 +211,11 @@ img{ max-width:100%; height:auto;}
 footer{  
 	clear:both;
 	padding:20px 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 83px;
 }
 footer ul{
 	margin:0;
@@ -219,6 +226,7 @@ footer ul{
 body{
 	background:#fff;
     font-size: 14px;
+    min-height: 100%;
 }
 h1, h2, h3, h4, h5, h6{
 	color:#333; 
@@ -583,6 +591,13 @@ PRINT STYLESHEET
     margin-left: 110px;
     display: block;
 }
+.shops ul li>a{
+    color: #000;
+}
+.shops ul li>a:hover h3,
+.shops ul li>a:hover p{
+    color: #0099ff;
+}
 .shops ul li h3{
     margin-top: 0;
     line-height: 16px;
@@ -669,4 +684,24 @@ p{
 }
 .ace-nav > li.open > a{
     background: none !important;
+}
+.no-left-margin{
+    margin-left: 0;
+}
+.bigger-left-margin{
+    margin-left: 3.33333333333%;
+}
+#home .page{
+    display: none;
+    margin-bottom: 123px;
+}
+#home .landing-page{
+    display: block;
+}
+.error-info{
+    display: none;
+    color: #ff0000;
+    font-size: 14px;
+    float: left;
+    margin-top: 10px;
 }

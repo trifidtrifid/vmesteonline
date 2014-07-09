@@ -606,8 +606,10 @@ define(
         }
 
 
-        $('.shop-trigger').click(function(e,isHistoryNav){
-            e.preventDefault();
+        $('.shop-trigger').click(function(e,isHistoryNav) {
+            if (!$('.backoffice').length) {
+                e.preventDefault();
+            }
             //try{
                 var shopOrders = $('.shop-orders');
                 var ordersList = $('.orders-list');
@@ -630,7 +632,8 @@ define(
                         $('.main-container-inner').show();
 
                         $('.navbar .nav li.active').removeClass('active');
-                        $('.navbar .nav li:eq(0)').addClass('active');
+                        //$('.navbar .nav li:eq(0)').addClass('active');
+                        $(this).addClass('active');
                         var shopProducts = $('.shop-products');
                         if(shopProducts.find('.shop-menu .shopmenu-back').length){
                             // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
@@ -645,7 +648,7 @@ define(
                         };
                         window.history.pushState(state,null,'shop.jsp');
                     }
-                }else{
+                }else if($(this).hasClass('go-to-orders')){
                         /* history */
                     var urlHash = document.location.hash;
                     if (urlHash != '#orders-history'){
@@ -667,7 +670,7 @@ define(
 
                         $('.shop-products').hide();
                         $('.shop-confirm').hide();
-                        $('.main-container-inner').show();
+                        $('.shop-page').show();
                         var nowTime = parseInt(new Date().getTime()/1000);
                         nowTime -= nowTime%86400;
                         var day = 3600*24;
@@ -732,6 +735,51 @@ define(
             $('.navbar-header .nav .bo-link').removeClass('hidden');
         }
 
+        function initLanding(){
+
+            $('.no-active-shops li').each(function(){
+                var shopId = $(this).attr('id'),
+                 votes = thriftModule.client.getVotes(shopId);
+
+                $(this).find('.voice-counter').text(0);
+
+                for(var p in votes){
+                    //console.log(p+" "+votes[p]);
+                    $(this).find('.voice-counter').text(votes[p]);
+                }
+
+            });
+
+            $('.vote-btn').click(function(e){
+                e.preventDefault();
+
+                if(!globalUserAuth){
+                    $('.landing-login').trigger('click');
+                }else{
+
+                    var currentItem = $(this).closest('li'),
+                        currentVoiceCounter = currentItem.find('.voice-counter'),
+                        shopId = currentItem.attr('id'),
+                        currentVoicesNum = currentVoiceCounter.text();
+
+
+                    if(thriftModule.client.canVote(shopId)){
+
+                        thriftModule.client.vote(shopId,'1');
+                        currentVoiceCounter.text(++currentVoicesNum);
+
+                    }else{
+                        currentItem.find('.error-info').text('Вы уже голосовали !').show();
+
+                        setTimeout(function(){
+                            currentItem.find('.error-info').hide();
+                        },2000);
+                    }
+
+                }
+            });
+        }
+
 
         return{
             getCookie: getCookie,
@@ -749,7 +797,8 @@ define(
             isValidEmail: isValidEmail,
             changeShortUserInfo: changeShortUserInfo,
             getOrderWeight: getOrderWeight,
-            identificateModal: identificateModal
+            identificateModal: identificateModal,
+            initLanding: initLanding
         }
     }
 );

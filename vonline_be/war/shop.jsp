@@ -1,70 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="java.util.List"%>
-<%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ShopBOServiceImpl"%>
-<%@ page import="com.vmesteonline.be.InvalidOperation"%>
-<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
-<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.shop.*"%>
+
+<%@ include file="templates/preload.jsp" %>
 
 <%
-    HttpServletRequest httpReq = (HttpServletRequest)request;
-    /*String url1 = httpReq.getContextPath();
-    String url2 = httpReq.getRequestURI();*/
-    String url = httpReq.getPathInfo();
-    //out.print(url);
-
-	HttpSession sess = request.getSession();
-
-    pageContext.setAttribute("auth",true);
-    try {
-        //AuthServiceImpl.checkIfAuthorised(sess.getId());
-        UserServiceImpl userService = new UserServiceImpl(request.getSession());
-        ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-        if( null == ShortUserInfo){
-        	sess.invalidate();
-        	throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
-        }
-        pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-        pageContext.setAttribute("lastName",ShortUserInfo.lastName);
-    } catch (InvalidOperation ioe) {
-        pageContext.setAttribute("auth",false);
-    }
-
-
-    ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
-
-    List<Shop> ArrayShops = shopService.getShops();
-    if(ArrayShops != null && ArrayShops.size() > 0){
-        Shop shop;
-        if(ArrayShops.size() > 1 && url.length() >= 17){
-            char buf[] = new char[16];
-            url.getChars(1, 17, buf, 0);
-            String shopIdStr = "";
-            // 15 - кол-во символов в id магазина
-            for (int i = 0; i <= 15; i++) {
-                shopIdStr = shopIdStr+buf[i];
-            }
-
-            Long shopId = new Long(shopIdStr);
-
-            shop = shopService.getShop(shopId);
-            //out.print("1");
-        }else{
-            //out.print("2");
-            shop = shopService.getShop(ArrayShops.get(0).id);
-        }
-        //out.print(shop.id);
-
-        UserShopRole userRole = shopService.getUserShopRole(shop.id);
-        pageContext.setAttribute("logoURL", shop.logoURL);
-        pageContext.setAttribute("shopID", shop.id);
-        pageContext.setAttribute("userRole", userRole);
-        //out.print(userRole);
-    }
-
 
     OrderDetails currentOrderDetails;
     try{
@@ -73,7 +11,6 @@
         List<OrderLine> orderLines = currentOrderDetails.odrerLines;
         pageContext.setAttribute("orderLines", orderLines);
     } catch(InvalidOperation ioe){
-        currentOrderDetails = null;
         //out.print('2');
     }
 
@@ -88,13 +25,6 @@
 
     List<Producer> producersList = shopService.getProducers();
     pageContext.setAttribute("producersList", producersList);
-
-    /* shopPages Links */
-
-    ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
-
-    ShopPages shopPages = shopBOService.getShopPages();
-    pageContext.setAttribute("shopPages", shopPages);
 
 %>
 
@@ -116,101 +46,15 @@
 
     <script type="text/javascript" data-main="../build/build.js" src="../js/shop/require.min.js"></script>
 
-    <script type="text/javascript">
-        globalUserAuth = false;
-        <c:if test="${auth}">
-        globalUserAuth = true;
-        </c:if>
-    </script>
 </head>
 <body>
     <div class="wrap">
 	<div class="main container">
-		<div class="navbar navbar-default" id="navbar">
-			<script type="text/javascript">
-				try {
-					ace.settings.check('navbar', 'fixed')
-				} catch (e) {
-				}
-			</script>
 
-			<div class="navbar-container" id="navbar-container">
-				<div class="navbar-header pull-left">
-					<a href="/shop/<c:out value="${shopID}"/>" class="navbar-brand">
-                            <img src="<c:out value="${logoURL}" />" alt="лого">
-					</a>
-                    <c:if test="${shopPages.aboutPageContentURL != null && shopPages.aboutPageContentURL != ''}">
-                        <a href="/${shopPages.aboutPageContentURL}" class="about-shop-link header-link">О магазине</a>
-                    </c:if>
-                    <c:if test="${shopPages.conditionsPageContentURL != null && shopPages.conditionsPageContentURL != ''}">
-                        <a href="/${shopPages.conditionsPageContentURL}" class="terms-of-orders header-link">Условия</a>
-                    </c:if>
-                    <c:if test="${shopPages.deliveryPageContentURL != null && shopPages.deliveryPageContentURL != ''}">
-                        <a href="/${shopPages.deliveryPageContentURL}" class="terms-of-delivery header-link">Доставка</a>
-                    </c:if>
+<%@ include file="templates/header.jsp" %>
 
-					<!-- /.brand -->
-				</div>
-				<!-- /.navbar-header -->
-
-				<div class="navbar-header pull-right" role="navigation">
-					<ul class="nav ace-nav">
-
-                        <li><a class="btn btn-info no-border no-prevent" href="/">
-                            Главная </a></li>
-						<li class="active back-to-shop shop-trigger"><a class="btn btn-info no-border" href="shop.jsp">
-								Магазин </a></li>
-                        <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
-                            Заказы </a></li>
-
-
-                        <li><a class="btn btn-info no-border bo-link
-                        <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}">
-                        hidden
-                        </c:if>
-                        " href="/backoffice/${shopID}">
-                            Бэкоффис</a></li>
-
-						<li class="user-short light-blue">
-                            <c:choose>
-								<c:when test="${auth}">
-									<a data-toggle="dropdown" href="#" class="dropdown-toggle">
-										<%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
-                                        <span class="user-info">
-                                            <c:out value="${firstName}" />
-                                            <c:out value="${lastName}" />
-									    </span>
-                                            <i class="icon-caret-down"></i>
-									</a>
-								</c:when>
-								<c:otherwise>
-									<a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
-                                        <span class="user-info">
-                                            Войти
-									</span>
-									</a>
-								</c:otherwise>
-							</c:choose>
-                            <ul	class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-
-                                <li><a href="#"> <i class="icon-user"></i> Профиль
-                                </a></li>
-
-                                <li class="divider"></li>
-
-                                <li><a href="#"> <i class="icon-off"></i> Выход
-                                </a></li>
-                            </ul>
-                        </li>
-					</ul>
-					<!-- /.ace-nav -->
-				</div>
-				<!-- /.navbar-header -->
-			</div>
-			<!-- /.container -->
-		</div>
 		<div class="main-container shop dynamic" id="${shopID}">
-            <div class="page main-container-inner">
+            <div class="page main-container-inner shop-page">
 
                 <div class="show-right">
                     Заказы
@@ -390,6 +234,13 @@
         </div>
     </footer>
     </div>
+
+    <script type="text/javascript">
+        globalUserAuth = false;
+        <c:if test="${isAuth}">
+        globalUserAuth = true;
+        </c:if>
+    </script>
 
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
