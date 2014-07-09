@@ -118,7 +118,7 @@
 
 			<div id="banner">
 				<div id="logo">
-					<a href="index.jsp">Во!Маркет</a>
+					<a href="/">Во!Маркет</a>
 				</div>
 			</div>
 
@@ -159,10 +159,8 @@
 
 	</header>
 
-
-	<!-- hero area (the grey one with a slider -->
+    <div class="page landing-page">
 	<section id="hero" class="clearfix">
-		<!-- responsive FlexSlider image slideshow -->
 		<div class="wrapper">
 			<div class="grid_5 alpha">
 				<h1>Самые удобные магазины на планете</h1>
@@ -182,16 +180,11 @@
 					</ul>
 				</div>
 			</div>
-			<!-- FlexSlider -->
 		</div>
 	</section>
-	<!-- end hero area -->
 
-	<!-- main content area -->
 	<div id="main" class="wrapper">
 
-
-		<!-- content area -->
 		<section id="content" class="wide-content">
 			<div class="grid_4">
 				<h1 class="first-header">Качество!</h1>
@@ -209,38 +202,43 @@
 
 			<div class="grid_4">
 				<h1 class="first-header">Удобство !</h1>
-				<img src="i/landing/usability.png" />
+				<img src="i/landing/usability.jpg" />
 				<p>Мы постоянно оптимизируем доставку, для того чтобы предложить Вам лучшие условия. Чем больше заказов поступает из одного дома - тем дешевле. Коопрерируйтесь с соседями и цена доставки будет
 					уменьшаться!</p>
 			</div>
 
 		</section>
-		<!-- #end content area -->
 
 
-		<!-- columns demo, delete it!-->
 		<section id="columnsdemo" style="margin-bottom: 60px; width: 100%" class="clearfix">
 			<div class="clearfix"></div>
 			<h2 class="for-auth-user">Спасибо, что выбираете нас !</h2>
 
-			<div class="grid_6 shops for-auth-user">
+			<div class="grid_6 shops for-auth-user no-left-margin">
 				<div>Для совершения покупок, выберете магазин из списка:</div>
 			</div>
-			<div class="grid_6 shops for-auth-user">
+			<div class="grid_6 shops for-auth-user bigger-left-margin">
 				<div>Какой следующий магазин должен быть подключен?</div>
 			</div>
 
-			<div class="grid_6 shops">
+			<div class="grid_6 shops active-shops no-left-margin">
 
 				<div class="shops-block-title">Подключенные магазины</div>
 				<ul>
 					<c:forEach var="shop" items="${activeShops}">
 						<c:if test="${shop.id != null}">
-							<li><a href="shop/${shop.id}"> <img src="${shop.logoURL}" alt="логотип" /> <span class="landing-shop-right">
+							<li>
+                                <a href="shop/${shop.id}"> <img src="${shop.logoURL}" alt="логотип" /> <span class="landing-shop-right">
 										<h3>${shop.name}</h3>
 										<p>${shop.descr}</p>
 								</span>
-							</a></li>
+							    </a>
+
+                                <div>
+                                <span class="voice-counter"></span>
+                                <a class="buttonlink" href="shop/${shop.id}">Перейти в магазин</a>
+                                </div>
+                            </li>
 						</c:if>
 					</c:forEach>
 
@@ -264,19 +262,23 @@
                 </li>--%>
 				</ul>
 			</div>
-			<div class="grid_6 shops shops-queue">
+			<div class="grid_6 shops no-active-shops bigger-left-margin">
 				<div class="shops-block-title">В очереди</div>
 				<ul>
 					<c:forEach var="shop" items="${noActiveShops}">
 						<c:if test="${shop.id != null}">
-							<li><a href="shop/${shop.id}"> <img src="${shop.logoURL}" alt="логотип" /> <span class="landing-shop-right">
+							<li  id="${shop.id}">
+                                <a href="shop/${shop.id}"> <img src="${shop.logoURL}" alt="логотип" /> <span class="landing-shop-right">
 										<h3>${shop.name}</h3>
 										<p>${shop.descr}</p>
 								</span>
-							</a>
+							    </a>
 								<div>
-									<span class="voice-counter">35</span> <a class="buttonlink vote-btn" href="#">Голосовать</a>
-								</div></li>
+									<span class="voice-counter"></span>
+                                    <a class="buttonlink vote-btn" href="#">Голосовать</a>
+                                    <span class="error-info"></span>
+								</div>
+                            </li>
 						</c:if>
 					</c:forEach>
 					<%--<li>
@@ -295,22 +297,21 @@
 				</ul>
 			</div>
 		</section>
-		<!-- end columns demo -->
 
 
 	</div>
-	<!-- #end div #main .wrapper -->
+    </div>
 
-	<!-- footer area -->
+    <div class="page shop-profile wrapper"></div>
+    <div class="page shop-editPersonal wrapper"></div>
+
 	<footer>
 		<div id="colophon" class="wrapper clearfix">
 			(c) Во!Маркет Санкт-Петербург, 2014
 			<div>email: info@vomarket.ru</div>
 		</div>
 
-
 	</footer>
-	<!-- #end footer area -->
 
 
 	<div class="modal modal-auth"></div>
