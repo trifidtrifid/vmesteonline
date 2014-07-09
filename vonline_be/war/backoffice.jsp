@@ -1,83 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="java.util.List"%>
-<%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ShopBOServiceImpl"%>
-<%@ page import="com.vmesteonline.be.InvalidOperation"%>
-<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
-<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.shop.Order"%>
-<%@ page import="com.vmesteonline.be.shop.Producer"%>
-<%@ page import="com.vmesteonline.be.shop.Product"%>
-<%@ page import="com.vmesteonline.be.shop.ProductCategory"%>
-<%@ page import="com.vmesteonline.be.shop.UserShopRole"%>
-<%@ page import="com.vmesteonline.be.shop.ProductListPart"%>
-<%@ page import="com.vmesteonline.be.shop.Shop"%>
-<%@ page import="com.vmesteonline.be.shop.bo.*"%>
 
+<%@ include file="templates/preload.jsp" %>
 <%
-    HttpServletRequest httpReq = (HttpServletRequest)request;
-    String url = httpReq.getPathInfo();
-
-    HttpSession sess = request.getSession();
-    boolean isAuth = true;
-    try {
-    AuthServiceImpl.checkIfAuthorised(sess.getId());
-    UserServiceImpl userService = new UserServiceImpl(request.getSession());
-    ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-    if( null == ShortUserInfo){
-        sess.invalidate();
-        throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
-    }
-    pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-    pageContext.setAttribute("lastName",ShortUserInfo.lastName);
-    } catch (InvalidOperation ioe) {
-        isAuth = false;
-        //response.sendRedirect("/login.jsp");
-        //sess.setAttribute("successLoginURL", request.getQueryString());
-        //return;
-    }
-    pageContext.setAttribute("isAuth",isAuth);
 
 if(isAuth){
-    ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
-
-    List<Shop> ArrayShops = shopService.getShops();
-    if(ArrayShops != null && ArrayShops.size() > 0){
-        Shop shop;
-        if(ArrayShops.size() > 1 && url.length() >= 17){
-            char buf[] = new char[16];
-            url.getChars(1, 17, buf, 0);
-            String shopIdStr = "";
-            // 15 - кол-во символов в id магазина
-            for (int i = 0; i <= 15; i++) {
-                shopIdStr = shopIdStr+buf[i];
-            }
-
-            Long shopId = new Long(shopIdStr);
-
-            shop = shopService.getShop(shopId);
-            //out.print("1");
-        }else{
-            //out.print("2");
-            shop = shopService.getShop(ArrayShops.get(0).id);
-        }
-
-        //Shop shop = shopService.getShop(ArrayShops.get(0).id);
-        UserShopRole userRole = shopService.getUserShopRole(shop.id);
-
-        List<ProductCategory> categoriesList = shopService.getAllCategories(shop.id);
-
-        if(categoriesList != null && categoriesList.size() > 0){
-            pageContext.setAttribute("categories", categoriesList);
-        }
-        pageContext.setAttribute("logoURL", shop.logoURL);
-        pageContext.setAttribute("shopID", shop.id);
-        pageContext.setAttribute("userRole", userRole);
-        //out.print(userRole);
-        pageContext.setAttribute("shop", shop);
-    }
 
     int now = (int) (System.currentTimeMillis() / 1000L);
     int day = 3600 * 24;
@@ -118,60 +44,12 @@ if(isAuth){
 <body>
 
 <div class="container backoffice <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}"> noAccess </c:if> ">
-    <div class="navbar navbar-default" id="navbar">
-    <script type="text/javascript">
-        try{ace.settings.check('navbar' , 'fixed')}catch(e){}
-    </script>
 
-    <div class="navbar-container" id="navbar-container">
-    <div class="navbar-header pull-left">
-        <a href="shop.jsp" class="navbar-brand">
-            <img src="<c:out value="${logoURL}" />" alt="лого">
-        </a><!-- /.brand -->
-    </div><!-- /.navbar-header -->
+    <%@ include file="templates/header.jsp" %>
 
-        <div class="navbar-header pull-right" role="navigation">
-            <ul class="nav ace-nav">
-
-                <li class="active"><a class="btn btn-info no-border" href="/shop/${shopID}">
-                    Магазин </a></li>
-                <li class="user-short light-blue">
-                    <c:choose>
-                        <c:when test="${isAuth}">
-                            <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                                <span class="user-info">
-                                    <c:out value="${firstName}" /> <c:out value="${lastName}" />
-                                </span>
-                                    <i class="icon-caret-down"></i>
-                            </a>
-                        </c:when>
-                        <c:otherwise>
-                            <a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
-                                <span class="user-info">
-                                    Войти
-									</span>
-                            </a>
-                        </c:otherwise>
-                    </c:choose>
-                    <ul	class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-
-                        <li><a href="#"> <i class="icon-user"></i> Профиль
-                        </a></li>
-
-                        <li class="divider"></li>
-
-                        <li><a href="#"> <i class="icon-off"></i> Выход
-                        </a></li>
-                    </ul>
-                </li>
-            </ul>
-            <!-- /.ace-nav -->
-        </div>
-    </div><!-- /.container -->
-    </div>
     <div class="main-container backoffice dynamic" id="${shopID}">
     <c:if test="${isAuth}">
-        <div class="page main-container-inner">
+        <div class="page main-container-inner bo-page">
             <aside class="sidebar" id="sidebar">
                 <script type="text/javascript">
                     try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
@@ -507,11 +385,6 @@ if(isAuth){
                             <input type="file" id="settings-logo">
                         </label>
 
-                        <%--<label class="block clearfix">
-                            <span class="block input-icon input-icon-right">
-                                <input type="text" id="price-delivery" class="form-control" value="1" />
-                            </span>
-                        </label>--%>
                     </fieldset>
                         <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
                     </div>
@@ -825,6 +698,43 @@ if(isAuth){
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="page main-container-inner shop-page">
+
+            <div class="show-right">
+                Заказы
+            </div>
+            <aside class="sidebar shop-right">
+                <div class="hide-right">×</div>
+                <div class="sidebar-title">
+                </div>
+
+                <div class="modal-backdrop basket-backdrop"></div>
+            </aside>
+            <div class="main-content">
+                <div class="shop-products">
+                </div>
+                <div class="shop-orders">
+
+                    <h1>Заказы</h1>
+                    <div class="orders-tbl-wrap">
+                        <table>
+                            <tr>
+                                <td class="td1"></td>
+                                <td class="td2">N</td>
+                                <td class="td3">Дата</td>
+                                <td class="td4">Статус</td>
+                                <td class="td9">Цена доставки</td>
+                                <td class="td8">Вес(кг)</td>
+                                <td class="td6">Сумма</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="orders-list">
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
         </div>
         <div class="page shop-profile"></div>
         <div class="page shop-editPersonal"></div>

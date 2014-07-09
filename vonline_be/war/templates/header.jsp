@@ -12,10 +12,16 @@
 				<div class="navbar-header pull-left">
 					<a href="/shop/<c:out value="${shopID}"/>" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
-                        <a href="/about/${shopID}" class="about-shop-link header-link">О магазине</a>
-                        <a href="#" class="terms-of-orders header-link">Условия</a>
-                        <a href="#" class="terms-of-delivery header-link">Доставка</a>
 					</a>
+                    <c:if test="${shopPages.aboutPageContentURL != null && shopPages.aboutPageContentURL != ''}">
+                        <a href="/${shopPages.aboutPageContentURL}" class="about-shop-link header-link">О магазине</a>
+                    </c:if>
+                    <c:if test="${shopPages.conditionsPageContentURL != null && shopPages.conditionsPageContentURL != ''}">
+                        <a href="/${shopPages.conditionsPageContentURL}" class="terms-of-orders header-link">Условия</a>
+                    </c:if>
+                    <c:if test="${shopPages.deliveryPageContentURL != null && shopPages.deliveryPageContentURL != ''}">
+                        <a href="/${shopPages.deliveryPageContentURL}" class="terms-of-delivery header-link">Доставка</a>
+                    </c:if>
 					<!-- /.brand -->
 				</div>
 				<!-- /.navbar-header -->
@@ -25,22 +31,24 @@
 
                         <li><a class="btn btn-info no-border no-prevent" href="/">
                             Главная </a></li>
-						<li><a class="btn btn-info no-border no-prevent" href="/shop/<c:out value="${shopID}"/>">
-								Магазин </a></li>
-                        <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
-                            Заказы </a></li>
+                        <c:if test="${!isEmptyURL}">
+                            <li><a class="btn btn-info no-border back-to-shop shop-trigger no-prevent" href="/shop/<c:out value="${shopID}"/>">
+                                    Магазин </a></li>
+                            <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
+                                Заказы </a></li>
 
 
-                        <li><a class="btn btn-info no-border bo-link
-                        <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN'}">
-                        hidden
+                            <li><a class="btn btn-info no-border bo-link
+                            <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}">
+                            hidden
+                            </c:if>
+                            " href="/backoffice/${shopID}">
+                                Бэкоффис</a></li>
                         </c:if>
-                        " href="/backoffice.jsp">
-                            Бэкоффис</a></li>
 
 						<li class="user-short light-blue">
                             <c:choose>
-								<c:when test="${auth}">
+								<c:when test="${isAuth}">
 									<a data-toggle="dropdown" href="#" class="dropdown-toggle">
 										<%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%>
                                         <span class="user-info">

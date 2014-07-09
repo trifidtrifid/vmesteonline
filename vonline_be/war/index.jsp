@@ -19,6 +19,7 @@
     Shop[] noActiveShops = new Shop[ArrayShopsLength];
     int activeShopsCounter = 0;
     int noActiveShopsCounter = 0;
+
     for (int i = 0; i < ArrayShopsLength; i++) {
         if(shopService.isActivated(ArrayShops.get(i).id)){
             activeShops[activeShopsCounter] = ArrayShops.get(i);
@@ -111,6 +112,16 @@
 </head>
 
 <body id="home" class="shop-landing <c:if test="${auth}">user-is-auth</c:if>">
+<<<<<<< HEAD
+=======
+  
+    <header>
+        <div class="wrapper clearfix">
+
+            <div id="banner">
+                <div id="logo"><a href="/">Во!Маркет</a></div>
+            </div>
+>>>>>>> origin/FE
 
 	<header>
 		<div class="wrapper clearfix">
@@ -121,6 +132,7 @@
 				</div>
 			</div>
 
+<<<<<<< HEAD
 			<nav id="topnav" role="navigation">
 				<%--<a href="#" class="landing-login">Войти</a>
                 <a href="#" class="for-auth-user landing-logout">Выйти</a>--%>
@@ -314,6 +326,182 @@
 
 	</footer>
 	<!-- #end footer area -->
+=======
+            </nav>
+        </div>
+  
+    </header>
+ 
+    <div class="page landing-page">
+    <section id="hero" class="clearfix">
+    <div class="wrapper">
+        <div class="grid_5 alpha">
+                <h1>Самые удобные магазины на планете</h1>
+            <p>
+            ...is a template for responsive web design. A small set of tools and best practices that allows web designers to build responsive websites faster. Websites built with Simple Responsive Template will be optimized for screen widths between 320px and anything. Resize your browser to check it out.
+            </p>
+            <p class="align-center"><a href="#" class="buttonlink">Далее</a></p>
+        </div>
+        <div class="grid_7 omega rightfloat">
+                <div class="flexslider">
+                    <ul class="slides">
+                        <li>
+                            <img src="i/landing/slider1.jpg" />
+                            <p class="flex-caption">Love Brazil !!! Sea view from Rio de Janeiro fort.</p>
+                        </li>
+                        <li>
+                            <img src="i/landing/slider2.jpg" />
+                            <p class="flex-caption">El Arco Cabo Mexico. This image is wrapped in a link.</p>
+                        </li>
+                        <li>
+                            <img src="i/landing/slider3.jpg" />
+                            <p class="flex-caption">Arches National Park, Utah, Usa.</p>
+                        </li>
+                        <li>
+                            <img src="i/landing/slider4.jpg" />
+                            <p class="flex-caption">Arches National Park, Utah, Usa.</p>
+                        </li>
+                    </ul>
+                  </div>
+                </div><!-- FlexSlider -->
+        </div>
+    </section>
+
+    <div id="main" class="wrapper">
+
+
+    <!-- content area -->
+        <section id="content" class="wide-content">
+            <div class="grid_4">
+                <h1 class="first-header">Качество!</h1>
+                <img src="i/landing/quality.jpg" />
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+            </div>
+
+            <div class="grid_4">
+                <h1 class="first-header">Свежесть!</h1>
+                <img src="i/landing/fresh.jpg" />
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+            </div>
+
+            <div class="grid_4">
+                <h1 class="first-header">Удобство !</h1>
+                <img src="i/landing/usability.jpg" />
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+            </div>
+
+        </section><!-- #end content area -->
+
+
+        <!-- columns demo, delete it!-->
+        <section id="columnsdemo" style="margin-bottom:60px; width:100%" class="clearfix">
+            <div class="clearfix"></div>
+            <h2 class="for-auth-user">Спасибо, что выбираете нас !</h2>
+
+            <div class="grid_6 shops for-auth-user no-left-margin">
+                <div>Для совершения покупок, выберете магазин из списка:</div>
+            </div>
+            <div class="grid_6 shops for-auth-user bigger-left-margin">
+                <div>Какой следующий магазин должен быть подключен?</div>
+            </div>
+
+            <div class="grid_6 shops active-shops no-left-margin">
+
+                <div class="shops-block-title">Подключенные магазины</div>
+                <ul>
+                    <c:forEach var="shop" items="${activeShops}">
+                        <c:if test="${shop.id != null}">
+                        <li>
+                            <a href="shop/${shop.id}">
+                                <img src="${shop.logoURL}" alt="логотип"/>
+                            <span class="landing-shop-right">
+                                <h3>${shop.name}</h3>
+                                <p>${shop.descr}</p>
+                            </span>
+                            </a>
+                            <div>
+                                <span class="voice-counter"></span>
+                                <a class="buttonlink" href="shop/${shop.id}">Перейти в магазин</a>
+                            </div>
+                        </li>
+                        </c:if>
+                    </c:forEach>
+
+                    <%--<li>
+                        <a href="#">
+                            <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
+                            <span class="shop-right">
+                                <h3>ВоМолоко</h3>
+                                <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
+                            <span class="shop-right">
+                                <h3>ВоМолоко</h3>
+                                <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
+                            </span>
+                        </a>
+                    </li>--%>
+                </ul>
+            </div>
+            <div class="grid_6 shops no-active-shops bigger-left-margin">
+                <div class="shops-block-title">В очереди</div>
+                <ul>
+                    <c:forEach var="shop" items="${noActiveShops}">
+                        <c:if test="${shop.id != null}">
+                            <li id="${shop.id}">
+                                <a href="shop/${shop.id}">
+                                    <img src="${shop.logoURL}" alt="логотип"/>
+                                <span class="landing-shop-right">
+                                    <h3>${shop.name}</h3>
+                                    <p>${shop.descr}</p>
+                                </span>
+                                </a>
+                                <div>
+                                    <span class="voice-counter"></span>
+                                    <a class="buttonlink vote-btn" href="#">Голосовать</a>
+                                    <span class="error-info"></span>
+                                </div>
+                            </li>
+                        </c:if>
+                    </c:forEach>
+                    <%--<li>
+                        <a href="#">
+                            <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
+                            <span class="landing-shop-right">
+                                <h3>ВоМолоко</h3>
+                                <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
+                            </span>
+                        </a>
+                        <div>
+                            <span class="voice-counter">35</span>
+                            <a class="buttonlink vote-btn" href="#">Голосовать</a>
+                        </div>
+                    </li>--%>
+                </ul>
+            </div>
+        </section>
+        <!-- end columns demo -->
+
+
+      </div>
+ </div>
+
+    <div class="page shop-profile wrapper"></div>
+    <div class="page shop-editPersonal wrapper"></div>
+
+<footer>
+	<div id="colophon" class="wrapper clearfix">
+    	(c) Во!Маркет Санкт-Петербург, 2014
+        <div>email: info@vomarket.ru</div>
+    </div>
+
+    
+</footer>
+>>>>>>> origin/FE
 
 
 

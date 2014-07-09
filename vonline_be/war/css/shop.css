@@ -1591,13 +1591,16 @@ height 50px
   float: right;
 }
 /* backoffice */
-.backoffice .main-content {
+.backoffice .bo-page .main-content {
   margin-left: 200px;
   margin-right: 0;
   margin-top: 45px;
 }
 .main-container.backoffice {
   margin-top: 45px;
+}
+.backoffice .shop-page {
+  display: none;
 }
 .backoffice .plus-minus {
   font-size: 24px;

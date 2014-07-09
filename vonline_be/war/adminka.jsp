@@ -1,41 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="java.util.List"%>
-<%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ShopBOServiceImpl"%>
-<%@ page import="com.vmesteonline.be.InvalidOperation"%>
-<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
-<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.shop.*"%>
 
+<%@ include file="templates/preload.jsp" %>
 <%
-    HttpSession sess = request.getSession();
-    pageContext.setAttribute("isAuth",true);
-    //boolean isAuth = true;
-    try {
-        AuthServiceImpl.checkIfAuthorised(sess.getId());
-        UserServiceImpl userService = new UserServiceImpl(request.getSession());
-        ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-        if( null == ShortUserInfo){
-            sess.invalidate();
-            throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
-        }
-        pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-        pageContext.setAttribute("lastName",ShortUserInfo.lastName);
-
-    } catch (InvalidOperation ioe) {
-        //isAuth = false;
-        pageContext.setAttribute("isAuth",false);
-        //response.sendRedirect("/login.jsp");
-        //sess.setAttribute("successLoginURL", request.getQueryString());
-        //return;
-    }
-
-    ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
-    ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
-
-    List<Shop> ArrayShops = shopService.getShops();
     int ArrayShopsSize = ArrayShops.size();
 
     int now = (int) (System.currentTimeMillis() / 1000L);
@@ -45,18 +11,6 @@
     for(int i = 0; i < ArrayShopsSize; i++){
         totalShopArray[i] = shopBOService.totalShopReturn(ArrayShops.get(i).id, 0, now);
     }
-
-    if(ArrayShops != null && ArrayShopsSize > 0){
-        pageContext.setAttribute("shops", ArrayShops);
-
-        Shop shop = shopService.getShop(ArrayShops.get(0).id);
-        UserShopRole userRole = shopService.getUserShopRole(shop.id);
-        pageContext.setAttribute("logoURL", shop.logoURL);
-        pageContext.setAttribute("shopID", shop.id);
-        pageContext.setAttribute("userRole", userRole);
-    }
-
-
 %>
 <!DOCTYPE html>
 <html>
@@ -77,7 +31,7 @@
 <body>
 
 <div class="container adminka">
-    <div class="navbar navbar-default" id="navbar">
+<%--    <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
         try{ace.settings.check('navbar' , 'fixed')}catch(e){}
     </script>
@@ -127,11 +81,13 @@
             <!-- /.ace-nav -->
         </div>
     </div><!-- /.container -->
-    </div>
+    </div>--%>
+
+    <%@ include file="templates/header.jsp" %>
 
         <div class="main-container backoffice adminka dynamic">
             <c:if test="${isAuth}">
-            <div class="page main-container-inner">
+            <div class="page main-container-inner bo-page">
                 <aside class="sidebar" id="sidebar">
                     <script type="text/javascript">
                         try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
