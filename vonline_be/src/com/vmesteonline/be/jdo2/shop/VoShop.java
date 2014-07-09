@@ -51,7 +51,7 @@ public class VoShop {
 			Map<DeliveryType, Double> deliveryCosts, Map<PaymentType, Double> paymentTypes) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
-
+		this.activated = false;
 		this.name = name;
 		this.setDescr(descr);
 		if (postalAddress != null)
