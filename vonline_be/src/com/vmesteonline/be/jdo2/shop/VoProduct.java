@@ -510,6 +510,9 @@ public class VoProduct {
 	}
 
 	public double getPrice(PriceType priceType) {
+		if( null==priceType )
+			priceType = PriceType.INET;
+		
 		return pricesMap.containsKey(priceType.getValue()) ? pricesMap.get(priceType.getValue()) : price;
 	}
 

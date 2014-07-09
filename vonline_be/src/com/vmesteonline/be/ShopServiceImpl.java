@@ -452,29 +452,31 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		
 		htmlBody += "<br/><table><caption>Состав заказа</caption>";
 		htmlBody += "<tr><th>Код товара</th><th>Производитель</th><th>Наименование</th><th>Кол-во</th><th>Развес</th><th>Стоимость</th><th>Цена</th><th>Комментарий</th></tr>";
-		for (Long lineId: currentOrder.getOrderLines().values()) {
-			VoOrderLine orderLine = pm.getObjectById(VoOrderLine.class, lineId);
-			VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProductId());
-			VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducerId());
-		
-			htmlBody += "<tr>";
-			htmlBody += "<td>" + product.getImportId() + "</td>";
-			htmlBody += "<td>" + producer.getName() + "</td>";
-			htmlBody += "<td>" + product.getName() + "</td>";
-			htmlBody += "<td>" + orderLine.getQuantity()+" "+product.getUnitName()+"</td>";
-			if( product.isPrepackRequired() && null!=orderLine.getPackets() && orderLine.getPackets().size() > 0 ){
-				String packets = "";
-				for( Entry<Double,Integer> packE : orderLine.getPackets().entrySet() )
-					packets += packE.getKey() + " x " + packE.getValue()+"; ";
-				htmlBody += "<td>" + packets + "</td>";
-			} else {
-				htmlBody += "<td>-</td>";
+		Map<Long, Long> orderLines = currentOrder.getOrderLines();
+		if(null!=orderLines)
+			for (Long lineId: orderLines.values()) {
+				VoOrderLine orderLine = pm.getObjectById(VoOrderLine.class, lineId);
+				VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProductId());
+				VoProducer producer = pm.getObjectById(VoProducer.class, product.getProducerId());
+			
+				htmlBody += "<tr>";
+				htmlBody += "<td>" + product.getImportId() + "</td>";
+				htmlBody += "<td>" + producer.getName() + "</td>";
+				htmlBody += "<td>" + product.getName() + "</td>";
+				htmlBody += "<td>" + orderLine.getQuantity()+" "+product.getUnitName()+"</td>";
+				if( product.isPrepackRequired() && null!=orderLine.getPackets() && orderLine.getPackets().size() > 0 ){
+					String packets = "";
+					for( Entry<Double,Integer> packE : orderLine.getPackets().entrySet() )
+						packets += packE.getKey() + " x " + packE.getValue()+"; ";
+					htmlBody += "<td>" + packets + "</td>";
+				} else {
+					htmlBody += "<td>-</td>";
+				}
+				htmlBody += "<td>" + orderLine.getPrice() + "</td>";
+				htmlBody += "<td>" + VoHelper.roundDouble( orderLine.getPrice() * orderLine.getQuantity(), 2 )  + "</td>";
+				htmlBody += "<td>" + null == orderLine.getComment() ? "-" : orderLine.getComment() + "</td>";
+				htmlBody += "</tr>";
 			}
-			htmlBody += "<td>" + orderLine.getPrice() + "</td>";
-			htmlBody += "<td>" + VoHelper.roundDouble( orderLine.getPrice() * orderLine.getQuantity(), 2 )  + "</td>";
-			htmlBody += "<td>" + null == orderLine.getComment() ? "-" : orderLine.getComment() + "</td>";
-			htmlBody += "</tr>";
-		}
 		
 		htmlBody += "<tr>"
 				+ "<td/><td/><td/><td/><td/><td><b>Итого:</b></td><td><b>"
@@ -1358,6 +1360,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 	@Override
 	public boolean canVote(long shopId) throws InvalidOperation, TException {
+		if(0==shopId) return false;
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			long uid = getCurrentUserId();

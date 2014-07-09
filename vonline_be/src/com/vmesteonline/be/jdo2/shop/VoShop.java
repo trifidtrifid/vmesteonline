@@ -51,7 +51,7 @@ public class VoShop {
 			Map<DeliveryType, Double> deliveryCosts, Map<PaymentType, Double> paymentTypes) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
-
+		this.activated = false;
 		this.name = name;
 		this.setDescr(descr);
 		if (postalAddress != null)
@@ -173,7 +173,7 @@ public class VoShop {
 	@Persistent
 	private boolean activated;
 	
-	@Persistent
+	@Persistent(serialized="true")
 	@Unindexed
 	private Map<String, Set<Long>> voteResults;
 	
@@ -270,6 +270,7 @@ public class VoShop {
 			if( ods.orderDay == newDates.orderDay ) {//replace the dates
 				ods.eachOddEven = newDates.eachOddEven;
 				ods.orderBefore = newDates.orderBefore;
+				ods.priceTypeToUse = newDates.priceTypeToUse;
 				return;
 			}
 		}
