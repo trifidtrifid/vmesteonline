@@ -1,42 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-
 <%@ include file="templates/preload.jsp" %>
-
-<<<<<<< HEAD
-    ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
-
-    List<Shop> ArrayShops = shopService.getShops();
-    if(ArrayShops != null && ArrayShops.size() > 0){
-        Shop shop;
-        if(ArrayShops.size() > 1 && null!=url && url.length() >= 17){
-            char buf[] = new char[16];
-            url.getChars(1, 17, buf, 0);
-            String shopIdStr = "";
-            // 15 - кол-во символов в id магазина
-            for (int i = 0; i <= 15; i++) {
-                shopIdStr = shopIdStr+buf[i];
-            }
-
-            Long shopId = new Long(shopIdStr);
-
-            shop = shopService.getShop(shopId);
-            //out.print("1");
-        }else{
-            //out.print("2");
-            shop = shopService.getShop(ArrayShops.get(0).id);
-        }
-        //out.print(shop.id);
-
-        UserShopRole userRole = shopService.getUserShopRole(shop.id);
-        pageContext.setAttribute("logoURL", shop.logoURL);
-        pageContext.setAttribute("shopID", shop.id);
-        pageContext.setAttribute("userRole", userRole);
-        //out.print(userRole);
-    }
-
-=======
 <%
->>>>>>> origin/FE
 
     OrderDetails currentOrderDetails;
     try{
