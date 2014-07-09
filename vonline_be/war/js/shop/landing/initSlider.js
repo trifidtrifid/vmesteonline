@@ -1,19 +1,3 @@
-/*require.config({
-    baseUrl: "/build",
-    paths: {
-
-    }
-});
-
-require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
-    function($,modules,commonM,loginModule) {
-
-        $('.landing-login').click(function(){
-            modules.shopCommonModule.openModalAuth();
-        });
-
-    });*/
-
 
 // Fireup the plugins
 $(document).ready(function(){
@@ -25,30 +9,6 @@ $(document).ready(function(){
           $('body').removeClass('loading');
         }
       });
-
-    /*var transport = new Thrift.Transport("/thrift/ShopFEService");
-    var protocol = new Thrift.Protocol(transport);
-    var client = new com.vmesteonline.be.shop.ShopFEServiceClient(protocol);*/
-
-
-    /*$('.vote-btn').click(function(e){
-        e.preventDefault();
-
-        if(!globalUserAuth){
-            $('.landing-login').trigger('click');
-        }else{
-
-            var currentItem = $(this).closest('li'),
-                currentVoiceCounter = currentItem.find('.voice-counter'),
-                shopId = currentItem.attr('id'),
-                currentVoicesNum = currentVoiceCounter.text();
-
-            currentVoiceCounter.text(++currentVoicesNum);
-            client.vote(shopId,'1');
-
-        }
-    });*/
-
 
 });
 /**

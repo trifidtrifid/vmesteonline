@@ -3,7 +3,6 @@
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
-<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.shop.*"%>
@@ -52,12 +51,7 @@
 %>
 
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
 <html class="no-js">
-<!--<![endif]-->
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -72,37 +66,13 @@
 
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 
-<!-- CSS-->
-<!-- Google web fonts. You can get your own bundle at http://www.google.com/fonts. Don't forget to update the CSS accordingly!-->
 <link href='http://fonts.googleapis.com/css?family=Droid+Serif|Ubuntu' rel='stylesheet' type='text/css'>
 
 <link rel="stylesheet" href="css/landing/normalize.css">
 <link rel="stylesheet" href="js/shop/landing/flexslider/flexslider.css" />
-
 <link rel="stylesheet" href="css/landing/basic-style.css">
-<%--<link rel="stylesheet" href="css/login.css">--%>
 
-<!-- end CSS-->
-
-<!-- JS-->
-<script src="js/shop/landing/libs/modernizr-2.6.2.min.js"></script>
-<!-- end JS-->
-
-
-<!-- columns demo style. DELETE IT! -->
-<style type="text/css">
-<!--
-#columnsdemo .grid_1,#columnsdemo .grid_2,#columnsdemo .grid_3,#columnsdemo .grid_4,#columnsdemo .grid_5,#columnsdemo .grid_6,#columnsdemo .grid_7,#columnsdemo .grid_8,#columnsdemo .grid_9,#columnsdemo .grid_10,#columnsdemo .grid_11,#columnsdemo .grid_12
-	{
-	border: solid 1px #999;
-	color: #999;
-	text-align: center;
-	margin-top: 20px;
-	padding: 20px;
-}
--->
-</style>
-
+    <script src="js/shop/landing/libs/modernizr-2.6.2.min.js"></script>
 <script type="text/javascript">
 	globalUserAuth = false;
 	<c:if test="${auth}">
@@ -123,8 +93,6 @@
 			</div>
 
 			<nav id="topnav" role="navigation">
-				<%--<a href="#" class="landing-login">Войти</a>
-                <a href="#" class="for-auth-user landing-logout">Выйти</a>--%>
 
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
@@ -151,7 +119,6 @@
 								</a></li>
 							</ul></li>
 					</ul>
-					<!-- /.ace-nav -->
 				</div>
 
 			</nav>
@@ -242,24 +209,6 @@
 						</c:if>
 					</c:forEach>
 
-					<%--<li>
-                    <a href="#">
-                        <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
-                        <span class="shop-right">
-                            <h3>ВоМолоко</h3>
-                            <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
-                        </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
-                        <span class="shop-right">
-                            <h3>ВоМолоко</h3>
-                            <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
-                        </span>
-                    </a>
-                </li>--%>
 				</ul>
 			</div>
 			<div class="grid_6 shops no-active-shops bigger-left-margin">
@@ -268,10 +217,12 @@
 					<c:forEach var="shop" items="${noActiveShops}">
 						<c:if test="${shop.id != null}">
 							<li  id="${shop.id}">
-                                <a href="shop/${shop.id}"> <img src="${shop.logoURL}" alt="логотип" /> <span class="landing-shop-right">
+                                <a href="about/${shop.id}">
+                                    <img src="${shop.logoURL}" alt="логотип" />
+                                    <span class="landing-shop-right">
 										<h3>${shop.name}</h3>
 										<p>${shop.descr}</p>
-								</span>
+								    </span>
 							    </a>
 								<div>
 									<span class="voice-counter"></span>
@@ -281,19 +232,6 @@
                             </li>
 						</c:if>
 					</c:forEach>
-					<%--<li>
-                    <a href="#">
-                        <img src="i/landing/basic-pic3.jpg" alt="картинка"/>
-                        <span class="landing-shop-right">
-                            <h3>ВоМолоко</h3>
-                            <p>Магазинкачественной молочной продукции из столицы российского сельского хозяйства Вологды</p>
-                        </span>
-                    </a>
-                    <div>
-                        <span class="voice-counter">35</span>
-                        <a class="buttonlink vote-btn" href="#">Голосовать</a>
-                    </div>
-                </li>--%>
 				</ul>
 			</div>
 		</section>
@@ -326,17 +264,7 @@
 	</script>
 
 	<script defer src="js/shop/landing/flexslider/jquery.flexslider-min.js"></script>
-
-	<script src="/build/thrift.min.js" type="text/javascript"></script>
-
-	<script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
-
-	<script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
-	<script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
-
-	<!-- fire ups - read this file!  -->
-	<%--<script type="text/javascript" data-main="/js/shop/landing/main.js" src="/js/shop/require.min.js"></script>--%>
-	<script src="js/shop/landing/main.js"></script>
+	<script src="js/shop/landing/initSlider.js"></script>
 
 	<script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
 

@@ -742,6 +742,17 @@ define(
                     $(this).find('.voice-counter').text(votes[p]);
                 }
 
+                thriftModule.client.getShop(shopId);
+                var shopPages = thriftModule.clientBO.getShopPages();
+                if(!shopPages.aboutPageContentURL){
+                    $(this).find('>a').addClass('disable-link');
+                }
+
+
+            });
+
+            $('.disable-link').click(function(e){
+                e.preventDefault();
             });
 
             $('.vote-btn').click(function(e){
