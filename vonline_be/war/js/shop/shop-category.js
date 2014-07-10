@@ -91,16 +91,43 @@ define(
 					}
 
 					for (var i = 0; i < categoriesLength; i++) {
-						shopMenu += '<li data-parentid="'
+                        var zIndex = 50-i*2;
+                        shopMenu += '<li data-parentid="'
 								+ productCategories[i].parentId
-								+ '" data-catid="' + productCategories[i].id
-								+ '">' + '<a href="#" class="btn btn-app btn-info btn-sm">'
-								+ '<i class="fa fa-beer"></i>' + '<span>'
-								+ productCategories[i].name + '</span>'
-								+ '</a>' + '</li>';
+								+ '" data-catid="' + productCategories[i].id + '">'
+                                + '<a href="#" style="z-index: '+ zIndex +'" class="btn btn-app btn-info btn-sm">'
+								+ '<span>'+ productCategories[i].name + '</span>'
+								+ '</a>';
+
+                        if(productCategories[i].logoURLset.length){
+
+                            shopMenu +='<div class="category-label no-init"></div>'
+                            +'<div class="category-soc-links" style="z-index: '+ --zIndex +'">';
+
+                            var logoURLset = productCategories[i].logoURLset,
+                            logoURLsetLength = productCategories[i].logoURLset.length,
+                            imgSrc=" ";
+
+                            for( var j = 0; j < logoURLsetLength ; j ++ ) {
+                                if (logoURLset[j].indexOf("vk") != -1) {
+                                    imgSrc = "i/vk.png";
+                                } else if (logoURLset[j].indexOf("fb") != -1) {
+                                    imgSrc = "i/fb.png";
+                                }
+
+                                shopMenu += '<a class="category-soc-single" href="'+ logoURLset[j] +'"><img src="'+ imgSrc +'" alt="картинка"/></a>';
+                            }
+                            shopMenu +="</div>";
+                        }
+
+                        shopMenu += '</li>';
 					}
 
 					$('.shop-menu ul').html(firstMenuItem).append(shopMenu);
+
+                    var categoryLabelNoInit = $('.category-label.no-init');
+                    initCategoryLabelHover(categoryLabelNoInit);
+                    categoryLabelNoInit.removeClass('.no-init');
 
 					/* новый список товаров */
 					var productsList = thriftModule.client.getProducts(0, 1000, catID).products;
@@ -146,7 +173,7 @@ define(
 			function InitClickOnCategory() {
 				try {
 					$('.shop-menu li a').click(
-                        function(e) {
+                        function(e,historyBool) {
 
                             e.preventDefault();
 
@@ -176,17 +203,35 @@ define(
 
                             }
 
-                            var state = {
-                                type : 'category',
-                                categoriesHash: categoriesHash
-                            };
-                            window.history.pushState(state,null,categoriesHash);
+                            var isHistoryNav = (historyBool) ? historyBool : false;
+                            if(!isHistoryNav) {
+                                var state = {
+                                    type: 'category',
+                                    categoriesHash: categoriesHash
+                                };
+                                window.history.pushState(state, null, categoriesHash);
+                            }
 
                         });
 				} catch (e) {
 					alert(e + " Функция InitClickOnCategory");
 				}
 			}
+
+            initCategoryLabelHover($('.category-label'));
+
+            function initCategoryLabelHover(selector){
+                selector.hover(function(){
+                    var categorySocLinks = $(this).find('+.category-soc-links'),
+                        categorySocLinksWidth = categorySocLinks.width();
+                    //categorySocLinks.css({'width':0,'right': -categorySocLinksWidth+'px'});
+                    categorySocLinks.animate({right: -categorySocLinksWidth+'px'},200)
+                },function(){
+                    var categorySocLinks = $(this).find('+.category-soc-links');
+                    categorySocLinks.animate({right: '0'},200)
+                });
+            }
+
 
 			return {
 				createProductsTableHtml : createProductsTableHtml,

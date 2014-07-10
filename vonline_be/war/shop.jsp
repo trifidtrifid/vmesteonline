@@ -17,7 +17,8 @@
     if (productsListPart.products.size() > 0){
         pageContext.setAttribute("products",productsListPart.products);
     }
-    if(ArrayProductCategory.size() > 0){
+    int ArrayProductCategorySize = ArrayProductCategory.size();
+    if(ArrayProductCategorySize > 0){
         pageContext.setAttribute("productCategories", ArrayProductCategory);
     }
 
@@ -125,14 +126,60 @@
                                         </a>
                                     </li>
                                 </c:if>
-                                <c:forEach var="productCategory" items="${productCategories}">
+                                <%
+                                    for( int val = 0; val < ArrayProductCategorySize; val ++ ){
+                                %>
+                                        <li data-parentid="<%=ArrayProductCategory.get(val).parentId%>" data-catid="<%=ArrayProductCategory.get(val).id%>">
+                                            <a href="#"  style="z-index: <%=50-val*2%>" class="btn btn-app btn-info btn-sm">
+                                                <span><%=ArrayProductCategory.get(val).name%></span>
+                                            </a>
+                                            <%
+                                                if(ArrayProductCategory.get(val).logoURLset != null){
+                                            %>
+                                            <div class="category-label"></div>
+                                            <div class="category-soc-links" style="z-index: <%=50-val*2-1%>">
+                                                <%
+                                                    List<String> logoURLset = ArrayProductCategory.get(val).logoURLset;
+                                                    int logoURLsetSize = logoURLset.size();
+                                                    String imgSrc=" ";
+
+                                                    for( int i = 0; i < logoURLsetSize ; i ++ ){
+                                                        if (logoURLset.get(i).indexOf("vk") != -1){
+                                                            imgSrc = "i/vk.png";
+                                                        }else if(logoURLset.get(i).indexOf("fb") != -1){
+                                                            imgSrc = "i/fb.png";
+                                                        }
+
+                                                %>
+                                                <a class="category-soc-single" href="<%=logoURLset.get(i)%>"><img src="<%=imgSrc%>" alt="картинка"/></a>
+                                                <%
+                                                    }
+                                                %>
+                                            </div>
+                                            <%
+                                                }
+                                            %>
+                                        </li>
+                                <%
+                                    }
+                                %>
+                                <%--<c:forEach var="productCategory" items="${productCategories}">
                                     <li data-parentid="${productCategory.parentId}" data-catid="${productCategory.id}">
                                         <a href="#" class="btn btn-app btn-info btn-sm">
-                                            <i class="fa fa-beer"></i>
+                                            <c:if test="${productCategory.logoURLset != null}">
+                                                <div class="category-label"></div>
+                                                <div class="category-soc-links">
+                                                    <%
+                                                        for( int val = 0; val < ; val ++ ){
+
+                                                        }
+                                                    %>
+                                                </div>
+                                            </c:if>
                                             <span>${productCategory.name}</span>
                                         </a>
                                     </li>
-                                </c:forEach>
+                                </c:forEach>--%>
                             </ul>
                         </nav>
                         <section class="catalog-head">

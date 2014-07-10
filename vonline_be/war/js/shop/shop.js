@@ -101,7 +101,7 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                 if (urlHash.indexOf('p=') != -1) {
                     // значит url с modal
                     var hashParts = urlHash.split('=');
-                    modules.shopCommonModule.identificateModal(hashParts[1]);
+                    modules.shopCommonModule.identificateModal(hashParts[1],true);
 
                 } else if (urlHash.indexOf('cat=') != -1) {
                     // значит категория
@@ -111,7 +111,7 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                         hashParts = categoriesHistory[i].split('=');
                         $('.shop-menu li').each(function () {
                             if ($(this).data('catid') == hashParts[1]) {
-                                $(this).find('a').trigger('click');
+                                $(this).find('a').trigger('click',true);
                             }
                         });
                     }

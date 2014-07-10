@@ -192,7 +192,9 @@ define(
                         name : name,
                         price : productSelector.find('.product-price').text(),
                         unitName: productSelector.find('.unit-name').text(),
-                        imageURL : imgArr[0]
+                        imageURL : imgArr[0],
+                        producerName : productSelector.find('.td-producer').text(),
+                        producerId : productSelector.find('.td-producer').data('producerid')
                     };
 
                     var currentModal = $(this).find('+.modal');
@@ -201,10 +203,44 @@ define(
 
                     if (!isModalWasOpen){
 
-                        var productDetails = thriftModule.client.getProductDetails(productId);
-                        var imagesSet = productDetails.imagesURLset;
-                        var options = productDetails.optionsMap;
+                        var productDetails = thriftModule.client.getProductDetails(productId),
+                        imagesSet = productDetails.imagesURLset,
+                        options = productDetails.optionsMap,
+                        knownNames = productDetails.knownNames,
+                        socLinkSingle,socLinks = "";
 
+                        // находим ссылки на соц.сети
+                        for(var p in knownNames){
+                            socLinkSingle = knownNames[p];
+                            if(socLinkSingle.indexOf('vk') != -1){
+                                socLinks += "<a href='"+socLinkSingle+"'><img src='i/vk.png'></a>"
+                            }else if(socLinkSingle.indexOf('fb') != -1){
+                                socLinks += "<a href='"+socLinkSingle+"'><img src='i/fb.png'></a>"
+                            }
+                        }
+
+                        // определяем продюсера и его соц.сети
+                        var producersList = thriftModule.client.getProducers(),
+                            producersListLength = producersList.length,
+                            producerSocLinkSingle,producerSocLinksArr,
+                            producerSocLinksArrLength,producerSocLinks="";
+                        for(var j = 0; j < producersListLength; j++){
+                            if (producersList[j].id == product.producerId){
+                                producerSocLinkSingle = producersList[j].descr;
+                                if(producerSocLinkSingle) {
+                                    producerSocLinksArr = producerSocLinkSingle.split('|');
+                                    producerSocLinksArrLength = producerSocLinksArr.length;
+
+                                    for (var x = 0; x < producerSocLinksArrLength; x++) {
+                                        if (producerSocLinksArr[x].indexOf('vk') != -1) {
+                                            producerSocLinks += "<a href='" + producerSocLinksArr[x] + "'><img src='i/vk.png'></a>"
+                                        } else if (producerSocLinksArr[x].indexOf('fb') != -1) {
+                                            producerSocLinks += "<a href='" + producerSocLinksArr[x] + "'><img src='i/fb.png'></a>"
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
                     if(imagesSet.length){
                         currentModal.height('275px');
@@ -251,6 +287,10 @@ define(
                     popupHtml += '</div>'+
                         '<div class="product-descr">'+
                         '<h3>'+product.name+'</h3>'+
+                        '<span class="product-soc-links">'+socLinks+'</span>'+
+                        '<div class="modal-producer">Производитель: '+product.producerName+
+                        '<span class="producer-soc-links">'+ producerSocLinks +'</span>'+
+                        '</div>'+
                         '<div class="product-text">'+
                         '<div class="product-options">';
                     for(var p in options){
@@ -732,7 +772,7 @@ define(
 
             var shopId = $('.shop.dynamic').attr('id');
             var userRole = thriftModule.client.getUserShopRole(shopId);
-            
+
             if(userRole != 1) $('.navbar-header .nav .bo-link').removeClass('hidden');
         }
 

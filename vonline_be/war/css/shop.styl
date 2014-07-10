@@ -394,6 +394,7 @@ th.next
   ul
     margin-left 0
     li
+      position relative
       list-style none
       float left
       margin-bottom 10px
@@ -407,7 +408,10 @@ th.next
       &.active
         a
           color #2a6496
-      a
+      a.btn-app
+      a.shopmenu-back
+        position relative
+        z-index 2
         display block
         font-size 20px
         line-height 28px !important
@@ -425,12 +429,31 @@ th.next
           vertical-align middle
         .fa
           display none
-        &.shopmenu-back
-          border 0
-          line-height 10px !important
-          font-size 26px
-          .fa
-            display block
+      a.shopmenu-back
+        border 0
+        line-height 10px !important
+        font-size 26px
+        .fa
+          display block
+      .category-label
+        position absolute
+        background url(../i/label.png)
+        width 20px
+        height 20px
+        top 2px
+        right -2px
+        z-index 51
+      .category-soc-links
+        position absolute
+        height 20px
+        top 0
+        right 0
+        .category-soc-single
+          width 20px
+          height 20px
+          display inline-block
+          img
+            width 100%
 .catalog-head
   table
     background #f9f9f9
@@ -722,6 +745,9 @@ th.next
      margin-left 210px
     h3
       margin-top 0
+      display inline-block
+    .product-soc-links
+      display inline-block
     .product-text
       //height 90px
       //overflow auto
