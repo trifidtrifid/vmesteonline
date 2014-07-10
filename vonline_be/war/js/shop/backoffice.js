@@ -1405,7 +1405,7 @@ if($('.container.backoffice').hasClass('noAccess')){
 
         /* настройки ссылок  */
 
-        var shopPages = thriftModule.clientBO.getShopPages();
+        var shopPages = thriftModule.clientBO.getShopPages(shopid);
 
         if (shopPages.aboutPageContentURL) $('#settings-about-link').val(shopPages.aboutPageContentURL);
         if (shopPages.conditionsPageContentURL) $('#settings-terms-link').val(shopPages.conditionsPageContentURL);

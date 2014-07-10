@@ -789,8 +789,8 @@ define(
                     $(this).find('.voice-counter').text(votes[p]);
                 }
 
-                thriftModule.client.getShop(shopId);
-                var shopPages = thriftModule.clientBO.getShopPages();
+                //thriftModule.client.getShop(shopId);
+                var shopPages = thriftModule.clientBO.getShopPages(shopId);
                 if(!shopPages.aboutPageContentURL){
                     $(this).find('>a').addClass('disable-link');
                 }

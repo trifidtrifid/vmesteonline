@@ -74,15 +74,17 @@
          // for Adminka
         pageContext.setAttribute("shops", ArrayShops);
         pageContext.setAttribute("isEmptyURL",url == null);
+
+        // shopPages Links
+
+        ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
+
+        ShopPages shopPages = shopBOService.getShopPages(shop.id);
+        pageContext.setAttribute("shopPages", shopPages);
     }
 
 
- // shopPages Links
 
-    ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
-
-    ShopPages shopPages = shopBOService.getShopPages();
-    pageContext.setAttribute("shopPages", shopPages);
 
 %>
 
