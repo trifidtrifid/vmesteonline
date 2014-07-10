@@ -51,7 +51,43 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             }
         });
 
+
+        var urlHash = document.location.hash;
+
+        var state = {
+            type: 'default'
+        };
+
+
         if($('.shop-landing').length){
+            /* history */
+            window.history.replaceState(state,null,urlHash);
+
+            window.addEventListener('popstate', makeHistoryNavLanding, false);
+
+            function makeHistoryNavLanding(e) {
+                // действия для корректной навигации по истории
+                var isHistoryNav = true;
+                if (e.state) {
+                    if (e.state.type == 'page') {
+
+                        if (e.state.pageName == 'profile') {
+
+                            $('.user-menu a:eq(0)').trigger('click');
+
+                        } else if (e.state.pageName == 'edit-profile') {
+
+                            var loadEditPersonal = true;
+                            $('.user-menu a:eq(0)').trigger('click', [loadEditPersonal]);
+
+                        }
+                    } else if (e.state.type == 'default') {
+
+                        $('.page').hide();
+                        $('.landing-page').show();
+                    }
+                }
+            }
 
             $('.landing-login').click(function (e) {
                 e.preventDefault();
@@ -85,11 +121,6 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
 
             /* history */
-            var urlHash = document.location.hash;
-
-            var state = {
-                type: 'default'
-            };
 
             if($('.login-page').length == 0 && $('.page-about-shop').length == 0
              && $('.shop-landing').length == 0) window.history.replaceState(state,null,urlHash);
@@ -101,7 +132,7 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                 if (urlHash.indexOf('p=') != -1) {
                     // значит url с modal
                     var hashParts = urlHash.split('=');
-                    modules.shopCommonModule.identificateModal(hashParts[1]);
+                    modules.shopCommonModule.identificateModal(hashParts[1],true);
 
                 } else if (urlHash.indexOf('cat=') != -1) {
                     // значит категория
@@ -111,7 +142,7 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                         hashParts = categoriesHistory[i].split('=');
                         $('.shop-menu li').each(function () {
                             if ($(this).data('catid') == hashParts[1]) {
-                                $(this).find('a').trigger('click');
+                                $(this).find('a').trigger('click',true);
                             }
                         });
                     }

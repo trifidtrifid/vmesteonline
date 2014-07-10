@@ -19,12 +19,18 @@ a {
   clear: both;
 }
 footer {
-  text-align: center;
+  padding: 20px 0;
   position: absolute;
   background: #fff;
+  font-size: 14px;
   width: 100%;
   bottom: 0;
   border-top: 1px solid #ccc;
+  z-index: 3;
+}
+footer .wrapper {
+  width: 92%;
+  margin: 0 auto;
 }
 footer .container {
   padding: 10px 0;
@@ -433,6 +439,7 @@ th.next,
   margin-left: 0;
 }
 .shop-menu ul li {
+  position: relative;
   list-style: none;
   float: left;
   margin-bottom: 10px;
@@ -447,7 +454,10 @@ th.next,
 .shop-menu ul li.active a {
   color: #2a6496;
 }
-.shop-menu ul li a {
+.shop-menu ul li a.btn-app,
+.shop-menu ul li a.shopmenu-back {
+  position: relative;
+  z-index: 2;
   display: block;
   font-size: 20px;
   line-height: 28px !important;
@@ -457,16 +467,19 @@ th.next,
   border: 1px solid #438eb9;
   white-space: normal;
 }
-.shop-menu ul li a:hover {
+.shop-menu ul li a.btn-app:hover,
+.shop-menu ul li a.shopmenu-back:hover {
   text-decoration: none;
 }
-.shop-menu ul li a span {
+.shop-menu ul li a.btn-app span,
+.shop-menu ul li a.shopmenu-back span {
   font-size: 12px;
   line-height: 16px;
   display: inline-block;
   vertical-align: middle;
 }
-.shop-menu ul li a .fa {
+.shop-menu ul li a.btn-app .fa,
+.shop-menu ul li a.shopmenu-back .fa {
   display: none;
 }
 .shop-menu ul li a.shopmenu-back {
@@ -476,6 +489,29 @@ th.next,
 }
 .shop-menu ul li a.shopmenu-back .fa {
   display: block;
+}
+.shop-menu ul li .category-label {
+  position: absolute;
+  background: url("../i/label.png");
+  width: 20px;
+  height: 20px;
+  top: 2px;
+  right: -2px;
+  z-index: 51;
+}
+.shop-menu ul li .category-soc-links {
+  position: absolute;
+  height: 20px;
+  top: 0;
+  right: 0;
+}
+.shop-menu ul li .category-soc-links .category-soc-single {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+.shop-menu ul li .category-soc-links .category-soc-single img {
+  width: 100%;
 }
 .catalog-head table {
   background: #f9f9f9;
@@ -844,6 +880,10 @@ th.next,
 }
 .modal h3 {
   margin-top: 0;
+  display: inline-block;
+}
+.modal .product-soc-links {
+  display: inline-block;
 }
 .modal .product-text {
   text-align: left;
@@ -1136,6 +1176,12 @@ height 50px
     font-size: 30px;
   }
 }
+/*@media only screen and (min-width: 920px) {
+  .wrapper{
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}*/
 @media all and (max-width: 768px), screen and (device-width: 320px) {
   .sidebar#sidebar {
     margin-left: -190px;
@@ -1591,6 +1637,9 @@ height 50px
   float: right;
 }
 /* backoffice */
+.container.backoffice {
+  padding-bottom: 20px;
+}
 .backoffice .bo-page .main-content {
   margin-left: 200px;
   margin-right: 0;

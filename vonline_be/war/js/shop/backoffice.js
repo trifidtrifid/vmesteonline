@@ -73,8 +73,10 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','shop-co
                 if (contH > wHeight){
                     contH = (contentH) ? contentH+100 : mainContent.height()+45;
                     $('#sidebar').css('height', contH);
+                    //alert('1 '+contH);
                 }else{
-                    $('#sidebar').css('height', wHeight);
+                    //alert('2 '+wHeight);
+                    $('#sidebar').css('height', wHeight-45);
                 }
             }catch(e){
                 alert(e+" Функция setSidebarHeight");
@@ -86,6 +88,7 @@ require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','shop-co
         var day = 3600*24;
 
         commonM.init();
+        $('#sidebar').css('min-height', w.height()-45);
 
 if($('.container.backoffice').hasClass('noAccess')){
 

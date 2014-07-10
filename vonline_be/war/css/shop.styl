@@ -28,12 +28,17 @@ a
   clear:both
 
 footer
-  text-align center
+  padding 20px 0
   position absolute
   background #fff
+  font-size 14px
   width 100%
   bottom 0
   border-top 1px solid #ccc
+  z-index 3
+  .wrapper
+    width: 92%
+    margin: 0 auto
   .container
     padding 10px 0
   .footer-menu
@@ -394,6 +399,7 @@ th.next
   ul
     margin-left 0
     li
+      position relative
       list-style none
       float left
       margin-bottom 10px
@@ -407,7 +413,10 @@ th.next
       &.active
         a
           color #2a6496
-      a
+      a.btn-app
+      a.shopmenu-back
+        position relative
+        z-index 2
         display block
         font-size 20px
         line-height 28px !important
@@ -425,12 +434,31 @@ th.next
           vertical-align middle
         .fa
           display none
-        &.shopmenu-back
-          border 0
-          line-height 10px !important
-          font-size 26px
-          .fa
-            display block
+      a.shopmenu-back
+        border 0
+        line-height 10px !important
+        font-size 26px
+        .fa
+          display block
+      .category-label
+        position absolute
+        background url(../i/label.png)
+        width 20px
+        height 20px
+        top 2px
+        right -2px
+        z-index 51
+      .category-soc-links
+        position absolute
+        height 20px
+        top 0
+        right 0
+        .category-soc-single
+          width 20px
+          height 20px
+          display inline-block
+          img
+            width 100%
 .catalog-head
   table
     background #f9f9f9
@@ -722,6 +750,9 @@ th.next
      margin-left 210px
     h3
       margin-top 0
+      display inline-block
+    .product-soc-links
+      display inline-block
     .product-text
       //height 90px
       //overflow auto
@@ -960,6 +991,13 @@ height 50px
     margin-right 0
   .close
     font-size 30px
+
+/*@media only screen and (min-width: 920px) {
+  .wrapper{
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}*/
 
 @media all and (max-width: 768px),screen and (device-width: 320px)
   .sidebar#sidebar
@@ -1324,6 +1362,9 @@ height 50px
     float right
 
 /* backoffice */
+.container.backoffice
+  padding-bottom 20px
+
 .backoffice .bo-page .main-content
   margin-left 200px
   margin-right 0
