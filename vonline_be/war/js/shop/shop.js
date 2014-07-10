@@ -51,7 +51,43 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             }
         });
 
+
+        var urlHash = document.location.hash;
+
+        var state = {
+            type: 'default'
+        };
+
+
         if($('.shop-landing').length){
+            /* history */
+            window.history.replaceState(state,null,urlHash);
+
+            window.addEventListener('popstate', makeHistoryNavLanding, false);
+
+            function makeHistoryNavLanding(e) {
+                // действия для корректной навигации по истории
+                var isHistoryNav = true;
+                if (e.state) {
+                    if (e.state.type == 'page') {
+
+                        if (e.state.pageName == 'profile') {
+
+                            $('.user-menu a:eq(0)').trigger('click');
+
+                        } else if (e.state.pageName == 'edit-profile') {
+
+                            var loadEditPersonal = true;
+                            $('.user-menu a:eq(0)').trigger('click', [loadEditPersonal]);
+
+                        }
+                    } else if (e.state.type == 'default') {
+
+                        $('.page').hide();
+                        $('.landing-page').show();
+                    }
+                }
+            }
 
             $('.landing-login').click(function (e) {
                 e.preventDefault();
@@ -85,11 +121,6 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             modules.basketModule.InitAddToBasket($('.fa-shopping-cart'));
 
             /* history */
-            var urlHash = document.location.hash;
-
-            var state = {
-                type: 'default'
-            };
 
             if($('.login-page').length == 0 && $('.page-about-shop').length == 0
              && $('.shop-landing').length == 0) window.history.replaceState(state,null,urlHash);

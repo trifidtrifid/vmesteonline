@@ -110,6 +110,10 @@ header{
 #content {  
 	margin:40px 0;
 }
+#content p{
+    text-align: justify;
+}
+
 
 aside { 
 	margin:40px 0;
@@ -623,6 +627,10 @@ PRINT STYLESHEET
     margin-top: 0;
     font-size: 14px;
 }
+.shops ul li .btn-primary{
+    float: left;
+    margin-left: 10px;
+}
 .shops ul li a.disable-link{
     cursor: default;
 }
@@ -650,29 +658,6 @@ header .dropdown-toggle{
     color: #fff;
 }
 
-.for-auth-user{
-    display: none;
-    border: none !important;
-    margin-top: 20px !important;
-    padding: 0 !important;
-    color: #000 !important;
-    text-align: left !important;
-}
-.for-auth-user.landing-logout{
-    margin-top: 0 !important;
-    color: #fff !important;
-}
-.user-is-auth .landing-login,
-.user-is-auth #hero,
-.user-is-auth #content{
-    display: none;
-}
-.user-is-auth .for-auth-user{
-    display: block;
-}
-.user-is-auth header{
-    border-bottom: 1px solid #999;
-}
 p{
     font-size: 14px;
 }
@@ -714,6 +699,7 @@ p{
     font-size: 14px;
     float: left;
     margin-top: 10px;
+    margin-left: 10px;
 }
 #columnsdemo .grid_1,#columnsdemo .grid_2,#columnsdemo .grid_3,#columnsdemo .grid_4,#columnsdemo .grid_5,#columnsdemo .grid_6,#columnsdemo .grid_7,#columnsdemo .grid_8,#columnsdemo .grid_9,#columnsdemo .grid_10,#columnsdemo .grid_11,#columnsdemo .grid_12
 {
@@ -722,4 +708,10 @@ p{
     text-align: center;
     margin-top: 20px;
     padding: 20px;
+}
+.first-header{
+    text-align: center;
+}
+.btn-primary{
+    border-radius: 2px !important;
 }

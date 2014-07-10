@@ -293,7 +293,10 @@
 		</div>
 
 	</div>
-    <footer class="short-footer">
+
+    <%@ include file="templates/footer.jsp" %>
+
+    <%--<footer class="short-footer">
         <div class="container">
             <div class="footer-menu">
                 <ul>
@@ -306,7 +309,7 @@
             </div>
             <div>Вместе Онлайн (c) 2014</div>
         </div>
-    </footer>
+    </footer>--%>
     </div>
 
     <script type="text/javascript">

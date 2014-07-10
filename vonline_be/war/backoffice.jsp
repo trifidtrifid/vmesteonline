@@ -42,7 +42,7 @@ if(isAuth){
     <![endif]-->
 </head>
 <body>
-
+<div class="wrap">
 <div class="container backoffice <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}"> noAccess </c:if> ">
 
     <%@ include file="templates/header.jsp" %>
@@ -746,6 +746,8 @@ if(isAuth){
             <span>Подождите, идет загрузка ...</span>
         </div>
     </div>
+</div>
+<%@ include file="templates/footer.jsp" %>
 </div>
 
 

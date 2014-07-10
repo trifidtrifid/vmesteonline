@@ -81,7 +81,7 @@
 </script>
 </head>
 
-<body id="home" class="shop-landing <c:if test="${auth}">user-is-auth</c:if>">
+<body id="home" class="shop-landing">
 
 	<header>
 		<div class="wrapper clearfix">
@@ -134,7 +134,7 @@
 				<p>Мы внимательно относимся к качеству продуктов питания, потому что верим, что от этого зависит качество нашей жизни. Наши эксперты определяют какие свойтсва продуктов важны, а чего следует
 					остерегаться при выборе. Огромное внимание мы уделяем свежести продуктов, поэтому продукты доставлятюся Вам напрямую от производителя, минуя магазины, часто, прямо в день производства.</p>
 				<p class="align-center">
-					<a href="#" class="buttonlink">Далее</a>
+					<a href="#shops" class="btn no-border btn-primary pull-right">Далее</a>
 				</p>
 			</div>
 			<div class="grid_7 omega rightfloat">
@@ -179,16 +179,16 @@
 
 		<section id="columnsdemo" style="margin-bottom: 60px; width: 100%" class="clearfix">
 			<div class="clearfix"></div>
-			<h2 class="for-auth-user">Спасибо, что выбираете нас !</h2>
+			<%--<h2 class="for-auth-user">Спасибо, что выбираете нас !</h2>
 
 			<div class="grid_6 shops for-auth-user no-left-margin">
 				<div>Для совершения покупок, выберете магазин из списка:</div>
 			</div>
 			<div class="grid_6 shops for-auth-user bigger-left-margin">
 				<div>Какой следующий магазин должен быть подключен?</div>
-			</div>
+			</div>--%>
 
-			<div class="grid_6 shops active-shops no-left-margin">
+			<div id="shops" class="grid_6 shops active-shops no-left-margin">
 
 				<div class="shops-block-title">Подключенные магазины</div>
 				<ul>
@@ -203,7 +203,7 @@
 
                                 <div>
                                 <span class="voice-counter"></span>
-                                <a class="buttonlink" href="shop/${shop.id}">Перейти в магазин</a>
+                                <a class="btn no-border btn-primary" href="shop/${shop.id}">Перейти в магазин</a>
                                 </div>
                             </li>
 						</c:if>
@@ -226,7 +226,7 @@
 							    </a>
 								<div>
 									<span class="voice-counter"></span>
-                                    <a class="buttonlink vote-btn" href="#">Голосовать</a>
+                                    <a class="btn no-border btn-primary vote-btn" href="#">Голосовать</a>
                                     <span class="error-info"></span>
 								</div>
                             </li>
@@ -243,14 +243,7 @@
     <div class="page shop-profile wrapper"></div>
     <div class="page shop-editPersonal wrapper"></div>
 
-	<footer>
-		<div id="colophon" class="wrapper clearfix">
-			(c) Во!Маркет Санкт-Петербург, 2014
-			<div>email: info@vomarket.ru</div>
-		</div>
-
-	</footer>
-
+    <%@ include file="templates/footer.jsp" %>
 
 	<div class="modal modal-auth"></div>
 

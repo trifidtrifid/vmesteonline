@@ -19,12 +19,18 @@ a {
   clear: both;
 }
 footer {
-  text-align: center;
+  padding: 20px 0;
   position: absolute;
   background: #fff;
+  font-size: 14px;
   width: 100%;
   bottom: 0;
   border-top: 1px solid #ccc;
+  z-index: 3;
+}
+footer .wrapper {
+  width: 92%;
+  margin: 0 auto;
 }
 footer .container {
   padding: 10px 0;
@@ -1170,6 +1176,12 @@ height 50px
     font-size: 30px;
   }
 }
+/*@media only screen and (min-width: 920px) {
+  .wrapper{
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}*/
 @media all and (max-width: 768px), screen and (device-width: 320px) {
   .sidebar#sidebar {
     margin-left: -190px;
@@ -1625,6 +1637,9 @@ height 50px
   float: right;
 }
 /* backoffice */
+.container.backoffice {
+  padding-bottom: 20px;
+}
 .backoffice .bo-page .main-content {
   margin-left: 200px;
   margin-right: 0;
