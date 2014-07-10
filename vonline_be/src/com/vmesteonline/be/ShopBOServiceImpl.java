@@ -1634,10 +1634,11 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public ShopPages getShopPages() throws InvalidOperation, TException {
+	public ShopPages getShopPages(long shopId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop currentShop = ShopServiceHelper.getCurrentShop( this, pm );
+			VoShop currentShop =  0==shopId ? 
+					ShopServiceHelper.getCurrentShop( this, pm ) : pm.getObjectById(VoShop.class, shopId);
 			ShopPages shopPages = new ShopPages();
 			shopPages.aboutPageContentURL = currentShop.getAboutShopPageContentURL();
 			shopPages.conditionsPageContentURL = currentShop.getConditionsPageContentURL();

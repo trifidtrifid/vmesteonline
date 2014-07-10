@@ -43,7 +43,6 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
 
         $('.user-short a.dropdown-toggle').click(function (e) {
             e.preventDefault();
-            //alert('1');
 
             if ($(this).hasClass('no-login')) {
                 modules.shopCommonModule.openModalAuth();
@@ -92,11 +91,13 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                 type: 'default'
             };
 
-            /*if($('.login-page').length == 0 && $('.page-about-shop').length == 0
-             && $('.shop-landing').length == 0) window.history.replaceState(state,null,'shop.jsp');*/
+            if($('.login-page').length == 0 && $('.page-about-shop').length == 0
+             && $('.shop-landing').length == 0) window.history.replaceState(state,null,urlHash);
 
 
             if (urlHash) {
+                var urlHashArr = urlHash.split('#');
+                urlHash = urlHashArr[1];
                 if (urlHash.indexOf('p=') != -1) {
                     // значит url с modal
                     var hashParts = urlHash.split('=');
@@ -114,25 +115,25 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                             }
                         });
                     }
-                } else if (urlHash == '#orders-history') {
+                } else if (urlHash == 'orders-history') {
 
                     $('.shop-trigger.go-to-orders').trigger('click');
 
-                } else if (urlHash == '#profile') {
+                } else if (urlHash == 'profile') {
 
                     $('.user-menu a:eq(0)').trigger('click');
 
-                } else if (urlHash == '#edit-profile') {
+                } else if (urlHash == 'edit-profile') {
 
                     var loadEditPersonal = true;
                     $('.user-menu a:eq(0)').trigger('click', [loadEditPersonal]);
 
-                } else if (urlHash == '#confirm-order') {
+                } else if (urlHash == 'confirm-order') {
 
                     $('.basket-bottom .btn-order').trigger('click');
 
                 }
-                if (urlHash == '#about-shop') {
+                if (urlHash == 'about-shop') {
 
                     $('footer .about-shop-link').trigger('click');
 

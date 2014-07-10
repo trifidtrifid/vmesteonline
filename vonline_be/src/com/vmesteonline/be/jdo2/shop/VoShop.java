@@ -173,7 +173,7 @@ public class VoShop {
 	@Persistent
 	private boolean activated;
 	
-	@Persistent
+	@Persistent(serialized="true")
 	@Unindexed
 	private Map<String, Set<Long>> voteResults;
 	

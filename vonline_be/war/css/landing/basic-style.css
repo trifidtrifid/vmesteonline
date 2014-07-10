@@ -623,6 +623,16 @@ PRINT STYLESHEET
     margin-top: 0;
     font-size: 14px;
 }
+.shops ul li a.disable-link{
+    cursor: default;
+}
+.shops ul li a.disable-link:hover h3,
+.shops ul li a.disable-link:hover p
+{
+    color: #000;
+    text-decoration: none;
+}
+
 .align-center {
     text-align: center;
 }
@@ -704,4 +714,12 @@ p{
     font-size: 14px;
     float: left;
     margin-top: 10px;
+}
+#columnsdemo .grid_1,#columnsdemo .grid_2,#columnsdemo .grid_3,#columnsdemo .grid_4,#columnsdemo .grid_5,#columnsdemo .grid_6,#columnsdemo .grid_7,#columnsdemo .grid_8,#columnsdemo .grid_9,#columnsdemo .grid_10,#columnsdemo .grid_11,#columnsdemo .grid_12
+{
+    border: solid 1px #999;
+    color: #999;
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
 }

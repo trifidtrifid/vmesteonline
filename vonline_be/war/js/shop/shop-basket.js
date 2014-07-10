@@ -401,7 +401,9 @@ define(
                         type : 'page',
                         pageName: 'confirm-order'
                     };
-                    window.history.pushState(state,null,'shop.jsp#'+state.pageName);
+                    var tempHash;
+                    (urlHash.indexOf('#') == -1) ? tempHash = urlHash : tempHash = "";
+                    window.history.pushState(state,null,tempHash+'#'+state.pageName);
                 }
                 /* --- */
                 var myDate;
@@ -411,8 +413,9 @@ define(
                 var orderDetails = thriftModule.client.getOrderDetails(orderId);
                 var checkboxDeliveryType = $('.delivery-right .radio');
                 checkboxDeliveryType.find('input').prop('checked',false);
-                var shops = thriftModule.client.getShops();
-                var shop = thriftModule.client.getShop(shops[0].id);
+                //var shops = thriftModule.client.getShops();
+                var shopId = $('.shop.dynamic').attr('id');
+                var shop = thriftModule.client.getShop(shopId);
                 var shopAddress = shop.address;
 
                 switch (orderDetails.delivery){

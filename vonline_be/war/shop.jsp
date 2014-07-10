@@ -44,6 +44,35 @@
 
     <script type="text/javascript" data-main="../build/build.js" src="../js/shop/require.min.js"></script>
 
+    <%--<script src="../js/lib/jquery-2.1.1.min.js"></script>
+    <script src="../js/lib/bootstrap.min.js"></script>
+    <script src="../js/lib/ace-extra.min.js"></script>
+    <script src="../js/lib/ace-elements.min.js"></script>
+
+
+    <script src="../js/lib/jquery.nestable.min.js"></script>
+
+    <script src="../js/lib/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="../js/lib/markdown/markdown.min.js"></script>
+    <script src="../js/lib/markdown/bootstrap-markdown.min.js"></script>
+    <script src="../js/lib/jquery.hotkeys.min.js"></script>
+    <script src="../js/lib/bootstrap-wysiwyg.min.js"></script>
+    <script src="../js/bootbox.min.js"></script>
+    <script src="/build/thrift.min.js" type="text/javascript"></script>
+    <script src="/build/gen-js/bedata_types.js" type="text/javascript"></script>
+
+    <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
+    <script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
+    <script src="/build/gen-js/shop.bo_types.js" type="text/javascript"></script>
+    <script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>
+
+    <script src="/build/gen-js/authservice_types.js" type="text/javascript"></script>
+    <script src="/build/gen-js/AuthService.js" type="text/javascript"></script>
+    <script src="/build/gen-js/userservice_types.js" type="text/javascript"></script>
+    <script src="/build/gen-js/UserService.js" type="text/javascript"></script>
+
+    <script type="text/javascript" data-main="../js/shop/shop.js" src="../js/shop/require.min.js"></script>--%>
+
 </head>
 <body>
     <div class="wrap">

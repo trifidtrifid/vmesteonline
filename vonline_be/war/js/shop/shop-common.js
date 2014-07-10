@@ -389,14 +389,15 @@ define(
                             }
                         }
                     }
-                    var beginHash = "p";
+                    var beginHash = "p",
+                        urlHash = document.location.hash;
 
                     if (!isHistoryNav && isCatalog){
                         var state = {
                             type : 'modal',
                             productid : productId
                         };
-                        window.history.pushState(state,null,'shop.jsp#'+ beginHash +'='+productId);
+                        window.history.pushState(state,null,urlHash+'#'+ beginHash +'='+productId);
                     }
                     currentModal.modal();
                     if(isBasket && !isConfirm){
@@ -605,59 +606,44 @@ define(
             }
         }
 
-
         $('.shop-trigger').click(function(e,isHistoryNav) {
-            if (!$('.backoffice').length) {
+            if (!$('.backoffice').length || $(this).hasClass('go-to-orders')) {
                 e.preventDefault();
             }
             //try{
                 var shopOrders = $('.shop-orders');
-                var ordersList = $('.orders-list');
+                var ordersList = $('.shop-orders .orders-list');
                 var state;
 
                 if($(this).hasClass('back-to-shop')){
-                    if($('.catalog .ace-spinner').length == 0){
-                        // если мы еще не загружали главную страницу
-                        // например при заходе из basic.jsp
 
-                        document.location.replace("./shop.jsp");
+                    $('.page').hide();
+                    $('footer').addClass('short-footer');
 
-                    }else{
+                    shopOrders.hide();
+                    $('.shop-confirm').hide();
+                    $('.main-container-inner').show();
 
-                        $('.page').hide();
-                        $('footer').addClass('short-footer');
-
-                        shopOrders.hide();
-                        $('.shop-confirm').hide();
-                        $('.main-container-inner').show();
-
-                        $('.navbar .nav li.active').removeClass('active');
-                        //$('.navbar .nav li:eq(0)').addClass('active');
-                        $(this).addClass('active');
-                        var shopProducts = $('.shop-products');
-                        if(shopProducts.find('.shop-menu .shopmenu-back').length){
-                            // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
-                            var categoryModule = require('shop-category.min');
-                            categoryModule.InitLoadCategory(0);
-                        }
-                        shopProducts.show(function(){
-                            setSidebarHeight();
-                        });
-                        state = {
-                            type : 'default'
-                        };
-                        window.history.pushState(state,null,'shop.jsp');
+                    $('.navbar .nav li.active').removeClass('active');
+                    //$('.navbar .nav li:eq(0)').addClass('active');
+                    $(this).addClass('active');
+                    var shopProducts = $('.shop-products');
+                    if(shopProducts.find('.shop-menu .shopmenu-back').length){
+                        // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
+                        var categoryModule = require('shop-category.min');
+                        categoryModule.InitLoadCategory(0);
                     }
+                    shopProducts.show(function(){
+                        setSidebarHeight();
+                    });
+                    state = {
+                        type : 'default'
+                    };
+
+                    window.history.pushState(state,null," ");
+
                 }else if($(this).hasClass('go-to-orders')){
                         /* history */
-                    var urlHash = document.location.hash;
-                    if (urlHash != '#orders-history'){
-                        state = {
-                            type : 'page',
-                            pageName: 'orders-history'
-                        };
-                        window.history.pushState(state,null,'shop.jsp#'+state.pageName);
-                    }
                     /**/
                     var ordersModule = require('shop-orders.min');
                     if (!globalUserAuth){
@@ -665,6 +651,17 @@ define(
                         basketModule.callbacks.add(ordersModule.GoToOrdersTrigger);
                         openModalAuth();
                     }else{
+                        var urlHash = document.location.hash;
+                        if (urlHash != '#orders-history'){
+                            state = {
+                                type : 'page',
+                                pageName: 'orders-history'
+                            };
+                            var tempHash;
+                            (urlHash.indexOf('#') == -1) ? tempHash = urlHash : tempHash = "";
+                            window.history.pushState(state,null,tempHash+'#'+state.pageName);
+                        }
+
                         $('.page').hide();
                         $('footer').addClass('short-footer');
 
@@ -732,7 +729,11 @@ define(
             var shortUserInfo = (newUserInfo) ?  newUserInfo : thriftModule.userClient.getShortUserInfo();
             var shortUserInfoHtml =  shortUserInfo.firstName +' '+ shortUserInfo.lastName;
             $('.user-info').html(shortUserInfoHtml);
-            $('.navbar-header .nav .bo-link').removeClass('hidden');
+
+            var shopId = $('.shop.dynamic').attr('id');
+            var userRole = thriftModule.client.getUserShopRole(shopId);
+            
+            if(userRole != 1) $('.navbar-header .nav .bo-link').removeClass('hidden');
         }
 
         function initLanding(){
@@ -748,6 +749,17 @@ define(
                     $(this).find('.voice-counter').text(votes[p]);
                 }
 
+                thriftModule.client.getShop(shopId);
+                var shopPages = thriftModule.clientBO.getShopPages();
+                if(!shopPages.aboutPageContentURL){
+                    $(this).find('>a').addClass('disable-link');
+                }
+
+
+            });
+
+            $('.disable-link').click(function(e){
+                e.preventDefault();
             });
 
             $('.vote-btn').click(function(e){
