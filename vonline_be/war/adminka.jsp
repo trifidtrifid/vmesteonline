@@ -7,6 +7,7 @@
     int now = (int) (System.currentTimeMillis() / 1000L);
     //int day = 3600 * 24;
     double[] totalShopArray = new double[ArrayShopsSize];
+    ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
 
     for(int i = 0; i < ArrayShopsSize; i++){
         totalShopArray[i] = shopBOService.totalShopReturn(ArrayShops.get(i).id, 0, now);
