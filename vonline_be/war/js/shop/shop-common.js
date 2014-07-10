@@ -729,7 +729,11 @@ define(
             var shortUserInfo = (newUserInfo) ?  newUserInfo : thriftModule.userClient.getShortUserInfo();
             var shortUserInfoHtml =  shortUserInfo.firstName +' '+ shortUserInfo.lastName;
             $('.user-info').html(shortUserInfoHtml);
-            $('.navbar-header .nav .bo-link').removeClass('hidden');
+
+            var shopId = $('.shop.dynamic').attr('id');
+            var userRole = thriftModule.client.getUserShopRole(shopId);
+            
+            if(userRole != 1) $('.navbar-header .nav .bo-link').removeClass('hidden');
         }
 
         function initLanding(){
