@@ -109,6 +109,7 @@ if($('.container.backoffice').hasClass('noAccess')){
 
     function makeHistoryNav(e) {
         // действия для корректной навигации по истории
+        $('.navbar').removeClass('over-rightbar');
         var isHistoryNav = true;
         if (e.state) {
              if (e.state.type == 'page') {
@@ -139,6 +140,17 @@ if($('.container.backoffice').hasClass('noAccess')){
     }
 
         $('.bo-link').parent().addClass('active');
+
+    /*$('.user-short a.dropdown-toggle').click(function (e) {
+        e.preventDefault();
+
+        if ($(this).hasClass('no-login')) {
+            modules.shopCommonModule.openModalAuth();
+        } else {
+            $(this).closest('.navbar').toggleClass('over-rightbar');
+        }
+    });*/
+
 
         function showAllOrders(){
             try{

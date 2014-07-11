@@ -832,6 +832,25 @@ define(
             });
         }
 
+        $('.user-short a.dropdown-toggle').click(function (e) {
+            e.preventDefault();
+
+            if ($(this).hasClass('no-login')) {
+                //modules.shopCommonModule.openModalAuth();
+                openModalAuth();
+            } else {
+                $(this).closest('.navbar').toggleClass('over-rightbar');
+            }
+        });
+
+        $('html,body').click(function (e) {
+            //e.stopPropagation();
+
+            if ($('.user-short').hasClass('open')) {
+                $('.navbar').removeClass('over-rightbar');
+            }
+        });
+
 
         return{
             getCookie: getCookie,
