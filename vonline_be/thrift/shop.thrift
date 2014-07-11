@@ -18,9 +18,10 @@ struct Shop {
 	8:list<string> tags,
 	9:map<DeliveryType,double> deliveryCosts,
 	10:map<PaymentType,double> paymentTypes,
-	11:optional map<i32,i32> deliveryByWeightIncrement,
-	12:optional map<i32,double> deliveryCostByDistance,
-	13:optional map<DeliveryType,string> deliveryTypeAddressMasks, 
+	11:string hostName,
+	12:optional map<i32,i32> deliveryByWeightIncrement,
+	13:optional map<i32,double> deliveryCostByDistance,
+	14:optional map<DeliveryType,string> deliveryTypeAddressMasks, 
 }
 
 struct ShopPages {

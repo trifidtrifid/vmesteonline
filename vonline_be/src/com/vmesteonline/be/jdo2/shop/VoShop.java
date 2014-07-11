@@ -94,10 +94,11 @@ public class VoShop {
 		if(null!=topicss) topicIds.addAll(topicss);
 		Shop shop = new Shop(id.getId(), name, descr.getValue(), null == address ? null : address.getPostalAddress(), logoURL, ownerId, topicIds, tags,
 				convertToDeliveryTypeMap(deliveryCosts, new HashMap<DeliveryType, Double>()), convertToPaymentTypeMap(paymentTypes,
-						new HashMap<PaymentType, Double>()));
+						new HashMap<PaymentType, Double>()),hostName);
 		shop.deliveryByWeightIncrement = deliveryByWeightIncrement;
 		shop.deliveryCostByDistance = deliveryCostByDistance;
 		shop.deliveryTypeAddressMasks = convertToDeliveryTypeMap( this.deliveryAddressMasksText, new HashMap<DeliveryType, String>());
+		shop.hostName = hostName;
 		return shop;
 	}
 
@@ -181,6 +182,9 @@ public class VoShop {
 	@Persistent
 	@Unindexed
 	private Map<Integer, Double> paymentTypes;
+	
+	@Persistent
+	private String hostName;
 	
 	
 	public Map<DeliveryType, String> getDeliveryConditionsText() {

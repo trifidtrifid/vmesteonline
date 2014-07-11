@@ -22,7 +22,7 @@ public class ShopDescription {
 	public Shop getShop() {
 		Shop shop = new Shop(id, name, descr, null, logoURL, 0L, 
 				null, tags, 
-				null, null);
+				null, null, null);
 		shop.topicSet = VoHelper.convertSet( topics, new ArrayList<Long>(), new Long(0));
 		return shop;
 	}
