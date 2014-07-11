@@ -41,7 +41,7 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
         backToShop.removeClass('no-prevent');
         backToShop.parent().addClass('active');
 
-        $('.user-short a.dropdown-toggle').click(function (e) {
+        /*$('.user-short a.dropdown-toggle').click(function (e) {
             e.preventDefault();
 
             if ($(this).hasClass('no-login')) {
@@ -49,7 +49,7 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             } else {
                 $(this).closest('.navbar').toggleClass('over-rightbar');
             }
-        });
+        });*/
 
 
         var urlHash = document.location.hash;
@@ -175,6 +175,7 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
 
             function makeHistoryNav(e) {
                 // действия для корректной навигации по истории
+                $('.navbar').removeClass('over-rightbar');
                 var isHistoryNav = true;
                 if (e.state) {
                     if (e.state.type == 'modal') {
@@ -330,13 +331,13 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                     return false;
                 });
 
-                $('html,body').click(function (e) {
+                /*$('html,body').click(function (e) {
                     //e.stopPropagation();
 
                     if ($('.user-short').hasClass('open')) {
                         $('.navbar').removeClass('over-rightbar');
                     }
-                });
+                });*/
 
             } catch (e) {
                 //alert(e + ' Ошибка в простых обработчиках');

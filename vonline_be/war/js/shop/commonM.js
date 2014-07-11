@@ -401,6 +401,21 @@ define(
 
             thriftModule.authClient.logout();
             var href = document.location.href;
+            if(href.indexOf('backoffice') != -1){
+
+                if(href.indexOf('#') != -1){
+
+                    href = href.split('#')[0];
+
+                }
+
+                href = href.replace('backoffice','shop');
+
+            }else if(href.indexOf('#') != -1){
+
+                href = href.split('#')[0];
+
+            }
             document.location.replace(href);
         }
 

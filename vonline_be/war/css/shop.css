@@ -2146,6 +2146,15 @@ height 50px
 .bo-edit table .product-options td.td-remove-options .remove-item {
   font-size: 16px;
 }
+.bo-edit table .product-links td {
+  border: 0;
+}
+.bo-edit table .product-links td.td-remove-link {
+  min-width: 30px;
+}
+.bo-edit table .product-links .remove-item {
+  font-size: 16px;
+}
 .bo-edit table .product-producer >span {
   display: block;
 }
@@ -2194,6 +2203,13 @@ height 50px
 .bo-edit #edit-category .category-remove {
   width: 4%;
   text-align: center;
+}
+.bo-edit #edit-category .category-links table {
+  margin: 0;
+}
+.bo-edit #edit-category .category-links table .td-remove-link {
+  width: 5%;
+  min-width: 0;
 }
 .bo-edit #edit-category .dropdown-menu {
   margin-left: -50px;
