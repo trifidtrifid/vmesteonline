@@ -1747,7 +1747,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                 var newShopInfo = myShop;
 
                 newShopInfo.name = settingsCommon.find($('#name')).val();
-                //newShopInfo.hostName = settingsCommon.find($('#hostName')).val();
+                newShopInfo.hostName = settingsCommon.find($('#hostName')).val();
                 newShopInfo.descr = settingsCommon.find($('#descr')).val();
                 newShopInfo.address = thriftModule.client.createDeliveryAddress(settingsCommon.find($('#address')).val());
 

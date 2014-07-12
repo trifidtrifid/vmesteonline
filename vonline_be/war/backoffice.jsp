@@ -379,11 +379,11 @@ if(isAuth){
                             </span>
                         </label>
 
-                        <%--<label class="block clearfix">
+                        <label class="block clearfix">
                             <span class="block input-icon input-icon-right">
                                 <input type="text" id="hostName" class="form-control" value="${shop.hostName}" />
                             </span>
-                        </label>--%>
+                        </label>
 
 
                         <label class="block clearfix logo-container">
