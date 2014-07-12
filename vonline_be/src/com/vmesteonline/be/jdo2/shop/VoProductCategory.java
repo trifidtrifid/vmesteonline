@@ -1,7 +1,9 @@
 package com.vmesteonline.be.jdo2.shop;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -23,17 +25,17 @@ import com.vmesteonline.be.utils.StorageHelper;
 @PersistenceCapable
 public class VoProductCategory {
 
-	public VoProductCategory(VoShop shop, long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId,
+	public VoProductCategory(VoShop shop, long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId, Map<String,String> socialNetworks,
 			PersistenceManager _pm) {
-		this(shop, 0, parentId, name, descr, logoURLset, topicSet, ownedId, null);
+		this(shop, 0, parentId, name, descr, logoURLset, topicSet, ownedId,  socialNetworks, null);
 	}
 
-	public VoProductCategory(VoShop shop, long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId) {
-		this(shop, 0, parentId, name, descr, logoURLset, topicSet, ownedId, null);
+	public VoProductCategory(VoShop shop, long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet, long ownedId, Map<String,String> socialNetworks) {
+		this(shop, 0, parentId, name, descr, logoURLset, topicSet, ownedId,  socialNetworks, null);
 	}
 
 	public VoProductCategory(VoShop shop, long importId, long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet,
-			long ownedId, PersistenceManager _pm) {
+			long ownedId,  Map<String,String>  socialNetworks, PersistenceManager _pm) {
 
 		this.name = name;
 		this.setDescr(descr);
@@ -67,6 +69,9 @@ public class VoProductCategory {
 					pm.getObjectById(VoTopic.class, tid);
 					topics.add(tid);
 				}
+			
+			this.setSocialNetworks( socialNetworks );
+			
 			pm.makePersistent(this);
 
 		} catch (Exception e) {
@@ -129,7 +134,7 @@ public class VoProductCategory {
 		ts.addAll(getTopics());
 		pc.setLogoURLset(getLogoURLset());
 		pc.setTopicSet(ts);
-
+		pc.setSocialNetworks(socialNetworks);
 		return pc;
 	}
 
@@ -170,6 +175,19 @@ public class VoProductCategory {
 	@Persistent
 	@Unindexed
 	private List<Long> parentPath; 
+	
+	@Persistent
+	@Unindexed
+	private Map<String,String> socialNetworks;
+	
+	public Map<String, String> getSocialNetworks() {
+		return socialNetworks;
+	}
+
+	public void setSocialNetworks(Map<String, String> socialNetworks) {
+		this.socialNetworks = socialNetworks;
+	}
+
 	
 	public void setParent(VoProductCategory parent){
 		if( null!=parent){
@@ -245,7 +263,7 @@ public class VoProductCategory {
 
 		this.name = newCategoryInfo.name;
 		this.setDescr(newCategoryInfo.descr);
-		this.logoURLset = new ArrayList<String>();
+		
 		if( this.parentId != newCategoryInfo.getParentId()){
 			VoProductCategory parentCategory = pm.getObjectById(VoProductCategory.class, newCategoryInfo.parentId);
 			this.setParent(parentCategory);
@@ -260,6 +278,11 @@ public class VoProductCategory {
 					e.printStackTrace();
 				}
 		}
+		this.setLogoURLset( new ArrayList<String>());
+		if( null!=newCategoryInfo.logoURLset )
+			this.logoURLset.addAll(newCategoryInfo.logoURLset);
+		
+		socialNetworks = newCategoryInfo.socialNetworks;
 	}
 
 	public static VoProductCategory getByImportId(Long shopId, long importId, PersistenceManager pm) {

@@ -37,6 +37,7 @@ struct Producer {
 	3:string descr,
 	4:string logoURL,
 	5:string homeURL
+	6:optional map<string,string> socialNetworks,
 }
 
 struct ProductCategory {
@@ -47,6 +48,7 @@ struct ProductCategory {
 	5:list<string> logoURLset,
 	6:list<i64> topicSet,
 	7:i32 productCount,
+	8:optional map<string,string> socialNetworks,
 }
 
 enum PriceType { RETAIL=0, INET=1, VIP=2, SPECIAL=3 }
@@ -60,6 +62,7 @@ struct ProductDetails {
 	6:list<i64> topicSet,
 	7:double minProducerPack,
 	8:set<string> knownNames,
+	9:optional map<string,string> socialNetworks,
 }
 
 struct Product {

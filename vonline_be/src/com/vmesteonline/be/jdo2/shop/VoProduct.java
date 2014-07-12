@@ -98,6 +98,13 @@ public class VoProduct {
 				this.topicSet.addAll(newInfo.details.getTopicSet());
 			}
 			VoHelper.copyIfNotNull(this, "unitName", newInfo.product.unitName);
+			
+			this.setKnownNames( new HashSet<String>() );
+			if( null!=newInfo.details.knownNames )
+				this.knownNames.addAll(newInfo.details.knownNames);
+			
+			this.socialNetworks = newInfo.details.socialNetworks;
+			
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
 		}
@@ -195,6 +202,7 @@ public class VoProduct {
 				}
 			vp.unitName = product.unitName;
 			vp.importId = product.id;
+			vp.socialNetworks = details.socialNetworks;
 
 			pm.makePersistent(vp);
 			return vp;
@@ -276,6 +284,8 @@ public class VoProduct {
 			}
 			pm.getObjectById(VoProducer.class, product.getProducerId());
 			this.producerId = product.getProducerId();
+			
+			this.socialNetworks = details.socialNetworks;
 
 			pm.makePersistent(this);
 
@@ -295,7 +305,8 @@ public class VoProduct {
 			null == pricesMap.get(PriceType.INET.getValue()) ? 
 					pricesMap.get(PriceType.RETAIL.getValue()) == null ? price : pricesMap.get(PriceType.RETAIL.getValue()) :
 						pricesMap.get(PriceType.INET.getValue());
-		return new Product(id.getId(), name, shortDescr, weight, imageURL, thePrice, unitName, minClientPack, shopId, prepackRequired,producerId);
+		Product product = new Product(id.getId(), name, shortDescr, weight, imageURL, thePrice, unitName, minClientPack, shopId, prepackRequired,producerId);
+		return product;
 	}
 
 	public ProductDetails getProductDetails() {
@@ -308,10 +319,10 @@ public class VoProduct {
 		productDetails.setTopicSet(getTopicSet());
 		productDetails.setImagesURLset(getImagesURLset());
 		productDetails.setKnownNames(knownNames);
+		productDetails.setSocialNetworks(socialNetworks);
 
 		return productDetails;
 	}
-
 	
 	public long getProducerId() {
 		return producerId;
@@ -437,6 +448,18 @@ public class VoProduct {
 
 	@Persistent
 	private long importId;
+	
+	@Persistent
+	@Unindexed
+	private Map<String,String> socialNetworks;
+	
+	public Map<String, String> getSocialNetworks() {
+		return socialNetworks;
+	}
+
+	public void setSocialNetworks(Map<String, String> socialNetworks) {
+		this.socialNetworks = socialNetworks;
+	}
 
 	public double getMinClientPack() {
 		return minClientPack;

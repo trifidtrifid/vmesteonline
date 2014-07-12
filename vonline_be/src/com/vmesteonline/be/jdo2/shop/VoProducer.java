@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -41,6 +42,7 @@ public class VoProducer {
 		this.setDescr( producer.getDescr());
 		this.homeURL = producer.getHomeURL();
 		this.importId = producer.id;
+		this.socialNetworks = producer.socialNetworks;
 		
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 
@@ -72,7 +74,9 @@ public class VoProducer {
 	}
 
 	public Producer createProducer() {
-		return new Producer(id.getId(), name, descr.getValue(), logoURL, homeURL);
+		Producer producer = new Producer(id.getId(), name, descr.getValue(), logoURL, homeURL);
+		producer.setSocialNetworks(socialNetworks);
+		return producer;
 	}
 
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -100,6 +104,18 @@ public class VoProducer {
 	@Persistent
 	@Unindexed
 	private String homeURL;
+	
+	@Persistent
+	@Unindexed
+	private Map<String,String> socialNetworks;
+	
+	public Map<String, String> getSocialNetworks() {
+		return socialNetworks;
+	}
+
+	public void setSocialNetworks(Map<String, String> socialNetworks) {
+		this.socialNetworks = socialNetworks;
+	}
 
 	public String getName() {
 		return name;
@@ -170,6 +186,8 @@ public class VoProducer {
 			} catch (Exception e) {
 			}
 			VoHelper.copyIfNotNull(this, "name", newInfoWithOldId.name);
+			this.setSocialNetworks( newInfoWithOldId.socialNetworks );
+			
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
 			throw new InvalidOperation( VoError.IncorrectParametrs, "Failed to update Producer:"+e.getMessage());
