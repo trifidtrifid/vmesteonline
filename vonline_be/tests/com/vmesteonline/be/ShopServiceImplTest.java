@@ -168,7 +168,7 @@ public class ShopServiceImplTest {
 	public void testRegisterShop() {
 		try {
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 
 			Long id = sbi.registerShop(shop);
 			Shop savedShop = si.getShop(id);
@@ -193,7 +193,7 @@ public class ShopServiceImplTest {
 	@Test
 	public void testRegisterProductCategory() {
 		try {
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 
 			Long shopId = sbi.registerShop(shop);
 			// set current shop
@@ -252,7 +252,7 @@ public class ShopServiceImplTest {
 	@Test
 	public void testRegisterProducer() {
 		try {
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 
 			Long shopId = sbi.registerShop(shop);
 			// set current shop
@@ -284,7 +284,7 @@ public class ShopServiceImplTest {
 	@Test
 	public void testUploadProducts() {
 		try {
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
@@ -387,7 +387,7 @@ public class ShopServiceImplTest {
 	@Test
 	public void testUploadProductCategoies() {
 		try {
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
@@ -437,7 +437,7 @@ public class ShopServiceImplTest {
 	@Test
 	public void testSetDates() {
 		try {
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
@@ -468,9 +468,9 @@ public class ShopServiceImplTest {
 	@Test
 	public void testGetShops() {
 		try {
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
-			Shop shop2 = new Shop(0L, NAME + 1, DESCR + 1, userAddress, LOGO + 1, userId, topic2Set, tags, deliveryCosts, paymentTypes);
-			Shop shop3 = new Shop(0L, NAME + 2, DESCR + 2, userAddress, LOGO + 2, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
+			Shop shop2 = new Shop(0L, NAME + 1, DESCR + 1, userAddress, LOGO + 1, userId, topic2Set, tags, deliveryCosts, paymentTypes,null);
+			Shop shop3 = new Shop(0L, NAME + 2, DESCR + 2, userAddress, LOGO + 2, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 
 			Long shopId = sbi.registerShop(shop);
 			Long shop2Id = sbi.registerShop(shop2);
@@ -502,7 +502,7 @@ public class ShopServiceImplTest {
 			int day = 3600 * 24;
 			List<Long> upProductsIdl;
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
@@ -678,7 +678,7 @@ public class ShopServiceImplTest {
 			int day = 3600 * 24;
 			List<Long> upProductsIdl;
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
@@ -768,7 +768,7 @@ public class ShopServiceImplTest {
 
 		try {
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
@@ -809,7 +809,7 @@ public class ShopServiceImplTest {
 
 		try {
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
@@ -848,7 +848,7 @@ public class ShopServiceImplTest {
 	public void testSetOrderDeliveryAddress() {
 		try {
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
@@ -874,7 +874,7 @@ public class ShopServiceImplTest {
 	public void testSetOrderPaymentStatus() {
 
 		try {
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
@@ -923,7 +923,7 @@ public class ShopServiceImplTest {
 
 			ds.addToData(importData);
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 
 			Long id = sbi.registerShop(shop);
 			/* Shop savedShop = */si.getShop(id);
@@ -1005,7 +1005,7 @@ public class ShopServiceImplTest {
 
 			ds.addToData(importData);
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
@@ -1075,7 +1075,7 @@ public class ShopServiceImplTest {
 
 			List<ProductCategory> productCategories = null;
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 			// set current shop
 			si.getShop(shopId);
@@ -1145,7 +1145,7 @@ public class ShopServiceImplTest {
 			int day = 3600 * 24;
 			List<Long> upProductsIdl;
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
@@ -1234,7 +1234,7 @@ public class ShopServiceImplTest {
 			int day = 3600 * 24;
 			List<Long> upProductsIdl;
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
@@ -1339,7 +1339,7 @@ public class ShopServiceImplTest {
 			int day = 3600 * 24;
 			List<Long> upProductsIdl;
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
@@ -1370,7 +1370,7 @@ public class ShopServiceImplTest {
 			int day = 3600 * 24;
 			List<Long> upProductsIdl;
 
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 
 			upProductsIdl = createCategoriesAndProductsAndOrder(now, day, shopId);
@@ -1442,7 +1442,7 @@ public class ShopServiceImplTest {
 			int day = 3600 * 24;
 			List<Long> upProductsIdl;
 	
-			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 			Long shopId = sbi.registerShop(shop);
 			
 			VoPostalAddress sa = new VoPostalAddress( userAddress, pm);
@@ -1572,7 +1572,7 @@ public class ShopServiceImplTest {
 		int day = 3600 * 24;
 		List<Long> upProductsIdl;
 
-		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 		try {
 			Long shopId = sbi.registerShop(shop);
 			try {
@@ -1595,7 +1595,7 @@ public class ShopServiceImplTest {
 		int day = 3600 * 24;
 		List<Long> upProductsIdl;
 
-		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 		try {
 			
 			long shopId = sbi.registerShop(shop);
@@ -1639,7 +1639,7 @@ public class ShopServiceImplTest {
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		int day = 3600 * 24;
 
-		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes);
+		Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
 		try {
 			
 			UserShopRole userShopRole = si.getUserShopRole(sbi.registerShop(shop));

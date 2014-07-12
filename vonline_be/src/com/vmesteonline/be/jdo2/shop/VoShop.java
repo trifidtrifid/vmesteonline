@@ -44,11 +44,11 @@ public class VoShop {
 
 	public VoShop(Shop shop) throws InvalidOperation {
 		this(shop.getName(), shop.getDescr(), shop.getAddress(), shop.getLogoURL(), shop.getOwnerId(), shop.getTopicSet(), shop.getTags(), shop
-				.getDeliveryCosts(), shop.getPaymentTypes());
+				.getDeliveryCosts(), shop.getPaymentTypes(), shop.getHostName());
 	}
 
 	public VoShop(String name, String descr, PostalAddress postalAddress, String logoURL, long ownerId, List<Long> topicSet, List<String> tags,
-			Map<DeliveryType, Double> deliveryCosts, Map<PaymentType, Double> paymentTypes) throws InvalidOperation {
+			Map<DeliveryType, Double> deliveryCosts, Map<PaymentType, Double> paymentTypes, String hostName) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
 		this.activated = false;
@@ -78,8 +78,12 @@ public class VoShop {
 				this.topics = new ArrayList<Long>();
 				topics.addAll(topicSet);
 			}
+			
 			dates = new ArrayList<OrderDates>();
+			this.hostName = hostName;
+			
 			pm.makePersistent(this);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to create shop." + e.getMessage());
@@ -513,6 +517,7 @@ public class VoShop {
 			this.topics = new ArrayList<Long>();
 			this.topics.addAll(ns.topicSet);
 		}
+		this.hostName = ns.getHostName();
 	}
 //======================================================================================================================
 	public PriceType getPriceType(int date) throws InvalidOperation {

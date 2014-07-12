@@ -298,7 +298,7 @@ public class VoOrder {
 	}
 
 	public Map<Long,Long> getOrderLines() {
-		return orderLines;
+		return null == orderLines ? new HashMap<Long, Long>() : orderLines;
 	}
 
 	public long getShopId() {

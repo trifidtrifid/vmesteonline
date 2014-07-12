@@ -210,8 +210,17 @@ public class Defaults {
 
 			Map<PaymentType, Double> paymentTypes = new TreeMap<PaymentType, Double>();
 
-			long shop = sbsi.registerShop(new Shop(10, "Во!Молоко", "Магазин свежей молочной продукции Вологодского края", postalAddress,
-					"http://vomoloko.ru/img/logo.jpg", userId, topicSet, tags, deliveryCosts, paymentTypes, "www.vomoloko.ru"));
+			Shop shop2 = new Shop(10, "Во!Молоко", "Магазин свежей молочной продукции Вологодского края", postalAddress,
+					"http://vomoloko.ru/img/logo.jpg", userId, topicSet, tags, deliveryCosts, paymentTypes, "vomoloko.ru");
+			
+			long shop = sbsi.registerShop(shop2);
+			sbsi.activate(shop, true);
+			
+			Shop shop3 = new Shop(10, "Во!Мясо", "Магазин качественного мяса", postalAddress,
+					null, userId, topicSet, tags, deliveryCosts, paymentTypes, "votmeet.ru");
+			
+			long shop3id = sbsi.registerShop(shop3);
+			sbsi.activate(shop3id, true);
 
 			VoShopAccessManager.createAccessForShopOwner(userId, shop);
 

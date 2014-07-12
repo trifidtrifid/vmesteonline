@@ -99,8 +99,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
 			VoProductCategory voProductCategory = new VoProductCategory(voShop, productCategory.getId(), productCategory.getParentId(),
 					productCategory.getName(), productCategory.getDescr(), productCategory.getLogoURLset(), productCategory.getTopicSet(), voShop.getOwnerId(),
-					pm);
+					productCategory.getSocialNetworks(), pm);
 			productCategory.setId(voProductCategory.getId());
+			
 			pm.makePersistent(voShop);
 			
 			removeCategoryFromCache(shopId, voProductCategory.getId(), pm);
@@ -289,7 +290,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				} else {
 					logger.debug("Use parent category " + pc.getParentId());
 					vpc = new VoProductCategory(voShop, pc.getId(), pc.getParentId(), pc.getName(), pc.getDescr(), pc.getLogoURLset(), pc.getTopicSet(),
-							voShop.getOwnerId(), pm);
+							voShop.getOwnerId(), pc.socialNetworks, pm);
 
 					pc.setId(vpc.getId());
 					logger.debug("Category " + vpc + " added to " + voShop);

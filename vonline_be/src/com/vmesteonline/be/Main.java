@@ -1,52 +1,92 @@
 package com.vmesteonline.be;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.utils.SystemProperty;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.shop.VoShop;
-import com.vmesteonline.be.shop.Shop;
 
 @SuppressWarnings("serial")
-public class Main extends HttpServlet {
+public class Main implements javax.servlet.Filter {
 	
-	String landingURL = "voclub.co";
+	private static String landingURL = "voclub.co";
+	private static String postfix; 
+	private static Logger logger = Logger.getLogger(Main.class.getName());
 
 	@Override
-	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		URL ru = new URL(request.getRequestURL().toString());
-		String host = ru.getHost();
+	public void destroy() {
+	}
+
+	@Override
+	public void doFilter(ServletRequest srequest, ServletResponse sresponse, FilterChain chain) throws IOException, ServletException {
+		
+		HttpServletRequest request = (HttpServletRequest) srequest;
+		HttpServletResponse response = (HttpServletResponse) sresponse;
+		
+		String landingPage = "http://"+landingURL+postfix + ":" +request.getServerPort();
+		String host = request.getServerName();
+		
+		if( host.contains( landingURL+postfix )){
+			chain.doFilter( srequest, sresponse );
+			ServiceImpl si = new ServiceImpl( request.getSession() );
+			try {
+				si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue(), 0 );
+			} catch (InvalidOperation e) {
+				e.printStackTrace();
+			}
+			return;
+		}
+		
+		if( postfix.length() > 0 && host.endsWith(postfix)) //remove local postfix if it's presented
+			host = host.substring(0, host.length() - postfix.length());
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
-			List<VoShop> shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='"+host+"' && activated==true");
+			List<VoShop> shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='"+host+"' && activated==true").execute();
 			if( 0!=shops.size() ){
-				ServiceImpl si = new ServiceImpl( request.getSession());
+				ServiceImpl si = new ServiceImpl( request.getSession() );
 				si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , shops.get(0).getId() );
 			} else {
-				shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='www."+host+"' && activated==true");
+				shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='www."+host+"' && activated==true").execute();
 				if( 0!=shops.size() ){
 					ServiceImpl si = new ServiceImpl( request.getSession());
 					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , shops.get(0).getId() );
 				} else {
 					//redirect to landing page
-					response.sendRedirect(landingURL);
+					response.sendRedirect(landingPage);
 					return;
 				}
 			}
-		} catch (Exception e){
+			chain.doFilter( srequest, sresponse );
 			
+		} catch (Exception e){
+			logger.fine( "Failed to get shop for host '"+host+"' request URL: "+request.getRequestURI()+ " exc:"+e);
+			response.sendRedirect(landingPage);
+			return;
 		} finally {
 			pm.close();
 		}
-		super.service(request, response);
 	}
-	
 
+	@Override
+	public void init(FilterConfig conf) throws ServletException {
+		landingURL = conf.getInitParameter("landingURL");
+		String postfixStr = conf.getInitParameter("localPostfix");
+		if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Production){
+			postfix = postfixStr;
+		} else {
+			postfix = "";
+		}
+	}
 }
