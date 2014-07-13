@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
+<%@ page import="java.util.Map"%>
 <%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShopBOServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
@@ -15,7 +16,7 @@
     /*String url1 = httpReq.getContextPath();
     String url2 = httpReq.getRequestURI();*/
     String url = httpReq.getPathInfo();
-    //out.print(url);
+    //out.print(url2);
 
     HttpSession sess = request.getSession();
     boolean isAuth = true;
