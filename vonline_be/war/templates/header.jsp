@@ -29,7 +29,7 @@
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
-                        <li><a class="btn btn-info no-border no-prevent" href="/">
+                        <li><a class="btn btn-info no-border no-prevent" href="http://voclub.co<%=URLrest%>">
                             Главная </a></li>
                         <c:if test="${!isEmptyURL}">
                             <li><a class="btn btn-info no-border back-to-shop shop-trigger no-prevent"

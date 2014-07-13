@@ -16,7 +16,15 @@
     /*String url1 = httpReq.getContextPath();
     String url2 = httpReq.getRequestURI();*/
     String url = httpReq.getPathInfo();
-    //out.print(url2);
+    //out.print(url);
+
+    String serverName = request.getServerName();
+    int port = request.getServerPort();
+
+    String URLrest = serverName.endsWith(".local") ? ".local" : "";
+    if(port != 0){
+        URLrest = URLrest + ":"+port;
+    }
 
     HttpSession sess = request.getSession();
     boolean isAuth = true;
@@ -57,6 +65,7 @@
         }else{
             shop = shopService.getShop(ArrayShops.get(0).id);
         }
+        //out.print(shop.id);
 
         UserShopRole userRole = shopService.getUserShopRole(shop.id);
         pageContext.setAttribute("logoURL", shop.logoURL);
