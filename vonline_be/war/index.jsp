@@ -195,10 +195,19 @@
 					<c:forEach var="shop" items="${activeShops}">
 						<c:if test="${shop.id != null}">
 							<li>
-                                <a href="shop/${shop.id}"> <img src="${shop.logoURL}" alt="логотип" /> <span class="landing-shop-right">
+                            <c:choose>
+                                <c:when test="${shop.hostName != null}">
+                                    <a href="shop/${shop.hostName}">
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="shop/${shop.id}">
+                                </c:otherwise>
+                            </c:choose>
+                                    <img src="${shop.logoURL}" alt="логотип" />
+                                    <span class="landing-shop-right">
 										<h3>${shop.name}</h3>
 										<p>${shop.descr}</p>
-								</span>
+								    </span>
 							    </a>
 
                                 <div>
@@ -216,8 +225,15 @@
 				<ul>
 					<c:forEach var="shop" items="${noActiveShops}">
 						<c:if test="${shop.id != null}">
-							<li  id="${shop.id}">
-                                <a href="about/${shop.id}">
+							<li id="${shop.id}">
+                                <c:choose>
+                                    <c:when test="${shop.hostName != null}">
+                                        <a href="about/${shop.hostName}">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="about/${shop.id}">
+                                    </c:otherwise>
+                                </c:choose>
                                     <img src="${shop.logoURL}" alt="логотип" />
                                     <span class="landing-shop-right">
 										<h3>${shop.name}</h3>

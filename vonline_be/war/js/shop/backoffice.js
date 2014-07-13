@@ -2285,9 +2285,16 @@ if($('.container.backoffice').hasClass('noAccess')){
 
              var linksMap = [],ind = 0;
              tableLine.find('.product-links table tr').each(function(){
-                 linksMap[ind++] = $(this).find('input').val();
+                  var socVal = $(this).find('input').val(),
+                      key;
+                 if(socVal.indexOf('vk') != -1){
+                     key = 'vk';
+                 }else if(socVal.indexOf('facebook') != -1){
+                     key = 'facebook';
+                 }
+                 linksMap[key] = socVal;
              });
-             productInfo.details.knownNames = linksMap;
+             productInfo.details.socialNetworks = linksMap;
 
              return productInfo;
          }
@@ -2339,9 +2346,9 @@ if($('.container.backoffice').hasClass('noAccess')){
                  }
                  optionsHtml += "</tbody></table><a href='#' class='add-options-item add-item'>Добавить</a>";
                  // -------------
-                 var links = productDetails.knownNames,
+                 var links = productDetails.socialNetworks,
                      linksHtml = "<table><tbody>";
-                 console.log(links.length);
+                 //console.log(links.length);
                  for(var p in links){
                      linksHtml += "<tr class='product-link-wrap'>" +
                          "<td><input type='text' value='"+ links[p] +"'></td>" +
@@ -2585,7 +2592,7 @@ if($('.container.backoffice').hasClass('noAccess')){
              logoURLsetArr = [],ind = 0;
 
          for(var i = 0; i < categoriesLength ; i++){
-             logoURLsetArr[i] = categories[i].logoURLset;
+             logoURLsetArr[i] = categories[i].socialNetworks;
          }
 
          if(logoURLsetArr.length) {
@@ -2672,10 +2679,16 @@ if($('.container.backoffice').hasClass('noAccess')){
             productCategory.name = tableLine.find('.category-name textarea').val();
             productCategory.descr = tableLine.find('.category-descr textarea').val();
             productCategory.parentId = tableLine.find('.category-parent').attr('data-parentid');
-            productCategory.logoURLset = [];
-            var ind = 0;
+            productCategory.socialNetworks = [];
             tableLine.find('.category-links table tr').each(function(){
-                productCategory.logoURLset[ind++] = $(this).find('input').val();
+                var socVal = $(this).find('input').val(),
+                    key;
+                if(socVal.indexOf('vk')){
+                    key = 'vk';
+                }else if(socVal.indexOf('facebook')){
+                    key = 'facebook';
+                }
+                productCategory.socialNetworks[key] = socVal;
             });
 
             return productCategory;

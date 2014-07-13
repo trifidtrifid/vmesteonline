@@ -99,13 +99,13 @@ define(
 								+ '<span>'+ productCategories[i].name + '</span>'
 								+ '</a>';
 
-                        if(productCategories[i].logoURLset.length){
+                        if(productCategories[i].socialNetworks.length){
 
                             shopMenu +='<div class="category-label no-init"></div>'
                             +'<div class="category-soc-links" style="z-index: '+ --zIndex +'">';
 
-                            var logoURLset = productCategories[i].logoURLset,
-                            logoURLsetLength = productCategories[i].logoURLset.length,
+                            var logoURLset = productCategories[i].socialNetworks,
+                            logoURLsetLength = productCategories[i].socialNetworks.length,
                             imgSrc=" ";
 
                             for( var j = 0; j < logoURLsetLength ; j ++ ) {

@@ -81,6 +81,7 @@
 
         ShopPages shopPages = shopBOService.getShopPages(shop.id);
         pageContext.setAttribute("shopPages", shopPages);
+
     }
 
 

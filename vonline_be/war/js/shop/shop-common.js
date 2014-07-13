@@ -206,12 +206,12 @@ define(
                         var productDetails = thriftModule.client.getProductDetails(productId),
                         imagesSet = productDetails.imagesURLset,
                         options = productDetails.optionsMap,
-                        knownNames = productDetails.knownNames,
+                        socialNetworks = productDetails.socialNetworks,
                         socLinkSingle,socLinks = "";
 
                         // находим ссылки на соц.сети
-                        for(var p in knownNames){
-                            socLinkSingle = knownNames[p];
+                        for(var p in socialNetworks){
+                            socLinkSingle = socialNetworks[p];
                             if(socLinkSingle.indexOf('vk') != -1){
                                 socLinks += "<a href='"+socLinkSingle+"'><img src='i/vk.png'></a>"
                             }else if(socLinkSingle.indexOf('fb') != -1){
@@ -223,19 +223,19 @@ define(
                         var producersList = thriftModule.client.getProducers(),
                             producersListLength = producersList.length,
                             producerSocLinkSingle,producerSocLinksArr,
-                            producerSocLinksArrLength,producerSocLinks="";
+                            producerSocLinkSingleLength,producerSocLinks="";
                         for(var j = 0; j < producersListLength; j++){
                             if (producersList[j].id == product.producerId){
-                                producerSocLinkSingle = producersList[j].descr;
+                                producerSocLinkSingle = producersList[j].socialNetworks;
                                 if(producerSocLinkSingle) {
-                                    producerSocLinksArr = producerSocLinkSingle.split('|');
-                                    producerSocLinksArrLength = producerSocLinksArr.length;
+                                    //producerSocLinksArr = producerSocLinkSingle.split('|');
+                                    producerSocLinkSingleLength = producerSocLinksArr.length;
 
-                                    for (var x = 0; x < producerSocLinksArrLength; x++) {
-                                        if (producerSocLinksArr[x].indexOf('vk') != -1) {
-                                            producerSocLinks += "<a href='" + producerSocLinksArr[x] + "'><img src='i/vk.png'></a>"
-                                        } else if (producerSocLinksArr[x].indexOf('fb') != -1) {
-                                            producerSocLinks += "<a href='" + producerSocLinksArr[x] + "'><img src='i/fb.png'></a>"
+                                    for (var x in producerSocLinkSingle) {
+                                        if (producerSocLinkSingle[x].indexOf('vk') != -1) {
+                                            producerSocLinks += "<a href='" + producerSocLinkSingle[x] + "'><img src='i/vk.png'></a>"
+                                        } else if (producerSocLinkSingle[x].indexOf('fb') != -1) {
+                                            producerSocLinks += "<a href='" + producerSocLinkSingle[x] + "'><img src='i/fb.png'></a>"
                                         }
                                     }
                                 }

@@ -32,7 +32,16 @@
                         <li><a class="btn btn-info no-border no-prevent" href="/">
                             Главная </a></li>
                         <c:if test="${!isEmptyURL}">
-                            <li><a class="btn btn-info no-border back-to-shop shop-trigger no-prevent" href="/shop/<c:out value="${shopID}"/>">
+                            <li><a class="btn btn-info no-border back-to-shop shop-trigger no-prevent"
+                                <c:choose>
+                                    <c:when test="${shop.hostName != null}">
+                                        href="/shop/<c:out value="${shop.hostName}"/>">
+                                    </c:when>
+                                    <c:otherwise>
+                                        href="/shop/<c:out value="${shop.id}"/>">
+                                    </c:otherwise>
+                                </c:choose>
+
                                     Магазин </a></li>
                             <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
                                 Заказы </a></li>
@@ -40,9 +49,17 @@
 
                             <li><a class="btn btn-info no-border bo-link
                             <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}">
-                            hidden
+                            hidden"
                             </c:if>
-                            " href="/backoffice/${shopID}">
+
+                            <c:choose>
+                                <c:when test="${shop.hostName != null}">
+                                    href="/backoffice/<c:out value="${shop.hostName}"/>">
+                                </c:when>
+                                <c:otherwise>
+                                    href="/backoffice/<c:out value="${shop.id}"/>">
+                                </c:otherwise>
+                            </c:choose>
                                 Бэкоффис</a></li>
                         </c:if>
 
