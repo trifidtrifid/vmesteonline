@@ -8,6 +8,12 @@
 <%@ page import="com.vmesteonline.be.shop.*"%>
 
 <%
+    String serverName = request.getServerName();
+    int port = request.getServerPort();
+
+    String URLrest = serverName.endsWith(".local") ? ".local" : "";
+    URLrest = URLrest + ":"+port;
+
 	HttpSession sess = request.getSession();
 
     ShopServiceImpl shopService = new ShopServiceImpl(sess.getId());
@@ -197,7 +203,7 @@
 							<li>
                             <c:choose>
                                 <c:when test="${shop.hostName != null}">
-                                    <a href="shop/${shop.hostName}">
+                                    <a href="http://${shop.hostName}<%=URLrest%>/shop/">
                                 </c:when>
                                 <c:otherwise>
                                     <a href="shop/${shop.id}">
@@ -228,7 +234,7 @@
 							<li id="${shop.id}">
                                 <c:choose>
                                     <c:when test="${shop.hostName != null}">
-                                        <a href="about/${shop.hostName}">
+                                        <a href="http://${shop.hostName}<%=URLrest%>/about/">
                                     </c:when>
                                     <c:otherwise>
                                         <a href="about/${shop.id}">
