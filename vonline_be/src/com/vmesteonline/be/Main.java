@@ -55,16 +55,21 @@ public class Main implements javax.servlet.Filter {
 		try {
 			List<VoShop> shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='"+host+"' && activated==true").execute();
 			if( 0!=shops.size() ){
+				VoShop voShop = shops.get(0);
 				ServiceImpl si = new ServiceImpl( request.getSession() );
-				si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , shops.get(0).getId() );
+				si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
+				logger.fine("Found shop "+voShop.getName()+" by Hostname '"+host+"' Current shop set to: "+voShop.getId());
 			} else {
+				VoShop voShop = shops.get(0);
 				shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='www."+host+"' && activated==true").execute();
 				if( 0!=shops.size() ){
 					ServiceImpl si = new ServiceImpl( request.getSession());
-					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , shops.get(0).getId() );
+					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
+					logger.fine("Found shop "+voShop.getName()+" by Hostname '"+host+"' Current shop set to: "+voShop.getId());
 				} else {
 					//redirect to landing page
 					response.sendRedirect(landingPage);
+					logger.fine("URL not looks like shop's address so go to landing page '"+landingPage+"'");
 					return;
 				}
 			}
