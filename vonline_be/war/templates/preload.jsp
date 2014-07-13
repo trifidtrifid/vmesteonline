@@ -16,12 +16,19 @@
     /*String url1 = httpReq.getContextPath();
     String url2 = httpReq.getRequestURI();*/
     String url = httpReq.getPathInfo();
-    //out.print(url);
 
     String serverName = request.getServerName();
     int port = request.getServerPort();
 
-    String URLrest = serverName.endsWith(".local") ? ".local" : "";
+    String URLrest = "";
+
+    if (serverName.endsWith(".local")){
+        URLrest = ".local";
+
+        int serverNameLength = serverName.length()-6;
+        serverName = serverName.substring(0,serverNameLength);
+    }
+
     if(port != 0){
         URLrest = URLrest + ":"+port;
     }
@@ -48,9 +55,18 @@
     ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
 
     List<Shop> ArrayShops = shopService.getShops();
-    if(ArrayShops != null && ArrayShops.size() > 0){
-        Shop shop;
-        if(ArrayShops.size() > 1 && url != null && url.length() >= 17){
+    int ArrayShopsSize = ArrayShops.size();
+
+    if(ArrayShops != null && ArrayShopsSize > 0){
+        Shop shop = shopService.getShop(ArrayShops.get(0).id);
+        for(int i = 0; i < ArrayShopsSize; i++){
+
+            if(ArrayShops.get(i).hostName.equals(serverName)){
+                shop = ArrayShops.get(i);
+            }
+        }
+
+        /*if(ArrayShops.size() > 1 && url != null && url.length() >= 17){
             char buf[] = new char[16];
             url.getChars(1, 17, buf, 0);
             String shopIdStr = "";
@@ -64,7 +80,7 @@
             shop = shopService.getShop(shopId);
         }else{
             shop = shopService.getShop(ArrayShops.get(0).id);
-        }
+        }*/
         //out.print(shop.id);
 
         UserShopRole userRole = shopService.getUserShopRole(shop.id);
@@ -93,9 +109,6 @@
         pageContext.setAttribute("shopPages", shopPages);
 
     }
-
-
-
 
 %>
 
