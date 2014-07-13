@@ -9,9 +9,10 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.mail.internet.ContentType;
-import com.google.appengine.api.datastore.Key;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.google.appengine.datanucleus.annotations.Unowned;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.vmesteonline.be.utils.StorageHelper;
 
@@ -87,6 +88,7 @@ public class VoFileAccessRecord {
 	
 	@Unindexed
 	@Persistent(dependentElement = "true")
+	@Unowned
 	Map<String,VoFileAccessRecord> versions;
 	
 
