@@ -35,7 +35,7 @@
                             <li><a class="btn btn-info no-border back-to-shop shop-trigger no-prevent"
                                 <c:choose>
                                     <c:when test="${shop.hostName != null}">
-                                        href="/shop/<c:out value="${shop.hostName}"/>">
+                                        href="http://${shop.hostName}<%=URLrest%>/shop/">
                                     </c:when>
                                     <c:otherwise>
                                         href="/shop/<c:out value="${shop.id}"/>">
@@ -54,7 +54,7 @@
 
                             <c:choose>
                                 <c:when test="${shop.hostName != null}">
-                                    href="/backoffice/<c:out value="${shop.hostName}"/>">
+                                    href="http://${shop.hostName}<%=URLrest%>/backoffice/">
                                 </c:when>
                                 <c:otherwise>
                                     href="/backoffice/<c:out value="${shop.id}"/>">
