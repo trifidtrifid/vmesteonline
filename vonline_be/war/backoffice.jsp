@@ -522,7 +522,7 @@ if(isAuth){
                                         </td>
                                         <td class="product-imageURL">
                                             <input type="file" id="imageURL-add">
-                                            <img src="i/no-photo.png" alt="картинка"/>
+                                            <img src="../i/no-photo.png" alt="картинка"/>
                                         </td>
                                         <td class="product-imagesSet">
                                             <input type="file" id="imageURLSet-add">
@@ -559,12 +559,15 @@ if(isAuth){
                                         </td>
                                         <td class="product-links">
                                             <table>
-                                                <tr class="product-link-wrap">
-                                                    <td><input type='text' placeholder="Ссылка на соц. сеть"></td>
-                                                    <td class='td-remove-link'><a href='#' class='remove-link-item remove-item'>&times;</a></td>
+                                                <tr>
+                                                    <td class="link-key">vk</td>
+                                                    <td><input type="text"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="link-key">fb</td>
+                                                    <td><input type="text"/></td>
                                                 </tr>
                                             </table>
-                                            <a href='#' class='add-link-item add-item'>Добавить</a>
                                         </td>
                                         <td class="product-prepack">
                                             <label>
@@ -617,7 +620,7 @@ if(isAuth){
                                                         <img src="${product.imageURL}" alt="картинка"/>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <img src="i/no-photo.png" alt="картинка"/>
+                                                        <img src="../i/no-photo.png" alt="картинка"/>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
@@ -631,7 +634,20 @@ if(isAuth){
                                             <td class="product-unitName"><input type="text" value="${product.unitName}"/></td>
                                             <td class="product-pack"><input type="text" value="${product.minClientPack}"/></td>
                                             <td class="product-options"></td>
-                                            <td class="product-links"></td>
+                                            <td class="product-links">
+                                                <table>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="link-key">vk</td>
+                                                            <td><input type="text"/></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="link-key">fb</td>
+                                                            <td><input type="text"/></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
                                             <td class="product-prepack">
                                                 <input type="checkbox" <c:if test="${product.prepackRequired}"> checked </c:if> />
                                             </td>
@@ -653,12 +669,15 @@ if(isAuth){
                                         <td class="category-descr"><textarea>Описание</textarea></td>
                                         <td class="category-links">
                                             <table>
-                                                <tr class="category-link-wrap">
-                                                    <td><input type='text' placeholder="Ссылка на соц. сеть"></td>
-                                                    <td class='td-remove-link'><a href='#' class='remove-link-item remove-item'>&times;</a></td>
+                                                <tr>
+                                                    <td class="link-key">vk</td>
+                                                    <td><input type="text"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="link-key">fb</td>
+                                                    <td><input type="text"/></td>
                                                 </tr>
                                             </table>
-                                            <a href='#' class='add-link-item add-item'>Добавить</a>
                                         </td>
                                         <td class="category-parent"></td>
                                     </tr>
@@ -680,7 +699,18 @@ if(isAuth){
                                     <tr id="${category.id}">
                                         <td class="category-name"><textarea>${category.name}</textarea></td>
                                         <td class="category-descr"><textarea>${category.descr}</textarea></td>
-                                        <td class="category-links"></td>
+                                        <td class="category-links">
+                                            <table>
+                                                <tr>
+                                                    <td class="link-key">vk</td>
+                                                    <td><input type="text"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="link-key">fb</td>
+                                                    <td><input type="text"/></td>
+                                                </tr>
+                                            </table>
+                                        </td>
                                         <td class="category-parent" data-parentid="${category.parentId}">
                                         </td>
                                         <td class="category-remove"><a href="#" class="remove-item">&times;</a></td>
@@ -701,12 +731,15 @@ if(isAuth){
                                         <td class="producer-descr"><textarea>Описание</textarea></td>
                                         <td class="producer-links">
                                             <table>
-                                                <tr class="product-link-wrap">
-                                                    <td><input type='text' placeholder="Ссылка на соц. сеть"></td>
-                                                    <td class='td-remove-link'><a href='#' class='remove-link-item remove-item'>&times;</a></td>
+                                                <tr>
+                                                    <td class="link-key">vk</td>
+                                                    <td><input type="text"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="link-key">fb</td>
+                                                    <td><input type="text"/></td>
                                                 </tr>
                                             </table>
-                                            <a href='#' class='add-link-item add-item'>Добавить</a>
                                         </td>
                                     </tr>
                                 </table>
@@ -726,7 +759,18 @@ if(isAuth){
                                     <tr id="${producer.id}">
                                         <td class="producer-name"><textarea>${producer.name}</textarea></td>
                                         <td class="producer-descr"><textarea>${producer.descr}</textarea></td>
-                                        <td class="producer-links"></td>
+                                        <td class="producer-links">
+                                            <table>
+                                                <tr>
+                                                    <td class="link-key">vk</td>
+                                                    <td><input type="text"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="link-key">fb</td>
+                                                    <td><input type="text"/></td>
+                                                </tr>
+                                            </table>
+                                        </td>
                                         <td class="producer-remove"><a href="#" class="remove-item">&times;</a></td>
                                     </tr>
                                 </c:forEach>

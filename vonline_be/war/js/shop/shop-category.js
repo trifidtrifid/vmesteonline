@@ -99,23 +99,27 @@ define(
 								+ '<span>'+ productCategories[i].name + '</span>'
 								+ '</a>';
 
-                        if(productCategories[i].socialNetworks && productCategories[i].socialNetworks.length){
+                        //alert(productCategories[i].socialNetworks+" "+productCategories[i].socialNetworks.length);
+                        if(productCategories[i].socialNetworks){
 
                             shopMenu +='<div class="category-label no-init"></div>'
                             +'<div class="category-soc-links" style="z-index: '+ --zIndex +'">';
 
-                            var logoURLset = productCategories[i].socialNetworks,
-                            logoURLsetLength = productCategories[i].socialNetworks.length,
+                            var socialNetworks = productCategories[i].socialNetworks,
+                            socialNetworksLength = productCategories[i].socialNetworks.length,
                             imgSrc=" ";
 
-                            for( var j = 0; j < logoURLsetLength ; j ++ ) {
-                                if (logoURLset[j].indexOf("vk") != -1) {
-                                    imgSrc = "i/vk.png";
-                                } else if (logoURLset[j].indexOf("fb") != -1) {
-                                    imgSrc = "i/fb.png";
-                                }
+                            for( var p in socialNetworks) {
+                                if(socialNetworks[p] != "") {
+                                    if (p == "vk") {
+                                        imgSrc = "../i/vk.png";
+                                    } else if (p == "fb") {
+                                        imgSrc = "../i/fb.png";
+                                    }
 
-                                shopMenu += '<a class="category-soc-single" href="'+ logoURLset[j] +'"><img src="'+ imgSrc +'" alt="картинка"/></a>';
+                                    shopMenu += '<a class="category-soc-single" href="' + socialNetworks[p] + '">' +
+                                        '<img src="' + imgSrc + '" alt="картинка"/></a>';
+                                }
                             }
                             shopMenu +="</div>";
                         }
@@ -151,6 +155,7 @@ define(
 				basketModule.InitAddToBasket($('.fa-shopping-cart'));
 				InitClickOnCategory();
 				commonModule.setSidebarHeight();
+                initCategorysHover();
             }
 
             function LoadCategoryByURLHash(URLHash){
@@ -223,15 +228,28 @@ define(
             function initCategoryLabelHover(selector){
                 selector.hover(function(){
                     var categorySocLinks = $(this).find('+.category-soc-links'),
-                        categorySocLinksWidth = categorySocLinks.width();
+                        categorySocLinksWidth = categorySocLinks.width()+2;
                     //categorySocLinks.css({'width':0,'right': -categorySocLinksWidth+'px'});
                     categorySocLinks.animate({right: -categorySocLinksWidth+'px'},200)
                 },function(){
-                    var categorySocLinks = $(this).find('+.category-soc-links');
+                   // var categorySocLinks = $(this).find('+.category-soc-links');
+                    // categorySocLinks.animate({right: '0'},200)
+                });
+
+            }
+            initCategorysHover();
+
+            function initCategorysHover(){
+                $('.shop-menu li').hover(function(){
+                    $('.category-soc-links.active').removeClass('active');
+                    $(this).find('.category-soc-links').addClass('active');
+                    var categorySocLinks = $('.category-soc-links:not(".active")');
+                    categorySocLinks.animate({right: '0'},200)
+                },function(){
+                    var categorySocLinks = $('.category-soc-links');
                     categorySocLinks.animate({right: '0'},200)
                 });
             }
-
 
 			return {
 				createProductsTableHtml : createProductsTableHtml,
