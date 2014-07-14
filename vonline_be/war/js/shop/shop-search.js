@@ -4,7 +4,7 @@ define(
     //['jquery','shop-initThrift.min','shop-basket.min','shop-orders.min','shop-category.min','shop-common.min','shop-spinner.min'],
     function( $,jquery_ui,thriftModule,basketModule,ordersModule,categoryModule,commonModule,spinnerModule ){
 
-        try{
+        //try{
             $.widget( "custom.catcomplete", $.ui.autocomplete, {
                 _renderMenu: function( ul, items ) {
                     var that = this,
@@ -124,7 +124,7 @@ define(
 
             /* автозаполнение адреса доставки  */
             function initAutocompleteAddress(selector){
-                try{
+                //try{
                 var addressesBase = thriftModule.userClient.getAddressCatalogue();
 
                 var countries = addressesBase.countries;
@@ -220,15 +220,15 @@ define(
                         source: buildingsTags
                     });
                 });
-                }catch(e){
+                /*}catch(e){
 
-                }
+                }*/
             }
 
 
-        }catch(e){
+        /*}catch(e){
             alert(e+ " Ошибка shop-search")
-        }
+        }*/
         return {
             initAutocompleteAddress: initAutocompleteAddress,
             filterByProducer : filterByProducer

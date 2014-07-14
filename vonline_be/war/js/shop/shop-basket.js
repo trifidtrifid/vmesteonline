@@ -30,7 +30,7 @@ define(
         }
 
         function InitDeleteProduct(selector,orderDetails){
-            try{
+            //try{
                 selector.click(function(e){
                     e.preventDefault();
 
@@ -110,9 +110,9 @@ define(
 
 
                 });
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция InitDeleteProduct");
-            }
+            }*/
         }
 
         /*--------------------------------------*/
@@ -123,7 +123,7 @@ define(
         var selectorForCallbacks;
 
         function InitAddToBasket(selector){
-            try{
+            //try{
                 selector.click(function(e){
                     e.preventDefault();
                     var errorPrepack = false;
@@ -143,6 +143,8 @@ define(
                             name : currentProductSelector.find('.product-name').text(),
                             price : currentProductSelector.find('.product-price').text(),
                             unitName :currentProductSelector.find('.unit-name').text(),
+                            producerName :currentProductSelector.find('.td-producer').text(),
+                            producerId :currentProductSelector.find('.td-producer').data('producerid'),
                             minClientPack :  currentProductSelector.find('.td-spinner .ace-spinner .spinner1').data('step'),
                             prepackLine : currentProductSelector.find('.prepack-line'),
                             prepackRequired: currentProductSelector.data('prepack'),
@@ -226,9 +228,9 @@ define(
                         }
                     }
                 });
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция InitAddToBasket");
-            }
+            }*/
         }
 
         function getWeekDay(orderWeekDay){
@@ -518,6 +520,10 @@ define(
                         cleanBasket();
                         $('.shop-orderEnd').load('../ajax/ajax-orderEnd.html .dynamic',function(){
 
+                            var href = document.location.href;
+                            href = href.split('#')[0];
+                            $('.to-main-link').attr('href',href);//
+
                             $('.page').hide();
                             $(this).show();
 
@@ -648,7 +654,7 @@ define(
         }
 
         function AddSingleProductToBasket(currentProduct,spinnerValue,spinnerDisable,orderDetails){
-            try{
+            //try{
                 var myPic;
                 var commonModule = require('shop-common.min');
                 myPic = (currentProduct.imageURL) ? currentProduct.imageURL : commonModule.noPhotoPic;
@@ -659,6 +665,7 @@ define(
                     '<td class="td-price product-price">'+ currentProduct.price +'</td>'+
                     '<td class="td-spinner"><input type="text" data-step="'+ currentProduct.minClientPack +'" class="input-mini spinner1 no-init" /><span class="unit-name">'+ currentProduct.unitName +'</span></td>'+
                     '<td class="td-summa">'+ (currentProduct.price*spinnerValue).toFixed(1) +'</td>'+
+                    '<td class="td-producer" data-producerid="'+ currentProduct.producerId +'">'+ currentProduct.producerName +'</td>'+
                     '<td class="td-close"><a href="#" class="delete-product no-init">×</a></td>'+
                     '</tr>'+
                     '</table>'+
@@ -671,9 +678,9 @@ define(
                     '<div class="modal">'+
                     '</div>'+
                     '</li>';
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция AddSingleProductToBasket");
-            }
+            }*/
 
             var currentTab = $('.tab-pane.active');
             var catalogOrder = currentTab.find('.catalog-order');
@@ -700,14 +707,14 @@ define(
         }
 
         function getNextDate(){
-            try{
+            //try{
                 var day = 3600*24;
                 var now = parseInt(new Date()/1000);
                 now -= now%86400;
                 var nextDate = thriftModule.client.getNextOrderDate(now);
-            }catch(e){
+            /*}catch(e){
                 alert(e + ' Функция SetFreeDates');
-            }
+            }*/
             return nextDate.orderDate;
         }
 

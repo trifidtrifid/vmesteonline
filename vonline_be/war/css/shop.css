@@ -297,6 +297,10 @@ footer.short-footer .container {
   display: none;
   opacity: 0.5;
 }
+.catalog-order .td-producer,
+.catalog-confirm .td-producer {
+  display: none;
+}
 .tabs-right > .nav-tabs > li > a {
   min-width: 40px;
   margin-right: 0 !important;
@@ -877,6 +881,7 @@ th.next,
 }
 .modal .product-descr {
   margin-left: 210px;
+  margin-right: 17px;
 }
 .modal h3 {
   margin-top: 0;
@@ -884,6 +889,9 @@ th.next,
 }
 .modal .product-soc-links {
   display: inline-block;
+}
+.modal .modal-producer {
+  font-size: 13px;
 }
 .modal .product-text {
   text-align: left;
@@ -901,7 +909,7 @@ th.next,
 .modal .modal-footer {
   position: absolute;
   overflow: auto;
-  min-height: 55px;
+  min-height: 56px;
   margin-top: 0;
   right: 10px;
   bottom: 10px;
@@ -1420,6 +1428,7 @@ height 50px
 }
 .confirm-order .additionally-order {
   padding: 0 10px;
+  padding-bottom: 60px;
 }
 .confirm-order .delivery-right {
   margin-top: 40px;
@@ -1499,7 +1508,8 @@ height 50px
 }
 .order-end .to-main-link {
   float: left;
-  margin: 10px 0;
+  margin: 10px 0 0 0;
+  padding-bottom: 20px;
 }
 .order-end .order-end-in {
   min-width: 768px;

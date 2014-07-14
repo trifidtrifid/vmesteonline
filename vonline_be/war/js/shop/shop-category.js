@@ -75,7 +75,7 @@ define(
 			}
 
 			function InitLoadCategory(catID) {
-				try {
+				//try {
 					/* замена меню категорий */
 					var commonModule = require('shop-common.min');
 					var productCategories = thriftModule.client.getProductCategories(catID);
@@ -99,7 +99,7 @@ define(
 								+ '<span>'+ productCategories[i].name + '</span>'
 								+ '</a>';
 
-                        if(productCategories[i].socialNetworks.length){
+                        if(productCategories[i].socialNetworks && productCategories[i].socialNetworks.length){
 
                             shopMenu +='<div class="category-label no-init"></div>'
                             +'<div class="category-soc-links" style="z-index: '+ --zIndex +'">';
@@ -140,9 +140,9 @@ define(
                         searchModule.filterByProducer(producerDropdownId);
                     }
 
-				} catch (e) {
+				/*} catch (e) {
 					alert(e + " Функция InitLoadCategory");
-				}
+				}*/
 
 				/* подключение событий */
 				spinnerModule.initProductsSpinner();
@@ -171,7 +171,7 @@ define(
             }
 
 			function InitClickOnCategory() {
-				try {
+				//try {
 					$('.shop-menu li a').click(
                         function(e,historyBool) {
 
@@ -213,9 +213,9 @@ define(
                             }
 
                         });
-				} catch (e) {
+				/*} catch (e) {
 					alert(e + " Функция InitClickOnCategory");
-				}
+				}*/
 			}
 
             initCategoryLabelHover($('.category-label'));
