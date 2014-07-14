@@ -29,13 +29,13 @@
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
-                        <li><a class="btn btn-info no-border no-prevent" href="/">
+                        <li><a class="btn btn-info no-border no-prevent" href="http://voclub.co<%=URLrest%>">
                             Главная </a></li>
                         <c:if test="${!isEmptyURL}">
                             <li><a class="btn btn-info no-border back-to-shop shop-trigger no-prevent"
                                 <c:choose>
                                     <c:when test="${shop.hostName != null}">
-                                        href="/shop/<c:out value="${shop.hostName}"/>">
+                                        href="http://${shop.hostName}<%=URLrest%>/shop/">
                                     </c:when>
                                     <c:otherwise>
                                         href="/shop/<c:out value="${shop.id}"/>">
@@ -49,12 +49,12 @@
 
                             <li><a class="btn btn-info no-border bo-link
                             <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}">
-                            hidden"
+                            hidden
                             </c:if>
 
                             <c:choose>
                                 <c:when test="${shop.hostName != null}">
-                                    href="/backoffice/<c:out value="${shop.hostName}"/>">
+                                   " href="http://${shop.hostName}<%=URLrest%>/backoffice/">
                                 </c:when>
                                 <c:otherwise>
                                     href="/backoffice/<c:out value="${shop.id}"/>">
