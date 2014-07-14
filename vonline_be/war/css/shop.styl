@@ -456,12 +456,13 @@ th.next
       .category-soc-links
         position absolute
         height 20px
-        top 0
+        top 2px
         right 0
         .category-soc-single
           width 20px
           height 20px
           display inline-block
+          margin 0 1px
           img
             width 100%
 .catalog-head
@@ -759,8 +760,18 @@ th.next
       display inline-block
     .product-soc-links
       display inline-block
+      position relative
+      top -5px
+      a
+        display inline-block
+        margin 0 2px //
     .modal-producer
-      font-size 13px //
+      font-size 13px
+      a
+        display inline-block
+        margin 0 2px
+        position relative
+        top -2px
     .product-text
       //height 90px
       //overflow auto
@@ -1779,10 +1790,9 @@ height 50px
       &links
         td
           border 0
-        td.td-remove-link
-          min-width 30px //
-        .remove-item
-          font-size 16px
+        .link-key
+          min-width 0
+          width 5%
       &producer
         >span
           display block
@@ -1826,9 +1836,9 @@ height 50px
     .category-links
       table
         margin 0
-        .td-remove-link
-          width 5%
+        .link-key
           min-width 0
+          width 5%
     .dropdown-menu
       margin-left -50px
   #edit-producer
@@ -1837,6 +1847,12 @@ height 50px
       padding 10px
       textarea
         min-height 100px
+    .producer-links
+      table
+        margin 0
+        .link-key
+          min-width 0
+          width 5%
     .producer-remove
       width 4%
       text-align center

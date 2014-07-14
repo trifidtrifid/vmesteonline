@@ -152,6 +152,7 @@ define(
                             packVal : 1,
                             quantVal :  currentProductSelector.find('.td-spinner .spinner1').data('step')
                         };
+
                         var packs = [];
                         if (currentProduct.prepackRequired){
                             // если это товар с prepackRequired

@@ -136,26 +136,28 @@
                                                 <span><%=ArrayProductCategory.get(val).name%></span>
                                             </a>
                                             <%
-                                                if(ArrayProductCategory.get(val).logoURLset != null){
+                                                if(ArrayProductCategory.get(val).socialNetworks != null){
                                             %>
                                             <div class="category-label"></div>
                                             <div class="category-soc-links" style="z-index: <%=50-val*2-1%>">
                                                 <%
-                                                    List<String> logoURLset = ArrayProductCategory.get(val).logoURLset;
-                                                    int logoURLsetSize = logoURLset.size();
+                                                    Map<String,String> socialNetworks = ArrayProductCategory.get(val).socialNetworks;
+                                                    int socialNetworksSize = socialNetworks.size();
                                                     String imgSrc=" ";
+                                                    String[] keys = socialNetworks.keySet().toArray(new String[socialNetworksSize]);
 
-                                                    for( int i = 0; i < logoURLsetSize ; i ++ ){
-                                                        if (logoURLset.get(i).indexOf("vk") != -1){
-                                                            imgSrc = "i/vk.png";
-                                                        }else if(logoURLset.get(i).indexOf("fb") != -1){
-                                                            imgSrc = "i/fb.png";
-                                                        }
+                                                    for( int i = 0; i < socialNetworksSize ; i ++ ){
+                                                        if(!socialNetworks.get(keys[i]).equals("")){
+                                                            if (socialNetworks.get(keys[i]).indexOf("vk") != -1){
+                                                                imgSrc = "../i/vk.png";
+                                                            }else if(socialNetworks.get(keys[i]).indexOf("fb") != -1){
+                                                                imgSrc = "../i/fb.png";
+                                                            }
 
                                                 %>
-                                                <a class="category-soc-single" href="<%=logoURLset.get(i)%>"><img src="<%=imgSrc%>" alt="картинка"/></a>
+                                                <a class="category-soc-single" href="<%=socialNetworks.get(keys[i])%>"><img src="<%=imgSrc%>" alt="картинка"/></a>
                                                 <%
-                                                    }
+                                                        }}
                                                 %>
                                             </div>
                                             <%

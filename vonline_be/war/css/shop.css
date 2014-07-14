@@ -506,13 +506,14 @@ th.next,
 .shop-menu ul li .category-soc-links {
   position: absolute;
   height: 20px;
-  top: 0;
+  top: 2px;
   right: 0;
 }
 .shop-menu ul li .category-soc-links .category-soc-single {
   width: 20px;
   height: 20px;
   display: inline-block;
+  margin: 0 1px;
 }
 .shop-menu ul li .category-soc-links .category-soc-single img {
   width: 100%;
@@ -889,9 +890,21 @@ th.next,
 }
 .modal .product-soc-links {
   display: inline-block;
+  position: relative;
+  top: -5px;
+}
+.modal .product-soc-links a {
+  display: inline-block;
+  margin: 0 2px;
 }
 .modal .modal-producer {
   font-size: 13px;
+}
+.modal .modal-producer a {
+  display: inline-block;
+  margin: 0 2px;
+  position: relative;
+  top: -2px;
 }
 .modal .product-text {
   text-align: left;
@@ -2159,11 +2172,9 @@ height 50px
 .bo-edit table .product-links td {
   border: 0;
 }
-.bo-edit table .product-links td.td-remove-link {
-  min-width: 30px;
-}
-.bo-edit table .product-links .remove-item {
-  font-size: 16px;
+.bo-edit table .product-links .link-key {
+  min-width: 0;
+  width: 5%;
 }
 .bo-edit table .product-producer >span {
   display: block;
@@ -2217,9 +2228,9 @@ height 50px
 .bo-edit #edit-category .category-links table {
   margin: 0;
 }
-.bo-edit #edit-category .category-links table .td-remove-link {
-  width: 5%;
+.bo-edit #edit-category .category-links table .link-key {
   min-width: 0;
+  width: 5%;
 }
 .bo-edit #edit-category .dropdown-menu {
   margin-left: -50px;
@@ -2230,6 +2241,13 @@ height 50px
 }
 .bo-edit #edit-producer td textarea {
   min-height: 100px;
+}
+.bo-edit #edit-producer .producer-links table {
+  margin: 0;
+}
+.bo-edit #edit-producer .producer-links table .link-key {
+  min-width: 0;
+  width: 5%;
 }
 .bo-edit #edit-producer .producer-remove {
   width: 4%;
