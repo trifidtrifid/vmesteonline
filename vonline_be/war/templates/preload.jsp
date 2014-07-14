@@ -16,6 +16,7 @@
     /*String url1 = httpReq.getContextPath();
     String url2 = httpReq.getRequestURI();*/
     String url = httpReq.getPathInfo();
+    //out.print(url);
 
     String serverName = request.getServerName();
     int port = request.getServerPort();
@@ -58,15 +59,11 @@
     int ArrayShopsSize = ArrayShops.size();
 
     if(ArrayShops != null && ArrayShopsSize > 0){
-        Shop shop = shopService.getShop(ArrayShops.get(0).id);
-        for(int i = 0; i < ArrayShopsSize; i++){
+        Shop shop;
+        //= shopService.getShop(ArrayShops.get(0).id);
 
-            if(ArrayShops.get(i).hostName.equals(serverName)){
-                shop = ArrayShops.get(i);
-            }
-        }
-
-        /*if(ArrayShops.size() > 1 && url != null && url.length() >= 17){
+        if(ArrayShops.size() > 1 && url != null && url.length() >= 17){
+            // если по ID
             char buf[] = new char[16];
             url.getChars(1, 17, buf, 0);
             String shopIdStr = "";
@@ -79,8 +76,19 @@
 
             shop = shopService.getShop(shopId);
         }else{
-            shop = shopService.getShop(ArrayShops.get(0).id);
-        }*/
+            // если по hostName
+
+            //shop = shopService.getShop(ArrayShops.get(0).id);
+            shop = null;
+
+            for(int i = 0; i < ArrayShopsSize; i++){
+
+                if(ArrayShops.get(i).hostName.equals(serverName)){
+                    shop = ArrayShops.get(i);
+                }
+            }
+
+        }
         //out.print(shop.id);
 
         UserShopRole userRole = shopService.getUserShopRole(shop.id);
