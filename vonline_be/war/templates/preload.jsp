@@ -78,7 +78,8 @@
         }else{
             // если по hostName
 
-            shop = shopService.getShop(ArrayShops.get(0).id);
+            //shop = shopService.getShop(ArrayShops.get(0).id);
+            shop = null;
 
             for(int i = 0; i < ArrayShopsSize; i++){
 
