@@ -61,59 +61,63 @@
     if(ArrayShops != null && ArrayShopsSize > 0){
         Shop shop;
 
-        if(ArrayShops.size() > 1 && url != null && url.length() >= 17){
-            // если по ID
-            char buf[] = new char[16];
-            url.getChars(1, 17, buf, 0);
-            String shopIdStr = "";
-            // 15 - кол-во символов в id магазина
-            for (int i = 0; i <= 15; i++) {
-                shopIdStr = shopIdStr+buf[i];
-            }
-
-            Long shopId = new Long(shopIdStr);
-
-            shop = shopService.getShop(shopId);
-        }else{
-            // если по hostName
-
-            //shop = shopService.getShop(ArrayShops.get(0).id);
-            shop = null;
-
-            for(int i = 0; i < ArrayShopsSize; i++){
-
-                if(ArrayShops.get(i).hostName.equals(serverName)){
-                    shop = ArrayShops.get(i);
+        if(url != null){
+            if (url.length() >= 17){
+                // если по ID
+                char buf[] = new char[16];
+                url.getChars(1, 17, buf, 0);
+                String shopIdStr = "";
+                // 15 - кол-во символов в id магазина
+                for (int i = 0; i <= 15; i++) {
+                    shopIdStr = shopIdStr+buf[i];
                 }
+
+                Long shopId = new Long(shopIdStr);
+
+                shop = shopService.getShop(shopId);
+            }else{
+                // если по hostName
+
+                //shop = shopService.getShop(ArrayShops.get(0).id);
+                shop = null;
+
+                for(int i = 0; i < ArrayShopsSize; i++){
+
+                    if(ArrayShops.get(i).hostName.equals(serverName)){
+                        shop = ArrayShops.get(i);
+                    }
+                }
+
             }
 
+            UserShopRole userRole = shopService.getUserShopRole(shop.id);
+            pageContext.setAttribute("logoURL", shop.logoURL);
+            pageContext.setAttribute("shopID", shop.id);
+            pageContext.setAttribute("userRole", userRole);
+
+            // for BO
+            List<ProductCategory> categoriesList = shopService.getAllCategories(shop.id);
+
+            if(categoriesList != null && categoriesList.size() > 0){
+                pageContext.setAttribute("categories", categoriesList);
+            }
+
+            pageContext.setAttribute("shop", shop);
+
+            // shopPages Links
+
+            ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
+
+            ShopPages shopPages = shopBOService.getShopPages(shop.id);
+            pageContext.setAttribute("shopPages", shopPages);
+
+        }else{
+            // for Adminka
+            pageContext.setAttribute("shops", ArrayShops);
         }
-        //out.print(shop.id);
 
-        UserShopRole userRole = shopService.getUserShopRole(shop.id);
-        pageContext.setAttribute("logoURL", shop.logoURL);
-        pageContext.setAttribute("shopID", shop.id);
-        pageContext.setAttribute("userRole", userRole);
 
-         // for BO
-        List<ProductCategory> categoriesList = shopService.getAllCategories(shop.id);
-
-        if(categoriesList != null && categoriesList.size() > 0){
-            pageContext.setAttribute("categories", categoriesList);
-        }
-
-        pageContext.setAttribute("shop", shop);
-
-         // for Adminka
-        pageContext.setAttribute("shops", ArrayShops);
         pageContext.setAttribute("isEmptyURL",url == null);
-
-        // shopPages Links
-
-        ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
-
-        ShopPages shopPages = shopBOService.getShopPages(shop.id);
-        pageContext.setAttribute("shopPages", shopPages);
 
     }
 

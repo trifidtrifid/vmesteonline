@@ -13,6 +13,7 @@
 					<a href="/shop/<c:out value="${shopID}"/>" class="navbar-brand">
                             <img src="<c:out value="${logoURL}" />" alt="лого">
 					</a>
+                <c:if test="${!isEmptyURL}">
                     <c:if test="${shopPages.aboutPageContentURL != null && shopPages.aboutPageContentURL != ''}">
                         <a href="/${shopPages.aboutPageContentURL}" class="about-shop-link header-link">О магазине</a>
                     </c:if>
@@ -22,6 +23,7 @@
                     <c:if test="${shopPages.deliveryPageContentURL != null && shopPages.deliveryPageContentURL != ''}">
                         <a href="/${shopPages.deliveryPageContentURL}" class="terms-of-delivery header-link">Доставка</a>
                     </c:if>
+                </c:if>
 					<!-- /.brand -->
 				</div>
 				<!-- /.navbar-header -->
