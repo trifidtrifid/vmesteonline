@@ -18,7 +18,7 @@
 <footer>
     <div id="colophon" class="wrapper clearfix">
         (c) Во!Маркет Санкт-Петербург, 2014
-        <div>email: info@vomarket.ru</div>
+        <div>email: info@voclub.co</div>
     </div>
 
 </footer>
