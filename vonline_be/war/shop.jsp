@@ -14,7 +14,7 @@
 
     List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(0);
     ProductListPart productsListPart = shopService.getProducts(0,1000,0);
-    //out.print(ArrayProductCategory.size());
+    //out.print(productsListPart.products.size());
 
     if (productsListPart.products.size() > 0){
         pageContext.setAttribute("products",productsListPart.products);

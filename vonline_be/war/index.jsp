@@ -220,7 +220,17 @@
 
                                 <div>
                                 <span class="voice-counter"></span>
-                                <a class="btn no-border btn-primary" href="shop/${shop.id}">Перейти в магазин</a>
+
+                                    <c:choose>
+                                        <c:when test="${shop.hostName != null}">
+                                          <a class="btn no-border btn-primary" href="http://${shop.hostName}<%=URLrest%>/shop/">
+                                        </c:when>
+                                        <c:otherwise>
+                                           <a class="btn no-border btn-primary" href="shop/${shop.id}">
+                                        </c:otherwise>
+                                    </c:choose>
+
+                                    Перейти в магазин</a>
                                 </div>
                             </li>
 						</c:if>
