@@ -240,7 +240,7 @@ if($('.container.backoffice').hasClass('noAccess')){
 
                     if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
                     var myPic;
-                    (orderLines[j].product.imageURL) ? myPic = orderLines[j].product.imageURL : myPic = 'i/no-photo.png';
+                    (orderLines[j].product.imageURL) ? myPic = orderLines[j].product.imageURL : myPic = '../i/no-photo.png';
                     ordersProductsHtml += '<tr class="product" data-prepack="'+ orderLines[j].product.prepackRequired +'" data-productid="'+ orderLines[j].product.id +'">'+
                         '<td>'+
                         '<a href="#" class="product-link">'+

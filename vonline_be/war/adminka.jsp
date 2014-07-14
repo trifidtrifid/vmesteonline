@@ -2,7 +2,8 @@
 
 <%@ include file="templates/preload.jsp" %>
 <%
-    int ArrayShopsSize = ArrayShops.size();
+    //int ArrayShopsSize = ArrayShops.size();
+    //out.print(ArrayShopsSize);
 
     int now = (int) (System.currentTimeMillis() / 1000L);
     //int day = 3600 * 24;
