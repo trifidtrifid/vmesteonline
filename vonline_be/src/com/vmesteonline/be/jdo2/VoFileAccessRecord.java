@@ -1,7 +1,9 @@
 package com.vmesteonline.be.jdo2;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -9,9 +11,10 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.mail.internet.ContentType;
-import com.google.appengine.api.datastore.Key;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.google.appengine.datanucleus.annotations.Unowned;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.vmesteonline.be.utils.StorageHelper;
 
@@ -86,7 +89,7 @@ public class VoFileAccessRecord {
 	private String contentType;
 	
 	@Unindexed
-	@Persistent(dependentElement = "true")
+	@Persistent
 	Map<String,VoFileAccessRecord> versions;
 	
 
@@ -126,5 +129,18 @@ public class VoFileAccessRecord {
 			versions = new HashMap<String,VoFileAccessRecord>(); 
 		versions.put( versionKey, ver);
 		return ver;
+	}
+
+	public void deleteAllVersions(PersistenceManager pm) {
+		if(null!=versions)
+			for( Entry<String, VoFileAccessRecord> fare: versions.entrySet() ){
+				try {
+					StorageHelper.deleteImage( fare.getValue().getGSFileName() );
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				fare.getValue().deleteAllVersions(pm);
+				pm.deletePersistent(fare.getValue());
+			} 
 	}
 }
