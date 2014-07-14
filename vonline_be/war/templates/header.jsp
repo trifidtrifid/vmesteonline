@@ -49,12 +49,12 @@
 
                             <li><a class="btn btn-info no-border bo-link
                             <c:if test="${userRole != 'BACKOFFICER' && userRole != 'ADMIN' && userRole != 'OWNER'}">
-                            hidden"
+                            hidden
                             </c:if>
 
                             <c:choose>
                                 <c:when test="${shop.hostName != null}">
-                                    href="http://${shop.hostName}<%=URLrest%>/backoffice/">
+                                   " href="http://${shop.hostName}<%=URLrest%>/backoffice/">
                                 </c:when>
                                 <c:otherwise>
                                     href="/backoffice/<c:out value="${shop.id}"/>">
