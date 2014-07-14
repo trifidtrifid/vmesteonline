@@ -149,6 +149,8 @@ public class StorageHelper {
 					if (null == isPublic)
 						isPublic = oldFile.isPublic();
 					deleteImage(oldFile.getGSFileName());
+					oldFile.deleteAllVersions(pm);
+					pm.deletePersistent(oldFile);
 				} catch (JDOObjectNotFoundException onfe) {
 				}
 			}
@@ -287,6 +289,8 @@ public class StorageHelper {
 			try {
 				VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
 				deleteImage(oldFile.getGSFileName());
+				oldFile.deleteAllVersions(pm);
+				pm.deletePersistent(oldFile);
 				return true;
 			} catch (JDOObjectNotFoundException onfe) {
 				return false;
@@ -299,7 +303,7 @@ public class StorageHelper {
 
 	// ===================================================================================================================
 
-	private static boolean deleteImage(GcsFilename fileName) throws IOException {
+	public static boolean deleteImage(GcsFilename fileName) throws IOException {
 		return gcsService.delete(fileName);
 	}
 
