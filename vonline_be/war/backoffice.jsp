@@ -825,7 +825,7 @@ if(isAuth){
     </div>
     <div class="loading">
         <div class="loading-inside">
-            <img src="i/wait1.png" alt="загрузка">
+            <img src="../i/wait1.png" alt="загрузка">
             <span>Подождите, идет загрузка ...</span>
         </div>
     </div>

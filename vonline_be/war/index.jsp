@@ -43,6 +43,7 @@
         pageContext.setAttribute("shops", ArrayShops);
         }
     pageContext.setAttribute("auth",true);
+    pageContext.setAttribute("noPhotoPic","../i/no-photo.png");
     try {
 
         UserServiceImpl userService = new UserServiceImpl(sess);
@@ -211,7 +212,16 @@
                                     <a href="shop/${shop.id}">
                                 </c:otherwise>
                             </c:choose>
-                                    <img src="${shop.logoURL}" alt="логотип" />
+
+                                    <c:choose>
+                                        <c:when test="${shop.logoURL!= null}">
+                                            <img src="${shop.logoURL}" alt="логотип" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="<c:out value="${noPhotoPic}" />" alt="лого">
+                                        </c:otherwise>
+                                    </c:choose>
+
                                     <span class="landing-shop-right">
 										<h3>${shop.name}</h3>
 										<p>${shop.descr}</p>
@@ -252,7 +262,16 @@
                                         <a href="about/${shop.id}">
                                     </c:otherwise>
                                 </c:choose>
-                                    <img src="${shop.logoURL}" alt="логотип" />
+
+                                    <c:choose>
+                                        <c:when test="${shop.logoURL!= null}">
+                                            <img src="${shop.logoURL}" alt="логотип" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="<c:out value="${noPhotoPic}" />" alt="лого">
+                                        </c:otherwise>
+                                    </c:choose>
+
                                     <span class="landing-shop-right">
 										<h3>${shop.name}</h3>
 										<p>${shop.descr}</p>

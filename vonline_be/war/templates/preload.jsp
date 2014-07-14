@@ -119,6 +119,7 @@
 
 
         pageContext.setAttribute("isEmptyURL",url == null);
+        pageContext.setAttribute("noPhotoPic","../i/no-photo.png");
 
     }
 

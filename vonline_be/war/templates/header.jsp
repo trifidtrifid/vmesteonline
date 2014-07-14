@@ -11,7 +11,14 @@
 			<div class="navbar-container" id="navbar-container">
 				<div class="navbar-header pull-left">
 					<a href="/shop/<c:out value="${shopID}"/>" class="navbar-brand">
-                            <img src="<c:out value="${logoURL}" />" alt="лого">
+                        <c:choose>
+                            <c:when test="${logoURL!= null}">
+                                <img src="<c:out value="${logoURL}" />" alt="лого">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="<c:out value="${noPhotoPic}" />" alt="лого">
+                            </c:otherwise>
+                        </c:choose>
 					</a>
                 <c:if test="${!isEmptyURL}">
                     <c:if test="${shopPages.aboutPageContentURL != null && shopPages.aboutPageContentURL != ''}">
