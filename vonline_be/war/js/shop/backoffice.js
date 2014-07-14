@@ -878,6 +878,8 @@ if($('.container.backoffice').hasClass('noAccess')){
                             //alert(currentDropdown.find('.btn-group-text').text(fieldName).closest('.btn').data('fieldtype'));
                         });
 
+                            setSidebarHeight($('.main-content').height());
+
                     }
                 });
 
@@ -2128,22 +2130,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                     initCategoryDropdownClick(categoryTd);
                     var tableSelector = $('.table-add-product .table-overflow');
                     setDropdownWithoutOverFlow(tableSelector.find('.categories-dropdown'),tableSelector,84);
-/*                    $('.categories-dropdown .dropdown-toggle').click(function(e){
-                        e.preventDefault();
 
-                        var ind = $(this).closest('td').index();
-                        var coordX = 0, tdIndex = 0;
-                        $('.table-add-product table').find('td').each(function(){
-                            if (tdIndex < ind){
-                                coordX += $(this).width();
-                            }
-                            tdIndex ++;
-                        });
-                        coordX -= $('.table-add-product').scrollLeft();
-
-                        var coordY = 134;
-                        $(this).parent().find('.dropdown-menu').css({'left':coordX,'top':coordY});
-                    });*/
 
                     //------------------
 
@@ -2175,10 +2162,11 @@ if($('.container.backoffice').hasClass('noAccess')){
 
         });
 
-         $('.bo-edit .nav-tabs a').click(function(){
-            var ind = $(this).parent().index();
+         $('.bo-edit .nav-tabs a').click(function() {
 
-             switch(ind){
+             var ind = $(this).parent().index();
+
+             switch (ind) {
                  case 1:
                      if (!isCategoryInitSet) initEditCategory();
                      break;
@@ -2186,7 +2174,12 @@ if($('.container.backoffice').hasClass('noAccess')){
                      if (!isProducerInitSet) initEditProducer();
                      break;
              }
-             setSidebarHeight($('.main-content').height());
+             setTimeout(setSidebarHeightTemp,200);
+
+             function setSidebarHeightTemp() {
+                 setSidebarHeight($('.main-content').height());
+             }
+
          });
     }
 
@@ -2460,6 +2453,9 @@ if($('.container.backoffice').hasClass('noAccess')){
                      isAdd = false;
                  var productInfo = createProductInfoObject(tableLine,isAdd);
 
+                 if(productInfo.imageURL === undefined || productInfo.imageURL == "../i/no-photo.png"){
+                     productInfo.imageURL = null;
+                 }
                  thriftModule.clientBO.updateProduct(productInfo);
              });
          });

@@ -89,6 +89,7 @@ header{
 }
 #banner{ 
 	text-align:center;
+    float: left !important;
 }
 	
 #hero,
@@ -112,6 +113,10 @@ header{
 }
 #content p{
     text-align: justify;
+}
+#content img{
+    display: block;
+    margin: 0 auto;
 }
 
 
@@ -714,4 +719,14 @@ p{
 }
 .btn-primary{
     border-radius: 2px !important;
+}
+@media (max-width: 480px) and (min-width: 461px), (max-width: 360px) {
+    .user-info {
+        display: block !important;
+        margin-top: 0;
+        border: 0;
+        color: #fff;
+        width: auto;
+        top:0
+    }
 }

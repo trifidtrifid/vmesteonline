@@ -45,7 +45,7 @@
                                 </c:choose>
 
                                     Магазин </a></li>
-                            <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#">
+                            <li><a class="btn btn-info no-border go-to-orders shop-trigger" href="#orders-history">
                                 Заказы </a></li>
 
 
