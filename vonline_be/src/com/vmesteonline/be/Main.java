@@ -60,9 +60,9 @@ public class Main implements javax.servlet.Filter {
 				si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
 				logger.fine("Found shop "+voShop.getName()+" by Hostname '"+host+"' Current shop set to: "+voShop.getId());
 			} else {
-				VoShop voShop = shops.get(0);
 				shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='www."+host+"' && activated==true").execute();
 				if( 0!=shops.size() ){
+					VoShop voShop = shops.get(0);
 					ServiceImpl si = new ServiceImpl( request.getSession());
 					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
 					logger.fine("Found shop "+voShop.getName()+" by Hostname '"+host+"' Current shop set to: "+voShop.getId());
