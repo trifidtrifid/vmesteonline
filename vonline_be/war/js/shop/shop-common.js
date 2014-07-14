@@ -164,13 +164,13 @@ define(
                     spinnerDisable = (getPacksLength(packs) > 1 || packsQnty ) ? true : false;
 
                     // чтобы в попапе можно было посмотреть производителя
-                    var producers = thriftModule.client.getProducers(),
+                   /* var producers = thriftModule.client.getProducers(),
                     producersLength = producers.length;
                     for(var i = 0; i < producersLength; i++){
                         if(orderLines[j].product.producerId == producers[i].id){
                             orderLines[j].product.producerName = producers[i].name;
                         }
-                    }
+                    }*/
 
                     basketModule.AddSingleProductToBasket(orderLines[j].product,orderLines[j].quantity,spinnerDisable,orderDetails);
 
@@ -207,6 +207,18 @@ define(
                         producerId : productSelector.find('.td-producer').data('producerid')
                     };
 
+                    var producersList;
+                    if(product.producerName == 'undefined') {
+                        // чтобы в попапе можно было посмотреть производителя
+                        producersList = thriftModule.client.getProducers();
+                            var producersLength = producersList.length;
+                        for (var i = 0; i < producersLength; i++) {
+                            if (product.producerId == producersList[i].id) {
+                                product.producerName = producersList[i].name;
+                            }
+                        }
+                    }
+
                     var currentModal = $(this).find('+.modal');
                     var isModalWasOpen = currentModal.find('.modal-body').length;
                     var boolPrepackRequired = productSelector.data('prepack');
@@ -223,15 +235,15 @@ define(
                         for(var p in socialNetworks){
                             socLinkSingle = socialNetworks[p];
                             if(socLinkSingle.indexOf('vk') != -1){
-                                socLinks += "<a href='"+socLinkSingle+"'><img src='i/vk.png'></a>"
+                                socLinks += "<a href='"+socLinkSingle+"'><img src='../i/vk.png'></a>"
                             }else if(socLinkSingle.indexOf('fb') != -1){
-                                socLinks += "<a href='"+socLinkSingle+"'><img src='i/fb.png'></a>"
+                                socLinks += "<a href='"+socLinkSingle+"'><img src='../i/fb.png'></a>"
                             }
                         }
 
                         // определяем продюсера и его соц.сети
-                        var producersList = thriftModule.client.getProducers(),
-                            producersListLength = producersList.length,
+                        if(!producersList) producersList = thriftModule.client.getProducers();
+                        var producersListLength = producersList.length,
                             producerSocLinkSingle,producerSocLinksArr,
                             producerSocLinkSingleLength,producerSocLinks="";
                         for(var j = 0; j < producersListLength; j++){
@@ -243,9 +255,9 @@ define(
 
                                     for (var x in producerSocLinkSingle) {
                                         if (producerSocLinkSingle[x].indexOf('vk') != -1) {
-                                            producerSocLinks += "<a href='" + producerSocLinkSingle[x] + "'><img src='i/vk.png'></a>"
+                                            producerSocLinks += "<a href='" + producerSocLinkSingle[x] + "'><img src='../i/vk.png'></a>"
                                         } else if (producerSocLinkSingle[x].indexOf('fb') != -1) {
-                                            producerSocLinks += "<a href='" + producerSocLinkSingle[x] + "'><img src='i/fb.png'></a>"
+                                            producerSocLinks += "<a href='" + producerSocLinkSingle[x] + "'><img src='../i/fb.png'></a>"
                                         }
                                     }
                                 }
