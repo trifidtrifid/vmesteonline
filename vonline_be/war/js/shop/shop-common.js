@@ -4,7 +4,7 @@ define(
     //['jquery','shop-initThrift.min','shop-basket.min','shop-spinner.min','shop-orders.min','shop-category.min'],
     function( $ ,flexslider, thriftModule,basketModule,spinnerModule,categoryModule,ordersModule ){
 
-        var noPhotoPic = "i/no-photo.png";
+        var noPhotoPic = "../i/no-photo.png";
         // возвращает cookie с именем name, если есть, если нет, то undefined
         function getCookie(name) {
             try{
@@ -162,6 +162,16 @@ define(
                     }
 
                     spinnerDisable = (getPacksLength(packs) > 1 || packsQnty ) ? true : false;
+
+                    // чтобы в попапе можно было посмотреть производителя
+                    var producers = thriftModule.client.getProducers(),
+                    producersLength = producers.length;
+                    for(var i = 0; i < producersLength; i++){
+                        if(orderLines[j].product.producerId == producers[i].id){
+                            orderLines[j].product.producerName = producers[i].name;
+                        }
+                    }
+
                     basketModule.AddSingleProductToBasket(orderLines[j].product,orderLines[j].quantity,spinnerDisable,orderDetails);
 
                 }
@@ -174,7 +184,7 @@ define(
         }
 
         function InitProductDetailPopup(selector){
-            try{
+            //try{
                 selector.click(function(e,isHistoryNav){
                     e.preventDefault();
 
@@ -229,7 +239,7 @@ define(
                                 producerSocLinkSingle = producersList[j].socialNetworks;
                                 if(producerSocLinkSingle) {
                                     //producerSocLinksArr = producerSocLinkSingle.split('|');
-                                    producerSocLinkSingleLength = producerSocLinksArr.length;
+                                    producerSocLinkSingleLength = producerSocLinkSingle.length;
 
                                     for (var x in producerSocLinkSingle) {
                                         if (producerSocLinkSingle[x].indexOf('vk') != -1) {
@@ -286,9 +296,13 @@ define(
 
                     popupHtml += '</div>'+
                         '<div class="product-descr">'+
-                        '<h3>'+product.name+'</h3>'+
-                        '<span class="product-soc-links">'+socLinks+'</span>'+
-                        '<div class="modal-producer">Производитель: '+product.producerName+
+                        '<h3>'+product.name+'</h3>';
+
+                    if(socLinks.length){
+                        popupHtml += '<span class="product-soc-links">'+socLinks+'</span>';
+                    }
+
+                        popupHtml += '<div class="modal-producer">Производитель: '+product.producerName+
                         '<span class="producer-soc-links">'+ producerSocLinks +'</span>'+
                         '</div>'+
                         '<div class="product-text">'+
@@ -491,9 +505,9 @@ define(
                     });
 
                 });
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция InitProductDetailPopup");
-            }
+            }*/
         }
 
         function identificateModal(productId,historyBool){
@@ -569,7 +583,7 @@ define(
         }
 
         function countAmount(sel,orderDetails){
-            try{
+            //try{
                 var orderId = $('.tab-pane.active').data('orderid');
 
                 var myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
@@ -583,9 +597,9 @@ define(
                 }
 
                 summa += myOrderDetails.deliveryCost;
-            }catch(e){
+            /*}catch(e){
                 //alert(e+" Функция countAmount");
-            }
+            }*/
             return summa.toFixed(1);
         }
 
@@ -633,7 +647,7 @@ define(
         }
 
         function setSidebarHeight(){
-            try{
+            //try{
                 var mainContent = $('.main-content');
 
                 if (mainContent.height() > $(window).height()-45){
@@ -641,9 +655,9 @@ define(
                 }else{
                     $('.shop-right').css('height', '100%');
                 }
-            }catch(e){
+           /* }catch(e){
                 alert(e+" Функция setSidebarHeight");
-            }
+            }*/
         }
 
         $('.shop-trigger').click(function(e,isHistoryNav) {

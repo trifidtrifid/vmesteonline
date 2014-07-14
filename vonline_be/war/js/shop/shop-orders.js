@@ -7,7 +7,7 @@ define(
         var producersLength;
 
         function createOrdersProductHtml(orderDetails,noEdit){
-            try{
+            //try{
                 var ordersProductsHtml = '<section class="catalog">'+
                     '<table>'+
                     '<thead>'+
@@ -86,9 +86,9 @@ define(
                 }
                 ordersProductsHtml += '</table>'+
                     '</section>';
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция createOrdersProductHtml");
-            }
+            }*/
             return ordersProductsHtml;
         }
 
@@ -254,7 +254,7 @@ define(
         }
 
         function initOrderPlusMinus(selector){
-                try{
+                //try{
                     selector.find('.plus-minus').click(function(e){
                         e.preventDefault();
 
@@ -303,13 +303,13 @@ define(
 
 
                     });
-                }catch(e){
+                /*}catch(e){
                     alert(e+" Функция initOrderPlusMinus");
-                }
+                }*/
             }
 
         function addSingleOrderToBasket(orderId,addType){
-            try{
+            //try{
                 var orderDetails,
                     curProd,
                     spinVal, i,
@@ -352,14 +352,14 @@ define(
                 }
                 commonModule.markAddedProduct();
                 tabPaneActive.find('.weight span').text(commonModule.getOrderWeight(orderId));
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция addSingleOrderToBasket");
-            }
+            }*/
         }
 
         function AddOrdersToBasket(orderData){
             // добавление целого заказа
-            try{
+            //try{
                 var addType;
                 if (orderData.itsAppend){
                     addType = 'append';
@@ -368,13 +368,13 @@ define(
                 }
                 $('.catalog-order').html('');
                 addSingleOrderToBasket(orderData.orderId,addType);
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция AddOrdersToBasket");
-            }
+            }*/
         }
 
         function initOrderBtns(selector){
-            try{
+            //try{
                 selector.find('.repeat-order-btn').click(function(){
                     var orderData= {
                         itsOrder: true,
@@ -394,9 +394,9 @@ define(
                         AddOrdersToBasket(orderData);
                     }
                 });
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция initOrderBtns");
-            }
+            }*/
         }
 
         var offsetOrders = 10;
@@ -408,7 +408,7 @@ define(
         }
 
         function initShowMoreOrders(orders){
-            try{
+            //try{
                 $('.more-orders').click(function(e){
                     e.preventDefault();
                     var orderList = $('.orders-list');
@@ -424,9 +424,9 @@ define(
                     var commonModule = require('shop-common.min');
                     commonModule.setSidebarHeight();
                 });
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция initShowMoreOrders");
-            }
+            }*/
         }
 
         function GoToOrdersTrigger(){

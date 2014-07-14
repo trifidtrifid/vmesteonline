@@ -60,7 +60,6 @@
 
     if(ArrayShops != null && ArrayShopsSize > 0){
         Shop shop;
-        //= shopService.getShop(ArrayShops.get(0).id);
 
         if(ArrayShops.size() > 1 && url != null && url.length() >= 17){
             // если по ID

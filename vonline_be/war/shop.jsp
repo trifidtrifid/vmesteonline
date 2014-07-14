@@ -208,7 +208,7 @@
                                                         <img src="${product.imageURL}?w=40&h=40" alt="${product.name}"/>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <img src="i/no-photo.png" alt="нет фото"/>
+                                                        <img src="../i/no-photo.png" alt="нет фото"/>
                                                     </c:otherwise>
                                                 </c:choose>
                                                 </div>

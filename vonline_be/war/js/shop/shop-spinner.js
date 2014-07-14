@@ -5,14 +5,14 @@ define(
     function( $,ace_spinner,thriftModule,commonModule,basketModule ){
 
         function InitSpinner(selector,spinnerValue,isBasket,spinnerStep){
-            try{
+            //try{
                 var step = 1;
                 if (spinnerStep){step = spinnerStep}
                 // делаем +spinnerValue для строгого преобразования к числу
                 selector.ace_spinner({value:+spinnerValue,min:step,max:100000,step:step,on_sides: true,hold:false, btn_up_class:'btn-info' , btn_down_class:'btn-info'});
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция InitSpinner");
-            }
+            }*/
             var isConfirm = selector.closest('.catalog-confirm').length > 0;
 
             if (isBasket || isConfirm){
@@ -345,7 +345,7 @@ define(
                 }
                 oldSpinnerValue = currentValue;
             });
-            try{
+            //try{
                 selector.on('change',function(e){
 
                     // действия для окргуления и избежания неправильного ввода (0 например)
@@ -412,9 +412,9 @@ define(
                     }
                     }
                 });
-            }catch(e){
+            /*}catch(e){
                 alert(e+" Функция InitSpinnerChange");
-            }
+            }*/
         }
 
         function autoOpenBasketPopup(productSelector){
@@ -425,7 +425,7 @@ define(
         }
 
         function initRemovePrepackLine(selector,productId,productSelector){
-            try{
+            //try{
                 selector.click(function(e){
                     e.preventDefault();
 
@@ -447,10 +447,10 @@ define(
 
                         $(this).remove();
                     });
-                })
-            }catch(e){
+                });
+            /*}catch(e){
                 alert(e+" Функция initRemovePrepackLine");
-            }
+            }*/
         }
 
         function initProductsSpinner(){
