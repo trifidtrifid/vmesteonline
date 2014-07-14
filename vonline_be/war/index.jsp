@@ -12,7 +12,9 @@
     int port = request.getServerPort();
 
     String URLrest = serverName.endsWith(".local") ? ".local" : "";
-    URLrest = URLrest + ":"+port;
+    if(port != 0){
+        URLrest = URLrest + ":"+port;
+    }
 
 	HttpSession sess = request.getSession();
 
