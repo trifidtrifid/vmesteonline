@@ -1,62 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="java.util.List"%>
-<%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
-<%@ page import="com.vmesteonline.be.InvalidOperation"%>
-<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
-<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.shop.*"%>
+<%@ include file="templates/preload.jsp" %>
 
-<%
-    HttpServletRequest httpReq = (HttpServletRequest)request;
-    /*String url1 = httpReq.getContextPath();
-    String url2 = httpReq.getRequestURI();*/
-    String url = httpReq.getPathInfo();
-    //out.println(url);
-
-    if(url.length() == 17){
-        char buf[] = new char[16];
-        url.getChars(1, 17, buf, 0);
-        String shopIdStr = "";
-        for (int i = 0; i <= 15; i++) {
-            shopIdStr = shopIdStr+buf[i];
-        }
-
-        Long shopId = new Long(shopIdStr);
-        //out.println(shopId);
-
-        HttpSession sess = request.getSession();
-        pageContext.setAttribute("auth",true);
-        try {
-            //AuthServiceImpl.checkIfAuthorised(sess.getId());
-            UserServiceImpl userService = new UserServiceImpl(request.getSession());
-            ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-            if( null == ShortUserInfo){
-                sess.invalidate();
-                throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
-            }
-            pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-            pageContext.setAttribute("lastName",ShortUserInfo.lastName);
-        } catch (InvalidOperation ioe) {
-            pageContext.setAttribute("auth",false);
-        }
-
-
-        ShopServiceImpl shopService = new ShopServiceImpl(request.getSession().getId());
-
-        try{
-            Shop shop = shopService.getShop(shopId);
-            UserShopRole userRole = shopService.getUserShopRole(shop.id);
-            pageContext.setAttribute("logoURL", shop.logoURL);
-            pageContext.setAttribute("shopID", shop.id);
-            pageContext.setAttribute("userRole", userRole);
-            pageContext.setAttribute("shop", shop);
-        }catch(InvalidOperation ioe){
-
-        }
-    }
-%>
 <!DOCTYPE html>
 <html>
 <head>

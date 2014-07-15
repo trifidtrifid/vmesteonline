@@ -2335,8 +2335,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                  }
                  optionsHtml += "</tbody></table><a href='#' class='add-options-item add-item'>Добавить</a>";
                  // -------------
-                 var links = productDetails.socialNetworks,
-                     linksHtml = "<table><tbody>";
+                 var links = productDetails.socialNetworks;
                  var productLinks = $(this).find('.product-links');
                  for(var p in links){
                      if(p == "vk"){

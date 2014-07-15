@@ -233,11 +233,13 @@ define(
 
                         // находим ссылки на соц.сети
                         for(var p in socialNetworks){
-                            socLinkSingle = socialNetworks[p];
-                            if(socLinkSingle.indexOf('vk') != -1){
-                                socLinks += "<a href='"+socLinkSingle+"'><img src='../i/vk.png'></a>"
-                            }else if(socLinkSingle.indexOf('fb') != -1){
-                                socLinks += "<a href='"+socLinkSingle+"'><img src='../i/fb.png'></a>"
+                            if(socialNetworks[p] != "") {
+                                socLinkSingle = socialNetworks[p];
+                                if (socLinkSingle.indexOf('vk') != -1) {
+                                    socLinks += "<a href='" + socLinkSingle + "'><img src='../i/vk.png'></a>"
+                                } else if (socLinkSingle.indexOf('fb') != -1) {
+                                    socLinks += "<a href='" + socLinkSingle + "'><img src='../i/fb.png'></a>"
+                                }
                             }
                         }
 
