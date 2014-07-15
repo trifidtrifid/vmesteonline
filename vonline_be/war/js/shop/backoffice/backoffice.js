@@ -8,7 +8,7 @@ require.config({
         "jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min",
         "flexslider": "../js/lib/jquery.flexslider-min",
         "ace_spinner": "../js/lib/fuelux/fuelux.spinner",
-        "datepicker-backoffice": "../js/shop/bootstrap-datepicker-backoffice",
+        "datepicker-backoffice": "../js/shop/backoffice/bootstrap-datepicker-backoffice",
         "datepicker-ru": "../js/lib/date-time/locales/bootstrap-datepicker.ru",
         "multiselect": "../js/lib/jquery.multiselect.min",
         "bootbox":"../js/bootbox.min"
@@ -58,34 +58,11 @@ var deliveryFilterFlag= 0,
     searchFilterFlag = 0,
     orders;
 
-require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min','shop-common.min','datepicker-backoffice','datepicker-ru','bootstrap','multiselect'],
-    function($,thriftModule,commonM,ordersModule,commonModule) {
+require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min',
+        'shop-common.min','bo-modules.min','bo-common.min','datepicker-backoffice','datepicker-ru',
+        'bootstrap','multiselect'],
+    function($,thriftModule,commonM,ordersModule,commonModule,boModules,boCommon) {
         var w = $(window);
-
-        function setSidebarHeight(contentH){
-            try{
-
-                var mainContent = $('.main-content');
-                var contH = (contentH) ? contentH : mainContent.height(),
-                    wHeight = w.height();
-                //alert(contH+" "+w.height());
-
-                if (contH > wHeight){
-                    contH = (contentH) ? contentH+100 : mainContent.height()+45;
-                    $('#sidebar').css('height', contH);
-                    //alert('1 '+contH);
-                }else{
-                    //alert('2 '+wHeight);
-                    $('#sidebar').css('height', wHeight-45);
-                }
-            }catch(e){
-                alert(e+" Функция setSidebarHeight");
-            }
-        }
-
-        var nowTime = parseInt(new Date().getTime()/1000);
-        nowTime -= nowTime%86400;
-        var day = 3600*24;
 
         commonM.init();
         $('#sidebar').css('min-height', w.height()-45);
@@ -141,6 +118,8 @@ if($('.container.backoffice').hasClass('noAccess')){
 
         $('.bo-link').parent().addClass('active');
 
+    boModules.boOrdersModule.initBackofficeOrders();
+
     /*$('.user-short a.dropdown-toggle').click(function (e) {
         e.preventDefault();
 
@@ -152,7 +131,7 @@ if($('.container.backoffice').hasClass('noAccess')){
     });*/
 
 
-        function showAllOrders(){
+        /*function showAllOrders(){
             try{
             orders = thriftModule.client.getOrdersByStatus(0,nowTime+180*day,0);
 
@@ -315,7 +294,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                             break
                     }
                     // форматирование типа доставки
-                    /*var orderDetails = thriftModule.client.getOrderDetails(orders[i].id);
+                    *//*var orderDetails = thriftModule.client.getOrderDetails(orders[i].id);
                     var orderDelivery;
                     switch(orderDetails.delivery){
                         case 0:
@@ -330,7 +309,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                         case 3:
                             orderDelivery = "Курьер далеко";
                             break
-                    }*/
+                    }*//*
                     //if (orderDetails.deliveryTo){
 
                         var orderDay = tempDate.getDate();
@@ -357,8 +336,8 @@ if($('.container.backoffice').hasClass('noAccess')){
                             '<td class="td4">'+
                             '<div class="order-status">'+orderStatus +'</div>'+
                             '</td>'+
-                            /*'<td class="td5">+
-                            '</td>'+*/
+                            *//*'<td class="td5">+
+                            '</td>'+*//*
                             '<td class="td9"></td>'+
                             '<td class="td8"></td>'+
                             '<td class="td6">'+ orders[i].totalCost.toFixed(1) +'</td>'+
@@ -374,13 +353,13 @@ if($('.container.backoffice').hasClass('noAccess')){
                             '</div>';
                     //}
                 }
-                /*var haveMore = ordersLength%listLength;
+                *//*var haveMore = ordersLength%listLength;
                  if (haveMore && haveMore != ordersLength){
                  //$('.more-orders').show();
                  ordersHtml += '<div class="more-orders"><a href="#">Показать еще</a></div>';
                  }else{
                  $('.more-orders').hide();
-                 }*/
+                 }*//*
             }catch(e){
                 alert(e+" Функция createOrdersHtml");
             }
@@ -435,10 +414,10 @@ if($('.container.backoffice').hasClass('noAccess')){
         });
         }catch(e){}
 
-        /* сброс */
+        *//* сброс *//*
         $('#date-picker-2,#date-picker-3,#date-picker-4').val('Фильтр по дате');
         $('.export .checkbox input.ace').prop('checked',false);
-        /* --- */
+        *//* --- *//*
 
         function getStatusTypeByText(statusText){
             var statusType;
@@ -629,8 +608,8 @@ if($('.container.backoffice').hasClass('noAccess')){
             return ordersInFilter;
         }
 
-        /* ----------------------- Поиск -----------------------------------*/
-        /* создаем массив из имен клиентов, без повторений */
+        *//* ----------------------- Поиск -----------------------------------*//*
+        *//* создаем массив из имен клиентов, без повторений *//*
         var clients = [];
         var counter = 0;
         $('.back-orders .order-item').each(function(){
@@ -652,7 +631,7 @@ if($('.container.backoffice').hasClass('noAccess')){
             }
         }
         clientsNoRepeat[counter] = clients[clientLength-1];
-        /* --- */
+        *//* --- *//*
 
         function searchByWord(word){
             var orders = thriftModule.client.getOrdersByStatus(0,nowTime+180*day,0);
@@ -703,10 +682,17 @@ if($('.container.backoffice').hasClass('noAccess')){
             initPlusMinus();
         });
 
-        /* ------------------------------- Конец Поиск ---------------------------- */
+        *//* ------------------------------- Конец Поиск ---------------------------- *//*
+*/
+
+
+
 
         /* import */
-        var dataCSV = [],
+
+    boModules.importModule.initImport();
+
+        /*var dataCSV = [],
             elems, rowCount,colCount;
 
         var fileUrl;
@@ -727,9 +713,9 @@ if($('.container.backoffice').hasClass('noAccess')){
                 var fd = new FormData();
                 var input = $('.form-import #import-data');
                 fd.append( 'data', input[0].files[0]);
-                /*for(var p in input[0].files[0]){
+                *//*for(var p in input[0].files[0]){
                     alert(p+" "+ input[0].files[0][p]);
-                }*/
+                }*//*
 
                 $.ajax({
                     type: "POST",
@@ -739,11 +725,11 @@ if($('.container.backoffice').hasClass('noAccess')){
                     //contentType: 'multipart/form-data',
                     contentType: false,
                     data: fd,
-                    /*data: {
+                    *//*data: {
                      fname: fname,
                      data: data,
                      public: importPublic
-                     },*/
+                     },*//*
                     success: function(html) {
                         fileUrl = html;
 
@@ -1078,13 +1064,15 @@ if($('.container.backoffice').hasClass('noAccess')){
             }
 
         });
+*/
 
         /* /import */
 
         /* export */
 
+    boModules.exportModule.initExport();
 
-        $('.export-orders-checklist select, .export-products-checklist select, .export-packs-checklist select').multiselect({
+        /*$('.export-orders-checklist select, .export-products-checklist select, .export-packs-checklist select').multiselect({
             noneSelectedText: "Опции",
             selectedText: "Опции (# выбрано)",
             checkAllText: "Выбрать все",
@@ -1234,14 +1222,6 @@ if($('.container.backoffice').hasClass('noAccess')){
             return {fieldsMap: fieldsMap,headColArray: headColArray }
         };
 
-        /*function getExportFieldsByMap(fieldsMap){
-         var counter = 0;
-
-         for (var p in fieldsMap){
-         console.log(p+" "+fieldsMap[p]);
-         }
-         }*/
-
         function drawExportTables(dataSet,tablesCount,exportFields,exportFieldsOrderLine){
 
             var currentExportTable = $('.tab-pane.active').find('.export-table');
@@ -1338,7 +1318,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                 return exportLine;
             }
             return exportTable;
-        }
+        }*/
 
         /* /export */
 
@@ -1353,7 +1333,7 @@ if($('.container.backoffice').hasClass('noAccess')){
                     break;
                 case 1:
                     $('.bo-edit').show();
-                    if(!isEditInitSet) initEdit();
+                    if(!boModules.productsModule.isEditInitSet) boModules.productsModule.initEdit();
                     break;
                 case 2:
                     $('.export').show();
@@ -1363,39 +1343,21 @@ if($('.container.backoffice').hasClass('noAccess')){
                     break;
                 case 4:
                     $('.bo-settings').show();
-                    if(!isSettingsInitSet) initSettings();
+                    if(!boModules.settingsModule.isSettingsInitSet) boModules.settingsModule.initSettings();
                     break;
             }
             $(this).closest('ul').find('.active').removeClass('active');
             $(this).parent().addClass('active');
-            setSidebarHeight();
+            boCommon.setSidebarHeight();
         });
 
-       function DoubleScroll(element) {
-            var scrollbar= document.createElement('div');
-            scrollbar.appendChild(document.createElement('div'));
-            scrollbar.style.overflow= 'auto';
-            scrollbar.style.overflowY= 'hidden';
-            scrollbar.firstChild.style.width= element.scrollWidth+'px';
-            scrollbar.firstChild.style.paddingTop= '1px';
-            scrollbar.firstChild.style.marginTop= '-5px';
-            scrollbar.firstChild.appendChild(document.createTextNode('\xA0'));
-            scrollbar.onscroll= function() {
-                element.scrollLeft= scrollbar.scrollLeft;
-            };
-            element.onscroll= function() {
-                scrollbar.scrollLeft= element.scrollLeft;
-            };
-            element.parentNode.insertBefore(scrollbar, element);
-            $(element).prev().addClass('top-scroll');
-        }
 
     /* --------------------------------------------------*/
     /* -------------------- SETTINGS --------------------*/
     /* --------------------------------------------------*/
 
 
-    function initSettings(){
+    /*function initSettings(){
         $('#settings-logo').ace_file_input({
             style:'well',
             btn_choose:'Изменить логотип',
@@ -1417,7 +1379,7 @@ if($('.container.backoffice').hasClass('noAccess')){
         var shopid = $('.backoffice.dynamic').attr('id');
         var myShop = thriftModule.client.getShop(shopid);
 
-        /* настройки ссылок  */
+        *//* настройки ссылок  *//*
 
         var shopPages = thriftModule.clientBO.getShopPages(shopid);
 
@@ -1425,7 +1387,7 @@ if($('.container.backoffice').hasClass('noAccess')){
         if (shopPages.conditionsPageContentURL) $('#settings-terms-link').val(shopPages.conditionsPageContentURL);
         if (shopPages.deliveryPageContentURL) $('#settings-delivery-link').val(shopPages.deliveryPageContentURL);
 
-        /* настройки даты */
+        *//* настройки даты *//*
         var datesArray = thriftModule.clientBO.getDates();
         var datesArrayLength = datesArray.length,
             singleDate,deliveryDatesHtml = "";
@@ -1582,7 +1544,7 @@ if($('.container.backoffice').hasClass('noAccess')){
 
         }
 
-        /* настройки доставки */
+        *//* настройки доставки *//*
 
         var deliveryCostByDistance = myShop.deliveryCostByDistance,
             deliveryCostByDistanceHtml = "";
@@ -1735,9 +1697,9 @@ if($('.container.backoffice').hasClass('noAccess')){
             $(this).closest('.settings-delivery-container').addClass('changed');
         });
 
-        /*
+        *//*
         * Сохранение
-        * */
+        * *//*
 
     $('.settings-item .btn-save').click(function(e){
         e.preventDefault();
@@ -1792,9 +1754,9 @@ if($('.container.backoffice').hasClass('noAccess')){
                         }
                     }
 
-                    /*for(var j = 0; j < datesArrayLength; j++){
+                    *//*for(var j = 0; j < datesArrayLength; j++){
                         if(!isNotRemoved[j]) thriftModule.clientBO.removeDate(datesArray[j]);
-                    }*/
+                    }*//*
 
                     if(!isAlreadyExist) thriftModule.clientBO.setDate(dates);
 
@@ -1911,7 +1873,7 @@ if($('.container.backoffice').hasClass('noAccess')){
         }
     });
 
-/*    $('.shedule-dates td').click(function(e){
+*//*    $('.shedule-dates td').click(function(e){
         e.preventDefault();
 
         if(!$(this).hasClass('new') && !$(this).hasClass('old')){
@@ -1999,7 +1961,7 @@ if($('.container.backoffice').hasClass('noAccess')){
         }
         return (Date.parse(day+" "+strMonth+" "+year));
     }
-*/
+*//*
     isSettingsInitSet = 1;
 }
 
@@ -2021,14 +1983,14 @@ if($('.container.backoffice').hasClass('noAccess')){
 
             $(this).parent().find('.dropdown-menu').css({'left':coordX,'top':coordY});
         });
-    }
+    }*/
 
 
     /* ----------------------------------------------*/
     /* -------------------- EDIT --------------------*/
     /* ----------------------------------------------*/
 
-    var isProductInitSet = 0,
+    /*var isProductInitSet = 0,
         isCategoryInitSet = 0,
         isProducerInitSet = 0,
         isEditInitSet = 0,
@@ -2077,7 +2039,7 @@ if($('.container.backoffice').hasClass('noAccess')){
 
      if (!isProductInitSet) initEditProduct();
 
-     /* общие */
+     *//* общие *//*
     if(!isEditInitSet){
 
          $('.edit-show-add').click(function(e){
@@ -2151,9 +2113,9 @@ if($('.container.backoffice').hasClass('noAccess')){
                     });
                     break;
                 case "edit-category" :
-                    /*linksTd = $('.table-add-category .category-links');
+                    *//*linksTd = $('.table-add-category .category-links');
                     initAddLinksItem(linksTd);
-                    initRemoveLinksItem(linksTd);*/
+                    initRemoveLinksItem(linksTd);*//*
                     break;
                 case "edit-producer" :
                     break;
@@ -2183,7 +2145,7 @@ if($('.container.backoffice').hasClass('noAccess')){
          });
     }
 
-     /* редактирование продуктов */
+     *//* редактирование продуктов *//*
 
      function initEditProduct(){
 
@@ -2191,7 +2153,7 @@ if($('.container.backoffice').hasClass('noAccess')){
 
          DoubleScroll(document.getElementById('doublescroll-2'));
 
-         /* добавление нового продукта  */
+         *//* добавление нового продукта  *//*
 
          $('.table-add-product .edit-add').click(function(e){
              e.preventDefault();
@@ -2288,7 +2250,7 @@ if($('.container.backoffice').hasClass('noAccess')){
              return productInfo;
          }
 
-         /* первоначальное заполнение таблицы продуктов */
+         *//* первоначальное заполнение таблицы продуктов *//*
 
          function FillProductDetails(){
              var productsTable = $('.products-table>table'),
@@ -2416,7 +2378,7 @@ if($('.container.backoffice').hasClass('noAccess')){
              });
          }
 
-         /* действия внутри таблицы продуктов */
+         *//* действия внутри таблицы продуктов *//*
 
          $('.product-remove a').click(function(e){
              e.preventDefault();
@@ -2441,7 +2403,7 @@ if($('.container.backoffice').hasClass('noAccess')){
              });
          }
 
-         /* сохранение изменений в таблице продуктов */
+         *//* сохранение изменений в таблице продуктов *//*
 
          $('.save-products').click(function(e){
              e.preventDefault();
@@ -2547,33 +2509,8 @@ if($('.container.backoffice').hasClass('noAccess')){
          });
      }
 
-        /*function initRemoveLinksItem(selector){
-            selector.find('.remove-link-item').click(function(e){
-                e.preventDefault();
 
-                $(this).closest('.product-link-wrap').slideUp(200,function(){
-                    $(this).detach();
-                });
-            })
-        }
-
-        function initAddLinksItem(selector){
-            selector.find('.add-link-item ').click(function(e){
-                e.preventDefault();
-                var newLinksLine = '<tr class="product-link-wrap">'+
-                    '<td><input type="text" placeholder="Ссылка на соц. сеть"></td>'+
-                        '<td class="td-remove-link no-init"><a href="#" class="remove-link-item remove-item">&times;</a></td>'+
-                    '</tr>';
-
-                $(this).closest('td').find('table tbody').append(newLinksLine);
-
-                var removeLinkNoInit = $('.td-remove-link.no-init');
-                initRemoveLinksItem(removeLinkNoInit);
-                removeLinkNoInit.removeClass('.no-init');
-            });
-        }*/
-
-    /* редактирование категорий */
+    *//* редактирование категорий *//*
 
      function initEditCategory() {
 
@@ -2699,7 +2636,7 @@ if($('.container.backoffice').hasClass('noAccess')){
 
      }
 
-    /* редактирование производителей */
+    *//* редактирование производителей *//*
 
      function initEditProducer(){
 
@@ -2793,7 +2730,7 @@ if($('.container.backoffice').hasClass('noAccess')){
      }
 
      isEditInitSet = 1;
- }
+ }*/
 
 }else{
 
@@ -2801,8 +2738,9 @@ if($('.container.backoffice').hasClass('noAccess')){
         /* -------------------- ADMINKA --------------------*/
         /* -------------------------------------------------*/
 
+    boModules.adminkaModule.initAdminka();
 
-        var contentH = $('body').height();
+        /*var contentH = $('body').height();
         setSidebarHeight(contentH);
 
         $('.adminka-shops table tr').each(function(){
@@ -2877,23 +2815,6 @@ if($('.container.backoffice').hasClass('noAccess')){
             selector.closest('tr').find('.owner-contacts').html(getUserContacts(newOwnerInfo.id));
         }
 
-    /*$('.adminka-statistics-period .dropdown-menu a').click(function(e){
-        e.preventDefault();
-
-        var newText = $(this).text(),
-            dateFrom, dateTo;
-        $(this).closest('.btn-group').find('.btn-group-text').text(newText);
-
-        switch(newText){
-            case "За месяц":
-                reloadShopTotal(nowTime-30*day,nowTime);
-                break;
-            case "За все время":
-                reloadShopTotal(0,nowTime);
-                break;
-        }
-    });*/
-
     $('.adminka-statistics-date .btn').click(function(e){
         e.preventDefault();
 
@@ -2966,7 +2887,7 @@ if($('.container.backoffice').hasClass('noAccess')){
         $(this).parent().addClass('open');
         commonModule.openModalAuth();
 
-    });
+    });*/
 }
 
     });
