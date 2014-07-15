@@ -64,7 +64,37 @@
     if(ArrayShops != null && ArrayShopsSize > 0){
         Shop shop;
 
-        if(!requestURI.equals("/adminka.jsp")){
+         if(requestURI.equals("/index.jsp")){
+
+             // LANDING
+
+            Shop[] activeShops = new Shop[ArrayShopsSize];
+            Shop[] noActiveShops = new Shop[ArrayShopsSize];
+            int activeShopsCounter = 0;
+            int noActiveShopsCounter = 0;
+
+            for (int i = 0; i < ArrayShopsSize; i++) {
+                if(shopService.isActivated(ArrayShops.get(i).id)){
+                    activeShops[activeShopsCounter] = ArrayShops.get(i);
+                    activeShopsCounter++;
+                }else{
+                    noActiveShops[noActiveShopsCounter] = ArrayShops.get(i);
+                    noActiveShopsCounter++;
+                }
+            }
+            pageContext.setAttribute("activeShops", activeShops);
+            pageContext.setAttribute("noActiveShops", noActiveShops);
+
+        }else if(requestURI.equals("/adminka.jsp")){
+
+            // ADMINKA
+
+            pageContext.setAttribute("shops", ArrayShops);
+
+        }else{
+
+             // SHOP & other
+
             if (url != null && url.length() >= 17){
                 // если по ID
                 char buf[] = new char[16];
@@ -98,7 +128,7 @@
                 pageContext.setAttribute("shopID", shop.id);
                 pageContext.setAttribute("userRole", userRole);
 
-                // for BO
+                // BACKOFFICE
                 List<ProductCategory> categoriesList = shopService.getAllCategories(shop.id);
 
                 if(categoriesList != null && categoriesList.size() > 0){
@@ -115,11 +145,9 @@
                 pageContext.setAttribute("shopPages", shopPages);
             }
 
-        }else{
-            // for Adminka
-            pageContext.setAttribute("shops", ArrayShops);
         }
 
+        // COMMON
 
         pageContext.setAttribute("isEmptyURL",url == null);
         pageContext.setAttribute("noPhotoPic","../i/no-photo.png");

@@ -1,0 +1,18 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+
+<div class="modal modal-error">
+    <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <p>Произошла ошибка работы приложения. Наши программисты уже получили всю необходимую информацию.
+            Приносим извинения за доставленные неудобства.</p>
+        <p>Для продолжения работы перезагрузите страницу.</p>
+        <div class="details-block">
+            <a href="#" class="error-details-link no-init">Детали</a>
+            <div id="error-details" class="error-info"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-auth">
+</div>
+

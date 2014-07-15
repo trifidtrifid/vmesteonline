@@ -782,45 +782,19 @@ if(isAuth){
                 </div>
             </div>
         </div>
+
         <div class="page main-container-inner shop-page">
+            <%@ include file="templates/shop-sidebar.jsp" %>
 
-            <div class="show-right">
-                Заказы
-            </div>
-            <aside class="sidebar shop-right">
-                <div class="hide-right">×</div>
-                <div class="sidebar-title">
-                </div>
-
-                <div class="modal-backdrop basket-backdrop"></div>
-            </aside>
             <div class="main-content">
-                <div class="shop-products">
-                </div>
-                <div class="shop-orders">
+                <div class="shop-products"></div>
+                <%@ include file="templates/shop-orders.jsp" %>
 
-                    <h1>Корзина</h1>
-                    <div class="orders-tbl-wrap">
-                        <table>
-                            <tr>
-                                <td class="td1"></td>
-                                <td class="td2">N</td>
-                                <td class="td3">Дата</td>
-                                <td class="td4">Статус</td>
-                                <td class="td9">Цена доставки</td>
-                                <td class="td8">Вес(кг)</td>
-                                <td class="td6">Сумма</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="orders-list">
-                    </div>
-                </div>
             </div>
             <div class="clear"></div>
         </div>
-        <div class="page shop-profile"></div>
-        <div class="page shop-editPersonal"></div>
+
+        <%@ include file="templates/pages-profile.jsp" %>
     </c:if>
     </div>
     <div class="loading">

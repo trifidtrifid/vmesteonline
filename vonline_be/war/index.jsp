@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ include file="templates/preload.jsp" %>
+
+<%--<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
@@ -22,13 +24,16 @@
     ShopServiceImpl shopService = new ShopServiceImpl(sess.getId());
 
     List<Shop> ArrayShops = shopService.getShops();
-    int ArrayShopsLength = ArrayShops.size();
-    Shop[] activeShops = new Shop[ArrayShopsLength];
-    Shop[] noActiveShops = new Shop[ArrayShopsLength];
+    int ArrayShopsSize = ArrayShops.size();
+
+
+
+    Shop[] activeShops = new Shop[ArrayShopsSize];
+    Shop[] noActiveShops = new Shop[ArrayShopsSize];
     int activeShopsCounter = 0;
     int noActiveShopsCounter = 0;
 
-    for (int i = 0; i < ArrayShopsLength; i++) {
+    for (int i = 0; i < ArrayShopsSize; i++) {
         if(shopService.isActivated(ArrayShops.get(i).id)){
             activeShops[activeShopsCounter] = ArrayShops.get(i);
             activeShopsCounter++;
@@ -40,10 +45,15 @@
     pageContext.setAttribute("activeShops", activeShops);
     pageContext.setAttribute("noActiveShops", noActiveShops);
 
-        if(ArrayShops != null && ArrayShops.size() > 0){
+
+
+
+
+    if(ArrayShops != null && ArrayShops.size() > 0){
         pageContext.setAttribute("shops", ArrayShops);
-        }
-    pageContext.setAttribute("auth",true);
+    }
+
+    pageContext.setAttribute("isAuth",true);
     pageContext.setAttribute("noPhotoPic","../i/no-photo.png");
 
     boolean isProduction = false;
@@ -63,9 +73,9 @@
         pageContext.setAttribute("firstName",ShortUserInfo.firstName);
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
     } catch (InvalidOperation ioe) {
-        pageContext.setAttribute("auth",false);
+        pageContext.setAttribute("isAuth",false);
     }
-%>
+%>--%>
 
 <!DOCTYPE html>
 <html class="no-js">
@@ -91,9 +101,9 @@
 
     <script src="js/shop/landing/libs/modernizr-2.6.2.min.js"></script>
 <script type="text/javascript">
-	globalUserAuth = false;
-	<c:if test="${auth}">
-	globalUserAuth = true;
+	    globalUserAuth = false;
+	<c:if test="${isAuth}">
+	    globalUserAuth = true;
 	</c:if>
 </script>
 </head>
@@ -113,8 +123,9 @@
 
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
-						<li class="user-short"><c:choose>
-								<c:when test="${auth}">
+						<li class="user-short">
+                            <c:choose>
+								<c:when test="${isAuth}">
 									<a data-toggle="dropdown" href="#" class="dropdown-toggle"> <%--<img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />--%> <span class="user-info"> <c:out
 												value="${firstName}" /> <c:out value="${lastName}" />
 									</span> <i class="icon-caret-down"></i>
@@ -198,14 +209,6 @@
 
 		<section id="columnsdemo" style="margin-bottom: 60px; width: 100%" class="clearfix">
 			<div class="clearfix"></div>
-			<%--<h2 class="for-auth-user">Спасибо, что выбираете нас !</h2>
-
-			<div class="grid_6 shops for-auth-user no-left-margin">
-				<div>Для совершения покупок, выберете магазин из списка:</div>
-			</div>
-			<div class="grid_6 shops for-auth-user bigger-left-margin">
-				<div>Какой следующий магазин должен быть подключен?</div>
-			</div>--%>
 
 			<div id="shops" class="grid_6 shops active-shops no-left-margin">
 

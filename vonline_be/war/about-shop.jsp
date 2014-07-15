@@ -34,66 +34,24 @@
         <%@ include file="templates/header.jsp" %>
 
 		<div class="main-container shop dynamic" id="${shopID}">
-            <div class="page shop-about">
-            </div>
-            <div class="page main-container-inner shop-page">
-                <div class="show-right">
-                    Корзина
-                </div>
-                <aside class="sidebar shop-right">
-                    <div class="hide-right">×</div>
-                    <div class="sidebar-title">
-                    </div>
 
-                    <div class="modal-backdrop basket-backdrop"></div>
-                </aside>
+            <div class="page main-container-inner shop-page">
+                <%@ include file="templates/shop-sidebar.jsp" %>
+
                 <div class="main-content">
                     <div class="shop-products"></div>
-                    <div class="shop-orders">
+                    <%@ include file="templates/shop-orders.jsp" %>
 
-                        <h1>Заказы</h1>
-                        <div class="orders-tbl-wrap">
-                            <table>
-                                <tr>
-                                    <td class="td1"></td>
-                                    <td class="td2">N</td>
-                                    <td class="td3">Дата</td>
-                                    <td class="td4">Статус</td>
-                                    <td class="td9">Цена доставки</td>
-                                    <td class="td8">Вес(кг)</td>
-                                    <td class="td6">Сумма</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="orders-list">
-                        </div>
-                    </div>
                 </div>
                 <div class="clear"></div>
             </div>
-            <div class="page shop-confirm"></div>
-            <div class="page shop-profile"></div>
-            <div class="page shop-orderEnd"></div>
-            <div class="page shop-editPersonal"></div>
-            <div class="page shop-terms-of-orders"></div>
-            <div class="page shop-terms-of-delivery"></div>
+
+            <%@ include file="templates/pages.jsp" %>
+
+
         </div>
 
-        <div class="modal modal-error">
-            <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <p>Произошла ошибка работы приложения. Наши программисты уже получили всю необходимую информацию.
-                Приносим извинения за доставленные неудобства.</p>
-                <p>Для продолжения работы перезагрузите страницу.</p>
-                <div class="details-block">
-                    <a href="#" class="error-details-link no-init">Детали</a>
-                    <div id="error-details" class="error-info"></div>
-                </div>
-            </div>
-        </div>
-
-		<div class="modal modal-auth">
-		</div>
+        <%@ include file="templates/modals.jsp" %>
 
 	</div>
 

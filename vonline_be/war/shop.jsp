@@ -86,16 +86,8 @@
 		<div class="main-container shop dynamic" id="${shopID}">
             <div class="page main-container-inner shop-page">
 
-                <div class="show-right">
-                    Корзина
-                </div>
-                <aside class="sidebar shop-right">
-                    <div class="hide-right">×</div>
-                    <div class="sidebar-title">
-                    </div>
+                <%@ include file="templates/shop-sidebar.jsp" %>
 
-                    <div class="modal-backdrop basket-backdrop"></div>
-                </aside>
                 <div class="main-content">
                     <div class="shop-products">
                         <div class="btn-group producer-dropdown">
@@ -248,72 +240,26 @@
                             </table>
                         </section>
                     </div>
-                    <div class="shop-orders">
-
-                        <h1>Заказы</h1>
-                        <div class="orders-tbl-wrap">
-                        <table>
-                            <tr>
-                                <td class="td1"></td>
-                                <td class="td2">N</td>
-                                <td class="td3">Дата</td>
-                                <td class="td4">Статус</td>
-                                <td class="td9">Цена доставки</td>
-                                <td class="td8">Вес(кг)</td>
-                                <td class="td6">Сумма</td>
-                            </tr>
-                        </table>
-                        </div>
-                        <div class="orders-list">
-                        </div>
-                    </div>
+                    <%@ include file="templates/shop-orders.jsp" %>
 
                 </div>
                 <div class="clear"></div>
             </div>
             <div class="page shop-confirm"></div>
-            <div class="page shop-profile"></div>
             <div class="page shop-orderEnd"></div>
             <div class="page shop-editPersonal"></div>
+            <div class="page shop-profile"></div>
             <div class="page shop-about"></div>
             <div class="page shop-terms-of-orders"></div>
             <div class="page shop-terms-of-delivery"></div>
         </div>
 
-        <div class="modal modal-error">
-            <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <p>Произошла ошибка работы приложения. Наши программисты уже получили всю необходимую информацию.
-                Приносим извинения за доставленные неудобства.</p>
-                <p>Для продолжения работы перезагрузите страницу.</p>
-                <div class="details-block">
-                    <a href="#" class="error-details-link no-init">Детали</a>
-                    <div id="error-details" class="error-info"></div>
-                </div>
-            </div>
-        </div>
-
-		<div class="modal modal-auth">
-		</div>
+        <%@ include file="templates/modals.jsp" %>
 
 	</div>
 
     <%@ include file="templates/footer.jsp" %>
 
-    <%--<footer class="short-footer">
-        <div class="container">
-            <div class="footer-menu">
-                <ul>
-                    <li><a href="#">О сайте</a></li>
-                    <li><a href="/about/${shopID}" class="about-shop-link">О магазине</a></li>
-                    <li><a href="#">Правила</a></li>
-                    <li><a href="#">Контакты</a></li>
-                    <li><a href="#">В начало</a></li>
-                </ul>
-            </div>
-            <div>Вместе Онлайн (c) 2014</div>
-        </div>
-    </footer>--%>
     </div>
 
     <script type="text/javascript">
