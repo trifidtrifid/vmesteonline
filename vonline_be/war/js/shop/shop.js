@@ -326,10 +326,10 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                     $('.modal-login').modal();
                 });
 
-                $('.navbar-brand').click(function () {
+                /*$('.navbar-brand').click(function () {
                     $('.back-to-shop a').trigger('click');
                     return false;
-                });
+                });*/
 
                 /*$('html,body').click(function (e) {
                     //e.stopPropagation();

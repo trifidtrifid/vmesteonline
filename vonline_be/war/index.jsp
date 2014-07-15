@@ -6,6 +6,7 @@
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.shop.*"%>
+<%@ page import="com.google.appengine.api.utils.SystemProperty;"%>
 
 <%
     String serverName = request.getServerName();
@@ -44,6 +45,13 @@
         }
     pageContext.setAttribute("auth",true);
     pageContext.setAttribute("noPhotoPic","../i/no-photo.png");
+
+    boolean isProduction = false;
+    if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
+        isProduction = true;
+    }
+    pageContext.setAttribute("isProduction",isProduction);
+
     try {
 
         UserServiceImpl userService = new UserServiceImpl(sess);
@@ -207,7 +215,7 @@
 						<c:if test="${shop.id != null}">
 							<li>
                             <c:choose>
-                                <c:when test="${shop.hostName != null}">
+                                <c:when test="${shop.hostName != null && isProduction}">
                                     <a href="http://${shop.hostName}<%=URLrest%>/shop/">
                                 </c:when>
                                 <c:otherwise>

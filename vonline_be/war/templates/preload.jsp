@@ -14,10 +14,10 @@
 
 <%
     HttpServletRequest httpReq = (HttpServletRequest)request;
-    /*String url1 = httpReq.getContextPath();
-    String url2 = httpReq.getRequestURI();*/
+    //String url1 = httpReq.getContextPath();
+    String requestURI = httpReq.getRequestURI();
     String url = httpReq.getPathInfo();
-    //out.print(url);
+    //out.print(url2);
 
     String serverName = request.getServerName();
     int port = request.getServerPort();
@@ -62,8 +62,8 @@
     if(ArrayShops != null && ArrayShopsSize > 0){
         Shop shop;
 
-        if(url != null){
-            if (url.length() >= 17){
+        if(!requestURI.equals("/adminka.jsp")){
+            if (url != null && url.length() >= 17){
                 // если по ID
                 char buf[] = new char[16];
                 url.getChars(1, 17, buf, 0);

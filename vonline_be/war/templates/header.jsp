@@ -10,7 +10,17 @@
 
 			<div class="navbar-container" id="navbar-container">
 				<div class="navbar-header pull-left">
-					<a href="/shop/<c:out value="${shopID}"/>" class="navbar-brand">
+					<a
+                    <c:choose>
+                        <c:when test="${shop.hostName != null}">
+                            href="http://${shop.hostName}<%=URLrest%>/shop/"
+                        </c:when>
+                        <c:otherwise>
+                            href="/shop/<c:out value="${shop.id}"/>"
+                        </c:otherwise>
+                    </c:choose>
+                    class="navbar-brand">
+
                         <c:choose>
                             <c:when test="${logoURL!= null}">
                                 <img src="<c:out value="${logoURL}" />" alt="лого">
