@@ -11,57 +11,97 @@ module.exports = function(grunt) {
             },
             backoffice:{
                 files: {
-                    'war/build/backoffice.min.js': 'war/js/shop/backoffice.js'
+                    'war/build/backoffice.min.js': 'war/js/shop/backoffice/backoffice.js'
+                }
+            },
+            boModules:{
+                files: {
+                    'war/build/bo-modules.min.js': 'war/js/shop/backoffice/bo-modules.min.js'
+                }
+            },
+            boOrders:{
+                files: {
+                    'war/build/orders.min.js': 'war/js/shop/backoffice/orders.min.js'
+                }
+            },
+            boProducts:{
+                files: {
+                    'war/build/products.min.js': 'war/js/shop/backoffice/products.min.js'
+                }
+            },
+            boImport:{
+                files: {
+                    'war/build/import.min.js': 'war/js/shop/backoffice/import.min.js'
+                }
+            },
+            boExport:{
+                files: {
+                    'war/build/export.min.js': 'war/js/shop/backoffice/export.min.js'
+                }
+            },
+            boSettings:{
+                files: {
+                    'war/build/settings.min.js': 'war/js/shop/backoffice/settings.min.js'
+                }
+            },
+            boAdminka:{
+                files: {
+                    'war/build/adminka.min.js': 'war/js/shop/backoffice/adminka.min.js'
+                }
+            },
+            boCommon:{
+                files: {
+                    'war/build/bo-common.min.js': 'war/js/shop/backoffice/bo-common.min.js'
                 }
             },
             loginModule:{
                 files: {
-                    'war/build/loginModule.min.js': 'war/js/shop/loginModule.js'
+                    'war/build/loginModule.min.js': 'war/js/shop/loginModule.min.js'
                 }
             },
             commonM:{
                 files: {
-                    'war/build/commonM.min.js': 'war/js/shop/commonM.js'
+                    'war/build/commonM.min.js': 'war/js/shop/commonM.min.js'
                 }
             },
             shopCommon:{
                 files: {
-                    'war/build/shop-common.min.js': 'war/js/shop/shop-common.js'
+                    'war/build/shop-common.min.js': 'war/js/shop/shop-common.min.js'
                 }
             },
             shopBasket:{
                 files: {
-                    'war/build/shop-basket.min.js': 'war/js/shop/shop-basket.js'
+                    'war/build/shop-basket.min.js': 'war/js/shop/shop-basket.min.js'
                 }
             },
             shopCategory:{
                 files: {
-                    'war/build/shop-category.min.js': 'war/js/shop/shop-category.js'
+                    'war/build/shop-category.min.js': 'war/js/shop/shop-category.min.js'
                 }
             },
             shopSearch:{
                 files: {
-                    'war/build/shop-search.min.js': 'war/js/shop/shop-search.js'
+                    'war/build/shop-search.min.js': 'war/js/shop/shop-search.min.js'
                 }
             },
             shopOrders:{
                 files: {
-                    'war/build/shop-orders.min.js': 'war/js/shop/shop-orders.js'
+                    'war/build/shop-orders.min.js': 'war/js/shop/shop-orders.min.js'
                 }
             },
             shopSpinner:{
                 files: {
-                    'war/build/shop-spinner.min.js': 'war/js/shop/shop-spinner.js'
+                    'war/build/shop-spinner.min.js': 'war/js/shop/shop-spinner.min.js'
                 }
             },
             shopinitThrift:{
                 files: {
-                    'war/build/shop-initThrift.min.js': 'war/js/shop/shop-initThrift.js'
+                    'war/build/shop-initThrift.min.js': 'war/js/shop/shop-initThrift.min.js'
                 }
             },
             shopModules:{
                 files: {
-                    'war/build/shop-modules.min.js': 'war/js/shop/shop-modules.js'
+                    'war/build/shop-modules.min.js': 'war/js/shop/shop-modules.min.js'
                 }
             },
             /*modules: {
@@ -127,47 +167,79 @@ module.exports = function(grunt) {
                 tasks: ['uglify:shop','concat']
             },
             backoffice:{
-                files: ['war/js/shop/backoffice.js'],
+                files: ['war/js/shop/backoffice/backoffice.js'],
                 tasks: ['uglify:backoffice','concat']
             },
+            boModules:{
+                files: ['war/js/shop/backoffice/bo-modules.min.js'],
+                tasks: ['uglify:boModules','concat']
+            },
+            boOrders:{
+                files: ['war/js/shop/backoffice/orders.min.js'],
+                tasks: ['uglify:boOrders','concat']
+            },
+            boProducts:{
+                files: ['war/js/shop/backoffice/products.min.js'],
+                tasks: ['uglify:boProducts','concat']
+            },
+            boImport:{
+                files: ['war/js/shop/backoffice/import.min.js'],
+                tasks: ['uglify:boImport','concat']
+            },
+            boExport:{
+                files: ['war/js/shop/backoffice/export.min.js'],
+                tasks: ['uglify:boExport','concat']
+            },
+            boSettings:{
+                files: ['war/js/shop/backoffice/settings.min.js'],
+                tasks: ['uglify:boSettings','concat']
+            },
+            boAdminka:{
+                files: ['war/js/shop/backoffice/adminka.min.js'],
+                tasks: ['uglify:boAdminka','concat']
+            },
+            boCommon:{
+                files: ['war/js/shop/backoffice/bo-common.min.js'],
+                tasks: ['uglify:boCommon','concat']
+            },
             loginModule:{
-                files: ['war/js/shop/loginModule.js'],
+                files: ['war/js/shop/loginModule.min.js'],
                 tasks: ['uglify:loginModule','concat']
             },
             commonM:{
-                files: ['war/js/shop/commonM.js'],
+                files: ['war/js/shop/commonM.min.js'],
                 tasks: ['uglify:commonM','concat']
             },
             shopCommon:{
-                files: ['war/js/shop/shop-common.js'],
+                files: ['war/js/shop/shop-common.min.js'],
                 tasks: ['uglify:shopCommon','concat']
             },
             shopBasket:{
-                files: ['war/js/shop/shop-basket.js'],
+                files: ['war/js/shop/shop-basket.min.js'],
                 tasks: ['uglify:shopBasket','concat']
             },
             shopCategory:{
-                files: ['war/js/shop/shop-category.js'],
+                files: ['war/js/shop/shop-category.min.js'],
                 tasks: ['uglify:shopCategory','concat']
             },
             shopSearch:{
-                files: ['war/js/shop/shop-search.js'],
+                files: ['war/js/shop/shop-search.min.js'],
                 tasks: ['uglify:shopSearch','concat']
             },
             shopOrders:{
-                files: ['war/js/shop/shop-orders.js'],
+                files: ['war/js/shop/shop-orders.min.js'],
                 tasks: ['uglify:shopOrders','concat']
             },
             shopSpinner:{
-                files: ['war/js/shop/shop-spinner.js'],
+                files: ['war/js/shop/shop-spinner.min.js'],
                 tasks: ['uglify:shopSpinner','concat']
             },
             shopinitThrift:{
-                files: ['war/js/shop/shop-initThrift.js'],
+                files: ['war/js/shop/shop-initThrift.min.js'],
                 tasks: ['uglify:shopinitThrift','concat']
             },
             shopModules:{
-                files: ['war/js/shop/shop-modules.js'],
+                files: ['war/js/shop/shop-modules.min.js'],
                 tasks: ['uglify:shopModules','concat']
             },
             /*scripts: {

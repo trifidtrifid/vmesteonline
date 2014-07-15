@@ -824,7 +824,8 @@ if(isAuth){
 <script src="/build/gen-js/UserService.js" type="text/javascript"></script>
 <!-- -->
 
-<script type="text/javascript" data-main="/build/backoffice.min.js" src="/js/shop/require.min.js"></script>
+<%--<script type="text/javascript" data-main="/build/backoffice.min.js" src="/js/shop/require.min.js"></script>--%>
+<script type="text/javascript" data-main="/js/shop/backoffice/backoffice.js" src="/js/shop/require.min.js"></script>
 
 
 </body>

@@ -1,14 +1,13 @@
 require.config({
-    baseUrl: "/build",
+    baseUrl: "/build", // /js/shop
     paths: {
-        //"jquery"   : "../js/lib/jquery-2.1.1.min",
-        //"ace_spinner": "../js/lib/fuelux/fuelux.spinner",
-        //"bootstrap": "../js/lib/bootstrap.min",
-        ////"ace_extra": "../js/lib/ace-extra.min",
-        //"ace_elements": "../js/lib/ace-elements.min",
-        //"flexslider": "../js/lib/jquery.flexslider-min",
-        //"jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min",
-        //"bootbox":"../js/bootbox.min"
+        /*"jquery"   : "../lib/jquery-2.1.1.min",
+        "ace_spinner": "../lib/fuelux/fuelux.spinner",
+        "bootstrap": "../lib/bootstrap.min",
+        "ace_elements": "../lib/ace-elements.min",
+        "flexslider": "../lib/jquery.flexslider-min",
+        "jquery_ui": "../lib/jquery-ui-1.10.3.full.min",
+        "bootbox":"../bootbox.min"*/
     },
     shim:{
       /*'ace_spinner':{
