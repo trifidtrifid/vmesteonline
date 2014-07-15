@@ -31,57 +31,59 @@ public class Main implements javax.servlet.Filter {
 	@Override
 	public void doFilter(ServletRequest srequest, ServletResponse sresponse, FilterChain chain) throws IOException, ServletException {
 		
-		HttpServletRequest request = (HttpServletRequest) srequest;
-		HttpServletResponse response = (HttpServletResponse) sresponse;
-		
-		String landingPage = "http://"+landingURL+postfix + ":" +request.getServerPort();
-		String host = request.getServerName();
-		
-		if( host.contains( landingURL+postfix )){
-			chain.doFilter( srequest, sresponse );
-			ServiceImpl si = new ServiceImpl( request.getSession() );
-			try {
-				si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue(), 0 );
-			} catch (InvalidOperation e) {
-				e.printStackTrace();
-			}
-			return;
-		}
-		
-		if( postfix.length() > 0 && host.endsWith(postfix)) //remove local postfix if it's presented
-			host = host.substring(0, host.length() - postfix.length());
-		
-		PersistenceManager pm = PMF.getPm();
-		try {
-			List<VoShop> shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='"+host+"' && activated==true").execute();
-			if( 0!=shops.size() ){
-				VoShop voShop = shops.get(0);
+		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
+			HttpServletRequest request = (HttpServletRequest) srequest;
+			HttpServletResponse response = (HttpServletResponse) sresponse;
+			
+			String landingPage = "http://"+landingURL+postfix + ":" +request.getServerPort();
+			String host = request.getServerName();
+			
+			if( host.contains( landingURL+postfix )){
+				chain.doFilter( srequest, sresponse );
 				ServiceImpl si = new ServiceImpl( request.getSession() );
-				si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
-				logger.fine("Found shop "+voShop.getName()+" by Hostname '"+host+"' Current shop set to: "+voShop.getId());
-			} else {
-				shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='www."+host+"' && activated==true").execute();
+				try {
+					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue(), 0 );
+				} catch (InvalidOperation e) {
+					e.printStackTrace();
+				}
+				return;
+			}
+			
+			if( postfix.length() > 0 && host.endsWith(postfix)) //remove local postfix if it's presented
+				host = host.substring(0, host.length() - postfix.length());
+			
+			PersistenceManager pm = PMF.getPm();
+			try {
+				List<VoShop> shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='"+host+"' && activated==true").execute();
 				if( 0!=shops.size() ){
 					VoShop voShop = shops.get(0);
-					ServiceImpl si = new ServiceImpl( request.getSession());
+					ServiceImpl si = new ServiceImpl( request.getSession() );
 					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
 					logger.fine("Found shop "+voShop.getName()+" by Hostname '"+host+"' Current shop set to: "+voShop.getId());
 				} else {
-					//redirect to landing page
-					response.sendRedirect(landingPage);
-					logger.fine("URL not looks like shop's address so go to landing page '"+landingPage+"'");
-					return;
+					shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='www."+host+"' && activated==true").execute();
+					if( 0!=shops.size() ){
+						VoShop voShop = shops.get(0);
+						ServiceImpl si = new ServiceImpl( request.getSession());
+						si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
+						logger.fine("Found shop "+voShop.getName()+" by Hostname '"+host+"' Current shop set to: "+voShop.getId());
+					} else {
+						//redirect to landing page
+						response.sendRedirect(landingPage);
+						logger.fine("URL not looks like shop's address so go to landing page '"+landingPage+"'");
+						return;
+					}
 				}
+				
+			} catch (Exception e){
+				logger.fine( "Failed to get shop for host '"+host+"' request URL: "+request.getRequestURI()+ " exc:"+e);
+				response.sendRedirect(landingPage);
+				return;
+			} finally {
+				pm.close();
 			}
-			chain.doFilter( srequest, sresponse );
-			
-		} catch (Exception e){
-			logger.fine( "Failed to get shop for host '"+host+"' request URL: "+request.getRequestURI()+ " exc:"+e);
-			response.sendRedirect(landingPage);
-			return;
-		} finally {
-			pm.close();
 		}
+		chain.doFilter( srequest, sresponse );
 	}
 
 	@Override
