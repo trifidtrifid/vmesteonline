@@ -11,6 +11,7 @@
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.shop.*"%>
 <%@ page import="com.vmesteonline.be.shop.bo.*"%>
+<%@ page import="com.google.appengine.api.utils.SystemProperty;"%>
 
 <%
     HttpServletRequest httpReq = (HttpServletRequest)request;
@@ -120,6 +121,12 @@
 
         pageContext.setAttribute("isEmptyURL",url == null);
         pageContext.setAttribute("noPhotoPic","../i/no-photo.png");
+
+        boolean isProduction = false;
+        if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
+            isProduction = true;
+        }
+        pageContext.setAttribute("isProduction",isProduction);
 
     }
 

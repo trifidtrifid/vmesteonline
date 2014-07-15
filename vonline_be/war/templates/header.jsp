@@ -12,7 +12,7 @@
 				<div class="navbar-header pull-left">
 					<a
                     <c:choose>
-                        <c:when test="${shop.hostName != null}">
+                        <c:when test="${shop.hostName != null && isProduction}">
                             href="http://${shop.hostName}<%=URLrest%>/shop/"
                         </c:when>
                         <c:otherwise>
@@ -48,12 +48,23 @@
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
-                        <li><a class="btn btn-info no-border no-prevent" href="http://voclub.co<%=URLrest%>">
+                        <li><a class="btn btn-info no-border no-prevent"
+
+                            <c:choose>
+                                <c:when test="${shop.hostName != null && isProduction}">
+                                    href="http://voclub.co<%=URLrest%>">
+                                </c:when>
+                                <c:otherwise>
+                                    href="/">
+                                </c:otherwise>
+                            </c:choose>
+
                             Главная </a></li>
                         <c:if test="${!isEmptyURL}">
-                            <li><a class="btn btn-info no-border back-to-shop shop-trigger no-prevent"
+                            <li>
+                                <a class="btn btn-info no-border back-to-shop shop-trigger no-prevent"
                                 <c:choose>
-                                    <c:when test="${shop.hostName != null}">
+                                    <c:when test="${shop.hostName != null && isProduction}">
                                         href="http://${shop.hostName}<%=URLrest%>/shop/">
                                     </c:when>
                                     <c:otherwise>
@@ -72,11 +83,11 @@
                             </c:if>
 
                             <c:choose>
-                                <c:when test="${shop.hostName != null}">
+                                <c:when test="${shop.hostName != null && isProduction}">
                                    " href="http://${shop.hostName}<%=URLrest%>/backoffice/">
                                 </c:when>
                                 <c:otherwise>
-                                    href="/backoffice/<c:out value="${shop.id}"/>">
+                                   " href="/backoffice/<c:out value="${shop.id}"/>">
                                 </c:otherwise>
                             </c:choose>
                                 Бэкоффис</a></li>
