@@ -1634,12 +1634,17 @@ height 50px
 }
 .page-about-shop .shop-about {
   display: block;
-  padding: 5px 20px;
+  padding-top: 5px;
   padding-bottom: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 .page-about-shop .shop-about img {
   display: block;
   margin: 30px auto 0;
+}
+.page-about-shop .shop-about p {
+  font-size: 14px;
 }
 /* error */
 .modal-error {

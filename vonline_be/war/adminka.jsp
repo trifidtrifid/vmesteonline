@@ -33,57 +33,6 @@
 <body>
 
 <div class="container adminka">
-<%--    <div class="navbar navbar-default" id="navbar">
-    <script type="text/javascript">
-        try{ace.settings.check('navbar' , 'fixed')}catch(e){}
-    </script>
-
-    <div class="navbar-container" id="navbar-container">
-    <div class="navbar-header pull-left">
-        <a href="shop.jsp" class="navbar-brand">
-            <img src="<c:out value="${logoURL}" />" alt="лого">
-        </a><!-- /.brand -->
-    </div><!-- /.navbar-header -->
-
-        <div class="navbar-header pull-right" role="navigation">
-            <ul class="nav ace-nav">
-
-                <li class="active"><a class="btn btn-info no-border" href="shop.jsp">
-                    Магазин </a></li>
-                <li class="user-short light-blue">
-                    <c:choose>
-                        <c:when test="${isAuth}">
-                            <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                                <span class="user-info">
-                                    <c:out value="${firstName}" /> <c:out value="${lastName}" />
-                                </span>
-                                    <i class="icon-caret-down"></i>
-                            </a>
-                        </c:when>
-                        <c:otherwise>
-                            <a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
-                                <span class="user-info">
-                                    Войти
-									</span>
-                            </a>
-                        </c:otherwise>
-                    </c:choose>
-                    <ul	class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-
-                        <li><a href="#"> <i class="icon-user"></i> Профиль
-                        </a></li>
-
-                        <li class="divider"></li>
-
-                        <li><a href="#"> <i class="icon-off"></i> Выход
-                        </a></li>
-                    </ul>
-                </li>
-            </ul>
-            <!-- /.ace-nav -->
-        </div>
-    </div><!-- /.container -->
-    </div>--%>
 
     <%@ include file="templates/header.jsp" %>
 
@@ -140,18 +89,7 @@
                     <div class="adminka-statistics back-tab">
                         <h1>Оборот магазина</h1>
                         <div>(по умолчанию за все время)</div><br>
-                        <%--<div class="btn-group adminka-statistics-period">
-                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                                <span class="btn-group-text">Выберите период</span>
-                                <span class="icon-caret-down icon-on-right"></span>
-                            </button>
 
-                            <ul class="dropdown-menu dropdown-blue">
-                                <li><a href="#">За месяц</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">За все время</a></li>
-                            </ul>
-                        </div>--%>
                         <div class="adminka-statistics-date">
                             <label for="datepicker-from">от</label>
                             <input class="form-control date-picker" id="datepicker-from" type="text" data-date-format="mm-dd-yyyy" value="Дата" onblur="if(this.value=='') this.value='Дата';" onfocus="if(this.value=='Дата') this.value='';"/>
@@ -202,7 +140,8 @@
 <script src="/build/gen-js/UserService.js" type="text/javascript"></script>
 <!-- -->
 
-<script type="text/javascript" data-main="/build/backoffice.min.js" src="/js/shop/require.min.js"></script>
+<%--<script type="text/javascript" data-main="/build/backoffice.min.js" src="/js/shop/require.min.js"></script>--%>
+<script type="text/javascript" data-main="/js/shop/backoffice/backoffice.js" src="/js/shop/require.min.js"></script>
 
 </body>
 </html>

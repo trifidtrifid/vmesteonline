@@ -10,16 +10,15 @@
 
 			<div class="navbar-container" id="navbar-container">
 				<div class="navbar-header pull-left">
-					<a
+
                     <c:choose>
                         <c:when test="${shop.hostName != null && isProduction}">
-                            href="http://${shop.hostName}<%=URLrest%>/shop/"
+                        <a href="http://${shop.hostName}<%=URLrest%>/shop/" class="navbar-brand">
                         </c:when>
                         <c:otherwise>
-                            href="/shop/<c:out value="${shop.id}"/>"
+                        <a href="/shop/<c:out value="${shop.id}"/>" class="navbar-brand">
                         </c:otherwise>
                     </c:choose>
-                    class="navbar-brand">
 
                         <c:choose>
                             <c:when test="${logoURL!= null}">
@@ -74,27 +73,25 @@
 				<div class="navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
-                        <li><a class="btn btn-info no-border no-prevent"
-
+                        <li>
                             <c:choose>
                                 <c:when test="${shop.hostName != null && isProduction}">
-                                    href="http://voclub.co<%=URLrest%>">
+                                <a class="btn btn-info no-border no-prevent" href="http://voclub.co<%=URLrest%>">
                                 </c:when>
                                 <c:otherwise>
-                                    href="/">
+                                    <a class="btn btn-info no-border no-prevent" href="/">
                                 </c:otherwise>
                             </c:choose>
 
                             Главная </a></li>
                         <c:if test="${!isEmptyURL}">
                             <li>
-                                <a class="btn btn-info no-border back-to-shop shop-trigger no-prevent"
                                 <c:choose>
                                     <c:when test="${shop.hostName != null && isProduction}">
-                                        href="http://${shop.hostName}<%=URLrest%>/shop/">
+                                    <a class="btn btn-info no-border back-to-shop shop-trigger no-prevent" href="http://${shop.hostName}<%=URLrest%>/shop/">
                                     </c:when>
                                     <c:otherwise>
-                                        href="/shop/<c:out value="${shop.id}"/>">
+                                        <a class="btn btn-info no-border back-to-shop shop-trigger no-prevent" href="/shop/<c:out value="${shop.id}"/>">
                                     </c:otherwise>
                                 </c:choose>
 
