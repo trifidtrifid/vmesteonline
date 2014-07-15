@@ -390,10 +390,10 @@ define(
             }
         });
 
-        $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
-            //alert('0');
+        /*$('.user-short .dropdown-toggle:not(".no-login")').click(function(){
+
                 //$(this).parent().addClass('open');
-        });
+        });*/
 
         commonModule.setSidebarHeight();
 

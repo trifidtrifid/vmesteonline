@@ -866,7 +866,7 @@ define(
             shopPages = thriftModule.clientBO.getShopPages(shopId);
 
 
-            $('.shop-about').load('/vomoloko/about.jsp .about',function(){
+            $('.shop-about').load(shopPages.aboutPageContentURL+ ' .about',function(){
 
             });
         }
@@ -875,7 +875,6 @@ define(
             e.preventDefault();
 
             if ($(this).hasClass('no-login')) {
-                //modules.shopCommonModule.openModalAuth();
                 openModalAuth();
             } else {
                 $(this).closest('.navbar').toggleClass('over-rightbar');
@@ -883,8 +882,6 @@ define(
         });
 
         $('html,body').click(function (e) {
-            //e.stopPropagation();
-            //alert('111');
 
             if ($('.user-short').hasClass('open')) {
                 $('.navbar').removeClass('over-rightbar');
