@@ -1,6 +1,7 @@
 package com.vmesteonline.be.jdo2;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,12 +15,12 @@ import javax.mail.internet.ContentType;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.google.appengine.datanucleus.annotations.Unowned;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.vmesteonline.be.utils.StorageHelper;
 
+@SuppressWarnings("serial")
 @PersistenceCapable
-public class VoFileAccessRecord {
+public class VoFileAccessRecord implements Serializable {
 
 	private String fileName;
 
@@ -89,9 +90,8 @@ public class VoFileAccessRecord {
 	private String contentType;
 	
 	@Unindexed
-	@Persistent
+	@Persistent(serialized="true")
 	Map<String,VoFileAccessRecord> versions;
-	
 
 	public VoFileAccessRecord getVersion(Map<String, String[]> params, PersistenceManager p) {
 		return getVersion(params,p,true);

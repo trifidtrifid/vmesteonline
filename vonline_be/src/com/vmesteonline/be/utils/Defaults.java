@@ -20,9 +20,12 @@ import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.ShopBOServiceImpl;
 import com.vmesteonline.be.ShopServiceImpl;
 import com.vmesteonline.be.VoError;
+import com.vmesteonline.be.access.shop.VoShopAccess;
 import com.vmesteonline.be.access.shop.VoShopAccessManager;
+import com.vmesteonline.be.access.shop.VoShopAccessRoles;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoRubric;
@@ -101,14 +104,14 @@ public class Defaults {
 			clearGroups(pm);
 			clearLocations(pm);
 			clearUsers(pm);
-			initializeShop();
 			initializeRubrics(pm);
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations();
 			initializeUsers(locCodes);
 			MySQLJDBCConnector con = new MySQLJDBCConnector();
 			con.execute("drop table if exists topic");
-
+			initializeShop();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -138,6 +141,8 @@ public class Defaults {
 		deletePersistentAll(pm, VoTopic.class);
 		deletePersistentAll(pm, VoMessage.class);
 		deletePersistentAll(pm, VoUser.class);
+		deletePersistentAll(pm, VoShopAccess.class);
+		deletePersistentAll(pm,VoFileAccessRecord.class);
 	}
 
 	// ======================================================================================================================
@@ -217,7 +222,7 @@ public class Defaults {
 			sbsi.activate(shop, true);
 			
 			Shop shop3 = new Shop(10, "Во!Мясо", "Магазин качественного мяса", postalAddress,
-					null, userId, topicSet, tags, deliveryCosts, paymentTypes, "votmeet.ru");
+					null, userId, topicSet, tags, deliveryCosts, paymentTypes, "votmeat.co");
 			
 			long shop3id = sbsi.registerShop(shop3);
 			sbsi.activate(shop3id, true);
