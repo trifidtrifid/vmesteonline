@@ -368,6 +368,7 @@ define(
             }
         });
 
+
         $('.user-menu a').click(function(e,loadEditPersonal){
             e.preventDefault();
 
@@ -389,8 +390,9 @@ define(
             }
         });
 
-        $('.user-short .dropdown-toggle.no-login').click(function(){
-                $(this).parent().addClass('open');
+        $('.user-short .dropdown-toggle:not(".no-login")').click(function(){
+            //alert('0');
+                //$(this).parent().addClass('open');
         });
 
         commonModule.setSidebarHeight();

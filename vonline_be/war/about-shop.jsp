@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="templates/preload.jsp" %>
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +22,7 @@
 
     <script type="text/javascript">
 	globalUserAuth = false;
-	<c:if test="${auth}">
+	<c:if test="${isAuth}">
 	globalUserAuth = true;
 	</c:if>
 </script>
@@ -34,22 +35,10 @@
 
 		<div class="main-container shop dynamic" id="${shopID}">
             <div class="page shop-about">
-                <div class="col-xs-4">
-                </div>
-                <div class="col-xs-8">
-                    <h1>Магазин "<c:out value="${shop.name}" />"</h1>
-                </div>
-                <div class="col-xs-4">
-                    <img src="<c:out value="${logoURL}" />" alt="лого">
-                </div>
-                <div class="col-xs-8">
-                    <p><c:out value="${shop.descr}" /></p>
-                    <a class="btn btn-primary no-border btn-sm" href="/shop/<c:out value="${shopID}"/>">Продолжить покупки</a>
-                </div>
             </div>
-            <div class="page main-container-inner">
+            <div class="page main-container-inner shop-page">
                 <div class="show-right">
-                    Заказы
+                    Корзина
                 </div>
                 <aside class="sidebar shop-right">
                     <div class="hide-right">×</div>

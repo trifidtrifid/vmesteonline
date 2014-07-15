@@ -143,8 +143,12 @@ define(
             var dropdownToggle = $('.dropdown-toggle');
             dropdownToggle.removeClass('no-login');
 
-            $('.user-short .dropdown-toggle:not(".no-login")').click(function () {
-                $(this).parent().removeClass('open');
+            $('.user-short .dropdown-toggle:not(".no-login")').click(function (e) {
+                $(this).parent().toggleClass('open');
+
+                e.stopPropagation();
+                //alert($(this).closest('.navbar').length);
+                //$(this).closest('.navbar').toggleClass('over-rightbar');
             });
 
             //var shopId = $('.shop').attr('id');

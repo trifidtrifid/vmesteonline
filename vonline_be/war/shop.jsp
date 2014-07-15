@@ -87,7 +87,7 @@
             <div class="page main-container-inner shop-page">
 
                 <div class="show-right">
-                    Заказы
+                    Корзина
                 </div>
                 <aside class="sidebar shop-right">
                     <div class="hide-right">×</div>

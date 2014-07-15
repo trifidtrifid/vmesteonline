@@ -59,6 +59,7 @@
 
     List<Shop> ArrayShops = shopService.getShops();
     int ArrayShopsSize = ArrayShops.size();
+    ShopPages shopPages = null;
 
     if(ArrayShops != null && ArrayShopsSize > 0){
         Shop shop;
@@ -89,29 +90,30 @@
                         shop = ArrayShops.get(i);
                     }
                 }
-
             }
 
-            UserShopRole userRole = shopService.getUserShopRole(shop.id);
-            pageContext.setAttribute("logoURL", shop.logoURL);
-            pageContext.setAttribute("shopID", shop.id);
-            pageContext.setAttribute("userRole", userRole);
+            if(shop != null){
+                UserShopRole userRole = shopService.getUserShopRole(shop.id);
+                pageContext.setAttribute("logoURL", shop.logoURL);
+                pageContext.setAttribute("shopID", shop.id);
+                pageContext.setAttribute("userRole", userRole);
 
-            // for BO
-            List<ProductCategory> categoriesList = shopService.getAllCategories(shop.id);
+                // for BO
+                List<ProductCategory> categoriesList = shopService.getAllCategories(shop.id);
 
-            if(categoriesList != null && categoriesList.size() > 0){
-                pageContext.setAttribute("categories", categoriesList);
+                if(categoriesList != null && categoriesList.size() > 0){
+                    pageContext.setAttribute("categories", categoriesList);
+                }
+
+                pageContext.setAttribute("shop", shop);
+
+                // shopPages Links
+
+                ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
+
+                shopPages = shopBOService.getShopPages(shop.id);
+                pageContext.setAttribute("shopPages", shopPages);
             }
-
-            pageContext.setAttribute("shop", shop);
-
-            // shopPages Links
-
-            ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
-
-            ShopPages shopPages = shopBOService.getShopPages(shop.id);
-            pageContext.setAttribute("shopPages", shopPages);
 
         }else{
             // for Adminka

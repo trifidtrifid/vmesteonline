@@ -1634,6 +1634,7 @@ height 50px
 }
 .page-about-shop .shop-about {
   display: block;
+  padding: 5px 20px;
   padding-bottom: 50px;
 }
 .page-about-shop .shop-about img {

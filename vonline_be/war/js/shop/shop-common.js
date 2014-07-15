@@ -675,7 +675,7 @@ define(
         }
 
         $('.shop-trigger').click(function(e,isHistoryNav) {
-            if (!$('.backoffice').length || $(this).hasClass('go-to-orders')) {
+            if ((!$('.backoffice').length && !$('.page-about-shop').length) || $(this).hasClass('go-to-orders')){
                 e.preventDefault();
             }
             //try{
@@ -860,6 +860,17 @@ define(
             });
         }
 
+        function initShopAbout(){
+
+            var shopId = $('.shop.dynamic').attr('id'),
+            shopPages = thriftModule.clientBO.getShopPages(shopId);
+
+
+            $('.shop-about').load('/vomoloko/about.jsp .about',function(){
+
+            });
+        }
+
         $('.user-short a.dropdown-toggle').click(function (e) {
             e.preventDefault();
 
@@ -873,9 +884,11 @@ define(
 
         $('html,body').click(function (e) {
             //e.stopPropagation();
+            //alert('111');
 
             if ($('.user-short').hasClass('open')) {
                 $('.navbar').removeClass('over-rightbar');
+                $('.user-short').removeClass('open');
             }
         });
 
@@ -897,7 +910,8 @@ define(
             changeShortUserInfo: changeShortUserInfo,
             getOrderWeight: getOrderWeight,
             identificateModal: identificateModal,
-            initLanding: initLanding
+            initLanding: initLanding,
+            initShopAbout: initShopAbout
         }
     }
 );

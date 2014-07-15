@@ -37,10 +37,6 @@ require.config({
 require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
     function($,modules,commonM,loginModule) {
 
-        var backToShop = $('.back-to-shop');
-        backToShop.removeClass('no-prevent');
-        backToShop.parent().addClass('active');
-
         /*$('.user-short a.dropdown-toggle').click(function (e) {
             e.preventDefault();
 
@@ -58,20 +54,22 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             type: 'default'
         };
 
-
-        if($('.shop-landing').length){
-            /* history */
+        function simpleHistoryNav(pageSelector){
             window.history.replaceState(state,null,urlHash);
 
-            window.addEventListener('popstate', makeHistoryNavLanding, false);
+            window.addEventListener('popstate', makeHistoryNav, false);
 
-            function makeHistoryNavLanding(e) {
+            function makeHistoryNav(e) {
                 // действия для корректной навигации по истории
                 var isHistoryNav = true;
                 if (e.state) {
                     if (e.state.type == 'page') {
 
-                        if (e.state.pageName == 'profile') {
+                        if (e.state.pageName == 'orders-history') {
+
+                            $('.shop-trigger.go-to-orders').trigger('click', [isHistoryNav]);
+
+                        }else if (e.state.pageName == 'profile') {
 
                             $('.user-menu a:eq(0)').trigger('click');
 
@@ -84,10 +82,17 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                     } else if (e.state.type == 'default') {
 
                         $('.page').hide();
-                        $('.landing-page').show();
+                        pageSelector.show();
                     }
                 }
             }
+        }
+
+
+        if($('.shop-landing').length){
+            /* history */
+
+            simpleHistoryNav($('.landing-page'));
 
             $('.landing-login').click(function (e) {
                 e.preventDefault();
@@ -104,7 +109,19 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
 
             commonM.init();
 
-        }else {
+        }else if($('.page-about-shop').length){
+
+            simpleHistoryNav($('.shop-about'));
+
+            modules.shopCommonModule.initShopAbout();
+
+            commonM.init();
+
+        }else{
+
+            var backToShop = $('.back-to-shop');
+            backToShop.removeClass('no-prevent');
+            backToShop.parent().addClass('active');
 
             modules.spinnerModule.initProductsSpinner();
 

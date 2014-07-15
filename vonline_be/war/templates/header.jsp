@@ -32,13 +32,39 @@
 					</a>
                 <c:if test="${!isEmptyURL}">
                     <c:if test="${shopPages.aboutPageContentURL != null && shopPages.aboutPageContentURL != ''}">
-                        <a href="/${shopPages.aboutPageContentURL}" class="about-shop-link header-link">О магазине</a>
+
+                        <c:choose>
+                            <c:when test="${shop.hostName != null && isProduction}">
+                                <a href="about/${shopPages.aboutPageContentURL}" class="about-shop-link header-link">О магазине</a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="/about/${shop.id}" class="about-shop-link header-link">О магазине</a>
+                            </c:otherwise>
+                        </c:choose>
+
                     </c:if>
                     <c:if test="${shopPages.conditionsPageContentURL != null && shopPages.conditionsPageContentURL != ''}">
-                        <a href="/${shopPages.conditionsPageContentURL}" class="terms-of-orders header-link">Условия</a>
+
+                        <c:choose>
+                            <c:when test="${shop.hostName != null && isProduction}">
+                                <a href="/${shopPages.conditionsPageContentURL}" class="terms-of-orders header-link">Условия</a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="/terms/${shop.id}" class="terms-of-orders header-link">Условия</a>
+                            </c:otherwise>
+                        </c:choose>
+
                     </c:if>
                     <c:if test="${shopPages.deliveryPageContentURL != null && shopPages.deliveryPageContentURL != ''}">
-                        <a href="/${shopPages.deliveryPageContentURL}" class="terms-of-delivery header-link">Доставка</a>
+                        <c:choose>
+                            <c:when test="${shop.hostName != null && isProduction}">
+                                <a href="/${shopPages.deliveryPageContentURL}" class="terms-of-delivery header-link">Доставка</a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="/delivery-terms/${shop.id}" class="terms-of-delivery header-link">Доставка</a>
+                            </c:otherwise>
+                        </c:choose>
+
                     </c:if>
                 </c:if>
 					<!-- /.brand -->
@@ -106,7 +132,8 @@
 									</a>
 								</c:when>
 								<c:otherwise>
-									<a data-toggle="dropdown" href="#" class="dropdown-toggle no-login">
+                                    <%--data-toggle="dropdown"--%>
+									<a href="#" class="dropdown-toggle no-login">
                                         <span class="user-info">
                                             Войти
 									</span>

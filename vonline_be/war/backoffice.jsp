@@ -799,7 +799,7 @@ if(isAuth){
                 </div>
                 <div class="shop-orders">
 
-                    <h1>Заказы</h1>
+                    <h1>Корзина</h1>
                     <div class="orders-tbl-wrap">
                         <table>
                             <tr>
