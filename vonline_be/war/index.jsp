@@ -1,82 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="templates/preload.jsp" %>
 
-<%--<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="java.util.List"%>
-<%@ page import="com.vmesteonline.be.ShopServiceImpl"%>
-<%@ page import="com.vmesteonline.be.InvalidOperation"%>
-<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
-<%@ page import="com.vmesteonline.be.shop.*"%>
-<%@ page import="com.google.appengine.api.utils.SystemProperty;"%>
-
-<%
-    String serverName = request.getServerName();
-    int port = request.getServerPort();
-
-    String URLrest = serverName.endsWith(".local") ? ".local" : "";
-    if(port != 0){
-        URLrest = URLrest + ":"+port;
-    }
-
-	HttpSession sess = request.getSession();
-
-    ShopServiceImpl shopService = new ShopServiceImpl(sess.getId());
-
-    List<Shop> ArrayShops = shopService.getShops();
-    int ArrayShopsSize = ArrayShops.size();
-
-
-
-    Shop[] activeShops = new Shop[ArrayShopsSize];
-    Shop[] noActiveShops = new Shop[ArrayShopsSize];
-    int activeShopsCounter = 0;
-    int noActiveShopsCounter = 0;
-
-    for (int i = 0; i < ArrayShopsSize; i++) {
-        if(shopService.isActivated(ArrayShops.get(i).id)){
-            activeShops[activeShopsCounter] = ArrayShops.get(i);
-            activeShopsCounter++;
-        }else{
-            noActiveShops[noActiveShopsCounter] = ArrayShops.get(i);
-            noActiveShopsCounter++;
-        }
-    }
-    pageContext.setAttribute("activeShops", activeShops);
-    pageContext.setAttribute("noActiveShops", noActiveShops);
-
-
-
-
-
-    if(ArrayShops != null && ArrayShops.size() > 0){
-        pageContext.setAttribute("shops", ArrayShops);
-    }
-
-    pageContext.setAttribute("isAuth",true);
-    pageContext.setAttribute("noPhotoPic","../i/no-photo.png");
-
-    boolean isProduction = false;
-    if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
-        isProduction = true;
-    }
-    pageContext.setAttribute("isProduction",isProduction);
-
-    try {
-
-        UserServiceImpl userService = new UserServiceImpl(sess);
-        ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-        if( null == ShortUserInfo){
-            sess.invalidate();
-            throw new InvalidOperation( com.vmesteonline.be.VoError.NotAuthorized, "");
-        }
-        pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-        pageContext.setAttribute("lastName",ShortUserInfo.lastName);
-    } catch (InvalidOperation ioe) {
-        pageContext.setAttribute("isAuth",false);
-    }
-%>--%>
-
 <!DOCTYPE html>
 <html class="no-js">
 <head>
@@ -268,7 +192,7 @@
 						<c:if test="${shop.id != null}">
 							<li id="${shop.id}">
                                 <c:choose>
-                                    <c:when test="${shop.hostName != null}">
+                                    <c:when test="${shop.hostName != null && isProduction}">
                                         <a href="http://${shop.hostName}<%=URLrest%>/about/">
                                     </c:when>
                                     <c:otherwise>

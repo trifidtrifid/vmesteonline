@@ -35,6 +35,7 @@
     if(port != 0){
         URLrest = URLrest + ":"+port;
     }
+    pageContext.setAttribute("URLrest",URLrest);
 
     HttpSession sess = request.getSession();
     boolean isAuth = true;
@@ -59,10 +60,10 @@
 
     List<Shop> ArrayShops = shopService.getShops();
     int ArrayShopsSize = ArrayShops.size();
-    ShopPages shopPages = null;
+    boolean isAdminka = false;
+    Shop shop = null;
 
     if(ArrayShops != null && ArrayShopsSize > 0){
-        Shop shop;
 
          if(requestURI.equals("/index.jsp")){
 
@@ -89,6 +90,7 @@
 
             // ADMINKA
 
+            isAdminka = true;
             pageContext.setAttribute("shops", ArrayShops);
 
         }else{
@@ -111,9 +113,6 @@
             }else{
                 // если по hostName
 
-                //shop = shopService.getShop(ArrayShops.get(0).id);
-                shop = null;
-
                 for(int i = 0; i < ArrayShopsSize; i++){
 
                     if(ArrayShops.get(i).hostName.equals(serverName)){
@@ -122,34 +121,52 @@
                 }
             }
 
-            if(shop != null){
-                UserShopRole userRole = shopService.getUserShopRole(shop.id);
-                pageContext.setAttribute("logoURL", shop.logoURL);
-                pageContext.setAttribute("shopID", shop.id);
-                pageContext.setAttribute("userRole", userRole);
-
-                // BACKOFFICE
-                List<ProductCategory> categoriesList = shopService.getAllCategories(shop.id);
-
-                if(categoriesList != null && categoriesList.size() > 0){
-                    pageContext.setAttribute("categories", categoriesList);
-                }
-
-                pageContext.setAttribute("shop", shop);
-
-                // shopPages Links
-
-                ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
-
-                shopPages = shopBOService.getShopPages(shop.id);
-                pageContext.setAttribute("shopPages", shopPages);
-            }
-
         }
+
+    }
 
         // COMMON
 
-        pageContext.setAttribute("isEmptyURL",url == null);
+        Long shopID = null;
+        UserShopRole userRole = null;
+        String logoURL = null;
+        List<ProductCategory> categoriesList = null;
+        ShopPages shopPages = null;
+
+        if(shop != null){
+            shopID = shop.id;
+            userRole = shopService.getUserShopRole(shop.id);
+            logoURL = shop.logoURL;
+
+            ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(request.getSession().getId());
+            shopPages = shopBOService.getShopPages(shop.id);
+
+            // BACKOFFICE
+            categoriesList = shopService.getAllCategories(shopID);
+
+        }
+        pageContext.setAttribute("shop", shop);
+        pageContext.setAttribute("logoURL", logoURL);
+        pageContext.setAttribute("shopID", shopID);
+        pageContext.setAttribute("userRole", userRole);
+
+        boolean isSimpleUser = false;
+        String hiddenClass = "";
+        if(userRole != UserShopRole.BACKOFFICER && userRole != UserShopRole.ADMIN && userRole != UserShopRole.OWNER){
+            isSimpleUser = true;
+            hiddenClass = "hidden";
+        }
+        pageContext.setAttribute("isSimpleUser",isSimpleUser);
+        pageContext.setAttribute("hiddenClass",hiddenClass);
+
+        if(categoriesList != null && categoriesList.size() > 0){
+            pageContext.setAttribute("categories", categoriesList);
+        }
+
+        pageContext.setAttribute("shopPages", shopPages);
+
+
+        pageContext.setAttribute("isAdminka",isAdminka);
         pageContext.setAttribute("noPhotoPic","../i/no-photo.png");
 
         boolean isProduction = false;
@@ -158,7 +175,7 @@
         }
         pageContext.setAttribute("isProduction",isProduction);
 
-    }
+
 
 %>
 

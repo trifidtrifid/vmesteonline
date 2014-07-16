@@ -720,6 +720,9 @@ p{
 .btn-primary{
     border-radius: 2px !important;
 }
+.dropdown-menu > li > a{
+    font-size: 14px;
+}
 @media (max-width: 480px) and (min-width: 461px), (max-width: 360px) {
     .user-info {
         display: block !important;
