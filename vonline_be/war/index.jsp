@@ -169,7 +169,7 @@
                                 <span class="voice-counter"></span>
 
                                     <c:choose>
-                                        <c:when test="${shop.hostName != null}">
+                                        <c:when test="${shop.hostName != null && isProduction}">
                                           <a class="btn no-border btn-primary" href="http://${shop.hostName}<%=URLrest%>/shop/">
                                         </c:when>
                                         <c:otherwise>

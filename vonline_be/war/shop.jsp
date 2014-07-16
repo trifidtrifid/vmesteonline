@@ -232,7 +232,7 @@
                                         </td>
                                         <td class="td-basket">
                                             <a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>
-                                            <span href="#" title="Продукт уже у вас в корзине" class="fa fa-check"></span>
+                                            <span title="Продукт уже у вас в корзине" class="fa fa-check"></span>
                                         </td>
                                     </tr>
                                 </c:forEach>
