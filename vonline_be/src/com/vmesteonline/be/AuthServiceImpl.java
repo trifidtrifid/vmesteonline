@@ -154,8 +154,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			}
 
 			try {
-				String body = "<h2>" + firstname + " " + lastname + "</h2><br/>Вы зарегистрировались на сайте www.vomoloko.ru. Ваш логин " + email
-						+ ".<br/> Удачных Вам покупок!";
+				String body = "<h2>" + firstname + " " + lastname + "</h2><br/>Вы зарегистрировались на сайте www.voclub.co. Ваш логин " + email
+						+ ".<br/>Ваш пароль " + password + ". Удачных Вам покупок!";
 				EMailHelper.sendSimpleEMail(email, "Вы зарегестрированы на Bo! сайте", body);
 			} catch (Exception e) {
 				logger.warn("can't send email to " + email + " " + e.getMessage());

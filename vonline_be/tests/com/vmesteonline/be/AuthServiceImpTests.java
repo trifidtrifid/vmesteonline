@@ -1,8 +1,12 @@
 package com.vmesteonline.be;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -13,6 +17,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.appengine.labs.repackaged.org.json.JSONArray;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.PMF;
@@ -134,8 +140,7 @@ public class AuthServiceImpTests {
 			assertEquals("testName", user.getName());
 			assertEquals("testPassword", user.getPassword());
 			/*
-			 * Assert.assertNotNull(user.getHomeGroup()); assertEquals(0,
-			 * user.getHomeGroup().getRadius());
+			 * Assert.assertNotNull(user.getHomeGroup()); assertEquals(0, user.getHomeGroup().getRadius());
 			 */
 			VoPostalAddress.getKeyValue(Long.parseLong(locations.get(0)));
 			VoPostalAddress postalAddress = pm.getObjectById(VoPostalAddress.class, VoPostalAddress.getKeyValue(Long.parseLong(locations.get(0))));
@@ -226,5 +231,17 @@ public class AuthServiceImpTests {
 			assertFalse(true);
 		}
 		assertTrue(asi.checkEmailRegistered(email));
+	}
+
+	@Test
+	public void parseGetUserResp() throws Exception {
+
+		JSONObject jsonObj2 = new JSONObject("{\"response\":[{\"id\":27719942,\"first_name\":\"aname\",\"last_name\":\"afam\"}]}");
+		
+		JSONArray vkResp = jsonObj2.getJSONArray("response");
+		JSONObject o = (JSONObject) vkResp.get(0);
+		assertEquals("aname", Charset.forName("UTF-8").encode(o.getString("first_name")));
+		// assertEquals("afam", vkResp.getString(1));
+
 	}
 }
