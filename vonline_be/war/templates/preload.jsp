@@ -86,33 +86,38 @@
             pageContext.setAttribute("activeShops", activeShops);
             pageContext.setAttribute("noActiveShops", noActiveShops);
 
-        }else if(requestURI.equals("/adminka.jsp")){
+        } else if(requestURI.equals("/adminka.jsp")){
 
             // ADMINKA
 
             isAdminka = true;
             pageContext.setAttribute("shops", ArrayShops);
 
-        }else{
+        } else {
 
              // SHOP & other
 
-            if (url != null && url.length() >= 17){
-                // если по ID
+            /*if (url != null && url.length() >= 17){
+                 // если по ID
                 char buf[] = new char[16];
                 url.getChars(1, 17, buf, 0);
                 String shopIdStr = "";
                 // 15 - кол-во символов в id магазина
                 for (int i = 0; i <= 15; i++) {
                     shopIdStr = shopIdStr+buf[i];
-                }
-
-                Long shopId = new Long(shopIdStr);
-
-                shop = shopService.getShop(shopId);
-            }else{
+                } */
+            String[] pathWords = requestURI.split("/");
+            if( pathWords.length > 0 ){
+            	try{
+            		shop = shopService.getShop( Long.parseLong( pathWords[ pathWords.length-1]));
+            	} catch (Exception nfe){
+            		//There is not a Long at the end of reuqest path
+            	} 
+            }
                 // если по hostName
 
+			if(null==shop){                
+                
                 for(int i = 0; i < ArrayShopsSize; i++){
 
                     if(ArrayShops.get(i).hostName.equals(serverName)){

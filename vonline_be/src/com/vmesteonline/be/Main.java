@@ -31,7 +31,7 @@ public class Main implements javax.servlet.Filter {
 	@Override
 	public void doFilter(ServletRequest srequest, ServletResponse sresponse, FilterChain chain) throws IOException, ServletException {
 		
-		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
+		if (false && SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
 			HttpServletRequest request = (HttpServletRequest) srequest;
 			HttpServletResponse response = (HttpServletResponse) sresponse;
 			

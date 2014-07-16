@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="templates/preload.jsp" %>
 <%
-
     OrderDetails currentOrderDetails;
     try{
         Order order = shopService.getOrder(0);
