@@ -13,7 +13,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>OAuthServlet</servlet-name>
 		<url-pattern>/oauth</url-pattern>
 	</servlet-mapping>
-
 	<servlet>
 		<servlet-name>AuthSericeServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.AuthSericeServlet</servlet-class>
@@ -38,7 +37,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>MessageServiceServlet</servlet-name>
 		<url-pattern>/thrift/MessageService</url-pattern>
 	</servlet-mapping>
-
 	<servlet>
 		<servlet-name>ShopServiceServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.ShopServiceServlet</servlet-class>
@@ -47,7 +45,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>ShopServiceServlet</servlet-name>
 		<url-pattern>/thrift/ShopService</url-pattern>
 	</servlet-mapping>
-
 	<servlet>
 		<servlet-name>ShopBOServiceServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.ShopBOServiceServlet</servlet-class>
@@ -56,7 +53,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>ShopBOServiceServlet</servlet-name>
 		<url-pattern>/thrift/ShopBOService</url-pattern>
 	</servlet-mapping>
-
 	<servlet>
 		<servlet-name>FileAccess</servlet-name>
 		<servlet-class>com.vmesteonline.be.VoFileAccess</servlet-class>
@@ -65,16 +61,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>FileAccess</servlet-name>
 		<url-pattern>/file/*</url-pattern>
 	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>ShopMain</servlet-name>
-		<jsp-file>/shop.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>ShopMain</servlet-name>
-		<url-pattern>/market/*</url-pattern>
-	</servlet-mapping>
-
 	<servlet>
 		<servlet-name>FileService</servlet-name>
 		<servlet-class>com.vmesteonline.be.FileServiceServlet</servlet-class>
@@ -83,41 +69,35 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>FileService</servlet-name>
 		<url-pattern>/thrift/fs</url-pattern>
 	</servlet-mapping>
-
 	<servlet>
 		<servlet-name>about</servlet-name>
-		<jsp-file>about-shop.jsp</jsp-file>
+		<jsp-file>/about-shop.jsp</jsp-file>
 	</servlet>
-
 	<servlet-mapping>
 		<servlet-name>about</servlet-name>
 		<url-pattern>/about/*</url-pattern>
 	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>shop</servlet-name>
-		<jsp-file>shop.jsp</jsp-file>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>shop</servlet-name>
-		<url-pattern>/shop/*</url-pattern>
-	</servlet-mapping>
-
 	<servlet>
 		<servlet-name>backoffice</servlet-name>
 		<jsp-file>backoffice.jsp</jsp-file>
 	</servlet>
-
 	<servlet-mapping>
 		<servlet-name>backoffice</servlet-name>
 		<url-pattern>/backoffice/*</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>MainShop</servlet-name>
+		<jsp-file>/shop.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MainShop</servlet-name>
+		<url-pattern>/shop/*</url-pattern>
+	</servlet-mapping>
+
 
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-
 	<filter>
 		<filter-name>shopDetector</filter-name>
 		<filter-class>com.vmesteonline.be.Main</filter-class>
@@ -130,7 +110,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 			<param-value>.local</param-value>
 		</init-param>
 	</filter>
-
 	<filter-mapping>
 		<filter-name>shopDetector</filter-name>
 		<url-pattern>/backoffice/*</url-pattern>

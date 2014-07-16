@@ -33,7 +33,11 @@
 <head>
 <meta charset="utf-8" />
 <title>Магазин</title>
-<link rel="stylesheet" href="../build/shop.min.css" />
+
+
+
+
+<link rel="stylesheet" href="/build/shop.min.css" />
 <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -44,7 +48,7 @@
     </script>
     <![endif]-->
 
-    <script type="text/javascript" data-main="../build/build.js" src="../js/shop/require.min.js"></script>
+    <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
 
     <%--<script src="../js/lib/jquery-2.1.1.min.js"></script>
     <script src="../js/lib/bootstrap.min.js"></script>
@@ -231,7 +235,7 @@
                                         </td>
                                         <td class="td-basket">
                                             <a href="#" title="Добавить в корзину" class="fa fa-shopping-cart"></a>
-                                            <span href="#" title="Продукт уже у вас в корзине" class="fa fa-check"></span>
+                                            <span title="Продукт уже у вас в корзине" class="fa fa-check"></span>
                                         </td>
                                     </tr>
                                 </c:forEach>
