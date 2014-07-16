@@ -36,16 +36,6 @@ require.config({
 require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
     function($,modules,commonM,loginModule) {
 
-        /*$('.user-short a.dropdown-toggle').click(function (e) {
-            e.preventDefault();
-
-            if ($(this).hasClass('no-login')) {
-                modules.shopCommonModule.openModalAuth();
-            } else {
-                $(this).closest('.navbar').toggleClass('over-rightbar');
-            }
-        });*/
-
 
         var urlHash = document.location.hash;
 
@@ -93,11 +83,11 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
 
             simpleHistoryNav($('.landing-page'));
 
-            $('.landing-login').click(function (e) {
+            /*$('.landing-login').click(function (e) {
                 e.preventDefault();
 
                 modules.shopCommonModule.openModalAuth();
-            });
+            });*/
             $('.landing-logout').click(function (e) {
                 e.preventDefault();
 
