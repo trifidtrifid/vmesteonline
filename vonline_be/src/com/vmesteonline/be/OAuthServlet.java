@@ -58,7 +58,7 @@ public class OAuthServlet extends HttpServlet {
 
 			String email = jsonObj.getString("email");
 			if (!authServiceImpl.allowUserAccess(email, "", false)) {
-				authServiceImpl.registerNewUser("name", "family", "safdsf", email, "0");
+				authServiceImpl.registerNewUser("name", "family", "safdsf", email, null);
 				authServiceImpl.allowUserAccess(email, "", false);
 			}
 			resp.sendRedirect(state);

@@ -42,7 +42,7 @@
 										<form>
 											<fieldset>
 												<a class="btn btn-sm no-border btn-primary width-100 btn-vk"
-													href="https://oauth.vk.com/authorize?client_id=4429306&redirect_uri=https%3A%2F%2F1-dot-vmesteonline.appspot.com%2Foauth&scope=4194305&display=popup&v=5.21&state="> Войти через
+													href="https://oauth.vk.com/authorize?client_id=4463293&redirect_uri=https%3A%2F%2F1-dot-vmesteonline.appspot.com%2Foauth&scope=4194305&display=popup&v=5.21&state="> Войти через
 													Вконтакте</a>
 												<div class="or align-center">или</div>
 												<label class="block clearfix"> <span class="block input-icon input-icon-right"> <input type="text" id="uname" class="form-control" placeholder="Ваш email" /> <i
