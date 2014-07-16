@@ -56,6 +56,7 @@
 	</div>
 
         <%@ include file="templates/footer.jsp" %>
+        
 
     </div>
 
