@@ -20,7 +20,7 @@ import com.vmesteonline.be.utils.StorageHelper;
 
 @SuppressWarnings("serial")
 @PersistenceCapable
-public class VoFileAccessRecord implements Serializable {
+public class VoFileAccessRecord {
 
 	private String fileName;
 
@@ -90,7 +90,7 @@ public class VoFileAccessRecord implements Serializable {
 	private String contentType;
 	
 	@Unindexed
-	@Persistent(serialized="true")
+	@Persistent
 	Map<String,VoFileAccessRecord> versions;
 
 	public VoFileAccessRecord getVersion(Map<String, String[]> params, PersistenceManager p) {
