@@ -150,7 +150,7 @@ public class ShopServiceImplTest {
 			long gId = userGroups.get(0).getId();
 	
 			Message msg = new Message(0, 0, MessageType.BASE, 0, gId, 0, 0, 0, "", 0, 0,
-					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null);
 			Topic tpc = new Topic(0, "AAA", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
 			topic = msi.postTopic(tpc);
 

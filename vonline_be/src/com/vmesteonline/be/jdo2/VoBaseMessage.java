@@ -1,7 +1,10 @@
 package com.vmesteonline.be.jdo2;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -10,8 +13,10 @@ import javax.jdo.annotations.Persistent;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageType;
+import com.vmesteonline.be.utils.StorageHelper;
 
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
@@ -20,13 +25,27 @@ public abstract class VoBaseMessage extends GeoLocation {
 	public VoBaseMessage(Message msg) {
 		// super(msg.getLikesNum(), msg.getUnlikesNum());
 		content = msg.getContent().getBytes();
-		tags = msg.getTags();
 		links = msg.getLinkedMessages();
 		type = msg.getType();
 		authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
 		createdAt = msg.getCreated();
 		likesNum = msg.getLikesNum();
 		unlikesNum = msg.getUnlikesNum();
+
+		PersistenceManager pm = PMF.getPm();
+		try {
+			if (msg.images != null) {
+				for (String img : msg.images) {
+					if (!img.contains("vmesteonline.ru")) {
+						img = StorageHelper.saveImage(img, msg.getAuthorId(), true, pm);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pm.close();
+		}
 	}
 
 	public void setCreatedAt(int createdAt) {
@@ -40,10 +59,10 @@ public abstract class VoBaseMessage extends GeoLocation {
 	public VoBaseMessage() {
 	}
 
-/*	public Key getId() {
-		return id;
-	}
-*/
+	/*	public Key getId() {
+			return id;
+		}
+	*/
 	public Key getAuthorId() {
 		return authorId;
 	}
@@ -56,10 +75,10 @@ public abstract class VoBaseMessage extends GeoLocation {
 		this.type = type;
 	}
 
-/*	public void setId(Key key) {
-		this.id = key;
-	}
-*/
+	/*	public void setId(Key key) {
+			this.id = key;
+		}
+	*/
 	public byte[] getContent() {
 		return content;
 	}
@@ -124,16 +143,13 @@ public abstract class VoBaseMessage extends GeoLocation {
 		this.unlikesNum = unlikes;
 	}
 
-/*	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	protected Key id;
-*/
+	/*	@PrimaryKey
+		@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+		protected Key id;
+	*/
 	@Persistent(serialized = "true")
 	@Unindexed
 	protected byte[] content;
-
-	@Persistent
-	protected Map<Long, String> tags;
 
 	@Persistent
 	@Unindexed
@@ -142,6 +158,10 @@ public abstract class VoBaseMessage extends GeoLocation {
 	@Persistent
 	@Unindexed
 	protected MessageType type;
+
+	@Persistent
+	@Unindexed
+	protected List<String> images;
 
 	@Persistent
 	@Unindexed

@@ -150,16 +150,17 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	}
 
+	// todo remove method
 	@Override
 	public Message createMessage(long topicId, long parentId, long groupId, MessageType type, String content, Map<MessageType, Long> linkedMessages,
 			Map<Long, String> tags, long recipientId) throws InvalidOperation, TException {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		Message newMessage = new Message(0, parentId, type, topicId, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
-				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null);
 		newMessage.recipientId = recipientId;
 		postMessage(newMessage);
-		return newMessage;
+		return null;
 	}
 
 	// ===================================================================================================================================
@@ -528,7 +529,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			Message msg = voMessage.getMessage();
 			msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId());
 			msg.userMessage = null == voUserMsg ? null : voUserMsg.getUserMessage();
-			msg.setChildMsgsNum(voMessage.getChildMessageNum());
 			mlp.addToMessages(msg);
 		}
 		return mlp;

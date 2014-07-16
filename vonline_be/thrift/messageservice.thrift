@@ -33,8 +33,7 @@ struct Message {
 	16: UserMessage userMessage, //how user treats the message
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
 	18: bedata.ShortUserInfo userInfo,
-	19: optional i32 childMsgsNum,
-	20: optional i32 childUnreadMsgsNum, 
+	19: list<string> images, 
 	
 } // 'сообщение';
 		
