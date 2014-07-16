@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns="http://java.sun.com/xml/ns/javaee"
-xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+
+	<servlet>
+		<servlet-name>OAuthServlet</servlet-name>
+		<servlet-class>com.vmesteonline.be.OAuthServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OAuthServlet</servlet-name>
+		<url-pattern>/oauth</url-pattern>
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>AuthSericeServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.AuthSericeServlet</servlet-class>
@@ -28,7 +38,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>MessageServiceServlet</servlet-name>
 		<url-pattern>/thrift/MessageService</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>ShopServiceServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.ShopServiceServlet</servlet-class>
@@ -37,7 +47,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>ShopServiceServlet</servlet-name>
 		<url-pattern>/thrift/ShopService</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>ShopBOServiceServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.ShopBOServiceServlet</servlet-class>
@@ -46,7 +56,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>ShopBOServiceServlet</servlet-name>
 		<url-pattern>/thrift/ShopBOService</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>FileAccess</servlet-name>
 		<servlet-class>com.vmesteonline.be.VoFileAccess</servlet-class>
@@ -74,61 +84,61 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<url-pattern>/thrift/fs</url-pattern>
 	</servlet-mapping>
 
-    <servlet>
-        <servlet-name>about</servlet-name>
-        <jsp-file>about-shop.jsp</jsp-file>
-    </servlet>
+	<servlet>
+		<servlet-name>about</servlet-name>
+		<jsp-file>about-shop.jsp</jsp-file>
+	</servlet>
 
-    <servlet-mapping>
-        <servlet-name>about</servlet-name>
-        <url-pattern>/about/*</url-pattern>
-    </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>about</servlet-name>
+		<url-pattern>/about/*</url-pattern>
+	</servlet-mapping>
 
-    <servlet>
-        <servlet-name>shop</servlet-name>
-        <jsp-file>shop.jsp</jsp-file>
-    </servlet>
+	<servlet>
+		<servlet-name>shop</servlet-name>
+		<jsp-file>shop.jsp</jsp-file>
+	</servlet>
 
-    <servlet-mapping>
-        <servlet-name>shop</servlet-name>
-        <url-pattern>/shop/*</url-pattern>
-    </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>shop</servlet-name>
+		<url-pattern>/shop/*</url-pattern>
+	</servlet-mapping>
 
-    <servlet>
-        <servlet-name>backoffice</servlet-name>
-        <jsp-file>backoffice.jsp</jsp-file>
-    </servlet>
+	<servlet>
+		<servlet-name>backoffice</servlet-name>
+		<jsp-file>backoffice.jsp</jsp-file>
+	</servlet>
 
-    <servlet-mapping>
-        <servlet-name>backoffice</servlet-name>
-        <url-pattern>/backoffice/*</url-pattern>
-    </servlet-mapping>
-	
+	<servlet-mapping>
+		<servlet-name>backoffice</servlet-name>
+		<url-pattern>/backoffice/*</url-pattern>
+	</servlet-mapping>
+
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-	
+
 	<filter>
-        <filter-name>shopDetector</filter-name>
-        <filter-class>com.vmesteonline.be.Main</filter-class>
-        <init-param>
-            <param-name>landingURL</param-name>
-            <param-value>voclub.co</param-value>
-        </init-param>
-        <init-param>
-            <param-name>localPostfix</param-name>
-            <param-value>.local</param-value>
-        </init-param>
-    </filter>
-    
+		<filter-name>shopDetector</filter-name>
+		<filter-class>com.vmesteonline.be.Main</filter-class>
+		<init-param>
+			<param-name>landingURL</param-name>
+			<param-value>voclub.co</param-value>
+		</init-param>
+		<init-param>
+			<param-name>localPostfix</param-name>
+			<param-value>.local</param-value>
+		</init-param>
+	</filter>
+
 	<filter-mapping>
-        <filter-name>shopDetector</filter-name>
-        <url-pattern>/backoffice/*</url-pattern>
-        <url-pattern>/shop/*</url-pattern>
-        <url-pattern>/about/*</url-pattern>
-        <url-pattern>/</url-pattern>
-    </filter-mapping>
-    
+		<filter-name>shopDetector</filter-name>
+		<url-pattern>/backoffice/*</url-pattern>
+		<url-pattern>/shop/*</url-pattern>
+		<url-pattern>/about/*</url-pattern>
+		<url-pattern>/</url-pattern>
+	</filter-mapping>
+
 	<servlet>
 		<servlet-name>UpdateSomething</servlet-name>
 		<servlet-class>com.vmesteonline.be.utils.UpdateSomething</servlet-class>
@@ -137,5 +147,5 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>UpdateSomething</servlet-name>
 		<url-pattern>/utils/doupdate</url-pattern>
 	</servlet-mapping>
-		
+
 </web-app>

@@ -89,7 +89,10 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		} finally {
 			pm.close();
 		}
-		throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
+		if (checkPwd)
+			throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
+
+		return false;
 	}
 
 	public AuthServiceImpl(String sessId) {
