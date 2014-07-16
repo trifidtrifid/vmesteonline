@@ -20,7 +20,7 @@ public class UpdateSomething extends HttpServlet {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			Extent<VoShop> shops = pm.getExtent(VoShop.class);
-			shops.iterator().next().setActivated(true);
+			shops.iterator().next().setHostName("www.vomoloko.ru");
 		} finally {
 			pm.close();
 		}

@@ -62,8 +62,13 @@
     int ArrayShopsSize = ArrayShops.size();
     boolean isAdminka = false;
     Shop shop = null;
+    try{
+    	shop = shopService.getShop(0);
+    } catch (InvalidOperation io){
+    	//no shop set as current
+    }
 
-    if(ArrayShops != null && ArrayShopsSize > 0){
+    if( ArrayShops != null && ArrayShopsSize > 0){
 
          if(requestURI.equals("/index.jsp")){
 
@@ -93,7 +98,7 @@
             isAdminka = true;
             pageContext.setAttribute("shops", ArrayShops);
 
-        } else {
+        } else if( null == shop ){
 
              // SHOP & other
 
@@ -110,8 +115,8 @@
 			if(null==shop){                
                 
                 for(int i = 0; i < ArrayShopsSize; i++){
-
-                    if(ArrayShops.get(i).hostName.equals(serverName)){
+					String hostName = ArrayShops.get(i).hostName;
+                    if(null!=hostName && (hostName.equals(serverName) || hostName.equals("www"+serverName))){
                         shop = ArrayShops.get(i);
                     }
                 }
