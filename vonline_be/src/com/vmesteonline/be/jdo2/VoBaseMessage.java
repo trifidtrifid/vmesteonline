@@ -1,6 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,14 +31,12 @@ public abstract class VoBaseMessage extends GeoLocation {
 		createdAt = msg.getCreated();
 		likesNum = msg.getLikesNum();
 		unlikesNum = msg.getUnlikesNum();
-
+		images = new ArrayList<String>();
 		PersistenceManager pm = PMF.getPm();
 		try {
 			if (msg.images != null) {
 				for (String img : msg.images) {
-					if (!img.contains("vmesteonline.ru")) {
-						img = StorageHelper.saveImage(img, msg.getAuthorId(), true, pm);
-					}
+					images.add(StorageHelper.saveImage(img, msg.getAuthorId(), true, pm));
 				}
 			}
 		} catch (Exception e) {
