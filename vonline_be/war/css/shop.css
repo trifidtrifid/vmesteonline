@@ -2512,3 +2512,7 @@ height 50px
   width: auto;
   padding-top: 15px;
 }
+/* error page */
+.error-page .main-content {
+  margin-right: 0;
+}
