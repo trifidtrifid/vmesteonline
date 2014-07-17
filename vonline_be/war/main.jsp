@@ -197,8 +197,6 @@
                             <button class="btn btn-sm btn-info no-border pull-right ng-cloak" ng-repeat="group in mainContentTop.groups"
                             id="{{group.id}}" ng-class="{active : group.selected}" ng-click="mainContentTop.selectGroup(group)">{{group.visibleName}}</button>
 
-                            <%--<button class="btn btn-sm btn-info no-border pull-right all-groups-btn"
-                                    ng-class="{active : mainContentTop.allGroupsBtn.selected}" ng-click="mainContentTop.selectGroup(group,1)">Все</button>--%>
                         </nav>
 
                         <div class="create-topic-btn pull-right" ng-show="base.talksIsActive">
@@ -224,6 +222,15 @@
                                         <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,lenta)"/>
                                     </div>
 
+                                    <div class="attach-area" > <%--ng-show="lenta.isAttachImagesShow"--%>
+                                        <%--<div class="attach-images" ng-repeat="image in lenta.attachImages">
+                                            <div class="attach-images-item"><input id="attachImage$$index" type="file"/></div>
+                                        </div>--%>
+
+                                        <%--<input id="attachImage2" ng-click="base.attachImageClick($event)" type="file"/>--%>
+
+                                    </div>
+
                                     <div class="message-input-bottom">
                                         <div class="btn-group attach-dropdown pull-right">
                                         <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
@@ -234,7 +241,10 @@
                                         <ul class="dropdown-menu dropdown-blue">
                                         <li><a href="#">Видео</a></li>
                                         <li><a href="#">Документ</a></li>
-                                        <li><a href="#">Изображение</a></li>
+                                        <li><input id="attachImage" type="file"/></li>
+                                       <%-- <li><a href="#"> <!--  ng-click="base.attachImage($event,lenta)" -->
+                                            <input type="file" id="attachImage"/>
+                                        </a></li>--%>
                                         <li><a href="#" ng-click="base.showPoll($event,lenta)" ng-show="lenta.isPollAvailable">Опрос</a></li>
                                         </ul>
                                         </div>
@@ -255,7 +265,6 @@
                                         </div>
 
                                     </div>
-
 
                                 </div>
 
@@ -279,6 +288,10 @@
                                                     </div>
 
                                                     <div class="text" ng-switch-when="message" ng-cloak>{{wallItem.topic.message.content}}</div>
+
+                                                    <div class="attached" ng-repeat="image in wallItem.topic.message.images">
+                                                        <a href="#"><img src="{{image}}" alt="картинка"/></a>
+                                                    </div>
 
                                                     <div class="poll" ng-switch-when="poll" ng-switch on="wallItem.topic.poll.alreadyPoll" ng-cloak>
                                                         <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>

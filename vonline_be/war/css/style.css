@@ -544,6 +544,45 @@ h1 {
 .message-input .hashtag {
   margin-left: 10px;
 }
+.message-input .attach-area {
+  margin-bottom: 15px;
+}
+.message-input .attach-area .attached-img {
+  width: 150px;
+  height: 150px;
+  margin-right: 10px;
+  background-position: center center;
+  background-size: contain;
+}
+.message-input .attach-dropdown .ace-file-input {
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+.message-input .attach-dropdown .ace-file-input .file-label {
+  border: 0;
+  text-align: left;
+  margin-bottom: 0;
+  background-color: transparent;
+  transition: none;
+}
+.message-input .attach-dropdown .ace-file-input .file-label:before {
+  font-size: 13px;
+  font-weight: normal;
+  color: #000;
+  margin: 0;
+  line-height: 14px;
+  background-color: transparent;
+  transition: none;
+  padding: 0;
+  padding-left: 11px;
+}
+.message-input .attach-dropdown .ace-file-input:hover {
+  color: #fff;
+  background: #4f99c6;
+}
+.message-input .attach-dropdown .ace-file-input:hover .file-label:before {
+  color: #fff;
+}
 .create-poll {
   margin-bottom: 10px;
 }

@@ -480,6 +480,39 @@ transform()
     overflow hidden
   .hashtag
     margin-left 10px
+  .attach-area
+    margin-bottom 15px
+    .attached-img
+      width 150px
+      height 150px
+      margin-right 10px
+      background-position center center
+      background-size contain
+  .attach-dropdown
+    .ace-file-input
+      margin-bottom 0
+      line-height 1.5
+      .file-label
+        border 0
+        text-align left
+        margin-bottom 0
+        background-color transparent
+        transition none
+        &:before
+          font-size 13px
+          font-weight normal
+          color #000
+          margin 0
+          line-height 14px
+          background-color transparent
+          transition none
+          padding 0
+          padding-left 11px
+      &:hover
+        color #fff
+        background #4f99c6
+        .file-label:before
+          color #fff
 
 .create-poll
   margin-bottom 10px

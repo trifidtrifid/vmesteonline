@@ -66,6 +66,22 @@ angular.module('forum.controllers', [])
 
         };
 
+        initAttachImage();
+
+        base.attachImage = function(event,obj){
+            event.preventDefault();
+            base.attachImageClick(event);
+
+            obj.isAttachImagesShow = true;
+        };
+
+        base.attachImageClick = function(event){
+            //event.preventDefault();
+            //alert('1');
+            //event.target.parent().trigger('click');
+
+        };
+
         base.oldTextLength = 0;
         base.messageChange = function(event,textareaType){
             /*for(var p in event.target){
@@ -352,10 +368,19 @@ angular.module('forum.controllers', [])
         ];
         lenta.isPollAvailable = true;
 
+        lenta.isAttachImagesShow = false;
+
+        lenta.attachedImages = [];
+
         lenta.wallMessageContent = "Написать сообщение";
 
         lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
-        //console.log("1 "+lenta.wallItems.length);
+        /*console.log("1 "+lenta.wallItems.length);
+        for(var i = 0; i < lenta.wallItems.length; i++){
+            if(lenta.wallItems[i].topic.message.images) {
+                console.log("llll " + lenta.wallItems[i].topic.message.images.length);
+            }
+        }*/
 
         var wallItemsLength;
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
@@ -373,11 +398,14 @@ angular.module('forum.controllers', [])
         lenta.createWallMessage = function(event){
             event.preventDefault();
 
+            lenta.attachedImages = getAttachedImages();
+
             var isWall = 1,
                 newTopic = postTopic(lenta,isWall);
 
             var newWallItem = new com.vmesteonline.be.messageservice.WallItem;
             newWallItem.topic = newTopic;
+            //newWallItem.images = newTopic.message.images;
             console.log("++"+newWallItem.topic.message.content);
             newWallItem.topic.authorName = getAuthorName();
             newWallItem.messages = [];
@@ -386,6 +414,8 @@ angular.module('forum.controllers', [])
             newWallItem.isFocus = false;
             newWallItem.label = getLabel(lenta.groups,lenta.selectedGroup.id);
             newWallItem.tagColor = getTagColor(newWallItem.label);
+
+            cleanAttached();
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
                 lenta.wallItems ?
@@ -413,7 +443,6 @@ angular.module('forum.controllers', [])
                 wallItem.messages = [];
                 wallItem.messages[0] = newWallComment;
             }
-
 
         };
 
@@ -949,6 +978,7 @@ function resetAceNavBtns(navbar){
     navbar.privateMessagesBtnStatus = "";
 }
 function initProfile(){
+
     $('#profile-ava').ace_file_input({
         style:'well',
         btn_choose:'Изменить фото',
@@ -958,8 +988,8 @@ function initProfile(){
         thumbnail:'large',
         icon_remove:null
     }).on('change', function(){
-            $('.logo-container>img').hide();
-            //userClient.updateUserAvatar();
+
+        $('.logo-container>img').hide();
 
         setTimeout(saveNewAva,1000);
 
@@ -968,16 +998,39 @@ function initProfile(){
             var imgBase64 = $('.ace-file-input').find('.file-name img').css('background-image');
             var url = fileClient.saveFileContent(imgBase64,false);
 
-           /* var fd = new FormData();
-            var input = $('#profile-ava');
-            console.log(input[0].files[0]);
-            fd.append( 'data', input[0].files[0]);*/
-
             userClient.updateUserAvatar(url);
         }
-        //console.log($('#profile-ava').find('.file-name img').length);
-        });
+    });
 
+}
+function initAttachImage(){
+    var title;
+    $('#attachImage').ace_file_input({
+        style:'well',
+        btn_choose:'Изображение',
+        btn_change:null,
+        no_icon:'',
+        droppable:true,
+        thumbnail:'large',
+        icon_remove:null,
+        before_change: function(files, dropped){
+            title = $(this).find('+.file-label').data('title');
+            return true;
+        }
+    }).on('change', function(){
+        var fileLabel = $(this).find('+.file-label');
+        fileLabel.attr('data-title',title).removeClass('hide-placeholder');
+        fileLabel.find('.file-name').hide();
+
+        setTimeout(t,200);
+
+        function t() {
+            var copyImgSrc = fileLabel.find('.file-name img').css('background-image');
+
+            $('.attach-area').append("<img class='attached-img' style='background-image:"+ copyImgSrc +"'>");
+        }
+
+    });
 }
 function selectGroupInDropdown(groupId,objCtrl){
     var groupsLength = objCtrl.groups.length;
@@ -1093,6 +1146,7 @@ function postTopic(obj,isWall){
     newTopic.message.groupId = obj.selectedGroup.id;
     newTopic.message.type = messageType;
     newTopic.message.content = messageContent;
+    newTopic.message.images = obj.attachedImages;
     newTopic.message.id = 0;
     newTopic.message.created = Date.parse(new Date());
 
@@ -1124,6 +1178,7 @@ function postTopic(obj,isWall){
 
     var tempTopic = messageClient.postTopic(newTopic);
     newTopic.id = tempTopic.id;
+    newTopic.message.images = tempTopic.message.images;
 
     if(obj.isPollShow){
         newTopic.poll.pollId = tempTopic.poll.pollId;
@@ -1186,3 +1241,18 @@ function setPollEditNames(poll){
     }
     poll.amount = amount;
 }
+
+function getAttachedImages(){
+    var imgList = [], ind = 0;
+
+    $('.attach-area img').each(function(){
+        imgList[ind++] = $(this).css('background-image');
+    });
+
+    return imgList;
+}
+function cleanAttached(){
+    $('.attach-area').html('');
+};
+
+
