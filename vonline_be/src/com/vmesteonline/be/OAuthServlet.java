@@ -39,7 +39,7 @@ public class OAuthServlet extends HttpServlet {
 		resp.getWriter().println("try authorize in " + state + " with code=" + authCode);
 
 		URL obj = new URL(
-				"https://oauth.vk.com/access_token?client_id=4463293&redirect_uri=https://1-dot-vmesteonline.appspot.com/oauth&client_secret=S8wYzpGUtzomnv1Pvcpv&code="
+				"https://oauth.vk.com/access_token?client_id=4463293&redirect_uri=https://3-dot-vmesteonline.appspot.com/oauth&client_secret=S8wYzpGUtzomnv1Pvcpv&code="
 						+ authCode);
 		String response = runUrl(obj);
 
@@ -47,7 +47,7 @@ public class OAuthServlet extends HttpServlet {
 			JSONObject jsonObj = new JSONObject(response.toString());
 			AuthServiceImpl authServiceImpl = new AuthServiceImpl();
 			authServiceImpl.setSession(req.getSession());
-			// resp.getWriter().println("<br><br>" + jsonObj.getString("email") + " find");
+			resp.getWriter().println("<br><br>" + jsonObj.getString("email") + " find");
 
 			String email = jsonObj.getString("email");
 
@@ -57,24 +57,23 @@ public class OAuthServlet extends HttpServlet {
 				JSONObject jsonObj2 = new JSONObject(resp2);
 
 				resp.getWriter().println("<br><br>  sdfsdf " + resp2);
-				resp.getWriter().println("<br><br>  sdfsdf " + Charset.forName("UTF-8").encode(resp2));
 
 				JSONArray vkResp = jsonObj2.getJSONArray("response");
 				JSONObject o = (JSONObject) vkResp.get(0);
 
-				resp.getWriter().println("<br><br>  sdfsdf " + Charset.forName("UTF-8").encode(o.getString("first_name")));
-
 				authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), "123456", email, null);
 				authServiceImpl.allowUserAccess(email, "", false);
-				EMailHelper.sendSimpleEMail(email, "Регистрация на сайте voclub.co", "вы зарегистрировались на сайте http://voclub.co. Ваш логин для входа: "
-						+ email + ". Ваш пароль: 123456. Рекомендуем изменить.");
+				EMailHelper.sendSimpleEMail(email, "Регистрация на сайте voclub.co",
+						"вы зарегистрировались на сайте http://voclub.co. Ваш логин для входа: " + email
+								+ ". Ваш пароль: 123456. Рекомендуем изменить.");
 			}
-			resp.sendRedirect(state);
 
 		} catch (Exception e) {
 			resp.getWriter().println("<br><br>  sdfsdf " + e.toString());
 			e.printStackTrace();
 		}
+
+		resp.sendRedirect(state + "?s=" + req.getSession().getId());
 
 	}
 
