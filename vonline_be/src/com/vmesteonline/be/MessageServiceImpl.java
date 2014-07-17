@@ -339,6 +339,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId()
 							+ "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + ","
 							+ votopic.getCreatedAt() + ");");
+					
 				} else {
 					updateTopic(topic);
 				}

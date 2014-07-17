@@ -36,7 +36,8 @@ public abstract class VoBaseMessage extends GeoLocation {
 		try {
 			if (msg.images != null) {
 				for (String img : msg.images) {
-					images.add(StorageHelper.saveImage(img, msg.getAuthorId(), true, pm));
+					img = StorageHelper.saveImage(img, msg.getAuthorId(), true, pm);
+					images.add(img);
 				}
 			}
 		} catch (Exception e) {
