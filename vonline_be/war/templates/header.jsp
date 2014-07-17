@@ -38,7 +38,7 @@
 
                             <c:choose>
                                 <c:when test="${shop.hostName != null && isProduction}">
-                                    <a href="/about/${shop.id}" class="about-shop-link header-link">О магазине</a>
+                                    <a href="/about/" class="about-shop-link header-link">О магазине</a>
                                 </c:when>
                                 <c:otherwise>
                                     <a href="/about/${shop.id}" class="about-shop-link header-link">О магазине</a>
@@ -50,7 +50,7 @@
 
                             <c:choose>
                                 <c:when test="${shop.hostName != null && isProduction}">
-                                    <a href="/terms/${shop.id}" class="terms-of-orders header-link">Условия</a>
+                                    <a href="/terms/" class="terms-of-orders header-link">Условия</a>
                                 </c:when>
                                 <c:otherwise>
                                     <a href="/terms/${shop.id}" class="terms-of-orders header-link">Условия</a>
@@ -61,7 +61,7 @@
                         <c:if test="${shopPages.deliveryPageContentURL != null && shopPages.deliveryPageContentURL != ''}">
                             <c:choose>
                                 <c:when test="${shop.hostName != null && isProduction}">
-                                    <a href="/delivery-terms/${shop.id}" class="terms-of-delivery header-link">Доставка</a>
+                                    <a href="/delivery-terms/" class="terms-of-delivery header-link">Доставка</a>
                                 </c:when>
                                 <c:otherwise>
                                     <a href="/delivery-terms/${shop.id}" class="terms-of-delivery header-link">Доставка</a>
