@@ -476,43 +476,59 @@ transform()
   textarea
     width 100%
     height 90px
-    margin-bottom 10px
     overflow hidden
   .hashtag
     margin-left 10px
-  .attach-area
-    margin-bottom 15px
-    .attached-img
-      width 150px
-      height 150px
-      margin-right 10px
-      background-position center center
-      background-size contain
-  .attach-dropdown
-    .ace-file-input
+  .message-input-bottom
+    margin-top 15px
+
+
+.attach-area
+  .attach-item
+    display inline-block
+    margin-right 10px
+    margin-top 10px
+  .attached-img
+    width 150px
+    height 150px
+    background-position center center
+    background-size contain
+    background-repeat no-repeat
+  .remove-attach-img
+    font-size 20px
+    color #ff0000
+    float right
+    margin-left -13px
+    line-height 10px
+    position relative
+    &:hover
+      text-decoration none
+
+.attach-dropdown
+  .ace-file-input
+    margin-bottom 0
+    line-height 1.5
+    .file-label
+      border 0
+      text-align left
       margin-bottom 0
-      line-height 1.5
-      .file-label
-        border 0
-        text-align left
-        margin-bottom 0
+      background-color transparent
+      transition none
+      &:before
+        font-size 13px
+        font-weight normal
+        color #000
+        margin 0
+        line-height 14px
         background-color transparent
         transition none
-        &:before
-          font-size 13px
-          font-weight normal
-          color #000
-          margin 0
-          line-height 14px
-          background-color transparent
-          transition none
-          padding 0
-          padding-left 11px
-      &:hover
+        padding 0
+        padding-left 11px
+    &:hover
+      color #fff
+      background #4f99c6
+      .file-label:before
         color #fff
-        background #4f99c6
-        .file-label:before
-          color #fff
 
 .create-poll
   margin-bottom 10px
@@ -560,6 +576,12 @@ transform()
   .wallitem-message
     padding-top 10px
     border-top 1px solid rgb(80, 144, 193)
+    .input-group
+      display block
+      .input-group-btn
+        display block
+        margin-top 10px
+        width 100%
   .first-message
     border 1px solid #D7DBDD
     position relative
@@ -587,13 +609,20 @@ transform()
     padding-top 15px
     padding-right 0
   .message-textarea
-    width 99%
+    width 100%
     overflow hidden
   .lenta-item-bottom
     position absolute
     bottom 3px
   .lenta-item-hashtag
     float right
+  .attached
+    padding-bottom 20px
+    a
+      display inline-block
+      vertical-align top
+      img
+        max-width 300px
 
 .create-topic-btn
   overflow auto

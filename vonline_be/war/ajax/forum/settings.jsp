@@ -27,7 +27,7 @@
 
         <div class="dynamic">
             <section class="settings">
-                <h3>Настройки</h3>
+                <h3>Настройки {{settings.a}}</h3>
                 <div class="tabbable">
                     <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
 

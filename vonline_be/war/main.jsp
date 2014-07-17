@@ -55,6 +55,7 @@
 <meta charset="utf-8" />
 <title>Главная</title>
 <link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>
 
 <script src="js/lib/jquery-2.1.1.min.js"></script>
 <!--[if lt IE 9]>
@@ -222,31 +223,26 @@
                                         <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,lenta)"/>
                                     </div>
 
-                                    <div class="attach-area" > <%--ng-show="lenta.isAttachImagesShow"--%>
-                                        <%--<div class="attach-images" ng-repeat="image in lenta.attachImages">
-                                            <div class="attach-images-item"><input id="attachImage$$index" type="file"/></div>
-                                        </div>--%>
-
-                                        <%--<input id="attachImage2" ng-click="base.attachImageClick($event)" type="file"/>--%>
+                                    <div class="attach-area" id="attach-area-0">
 
                                     </div>
 
                                     <div class="message-input-bottom">
                                         <div class="btn-group attach-dropdown pull-right">
-                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                        <span class="btn-group-text">Прикрепить</span>
-                                        <span class="icon-caret-down icon-on-right"></span>
-                                        </button>
+                                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                            <span class="btn-group-text">Прикрепить</span>
+                                            <span class="icon-caret-down icon-on-right"></span>
+                                            </button>
 
-                                        <ul class="dropdown-menu dropdown-blue">
-                                        <li><a href="#">Видео</a></li>
-                                        <li><a href="#">Документ</a></li>
-                                        <li><input id="attachImage" type="file"/></li>
-                                       <%-- <li><a href="#"> <!--  ng-click="base.attachImage($event,lenta)" -->
-                                            <input type="file" id="attachImage"/>
-                                        </a></li>--%>
-                                        <li><a href="#" ng-click="base.showPoll($event,lenta)" ng-show="lenta.isPollAvailable">Опрос</a></li>
-                                        </ul>
+                                            <ul class="dropdown-menu dropdown-blue">
+                                            <li><a href="#">Видео</a></li>
+                                            <li><a href="#">Документ</a></li>
+                                            <li><input id="attachImage-0" type="file"/></li>
+                                           <%-- <li><a href="#"> <!--  ng-click="base.attachImage($event,lenta)" -->
+                                                <input type="file" id="attachImage"/>
+                                            </a></li>--%>
+                                            <li><a href="#" ng-click="base.showPoll($event,lenta)" ng-show="lenta.isPollAvailable">Опрос</a></li>
+                                            </ul>
                                         </div>
                                         <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
 
@@ -276,7 +272,7 @@
 
                                             <div class="first-message clearfix" >
                                                 <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
+                                                    <img alt="Alexa's Avatar" src="{{wallItem.topic.message.userInfo.avatar}}">
                                                 </div>
 
                                                 <div class="body" ng-switch on="wallItem.topic.metaType">
@@ -289,8 +285,10 @@
 
                                                     <div class="text" ng-switch-when="message" ng-cloak>{{wallItem.topic.message.content}}</div>
 
-                                                    <div class="attached" ng-repeat="image in wallItem.topic.message.images">
-                                                        <a href="#"><img src="{{image}}" alt="картинка"/></a>
+                                                    <div class="attached">
+                                                        <a href="{{image}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
+                                                            <img src="{{image}}" alt="картинка"/>
+                                                        </a>
                                                     </div>
 
                                                     <div class="poll" ng-switch-when="poll" ng-switch on="wallItem.topic.poll.alreadyPoll" ng-cloak>
@@ -344,7 +342,7 @@
                                             <div class="dialogs">
                                                 <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
                                                     <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
+                                                        <img alt="Alexa's Avatar" src="{{wallMessage.userInfo.avatar}}">
                                                     </div>
 
                                                     <div class="body">
@@ -353,6 +351,12 @@
                                                             <a href="#">{{wallMessage.authorName}}</a>
                                                         </div>
                                                         <div class="text" ng-cloak>{{wallMessage.content}}</div>
+
+                                                        <div class="attached">
+                                                            <a href="{{image}}" class="fancybox" rel="attached-group-{{wallMessage.id}}" ng-repeat="image in wallMessage.images">
+                                                                <img src="{{image}}" alt="картинка"/>
+                                                            </a>
+                                                        </div>
 
                                                         <div class="lenta-item-bottom">
                                                             <span ng-cloak>{{wallMessage.createdEdit}}</span>
@@ -368,11 +372,26 @@
                                                           ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow" ng-keyup="base.messageChange($event,1)"
                                                     onblur="if(this.value=='') this.value='Ваш ответ';"
                                                     onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
+
+                                                    <div id="attach-area-{{wallItem.topic.id}}" class="attach-area"></div>
+
                                                     <span class="input-group-btn" ng-show="wallItem.answerShow">
                                                         <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
                                                             <i class="icon-share-alt"></i>
                                                             Отправить
                                                         </button>
+
+                                                        <div class="btn-group attach-dropdown pull-right">
+                                                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                                                <span class="btn-group-text">Прикрепить</span>
+                                                                <span class="icon-caret-down icon-on-right"></span>
+                                                            </button>
+
+                                                            <ul class="dropdown-menu dropdown-blue">
+                                                                <li><a href="#">Документ</a></li>
+                                                                <li><input id="attachImage-{{wallItem.topic.id}}" type="file"/></li>
+                                                            </ul>
+                                                        </div>
                                                     </span>
                                             </div>
                                         </div>
@@ -999,6 +1018,8 @@
 	<script src="js/lib/bootstrap.min.js"></script>
 	<script src="js/lib/ace-extra.min.js"></script>
 	<script src="js/lib/ace-elements.min.js"></script>
+
+    <script src="js/lib/jquery.fancybox.pack.js"></script>
 
 	<!-- конкретные плагины -->
 

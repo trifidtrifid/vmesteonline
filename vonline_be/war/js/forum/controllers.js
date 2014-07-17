@@ -66,21 +66,8 @@ angular.module('forum.controllers', [])
 
         };
 
-        initAttachImage();
-
-        base.attachImage = function(event,obj){
-            event.preventDefault();
-            base.attachImageClick(event);
-
-            obj.isAttachImagesShow = true;
-        };
-
-        base.attachImageClick = function(event){
-            //event.preventDefault();
-            //alert('1');
-            //event.target.parent().trigger('click');
-
-        };
+        initAttachImage($('#attachImage-0'),$('#attach-area-0'));
+        initFancyBox();
 
         base.oldTextLength = 0;
         base.messageChange = function(event,textareaType){
@@ -368,8 +355,6 @@ angular.module('forum.controllers', [])
         ];
         lenta.isPollAvailable = true;
 
-        lenta.isAttachImagesShow = false;
-
         lenta.attachedImages = [];
 
         lenta.wallMessageContent = "Написать сообщение";
@@ -398,12 +383,12 @@ angular.module('forum.controllers', [])
         lenta.createWallMessage = function(event){
             event.preventDefault();
 
-            lenta.attachedImages = getAttachedImages();
+            lenta.attachedImages = getAttachedImages($('#attach-area-0'));
 
             var isWall = 1,
                 newTopic = postTopic(lenta,isWall);
 
-            var newWallItem = new com.vmesteonline.be.messageservice.WallItem;
+            var newWallItem = new com.vmesteonline.be.messageservice.WallItem();
             newWallItem.topic = newTopic;
             //newWallItem.images = newTopic.message.images;
             console.log("++"+newWallItem.topic.message.content);
@@ -431,17 +416,27 @@ angular.module('forum.controllers', [])
         lenta.createWallComment = function(event,wallItem){
             event.preventDefault();
 
-            var newWallComment = messageClient.createMessage(wallItem.topic.id,0,lenta.selectedGroupInTop.id,5,wallItem.commentText);
+            var message =  new com.vmesteonline.be.messageservice.Message();
+            message.id = 0;
+            message.topicId = wallItem.topic.id;
+            message.parentId = 0;
+            message.groupId = lenta.selectedGroupInTop.id;
+            message.type = com.vmesteonline.be.messageservice.MessageType.WALL;//5;
+            message.content = wallItem.commentText;
+            message.images = getAttachedImages($('#attach-area-'+wallItem.topic.id));
+
+            messageClient.postMessage(message);
             wallItem.commentText = "Ваш ответ";
-            newWallComment.createdEdit = getTiming(newWallComment.created);
-            newWallComment.authorName = getAuthorName(newWallComment.userInfo);
+            message.created = new Date();
+            message.createdEdit = getTiming(message.created);
+            message.authorName = getAuthorName();
 
             //console.log(lenta.wallItems+" "+lenta.wallItems.topic);
             if(wallItem.messages){
-                wallItem.messages.push(newWallComment);
+                wallItem.messages.push(message);
             }else{
                 wallItem.messages = [];
-                wallItem.messages[0] = newWallComment;
+                wallItem.messages[0] = message;
             }
 
         };
@@ -464,6 +459,8 @@ angular.module('forum.controllers', [])
             }else{
                 wallItem.commentText = "";
             }
+
+            initAttachImage($('#attachImage-'+wallItem.topic.id),$('#attach-area-'+wallItem.topic.id));
 
         };
 
@@ -940,6 +937,9 @@ angular.module('forum.controllers', [])
     .controller('ProfileController',function() {
     })
     .controller('SettingsController',function() {
+        var settings = this;
+
+        settings.a = 1;
     });
 
 
@@ -1003,9 +1003,9 @@ function initProfile(){
     });
 
 }
-function initAttachImage(){
+function initAttachImage(selector,attachAreaSelector){
     var title;
-    $('#attachImage').ace_file_input({
+    selector.ace_file_input({
         style:'well',
         btn_choose:'Изображение',
         btn_change:null,
@@ -1027,7 +1027,17 @@ function initAttachImage(){
         function t() {
             var copyImgSrc = fileLabel.find('.file-name img').css('background-image');
 
-            $('.attach-area').append("<img class='attached-img' style='background-image:"+ copyImgSrc +"'>");
+            //$('.attach-area')
+            attachAreaSelector.append("<span class='attach-item new-attached'>" +
+                "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
+                "<img class='attached-img' style='background-image:"+ copyImgSrc +"'></span>");
+
+            $('.new-attached .remove-attach-img').click(function(e){
+                e.preventDefault();
+               $(this).closest('.attach-item').hide().detach();
+            });
+
+            $('.new-attached').removeClass('new-attached');
         }
 
     });
@@ -1141,8 +1151,8 @@ function postTopic(obj,isWall){
     }
     console.log(messageContent+" "+messageType+" "+subject);
 
-    var newTopic = new com.vmesteonline.be.messageservice.Topic;
-    newTopic.message = new com.vmesteonline.be.messageservice.Message;
+    var newTopic = new com.vmesteonline.be.messageservice.Topic();
+    newTopic.message = new com.vmesteonline.be.messageservice.Message();
     newTopic.message.groupId = obj.selectedGroup.id;
     newTopic.message.type = messageType;
     newTopic.message.content = messageContent;
@@ -1157,7 +1167,7 @@ function postTopic(obj,isWall){
 
     var poll;
     if(obj.isPollShow){
-        poll = new com.vmesteonline.be.messageservice.Poll;
+        poll = new com.vmesteonline.be.messageservice.Poll();
         poll.pollId = 0;
         poll.editNames = [];
         poll.names = [];
@@ -1242,10 +1252,10 @@ function setPollEditNames(poll){
     poll.amount = amount;
 }
 
-function getAttachedImages(){
+function getAttachedImages(selector){
     var imgList = [], ind = 0;
 
-    $('.attach-area img').each(function(){
+    selector.find('img').each(function(){
         imgList[ind++] = $(this).css('background-image');
     });
 
@@ -1253,6 +1263,9 @@ function getAttachedImages(){
 }
 function cleanAttached(){
     $('.attach-area').html('');
-};
+}
 
+function initFancyBox(){
+    $(".fancybox").fancybox();
+}
 

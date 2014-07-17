@@ -538,34 +538,49 @@ h1 {
 .message-input textarea {
   width: 100%;
   height: 90px;
-  margin-bottom: 10px;
   overflow: hidden;
 }
 .message-input .hashtag {
   margin-left: 10px;
 }
-.message-input .attach-area {
-  margin-bottom: 15px;
+.message-input .message-input-bottom {
+  margin-top: 15px;
 }
-.message-input .attach-area .attached-img {
+.attach-area .attach-item {
+  display: inline-block;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+.attach-area .attached-img {
   width: 150px;
   height: 150px;
-  margin-right: 10px;
   background-position: center center;
   background-size: contain;
+  background-repeat: no-repeat;
 }
-.message-input .attach-dropdown .ace-file-input {
+.attach-area .remove-attach-img {
+  font-size: 20px;
+  color: #f00;
+  float: right;
+  margin-left: -13px;
+  line-height: 10px;
+  position: relative;
+}
+.attach-area .remove-attach-img:hover {
+  text-decoration: none;
+}
+.attach-dropdown .ace-file-input {
   margin-bottom: 0;
   line-height: 1.5;
 }
-.message-input .attach-dropdown .ace-file-input .file-label {
+.attach-dropdown .ace-file-input .file-label {
   border: 0;
   text-align: left;
   margin-bottom: 0;
   background-color: transparent;
   transition: none;
 }
-.message-input .attach-dropdown .ace-file-input .file-label:before {
+.attach-dropdown .ace-file-input .file-label:before {
   font-size: 13px;
   font-weight: normal;
   color: #000;
@@ -576,11 +591,11 @@ h1 {
   padding: 0;
   padding-left: 11px;
 }
-.message-input .attach-dropdown .ace-file-input:hover {
+.attach-dropdown .ace-file-input:hover {
   color: #fff;
   background: #4f99c6;
 }
-.message-input .attach-dropdown .ace-file-input:hover .file-label:before {
+.attach-dropdown .ace-file-input:hover .file-label:before {
   color: #fff;
 }
 .create-poll {
@@ -640,6 +655,14 @@ h1 {
   padding-top: 10px;
   border-top: 1px solid #5090c1;
 }
+.lenta-item .wallitem-message .input-group {
+  display: block;
+}
+.lenta-item .wallitem-message .input-group .input-group-btn {
+  display: block;
+  margin-top: 10px;
+  width: 100%;
+}
 .lenta-item .first-message {
   border: 1px solid #d7dbdd;
   position: relative;
@@ -677,7 +700,7 @@ h1 {
   padding-right: 0;
 }
 .lenta-item .message-textarea {
-  width: 99%;
+  width: 100%;
   overflow: hidden;
 }
 .lenta-item .lenta-item-bottom {
@@ -686,6 +709,16 @@ h1 {
 }
 .lenta-item .lenta-item-hashtag {
   float: right;
+}
+.lenta-item .attached {
+  padding-bottom: 20px;
+}
+.lenta-item .attached a {
+  display: inline-block;
+  vertical-align: top;
+}
+.lenta-item .attached a img {
+  max-width: 300px;
 }
 .create-topic-btn {
   overflow: auto;

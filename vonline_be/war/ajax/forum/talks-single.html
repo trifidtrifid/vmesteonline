@@ -11,7 +11,7 @@
                             <div class="widget-main">
                                 <div class="topic-left">
                                     <a href="#">
-                                        <img src="i/avatars/clint.jpg" alt="картинка" /></a>
+                                        <img src="{{talks.fullTalkTopic.message.userInfo.avatar}}" alt="картинка" /></a>
                                     <div class="topic-author">
                                     </div>
                                 </div>
@@ -83,7 +83,7 @@
                                     <div class="widget-main">
                                         <div class="topic-left">
                                             <a href="#">
-                                                <img src="i/avatars/clint.jpg" alt="картинка" /></a>
+                                                <img src="{{firstMessage.userInfo.avatar}}" alt="картинка" /></a>
                                             <div class="topic-author">
                                                 <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !firstMessage.isTreeOpen,'fa-minus' : firstMessage.isTreeOpen}"
                                                    ng-click="talks.toggleTreeFirstMessage($event,firstMessage)"></a>
@@ -116,7 +116,7 @@
                                             <div class="widget-main">
                                                 <div class="topic-left">
                                                     <a href="#">
-                                                        <img src="i/avatars/clint.jpg" alt="картинка" /></a>
+                                                        <img src="{{message.userInfo.avatar}}" alt="картинка" /></a>
                                                     <div class="topic-author">
                                                         <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !message.isTreeOpen,'fa-minus' : message.isTreeOpen}"
                                                            ng-click="talks.toggleTree($event,message,firstMessage)"></a>
