@@ -57,7 +57,7 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 			} catch (JDOObjectNotFoundException jonfe) {
 				jonfe.printStackTrace();
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No building found by ID=" + postalAddress.getBuilding().getId());
-			}
+			} 
 			// check that the address exists
 			Query q = pm.newQuery(VoPostalAddress.class);
 			q.setFilter("building == :key && staircase == " + postalAddress.getStaircase() + " && floor == " + postalAddress.getFloor() + " && flatNo == "

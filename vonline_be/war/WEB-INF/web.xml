@@ -157,6 +157,17 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/about/*</url-pattern>
 		<url-pattern>/</url-pattern>
 	</filter-mapping>
+	
+	<filter>
+		<filter-name>crossAuth</filter-name>
+		<filter-class>com.vmesteonline.be.CrossAuthFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>crossAuth</filter-name>
+		<url-pattern>/shop/*</url-pattern>
+		<url-pattern>/</url-pattern>
+	</filter-mapping>
+	
 
 	<servlet>
 		<servlet-name>UpdateSomething</servlet-name>

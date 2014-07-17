@@ -143,10 +143,17 @@
 							<li>
                             <c:choose>
                                 <c:when test="${shop.hostName != null && isProduction}">
-                                    <a href="http://${shop.hostName}<%=URLrest%>/shop/">
+	                                <c:choose>
+										<c:when test="${isAuth}">
+											<a href="http://${shop.hostName}<%=URLrest%>/shop/?rt=ci">
+										</c:when>
+										<c:otherwise>
+											<a href="http://${shop.hostName}<%=URLrest%>/shop/">		
+										</c:otherwise>
+									</c:choose>
                                 </c:when>
                                 <c:otherwise>
-                                    <a href="shop/${shop.id}">
+                                    <a href="/shop/${shop.id}">
                                 </c:otherwise>
                             </c:choose>
 

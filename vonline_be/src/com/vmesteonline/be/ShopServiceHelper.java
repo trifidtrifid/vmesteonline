@@ -1,12 +1,18 @@
 package com.vmesteonline.be;
 
+import java.util.logging.Logger;
+
 import javax.jdo.PersistenceManager;
 
+import com.vmesteonline.be.access.VoUserAccessBaseRoles;
+import com.vmesteonline.be.access.shop.VoShopAccessRoles;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.shop.VoOrder;
 import com.vmesteonline.be.jdo2.shop.VoShop;
 
 public class ShopServiceHelper {
+	
+	private static Logger logger = Logger.getLogger(ShopServiceHelper.class.getName());
 
 //======================================================================================================================
 	 static VoShop getCurrentShop(ServiceImpl si, PersistenceManager _pm) throws InvalidOperation {
@@ -67,5 +73,16 @@ public class ShopServiceHelper {
 
 	static String getProcutsOfCategoryCacheKey(long categoryId, Long shopId) {
 		return "VoProductsForCategory:" + shopId + ":" + categoryId;
+	}
+	
+	// ======================================================================================================================
+
+	public boolean isPublicMethod(String method) {
+		Long roleRequired;
+		if( null == (roleRequired =  VoShopAccessRoles.getRequiredRole(method))){
+			logger.warning("Method '"+method+"' is called but there is no role registered for it! Access denied");
+			return false;
+		}
+		return roleRequired == VoUserAccessBaseRoles.ANYBODY || roleRequired == VoShopAccessRoles.CUSTOMER;
 	}
 }
