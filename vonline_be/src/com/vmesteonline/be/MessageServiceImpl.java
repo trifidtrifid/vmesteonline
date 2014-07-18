@@ -150,6 +150,18 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	}
 
+	// todo remove method
+	public Message createMessage(long topicId, long parentId, long groupId, MessageType type, String content, Map<MessageType, Long> linkedMessages,
+			Map<Long, String> tags, long recipientId) throws InvalidOperation, TException {
+
+		int now = (int) (System.currentTimeMillis() / 1000L);
+		Message newMessage = new Message(0, parentId, type, topicId, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
+				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null);
+		newMessage.recipientId = recipientId;
+		postMessage(newMessage);
+		return null;
+	}
+
 	// ===================================================================================================================================
 	@Override
 	public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedMsgId, boolean archived, int length)
@@ -323,6 +335,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					votopic.setLongitude(ug.getLongitude());
 					votopic.setLatitude(ug.getLatitude());
 
+					topic.userInfo = user.getShortUserInfo();
 					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId() + ","
 							+ ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + "," + votopic.getCreatedAt() + ");");
 
@@ -390,6 +403,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					topic.setMessageNum(topic.getMessageNum() + 1);
 					topic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
 					pm.makePersistent(topic);
+					VoUser user = getCurrentUser(pm);
+					msg.userInfo = user.getShortUserInfo();
+
 				} catch (Exception e) {
 					e.printStackTrace();
 					throw new InvalidOperation(VoError.IncorrectParametrs, "can't create message " + e.toString());
@@ -398,6 +414,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				pm.close();
 			}
 			msg.setId(vomsg.getId());
+
 		} else {
 			updateMessage(msg);
 		}
