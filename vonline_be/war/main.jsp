@@ -353,7 +353,7 @@
                                                         <div class="text" ng-cloak>{{wallMessage.content}}</div>
 
                                                         <div class="attached">
-                                                            <a href="{{image}}" class="fancybox" rel="attached-group-{{wallMessage.id}}" ng-repeat="image in wallMessage.images">
+                                                            <a href="{{image}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
                                                                 <img src="{{image}}" alt="картинка"/>
                                                             </a>
                                                         </div>
@@ -364,7 +364,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                             </div>
 
                                             <div class="input-group"> <%--  ng-show="wallItem.answerShow" --%>

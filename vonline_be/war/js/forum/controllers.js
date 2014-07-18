@@ -400,7 +400,7 @@ angular.module('forum.controllers', [])
             newWallItem.label = getLabel(lenta.groups,lenta.selectedGroup.id);
             newWallItem.tagColor = getTagColor(newWallItem.label);
 
-            cleanAttached();
+            cleanAttached($('#attach-area-0'));
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
                 lenta.wallItems ?
@@ -438,6 +438,8 @@ angular.module('forum.controllers', [])
                 wallItem.messages = [];
                 wallItem.messages[0] = message;
             }
+
+            cleanAttached($('#attach-area-'+wallItem.topic.id));
 
         };
 
@@ -1265,8 +1267,8 @@ function getAttachedImages(selector){
 
     return imgList;
 }
-function cleanAttached(){
-    $('.attach-area').html('');
+function cleanAttached(selector){
+    selector.html('');
 }
 
 function initFancyBox(){
