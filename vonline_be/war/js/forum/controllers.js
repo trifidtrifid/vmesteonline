@@ -942,13 +942,13 @@ angular.module('forum.controllers', [])
     .controller('ProfileController',function() {
     })
     .controller('SettingsController',function() {
-        var settings = this;
+        /*var settings = this;
 
         settings.a = 1;
 
         var func = $http.get("ajax/forum/settings.jsp").success(function(data,status,headers,config){
             var data = data;
-        });
+        });*/
     });
 
 
@@ -1198,6 +1198,7 @@ function postTopic(obj,isWall){
     var tempTopic = messageClient.postTopic(newTopic);
     newTopic.id = tempTopic.id;
     newTopic.message.images = tempTopic.message.images;
+    newTopic.userInfo = tempTopic.userInfo;
 
     if(obj.isPollShow){
         newTopic.poll.pollId = tempTopic.poll.pollId;

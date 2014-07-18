@@ -272,7 +272,7 @@
 
                                             <div class="first-message clearfix" >
                                                 <div class="user">
-                                                    <img alt="Alexa's Avatar" src="{{wallItem.topic.message.userInfo.avatar}}">
+                                                    <img alt="Alexa's Avatar" src="{{wallItem.topic.userInfo.avatar}}">
                                                 </div>
 
                                                 <div class="body" ng-switch on="wallItem.topic.metaType">
