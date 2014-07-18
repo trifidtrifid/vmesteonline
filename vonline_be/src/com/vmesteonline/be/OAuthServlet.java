@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 
 import javax.servlet.http.HttpServlet;
@@ -73,7 +74,7 @@ public class OAuthServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		resp.sendRedirect(state + "?s=" + req.getSession().getId());
+		resp.sendRedirect(state + "?rt=ci&bu="+URLEncoder.encode("https://3-dot-vmesteonline.appspot.com/"));
 
 	}
 

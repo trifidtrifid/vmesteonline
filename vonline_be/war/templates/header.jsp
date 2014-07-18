@@ -78,7 +78,17 @@
                         <li>
                             <c:choose>
                                 <c:when test="${isProduction}">
-                                <a class="btn btn-info no-border no-prevent" href="http://voclub.co<c:out value="${URLrest}"/>">
+                                
+                                
+                                <c:choose>
+										<c:when test="${isAuth}">
+											<a class="btn btn-info no-border no-prevent" href="http://voclub.co<c:out value="${URLrest}"/>/?rt=ci">
+										</c:when>
+										<c:otherwise>
+											<a class="btn btn-info no-border no-prevent" href="http://voclub.co<c:out value="${URLrest}"/>">		
+										</c:otherwise>
+									</c:choose>
+                                
                                 </c:when>
                                 <c:otherwise>
                                     <a class="btn btn-info no-border no-prevent" href="/">

@@ -1,6 +1,9 @@
 package com.vmesteonline.be;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.utils.SystemProperty;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.shop.VoShop;
 
 @SuppressWarnings("serial")
@@ -32,6 +36,9 @@ public class Main implements javax.servlet.Filter {
 	public void doFilter(ServletRequest srequest, ServletResponse sresponse, FilterChain chain) throws IOException, ServletException {
 		
 		if ( SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
+			
+			doAuthFilter(srequest, sresponse);
+			
 			HttpServletRequest request = (HttpServletRequest) srequest;
 			HttpServletResponse response = (HttpServletResponse) sresponse;
 			
@@ -94,6 +101,66 @@ public class Main implements javax.servlet.Filter {
 			postfix = postfixStr;
 		} else {
 			postfix = "";
+		}
+	}
+	
+	public void doAuthFilter(ServletRequest arg0, ServletResponse arg1) throws IOException, ServletException {
+		
+		String rt = arg0.getParameter("rt"); //type of request, auth or confirm
+		HttpServletRequest req = (HttpServletRequest) arg0;
+		
+		String si = req.getParameter("si");
+		String bu = req.getParameter("bu");
+		
+		String ref = req.getHeader("Referer");
+		
+		logger.fine("Got 'rt' = '"+rt+"' si='"+si+"' ref='"+ref+"' bu='"+bu+"'");
+		
+		if( null!=rt){
+			
+			HttpServletResponse resp = (HttpServletResponse) arg1;
+			
+			
+			if( null!=ref || null!=(ref=bu)) try {
+				
+				URL refUrl = new URL(ref);//got exception if string is not like URL
+				
+				if( !refUrl.getHost().equals(req.getServerName()) || null!=bu ){ //check if HOST changed
+					
+					if("ci".equals(rt)){  //redirect to confirm auth
+						String confUrl = refUrl+"?rt=co&si="+req.getSession().getId()+"&bu="+URLEncoder.encode(req.getRequestURL().toString());
+						logger.fine("Got 'ci' request send redirect to '"+confUrl+"'");
+						resp.sendRedirect(confUrl);
+						
+					} else if("co".equals(rt) && null!=si){
+
+						String confUrl = refUrl+"?rt=co&si="+req.getSession().getId();
+						logger.fine("Got 'co' check the session");
+
+						PersistenceManager pm = PMF.getPm();
+						try {
+							VoSession cs = pm.getObjectById(VoSession.class,req.getSession().getId());
+							long userId = cs.getUserId();
+							VoSession rs = pm.getObjectById(VoSession.class, ""+si);
+							rs.setUserId(userId);
+							logger.fine("User id="+userId+" successfully attached to session '"+si+"' from session '"+req.getSession().getId()+"' REdirect req to '"+URLDecoder.decode(bu)+"'");
+							resp.sendRedirect( URLDecoder.decode(bu) );
+							
+
+							
+						} catch( Exception e){
+							logger.warning("Failed to confirm user."+e.getMessage());
+							resp.sendRedirect(ref);
+							
+						} finally {
+							pm.close();
+						}		
+					}
+				}
+			} catch (Exception e){
+				e.printStackTrace();
+				logger.warning("Failed filter." + e.getMessage());
+			}
 		}
 	}
 }

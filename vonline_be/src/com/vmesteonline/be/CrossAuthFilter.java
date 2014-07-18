@@ -52,7 +52,7 @@ public class CrossAuthFilter implements javax.servlet.Filter {
 			HttpServletResponse resp = (HttpServletResponse) arg1;
 			
 			
-			if( null!=ref ) try {
+			if( null!=ref || null!=(ref=bu)) try {
 				
 				URL refUrl = new URL(ref);//got exception if string is not like URL
 				
