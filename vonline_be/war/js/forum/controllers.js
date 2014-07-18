@@ -425,11 +425,14 @@ angular.module('forum.controllers', [])
             message.content = wallItem.commentText;
             message.images = getAttachedImages($('#attach-area-'+wallItem.topic.id));
 
-            messageClient.postMessage(message);
+            var newMessage = messageClient.postMessage(message);
             wallItem.commentText = "Ваш ответ";
-            message.created = new Date();
-            message.createdEdit = getTiming(message.created);
+            message.created = newMessage.created;
+            message.createdEdit = getTiming(newMessage.created);
             message.authorName = getAuthorName();
+            message.userInfo = newMessage.userInfo;
+            message.images = newMessage.images;
+            message.id = newMessage.id;
 
             //console.log(lenta.wallItems+" "+lenta.wallItems.topic);
             if(wallItem.messages){
