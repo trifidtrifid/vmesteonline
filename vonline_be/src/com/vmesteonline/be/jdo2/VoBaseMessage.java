@@ -36,9 +36,10 @@ public abstract class VoBaseMessage extends GeoLocation {
 		try {
 			if (msg.images != null) {
 				for (String img : msg.images) {
-					img = StorageHelper.saveImage(img, msg.getAuthorId(), true, pm);
-					images.add(img);
+					images.add(StorageHelper.saveImage(img, msg.getAuthorId(), true, pm));
 				}
+				msg.images = images;
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -58,10 +59,9 @@ public abstract class VoBaseMessage extends GeoLocation {
 	public VoBaseMessage() {
 	}
 
-	/*	public Key getId() {
-			return id;
-		}
-	*/
+	/*
+	 * public Key getId() { return id; }
+	 */
 	public Key getAuthorId() {
 		return authorId;
 	}
@@ -74,10 +74,9 @@ public abstract class VoBaseMessage extends GeoLocation {
 		this.type = type;
 	}
 
-	/*	public void setId(Key key) {
-			this.id = key;
-		}
-	*/
+	/*
+	 * public void setId(Key key) { this.id = key; }
+	 */
 	public byte[] getContent() {
 		return content;
 	}
@@ -107,8 +106,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 	}
 
 	/*
-	 * public VoUserAttitude(int likes, int unlikes) { likesNum = likes;
-	 * unlikesNum = unlikes; }
+	 * public VoUserAttitude(int likes, int unlikes) { likesNum = likes; unlikesNum = unlikes; }
 	 */
 	public int getLikes() {
 		return likesNum;
@@ -142,10 +140,11 @@ public abstract class VoBaseMessage extends GeoLocation {
 		this.unlikesNum = unlikes;
 	}
 
-	/*	@PrimaryKey
-		@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-		protected Key id;
-	*/
+	/*
+	 * @PrimaryKey
+	 * 
+	 * @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY) protected Key id;
+	 */
 	@Persistent(serialized = "true")
 	@Unindexed
 	protected byte[] content;

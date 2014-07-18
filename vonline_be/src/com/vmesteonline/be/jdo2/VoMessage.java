@@ -108,7 +108,7 @@ public class VoMessage extends VoBaseMessage {
 				/*
 				 * Check that all of linked messages exists and has type that is required
 				 */
-				this.links = new HashMap<MessageType, Long>();
+/*				this.links = new HashMap<MessageType, Long>();
 
 				for (Entry<MessageType, Long> entry : msg.getLinkedMessages().entrySet()) {
 					VoMessage linkedMsg = pm.getObjectById(VoMessage.class, entry.getValue());
@@ -120,7 +120,7 @@ public class VoMessage extends VoBaseMessage {
 								+ " type missmatch. Stored type:" + linkedMsg.getType().name() + " but linked as:" + entry.getKey().name());
 					links.put(entry.getKey(), entry.getValue());
 				}
-
+*/
 				this.approvedId = msg.getApprovedBy();
 
 				pm.makePersistent(author);
