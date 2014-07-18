@@ -940,6 +940,10 @@ angular.module('forum.controllers', [])
         var settings = this;
 
         settings.a = 1;
+
+        var func = $http.get("ajax/forum/settings.jsp").success(function(data,status,headers,config){
+            var data = data;
+        });
     });
 
 
@@ -1022,9 +1026,9 @@ function initAttachImage(selector,attachAreaSelector){
         fileLabel.attr('data-title',title).removeClass('hide-placeholder');
         fileLabel.find('.file-name').hide();
 
-        setTimeout(t,200);
+        setTimeout(copyImage,200);
 
-        function t() {
+        function copyImage() {
             var copyImgSrc = fileLabel.find('.file-name img').css('background-image');
 
             //$('.attach-area')
