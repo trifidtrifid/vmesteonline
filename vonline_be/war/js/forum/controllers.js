@@ -66,7 +66,8 @@ angular.module('forum.controllers', [])
 
         };
 
-        initAttachImage($('#attachImage-0'),$('#attach-area-0'));
+        initAttachImage($('#attachImage-0'),$('#attach-area-0')); // для ленты новостей
+        initAttachImage($('#attachImage-00'),$('#attach-area-00')); // для обсуждений
         initFancyBox();
 
         base.oldTextLength = 0;
@@ -416,7 +417,12 @@ angular.module('forum.controllers', [])
         lenta.createWallComment = function(event,wallItem){
             event.preventDefault();
 
-            var message =  new com.vmesteonline.be.messageservice.Message();
+            wallItem.groupId = lenta.selectedGroupInTop.id;
+
+            var isWall = true,
+                message =  postMessage(wallItem,isWall);
+
+            /*var message =  new com.vmesteonline.be.messageservice.Message();
             message.id = 0;
             message.topicId = wallItem.topic.id;
             message.parentId = 0;
@@ -424,15 +430,16 @@ angular.module('forum.controllers', [])
             message.type = com.vmesteonline.be.messageservice.MessageType.WALL;//5;
             message.content = wallItem.commentText;
             message.images = getAttachedImages($('#attach-area-'+wallItem.topic.id));
+            message.created = Date.parse(new Date)/1000;
 
             var newMessage = messageClient.postMessage(message);
             wallItem.commentText = "Ваш ответ";
-            message.created = newMessage.created;
             message.createdEdit = getTiming(newMessage.created);
+            console.log(newMessage.created);
             message.authorName = getAuthorName();
             message.userInfo = newMessage.userInfo;
             message.images = newMessage.images;
-            message.id = newMessage.id;
+            message.id = newMessage.id;*/
 
             //console.log(lenta.wallItems+" "+lenta.wallItems.topic);
             if(wallItem.messages){
@@ -442,10 +449,12 @@ angular.module('forum.controllers', [])
                 wallItem.messages[0] = message;
             }
 
-            cleanAttached($('#attach-area-'+wallItem.topic.id));
+            //cleanAttached($('#attach-area-'+wallItem.topic.id));
+            wallItem.answerShow = false ;
 
         };
 
+        var initFlagsArray = [];
         lenta.showAnswerInput = function(event,wallItem,wallMessage){
             event.preventDefault();
 
@@ -465,7 +474,11 @@ angular.module('forum.controllers', [])
                 wallItem.commentText = "";
             }
 
-            initAttachImage($('#attachImage-'+wallItem.topic.id),$('#attach-area-'+wallItem.topic.id));
+            if(!initFlagsArray[wallItem.topic.id]) {
+                // инифицализацмю AttachImage нужно делать только один раз для каждого сообщения
+                initAttachImage($('#attachImage-' + wallItem.topic.id), $('#attach-area-' + wallItem.topic.id));
+                initFlagsArray[wallItem.topic.id] = true;
+            }
 
         };
 
@@ -663,6 +676,8 @@ angular.module('forum.controllers', [])
         talk.selectGroupInDropdown = selectGroupInDropdown;
 
         talk.addSingleTalk = function(){
+            talk.attachedImages = getAttachedImages($('#attach-area-00'));
+
             var isWall = 0,
                 newTopic = postTopic(talk,isWall);
             /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
@@ -704,19 +719,29 @@ angular.module('forum.controllers', [])
 
         };
 
-        talk.showTopicAnswerInput = function(event){
+        var initFlagsTopic = [];
+        talk.showTopicAnswerInput = function(event,fullTalkTopic){
             event.preventDefault();
+
+            if(!initFlagsTopic[fullTalkTopic.id]) {
+                initAttachImage($('#attachImage-' + fullTalkTopic.id), $('#attach-area-' + fullTalkTopic.id));
+                initFlagsTopic[fullTalkTopic.id] = true;
+            }
 
             talk.fullTalkTopic.answerInputIsShow ?
                 talk.fullTalkTopic.answerInputIsShow = false :
                 talk.fullTalkTopic.answerInputIsShow = true ;
         };
 
-        talk.showMessageAnswerInput = function(event,firstMessage,message){
+        var initFlagsMessage = [];
+        talk.showMessageAnswerInput = function(event,fullTalkTopic,firstMessage,message){
             event.preventDefault();
+            var attachId;
 
             if(!message){
                 // если это сообщение первого уровня
+                attachId = fullTalkTopic.id+'-'+firstMessage.id;
+
                 if(!talk.fullTalkFirstMessages) talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
                 var fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length;
 
@@ -727,6 +752,8 @@ angular.module('forum.controllers', [])
 
             }else{
                 // если простое сообщение
+                attachId = fullTalkTopic.id+'-'+message.id;
+
                 if(!talk.fullTalkMessages[firstMessage.id]) talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,1000).messages;
                 var  fullTalkMessagesLength = talk.fullTalkMessages[firstMessage.id].length;
                 message.answerInputIsShow ?
@@ -735,6 +762,11 @@ angular.module('forum.controllers', [])
 
 
             }
+
+            if(!initFlagsMessage[attachId]) {
+                initAttachImage($('#attachImage-' + attachId), $('#attach-area-' + attachId));
+                initFlagsMessage[attachId] = true;
+            }
         };
 
         talk.addSingleFirstMessage = function(event,topicId){
@@ -742,12 +774,21 @@ angular.module('forum.controllers', [])
 
             talk.fullTalkTopic.answerInputIsShow = false;
 
+           /* var message =  new com.vmesteonline.be.messageservice.Message();
+
             var newMessage = messageClient.createMessage(topicId,0,talk.selectedGroup.id,1,talk.answerFirstMessage);
-            newMessage.createdEdit = getTiming(newMessage.created);
+            newMessage.createdEdit = getTiming(newMessage.created);*/
+
+            talk.topicId = topicId;
+
+            var isWall = false,
+                isFirstLevel = true,
+                newMessage = postMessage(talk,isWall,isFirstLevel);
 
             talk.fullTalkFirstMessages ?
                 talk.fullTalkFirstMessages.push(newMessage):
                 talk.fullTalkFirstMessages[0] = newMessage;
+
 
         };
 
@@ -763,6 +804,7 @@ angular.module('forum.controllers', [])
 
             if(!message){
                 // если добавляем к сообщению первого уровня
+                talk.messageId = firstMessage.id;
 
                 answer = firstMessage.answerMessage;
                 firstMessage.isTreeOpen = true;
@@ -770,10 +812,10 @@ angular.module('forum.controllers', [])
                 firstMessage.answerMessage = "Ваш ответ";
                 parentId = firstMessage.id;
 
-
-
             }else{
                 // если добавляем к простому сообщению
+                talk.messageId = message.id;
+
                 for(var i = 0; i < fullTalkMessagesLength; i++){
                     if(talk.fullTalkMessages[firstMessage.id][i].id == message.id){
                         talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
@@ -787,7 +829,14 @@ angular.module('forum.controllers', [])
                 parentId = message.id;
 
             }
-            newMessage = messageClient.createMessage(topicId,parentId,talk.selectedGroup.id,1,answer,0,0,0);
+//            newMessage = messageClient.createMessage(topicId,parentId,talk.selectedGroup.id,1,answer,0,0,0);
+            var isWall = false,
+                isFirstLevel = false;
+            talk.topicId = topicId;
+            talk.parentId = parentId;
+            talk.answerMessage = answer;
+
+            newMessage = postMessage(talk,isWall,isFirstLevel);
 
             /*talk.fullTalkMessages ?
                 talk.fullTalkMessages.push(newMessage):
@@ -1014,6 +1063,7 @@ function initProfile(){
 }
 function initAttachImage(selector,attachAreaSelector){
     var title;
+
     selector.ace_file_input({
         style:'well',
         btn_choose:'Изображение',
@@ -1167,7 +1217,7 @@ function postTopic(obj,isWall){
     newTopic.message.content = messageContent;
     newTopic.message.images = obj.attachedImages;
     newTopic.message.id = 0;
-    newTopic.message.created = Date.parse(new Date());
+    newTopic.message.created = Date.parse(new Date())/1000;
 
     newTopic.subject = subject;
     newTopic.id = 0;
@@ -1220,6 +1270,50 @@ function postTopic(obj,isWall){
 
 }
 
+function postMessage(obj,isWall,isFirstLevel){
+    var message =  new com.vmesteonline.be.messageservice.Message(),
+        attachId;
+
+    if(isWall){
+        message.type = com.vmesteonline.be.messageservice.MessageType.WALL;//5;
+        attachId = message.topicId = obj.topic.id;
+        message.groupId = obj.groupId;
+        message.content = obj.commentText;
+        message.parentId = 0;
+    }else{
+        message.type = com.vmesteonline.be.messageservice.MessageType.BASE;//1;
+        attachId = message.topicId = obj.topicId;
+        message.groupId = obj.selectedGroup.id;
+
+        if(isFirstLevel) {
+            message.content = obj.answerFirstMessage;
+            message.parentId = 0;
+        }else{
+            message.content = obj.answerMessage;
+            message.parentId = obj.parentId;
+            attachId = attachId +"-"+ obj.messageId;
+        }
+    }
+
+    message.id = 0;
+    message.images = getAttachedImages($('#attach-area-'+attachId));
+    cleanAttached($('#attach-area-'+ attachId));
+    //message.images = obj.attachedImages;
+    message.created = Date.parse(new Date)/1000;
+
+    var newMessage = messageClient.postMessage(message);
+
+    obj.commentText = "Ваш ответ";
+    message.createdEdit = getTiming(newMessage.created);
+    console.log(newMessage.created);
+    message.authorName = getAuthorName();
+    message.userInfo = newMessage.userInfo;
+    message.images = newMessage.images;
+    message.id = newMessage.id;
+
+    return message;
+}
+
 function setPollEditNames(poll){
     // obj.wallItems[i].topic
     poll.editNames = [];
@@ -1255,9 +1349,6 @@ function setPollEditNames(poll){
             votersPercent: votersPercent+"%"
         };
 
-        console.log('---');
-        //console.log(poll.names[j]+" "+poll.values[j]);
-        console.log('---');
     }
     poll.amount = amount;
 }

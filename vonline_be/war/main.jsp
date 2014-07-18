@@ -40,6 +40,7 @@
         pageContext.setAttribute("topics",Topics.topics);
         pageContext.setAttribute("firstName",ShortUserInfo.firstName);
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
+        pageContext.setAttribute("userAvatar",ShortUserInfo.avatar);
 	} catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
 		response.sendRedirect("/login.html");
@@ -99,7 +100,7 @@
 
                 <li class="user-short light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                        <img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />
+                        <img class="nav-user-photo" ng-src="<c:out value="${userAvatar}"/>" alt="Jason's Photo" />
                         <span class="user-info">
                             <small><c:out value="${firstName}" /></small>
                             <c:out value="${lastName}" />
@@ -223,9 +224,7 @@
                                         <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,lenta)"/>
                                     </div>
 
-                                    <div class="attach-area" id="attach-area-0">
-
-                                    </div>
+                                    <div class="attach-area" id="attach-area-0"></div>
 
                                     <div class="message-input-bottom">
                                         <div class="btn-group attach-dropdown pull-right">
@@ -272,7 +271,7 @@
 
                                             <div class="first-message clearfix" >
                                                 <div class="user">
-                                                    <img alt="Alexa's Avatar" src="{{wallItem.topic.userInfo.avatar}}">
+                                                    <img alt="Alexa's Avatar" ng-src="{{wallItem.topic.userInfo.avatar}}">
                                                 </div>
 
                                                 <div class="body" ng-switch on="wallItem.topic.metaType">
@@ -287,7 +286,7 @@
 
                                                     <div class="attached">
                                                         <a href="{{image}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
-                                                            <img src="{{image}}" alt="картинка"/>
+                                                            <img ng-src="{{image}}" alt="картинка"/>
                                                         </a>
                                                     </div>
 
@@ -342,7 +341,7 @@
                                             <div class="dialogs">
                                                 <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
                                                     <div class="user">
-                                                        <img alt="Alexa's Avatar" src="{{wallMessage.userInfo.avatar}}">
+                                                        <img alt="Alexa's Avatar" ng-src="{{wallMessage.userInfo.avatar}}">
                                                     </div>
 
                                                     <div class="body">
@@ -354,7 +353,7 @@
 
                                                         <div class="attached">
                                                             <a href="{{image}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
-                                                                <img src="{{image}}" alt="картинка"/>
+                                                                <img ng-src="{{image}}" alt="картинка"/>
                                                             </a>
                                                         </div>
 
@@ -366,7 +365,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="input-group"> <%--  ng-show="wallItem.answerShow" --%>
+                                            <div class="input-group">
                                                 <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallItem.commentText"
                                                           ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow" ng-keyup="base.messageChange($event,1)"
                                                     onblur="if(this.value=='') this.value='Ваш ответ';"
@@ -439,42 +438,47 @@
                                             <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,talks)"/>
                                         </div>
 
-                                        <div class="btn-group pull-left">
-                                        <button class="btn btn-sm btn-primary" ng-click="talks.addSingleTalk()">
-                                        Создать
-                                        </button>
-                                        </div>
+                                        <div class="attach-area" id="attach-area-00"></div>
 
-                                        <div class="hashtag pull-left">
-                                            <span>группа</span>
-                                            <div class="btn-group hashtag-dropdown">
-                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                                    <span class="btn-group-text"># {{talks.selectedGroup.visibleName}}</span>
-                                                    <span class="icon-caret-down icon-on-right"></span>
+                                        <div class="message-input-bottom">
+
+                                            <div class="btn-group pull-left">
+                                                <button class="btn btn-sm btn-primary" ng-click="talks.addSingleTalk()">
+                                                Создать
+                                                </button>
+                                            </div>
+
+                                            <div class="hashtag pull-left">
+                                                <span>группа</span>
+                                                <div class="btn-group hashtag-dropdown">
+                                                    <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                                        <span class="btn-group-text"># {{talks.selectedGroup.visibleName}}</span>
+                                                        <span class="icon-caret-down icon-on-right"></span>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-blue">
+                                                        <li ng-repeat="group in talks.groups"><a href="#" ng-click="talks.selectGroupInDropdown(group.id,talks)"># {{group.visibleName}}</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="btn-group attach-dropdown pull-right">
+                                                <button data-toggle="dropdown"
+                                                class="btn btn-info btn-sm dropdown-toggle no-border">
+                                                <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
                                                 </button>
 
-                                                <ul class="dropdown-menu dropdown-blue">
-                                                    <li ng-repeat="group in talks.groups"><a href="#" ng-click="talks.selectGroupInDropdown(group.id,talks)"># {{group.visibleName}}</a></li>
+                                                <ul class="dropdown-menu dropdown-yellow">
+                                                <li><a href="#">Видео</a></li>
+
+                                                <li><a href="#">Документ</a></li>
+
+                                                <li><input id="attachImage-00" type="file"/></li>
+
+                                                <li><a href="#" ng-click="base.showPoll($event,talks)" ng-show="talks.isPollAvailable">Опрос</a></li>
                                                 </ul>
                                             </div>
-                                        </div>
-
-
-                                        <div class="btn-group pull-right">
-                                        <button data-toggle="dropdown"
-                                        class="btn btn-info btn-sm dropdown-toggle no-border">
-                                        <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
-                                        </button>
-
-                                        <ul class="dropdown-menu dropdown-yellow">
-                                        <li><a href="#">Видео</a></li>
-
-                                        <li><a href="#">Фотографию</a></li>
-
-                                        <li><a href="#">Документ</a></li>
-
-                                        <li><a href="#" ng-click="base.showPoll($event,talks)" ng-show="talks.isPollAvailable">Опрос</a></li>
-                                        </ul>
                                         </div>
 
 

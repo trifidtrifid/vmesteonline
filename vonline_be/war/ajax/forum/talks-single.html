@@ -11,7 +11,7 @@
                             <div class="widget-main">
                                 <div class="topic-left">
                                     <a href="#">
-                                        <img src="{{talks.fullTalkTopic.message.userInfo.avatar}}" alt="картинка" /></a>
+                                        <img ng-src="{{talks.fullTalkTopic.userInfo.avatar}}" alt="картинка" /></a>
                                     <div class="topic-author">
                                     </div>
                                 </div>
@@ -21,6 +21,12 @@
                                         </h2>
 
                                     <p ng-switch-when="message">{{talks.fullTalkTopic.message.content}}</p>
+
+                                    <div class="attached">
+                                        <a href="{{image}}" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id}}" ng-repeat="image in talks.fullTalkTopic.message.images">
+                                            <img ng-src="{{image}}" alt="картинка"/>
+                                        </a>
+                                    </div>
 
                                     <div class="poll" ng-switch-when="poll"  ng-switch on="talks.fullTalkTopic.poll.alreadyPoll" ng-cloak>
                                         <div class="text" ng-cloak>{{talks.fullTalkTopic.message.content}}</div>
@@ -63,7 +69,7 @@
 
                                         <div class="message-bottom">
                                             <span class="topic-header-date">{{talks.fullTalkTopic.message.createdEdit}}</span>
-                                            <a class="answer-link" href="#" ng-click="talks.showTopicAnswerInput($event)">Ответить</a>
+                                            <a class="answer-link" href="#" ng-click="talks.showTopicAnswerInput($event,talks.fullTalkTopic)">Ответить</a>
                                         </div>
                                 </div>
                             </div>
@@ -71,7 +77,25 @@
                                 <textarea ng-model="talks.answerFirstMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
                                           onblur="if(this.value=='') this.value='Ваш ответ';"
                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
-                                <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleFirstMessage($event,talks.fullTalkTopic.id)">Отправить</a>
+
+                                <div id="attach-area-{{talks.fullTalkTopic.id}}" class="attach-area"></div>
+
+                                <div class="answer-input-bottom">
+                                    <div class="btn-group attach-dropdown pull-right">
+                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                            <span class="btn-group-text">Прикрепить</span>
+                                            <span class="icon-caret-down icon-on-right"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-blue">
+                                            <li><a href="#">Документ</a></li>
+                                            <li><input id="attachImage-{{talks.fullTalkTopic.id}}" type="file"/></li>
+                                        </ul>
+                                    </div>
+
+                                    <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleFirstMessage($event,talks.fullTalkTopic.id)">Отправить</a>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -83,7 +107,7 @@
                                     <div class="widget-main">
                                         <div class="topic-left">
                                             <a href="#">
-                                                <img src="{{firstMessage.userInfo.avatar}}" alt="картинка" /></a>
+                                                <img ng-src="{{firstMessage.userInfo.avatar}}" alt="картинка" /></a>
                                             <div class="topic-author">
                                                 <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !firstMessage.isTreeOpen,'fa-minus' : firstMessage.isTreeOpen}"
                                                    ng-click="talks.toggleTreeFirstMessage($event,firstMessage)"></a>
@@ -92,18 +116,43 @@
                                         <div class="topic-right">
                                             <h2><a href="#">Автор автор</a></h2>
                                             <p>{{firstMessage.content}}</p>
+
+                                            <div class="attached">
+                                                <a href="{{image}}" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
+                                                    <img ng-src="{{image}}" alt="картинка"/>
+                                                </a>
+                                            </div>
+
                                             <div class="message-bottom">
                                                 <span class="topic-header-date">{{firstMessage.createdEdit}}</span>
-                                                <a class="answer-link" href="#" ng-click="talks.showMessageAnswerInput($event,firstMessage)">Ответить</a>
+                                                <a class="answer-link" href="#" ng-click="talks.showMessageAnswerInput($event,talks.fullTalkTopic,firstMessage)">Ответить</a>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="answer-input" ng-show="firstMessage.answerInputIsShow">
                                         <textarea ng-model="firstMessage.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
-                                            onblur="if(this.value=='') this.value='Ваш ответ';"
-                                            onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
-                                        <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,firstMessage)">Отправить</a>
+                                                  onblur="if(this.value=='') this.value='Ваш ответ';"
+                                                  onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
+
+                                        <div id="attach-area-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" class="attach-area"></div>
+
+                                        <div class="answer-input-bottom">
+                                            <div class="btn-group attach-dropdown pull-right">
+                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                                    <span class="btn-group-text">Прикрепить</span>
+                                                    <span class="icon-caret-down icon-on-right"></span>
+                                                </button>
+
+                                                <ul class="dropdown-menu dropdown-blue">
+                                                    <li><a href="#">Документ</a></li>
+                                                    <li><input id="attachImage-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" type="file"/></li>
+                                                </ul>
+                                            </div>
+
+                                            <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,firstMessage)">Отправить</a>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -116,7 +165,7 @@
                                             <div class="widget-main">
                                                 <div class="topic-left">
                                                     <a href="#">
-                                                        <img src="{{message.userInfo.avatar}}" alt="картинка" /></a>
+                                                        <img ng-src="{{message.userInfo.avatar}}" alt="картинка" /></a>
                                                     <div class="topic-author">
                                                         <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !message.isTreeOpen,'fa-minus' : message.isTreeOpen}"
                                                            ng-click="talks.toggleTree($event,message,firstMessage)"></a>
@@ -125,9 +174,16 @@
                                                 <div class="topic-right">
                                                     <h2><a href="#">Автор автор</a></h2>
                                                     <p>{{message.content}}</p>
+
+                                                    <div class="attached">
+                                                        <a href="{{image}}" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
+                                                            <img ng-src="{{image}}" alt="картинка"/>
+                                                        </a>
+                                                    </div>
+
                                                     <div class="message-bottom">
                                                         <span class="topic-header-date">{{message.createdEdit}}</span>
-                                                        <a class="answer-link" href="#" ng-click="talks.showMessageAnswerInput($event,firstMessage,message)">Ответить</a>
+                                                        <a class="answer-link" href="#" ng-click="talks.showMessageAnswerInput($event,talks.fullTalkTopic,firstMessage,message)">Ответить</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -136,7 +192,25 @@
                                                 <textarea ng-model="message.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
                                                           onblur="if(this.value=='') this.value='Ваш ответ';"
                                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
-                                                <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,firstMessage,message)">Отправить</a>
+
+                                                <div id="attach-area-{{talks.fullTalkTopic.id+'-'+message.id}}" class="attach-area"></div>
+
+                                                <div class="answer-input-bottom">
+                                                    <div class="btn-group attach-dropdown pull-right">
+                                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                                            <span class="btn-group-text">Прикрепить</span>
+                                                            <span class="icon-caret-down icon-on-right"></span>
+                                                        </button>
+
+                                                        <ul class="dropdown-menu dropdown-blue">
+                                                            <li><a href="#">Документ</a></li>
+                                                            <li><input id="attachImage-{{talks.fullTalkTopic.id+'-'+message.id}}" type="file"/></li>
+                                                        </ul>
+                                                    </div>
+
+                                                    <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,firstMessage,message)">Отправить</a>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
