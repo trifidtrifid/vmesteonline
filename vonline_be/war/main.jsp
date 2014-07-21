@@ -103,7 +103,8 @@
 
                 <li class="user-short light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                        <img class="nav-user-photo" ng-src="<c:out value="${userAvatar}"/>" alt="Jason's Photo" />
+                        <div class="nav-user-photo" style="background-image: url('<c:out value="${userAvatar}"/>')"></div>
+                        <%--<img class="nav-user-photo" ng-src="<c:out value="${userAvatar}"/>" alt="аватар" />--%>
                         <span class="user-info">
                             <small><c:out value="${firstName}" /></small>
                             <c:out value="${lastName}" />

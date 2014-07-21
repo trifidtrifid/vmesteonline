@@ -61,7 +61,8 @@
 
                         <div class="first-message clearfix" >
                             <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })" class="user">
-                                <img alt="аватар" ng-src="{{wallItem.topic.userInfo.avatar}}">
+                                <div class="avatar" style="background-image: url({{wallItem.topic.userInfo.avatar}})"></div>
+                                <!--<img alt="аватар" ng-src="{{wallItem.topic.userInfo.avatar}}">-->
                             </a>
 
                             <div class="body" ng-switch on="wallItem.topic.metaType">
@@ -131,7 +132,8 @@
                         <div class="dialogs">
                             <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
                                 <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })" class="user">
-                                    <img alt="аватар" ng-src="{{wallMessage.userInfo.avatar}}">
+                                    <div class="avatar short" style="background-image: url({{wallMessage.userInfo.avatar}})"></div>
+                                    <!--<img alt="аватар" ng-src="{{wallMessage.userInfo.avatar}}">-->
                                 </a>
 
                                 <div class="body">

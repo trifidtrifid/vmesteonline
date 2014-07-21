@@ -12,7 +12,8 @@
                             <div class="widget-main">
                                 <div class="topic-left">
                                     <a ui-sref="profile({ userId : {{ talks.fullTalkTopic.userInfo.id }} })">
-                                        <img ng-src="{{talks.fullTalkTopic.userInfo.avatar}}" alt="картинка" /></a>
+                                        <div class="avatar" style="background-image: url({{talks.fullTalkTopic.userInfo.avatar}})"></div>
+                                        <!--<img ng-src="{{talks.fullTalkTopic.userInfo.avatar}}" alt="картинка" /></a>-->
                                     <div class="topic-author">
                                     </div>
                                 </div>
@@ -108,7 +109,8 @@
                                     <div class="widget-main">
                                         <div class="topic-left">
                                             <a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">
-                                                <img ng-src="{{firstMessage.userInfo.avatar}}" alt="картинка" /></a>
+                                                <div class="avatar" style="background-image: url({{firstMessage.userInfo.avatar}})"></div>
+                                                <!--<img ng-src="{{firstMessage.userInfo.avatar}}" alt="картинка" /></a>-->
                                             <div class="topic-author">
                                                 <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !firstMessage.isTreeOpen,'fa-minus' : firstMessage.isTreeOpen}"
                                                    ng-click="talks.toggleTreeFirstMessage($event,firstMessage)"></a>
@@ -166,7 +168,8 @@
                                             <div class="widget-main">
                                                 <div class="topic-left">
                                                     <a ui-sref="profile({ userId : {{ message.userInfo.id }} })">
-                                                        <img ng-src="{{message.userInfo.avatar}}" alt="картинка" /></a>
+                                                        <div class="avatar" style="background-image: url({{message.userInfo.avatar}})"></div>
+                                                        <!--<img ng-src="{{message.userInfo.avatar}}" alt="картинка" /></a>-->
                                                     <div class="topic-author">
                                                         <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !message.isTreeOpen,'fa-minus' : message.isTreeOpen}"
                                                            ng-click="talks.toggleTree($event,message,firstMessage)"></a>

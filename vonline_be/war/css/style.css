@@ -66,9 +66,20 @@ h1 {
   padding: 0 8px;
   font-size: 16px;
 }
+.ace-nav li:last-child .icon-caret-down {
+  position: relative;
+  top: -10px;
+}
 .ace-nav .nav-user-photo {
   border: 0;
-  max-width: 35px;
+  width: 35px;
+  height: 35px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+  display: inline-block;
+  margin-top: 5px;
+  border-radius: 0;
 }
 .nav-list > li > a {
   padding: 8px 10px 10px 16px;
@@ -730,6 +741,17 @@ h1 {
 .lenta-item .lenta-item-hashtag {
   float: right;
 }
+.avatar {
+  width: 100px;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+.avatar.short {
+  width: 40px;
+  height: 40px;
+}
 .create-topic-btn {
   overflow: auto;
 }
@@ -863,7 +885,7 @@ h1 {
   width: 70px;
 }
 .nextdoors .nextdoor-single .nextdoor-left .nextdoor-name {
-  margin-left: 90px;
+  margin-left: 110px;
 }
 .nextdoors .nextdoors-amount {
   margin: 15px 0 0 0;
@@ -871,6 +893,7 @@ h1 {
 }
 .user-body .user-body-left .logo-container {
   position: relative;
+  width: 150px;
 }
 .user-body .user-body-left .ace-file-input {
   position: absolute;
@@ -905,7 +928,10 @@ h1 {
   vertical-align: middle;
 }
 .user-body .user-body-left img {
-  width: 150px;
+  max-width: 150px;
+  max-height: 150px;
+  display: block;
+  margin: 0 auto;
 }
 .user-body .user-body-right {
   margin-left: 170px;
