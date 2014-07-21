@@ -95,10 +95,10 @@
 
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
-                <li ng-class="navbar.privateMessagesBtnStatus"><a class="btn btn-info no-border private-messages-link" ng-click="navbar.goToPrivateMessages($event)"
+                <li ng-class="navbar.privateMessagesBtnStatus"><a class="btn btn-info no-border private-messages-link"
                                                                   ui-sref="private-messages">Личные сообщения </a></li>
 
-                <li ng-class="navbar.nextdoorsBtnStatus"><a class="btn btn-info no-border nextdoors-link" ng-click="navbar.goToNextdoors($event)"
+                <li ng-class="navbar.nextdoorsBtnStatus"><a class="btn btn-info no-border nextdoors-link"
                                                             ui-sref="nextdoors"> Соседи</a></li>
 
                 <li class="user-short light-blue">
@@ -112,7 +112,7 @@
                     </a>
 
                     <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                        <li><a ui-sref="settings" ng-click="navbar.goToSettings($event)"> <i class="icon-cog"></i> <!--   -->
+                        <li><a ui-sref="settings"> <i class="icon-cog"></i> <!--   -->
                             Настройки
                         </a></li>
 

@@ -135,91 +135,7 @@ angular.module('forum.controllers', [])
   .controller('navbarController', function($rootScope) {
         this.privateMessagesBtnStatus = "";
         this.nextdoorsBtnStatus = "";
-        var navbar = $rootScope.navbar = this;
-
-        this.goToNextdoors = function(event){
-            event.preventDefault();
-
-            //resetLeftBar($rootScope.leftbar);
-            $rootScope.leftbar.tab = 0;
-
-            resetPages($rootScope.base);
-            $rootScope.base.mainContentTopIsHide = false;
-            $rootScope.base.nextdoorsIsActive = true;
-
-            resetAceNavBtns(navbar);
-            navbar.nextdoorsBtnStatus = "active";
-            $rootScope.base.pageTitle = "";
-
-            var nextdoors = $('.dynamic .nextdoors');
-
-            /*if ($rootScope.base.nextdoorsLoadStatus == "") {
-                nextdoors.load('ajax/forum/nextdoors.jsp .nextdoors',function(){
-                });
-            }*/
-
-            $rootScope.base.nextdoorsLoadStatus = "isLoaded";
-
-        };
-
-        this.goToPrivateMessages = function(event){
-                //event.preventDefault();
-
-                $rootScope.leftbar.tab = 0;
-
-                resetPages($rootScope.base);
-                $rootScope.base.privateMessagesIsActive = true;
-
-                resetAceNavBtns(navbar);
-                navbar.privateMessagesBtnStatus = "active";
-                $rootScope.base.mainContentTopIsHide = true;
-
-                var privateMessages = $('.dynamic .private-messages');
-
-                /*if ($rootScope.base.privateMessagesLoadStatus == "") {
-                    privateMessages.load('ajax/forum/private-messages.jsp .private-messages',function(){
-                    });
-                }*/
-
-                $rootScope.base.privateMessagesLoadStatus = "isLoaded";
-
-            };
-
-/*        this.goToProfile = function(event){
-            event.preventDefault();
-
-            $rootScope.leftbar.tab = 0;
-
-            resetPages($rootScope.base);
-            $rootScope.base.profileIsActive = true;
-
-            resetAceNavBtns(navbar);
-
-            $rootScope.base.profileLoadStatus = "isLoaded";
-
-        };*/
-
-        this.goToSettings = function(event){
-            event.preventDefault();
-
-            $rootScope.leftbar.tab = 0;
-
-            resetPages($rootScope.base);
-            $rootScope.base.settingsIsActive = true;
-
-            resetAceNavBtns(navbar);
-            $rootScope.base.mainContentTopIsHide = true;
-
-            var settings = $('.dynamic .settings');
-
-            /*if ($rootScope.base.settingsLoadStatus == "") {
-                settings.load('ajax/forum/settings.jsp .settings',function(){
-
-                });
-            }*/
-
-            $rootScope.base.settingsLoadStatus = "isLoaded";
-        };
+        $rootScope.navbar = this;
 
         this.logout = function(event){
             event.preventDefault();
@@ -1007,9 +923,36 @@ angular.module('forum.controllers', [])
     })
     .controller('ServicesController',function() {
     })
-    .controller('privateMessagesController',function() {
+    .controller('privateMessagesController',function($rootScope) {
+        var privateMessage = this;
+
+        $rootScope.leftbar.tab = 0;
+
+        resetPages($rootScope.base);
+        $rootScope.base.privateMessagesIsActive = true;
+
+        resetAceNavBtns($rootScope.navbar);
+        $rootScope.navbar.privateMessagesBtnStatus = "active";
+
+        $rootScope.base.mainContentTopIsHide = true;
+
+        $rootScope.base.privateMessagesLoadStatus = "isLoaded";
+
+
     })
     .controller('nextdoorsController',function($rootScope) {
+        $rootScope.leftbar.tab = 0;
+
+        resetPages($rootScope.base);
+        $rootScope.base.mainContentTopIsHide = false;
+        $rootScope.base.nextdoorsIsActive = true;
+
+        resetAceNavBtns($rootScope.navbar);
+        $rootScope.navbar.nextdoorsBtnStatus = "active";
+        $rootScope.base.pageTitle = "";
+
+        $rootScope.base.nextdoorsLoadStatus = "isLoaded";
+
         var nextdoors = this;
         nextdoors.neighboors = userClient.getNeighbors($rootScope.currentGroup.id);
         nextdoors.neighboorsSize = nextdoors.neighboors.length;
@@ -1043,13 +986,22 @@ angular.module('forum.controllers', [])
 
     })
     .controller('SettingsController',function($scope) {
+        $rootScope.leftbar.tab = 0;
+
+        resetPages($rootScope.base);
+        $rootScope.base.settingsIsActive = true;
+
+        resetAceNavBtns($rootScope.navbar);
+        $rootScope.base.mainContentTopIsHide = true;
+
+        $rootScope.base.settingsLoadStatus = "isLoaded";
+
         var settings = this;
 
-        $scope.a = 1;
+    })
+    .controller('dialogController',function($rootScope) {
+        $rootScope.base.mainContentTopIsHide = true;
 
-        /*var func = $http.get("ajax/forum/settings.jsp").success(function(data,status,headers,config){
-            var data = data;
-        });*/
     });
 
 

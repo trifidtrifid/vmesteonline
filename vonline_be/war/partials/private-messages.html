@@ -1,9 +1,17 @@
 
 <section class="private-messages page"> <!-- ng-show="base.privateMessagesIsActive" -->
-    <div class="private-messages">
-        <h2>Личные сообщения</h2>
+    <a class="btn btn-primary no-border btn-sm pull-right" href="#">Написать сообщение</a>
+    <form method="post" action="#" class="form-group has-info form-search-private">
+<!--
+        <span class="block input-icon input-icon-right">
+-->
+            <input id="search-private-messages" type="text" class="form-control width-70" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
+            <!--<a href="#" class="icon-search icon-on-right bigger-110"></a>-->
+        <!--</span>-->
+    </form>
+    <!--<div class="private-messages">-->
         <div>
-            <div class="private-message-single">
+            <div class="private-message-single" ui-sref="dialog">
                 <div class="private-message-left pull-left">
                     <div class="private-message-ava pull-left"><img src="../../i/avatars/avatar.png" alt="аватарка"/></div>
                     <div class="private-message-author">
@@ -15,7 +23,7 @@
                     <p>Текст сообщения</p>
                 </div>
             </div>
-            <div class="private-message-single">
+            <div class="private-message-single" ui-sref="dialog">
                 <div class="private-message-left pull-left">
                     <div class="private-message-ava pull-left"><img src="../../i/avatars/avatar.png" alt="аватарка"/></div>
                     <div class="private-message-author">
@@ -28,6 +36,6 @@
                 </div>
             </div>
         </div>
-    </div>
+    <!--</div>-->
 
 </section>
