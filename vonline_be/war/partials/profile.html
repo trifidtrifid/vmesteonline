@@ -4,7 +4,7 @@
             <div class="text-area">
                 <div class="user-head" >
                     <h1>{{ profile.userProfile.userInfo.firstName +" "+profile.userProfile.userInfo.lastName}}</h1>
-                    <a class="edit-personal-link" href="#" ng-show="profile.isMayEdit">Редактировать</a>
+                    <a class="edit-personal-link" ui-sref="settings" ng-show="profile.isMayEdit">Редактировать</a>
                 </div>
                 <div class="user-body">
                     <div class="user-body-left pull-left">

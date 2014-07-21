@@ -672,9 +672,6 @@ angular.module('forum.controllers', [])
 
         showFullTalk(talk,talkId);
 
-        //$scope.talk = talksSingle.talk =
-            //talk = $rootScope.base.talk;
-
         var initFlagsTopic = [];
         talk.showTopicAnswerInput = function(event,fullTalkTopic){
             event.preventDefault();
@@ -986,7 +983,7 @@ angular.module('forum.controllers', [])
         profile.userProfile = userClient.getUserProfile(userId);
 
     })
-    .controller('SettingsController',function($scope) {
+    .controller('SettingsController',function($rootScope,$scope) {
         $rootScope.leftbar.tab = 0;
 
         resetPages($rootScope.base);
@@ -997,7 +994,112 @@ angular.module('forum.controllers', [])
 
         $rootScope.base.settingsLoadStatus = "isLoaded";
 
-        var settings = this;
+        var settings = this,
+            userContatcsMeta = userClient.getUserContacts(),
+            userProfileMeta = userClient.getUserProfile(),
+            userInfoMeta = userProfileMeta.userInfo,
+            userFamilyMeta = userProfileMeta.family,
+            userInterestsMeta = userProfileMeta.interests;
+
+        settings.userContacts = clone(userContatcsMeta);
+        settings.userProfile = clone(userProfileMeta);
+        settings.userInfo = clone(userInfoMeta);
+        settings.family = clone(userFamilyMeta);
+        settings.interests = clone(userInterestsMeta);
+        //settings.userInfo.canSaveBool = true;
+        settings.oldPassw = "";
+        settings.newPassw = "";
+
+        settings.canSave = function(num){
+            switch(num){
+                case 1:
+                    return $scope.formUserInfo.$valid;
+                    break;
+                case 2:
+                    return $scope.formPrivate.$valid;
+                    break;
+                case 3:
+                    return $scope.formAlerts.$valid;
+                    break;
+                case 4:
+                    return $scope.formContacts.$valid;
+                    break;
+                case 5:
+                    return $scope.formFamily.$valid;
+                    break;
+                case 6:
+                    return $scope.formInterests.$valid;
+                    break;
+            }
+
+        };
+
+        settings.updatePasswordOrUserInfo = function(){
+            if (!settings.passwChange){
+                userClient.updateUserInfo(settings.userInfo);
+            }else{
+                userClient.changePassword(settings.oldPassw, settings.newPassw);
+            }
+        };
+
+        settings.updatePrivacy = function(){
+            userClient.updatePrivacy();
+        };
+
+        settings.updateContacts = function(){
+            userClient.updateContacts(settings.userContacts);
+        };
+        settings.updateFamily = function(){
+            userClient.updateFamily(settings.family);
+        };
+        settings.updateInterests = function(){
+            userClient.updateInterests(settings.interests);
+        };
+
+        settings.childAdd = function(event){
+            event.preventDefault();
+
+            var newChild = new com.vmesteonline.be.Children();
+            newChild.name = " ";
+
+            if(settings.family == null){
+                settings.family = new com.vmesteonline.be.UserFamily();
+            }
+            if(settings.family.childs == null){
+                settings.family.childs= [];
+            }
+
+            settings.family.childs.length == 0 ?
+            settings.family.childs[0] = newChild :
+            settings.family.childs.push(newChild);
+
+        };
+        settings.petAdd = function(event){
+            event.preventDefault();
+
+            var newPet = new com.vmesteonline.be.Pet();
+            newPet.name = " ";
+
+            if(settings.family == null){
+                settings.family = new com.vmesteonline.be.UserFamily();
+            }
+            if(settings.family.pets == null){
+                settings.family.pets= [];
+            }
+
+            settings.family.pets.length == 0 ?
+                settings.family.pets[0] = newPet :
+                settings.family.pets.push(newPet);
+        };
+
+        settings.passwChange = false;
+        settings.changePassw = function(){
+            settings.passwChange = true;
+        };
+
+        (settings.userInfo.birthday != 0) ?
+        settings.birthday = settings.userInfo.birthday :
+        settings.birthday = "";
 
     })
     .controller('dialogController',function($rootScope) {
@@ -1373,5 +1475,13 @@ function cleanAttached(selector){
 
 function initFancyBox(selector){
     selector.find(".fancybox").fancybox();
+}
+function clone(obj){
+    if(obj == null || typeof(obj) != 'object')
+        return obj;
+    var temp = new obj.constructor();
+    for(var key in obj)
+        temp[key] = clone(obj[key]);
+    return temp;
 }
 
