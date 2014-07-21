@@ -523,78 +523,6 @@ angular.module('forum.controllers', [])
 
             talk.selectGroupInDropdown = selectGroupInDropdown;
 
-        $rootScope.showFullTalk = function(talk,talkOutsideId){
-
-            var topicLength;
-            talk.topics ? topicLength = talk.topics.length : topicLength = 0;
-            //talk.fullTalkTopic = talkOutside;
-
-            talkId = talkOutsideId;
-            for(var i = 0; i < topicLength; i++){
-                if(talkId == talk.topics[i].id){
-                    talk.fullTalkTopic = talk.topics[i];
-                    talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
-                }
-            }
-            if(talk.fullTalkTopic.poll != null){
-                setPollEditNames(talk.fullTalkTopic.poll);
-                talk.fullTalkTopic.metaType = "poll";
-            }else{
-                talk.fullTalkTopic.metaType = "message";
-            }
-
-            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
-
-            talk.fullTalkFirstMessages ?
-                fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length:
-                fullTalkFirstMessagesLength = 0;
-            if(talk.fullTalkFirstMessages === null) talk.fullTalkFirstMessages = [];
-
-            for(var i = 0; i < fullTalkFirstMessagesLength; i++){
-                talk.fullTalkFirstMessages[i].answerInputIsShow = false;
-                talk.fullTalkFirstMessages[i].isTreeOpen = false;
-                talk.fullTalkFirstMessages[i].isLoaded = false;
-                talk.fullTalkFirstMessages[i].answerMessage = "Ваш ответ";
-                talk.fullTalkFirstMessages[i].createdEdit = getTiming(talk.fullTalkFirstMessages[i].created);
-            }
-
-            $rootScope.base.isTalkTitles = false;
-            //alert($rootScope.base.isTalkTitles);
-            $rootScope.base.mainContentTopIsHide = true;
-            $rootScope.base.createTopicIsHide = true;
-
-            var talksBlock = $('.talks').find('.talks-block');
-
-            if(!talk.isTalksLoaded){
-                /*talksBlock.load('ajax/forum/talks-single.jsp .talks-single',function(){
-
-                    talk.isTreeOpen = false;
-
-                    talk.toggleInsideTreeOfMessages = function(){
-                        if(!talk.isTreeOpen){
-
-                            //$(this).removeClass('fa-plus').addClass('fa-minus');
-                            talk.isTreeOpen = true;
-                            //$(this).closest('.dd-item').find('>.dd-list').slideDown();
-
-                        }else{
-
-                            //$(this).removeClass('fa-minus').addClass('fa-plus');
-                            talk.isTreeOpen = false;
-                            //$(this).closest('.dd-item').find('>.dd-list').slideUp();
-                        }
-                    };
-                    //SetShowEditorClick($('.answer-link'));
-
-                });*/
-            }
-
-            $rootScope.base.talk = talk;
-            //$rootScope.base.talkId = talkId;
-
-
-        };
-
         talk.addSingleTalk = function(){
             talk.attachedImages = getAttachedImages($('#attach-area-00'));
 
@@ -657,7 +585,7 @@ angular.module('forum.controllers', [])
         };
 
     })
-    .controller('TalksSingleController',function($scope,$rootScope,$stateParams){
+    .controller('TalksSingleController',function($rootScope,$stateParams){
 
         var talk = this,
             fullTalkMessagesLength,
@@ -669,7 +597,80 @@ angular.module('forum.controllers', [])
         talk.fullTalkMessages = {};
         talk.fullTalkFirstMessages = [];
 
-        $rootScope.showFullTalk(talk,talkId);
+        var showFullTalk = function(talk,talkOutsideId){
+
+            var topicLength;
+            talk.topics ? topicLength = talk.topics.length : topicLength = 0;
+            //talk.fullTalkTopic = talkOutside;
+
+            var talkId = talkOutsideId,
+                fullTalkFirstMessagesLength;
+            for(var i = 0; i < topicLength; i++){
+                if(talkId == talk.topics[i].id){
+                    talk.fullTalkTopic = talk.topics[i];
+                    talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
+                }
+            }
+            if(talk.fullTalkTopic.poll != null){
+                setPollEditNames(talk.fullTalkTopic.poll);
+                talk.fullTalkTopic.metaType = "poll";
+            }else{
+                talk.fullTalkTopic.metaType = "message";
+            }
+
+            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
+
+            talk.fullTalkFirstMessages ?
+                fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length:
+                fullTalkFirstMessagesLength = 0;
+            if(talk.fullTalkFirstMessages === null) talk.fullTalkFirstMessages = [];
+
+            for(var i = 0; i < fullTalkFirstMessagesLength; i++){
+                talk.fullTalkFirstMessages[i].answerInputIsShow = false;
+                talk.fullTalkFirstMessages[i].isTreeOpen = false;
+                talk.fullTalkFirstMessages[i].isLoaded = false;
+                talk.fullTalkFirstMessages[i].answerMessage = "Ваш ответ";
+                talk.fullTalkFirstMessages[i].createdEdit = getTiming(talk.fullTalkFirstMessages[i].created);
+            }
+
+            $rootScope.base.isTalkTitles = false;
+            //alert($rootScope.base.isTalkTitles);
+            $rootScope.base.mainContentTopIsHide = true;
+            $rootScope.base.createTopicIsHide = true;
+
+            var talksBlock = $('.talks').find('.talks-block');
+
+            if(!talk.isTalksLoaded){
+                /*talksBlock.load('ajax/forum/talks-single.jsp .talks-single',function(){
+
+                 talk.isTreeOpen = false;
+
+                 talk.toggleInsideTreeOfMessages = function(){
+                 if(!talk.isTreeOpen){
+
+                 //$(this).removeClass('fa-plus').addClass('fa-minus');
+                 talk.isTreeOpen = true;
+                 //$(this).closest('.dd-item').find('>.dd-list').slideDown();
+
+                 }else{
+
+                 //$(this).removeClass('fa-minus').addClass('fa-plus');
+                 talk.isTreeOpen = false;
+                 //$(this).closest('.dd-item').find('>.dd-list').slideUp();
+                 }
+                 };
+                 //SetShowEditorClick($('.answer-link'));
+
+                 });*/
+            }
+
+            $rootScope.base.talk = talk;
+            //$rootScope.base.talkId = talkId;
+
+
+        };
+
+        showFullTalk(talk,talkId);
 
         //$scope.talk = talksSingle.talk =
             //talk = $rootScope.base.talk;
