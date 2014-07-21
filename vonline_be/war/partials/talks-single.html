@@ -1,4 +1,5 @@
 
+<section class="talks-block"> <!--  ng-hide="base.isTalkTitles" -->
 
     <section class="forum talks-single">
 
@@ -10,7 +11,7 @@
                         <div class="widget-body">
                             <div class="widget-main">
                                 <div class="topic-left">
-                                    <a href="#">
+                                    <a ui-sref="profile({ userId : {{ talks.fullTalkTopic.userInfo.id }} })">
                                         <img ng-src="{{talks.fullTalkTopic.userInfo.avatar}}" alt="картинка" /></a>
                                     <div class="topic-author">
                                     </div>
@@ -106,7 +107,7 @@
                                 <div class="widget-body">
                                     <div class="widget-main">
                                         <div class="topic-left">
-                                            <a href="#">
+                                            <a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">
                                                 <img ng-src="{{firstMessage.userInfo.avatar}}" alt="картинка" /></a>
                                             <div class="topic-author">
                                                 <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !firstMessage.isTreeOpen,'fa-minus' : firstMessage.isTreeOpen}"
@@ -114,7 +115,7 @@
                                             </div>
                                         </div>
                                         <div class="topic-right">
-                                            <h2><a href="#">Автор автор</a></h2>
+                                            <h2><a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">{{ firstMessage.userInfo.firstName +" "+ firstMessage.userInfo.lastName}}</a></h2>
                                             <p>{{firstMessage.content}}</p>
 
                                             <div class="attached">
@@ -164,7 +165,7 @@
                                         <div class="widget-body">
                                             <div class="widget-main">
                                                 <div class="topic-left">
-                                                    <a href="#">
+                                                    <a ui-sref="profile({ userId : {{ message.userInfo.id }} })">
                                                         <img ng-src="{{message.userInfo.avatar}}" alt="картинка" /></a>
                                                     <div class="topic-author">
                                                         <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !message.isTreeOpen,'fa-minus' : message.isTreeOpen}"
@@ -172,7 +173,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="topic-right">
-                                                    <h2><a href="#">Автор автор</a></h2>
+                                                    <h2><a ui-sref="profile({ userId : {{ message.userInfo.id }} })">{{message.userInfo.firstName+" "+message.userInfo.lastName}}</a></h2>
                                                     <p>{{message.content}}</p>
 
                                                     <div class="attached">
@@ -225,3 +226,4 @@
 
     </section>
 
+</section>

@@ -1,0 +1,43 @@
+<section class="profile page"> <!--  ng-show="base.profileIsActive" -->
+    <div class="profile">
+        <section class="user-descr">
+            <div class="text-area">
+                <div class="user-head" >
+                    <h1>{{ profile.userProfile.userInfo.firstName +" "+profile.userProfile.userInfo.lastName}}</h1>
+                    <a class="edit-personal-link" href="#" ng-show="profile.isMayEdit">Редактировать</a>
+                </div>
+                <div class="user-body">
+                    <div class="user-body-left pull-left">
+                        <label class="block clearfix logo-container">
+                            <img ng-src="{{profile.userProfile.userInfo.avatar}}" alt="логотип"/>
+                            <input type="file" id="profile-ava" ng-show="profile.isMayEdit">
+                        </label>
+                    </div>
+                    
+                    <div class="user-body-right">
+                        <div><span>День рождения:</span>{{profile.userProfile.userInfo.birthday}}</div>
+                        <div><span>Пол:</span>{{profile.userProfile.userInfo.gender}}</div>
+
+                        <h3>Контактная информация</h3>
+                        <div><span>Телефон:</span> {{ profile.userContacts.mobilePhone }}</div>
+                        <div><span>Email:</span> {{ profile.userContacts.email }}</div>
+
+                        <h3>Семья</h3>
+                        <div><span>Семейное положение:</span>{{profile.userProfile.family.relations}}</div>
+                        <div><span>Ребенок:</span> {{profile.userProfile.family.childs}}</div>
+                        <div><span>Питомец:</span> {{profile.userProfile.family.pets}}</div>
+
+                        <h3>Интересы</h3>
+                        <p>{{profile.userProfile.interests.userInterests}}</p>
+
+                        <h3>Домашний адрес</h3>
+                        <div>{{profile.userContacts.homeAddress.street.name + " "+ profile.userContacts.homeAddress.building.fullNo}}</div>
+
+                        <div class="home-map"><img src="./i/map_home.jpg" alt="карта"/></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</section>
+

@@ -1,0 +1,30 @@
+
+<section class="nextdoors page" ng-class="base.nextdoorsLoadStatus"> <!--  ng-show="base.nextdoorsIsActive" -->
+
+<div class="nextdoors">
+    <div class="nextdoors-amount pull-left">Зарегестрировано соседей: <span>{{nextdoors.neighboorsSize}}</span></div>
+
+
+    <form method="post" action="#" class="form-group has-info form-search">
+        <span class="block input-icon input-icon-right">
+            <input id="search-nextdoors" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
+            <a href="#" class="icon-search icon-on-right bigger-110"></a>
+        </span>
+    </form>
+
+        <div class="nextdoor-single" ng-repeat="neighboor in nextdoors.neighboors">
+            <a ui-sref="profile({ userId : neighboor.id})" class="nextdoor-left pull-left">
+            <span class="nextdoor-ava pull-left">
+                <img src="{{neighboor.avatar}}" alt="аватарка"/>
+            </span>
+                <span class="nextdoor-name">{{neighboor.firstName+" "+neighboor.lastName}}</span>
+            </a>
+            <div class="nextdoor-right pull-right">
+                <a href="#" class="btn btn-sm btn-primary no-border">Написать</a>
+            </div>
+        </div>
+
+</div>
+
+</section>
+

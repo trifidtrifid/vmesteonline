@@ -33,6 +33,7 @@
 
 
 %>
+<section class="nextdoors page" ng-class="base.nextdoorsLoadStatus" ng-show="base.nextdoorsIsActive">
 
 <div class="nextdoors">
     <div class="nextdoors-amount pull-left">Зарегестрировано соседей: <span><c:out value="${neighboorsSize}"/></span></div>
@@ -60,17 +61,7 @@
         </div>
     </c:forEach>
 
-
-    <%--<div class="nextdoor-single">
-        <a href="#" class="nextdoor-left pull-left">
-            <span class="nextdoor-ava pull-left">
-                <img src="../../i/avatars/avatar1.png" alt="аватарка"/>
-            </span>
-            <span class="nextdoor-name">Статичный юзер</span>
-        </a>
-        <div class="nextdoor-right pull-right">
-            <a href="#" class="btn btn-sm btn-primary no-border">Написать</a>
-        </div>
-    </div>--%>
 </div>
+
+</section>
 

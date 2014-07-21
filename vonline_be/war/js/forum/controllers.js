@@ -66,10 +66,6 @@ angular.module('forum.controllers', [])
 
         };
 
-        initAttachImage($('#attachImage-0'),$('#attach-area-0')); // для ленты новостей
-        initAttachImage($('#attachImage-00'),$('#attach-area-00')); // для обсуждений
-        initFancyBox();
-
         base.oldTextLength = 0;
         base.messageChange = function(event,textareaType){
             /*for(var p in event.target){
@@ -133,6 +129,8 @@ angular.module('forum.controllers', [])
 
         $rootScope.base = base;
         $rootScope.currentPage = 'lenta';
+
+        $rootScope.leftbar = {};
     })
   .controller('navbarController', function($rootScope) {
         this.privateMessagesBtnStatus = "";
@@ -155,18 +153,17 @@ angular.module('forum.controllers', [])
 
             var nextdoors = $('.dynamic .nextdoors');
 
-            if ($rootScope.base.nextdoorsLoadStatus == "") {
+            /*if ($rootScope.base.nextdoorsLoadStatus == "") {
                 nextdoors.load('ajax/forum/nextdoors.jsp .nextdoors',function(){
-                    //initNextdoors();
                 });
-            }
+            }*/
 
             $rootScope.base.nextdoorsLoadStatus = "isLoaded";
 
         };
 
         this.goToPrivateMessages = function(event){
-                event.preventDefault();
+                //event.preventDefault();
 
                 $rootScope.leftbar.tab = 0;
 
@@ -179,17 +176,16 @@ angular.module('forum.controllers', [])
 
                 var privateMessages = $('.dynamic .private-messages');
 
-                if ($rootScope.base.privateMessagesLoadStatus == "") {
+                /*if ($rootScope.base.privateMessagesLoadStatus == "") {
                     privateMessages.load('ajax/forum/private-messages.jsp .private-messages',function(){
-                        //initNextdoors();
                     });
-                }
+                }*/
 
                 $rootScope.base.privateMessagesLoadStatus = "isLoaded";
 
             };
 
-        this.goToProfile = function(event){
+/*        this.goToProfile = function(event){
             event.preventDefault();
 
             $rootScope.leftbar.tab = 0;
@@ -198,19 +194,10 @@ angular.module('forum.controllers', [])
             $rootScope.base.profileIsActive = true;
 
             resetAceNavBtns(navbar);
-            $rootScope.base.mainContentTopIsHide = true;
-
-            var profile = $('.dynamic .profile');
-
-            if ($rootScope.base.profileLoadStatus == "") {
-                profile.load('ajax/forum/profile.jsp .profile',function(){
-                    initProfile();
-                });
-            }
 
             $rootScope.base.profileLoadStatus = "isLoaded";
 
-        };
+        };*/
 
         this.goToSettings = function(event){
             event.preventDefault();
@@ -225,11 +212,11 @@ angular.module('forum.controllers', [])
 
             var settings = $('.dynamic .settings');
 
-            if ($rootScope.base.settingsLoadStatus == "") {
+            /*if ($rootScope.base.settingsLoadStatus == "") {
                 settings.load('ajax/forum/settings.jsp .settings',function(){
-                    //initSettings();
+
                 });
-            }
+            }*/
 
             $rootScope.base.settingsLoadStatus = "isLoaded";
         };
@@ -246,20 +233,20 @@ angular.module('forum.controllers', [])
   })
   .controller('leftBarController',function($rootScope) {
 
-    $rootScope.leftbar = this;
+    //$rootScope.leftbar = this;
 
-    $rootScope.leftbar.tab = 1;
+    //$rootScope.leftbar.tab = 1;
 
-    $rootScope.setTab = function(event,newValue){
-        event.preventDefault();
+    $rootScope.setTab = function(newValue){
 
         $rootScope.leftbar.tab = newValue;
+        //var tempTalksBool = false;
+        //if($rootScope.base.talksIsActive) tempTalksBool = true;
         resetPages($rootScope.base);
         resetAceNavBtns($rootScope.navbar);
 
         switch(newValue){
             case 1:
-
                 $rootScope.base.mainContentTopIsHide = false;
                 $rootScope.base.lentaIsActive = true;
                 $rootScope.currentPage = 'lenta';
@@ -267,8 +254,11 @@ angular.module('forum.controllers', [])
                 break;
             case 2:
                 $rootScope.base.mainContentTopIsHide = false;
-                $rootScope.base.talksIsActive = true;
+
+                //if(!tempTalksBool)
                 $rootScope.base.isTalkTitles = true;
+
+                $rootScope.base.talksIsActive = true;
                 $rootScope.currentPage = 'talks';
                 $rootScope.base.pageTitle = "Обсуждения";
                 break;
@@ -282,8 +272,10 @@ angular.module('forum.controllers', [])
 
     };
 
-    this.isSet = function(number){
-        return this.tab === number;
+    $rootScope.isSet = function(number){
+        //return this.tab === number;
+        //alert($rootScope.leftbar.tab);
+        return $rootScope.leftbar.tab === number;
     };
   })
     .controller('rightBarController',function() {
@@ -339,6 +331,10 @@ angular.module('forum.controllers', [])
         };
     })
     .controller('LentaController',function($rootScope) {
+        $rootScope.setTab(1);
+        initAttachImage($('#attachImage-0'),$('#attach-area-0')); // для ленты новостей
+        initFancyBox($('.forum'));
+
         var lenta = this;
         lenta.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroup = lenta.selectedGroupInTop = $rootScope.currentGroup;
@@ -565,55 +561,59 @@ angular.module('forum.controllers', [])
         * 3) toggleTree: контрол "плюс-минус", скрвает-показвает внутренние сообщения этого
         * сообщения.
         * */
-        var talk = this;
-        talk.isTalksLoaded = false;
-        talk.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
 
-        talk.content = "Сообщение";
-        talk.subject = "Заголовок";
+            $rootScope.setTab(2);
 
-        talk.isPollShow = false;
-        talk.pollSubject = "";
-        talk.pollInputs = [
-            {
-                counter : 0,
-                name:""
-            },
-            {
-                counter : 1,
-                name:""
-            }
-        ];
-        talk.isPollAvailable = true;
+            initAttachImage($('#attachImage-00'), $('#attach-area-00')); // для обсуждений
+            initFancyBox($('.talks'));
 
-        talk.fullTalkTopic = {};
-        talk.fullTalkTopic.answerInputIsShow = false;
-        talk.fullTalkMessages = [];
-        talk.fullTalkFirstMessages = [];
-        talk.answerFirstMessage = "Ваш ответ";
-        var fullTalkFirstMessagesLength,
-            fullTalkMessagesLength,
-            talkId;
+            var talk = this;
+            talk.isTalksLoaded = false;
+            talk.groups = userClientGroups.reverse();
 
-        var groups = this.groups,
-            groupsLength = groups.length;
-        talk.selectedGroup = talk.groups[0];
-        talk.topics = messageClient.getTopics(talk.selectedGroup.id,0,0,0,1000).topics;
+            talk.content = "Сообщение";
+            talk.subject = "Заголовок";
 
-        initTalks();
+            talk.isPollShow = false;
+            talk.pollSubject = "";
+            talk.pollInputs = [
+                {
+                    counter: 0,
+                    name: ""
+                },
+                {
+                    counter: 1,
+                    name: ""
+                }
+            ];
+            talk.isPollAvailable = true;
 
-        if(!talk.topics) talk.topics = [];
+            talk.fullTalkTopic = {};
+            talk.fullTalkTopic.answerInputIsShow = false;
+            talk.fullTalkMessages = [];
+            talk.fullTalkFirstMessages = [];
+            talk.answerFirstMessage = "Ваш ответ";
+            var fullTalkFirstMessagesLength,
+                talkId;
 
-        $rootScope.showFullTalk = function(event,talkOutside){
-            //event.preventDefault();
+            var groups = this.groups,
+                groupsLength = groups.length;
+            $rootScope.currentGroup = talk.selectedGroup = talk.groups[0];
+            talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
 
-            $rootScope.setTab(event,2);
+            initTalks();
+
+            if (!talk.topics) talk.topics = [];
+
+            talk.selectGroupInDropdown = selectGroupInDropdown;
+
+        $rootScope.showFullTalk = function(talk,talkOutsideId){
 
             var topicLength;
             talk.topics ? topicLength = talk.topics.length : topicLength = 0;
             //talk.fullTalkTopic = talkOutside;
 
-            talkId = talkOutside.id;
+            talkId = talkOutsideId;
             for(var i = 0; i < topicLength; i++){
                 if(talkId == talk.topics[i].id){
                     talk.fullTalkTopic = talk.topics[i];
@@ -643,6 +643,7 @@ angular.module('forum.controllers', [])
             }
 
             $rootScope.base.isTalkTitles = false;
+            //alert($rootScope.base.isTalkTitles);
             $rootScope.base.mainContentTopIsHide = true;
             $rootScope.base.createTopicIsHide = true;
 
@@ -671,9 +672,12 @@ angular.module('forum.controllers', [])
 
                 });*/
             }
-        };
 
-        talk.selectGroupInDropdown = selectGroupInDropdown;
+            $rootScope.base.talk = talk;
+            //$rootScope.base.talkId = talkId;
+
+
+        };
 
         talk.addSingleTalk = function(){
             talk.attachedImages = getAttachedImages($('#attach-area-00'));
@@ -718,6 +722,41 @@ angular.module('forum.controllers', [])
             talk.topics.unshift(newTopic);
 
         };
+
+        function initTalks(){
+            var topicLength;
+            talk.topics ? topicLength = talk.topics.length : topicLength = 0;
+
+            for(var i = 0; i < topicLength;i++){
+                talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
+            }
+        }
+
+        $rootScope.talksChangeGroup = function(groupId){
+
+            talk.topics = messageClient.getTopics(groupId,0,0,0,1000).topics;
+
+            initTalks();
+
+        };
+
+    })
+    .controller('TalksSingleController',function($scope,$rootScope,$stateParams){
+
+        var talk = this,
+            fullTalkMessagesLength,
+            talkId = $stateParams.talkId;
+
+        talk.selectedGroup = $rootScope.currentGroup;
+        talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
+        talk.fullTalkTopic = {};
+        talk.fullTalkMessages = {};
+        talk.fullTalkFirstMessages = [];
+
+        $rootScope.showFullTalk(talk,talkId);
+
+        //$scope.talk = talksSingle.talk =
+            //talk = $rootScope.base.talk;
 
         var initFlagsTopic = [];
         talk.showTopicAnswerInput = function(event,fullTalkTopic){
@@ -774,10 +813,10 @@ angular.module('forum.controllers', [])
 
             talk.fullTalkTopic.answerInputIsShow = false;
 
-           /* var message =  new com.vmesteonline.be.messageservice.Message();
+            /* var message =  new com.vmesteonline.be.messageservice.Message();
 
-            var newMessage = messageClient.createMessage(topicId,0,talk.selectedGroup.id,1,talk.answerFirstMessage);
-            newMessage.createdEdit = getTiming(newMessage.created);*/
+             var newMessage = messageClient.createMessage(topicId,0,talk.selectedGroup.id,1,talk.answerFirstMessage);
+             newMessage.createdEdit = getTiming(newMessage.created);*/
 
             talk.topicId = topicId;
 
@@ -839,8 +878,8 @@ angular.module('forum.controllers', [])
             newMessage = postMessage(talk,isWall,isFirstLevel);
 
             /*talk.fullTalkMessages ?
-                talk.fullTalkMessages.push(newMessage):
-                talk.fullTalkMessages[0] = newMessage;*/
+             talk.fullTalkMessages.push(newMessage):
+             talk.fullTalkMessages[0] = newMessage;*/
 
             talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,1000).messages;
 
@@ -858,9 +897,9 @@ angular.module('forum.controllers', [])
             }
 
             /*fullTalkMessagesLength = talk.fullTalkMessages[firstMessage.id].length;
-            for(var i = 0; i < fullTalkMessagesLength; i++){
-                talk.fullTalkMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
-            }*/
+             for(var i = 0; i < fullTalkMessagesLength; i++){
+             talk.fullTalkMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
+             }*/
 
         };
 
@@ -880,14 +919,14 @@ angular.module('forum.controllers', [])
                 fullTalkMessagesLength = 0;
             if(talk.fullTalkMessages[firstMessage.id] === null) talk.fullTalkMessages[firstMessage.id] = [];
 
-                for(var i = 0; i < fullTalkMessagesLength; i++){
-                    talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
-                    talk.fullTalkMessages[firstMessage.id][i].isTreeOpen = true;
-                    talk.fullTalkMessages[firstMessage.id][i].isOpen = true;
-                    talk.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
-                    talk.fullTalkMessages[firstMessage.id][i].createdEdit = getTiming(talk.fullTalkMessages[firstMessage.id][i].created);
-                    talk.fullTalkMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
-                }
+            for(var i = 0; i < fullTalkMessagesLength; i++){
+                talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
+                talk.fullTalkMessages[firstMessage.id][i].isTreeOpen = true;
+                talk.fullTalkMessages[firstMessage.id][i].isOpen = true;
+                talk.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
+                talk.fullTalkMessages[firstMessage.id][i].createdEdit = getTiming(talk.fullTalkMessages[firstMessage.id][i].created);
+                talk.fullTalkMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
+            }
 
         };
 
@@ -964,38 +1003,51 @@ angular.module('forum.controllers', [])
             }
         };
 
-        $rootScope.talksChangeGroup = function(groupId){
-
-            talk.topics = messageClient.getTopics(groupId,0,0,0,1000).topics;
-
-            initTalks();
-
-        };
-
-        function initTalks(){
-            var topicLength;
-            talk.topics ? topicLength = talk.topics.length : topicLength = 0;
-
-            for(var i = 0; i < topicLength;i++){
-                talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
-            }
-        }
 
     })
     .controller('ServicesController',function() {
     })
     .controller('privateMessagesController',function() {
     })
-    .controller('nextdoorsController',function() {
-    })
-    .controller('ProfileController',function() {
-    })
-    .controller('SettingsController',function() {
-        /*var settings = this;
+    .controller('nextdoorsController',function($rootScope) {
+        var nextdoors = this;
+        nextdoors.neighboors = userClient.getNeighbors($rootScope.currentGroup.id);
+        nextdoors.neighboorsSize = nextdoors.neighboors.length;
 
-        settings.a = 1;
+    })
+    .controller('ProfileController',function($rootScope, $stateParams) {
+        $rootScope.leftbar.tab = 0;
 
-        var func = $http.get("ajax/forum/settings.jsp").success(function(data,status,headers,config){
+        resetPages($rootScope.base);
+        $rootScope.base.profileIsActive = true;
+
+        resetAceNavBtns($rootScope.navbar);
+        $rootScope.base.mainContentTopIsHide = true;
+        $rootScope.base.profileLoadStatus = "isLoaded";
+
+        var profile = this, userId;
+        profile.isMayEdit = false;
+
+
+        if ($stateParams.userId && $stateParams.userId != shortUserInfo.id){
+            userId = $stateParams.userId;
+            profile.userContacts = userClient.getUserContactsExt(userId);
+        }else{
+            userId = null;
+            profile.isMayEdit = true;
+            profile.userContacts = userClient.getUserContacts();
+            initProfileAva();
+        }
+
+        profile.userProfile = userClient.getUserProfile(userId);
+
+    })
+    .controller('SettingsController',function($scope) {
+        var settings = this;
+
+        $scope.a = 1;
+
+        /*var func = $http.get("ajax/forum/settings.jsp").success(function(data,status,headers,config){
             var data = data;
         });*/
     });
@@ -1035,7 +1087,7 @@ function resetAceNavBtns(navbar){
     navbar.nextdoorsBtnStatus = "";
     navbar.privateMessagesBtnStatus = "";
 }
-function initProfile(){
+function initProfileAva(){
 
     $('#profile-ava').ace_file_input({
         style:'well',
@@ -1324,7 +1376,7 @@ function setPollEditNames(poll){
     poll.names ?
         namesLength = poll.names.length:
         namesLength = 0;
-    console.log(poll.alreadyPoll);
+    //console.log(poll.alreadyPoll);
 
     // нужно знать полный amount для вычисления процентной длины
     for(var j = 0; j < namesLength; j++){
@@ -1366,7 +1418,7 @@ function cleanAttached(selector){
     selector.html('');
 }
 
-function initFancyBox(){
-    $(".fancybox").fancybox();
+function initFancyBox(selector){
+    selector.find(".fancybox").fancybox();
 }
 
