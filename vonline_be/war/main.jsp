@@ -223,7 +223,8 @@
 	<!-- общие библиотеки -->
 	<script src="js/lib/bootstrap.min.js"></script>
 	<script src="js/lib/ace-extra.min.js"></script>
-	<script src="js/lib/ace-elements.min.js"></script>
+	<%--<script src="js/lib/ace-elements.min.js"></script>--%>
+	<script src="js/ace-elements.js"></script>
 
     <script src="js/lib/jquery.fancybox.pack.js"></script>
 

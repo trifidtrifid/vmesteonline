@@ -421,7 +421,7 @@ angular.module('forum.controllers', [])
                 }else if(lenta.wallItems[i].topic.message.type == 5){
 
                     lenta.wallItems[i].topic.message.createdEdit = getTiming(lenta.wallItems[i].topic.message.created);
-                    lenta.wallItems[i].topic.authorName = getAuthorName(lenta.wallItems[i].topic.message.userInfo);
+                    lenta.wallItems[i].topic.authorName = getAuthorName(lenta.wallItems[i].topic.userInfo);
                     lenta.wallItems[i].topic.metaType = "message";
 
                     var mesLen;
@@ -1177,7 +1177,7 @@ function initAttachImage(selector,attachAreaSelector){
         btn_change:null,
         no_icon:'',
         droppable:true,
-        thumbnail:'large',
+        thumbnail: 'large',
         icon_remove:null,
         before_change: function(files, dropped){
             title = $(this).find('+.file-label').data('title');
