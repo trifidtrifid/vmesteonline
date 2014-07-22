@@ -34,14 +34,14 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/services.html",
             controller: 'ServicesController as services'
         })
-        .state('private-messages', {
-            url: "/private-messages",
-            templateUrl: "partials/private-messages.html",
-            controller: 'privateMessagesController as privateMessages'
-        })
-        .state('dialog', {
-            url: "/dialog",
+        .state('dialogs', {
+            url: "/dialogs",
             templateUrl: "partials/dialogs.html",
+            controller: 'dialogsController as dialogs'
+        })
+        .state('dialog-single', {
+            url: "/dialog-single-:dialogId",
+            templateUrl: "partials/dialog-single.html",
             controller: 'dialogController as dialog'
         })
         .state('write-message', {

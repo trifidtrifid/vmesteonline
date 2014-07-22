@@ -96,7 +96,7 @@
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
                 <li ng-class="navbar.privateMessagesBtnStatus"><a class="btn btn-info no-border private-messages-link"
-                                                                  ui-sref="private-messages">Личные сообщения </a></li>
+                                                                  ui-sref="dialogs">Личные сообщения </a></li>
 
                 <li ng-class="navbar.nextdoorsBtnStatus"><a class="btn btn-info no-border nextdoors-link"
                                                             ui-sref="nextdoors"> Соседи</a></li>
@@ -222,9 +222,7 @@
 
 	<!-- общие библиотеки -->
 	<script src="js/lib/bootstrap.min.js"></script>
-    <script src="js/lib/typeahead-bs2.min.js"></script>
-    <script src="js/lib/jquery-ui-1.10.3.custom.js"></script>
-    <script src="js/lib/jquery.ui.touch-punch.min.js"></script>
+    <script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
 	<script src="js/lib/ace-extra.min.js"></script>
 	<%--<script src="js/lib/ace-elements.min.js"></script>--%>
 	<script src="js/ace-elements.js"></script>
@@ -249,6 +247,7 @@
 	<script src="gen-js/bedata_types.js" type="text/javascript"></script>
 	<script src="gen-js/messageservice_types.js" type="text/javascript"></script>
 	<script src="gen-js/MessageService.js" type="text/javascript"></script>
+	<script src="gen-js/DialogService.js" type="text/javascript"></script>
 	<script src="gen-js/userservice_types.js" type="text/javascript"></script>
 	<script src="gen-js/UserService.js" type="text/javascript"></script>
 	<script src="gen-js/authservice_types.js" type="text/javascript"></script>

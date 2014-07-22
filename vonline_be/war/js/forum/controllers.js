@@ -203,7 +203,7 @@ angular.module('forum.controllers', [])
         var groups = topCtrl.groups,
             groupsLength = groups.length;
         groups[0].selected = true;
-        $rootScope.currentGroup = groups[0];
+        $rootScope.currentGroup = $rootScope.biggestGroup = groups[0];
 
         topCtrl.isSet = function(groupId){
             //return groupId ===
@@ -1102,16 +1102,92 @@ angular.module('forum.controllers', [])
         settings.birthday = "";
 
     })
-    .controller('dialogController',function($rootScope) {
+    .controller('dialogsController', function($rootScope){
         $rootScope.base.mainContentTopIsHide = true;
+        var dialogs = this;
+
+        dialogs.dialogsList = dialogClient.getDialogs(0);
+
+    })
+    .controller('dialogController',function($rootScope,$stateParams) {
+        $rootScope.base.mainContentTopIsHide = true;
+        var dialog = this;
+
+        if ($stateParams.dialogId){
+            if($rootScope.isNewPrivateMessageAdded){
+                dialogClient.postMessage($stateParams.dialogId, $rootScope.newPrivateMessageText);
+            }
+            dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId);
+            var privateMessagesLength = dialog.privateMessages.length;
+                dialog.authors = [];
+            for(var i = 0; i < privateMessagesLength; i++){
+                dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
+            }
+        }else{
+
+        }
 
     })
     .controller('writeMessageController',function($rootScope) {
         $rootScope.base.mainContentTopIsHide = true;
+        var writeMessage = this;
 
-        initAutocomplete();
+        writeMessage.newMessage = {};
+        writeMessage.newMessage.text = "Сообщение";
+
+        var availableTags = ['aaa','bbb'], userId;
+
+        var neighboors = userClient.getNeighbors($rootScope.biggestGroup.id),
+            neighboorsLength = neighboors.length;
+        for(var i = 0; i < neighboorsLength; i++){
+            availableTags[i] = neighboors.firstName + " "+ neighboors.lastName;
+        }
+
+        $.widget("custom.catcomplete", $.ui.autocomplete, {
+            _renderMenu: function(ul, items){
+                var self = this,
+                    currentCategory = "";
+                $.each( items, function(index, item){
+                    if(item.category != currentCategory){
+                        ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+                        currentCategory = item.category;
+                    }
+                    self._renderItem( ul, item );
+                });
+            }
+        });
+
+       /* var availableTags = [
+            {label:"Чебоксары", category:"города"},
+            {label:"Челябинск", category:"города"},
+            {label:"Челны", category:"поселки"},
+            {label:"Ставрополь", category:"города"},
+            {label:"Чехия", category:"страны"}
+        ];
+*/
+        $(".write-message-to").catcomplete({
+            source: availableTags,
+            create: function(event,ui){
+                var ind = 0;
+                $('.ui-menu-item').each(function(){
+                   $(this).attr('id',neighboors[ind++].id);
+                });
+            },
+            select: function(event,ui){
+                $('.write-message-to').attr('id',ui.item.attr('id'));
+                userId = ui.item.attr('id');
+            }
+        });
 
         initAttachImage($('#attachImage-writeMessage'),$('#attach-area-writeMessage'));
+
+        var dialog = dialogClient.getDialog(userId);
+        writeMessage.dialogId = dialog.id;
+
+        /*this.send = function(){
+         dialogClient.postMessage(dialog.id, writeMessage.newMessage.text);
+         dialogClient.getDialogMessages(dialog.id);
+        }*/
 
     });
 
@@ -1121,6 +1197,10 @@ angular.module('forum.controllers', [])
 var transport = new Thrift.Transport("/thrift/MessageService");
 var protocol = new Thrift.Protocol(transport);
 var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(protocol);
+
+transport = new Thrift.Transport("/thrift/DialogService");
+protocol = new Thrift.Protocol(transport);
+var dialogClient = new com.vmesteonline.be.messageservice.DialogServiceClient(protocol);
 
 transport = new Thrift.Transport("/thrift/UserService");
 protocol = new Thrift.Protocol(transport);
@@ -1491,50 +1571,5 @@ function clone(obj){
     for(var key in obj)
         temp[key] = clone(obj[key]);
     return temp;
-}
-function initAutocomplete(){
-
-    //custom autocomplete (category selection)
-    $.widget( "custom.catcomplete", $.ui.autocomplete, {
-        _renderMenu: function( ul, items ) {
-            var that = this,
-                currentCategory = "";
-            $.each( items, function( index, item ) {
-                if ( item.category != currentCategory ) {
-                    ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
-                    currentCategory = item.category;
-                }
-                that._renderItemData( ul, item );
-            });
-        }
-    });
-
-    var data = [
-        { label: "anders", category: "" },
-        { label: "andreas", category: "" },
-        { label: "antal", category: "" },
-        { label: "annhhx10", category: "Products" },
-        { label: "annk K12", category: "Products" },
-        { label: "annttop C13", category: "Products" },
-        { label: "anders andersson", category: "People" },
-        { label: "andreas andersson", category: "People" },
-        { label: "andreas johnson", category: "People" }
-    ];
-    $( ".write-message-to" ).catcomplete({
-        delay: 0,
-        source: data
-    });
-
-    /*var availableTags = [];
-
-    var neighboors = userClient.getNeighbors(),
-        neighboorsLength = neighboors.length;
-    for(var i = 0; i < neighboorsLength; i++){
-        availableTags[i] = neighboors.firstName + " "+ neighboors.lastName;
-    }
-
-    $(".write-message-to").autocomplete({
-        source: availableTags
-    });*/
 }
 
