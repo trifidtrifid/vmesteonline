@@ -256,7 +256,7 @@ public class VoHelper {
 	 * object from list inList to list of O objects using mutation method of O object that //tooks I objects and has name get<O.simpleName()>
 	 */
 
-	public static <I, O> List<O> convertMutableSet(List<I> inList, ArrayList<O> outList, O o) throws InvalidOperation {
+	public static <I, O> List<O> convertMutableSet(List<I> inList, List<O> outList, O o) throws InvalidOperation {
 		if (null == inList)
 			return null;
 		if (0 == inList.size())
@@ -266,6 +266,25 @@ public class VoHelper {
 			Method method = i0.getClass().getMethod("get" + o.getClass().getSimpleName(), new Class[] {});
 			for (I i : inList) {
 				outList.add((O) method.invoke(i));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Class " + i0.getClass().getSimpleName() + " have no acccesible method get"
+					+ o.getClass().getSimpleName());
+		}
+		return outList;
+	}
+//===================================================================================================================
+	public static <I, O> List<O> convertMutableSet(List<I> inList, List<O> outList, O o, PersistenceManager pm) throws InvalidOperation {
+		if (null == inList)
+			return null;
+		if (0 == inList.size())
+			return outList;
+		I i0 = inList.get(0);
+		try {
+			Method method = i0.getClass().getMethod("get" + o.getClass().getSimpleName(), new Class[] { PersistenceManager.class });
+			for (I i : inList) {
+				outList.add((O) method.invoke(i,pm));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
