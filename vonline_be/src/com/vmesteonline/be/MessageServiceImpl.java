@@ -156,7 +156,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		Message newMessage = new Message(0, parentId, type, topicId, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
-				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null);
+				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null);
 		newMessage.recipientId = recipientId;
 		postMessage(newMessage);
 		return null;

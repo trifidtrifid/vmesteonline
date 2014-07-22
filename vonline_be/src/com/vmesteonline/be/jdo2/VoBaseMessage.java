@@ -39,8 +39,15 @@ public abstract class VoBaseMessage extends GeoLocation {
 					images.add(StorageHelper.saveImage(img, msg.getAuthorId(), true, pm));
 				}
 				msg.images = images;
-
 			}
+
+			if (msg.documents != null) {
+				for (String img : msg.documents) {
+					documents.add(StorageHelper.saveImage(img, msg.getAuthorId(), true, pm));
+				}
+				msg.documents = documents;
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -160,6 +167,10 @@ public abstract class VoBaseMessage extends GeoLocation {
 	@Persistent
 	@Unindexed
 	protected List<String> images;
+
+	@Persistent
+	@Unindexed
+	protected List<String> documents;
 
 	@Persistent
 	@Unindexed

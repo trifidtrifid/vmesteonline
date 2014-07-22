@@ -34,6 +34,7 @@ struct Message {
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
 	18: bedata.ShortUserInfo userInfo,
 	19: list<string> images, 
+	20: list<string> documents, 
 	
 } // 'сообщение';
 		
