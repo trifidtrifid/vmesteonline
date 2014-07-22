@@ -47,7 +47,7 @@ public class VoTopic extends VoBaseMessage {
 	public Topic getTopic(long userId, PersistenceManager pm) {
 
 		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, new String(content), likesNum,
-				unlikesNum, links, tags, null, 0, null);
+				unlikesNum, links, null, null, 0, null, images, documents);
 
 		Topic tpc = new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(),
 				getUnlikes(), null, null, null);

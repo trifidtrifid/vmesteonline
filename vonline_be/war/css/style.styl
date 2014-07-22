@@ -79,6 +79,21 @@ transform()
   padding 0 8px
   font-size 16px
 
+.ace-nav li:last-child .icon-caret-down
+  position relative
+  top -10px
+
+.ace-nav .nav-user-photo
+  border 0
+  width 35px
+  height 35px
+  background-repeat no-repeat
+  background-size cover
+  background-position 50% 50%
+  display inline-block
+  margin-top 5px
+  border-radius 0
+
 .nav-list > li > a
   padding 8px 10px 10px 16px
   height auto
@@ -444,7 +459,7 @@ transform()
     textarea
       width 100%
       height 90px
-      margin-bottom 10px
+      overflow hidden
   >.btn-group
     float right
     margin-left 5px
@@ -454,6 +469,8 @@ transform()
       margin-right 5px
   .wysiwyg-editor
     border-left 1px solid #ccc
+  .message-input-bottom
+    margin-top 10px
 
 /* новые стили после редизайна 11.06.14 */
 .itemdiv > .user > img
@@ -475,9 +492,69 @@ transform()
   textarea
     width 100%
     height 90px
-    margin-bottom 10px
+    overflow hidden
   .hashtag
     margin-left 10px
+  .message-input-bottom
+    margin-top 15px
+
+.attach-area
+  .attach-item
+    display inline-block
+    margin-right 10px
+    margin-top 10px
+  .attached-img
+    width 150px
+    height 150px
+    background-position center center
+    background-size contain
+    background-repeat no-repeat
+  .remove-attach-img
+    font-size 20px
+    color #ff0000
+    float right
+    margin-left -13px
+    line-height 10px
+    position relative
+    &:hover
+      text-decoration none
+
+.attach-dropdown
+  li a:hover
+    background #4f99c6
+    color #fff
+  .ace-file-input
+    margin-bottom 0
+    line-height 1.5
+    .file-label
+      border 0
+      text-align left
+      margin-bottom 0
+      background-color transparent
+      transition none
+      &:before
+        font-size 13px
+        font-weight normal
+        color #000
+        margin 0
+        line-height 14px
+        background-color transparent
+        transition none
+        padding 0
+        padding-left 11px
+    &:hover
+      color #fff
+      background #4f99c6
+      .file-label:before
+        color #fff
+
+.attached
+  padding-bottom 20px
+  a
+    display inline-block
+    vertical-align top
+    img
+      max-width 300px
 
 .create-poll
   margin-bottom 10px
@@ -504,10 +581,15 @@ transform()
         display inline-block
         color #8BA1BC
         width 84%
+        text-align center
+        line-height 15px
+        background-color #F7F7F7
         .poll-line-percent
           background-color #DAE1E8
+          height 15px
         .poll-line-number
-          background-color #F7F7F7
+          height 15px
+          margin-top -15px
       .poll-row-percent
         display inline-block
         width 15%
@@ -520,6 +602,12 @@ transform()
   .wallitem-message
     padding-top 10px
     border-top 1px solid rgb(80, 144, 193)
+    .input-group
+      display block
+      .input-group-btn
+        display block
+        margin-top 10px
+        width 100%
   .first-message
     border 1px solid #D7DBDD
     position relative
@@ -539,18 +627,31 @@ transform()
       padding-bottom 20px
       .lbl:before
         margin-right 10px
+      h5
+        font-family tahoma, arial
   .dialogs
     clear left
     margin 0 0 0 30px
     padding-top 15px
     padding-right 0
   .message-textarea
-    width 99%
+    width 100%
+    overflow hidden
   .lenta-item-bottom
     position absolute
     bottom 3px
   .lenta-item-hashtag
     float right
+
+.avatar
+  width 100px
+  height 100px
+  background-repeat no-repeat
+  background-size cover
+  background-position 50% 50%
+  &.short
+    width 40px
+    height 40px
 
 .create-topic-btn
   overflow auto
@@ -583,8 +684,11 @@ transform()
         margin-top 0
   .answer-input
     textarea
-      width 88%
-      margin-bottom 10px
+      width 100%
+      overflow hidden
+    .answer-input-bottom
+      margin-top 10px
+      padding-bottom 10px
   .widget-main
     position relative
   .message-bottom
@@ -592,13 +696,28 @@ transform()
     bottom 5px
   .poll
     padding-bottom 30px
+    .radio .lbl:before
+      margin-right 10px
+    h5
+      font-family tahoma, arial
 
   /* private-messages */
+.dialog-send
+  padding-top 15px
+  .dialog-send-center
+    margin 0 60px
+    textarea
+      display block
+      width 100%
+      margin-bottom 10px
+
+.dialog
 .private-messages
   padding 10px
   h2
     margin-top 0
   .private-message-single
+    cursor pointer
     padding 10px
     overflow auto
     border-bottom 1px solid #CCCCCC
@@ -635,7 +754,7 @@ transform()
         img
           width 70px
       .nextdoor-name
-          margin-left 90px
+          margin-left 110px
   .nextdoors-amount
     margin 15px 0 0 0
 
@@ -644,6 +763,7 @@ transform()
   .user-body-left
     .logo-container
       position relative
+      width 150px
     .ace-file-input
       position absolute
       top 0
@@ -672,6 +792,17 @@ transform()
         display inline-block
         vertical-align middle //
     img
-      width 150px
+      max-width 150px
+      max-height 150px
+      display block
+      margin 0 auto
   .user-body-right
     margin-left 170px
+    .home-map
+      padding 0 10px 10px 0
+      img
+        width 100%
+        display block
+
+input.ng-invalid.ng-dirty
+  border 1px solid #ff0000

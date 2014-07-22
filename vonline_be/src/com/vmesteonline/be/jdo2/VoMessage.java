@@ -93,7 +93,8 @@ public class VoMessage extends VoBaseMessage {
 
 				VoUser author = pm.getObjectById(VoUser.class, msg.getAuthorId());
 				if (null == author) {
-					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Author of Message not found by ID=" + msg.getAuthorId());
+					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Author of Message not found by ID="
+							+ msg.getAuthorId());
 				}
 				// TODO сделать проверку на права создания сообщений не зависящей от
 				// наличия домашней группы.
@@ -107,18 +108,19 @@ public class VoMessage extends VoBaseMessage {
 				/*
 				 * Check that all of linked messages exists and has type that is required
 				 */
-				this.links = new HashMap<MessageType, Long>();
+/*				this.links = new HashMap<MessageType, Long>();
 
 				for (Entry<MessageType, Long> entry : msg.getLinkedMessages().entrySet()) {
 					VoMessage linkedMsg = pm.getObjectById(VoMessage.class, entry.getValue());
 					if (null == linkedMsg)
-						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Linked message not found by ID:" + entry.getValue());
+						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Linked message not found by ID:"
+								+ entry.getValue());
 					if (!entry.getKey().equals(linkedMsg.getType()))
 						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Linked message with ID:" + entry.getValue()
 								+ " type missmatch. Stored type:" + linkedMsg.getType().name() + " but linked as:" + entry.getKey().name());
 					links.put(entry.getKey(), entry.getValue());
 				}
-
+*/
 				this.approvedId = msg.getApprovedBy();
 
 				pm.makePersistent(author);
@@ -143,7 +145,7 @@ public class VoMessage extends VoBaseMessage {
 
 	public Message getMessage() {
 		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
-				getUnlikes(), links, tags, null, visibleOffset, null);
+				getUnlikes(), links, null, null, visibleOffset, null, images, documents);
 	}
 
 	public long getApprovedId() {

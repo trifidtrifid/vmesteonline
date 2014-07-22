@@ -1,0 +1,90 @@
+
+    <section class="talks page" ng-show="base.talksIsActive">
+
+        <section class="create-topic" ng-hide="base.createTopicIsHide">
+            <div class="has-info form-group">
+                <input type="text" class="width-100 head" value="Заголовок"
+                       onblur="if(this.value=='') this.value='Заголовок';"
+                       onfocus="if(this.value=='Заголовок') this.value='';" ng-model="talks.subject" />
+            </div>
+            <div class="topic-body clearfix">
+                <textarea ng-model="talks.content" class="no-resize" ng-keyup="base.messageChange($event,1)"
+                    onblur="if(this.value=='') this.value='Сообщение';"
+                    onfocus="if(this.value=='Сообщение') this.value='';"></textarea>
+
+                <div class="create-poll" ng-show="talks.isPollShow">
+                    <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="talks.isPollShow = false;talks.isPollAvailable = true;">&times;</a>
+                    <h5>Тема опроса:</h5>
+                    <input type="text" ng-model="talks.pollSubject"/>
+                    <h5>Варианты ответов:</h5>
+                    <div ng-repeat="input in talks.pollInputs">
+                        <input ng-model="input.name" type="text"/>
+                    </div>
+                    <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,talks)"/>
+                </div>
+
+                <div class="attach-area" id="attach-area-00"></div>
+
+                <div class="message-input-bottom">
+
+                    <div class="btn-group pull-left">
+                        <button class="btn btn-sm btn-primary" ng-click="talks.addSingleTalk()">
+                        Создать
+                        </button>
+                    </div>
+
+                    <div class="hashtag pull-left">
+                        <span>группа</span>
+                        <div class="btn-group hashtag-dropdown">
+                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                <span class="btn-group-text"># {{talks.selectedGroup.visibleName}}</span>
+                                <span class="icon-caret-down icon-on-right"></span>
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-blue">
+                                <li ng-repeat="group in talks.groups"><a href="#" ng-click="talks.selectGroupInDropdown(group.id,talks)"># {{group.visibleName}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <div class="btn-group attach-dropdown pull-right">
+                        <button data-toggle="dropdown"
+                        class="btn btn-info btn-sm dropdown-toggle no-border">
+                        <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-yellow">
+                        <li><a href="#">Видео</a></li>
+
+                        <li><a href="#">Документ</a></li>
+
+                        <li><input id="attachImage-00" type="file"/></li>
+
+                        <li><a href="#" ng-click="base.showPoll($event,talks)" ng-show="talks.isPollAvailable">Опрос</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </section>
+
+        <section class="talks-title-block"> <!--  ng-show="base.isTalkTitles" -->
+
+            <div class="talks-title" ng-repeat="talk in talks.topics" id="{{talk.id}}">
+                <div class="talks-title-left load-talk">
+                    <div><a ui-sref="talks-single({ talkId : {{talk.id}} })">{{talk.subject}}</a></div> <!--  ng-click="showFullTalk($event,talk)" -->
+                    <div>{{talk.messageNum}} сообщений</div>
+                </div>
+                <div class="talks-title-right">
+                    <div>Последнее обновление:</div>
+                    <div>{{talk.lastUpdateEdit}}</div>
+                </div>
+            </div>
+
+        </section>
+
+    </section>
+

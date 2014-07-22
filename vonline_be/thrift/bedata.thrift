@@ -34,6 +34,12 @@ struct PostalAddress {
 	8:string comment
 }
 
+struct UserLocation{
+	1:string address,
+	2:string locationId
+}
+
+
 enum FriendshipType { UNCONFIRMED=0, CONFIRMED=1, REQUESTED=2, WAIT_CONFIRMATION=3, HIDE=4 }
 
 struct Friendship {
@@ -97,6 +103,7 @@ struct Children{
 enum PetType { CAT=0, DOG=1, BIRD=2, OTHER=3}
 
 struct Pet{
+	1: string name,
 	2: PetType type,
 	3: string breed
 }

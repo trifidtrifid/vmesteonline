@@ -1,0 +1,271 @@
+<section class="settings page"> <!--  ng-show="base.settingsIsActive" -->
+
+        <div class="dynamic">
+            <section class="settings">
+                <h3>Настройки </h3>
+                <div class="tabbable">
+                    <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
+
+                        <li class="active"><a data-toggle="tab" href="#settings-base">Основное</a>
+                        </li>
+
+                        <li><a data-toggle="tab" href="#private">Приватность</a>
+                        </li>
+
+                        <li class=""><a data-toggle="tab" href="#alerts">Оповещения</a>
+                        </li>
+
+                        <li class=""><a data-toggle="tab" href="#contacts">Контакты</a>
+                        </li>
+
+                        <li class=""><a data-toggle="tab" href="#family">Семья</a>
+                        </li>
+
+                        <li class=""><a data-toggle="tab" href="#interests">Интересы</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div id="settings-base" class="tab-pane active">
+                            <form name="formUserInfo">
+
+                            <a class="btn btn-sm no-border btn-primary pull-right" href="#">Загрузить данные из Вконтакте</a>
+
+                            <div>
+                                <label for="settings-input-1">Фамилия</label>
+                                <input type="text" id="settings-input-1" ng-model="settings.userInfo.lastName" required/>
+                            </div>
+                            <div>
+                                <label for="settings-input-2">Имя</label>
+                                <input type="text" id="settings-input-2" ng-model="settings.userInfo.firstName" required/>
+                            </div>
+                            <div>
+                                <label for="settings-input-3">Дата рождения</label>
+                                <input type="text" id="settings-input-3" ng-model="settings.birthday"/>
+                            </div>
+                            <div>
+                                <label for="settings-select-1">Пол</label>
+
+                                <select class="form-control" id="settings-select-1" ng-model="settings.userInfo.gender">
+                                    <option value="m" ng-selected="settings.userInfo.gender=='m'">Муж</option>
+                                    <option value="f" ng-selected="settings.userInfo.gender=='f'">Жен</option>
+                                </select>
+                            </div>
+
+                            <h4>Изменить пароль</h4>
+                            <div>
+                                <label for="settings-input-4">Старый пароль</label>
+                                <input type="password" id="settings-input-4" ng-model="settings.oldPassw" ng-change="settings.changePassw()" />
+                            </div>
+                            <div>
+                                <label for="settings-input-5">Новый пароль</label>
+                                <input type="password" id="settings-input-5" ng-model="settings.newPassw" ng-change="settings.changePassw()"/>
+                            </div>
+                            <div>
+                                <label for="settings-input-6">Повторите пароль</label>
+                                <input type="password" id="settings-input-6"/>
+                            </div>
+
+                            <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(1),'btn-primary' : settings.canSave(1)}"
+                                    href="#" ng-disabled="!settings.canSave(1)" ng-click="settings.updatePasswordOrUserInfo()">Сохранить</button>
+                            </form>
+
+                        </div>
+
+                        <div id="private" class="tab-pane">
+                            <form name="formPrivate">
+                            <div>
+                                <label for="settings-select-2" class="long">Показывать мой профайл</label>
+
+                                <select class="form-control" id="settings-select-2">
+                                    <option value="">&nbsp;</option>
+                                    <option value="AL">Никому</option>
+                                    <option value="AK">Васе</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="settings-select-3" class="long">Показывать контактную информацию</label>
+
+                                <select class="form-control" id="settings-select-3">
+                                    <option value="">&nbsp;</option>
+                                    <option value="AL">Никому</option>
+                                    <option value="AK">Васе</option>
+                                </select>
+                            </div>
+
+                                <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(2),'btn-primary' : settings.canSave(2)}"
+                                        href="#" ng-disabled="!settings.canSave(2)" ng-click="settings.updatePasswordOrUserInfo()">Сохранить</button>
+                            </form>
+                        </div>
+
+                        <div id="alerts" class="tab-pane">
+                            <form name="formAlerts">
+                            <div>
+                                <label for="settings-input-13">E-mail для оповещений</label>
+                                <input type="email" id="settings-input-13" value="ttt@sdf.ru"/>
+                            </div>
+                            <!--<div>
+                                <label>E-mail для оповещений</label> ttt@sdf.ru <a href="#">изменить</a>
+                            </div>-->
+                            <div>
+                                <label for="settings-select-4">Частота оповещений</label>
+                                <select class="form-control" id="settings-select-4">
+                                    <option value="">&nbsp;</option>
+                                    <option value="AL">Никогда</option>
+                                    <option value="AK">Васе</option>
+                                </select>
+                            </div>
+                            <div class="checkbox">
+                                <label> <input name="settings-checkbox"
+                                    type="checkbox" class="ace"> <span class="lbl">
+                                        Важные сообщения</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label> <input name="settings-checkbox"
+                                    type="checkbox" class="ace"> <span class="lbl">
+                                        Новые обсуждения</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label> <input name="settings-checkbox"
+                                    type="checkbox" class="ace"> <span class="lbl">
+                                        Новые сообщения</span>
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label> <input name="settings-checkbox"
+                                    type="checkbox" class="ace"> <span class="lbl">
+                                        Личные сообщения</span>
+                                </label>
+                            </div>
+
+                                <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(3),'btn-primary' : settings.canSave(3)}"
+                                        href="#" ng-disabled="!settings.canSave(3)" ng-click="settings.updatePasswordOrUserInfo()">Сохранить</button>
+                            </form>
+                        </div>
+
+                        <div id="contacts" class="tab-pane">
+                            <form name="formContacts">
+                            <div>
+                                <label for="settings-input-7">Email</label>
+                                <input type="email" id="settings-input-7" ng-model="settings.userContacts.email" required/>
+                            </div>
+                            <div>
+                                <label for="settings-input-8">Телефон</label>
+                                <input type="tel" id="settings-input-8" ng-model="settings.userContacts.mobilePhone"/>
+                            </div>
+
+                                <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(4),'btn-primary' : settings.canSave(4)}"
+                                        href="#" ng-disabled="!settings.canSave(4)" ng-click="settings.updateContacts()">Сохранить</button>
+                            </form>
+                        </div>
+
+                        <div id="family" class="tab-pane">
+                            <form name="formFamily">
+                            <div>
+                                <label for="settings-select-5">Семейное положение</label>
+
+                                <select class="form-control short" id="settings-select-5" ng-model="settings.family.relations">
+                                    <option value="1" ng-selected="settings.family.relations=='1'">Не женат</option>
+                                    <option value="0" ng-selected="settings.family.relations=='0'">Женат</option>
+                                </select>
+                            </div>
+                            <div  ng-switch on="settings.family.childs.length">
+                                <label for="settings-input-9" class="pull-left">Ребенок</label>
+
+                                <div class="single-child" ng-swith-when="0">
+                                    <input type="text" class="short" id="settings-input-9" ng-model="child.name"/>
+
+                                    <label for="settings-select-6" class="no-width">родился</label>
+                                    <select class="form-control short" id="settings-select-6">
+                                        <option value="">&nbsp;</option>
+                                        <option value="AL">Месяц</option>
+                                        <option value="AK">Январь</option>
+                                    </select>
+
+                                    <input type="text" class="short" placeholder="год" id="settings-input-16"/>
+                                </div>
+
+                                <div class="settings-child-item" ng-switch-default ng-repeat="child in settings.family.childs">
+                                    <input type="text" class="short" id="settings-input-17" ng-model="child.name"/>
+
+                                    <label for="settings-select-6" class="no-width">родился</label>
+                                    <select class="form-control short" id="settings-select-9">
+                                        <option value="">&nbsp;</option>
+                                        <option value="AL">Месяц</option>
+                                        <option value="AK">Январь</option>
+                                    </select>
+
+                                    <input type="text" class="short" placeholder="год" id="settings-input-10"/>
+                                </div>
+
+                                <div class="settings-add-link"><a href="#" ng-click="settings.childAdd($event)">Добавить</a></div>
+
+                            </div>
+
+                            <div ng-switch on="settings.family.pets.length">
+                                <label for="settings-input-11" class="pull-left">Питомец</label>
+
+                                <div class="single-pet" ng-swith-when="0">
+                                    <input type="text" class="short" id="settings-input-11"/>
+
+                                    <select class="form-control short" id="settings-select-7" ng-model="pet.type">
+                                        <option  value="0" ng-selected="pet.type=='0'">Кошка</option>
+                                        <option  value="1" ng-selected="pet.type=='1'">Собака</option>
+                                        <option  value="2" ng-selected="pet.type=='2'">Птица</option>
+                                        <option  value="3" ng-selected="pet.type=='3'">Другое</option>
+                                    </select>
+
+                                    <input type="text" class="short" placeholder="порода" id="settings-input-12" ng-model="pet.breed"/>
+                                </div>
+
+                                <div class="settings-pet-item" ng-switch-default ng-repeat="pet in settings.family.pets">
+                                    <input type="text" class="short" id="settings-input-14"/>
+
+                                    <select class="form-control short" id="settings-select-8" ng-model="pet.type">
+                                        <option  value="0" ng-selected="pet.type=='0'">Кошка</option>
+                                        <option  value="1" ng-selected="pet.type=='1'">Собака</option>
+                                        <option  value="2" ng-selected="pet.type=='2'">Птица</option>
+                                        <option  value="3" ng-selected="pet.type=='3'">Другое</option>
+                                    </select>
+
+                                    <input type="text" class="short" placeholder="порода" id="settings-input-15" ng-model="pet.breed"/>
+                                </div>
+
+                                <div class="settings-add-link"><a href="#" ng-click="settings.petAdd($event)">Добавить</a></div>
+
+
+                            </div>
+
+                                <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(5),'btn-primary' : settings.canSave(5)}"
+                                        href="#" ng-disabled="!settings.canSave(5)" ng-click="settings.updateFamily()">Сохранить</button>
+                            </form>
+
+                        </div>
+
+                        <div id="interests" class="tab-pane">
+                            <form name="formInterests">
+                            <div>
+                                <label for="settings-textarea-1">Интересы</label>
+                                <textarea id="settings-textarea-1" ng-model="settings.interests.userInterests"></textarea>
+                            </div>
+                            <div>
+                                <label for="settings-textarea-2">Работа</label>
+                                <textarea id="settings-textarea-2" ng-model="settings.interests.job"></textarea>
+                            </div>
+
+                                <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(6),'btn-primary' : settings.canSave(6)}"
+                                        href="#" ng-disabled="!settings.canSave(6)" ng-click="settings.updateInterests()">Сохранить</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+</section>
+
+

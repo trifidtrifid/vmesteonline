@@ -66,6 +66,21 @@ h1 {
   padding: 0 8px;
   font-size: 16px;
 }
+.ace-nav li:last-child .icon-caret-down {
+  position: relative;
+  top: -10px;
+}
+.ace-nav .nav-user-photo {
+  border: 0;
+  width: 35px;
+  height: 35px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+  display: inline-block;
+  margin-top: 5px;
+  border-radius: 0;
+}
 .nav-list > li > a {
   padding: 8px 10px 10px 16px;
   height: auto;
@@ -497,7 +512,7 @@ h1 {
 .create-topic .topic-body textarea {
   width: 100%;
   height: 90px;
-  margin-bottom: 10px;
+  overflow: hidden;
 }
 .create-topic >.btn-group {
   float: right;
@@ -511,6 +526,9 @@ h1 {
 }
 .create-topic .wysiwyg-editor {
   border-left: 1px solid #ccc;
+}
+.create-topic .message-input-bottom {
+  margin-top: 10px;
 }
 /* новые стили после редизайна 11.06.14 */
 .itemdiv > .user > img {
@@ -537,10 +555,79 @@ h1 {
 .message-input textarea {
   width: 100%;
   height: 90px;
-  margin-bottom: 10px;
+  overflow: hidden;
 }
 .message-input .hashtag {
   margin-left: 10px;
+}
+.message-input .message-input-bottom {
+  margin-top: 15px;
+}
+.attach-area .attach-item {
+  display: inline-block;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+.attach-area .attached-img {
+  width: 150px;
+  height: 150px;
+  background-position: center center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.attach-area .remove-attach-img {
+  font-size: 20px;
+  color: #f00;
+  float: right;
+  margin-left: -13px;
+  line-height: 10px;
+  position: relative;
+}
+.attach-area .remove-attach-img:hover {
+  text-decoration: none;
+}
+.attach-dropdown li a:hover {
+  background: #4f99c6;
+  color: #fff;
+}
+.attach-dropdown .ace-file-input {
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+.attach-dropdown .ace-file-input .file-label {
+  border: 0;
+  text-align: left;
+  margin-bottom: 0;
+  background-color: transparent;
+  transition: none;
+}
+.attach-dropdown .ace-file-input .file-label:before {
+  font-size: 13px;
+  font-weight: normal;
+  color: #000;
+  margin: 0;
+  line-height: 14px;
+  background-color: transparent;
+  transition: none;
+  padding: 0;
+  padding-left: 11px;
+}
+.attach-dropdown .ace-file-input:hover {
+  color: #fff;
+  background: #4f99c6;
+}
+.attach-dropdown .ace-file-input:hover .file-label:before {
+  color: #fff;
+}
+.attached {
+  padding-bottom: 20px;
+}
+.attached a {
+  display: inline-block;
+  vertical-align: top;
+}
+.attached a img {
+  max-width: 300px;
 }
 .create-poll {
   margin-bottom: 10px;
@@ -572,12 +659,17 @@ h1 {
   display: inline-block;
   color: #8ba1bc;
   width: 84%;
+  text-align: center;
+  line-height: 15px;
+  background-color: #f7f7f7;
 }
 .poll-results .poll-result-item .poll-row .poll-row-line .poll-line-percent {
   background-color: #dae1e8;
+  height: 15px;
 }
 .poll-results .poll-result-item .poll-row .poll-row-line .poll-line-number {
-  background-color: #f7f7f7;
+  height: 15px;
+  margin-top: -15px;
 }
 .poll-results .poll-result-item .poll-row .poll-row-percent {
   display: inline-block;
@@ -593,6 +685,14 @@ h1 {
 .lenta-item .wallitem-message {
   padding-top: 10px;
   border-top: 1px solid #5090c1;
+}
+.lenta-item .wallitem-message .input-group {
+  display: block;
+}
+.lenta-item .wallitem-message .input-group .input-group-btn {
+  display: block;
+  margin-top: 10px;
+  width: 100%;
 }
 .lenta-item .first-message {
   border: 1px solid #d7dbdd;
@@ -621,6 +721,9 @@ h1 {
 .lenta-item .first-message .poll .lbl:before {
   margin-right: 10px;
 }
+.lenta-item .first-message .poll h5 {
+  font-family: tahoma, arial;
+}
 .lenta-item .dialogs {
   clear: left;
   margin: 0 0 0 30px;
@@ -628,7 +731,8 @@ h1 {
   padding-right: 0;
 }
 .lenta-item .message-textarea {
-  width: 99%;
+  width: 100%;
+  overflow: hidden;
 }
 .lenta-item .lenta-item-bottom {
   position: absolute;
@@ -636,6 +740,17 @@ h1 {
 }
 .lenta-item .lenta-item-hashtag {
   float: right;
+}
+.avatar {
+  width: 100px;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+.avatar.short {
+  width: 40px;
+  height: 40px;
 }
 .create-topic-btn {
   overflow: auto;
@@ -676,8 +791,12 @@ h1 {
   margin-top: 0;
 }
 .talks-block .answer-input textarea {
-  width: 88%;
-  margin-bottom: 10px;
+  width: 100%;
+  overflow: hidden;
+}
+.talks-block .answer-input .answer-input-bottom {
+  margin-top: 10px;
+  padding-bottom: 10px;
 }
 .talks-block .widget-main {
   position: relative;
@@ -689,33 +808,60 @@ h1 {
 .talks-block .poll {
   padding-bottom: 30px;
 }
+.talks-block .poll .radio .lbl:before {
+  margin-right: 10px;
+}
+.talks-block .poll h5 {
+  font-family: tahoma, arial;
+}
+.dialog-send {
+  padding-top: 15px;
+}
+.dialog-send .dialog-send-center {
+  margin: 0 60px;
+}
+.dialog-send .dialog-send-center textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.dialog,
 .private-messages {
   padding: 10px;
 }
+.dialog h2,
 .private-messages h2 {
   margin-top: 0;
 }
+.dialog .private-message-single,
 .private-messages .private-message-single {
+  cursor: pointer;
   padding: 10px;
   overflow: auto;
   border-bottom: 1px solid #ccc;
 /* nextdoors */
 }
+.dialog .private-message-single:first-child,
 .private-messages .private-message-single:first-child {
   border-top: 1px solid #ccc;
 }
+.dialog .private-message-single .private-message-left,
 .private-messages .private-message-single .private-message-left {
   width: 300px;
 }
+.dialog .private-message-single .private-message-left .private-message-ava img,
 .private-messages .private-message-single .private-message-left .private-message-ava img {
   width: 70px;
 }
+.dialog .private-message-single .private-message-left .private-message-author,
 .private-messages .private-message-single .private-message-left .private-message-author {
   margin-left: 90px;
 }
+.dialog .private-message-single .private-message-left .private-message-author a:hover,
 .private-messages .private-message-single .private-message-left .private-message-author a:hover {
   text-decoration: none;
 }
+.dialog .private-message-single .private-message-right,
 .private-messages .private-message-single .private-message-right {
   margin-left: 320px;
 }
@@ -739,7 +885,7 @@ h1 {
   width: 70px;
 }
 .nextdoors .nextdoor-single .nextdoor-left .nextdoor-name {
-  margin-left: 90px;
+  margin-left: 110px;
 }
 .nextdoors .nextdoors-amount {
   margin: 15px 0 0 0;
@@ -747,6 +893,7 @@ h1 {
 }
 .user-body .user-body-left .logo-container {
   position: relative;
+  width: 150px;
 }
 .user-body .user-body-left .ace-file-input {
   position: absolute;
@@ -781,8 +928,21 @@ h1 {
   vertical-align: middle;
 }
 .user-body .user-body-left img {
-  width: 150px;
+  max-width: 150px;
+  max-height: 150px;
+  display: block;
+  margin: 0 auto;
 }
 .user-body .user-body-right {
   margin-left: 170px;
+}
+.user-body .user-body-right .home-map {
+  padding: 0 10px 10px 0;
+}
+.user-body .user-body-right .home-map img {
+  width: 100%;
+  display: block;
+}
+input.ng-invalid.ng-dirty {
+  border: 1px solid #f00;
 }

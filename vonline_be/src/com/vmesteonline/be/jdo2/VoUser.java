@@ -19,6 +19,7 @@ import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.RelationsType;
 import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.UserContacts;
+import com.vmesteonline.be.UserFamily;
 import com.vmesteonline.be.UserInfo;
 import com.vmesteonline.be.UserProfile;
 import com.vmesteonline.be.UserStatus;
@@ -58,8 +59,12 @@ public class VoUser extends GeoLocation {
 		UserProfile up = new UserProfile();
 		up.contacts = getContacts();
 		up.userInfo = getUserInfo();
-
+		up.family = getUserFamily();
 		return up;
+	}
+
+	public UserFamily getUserFamily() {
+		return new UserFamily();
 	}
 
 	public UserContacts getContacts() {

@@ -18,10 +18,7 @@
 
 	<%
 	Defaults.initDefaultData();
-/* 	if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Production) {
-		Defaults.initDefaultData();
-	} else {
- */		%>
+		%>
 		<h1>THIS IS PRODUCTION YOU NEVER SHOULD USE init.jsp!</h1>
 		<%
 	//}

@@ -40,6 +40,7 @@
         pageContext.setAttribute("topics",Topics.topics);
         pageContext.setAttribute("firstName",ShortUserInfo.firstName);
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
+        pageContext.setAttribute("userAvatar",ShortUserInfo.avatar);
 	} catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
 		response.sendRedirect("/login.html");
@@ -55,6 +56,7 @@
 <meta charset="utf-8" />
 <title>Главная</title>
 <link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>
 
 <script src="js/lib/jquery-2.1.1.min.js"></script>
 <!--[if lt IE 9]>
@@ -73,6 +75,7 @@
         </c:if>
     </script>
     <script src="js/forum/angular/angular.js"></script>
+
 </head>
 <body ng-controller="baseController as base" ng-cloak>
 <div class="navbar navbar-default" id="navbar">
@@ -92,13 +95,16 @@
 
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
-                <li ng-class="navbar.privateMessagesBtnStatus"><a class="btn btn-info no-border private-messages-link" ng-click="navbar.goToPrivateMessages($event)" href="#">Личные сообщения </a></li>
+                <li ng-class="navbar.privateMessagesBtnStatus"><a class="btn btn-info no-border private-messages-link"
+                                                                  ui-sref="private-messages">Личные сообщения </a></li>
 
-                <li ng-class="navbar.nextdoorsBtnStatus"><a class="btn btn-info no-border nextdoors-link" href="#" ng-click="navbar.goToNextdoors($event)"> Соседи</a></li>
+                <li ng-class="navbar.nextdoorsBtnStatus"><a class="btn btn-info no-border nextdoors-link"
+                                                            ui-sref="nextdoors"> Соседи</a></li>
 
                 <li class="user-short light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                        <img class="nav-user-photo" src="i/avatars/user.jpg" alt="Jason's Photo" />
+                        <div class="nav-user-photo" style="background-image: url('<c:out value="${userAvatar}"/>')"></div>
+                        <%--<img class="nav-user-photo" ng-src="<c:out value="${userAvatar}"/>" alt="аватар" />--%>
                         <span class="user-info">
                             <small><c:out value="${firstName}" /></small>
                             <c:out value="${lastName}" />
@@ -107,11 +113,11 @@
                     </a>
 
                     <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                        <li><a href="settings.html"> <i class="icon-cog"></i>
+                        <li><a ui-sref="settings"> <i class="icon-cog"></i> <!--   -->
                             Настройки
                         </a></li>
 
-                        <li><a href="#" ng-click="navbar.goToProfile($event)"> <i class="icon-user"></i>
+                        <li><a ui-sref="profile"> <i class="icon-user"></i>
                             Профиль
                         </a></li>
 
@@ -144,9 +150,9 @@
 						}
 					</script>
 					<ul class="nav nav-list">
-                        <li ng-class="{active:leftbar.isSet(1)}"><a href="#" ng-click="setTab($event,1)"> <span class="menu-text">Новости</span> </a></li>
-                        <li ng-class="{active:leftbar.isSet(2)}"><a href="#" ng-click="setTab($event,2)"> <span class="menu-text">Обсуждения</span> </a></li>
-                        <li ng-class="{active:leftbar.isSet(3)}"><a href="#" ng-click="setTab($event,3)"> <span class="menu-text">Услуги и объявления</span> </a></li>
+                        <li ng-class="{active:isSet(1)}"><a ui-sref="main"> <span class="menu-text">Новости</span> </a></li> <!--  ng-click="setTab($event,1)" -->
+                        <li ng-class="{active:isSet(2)}"><a ui-sref="talks"> <span class="menu-text">Обсуждения</span> </a></li> <!-- ng-click="setTab($event,2)" -->
+                        <li ng-class="{active:isSet(3)}"><a ui-sref="services"> <span class="menu-text">Услуги и объявления</span> </a></li>
 						<%--<c:forEach var="rubric" items="${rubrics}">
 							<li><a href="#" data-rubricid="${rubric.id}"> <span
 									class="menu-text">${rubric.visibleName}</span> <b>(3)</b>
@@ -197,8 +203,6 @@
                             <button class="btn btn-sm btn-info no-border pull-right ng-cloak" ng-repeat="group in mainContentTop.groups"
                             id="{{group.id}}" ng-class="{active : group.selected}" ng-click="mainContentTop.selectGroup(group)">{{group.visibleName}}</button>
 
-                            <%--<button class="btn btn-sm btn-info no-border pull-right all-groups-btn"
-                                    ng-class="{active : mainContentTop.allGroupsBtn.selected}" ng-click="mainContentTop.selectGroup(group,1)">Все</button>--%>
                         </nav>
 
                         <div class="create-topic-btn pull-right" ng-show="base.talksIsActive">
@@ -206,429 +210,7 @@
                         </div>
                     </div>
 
-						<div class="forum-wrap">
-                            <section class="forum page" ng-show="base.lentaIsActive" ng-controller="LentaController as lenta" ng-cloak>
-                                <div class="message-input clearfix">
-                                    <textarea ng-model="lenta.wallMessageContent" class="no-resize"
-                                        onblur="if(this.value=='') this.value='Написать сообщение';"
-                                        onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
-
-                                    <div class="create-poll" ng-show="lenta.isPollShow">
-                                        <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="lenta.isPollShow = false;lenta.isPollAvailable = true;">&times;</a>
-                                        <h5>Тема опроса:</h5>
-                                        <input type="text" ng-model="lenta.pollSubject"/>
-                                        <h5>Варианты ответов:</h5>
-                                        <div ng-repeat="input in lenta.pollInputs">
-                                            <input ng-model="input.name" type="text"/>
-                                        </div>
-                                        <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,lenta)"/>
-                                    </div>
-
-                                    <div class="message-input-bottom">
-                                        <div class="btn-group attach-dropdown pull-right">
-                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                        <span class="btn-group-text">Прикрепить</span>
-                                        <span class="icon-caret-down icon-on-right"></span>
-                                        </button>
-
-                                        <ul class="dropdown-menu dropdown-blue">
-                                        <li><a href="#">Видео</a></li>
-                                        <li><a href="#">Документ</a></li>
-                                        <li><a href="#">Изображение</a></li>
-                                        <li><a href="#" ng-click="base.showPoll($event,lenta)" ng-show="lenta.isPollAvailable">Опрос</a></li>
-                                        </ul>
-                                        </div>
-                                        <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
-
-                                        <div class="hashtag pull-left">
-                                            <span>группа</span>
-                                            <div class="btn-group hashtag-dropdown">
-                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                                                    <span class="btn-group-text" ng-cloak># {{lenta.selectedGroup.visibleName}}</span>
-                                                    <span class="icon-caret-down icon-on-right"></span>
-                                                </button>
-
-                                                <ul class="dropdown-menu dropdown-blue">
-                                                    <li ng-repeat="group in lenta.groups"><a href="#" ng-click="lenta.selectGroupInDropdown(group.id,lenta)" ng-cloak># {{group.visibleName}}</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-
-                                </div>
-
-                                <div class="lenta">
-                                    <div class="lenta-item" ng-repeat="wallItem in lenta.wallItems"
-                                            ng-switch on="wallItem.topic.message.type">
-
-                                        <div class="wallitem-message" ng-switch-when="5">
-
-                                            <div class="first-message clearfix" >
-                                                <div class="user">
-                                                    <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                </div>
-
-                                                <div class="body" ng-switch on="wallItem.topic.metaType">
-                                                    <span class="label label-lg arrowed lenta-item-hashtag"
-                                                            ng-class="wallItem.tagColor">{{wallItem.label}}</span>
-
-                                                    <div class="name">
-                                                        <a href="#">{{wallItem.topic.authorName}}</a>
-                                                    </div>
-
-                                                    <div class="text" ng-switch-when="message" ng-cloak>{{wallItem.topic.message.content}}</div>
-
-                                                    <div class="poll" ng-switch-when="poll" ng-switch on="wallItem.topic.poll.alreadyPoll" ng-cloak>
-                                                        <div class="text" ng-cloak>{{wallItem.topic.message.content}} {{wallItem.topic.poll.alreadyPoll}}</div>
-
-                                                        <h5>{{wallItem.topic.poll.subject}}</h5>
-
-                                                        <!-- -->
-
-                                                        <div class="poll-do" ng-switch-when="false">
-
-                                                            <div class="radio" ng-repeat="variant in wallItem.topic.poll.editNames">
-                                                                <label>
-                                                                    <input name="poll-variant-{{wallItem.topic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
-                                                                    <span class="lbl">{{variant.name}}</span>
-                                                                </label>
-                                                            </div>
-
-                                                            <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,wallItem.topic.poll)">Голосовать</button>
-
-                                                        </div>
-                                                        <!-- -->
-
-                                                        <div class="poll-results" ng-switch-when="true">
-
-                                                            <div class="poll-result-item"  ng-repeat="variant in wallItem.topic.poll.editNames">
-                                                                <div class="poll-result-variant">{{variant.name}}</div>
-                                                                <div class="poll-row">
-                                                                    <div class="poll-row-line">
-                                                                        <div class="poll-line-percent" ng-style="{width: variant.votersPercent}"></div>
-                                                                        <div class="poll-line-number" style="width: 100%">{{variant.votersNum}}</div>
-                                                                    </div>
-                                                                    <div class="poll-row-percent">{{variant.votersPercent}}%</div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="poll-result-amount">Проголосовало <span>{{wallItem.topic.poll.amount}}</span> человек</div>
-
-                                                        </div>
-
-                                                    </div>
-
-                                                    <div class="lenta-item-bottom">
-                                                        <span ng-cloak>{{wallItem.topic.message.createdEdit}}</span>
-                                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)" class="a1">Комментировать</a>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                            <div class="dialogs">
-                                                <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
-                                                    <div class="user">
-                                                        <img alt="Alexa's Avatar" src="i/avatars/avatar1.png">
-                                                    </div>
-
-                                                    <div class="body">
-
-                                                        <div class="name">
-                                                            <a href="#">{{wallMessage.authorName}}</a>
-                                                        </div>
-                                                        <div class="text" ng-cloak>{{wallMessage.content}}</div>
-
-                                                        <div class="lenta-item-bottom">
-                                                            <span ng-cloak>{{wallMessage.createdEdit}}</span>
-                                                            <a href="#" ng-click="lenta.showAnswerInput($event,wallItem,wallMessage)">Ответить</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                            <div class="input-group"> <%--  ng-show="wallItem.answerShow" --%>
-                                                <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallItem.commentText"
-                                                          ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow"
-                                                    onblur="if(this.value=='') this.value='Ваш ответ';"
-                                                    onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
-                                                    <span class="input-group-btn" ng-show="wallItem.answerShow">
-                                                        <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
-                                                            <i class="icon-share-alt"></i>
-                                                            Отправить
-                                                        </button>
-                                                    </span>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="wallitem-topic" ng-switch-when="1">
-                                            <div class="talks-title">
-                                                <div class="talks-title-left load-talk">
-                                                    <div><a href="#" ng-click="showFullTalk($event,wallItem.topic)">{{wallItem.topic.subject}}</a></div>
-                                                    <div>{{wallItem.topic.messageNum}} сообщений</div>
-                                                </div>
-                                                <div class="talks-title-right">
-                                                    <div>Последнее обновление:</div>
-                                                    <div>{{wallItem.topic.lastUpdateEdit}}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </section>
-
-                            <section class="talks page" ng-show="base.talksIsActive" ng-controller="TalksController as talks">
-
-                                <section class="create-topic" ng-hide="base.createTopicIsHide">
-                                    <div class="has-info form-group">
-                                        <input type="text" class="width-100 head" value="Заголовок"
-                                               onblur="if(this.value=='') this.value='Заголовок';"
-                                               onfocus="if(this.value=='Заголовок') this.value='';" ng-model="talks.subject" />
-                                    </div>
-                                    <div class="topic-body clearfix">
-                                        <textarea ng-model="talks.content" class="no-resize"
-                                            onblur="if(this.value=='') this.value='Сообщение';"
-                                            onfocus="if(this.value=='Сообщение') this.value='';"></textarea>
-
-                                        <div class="create-poll" ng-show="talks.isPollShow">
-                                            <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="talks.isPollShow = false;talks.isPollAvailable = true;">&times;</a>
-                                            <h5>Тема опроса:</h5>
-                                            <input type="text" ng-model="talks.pollSubject"/>
-                                            <h5>Варианты ответов:</h5>
-                                            <div ng-repeat="input in talks.pollInputs">
-                                                <input ng-model="input.name" type="text"/>
-                                            </div>
-                                            <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,talks)"/>
-                                        </div>
-
-                                        <div class="btn-group pull-left">
-                                        <button class="btn btn-sm btn-primary" ng-click="talks.addSingleTalk()">
-                                        Создать
-                                        </button>
-                                        </div>
-
-                                        <div class="hashtag pull-left">
-                                            <span>группа</span>
-                                            <div class="btn-group hashtag-dropdown">
-                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                                    <span class="btn-group-text"># {{talks.selectedGroup.visibleName}}</span>
-                                                    <span class="icon-caret-down icon-on-right"></span>
-                                                </button>
-
-                                                <ul class="dropdown-menu dropdown-blue">
-                                                    <li ng-repeat="group in talks.groups"><a href="#" ng-click="talks.selectGroupInDropdown(group.id,talks)"># {{group.visibleName}}</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="btn-group pull-right">
-                                        <button data-toggle="dropdown"
-                                        class="btn btn-info btn-sm dropdown-toggle no-border">
-                                        <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
-                                        </button>
-
-                                        <ul class="dropdown-menu dropdown-yellow">
-                                        <li><a href="#">Видео</a></li>
-
-                                        <li><a href="#">Фотографию</a></li>
-
-                                        <li><a href="#">Документ</a></li>
-
-                                        <li><a href="#" ng-click="base.showPoll($event,talks)" ng-show="talks.isPollAvailable">Опрос</a></li>
-                                        </ul>
-                                        </div>
-
-
-                                    </div>
-<%--                                    <div class="widget-box wysiwig-box">
-                                        <div class="widget-header widget-header-small  header-color-blue2">
-
-                                        </div>
-
-                                        <div class="widget-body">
-                                            <div class="widget-main no-padding">
-                                                <div class="wysiwyg-editor"></div>
-                                            </div>
-
-                                            <div class="widget-toolbox padding-4 clearfix">
-                                                <div class="btn-group">
-                                                    <button data-toggle="dropdown"
-                                                            class="btn btn-info btn-sm dropdown-toggle no-border">
-                                                        <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
-                                                    </button>
-
-                                                    <ul class="dropdown-menu dropdown-yellow">
-                                                        <li><a href="#">Видео</a></li>
-
-                                                        <li><a href="#">Фотографию</a></li>
-
-                                                        <li><a href="#">Документ</a></li>
-
-                                                        <li><a href="#">Опрос</a></li>
-                                                    </ul>
-                                                </div>
-
-                                                <div class="btn-group pull-right">
-                                                    <button class="btn btn-sm btn-primary">
-                                                        <i class="icon-globe bigger-125"></i> Создать <i
-                                                            class="icon-arrow-right icon-on-right bigger-125"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>--%>
-                                </section>
-
-                                <section class="talks-title-block" ng-show="base.isTalkTitles">
-
-                                    <div class="talks-title" ng-repeat="talk in talks.topics" id="{{talk.id}}">
-                                        <div class="talks-title-left load-talk">
-                                            <div><a href="#" ng-click="showFullTalk($event,talk)">{{talk.subject}}</a></div>
-                                            <div>{{talk.messageNum}} сообщений</div>
-                                        </div>
-                                        <div class="talks-title-right">
-                                            <div>Последнее обновление:</div>
-                                            <div>{{talk.lastUpdateEdit}}</div>
-                                        </div>
-                                    </div>
-
-                                </section>
-
-                                <section class="talks-block" ng-hide="base.isTalkTitles">
-                                    <div ng-include="'ajax/forum/talks-single.html'"></div>
-                                </section>
-
-                            </section>
-
-                            <section class="services page" ng-show="base.servicesIsActive" ng-controller="ServicesController as services"></section>
-
-                            <section class="private-messages page" ng-show="base.privateMessagesIsActive" ng-controller="privateMessagesController as privateMessages"></section>
-
-                            <section class="nextdoors page" ng-class="base.nextdoorsLoadStatus" ng-show="base.nextdoorsIsActive" ng-controller="nextdoorsController as nextdoors">
-                                
-                            </section>
-
-                            <section class="profile page" ng-show="base.profileIsActive" ng-controller="ProfileController as profile"></section>
-
-							<%--<section class="forum">
-								<section class="options">
-									<div class="btn-group">
-										<button data-toggle="dropdown"
-											class="btn btn-info btn-sm dropdown-toggle no-border">
-											<span class="btn-group-text">Сортировка</span> <span
-												class="icon-caret-down icon-on-right"></span>
-										</button>
-										<ul class="dropdown-menu dropdown-info pull-right">
-											<li><a href="#">Сортировка 1</a></li>
-
-											<li><a href="#">Сортировка2</a></li>
-
-											<li><a href="#">Что-то еще</a></li>
-										</ul>
-									</div>
-									<!-- /btn-group -->
-
-									<a class="btn btn-primary btn-sm no-border create-topic-show"
-										href="#">Создать тему</a>
-
-									<form method="post" action="#" class="form-group has-info">
-										<span class="block input-icon input-icon-right"> <input
-											type="text" id="inputInfo" class="width-100" value="Поиск"
-											onblur="if(this.value=='') this.value='Поиск';"
-											onfocus="if(this.value=='Поиск') this.value='';" /> <a
-											href="#" class="icon-search icon-on-right bigger-110"></a>
-										</span>
-									</form>
-									<div class="clear"></div>
-								</section>
-
-								<div class="dd dd-draghandle">
-									<ol class="dd-list">
-										<c:forEach var="topic" items="${topics}">
-											<li class="dd-item dd2-item topic-item"
-												data-topicid="${topic.id}">
-												<div class="dd2-content widget-box topic-descr">
-													<header class="widget-header header-color-blue2">
-														<span class="topic-header-date">${topic.message.created}</span>
-														<span class="topic-header-left"> <i
-															class="fa fa-minus"></i> <i class="fa fa-sitemap"></i>
-														</span>
-														<div class="widget-toolbar no-border">
-															<a class="fa fa-thumb-tack fa-2x" href="#"></a> <a
-																class="fa fa-check-square-o fa-2x" href="#"></a> <a
-																class="fa fa-times fa-2x" href="#"></a>
-														</div>
-														<h2>
-															<span>${topic.subject}</span>
-														</h2>
-													</header>
-
-													<div class="widget-body">
-														<div class="widget-main">
-															<div class="topic-left">
-																<a href="#"><img src="i/avatars/clint.jpg"
-																	alt="картинка" /></a>
-																<div class="topic-author">
-																	<a href="#">${topic.userInfo.firstName}
-																		${topic.userInfo.lastName}</a>
-																	<div class="author-rating">
-																		<a href="#" class="fa fa-star"></a> <a
-																			class="fa fa-star" href="#"></a> <a
-																			class="fa fa-star" href="#"></a> <a
-																			class="fa fa-star-half-o" href="#"></a> <a
-																			class="fa fa-star-o" href="#"></a>
-																	</div>
-																</div>
-															</div>
-															<div class="topic-right">
-																<a class="fa fa-link fa-relations" href="#"></a>
-																<p class="alert ">${topic.message.content}</p>
-																<div class="likes">
-																	<a href="#" class="like-item like"> <i
-																		class="fa fa-thumbs-o-up"></i> <span>${topic.likesNum}</span>
-																	</a> <a href="#" class="like-item dislike"> <i
-																		class="fa fa-thumbs-o-down"></i> <span>${topic.unlikesNum}</span>
-																	</a>
-																</div>
-															</div>
-														</div>
-
-														<footer class="widget-toolbox clearfix">
-															<div class="btn-group ans-btn">
-																<button
-																	class="btn btn-primary btn-sm dropdown-toggle no-border ans-all">Ответить</button>
-																<button data-toggle="dropdown"
-																	class="btn btn-primary btn-sm dropdown-toggle no-border ans-pers">
-																	<span class="icon-caret-down icon-only smaller-90"></span>
-																</button>
-																<ul class="dropdown-menu dropdown-warning">
-																	<li><a href="#">Ответить лично</a></li>
-																</ul>
-															</div>
-															<div class="answers-ctrl">
-																<a
-																	class="fa fa-plus plus-minus <c:if test="${topic.messageNum == 0}">hide</c:if>"
-																	href="#"></a> <span> <span>${topic.messageNum}</span>
-																	<a href="#">(3)</a></span>
-															</div>
-															<div class="topic-statistic">Участников
-																${topic.usersNum} Просмотров ${topic.viewers}</div>
-														</footer>
-													</div>
-												</div>
-											</li>
-										</c:forEach>
-									</ol>
-								</div>
-							</section>--%>
+						<div class="forum-wrap" ui-view>
 
 						</div>
 
@@ -637,353 +219,13 @@
 		</div>
 
 	</div>
-
-	<%--<div class="wysiwig-wrap">
-		<div class="widget-box wysiwig-box">
-			<div class="widget-header widget-header-small  header-color-blue2">
-
-			</div>
-
-			<div class="widget-body">
-				<div class="widget-main no-padding">
-					<div class="wysiwyg-editor"></div>
-				</div>
-
-				<div class="widget-toolbox padding-4 clearfix">
-					<div class="btn-group pull-left">
-						<button class="btn btn-sm btn-grey btn-cancel">
-							<i class="icon-remove bigger-125"></i> Отмена
-						</button>
-					</div>
-
-					<div class="btn-group pull-right">
-						<button class="btn btn-sm btn-primary">
-							<i class="icon-globe bigger-125"></i> Отправить <i
-								class="icon-arrow-right icon-on-right bigger-125"></i>
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="create-topic-wrap">
-		<section class="create-topic">
-			<div class="btn-group">
-				<button data-toggle="dropdown"
-					class="btn btn-info btn-sm dropdown-toggle no-border">
-					<span class="btn-group-text">Писать могут</span> <span
-						class="icon-caret-down icon-on-right"></span>
-				</button>
-				<ul class="dropdown-menu dropdown-info pull-right">
-					<li><a href="#">Группа 1</a></li>
-
-					<li><a href="#">Группа 2</a></li>
-
-					<li><a href="#">Все</a></li>
-				</ul>
-			</div>
-			<!-- /btn-group -->
-			<div class="btn-group">
-				<button data-toggle="dropdown"
-					class="btn btn-info btn-sm dropdown-toggle no-border">
-					<span class="btn-group-text">Читать могут</span> <span
-						class="icon-caret-down icon-on-right"></span>
-				</button>
-				<ul class="dropdown-menu dropdown-info pull-right">
-					<li><a href="#">Группа 1</a></li>
-
-					<li><a href="#">Группа 2</a></li>
-
-					<li><a href="#">Все</a></li>
-				</ul>
-			</div>
-			<!-- /btn-group -->
-			<h1>Создание темы</h1>
-			<div class="has-info form-group">
-				<input type="text" class="width-100 head" value="Заголовок"
-					onblur="if(this.value=='') this.value='Заголовок';"
-					onfocus="if(this.value=='Заголовок') this.value='';" />
-			</div>
-			<div class="widget-box wysiwig-box">
-				<div class="widget-header widget-header-small  header-color-blue2">
-
-				</div>
-
-				<div class="widget-body">
-					<div class="widget-main no-padding">
-						<div class="wysiwyg-editor"></div>
-					</div>
-
-					<div class="widget-toolbox padding-4 clearfix">
-						<div class="btn-group pull-left">
-							<button class="btn btn-sm btn-primary">Предпросмотр</button>
-							<button class="btn btn-sm btn-primary">В черновик</button>
-						</div>
-
-						<div class="btn-group pull-right">
-							<button class="btn btn-sm btn-primary">
-								<i class="icon-globe bigger-125"></i> Создать <i
-									class="icon-arrow-right icon-on-right bigger-125"></i>
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-	</div>
-
-	<div class="user-descr-wrap">
-		<section class="user-descr">
-			<div class="ava-area">
-				<img src="i/avatars/clint.jpg" alt="картинка" />
-				<div class="user-rating">
-					<a href="#" class="fa fa-star"></a> <a class="fa fa-star" href="#"></a>
-					<a class="fa fa-star" href="#"></a> <a class="fa fa-star-half-o"
-						href="#"></a> <a class="fa fa-star-o" href="#"></a>
-				</div>
-				<div>Класс С</div>
-			</div>
-			<div class="soc-accounts">
-				<div>Подключить аккаунт:</div>
-				<a class="fa fa-vk" href="#"></a> <a class="fa fa-facebook-square"
-					href="#"></a> <a class="fa fa-google-plus-square" href="#"></a> <a
-					class="fa fa-twitter-square" href="#"></a>
-			</div>
-			<div class="text-area">
-				<div class="user-head">
-					<span class="confirm-alert">Аккаунт не подтвержден !</span>
-					<h1>Иван Грозный</h1>
-					<a class="edit-personal-link" href="#">Редактировать</a>
-				</div>
-				<div class="user-body">
-					<div>
-						<span>статус:</span> настроение хорошее
-					</div>
-					<div>
-						<span>Адрес проживания:</span> ул.Коссмонавтов 34
-					</div>
-					<div>
-						<span>День рождения:</span> 23.07.2000
-					</div>
-					<div>
-						<span>Семейное положение:</span> холост
-					</div>
-					<h3>Контактная информация</h3>
-					<div>
-						<span>Телефон:</span> 8-911-3333333
-					</div>
-					<div>
-						<span>Email:</span> asdf@sdf.ru
-					</div>
-					<h3>Интересы</h3>
-					<div>футбол</div>
-					<div>пиво</div>
-					<div>балет</div>
-				</div>
-			</div>
-		</section>
-	</div>
-
-	<div class="settings-wrap">
-		<section class="settings">
-			<h3>Настройки</h3>
-			<div class="tabbable">
-				<ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
-					<li class="active"><a data-toggle="tab" href="#private">Приватность</a>
-					</li>
-
-					<li class=""><a data-toggle="tab" href="#subscription">Подписка</a>
-					</li>
-
-					<li class=""><a data-toggle="tab" href="#alerts">Оповещения</a>
-					</li>
-				</ul>
-
-				<div class="tab-content">
-					<div id="private" class="tab-pane active">
-						<div>
-							<label for="form-field-select-1">Показывать мой адрес</label> <select
-								class="form-control" id="form-field-select-1">
-								<option value="">&nbsp;</option>
-								<option value="AL">Никому</option>
-								<option value="AK">Васе</option>
-							</select>
-						</div>
-						<div>
-							<label for="form-field-select-2">Показывать мой email</label> <select
-								class="form-control" id="form-field-select-2">
-								<option value="">&nbsp;</option>
-								<option value="AL">Никому</option>
-								<option value="AK">Васе</option>
-							</select>
-						</div>
-					</div>
-
-					<div id="subscription" class="tab-pane">
-						<label for="form-field-select-3">Группа</label>
-
-						<div class="subs-group">
-							<select class="form-control" id="form-field-select-3">
-								<option value="">&nbsp;</option>
-								<option value="AL">Дом</option>
-								<option value="AK">Район</option>
-							</select>
-							<div class="checkbox">
-								<label> <input name="form-field-checkbox"
-									type="checkbox" class="ace"> <span class="lbl">
-										Обо всем</span>
-								</label>
-							</div>
-							<div class="checkbox">
-								<label> <input name="form-field-checkbox"
-									type="checkbox" class="ace"> <span class="lbl">
-										Здоровье</span>
-								</label>
-							</div>
-							<div class="checkbox">
-								<label> <input name="form-field-checkbox"
-									type="checkbox" class="ace"> <span class="lbl">
-										Спорт</span>
-								</label>
-							</div>
-						</div>
-
-					</div>
-
-					<div id="alerts" class="tab-pane">
-						<h4>Оповещения на сайте:</h4>
-						<div class="checkbox">
-							<label> <input name="form-field-checkbox" type="checkbox"
-								class="ace"> <span class="lbl"> Включить звуковые
-									оповещения</span>
-							</label>
-						</div>
-						<div class="checkbox">
-							<label> <input name="form-field-checkbox" type="checkbox"
-								class="ace"> <span class="lbl"> Включить световые
-									оповещения</span>
-							</label>
-						</div>
-						<br>
-						<h4>Оповещения по e-mail:</h4>
-						<div>
-							<label>E-mail для оповещений</label> ttt@sdf.ru <a href="#">изменить</a>
-						</div>
-						<div>
-							<label for="form-field-select-4">Частота оповещений</label> <select
-								class="form-control" id="form-field-select-4">
-								<option value="">&nbsp;</option>
-								<option value="AL">Никогда</option>
-								<option value="AK">Васе</option>
-							</select>
-						</div>
-						<div class="checkbox">
-							<label> <input name="form-field-checkbox" type="checkbox"
-								class="ace"> <span class="lbl"> Новые темы</span>
-							</label>
-						</div>
-						<div class="checkbox">
-							<label> <input name="form-field-checkbox" type="checkbox"
-								class="ace"> <span class="lbl"> Ответы</span>
-							</label>
-						</div>
-						<div class="checkbox">
-							<label> <input name="form-field-checkbox" type="checkbox"
-								class="ace"> <span class="lbl"> Приглашения в
-									новые чаты</span>
-							</label>
-						</div>
-						<div class="checkbox">
-							<label> <input name="form-field-checkbox" type="checkbox"
-								class="ace"> <span class="lbl"> Приглашения в
-									сообщества</span>
-							</label>
-						</div>
-
-					</div>
-				</div>
-			</div>
-			<a class="btn btn-primary no-border" href="#">Сохранить</a>
-		</section>
-	</div>
-
-	<div class="edit-personal-wrap">
-		<section class="edit-personal">
-			<h3>Редактировать профиль</h3>
-			<div class="tabbable">
-				<ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab5">
-					<li class="active"><a data-toggle="tab" href="#main">Основное</a>
-					</li>
-
-					<li class=""><a data-toggle="tab" href="#contacts">Контакты</a>
-					</li>
-
-					<li class=""><a data-toggle="tab" href="#interests">Интересы</a>
-					</li>
-				</ul>
-
-				<div class="tab-content">
-					<div id="main" class="tab-pane active">
-						<div>
-							<label for="edit-name">Имя</label> <input id="edit-name"
-								type="text" />
-						</div>
-						<div>
-							<label for="edit-surname">Фамилия</label> <input
-								id="edit-surname" type="text" />
-						</div>
-						<div>
-							<label for="form-field-select-5">Должность</label> <select
-								class="form-control" id="form-field-select-5">
-								<option value="">&nbsp;</option>
-								<option value="AL">Гончар</option>
-								<option value="AK">Копьеносец</option>
-							</select>
-						</div>
-						<div>
-							<label for="form-field-select-6">Дата рождения</label> <select
-								class="form-control" id="form-field-select-6">
-								<option value="">&nbsp;</option>
-								<option value="AL">Никому</option>
-								<option value="AK">Васе</option>
-							</select>
-						</div>
-					</div>
-
-					<div id="contacts" class="tab-pane">
-						<div>
-							<label for="edit-email">E-mail</label> <input id="edit-email"
-								type="text" />
-						</div>
-						<div>
-							<label for="edit-phone">Телефон</label> <input id="edit-phone"
-								type="text" />
-						</div>
-					</div>
-
-					<div id="interests" class="tab-pane">
-						<div>
-							<label for="edit-about">О себе</label>
-							<textarea name="edit-about" id="edit-about" cols="30" rows="5"></textarea>
-						</div>
-						<div>
-							<label for="edit-interests">Интересы</label>
-							<textarea name="edit-interests" id="edit-interests" cols="30"
-								rows="5"></textarea>
-						</div>
-
-					</div>
-				</div>
-			</div>
-			<a class="btn btn-primary no-border" href="#">Сохранить</a>
-		</section>
-	</div>--%>
-
 
 	<!-- общие библиотеки -->
 	<script src="js/lib/bootstrap.min.js"></script>
 	<script src="js/lib/ace-extra.min.js"></script>
 	<script src="js/lib/ace-elements.min.js"></script>
+
+    <script src="js/lib/jquery.fancybox.pack.js"></script>
 
 	<!-- конкретные плагины -->
 
@@ -1007,6 +249,8 @@
 	<script src="gen-js/UserService.js" type="text/javascript"></script>
 	<script src="gen-js/authservice_types.js" type="text/javascript"></script>
 	<script src="gen-js/AuthService.js" type="text/javascript"></script>
+    <script src="gen-js/fileutils_types.js" type="text/javascript"></script>
+    <script src="gen-js/FileService.js" type="text/javascript"></script>
 	<!-- -->
 
 
@@ -1015,7 +259,7 @@
 	<%--<script src="js/forum/main.js"></script>--%>
 <script src="js/forum/directives.js"></script>
 <script src="js/forum/controllers.js"></script>
-
+<script src="js/forum/angular/angular-ui-router.min.js"></script>
 
 	<script src="js/forum/app.js"></script>
 

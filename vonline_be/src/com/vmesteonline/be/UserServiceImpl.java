@@ -263,10 +263,25 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public UserProfile getUserProfile(long userId) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
-		VoUser user = getCurrentUser(pm);
-		UserProfile up = user.getUserProfile();
+		VoUser user;
 
-		return up;
+		try {
+			if (userId == 0) {
+				user = getCurrentUser(pm);
+			} else {
+				user = pm.getObjectById(VoUser.class, userId);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.IncorrectParametrs, "unknow user id: " + Long.toString(userId));
+		} finally {
+			pm.close();
+		}
+
+		if (user == null)
+			throw new InvalidOperation(VoError.IncorrectParametrs, "unknow user id: " + Long.toString(userId));
+		return user.getUserProfile();
 	}
 
 	@Override
@@ -446,36 +461,19 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public void updateUserAvatar(String url) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		VoUser voUser = getCurrentUser(pm);
-
-		ImagesService imagesService = ImagesServiceFactory.getImagesService();
 
 		try {
-			VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(url));
-			if (vfar.getUserId() != voUser.getId())
-				throw new InvalidOperation(VoError.IncorrectParametrs, "can't save avatar");
+			VoUser voUser = getCurrentUser(pm);
 
-			Image origImage = ImagesServiceFactory.makeImageFromFilename(vfar.getGSFileName().toString());
-			Transform resize = ImagesServiceFactory.makeResize(95, 95);
-			String topicAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true, pm);
-
-			resize = ImagesServiceFactory.makeResize(40, 40);
-			String shortProfileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(),
-					true, pm);
-
-			resize = ImagesServiceFactory.makeResize(200, 200);
-			String profileAvatarUrl = StorageHelper.saveImage(imagesService.applyTransform(resize, origImage).getImageData(), voUser.getId(), true,
-					pm);
-
+			String topicAvatarUrl = url + "?w=95&h=95";
+			String shortProfileAvatarUrl = url + "?w=40&h=40";
+			String profileAvatarUrl = url + "?w=200&h=200";
 			voUser.setAvatarTopic(topicAvatarUrl);
 			voUser.setAvatarMessage(topicAvatarUrl);
 			voUser.setAvatarProfileShort(shortProfileAvatarUrl);
 			voUser.setAvatarProfile(profileAvatarUrl);
 			pm.makePersistent(voUser);
-		} catch (Exception e) {
-			logger.warn("can't get VoFileAccessRecord for file " + url + " " + e.getMessage());
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.IncorrectParametrs, "can't find image");
+
 		} finally {
 			pm.close();
 		}

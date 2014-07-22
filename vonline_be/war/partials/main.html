@@ -1,0 +1,213 @@
+
+        <section class="forum page" ng-show="base.lentaIsActive" ng-cloak> <!--  ng-controller="LentaController as lenta" -->
+            <div class="message-input clearfix">
+                <textarea ng-model="lenta.wallMessageContent" class="no-resize" ng-keyup="base.messageChange($event,1)"
+                    onblur="if(this.value=='') this.value='Написать сообщение';"
+                    onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
+
+                <div class="create-poll" ng-show="lenta.isPollShow">
+                    <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="lenta.isPollShow = false;lenta.isPollAvailable = true;">&times;</a>
+                    <h5>Тема опроса:</h5>
+                    <input type="text" ng-model="lenta.pollSubject"/>
+                    <h5>Варианты ответов:</h5>
+                    <div ng-repeat="input in lenta.pollInputs">
+                        <input ng-model="input.name" type="text"/>
+                    </div>
+                    <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,lenta)"/>
+                </div>
+
+                <div class="attach-area" id="attach-area-0"></div>
+
+                <div class="message-input-bottom">
+                    <div class="btn-group attach-dropdown pull-right">
+                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                        <span class="btn-group-text">Прикрепить</span>
+                        <span class="icon-caret-down icon-on-right"></span>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-blue">
+                        <li><a href="#">Видео</a></li>
+                        <li><a href="#">Документ</a></li>
+                        <li><input id="attachImage-0" type="file"/></li>
+
+                        <li><a href="#" ng-click="base.showPoll($event,lenta)" ng-show="lenta.isPollAvailable">Опрос</a></li>
+                        </ul>
+                    </div>
+                    <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
+
+                    <div class="hashtag pull-left">
+                        <span>группа</span>
+                        <div class="btn-group hashtag-dropdown">
+                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                <span class="btn-group-text" ng-cloak># {{lenta.selectedGroup.visibleName}}</span>
+                                <span class="icon-caret-down icon-on-right"></span>
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-blue">
+                                <li ng-repeat="group in lenta.groups"><a href="#" ng-click="lenta.selectGroupInDropdown(group.id,lenta)" ng-cloak># {{group.visibleName}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="lenta">
+                <div class="lenta-item" ng-repeat="wallItem in lenta.wallItems"
+                        ng-switch on="wallItem.topic.message.type">
+
+                    <div class="wallitem-message" ng-switch-when="5">
+
+                        <div class="first-message clearfix" >
+                            <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })" class="user">
+                                <div class="avatar" style="background-image: url({{wallItem.topic.userInfo.avatar}})"></div>
+                                <!--<img alt="аватар" ng-src="{{wallItem.topic.userInfo.avatar}}">-->
+                            </a>
+
+                            <div class="body" ng-switch on="wallItem.topic.metaType">
+                                <span class="label label-lg arrowed lenta-item-hashtag"
+                                        ng-class="wallItem.tagColor">{{wallItem.label}}</span>
+
+                                <div class="name">
+                                    <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })">{{wallItem.topic.authorName}}</a>
+                                </div>
+
+                                <div class="text" ng-switch-when="message" ng-cloak>{{wallItem.topic.message.content}}</div>
+
+                                <div class="attached">
+                                    <a href="{{image}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
+                                        <img ng-src="{{image}}" alt="картинка"/>
+                                    </a>
+                                </div>
+
+                                <div class="poll" ng-switch-when="poll" ng-switch on="wallItem.topic.poll.alreadyPoll" ng-cloak>
+                                    <div class="text" ng-cloak>{{wallItem.topic.message.content}}</div>
+
+                                    <h5>{{wallItem.topic.poll.subject}}</h5>
+
+                                    <!-- -->
+
+                                    <div class="poll-do" ng-switch-when="false">
+
+                                        <div class="radio" ng-repeat="variant in wallItem.topic.poll.editNames">
+                                            <label>
+                                                <input name="poll-variant-{{wallItem.topic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
+                                                <span class="lbl">{{variant.name}}</span>
+                                            </label>
+                                        </div>
+
+                                        <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,wallItem.topic.poll)">Голосовать</button>
+
+                                    </div>
+                                    <!-- -->
+
+                                    <div class="poll-results" ng-switch-when="true">
+
+                                        <div class="poll-result-item"  ng-repeat="variant in wallItem.topic.poll.editNames">
+                                            <div class="poll-result-variant">{{variant.name}}</div>
+                                            <div class="poll-row">
+                                                <div class="poll-row-line">
+                                                    <div class="poll-line-percent" ng-style="{width: variant.votersPercent}"></div>
+                                                    <div class="poll-line-number" style="width: 100%">{{variant.votersNum}}</div>
+                                                </div>
+                                                <div class="poll-row-percent">{{variant.votersPercent}}</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="poll-result-amount">Проголосовало <span>{{wallItem.topic.poll.amount}}</span> человек</div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="lenta-item-bottom">
+                                    <span ng-cloak>{{wallItem.topic.message.createdEdit}}</span>
+                                    <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)">Комментировать</a>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="dialogs">
+                            <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
+                                <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })" class="user">
+                                    <div class="avatar short" style="background-image: url({{wallMessage.userInfo.avatar}})"></div>
+                                    <!--<img alt="аватар" ng-src="{{wallMessage.userInfo.avatar}}">-->
+                                </a>
+
+                                <div class="body">
+
+                                    <div class="name">
+                                        <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })">{{wallMessage.authorName}}</a>
+                                    </div>
+                                    <div class="text" ng-cloak>{{wallMessage.content}}</div>
+
+                                    <div class="attached">
+                                        <a href="{{image}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
+                                            <img ng-src="{{image}}" alt="картинка"/>
+                                        </a>
+                                    </div>
+
+                                    <div class="lenta-item-bottom">
+                                        <span ng-cloak>{{wallMessage.createdEdit}}</span>
+                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem,wallMessage)">Ответить</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallItem.commentText"
+                                      ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow" ng-keyup="base.messageChange($event,1)"
+                                onblur="if(this.value=='') this.value='Ваш ответ';"
+                                onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
+
+                                <div id="attach-area-{{wallItem.topic.id}}" class="attach-area"></div>
+
+                                <span class="input-group-btn" ng-show="wallItem.answerShow">
+                                    <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
+                                        <i class="icon-share-alt"></i>
+                                        Отправить
+                                    </button>
+
+                                    <div class="btn-group attach-dropdown pull-right">
+                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                            <span class="btn-group-text">Прикрепить</span>
+                                            <span class="icon-caret-down icon-on-right"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-blue">
+                                            <li><a href="#">Документ</a></li>
+                                            <li><input id="attachImage-{{wallItem.topic.id}}" type="file"/></li>
+                                        </ul>
+                                    </div>
+                                </span>
+                        </div>
+                    </div>
+
+
+                    <div class="wallitem-topic" ng-switch-when="1">
+                        <div class="talks-title">
+                            <div class="talks-title-left load-talk">
+                                <div><a ui-sref="talks-single({ talkId : {{wallItem.topic.id}} })">{{wallItem.topic.subject}}</a></div> <!-- ng-click="showFullTalk($event,wallItem.topic.id)" -->
+                                <div>{{wallItem.topic.messageNum}} сообщений</div>
+                            </div>
+                            <div class="talks-title-right">
+                                <div>Последнее обновление:</div>
+                                <div>{{wallItem.topic.lastUpdateEdit}}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+
+
+

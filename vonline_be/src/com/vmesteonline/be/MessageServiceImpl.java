@@ -150,16 +150,16 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	}
 
-	@Override
+	// todo remove method
 	public Message createMessage(long topicId, long parentId, long groupId, MessageType type, String content, Map<MessageType, Long> linkedMessages,
 			Map<Long, String> tags, long recipientId) throws InvalidOperation, TException {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		Message newMessage = new Message(0, parentId, type, topicId, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
-				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null);
+				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null);
 		newMessage.recipientId = recipientId;
 		postMessage(newMessage);
-		return newMessage;
+		return null;
 	}
 
 	// ===================================================================================================================================
@@ -335,9 +335,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					votopic.setLongitude(ug.getLongitude());
 					votopic.setLatitude(ug.getLatitude());
 
-					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId()
-							+ "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + ","
-							+ votopic.getCreatedAt() + ");");
+					topic.userInfo = user.getShortUserInfo();
+					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId() + ","
+							+ ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + "," + votopic.getCreatedAt() + ");");
+
 				} else {
 					updateTopic(topic);
 				}
@@ -367,10 +368,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	/**
-	 * checkUpdates запрашивает наличие обновлений с момента предыдущего
-	 * запроса, который возвращает сервер в ответе, если обновлений нет - в
-	 * ответ приходит новое значение таймстампа формирования ответа на сервере.
-	 * При наличии обновлений возвращается 0
+	 * checkUpdates запрашивает наличие обновлений с момента предыдущего запроса, который возвращает сервер в ответе, если обновлений нет - в ответ
+	 * приходит новое значение таймстампа формирования ответа на сервере. При наличии обновлений возвращается 0
 	 **/
 	@Override
 	public int checkUpdates(int lastRequest) throws InvalidOperation {
@@ -378,9 +377,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		VoSession sess = getCurrentSession(pm);
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		if (now - sess.getLastActivityTs() > 60) { /*
-													 * Update last Activity once
-													 * per minute
-													 */
+																								 * Update last Activity once per minute
+																								 */
 			sess.setLastActivityTs(now);
 			try {
 				pm.makePersistent(sess);
@@ -392,7 +390,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public long postMessage(Message msg) throws InvalidOperation, TException {
+	public Message postMessage(Message msg) throws InvalidOperation, TException {
 		long userId = getCurrentUserId();
 		msg.setAuthorId(userId);
 		VoMessage vomsg;
@@ -405,6 +403,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					topic.setMessageNum(topic.getMessageNum() + 1);
 					topic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
 					pm.makePersistent(topic);
+					VoUser user = getCurrentUser(pm);
+					msg.userInfo = user.getShortUserInfo();
+
 				} catch (Exception e) {
 					e.printStackTrace();
 					throw new InvalidOperation(VoError.IncorrectParametrs, "can't create message " + e.toString());
@@ -413,10 +414,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				pm.close();
 			}
 			msg.setId(vomsg.getId());
+
 		} else {
 			updateMessage(msg);
 		}
-		return msg.getId();
+		return msg;
 	}
 
 	protected <T extends VoBaseMessage, UserT extends VoUserObject> UserOpinion like(long messageId, Class<T> tclass, Class<UserT> tUserClass,
@@ -528,7 +530,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			Message msg = voMessage.getMessage();
 			msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId());
 			msg.userMessage = null == voUserMsg ? null : voUserMsg.getUserMessage();
-			msg.setChildMsgsNum(voMessage.getChildMessageNum());
 			mlp.addToMessages(msg);
 		}
 		return mlp;
@@ -570,8 +571,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			}
 
 			if (storedMsg.getTopicId() != msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId()
-					|| storedMsg.getRecipient() != msg.getRecipientId() || storedMsg.getCreatedAt() != msg.getCreated()
-					|| storedMsg.getType() != msg.getType())
+					|| storedMsg.getRecipient() != msg.getRecipientId() || storedMsg.getCreatedAt() != msg.getCreated() || storedMsg.getType() != msg.getType())
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs,
 						"Parameters: topic, author, recipient, createdAt, type could not be changed!");
 
@@ -593,8 +593,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		try {
 			VoTopic theTopic = pm.getObjectById(VoTopic.class, topic.getId());
 			if (null == theTopic) {
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "FAiled to update Topic. No topic found by ID"
-						+ topic.getId());
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
 			}
 
 			VoRubric rubric = pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));

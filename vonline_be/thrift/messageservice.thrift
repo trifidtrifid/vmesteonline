@@ -33,8 +33,8 @@ struct Message {
 	16: UserMessage userMessage, //how user treats the message
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
 	18: bedata.ShortUserInfo userInfo,
-	19: optional i32 childMsgsNum,
-	20: optional i32 childUnreadMsgsNum, 
+	19: list<string> images, 
+	20: list<string> documents, 
 	
 } // 'сообщение';
 		
@@ -126,24 +126,13 @@ service DialogService {
 
 service MessageService {
 	
-	list<WallItem> getWallItems(1:i64 groupId) throws (1:error.InvalidOperation exc)
-/**
-* МЕтод для создаия нового сообщения
-*
-**/
-	Message createMessage( 1:i64 topicId,  
-		2: i64 parentId, // 'идентификатор родительского сообщения, NULL для корневого со',
-		3: i64 groupId, //идентификатор пользовтельской группы, в которой он размещает сообщение
-		4: MessageType type, // 'тип один из (сообщение, чат)',
-		5: string content, // 'содержание сообщения',
-		6: map<MessageType,i64> linkedMessages,
-		7: map<i64,string> tags,
-		8: i64 recipientId // 'адресат задан только для личных сообщений, иначе NULL',
-		) throws (1:error.InvalidOperation exc),
+
+	list<WallItem> getWallItems(1:i64 groupId)	 throws (1:error.InvalidOperation exc)
+
 /**
 * Cоздание нового или обновление старого сообщения
 **/	 
-	i64 postMessage( 1:Message msg ) throws (1:error.InvalidOperation exc),
+	Message postMessage( 1:Message msg ) throws (1:error.InvalidOperation exc),
 
 	Poll doPoll( 1:i64 pollId, 2:i32 item) throws (1:error.InvalidOperation exc),
 	Topic postTopic( 1: Topic topic ) throws (1:error.InvalidOperation exc),  
