@@ -625,6 +625,7 @@ h1 {
 .attached a {
   display: inline-block;
   vertical-align: top;
+  margin: 0 5px;
 }
 .attached a img {
   max-width: 300px;
