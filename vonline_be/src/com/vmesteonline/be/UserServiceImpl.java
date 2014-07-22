@@ -263,10 +263,25 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public UserProfile getUserProfile(long userId) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
-		VoUser user = getCurrentUser(pm);
-		UserProfile up = user.getUserProfile();
+		VoUser user;
 
-		return up;
+		try {
+			if (userId == 0) {
+				user = getCurrentUser(pm);
+			} else {
+				user = pm.getObjectById(VoUser.class, userId);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.IncorrectParametrs, "unknow user id: " + Long.toString(userId));
+		} finally {
+			pm.close();
+		}
+
+		if (user == null)
+			throw new InvalidOperation(VoError.IncorrectParametrs, "unknow user id: " + Long.toString(userId));
+		return user.getUserProfile();
 	}
 
 	@Override
@@ -446,7 +461,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public void updateUserAvatar(String url) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-	
+
 		try {
 			VoUser voUser = getCurrentUser(pm);
 
@@ -458,7 +473,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			voUser.setAvatarProfileShort(shortProfileAvatarUrl);
 			voUser.setAvatarProfile(profileAvatarUrl);
 			pm.makePersistent(voUser);
-			
+
 		} finally {
 			pm.close();
 		}

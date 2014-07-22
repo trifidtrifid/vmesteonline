@@ -145,7 +145,7 @@ public class VoMessage extends VoBaseMessage {
 
 	public Message getMessage() {
 		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
-				getUnlikes(), links, null, null, visibleOffset, null, images);
+				getUnlikes(), links, null, null, visibleOffset, null, images, documents);
 	}
 
 	public long getApprovedId() {

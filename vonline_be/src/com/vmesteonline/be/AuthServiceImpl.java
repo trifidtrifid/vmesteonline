@@ -66,8 +66,6 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	}
 
-	
-	
 	@Override
 	public boolean login(final String email, final String password) throws InvalidOperation {
 		if (sessionStorage == null) {
@@ -102,6 +100,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		 * sess.setLatitude(u.getLatitude()); sess.setLongitude(u.getLongitude());
 		 */
 		pm.makePersistent(currentSession);
+	}
+
+	@Override
+	public UserLocation checkInviteCode(String code) throws InvalidOperation {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -147,8 +151,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			}
 
 			try {
-				String body = "<h2>" + firstname + " " + lastname + "</h2><br/>Вы зарегистрировались на сайте www.vmesteonline.ru. Ваш логин "
-						+ email + ".<br/>";
+				String body = "<h2>" + firstname + " " + lastname + "</h2><br/>Вы зарегистрировались на сайте www.vmesteonline.ru. Ваш логин " + email
+						+ ".<br/>";
 				EMailHelper.sendSimpleEMail(email, "Вы зарегестрированы на Bo! сайте", body);
 			} catch (Exception e) {
 				logger.warn("can't send email to " + email + " " + e.getMessage());
@@ -277,7 +281,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		}
 	}
 
-	//TODO what is this?
+	// TODO what is this?
 	@Override
 	public boolean isPublicMethod(String method) {
 		return true;// publicMethods.contains(method);

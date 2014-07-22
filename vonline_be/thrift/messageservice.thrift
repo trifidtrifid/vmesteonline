@@ -34,6 +34,7 @@ struct Message {
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
 	18: bedata.ShortUserInfo userInfo,
 	19: list<string> images, 
+	20: list<string> documents, 
 	
 } // 'сообщение';
 		
@@ -95,9 +96,38 @@ struct WallItem {
 	2:Topic topic,
 }
 
-service MessageService {
+struct Dialog {
+	1:i64 id,
+	2:list<bedata.ShortUserInfo> users,
+	3:i32 createDate,
+	4:i32 lastMessageDate,
+}
+struct DialogMessage {
+	1:i64 id,
+	2:i64 dialogId,
+	3:i64 author,
+	4:string content,
+	5:i32 created,
+}
 
-list<WallItem> getWallItems(1:i64 groupId)	 throws (1:error.InvalidOperation exc)
+service DialogService {
+	//DIALOGUE implementation methods
+	//method returns dilaog ID that just created or thorw an exception if a parameter is incorrect
+	Dialog getDialog( 1:list<i64> users, 2:i32 after ) throws (1:error.InvalidOperation exc),
+	list<Dialog> getDialogs(1:i32 after ) throws (1:error.InvalidOperation exc),
+	list<DialogMessage> getDialogMessages( 1:i64 dialogID, 2:i32 afterDate, 3:i32 tailSize) throws (1:error.InvalidOperation exc),
+	i64 postMessage( 1:i64 dialogId, 2:string content ) throws (1:error.InvalidOperation exc),
+	void updateDialogMessage( 1:i64 dlgMsgId, 2:string content ) throws (1:error.InvalidOperation exc),
+	void deleteDialogMessage( 1:i64 dlgMsgId ) throws (1:error.InvalidOperation exc),
+	void addUserToDialog(1:i64 dialogId, 2:i64 userId) throws (1:error.InvalidOperation exc),
+	void removeUserFromDialog(1:i64 dialogId, 2:i64 userId) throws (1:error.InvalidOperation exc),
+	//-------------------------------------------
+}
+
+service MessageService {
+	
+
+	list<WallItem> getWallItems(1:i64 groupId)	 throws (1:error.InvalidOperation exc)
 
 /**
 * Cоздание нового или обновление старого сообщения
