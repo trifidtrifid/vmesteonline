@@ -1105,6 +1105,14 @@ angular.module('forum.controllers', [])
     .controller('dialogController',function($rootScope) {
         $rootScope.base.mainContentTopIsHide = true;
 
+    })
+    .controller('writeMessageController',function($rootScope) {
+        $rootScope.base.mainContentTopIsHide = true;
+
+        initAutocomplete();
+
+        initAttachImage($('#attachImage-writeMessage'),$('#attach-area-writeMessage'));
+
     });
 
 
@@ -1483,5 +1491,50 @@ function clone(obj){
     for(var key in obj)
         temp[key] = clone(obj[key]);
     return temp;
+}
+function initAutocomplete(){
+
+    //custom autocomplete (category selection)
+    $.widget( "custom.catcomplete", $.ui.autocomplete, {
+        _renderMenu: function( ul, items ) {
+            var that = this,
+                currentCategory = "";
+            $.each( items, function( index, item ) {
+                if ( item.category != currentCategory ) {
+                    ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+                    currentCategory = item.category;
+                }
+                that._renderItemData( ul, item );
+            });
+        }
+    });
+
+    var data = [
+        { label: "anders", category: "" },
+        { label: "andreas", category: "" },
+        { label: "antal", category: "" },
+        { label: "annhhx10", category: "Products" },
+        { label: "annk K12", category: "Products" },
+        { label: "annttop C13", category: "Products" },
+        { label: "anders andersson", category: "People" },
+        { label: "andreas andersson", category: "People" },
+        { label: "andreas johnson", category: "People" }
+    ];
+    $( ".write-message-to" ).catcomplete({
+        delay: 0,
+        source: data
+    });
+
+    /*var availableTags = [];
+
+    var neighboors = userClient.getNeighbors(),
+        neighboorsLength = neighboors.length;
+    for(var i = 0; i < neighboorsLength; i++){
+        availableTags[i] = neighboors.firstName + " "+ neighboors.lastName;
+    }
+
+    $(".write-message-to").autocomplete({
+        source: availableTags
+    });*/
 }
 

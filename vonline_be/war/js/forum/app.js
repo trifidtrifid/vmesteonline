@@ -44,6 +44,11 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/dialogs.html",
             controller: 'dialogController as dialog'
         })
+        .state('write-message', {
+            url: "/write-message",
+            templateUrl: "partials/write-message.html",
+            controller: 'writeMessageController as writeMessage'
+        })
         .state('nextdoors', {
             url: "/nextdoors",
             templateUrl: "partials/nextdoors.html",

@@ -84,3 +84,6 @@
 .settings-pet-item {
   margin-left: 160px;
 }
+input.ng-invalid.ng-dirty {
+  border: 1px solid #f00;
+}

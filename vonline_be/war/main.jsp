@@ -222,6 +222,9 @@
 
 	<!-- общие библиотеки -->
 	<script src="js/lib/bootstrap.min.js"></script>
+    <script src="js/lib/typeahead-bs2.min.js"></script>
+    <script src="js/lib/jquery-ui-1.10.3.custom.js"></script>
+    <script src="js/lib/jquery.ui.touch-punch.min.js"></script>
 	<script src="js/lib/ace-extra.min.js"></script>
 	<%--<script src="js/lib/ace-elements.min.js"></script>--%>
 	<script src="js/ace-elements.js"></script>
@@ -231,7 +234,6 @@
 	<!-- конкретные плагины -->
 
 	<!-- библиотеки для wysiwig редактора  -->
-	<script src="js/lib/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="js/lib/markdown/markdown.min.js"></script>
 	<script src="js/lib/markdown/bootstrap-markdown.min.js"></script>
 	<script src="js/lib/jquery.hotkeys.min.js"></script>
@@ -239,6 +241,7 @@
 	<script src="js/bootbox.min.js"></script>
 	<!-- -->
 	<script src="js/lib/jquery.scrollTo.min.js"></script>
+    <script src="js/lib/ace.min.js"></script>
 
 	<!-- -->
 	<!-- файлы thrift -->

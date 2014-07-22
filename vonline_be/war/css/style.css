@@ -547,6 +547,9 @@ h1 {
 .no-resize {
   resize: none;
 }
+.page {
+  padding: 10px;
+}
 .message-input {
   padding: 10px;
   margin-bottom: 20px;
@@ -944,6 +947,10 @@ h1 {
   width: 100%;
   display: block;
 }
-input.ng-invalid.ng-dirty {
-  border: 1px solid #f00;
+/* write-message */
+.write-message input {
+  margin-bottom: 10px;
+}
+.write-message .write-message-bottom {
+  padding-top: 10px;
 }
