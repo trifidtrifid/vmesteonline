@@ -5,16 +5,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
+import java.nio.charset.Charset;
 
-import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
-import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.utils.EMailHelper;
 
 /*import com.restfb.DefaultFacebookClient;
  import com.restfb.FacebookClient;
@@ -24,33 +23,63 @@ import com.vmesteonline.be.data.PMF;
  */
 public class OAuthServlet extends HttpServlet {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6216226231759945787L;
-	private static final Iterable<String> SCOPE = Arrays
-			.asList("https://www.googleapis.com/auth/userinfo.profile;https://www.googleapis.com/auth/userinfo.email".split(";"));
+	private static final long serialVersionUID = -6391276180341584453L;
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-		resp.setContentType("text/plain");
-		
-		
+		resp.setContentType("text/html; charset=utf-8");
+
 		String authCode = req.getParameter("code");
 		String state = req.getParameter("state");
+		resp.getWriter().println("<head><meta charset=\"utf-8\">");
+
 		resp.getWriter().println("request " + req.toString());
 
 		resp.getWriter().println("try authorize in " + state + " with code=" + authCode);
 
 		URL obj = new URL(
-				"https://oauth.vk.com/access_token?client_id=4429306&redirect_uri=https://1-dot-vmesteonline.appspot.com/oauth&client_secret=oQBV8uO3tHyBONHcNsxe&code="
+				"https://oauth.vk.com/access_token?client_id=4463293&redirect_uri=https://3-dot-vmesteonline.appspot.com/oauth&client_secret=S8wYzpGUtzomnv1Pvcpv&code="
 						+ authCode);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-		int responseCode = con.getResponseCode();
-		resp.getWriter().println("Response Code : " + responseCode);
+		String response = runUrl(obj);
 
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		try {
+			JSONObject jsonObj = new JSONObject(response.toString());
+			AuthServiceImpl authServiceImpl = new AuthServiceImpl();
+			authServiceImpl.setSession(req.getSession());
+			resp.getWriter().println("<br><br>" + jsonObj.getString("email") + " find");
+
+			String email = jsonObj.getString("email");
+
+			if (!authServiceImpl.allowUserAccess(email, "", false)) {
+				String resp2 = runUrl(new URL("https://api.vk.com/method/users.get?user_id=" + jsonObj.getString("user_id") + "&v=5.23&access_token="
+						+ jsonObj.getString("access_token")));
+				JSONObject jsonObj2 = new JSONObject(resp2);
+
+				resp.getWriter().println("<br><br>  sdfsdf " + resp2);
+
+				JSONArray vkResp = jsonObj2.getJSONArray("response");
+				JSONObject o = (JSONObject) vkResp.get(0);
+
+				authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), "123456", email, null);
+				authServiceImpl.allowUserAccess(email, "", false);
+				EMailHelper.sendSimpleEMail(email, "Регистрация на сайте voclub.co",
+						"вы зарегистрировались на сайте http://voclub.co. Ваш логин для входа: " + email
+								+ ". Ваш пароль: 123456. Рекомендуем изменить.");
+			}
+
+		} catch (Exception e) {
+			resp.getWriter().println("<br><br>  sdfsdf " + e.toString());
+			e.printStackTrace();
+		}
+
+		resp.sendRedirect(state + "?s=" + req.getSession().getId());
+
+	}
+
+	private String runUrl(URL obj) throws IOException {
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
 		String inputLine;
 		StringBuffer response = new StringBuffer();
 
@@ -58,25 +87,7 @@ public class OAuthServlet extends HttpServlet {
 			response.append(inputLine);
 		}
 		in.close();
-
-		resp.getWriter().println("Hello, world " + response);
-		try {
-			JSONObject jsonObj = new JSONObject(response.toString());
-			resp.getWriter().println("<br><br>" + jsonObj.getString("email"));
-			AuthServiceImpl authService = new AuthServiceImpl();
-			authService.setSession(req.getSession());
-			PersistenceManager pm = PMF.getPm();
-/*			try{
-			authService.allowUserAccess();
-			}finally{
-				pm.close()
-			}
-*/		} catch (JSONException e) {
-			resp.getWriter().println("<br><br>  sdfsdf " + e.toString());
-
-			e.printStackTrace();
-		}
-
+		return response.toString();
 	}
 
 	/*
