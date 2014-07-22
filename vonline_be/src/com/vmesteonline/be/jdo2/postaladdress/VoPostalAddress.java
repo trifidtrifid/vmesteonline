@@ -23,7 +23,7 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 @PersistenceCapable
 public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
-	public VoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, byte flatNo, String comment) {
+	public VoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, int flatNo, String comment) {
 
 		this.building = voBuilding;
 		this.staircase = staircase;

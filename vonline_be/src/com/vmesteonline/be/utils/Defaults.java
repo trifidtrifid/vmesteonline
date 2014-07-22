@@ -232,13 +232,13 @@ public class Defaults {
 
 					// адресов должно быть минимум три! кол-во юзеров
 					// хардкодится выше
-					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 1,
+					new VoPostalAddress(new VoBuilding("195213", street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 1,
 							(byte) 1, (byte) 5, ""),
-					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 2,
+					new VoPostalAddress(new VoBuilding("195213", street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 2,
 							(byte) 1, (byte) 50, ""),
-					new VoPostalAddress(new VoBuilding(street, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544"), pm), (byte) 1,
+					new VoPostalAddress(new VoBuilding("195213", street, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544"), pm), (byte) 1,
 							(byte) 11, (byte) 35, ""),
-					new VoPostalAddress(new VoBuilding(street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177"), pm), (byte) 1,
+					new VoPostalAddress(new VoBuilding("195213", street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177"), pm), (byte) 1,
 							(byte) 2, (byte) 25, "") };
 
 			for (VoPostalAddress pa : addresses) {
@@ -251,7 +251,9 @@ public class Defaults {
 				pm.makePersistent(pa);
 				locations.add("" + pa.getAddressCode());
 			}
-
+			
+			InviteCodeUploader.uploadCodes("/data/addresses_len_7_kudrovo.csv");
+			
 			return locations;
 		} catch (Exception e) {
 			e.printStackTrace();

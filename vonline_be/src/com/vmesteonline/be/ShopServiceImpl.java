@@ -1215,7 +1215,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			VoCity voCity = new VoCity( voCountry, addrInfo.getCityName(), pm );
 			VoStreet voStreet = new VoStreet(voCity, addrInfo.getStreetName(),pm );
 			String no = addrInfo.getBuildingNo();
-			VoBuilding voBuilding = new VoBuilding(voStreet, no, addrInfo.getLongitude(), addrInfo.getLattitude(), pm);
+			VoBuilding voBuilding = new VoBuilding(addrInfo.getZipCode(), voStreet, no, addrInfo.getLongitude(), addrInfo.getLattitude(), pm);
 			VoPostalAddress pa = new VoPostalAddress( voBuilding, staircase, floor, (byte)flatNo, comment );
 			currentUser.addDeliveryAddress( pa, buildingAddressText);
 			return pa.getPostalAddress(pm);

@@ -131,6 +131,7 @@ public class VoGeocoder {
 
 		private WhatDataToRead whatNext = WhatDataToRead.UNKNOWN;
 
+		private String zipCode = null;
 		private String longLatString = null;
 		private String countryName = null;
 		private String streetName = null;
@@ -202,6 +203,14 @@ public class VoGeocoder {
 			default:
 				break;
 			}
+		}
+
+		public String getZipCode() {
+			return zipCode;
+		}
+
+		public void setZipCode(String zipCode) {
+			this.zipCode = zipCode;
 		}
 
 		@Override

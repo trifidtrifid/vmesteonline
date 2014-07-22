@@ -23,11 +23,12 @@ import com.vmesteonline.be.jdo2.VoUser;
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 public class VoBuilding implements Comparable<VoBuilding> {
 
-	public VoBuilding(VoStreet vs, String fullNo, BigDecimal longitude, BigDecimal latitude, PersistenceManager pm) throws InvalidOperation {
+	public VoBuilding(String zip, VoStreet vs, String fullNo, BigDecimal longitude, BigDecimal latitude, PersistenceManager pm) throws InvalidOperation {
 		Query q = pm.newQuery(VoBuilding.class, "streetId == :key && fullNo == '"+fullNo+"'");
 		List<VoBuilding> bgsl = (List<VoBuilding>)q.execute(vs.getId());
 		this.streetId = vs.getId();
 		this.fullNo = fullNo;
+		this.zipCode = zip;
 		
 		if( 0==bgsl.size() ){
 			users = new ArrayList<VoUser>();
@@ -69,11 +70,14 @@ public class VoBuilding implements Comparable<VoBuilding> {
 
 	@Persistent
 	@Unindexed
-	private String addressString; // no with letter or other extension if any
+	private String addressString; 
 
 	@Persistent
 	private String fullNo; // no with letter or other extension if any
 
+	@Persistent
+	private String zipCode; 
+	
 	@Persistent
 	private Key streetId;
 
@@ -97,6 +101,14 @@ public class VoBuilding implements Comparable<VoBuilding> {
 		return id;
 	}
 
+	public String getZipCode() {
+		return zipCode;
+	}
+
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+
 	@Persistent
 	@Unowned
 	@Unindexed
@@ -107,12 +119,12 @@ public class VoBuilding implements Comparable<VoBuilding> {
 	}
 
 	public Building getBuilding() {
-		return new Building(id.getId(), streetId.getId(), fullNo);
+		return new Building(id.getId(), zipCode, streetId.getId(), fullNo);
 	}
 
 	@Override
 	public String toString() {
-		return "VoBuilding [id=" + id + ", fullNo=" + fullNo + ", streetId=" + streetId + ", address=" + address + ", long=" + longitude + ", lat="
+		return "VoBuilding [id=" + id + ", zipCode=" + zipCode +", fullNo=" + fullNo + ", streetId=" + streetId + ", address=" + address + ", long=" + longitude + ", lat="
 				+ latitude + "]";
 	}
 
