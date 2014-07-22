@@ -1,13 +1,8 @@
 package com.vmesteonline.be.utils;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
@@ -16,11 +11,7 @@ import javax.jdo.Query;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.InvalidOperation;
-import com.vmesteonline.be.PostalAddress;
-import com.vmesteonline.be.ShopBOServiceImpl;
-import com.vmesteonline.be.ShopServiceImpl;
 import com.vmesteonline.be.VoError;
-import com.vmesteonline.be.access.shop.VoShopAccessManager;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoGroup;
@@ -36,22 +27,6 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
-import com.vmesteonline.be.jdo2.shop.VoOrder;
-import com.vmesteonline.be.jdo2.shop.VoOrderLine;
-import com.vmesteonline.be.jdo2.shop.VoProducer;
-import com.vmesteonline.be.jdo2.shop.VoProduct;
-import com.vmesteonline.be.jdo2.shop.VoProductCategory;
-import com.vmesteonline.be.jdo2.shop.VoShop;
-import com.vmesteonline.be.shop.DeliveryType;
-import com.vmesteonline.be.shop.OrderDates;
-import com.vmesteonline.be.shop.OrderDatesType;
-import com.vmesteonline.be.shop.PaymentType;
-import com.vmesteonline.be.shop.PriceType;
-import com.vmesteonline.be.shop.Shop;
-import com.vmesteonline.be.shop.bo.DataSet;
-import com.vmesteonline.be.shop.bo.ExchangeFieldType;
-import com.vmesteonline.be.shop.bo.ImExType;
-import com.vmesteonline.be.shop.bo.ImportElement;
 
 @SuppressWarnings("unchecked")
 public class Defaults {
