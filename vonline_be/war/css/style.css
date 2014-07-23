@@ -577,6 +577,7 @@ h1 {
   background-position: center center;
   background-size: contain;
   background-repeat: no-repeat;
+  display: block;
 }
 .attach-area .remove-attach-img {
   font-size: 20px;
@@ -635,6 +636,7 @@ h1 {
 }
 .attached a img {
   max-width: 300px;
+  max-height: 300px;
 }
 .create-poll {
   margin-bottom: 10px;

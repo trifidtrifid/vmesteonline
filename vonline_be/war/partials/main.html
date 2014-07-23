@@ -78,6 +78,9 @@
                                     <a href="{{image}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
                                         <img ng-src="{{image}}" alt="картинка"/>
                                     </a>
+                                    <div class="docs">
+                                        <div ng-repeat="document in wallItem.topic.message.documents"><a href="#" class="doc-item">{{document}}</a></div>
+                                    </div>
                                 </div>
 
                                 <div class="poll" ng-switch-when="poll" ng-switch on="wallItem.topic.poll.alreadyPoll" ng-cloak>

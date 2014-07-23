@@ -298,6 +298,7 @@ angular.module('forum.controllers', ['ui.select2'])
             event.preventDefault();
 
             lenta.attachedImages = getAttachedImages($('#attach-area-0'));
+            lenta.attachedDocs = getAttachedDocs($('#attach-doc-area-0'));
 
             var isWall = 1,
                 newTopic = postTopic(lenta,isWall);
@@ -315,6 +316,7 @@ angular.module('forum.controllers', ['ui.select2'])
             newWallItem.tagColor = getTagColor(newWallItem.label);
 
             cleanAttached($('#attach-area-0'));
+            cleanAttached($('#attach-doc-area-0'));
 
             if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
                 lenta.wallItems ?
@@ -1293,13 +1295,22 @@ function initAttachDoc(selector,attachAreaSelector){
         fileLabel.find('.file-name').hide();
 
         setTimeout(insertDoc,200);
+        //var input = selector.clone();
 
         function insertDoc() {
             var docName = fileLabel.find('.file-name').attr('data-title');
+            /*for(var p in selector[0].files[0]){
+                console.log(p+" "+selector[0].files[0][p]);
+            }*/
 
-            attachAreaSelector.append("<span class='attach-item new-attached'>" +
+            /*var fd = new FormData();
+            //var input = $('#import-data');
+            fd.append( 'data', input[0].files[0]);*/
+
+            attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ selector.val() +"'>" +
                 "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                docName+"</span>");
+                docName+
+                "</span>");
 
             $('.new-attached .remove-attach-img').click(function(e){
                 e.preventDefault();
@@ -1425,6 +1436,7 @@ function postTopic(obj,isWall){
     newTopic.message.type = messageType;
     newTopic.message.content = messageContent;
     newTopic.message.images = obj.attachedImages;
+    newTopic.message.documents = obj.attachedDocs;
     newTopic.message.id = 0;
     newTopic.message.created = Date.parse(new Date())/1000;
 
@@ -1457,6 +1469,7 @@ function postTopic(obj,isWall){
     var tempTopic = messageClient.postTopic(newTopic);
     newTopic.id = tempTopic.id;
     newTopic.message.images = tempTopic.message.images;
+    newTopic.message.documents = tempTopic.message.documents;
     newTopic.userInfo = tempTopic.userInfo;
 
     if(obj.isPollShow){
@@ -1506,7 +1519,10 @@ function postMessage(obj,isWall,isFirstLevel){
 
     message.id = 0;
     message.images = getAttachedImages($('#attach-area-'+attachId));
+    message.documents = getAttachedDocs($('#attach-doc-area-'+attachId));
+    //alert(message.documents[0]);
     cleanAttached($('#attach-area-'+ attachId));
+    cleanAttached($('#attach-doc-area-'+ attachId));
     //message.images = obj.attachedImages;
     message.created = Date.parse(new Date)/1000;
 
@@ -1572,13 +1588,13 @@ function getAttachedImages(selector){
     return imgList;
 }
 function getAttachedDocs(selector){
-    var imgList = [], ind = 0;
+    var docList = [], ind = 0;
 
-    selector.find('img').each(function(){
-        imgList[ind++] = $(this).css('background-image');
+    selector.find('.attach-item').each(function(){
+        docList[ind++] = $(this).attr('data-fakepath');
     });
 
-    return imgList;
+    return docList;
 }
 function cleanAttached(selector){
     selector.html('');
