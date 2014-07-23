@@ -19,7 +19,7 @@
 	<%
 	Defaults.initDefaultData();
 		%>
-		<h1>THIS IS PRODUCTION YOU NEVER SHOULD USE init.jsp!</h1>
+		<h1>Init done!</h1>
 		<%
 	//}
 	%>
