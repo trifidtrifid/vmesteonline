@@ -24,6 +24,7 @@ import com.vmesteonline.be.utils.EMailHelper;
 public class OAuthServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -6391276180341584453L;
+	private static final String domain = "https://3-dot-vmesteonline.appspot.com/";
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -31,16 +32,14 @@ public class OAuthServlet extends HttpServlet {
 		resp.setContentType("text/html; charset=utf-8");
 
 		String authCode = req.getParameter("code");
-		String state = req.getParameter("state");
+		String inviteCode = req.getParameter("state");
+
 		resp.getWriter().println("<head><meta charset=\"utf-8\">");
-
 		resp.getWriter().println("request " + req.toString());
+		resp.getWriter().println("try authorize in " + inviteCode + " with code=" + authCode);
 
-		resp.getWriter().println("try authorize in " + state + " with code=" + authCode);
-
-		URL obj = new URL(
-				"https://oauth.vk.com/access_token?client_id=4463293&redirect_uri=https://3-dot-vmesteonline.appspot.com/oauth&client_secret=S8wYzpGUtzomnv1Pvcpv&code="
-						+ authCode);
+		URL obj = new URL("https://oauth.vk.com/access_token?client_id=4463293&redirect_uri=" + domain + "oauth&client_secret=S8wYzpGUtzomnv1Pvcpv&code="
+				+ authCode);
 		String response = runUrl(obj);
 
 		try {
@@ -51,7 +50,9 @@ public class OAuthServlet extends HttpServlet {
 
 			String email = jsonObj.getString("email");
 
-			if (!authServiceImpl.allowUserAccess(email, "", false)) {
+			if (inviteCode.isEmpty()) {
+				authServiceImpl.allowUserAccess(email, "", false);
+			} else {
 				String resp2 = runUrl(new URL("https://api.vk.com/method/users.get?user_id=" + jsonObj.getString("user_id") + "&v=5.23&access_token="
 						+ jsonObj.getString("access_token")));
 				JSONObject jsonObj2 = new JSONObject(resp2);
@@ -61,19 +62,18 @@ public class OAuthServlet extends HttpServlet {
 				JSONArray vkResp = jsonObj2.getJSONArray("response");
 				JSONObject o = (JSONObject) vkResp.get(0);
 
-				authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), "123456", email, null);
+				authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), "123456", email, inviteCode);
 				authServiceImpl.allowUserAccess(email, "", false);
-				EMailHelper.sendSimpleEMail(email, "Регистрация на сайте voclub.co",
-						"вы зарегистрировались на сайте http://voclub.co. Ваш логин для входа: " + email
-								+ ". Ваш пароль: 123456. Рекомендуем изменить.");
+				EMailHelper.sendSimpleEMail(email, "Регистрация на сайте vmesteonline.ru",
+						"вы зарегистрировались на сайте http://voclub.co. Ваш логин для входа: " + email + ". Ваш пароль: 123456. Рекомендуем изменить.");
 			}
 
-		} catch (Exception e) {
-			resp.getWriter().println("<br><br>  sdfsdf " + e.toString());
-			e.printStackTrace();
-		}
+			resp.sendRedirect(domain + "main.jsp");
 
-		resp.sendRedirect(state + "?s=" + req.getSession().getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp.sendRedirect(domain + "index.html");
+		}
 
 	}
 

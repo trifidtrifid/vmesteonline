@@ -13,6 +13,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -176,9 +177,8 @@ public class VoUser extends GeoLocation {
 	}
 
 	public void setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
-		Key addressKey = VoPostalAddress.getKeyValue(locCode);
 		try {
-			VoPostalAddress userAddress = pm.getObjectById(VoPostalAddress.class, addressKey);
+			VoPostalAddress userAddress = pm.getObjectById(VoPostalAddress.class, locCode);
 			setCurrentPostalAddress(userAddress, pm);
 		} catch (JDOObjectNotFoundException eonf) {
 			throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Location not found by CODE=" + locCode);
@@ -186,13 +186,12 @@ public class VoUser extends GeoLocation {
 	}
 
 	/**
-	 * MEthod set current postal address of the user and register user in the
-	 * building
+	 * MEthod set current postal address of the user and register user in the building
 	 * 
 	 * @param userAddress
-	 *            newUSer postal address
+	 *          newUSer postal address
 	 * @param pm
-	 *            - PersistenceManager to manage the objects
+	 *          - PersistenceManager to manage the objects
 	 */
 
 	// TODO should test removing
@@ -200,7 +199,7 @@ public class VoUser extends GeoLocation {
 
 		// remove user from old group
 		if (null != this.getAddress()) { // location already set, so user should
-											// be removed first
+			// be removed first
 			VoBuilding oldBuilding = this.address.getBuilding();
 			if (null != oldBuilding)
 				oldBuilding.removeUser(this);
@@ -247,7 +246,7 @@ public class VoUser extends GeoLocation {
 
 		VoBuilding building = null;
 		if (null != this.getAddress()) { // location already set, so user should
-											// be removed first
+			// be removed first
 			building = this.address.getBuilding();
 			if (null != building)
 				building.removeUser(this);
@@ -445,7 +444,7 @@ public class VoUser extends GeoLocation {
 
 	public String toFullString() {
 		return "VoUser [id=" + getId() + ", address=" + address + ", longitude=" + getLongitude() + ", latitude=" + getLatitude() + ", name=" + name
-				+ ", lastName=" + lastName + ", email=" + email + ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum="
-				+ topicsNum + ", likesNum=" + likesNum + ", unlikesNum=" + unlikesNum + "]";
+				+ ", lastName=" + lastName + ", email=" + email + ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum=" + topicsNum
+				+ ", likesNum=" + likesNum + ", unlikesNum=" + unlikesNum + "]";
 	}
 }
