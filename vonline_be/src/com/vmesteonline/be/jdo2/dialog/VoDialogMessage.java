@@ -25,7 +25,7 @@ public class VoDialogMessage {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	protected long id;
+	protected Long id;
 	
 	@Persistent
 	protected long dialogId;
