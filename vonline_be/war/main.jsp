@@ -57,6 +57,7 @@
 <title>Главная</title>
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>
+<link rel="stylesheet" href="js/forum/bower_components/select2/select2.css"/>
 
 <script src="js/lib/jquery-2.1.1.min.js"></script>
 <!--[if lt IE 9]>
@@ -74,7 +75,9 @@
         globalUserAuth = true;
         </c:if>
     </script>
+    <script src="js/forum/bower_components/select2/select2.min.js"></script>
     <script src="js/forum/angular/angular.js"></script>
+    <script src="js/forum/bower_components/angular-ui-select2/src/select2.js"></script>
 
 </head>
 <body ng-controller="baseController as base" ng-cloak>
@@ -262,7 +265,7 @@
 	<%--<script src="js/forum/main.js"></script>--%>
 <script src="js/forum/directives.js"></script>
 <script src="js/forum/controllers.js"></script>
-<script src="js/forum/angular/angular-ui-router.min.js"></script>
+<script src="js/forum/angular/angular-ui-router.js"></script>
 
 	<script src="js/forum/app.js"></script>
 

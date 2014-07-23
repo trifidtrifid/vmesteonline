@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-angular.module('forum.controllers', [])
+angular.module('forum.controllers', ['ui.select2'])
     .controller('baseController',function($rootScope) {
         var base = this;
         base.nextdoorsLoadStatus = "";
@@ -921,23 +921,6 @@ angular.module('forum.controllers', [])
     })
     .controller('ServicesController',function() {
     })
-    .controller('privateMessagesController',function($rootScope) {
-        var privateMessage = this;
-
-        $rootScope.leftbar.tab = 0;
-
-        resetPages($rootScope.base);
-        $rootScope.base.privateMessagesIsActive = true;
-
-        resetAceNavBtns($rootScope.navbar);
-        $rootScope.navbar.privateMessagesBtnStatus = "active";
-
-        $rootScope.base.mainContentTopIsHide = true;
-
-        $rootScope.base.privateMessagesLoadStatus = "isLoaded";
-
-
-    })
     .controller('nextdoorsController',function($rootScope) {
         $rootScope.leftbar.tab = 0;
 
@@ -1104,9 +1087,24 @@ angular.module('forum.controllers', [])
     })
     .controller('dialogsController', function($rootScope){
         $rootScope.base.mainContentTopIsHide = true;
+        $rootScope.leftbar.tab = 0;
+
+        resetPages($rootScope.base);
+        $rootScope.base.privateMessagesIsActive = true;
+
+        resetAceNavBtns($rootScope.navbar);
+        $rootScope.navbar.privateMessagesBtnStatus = "active";
+
+        $rootScope.base.mainContentTopIsHide = true;
+
+        $rootScope.base.privateMessagesLoadStatus = "isLoaded";
+
+        $rootScope.isNewPrivateMessageAdded = false;
+
         var dialogs = this;
 
         dialogs.dialogsList = dialogClient.getDialogs(0);
+        //dialogs.dialogsList.usersForShow = dialogs.dialogsList.users.slice(0,3);
 
     })
     .controller('dialogController',function($rootScope,$stateParams) {
@@ -1123,66 +1121,43 @@ angular.module('forum.controllers', [])
             for(var i = 0; i < privateMessagesLength; i++){
                 dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
             }
-        }else{
-
         }
 
     })
     .controller('writeMessageController',function($rootScope) {
         $rootScope.base.mainContentTopIsHide = true;
-        var writeMessage = this;
+        var writeMessage = this, dialog;
 
         writeMessage.newMessage = {};
+        writeMessage.users = [];
+        writeMessage.neighboors = userClient.getNeighbors($rootScope.biggestGroup.id);
         writeMessage.newMessage.text = "Сообщение";
+        writeMessage.dialogId = 0;
 
-        var availableTags = ['aaa','bbb'], userId;
+        function usersToInt(users){
+            var usersLength = users.length,
+                usersInt = [];
+            for(var i = 0; i < usersLength; i++){
+                usersInt[i] = parseInt(writeMessage.users[i]);
+            }
 
-        var neighboors = userClient.getNeighbors($rootScope.biggestGroup.id),
-            neighboorsLength = neighboors.length;
-        for(var i = 0; i < neighboorsLength; i++){
-            availableTags[i] = neighboors.firstName + " "+ neighboors.lastName;
+            //alert(usersInt[0] + " "+typeof(usersInt[0]));
+
+            return usersInt;
         }
 
-        $.widget("custom.catcomplete", $.ui.autocomplete, {
-            _renderMenu: function(ul, items){
-                var self = this,
-                    currentCategory = "";
-                $.each( items, function(index, item){
-                    if(item.category != currentCategory){
-                        ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
-                        currentCategory = item.category;
-                    }
-                    self._renderItem( ul, item );
-                });
-            }
-        });
+        writeMessage.change = function(){
+            dialog = dialogClient.getDialog(usersToInt(writeMessage.users),0);
+            writeMessage.dialogId = dialog.id;
 
-       /* var availableTags = [
-            {label:"Чебоксары", category:"города"},
-            {label:"Челябинск", category:"города"},
-            {label:"Челны", category:"поселки"},
-            {label:"Ставрополь", category:"города"},
-            {label:"Чехия", category:"страны"}
-        ];
-*/
-        $(".write-message-to").catcomplete({
-            source: availableTags,
-            create: function(event,ui){
-                var ind = 0;
-                $('.ui-menu-item').each(function(){
-                   $(this).attr('id',neighboors[ind++].id);
-                });
-            },
-            select: function(event,ui){
-                $('.write-message-to').attr('id',ui.item.attr('id'));
-                userId = ui.item.attr('id');
-            }
-        });
+            $rootScope.isNewPrivateMessageAdded = true;
+            $rootScope.newPrivateMessageText = writeMessage.newMessage.text;
+        };
 
         initAttachImage($('#attachImage-writeMessage'),$('#attach-area-writeMessage'));
 
-        var dialog = dialogClient.getDialog(userId);
-        writeMessage.dialogId = dialog.id;
+        //var dialog = dialogClient.getDialog(userId);
+        //writeMessage.dialogId = dialog.id;
 
         /*this.send = function(){
          dialogClient.postMessage(dialog.id, writeMessage.newMessage.text);
@@ -1572,4 +1547,27 @@ function clone(obj){
         temp[key] = clone(obj[key]);
     return temp;
 }
+/*
+$.widget("custom.catcomplete", $.ui.autocomplete, {
+    _renderMenu: function(ul, items){
+        var self = this,
+            currentCategory = "";
+        $.each( items, function(index, item){
+            if(item.category != currentCategory){
+                ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+                currentCategory = item.category;
+            }
+            self._renderItem( ul, item );
+        });
+    }
+});*/
+function F($rootScope){
+    var availableTags = [], userId;
 
+    var neighboors = userClient.getNeighbors($rootScope.biggestGroup.id),
+        neighboorsLength = neighboors.length;
+    for(var i = 0; i < neighboorsLength; i++){
+        availableTags[i] = neighboors[i].firstName + " "+ neighboors[i].lastName;
+    }
+
+}

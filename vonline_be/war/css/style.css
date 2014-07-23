@@ -948,7 +948,7 @@ h1 {
   display: block;
 }
 /* write-message */
-.write-message input {
+.write-message .select2-container {
   margin-bottom: 10px;
 }
 .write-message .write-message-bottom {

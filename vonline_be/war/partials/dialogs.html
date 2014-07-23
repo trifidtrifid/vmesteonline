@@ -1,6 +1,6 @@
 
 <section class="private-messages page"> <!-- ng-show="base.privateMessagesIsActive" -->
-    <a class="btn btn-primary no-border btn-sm pull-right" href="write-message">Написать сообщение</a>
+    <a class="btn btn-primary no-border btn-sm pull-right" ui-sref="write-message">Написать сообщение</a>
     <form method="post" action="#" class="form-group has-info form-search-private">
 <!--
         <span class="block input-icon input-icon-right">
@@ -11,10 +11,11 @@
     </form>
     <!--<div class="private-messages">-->
         <div>
-            <div class="private-message-single" ui-sref="dialog-single-{ {{ dialog.id }} }" ng-repeat="dialog in dialogs.dialogsList">
+            <div class="private-message-single" ui-sref="dialog-single( {dialogId : {{ dialog.id }} })" ng-repeat="dialog in dialogs.dialogsList">
                 <div class="private-message-left pull-left">
                     <div class="private-message-ava pull-left">
-                        <div class="avatar" style="background-image: url({{dialog.users[0].avatar}})"></div>
+                        <div class="avatar" style="background-image: url({{dialog.usersForShow[0].avatar}})"></div>
+                        <div>{{dialog.users.length}} участников</div>
                     </div>
                     <div class="private-message-author">
                         <div><a href="#">{{dialog.users[0].firstName + " "+ dialog.users[0].lastName}}</a></div>

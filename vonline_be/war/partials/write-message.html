@@ -1,7 +1,10 @@
 
 <section class="write-message page">
 
-    <input type="text" placeholder="Кому" class="width-100 write-message-to" autocomplete="off" />
+    <select multiple class="width-100" ui-select2 ng-model="writeMessage.users" data-placeholder="Кому" ng-change="writeMessage.change()">
+        <option ng-repeat="neighboor in writeMessage.neighboors" value="{{neighboor.id}}">{{neighboor.firstName+" "+neighboor.lastName}}</option>
+    </select>
+    <!--<input type="text" placeholder="Кому" class="width-100 write-message-to" autocomplete="off" />-->
 
     <textarea class="width-100 message-textarea no-resize" value="Сообщение"
               onblur="if(this.value=='') this.value='Сообщение';"
@@ -10,7 +13,7 @@
     <div id="attach-area-writeMessage" class="attach-area"></div>
 
     <span class="input-group-btn write-message-bottom">
-        <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="writeMessage.send()" ui-sref="dialog-single-{ {{ writeMessage.dialogId }} }">
+        <button class="btn btn-sm btn-info no-radius no-border" type="button" ui-sref="dialog-single({ dialogId : {{writeMessage.dialogId}} })"> <!-- ng-click="writeMessage.send()" ui-sref="dialog-single-{ {{ writeMessage.dialogId }} }" -->
             <i class="icon-share-alt"></i>
             Отправить
         </button>
