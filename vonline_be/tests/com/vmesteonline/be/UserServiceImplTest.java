@@ -58,7 +58,7 @@ public class UserServiceImplTest extends TestWorkAround {
 		newStreet = usi.createNewStreet(newCity.getId(), STREET);
 		newStreet1 = usi.createNewStreet(newCity.getId(), STREET1);
 
-		newBuilding = usi.createNewBuilding(newStreet.getId(), BUILDING_NO, "17", "53");
+		newBuilding = usi.createNewBuilding("zip",newStreet.getId(), BUILDING_NO, "17", "53");
 
 		Assert.assertEquals(newBuilding.getFullNo(), BUILDING_NO);
 		Assert.assertEquals(newBuilding.getStreetId(), newStreet.getId());
@@ -495,17 +495,4 @@ public class UserServiceImplTest extends TestWorkAround {
 			fail("Exception " + e.getMessage());
 		}
 	}
-
-	@Test
-	public void testGetNeighbors() {
-		try {
-			asi.login(Defaults.user1email, Defaults.user1pass);
-			List<ShortUserInfo> user = usi.getNeighbors(getUserGroupId(Defaults.user1email, Defaults.radiusHome));
-			Assert.assertEquals(3, user.size());
-		} catch (InvalidOperation e) {
-			e.printStackTrace();
-			fail("Exception " + e.getMessage());
-		}
-	}
-
 }
