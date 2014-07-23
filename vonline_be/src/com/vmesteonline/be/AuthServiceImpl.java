@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -50,6 +51,34 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		}
 	}
 
+	public boolean allowUserAccess(String email, String pwd, boolean checkPwd) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser u = getUserByEmail(email, pm);
+			if (u != null) {
+				if (u.getPassword().equals(pwd) || !checkPwd) {
+
+					logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
+					VoSession currentSession = getCurrentSession(pm);
+					if (null == currentSession)
+						currentSession = new VoSession(sessionStorage.getId(), u);
+					else
+						currentSession.setUser(u);
+					pm.makePersistent(currentSession);
+					return true;
+				} else
+					logger.info("incorrect password " + email + " pass " + pwd);
+
+			}
+		} finally {
+			pm.close();
+		}
+		if (checkPwd)
+			throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
+
+		return false;
+	}
+
 	public static VoSession getSession(String sessId, PersistenceManager pm) throws InvalidOperation {
 
 		try {
@@ -75,18 +104,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 		logger.info("try authentificate user " + email + " pass " + password);
 
-		PersistenceManager pm = PMF.getPm();
-		VoUser u = getUserByEmail(email, pm);
-		if (u != null) {
-			if (u.getPassword().equals(password)) {
-
-				allowUserAccess(pm, u);
-				return true;
-			} else
-				logger.info("incorrect password " + email + " pass " + password);
-
-		}
-		throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
+		return allowUserAccess(email, password, true);
 	}
 
 	public void allowUserAccess(PersistenceManager pm, VoUser u) throws InvalidOperation {
@@ -110,50 +128,39 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public long registerNewUser(String firstname, String lastname, String password, String email, String locationId) throws InvalidOperation {
+	public long registerNewUser(String firstname, String lastname, String password, String email, String inviteCode) throws InvalidOperation {
 
 		if (getUserByEmail(email) != null)
 			throw new InvalidOperation(VoError.RegistrationAlreadyExist, "registration exsist for user with email " + email);
+		if (null == inviteCode || "".equals(inviteCode.trim()))
+			throw new InvalidOperation(VoError.IncorrectParametrs, "unknown invite code " + inviteCode);
 
 		PersistenceManager pm = PMF.getPm();
 
 		try {
+
+			VoInviteCode voInviteCode = VoInviteCode.getInviteCode(inviteCode, pm);
+			voInviteCode.registered();
+
 			VoUser user = new VoUser(firstname, lastname, email, password);
 			pm.makePersistent(user);
+			pm.makePersistent(voInviteCode);
 
-			// find all defaults rubrics for user
-			Query q = pm.newQuery(VoRubric.class);
-			q.setFilter(" subscribedByDefault == true");
-			List<VoRubric> defRubrics = (List<VoRubric>) q.execute();
-			if (defRubrics.isEmpty())
-				defRubrics = Defaults.defaultRubrics;
-			for (VoRubric rubric : defRubrics) {
-				user.addRubric(rubric);
+			try {
+				user.setLocation(voInviteCode.getPostalAddressId(), pm);
+			} catch (NumberFormatException | InvalidOperation e) {
+				throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 			}
 
-			/*
-			 * UserServiceImpl usi = new UserServiceImpl(sessionStorage.getId()); usi.updateUserAvatar(Defaults.defaultAvatarUrl);
-			 */
-
-			if (null == locationId || "".equals(locationId.trim())) {
-				logger.info("register " + email + " pass " + password + " id " + user.getId() + " Wihout location code and User Group");
-				user.setDefaultUserLocation(pm);
-			} else {
-				try {
-					user.setLocation(Long.parseLong(locationId), pm);
-				} catch (NumberFormatException | InvalidOperation e) {
-					throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
-				}
-
-				List<VoUserGroup> groups = user.getGroups();
-				logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + locationId + " home group: "
-						+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
-			}
+			List<VoUserGroup> groups = user.getGroups();
+			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + inviteCode + " home group: "
+					+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
 
 			try {
 				String body = "<h2>" + firstname + " " + lastname + "</h2><br/>Вы зарегистрировались на сайте www.vmesteonline.ru. Ваш логин " + email
 						+ ".<br/>";
 				EMailHelper.sendSimpleEMail(email, "Вы зарегестрированы на Bo! сайте", body);
+
 			} catch (Exception e) {
 				logger.warn("can't send email to " + email + " " + e.getMessage());
 				e.printStackTrace();
