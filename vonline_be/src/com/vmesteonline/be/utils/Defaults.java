@@ -95,7 +95,7 @@ public class Defaults {
 	// ======================================================================================================================
 	private static void deletePersistentAll(PersistenceManager pm, Class pc) {
 		Extent ext = pm.getExtent(pc);
-		for (Object i : ext) {
+		if(null!=ext) for (Object i : ext) {
 			try {
 				pm.deletePersistent(i);
 			} catch (Exception e) {

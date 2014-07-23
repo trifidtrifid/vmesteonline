@@ -21,20 +21,14 @@ import com.vmesteonline.be.VoError;
 public class VoStreet implements Comparable<VoStreet> {
 
 	public VoStreet(VoCity city, String name, PersistenceManager pm) throws InvalidOperation {
-		List<VoStreet> vcl = (List<VoStreet>)pm.newQuery(VoStreet.class, "city == :key && name=='"+name+"'").execute(city.getId());
+		List<VoStreet> vcl = (List<VoStreet>)pm.newQuery(VoStreet.class, "city=="+city.getId()+"  && name=='"+name+"'").execute();
 		this.setCity(city);
 		this.setName(name);
 		
 		if( vcl.size() > 0 ){
-			id = vcl.get(0).getId();
-			this.setBuildings(vcl.get(0).getBuildings());
+			this.id = vcl.get(0).getId();
 			
 		} else {
-			
-			if( city.getStreets().contains( this ))
-				throw new InvalidOperation(VoError.GeneralError, "The same Street '"+name+"' already exists in City "+city.getName());
-			city.addStreet(this);
-			this.setBuildings(new HashSet<VoBuilding>());
 			
 			pm.makePersistent(this);
 		}
@@ -42,9 +36,9 @@ public class VoStreet implements Comparable<VoStreet> {
 
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	private Key id;
+	private long id;
 
-	public void setId(Key id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -59,15 +53,7 @@ public class VoStreet implements Comparable<VoStreet> {
 		return city;
 	}
 
-	@Persistent
-	@Unowned
-	Set<VoBuilding> buildings;
-
-	public void addBuilding(VoBuilding building) {
-		buildings.add(building);
-	}
-
-	public Key getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -76,7 +62,7 @@ public class VoStreet implements Comparable<VoStreet> {
 	}
 
 	public Street getStreet() {
-		return new Street(id.getId(), city.getId().getId(), name);
+		return new Street(id, city.getId(), name);
 	}
 
 	@Override
@@ -85,7 +71,6 @@ public class VoStreet implements Comparable<VoStreet> {
 	}
 	
 	
-
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -94,16 +79,8 @@ public class VoStreet implements Comparable<VoStreet> {
 		this.city = city;
 	}
 
-	public void setBuildings(Set<VoBuilding> buildings) {
-		this.buildings = buildings;
-	}
-
 	@Override
 	public int compareTo(VoStreet that) {
 		return null == that.name ? this.name == null ? 0 : -1 : this.name.compareToIgnoreCase( that.name ) ;
-	}
-
-	public Set<VoBuilding> getBuildings() {
-		return buildings;
 	}
 }

@@ -36,10 +36,6 @@ service UserService {
 	void updateUserAvatar(1:string url) throws (1:error.InvalidOperation exc),
 	
 	
-//для получения списка соседей пользователя. 
-	list<bedata.ShortUserInfo> getNeighbors(1:i64 groupId) throws (1:error.InvalidOperation exc),
-	
-	
 	bedata.UserProfile getUserProfile(1:i64 userId) throws (1:error.InvalidOperation exc),
 	
 	//для изменения информации о пользователе на странице профайла. 

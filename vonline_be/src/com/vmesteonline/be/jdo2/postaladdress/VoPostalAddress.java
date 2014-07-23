@@ -90,8 +90,8 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
 	@Override
 	public int compareTo(VoPostalAddress that) {
-		return null == that.building ? this.building == null ? 0 : -1 : null == this.building ? 1 : Long.compare(this.building.getId().getId(),
-				that.building.getId().getId()) != 0 ? Long.compare(this.building.getId().getId(), that.building.getId().getId()) : Integer.compare(flatNo,
+		return null == that.building ? this.building == null ? 0 : -1 : null == this.building ? 1 : Long.compare(this.building.getId(),
+				that.building.getId()) != 0 ? Long.compare(this.building.getId(), that.building.getId()) : Integer.compare(flatNo,
 				that.flatNo);
 	}
 
@@ -112,10 +112,10 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	}
 
 	public PostalAddress getPostalAddress(PersistenceManager _pm) {
-		Key streetKey = building.getStreet();
+		long streetId = building.getStreet();
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
 		try {
-			VoStreet voStreet = pm.getObjectById(VoStreet.class, streetKey);
+			VoStreet voStreet = pm.getObjectById(VoStreet.class, streetId);
 			return new PostalAddress(voStreet.getCity().getCountry().getCountry(), voStreet.getCity().getCity(), voStreet.getStreet(),
 					building.getBuilding(), staircase, floor, flatNo, comment);
 		} finally {

@@ -27,21 +27,15 @@ public class VoCity implements Comparable<VoCity> {
 		
 		if( vcl.size() > 0 ){
 			id = vcl.get(0).getId();
-			this.setStreets( vcl.get(0).getStreets());
 			
 		} else {
 			
-			if( country.getCities().contains( this ))
-				throw new InvalidOperation(VoError.GeneralError, "The same City '"+name+"' already exists in contry "+country.getName());
-			country.addCity(this);
-			this.setStreets(new HashSet<VoStreet>());
 			pm.makePersistent(this);
 		}
-		
 	}
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	private Key id;
+	private long id;
 	
 	@Persistent
 	private String name;
@@ -53,20 +47,12 @@ public class VoCity implements Comparable<VoCity> {
 		return country;
 	}
 
-	@Persistent//(mappedBy="city")
-	@Unowned
-	private Set<VoStreet> streets;
-	
-	public void addStreet(VoStreet street){
-		streets.add(street);
-	}
-
-	public Key getId() {
+	public long getId() {
 		return id;
 	}
 
 	public City getCity() {
-		return new City(id.getId(), country.getId().getId(), name);
+		return new City(id, country.getId().getId(), name);
 	}
 
 	@Override
@@ -83,15 +69,6 @@ public class VoCity implements Comparable<VoCity> {
 		return name;
 	}
 
-	public Set<VoStreet> getStreets() {
-		return streets;
-	}
-
-	@Override
-	public boolean equals(Object that) {
-		return that instanceof VoStreet && ((VoCity)that).country.getId() == this.country.getId();
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -99,11 +76,4 @@ public class VoCity implements Comparable<VoCity> {
 	public void setCountry(VoCountry country) {
 		this.country = country;
 	}
-
-	public void setStreets(Set<VoStreet> streets) {
-		this.streets = streets;
-	}
-	
-	
-	
 }

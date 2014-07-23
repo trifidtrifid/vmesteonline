@@ -1,8 +1,5 @@
 package com.vmesteonline.be.jdo2.postaladdress;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,12 +49,15 @@ public class VoGeocoder {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoStreet street = pm.getObjectById(VoStreet.class, building.getStreet());
-
-			String address = street.getCity().getCountry().getName() + "," + street.getCity().getName() + "," + street.getName() + ","
+			
+			String address = street.getCity().getCountry().getName() + ", " + street.getCity().getName() + ", " + street.getName() + ", "
 					+ building.getFullNo();
-			address = URLEncoder.encode(address,"UTF-8");
+			
 
 				AddressInfo addrInfo = resolveAddressString(address);
+				if(!addrInfo.isExact() || !addrInfo.isKindHouse() )
+					throw new InvalidOperation(VoError.IncorrectParametrs, "YA: cant resolve address by string '"+address+"'");
+				
 				String longLatString = addrInfo.getLongLatString();
 
 				if (null != longLatString) {
@@ -99,7 +99,7 @@ public class VoGeocoder {
 				throw new InvalidOperation(VoError.GeneralError, "Failed to get Location. THere is No data");
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new InvalidOperation(VoError.GeneralError, "Failed to get Location: " + e.getMessage());
+				throw new InvalidOperation(VoError.GeneralError, "Failed to get Location: " + ( e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage()));
 			} finally {
 			pm.close();
 		}

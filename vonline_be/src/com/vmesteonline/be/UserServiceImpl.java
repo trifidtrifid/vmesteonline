@@ -57,7 +57,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoUser user = getCurrentUser(pm);
 			user.setName(userInfo.firstName);
 			user.setLastName(userInfo.lastName);
-			user.setLastName(userInfo.lastName);
+			
 			pm.makePersistent(user);
 		} finally {
 			pm.close();
@@ -239,25 +239,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	@Override
-	public List<ShortUserInfo> getNeighbors(long groupId) throws InvalidOperation {
-
-		PersistenceManager pm = PMF.getPm();
-		List<ShortUserInfo> lsp = new ArrayList<ShortUserInfo>();
-		try {
-			VoUser user = getCurrentUser(pm);
-			List<VoUser> users = user.getAddress().getBuilding().getUsers();
-			for (VoUser voUser : users) {
-				lsp.add(voUser.getShortUserInfo());
-			}
-			return lsp;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "can't find neighbors. e: " + e.getMessage());
-		} finally {
-			pm.close();
-		}
-	}
 
 	@Override
 	public UserProfile getUserProfile(long userId) throws InvalidOperation {
