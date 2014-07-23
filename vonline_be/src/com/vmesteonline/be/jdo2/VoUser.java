@@ -197,25 +197,13 @@ public class VoUser extends GeoLocation {
 	// TODO should test removing
 	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) {
 
-		// remove user from old group
-		if (null != this.getAddress()) { // location already set, so user should
-			// be removed first
-			VoBuilding oldBuilding = this.address.getBuilding();
-			if (null != oldBuilding)
-				oldBuilding.removeUser(this);
-		}
-
 		// building from new address
-		VoBuilding building = userAddress.getBuilding();
-		if (null == building)
-			throw new RuntimeException("Incorrect address");
-
-		building.addUser(this);
+		VoBuilding building = pm.getObjectById(VoBuilding.class, userAddress.getBuilding());
 
 		// check if location is set
 		if (null == building.getLatitude() || 0 == building.getLatitude().intValue()) {
 			try {
-				VoGeocoder.getPosition(building);
+				VoGeocoder.getPosition(building, false);
 			} catch (InvalidOperation e) {
 				e.printStackTrace();
 			}
@@ -244,13 +232,6 @@ public class VoUser extends GeoLocation {
 	// *****
 	public void setDefaultUserLocation(PersistenceManager pm) {
 
-		VoBuilding building = null;
-		if (null != this.getAddress()) { // location already set, so user should
-			// be removed first
-			building = this.address.getBuilding();
-			if (null != building)
-				building.removeUser(this);
-		}
 		groups = new ArrayList<VoUserGroup>();
 		groups.add(defaultGroup);
 		this.setLatitude(defaultGroup.getLatitude());

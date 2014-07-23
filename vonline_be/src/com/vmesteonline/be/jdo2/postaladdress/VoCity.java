@@ -18,92 +18,56 @@ import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
-public class VoCity implements Comparable<VoCity> {
+public class VoCity {
 	
 	public VoCity(VoCountry country,String name,PersistenceManager pm) throws InvalidOperation {
-		List<VoCity> vcl = (List<VoCity>)pm.newQuery(VoCity.class, "country == :key && name=='"+name+"'").execute(country.getId());
-		this.setCountry(country);
+		List<VoCity> vcl = (List<VoCity>)pm.newQuery(VoCity.class, "countryId=="+country.getId()+" && name=='"+name+"'").execute();
+		this.setCountry(country.getId());
 		this.setName(name);
 		
 		if( vcl.size() > 0 ){
 			id = vcl.get(0).getId();
-			this.setStreets( vcl.get(0).getStreets());
 			
 		} else {
 			
-			if( country.getCities().contains( this ))
-				throw new InvalidOperation(VoError.GeneralError, "The same City '"+name+"' already exists in contry "+country.getName());
-			country.addCity(this);
-			this.setStreets(new HashSet<VoStreet>());
 			pm.makePersistent(this);
 		}
-		
 	}
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	private Key id;
+	private Long id;
 	
 	@Persistent
 	private String name;
 
 	@Persistent
-	@Unowned
-	private VoCountry country;
-	public VoCountry getCountry(){
-		return country;
+	private long countryId;
+	public long getCountry(){
+		return countryId;
 	}
 
-	@Persistent//(mappedBy="city")
-	@Unowned
-	private Set<VoStreet> streets;
-	
-	public void addStreet(VoStreet street){
-		streets.add(street);
-	}
-
-	public Key getId() {
+	public long getId() {
 		return id;
 	}
 
 	public City getCity() {
-		return new City(id.getId(), country.getId().getId(), name);
+		return new City(id, countryId, name);
 	}
 
 	@Override
 	public String toString() {
-		return "VoCity [id=" + id + ", name=" + name + ", country=" + country + "]";
-	}
-	
-	@Override
-	public int compareTo(VoCity that) {
-		return null == that.name ? this.name == null ? 0 : -1 : this.name.compareToIgnoreCase( that.name ) ;
+		return "VoCity [id=" + id + ", name=" + name + ", country=" + countryId + "]";
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public Set<VoStreet> getStreets() {
-		return streets;
-	}
-
-	@Override
-	public boolean equals(Object that) {
-		return that instanceof VoStreet && ((VoCity)that).country.getId() == this.country.getId();
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public void setCountry(VoCountry country) {
-		this.country = country;
+	public void setCountry(long country) {
+		this.countryId = country;
 	}
-
-	public void setStreets(Set<VoStreet> streets) {
-		this.streets = streets;
-	}
-	
-	
-	
 }

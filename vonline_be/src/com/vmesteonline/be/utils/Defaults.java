@@ -1,13 +1,8 @@
 package com.vmesteonline.be.utils;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
@@ -16,11 +11,7 @@ import javax.jdo.Query;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.InvalidOperation;
-import com.vmesteonline.be.PostalAddress;
-import com.vmesteonline.be.ShopBOServiceImpl;
-import com.vmesteonline.be.ShopServiceImpl;
 import com.vmesteonline.be.VoError;
-import com.vmesteonline.be.access.shop.VoShopAccessManager;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoGroup;
@@ -37,22 +28,6 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
-import com.vmesteonline.be.jdo2.shop.VoOrder;
-import com.vmesteonline.be.jdo2.shop.VoOrderLine;
-import com.vmesteonline.be.jdo2.shop.VoProducer;
-import com.vmesteonline.be.jdo2.shop.VoProduct;
-import com.vmesteonline.be.jdo2.shop.VoProductCategory;
-import com.vmesteonline.be.jdo2.shop.VoShop;
-import com.vmesteonline.be.shop.DeliveryType;
-import com.vmesteonline.be.shop.OrderDates;
-import com.vmesteonline.be.shop.OrderDatesType;
-import com.vmesteonline.be.shop.PaymentType;
-import com.vmesteonline.be.shop.PriceType;
-import com.vmesteonline.be.shop.Shop;
-import com.vmesteonline.be.shop.bo.DataSet;
-import com.vmesteonline.be.shop.bo.ExchangeFieldType;
-import com.vmesteonline.be.shop.bo.ImExType;
-import com.vmesteonline.be.shop.bo.ImportElement;
 
 @SuppressWarnings("unchecked")
 public class Defaults {
@@ -126,13 +101,14 @@ public class Defaults {
 	// ======================================================================================================================
 	private static void deletePersistentAll(PersistenceManager pm, Class pc) {
 		Extent ext = pm.getExtent(pc);
-		for (Object i : ext) {
-			try {
-				pm.deletePersistent(i);
-			} catch (Exception e) {
-				// e.printStackTrace();
+		if (null != ext)
+			for (Object i : ext) {
+				try {
+					pm.deletePersistent(i);
+				} catch (Exception e) {
+					// e.printStackTrace();
+				}
 			}
-		}
 	}
 
 	// ======================================================================================================================
@@ -234,33 +210,29 @@ public class Defaults {
 			pm.makePersistent(street);
 			VoPostalAddress[] addresses;
 			addresses = new VoPostalAddress[] {
-					
 
 					// адресов должно быть минимум три! кол-во юзеров
 					// хардкодится выше
-					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 1, (byte) 1,
-							(byte) 5, ""),
-					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 2, (byte) 1,
-							(byte) 50, ""),
-					new VoPostalAddress(new VoBuilding(street, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544"), pm), (byte) 1, (byte) 11,
-							(byte) 35, ""),
-					new VoPostalAddress(new VoBuilding(street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177"), pm), (byte) 1, (byte) 2,
-							(byte) 25, "") };
+					new VoPostalAddress(new VoBuilding("195213", street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 1,
+							(byte) 1, (byte) 5, ""),
+					new VoPostalAddress(new VoBuilding("195213", street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 2,
+							(byte) 1, (byte) 50, ""),
+					new VoPostalAddress(new VoBuilding("195213", street, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544"), pm), (byte) 1,
+							(byte) 11, (byte) 35, ""),
+					new VoPostalAddress(new VoBuilding("195213", street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177"), pm), (byte) 1,
+							(byte) 2, (byte) 25, "") };
 
 			String invCodes[] = { "1", "2", "3", "4" };
 
 			for (int i = 0; i < addresses.length; i++) {
-				try {
-					Pair<String, String> position = VoGeocoder.getPosition(addresses[i].getBuilding());
-					addresses[i].getBuilding().setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+
 				pm.makePersistent(addresses[i]);
 				locations.add("" + addresses[i].getAddressCode());
-				VoInviteCode icode = new VoInviteCode(invCodes[i], addresses[i].getId().getId());
+				VoInviteCode icode = new VoInviteCode(invCodes[i], addresses[i].getId());
 				pm.makePersistent(icode);
 			}
+
+//			InviteCodeUploader.uploadCodes("/data/addresses_len_7_kudrovo.csv");
 
 			return locations;
 		} catch (Exception e) {

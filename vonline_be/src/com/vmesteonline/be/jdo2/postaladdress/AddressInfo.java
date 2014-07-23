@@ -25,4 +25,5 @@ public interface AddressInfo {
 
 	public abstract BigDecimal getLongitude();
 
+	public abstract String getZipCode();
 }

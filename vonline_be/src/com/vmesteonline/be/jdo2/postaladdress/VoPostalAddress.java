@@ -23,9 +23,9 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 @PersistenceCapable
 public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
-	public VoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, byte flatNo, String comment) {
+	public VoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, int flatNo, String comment) {
 
-		this.building = voBuilding;
+		this.buildingId = voBuilding.getId();
 		this.staircase = staircase;
 		this.floor = floor;
 		this.flatNo = flatNo;
@@ -63,9 +63,7 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 			}
 			pm.retrieve(vob);
 			
-			this.building = vob;
-			this.building.longitude = vob.getLongitude().toString();
-			this.building.latitude = vob.getLatitude().toString();
+			this.buildingId = vob.getId();
 			this.staircase = postalAddress.getStaircase();
 			this.floor = postalAddress.getFloor();
 			this.flatNo = postalAddress.getFlatNo();
@@ -79,32 +77,32 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
 	@Override
 	public boolean equals(Object that) {
-		return that instanceof VoPostalAddress ? ((VoPostalAddress) that).building.getId() == building.getId()
+		return that instanceof VoPostalAddress ? ((VoPostalAddress) that).buildingId == buildingId
 				&& ((VoPostalAddress) that).flatNo == flatNo : super.equals(that);
 	}
 
 	@Override
 	public String toString() {
-		return "VoPostalAddress [id=" + id + ", building=" + building + ", staircase=" + staircase + ", floor=" + floor + ", flatNo=" + flatNo + "]";
+		return "VoPostalAddress [id=" + id + ", building=" + buildingId + ", staircase=" + staircase + ", floor=" + floor + ", flatNo=" + flatNo + "]";
 	}
 
 	@Override
 	public int compareTo(VoPostalAddress that) {
-		return null == that.building ? this.building == null ? 0 : -1 : null == this.building ? 1 : Long.compare(this.building.getId().getId(),
-				that.building.getId().getId()) != 0 ? Long.compare(this.building.getId().getId(), that.building.getId().getId()) : Integer.compare(flatNo,
+		return 0 == that.buildingId ? this.buildingId == 0 ? 0 : -1 : 0 == this.buildingId ? 1 : Long.compare(this.buildingId,
+				that.buildingId) != 0 ? Long.compare(this.buildingId, that.buildingId) : Integer.compare(flatNo,
 				that.flatNo);
 	}
 
 	public long getAddressCode() {
-		return id.getId() ^ valueMask;
+		return id;
 	}
 
 	public static Key getKeyValue(long code) {
 		return KeyFactory.createKey(VoPostalAddress.class.getSimpleName(), code ^ valueMask);
 	}
 
-	public VoBuilding getBuilding() {
-		return building;
+	public long getBuilding() {
+		return buildingId;
 	}
 
 	public PostalAddress getPostalAddress() {
@@ -112,11 +110,15 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	}
 
 	public PostalAddress getPostalAddress(PersistenceManager _pm) {
-		Key streetKey = building.getStreet();
+	
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
 		try {
-			VoStreet voStreet = pm.getObjectById(VoStreet.class, streetKey);
-			return new PostalAddress(voStreet.getCity().getCountry().getCountry(), voStreet.getCity().getCity(), voStreet.getStreet(),
+			VoBuilding building = pm.getObjectById(VoBuilding.class, buildingId);
+			VoStreet street = pm.getObjectById(VoStreet.class, building.getStreetId());
+			VoCity city = pm.getObjectById(VoCity.class, street.getCity());
+			VoCountry country = pm.getObjectById(VoCountry.class, city.getCountry());
+			
+			return new PostalAddress(country.getCountry(), city.getCity(), street.getStreet(),
 					building.getBuilding(), staircase, floor, flatNo, comment);
 		} finally {
 			if (_pm == null)
@@ -125,23 +127,26 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	}
 
 	public String getAddressText(PersistenceManager _pm) {
-		if( null == building.getAddressString() || building.getAddressString().trim().length() == 0 ) {
-			PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-			try {
+		
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+		try {
+			VoBuilding building = pm.getObjectById(VoBuilding.class, buildingId);
+			if( null == building.getAddressString() || building.getAddressString().trim().length() == 0 ) {
+				
 				PostalAddress pa = getPostalAddress(pm);
 				building.setAddressString( pa.getCity().getName() + " " + pa.getStreet().getName() + " д." + building.getFullNo() + " кв. " + flatNo + " [э." + floor + " п. "
 						+ staircase + "]");
 				return building.getAddressString();
-			} finally {
-				if (null == _pm)
-					pm.close();
+			} else {
+				return building.getAddressString() + " кв. " + flatNo + " [этаж " + floor + " подъезд "+ staircase + "]";
 			}
-		} else {
-			return building.getAddressString() + " кв. " + flatNo + " [этаж " + floor + " подъезд "+ staircase + "]";
+		} finally {
+			if (null == _pm)
+				pm.close();
 		}
 	}
 
-	public Key getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -162,20 +167,29 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	}
 
 	public Double getDistance( VoPostalAddress that){
-		if( null == this.getBuilding() || null == that.getBuilding() )
-			return null;
-		return this.getBuilding().getDistance(that.getBuilding());
+		PersistenceManager pm = PMF.getPm();
+		try {
+			try {
+				VoBuilding building = pm.getObjectById(VoBuilding.class, buildingId);
+				VoBuilding thatBuilding = pm.getObjectById(VoBuilding.class, that.getBuilding());
+				return building.getDistance(thatBuilding);
+			} catch (Exception e) {
+				return null;
+			}
+		} finally {
+			pm.close();
+		}
 	}
 	
 	private static long valueMask = 26051976L;
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key id;
+	private Long id;
 
 	@Persistent
 	@Unowned
-	private VoBuilding building;
+	private long buildingId;
 
 	@Persistent
 	private byte staircase;
