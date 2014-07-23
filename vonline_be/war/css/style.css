@@ -568,8 +568,9 @@ h1 {
 }
 .attach-area .attach-item {
   display: inline-block;
-  margin-right: 10px;
-  margin-top: 10px;
+  vertical-align: top;
+  margin-right: 1px;
+  margin-top: 5px;
 }
 .attach-area .attached-img {
   width: 150px;
@@ -635,8 +636,8 @@ h1 {
   margin: 0 5px;
 }
 .attached a img {
-  max-width: 300px;
-  max-height: 300px;
+  max-width: 150px;
+  max-height: 150px;
 }
 .create-poll {
   margin-bottom: 10px;

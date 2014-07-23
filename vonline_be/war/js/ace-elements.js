@@ -301,7 +301,7 @@ jQuery(function() {
 	var get_thumbnail = function(img, size, isFullSize, type) {
 		
 		var w = img.width, h = img.height,
-		MAX_SIZE = 500;
+		MAX_SIZE = 800;
 		if(isFullSize && (w > MAX_SIZE || h > MAX_SIZE)){
 			if(w > h) {
 				h = parseInt(MAX_SIZE/w * h);
