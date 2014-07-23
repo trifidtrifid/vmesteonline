@@ -1307,7 +1307,7 @@ function initAttachDoc(selector,attachAreaSelector){
             //var input = $('#import-data');
             fd.append( 'data', input[0].files[0]);*/
 
-            attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ selector.val() +"'>" +
+            attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
                 "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
                 docName+
                 "</span>");
