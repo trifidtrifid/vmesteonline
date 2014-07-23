@@ -59,7 +59,8 @@
 <link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>
 <link rel="stylesheet" href="js/forum/bower_components/select2/select2.css"/>
 
-<script src="js/lib/jquery-2.1.1.min.js"></script>
+<%--<script src="js/lib/jquery-2.1.1.min.js"></script>--%>
+<script src="js/lib/jquery-2.0.3.js"></script>
 <!--[if lt IE 9]>
     <script>
         document.createElement('header');

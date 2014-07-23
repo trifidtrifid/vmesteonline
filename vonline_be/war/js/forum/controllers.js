@@ -1226,7 +1226,7 @@ function initProfileAva(){
 
         function saveNewAva(){
             //console.log($('.ace-file-input').find('.file-name img').css('background-image'));
-            var imgBase64 = $('.ace-file-input').find('.file-name img').css('background-image');
+            var imgBase64 = $('.profile .ace-file-input').find('.file-name img').css('background-image');
             var url = fileClient.saveFileContent(imgBase64,false);
 
             userClient.updateUserAvatar(url);
