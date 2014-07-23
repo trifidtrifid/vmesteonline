@@ -19,8 +19,9 @@ struct Street {
 
 struct Building {
 	1:i64 id,
-	2:i64 streetId,
-	3:string fullNo
+	2:string zip;
+	3:i64 streetId,
+	4:string fullNo
 }
 
 struct PostalAddress {

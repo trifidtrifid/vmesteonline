@@ -57,7 +57,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoUser user = getCurrentUser(pm);
 			user.setName(userInfo.firstName);
 			user.setLastName(userInfo.lastName);
-			user.setLastName(userInfo.lastName);
+			
 			pm.makePersistent(user);
 		} finally {
 			pm.close();
@@ -81,8 +81,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoUser voUser = getCurrentUser(pm);
 			ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, voUser.getAvatarMessage(), "", "");
 			VoPostalAddress pa = voUser.getAddress();
+			
 			if (pa != null) {
-				sp.setAddress(pa.getBuilding().getAddressString());
+				VoBuilding building = pm.getObjectById(VoBuilding.class, pa.getBuilding());
+				sp.setAddress(building.getAddressString());
 			}
 			return sp;
 		} finally {
@@ -186,8 +188,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			List<String> locations = new ArrayList<String>();
 			for (VoPostalAddress pa : postalAddresses) {
 				pm.retrieve(pa);
-				if (pa.getBuilding() != null)
-					locations.add("" + pa.getAddressCode());
+				locations.add("" + pa.getAddressCode());
 			}
 			return locations;
 		} finally {
@@ -239,25 +240,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	@Override
-	public List<ShortUserInfo> getNeighbors(long groupId) throws InvalidOperation {
-
-		PersistenceManager pm = PMF.getPm();
-		List<ShortUserInfo> lsp = new ArrayList<ShortUserInfo>();
-		try {
-			VoUser user = getCurrentUser(pm);
-			List<VoUser> users = user.getAddress().getBuilding().getUsers();
-			for (VoUser voUser : users) {
-				lsp.add(voUser.getShortUserInfo());
-			}
-			return lsp;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "can't find neighbors. e: " + e.getMessage());
-		} finally {
-			pm.close();
-		}
-	}
 
 	@Override
 	public UserProfile getUserProfile(long userId) throws InvalidOperation {
@@ -593,7 +575,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Building createNewBuilding(long streetId, String fullNo, String longitude, String lattitude) throws InvalidOperation {
+	public Building createNewBuilding(String zipCode, long streetId, String fullNo, String longitude, String lattitude) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no building with the same name
@@ -606,12 +588,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				return buildings.get(0).getBuilding();
 			} else {
 				logger.info("VoBuilding '" + fullNo + "'was created.");
-				VoBuilding voBuilding = new VoBuilding(vs, fullNo, new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
+				VoBuilding voBuilding = new VoBuilding(zipCode, vs, fullNo, new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
 						new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude), pm);
 				if (longitude == null || lattitude == null || longitude.isEmpty() || lattitude.isEmpty()) { // calculate
 					// location
 					try {
-						Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
+						Pair<String, String> position = VoGeocoder.getPosition(voBuilding, false);
 						voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 					} catch (Exception e) {
 						e.printStackTrace();
