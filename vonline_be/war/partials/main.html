@@ -17,6 +17,7 @@
                 </div>
 
                 <div class="attach-area" id="attach-area-0"></div>
+                <div class="attach-area attach-area-doc" id="attach-doc-area-0"></div>
 
                 <div class="message-input-bottom">
                     <div class="btn-group attach-dropdown pull-right">
@@ -26,10 +27,8 @@
                         </button>
 
                         <ul class="dropdown-menu dropdown-blue">
-                        <li><a href="#">Видео</a></li>
-                        <li><a href="#">Документ</a></li>
                         <li><input id="attachImage-0" type="file"/></li>
-
+                        <li><input id="attachDoc-0" type="file"/></li>
                         <li><a href="#" ng-click="base.showPoll($event,lenta)" ng-show="lenta.isPollAvailable">Опрос</a></li>
                         </ul>
                     </div>
@@ -178,8 +177,8 @@
                                         </button>
 
                                         <ul class="dropdown-menu dropdown-blue">
-                                            <li><a href="#">Документ</a></li>
                                             <li><input id="attachImage-{{wallItem.topic.id}}" type="file"/></li>
+                                            <li><a href="#">Документ</a></li>
                                         </ul>
                                     </div>
                                 </span>

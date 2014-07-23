@@ -589,6 +589,9 @@ h1 {
 .attach-area .remove-attach-img:hover {
   text-decoration: none;
 }
+.attach-area.attach-area-doc .remove-attach-img {
+  margin-left: 0;
+}
 .attach-dropdown li a:hover {
   background: #4f99c6;
   color: #fff;

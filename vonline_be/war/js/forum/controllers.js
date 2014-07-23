@@ -249,6 +249,7 @@ angular.module('forum.controllers', ['ui.select2'])
     .controller('LentaController',function($rootScope) {
         $rootScope.setTab(1);
         initAttachImage($('#attachImage-0'),$('#attach-area-0')); // для ленты новостей
+        initAttachDoc($('#attachDoc-0'),$('#attach-doc-area-0'));
         initFancyBox($('.forum'));
 
         var lenta = this;
@@ -1271,6 +1272,44 @@ function initAttachImage(selector,attachAreaSelector){
 
     });
 }
+function initAttachDoc(selector,attachAreaSelector){
+    var title;
+
+    selector.ace_file_input({
+        style:'well',
+        btn_choose:'Документ',
+        btn_change:null,
+        no_icon:'',
+        droppable:true,
+        thumbnail: false,
+        icon_remove:null,
+        before_change: function(files, dropped){
+            title = $(this).find('+.file-label').data('title');
+            return true;
+        }
+    }).on('change', function(){
+        var fileLabel = $(this).find('+.file-label');
+        fileLabel.attr('data-title',title).removeClass('hide-placeholder');
+        fileLabel.find('.file-name').hide();
+
+        setTimeout(insertDoc,200);
+
+        function insertDoc() {
+            var docName = fileLabel.find('.file-name').attr('data-title');
+
+            attachAreaSelector.append("<span class='attach-item new-attached'>" +
+                "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
+                docName+"</span>");
+
+            $('.new-attached .remove-attach-img').click(function(e){
+                e.preventDefault();
+                $(this).closest('.attach-item').hide().detach();
+            });
+
+            $('.new-attached').removeClass('new-attached');
+        }
+    });
+}
 function selectGroupInDropdown(groupId,objCtrl){
     var groupsLength = objCtrl.groups.length;
     for(var i = 0; i < groupsLength; i++){
@@ -1532,6 +1571,15 @@ function getAttachedImages(selector){
 
     return imgList;
 }
+function getAttachedDocs(selector){
+    var imgList = [], ind = 0;
+
+    selector.find('img').each(function(){
+        imgList[ind++] = $(this).css('background-image');
+    });
+
+    return imgList;
+}
 function cleanAttached(selector){
     selector.html('');
 }
@@ -1561,13 +1609,3 @@ $.widget("custom.catcomplete", $.ui.autocomplete, {
         });
     }
 });*/
-function F($rootScope){
-    var availableTags = [], userId;
-
-    var neighboors = userClient.getNeighbors($rootScope.biggestGroup.id),
-        neighboorsLength = neighboors.length;
-    for(var i = 0; i < neighboorsLength; i++){
-        availableTags[i] = neighboors[i].firstName + " "+ neighboors[i].lastName;
-    }
-
-}
