@@ -217,12 +217,6 @@ public class Defaults {
 							(byte) 2, (byte) 25, "") };
 
 			for (VoPostalAddress pa : addresses) {
-				try {
-					Pair<String, String> position = VoGeocoder.getPosition(pa.getBuilding());
-					pa.getBuilding().setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 				pm.makePersistent(pa);
 				locations.add("" + pa.getAddressCode());
 			}

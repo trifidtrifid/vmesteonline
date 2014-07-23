@@ -18,11 +18,11 @@ import com.vmesteonline.be.Street;
 import com.vmesteonline.be.VoError;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
-public class VoStreet implements Comparable<VoStreet> {
+public class VoStreet {
 
 	public VoStreet(VoCity city, String name, PersistenceManager pm) throws InvalidOperation {
-		List<VoStreet> vcl = (List<VoStreet>)pm.newQuery(VoStreet.class, "city=="+city.getId()+"  && name=='"+name+"'").execute();
-		this.setCity(city);
+		List<VoStreet> vcl = (List<VoStreet>)pm.newQuery(VoStreet.class, "cityId=="+city.getId()+"  && name=='"+name+"'").execute();
+		this.setCity(city.getId());
 		this.setName(name);
 		
 		if( vcl.size() > 0 ){
@@ -33,10 +33,10 @@ public class VoStreet implements Comparable<VoStreet> {
 			pm.makePersistent(this);
 		}
 	}
-
+	
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	private long id;
+	private Long id;
 
 	public void setId(long id) {
 		this.id = id;
@@ -47,10 +47,10 @@ public class VoStreet implements Comparable<VoStreet> {
 
 	@Persistent
 	@Unowned
-	private VoCity city;
+	private long cityId;
 
-	public VoCity getCity() {
-		return city;
+	public long getCity() {
+		return cityId;
 	}
 
 	public long getId() {
@@ -62,12 +62,12 @@ public class VoStreet implements Comparable<VoStreet> {
 	}
 
 	public Street getStreet() {
-		return new Street(id, city.getId(), name);
+		return new Street(id, cityId, name);
 	}
 
 	@Override
 	public String toString() {
-		return "VoStreet [id=" + id + ", name=" + name + ", city=" + city + "]";
+		return "VoStreet [id=" + id + ", name=" + name + ", city=" + cityId + "]";
 	}
 	
 	
@@ -75,12 +75,7 @@ public class VoStreet implements Comparable<VoStreet> {
 		this.name = name;
 	}
 
-	public void setCity(VoCity city) {
-		this.city = city;
-	}
-
-	@Override
-	public int compareTo(VoStreet that) {
-		return null == that.name ? this.name == null ? 0 : -1 : this.name.compareToIgnoreCase( that.name ) ;
+	public void setCity(long city) {
+		this.cityId = city;
 	}
 }

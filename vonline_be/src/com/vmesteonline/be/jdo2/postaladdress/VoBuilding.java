@@ -21,29 +21,28 @@ import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.VoUser;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
-public class VoBuilding implements Comparable<VoBuilding> {
+public class VoBuilding {
 
 	public VoBuilding(String zip, VoStreet vs, String fullNo, BigDecimal longitude, BigDecimal latitude, PersistenceManager pm) throws InvalidOperation {
-		Query q = pm.newQuery(VoBuilding.class, "streetId == :key && fullNo == '"+fullNo+"'");
-		List<VoBuilding> bgsl = (List<VoBuilding>)q.execute(vs.getId());
+		Query q = pm.newQuery(VoBuilding.class, "streetId=="+vs.getId()+" && fullNo == '"+fullNo+"'");
+		List<VoBuilding> bgsl = (List<VoBuilding>)q.execute();
 		this.streetId = vs.getId();
 		this.fullNo = fullNo;
 		this.zipCode = zip;
 		
-		if( 0==bgsl.size() ){
-			pm.makePersistent(this);
+		if( 0!=bgsl.size() ){
 			
-		} else {
 			VoBuilding oldbg = bgsl.get(0);
-			this.id = oldbg.getId();
+			this.setId(oldbg.getId());
 			
 			longitude = oldbg.getLongitude();
 			latitude = oldbg.getLatitude();
 			this.addressString = oldbg.getAddressString();
 		}
+		
 		if( null == longitude || longitude.toPlainString().trim().length() == 0 || 
 				null == latitude || latitude.toPlainString().trim().length() == 0) {
-			VoGeocoder.getPosition(this);
+			VoGeocoder.getPosition(this, false);
 			
 		} else {
 			this.longitude = longitude.toPlainString();
@@ -51,11 +50,17 @@ public class VoBuilding implements Comparable<VoBuilding> {
 		}
 		if( this.addressString == null ) {
 			VoStreet street = pm.getObjectById(VoStreet.class, this.streetId);
-			this.addressString = street.getCity().getCountry().getName() + "," + street.getCity().getName() + "," + street.getName() + ","
+			VoCity city = pm.getObjectById(VoCity.class, street.getCity());
+			VoCountry country = pm.getObjectById(VoCountry.class, city.getCountry());
+			
+			this.addressString = country.getName() + "," + city.getName() + "," + street.getName() + ","
 					+ this.getFullNo();
 		}
 		pm.makePersistent(this);
-		
+	}
+
+	private void setId(long id) {
+		this.id = id;
 	}
 
 	public String getAddressString() {
@@ -70,13 +75,9 @@ public class VoBuilding implements Comparable<VoBuilding> {
 		return streetId;
 	}
 
-	public VoPostalAddress getAddress() {
-		return address;
-	}
-
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	private long id;
+	private Long id;
 
 	@Persistent
 	@Unindexed
@@ -90,9 +91,6 @@ public class VoBuilding implements Comparable<VoBuilding> {
 	
 	@Persistent
 	private long streetId;
-
-	@Persistent
-	private VoPostalAddress address;
 
 	public long getStreet() {
 		return streetId;
@@ -116,15 +114,8 @@ public class VoBuilding implements Comparable<VoBuilding> {
 
 	@Override
 	public String toString() {
-		return "VoBuilding [id=" + id + ", zipCode=" + zipCode +", fullNo=" + fullNo + ", streetId=" + streetId + ", address=" + address + ", long=" + longitude + ", lat="
+		return "VoBuilding [id=" + id + ", zipCode=" + zipCode +", fullNo=" + fullNo + ", streetId=" + streetId + ", long=" + longitude + ", lat="
 				+ latitude + "]";
-	}
-
-	@Override
-	public int compareTo(VoBuilding that) {
-		return that.streetId == 0 ? this.streetId == 0 ? 0 : -1 : Long.compare(this.streetId, that.streetId) != 0 ? Long.compare(
-				this.streetId, that.streetId) : that.fullNo == null ? this.fullNo == null ? 0 : -1 : null == this.fullNo ? 1 : fullNo
-				.compareTo(that.fullNo);
 	}
 
 	public void setLocation(BigDecimal longitude, BigDecimal latitude) {

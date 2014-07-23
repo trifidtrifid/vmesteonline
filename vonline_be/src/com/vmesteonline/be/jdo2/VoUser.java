@@ -199,14 +199,11 @@ public class VoUser extends GeoLocation {
 	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) {
 
 				// building from new address
-		VoBuilding building = userAddress.getBuilding();
-		if (null == building)
-			throw new RuntimeException("Incorrect address");
-
+		VoBuilding building = pm.getObjectById(VoBuilding.class, userAddress.getBuilding());
 				// check if location is set
 		if (null == building.getLatitude() || 0 == building.getLatitude().intValue()) {
 			try {
-				VoGeocoder.getPosition(building);
+				VoGeocoder.getPosition(building, false);
 			} catch (InvalidOperation e) {
 				e.printStackTrace();
 			}

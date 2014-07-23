@@ -158,14 +158,6 @@ public class AuthServiceImpTests {
 				assertEquals(ug.getLatitude(), latitude);
 				assertEquals(ug.getLongitude(), longitude);
 			}
-			boolean found = false;
-			for (VoUser hobit : postalAddress.getBuilding().getUsers()) {
-				if (hobit.getId() == (userByRet.getId())) {
-					found = true;
-					break;
-				}
-			}
-			assertEquals(found, true);
 			assertEquals(true, asi.login("test@eml", "testPassword"));
 
 		} catch (TException e) {

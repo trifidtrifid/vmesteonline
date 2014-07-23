@@ -18,11 +18,11 @@ import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
-public class VoCity implements Comparable<VoCity> {
+public class VoCity {
 	
 	public VoCity(VoCountry country,String name,PersistenceManager pm) throws InvalidOperation {
-		List<VoCity> vcl = (List<VoCity>)pm.newQuery(VoCity.class, "country == :key && name=='"+name+"'").execute(country.getId());
-		this.setCountry(country);
+		List<VoCity> vcl = (List<VoCity>)pm.newQuery(VoCity.class, "countryId=="+country.getId()+" && name=='"+name+"'").execute();
+		this.setCountry(country.getId());
 		this.setName(name);
 		
 		if( vcl.size() > 0 ){
@@ -35,16 +35,15 @@ public class VoCity implements Comparable<VoCity> {
 	}
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	private long id;
+	private Long id;
 	
 	@Persistent
 	private String name;
 
 	@Persistent
-	@Unowned
-	private VoCountry country;
-	public VoCountry getCountry(){
-		return country;
+	private long countryId;
+	public long getCountry(){
+		return countryId;
 	}
 
 	public long getId() {
@@ -52,17 +51,12 @@ public class VoCity implements Comparable<VoCity> {
 	}
 
 	public City getCity() {
-		return new City(id, country.getId().getId(), name);
+		return new City(id, countryId, name);
 	}
 
 	@Override
 	public String toString() {
-		return "VoCity [id=" + id + ", name=" + name + ", country=" + country + "]";
-	}
-	
-	@Override
-	public int compareTo(VoCity that) {
-		return null == that.name ? this.name == null ? 0 : -1 : this.name.compareToIgnoreCase( that.name ) ;
+		return "VoCity [id=" + id + ", name=" + name + ", country=" + countryId + "]";
 	}
 
 	public String getName() {
@@ -73,7 +67,7 @@ public class VoCity implements Comparable<VoCity> {
 		this.name = name;
 	}
 
-	public void setCountry(VoCountry country) {
-		this.country = country;
+	public void setCountry(long country) {
+		this.countryId = country;
 	}
 }

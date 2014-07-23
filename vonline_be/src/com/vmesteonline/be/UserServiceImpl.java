@@ -81,8 +81,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoUser voUser = getCurrentUser(pm);
 			ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, voUser.getAvatarMessage(), "", "");
 			VoPostalAddress pa = voUser.getAddress();
+			
 			if (pa != null) {
-				sp.setAddress(pa.getBuilding().getAddressString());
+				VoBuilding building = pm.getObjectById(VoBuilding.class, pa.getBuilding());
+				sp.setAddress(building.getAddressString());
 			}
 			return sp;
 		} finally {
@@ -186,8 +188,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			List<String> locations = new ArrayList<String>();
 			for (VoPostalAddress pa : postalAddresses) {
 				pm.retrieve(pa);
-				if (pa.getBuilding() != null)
-					locations.add("" + pa.getAddressCode());
+				locations.add("" + pa.getAddressCode());
 			}
 			return locations;
 		} finally {
@@ -592,7 +593,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				if (longitude == null || lattitude == null || longitude.isEmpty() || lattitude.isEmpty()) { // calculate
 					// location
 					try {
-						Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
+						Pair<String, String> position = VoGeocoder.getPosition(voBuilding, false);
 						voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 					} catch (Exception e) {
 						e.printStackTrace();

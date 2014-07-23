@@ -1266,7 +1266,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			VoPostalAddress deliveryAddress = getCurrentUser(pm).getDeliveryAddress(addressText);
 			if( null==deliveryAddress)
 				return null;
-			VoBuilding building = deliveryAddress.getBuilding();
+			VoBuilding building =  pm.getObjectById(VoBuilding.class, deliveryAddress.getBuilding());
 			return VoGeocoder.createMapImageURL( building.getLongitude(), building.getLatitude(), width, height, addressText);
 		} finally {
 			pm.close();

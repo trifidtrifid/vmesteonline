@@ -44,15 +44,22 @@ public class VoGeocoder {
 	public VoGeocoder() {
 
 	}
-
-	public static Pair<String, String> getPosition(VoBuilding building) throws InvalidOperation {
+/**
+ * Method determines location of the building and if fixNames is true - make correction for street and city name according to resposne of geocoder
+ * @param building to determine location
+ * @param fixNames if names of street and city could be updated
+ * @return location, if found
+ * @throws InvalidOperation
+ */
+	public static Pair<String, String> getPosition(VoBuilding building, boolean fixNames) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoStreet street = pm.getObjectById(VoStreet.class, building.getStreet());
+			VoCity city = pm.getObjectById(VoCity.class, street.getCity());
+			VoCountry country = pm.getObjectById(VoCountry.class, city.getCountry());
 			
-			String address = street.getCity().getCountry().getName() + ", " + street.getCity().getName() + ", " + street.getName() + ", "
+			String address = country.getName() + "," + city.getName() + "," + street.getName() + ","
 					+ building.getFullNo();
-			
 
 				AddressInfo addrInfo = resolveAddressString(address);
 				if(!addrInfo.isExact() || !addrInfo.isKindHouse() )
@@ -68,31 +75,31 @@ public class VoGeocoder {
 						if (!longitude.isEmpty() && !lattitude.isEmpty())
 
 							// update other address information
-							if (addrInfo.getStreetName() != null && !street.getName().equals(addrInfo.getStreetName())) { // update
-																																																						// street
-																																																						// name
-								List<VoStreet> streets = (List<VoStreet>) pm.newQuery(VoStreet.class,
-										"city == :key && name == '" + addrInfo.getStreetName().trim() + "'").execute(street.getCity().getId());
-
-								VoStreet rightStreet;
-								if (streets.size() > 0) {
-									rightStreet = streets.get(0);
-								} else { // create new street
-									rightStreet = new VoStreet(street.getCity(), addrInfo.getStreetName(), pm);
-									pm.makePersistent(rightStreet);
+							if( fixNames ){
+								if (addrInfo.getStreetName() != null && !street.getName().equals(addrInfo.getStreetName())) { // update
+																																																							// street
+																																																							// name
+									List<VoStreet> streets = (List<VoStreet>) pm.newQuery(VoStreet.class,
+											"cityId=="+street.getCity()+" && name == '" + addrInfo.getStreetName().trim() + "'").execute();
+	
+									VoStreet rightStreet;
+									if (streets.size() > 0) {
+										rightStreet = streets.get(0);
+									} else { // create new street
+										rightStreet = new VoStreet(city, addrInfo.getStreetName(), pm);
+										pm.makePersistent(rightStreet);
+									}
+									building.setStreetId(rightStreet.getId());
+									// check if old street has a buildings
+									List<VoBuilding> buildings = (List<VoBuilding>) pm.newQuery(VoBuilding.class, "streetId=="+street.getId()).execute();
+									if (buildings.size() == 0) {
+										pm.deletePersistent(street);
+									}
 								}
-								building.setStreetId(rightStreet.getId());
-								building.setLocation( new BigDecimal(longitude), new BigDecimal(lattitude));
 								
-								// check if old street has a buildings
-								List<VoBuilding> buildings = (List<VoBuilding>) pm.newQuery(VoBuilding.class, "streetId == :key").execute(street.getId());
-								if (buildings.size() == 0) {
-									pm.deletePersistent(street);
-								}
+								building.setLocation( new BigDecimal(longitude), new BigDecimal(lattitude));
 							}
-						if (null != addrInfo.getAddresText() && null == building.getAddress())
-							building.setAddressString(addrInfo.getAddresText());
-
+						
 						return new Pair<String, String>(longitude, lattitude);
 					}
 				}

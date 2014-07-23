@@ -164,7 +164,7 @@ public class ShopServiceImplTest {
 		Country country = usi.getCounties().get(0);
 		City city = usi.getCities(country.getId()).get(0);
 		Street street = usi.getStreets(city.getId()).get(0);
-		Building building = usi.createNewBuilding(street.getId(), "17/3", "123.45", "54.321");
+		Building building = usi.createNewBuilding("",street.getId(), "17/3", "123.45", "54.321");
 		userAddress2 = new PostalAddress(country, city, street, building, (byte) 1, (byte) 2, 3, "");
 	}
 
@@ -1417,7 +1417,10 @@ public class ShopServiceImplTest {
 					Assert.assertEquals( pa.getDistance(pa0), pa0.getDistance(pa));
 					Assert.assertTrue( pa.getDistance(pa0) >= 0 );
 					Assert.assertTrue( pa.getDistance(pa0) < 20000 );
-					if( pa.getBuilding().toString().equals(pa0.getBuilding().toString()) )
+					VoBuilding building = pm.getObjectById(VoBuilding.class, pa.getBuilding());
+					VoBuilding building0 = pm.getObjectById(VoBuilding.class, pa0.getBuilding());
+					
+					if( building.toString().equals(building0.toString()) )
 						Assert.assertTrue(  0 == pa.getDistance(pa0));
 					else
 						Assert.assertTrue(  0 != pa.getDistance(pa0));
@@ -1438,8 +1441,10 @@ public class ShopServiceImplTest {
 //======================================================================================================================
 
 	private String addressString(PersistenceManager pm, VoPostalAddress pa) {
-		return pm.getObjectById(VoStreet.class, pa.getBuilding().getStreetId()).getName() 
-									+ " "+pa.getBuilding().getFullNo();
+		VoBuilding building = pm.getObjectById(VoBuilding.class, pa.getBuilding());
+		
+		return pm.getObjectById(VoStreet.class, building.getStreetId()).getName() 
+									+ " "+building.getFullNo();
 	}
 //======================================================================================================================
 
@@ -1456,7 +1461,8 @@ public class ShopServiceImplTest {
 			Long shopId = sbi.registerShop(shop);
 			
 			VoPostalAddress sa = new VoPostalAddress( userAddress, pm);
-			logger.debug("Shop is at: " + addressString(pm, sa) + " located at: "+sa.getBuilding().getLatitude()+":"+sa.getBuilding().getLongitude());
+			VoBuilding building = pm.getObjectById(VoBuilding.class, sa.getBuilding());
+			logger.debug("Shop is at: " + addressString(pm, sa) + " located at: "+building.getLatitude()+":"+building.getLongitude());
 			
 			Map<Integer, Double> deliveryCostByDistance = new HashMap<Integer, Double>();
 			deliveryCostByDistance.put(0, 100.0D); 
@@ -1500,8 +1506,8 @@ public class ShopServiceImplTest {
 			
 			VoCity city = pm.getObjectById(VoCity.class, usi.getCities(usi.getCounties().get(0).getId()).get(0).getId());
 			VoStreet voStreet = new VoStreet( city, streetName, pm );
-			VoBuilding voBuilding = new VoBuilding(voStreet, buuildingNAme, new BigDecimal("0"), new BigDecimal("0"),pm);
-			Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
+			VoBuilding voBuilding = new VoBuilding("",voStreet, buuildingNAme, new BigDecimal("0"), new BigDecimal("0"),pm);
+			Pair<String, String> position = VoGeocoder.getPosition(voBuilding,true);
 			voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 			VoPostalAddress voPostalAddress = new VoPostalAddress( voBuilding, (byte)1, (byte)1, (byte)1, "");
 			pm.makePersistent(voPostalAddress);

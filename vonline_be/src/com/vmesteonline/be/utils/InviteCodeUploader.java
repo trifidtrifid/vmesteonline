@@ -71,7 +71,7 @@ public class InviteCodeUploader {
 					VoPostalAddress vpa = new VoPostalAddress(voBuilding, stairCase, floor, flatNo, "");
 					pm.makePersistent(vpa);
 					
-					VoInviteCode ic = new VoInviteCode(code, vpa.getId().getId());
+					VoInviteCode ic = new VoInviteCode(code, vpa.getId());
 					pm.makePersistent(ic);
 					logger.fine("Created code: "+ic+" For address: "+vpa);
 					uploaded++;
