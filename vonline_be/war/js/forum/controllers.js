@@ -1274,8 +1274,11 @@ function initAttachImage(selector,attachAreaSelector){
 
     });
 }
+
+var docsBase64 = [];
 function initAttachDoc(selector,attachAreaSelector){
-    var title;
+    var title,ind = 0;
+        docsBase64[attachAreaSelector] = [];
 
     selector.ace_file_input({
         style:'well',
@@ -1299,13 +1302,12 @@ function initAttachDoc(selector,attachAreaSelector){
 
         function insertDoc() {
             var docName = fileLabel.find('.file-name').attr('data-title');
-            /*for(var p in selector[0].files[0]){
-                console.log(p+" "+selector[0].files[0][p]);
-            }*/
 
-            /*var fd = new FormData();
-            //var input = $('#import-data');
-            fd.append( 'data', input[0].files[0]);*/
+            var reader = new FileReader();
+            reader.readAsBinaryString(selector[0].files[0]);
+            reader.onload = function(e){
+                docsBase64[attachAreaSelector][ind++] = base64encode(reader.result);
+            };
 
             attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
                 "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
@@ -1588,13 +1590,18 @@ function getAttachedImages(selector){
     return imgList;
 }
 function getAttachedDocs(selector){
+    /*var docsBase64Length = docsBase64[selector].length;
+
+    for(var i = 0; i < docsBase64Length; i++){
+        docList
+    }
     var docList = [], ind = 0;
 
     selector.find('.attach-item').each(function(){
         docList[ind++] = $(this).attr('data-fakepath');
-    });
+    });*/
 
-    return docList;
+    return docsBase64[selector];
 }
 function cleanAttached(selector){
     selector.html('');
