@@ -188,7 +188,6 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	private Long id;
 
 	@Persistent
-	@Unowned
 	private long buildingId;
 
 	@Persistent
@@ -206,5 +205,4 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	@Persistent
 	@Unowned
 	private VoUserGroup userGroup;
-
 }
