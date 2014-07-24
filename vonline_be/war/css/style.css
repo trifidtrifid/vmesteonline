@@ -577,11 +577,12 @@ h1 {
   height: 90px;
   overflow: hidden;
 }
-.message-input .hashtag {
-  margin-left: 10px;
-}
 .message-input .message-input-bottom {
   margin-top: 15px;
+}
+.hashtag {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 .attach-area .attach-item {
   display: inline-block;

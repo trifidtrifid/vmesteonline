@@ -270,7 +270,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
         lenta.attachedImages = [];
 
-        lenta.wallMessageContent = "Написать сообщение";
+        lenta.wallMessageContent = TEXT_DEFAULT_1;
+        lenta.isCreateMessageError = false;
 
         lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
         /*console.log("1 "+lenta.wallItems.length);
@@ -299,32 +300,51 @@ angular.module('forum.controllers', ['ui.select2'])
             lenta.attachedImages = getAttachedImages($('#attach-area-0'));
             lenta.attachedDocs = getAttachedDocs($('#attach-doc-area-0'));
 
-            var isWall = 1,
-                newTopic = postTopic(lenta,isWall);
+            if(lenta.attachedImages.length == 0 && lenta.attachedDocs.length == 0 && !lenta.isPollShow
+                && lenta.wallMessageContent == TEXT_DEFAULT_1){
 
-            var newWallItem = new com.vmesteonline.be.messageservice.WallItem();
-            newWallItem.topic = newTopic;
-            //newWallItem.images = newTopic.message.images;
-            console.log("++"+newWallItem.topic.message.content);
-            newWallItem.topic.authorName = getAuthorName();
-            newWallItem.messages = [];
-            newWallItem.commentText = "Ваш ответ";
-            newWallItem.answerShow = false;
-            newWallItem.isFocus = false;
-            newWallItem.label = getLabel(lenta.groups,lenta.selectedGroup.id);
-            newWallItem.tagColor = getTagColor(newWallItem.label);
+                lenta.isCreateMessageError = true;
+                lenta.createMessageErrorText = "Вы не ввели сообщение";
 
-            cleanAttached($('#attach-area-0'));
-            cleanAttached($('#attach-doc-area-0'));
+            }else if(lenta.isPollShow && (!lenta.pollSubject || lenta.pollInputs[0].name == "" || lenta.pollInputs[1].name == "")){
 
-            if(lenta.selectedGroupInTop.id == lenta.selectedGroup.id){
-                lenta.wallItems ?
-                    lenta.wallItems.unshift(newWallItem):
-                    lenta.wallItems[0] = newWallItem;
+                lenta.isCreateMessageError = true;
+                lenta.createMessageErrorText = "Вы не указали данные для опроса";
 
-                //console.log(lenta.wallItems.length);
-                /*lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
-                initWallItem();*/
+            }else{
+
+                if(lenta.wallMessageContent == TEXT_DEFAULT_1 && (lenta.attachedImages || lenta.attachedDocs || lenta.isPollShow)){
+                    lenta.wallMessageContent = "";
+                }
+                lenta.isCreateMessageError = false;
+
+                var isWall = 1,
+                    newTopic = postTopic(lenta, isWall);
+
+                var newWallItem = new com.vmesteonline.be.messageservice.WallItem();
+                newWallItem.topic = newTopic;
+                //newWallItem.images = newTopic.message.images;
+                console.log("++" + newWallItem.topic.message.content);
+                newWallItem.topic.authorName = getAuthorName();
+                newWallItem.messages = [];
+                newWallItem.commentText = "Ваш ответ";
+                newWallItem.answerShow = false;
+                newWallItem.isFocus = false;
+                newWallItem.label = getLabel(lenta.groups, lenta.selectedGroup.id);
+                newWallItem.tagColor = getTagColor(newWallItem.label);
+
+                cleanAttached($('#attach-area-0'));
+                cleanAttached($('#attach-doc-area-0'));
+
+                if (lenta.selectedGroupInTop.id == lenta.selectedGroup.id) {
+                    lenta.wallItems ?
+                        lenta.wallItems.unshift(newWallItem) :
+                        lenta.wallItems[0] = newWallItem;
+
+                    //console.log(lenta.wallItems.length);
+                    /*lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
+                     initWallItem();*/
+                }
             }
         };
 
@@ -333,38 +353,43 @@ angular.module('forum.controllers', ['ui.select2'])
 
             wallItem.groupId = lenta.selectedGroupInTop.id;
 
-            var isWall = true,
-                message =  postMessage(wallItem,isWall);
+                var isWall = true,
+                    message = postMessage(wallItem, isWall);
 
-            /*var message =  new com.vmesteonline.be.messageservice.Message();
-            message.id = 0;
-            message.topicId = wallItem.topic.id;
-            message.parentId = 0;
-            message.groupId = lenta.selectedGroupInTop.id;
-            message.type = com.vmesteonline.be.messageservice.MessageType.WALL;//5;
-            message.content = wallItem.commentText;
-            message.images = getAttachedImages($('#attach-area-'+wallItem.topic.id));
-            message.created = Date.parse(new Date)/1000;
+                /*var message =  new com.vmesteonline.be.messageservice.Message();
+                 message.id = 0;
+                 message.topicId = wallItem.topic.id;
+                 message.parentId = 0;
+                 message.groupId = lenta.selectedGroupInTop.id;
+                 message.type = com.vmesteonline.be.messageservice.MessageType.WALL;//5;
+                 message.content = wallItem.commentText;
+                 message.images = getAttachedImages($('#attach-area-'+wallItem.topic.id));
+                 message.created = Date.parse(new Date)/1000;
 
-            var newMessage = messageClient.postMessage(message);
-            wallItem.commentText = "Ваш ответ";
-            message.createdEdit = getTiming(newMessage.created);
-            console.log(newMessage.created);
-            message.authorName = getAuthorName();
-            message.userInfo = newMessage.userInfo;
-            message.images = newMessage.images;
-            message.id = newMessage.id;*/
+                 var newMessage = messageClient.postMessage(message);
+                 wallItem.commentText = "Ваш ответ";
+                 message.createdEdit = getTiming(newMessage.created);
+                 console.log(newMessage.created);
+                 message.authorName = getAuthorName();
+                 message.userInfo = newMessage.userInfo;
+                 message.images = newMessage.images;
+                 message.id = newMessage.id;*/
 
-            //console.log(lenta.wallItems+" "+lenta.wallItems.topic);
-            if(wallItem.messages){
-                wallItem.messages.push(message);
-            }else{
-                wallItem.messages = [];
-                wallItem.messages[0] = message;
+            if(message == 0){
+                wallItem.isCreateCommentError = true;
+                wallItem.createCommentErrorText = "Вы не ввели сообщение";
+            }else {
+                wallItem.isCreateCommentError = false;
+
+                if (wallItem.messages) {
+                    wallItem.messages.push(message);
+                } else {
+                    wallItem.messages = [];
+                    wallItem.messages[0] = message;
+                }
+
+                wallItem.answerShow = false;
             }
-
-            //cleanAttached($('#attach-area-'+wallItem.topic.id));
-            wallItem.answerShow = false ;
 
         };
 
@@ -410,6 +435,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 lenta.wallItems[i].commentText = "Ваш ответ";
                 lenta.wallItems[i].answerShow = false;
                 lenta.wallItems[i].isFocus = false;
+                lenta.wallItems[i].isCreateCommentError = false;
 
                 //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
                 lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.message.groupId);
@@ -525,45 +551,68 @@ angular.module('forum.controllers', ['ui.select2'])
 
         talk.addSingleTalk = function(){
             talk.attachedImages = getAttachedImages($('#attach-area-00'));
+            talk.attachedDocs = getAttachedDocs($('#attach-doc-area-00'));
+            if(talk.subject == TEXT_DEFAULT_4 || talk.subject == ""){
 
-            var isWall = 0,
-                newTopic = postTopic(talk,isWall);
-            /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
-            newTopic.message = new com.vmesteonline.be.messageservice.Message;
-            newTopic.message.groupId = talk.selectedGroup.id;
-            newTopic.message.type = 1;
-            newTopic.message.content = talk.content;
-            newTopic.message.id = 0;
-            newTopic.message.created = Date.parse(new Date());
+                talk.isCreateTalkError = true;
+                talk.createTalkErrorText = "Вы не указали заголовок";
 
-            newTopic.subject = talk.subject;
-            newTopic.id = 0;
+            }else if(talk.attachedImages.length == 0 && (talk.attachedDocs === undefined || talk.attachedDocs.length == 0) && !talk.isPollShow
+                && talk.content == TEXT_DEFAULT_3){
 
-            var poll;
-            if(talk.isPollShow){
-                poll = new com.vmesteonline.be.messageservice.Poll;
-                poll.pollId = 0;
-                poll.names = [];
-                var pollInputsLength = talk.pollInputs.length;
-                for(var i = 0; i < pollInputsLength; i++){
-                    poll.names[i] = talk.pollInputs[i].name;
+                talk.isCreateTalkError = true;
+                talk.createTalkErrorText = "Вы не ввели сообщение";
+
+            }else if(talk.isPollShow && (!talk.pollSubject || talk.pollInputs[0].name == "" || talk.pollInputs[1].name == "")){
+
+                talk.isCreateTalkError = true;
+                talk.createTalkErrorText = "Вы не указали данные для опроса";
+
+            }else {
+
+                if (talk.content == TEXT_DEFAULT_3 && (talk.attachedImages || talk.attachedDocs || talk.isPollShow)) {
+                    talk.content = "";
                 }
-                newTopic.poll = poll;
-                newTopic.metaType = "poll";
+                talk.isCreateTalkError = false;
+                var isWall = 0,
+                    newTopic = postTopic(talk, isWall);
+                /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
+                 newTopic.message = new com.vmesteonline.be.messageservice.Message;
+                 newTopic.message.groupId = talk.selectedGroup.id;
+                 newTopic.message.type = 1;
+                 newTopic.message.content = talk.content;
+                 newTopic.message.id = 0;
+                 newTopic.message.created = Date.parse(new Date());
+
+                 newTopic.subject = talk.subject;
+                 newTopic.id = 0;
+
+                 var poll;
+                 if(talk.isPollShow){
+                 poll = new com.vmesteonline.be.messageservice.Poll;
+                 poll.pollId = 0;
+                 poll.names = [];
+                 var pollInputsLength = talk.pollInputs.length;
+                 for(var i = 0; i < pollInputsLength; i++){
+                 poll.names[i] = talk.pollInputs[i].name;
+                 }
+                 newTopic.poll = poll;
+                 newTopic.metaType = "poll";
+                 }
+
+                 newTopic = messageClient.postTopic(newTopic);
+
+                 if(talk.isPollShow){
+                 poll.pollId = newTopic.poll.pollId;
+                 talk.isPollShow = false;
+                 talk.pollSubject= "";
+                 talk.isPollAvailable = true;
+                 }*/
+
+                $rootScope.base.createTopicIsHide = true;
+
+                talk.topics.unshift(newTopic);
             }
-
-            newTopic = messageClient.postTopic(newTopic);
-
-            if(talk.isPollShow){
-                poll.pollId = newTopic.poll.pollId;
-                talk.isPollShow = false;
-                talk.pollSubject= "";
-                talk.isPollAvailable = true;
-            }*/
-
-            $rootScope.base.createTopicIsHide = true;
-
-            talk.topics.unshift(newTopic);
 
         };
 
@@ -731,8 +780,6 @@ angular.module('forum.controllers', ['ui.select2'])
         talk.addSingleFirstMessage = function(event,topicId){
             event.preventDefault();
 
-            talk.fullTalkTopic.answerInputIsShow = false;
-
             /* var message =  new com.vmesteonline.be.messageservice.Message();
 
              var newMessage = messageClient.createMessage(topicId,0,talk.selectedGroup.id,1,talk.answerFirstMessage);
@@ -744,10 +791,17 @@ angular.module('forum.controllers', ['ui.select2'])
                 isFirstLevel = true,
                 newMessage = postMessage(talk,isWall,isFirstLevel);
 
-            talk.fullTalkFirstMessages ?
-                talk.fullTalkFirstMessages.push(newMessage):
-                talk.fullTalkFirstMessages[0] = newMessage;
+            if(newMessage == 0){
+                talk.isCreateFirstMessageError = true;
+                talk.createFirstMessageErrorText = "Вы не ввели сообщение";
+            }else {
+                talk.fullTalkTopic.answerInputIsShow = false;
 
+                talk.isCreateFirstMessageError = false;
+                talk.fullTalkFirstMessages ?
+                    talk.fullTalkFirstMessages.push(newMessage) :
+                    talk.fullTalkFirstMessages[0] = newMessage;
+            }
 
         };
 
@@ -767,7 +821,6 @@ angular.module('forum.controllers', ['ui.select2'])
 
                 answer = firstMessage.answerMessage;
                 firstMessage.isTreeOpen = true;
-                firstMessage.answerInputIsShow = false;
                 firstMessage.answerMessage = "Ваш ответ";
                 parentId = firstMessage.id;
 
@@ -777,7 +830,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
                 for(var i = 0; i < fullTalkMessagesLength; i++){
                     if(talk.fullTalkMessages[firstMessage.id][i].id == message.id){
-                        talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
+                        //talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
                         talk.fullTalkMessages[firstMessage.id][i].isTreeOpen = true;
                         talk.fullTalkMessages[firstMessage.id][i].isOpen = true;
                         talk.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
@@ -797,29 +850,43 @@ angular.module('forum.controllers', ['ui.select2'])
 
             newMessage = postMessage(talk,isWall,isFirstLevel);
 
-            /*talk.fullTalkMessages ?
-             talk.fullTalkMessages.push(newMessage):
-             talk.fullTalkMessages[0] = newMessage;*/
+            if(newMessage == 0){
+                if(!message){
+                    talk.isCreateMessageToFirstError = true;
+                    talk.createMessageToFirstErrorText = "Вы не ввели сообщение";
+                }else{
+                    talk.isCreateMessageError = true;
+                    talk.createMessageErrorText = "Вы не ввели сообщение";
+                }
+            }else {
+                if(!message){
+                    talk.isCreateMessageToFirstError = false;
+                    firstMessage.answerInputIsShow = false;
 
-            talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,1000).messages;
+                }else{
+                    talk.isCreateMessageError = false;
+                    for(var i = 0; i < fullTalkMessagesLength; i++){
+                        if(talk.fullTalkMessages[firstMessage.id][i].id == message.id){
+                            talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
+                        }
+                    }
+                }
 
-            talk.fullTalkMessages[firstMessage.id] ?
-                fullTalkMessagesLength = talk.fullTalkMessages[firstMessage.id].length :
-                fullTalkMessagesLength = 0;
+                talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId, talk.selectedGroup.id, 1, firstMessage.id, 0, 1000).messages;
 
-            for(var i = 0; i < fullTalkMessagesLength; i++){
-                talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
-                talk.fullTalkMessages[firstMessage.id][i].isTreeOpen = true;
-                talk.fullTalkMessages[firstMessage.id][i].isOpen = true;
-                talk.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
-                talk.fullTalkMessages[firstMessage.id][i].createdEdit = getTiming(talk.fullTalkMessages[firstMessage.id][i].created);
-                talk.fullTalkMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
+                talk.fullTalkMessages[firstMessage.id] ?
+                    fullTalkMessagesLength = talk.fullTalkMessages[firstMessage.id].length :
+                    fullTalkMessagesLength = 0;
+
+                for (var i = 0; i < fullTalkMessagesLength; i++) {
+                    talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
+                    talk.fullTalkMessages[firstMessage.id][i].isTreeOpen = true;
+                    talk.fullTalkMessages[firstMessage.id][i].isOpen = true;
+                    talk.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
+                    talk.fullTalkMessages[firstMessage.id][i].createdEdit = getTiming(talk.fullTalkMessages[firstMessage.id][i].created);
+                    talk.fullTalkMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
+                }
             }
-
-            /*fullTalkMessagesLength = talk.fullTalkMessages[firstMessage.id].length;
-             for(var i = 0; i < fullTalkMessagesLength; i++){
-             talk.fullTalkMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
-             }*/
 
         };
 
@@ -1136,7 +1203,7 @@ angular.module('forum.controllers', ['ui.select2'])
         }
 
         if ($stateParams.dialogId){
-            dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId);
+            dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId,0);
             var privateMessagesLength = dialog.privateMessages.length;
                 dialog.authors = [];
             for(var i = 0; i < privateMessagesLength; i++){
@@ -1285,6 +1352,11 @@ angular.module('forum.controllers', ['ui.select2'])
         });
     });
 
+/* const */
+var TEXT_DEFAULT_1 = "Написать сообщение";
+var TEXT_DEFAULT_2 = "Ваш ответ";
+var TEXT_DEFAULT_3 = "Сообщение";
+var TEXT_DEFAULT_4 = "Заголовок";
 
 /* functions */
 
@@ -1542,7 +1614,7 @@ function postTopic(obj,isWall){
     if (isWall){
         messageType = 5;
         messageContent = obj.wallMessageContent;
-        obj.wallMessageContent = "Написать сообщение";
+        obj.wallMessageContent = TEXT_DEFAULT_1;
         subject = "";
     }else{
         messageType = 1;
@@ -1616,7 +1688,7 @@ function postTopic(obj,isWall){
 
 function postMessage(obj,isWall,isFirstLevel){
     var message =  new com.vmesteonline.be.messageservice.Message(),
-        attachId;
+        attachId, isEmptyText = false;
 
     if(isWall){
         message.type = com.vmesteonline.be.messageservice.MessageType.WALL;//5;
@@ -1624,6 +1696,7 @@ function postMessage(obj,isWall,isFirstLevel){
         message.groupId = obj.groupId;
         message.content = obj.commentText;
         message.parentId = 0;
+        isEmptyText = (obj.commentText == TEXT_DEFAULT_2 || obj.commentText == "");
     }else{
         message.type = com.vmesteonline.be.messageservice.MessageType.BASE;//1;
         attachId = message.topicId = obj.topicId;
@@ -1637,6 +1710,8 @@ function postMessage(obj,isWall,isFirstLevel){
             message.parentId = obj.parentId;
             attachId = attachId +"-"+ obj.messageId;
         }
+
+        isEmptyText = (message.content == TEXT_DEFAULT_2 || message.content == "" || message.content === undefined);
     }
 
     message.id = 0;
@@ -1648,17 +1723,26 @@ function postMessage(obj,isWall,isFirstLevel){
     //message.images = obj.attachedImages;
     message.created = Date.parse(new Date)/1000;
 
-    var newMessage = messageClient.postMessage(message);
+    if(isEmptyText && message.images.length == 0 && (message.documents === undefined || message.documents.length == 0)){
 
-    obj.commentText = "Ваш ответ";
-    message.createdEdit = getTiming(newMessage.created);
-    console.log(newMessage.created);
-    message.authorName = getAuthorName();
-    message.userInfo = newMessage.userInfo;
-    message.images = newMessage.images;
-    message.id = newMessage.id;
+        return 0;
 
-    return message;
+    }else {
+        if ( message.content == TEXT_DEFAULT_2 && (message.images.length != 0 || message.documents.length != 0)) {
+            message.content = "";
+        }
+        var newMessage = messageClient.postMessage(message);
+
+        obj.commentText = "Ваш ответ";
+        message.createdEdit = getTiming(newMessage.created);
+        console.log(newMessage.created);
+        message.authorName = getAuthorName();
+        message.userInfo = newMessage.userInfo;
+        message.images = newMessage.images;
+        message.id = newMessage.id;
+
+        return message;
+    }
 }
 
 function setPollEditNames(poll){
