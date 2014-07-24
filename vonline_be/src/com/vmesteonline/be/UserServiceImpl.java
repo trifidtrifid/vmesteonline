@@ -1,6 +1,8 @@
 package com.vmesteonline.be;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -713,16 +715,16 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 	
-	private List<VoUser> getUsersByLocation(GeoLocation loc, int radius, PersistenceManager pm ){
+	private List<VoUser> getUsersByLocation(VoUser loc, int radius, PersistenceManager pm ){
 		List<VoUser> users = new ArrayList<VoUser>(); 
 		
-		BigDecimal latMin = VoHelper.getLatitudeMin(loc.getLatitude(), radius);
-		BigDecimal longMin = VoHelper.getLongitudeMin(loc.getLongitude(), radius);
+		//BigDecimal latMin = VoHelper.getLatitudeMin(loc.getLatitude(), radius).setScale(6, RoundingMode.HALF_UP);
 		
-		List<VoUser> allUsers = (List<VoUser>)pm.newQuery(VoUser.class, "logitude >= " + longMin.toPlainString() + " && lattitude >= "+latMin.toPlainString()).execute();
+		List<VoUser> allUsers = (List<VoUser>)pm.newQuery(VoUser.class, "").execute();
 		for( VoUser user: allUsers ){
 			if( VoHelper.findMinimumGroupRadius( loc, user) <= radius){
-				users.add(user);
+				if(loc.getId() != user.getId()) 
+					users.add(user);
 			}
 		}	
 		return users;

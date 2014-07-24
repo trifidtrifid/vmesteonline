@@ -232,7 +232,7 @@ public class Defaults {
 				pm.makePersistent(icode);
 			}
 
-//			InviteCodeUploader.uploadCodes("/data/addresses_len_7_kudrovo.csv");
+			InviteCodeUploader.uploadCodes("/data/addresses_len_7_kudrovo.csv");
 
 			return locations;
 		} catch (Exception e) {

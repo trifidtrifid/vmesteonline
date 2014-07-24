@@ -66,7 +66,7 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 			dlgQuery.setOrdering("lastMessageDate");
 			List<VoDialog> oldDialog = (List<VoDialog>) dlgQuery.execute();
 			
-			return VoHelper.convertMutableSet(oldDialog, new ArrayList<Dialog>(), new Dialog());
+			return VoHelper.convertMutableSet(oldDialog, new ArrayList<Dialog>(), new Dialog(), pm);
 		} finally {
 			pm.close();
 		}
@@ -91,6 +91,11 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 
 	@Override
 	public long postMessage(long dialogId, String content) throws InvalidOperation {
+		if( 0==dialogId ) 
+			throw new InvalidOperation(VoError.IncorrectParametrs, "dialogId should be set to a non ZERO value.");
+		if( null==content || 0==content.trim().length() ) 
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Message content should be not empty.");
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			long currentUserId = getCurrentUserId();
