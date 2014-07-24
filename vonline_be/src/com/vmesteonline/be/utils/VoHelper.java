@@ -256,12 +256,12 @@ public class VoHelper {
 	 * object from list inList to list of O objects using mutation method of O object that //tooks I objects and has name get<O.simpleName()>
 	 */
 
-	public static <I, O> List<O> convertMutableSet(List<I> inList, List<O> outList, O o) throws InvalidOperation {
+	public static <I, O> List<O> convertMutableSet(Iterable<I> inList, List<O> outList, O o) throws InvalidOperation {
 		if (null == inList)
 			return null;
-		if (0 == inList.size())
+		if (!inList.iterator().hasNext())
 			return outList;
-		I i0 = inList.get(0);
+		I i0 = inList.iterator().next();
 		try {
 			Method method = i0.getClass().getMethod("get" + o.getClass().getSimpleName(), new Class[] {});
 			for (I i : inList) {
