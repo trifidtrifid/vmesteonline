@@ -18,10 +18,12 @@
         </div>
     <div class="dialog-send">
         <div class="dialog-send-left pull-left">
-            <img src="../../i/avatars/avatar.png" alt="аватар"/>
+            <div class="avatar short2" style="background-image: url({{base.me.avatar}})"></div>
+            <!--<img src="../../i/avatars/avatar.png" alt="аватар"/>-->
         </div>
         <div class="dialog-send-right pull-right">
-            <img src="../../i/avatars/avatar3.png" alt="аватар"/>
+            <div class="avatar short2" style="background-image: url({{user.avatar}})" ng-repeat="user in dialog.users"></div>
+            <!--<img src="../../i/avatars/avatar3.png" alt="аватар"/>-->
         </div>
         <div class="dialog-send-center">
             <textarea></textarea>

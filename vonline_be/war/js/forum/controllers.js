@@ -12,6 +12,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         base.mainContentTopIsHide = false;
         base.createTopicIsHide = true;
+        base.me = shortUserInfo;
 
         base.isTalkTitles = true;
 
@@ -1116,17 +1117,25 @@ angular.module('forum.controllers', ['ui.select2'])
         var dialogs = this;
 
         dialogs.dialogsList = dialogClient.getDialogs(0);
-        //dialogs.dialogsList.usersForShow = dialogs.dialogsList.users.slice(0,3);
+        //alert(dialogs.dialogsList[0].id+" 1 "+dialogs.dialogsList.users+" 2 "+ dialogs.dialogsList.createDate);
+        /*if(dialogs.dialogsList.length > 0){
+            dialogs.dialogsList.usersForShow = dialogs.dialogsList.users[0];
+        }*/
+
 
     })
     .controller('dialogController',function($rootScope,$stateParams) {
         $rootScope.base.mainContentTopIsHide = true;
         var dialog = this;
+        dialog.users = $rootScope.currentDialog.users;
+        var dialogUsersLength = dialog.users.length;
+        for(var i = 0; i < dialogUsersLength; i++){
+            if (dialog.users[i].id == $rootScope.base.me.id){
+                dialog.users.splice(i,1);
+            }
+        }
 
         if ($stateParams.dialogId){
-            if($rootScope.isNewPrivateMessageAdded){
-                dialogClient.postMessage($stateParams.dialogId, $rootScope.newPrivateMessageText);
-            }
             dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId);
             var privateMessagesLength = dialog.privateMessages.length;
                 dialog.authors = [];
@@ -1136,7 +1145,7 @@ angular.module('forum.controllers', ['ui.select2'])
         }
 
     })
-    .controller('writeMessageController',function($rootScope) {
+    .controller('writeMessageController',function($rootScope,$state) {
         $rootScope.base.mainContentTopIsHide = true;
         var writeMessage = this, dialog;
 
@@ -1145,6 +1154,7 @@ angular.module('forum.controllers', ['ui.select2'])
         writeMessage.neighboors = userClient.getNeighbours();
         writeMessage.newMessage.text = "Сообщение";
         writeMessage.dialogId = 0;
+        writeMessage.isError = false;
 
         function usersToInt(users){
             var usersLength = users.length,
@@ -1159,11 +1169,8 @@ angular.module('forum.controllers', ['ui.select2'])
         }
 
         writeMessage.change = function(){
-            dialog = dialogClient.getDialog(usersToInt(writeMessage.users),0);
+            $rootScope.currentDialog = dialog = dialogClient.getDialog(usersToInt(writeMessage.users),0);
             writeMessage.dialogId = dialog.id;
-
-            $rootScope.isNewPrivateMessageAdded = true;
-            $rootScope.newPrivateMessageText = writeMessage.newMessage.text;
         };
 
         initAttachImage($('#attachImage-writeMessage'),$('#attach-area-writeMessage'));
@@ -1171,10 +1178,18 @@ angular.module('forum.controllers', ['ui.select2'])
         //var dialog = dialogClient.getDialog(userId);
         //writeMessage.dialogId = dialog.id;
 
-        /*this.send = function(){
-         dialogClient.postMessage(dialog.id, writeMessage.newMessage.text);
-         dialogClient.getDialogMessages(dialog.id);
-        }*/
+        writeMessage.send = function(){
+            if(writeMessage.newMessage.text == "Сообщение"){
+                writeMessage.isError = true;
+                writeMessage.errorText = "Вы не ввели сообщение";
+            }else if(!dialog || dialog.id == 0){
+                writeMessage.isError = true;
+                writeMessage.errorText = "Вы не указали получателя";
+            }else{
+                dialogClient.postMessage(dialog.id, writeMessage.newMessage.text);
+                $state.go('dialog-single',{ 'dialogId' : dialog.id});
+            }
+        }
 
     })
     .controller('changeAvatarController',function($state,$rootScope){

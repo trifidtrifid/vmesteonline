@@ -14,7 +14,7 @@
             <div class="private-message-single" ui-sref="dialog-single( {dialogId : {{ dialog.id }} })" ng-repeat="dialog in dialogs.dialogsList">
                 <div class="private-message-left pull-left">
                     <div class="private-message-ava pull-left">
-                        <div class="avatar" style="background-image: url({{dialog.usersForShow[0].avatar}})"></div>
+                        <div class="avatar" style="background-image: url({{dialog.users[0].avatar}})"></div>
                         <div>{{dialog.users.length}} участников</div>
                     </div>
                     <div class="private-message-author">

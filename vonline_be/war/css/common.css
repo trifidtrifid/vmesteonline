@@ -7,7 +7,6 @@
 @import 'settings.css';
 .error-info,
 .confirm-info {
-  display: none;
   color: #f00;
   font-size: 14px;
 }
