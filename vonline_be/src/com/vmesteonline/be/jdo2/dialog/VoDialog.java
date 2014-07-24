@@ -1,7 +1,12 @@
 package com.vmesteonline.be.jdo2.dialog;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -84,15 +89,25 @@ public class VoDialog {
 		return id;
 	}
 
-	public List<VoDialogMessage> getMessages(int afterDate, int lastCount, PersistenceManager pm) {
+	public Collection<VoDialogMessage> getMessages(int afterDate, int lastCount, PersistenceManager pm) {
 		Query q = pm.newQuery(VoDialogMessage.class, "dialogId=="+id+
 				(afterDate > 0 ? " && createDate>"+afterDate : ""));
-		q.setOrdering("createDate desc");
+		//q.setOrdering("createDate DESC"); List will be empty if sorting is enabled :(
 		List<VoDialogMessage> msgs = (List<VoDialogMessage>) q.execute();
-		if( msgs.size() > lastCount ){
-			msgs = msgs.subList(0, lastCount);
+		SortedSet<VoDialogMessage> msgsSorted = new TreeSet<VoDialogMessage>( new Comparator<VoDialogMessage>(){
+			@Override
+			public int compare(VoDialogMessage o1, VoDialogMessage o2) {
+				return -Integer.compare(o1.getCreateDate(), o2.getCreateDate());
+			}});
+		msgsSorted.addAll(msgs);
+		if( lastCount>0 && msgsSorted.size() > lastCount ){
+			Iterator<VoDialogMessage> mi = msgsSorted.iterator();
+			while( lastCount-- != 0 ) {
+				mi.next();
+			}
+			msgsSorted.tailSet(mi.next());
 		}
-		return msgs;
+		return msgsSorted;
 	}
 
 	public long postMessage(long currentUserId, String content, PersistenceManager pm) {
