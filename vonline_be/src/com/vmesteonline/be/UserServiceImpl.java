@@ -24,7 +24,9 @@ import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.GeoLocation;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
+import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
@@ -35,6 +37,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.utils.StorageHelper;
+import com.vmesteonline.be.utils.VoHelper;
 
 public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
@@ -683,5 +686,45 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public long categoryId() {
 		return ServiceCategoryID.USER_SI.ordinal();
+	}
+
+	@Override
+	public List<ShortUserInfo> getNeighbours() throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser currentUser = getCurrentUser();
+			List<VoUser> users = getUsersByLocation( currentUser, 30, pm );
+			return VoHelper.convertMutableSet( users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public List<ShortUserInfo> getNeighboursByGroup(long groupId) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser currentUser = getCurrentUser();
+			VoUserGroup group = pm.getObjectById(VoUserGroup.class, groupId);
+			List<VoUser> users = getUsersByLocation( currentUser, group.getRadius(), pm );
+			return VoHelper.convertMutableSet( users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
+		} finally {
+			pm.close();
+		}
+	}
+	
+	private List<VoUser> getUsersByLocation(GeoLocation loc, int radius, PersistenceManager pm ){
+		List<VoUser> users = new ArrayList<VoUser>(); 
+		
+		BigDecimal latMin = VoHelper.getLatitudeMin(loc.getLatitude(), radius);
+		BigDecimal longMin = VoHelper.getLongitudeMin(loc.getLongitude(), radius);
+		
+		List<VoUser> allUsers = (List<VoUser>)pm.newQuery(VoUser.class, "logitude >= " + longMin.toPlainString() + " && lattitude >= "+latMin.toPlainString()).execute();
+		for( VoUser user: allUsers ){
+			if( VoHelper.findMinimumGroupRadius( loc, user) <= radius){
+				users.add(user);
+			}
+		}	
+		return users;
 	}
 }

@@ -60,4 +60,7 @@ service UserService {
 	bedata.Street createNewStreet( 1:i64 cityId, 2:string name) throws (1:error.InvalidOperation exc),
 	bedata.Building createNewBuilding( 1:string zip, 2:i64 streetId, 3:string fullNo, 4:string longitude, 5:string lattitude) throws (1:error.InvalidOperation exc),
 	
+	list<bedata.ShortUserInfo> getNeighbours() throws (1:error.InvalidOperation exc),
+	list<bedata.ShortUserInfo> getNeighboursByGroup(1:i64 groupId) throws (1:error.InvalidOperation exc),
+	
 }

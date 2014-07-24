@@ -80,7 +80,7 @@ struct UserInfo{
 	6: string avatar
 }
 
-enum PrivacyType { NONE=0, HOME=1, DISTRICT=2, EVERYBODY=3}
+enum PrivacyType { NONE=0, STAIRCASE=1, HOME=2, DISTRICT=3, EVERYBODY=4}
 
 struct UserPrivacy{
 	1: i64 userId,
