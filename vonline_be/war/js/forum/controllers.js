@@ -237,10 +237,6 @@ angular.module('forum.controllers', ['ui.select2'])
 
         };
 
-        /*this.createTopicIsHide = true;
-        $rootScope.createTopicIsHide = this.createTopicIsHide;
-        var mainContentTop = this;*/
-
         topCtrl.showCreateTopic = function(event){
             event.preventDefault();
 
@@ -482,12 +478,12 @@ angular.module('forum.controllers', ['ui.select2'])
         * 3) toggleTree: контрол "плюс-минус", скрвает-показвает внутренние сообщения этого
         * сообщения.
         * */
-
             $rootScope.setTab(2);
 
             initAttachImage($('#attachImage-00'), $('#attach-area-00')); // для обсуждений
             initFancyBox($('.talks'));
 
+            $rootScope.base.createTopicIsHide = true;
             var talk = this;
             talk.isTalksLoaded = false;
             talk.groups = userClientGroups.reverse();
@@ -517,8 +513,6 @@ angular.module('forum.controllers', ['ui.select2'])
             var fullTalkFirstMessagesLength,
                 talkId;
 
-            var groups = this.groups,
-                groupsLength = groups.length;
             $rootScope.currentGroup = talk.selectedGroup = talk.groups[0];
             talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
 
@@ -578,6 +572,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
             for(var i = 0; i < topicLength;i++){
                 talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
+                talk.topics[i].label = getLabel(talk.groups,talk.topics[i].message.groupId);
+                talk.topics[i].tagColor = getTagColor(talk.topics[i].label);
             }
         }
 
@@ -601,9 +597,11 @@ angular.module('forum.controllers', ['ui.select2'])
         talk.fullTalkTopic = {};
         talk.fullTalkMessages = {};
         talk.fullTalkFirstMessages = [];
+        talk.groups = userClientGroups.reverse();
 
         var showFullTalk = function(talk,talkOutsideId){
 
+            initFancyBox($('.talks-single'));
             var topicLength;
             talk.topics ? topicLength = talk.topics.length : topicLength = 0;
             //talk.fullTalkTopic = talkOutside;
@@ -614,6 +612,8 @@ angular.module('forum.controllers', ['ui.select2'])
                 if(talkId == talk.topics[i].id){
                     talk.fullTalkTopic = talk.topics[i];
                     talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
+                    talk.fullTalkTopic.label = getLabel(talk.groups,talk.fullTalkTopic.message.groupId);
+                    talk.fullTalkTopic.tagColor = getTagColor(talk.fullTalkTopic.label);
                 }
             }
             if(talk.fullTalkTopic.poll != null){
