@@ -94,11 +94,15 @@ transform()
   margin-top 5px
   border-radius 0
 
+.nav-list > li
+  border 0
+
 .nav-list > li > a
   padding 8px 10px 10px 16px
   height auto
   line-height 20px
   position relative
+  background none
   span
     display inline-block
     vertical-align middle
@@ -112,6 +116,16 @@ transform()
 .nav-list > li.active:hover a
   font-size 15px
 
+.nav-list > li.active > a
+.nav-list > li.active:hover a
+  font-weight normal
+  &:before
+    display none
+
+.nav-list > li:hover a
+.nav-list > li.active:hover a
+  background #f2f2f2
+
 .sidebar#sidebar
   height 100%
   left 0
@@ -119,6 +133,7 @@ transform()
   bottom 0
   position absolute
   z-index 13
+  background none
   .show-left
     display none
 

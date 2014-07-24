@@ -3,8 +3,9 @@
 /* Controllers */
 angular.module('forum.controllers', ['ui.select2'])
     .controller('baseController',function($rootScope) {
+        $rootScope.isTopSearchShow = true;
         var base = this;
-        base.nextdoorsLoadStatus = "";
+        base.neighboursLoadStatus = "";
         base.privateMessagesLoadStatus = "";
         base.profileLoadStatus = "";
         base.settingsLoadStatus = "";
@@ -134,7 +135,7 @@ angular.module('forum.controllers', ['ui.select2'])
     })
   .controller('navbarController', function($rootScope) {
         this.privateMessagesBtnStatus = "";
-        this.nextdoorsBtnStatus = "";
+        this.neighboursBtnStatus = "";
         $rootScope.navbar = this;
 
         this.logout = function(event){
@@ -156,6 +157,7 @@ angular.module('forum.controllers', ['ui.select2'])
     $rootScope.setTab = function(newValue){
 
         $rootScope.leftbar.tab = newValue;
+        $rootScope.isTopSearchShow = true;
         //var tempTalksBool = false;
         //if($rootScope.base.talksIsActive) tempTalksBool = true;
         resetPages($rootScope.base);
@@ -924,25 +926,27 @@ angular.module('forum.controllers', ['ui.select2'])
     })
     .controller('ServicesController',function() {
     })
-    .controller('nextdoorsController',function($rootScope) {
+    .controller('neighboursController',function($rootScope) {
+        $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
 
         resetPages($rootScope.base);
         $rootScope.base.mainContentTopIsHide = false;
-        $rootScope.base.nextdoorsIsActive = true;
+        $rootScope.base.neighboursIsActive = true;
 
         resetAceNavBtns($rootScope.navbar);
-        $rootScope.navbar.nextdoorsBtnStatus = "active";
+        $rootScope.navbar.neighboursBtnStatus = "active";
         $rootScope.base.pageTitle = "";
 
-        $rootScope.base.nextdoorsLoadStatus = "isLoaded";
+        $rootScope.base.neighboursLoadStatus = "isLoaded";
 
-        var nextdoors = this;
-        nextdoors.neighboors = userClient.getNeighbors($rootScope.currentGroup.id);
-        nextdoors.neighboorsSize = nextdoors.neighboors.length;
+        var neighbours = this;
+        neighbours.neighboors = userClient.getNeighboursByGroup($rootScope.currentGroup.id);
+        neighbours.neighboorsSize = neighbours.neighboors.length;
 
     })
     .controller('ProfileController',function($rootScope, $stateParams) {
+        $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
 
         resetPages($rootScope.base);
@@ -973,6 +977,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
     })
     .controller('SettingsController',function($rootScope,$scope) {
+        $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
 
         resetPages($rootScope.base);
@@ -1092,6 +1097,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
     })
     .controller('dialogsController', function($rootScope){
+        $rootScope.isTopSearchShow = false;
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.leftbar.tab = 0;
 
@@ -1291,7 +1297,7 @@ protocol = new Thrift.Protocol(transport);
 var fileClient = new com.vmesteonline.be.FileServiceClient(protocol);
 
 function resetPages(base){
-    base.nextdoorsIsActive = false;
+    base.neighboursIsActive = false;
     base.privateMessagesIsActive = false;
     base.profileIsActive = false;
     base.settingsIsActive = false;
@@ -1300,7 +1306,7 @@ function resetPages(base){
     base.servicesIsActive = false;
 }
 function resetAceNavBtns(navbar){
-    navbar.nextdoorsBtnStatus = "";
+    navbar.neighboursBtnStatus = "";
     navbar.privateMessagesBtnStatus = "";
 }
 function initProfileAva(obj){

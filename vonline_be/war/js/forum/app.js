@@ -49,10 +49,10 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/write-message.html",
             controller: 'writeMessageController as writeMessage'
         })
-        .state('nextdoors', {
-            url: "/nextdoors",
-            templateUrl: "partials/nextdoors.html",
-            controller: 'nextdoorsController as nextdoors'
+        .state('neighbours', {
+            url: "/neighbours",
+            templateUrl: "partials/neighbours.html",
+            controller: 'neighboursController as nextdoors'
         })
         .state('profile', {
             url: "/profile-:userId",

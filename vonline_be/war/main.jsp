@@ -105,7 +105,7 @@
                                                                   ui-sref="dialogs">Личные сообщения </a></li>
 
                 <li ng-class="navbar.nextdoorsBtnStatus"><a class="btn btn-info no-border nextdoors-link"
-                                                            ui-sref="nextdoors"> Соседи</a></li>
+                                                            ui-sref="neighbours"> Соседи</a></li>
 
                 <li class="user-short light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
@@ -119,12 +119,12 @@
                     </a>
 
                     <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                        <li><a ui-sref="settings"> <i class="icon-cog"></i> <!--   -->
-                            Настройки
-                        </a></li>
-
                         <li><a ui-sref="profile"> <i class="icon-user"></i>
                             Профиль
+                        </a></li>
+
+                        <li><a ui-sref="settings"> <i class="icon-cog"></i> <!--   -->
+                            Настройки
                         </a></li>
 
                         <li class="divider"></li>
@@ -135,7 +135,7 @@
             </ul>
         </div>
 
-        <form method="post" action="#" class="form-group has-info form-search">
+        <form method="post" action="#" class="form-group has-info form-search" ng-show="isTopSearchShow">
             <span class="block input-icon input-icon-right">
                 <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
                 <a href="#" class="icon-search icon-on-right bigger-110"></a>
