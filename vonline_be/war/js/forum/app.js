@@ -59,6 +59,11 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/profile.html",
             controller: 'ProfileController as profile'
         })
+        .state('profile.change-avatar', {
+            url: "/change-avatar",
+            templateUrl: "partials/profile.changeAvatar.html",
+            controller: 'changeAvatarController as changeAvatar'
+        })
         .state('settings', {
             url: "/settings",
             templateUrl: "partials/settings.html",

@@ -9,8 +9,9 @@
                 <div class="user-body">
                     <div class="user-body-left pull-left">
                         <label class="block clearfix logo-container">
-                            <img ng-src="{{profile.userProfile.userInfo.avatar}}" alt="логотип"/>
-                            <input type="file" id="profile-ava" ng-show="profile.isMayEdit">
+                            <img ng-src="{{profile.userProfile.userInfo.avatar}}" alt=""/>
+                            <a ui-sref="profile.change-avatar" class="change-avatar-link">Изменить аватар</a>
+                            <!--<input type="file" id="profile-ava" ng-show="profile.isMayEdit">-->
                         </label>
                     </div>
                     
@@ -38,6 +39,7 @@
                 </div>
             </div>
         </section>
+        <div ui-view></div>
     </div>
 </section>
 

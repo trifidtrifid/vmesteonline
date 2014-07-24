@@ -57,6 +57,7 @@
 <title>Главная</title>
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>
+<link rel="stylesheet" href="css/lib/jquery.Jcrop.css"/>
 <link rel="stylesheet" href="js/forum/bower_components/select2/select2.css"/>
 
 <%--<script src="js/lib/jquery-2.1.1.min.js"></script>--%>
@@ -76,6 +77,7 @@
         globalUserAuth = true;
         </c:if>
     </script>
+    <script src="js/lib/jquery.Jcrop.min.js"></script>
     <script src="js/forum/bower_components/select2/select2.min.js"></script>
     <script src="js/forum/angular/angular.js"></script>
     <script src="js/forum/bower_components/angular-ui-select2/src/select2.js"></script>

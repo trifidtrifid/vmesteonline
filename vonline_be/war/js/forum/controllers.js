@@ -955,6 +955,7 @@ angular.module('forum.controllers', ['ui.select2'])
         var profile = this, userId;
         profile.isMayEdit = false;
 
+        $("#dialog-message").addClass('hide');
 
         if ($stateParams.userId && $stateParams.userId != shortUserInfo.id){
             userId = $stateParams.userId;
@@ -963,10 +964,12 @@ angular.module('forum.controllers', ['ui.select2'])
             userId = null;
             profile.isMayEdit = true;
             profile.userContacts = userClient.getUserContacts();
-            initProfileAva();
+            //initProfileAva();
         }
 
         profile.userProfile = userClient.getUserProfile(userId);
+
+        $rootScope.chageIndex = 0;
 
     })
     .controller('SettingsController',function($rootScope,$scope) {
@@ -1167,6 +1170,98 @@ angular.module('forum.controllers', ['ui.select2'])
          dialogClient.getDialogMessages(dialog.id);
         }*/
 
+    })
+    .controller('changeAvatarController',function($state,$rootScope){
+        var changeAvatar = this;
+
+        var base64Src = [],
+        base64Src2 = [];
+        changeAvatar.save = function(){
+
+            $('.logo-container>img').detach();
+            $('.logo-container').prepend('<img>');
+            $('.logo-container>img').addClass('new').css('background-image',base64Src[$rootScope.chageIndex-1])
+                .attr('src',base64Src2[$rootScope.chageIndex-1]);
+
+            dialog.dialog('close');
+            $state.go('profile');
+        };
+
+        var dialog = $("#dialog-message").removeClass('hide').dialog({
+            modal: true,
+            width: 500,
+            position: ['center',100],
+            //title: "<div class='widget-header widget-header-small'><h4 class='smaller'><i class='icon-ok'></i> jQuery UI Dialog</h4></div>",
+            title_html: false,
+            closeText: "",
+            create: function(event,ui){
+
+                $('.load-avatar input').ace_file_input({
+                    style:'well',
+                    btn_choose:'Загрузить аватар',
+                    btn_change:null,
+                    no_icon:'',
+                    droppable:true,
+                    thumbnail:'large',
+                    icon_remove:null
+                }).on('change', function(){
+                    $('.btn-save-avatar').removeClass('hidden');
+
+                    //$('.logo-container>img').hide();
+
+                    setTimeout(saveNewAva,1000);
+
+                     function saveNewAva(){
+                         $('.load-avatar').find('.file-label img').addClass('new-img-'+$rootScope.chageIndex);
+                         base64Src[$rootScope.chageIndex] = $('.load-avatar').find('.file-label .new-img-'+$rootScope.chageIndex).css('background-image');
+                         base64Src2[$rootScope.chageIndex] = $('.load-avatar').find('.file-label .new-img-'+$rootScope.chageIndex).attr('src');
+
+                         $rootScope.chageIndex++;
+                         //base64Src = $('.load-avatar .file-name img').css('background-image');
+                     /*var imgBase64 = $('.profile .ace-file-input').find('.file-name img').css('background-image');
+                     var url = fileClient.saveFileContent(imgBase64,false);
+
+                     userClient.updateUserAvatar(url);*/
+
+                         $('.new-img-'+$rootScope.chageIndex).Jcrop({
+                             aspectRatio: 0,
+                             onChange: updateCoords,
+                             onSelect: updateCoords
+                         });
+                         $('.load-avatar').find('.file-label .new-img-'+$rootScope.chageIndex).removeClass('new-img-'+$rootScope.chageIndex);
+                     }
+
+
+
+                    function updateCoords(c) {
+                        $('#x').val(c.x);
+                        $('#y').val(c.y);
+                        $('#w').val(c.w);
+                        $('#h').val(c.h);
+
+                        $('#x2').val(c.x2);
+                        $('#y2').val(c.y2);
+
+
+                        var rx = 200 / c.w; // 200 - размер окна предварительного просмотра
+                        var ry = 200 / c.h;
+
+                        $('#preview').css({
+                            width: Math.round(rx * 800) + 'px',
+                            height: Math.round(ry * 600) + 'px',
+                            marginLeft: '-' + Math.round(rx * c.x) + 'px',
+                            marginTop: '-' + Math.round(ry * c.y) + 'px'
+                        });
+                    };
+
+
+                });
+
+            },
+            close: function(event, ui){
+                $state.go('profile');
+            }
+        });
     });
 
 
@@ -1208,21 +1303,22 @@ function resetAceNavBtns(navbar){
     navbar.nextdoorsBtnStatus = "";
     navbar.privateMessagesBtnStatus = "";
 }
-function initProfileAva(){
+function initProfileAva(obj){
 
-    $('#profile-ava').ace_file_input({
+    $('.load-avatar input').ace_file_input({
         style:'well',
-        btn_choose:'Изменить фото',
+        btn_choose:'Загрузить аватар',
         btn_change:null,
         no_icon:'',
         droppable:true,
         thumbnail:'large',
         icon_remove:null
     }).on('change', function(){
+        obj.isMaySave = true;
 
-        $('.logo-container>img').hide();
+        //$('.logo-container>img').hide();
 
-        setTimeout(saveNewAva,1000);
+        /*setTimeout(saveNewAva,1000);
 
         function saveNewAva(){
             //console.log($('.ace-file-input').find('.file-name img').css('background-image'));
@@ -1230,7 +1326,7 @@ function initProfileAva(){
             var url = fileClient.saveFileContent(imgBase64,false);
 
             userClient.updateUserAvatar(url);
-        }
+        }*/
     });
 
 }
@@ -1316,7 +1412,10 @@ function initAttachDoc(selector,attachAreaSelector){
 
             $('.new-attached .remove-attach-img').click(function(e){
                 e.preventDefault();
-                $(this).closest('.attach-item').hide().detach();
+                var attachItem = $(this).closest('.attach-item');
+                var ind = attachItem.index();
+                attachItem.hide().detach();
+                docsBase64[attachAreaSelector].splice(ind,1);
             });
 
             $('.new-attached').removeClass('new-attached');

@@ -905,6 +905,17 @@ h1 {
   position: relative;
   width: 150px;
 }
+.user-body .user-body-left .logo-container .change-avatar-link {
+  background: rgba(0,0,0,0.3);
+  text-align: center;
+  color: #fff;
+  display: block;
+  position: relative;
+  top: -26px;
+}
+.user-body .user-body-left .logo-container .change-avatar-link:hover {
+  text-decoration: none;
+}
 .user-body .user-body-left .ace-file-input {
   position: absolute;
   top: 0;
@@ -943,6 +954,11 @@ h1 {
   display: block;
   margin: 0 auto;
 }
+.user-body .user-body-left img.new {
+  width: 150px;
+  height: 150px;
+  background-position: center center;
+}
 .user-body .user-body-right {
   margin-left: 170px;
 }
@@ -968,4 +984,50 @@ h1 {
 }
 .ui-helper-hidden-accessible {
   display: none;
+}
+/* change-avatar */
+.ui-dialog .ui-dialog-titlebar {
+  background: #fff;
+}
+.ui-dialog .ui-dialog-titlebar-close {
+  float: right;
+}
+.load-avatar {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  border-width: 0;
+  border: 0;
+}
+.load-avatar:active,
+.load-avatar:focus {
+  border: 0;
+  outline: none;
+}
+.load-avatar .ace-file-input,
+.load-avatar .file-label {
+  margin-bottom: 0;
+}
+.load-avatar .file-label {
+  font-weight: normal;
+  color: #fff;
+  background-color: inherit;
+  margin: 0;
+  border: 0;
+}
+.load-avatar .file-label:before {
+  color: #fff;
+  background-color: inherit;
+  font-weight: normal;
+  border: 0;
+}
+.load-avatar img {
+  max-width: 500px;
+  max-height: 500px;
+}
+.btn-save-avatar {
+  margin: 10px 0;
+}
+.ui-dialog-content {
+  text-align: center;
 }
