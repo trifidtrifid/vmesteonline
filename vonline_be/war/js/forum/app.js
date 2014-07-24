@@ -49,15 +49,20 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/write-message.html",
             controller: 'writeMessageController as writeMessage'
         })
-        .state('nextdoors', {
-            url: "/nextdoors",
-            templateUrl: "partials/nextdoors.html",
-            controller: 'nextdoorsController as nextdoors'
+        .state('neighbours', {
+            url: "/neighbours",
+            templateUrl: "partials/neighbours.html",
+            controller: 'neighboursController as nextdoors'
         })
         .state('profile', {
             url: "/profile-:userId",
             templateUrl: "partials/profile.html",
             controller: 'ProfileController as profile'
+        })
+        .state('profile.change-avatar', {
+            url: "/change-avatar",
+            templateUrl: "partials/profile.changeAvatar.html",
+            controller: 'changeAvatarController as changeAvatar'
         })
         .state('settings', {
             url: "/settings",

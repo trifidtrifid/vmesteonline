@@ -15,6 +15,7 @@ import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoGroup;
+import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoTopic;
@@ -71,6 +72,8 @@ public class Defaults {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
+			System.out.print("test!!");
+
 			clearRubrics(pm);
 			clearGroups(pm);
 			clearLocations(pm);
@@ -81,7 +84,10 @@ public class Defaults {
 			List<String> locCodes = initializeTestLocations();
 			initializeUsers(locCodes);
 			MySQLJDBCConnector con = new MySQLJDBCConnector();
+			System.out.print("test!!");
+
 			con.execute("drop table if exists topic");
+			System.out.print("test!!");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -95,13 +101,14 @@ public class Defaults {
 	// ======================================================================================================================
 	private static void deletePersistentAll(PersistenceManager pm, Class pc) {
 		Extent ext = pm.getExtent(pc);
-		if(null!=ext) for (Object i : ext) {
-			try {
-				pm.deletePersistent(i);
-			} catch (Exception e) {
-				// e.printStackTrace();
+		if (null != ext)
+			for (Object i : ext) {
+				try {
+					pm.deletePersistent(i);
+				} catch (Exception e) {
+					// e.printStackTrace();
+				}
 			}
-		}
 	}
 
 	// ======================================================================================================================
@@ -143,8 +150,7 @@ public class Defaults {
 		List<VoRubric> defRubrics = (List<VoRubric>) q.execute();
 		if (defRubrics.isEmpty()) {
 			for (VoRubric dr : new VoRubric[] { new VoRubric("rubric1", "rubric first", "rubric about first", true),
-					new VoRubric("rubric2", "rubric second", "rubric about second", true),
-					new VoRubric("rubric3", "rubric third", "rubric about third", true),
+					new VoRubric("rubric2", "rubric second", "rubric about second", true), new VoRubric("rubric3", "rubric third", "rubric about third", true),
 					new VoRubric("rubric4", "rubric fourth", "rubric about fourth", true) }) {
 
 				pm.makePersistent(dr);
@@ -176,17 +182,17 @@ public class Defaults {
 		long user2Id, user3Id;
 		userId = user2Id = user3Id = 0;
 		try {
-			userId = asi.registerNewUser(user1name, user1lastName, user1pass, user1email, locCodes.get(0));
+			userId = asi.registerNewUser(user1name, user1lastName, user1pass, user1email, "1");
 		} catch (Exception e) {
 			// e.printStackTrace();
 		}
 		try {
-			user2Id = asi.registerNewUser(user2name, user2lastName, user2pass, user2email, locCodes.get(1));
+			user2Id = asi.registerNewUser(user2name, user2lastName, user2pass, user2email, "2");
 		} catch (Exception e1) {
 
 		}
 		try {
-			user3Id = asi.registerNewUser(user3name, user3lastName, user3pass, user3email, locCodes.get(2));
+			user3Id = asi.registerNewUser(user3name, user3lastName, user3pass, user3email, "3");
 		} catch (Exception e) {
 
 		}
@@ -216,13 +222,18 @@ public class Defaults {
 					new VoPostalAddress(new VoBuilding("195213", street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177"), pm), (byte) 1,
 							(byte) 2, (byte) 25, "") };
 
-			for (VoPostalAddress pa : addresses) {
-				pm.makePersistent(pa);
-				locations.add("" + pa.getAddressCode());
+			String invCodes[] = { "1", "2", "3", "4" };
+
+			for (int i = 0; i < addresses.length; i++) {
+
+				pm.makePersistent(addresses[i]);
+				locations.add("" + addresses[i].getAddressCode());
+				VoInviteCode icode = new VoInviteCode(invCodes[i], addresses[i].getId());
+				pm.makePersistent(icode);
 			}
-			
-			InviteCodeUploader.uploadCodes("/data/addresses_len_7_kudrovo.csv");
-			
+
+//			InviteCodeUploader.uploadCodes("/data/addresses_len_7_kudrovo.csv");
+
 			return locations;
 		} catch (Exception e) {
 			e.printStackTrace();

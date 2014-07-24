@@ -65,7 +65,7 @@
                             </a>
 
                             <div class="body" ng-switch on="wallItem.topic.metaType">
-                                <span class="label label-lg arrowed lenta-item-hashtag"
+                                <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                         ng-class="wallItem.tagColor">{{wallItem.label}}</span>
 
                                 <div class="name">
@@ -196,6 +196,10 @@
                                 <div>{{wallItem.topic.messageNum}} сообщений</div>
                             </div>
                             <div class="talks-title-right">
+                                <span class="label label-lg arrowed lenta-item-hashtag pull-right"
+                                      ng-class="wallItem.tagColor">{{wallItem.label}}</span>
+                                <div class="clearfix"></div>
+
                                 <div>Последнее обновление:</div>
                                 <div>{{wallItem.topic.lastUpdateEdit}}</div>
                             </div>

@@ -94,11 +94,15 @@ transform()
   margin-top 5px
   border-radius 0
 
+.nav-list > li
+  border 0
+
 .nav-list > li > a
   padding 8px 10px 10px 16px
   height auto
   line-height 20px
   position relative
+  background none
   span
     display inline-block
     vertical-align middle
@@ -112,6 +116,16 @@ transform()
 .nav-list > li.active:hover a
   font-size 15px
 
+.nav-list > li.active > a
+.nav-list > li.active:hover a
+  font-weight normal
+  &:before
+    display none
+
+.nav-list > li:hover a
+.nav-list > li.active:hover a
+  background #f2f2f2
+
 .sidebar#sidebar
   height 100%
   left 0
@@ -119,6 +133,7 @@ transform()
   bottom 0
   position absolute
   z-index 13
+  background none
   .show-left
     display none
 
@@ -504,8 +519,9 @@ transform()
 .attach-area
   .attach-item
     display inline-block
-    margin-right 10px
-    margin-top 10px
+    vertical-align top
+    margin-right 1px
+    margin-top 5px
   .attached-img
     width 150px
     height 150px
@@ -560,10 +576,10 @@ transform()
   a
     display inline-block
     vertical-align top
-    margin 0 5px
+    margin 0 2px
     img
-      max-width 300px
-      max-height 300px
+      max-width 150px
+      max-height 150px
 
 .create-poll
   margin-bottom 10px
@@ -773,6 +789,15 @@ transform()
     .logo-container
       position relative
       width 150px
+      .change-avatar-link
+        background rgba(0,0,0,.3)
+        text-align center
+        color #fff
+        display block
+        position relative
+        top -26px
+        &:hover
+          text-decoration none
     .ace-file-input
       position absolute
       top 0
@@ -805,6 +830,10 @@ transform()
       max-height 150px
       display block
       margin 0 auto
+      &.new
+        width 150px
+        height 150px
+        background-position center center
   .user-body-right
     margin-left 170px
     .home-map
@@ -827,3 +856,45 @@ transform()
 
 .ui-helper-hidden-accessible
   display none
+
+/* change-avatar */
+.ui-dialog .ui-dialog-titlebar
+  background #fff
+
+.ui-dialog .ui-dialog-titlebar-close
+  float right
+
+.load-avatar
+  display block
+  margin 0 auto
+  padding 0
+  border-width 0
+  border 0
+  &:active
+  &:focus
+    border 0
+    outline none
+    //background inherit !important
+  .ace-file-input
+  .file-label
+    margin-bottom 0
+  .file-label
+    font-weight normal
+    color #fff
+    background-color inherit
+    margin 0
+    border 0
+    &:before
+      color #fff
+      background-color inherit
+      font-weight normal
+      border 0
+  img
+    max-width 500px
+    max-height 500px
+
+.btn-save-avatar
+  margin 10px 0
+
+.ui-dialog-content
+  text-align center

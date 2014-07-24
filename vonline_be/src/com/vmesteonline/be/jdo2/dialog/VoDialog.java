@@ -44,7 +44,7 @@ public class VoDialog {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	protected long id;
+	protected Long id;
 	
 	@Persistent
 	private List<Long> users;

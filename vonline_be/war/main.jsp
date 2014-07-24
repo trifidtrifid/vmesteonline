@@ -57,9 +57,11 @@
 <title>Главная</title>
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>
+<link rel="stylesheet" href="css/lib/jquery.Jcrop.css"/>
 <link rel="stylesheet" href="js/forum/bower_components/select2/select2.css"/>
 
-<script src="js/lib/jquery-2.1.1.min.js"></script>
+<%--<script src="js/lib/jquery-2.1.1.min.js"></script>--%>
+<script src="js/lib/jquery-2.0.3.js"></script>
 <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -75,6 +77,7 @@
         globalUserAuth = true;
         </c:if>
     </script>
+    <script src="js/lib/jquery.Jcrop.min.js"></script>
     <script src="js/forum/bower_components/select2/select2.min.js"></script>
     <script src="js/forum/angular/angular.js"></script>
     <script src="js/forum/bower_components/angular-ui-select2/src/select2.js"></script>
@@ -102,7 +105,7 @@
                                                                   ui-sref="dialogs">Личные сообщения </a></li>
 
                 <li ng-class="navbar.nextdoorsBtnStatus"><a class="btn btn-info no-border nextdoors-link"
-                                                            ui-sref="nextdoors"> Соседи</a></li>
+                                                            ui-sref="neighbours"> Соседи</a></li>
 
                 <li class="user-short light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
@@ -116,12 +119,12 @@
                     </a>
 
                     <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                        <li><a ui-sref="settings"> <i class="icon-cog"></i> <!--   -->
-                            Настройки
-                        </a></li>
-
                         <li><a ui-sref="profile"> <i class="icon-user"></i>
                             Профиль
+                        </a></li>
+
+                        <li><a ui-sref="settings"> <i class="icon-cog"></i> <!--   -->
+                            Настройки
                         </a></li>
 
                         <li class="divider"></li>
@@ -132,7 +135,7 @@
             </ul>
         </div>
 
-        <form method="post" action="#" class="form-group has-info form-search">
+        <form method="post" action="#" class="form-group has-info form-search" ng-show="isTopSearchShow">
             <span class="block input-icon input-icon-right">
                 <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
                 <a href="#" class="icon-search icon-on-right bigger-110"></a>
@@ -230,7 +233,7 @@
 	<%--<script src="js/lib/ace-elements.min.js"></script>--%>
 	<script src="js/ace-elements.js"></script>
 
-    <script src="js/lib/jquery.fancybox.pack.js"></script>
+    <script src="js/lib/jquery.fancybox.js"></script>
 
 	<!-- конкретные плагины -->
 

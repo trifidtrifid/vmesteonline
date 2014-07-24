@@ -13,11 +13,17 @@
                                 <div class="topic-left">
                                     <a ui-sref="profile({ userId : {{ talks.fullTalkTopic.userInfo.id }} })">
                                         <div class="avatar" style="background-image: url({{talks.fullTalkTopic.userInfo.avatar}})"></div>
-                                        <!--<img ng-src="{{talks.fullTalkTopic.userInfo.avatar}}" alt="картинка" /></a>-->
+                                        <!--<img ng-src="{{talks.fullTalkTopic.userInfo.avatar}}" alt="картинка" />-->
+                                    </a>
                                     <div class="topic-author">
                                     </div>
                                 </div>
                                 <div class="topic-right" ng-switch on="talks.fullTalkTopic.metaType">
+
+
+                                    <span class="label label-lg arrowed lenta-item-hashtag pull-right"
+                                      ng-class="talks.fullTalkTopic.tagColor">{{talks.fullTalkTopic.label}}</span>
+
                                         <h2>
                                             <span>{{talks.fullTalkTopic.subject}}</span>
                                         </h2>
@@ -25,7 +31,7 @@
                                     <p ng-switch-when="message">{{talks.fullTalkTopic.message.content}}</p>
 
                                     <div class="attached">
-                                        <a href="{{image}}" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id}}" ng-repeat="image in talks.fullTalkTopic.message.images">
+                                        <a href="{{image}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id}}" ng-repeat="image in talks.fullTalkTopic.message.images">
                                             <img ng-src="{{image}}" alt="картинка"/>
                                         </a>
                                     </div>
@@ -121,7 +127,7 @@
                                             <p>{{firstMessage.content}}</p>
 
                                             <div class="attached">
-                                                <a href="{{image}}" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
+                                                <a href="{{image}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
                                                     <img ng-src="{{image}}" alt="картинка"/>
                                                 </a>
                                             </div>
@@ -180,7 +186,7 @@
                                                     <p>{{message.content}}</p>
 
                                                     <div class="attached">
-                                                        <a href="{{image}}" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
+                                                        <a href="{{image}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
                                                             <img ng-src="{{image}}" alt="картинка"/>
                                                         </a>
                                                     </div>

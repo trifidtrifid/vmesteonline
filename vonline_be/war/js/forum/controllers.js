@@ -3,8 +3,9 @@
 /* Controllers */
 angular.module('forum.controllers', ['ui.select2'])
     .controller('baseController',function($rootScope) {
+        $rootScope.isTopSearchShow = true;
         var base = this;
-        base.nextdoorsLoadStatus = "";
+        base.neighboursLoadStatus = "";
         base.privateMessagesLoadStatus = "";
         base.profileLoadStatus = "";
         base.settingsLoadStatus = "";
@@ -134,7 +135,7 @@ angular.module('forum.controllers', ['ui.select2'])
     })
   .controller('navbarController', function($rootScope) {
         this.privateMessagesBtnStatus = "";
-        this.nextdoorsBtnStatus = "";
+        this.neighboursBtnStatus = "";
         $rootScope.navbar = this;
 
         this.logout = function(event){
@@ -156,6 +157,7 @@ angular.module('forum.controllers', ['ui.select2'])
     $rootScope.setTab = function(newValue){
 
         $rootScope.leftbar.tab = newValue;
+        $rootScope.isTopSearchShow = true;
         //var tempTalksBool = false;
         //if($rootScope.base.talksIsActive) tempTalksBool = true;
         resetPages($rootScope.base);
@@ -234,10 +236,6 @@ angular.module('forum.controllers', ['ui.select2'])
             }
 
         };
-
-        /*this.createTopicIsHide = true;
-        $rootScope.createTopicIsHide = this.createTopicIsHide;
-        var mainContentTop = this;*/
 
         topCtrl.showCreateTopic = function(event){
             event.preventDefault();
@@ -480,12 +478,12 @@ angular.module('forum.controllers', ['ui.select2'])
         * 3) toggleTree: контрол "плюс-минус", скрвает-показвает внутренние сообщения этого
         * сообщения.
         * */
-
             $rootScope.setTab(2);
 
             initAttachImage($('#attachImage-00'), $('#attach-area-00')); // для обсуждений
             initFancyBox($('.talks'));
 
+            $rootScope.base.createTopicIsHide = true;
             var talk = this;
             talk.isTalksLoaded = false;
             talk.groups = userClientGroups.reverse();
@@ -515,8 +513,6 @@ angular.module('forum.controllers', ['ui.select2'])
             var fullTalkFirstMessagesLength,
                 talkId;
 
-            var groups = this.groups,
-                groupsLength = groups.length;
             $rootScope.currentGroup = talk.selectedGroup = talk.groups[0];
             talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
 
@@ -576,6 +572,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
             for(var i = 0; i < topicLength;i++){
                 talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
+                talk.topics[i].label = getLabel(talk.groups,talk.topics[i].message.groupId);
+                talk.topics[i].tagColor = getTagColor(talk.topics[i].label);
             }
         }
 
@@ -599,9 +597,11 @@ angular.module('forum.controllers', ['ui.select2'])
         talk.fullTalkTopic = {};
         talk.fullTalkMessages = {};
         talk.fullTalkFirstMessages = [];
+        talk.groups = userClientGroups.reverse();
 
         var showFullTalk = function(talk,talkOutsideId){
 
+            initFancyBox($('.talks-single'));
             var topicLength;
             talk.topics ? topicLength = talk.topics.length : topicLength = 0;
             //talk.fullTalkTopic = talkOutside;
@@ -612,6 +612,8 @@ angular.module('forum.controllers', ['ui.select2'])
                 if(talkId == talk.topics[i].id){
                     talk.fullTalkTopic = talk.topics[i];
                     talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
+                    talk.fullTalkTopic.label = getLabel(talk.groups,talk.fullTalkTopic.message.groupId);
+                    talk.fullTalkTopic.tagColor = getTagColor(talk.fullTalkTopic.label);
                 }
             }
             if(talk.fullTalkTopic.poll != null){
@@ -924,25 +926,27 @@ angular.module('forum.controllers', ['ui.select2'])
     })
     .controller('ServicesController',function() {
     })
-    .controller('nextdoorsController',function($rootScope) {
+    .controller('neighboursController',function($rootScope) {
+        $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
 
         resetPages($rootScope.base);
         $rootScope.base.mainContentTopIsHide = false;
-        $rootScope.base.nextdoorsIsActive = true;
+        $rootScope.base.neighboursIsActive = true;
 
         resetAceNavBtns($rootScope.navbar);
-        $rootScope.navbar.nextdoorsBtnStatus = "active";
+        $rootScope.navbar.neighboursBtnStatus = "active";
         $rootScope.base.pageTitle = "";
 
-        $rootScope.base.nextdoorsLoadStatus = "isLoaded";
+        $rootScope.base.neighboursLoadStatus = "isLoaded";
 
-        var nextdoors = this;
-        nextdoors.neighboors = userClient.getNeighbors($rootScope.currentGroup.id);
-        nextdoors.neighboorsSize = nextdoors.neighboors.length;
+        var neighbours = this;
+        neighbours.neighboors = userClient.getNeighboursByGroup($rootScope.currentGroup.id);
+        neighbours.neighboorsSize = neighbours.neighboors.length;
 
     })
     .controller('ProfileController',function($rootScope, $stateParams) {
+        $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
 
         resetPages($rootScope.base);
@@ -955,6 +959,7 @@ angular.module('forum.controllers', ['ui.select2'])
         var profile = this, userId;
         profile.isMayEdit = false;
 
+        $("#dialog-message").addClass('hide');
 
         if ($stateParams.userId && $stateParams.userId != shortUserInfo.id){
             userId = $stateParams.userId;
@@ -963,13 +968,16 @@ angular.module('forum.controllers', ['ui.select2'])
             userId = null;
             profile.isMayEdit = true;
             profile.userContacts = userClient.getUserContacts();
-            initProfileAva();
+            //initProfileAva();
         }
 
         profile.userProfile = userClient.getUserProfile(userId);
 
+        $rootScope.chageIndex = 0;
+
     })
     .controller('SettingsController',function($rootScope,$scope) {
+        $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
 
         resetPages($rootScope.base);
@@ -1089,6 +1097,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
     })
     .controller('dialogsController', function($rootScope){
+        $rootScope.isTopSearchShow = false;
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.leftbar.tab = 0;
 
@@ -1133,7 +1142,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         writeMessage.newMessage = {};
         writeMessage.users = [];
-        writeMessage.neighboors = userClient.getNeighbors($rootScope.biggestGroup.id);
+        writeMessage.neighboors = userClient.getNeighbours();
         writeMessage.newMessage.text = "Сообщение";
         writeMessage.dialogId = 0;
 
@@ -1167,6 +1176,98 @@ angular.module('forum.controllers', ['ui.select2'])
          dialogClient.getDialogMessages(dialog.id);
         }*/
 
+    })
+    .controller('changeAvatarController',function($state,$rootScope){
+        var changeAvatar = this;
+
+        var base64Src = [],
+        base64Src2 = [];
+        changeAvatar.save = function(){
+
+            $('.logo-container>img').detach();
+            $('.logo-container').prepend('<img>');
+            $('.logo-container>img').addClass('new').css('background-image',base64Src[$rootScope.chageIndex-1])
+                .attr('src',base64Src2[$rootScope.chageIndex-1]);
+
+            dialog.dialog('close');
+            $state.go('profile');
+        };
+
+        var dialog = $("#dialog-message").removeClass('hide').dialog({
+            modal: true,
+            width: 500,
+            position: ['center',100],
+            //title: "<div class='widget-header widget-header-small'><h4 class='smaller'><i class='icon-ok'></i> jQuery UI Dialog</h4></div>",
+            title_html: false,
+            closeText: "",
+            create: function(event,ui){
+
+                $('.load-avatar input').ace_file_input({
+                    style:'well',
+                    btn_choose:'Загрузить аватар',
+                    btn_change:null,
+                    no_icon:'',
+                    droppable:true,
+                    thumbnail:'large',
+                    icon_remove:null
+                }).on('change', function(){
+                    $('.btn-save-avatar').removeClass('hidden');
+
+                    //$('.logo-container>img').hide();
+
+                    setTimeout(saveNewAva,1000);
+
+                     function saveNewAva(){
+                         $('.load-avatar').find('.file-label img').addClass('new-img-'+$rootScope.chageIndex);
+                         base64Src[$rootScope.chageIndex] = $('.load-avatar').find('.file-label .new-img-'+$rootScope.chageIndex).css('background-image');
+                         base64Src2[$rootScope.chageIndex] = $('.load-avatar').find('.file-label .new-img-'+$rootScope.chageIndex).attr('src');
+
+                         $rootScope.chageIndex++;
+                         //base64Src = $('.load-avatar .file-name img').css('background-image');
+                     /*var imgBase64 = $('.profile .ace-file-input').find('.file-name img').css('background-image');
+                     var url = fileClient.saveFileContent(imgBase64,false);
+
+                     userClient.updateUserAvatar(url);*/
+
+                         $('.new-img-'+$rootScope.chageIndex).Jcrop({
+                             aspectRatio: 0,
+                             onChange: updateCoords,
+                             onSelect: updateCoords
+                         });
+                         $('.load-avatar').find('.file-label .new-img-'+$rootScope.chageIndex).removeClass('new-img-'+$rootScope.chageIndex);
+                     }
+
+
+
+                    function updateCoords(c) {
+                        $('#x').val(c.x);
+                        $('#y').val(c.y);
+                        $('#w').val(c.w);
+                        $('#h').val(c.h);
+
+                        $('#x2').val(c.x2);
+                        $('#y2').val(c.y2);
+
+
+                        var rx = 200 / c.w; // 200 - размер окна предварительного просмотра
+                        var ry = 200 / c.h;
+
+                        $('#preview').css({
+                            width: Math.round(rx * 800) + 'px',
+                            height: Math.round(ry * 600) + 'px',
+                            marginLeft: '-' + Math.round(rx * c.x) + 'px',
+                            marginTop: '-' + Math.round(ry * c.y) + 'px'
+                        });
+                    };
+
+
+                });
+
+            },
+            close: function(event, ui){
+                $state.go('profile');
+            }
+        });
     });
 
 
@@ -1196,7 +1297,7 @@ protocol = new Thrift.Protocol(transport);
 var fileClient = new com.vmesteonline.be.FileServiceClient(protocol);
 
 function resetPages(base){
-    base.nextdoorsIsActive = false;
+    base.neighboursIsActive = false;
     base.privateMessagesIsActive = false;
     base.profileIsActive = false;
     base.settingsIsActive = false;
@@ -1205,32 +1306,33 @@ function resetPages(base){
     base.servicesIsActive = false;
 }
 function resetAceNavBtns(navbar){
-    navbar.nextdoorsBtnStatus = "";
+    navbar.neighboursBtnStatus = "";
     navbar.privateMessagesBtnStatus = "";
 }
-function initProfileAva(){
+function initProfileAva(obj){
 
-    $('#profile-ava').ace_file_input({
+    $('.load-avatar input').ace_file_input({
         style:'well',
-        btn_choose:'Изменить фото',
+        btn_choose:'Загрузить аватар',
         btn_change:null,
         no_icon:'',
         droppable:true,
         thumbnail:'large',
         icon_remove:null
     }).on('change', function(){
+        obj.isMaySave = true;
 
-        $('.logo-container>img').hide();
+        //$('.logo-container>img').hide();
 
-        setTimeout(saveNewAva,1000);
+        /*setTimeout(saveNewAva,1000);
 
         function saveNewAva(){
             //console.log($('.ace-file-input').find('.file-name img').css('background-image'));
-            var imgBase64 = $('.ace-file-input').find('.file-name img').css('background-image');
+            var imgBase64 = $('.profile .ace-file-input').find('.file-name img').css('background-image');
             var url = fileClient.saveFileContent(imgBase64,false);
 
             userClient.updateUserAvatar(url);
-        }
+        }*/
     });
 
 }
@@ -1274,8 +1376,11 @@ function initAttachImage(selector,attachAreaSelector){
 
     });
 }
+
+var docsBase64 = [];
 function initAttachDoc(selector,attachAreaSelector){
-    var title;
+    var title,ind = 0;
+        docsBase64[attachAreaSelector] = [];
 
     selector.ace_file_input({
         style:'well',
@@ -1299,13 +1404,12 @@ function initAttachDoc(selector,attachAreaSelector){
 
         function insertDoc() {
             var docName = fileLabel.find('.file-name').attr('data-title');
-            /*for(var p in selector[0].files[0]){
-                console.log(p+" "+selector[0].files[0][p]);
-            }*/
 
-            /*var fd = new FormData();
-            //var input = $('#import-data');
-            fd.append( 'data', input[0].files[0]);*/
+            var reader = new FileReader();
+            reader.readAsBinaryString(selector[0].files[0]);
+            reader.onload = function(e){
+                docsBase64[attachAreaSelector][ind++] = base64encode(reader.result);
+            };
 
             attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
                 "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
@@ -1314,7 +1418,10 @@ function initAttachDoc(selector,attachAreaSelector){
 
             $('.new-attached .remove-attach-img').click(function(e){
                 e.preventDefault();
-                $(this).closest('.attach-item').hide().detach();
+                var attachItem = $(this).closest('.attach-item');
+                var ind = attachItem.index();
+                attachItem.hide().detach();
+                docsBase64[attachAreaSelector].splice(ind,1);
             });
 
             $('.new-attached').removeClass('new-attached');
@@ -1588,13 +1695,18 @@ function getAttachedImages(selector){
     return imgList;
 }
 function getAttachedDocs(selector){
+    /*var docsBase64Length = docsBase64[selector].length;
+
+    for(var i = 0; i < docsBase64Length; i++){
+        docList
+    }
     var docList = [], ind = 0;
 
     selector.find('.attach-item').each(function(){
         docList[ind++] = $(this).attr('data-fakepath');
-    });
+    });*/
 
-    return docList;
+    return docsBase64[selector];
 }
 function cleanAttached(selector){
     selector.html('');
@@ -1611,17 +1723,27 @@ function clone(obj){
         temp[key] = clone(obj[key]);
     return temp;
 }
-/*
-$.widget("custom.catcomplete", $.ui.autocomplete, {
-    _renderMenu: function(ul, items){
-        var self = this,
-            currentCategory = "";
-        $.each( items, function(index, item){
-            if(item.category != currentCategory){
-                ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
-                currentCategory = item.category;
-            }
-            self._renderItem( ul, item );
-        });
+function base64encode(str) {
+    // Символы для base64-преобразования
+    var b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg'+
+        'hijklmnopqrstuvwxyz0123456789+/=';
+    var b64encoded = '';
+    var chr1, chr2, chr3;
+    var enc1, enc2, enc3, enc4;
+
+    for (var i=0; i<str.length;) {
+        chr1 = str.charCodeAt(i++);
+        chr2 = str.charCodeAt(i++);
+        chr3 = str.charCodeAt(i++);
+
+        enc1 = chr1 >> 2;
+        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+
+        enc3 = isNaN(chr2) ? 64:(((chr2 & 15) << 2) | (chr3 >> 6));
+        enc4 = isNaN(chr3) ? 64:(chr3 & 63);
+
+        b64encoded += b64chars.charAt(enc1) + b64chars.charAt(enc2) +
+            b64chars.charAt(enc3) + b64chars.charAt(enc4);
     }
-});*/
+    return b64encoded;
+}

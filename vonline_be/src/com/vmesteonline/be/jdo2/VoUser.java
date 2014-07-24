@@ -12,8 +12,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
@@ -409,7 +407,7 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	@Unindexed
 	RelationsType relations;
-
+	
 	public String getMobilePhone() {
 		return mobilePhone;
 	}
