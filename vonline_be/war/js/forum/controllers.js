@@ -1136,7 +1136,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         writeMessage.newMessage = {};
         writeMessage.users = [];
-        writeMessage.neighboors = userClient.getNeighbors($rootScope.biggestGroup.id);
+        writeMessage.neighboors = userClient.getNeighbours();
         writeMessage.newMessage.text = "Сообщение";
         writeMessage.dialogId = 0;
 
