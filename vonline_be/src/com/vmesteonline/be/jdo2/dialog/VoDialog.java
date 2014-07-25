@@ -1,5 +1,7 @@
 package com.vmesteonline.be.jdo2.dialog;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -23,6 +25,8 @@ import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.messageservice.Dialog;
+import com.vmesteonline.be.utils.StorageHelper;
+import com.vmesteonline.be.utils.StorageHelper.FileSource;
 
 @PersistenceCapable
 public class VoDialog {
@@ -110,8 +114,19 @@ public class VoDialog {
 		return msgsSorted;
 	}
 
-	public long postMessage(long currentUserId, String content, PersistenceManager pm) {
+	public long postMessage(long currentUserId, String content, List<String> attachs, PersistenceManager pm) {
 		VoDialogMessage dmsg = new VoDialogMessage(id, currentUserId, content);
+		List<Long> attchs = new ArrayList<Long>();
+		for( String att: attachs ){
+			try {
+				FileSource fs = StorageHelper.createFileSource( att.getBytes(), null, "");
+				attchs.add(
+						StorageHelper.saveAttach( fs.fname, fs.contentType, currentUserId, true, fs.is, pm)
+						.getId());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		lastMessageDate = dmsg.getCreateDate();
 		pm.makePersistent(dmsg);
 		pm.makePersistent(this);

@@ -14,9 +14,11 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.utils.StorageHelper;
+import com.vmesteonline.be.utils.StorageHelper.FileSource;
 
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
@@ -31,21 +33,29 @@ public abstract class VoBaseMessage extends GeoLocation {
 		createdAt = msg.getCreated();
 		likesNum = msg.getLikesNum();
 		unlikesNum = msg.getUnlikesNum();
-		images = new ArrayList<String>();
+		images = new ArrayList<Long>();
 		PersistenceManager pm = PMF.getPm();
 		try {
 			if (msg.images != null) {
-				for (String img : msg.images) {
-					images.add(StorageHelper.saveImage(img, msg.getAuthorId(), true, pm));
+				List<Attach> savedImages = new ArrayList<Attach>();
+				for (Attach img : msg.images) {
+					FileSource fs = StorageHelper.createFileSource( img.URL.getBytes(), img.contentType, img.fileName);
+					VoFileAccessRecord cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
+					images.add( cfar.getId());
+					savedImages.add(cfar.getAttach());
 				}
-				msg.images = images;
+				msg.images = savedImages;
 			}
 
 			if (msg.documents != null) {
-				for (String img : msg.documents) {
-					documents.add(StorageHelper.saveImage(img, msg.getAuthorId(), true, pm));
+				List<Attach> savedDocs = new ArrayList<Attach>();
+				for (Attach doc : msg.documents) {
+					FileSource fs = StorageHelper.createFileSource( doc.URL.getBytes(), doc.contentType, doc.fileName);
+					VoFileAccessRecord cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
+					documents.add( cfar.getId());
+					savedDocs.add(cfar.getAttach());
 				}
-				msg.documents = documents;
+				msg.documents = savedDocs;
 			}
 
 		} catch (Exception e) {
@@ -166,11 +176,11 @@ public abstract class VoBaseMessage extends GeoLocation {
 
 	@Persistent
 	@Unindexed
-	protected List<String> images;
+	protected List<Long> images;
 
 	@Persistent
 	@Unindexed
-	protected List<String> documents;
+	protected List<Long> documents;
 
 	@Persistent
 	@Unindexed

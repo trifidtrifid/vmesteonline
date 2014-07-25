@@ -1,18 +1,30 @@
 package com.vmesteonline.be.jdo2.dialog;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.vmesteonline.be.jdo2.VoFileAccessRecord;
+import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.DialogMessage;
 
 @PersistenceCapable
 public class VoDialogMessage {
 
-	public DialogMessage getDialogMessage(){
-		return new DialogMessage(id, dialogId, authorId, content, createDate);
+	public DialogMessage getDialogMessage( PersistenceManager pm){
+		List<Attach> docs = new ArrayList<Attach>();
+		List<Attach> imgs = new ArrayList<Attach>();
+		for( Long farId : attachs ){
+			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
+			( att.isImage() ?  imgs : docs ).add( att.getAttach() );
+		}
+		return new DialogMessage(id, dialogId, authorId, content, createDate, imgs, docs);
 	} 
 	
 	public VoDialogMessage(long dialogId, long authorId, String content) {
@@ -40,6 +52,19 @@ public class VoDialogMessage {
 	@Persistent
 	@Unindexed
 	private int createDate;
+	
+	@Persistent
+	@Unindexed
+	private List<Long> attachs;
+
+	
+	public List<Long> getAttachs() {
+		return attachs;
+	}
+
+	public void setAttachs(List<Long> attachs) {
+		this.attachs = attachs;
+	}
 
 	public long getDialogId() {
 		return dialogId;

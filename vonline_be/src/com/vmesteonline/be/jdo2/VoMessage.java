@@ -1,7 +1,9 @@
 package com.vmesteonline.be.jdo2;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -15,6 +17,7 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.data.VoDatastoreHelper;
+import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.utils.VoHelper;
@@ -143,9 +146,19 @@ public class VoMessage extends VoBaseMessage {
 		return getRecipient() == 0 || getRecipient() == userId || getAuthorId().getId() == userId;
 	}
 
-	public Message getMessage() {
+	public Message getMessage( PersistenceManager pm ) {
+		List<Attach> imgs = new ArrayList<Attach>();
+		for( Long farId : images ){
+			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
+			imgs.add( att.getAttach() );
+		}
+		List<Attach> docs = new ArrayList<Attach>();
+		for( Long farId : documents ){
+			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
+			docs.add( att.getAttach() );
+		}
 		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
-				getUnlikes(), links, null, null, visibleOffset, null, images, documents);
+				getUnlikes(), links, null, null, visibleOffset, null, imgs, docs);
 	}
 
 	public long getApprovedId() {

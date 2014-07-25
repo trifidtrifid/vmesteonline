@@ -9,10 +9,11 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.mail.internet.ContentType;
-import com.google.appengine.api.datastore.Key;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
+import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.utils.StorageHelper;
 
 @PersistenceCapable
@@ -126,5 +127,17 @@ public class VoFileAccessRecord {
 			versions = new HashMap<String,VoFileAccessRecord>(); 
 		versions.put( versionKey, ver);
 		return ver;
+	}
+
+	public boolean isImage() {
+		return contentType.startsWith("image");
+	}
+
+	public Attach getAttach() {
+		return new Attach(publicFileName, contentType, getURL());
+	}
+	
+	public String getURL() {
+		return "/file/" + StorageHelper.numberToString(id.getId());
 	}
 }

@@ -14,6 +14,13 @@ struct UserMessage {
 	2: bool likes,
 	3: bool unlikes 
 }
+
+struct Attach {
+	1:string fileName,
+	2:string contentType,
+	3:string URL
+}
+
 struct Message {
 	1: i64 id,
 	2: i64 parentId, // 'идентификатор родительского сообщения, NULL для корневого со',
@@ -33,8 +40,8 @@ struct Message {
 	16: UserMessage userMessage, //how user treats the message
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
 	18: bedata.ShortUserInfo userInfo,
-	19: list<string> images, 
-	20: list<string> documents, 
+	19: list<Attach> images, 
+	20: list<Attach> documents, 
 	
 } // 'сообщение';
 		
@@ -75,7 +82,6 @@ struct Topic {
 	14: Poll poll, 	
 }
 
-
 struct TopicListPart {
 	1:list<Topic> topics,
 	2:i32	totalSize //size of full list
@@ -108,15 +114,18 @@ struct DialogMessage {
 	3:i64 author,
 	4:string content,
 	5:i32 created,
+	6: list<Attach> images, 
+	7: list<Attach> documents,  
 }
 
 service DialogService {
 	//DIALOGUE implementation methods
 	//method returns dilaog ID that just created or thorw an exception if a parameter is incorrect
 	Dialog getDialog( 1:list<i64> users, 2:i32 after ) throws (1:error.InvalidOperation exc),
+	Dialog getDialogById( 1:i64 dialogId ) throws (1:error.InvalidOperation exc),
 	list<Dialog> getDialogs(1:i32 after ) throws (1:error.InvalidOperation exc),
 	list<DialogMessage> getDialogMessages( 1:i64 dialogID, 2:i32 afterDate, 3:i32 tailSize) throws (1:error.InvalidOperation exc),
-	i64 postMessage( 1:i64 dialogId, 2:string content ) throws (1:error.InvalidOperation exc),
+	i64 postMessage( 1:i64 dialogId, 2:string content, 3:list<string> attachments ) throws (1:error.InvalidOperation exc),
 	void updateDialogMessage( 1:i64 dlgMsgId, 2:string content ) throws (1:error.InvalidOperation exc),
 	void deleteDialogMessage( 1:i64 dlgMsgId ) throws (1:error.InvalidOperation exc),
 	void addUserToDialog(1:i64 dialogId, 2:i64 userId) throws (1:error.InvalidOperation exc),

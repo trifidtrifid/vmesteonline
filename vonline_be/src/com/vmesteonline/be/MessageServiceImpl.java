@@ -527,7 +527,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		mlp.totalSize = lst.size();
 		for (VoMessage voMessage : lst) {
 			VoUserMessage voUserMsg = VoDatastoreHelper.<VoUserMessage> getUserMsg(VoUserMessage.class, userId, voMessage.getId(), pm);
-			Message msg = voMessage.getMessage();
+			Message msg = voMessage.getMessage(pm);
 			msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId());
 			msg.userMessage = null == voUserMsg ? null : voUserMsg.getUserMessage();
 			mlp.addToMessages(msg);

@@ -1,11 +1,15 @@
 package com.vmesteonline.be.jdo2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.Topic;
 
@@ -46,8 +50,19 @@ public class VoTopic extends VoBaseMessage {
 
 	public Topic getTopic(long userId, PersistenceManager pm) {
 
+		List<Attach> imgs = new ArrayList<Attach>();
+		for( Long farId : images ){
+			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
+			imgs.add( att.getAttach() );
+		}
+		List<Attach> docs = new ArrayList<Attach>();
+		for( Long farId : documents ){
+			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
+			docs.add( att.getAttach() );
+		}
+		
 		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, new String(content), likesNum,
-				unlikesNum, links, null, null, 0, null, images, documents);
+				unlikesNum, links, null, null, 0, null, imgs, docs);
 
 		Topic tpc = new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(),
 				getUnlikes(), null, null, null);
