@@ -1241,7 +1241,8 @@ angular.module('forum.controllers', ['ui.select2'])
                 var newDialogMessage = new com.vmesteonline.be.messageservice.DialogMessage();
                 newDialogMessage.content = dialog.messageText;
                 newDialogMessage.author = $rootScope.base.me.id;
-                newDialogMessage.created = new Date();
+
+                newDialogMessage.created = Date.parse(new Date())/1000;
                 newDialogMessage.authorProfile = userClient.getUserProfile(newDialogMessage.author);
 
                 dialogClient.postMessage($stateParams.dialogId, dialog.messageText);
