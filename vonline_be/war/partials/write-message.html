@@ -10,7 +10,8 @@
               onblur="if(this.value=='') this.value='Сообщение';"
               onfocus="if(this.value=='Сообщение') this.value='';" >Сообщение</textarea>
 
-    <div id="attach-area-writeMessage" class="attach-area"></div>
+    <div class="attach-area" id="attach-area-0000"></div>
+    <div class="attach-area attach-area-doc" id="attach-doc-area-0000"></div>
 
     <span class="input-group-btn write-message-bottom">
         <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="writeMessage.send()" > <!-- ui-sref="dialog-single({ dialogId : {{writeMessage.dialogId}} })" -->
@@ -27,7 +28,7 @@
 
             <ul class="dropdown-menu dropdown-blue">
                 <li><a href="#">Документ</a></li>
-                <li><input id="attachImage-writeMessage" type="file"/></li>
+                <li><input id="attachImage-0000" type="file"/></li>
             </ul>
         </div>
     </span>

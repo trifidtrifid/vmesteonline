@@ -1164,7 +1164,7 @@ angular.module('forum.controllers', ['ui.select2'])
         settings.birthday = "";
 
     })
-    .controller('dialogsController', function($rootScope){
+    .controller('dialogsController', function($rootScope,$state){
         $rootScope.isTopSearchShow = false;
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.leftbar.tab = 0;
@@ -1184,6 +1184,26 @@ angular.module('forum.controllers', ['ui.select2'])
         var dialogs = this;
 
         dialogs.dialogsList = dialogClient.getDialogs(0);
+
+        dialogs.goToSingleDialog = function(dialogId){
+            var dialogsListLength = dialogs.dialogsList.length,
+                usersInfoArray = [],
+                usersInfoLength,
+                usersId = [];
+            for(var i = 0; i < dialogsListLength; i++){
+                if(dialogs.dialogsList[i].id == dialogId){
+                    usersInfoArray = dialogs.dialogsList[i].users;
+                }
+            }
+            if(usersInfoArray){
+                usersInfoLength = usersInfoArray.length;
+                for(var i = 0; i < usersInfoLength; i++){
+                    usersId[i] = usersInfoArray[i].id
+                }
+            }
+            $rootScope.currentDialog = dialogClient.getDialog(usersId);
+            $state.go('dialog-single',{ dialogId : dialogId});
+        };
         //alert(dialogs.dialogsList[0].id+" 1 "+dialogs.dialogsList.users+" 2 "+ dialogs.dialogsList.createDate);
         /*if(dialogs.dialogsList.length > 0){
             dialogs.dialogsList.usersForShow = dialogs.dialogsList.users[0];
@@ -1194,13 +1214,14 @@ angular.module('forum.controllers', ['ui.select2'])
     .controller('dialogController',function($rootScope,$stateParams) {
         $rootScope.base.mainContentTopIsHide = true;
         var dialog = this;
-        dialog.users = $rootScope.currentDialog.users;
+        /*dialog.users = $rootScope.currentDialog.users;
         var dialogUsersLength = dialog.users.length;
         for(var i = 0; i < dialogUsersLength; i++){
             if (dialog.users[i].id == $rootScope.base.me.id){
                 dialog.users.splice(i,1);
             }
-        }
+        }*/
+        initAttachImage($('#attachImage-000'),$('#attach-area-000'));
 
         if ($stateParams.dialogId){
             dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId,0);
@@ -1208,6 +1229,25 @@ angular.module('forum.controllers', ['ui.select2'])
                 dialog.authors = [];
             for(var i = 0; i < privateMessagesLength; i++){
                 dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
+            }
+        }
+
+        dialog.messageText = TEXT_DEFAULT_1;
+        dialog.sendMessage = function(){
+            if(dialog.messageText != TEXT_DEFAULT_1 && dialog.messageText != ""){
+
+                var newDialogMessage = new com.vmesteonline.be.messageservice.DialogMessage();
+                newDialogMessage.content = dialog.messageText;
+                newDialogMessage.author = $rootScope.base.me.id;
+                newDialogMessage.created = new Date();
+                newDialogMessage.authorProfile = userClient.getUserProfile(newDialogMessage.author);
+
+                dialogClient.postMessage($stateParams.dialogId, dialog.messageText);
+                dialog.privateMessages.push(newDialogMessage);
+
+                dialog.messageText = TEXT_DEFAULT_1;
+                cleanAttached($('#attach-area-000'));
+                cleanAttached($('#attach-doc-area-000'));
             }
         }
 
@@ -1240,13 +1280,14 @@ angular.module('forum.controllers', ['ui.select2'])
             writeMessage.dialogId = dialog.id;
         };
 
-        initAttachImage($('#attachImage-writeMessage'),$('#attach-area-writeMessage'));
+        initAttachImage($('#attachImage-0000'),$('#attach-area-0000'));
+        //initAttachdocs($('#attachImage-0000'),$('#attach-area-0000'));
 
         //var dialog = dialogClient.getDialog(userId);
         //writeMessage.dialogId = dialog.id;
 
         writeMessage.send = function(){
-            if(writeMessage.newMessage.text == "Сообщение"){
+            if(writeMessage.newMessage.text == TEXT_DEFAULT_3){
                 writeMessage.isError = true;
                 writeMessage.errorText = "Вы не ввели сообщение";
             }else if(!dialog || dialog.id == 0){
@@ -1254,6 +1295,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 writeMessage.errorText = "Вы не указали получателя";
             }else{
                 dialogClient.postMessage(dialog.id, writeMessage.newMessage.text);
+                cleanAttached($('#attach-area-0000'));
                 $state.go('dialog-single',{ 'dialogId' : dialog.id});
             }
         }

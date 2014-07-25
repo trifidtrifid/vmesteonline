@@ -2,18 +2,17 @@
 <section class="dialog page">
         <div class="clearfix">
             <div class="private-message-single"  ng-repeat="message in dialog.privateMessages">
-                <div class="pull-right">{{message.created | date}}</div>
+                <div class="pull-right">{{message.created*1000 | date:'dd.MM.yy'}}</div>
                 <div class="private-message-left pull-left">
                     <div class="private-message-ava pull-left">
                         <div class="avatar" style="background-image: url({{message.authorProfile.userInfo.avatar}})"></div>
                     </div>
                     <div class="private-message-author">
-                        <div><a href="#">{{message.authorProfile.userInfo.firstName + " "+ message.authorProfile.userInfo.lastName}}</a></div>
+                        <div><a ui-sref="profile({ userId : {{ message.authorProfile.userInfo.userId }} })">{{message.authorProfile.userInfo.firstName + " "+ message.authorProfile.userInfo.lastName}}</a></div> <!--  -->
                         <p>{{message.content}}</p>
 
                     </div>
                 </div>
-
             </div>
         </div>
     <div class="dialog-send">
@@ -26,8 +25,30 @@
             <!--<img src="../../i/avatars/avatar3.png" alt="аватар"/>-->
         </div>
         <div class="dialog-send-center">
-            <textarea></textarea>
-            <a class="btn btn-sm btn-primary no-border" href="#">Отправить</a>
+            <textarea ng-model="dialog.messageText" class="no-resize" ng-keyup="base.messageChange($event,1)"
+                      onblur="if(this.value=='') this.value='Написать сообщение';"
+                      onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
+
+            <div class="attach-area" id="attach-area-000"></div>
+            <div class="attach-area attach-area-doc" id="attach-doc-area-000"></div>
+
+            <div class="dialog-send-bottom">
+                <div class="btn-group attach-dropdown pull-right">
+                    <button data-toggle="dropdown"
+                            class="btn btn-info btn-sm dropdown-toggle no-border">
+                        <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-yellow">
+
+                        <li><input id="attachImage-000" type="file"/></li>
+
+                        <li><a href="#">Документ</a></li>
+                    </ul>
+                </div>
+
+                <a class="btn btn-sm btn-primary no-border" ng-click="dialog.sendMessage()" href="#">Отправить</a>
+            </div>
         </div>
     </div>
 

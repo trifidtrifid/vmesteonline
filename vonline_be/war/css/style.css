@@ -855,7 +855,9 @@ h1 {
 .dialog-send .dialog-send-center textarea {
   display: block;
   width: 100%;
-  margin-bottom: 10px;
+}
+.dialog-send .dialog-send-center .dialog-send-bottom {
+  margin-top: 10px;
 }
 .dialog,
 .private-messages {
@@ -871,7 +873,6 @@ h1 {
   padding: 10px;
   overflow: auto;
   border-bottom: 1px solid #ccc;
-/* nextdoors */
 }
 .dialog .private-message-single:first-child,
 .private-messages .private-message-single:first-child {
@@ -896,6 +897,10 @@ h1 {
 .dialog .private-message-single .private-message-right,
 .private-messages .private-message-single .private-message-right {
   margin-left: 320px;
+}
+.dialog .private-message-single {
+  cursor: default;
+/* nextdoors */
 }
 .nextdoors {
   padding: 5px;
