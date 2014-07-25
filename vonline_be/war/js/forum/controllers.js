@@ -1043,7 +1043,33 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $rootScope.chageIndex = 0;
 
-    })
+
+        $('#test').Jcrop({
+            aspectRatio: 1,
+            onChange: updateCoords,
+            onSelect: updateCoords
+        });
+
+        function updateCoords(c) {
+            $('#x').val(c.x);
+            $('#y').val(c.y);
+            $('#w').val(c.w);
+            $('#h').val(c.h);
+            $('#x2').val(c.x2);
+            $('#y2').val(c.y2);
+            var rx = 200 / c.w; // 200 - размер окна предварительного просмотра
+            var ry = 200 / c.h;
+            $('#preview').css({
+                width: Math.round(rx * 800) + 'px',
+                height: Math.round(ry * 600) + 'px',
+                marginLeft: '-' + Math.round(rx * c.x) + 'px',
+                marginTop: '-' + Math.round(ry * c.y) + 'px'
+            });
+        };
+
+
+
+})
     .controller('SettingsController',function($rootScope,$scope) {
         $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
@@ -1163,7 +1189,9 @@ angular.module('forum.controllers', ['ui.select2'])
         settings.birthday = settings.userInfo.birthday :
         settings.birthday = "";
 
-        $('#settings-input-3').datepicker($.datepicker.regional['fr']);
+        $('#settings-input-3').datepicker({changeMonth:true, changeYear:true,yearRange:'c-100:+c'});
+        $.datepicker.setDefaults($.datepicker.regional['ru']);
+
 
     })
     .controller('dialogsController', function($rootScope,$state){
@@ -1307,14 +1335,7 @@ angular.module('forum.controllers', ['ui.select2'])
     .controller('changeAvatarController',function($state,$rootScope){
         var changeAvatar = this;
 
-        var base64Src = [],
-        base64Src2 = [];
         changeAvatar.save = function(){
-
-            $('.logo-container>img').detach();
-            $('.logo-container').prepend('<img>');
-            $('.logo-container>img').addClass('new').css('background-image',base64Src[$rootScope.chageIndex-1])
-                .attr('src',base64Src2[$rootScope.chageIndex-1]);
 
             dialog.dialog('close');
             $state.go('profile');
@@ -1324,7 +1345,6 @@ angular.module('forum.controllers', ['ui.select2'])
             modal: true,
             width: 500,
             position: ['center',100],
-            //title: "<div class='widget-header widget-header-small'><h4 class='smaller'><i class='icon-ok'></i> jQuery UI Dialog</h4></div>",
             title_html: false,
             closeText: "",
             create: function(event,ui){
@@ -1338,33 +1358,30 @@ angular.module('forum.controllers', ['ui.select2'])
                     thumbnail:'large',
                     icon_remove:null
                 }).on('change', function(){
-                    $('.btn-save-avatar').removeClass('hidden');
 
-                    //$('.logo-container>img').hide();
+                    $('.loadAvatar-area').addClass('hidden');
+                    $('.crop-area').removeClass('hidden');
 
                     setTimeout(saveNewAva,1000);
 
                      function saveNewAva(){
-                         $('.load-avatar').find('.file-label img').addClass('new-img-'+$rootScope.chageIndex);
-                         base64Src[$rootScope.chageIndex] = $('.load-avatar').find('.file-label .new-img-'+$rootScope.chageIndex).css('background-image');
-                         base64Src2[$rootScope.chageIndex] = $('.load-avatar').find('.file-label .new-img-'+$rootScope.chageIndex).attr('src');
 
-                         $rootScope.chageIndex++;
-                         //base64Src = $('.load-avatar .file-name img').css('background-image');
                      /*var imgBase64 = $('.profile .ace-file-input').find('.file-name img').css('background-image');
                      var url = fileClient.saveFileContent(imgBase64,false);
-
                      userClient.updateUserAvatar(url);*/
 
-                         $('.new-img-'+$rootScope.chageIndex).Jcrop({
+                         var bg = $('.load-avatar').find('.file-label img').css('background-image'),
+                             src = $('.load-avatar').find('.file-label img').attr('src');
+
+                         $('#image-for-crop').css('background-image',bg).attr('src',src);
+                         //alert(fileClient.saveFileContent(bg,true));
+                         $('#image-for-crop').Jcrop({
                              aspectRatio: 0,
                              onChange: updateCoords,
                              onSelect: updateCoords
                          });
-                         $('.load-avatar').find('.file-label .new-img-'+$rootScope.chageIndex).removeClass('new-img-'+$rootScope.chageIndex);
+
                      }
-
-
 
                     function updateCoords(c) {
                         $('#x').val(c.x);

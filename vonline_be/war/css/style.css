@@ -1058,3 +1058,9 @@ h1 {
 .ui-dialog-content {
   text-align: center;
 }
+#image-for-crop {
+  min-width: 300px;
+  min-height: 300px;
+  width: auto !important;
+  height: auto !important;
+}
