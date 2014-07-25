@@ -1481,19 +1481,22 @@ function initAttachImage(selector,attachAreaSelector){
             return true;
         }
     }).on('change', function(){
-        var fileLabel = $(this).find('+.file-label');
+        var fileLabel = $(this).find('+.file-label'),
+        type = selector[0].files[0].type;
+
         fileLabel.attr('data-title',title).removeClass('hide-placeholder');
         fileLabel.find('.file-name').hide();
 
         setTimeout(copyImage,200);
 
         function copyImage() {
-            var copyImgSrc = fileLabel.find('.file-name img').css('background-image');
+            var copyImgSrc = fileLabel.find('.file-name img').css('background-image'),
+                fileName = fileLabel.find('.file-name').attr('data-title');
 
             //$('.attach-area')
             attachAreaSelector.append("<span class='attach-item new-attached'>" +
                 "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                "<img class='attached-img' style='background-image:"+ copyImgSrc +"'></span>");
+                "<img data-title='"+ fileName +"' data-type='"+ type +"' class='attached-img' style='background-image:"+ copyImgSrc +"'></span>");
 
             $('.new-attached .remove-attach-img').click(function(e){
                 e.preventDefault();
@@ -1536,8 +1539,11 @@ function initAttachDoc(selector,attachAreaSelector){
 
             var reader = new FileReader();
             reader.readAsBinaryString(selector[0].files[0]);
+            var dataType = selector[0].files[0].type;
             reader.onload = function(e){
-                docsBase64[attachAreaSelector][ind++] = base64encode(reader.result);
+                docsBase64[attachAreaSelector][ind++] = "url(name:"+ base64encode(docName)
+                    +";data:"+ dataType +";content:"+base64encode(reader.result)+")";
+                //alert(docsBase64[attachAreaSelector][ind-1]);
             };
 
             attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
@@ -1830,7 +1836,17 @@ function getAttachedImages(selector){
     var imgList = [], ind = 0;
 
     selector.find('img').each(function(){
-        imgList[ind++] = $(this).css('background-image');
+        var bgImg = $(this).css('background-image'),
+            name = $(this).attr('data-title'),
+            type = $(this).attr('data-type'),
+            result;
+
+        var i = bgImg.indexOf('base64,');
+        result = bgImg.slice(i+7);
+
+        result = 'url(name:'+ base64encode(name) +';data:'+ type +';content:'+result+")";
+
+        imgList[ind++] = result;
     });
 
     return imgList;
