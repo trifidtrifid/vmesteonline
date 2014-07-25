@@ -14,11 +14,11 @@
             <div class="private-message-single" ng-click="dialogs.goToSingleDialog(dialog.id)" ng-repeat="dialog in dialogs.dialogsList"> <!-- ui-sref="dialog-single( {dialogId : {{ dialog.id }} })" -->
                 <div class="private-message-left pull-left">
                     <div class="private-message-ava pull-left">
-                        <div class="avatar" style="background-image: url({{dialog.users[0].avatar}})"></div>
+                        <div class="avatar" style="background-image: url({{dialog.anotherUser.avatar}})"></div>
                         <div>{{dialog.users.length}} участников</div>
                     </div>
                     <div class="private-message-author">
-                        <div><a ui-sref="profile({ userId : {{ dialog.users[0].id }} })" ng-click="$event.stopPropagation()">{{dialog.users[0].firstName + " "+ dialog.users[0].lastName}}</a></div>
+                        <div><a ui-sref="profile({ userId : {{ dialog.anotherUser.id }} })" ng-click="$event.stopPropagation()">{{dialog.anotherUser.firstName + " "+ dialog.anotherUser.lastName}}</a></div>
                         <div>{{dialog.createDate*1000 | date:'dd.MM.yy'}}</div>
                     </div>
                 </div>

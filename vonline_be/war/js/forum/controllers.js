@@ -1184,10 +1184,15 @@ angular.module('forum.controllers', ['ui.select2'])
         var dialogs = this;
 
         dialogs.dialogsList = dialogClient.getDialogs(0);
+        var dialogsListLength = dialogs.dialogsList.length;
+        for(var i = 0; i < dialogsListLength; i++){
+            (dialogs.dialogsList[i].users[0].id != $rootScope.base.me.id) ?
+                dialogs.dialogsList[i].anotherUser = dialogs.dialogsList[i].users[0] :
+                dialogs.dialogsList[i].anotherUser = dialogs.dialogsList[i].users[1];
+        }
 
         dialogs.goToSingleDialog = function(dialogId){
-            var dialogsListLength = dialogs.dialogsList.length,
-                usersInfoArray = [],
+            var usersInfoArray = [],
                 usersInfoLength,
                 usersId = [];
             for(var i = 0; i < dialogsListLength; i++){
@@ -1204,11 +1209,6 @@ angular.module('forum.controllers', ['ui.select2'])
             $rootScope.currentDialog = dialogClient.getDialog(usersId);
             $state.go('dialog-single',{ dialogId : dialogId});
         };
-        //alert(dialogs.dialogsList[0].id+" 1 "+dialogs.dialogsList.users+" 2 "+ dialogs.dialogsList.createDate);
-        /*if(dialogs.dialogsList.length > 0){
-            dialogs.dialogsList.usersForShow = dialogs.dialogsList.users[0];
-        }*/
-
 
     })
     .controller('dialogController',function($rootScope,$stateParams) {
