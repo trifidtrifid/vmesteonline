@@ -16,23 +16,34 @@
                     </div>
                     
                     <div class="user-body-right">
-                        <div><span>День рождения:</span>{{profile.userProfile.userInfo.birthday}}</div>
-                        <div><span>Пол:</span>{{profile.userProfile.userInfo.gender}}</div>
+                        <div class="profile-item" ng-show="">
+                            <div ng-show="profile.userProfile.userInfo.birthday != null"><span>День рождения:</span>{{profile.userProfile.userInfo.birthday}}</div>
+                            <div ng-show="profile.userProfile.userInfo.gender != null"><span>Пол:</span>{{profile.userProfile.userInfo.gender}}</div>
+                        </div>
 
-                        <h3>Контактная информация</h3>
-                        <div><span>Телефон:</span> {{ profile.userContacts.mobilePhone }}</div>
-                        <div><span>Email:</span> {{ profile.userContacts.email }}</div>
+                        <div class="profile-item" ng-show="profile.userContacts != null">
+                            <h3>Контактная информация</h3>
+                            <div ng-show="profile.userContacts.mobilePhone != null"><span>Телефон:</span> {{ profile.userContacts.mobilePhone }}</div>
+                            <div><span>Email:</span> {{ profile.userContacts.email }}</div>
+                        </div>
 
-                        <h3>Семья</h3>
-                        <div><span>Семейное положение:</span>{{profile.userProfile.family.relations}}</div>
-                        <div><span>Ребенок:</span> {{profile.userProfile.family.childs}}</div>
-                        <div><span>Питомец:</span> {{profile.userProfile.family.pets}}</div>
+                        <div class="profile-item" ng-show="profile.userProfile.family.relations != null && profile.userProfile.family.childs != null
+                        && profile.userProfile.family.pets != null">
+                            <h3>Семья</h3>
+                            <div ng-show="profile.userProfile.family.relations != null"><span>Семейное положение:</span>{{profile.userProfile.family.relations}}</div>
+                            <div ng-show="profile.userProfile.family.childs != null"><span>Ребенок:</span> {{profile.userProfile.family.childs}}</div>
+                            <div ng-show="profile.userProfile.family.pets != null"><span>Питомец:</span> {{profile.userProfile.family.pets}}</div>
+                        </div>
 
-                        <h3>Интересы</h3>
-                        <p>{{profile.userProfile.interests.userInterests}}</p>
+                        <div class="profile-item" ng-show="profile.userProfile.interests != null">
+                            <h3>Интересы</h3>
+                            <p>{{profile.userProfile.interests.userInterests}}</p>
+                        </div>
 
-                        <h3>Домашний адрес</h3>
-                        <div>{{profile.userContacts.homeAddress.street.name + " "+ profile.userContacts.homeAddress.building.fullNo}}</div>
+                        <div class="profile-item last" ng-show="profile.userContacts.homeAddress != null">
+                            <h3>Домашний адрес</h3>
+                            <div>{{profile.userContacts.homeAddress.street.name + " "+ profile.userContacts.homeAddress.building.fullNo}}</div>
+                        </div>
 
                         <div class="home-map"><img src="./i/map_home.jpg" alt="карта"/></div>
                     </div>

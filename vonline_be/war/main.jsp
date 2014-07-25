@@ -55,6 +55,7 @@
 <head>
 <meta charset="utf-8" />
 <title>Главная</title>
+    <link rel="stylesheet" href="css/lib/jquery-ui-1.10.3.full.min.css" />
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>
 <link rel="stylesheet" href="css/lib/jquery.Jcrop.css"/>
@@ -229,6 +230,7 @@
 	<!-- общие библиотеки -->
 	<script src="js/lib/bootstrap.min.js"></script>
     <script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
+    <script src="js/lib/jquery.ui.datepicker-ru.js"></script>
 	<script src="js/lib/ace-extra.min.js"></script>
 	<%--<script src="js/lib/ace-elements.min.js"></script>--%>
 	<script src="js/ace-elements.js"></script>

@@ -1163,6 +1163,8 @@ angular.module('forum.controllers', ['ui.select2'])
         settings.birthday = settings.userInfo.birthday :
         settings.birthday = "";
 
+        $('#settings-input-3').datepicker($.datepicker.regional['fr']);
+
     })
     .controller('dialogsController', function($rootScope,$state){
         $rootScope.isTopSearchShow = false;
@@ -1541,7 +1543,7 @@ function initAttachDoc(selector,attachAreaSelector){
             reader.readAsBinaryString(selector[0].files[0]);
             var dataType = selector[0].files[0].type;
             reader.onload = function(e){
-                docsBase64[attachAreaSelector][ind++] = "url(name:"+ base64encode(docName)
+                docsBase64[attachAreaSelector][ind++] = "obj(name:"+ base64encode(docName)
                     +";data:"+ dataType +";content:"+base64encode(reader.result)+")";
                 //alert(docsBase64[attachAreaSelector][ind-1]);
             };
@@ -1844,7 +1846,7 @@ function getAttachedImages(selector){
         var i = bgImg.indexOf('base64,');
         result = bgImg.slice(i+7);
 
-        result = 'url(name:'+ base64encode(name) +';data:'+ type +';content:'+result+")";
+        result = 'obj(name:'+ base64encode(name) +';data:'+ type +';content:'+result+")";
 
         imgList[ind++] = result;
     });
