@@ -1874,12 +1874,13 @@ function getAttachedImages(selector){
             result,content;
 
         var i = bgImg.indexOf('base64,');
-        content = bgImg.slice(i+7);
+        content = bgImg.slice(i+7,bgImg.length-1);
 
         result = new com.vmesteonline.be.messageservice.Attach();
         result.fileName = base64encode(name);
         result.contentType = type;
         result.URL = content;
+        //console.log(content);
         //result = 'obj(name:'+ base64encode(name) +';data:'+ type +';content:'+content+")";
 
         imgList[ind++] = result;
