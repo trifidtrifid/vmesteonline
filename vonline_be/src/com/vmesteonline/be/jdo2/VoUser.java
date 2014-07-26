@@ -209,17 +209,22 @@ public class VoUser extends GeoLocation {
 
 		this.address = userAddress;
 
-		this.setLatitude(building.getLongitude());
-		this.setLongitude(building.getLatitude());
+		this.setLatitude(building.getLatitude());
+		this.setLongitude(building.getLongitude());
 		if (null != groups && !groups.isEmpty()) {
 			for (VoUserGroup ug : groups) {
-				ug.setLatitude(building.getLongitude());
-				ug.setLongitude(building.getLatitude());
+				ug.setLatitude(building.getLatitude());
+				ug.setLongitude(building.getLongitude());
+				pm.makePersistent(ug);
 			}
 		} else {
 			groups = new ArrayList<VoUserGroup>();
 			for (VoGroup group : Defaults.defaultGroups) {
-				groups.add(new VoUserGroup(this, group));
+				VoUserGroup ug = new VoUserGroup(this, group);
+				ug.setLatitude(building.getLatitude());
+				ug.setLongitude(building.getLongitude());
+				pm.makePersistent(ug);
+				groups.add(ug);
 			}
 		}
 

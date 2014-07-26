@@ -61,9 +61,9 @@ public class ImageConverterVersionCreator implements VersionCreator {
 				Image oldImage = ImagesServiceFactory.makeImage(baos.toByteArray());
 				
 		    if( scale != null ) 
-		    	oldImage = imagesService.applyTransform(scale.getTransform(), oldImage);
+		    	oldImage = imagesService.applyTransform(scale.getTransform(oldImage), oldImage);
 		    if( crop != null )
-		    	oldImage = imagesService.applyTransform(crop.getTransform(), oldImage);
+		    	oldImage = imagesService.applyTransform(crop.getTransform(oldImage), oldImage);
 		    
 		    VoFileAccessRecord newVoFileAccessRecord =  new VoFileAccessRecord(original.getUserId(), original.isPublic(), 
 		    		original.getFileName(), original.getContentType(),
@@ -118,9 +118,9 @@ public class ImageConverterVersionCreator implements VersionCreator {
 			this.x = x;
 			this.y = y;
 		}
-		public String getVersionModificator(){ return x +"x"+ y;}
+		public String getVersionModificator(){ return "sc["+x +"x"+ y+"]";}
 		
-		public Transform getTransform(){
+		public Transform getTransform(Image img){
 			return ImagesServiceFactory.makeResize(x, y);
 		} 
 	}
@@ -135,9 +135,13 @@ public class ImageConverterVersionCreator implements VersionCreator {
 			Xrb = xrb;
 			Yrb = yrb;
 		}
-		public String getVersionModificator(){ return Xlt +","+ Ylt + "," + Xrb +","+Yrb;}
-		public Transform getTransform(){
-			return ImagesServiceFactory.makeCrop(Xlt, Ylt, Xrb, Yrb);
+		public String getVersionModificator(){ return "cr["+Xlt +","+ Ylt + "," + Xrb +","+Yrb+"]";}
+		public Transform getTransform(Image img){
+			float width = img.getWidth();
+			float height = img.getHeight();
+			return ImagesServiceFactory.makeCrop(
+					Math.min(((float)Xlt)/width,1.0F) , Math.min(((float)Ylt)/height,1.0F), 
+							Math.min(((float)Xrb)/width,1.0F), Math.min(((float)Yrb)/height,1.0F));
 		}
 	}
 	//=================================================================================================

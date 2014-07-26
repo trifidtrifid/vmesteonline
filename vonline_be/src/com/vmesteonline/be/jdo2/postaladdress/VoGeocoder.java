@@ -96,9 +96,8 @@ public class VoGeocoder {
 										pm.deletePersistent(street);
 									}
 								}
-								
-								building.setLocation( new BigDecimal(longitude), new BigDecimal(lattitude));
 							}
+						building.setLocation( new BigDecimal(longitude), new BigDecimal(lattitude));
 						
 						return new Pair<String, String>(longitude, lattitude);
 					}
