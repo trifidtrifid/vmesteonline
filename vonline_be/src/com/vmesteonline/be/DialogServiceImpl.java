@@ -84,7 +84,7 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 				throw new InvalidOperation(VoError.IncorrectParametrs, "User not involved in this dialog.");
 			
 			return VoHelper.convertMutableSet( vdlg.getMessages( afterDate, lastCount, pm ), 
-					new ArrayList<DialogMessage>(), new DialogMessage());
+					new ArrayList<DialogMessage>(), new DialogMessage(), pm);
 		
 		} finally {
 			pm.close();
