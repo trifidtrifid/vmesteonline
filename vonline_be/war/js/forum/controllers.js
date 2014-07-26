@@ -1236,7 +1236,7 @@ angular.module('forum.controllers', ['ui.select2'])
                     usersId[i] = usersInfoArray[i].id
                 }
             }
-            $rootScope.currentDialog = dialogClient.getDialog(usersId);
+            //$rootScope.currentDialog = dialogClient.getDialog(usersId);
             $state.go('dialog-single',{ dialogId : dialogId});
         };
 
@@ -1244,17 +1244,20 @@ angular.module('forum.controllers', ['ui.select2'])
     .controller('dialogController',function($rootScope,$stateParams) {
         $rootScope.base.mainContentTopIsHide = true;
         var dialog = this;
-        /*dialog.users = $rootScope.currentDialog.users;
+        var currentDialog = dialogClient.getDialogById($stateParams.dialogId);
+        dialog.users = currentDialog.users;
         var dialogUsersLength = dialog.users.length;
         for(var i = 0; i < dialogUsersLength; i++){
-            if (dialog.users[i].id == $rootScope.base.me.id){
+            console.log(dialog.users[i].id+" "+$rootScope.base.me.id);
+            /*if (dialog.users[i].id == $rootScope.base.me.id){
                 dialog.users.splice(i,1);
-            }
-        }*/
+            }*/
+        }
         initAttachImage($('#attachImage-000'),$('#attach-area-000'));
+        initAttachDoc($('#attachDoc-000'),$('#attach-doc-area-000'));
 
         if ($stateParams.dialogId){
-            dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId,0);
+            dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId);
             var privateMessagesLength = dialog.privateMessages.length;
                 dialog.authors = [];
             for(var i = 0; i < privateMessagesLength; i++){
@@ -1272,8 +1275,9 @@ angular.module('forum.controllers', ['ui.select2'])
 
                 newDialogMessage.created = Date.parse(new Date())/1000;
                 newDialogMessage.authorProfile = userClient.getUserProfile(newDialogMessage.author);
+                var attach = getAttachedImages($('#attachImage-000'),$('#attach-area-000')).concat(getAttachedDocs($('#attachDoc-000'),$('#attach-doc-area-000')));
 
-                dialogClient.postMessage($stateParams.dialogId, dialog.messageText);
+                dialogClient.postMessage($stateParams.dialogId, dialog.messageText,attach);
                 dialog.privateMessages.push(newDialogMessage);
 
                 dialog.messageText = TEXT_DEFAULT_1;
@@ -1307,12 +1311,12 @@ angular.module('forum.controllers', ['ui.select2'])
         }
 
         writeMessage.change = function(){
-            $rootScope.currentDialog = dialog = dialogClient.getDialog(usersToInt(writeMessage.users),0);
+            dialog = dialogClient.getDialog(usersToInt(writeMessage.users),0);
             writeMessage.dialogId = dialog.id;
         };
 
         initAttachImage($('#attachImage-0000'),$('#attach-area-0000'));
-        //initAttachdocs($('#attachImage-0000'),$('#attach-area-0000'));
+        initAttachDoc($('#attachDoc-0000'),$('#attach-doc-area-0000'));
 
         //var dialog = dialogClient.getDialog(userId);
         //writeMessage.dialogId = dialog.id;
@@ -1325,8 +1329,10 @@ angular.module('forum.controllers', ['ui.select2'])
                 writeMessage.isError = true;
                 writeMessage.errorText = "Вы не указали получателя";
             }else{
-                dialogClient.postMessage(dialog.id, writeMessage.newMessage.text);
+                var attach = getAttachedImages($('#attachImage-0000'),$('#attach-area-0000')).concat(getAttachedDocs($('#attachDoc-0000'),$('#attach-doc-area-0000')));
+                dialogClient.postMessage(dialog.id, writeMessage.newMessage.text,attach);
                 cleanAttached($('#attach-area-0000'));
+                cleanAttached($('#attach-doc-area-0000'));
                 $state.go('dialog-single',{ 'dialogId' : dialog.id});
             }
         }
@@ -1561,9 +1567,14 @@ function initAttachDoc(selector,attachAreaSelector){
             reader.readAsBinaryString(selector[0].files[0]);
             var dataType = selector[0].files[0].type;
             reader.onload = function(e){
-                docsBase64[attachAreaSelector][ind++] = "obj(name:"+ base64encode(docName)
-                    +";data:"+ dataType +";content:"+base64encode(reader.result)+")";
-                //alert(docsBase64[attachAreaSelector][ind-1]);
+                docsBase64[attachAreaSelector][ind] = new com.vmesteonline.be.messageservice.Attach();
+                docsBase64[attachAreaSelector][ind].fileName = base64encode(docName);
+                docsBase64[attachAreaSelector][ind].contentType = dataType;
+                docsBase64[attachAreaSelector][ind].URL = reader.result;
+                ind++;
+
+                   /* "obj(name:"+ base64encode(docName)
+                    +";data:"+ dataType +";content:"+base64encode(reader.result)+")";*/
             };
 
             attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
@@ -1859,12 +1870,16 @@ function getAttachedImages(selector){
         var bgImg = $(this).css('background-image'),
             name = $(this).attr('data-title'),
             type = $(this).attr('data-type'),
-            result;
+            result,content;
 
         var i = bgImg.indexOf('base64,');
-        result = bgImg.slice(i+7);
+        content = bgImg.slice(i+7);
 
-        result = 'obj(name:'+ base64encode(name) +';data:'+ type +';content:'+result+")";
+        result = new com.vmesteonline.be.messageservice.Attach();
+        result.fileName = base64encode(name);
+        result.contentType = type;
+        result.URL = content;
+        //result = 'obj(name:'+ base64encode(name) +';data:'+ type +';content:'+content+")";
 
         imgList[ind++] = result;
     });

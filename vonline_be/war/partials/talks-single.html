@@ -32,7 +32,7 @@
 
                                     <div class="attached">
                                         <a href="{{image}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id}}" ng-repeat="image in talks.fullTalkTopic.message.images">
-                                            <img ng-src="{{image}}" alt="картинка"/>
+                                            <img ng-src="{{image.URL}}" alt="картинка"/>
                                         </a>
                                     </div>
 
@@ -129,7 +129,7 @@
 
                                             <div class="attached">
                                                 <a href="{{image}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
-                                                    <img ng-src="{{image}}" alt="картинка"/>
+                                                    <img ng-src="{{image.URL}}" alt="картинка"/>
                                                 </a>
                                             </div>
 
@@ -189,7 +189,7 @@
 
                                                     <div class="attached">
                                                         <a href="{{image}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
-                                                            <img ng-src="{{image}}" alt="картинка"/>
+                                                            <img ng-src="{{image.URL}}" alt="картинка"/>
                                                         </a>
                                                     </div>
 

@@ -78,7 +78,7 @@
 
                                 <div class="attached">
                                     <a href="{{image}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
-                                        <img ng-src="{{image}}" alt="картинка"/>
+                                        <img ng-src="{{image.URL}}" alt="картинка"/>
                                     </a>
                                     <div class="docs">
                                         <div ng-repeat="document in wallItem.topic.message.documents"><a href="#" class="doc-item">{{document}}</a></div>
@@ -149,7 +149,7 @@
 
                                     <div class="attached">
                                         <a href="{{image}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
-                                            <img ng-src="{{image}}" alt="картинка"/>
+                                            <img ng-src="{{image.URL}}" alt="картинка"/>
                                         </a>
                                     </div>
 
