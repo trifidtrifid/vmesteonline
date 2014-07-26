@@ -13,6 +13,7 @@ import javax.mail.internet.ContentType;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
+import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.utils.StorageHelper;
 
@@ -86,6 +87,11 @@ public class VoFileAccessRecord {
 	@Unindexed
 	private String contentType;
 	
+	@Persistent
+	@Unindexed
+	private String url;
+	
+	
 	@Unindexed
 	@Persistent(dependentElement = "true")
 	Map<String,VoFileAccessRecord> versions;
@@ -138,6 +144,7 @@ public class VoFileAccessRecord {
 	}
 	
 	public String getURL() {
-		return "/file/" + StorageHelper.numberToString(id.getId());
+		if( null != url ) return url;
+		return url = "/file/" + StorageHelper.numberToString(id.getId())+ fileName.substring(fileName.indexOf("."));
 	}
 }

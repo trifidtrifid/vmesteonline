@@ -35,6 +35,8 @@ public abstract class VoBaseMessage extends GeoLocation {
 		unlikesNum = msg.getUnlikesNum();
 		images = new ArrayList<Long>();
 		PersistenceManager pm = PMF.getPm();
+		images = new ArrayList<Long>();
+		documents = new ArrayList<Long>();
 		try {
 			if (msg.images != null) {
 				List<Attach> savedImages = new ArrayList<Attach>();

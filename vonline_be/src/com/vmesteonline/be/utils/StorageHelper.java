@@ -369,11 +369,13 @@ public class StorageHelper {
 			throw new IOException("Invalid content. Failed to store null or empty content");
 
 		} else {
-			String fname = null;
-			InputStream is = null;
+			String fname = null == fileName ? null : new String( Base64.decode(fileName));
 			String contentType = null==_contentType ? "binary/stream" : _contentType;
-
+			String ext = ".bin";
+			InputStream is = null;
+			
 			String contentString = new String(urlOrContent);
+			
 			if( contentString.startsWith("url(")){
 				
 				String[] split = contentString.split("[():;,]");
@@ -384,7 +386,7 @@ public class StorageHelper {
 					} 
 				}
 				is = new ByteArrayInputStream(urlOrContent);
-				String ext = ".bin";
+				
 				try {
 					String st = new ContentType(contentType).getSubType();
 					ext = (null==st || st.length() == 0) ? ".bin" : "."+st;
@@ -418,7 +420,7 @@ public class StorageHelper {
 				}
 					
 				
-			} else  
+			} else 
 			
 			try { // try to create URL from content
 				URL url = new URL(new String(urlOrContent));
@@ -436,19 +438,11 @@ public class StorageHelper {
 
 			} catch (MalformedURLException e) {
 				
-				String[] split = contentString.split("[():;,]");
-				if( split.length >= 5 && split[0].equalsIgnoreCase("URL") && split[1].equalsIgnoreCase("data")){
-					if( split[3].equals("base64")){
-						is = new ByteArrayInputStream( Base64.decode(split[4]));
-						contentType = split[2];
-					} 
-				}
-				if( null == is )
-					is = new ByteArrayInputStream(urlOrContent);
+				is = new ByteArrayInputStream(urlOrContent);
 				
-				fname = ( null==fileName || 0 == fileName.trim().length()) ? 
-						numberToString((long) (Math.random() * Long.MAX_VALUE)) : 
-							URLEncoder.encode (fileName, "UTF-8");
+				fname =  null==fname  ? 
+						numberToString((long) (Math.random() * Long.MAX_VALUE)) + ext : 
+							fname ;
 				
 			}
 			return new FileSource( fname, contentType, is);
