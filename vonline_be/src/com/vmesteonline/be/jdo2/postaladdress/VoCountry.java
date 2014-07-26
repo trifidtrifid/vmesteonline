@@ -10,18 +10,21 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.vmesteonline.be.Country;
+import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.VoError;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 public class VoCountry {
 	
-	public VoCountry(String name, PersistenceManager pm){
+	public VoCountry(String name, PersistenceManager pm) throws InvalidOperation{
 		List<VoCountry> vcl = (List<VoCountry>)pm.newQuery(VoCountry.class, "name=='"+name+"'").execute();
-		if( vcl.size() > 0 ){
+		this.name = name;
+		if( vcl.size() == 1 ){
 			this.id = vcl.get(0).getId();
-			this.name = vcl.get(0).getName();
-		} else {
-			this.setName(name);
+		} else if( vcl.size() == 0 ){
 			pm.makePersistent(this);
+		} else {
+			throw new InvalidOperation(VoError.GeneralError, "Too many("+vcl.size()+") countries with the same name. ");
 		}
 	}
 	

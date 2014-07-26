@@ -591,16 +591,20 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = pmf.getPersistenceManager();
 
 		try {
-			VoTopic theTopic = pm.getObjectById(VoTopic.class, topic.getId());
-			if (null == theTopic) {
+			VoTopic theTopic;
+			try {
+				theTopic = pm.getObjectById(VoTopic.class, topic.getId());
+			} catch (Exception e1) {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
 			}
-
-			VoRubric rubric = pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
-			if (null == rubric) {
+			
+			try {
+				pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
+			} catch (Exception e) {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Failed to move topic No Rubric found by id="
 						+ topic.getRubricId());
 			}
+
 			theTopic.setLikes(topic.likesNum);
 			theTopic.setUnlikes(topic.unlikesNum);
 			theTopic.setUsersNum(topic.usersNum);

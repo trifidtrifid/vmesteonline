@@ -27,19 +27,19 @@ public abstract class GeoLocation {
 	 * GeoLocation(float longitude, float latitude) { this.longitude = longitude; this.latitude = latitude; }
 	 */
 	public BigDecimal getLongitude() {
-		return new BigDecimal(longitude);
+		return null == longitude ? null : new BigDecimal(longitude);
 	}
 
 	public void setLongitude(BigDecimal longitude) {
-		this.longitude = longitude.toPlainString();
+		this.longitude = null == longitude ? null : longitude.toPlainString();
 	}
 
 	public BigDecimal getLatitude() {
-		return new BigDecimal(latitude);
+		return null == latitude ? null : new BigDecimal(latitude);
 	}
 
 	public void setLatitude(BigDecimal latitude) {
-		this.latitude = latitude.toPlainString();
+		this.latitude = null == latitude ? null : latitude.toPlainString();
 	}
 
 	public long getId() {
