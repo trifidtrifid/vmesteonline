@@ -20,6 +20,7 @@ public class VoDialogMessage {
 	public DialogMessage getDialogMessage( PersistenceManager pm){
 		List<Attach> docs = new ArrayList<Attach>();
 		List<Attach> imgs = new ArrayList<Attach>();
+		if( null!=attachs)
 		for( Long farId : attachs ){
 			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
 			( att.isImage() ?  imgs : docs ).add( att.getAttach() );

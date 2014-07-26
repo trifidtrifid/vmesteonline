@@ -66,9 +66,9 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 			long currentUserId = getCurrentUserId();
 			Query dlgQuery = pm.newQuery(VoDialog.class, "users=="+currentUserId+" && lastMessageDate>"+after);
 			dlgQuery.setOrdering("lastMessageDate");
-			List<VoDialog> oldDialog = (List<VoDialog>) dlgQuery.execute();
+			List<VoDialog> oldDialogs = (List<VoDialog>) dlgQuery.execute();
 			
-			return VoHelper.convertMutableSet(oldDialog, new ArrayList<Dialog>(), new Dialog(), pm);
+			return VoHelper.convertMutableSet(oldDialogs, new ArrayList<Dialog>(), new Dialog(), pm);
 		} finally {
 			pm.close();
 		}
