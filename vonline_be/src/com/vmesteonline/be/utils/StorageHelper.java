@@ -423,7 +423,7 @@ public class StorageHelper {
 			} else 
 			
 			try { // try to create URL from content
-				URL url = new URL(new String(urlOrContent));
+				URL url = new URL(contentString);
 				if (null != url.getProtocol() && url.getProtocol().toLowerCase().startsWith("http")) {
 					HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
 					httpConnection.connect();
@@ -438,7 +438,15 @@ public class StorageHelper {
 
 			} catch (MalformedURLException e) {
 				
-				is = new ByteArrayInputStream(urlOrContent);
+				if( contentString.length() % 4 == 0 ){
+					try {
+						is = new ByteArrayInputStream( Base64.decode( contentString ));
+					} catch( Exception ee){
+					}
+				}
+					
+				if( null==is )
+					is = new ByteArrayInputStream( urlOrContent );
 				
 				fname =  null==fname  ? 
 						numberToString((long) (Math.random() * Long.MAX_VALUE)) + ext : 
