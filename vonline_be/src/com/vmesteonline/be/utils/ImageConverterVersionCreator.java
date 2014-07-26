@@ -37,16 +37,21 @@ public class ImageConverterVersionCreator implements VersionCreator {
 	@Override
 	public VoFileAccessRecord createParametrizedVersion(Map<String,String[]> params, boolean createIfNotExists) {
 
+		
 		if( null==params.get("w") || params.get("w").length == 0  ||
 				null==params.get("h") || params.get("h").length == 0  )
 			return original;
 				
+		
 		String widthStr = params.get("w")[0]; 
 		String heightStr = params.get("h")[0];
 		String heightDigitsStr, widthDigitsStr;
 		if( widthStr == null || ( widthDigitsStr = widthStr.replaceAll("[^0-9]", "")).length() == 0 || 
 				heightStr == null || ( heightDigitsStr = heightStr.replaceAll("[^0-9]", "")).length() == 0)
 		return original;
+		
+		int newWidth = Integer.parseInt(widthDigitsStr);
+		int newHeight = Integer.parseInt(heightDigitsStr);
 
 		String versionKey = "image:"+widthDigitsStr+"x"+heightDigitsStr;
 		VoFileAccessRecord version = original.getVersion(versionKey);
@@ -54,27 +59,14 @@ public class ImageConverterVersionCreator implements VersionCreator {
 		logger.debug("Image '"+original.getFileName()+"' with scale to "+widthDigitsStr+"x"+heightDigitsStr+" requested");
 		if( version == null && createIfNotExists ) {
 			GcsFilename fileName = original.getGSFileName();
-/*			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-			
-			BlobKey blobKey = blobstoreService.createGsBlobKey(
-			    "/gs/" + fileName.getBucketName() + "/" + fileName.getObjectName());
-			
-			Image oldImage = ImagesServiceFactory.makeImageFromBlob(blobKey);
-*/
+
 	    try {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				StorageHelper.getFile(fileName, baos);
 				baos.close();
 				Image oldImage = ImagesServiceFactory.makeImage(baos.toByteArray());
 				
-		    int newWidth = Integer.parseInt(widthDigitsStr);
-				int newHeight = Integer.parseInt(heightDigitsStr);
-				/*double wScale = (double)newWidth / (double)oldImage.getWidth();
-				double hScale = (double)newHeight / (double)oldImage.getHeight();
-				
-				double minScale = Math.min(wScale, hScale);
-				newWidth = (int) (minScale * oldImage.getWidth());
-				newHeight = (int) (minScale * oldImage.getHeight());*/
+		  
 				
 				Transform resize = ImagesServiceFactory.makeResize(newWidth*2, newHeight*2);
 				
