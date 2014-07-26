@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ import javax.jdo.annotations.Persistent;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Message;
@@ -41,8 +44,13 @@ public abstract class VoBaseMessage extends GeoLocation {
 			if (msg.images != null) {
 				List<Attach> savedImages = new ArrayList<Attach>();
 				for (Attach img : msg.images) {
-					FileSource fs = StorageHelper.createFileSource( img.URL.getBytes(), img.contentType, img.fileName);
-					VoFileAccessRecord cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
+					VoFileAccessRecord cfar;
+					try {
+						FileSource fs = StorageHelper.createFileSource( img.URL.getBytes(), img.contentType, img.fileName);
+						cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
+					} catch (IOException e) {
+						throw new InvalidOperation(VoError.IncorrectParametrs, "FAiled to upload content. "+e);
+					}
 					images.add( cfar.getId());
 					savedImages.add(cfar.getAttach());
 				}

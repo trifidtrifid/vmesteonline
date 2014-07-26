@@ -257,35 +257,28 @@ public class VoHelper {
 	 */
 
 	public static <I, O> List<O> convertMutableSet(Iterable<I> inList, List<O> outList, O o) throws InvalidOperation {
+		return convertMutableSet( inList, outList, o, null );
+	}
+//===================================================================================================================
+	public static <I, O> List<O> convertMutableSet(Iterable<I> inList, List<O> outList, O o, PersistenceManager pm) throws InvalidOperation {
 		if (null == inList)
 			return null;
 		if (!inList.iterator().hasNext())
 			return outList;
 		I i0 = inList.iterator().next();
 		try {
-			Method method = i0.getClass().getMethod("get" + o.getClass().getSimpleName(), new Class[] {});
-			for (I i : inList) {
-				outList.add((O) method.invoke(i));
+			if(null!=pm) {
+				Method method = i0.getClass().getMethod("get" + o.getClass().getSimpleName(), new Class[] { PersistenceManager.class });
+				for (I i : inList) {
+					outList.add((O) method.invoke(i,pm));
+				}
+			} else {
+				Method method = i0.getClass().getMethod("get" + o.getClass().getSimpleName(), new Class[] { });
+				for (I i : inList) {
+					outList.add((O) method.invoke(i));
+				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Class " + i0.getClass().getSimpleName() + " have no acccesible method get"
-					+ o.getClass().getSimpleName());
-		}
-		return outList;
-	}
-//===================================================================================================================
-	public static <I, O> List<O> convertMutableSet(List<I> inList, List<O> outList, O o, PersistenceManager pm) throws InvalidOperation {
-		if (null == inList)
-			return null;
-		if (0 == inList.size())
-			return outList;
-		I i0 = inList.get(0);
-		try {
-			Method method = i0.getClass().getMethod("get" + o.getClass().getSimpleName(), new Class[] { PersistenceManager.class });
-			for (I i : inList) {
-				outList.add((O) method.invoke(i,pm));
-			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Class " + i0.getClass().getSimpleName() + " have no acccesible method get"

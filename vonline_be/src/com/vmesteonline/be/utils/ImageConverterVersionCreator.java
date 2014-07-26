@@ -37,56 +37,41 @@ public class ImageConverterVersionCreator implements VersionCreator {
 	@Override
 	public VoFileAccessRecord createParametrizedVersion(Map<String,String[]> params, boolean createIfNotExists) {
 
-		if( null==params.get("w") || params.get("w").length == 0  ||
-				null==params.get("h") || params.get("h").length == 0  )
+		Scale scale = extractScale( params );
+		Crop crop = extractCrop( params );
+		
+		if( null == scale && null == crop )
 			return original;
 				
-		String widthStr = params.get("w")[0]; 
-		String heightStr = params.get("h")[0];
-		String heightDigitsStr, widthDigitsStr;
-		if( widthStr == null || ( widthDigitsStr = widthStr.replaceAll("[^0-9]", "")).length() == 0 || 
-				heightStr == null || ( heightDigitsStr = heightStr.replaceAll("[^0-9]", "")).length() == 0)
-		return original;
-
-		String versionKey = "image:"+widthDigitsStr+"x"+heightDigitsStr;
+	
+		String versionKey = "image:"+
+				(null != scale ? scale.getVersionModificator() : "") + 
+				(crop != null ? crop.getVersionModificator() : "");
+		
 		VoFileAccessRecord version = original.getVersion(versionKey);
 		
-		logger.debug("Image '"+original.getFileName()+"' with scale to "+widthDigitsStr+"x"+heightDigitsStr+" requested");
 		if( version == null && createIfNotExists ) {
+		
 			GcsFilename fileName = original.getGSFileName();
-/*			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-			
-			BlobKey blobKey = blobstoreService.createGsBlobKey(
-			    "/gs/" + fileName.getBucketName() + "/" + fileName.getObjectName());
-			
-			Image oldImage = ImagesServiceFactory.makeImageFromBlob(blobKey);
-*/
+
 	    try {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				StorageHelper.getFile(fileName, baos);
 				baos.close();
 				Image oldImage = ImagesServiceFactory.makeImage(baos.toByteArray());
 				
-		    int newWidth = Integer.parseInt(widthDigitsStr);
-				int newHeight = Integer.parseInt(heightDigitsStr);
-				/*double wScale = (double)newWidth / (double)oldImage.getWidth();
-				double hScale = (double)newHeight / (double)oldImage.getHeight();
-				
-				double minScale = Math.min(wScale, hScale);
-				newWidth = (int) (minScale * oldImage.getWidth());
-				newHeight = (int) (minScale * oldImage.getHeight());*/
-				
-				Transform resize = ImagesServiceFactory.makeResize(newWidth*2, newHeight*2);
-				
-		    Image newImage = imagesService.applyTransform(resize, oldImage);
+		    if( scale != null ) 
+		    	oldImage = imagesService.applyTransform(scale.getTransform(), oldImage);
+		    if( crop != null )
+		    	oldImage = imagesService.applyTransform(crop.getTransform(), oldImage);
 		    
 		    VoFileAccessRecord newVoFileAccessRecord =  new VoFileAccessRecord(original.getUserId(), original.isPublic(), 
 		    		original.getFileName(), original.getContentType(),
 		    		versionKey, original);
-		    StorageHelper.saveFileData(new ByteArrayInputStream(newImage.getImageData()), newVoFileAccessRecord);
+		    StorageHelper.saveFileData(new ByteArrayInputStream(oldImage.getImageData()), newVoFileAccessRecord);
 				pm.makePersistent(original);
 				pm.makePersistent(newVoFileAccessRecord);
-				logger.info("Scaled version: "+newWidth+"x"+newHeight +" of file: "+original.getFileName()+" created.");
+				
 				return newVoFileAccessRecord;
 				
 			} catch (IOException e) {
@@ -96,7 +81,66 @@ public class ImageConverterVersionCreator implements VersionCreator {
 		return version;
 		
 	}
-	
+	//=================================================================================================
+	private Crop extractCrop(Map<String, String[]> params) {
+		String[] cropParams;
+		String[] sparams = params.get("s");
+		if( null == sparams || 0 == sparams.length || (cropParams = sparams[0].split(",")).length < 4 )
+			return null;
+		try{
+			return new Crop(
+					Integer.parseInt(cropParams[0]),Integer.parseInt(cropParams[1]),Integer.parseInt(cropParams[2]),Integer.parseInt(cropParams[3]));
+		} catch ( NumberFormatException nfe ){
+			logger.warn("Failed to parse 's' parameter '"+sparams[0]+"' for crop. Would not be cropped");
+			return null;
+		}
+	}
+	//=================================================================================================
+	private Scale extractScale(Map<String, String[]> params) {
+		if( null==params.get("w") || params.get("w").length == 0  ||
+				null==params.get("h") || params.get("h").length == 0 )
+			return null;
+		String widthStr = params.get("w")[0]; 
+		String heightStr = params.get("h")[0];
+		String heightDigitsStr, widthDigitsStr;
+		
+		if( widthStr == null || ( widthDigitsStr = widthStr.replaceAll("[^0-9]", "")).length() == 0 || 
+				heightStr == null || ( heightDigitsStr = heightStr.replaceAll("[^0-9]", "")).length() == 0)
+			return null;
+		
+		return new Scale( Integer.parseInt(widthDigitsStr), Integer.parseInt(heightDigitsStr));
+	}
+	//=================================================================================================
+	private static class Scale{
+		int x;
+		int y;
+		public Scale(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+		public String getVersionModificator(){ return x +"x"+ y;}
+		
+		public Transform getTransform(){
+			return ImagesServiceFactory.makeResize(x, y);
+		} 
+	}
+	//=================================================================================================
+	private static class Crop{
+		int Xlt,Ylt;
+		int Xrb,Yrb;
+		
+		public Crop(int xlt, int ylt, int xrb, int yrb) {
+			Xlt = xlt;
+			Ylt = ylt;
+			Xrb = xrb;
+			Yrb = yrb;
+		}
+		public String getVersionModificator(){ return Xlt +","+ Ylt + "," + Xrb +","+Yrb;}
+		public Transform getTransform(){
+			return ImagesServiceFactory.makeCrop(Xlt, Ylt, Xrb, Yrb);
+		}
+	}
+	//=================================================================================================
 	public static Logger logger;
 
 	static {
