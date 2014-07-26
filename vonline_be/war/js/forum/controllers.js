@@ -1380,7 +1380,8 @@ angular.module('forum.controllers', ['ui.select2'])
                              src = $('.load-avatar').find('.file-label img').attr('src');
 
                          $('#image-for-crop').css('background-image',bg).attr('src',src);
-                         //alert(fileClient.saveFileContent(bg,true));
+                         var temp = fileClient.saveFileContent(bg,true);
+
                          $('#image-for-crop').Jcrop({
                              aspectRatio: 0,
                              onChange: updateCoords,
