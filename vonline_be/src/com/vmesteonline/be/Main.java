@@ -25,6 +25,8 @@ import com.vmesteonline.be.jdo2.shop.VoShop;
 public class Main implements javax.servlet.Filter {
 	
 	private static String landingURL = "voclub.co";
+	private static String shopContext = "shop";
+	
 	private static String postfix; 
 	private static Logger logger = Logger.getLogger(Main.class.getName());
 
@@ -67,6 +69,15 @@ public class Main implements javax.servlet.Filter {
 					ServiceImpl si = new ServiceImpl( request.getSession() );
 					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
 					logger.fine("Found shop "+voShop.getName()+" by Hostname '"+host+"' Current shop set to: "+voShop.getId());
+					if( shopContext !=null && null == request.getRequestURI() || 0==request.getRequestURI().length() || 
+							request.getRequestURI().equals("/")){
+						String shopHome = "http://"+host+"/"+shopContext;
+						logger.fine("Send redirect to "+shopHome);
+						response.sendRedirect( shopHome);
+					} else {
+						logger.fine("No redirect required shopContext:"+shopContext+" request.getRequestURI():"+request.getRequestURI());
+					}
+						
 				} else {
 					shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='www."+host+"' && activated==true").execute();
 					if( 0!=shops.size() ){
@@ -74,6 +85,15 @@ public class Main implements javax.servlet.Filter {
 						ServiceImpl si = new ServiceImpl( request.getSession());
 						si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
 						logger.fine("Found shop "+voShop.getName()+" by Hostname '"+host+"' Current shop set to: "+voShop.getId());
+						if( shopContext !=null && null == request.getRequestURI() || 0==request.getRequestURI().length() || 
+								request.getRequestURI().equals("/") ){
+							String shopHome = "http://www."+host+"/"+shopContext;
+							logger.fine("Send redirect to "+shopHome);
+							response.sendRedirect( shopHome);
+						} else {
+							logger.fine("No redirect required shopContext:"+shopContext+" request.getRequestURI():"+request.getRequestURI());
+						}
+						
 					} else {
 						//redirect to landing page
 						response.sendRedirect(landingPage);
@@ -96,6 +116,9 @@ public class Main implements javax.servlet.Filter {
 	@Override
 	public void init(FilterConfig conf) throws ServletException {
 		landingURL = conf.getInitParameter("landingURL");
+		String src = conf.getInitParameter("shopRootContext");
+		if( null!=src ) shopContext = src;
+		
 		String postfixStr = conf.getInitParameter("localPostfix");
 		if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Production){
 			postfix = postfixStr;

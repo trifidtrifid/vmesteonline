@@ -85,6 +85,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>backoffice</servlet-name>
 		<url-pattern>/backoffice/*</url-pattern>
 	</servlet-mapping>
+	
 	<servlet>
 		<servlet-name>MainShop</servlet-name>
 		<jsp-file>/shop.jsp</jsp-file>
@@ -93,11 +94,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>MainShop</servlet-name>
 		<url-pattern>/shop/*</url-pattern>
 	</servlet-mapping>
-
-	<!-- servlet> <servlet-name>enter</servlet-name> <jsp-file>/index.jsp</jsp-file> 
-		</servlet> <servlet-mapping> <servlet-name>enter</servlet-name> <url-pattern>/</url-pattern> 
-		</servlet-mapping -->
-
 
 	<servlet>
 		<servlet-name>about</servlet-name>
@@ -149,6 +145,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 			<param-name>localPostfix</param-name>
 			<param-value>.local</param-value>
 		</init-param>
+		<init-param><!-- Page to redirect from root context to enter to the shop -->
+			<param-name>shopRootContext</param-name>
+			<param-value>shop</param-value>
+		</init-param>
 	</filter>
 	<filter-mapping>
 		<filter-name>shopDetector</filter-name>
@@ -158,17 +158,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/</url-pattern>
 	</filter-mapping>
 	
-	<!-- filter>
-		<filter-name>crossAuth</filter-name>
-		<filter-class>com.vmesteonline.be.CrossAuthFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>crossAuth</filter-name>
-		<url-pattern>/shop/*</url-pattern>
-		<url-pattern>/</url-pattern>
-	</filter-mapping -->
-	
-
 	<servlet>
 		<servlet-name>UpdateSomething</servlet-name>
 		<servlet-class>com.vmesteonline.be.utils.UpdateSomething</servlet-class>
