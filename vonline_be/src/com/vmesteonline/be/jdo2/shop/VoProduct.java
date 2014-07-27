@@ -462,7 +462,7 @@ public class VoProduct {
 		return minClientPack;
 	}
 
-	public void setMinClientPackGramms(double minClientPack) {
+	public void setMinClientPackGramms(Double minClientPack) {
 		this.minClientPack = minClientPack;
 	}
 
@@ -470,7 +470,7 @@ public class VoProduct {
 		return minProducerPack;
 	}
 
-	public void setMinProducerPackGramms(double minProducerPack) {
+	public void setMinProducerPackGramms(Double minProducerPack) {
 		this.minProducerPack = minProducerPack;
 	}
 
@@ -478,7 +478,7 @@ public class VoProduct {
 		return prepackRequired;
 	}
 
-	public void setPrepackRequired(boolean prepackRequired) {
+	public void setPrepackRequired(Boolean prepackRequired) {
 		this.prepackRequired = prepackRequired;
 	}
 
@@ -664,5 +664,4 @@ public class VoProduct {
 	public String getUnitName() {
 		return unitName;
 	}
-	
 }
