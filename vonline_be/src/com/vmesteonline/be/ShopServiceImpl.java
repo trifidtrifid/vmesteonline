@@ -113,12 +113,13 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	public Shop getShop(long shopId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoShop voShop = pm.getObjectById(VoShop.class, shopId);
-			if (null != voShop) {
+			long voShopId;
+			if( 0!=(voShopId = shopId) || 0!=(voShopId = ShopServiceHelper.getCurrentShopId(this, pm)) ) { 
+				VoShop voShop = pm.getObjectById(VoShop.class, voShopId);
 				setCurrentAttribute(CurrentAttributeType.SHOP.getValue(), voShop.getId(), pm);
 				return voShop.getShop();
 			}
-			throw new InvalidOperation(VoError.GeneralError, "No shop found by ID");
+			throw new InvalidOperation(VoError.GeneralError, "No shop found by ID:'"+shopId+"' and current ID not set");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getShop by shopId=" + shopId + "." + e);

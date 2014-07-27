@@ -10,19 +10,20 @@
 			</script>
 
 			<div class="navbar-container" id="navbar-container">
+			
 				<div class="navbar-header pull-left">
                     <c:if test="${!isAdminka}">
 
                         <c:choose>
                             <c:when test="${shop.hostName != null && isProduction}">
-                                <a href="http://<c:out value="${shop.hostName+URLrest}"/>/shop/" class="navbar-brand">
+                                <a href="http://<c:out value="${shop.hostName}"/><c:out value="${URLrest}"/>/shop/" class="navbar-brand">
                             </c:when>
                             <c:otherwise>
                                 <a href="/shop/<c:out value="${shop.id}"/>" class="navbar-brand">
                             </c:otherwise>
                         </c:choose>
-
-                        <c:choose>
+                        
+            	        <c:choose>
                             <c:when test="${logoURL!= null}">
                                 <img src="<c:out value="${logoURL}" />" alt="лого">
                             </c:when>
@@ -37,7 +38,7 @@
 
                             <c:choose>
                                 <c:when test="${shop.hostName != null && isProduction}">
-                                    <a href="about/${shopPages.aboutPageContentURL}" class="about-shop-link header-link">О магазине</a>
+                                    <a href="/about/" class="about-shop-link header-link">О магазине</a>
                                 </c:when>
                                 <c:otherwise>
                                     <a href="/about/${shop.id}" class="about-shop-link header-link">О магазине</a>
@@ -49,7 +50,7 @@
 
                             <c:choose>
                                 <c:when test="${shop.hostName != null && isProduction}">
-                                    <a href="/${shopPages.conditionsPageContentURL}" class="terms-of-orders header-link">Условия</a>
+                                    <a href="/terms/" class="terms-of-orders header-link">Условия</a>
                                 </c:when>
                                 <c:otherwise>
                                     <a href="/terms/${shop.id}" class="terms-of-orders header-link">Условия</a>
@@ -60,7 +61,7 @@
                         <c:if test="${shopPages.deliveryPageContentURL != null && shopPages.deliveryPageContentURL != ''}">
                             <c:choose>
                                 <c:when test="${shop.hostName != null && isProduction}">
-                                    <a href="/${shopPages.deliveryPageContentURL}" class="terms-of-delivery header-link">Доставка</a>
+                                    <a href="/delivery-terms/" class="terms-of-delivery header-link">Доставка</a>
                                 </c:when>
                                 <c:otherwise>
                                     <a href="/delivery-terms/${shop.id}" class="terms-of-delivery header-link">Доставка</a>
@@ -77,7 +78,17 @@
                         <li>
                             <c:choose>
                                 <c:when test="${isProduction}">
-                                <a class="btn btn-info no-border no-prevent" href="http://voclub.co<c:out value="${URLrest}"/>">
+                                
+                                
+                                <c:choose>
+										<c:when test="${isAuth}">
+											<a class="btn btn-info no-border no-prevent" href="http://voclub.co<c:out value="${URLrest}"/>/?rt=ci">
+										</c:when>
+										<c:otherwise>
+											<a class="btn btn-info no-border no-prevent" href="http://voclub.co<c:out value="${URLrest}"/>">		
+										</c:otherwise>
+									</c:choose>
+                                
                                 </c:when>
                                 <c:otherwise>
                                     <a class="btn btn-info no-border no-prevent" href="/">
@@ -89,7 +100,7 @@
                             <li>
                                 <c:choose>
                                     <c:when test="${shop.hostName != null && isProduction}">
-                                    <a class="btn btn-info no-border back-to-shop shop-trigger no-prevent" href="http://<c:out value="${shop.hostName+URLrest}"/>/shop/">
+                                    <a class="btn btn-info no-border back-to-shop shop-trigger no-prevent" href="http://<c:out value="${shop.hostName}"/>/shop/">
                                     </c:when>
                                     <c:otherwise>
                                         <a class="btn btn-info no-border back-to-shop shop-trigger no-prevent" href="/shop/<c:out value="${shop.id}"/>">
@@ -106,7 +117,7 @@
                                 <c:choose>
                                     <c:when test="${shop.hostName != null && isProduction}">
                                         <a class="btn btn-info no-border bo-link <c:out value="${hiddenClass}"/>"
-                                           href="http://<c:out value="${shop.hostName+URLrest}"/>/backoffice/">
+                                           href="http://<c:out value="${shop.hostName}"/>/backoffice/">
                                     </c:when>
                                     <c:otherwise>
                                         <a class="btn btn-info no-border bo-link <c:out value="${hiddenClass}"/>"
@@ -148,10 +159,9 @@
                             </ul>
                         </li>
 					</ul>
-
 				</div>
-
+				 
 			</div>
-
+ 
 		</div>
-
+ 

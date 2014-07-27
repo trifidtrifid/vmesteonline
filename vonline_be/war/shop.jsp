@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="templates/preload.jsp" %>
+<%@ include file="/templates/preload.jsp" %>
 <%
-
     OrderDetails currentOrderDetails;
     try{
         Order order = shopService.getOrder(0);
@@ -34,7 +33,11 @@
 <head>
 <meta charset="utf-8" />
 <title>Магазин</title>
-<link rel="stylesheet" href="../build/shop.min.css" />
+
+
+
+
+<link rel="stylesheet" href="/build/shop.min.css" />
 <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -45,7 +48,7 @@
     </script>
     <![endif]-->
 
-    <script type="text/javascript" data-main="../build/build.js" src="../js/shop/require.min.js"></script>
+    <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
 
     <%--<script src="../js/lib/jquery-2.1.1.min.js"></script>
     <script src="../js/lib/bootstrap.min.js"></script>
@@ -133,17 +136,19 @@
                                             <div class="category-label"></div>
                                             <div class="category-soc-links" style="z-index: <%=50-val*2-1%>">
                                                 <%
-                                                    Map<String,String> socialNetworks = ArrayProductCategory.get(val).socialNetworks;
-                                                    int socialNetworksSize = socialNetworks.size();
+                                                   Map<String,String> socialNetworks = ArrayProductCategory.get(val).socialNetworks;
+                                                    
+                                                   int socialNetworksSize = socialNetworks.size();
+                                                    
                                                     String imgSrc=" ";
                                                     String[] keys = socialNetworks.keySet().toArray(new String[socialNetworksSize]);
 
                                                     for( int i = 0; i < socialNetworksSize ; i ++ ){
                                                         if(!socialNetworks.get(keys[i]).equals("")){
                                                             if (socialNetworks.get(keys[i]).indexOf("vk") != -1){
-                                                                imgSrc = "../i/vk.png";
+                                                                imgSrc = "/i/vk.png";
                                                             }else if(socialNetworks.get(keys[i]).indexOf("fb") != -1){
-                                                                imgSrc = "../i/fb.png";
+                                                                imgSrc = "/i/fb.png";
                                                             }
 
                                                 %>
@@ -202,7 +207,7 @@
                                                         <img src="${product.imageURL}?w=40&h=40" alt="${product.name}"/>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <img src="../i/no-photo.png" alt="нет фото"/>
+                                                        <img src="/i/no-photo.png" alt="нет фото" />
                                                     </c:otherwise>
                                                 </c:choose>
                                                 </div>

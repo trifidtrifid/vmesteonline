@@ -30,21 +30,17 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public AuthServiceImpl() {
 	}
 
-	public AuthServiceImpl(String sessId) {
-		super(sessId);
-	}
-
 	public static void checkIfAuthorised(String httpSessId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 
 			VoSession session = getSession(httpSessId, pm);
-			
-			if (null == session || 0 == session.getUserId() ){
+
+			if (null == session || 0 == session.getUserId()) {
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
 			}
 			try {
-				pm.getObjectById(VoUser.class,session.getUserId());
+				pm.getObjectById(VoUser.class, session.getUserId());
 			} catch (Exception e) {
 				session.setUserId(null);
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
@@ -71,6 +67,38 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	}
 
+	public boolean allowUserAccess(String email, String pwd, boolean checkPwd) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser u = getUserByEmail(email, pm);
+			if (u != null) {
+				if (u.getPassword().equals(pwd) || !checkPwd) {
+
+					logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
+					VoSession currentSession = getCurrentSession(pm);
+					if (null == currentSession)
+						currentSession = new VoSession(sessionStorage.getId(), u);
+					else
+						currentSession.setUser(u);
+					pm.makePersistent(currentSession);
+					return true;
+				} else
+					logger.info("incorrect password " + email + " pass " + pwd);
+
+			}
+		} finally {
+			pm.close();
+		}
+		if (checkPwd)
+			throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
+
+		return false;
+	}
+
+	public AuthServiceImpl(String sessId) {
+		super(sessId);
+	}
+
 	@Override
 	public boolean login(final String email, final String password) throws InvalidOperation {
 		if (sessionStorage == null) {
@@ -80,27 +108,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 		logger.info("try authentificate user " + email + " pass " + password);
 
-		PersistenceManager pm = PMF.getPm();
-		VoUser u = getUserByEmail(email, pm);
-		if (u != null) {
-			if (u.getPassword().equals(password)) {
-
-				logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
-				VoSession currentSession = getCurrentSession(pm);
-				if (null == currentSession)
-					currentSession = new VoSession(sessionStorage.getId(), u);
-				else
-					currentSession.setUser(u);
-				/*
-				 * sess.setLatitude(u.getLatitude()); sess.setLongitude(u.getLongitude());
-				 */
-				pm.makePersistent(currentSession);
-				return true;
-			} else
-				logger.info("incorrect password " + email + " pass " + password);
-
-		}
-		throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
+		return allowUserAccess(email, password, true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -146,8 +154,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			}
 
 			try {
-				String body = "<h2>"+firstname+" "+lastname+"</h2><br/>Вы зарегистрировались на сайте www.vomoloko.ru. Ваш логин " + email +".<br/> Удачных Вам покупок!";
-				EMailHelper.sendSimpleEMail( email, "Вы зарегестрированы на Bo! сайте", body);
+				String body = "<h2>" + firstname + " " + lastname + "</h2><br/>Вы зарегистрировались на сайте www.voclub.co. Ваш логин " + email
+						+ ".<br/>Ваш пароль " + password + ". Удачных Вам покупок!";
+				EMailHelper.sendSimpleEMail(email, "Вы зарегестрированы на Bo! сайте", body);
 			} catch (Exception e) {
 				logger.warn("can't send email to " + email + " " + e.getMessage());
 				e.printStackTrace();

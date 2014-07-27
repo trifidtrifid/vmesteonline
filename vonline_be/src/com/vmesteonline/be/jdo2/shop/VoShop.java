@@ -191,6 +191,14 @@ public class VoShop {
 	private String hostName;
 	
 	
+	public String getHostName() {
+		return hostName;
+	}
+
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
+
 	public Map<DeliveryType, String> getDeliveryConditionsText() {
 		if(null==deliveryConditionsText) return null;
 		

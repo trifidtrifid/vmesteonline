@@ -62,8 +62,13 @@
     int ArrayShopsSize = ArrayShops.size();
     boolean isAdminka = false;
     Shop shop = null;
+    try{
+    	shop = shopService.getShop(0);
+    } catch (InvalidOperation io){
+    	//no shop set as current
+    }
 
-    if(ArrayShops != null && ArrayShopsSize > 0){
+    if( ArrayShops != null && ArrayShopsSize > 0){
 
          if(requestURI.equals("/index.jsp")){
 
@@ -86,45 +91,36 @@
             pageContext.setAttribute("activeShops", activeShops);
             pageContext.setAttribute("noActiveShops", noActiveShops);
 
-        }else if(requestURI.equals("/adminka.jsp")){
+        } else if(requestURI.equals("/adminka.jsp")){
 
             // ADMINKA
 
             isAdminka = true;
             pageContext.setAttribute("shops", ArrayShops);
 
-        }else{
+        } else if( null == shop ){
 
              // SHOP & other
+            String[] pathWords = requestURI.split("/");
+            if( pathWords.length > 0 ){
+            	try{
+            		shop = shopService.getShop( Long.parseLong( pathWords[ pathWords.length-1]));
+            	} catch (Exception nfe){
+            		//There is not a Long at the end of reuqest path
+            	} 
+            }
+                // если по hostName
 
-             try{
-                if (url != null && url.length() >= 17){
-                    // если по ID
-                    char buf[] = new char[16];
-                    url.getChars(1, 17, buf, 0);
-                    String shopIdStr = "";
-                    // 15 - кол-во символов в id магазина
-                    for (int i = 0; i <= 15; i++) {
-                        shopIdStr = shopIdStr+buf[i];
-                    }
-
-                    Long shopId = new Long(shopIdStr);
-
-                    shop = shopService.getShop(shopId);
-                }else{
-                    // если по hostName
-
-                    for(int i = 0; i < ArrayShopsSize; i++){
-
-                        if(ArrayShops.get(i).hostName.equals(serverName)){
-                            shop = ArrayShops.get(i);
-                        }
+			if(null==shop){                
+                
+                for(int i = 0; i < ArrayShopsSize; i++){
+					String hostName = ArrayShops.get(i).hostName;
+                    if(null!=hostName && (hostName.equals(serverName) || hostName.equals("www"+serverName))){
+                        shop = ArrayShops.get(i);
                     }
 
                     //if(shop == null) throw new InvalidOperation();
                 }
-             } catch (InvalidOperation ioe){
-                 response.sendRedirect("/404.jsp");
              }
 
         }
@@ -180,9 +176,6 @@
             isProduction = true;
         }
         pageContext.setAttribute("isProduction",isProduction);
-
-
-
 %>
 
 

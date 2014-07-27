@@ -33,7 +33,7 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 		BigDecimal staircaseOffset = new BigDecimal("0.0000001");
 		staircaseOffset = staircaseOffset.multiply(new BigDecimal(staircase));
 		
-		System.out.print("offset: " + staircaseOffset.add(voBuilding.getLongitude()));
+		//System.out.print("offset: " + staircaseOffset.add(voBuilding.getLongitude()));
 		userGroup = new VoUserGroup("Парадная " + staircase, 0, staircaseOffset.add(voBuilding.getLongitude()), voBuilding.getLatitude());
 
 	}
@@ -57,7 +57,7 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 			} catch (JDOObjectNotFoundException jonfe) {
 				jonfe.printStackTrace();
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No building found by ID=" + postalAddress.getBuilding().getId());
-			}
+			} 
 			// check that the address exists
 			Query q = pm.newQuery(VoPostalAddress.class);
 			q.setFilter("building == :key && staircase == " + postalAddress.getStaircase() + " && floor == " + postalAddress.getFloor() + " && flatNo == "

@@ -46,6 +46,19 @@ footer .footer-menu li {
 footer.short-footer .container {
   margin-right: 470px;
 }
+.ya-informer {
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+  margin-right: 480px;
+}
+.backoffice+footer #colophon {
+  position: relative;
+}
+.backoffice+footer .ya-informer {
+  margin-right: 0;
+  bottom: 0;
+}
 .btn-primary,
 .header-color-blue2 {
   background-color: #438eb9 !important;
