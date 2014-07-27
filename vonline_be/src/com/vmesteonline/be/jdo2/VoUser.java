@@ -63,14 +63,14 @@ public class VoUser extends GeoLocation {
 	}
 
 	public UserFamily getUserFamily() {
-		return new UserFamily();
+		return userFamily;
 	}
 
 	public UserContacts getContacts() {
 		return new UserContacts(getId(), UserStatus.CONFIRMED, null, mobilePhone, email);
 	}
 
-	public void setBirthday(String birthday) {
+	public void setBirthday(int birthday) {
 		this.birthday = birthday;
 	}
 
@@ -79,11 +79,11 @@ public class VoUser extends GeoLocation {
 	}
 
 	public ShortUserInfo getShortUserInfo() {
-		return new ShortUserInfo(getId(), name, lastName, 0, getAvatarTopic());
+		return new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic());
 	}
 
 	public UserInfo getUserInfo() {
-		return new UserInfo(getId(), name, lastName, 0, gender, avatarProfile);
+		return new UserInfo(getId(), name, lastName, birthday, gender, avatarProfile);
 	}
 
 	public VoUserGroup getGroupById(long id) throws InvalidOperation {
@@ -278,7 +278,7 @@ public class VoUser extends GeoLocation {
 
 	@Persistent
 	@Unindexed
-	private String birthday;
+	private int birthday;
 
 	@Persistent
 	@Unindexed
@@ -353,6 +353,64 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private String avatarProfileShort;
 
+	@Persistent
+	@Unindexed
+	private String interests;
+	
+	@Persistent
+	@Unindexed
+	private String job;
+	
+	
+	@Persistent(serialized="true")
+	@Unindexed
+	private UserFamily userFamily;
+	
+	@Persistent
+	@Unindexed
+	private String mobilePhone;
+
+	@Persistent
+	@Unindexed
+	private RelationsType relations;
+	
+	
+	public int getMessagesNum() {
+		return messagesNum;
+	}
+
+	public void setMessagesNum(int messagesNum) {
+		this.messagesNum = messagesNum;
+	}
+
+	public int getLikesNum() {
+		return likesNum;
+	}
+
+	public void setLikesNum(int likesNum) {
+		this.likesNum = likesNum;
+	}
+
+	public String getInterests() {
+		return interests;
+	}
+
+	public void setInterests(String interests) {
+		this.interests = interests;
+	}
+
+	public String getJob() {
+		return job;
+	}
+
+	public void setJob(String job) {
+		this.job = job;
+	}
+
+	public int getBirthday() {
+		return birthday;
+	}
+
 	public String getAvatarMessage() {
 		return avatarMessage;
 	}
@@ -404,15 +462,25 @@ public class VoUser extends GeoLocation {
 	public void addRubric(VoRubric rubric) {
 		rubrics.add(rubric);
 	}
-
-	@Persistent
-	@Unindexed
-	private String mobilePhone;
-
-	@Persistent
-	@Unindexed
-	RelationsType relations;
 	
+	
+
+	public int getGender() {
+		return gender;
+	}
+
+	public void setGender(int gender) {
+		this.gender = gender;
+	}
+
+	public RelationsType getRelations() {
+		return relations;
+	}
+
+	public void setUserFamily(UserFamily userFamily) {
+		this.userFamily = userFamily;
+	}
+
 	public String getMobilePhone() {
 		return mobilePhone;
 	}

@@ -345,13 +345,21 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@Override
 	public void updateFamily(UserFamily family) throws InvalidOperation {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void updateInterests(UserInterests interests) throws InvalidOperation {
-		// TODO Auto-generated method stub
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser cu = getCurrentUser(pm);
+			cu.setInterests(interests.userInterests);
+			cu.setJob(interests.job);
+			pm.makePersistent(cu);
+		} finally {
+			pm.close();
+		}// TODO Auto-generated method stub
 
 	}
 

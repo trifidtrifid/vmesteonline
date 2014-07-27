@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
-import com.vmesteonline.be.shop.bo.ExchangeFieldType;
 
 public class CSVHelper {
 
@@ -347,7 +346,7 @@ public class CSVHelper {
 	}
 
 	// ====================================================================================================================
-	public static <T> SortedMap<Integer, String> getFieldsMap(T instance, ExchangeFieldType id, Map<Integer, ExchangeFieldType> requiredFields)
+	/*public static <T> SortedMap<Integer, String> getFieldsMap(T instance, ExchangeFieldType id, Map<Integer, ExchangeFieldType> requiredFields)
 			throws InvalidOperation {
 		SortedMap<Integer, String> fmap = new TreeMap<Integer, String>();
 		Field[] fields = instance.getClass().getFields();
@@ -362,7 +361,7 @@ public class CSVHelper {
 			}
 		}
 		return fmap;
-	}
+	}*/
 
 	// ====================================================================================================================
 	private static List<String> readLines(byte[] buf) throws IOException {

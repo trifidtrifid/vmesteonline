@@ -67,8 +67,6 @@ struct ShortProfile{
 	7: string balance,
 }
 
-
-
 enum UserStatus { UNCONFIRMED=0, CONFIRMED=1, REQUESTED=2, WAIT_CONFIRMATION=3, HIDE=4 }
 
 struct UserInfo{

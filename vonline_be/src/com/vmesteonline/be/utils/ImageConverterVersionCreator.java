@@ -10,15 +10,11 @@ import javax.mail.internet.ContentType;
 
 import org.apache.log4j.Logger;
 
-import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
-import com.vmesteonline.be.ShopBOServiceImpl;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord.VersionCreator;
 
@@ -148,7 +144,7 @@ public class ImageConverterVersionCreator implements VersionCreator {
 	public static Logger logger;
 
 	static {
-		logger = Logger.getLogger(ShopBOServiceImpl.class);
+		logger = Logger.getLogger(ImageConverterVersionCreator.class);
 	}
 	
 }
