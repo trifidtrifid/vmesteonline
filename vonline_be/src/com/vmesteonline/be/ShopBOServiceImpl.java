@@ -538,6 +538,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 
 	
 	// ======================================================================================================================
+	@Override
 	public void updateProduct(FullProductInfo newInfoWithOldId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {

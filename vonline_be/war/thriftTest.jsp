@@ -20,11 +20,12 @@
     ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(sess.getId());
     FileServiceImpl fileService = new FileServiceImpl();
 
-    String email = ""+'a';
-    String passw = ""+'a';
+    String email = "mariva@vomoloko.ru";
+    String passw = "aaaa";
     Boolean isLogin = authService.login(email,passw);
-
     List<Group> Groups = userService.getUserGroups();
+
+    
 %>
 
 <!DOCTYPE html>

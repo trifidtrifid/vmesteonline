@@ -50,10 +50,7 @@ public class VoProduct {
 	public void update(FullProductInfo newInfo, long userId, PersistenceManager _pm) throws InvalidOperation {
 		try {
 			
-			VoHelper.copyIfNotNull(this, "weight", newInfo.product.weight);
-			VoHelper.copyIfNotNull(this, "shortDescr", newInfo.product.shortDescr);
-
-			if(null!=newInfo.details.pricesMap)
+						if(null!=newInfo.details.pricesMap)
 				for( Entry<PriceType, Double> pme : newInfo.details.pricesMap.entrySet())
 					this.pricesMap.put( pme.getKey().getValue(), pme.getValue());
 

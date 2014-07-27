@@ -410,6 +410,7 @@ public class Defaults {
 		try {
 			List<String> locations = new ArrayList<String>();
 			VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY, pm), "Республиканская", pm);
+			VoStreet streetZ = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY, pm), "Заневский", pm);
 
 			pm.makePersistent(street);
 			VoPostalAddress[] addresses;
@@ -417,18 +418,18 @@ public class Defaults {
 
 					// адресов должно быть минимум три! кол-во юзеров
 					// хардкодится выше
-					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 1, (byte) 1,
+					new VoPostalAddress(new VoBuilding(streetZ, "32к3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 1, (byte) 1,
 							(byte) 5, ""),
-					new VoPostalAddress(new VoBuilding(street, "32/3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 2, (byte) 1,
+					new VoPostalAddress(new VoBuilding(streetZ, "32к3", new BigDecimal(zan32k3Long), new BigDecimal(zan32k3Lat), pm), (byte) 2, (byte) 1,
 							(byte) 50, ""),
-					new VoPostalAddress(new VoBuilding(street, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544"), pm), (byte) 1, (byte) 11,
+					new VoPostalAddress(new VoBuilding(streetZ, "35", new BigDecimal("30.419684"), new BigDecimal("59.932544"), pm), (byte) 1, (byte) 11,
 							(byte) 35, ""),
 					new VoPostalAddress(new VoBuilding(street, "6", new BigDecimal("30.404331"), new BigDecimal("59.934177"), pm), (byte) 1, (byte) 2,
 							(byte) 25, "") };
 
 			for (VoPostalAddress pa : addresses) {
 				try {
-					Pair<String, String> position = VoGeocoder.getPosition(pa.getBuilding());
+					Pair<String, String> position = VoGeocoder.getPosition(pa.getBuilding(),true);
 					pa.getBuilding().setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 				} catch (Exception e) {
 					e.printStackTrace();

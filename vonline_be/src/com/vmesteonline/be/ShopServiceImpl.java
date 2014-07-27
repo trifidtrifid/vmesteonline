@@ -1073,8 +1073,19 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			List<Order> lo = new ArrayList<Order>();
 			int now = (int)(System.currentTimeMillis()/1000L);
 			OrderDate nextDate;
-			for (VoOrder nextOrder : ps) {
-				
+			Iterator<VoOrder> oit = ps.iterator();
+			while ( oit.hasNext() )
+			{
+				VoOrder nextOrder;
+				try{
+					nextOrder = oit.next();
+				} catch( RuntimeException tre ){
+					tre.printStackTrace();
+					continue;
+				} catch( Exception e ){
+					e.printStackTrace();
+					continue;
+				}
 				if( 0!= userId && OrderStatus.NEW == status && nextOrder.getDate() < (nextDate = getNextOrderDate( now )).orderDate ){
 					nextOrder.setDate(nextDate.orderDate);
 					nextOrder.setPriceType(nextDate.priceType, pm);
@@ -1087,7 +1098,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			return lo;
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to getOrders for shopId=" + shopId + "." + e);
+			throw new InvalidOperation(VoError.GeneralError, "Failed to getOrdersByStatus for shopId=" + shopId + "." + e);
 		} finally {
 			pm.close();
 		}

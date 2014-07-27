@@ -1491,7 +1491,7 @@ public class ShopServiceImplTest {
 			VoCity city = pm.getObjectById(VoCity.class, usi.getCities(usi.getCounties().get(0).getId()).get(0).getId());
 			VoStreet voStreet = new VoStreet( city, streetName, pm );
 			VoBuilding voBuilding = new VoBuilding(voStreet, buuildingNAme, new BigDecimal("0"), new BigDecimal("0"),pm);
-			Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
+			Pair<String, String> position = VoGeocoder.getPosition(voBuilding, false);
 			voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 			VoPostalAddress voPostalAddress = new VoPostalAddress( voBuilding, (byte)1, (byte)1, (byte)1, "");
 			pm.makePersistent(voPostalAddress);
