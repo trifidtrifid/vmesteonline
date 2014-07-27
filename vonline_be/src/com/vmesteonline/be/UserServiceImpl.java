@@ -38,6 +38,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
+import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
@@ -250,14 +251,48 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public UserProfile getUserProfile(long userId) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
-		VoUser user;
 
 		try {
+			VoUser currentUser = getCurrentUser(pm);
 			if (userId == 0) {
-				user = getCurrentUser(pm);
-			} else {
-				user = pm.getObjectById(VoUser.class, userId);
+				return currentUser.getUserProfile();
 			}
+			
+			VoUser user;
+			try {
+				user = pm.getObjectById(VoUser.class, userId);
+				
+			} catch (JDOObjectNotFoundException e) {
+				throw new InvalidOperation(VoError.IncorrectParametrs, "No user found by ID: "+userId);
+			}
+			UserProfile uProfile = user.getUserProfile();
+			UserPrivacy uPrivacy = user.getPrivacy();
+			//show everything if no privacy set
+			if( uPrivacy.contacts == PrivacyType.EVERYBODY && uPrivacy.profile == PrivacyType.EVERYBODY ) 
+				return uProfile;
+			//show nothing if full privacy 
+			if( uPrivacy.contacts == PrivacyType.NONE && uPrivacy.profile == PrivacyType.NONE ) {
+				uProfile.contacts = new UserContacts();
+				uProfile.interests = new UserInterests();
+				uProfile.family = new UserFamily();
+				uProfile.privacy = new UserPrivacy();
+				return uProfile;
+			}
+			
+			//otherwise lets determine users relations that would be stored as PrivacyType 
+			PrivacyType relation = determineProvacyByAddresses(currentUser, user);
+			
+			//filter information according to relations
+			if( uPrivacy.contacts.getValue() < relation.getValue() ) {//remove contacts
+				uProfile.contacts = new UserContacts();
+			}
+			
+			if( uPrivacy.profile.getValue() < relation.getValue() ) {//remove contacts
+				uProfile.interests = new UserInterests();
+				uProfile.family = new UserFamily();
+			}
+			return uProfile;
+					
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -265,10 +300,40 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} finally {
 			pm.close();
 		}
+	}
 
-		if (user == null)
-			throw new InvalidOperation(VoError.IncorrectParametrs, "unknow user id: " + Long.toString(userId));
-		return user.getUserProfile();
+	private PrivacyType determineProvacyByAddresses(VoUser currentUser, VoUser user) {
+		PrivacyType relation = PrivacyType.EVERYBODY;
+		
+		VoPostalAddress cuAddr = currentUser.getAddress();
+		VoPostalAddress uAddr;
+		if( null==cuAddr || null==( uAddr = user.getAddress()) ) { 
+			relation = PrivacyType.EVERYBODY;
+		
+		} else if(cuAddr.getBuilding() == uAddr.getBuilding() && 0 == cuAddr.getBuilding() ){ //the same building
+			
+				relation = PrivacyType.HOME;
+				
+				if( cuAddr.getStaircase() == uAddr.getStaircase() && 0 != uAddr.getStaircase())
+					relation = PrivacyType.STAIRCASE;
+				
+				else if( cuAddr.getFloor() == uAddr.getFloor() && 0 != uAddr.getFloor())
+					relation = PrivacyType.STAIRCASE; // TODO could be a Floor privacy
+				
+				else if( cuAddr.getFlatNo() == uAddr.getFlatNo() && 0 != uAddr.getFlatNo())
+					relation = PrivacyType.STAIRCASE; // TODO could be a Flat privacy
+		
+		} else { //lets determine the relation as according to the distance
+			
+			int maxRadius = VoHelper.calculateRadius(user, currentUser);
+			if( maxRadius <= Defaults.radiusStarecase )
+				relation = PrivacyType.STAIRCASE;
+			else if( maxRadius <= Defaults.radiusHome )
+				relation = PrivacyType.HOME;
+			else if( maxRadius <= Defaults.radiusSmall )
+				relation = PrivacyType.DISTRICT;
+		}
+		return relation;
 	}
 
 	@Override
@@ -292,14 +357,32 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@Override
 	public void changePassword(String oldPwd, String newPwd) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser cu = getCurrentUser(pm);
+			if( !cu.getPassword().equals(oldPwd)) 
+				throw new InvalidOperation(VoError.IncorrectParametrs,"Old password dont match.");
+			if( null==newPwd || newPwd.length() < 3 ){
+				throw new InvalidOperation(VoError.IncorrectPassword,"New password too short.");
+			}
+			cu.setPassword(newPwd);
+			pm.makePersistent(cu);
+		} finally {
+			pm.close();
+		}
 
 	}
 
 	@Override
 	public void updatePrivacy(UserPrivacy privacy) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser cu = getCurrentUser(pm);
+			cu.setPrivacy(privacy);
+			pm.makePersistent(cu);
+		} finally {
+			pm.close();
+		}
 	}
 
 	@Override
@@ -345,8 +428,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@Override
 	public void updateFamily(UserFamily family) throws InvalidOperation {
-		
-
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser cu = getCurrentUser(pm);
+			cu.setUserFamily(family);
+			pm.makePersistent(cu);
+		} finally {
+			pm.close();
+		}
 	}
 
 	@Override
@@ -359,7 +448,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.makePersistent(cu);
 		} finally {
 			pm.close();
-		}// TODO Auto-generated method stub
+		}
 
 	}
 

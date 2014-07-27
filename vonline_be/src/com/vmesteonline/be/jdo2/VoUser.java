@@ -15,11 +15,13 @@ import javax.jdo.annotations.Persistent;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.PrivacyType;
 import com.vmesteonline.be.RelationsType;
 import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.UserContacts;
 import com.vmesteonline.be.UserFamily;
 import com.vmesteonline.be.UserInfo;
+import com.vmesteonline.be.UserPrivacy;
 import com.vmesteonline.be.UserProfile;
 import com.vmesteonline.be.UserStatus;
 import com.vmesteonline.be.VoError;
@@ -59,6 +61,7 @@ public class VoUser extends GeoLocation {
 		up.contacts = getContacts();
 		up.userInfo = getUserInfo();
 		up.family = getUserFamily();
+		up.privacy = getPrivacy();
 		return up;
 	}
 
@@ -374,7 +377,19 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private RelationsType relations;
 	
+	@Persistent(serialized="true")
+	@Unindexed
+	private UserPrivacy privacy;
 	
+	
+	public UserPrivacy getPrivacy() {
+		return null == privacy ? new UserPrivacy(0L, PrivacyType.NONE, PrivacyType.NONE ) : privacy;
+	}
+
+	public void setPrivacy(UserPrivacy privacy) {
+		this.privacy = privacy;
+	}
+
 	public int getMessagesNum() {
 		return messagesNum;
 	}
@@ -462,8 +477,6 @@ public class VoUser extends GeoLocation {
 	public void addRubric(VoRubric rubric) {
 		rubrics.add(rubric);
 	}
-	
-	
 
 	public int getGender() {
 		return gender;
