@@ -300,7 +300,7 @@ angular.module('forum.controllers', ['ui.select2'])
             lenta.attachedImages = getAttachedImages($('#attach-area-0'));
             lenta.attachedDocs = getAttachedDocs($('#attach-doc-area-0'));
 
-            if(lenta.attachedImages.length == 0 && lenta.attachedDocs.length == 0 && !lenta.isPollShow
+            if(lenta.attachedImages.length == 0 && lenta.attachedDocs && lenta.attachedDocs.length == 0 && !lenta.isPollShow
                 && lenta.wallMessageContent == TEXT_DEFAULT_1){
 
                 lenta.isCreateMessageError = true;
@@ -416,6 +416,7 @@ angular.module('forum.controllers', ['ui.select2'])
             if(!initFlagsArray[wallItem.topic.id]) {
                 // инифицализацмю AttachImage нужно делать только один раз для каждого сообщения
                 initAttachImage($('#attachImage-' + wallItem.topic.id), $('#attach-area-' + wallItem.topic.id));
+                initAttachDoc($('#attachDoc-' + wallItem.topic.id), $('#attach-doc-area-' + wallItem.topic.id));
                 initFlagsArray[wallItem.topic.id] = true;
             }
 
@@ -508,6 +509,7 @@ angular.module('forum.controllers', ['ui.select2'])
             $rootScope.setTab(2);
 
             initAttachImage($('#attachImage-00'), $('#attach-area-00')); // для обсуждений
+            initAttachDoc($('#attachDoc-00'), $('#attach-doc-area-00')); // для обсуждений
             initFancyBox($('.talks'));
 
             $rootScope.base.createTopicIsHide = true;
@@ -515,8 +517,8 @@ angular.module('forum.controllers', ['ui.select2'])
             talk.isTalksLoaded = false;
             talk.groups = userClientGroups.reverse();
 
-            talk.content = "Сообщение";
-            talk.subject = "Заголовок";
+            talk.content = TEXT_DEFAULT_3;
+            talk.subject = TEXT_DEFAULT_4;
 
             talk.isPollShow = false;
             talk.pollSubject = "";
@@ -613,6 +615,10 @@ angular.module('forum.controllers', ['ui.select2'])
 
                 talk.topics.unshift(newTopic);
             }
+
+            cleanAttached($('#attach-area-00'));
+            cleanAttached($('#attach-doc-area-00'));
+            talk.subject = TEXT_DEFAULT_4;
 
         };
 
@@ -733,6 +739,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
             if(!initFlagsTopic[fullTalkTopic.id]) {
                 initAttachImage($('#attachImage-' + fullTalkTopic.id), $('#attach-area-' + fullTalkTopic.id));
+                initAttachDoc($('#attachDoc-' + fullTalkTopic.id), $('#attach-doc-area-' + fullTalkTopic.id));
                 initFlagsTopic[fullTalkTopic.id] = true;
             }
 
@@ -773,6 +780,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
             if(!initFlagsMessage[attachId]) {
                 initAttachImage($('#attachImage-' + attachId), $('#attach-area-' + attachId));
+                initAttachDoc($('#attachDoc-' + attachId), $('#attach-doc-area-' + attachId));
+
                 initFlagsMessage[attachId] = true;
             }
         };
@@ -1248,10 +1257,10 @@ angular.module('forum.controllers', ['ui.select2'])
         dialog.users = currentDialog.users;
         var dialogUsersLength = dialog.users.length;
         for(var i = 0; i < dialogUsersLength; i++){
-            console.log(dialog.users[i].id+" "+$rootScope.base.me.id);
-            /*if (dialog.users[i].id == $rootScope.base.me.id){
+            //console.log(dialog.users[i].id+" "+$rootScope.base.me.id);
+            if (dialog.users[i] && (dialog.users[i].id == $rootScope.base.me.id)){
                 dialog.users.splice(i,1);
-            }*/
+            }
         }
         initAttachImage($('#attachImage-000'),$('#attach-area-000'));
         initAttachDoc($('#attachDoc-000'),$('#attach-doc-area-000'));
@@ -1330,6 +1339,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 writeMessage.errorText = "Вы не указали получателя";
             }else{
                 var attach = getAttachedImages($('#attachImage-0000'),$('#attach-area-0000')).concat(getAttachedDocs($('#attachDoc-0000'),$('#attach-doc-area-0000')));
+
                 dialogClient.postMessage(dialog.id, writeMessage.newMessage.text,attach);
                 cleanAttached($('#attach-area-0000'));
                 cleanAttached($('#attach-doc-area-0000'));
@@ -1536,10 +1546,12 @@ function initAttachImage(selector,attachAreaSelector){
     });
 }
 
-var docsBase64 = [];
+var docsBase64 = [],
+    docsInd = [];
 function initAttachDoc(selector,attachAreaSelector){
-    var title,ind = 0;
+    var title;
         docsBase64[attachAreaSelector] = [];
+        docsInd[attachAreaSelector] = 0;
 
     selector.ace_file_input({
         style:'well',
@@ -1568,11 +1580,11 @@ function initAttachDoc(selector,attachAreaSelector){
             reader.readAsBinaryString(selector[0].files[0]);
             var dataType = selector[0].files[0].type;
             reader.onload = function(e){
-                docsBase64[attachAreaSelector][ind] = new com.vmesteonline.be.messageservice.Attach();
-                docsBase64[attachAreaSelector][ind].fileName = base64encode(docName);
-                docsBase64[attachAreaSelector][ind].contentType = dataType;
-                docsBase64[attachAreaSelector][ind].URL = reader.result;
-                ind++;
+                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
+                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = base64encode(docName);
+                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
+                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = reader.result;
+                docsInd[attachAreaSelector]++;
 
                    /* "obj(name:"+ base64encode(docName)
                     +";data:"+ dataType +";content:"+base64encode(reader.result)+")";*/
@@ -1586,7 +1598,7 @@ function initAttachDoc(selector,attachAreaSelector){
             $('.new-attached .remove-attach-img').click(function(e){
                 e.preventDefault();
                 var attachItem = $(this).closest('.attach-item');
-                var ind = attachItem.index();
+                var docsInd = attachItem.index();
                 attachItem.hide().detach();
                 docsBase64[attachAreaSelector].splice(ind,1);
             });
@@ -1699,7 +1711,7 @@ function postTopic(obj,isWall){
     }else{
         messageType = 1;
         messageContent = obj.content;
-        obj.content = "Сообщение";
+        obj.content = TEXT_DEFAULT_3;
         subject = obj.subject;
     }
     console.log(messageContent+" "+messageType+" "+subject);
@@ -1797,7 +1809,9 @@ function postMessage(obj,isWall,isFirstLevel){
     message.id = 0;
     message.images = getAttachedImages($('#attach-area-'+attachId));
     message.documents = getAttachedDocs($('#attach-doc-area-'+attachId));
-    //alert(message.documents[0]);
+    /*for(var p in message.documents[0]){
+        alert(p+" "+message.documents[0][p]);
+    }*/
     cleanAttached($('#attach-area-'+ attachId));
     cleanAttached($('#attach-doc-area-'+ attachId));
     //message.images = obj.attachedImages;
@@ -1819,6 +1833,7 @@ function postMessage(obj,isWall,isFirstLevel){
         message.authorName = getAuthorName();
         message.userInfo = newMessage.userInfo;
         message.images = newMessage.images;
+        message.documents = newMessage.documents;
         message.id = newMessage.id;
 
         return message;
@@ -1904,6 +1919,8 @@ function getAttachedDocs(selector){
 }
 function cleanAttached(selector){
     selector.html('');
+    //docsBase64 = [];
+    docsInd[selector] = 0;
 }
 
 function initFancyBox(selector){

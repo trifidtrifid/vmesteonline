@@ -77,11 +77,11 @@
                                 <div class="text" ng-switch-when="message" ng-cloak>{{wallItem.topic.message.content}}</div>
 
                                 <div class="attached">
-                                    <a href="{{image}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
+                                    <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
                                         <img ng-src="{{image.URL}}" alt="картинка"/>
                                     </a>
                                     <div class="docs">
-                                        <div ng-repeat="document in wallItem.topic.message.documents"><a href="#" class="doc-item">{{document}}</a></div>
+                                        <div ng-repeat="document in wallItem.topic.message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
                                     </div>
                                 </div>
 
@@ -148,9 +148,12 @@
                                     <div class="text" ng-cloak>{{wallMessage.content}}</div>
 
                                     <div class="attached">
-                                        <a href="{{image}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
+                                        <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
                                             <img ng-src="{{image.URL}}" alt="картинка"/>
                                         </a>
+                                        <div class="docs">
+                                            <div ng-repeat="document in wallMessage.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                        </div>
                                     </div>
 
                                     <div class="lenta-item-bottom">
@@ -168,6 +171,7 @@
                                 onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
 
                                 <div id="attach-area-{{wallItem.topic.id}}" class="attach-area"></div>
+                                <div id="attach-doc-area-{{wallItem.topic.id}}" class="attach-area attach-area-doc"></div>
 
                                 <span class="input-group-btn" ng-show="wallItem.answerShow">
                                     <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
@@ -184,7 +188,7 @@
 
                                         <ul class="dropdown-menu dropdown-blue">
                                             <li><input id="attachImage-{{wallItem.topic.id}}" type="file"/></li>
-                                            <li><a href="#">Документ</a></li>
+                                            <li><input id="attachDoc-{{wallItem.topic.id}}" type="file"/></li>
                                         </ul>
                                     </div>
                                 </span>

@@ -11,6 +11,15 @@
                         <div><a ui-sref="profile({ userId : {{ message.authorProfile.userInfo.userId }} })">{{message.authorProfile.userInfo.firstName + " "+ message.authorProfile.userInfo.lastName}}</a></div> <!--  -->
                         <p>{{message.content}}</p>
 
+                        <div class="attached">
+                            <a href="{{image.URL}}" class="fancybox" rel="attached-group-dialog-{{message.id}}" ng-repeat="image in message.images">
+                                <img ng-src="{{image.URL}}" alt="картинка"/>
+                            </a>
+                            <div class="docs">
+                                <div ng-repeat="document in message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
