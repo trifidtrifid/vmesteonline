@@ -1064,3 +1064,11 @@ h1 {
   width: auto !important;
   height: auto !important;
 }
+.jcrop-holder {
+  background: transparent !important;
+}
+.jcrop-holder img {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}

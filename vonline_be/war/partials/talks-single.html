@@ -31,9 +31,12 @@
                                     <p ng-switch-when="message">{{talks.fullTalkTopic.message.content}}</p>
 
                                     <div class="attached">
-                                        <a href="{{image}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id}}" ng-repeat="image in talks.fullTalkTopic.message.images">
+                                        <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id}}" ng-repeat="image in talks.fullTalkTopic.message.images">
                                             <img ng-src="{{image.URL}}" alt="картинка"/>
                                         </a>
+                                        <div class="docs">
+                                            <div ng-repeat="document in talks.fullTalkTopic.message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                        </div>
                                     </div>
 
                                     <div class="poll" ng-switch-when="poll"  ng-switch on="talks.fullTalkTopic.poll.alreadyPoll" ng-cloak>
@@ -87,6 +90,7 @@
                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
                                 <div id="attach-area-{{talks.fullTalkTopic.id}}" class="attach-area"></div>
+                                <div id="attach-doc-area-{{talks.fullTalkTopic.id}}" class="attach-area attach-area-doc"></div>
 
                                 <div class="answer-input-bottom">
                                     <div class="btn-group attach-dropdown pull-right">
@@ -97,7 +101,7 @@
 
                                         <ul class="dropdown-menu dropdown-blue">
                                             <li><input id="attachImage-{{talks.fullTalkTopic.id}}" type="file"/></li>
-                                            <li><a href="#">Документ</a></li>
+                                            <li><input id="attachDoc-{{talks.fullTalkTopic.id}}" type="file"/></li>
                                         </ul>
                                     </div>
 
@@ -128,9 +132,12 @@
                                             <p>{{firstMessage.content}}</p>
 
                                             <div class="attached">
-                                                <a href="{{image}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
+                                                <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
                                                     <img ng-src="{{image.URL}}" alt="картинка"/>
                                                 </a>
+                                                <div class="docs">
+                                                    <div ng-repeat="document in firstMessage.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                                </div>
                                             </div>
 
                                             <div class="message-bottom">
@@ -146,6 +153,7 @@
                                                   onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
                                         <div id="attach-area-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" class="attach-area"></div>
+                                        <div id="attach-doc-area-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" class="attach-area attach-area-doc"></div>
 
                                         <div class="answer-input-bottom">
                                             <div class="btn-group attach-dropdown pull-right">
@@ -156,7 +164,7 @@
 
                                                 <ul class="dropdown-menu dropdown-blue">
                                                     <li><input id="attachImage-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" type="file"/></li>
-                                                    <li><a href="#">Документ</a></li>
+                                                    <li><input id="attachDoc-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" type="file"/></li>
                                                 </ul>
                                             </div>
 
@@ -188,9 +196,12 @@
                                                     <p>{{message.content}}</p>
 
                                                     <div class="attached">
-                                                        <a href="{{image}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
+                                                        <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
                                                             <img ng-src="{{image.URL}}" alt="картинка"/>
                                                         </a>
+                                                        <div class="docs">
+                                                            <div ng-repeat="document in message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                                        </div>
                                                     </div>
 
                                                     <div class="message-bottom">
@@ -206,6 +217,8 @@
                                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
                                                 <div id="attach-area-{{talks.fullTalkTopic.id+'-'+message.id}}" class="attach-area"></div>
+                                                <div id="attach-doc-area-{{talks.fullTalkTopic.id+'-'+message.id}}" class="attach-area attach-area-doc"></div>
+
 
                                                 <div class="answer-input-bottom">
                                                     <div class="btn-group attach-dropdown pull-right">
@@ -216,7 +229,7 @@
 
                                                         <ul class="dropdown-menu dropdown-blue">
                                                             <li><input id="attachImage-{{talks.fullTalkTopic.id+'-'+message.id}}" type="file"/></li>
-                                                            <li><a href="#">Документ</a></li>
+                                                            <li><input id="attachDoc-{{talks.fullTalkTopic.id+'-'+message.id}}" type="file"/></li>
                                                         </ul>
                                                     </div>
 

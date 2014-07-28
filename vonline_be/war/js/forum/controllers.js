@@ -151,16 +151,10 @@ angular.module('forum.controllers', ['ui.select2'])
   })
   .controller('leftBarController',function($rootScope) {
 
-    //$rootScope.leftbar = this;
-
-    //$rootScope.leftbar.tab = 1;
-
     $rootScope.setTab = function(newValue){
 
         $rootScope.leftbar.tab = newValue;
         $rootScope.isTopSearchShow = true;
-        //var tempTalksBool = false;
-        //if($rootScope.base.talksIsActive) tempTalksBool = true;
         resetPages($rootScope.base);
         resetAceNavBtns($rootScope.navbar);
 
@@ -234,6 +228,8 @@ angular.module('forum.controllers', ['ui.select2'])
                 $rootScope.wallChangeGroup(group.id);
             }else if($rootScope.currentPage == 'talks'){
                 $rootScope.talksChangeGroup(group.id);
+            }else if($rootScope.currentPage == 'neighbours'){
+                $rootScope.neighboursChangeGroup(group.id);
             }
 
         };
@@ -300,7 +296,7 @@ angular.module('forum.controllers', ['ui.select2'])
             lenta.attachedImages = getAttachedImages($('#attach-area-0'));
             lenta.attachedDocs = getAttachedDocs($('#attach-doc-area-0'));
 
-            if(lenta.attachedImages.length == 0 && lenta.attachedDocs.length == 0 && !lenta.isPollShow
+            if(lenta.attachedImages.length == 0 && lenta.attachedDocs && lenta.attachedDocs.length == 0 && !lenta.isPollShow
                 && lenta.wallMessageContent == TEXT_DEFAULT_1){
 
                 lenta.isCreateMessageError = true;
@@ -416,6 +412,7 @@ angular.module('forum.controllers', ['ui.select2'])
             if(!initFlagsArray[wallItem.topic.id]) {
                 // инифицализацмю AttachImage нужно делать только один раз для каждого сообщения
                 initAttachImage($('#attachImage-' + wallItem.topic.id), $('#attach-area-' + wallItem.topic.id));
+                initAttachDoc($('#attachDoc-' + wallItem.topic.id), $('#attach-doc-area-' + wallItem.topic.id));
                 initFlagsArray[wallItem.topic.id] = true;
             }
 
@@ -508,6 +505,7 @@ angular.module('forum.controllers', ['ui.select2'])
             $rootScope.setTab(2);
 
             initAttachImage($('#attachImage-00'), $('#attach-area-00')); // для обсуждений
+            initAttachDoc($('#attachDoc-00'), $('#attach-doc-area-00')); // для обсуждений
             initFancyBox($('.talks'));
 
             $rootScope.base.createTopicIsHide = true;
@@ -515,8 +513,8 @@ angular.module('forum.controllers', ['ui.select2'])
             talk.isTalksLoaded = false;
             talk.groups = userClientGroups.reverse();
 
-            talk.content = "Сообщение";
-            talk.subject = "Заголовок";
+            talk.content = TEXT_DEFAULT_3;
+            talk.subject = TEXT_DEFAULT_4;
 
             talk.isPollShow = false;
             talk.pollSubject = "";
@@ -576,6 +574,9 @@ angular.module('forum.controllers', ['ui.select2'])
                 talk.isCreateTalkError = false;
                 var isWall = 0,
                     newTopic = postTopic(talk, isWall);
+                newTopic.label = getLabel(talk.groups,newTopic.message.groupId);
+                newTopic.tagColor = getTagColor(newTopic.label);
+
                 /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
                  newTopic.message = new com.vmesteonline.be.messageservice.Message;
                  newTopic.message.groupId = talk.selectedGroup.id;
@@ -613,6 +614,10 @@ angular.module('forum.controllers', ['ui.select2'])
 
                 talk.topics.unshift(newTopic);
             }
+
+            cleanAttached($('#attach-area-00'));
+            cleanAttached($('#attach-doc-area-00'));
+            talk.subject = TEXT_DEFAULT_4;
 
         };
 
@@ -733,6 +738,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
             if(!initFlagsTopic[fullTalkTopic.id]) {
                 initAttachImage($('#attachImage-' + fullTalkTopic.id), $('#attach-area-' + fullTalkTopic.id));
+                initAttachDoc($('#attachDoc-' + fullTalkTopic.id), $('#attach-doc-area-' + fullTalkTopic.id));
                 initFlagsTopic[fullTalkTopic.id] = true;
             }
 
@@ -773,6 +779,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
             if(!initFlagsMessage[attachId]) {
                 initAttachImage($('#attachImage-' + attachId), $('#attach-area-' + attachId));
+                initAttachDoc($('#attachDoc-' + attachId), $('#attach-doc-area-' + attachId));
+
                 initFlagsMessage[attachId] = true;
             }
         };
@@ -995,6 +1003,7 @@ angular.module('forum.controllers', ['ui.select2'])
     .controller('ServicesController',function() {
     })
     .controller('neighboursController',function($rootScope) {
+        $rootScope.currentPage = "neighbours";
         $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
 
@@ -1010,6 +1019,11 @@ angular.module('forum.controllers', ['ui.select2'])
 
         var neighbours = this;
         neighbours.neighboors = userClient.getNeighboursByGroup($rootScope.currentGroup.id);
+
+        $rootScope.neighboursChangeGroup = function(groupId){
+            neighbours.neighboors = userClient.getNeighboursByGroup(groupId);
+        };
+
         neighbours.neighboorsSize = neighbours.neighboors.length;
 
     })
@@ -1033,7 +1047,7 @@ angular.module('forum.controllers', ['ui.select2'])
             userId = $stateParams.userId;
             profile.userContacts = userClient.getUserContactsExt(userId);
         }else{
-            userId = null;
+            userId = 0;
             profile.isMayEdit = true;
             profile.userContacts = userClient.getUserContacts();
             //initProfileAva();
@@ -1043,8 +1057,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $rootScope.chageIndex = 0;
 
-
-        $('#test').Jcrop({
+        /*$('#test').Jcrop({
             aspectRatio: 1,
             onChange: updateCoords,
             onSelect: updateCoords
@@ -1065,7 +1078,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 marginLeft: '-' + Math.round(rx * c.x) + 'px',
                 marginTop: '-' + Math.round(ry * c.y) + 'px'
             });
-        };
+        };*/
 
 
 
@@ -1248,10 +1261,10 @@ angular.module('forum.controllers', ['ui.select2'])
         dialog.users = currentDialog.users;
         var dialogUsersLength = dialog.users.length;
         for(var i = 0; i < dialogUsersLength; i++){
-            console.log(dialog.users[i].id+" "+$rootScope.base.me.id);
-            /*if (dialog.users[i].id == $rootScope.base.me.id){
+            //console.log(dialog.users[i].id+" "+$rootScope.base.me.id);
+            if (dialog.users[i] && (dialog.users[i].id == $rootScope.base.me.id)){
                 dialog.users.splice(i,1);
-            }*/
+            }
         }
         initAttachImage($('#attachImage-000'),$('#attach-area-000'));
         initAttachDoc($('#attachDoc-000'),$('#attach-doc-area-000'));
@@ -1330,6 +1343,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 writeMessage.errorText = "Вы не указали получателя";
             }else{
                 var attach = getAttachedImages($('#attachImage-0000'),$('#attach-area-0000')).concat(getAttachedDocs($('#attachDoc-0000'),$('#attach-doc-area-0000')));
+
                 dialogClient.postMessage(dialog.id, writeMessage.newMessage.text,attach);
                 cleanAttached($('#attach-area-0000'));
                 cleanAttached($('#attach-doc-area-0000'));
@@ -1339,12 +1353,18 @@ angular.module('forum.controllers', ['ui.select2'])
 
     })
     .controller('changeAvatarController',function($state,$rootScope){
-        var changeAvatar = this;
+        var changeAvatar = this, newSrc,
+            x1 =50, y1 = 50,x2 = 200,y2 = 200;
 
         changeAvatar.save = function(){
 
+            var saveSrc = newSrc+"?w=100&h=150&s="+x1+","+y1+","+x2+","+y2;
+            userClient.updateUserAvatar(newSrc);
+            $('.logo-container img').attr('src',saveSrc);
+
             dialog.dialog('close');
             $state.go('profile');
+
         };
 
         var dialog = $("#dialog-message").removeClass('hide').dialog({
@@ -1379,11 +1399,14 @@ angular.module('forum.controllers', ['ui.select2'])
                          var bg = $('.load-avatar').find('.file-label img').css('background-image'),
                              src = $('.load-avatar').find('.file-label img').attr('src');
 
-                         $('#image-for-crop').css('background-image',bg).attr('src',src);
-                         var temp = fileClient.saveFileContent(bg,true);
+                         //$('#image-for-crop').css('background-image',bg).attr('src',src);
+                         $('#preview').css('background-image',bg).attr('src',src);
+                         newSrc = fileClient.saveFileContent(bg,true);
+                         $('#image-for-crop').attr('src',newSrc);
 
                          $('#image-for-crop').Jcrop({
                              aspectRatio: 0,
+                             setSelect:   [ 200,200, 50, 50 ],
                              onChange: updateCoords,
                              onSelect: updateCoords
                          });
@@ -1391,14 +1414,17 @@ angular.module('forum.controllers', ['ui.select2'])
                      }
 
                     function updateCoords(c) {
-                        $('#x').val(c.x);
+                        x1= c.x;
+                        y1= c.y;
+                        x2= c.x2;
+                        y2= c.y2;
+                        /*$('#x').val(c.x);
                         $('#y').val(c.y);
                         $('#w').val(c.w);
                         $('#h').val(c.h);
 
                         $('#x2').val(c.x2);
-                        $('#y2').val(c.y2);
-
+                        $('#y2').val(c.y2);*/
 
                         var rx = 200 / c.w; // 200 - размер окна предварительного просмотра
                         var ry = 200 / c.h;
@@ -1410,8 +1436,6 @@ angular.module('forum.controllers', ['ui.select2'])
                             marginTop: '-' + Math.round(ry * c.y) + 'px'
                         });
                     };
-
-
                 });
 
             },
@@ -1536,10 +1560,12 @@ function initAttachImage(selector,attachAreaSelector){
     });
 }
 
-var docsBase64 = [];
+var docsBase64 = [],
+    docsInd = [];
 function initAttachDoc(selector,attachAreaSelector){
-    var title,ind = 0;
+    var title;
         docsBase64[attachAreaSelector] = [];
+        docsInd[attachAreaSelector] = 0;
 
     selector.ace_file_input({
         style:'well',
@@ -1568,11 +1594,11 @@ function initAttachDoc(selector,attachAreaSelector){
             reader.readAsBinaryString(selector[0].files[0]);
             var dataType = selector[0].files[0].type;
             reader.onload = function(e){
-                docsBase64[attachAreaSelector][ind] = new com.vmesteonline.be.messageservice.Attach();
-                docsBase64[attachAreaSelector][ind].fileName = base64encode(docName);
-                docsBase64[attachAreaSelector][ind].contentType = dataType;
-                docsBase64[attachAreaSelector][ind].URL = reader.result;
-                ind++;
+                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
+                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = base64encode(docName);
+                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
+                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = reader.result;
+                docsInd[attachAreaSelector]++;
 
                    /* "obj(name:"+ base64encode(docName)
                     +";data:"+ dataType +";content:"+base64encode(reader.result)+")";*/
@@ -1586,7 +1612,7 @@ function initAttachDoc(selector,attachAreaSelector){
             $('.new-attached .remove-attach-img').click(function(e){
                 e.preventDefault();
                 var attachItem = $(this).closest('.attach-item');
-                var ind = attachItem.index();
+                var docsInd = attachItem.index();
                 attachItem.hide().detach();
                 docsBase64[attachAreaSelector].splice(ind,1);
             });
@@ -1699,7 +1725,7 @@ function postTopic(obj,isWall){
     }else{
         messageType = 1;
         messageContent = obj.content;
-        obj.content = "Сообщение";
+        obj.content = TEXT_DEFAULT_3;
         subject = obj.subject;
     }
     console.log(messageContent+" "+messageType+" "+subject);
@@ -1797,7 +1823,9 @@ function postMessage(obj,isWall,isFirstLevel){
     message.id = 0;
     message.images = getAttachedImages($('#attach-area-'+attachId));
     message.documents = getAttachedDocs($('#attach-doc-area-'+attachId));
-    //alert(message.documents[0]);
+    /*for(var p in message.documents[0]){
+        alert(p+" "+message.documents[0][p]);
+    }*/
     cleanAttached($('#attach-area-'+ attachId));
     cleanAttached($('#attach-doc-area-'+ attachId));
     //message.images = obj.attachedImages;
@@ -1819,6 +1847,7 @@ function postMessage(obj,isWall,isFirstLevel){
         message.authorName = getAuthorName();
         message.userInfo = newMessage.userInfo;
         message.images = newMessage.images;
+        message.documents = newMessage.documents;
         message.id = newMessage.id;
 
         return message;
@@ -1904,6 +1933,8 @@ function getAttachedDocs(selector){
 }
 function cleanAttached(selector){
     selector.html('');
+    //docsBase64 = [];
+    docsInd[selector] = 0;
 }
 
 function initFancyBox(selector){

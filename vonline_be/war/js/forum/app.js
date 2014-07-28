@@ -52,7 +52,7 @@ main.config(function($stateProvider, $urlRouterProvider) {
         .state('neighbours', {
             url: "/neighbours",
             templateUrl: "partials/neighbours.html",
-            controller: 'neighboursController as nextdoors'
+            controller: 'neighboursController as neighbours'
         })
         .state('profile', {
             url: "/profile-:userId",
