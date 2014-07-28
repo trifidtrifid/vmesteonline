@@ -385,7 +385,6 @@ public class StorageHelper {
 						contentType = split[2];
 					} 
 				}
-				is = new ByteArrayInputStream(urlOrContent);
 				
 				try {
 					String st = new ContentType(contentType).getSubType();
