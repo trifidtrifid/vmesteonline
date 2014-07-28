@@ -1137,11 +1137,25 @@ angular.module('forum.controllers', ['ui.select2'])
 
         };
 
+        settings.isProfileError = false;
         settings.updatePasswordOrUserInfo = function(){
             if (!settings.passwChange){
                 userClient.updateUserInfo(settings.userInfo);
             }else{
-                userClient.changePassword(settings.oldPassw, settings.newPassw);
+                if (settings.newPassw.length < 3){
+                    settings.isProfileError = true;
+                    settings.profileError = "Вы указали слишком короткий пароль";
+                }else{
+                    try {
+                        userClient.changePassword(settings.oldPassw, settings.newPassw);
+                        settings.isProfileError = false;
+                    }catch(e){
+                        settings.isProfileError = true;
+                        settings.profileError = "Вы указали не верный старый пароль";
+                    }
+                }
+                //setTimeout(settings.isProfileError = false,1000);
+
             }
         };
 
@@ -1292,7 +1306,10 @@ angular.module('forum.controllers', ['ui.select2'])
                 newDialogMessage.authorProfile = userClient.getUserProfile(newDialogMessage.author);
                 var attach = getAttachedImages($('#attachImage-000'),$('#attach-area-000')).concat(getAttachedDocs($('#attachDoc-000'),$('#attach-doc-area-000')));
 
-                dialogClient.postMessage($stateParams.dialogId, dialog.messageText,attach);
+                var tempMessage = dialogClient.postMessage($stateParams.dialogId, dialog.messageText,attach);
+                newDialogMessage.images = tempMessage.images;
+                newDialogMessage.documents = tempMessage.documents;
+
                 dialog.privateMessages.push(newDialogMessage);
 
                 dialog.messageText = TEXT_DEFAULT_1;
@@ -1347,6 +1364,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 var attach = getAttachedImages($('#attachImage-0000'),$('#attach-area-0000')).concat(getAttachedDocs($('#attachDoc-0000'),$('#attach-doc-area-0000')));
 
                 dialogClient.postMessage(dialog.id, writeMessage.newMessage.text,attach);
+
                 cleanAttached($('#attach-area-0000'));
                 cleanAttached($('#attach-doc-area-0000'));
                 $state.go('dialog-single',{ 'dialogId' : dialog.id});
@@ -1360,9 +1378,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         changeAvatar.save = function(){
 
-            //alert(newSrc);
             var saveSrc = newSrc+"?w=150&h=150&s="+x1+","+y1+","+x2+","+y2;
-            //alert(saveSrc);
             userClient.updateUserAvatar(saveSrc);
             $('.logo-container img').attr('src',saveSrc);
 
@@ -1400,16 +1416,19 @@ angular.module('forum.controllers', ['ui.select2'])
                      var url = fileClient.saveFileContent(imgBase64,false);
                      userClient.updateUserAvatar(url);*/
 
-                         var bg = $('.load-avatar').find('.file-label img').css('background-image'),
+                         var bg = $('.load-avatar').find('.file-label img').css({'width':500}).css('background-image'),
                              src = $('.load-avatar').find('.file-label img').attr('src');
 
                          //$('#image-for-crop').css('background-image',bg).attr('src',src);
-                         $('#preview').css('background-image',bg).attr('src',src);
+                         //$('#preview').css('background-image',bg).attr('src',src);
                          newSrc = fileClient.saveFileContent(bg,true);
-                         $('#image-for-crop').attr('src',newSrc);
+                         $('#preview').attr('src',newSrc);
+                         $('#image-for-crop').attr('src',newSrc);//css({'width': '500px'});
+                         $('#image-for-crop').css({width:'500px'});
+                         //alert($('#image-for-crop').width());
 
                          $('#image-for-crop').Jcrop({
-                             aspectRatio: 0,
+                             aspectRatio: 1,
                              setSelect:   [ 200,200, 50, 50 ],
                              onChange: updateCoords,
                              onSelect: updateCoords
@@ -1430,12 +1449,12 @@ angular.module('forum.controllers', ['ui.select2'])
                         $('#x2').val(c.x2);
                         $('#y2').val(c.y2);*/
 
-                        var rx = 200 / c.w; // 200 - размер окна предварительного просмотра
-                        var ry = 200 / c.h;
+                        var rx = 150 / c.w; // 200 - размер окна предварительного просмотра
+                        var ry = 150 / c.h;
 
                         $('#preview').css({
-                            width: Math.round(rx * 800) + 'px',
-                            height: Math.round(ry * 600) + 'px',
+                            width: Math.round(rx * 500) + 'px',
+                            height: Math.round(ry * 370) + 'px',
                             marginLeft: '-' + Math.round(rx * c.x) + 'px',
                             marginTop: '-' + Math.round(ry * c.y) + 'px'
                         });
@@ -1601,7 +1620,7 @@ function initAttachDoc(selector,attachAreaSelector){
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = base64encode(docName);
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
-                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = reader.result;
+                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = base64encode(reader.result);
                 docsInd[attachAreaSelector]++;
 
                    /* "obj(name:"+ base64encode(docName)
