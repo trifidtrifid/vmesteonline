@@ -139,6 +139,8 @@ angular.module('forum.controllers', ['ui.select2'])
         this.neighboursBtnStatus = "";
         $rootScope.navbar = this;
 
+        this.user = userClient.getShortUserInfo();
+
         this.logout = function(event){
             event.preventDefault();
 
@@ -1358,8 +1360,10 @@ angular.module('forum.controllers', ['ui.select2'])
 
         changeAvatar.save = function(){
 
-            var saveSrc = newSrc+"?w=100&h=150&s="+x1+","+y1+","+x2+","+y2;
-            userClient.updateUserAvatar(newSrc);
+            //alert(newSrc);
+            var saveSrc = newSrc+"?w=150&h=150&s="+x1+","+y1+","+x2+","+y2;
+            //alert(saveSrc);
+            userClient.updateUserAvatar(saveSrc);
             $('.logo-container img').attr('src',saveSrc);
 
             dialog.dialog('close');
