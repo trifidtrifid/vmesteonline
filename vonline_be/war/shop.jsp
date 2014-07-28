@@ -152,7 +152,7 @@
                                                             }
 
                                                 %>
-                                                <a class="category-soc-single" href="<%=socialNetworks.get(keys[i])%>"><img src="<%=imgSrc%>" alt="картинка"/></a>
+                                                <a class="category-soc-single" target="_blank" href="<%=socialNetworks.get(keys[i])%>"><img src="<%=imgSrc%>" alt="картинка"/></a>
                                                 <%
                                                         }}
                                                 %>
