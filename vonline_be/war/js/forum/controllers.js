@@ -578,6 +578,9 @@ angular.module('forum.controllers', ['ui.select2'])
                 talk.isCreateTalkError = false;
                 var isWall = 0,
                     newTopic = postTopic(talk, isWall);
+                newTopic.label = getLabel(talk.groups,newTopic.message.groupId);
+                newTopic.tagColor = getTagColor(newTopic.label);
+
                 /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
                  newTopic.message = new com.vmesteonline.be.messageservice.Message;
                  newTopic.message.groupId = talk.selectedGroup.id;
