@@ -125,7 +125,7 @@ service DialogService {
 	Dialog getDialogById( 1:i64 dialogId ) throws (1:error.InvalidOperation exc),
 	list<Dialog> getDialogs(1:i32 after ) throws (1:error.InvalidOperation exc),
 	list<DialogMessage> getDialogMessages( 1:i64 dialogID, 2:i32 afterDate, 3:i32 tailSize) throws (1:error.InvalidOperation exc),
-	i64 postMessage( 1:i64 dialogId, 2:string content, 3:list<string> attachments ) throws (1:error.InvalidOperation exc),
+	DialogMessage postMessage( 1:i64 dialogId, 2:string content, 3:list<Attach> attachments ) throws (1:error.InvalidOperation exc),
 	void updateDialogMessage( 1:i64 dlgMsgId, 2:string content ) throws (1:error.InvalidOperation exc),
 	void deleteDialogMessage( 1:i64 dlgMsgId ) throws (1:error.InvalidOperation exc),
 	void addUserToDialog(1:i64 dialogId, 2:i64 userId) throws (1:error.InvalidOperation exc),

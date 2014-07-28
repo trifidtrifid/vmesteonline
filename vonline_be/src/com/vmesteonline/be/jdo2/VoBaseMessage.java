@@ -46,7 +46,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 				for (Attach img : msg.images) {
 					VoFileAccessRecord cfar;
 					try {
-						FileSource fs = StorageHelper.createFileSource( img.URL.getBytes(), img.contentType, img.fileName);
+						FileSource fs = StorageHelper.createFileSource( img );
 						cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
 					} catch (IOException e) {
 						throw new InvalidOperation(VoError.IncorrectParametrs, "FAiled to upload content. "+e);
@@ -60,7 +60,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 			if (msg.documents != null) {
 				List<Attach> savedDocs = new ArrayList<Attach>();
 				for (Attach doc : msg.documents) {
-					FileSource fs = StorageHelper.createFileSource( doc.URL.getBytes(), doc.contentType, doc.fileName);
+					FileSource fs = StorageHelper.createFileSource( doc );
 					VoFileAccessRecord cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
 					documents.add( cfar.getId());
 					savedDocs.add(cfar.getAttach());

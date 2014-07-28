@@ -16,6 +16,7 @@ import org.apache.thrift.TException;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.dialog.VoDialog;
 import com.vmesteonline.be.jdo2.dialog.VoDialogMessage;
+import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Dialog;
 import com.vmesteonline.be.messageservice.DialogMessage;
 import com.vmesteonline.be.messageservice.DialogService.Iface;
@@ -92,7 +93,7 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 	}
 
 	@Override
-	public long postMessage(long dialogId, String content, List<String> attachs) throws InvalidOperation {
+	public DialogMessage postMessage(long dialogId, String content, List<Attach> attachs) throws InvalidOperation {
 		if( 0==dialogId ) 
 			throw new InvalidOperation(VoError.IncorrectParametrs, "dialogId should be set to a non ZERO value.");
 		if( null==content || 0==content.trim().length() ) 
@@ -105,12 +106,13 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 			if( !new HashSet<Long>( vdlg.getUsers()).contains(currentUserId) )
 				throw new InvalidOperation(VoError.IncorrectParametrs, "User not involved in this dialog.");
 			
-			return vdlg.postMessage( currentUserId, content, attachs, pm );
+			return vdlg.postMessage( currentUserId, content, attachs, pm ).getDialogMessage(pm);
 		
 		} finally {
 			pm.close();
 		}
 	}
+
 
 	@Override
 	public void updateDialogMessage(long dlgMsgId, String content) throws InvalidOperation {
