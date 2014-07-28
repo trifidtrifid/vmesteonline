@@ -101,7 +101,6 @@
         } else if( null == shop ){
 
              // SHOP & other
-
             String[] pathWords = requestURI.split("/");
             if( pathWords.length > 0 ){
             	try{
@@ -119,8 +118,10 @@
                     if(null!=hostName && (hostName.equals(serverName) || hostName.equals("www"+serverName))){
                         shop = ArrayShops.get(i);
                     }
+
+                    //if(shop == null) throw new InvalidOperation();
                 }
-            }
+             }
 
         }
 
