@@ -21,6 +21,7 @@ import java.util.Map;
 
 
 
+
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.mail.internet.ContentType;
@@ -42,6 +43,7 @@ import com.vmesteonline.be.ServiceImpl;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord.VersionCreator;
+import com.vmesteonline.be.messageservice.Attach;
 
 public class StorageHelper {
 	
@@ -363,13 +365,18 @@ public class StorageHelper {
 	}
 
 	//===================================================================================================================
+	public static FileSource createFileSource( Attach att ) throws IOException {
+		return createFileSource( att.URL.getBytes(), att.contentType, new String( Base64.decode(att.fileName))); 
+	}
 	
+	//===================================================================================================================
+
 	public static FileSource createFileSource( byte[] urlOrContent, String _contentType, String fileName) throws IOException {
 		if (null == urlOrContent || 0 == urlOrContent.length) {
 			throw new IOException("Invalid content. Failed to store null or empty content");
 
 		} else {
-			String fname = null == fileName ? null : new String( Base64.decode(fileName));
+			String fname = null == fileName ? null : fileName;
 			String contentType = null==_contentType ? "binary/stream" : _contentType;
 			String ext = ".bin";
 			InputStream is = null;

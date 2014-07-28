@@ -24,6 +24,7 @@ import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Dialog;
 import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.StorageHelper.FileSource;
@@ -114,12 +115,12 @@ public class VoDialog {
 		return msgsSorted;
 	}
 
-	public long postMessage(long currentUserId, String content, List<String> attachs, PersistenceManager pm) {
+	public VoDialogMessage postMessage(long currentUserId, String content, List<Attach> attachs, PersistenceManager pm) {
 		VoDialogMessage dmsg = new VoDialogMessage(id, currentUserId, content);
 		List<Long> attchs = new ArrayList<Long>();
-		for( String att: attachs ){
+		for( Attach att: attachs ){
 			try {
-				FileSource fs = StorageHelper.createFileSource( att.getBytes(), null, "");
+				FileSource fs = StorageHelper.createFileSource( att );
 				attchs.add(
 						StorageHelper.saveAttach( fs.fname, fs.contentType, currentUserId, true, fs.is, pm)
 						.getId());
@@ -130,7 +131,7 @@ public class VoDialog {
 		lastMessageDate = dmsg.getCreateDate();
 		pm.makePersistent(dmsg);
 		pm.makePersistent(this);
-		return dmsg.getId();
+		return dmsg;
 	}
 	
 }
