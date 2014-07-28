@@ -151,16 +151,10 @@ angular.module('forum.controllers', ['ui.select2'])
   })
   .controller('leftBarController',function($rootScope) {
 
-    //$rootScope.leftbar = this;
-
-    //$rootScope.leftbar.tab = 1;
-
     $rootScope.setTab = function(newValue){
 
         $rootScope.leftbar.tab = newValue;
         $rootScope.isTopSearchShow = true;
-        //var tempTalksBool = false;
-        //if($rootScope.base.talksIsActive) tempTalksBool = true;
         resetPages($rootScope.base);
         resetAceNavBtns($rootScope.navbar);
 
@@ -234,6 +228,8 @@ angular.module('forum.controllers', ['ui.select2'])
                 $rootScope.wallChangeGroup(group.id);
             }else if($rootScope.currentPage == 'talks'){
                 $rootScope.talksChangeGroup(group.id);
+            }else if($rootScope.currentPage == 'neighbours'){
+                $rootScope.neighboursChangeGroup(group.id);
             }
 
         };
@@ -1007,6 +1003,7 @@ angular.module('forum.controllers', ['ui.select2'])
     .controller('ServicesController',function() {
     })
     .controller('neighboursController',function($rootScope) {
+        $rootScope.currentPage = "neighbours";
         $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
 
@@ -1022,6 +1019,11 @@ angular.module('forum.controllers', ['ui.select2'])
 
         var neighbours = this;
         neighbours.neighboors = userClient.getNeighboursByGroup($rootScope.currentGroup.id);
+
+        $rootScope.neighboursChangeGroup = function(groupId){
+            neighbours.neighboors = userClient.getNeighboursByGroup(groupId);
+        };
+
         neighbours.neighboorsSize = neighbours.neighboors.length;
 
     })
