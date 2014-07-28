@@ -1047,7 +1047,7 @@ angular.module('forum.controllers', ['ui.select2'])
             userId = $stateParams.userId;
             profile.userContacts = userClient.getUserContactsExt(userId);
         }else{
-            userId = null;
+            userId = 0;
             profile.isMayEdit = true;
             profile.userContacts = userClient.getUserContacts();
             //initProfileAva();
@@ -1057,8 +1057,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $rootScope.chageIndex = 0;
 
-
-        $('#test').Jcrop({
+        /*$('#test').Jcrop({
             aspectRatio: 1,
             onChange: updateCoords,
             onSelect: updateCoords
@@ -1079,7 +1078,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 marginLeft: '-' + Math.round(rx * c.x) + 'px',
                 marginTop: '-' + Math.round(ry * c.y) + 'px'
             });
-        };
+        };*/
 
 
 
@@ -1354,12 +1353,18 @@ angular.module('forum.controllers', ['ui.select2'])
 
     })
     .controller('changeAvatarController',function($state,$rootScope){
-        var changeAvatar = this;
+        var changeAvatar = this, newSrc,
+            x1 =50, y1 = 50,x2 = 200,y2 = 200;
 
         changeAvatar.save = function(){
 
+            var saveSrc = newSrc+"?w=100&h=150&s="+x1+","+y1+","+x2+","+y2;
+            userClient.updateUserAvatar(newSrc);
+            $('.logo-container img').attr('src',saveSrc);
+
             dialog.dialog('close');
             $state.go('profile');
+
         };
 
         var dialog = $("#dialog-message").removeClass('hide').dialog({
@@ -1394,11 +1399,14 @@ angular.module('forum.controllers', ['ui.select2'])
                          var bg = $('.load-avatar').find('.file-label img').css('background-image'),
                              src = $('.load-avatar').find('.file-label img').attr('src');
 
-                         $('#image-for-crop').css('background-image',bg).attr('src',src);
-                         var temp = fileClient.saveFileContent(bg,true);
+                         //$('#image-for-crop').css('background-image',bg).attr('src',src);
+                         $('#preview').css('background-image',bg).attr('src',src);
+                         newSrc = fileClient.saveFileContent(bg,true);
+                         $('#image-for-crop').attr('src',newSrc);
 
                          $('#image-for-crop').Jcrop({
                              aspectRatio: 0,
+                             setSelect:   [ 200,200, 50, 50 ],
                              onChange: updateCoords,
                              onSelect: updateCoords
                          });
@@ -1406,14 +1414,17 @@ angular.module('forum.controllers', ['ui.select2'])
                      }
 
                     function updateCoords(c) {
-                        $('#x').val(c.x);
+                        x1= c.x;
+                        y1= c.y;
+                        x2= c.x2;
+                        y2= c.y2;
+                        /*$('#x').val(c.x);
                         $('#y').val(c.y);
                         $('#w').val(c.w);
                         $('#h').val(c.h);
 
                         $('#x2').val(c.x2);
-                        $('#y2').val(c.y2);
-
+                        $('#y2').val(c.y2);*/
 
                         var rx = 200 / c.w; // 200 - размер окна предварительного просмотра
                         var ry = 200 / c.h;
@@ -1425,8 +1436,6 @@ angular.module('forum.controllers', ['ui.select2'])
                             marginTop: '-' + Math.round(ry * c.y) + 'px'
                         });
                     };
-
-
                 });
 
             },
