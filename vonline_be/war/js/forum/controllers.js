@@ -1036,7 +1036,7 @@ angular.module('forum.controllers', ['ui.select2'])
             $state.go('dialog-single',{ 'dialogId' : dialog.id});
         };
 
-        function usersToInt(users){
+        /*function usersToInt(users){
             var usersLength = users.length,
                 usersInt = [];
             for(var i = 0; i < usersLength; i++){
@@ -1044,7 +1044,7 @@ angular.module('forum.controllers', ['ui.select2'])
             }
 
             return usersInt;
-        }
+        }*/
 
 
     })
@@ -1304,17 +1304,23 @@ angular.module('forum.controllers', ['ui.select2'])
 
         dialog.messageText = TEXT_DEFAULT_1;
         dialog.sendMessage = function(){
-            if(dialog.messageText != TEXT_DEFAULT_1 && dialog.messageText != ""){
+            var attach = [];
+            attach = getAttachedImages($('#attach-area-000')).concat(getAttachedDocs($('#attach-doc-area-000')));
+
+            if((dialog.messageText != TEXT_DEFAULT_1 && dialog.messageText != "") || attach.length != 0){
 
                 var newDialogMessage = new com.vmesteonline.be.messageservice.DialogMessage();
-                newDialogMessage.content = dialog.messageText;
+
+                (dialog.messageText == TEXT_DEFAULT_1) ?
+                    newDialogMessage.content = "" :
+                    newDialogMessage.content = dialog.messageText;
+
                 newDialogMessage.author = $rootScope.base.me.id;
 
                 newDialogMessage.created = Date.parse(new Date())/1000;
                 newDialogMessage.authorProfile = userClient.getUserProfile(newDialogMessage.author);
-                var attach = getAttachedImages($('#attachImage-000'),$('#attach-area-000')).concat(getAttachedDocs($('#attachDoc-000'),$('#attach-doc-area-000')));
 
-                var tempMessage = dialogClient.postMessage($stateParams.dialogId, dialog.messageText,attach);
+                var tempMessage = dialogClient.postMessage($stateParams.dialogId, newDialogMessage.content,attach);
                 newDialogMessage.images = tempMessage.images;
                 newDialogMessage.documents = tempMessage.documents;
 
