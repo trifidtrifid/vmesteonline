@@ -110,7 +110,7 @@
 
                 <li class="user-short light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                        <div class="nav-user-photo" style="background-image: url('{{ navbar.user.avatar }}')"></div> <!-- -->
+                        <div class="nav-user-photo" style="background-image: url('{{ base.user.avatar }}')"></div> <!-- -->
                         <%--<img class="nav-user-photo" ng-src="<c:out value="${userAvatar}"/>" alt="аватар" />--%>
                         <span class="user-info">
                             <small><c:out value="${firstName}" /></small>
