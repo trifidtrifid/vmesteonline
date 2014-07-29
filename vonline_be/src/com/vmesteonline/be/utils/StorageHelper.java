@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -13,6 +14,10 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.util.Map;
+
+
+
+
 
 
 
@@ -59,6 +64,17 @@ public class StorageHelper {
 		public InputStream is;
 	}
 
+	private static class FileObject implements Serializable {
+		byte[] data;
+		String fileName;
+		String contentType;
+		public FileObject(byte[] data, String fileName, String contentType) {
+			super();
+			this.data = data;
+			this.fileName = fileName;
+			this.contentType = contentType;
+		}
+	}
 	private static Logger logger = Logger.getLogger(StorageHelper.class.getCanonicalName());
 
 	/**
@@ -187,14 +203,24 @@ public class StorageHelper {
 		String queryString = req.getRequestURI()+(req.getQueryString() == null ? "" : "?"+req.getQueryString());
 		logger.debug("Got request: URL:"+queryString);
 		
-		byte[] fileData;
+		byte[] fileData = null;
+		
 		//req.getParameter("useCache")
 		Object response = null != queryString ? 
 				ServiceImpl.getObjectFromCache(queryString) : null;
 
-		if( null!=response && response instanceof byte[] ){
-			fileData = (byte[])response;
-			logger.debug("Get '"+queryString+"' from cache.");
+		if( null!=response && (response instanceof byte[] || response instanceof FileObject)) { 
+			
+			if ( response instanceof byte[] ){
+				fileData = (byte[])response;
+				logger.debug("Get '"+queryString+"' from cache.");
+				
+			} else if(  response instanceof FileObject ){
+				FileObject fo = (FileObject)response;
+				fileData = fo.data;
+				resp.setContentType(fo.contentType);
+				resp.addHeader( "Content-Disposition", "attachment; filename="+fo.fileName);
+			} 
 			
 		} else {
 			long oldFileId = getFileId(req.getRequestURI());
@@ -203,8 +229,9 @@ public class StorageHelper {
 				try {
 					VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
 					resp.setStatus(HttpServletResponse.SC_OK);
-					resp.setContentType(vfar.getContentType()+"; filename='"+vfar.getFileName()+"'");
-					resp.addHeader( "Content-Disposition", "attachment; filename="+vfar.getFileName());
+					String fileName = URLEncoder.encode( vfar.getFileName(),"UTF-8");
+					resp.setContentType(vfar.getContentType()+"; filename="+fileName);
+					resp.addHeader( "Content-Disposition", "attachment; filename="+fileName);
 					VoFileAccessRecord theVersion = vfar.getVersion( req.getParameterMap(), pm );
 					
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -212,7 +239,7 @@ public class StorageHelper {
 					baos.close();
 					fileData = baos.toByteArray();
 					if( null != queryString)
-						ServiceImpl.putObjectToCache(queryString, fileData);
+						ServiceImpl.putObjectToCache(queryString, new FileObject(fileData, fileName, vfar.getContentType()+"; filename="+fileName));
 					
 				} catch (JDOObjectNotFoundException onfe) {
 					resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not Found");
