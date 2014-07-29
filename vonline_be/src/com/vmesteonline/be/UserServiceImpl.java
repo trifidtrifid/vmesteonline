@@ -549,13 +549,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser voUser = getCurrentUser(pm);
 
-			String topicAvatarUrl = url + "?w=95&h=95";
-			String shortProfileAvatarUrl = url + "?w=40&h=40";
-			String profileAvatarUrl = url + "?w=200&h=200";
-			voUser.setAvatarTopic(topicAvatarUrl);
-			voUser.setAvatarMessage(topicAvatarUrl);
-			voUser.setAvatarProfileShort(shortProfileAvatarUrl);
-			voUser.setAvatarProfile(profileAvatarUrl);
+			voUser.setAvatarTopic(url);
+			voUser.setAvatarMessage(url);
+			voUser.setAvatarProfileShort(url);
+			voUser.setAvatarProfile(url);
 			pm.makePersistent(voUser);
 
 		} finally {
