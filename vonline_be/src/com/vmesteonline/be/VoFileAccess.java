@@ -139,8 +139,6 @@ public class VoFileAccess extends HttpServlet {
               }
           }
       }
-      
-     
 		
       if( null!=fileData ){
       	resp.getOutputStream().write(
