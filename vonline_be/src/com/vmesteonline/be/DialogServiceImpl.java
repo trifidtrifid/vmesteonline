@@ -22,32 +22,33 @@ import com.vmesteonline.be.messageservice.DialogMessage;
 import com.vmesteonline.be.messageservice.DialogService.Iface;
 import com.vmesteonline.be.utils.VoHelper;
 
-public class DialogServiceImpl extends ServiceImpl implements Iface  {
+public class DialogServiceImpl extends ServiceImpl implements Iface {
 
 	private static Logger logger = Logger.getLogger(DialogServiceImpl.class.getName());
+
 	@Override
 	public Dialog getDialog(List<Long> users, int after) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			long currentUserId = getCurrentUserId();
-			//sort users 
+			// sort users
 			SortedSet userss = new TreeSet<Long>();
 			userss.addAll(users);
-			//add current user if not added
-			if( !userss.contains( currentUserId ))
+			// add current user if not added
+			if (!userss.contains(currentUserId))
 				userss.add(currentUserId);
-			List<Long> usersaSorted = new ArrayList<Long>(userss); 
-			
+			List<Long> usersaSorted = new ArrayList<Long>(userss);
+
 			String filterStr = "";
-			for (Long userId : usersaSorted){
-				filterStr += " && users=="+userId;
+			for (Long userId : usersaSorted) {
+				filterStr += " && users==" + userId;
 			}
-			Query dlgQuery = pm.newQuery(VoDialog.class, "lastMessageDate>"+after + filterStr);
+			Query dlgQuery = pm.newQuery(VoDialog.class, "lastMessageDate>" + after + filterStr);
 			dlgQuery.setOrdering("lastMessageDate");
 			List<VoDialog> oldDialog = (List<VoDialog>) dlgQuery.execute();
-			
+
 			VoDialog dlg;
-			if( oldDialog.size() == 0){ //there is no dialog exists, so create a new one
+			if (oldDialog.size() == 0) { // there is no dialog exists, so create a new one
 				dlg = new VoDialog(usersaSorted);
 				pm.makePersistent(dlg);
 			} else {
@@ -65,10 +66,10 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			long currentUserId = getCurrentUserId();
-			Query dlgQuery = pm.newQuery(VoDialog.class, "users=="+currentUserId+" && lastMessageDate>"+after);
+			Query dlgQuery = pm.newQuery(VoDialog.class, "users==" + currentUserId + " && lastMessageDate>" + after);
 			dlgQuery.setOrdering("lastMessageDate");
 			List<VoDialog> oldDialogs = (List<VoDialog>) dlgQuery.execute();
-			
+
 			return VoHelper.convertMutableSet(oldDialogs, new ArrayList<Dialog>(), new Dialog(), pm);
 		} finally {
 			pm.close();
@@ -80,13 +81,12 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			long currentUserId = getCurrentUserId();
-			VoDialog vdlg = pm.getObjectById( VoDialog.class, dialogID );
-			if( !new HashSet<Long>( vdlg.getUsers()).contains(currentUserId) )
+			VoDialog vdlg = pm.getObjectById(VoDialog.class, dialogID);
+			if (!new HashSet<Long>(vdlg.getUsers()).contains(currentUserId))
 				throw new InvalidOperation(VoError.IncorrectParametrs, "User not involved in this dialog.");
-			
-			return VoHelper.convertMutableSet( vdlg.getMessages( afterDate, lastCount, pm ), 
-					new ArrayList<DialogMessage>(), new DialogMessage(), pm);
-		
+
+			return VoHelper.convertMutableSet(vdlg.getMessages(afterDate, lastCount, pm), new ArrayList<DialogMessage>(), new DialogMessage(), pm);
+
 		} finally {
 			pm.close();
 		}
@@ -94,45 +94,44 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 
 	@Override
 	public DialogMessage postMessage(long dialogId, String content, List<Attach> attachs) throws InvalidOperation {
-		if( 0==dialogId ) 
+		if (0 == dialogId)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "dialogId should be set to a non ZERO value.");
-		if( null==content || 0==content.trim().length() ) 
+		if ((null == content || 0 == content.trim().length()) && (null == attachs || 0 == attachs.size()))
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Message content should be not empty.");
-		
+
 		PersistenceManager pm = PMF.getPm();
 		try {
 			long currentUserId = getCurrentUserId();
-			VoDialog vdlg = pm.getObjectById( VoDialog.class, dialogId );
-			if( !new HashSet<Long>( vdlg.getUsers()).contains(currentUserId) )
+			VoDialog vdlg = pm.getObjectById(VoDialog.class, dialogId);
+			if (!new HashSet<Long>(vdlg.getUsers()).contains(currentUserId))
 				throw new InvalidOperation(VoError.IncorrectParametrs, "User not involved in this dialog.");
-			
-			return vdlg.postMessage( currentUserId, content, attachs, pm ).getDialogMessage(pm);
-		
+
+			return vdlg.postMessage(currentUserId, content, attachs, pm).getDialogMessage(pm);
+
 		} finally {
 			pm.close();
 		}
 	}
 
-
 	@Override
 	public void updateDialogMessage(long dlgMsgId, String content) throws InvalidOperation {
-		
+
 		PersistenceManager pm = PMF.getPm();
 		try {
 			long currentUserId = getCurrentUserId();
 			VoDialogMessage vdlg;
 			try {
-				vdlg = pm.getObjectById( VoDialogMessage.class, dlgMsgId );
+				vdlg = pm.getObjectById(VoDialogMessage.class, dlgMsgId);
 			} catch (JDOObjectNotFoundException onfe) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No dlialog message found by iD '"+dlgMsgId+"'");
-				
+				throw new InvalidOperation(VoError.IncorrectParametrs, "No dlialog message found by iD '" + dlgMsgId + "'");
+
 			}
-			if( currentUserId != vdlg.getAuthorId())
-				throw new InvalidOperation(VoError.IncorrectParametrs, "Current User '"+currentUserId+"' not author of message.");
-			
+			if (currentUserId != vdlg.getAuthorId())
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Current User '" + currentUserId + "' not author of message.");
+
 			vdlg.setContent(content);
 			return;
-		
+
 		} finally {
 			pm.close();
 		}
@@ -145,17 +144,17 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 			long currentUserId = getCurrentUserId();
 			VoDialogMessage vdlg;
 			try {
-				vdlg = pm.getObjectById( VoDialogMessage.class, dlgMsgId );
+				vdlg = pm.getObjectById(VoDialogMessage.class, dlgMsgId);
 			} catch (JDOObjectNotFoundException onfe) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No dlialog message found by iD '"+dlgMsgId+"'");
-				
+				throw new InvalidOperation(VoError.IncorrectParametrs, "No dlialog message found by iD '" + dlgMsgId + "'");
+
 			}
-			if( currentUserId != vdlg.getAuthorId())
-				throw new InvalidOperation(VoError.IncorrectParametrs, "Current User '"+currentUserId+"' not author of message.");
-			
+			if (currentUserId != vdlg.getAuthorId())
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Current User '" + currentUserId + "' not author of message.");
+
 			pm.deletePersistent(vdlg);
 			return;
-		
+
 		} finally {
 			pm.close();
 		}
@@ -166,22 +165,22 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			long currentUserId = getCurrentUserId();
-			VoDialog vdlg = pm.getObjectById( VoDialog.class, dialogId );
-			HashSet<Long> usersSet = new HashSet<Long>( vdlg.getUsers());
-			if( !usersSet.contains(currentUserId) )
+			VoDialog vdlg = pm.getObjectById(VoDialog.class, dialogId);
+			HashSet<Long> usersSet = new HashSet<Long>(vdlg.getUsers());
+			if (!usersSet.contains(currentUserId))
 				throw new InvalidOperation(VoError.IncorrectParametrs, "User not involved in this dialog.");
-			
-			if( !usersSet.contains( userId )){
+
+			if (!usersSet.contains(userId)) {
 				vdlg.getUsers().add(userId);
 				pm.makePersistent(vdlg);
-				logger.fine("USer "+userId+" added to dialog "+dialogId);
+				logger.fine("USer " + userId + " added to dialog " + dialogId);
 			} else {
-				logger.fine("USer "+userId+" already involved into dialog "+dialogId);
+				logger.fine("USer " + userId + " already involved into dialog " + dialogId);
 			}
-		
+
 		} finally {
 			pm.close();
-		}		
+		}
 	}
 
 	@Override
@@ -189,24 +188,24 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			long currentUserId = getCurrentUserId();
-			VoDialog vdlg = pm.getObjectById( VoDialog.class, dialogId );
-			HashSet<Long> usersSet = new HashSet<Long>( vdlg.getUsers());
-			if( !usersSet.contains(currentUserId) )
+			VoDialog vdlg = pm.getObjectById(VoDialog.class, dialogId);
+			HashSet<Long> usersSet = new HashSet<Long>(vdlg.getUsers());
+			if (!usersSet.contains(currentUserId))
 				throw new InvalidOperation(VoError.IncorrectParametrs, "User not involved in this dialog.");
-			
-			if( usersSet.remove( userId )){
-				
+
+			if (usersSet.remove(userId)) {
+
 				vdlg.setUsers(new ArrayList<Long>(usersSet));
 				pm.makePersistent(vdlg);
-				logger.fine("USer "+userId+" removed from dialog "+dialogId);
+				logger.fine("USer " + userId + " removed from dialog " + dialogId);
 			} else {
-				logger.fine("USer "+userId+" was not involved into dialog "+dialogId);
+				logger.fine("USer " + userId + " was not involved into dialog " + dialogId);
 			}
-		
+
 		} finally {
 			pm.close();
 		}
-		
+
 	}
 
 	@Override
@@ -214,11 +213,11 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			return pm.getObjectById(VoDialog.class, dialogId).getDialog(pm);
-		} catch (JDOObjectNotFoundException onfe){
-			throw new InvalidOperation(VoError.IncorrectParametrs, "No dialog found by ID="+dialogId);
-		} catch (Exception oe){
-			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to get dialog by ID="+dialogId+". "+oe.getMessage());
-		}finally {
+		} catch (JDOObjectNotFoundException onfe) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No dialog found by ID=" + dialogId);
+		} catch (Exception oe) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to get dialog by ID=" + dialogId + ". " + oe.getMessage());
+		} finally {
 			pm.close();
 		}
 	}
