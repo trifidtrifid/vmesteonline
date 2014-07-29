@@ -96,7 +96,7 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 	public DialogMessage postMessage(long dialogId, String content, List<Attach> attachs) throws InvalidOperation {
 		if( 0==dialogId ) 
 			throw new InvalidOperation(VoError.IncorrectParametrs, "dialogId should be set to a non ZERO value.");
-		if( null==content || 0==content.trim().length() ) 
+		if( (null==content || 0==content.trim().length()) && (null == attachs || attachs.size() == 0)) 
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Message content should be not empty.");
 		
 		PersistenceManager pm = PMF.getPm();
