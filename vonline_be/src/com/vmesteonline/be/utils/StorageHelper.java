@@ -393,7 +393,7 @@ public class StorageHelper {
 
 	//===================================================================================================================
 	public static FileSource createFileSource( Attach att ) throws IOException {
-		return createFileSource( att.URL.getBytes(), att.contentType, new String( Base64.decode(att.fileName))); 
+		return createFileSource( att.URL.getBytes(), att.contentType, att.fileName); 
 	}
 	
 	//===================================================================================================================
