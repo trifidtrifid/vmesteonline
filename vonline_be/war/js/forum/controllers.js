@@ -1004,7 +1004,7 @@ angular.module('forum.controllers', ['ui.select2'])
     })
     .controller('ServicesController',function() {
     })
-    .controller('neighboursController',function($rootScope) {
+    .controller('neighboursController',function($rootScope,$state) {
         $rootScope.currentPage = "neighbours";
         $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
@@ -1027,6 +1027,25 @@ angular.module('forum.controllers', ['ui.select2'])
         };
 
         neighbours.neighboorsSize = neighbours.neighboors.length;
+
+        neighbours.goToDialog = function(userId){
+            var users = [];
+            users[0] = userId;
+            var dialog = dialogClient.getDialog(users,0);
+
+            $state.go('dialog-single',{ 'dialogId' : dialog.id});
+        };
+
+        function usersToInt(users){
+            var usersLength = users.length,
+                usersInt = [];
+            for(var i = 0; i < usersLength; i++){
+                usersInt[i] = parseInt(writeMessage.users[i]);
+            }
+
+            return usersInt;
+        }
+
 
     })
     .controller('ProfileController',function($rootScope, $stateParams) {
@@ -1325,8 +1344,6 @@ angular.module('forum.controllers', ['ui.select2'])
             for(var i = 0; i < usersLength; i++){
                 usersInt[i] = parseInt(writeMessage.users[i]);
             }
-
-            //alert(usersInt[0] + " "+typeof(usersInt[0]));
 
             return usersInt;
         }

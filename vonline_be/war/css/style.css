@@ -784,6 +784,10 @@ h1 {
   width: 48px;
   height: 48px;
 }
+.avatar.middle {
+  width: 70px;
+  height: 70px;
+}
 .create-topic-btn {
   overflow: auto;
 }
@@ -888,7 +892,15 @@ h1 {
 }
 .dialog .private-message-single .private-message-left .private-message-author,
 .private-messages .private-message-single .private-message-left .private-message-author {
-  margin-left: 110px;
+  margin-left: 50px;
+}
+.dialog .private-message-single .private-message-left .private-message-author .attached,
+.private-messages .private-message-single .private-message-left .private-message-author .attached {
+  padding-bottom: 0;
+}
+.dialog .private-message-single .private-message-left .private-message-author p,
+.private-messages .private-message-single .private-message-left .private-message-author p {
+  margin-bottom: 0;
 }
 .dialog .private-message-single .private-message-left .private-message-author a:hover,
 .private-messages .private-message-single .private-message-left .private-message-author a:hover {
@@ -897,6 +909,16 @@ h1 {
 .dialog .private-message-single .private-message-right,
 .private-messages .private-message-single .private-message-right {
   margin-left: 320px;
+}
+.private-messages .private-message-single .private-message-left {
+  line-height: 65px;
+}
+.private-messages .private-message-single .private-message-left .private-message-author {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 18px;
+  margin-left: 10px;
+  width: 220px;
 }
 .dialog .private-message-single {
   cursor: default;
