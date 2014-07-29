@@ -272,12 +272,6 @@ angular.module('forum.controllers', ['ui.select2'])
         lenta.isCreateMessageError = false;
 
         lenta.wallItems = messageClient.getWallItems(lenta.selectedGroup.id);
-        /*console.log("1 "+lenta.wallItems.length);
-        for(var i = 0; i < lenta.wallItems.length; i++){
-            if(lenta.wallItems[i].topic.message.images) {
-                console.log("llll " + lenta.wallItems[i].topic.message.images.length);
-            }
-        }*/
 
         var wallItemsLength;
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
@@ -321,8 +315,6 @@ angular.module('forum.controllers', ['ui.select2'])
 
                 var newWallItem = new com.vmesteonline.be.messageservice.WallItem();
                 newWallItem.topic = newTopic;
-                //newWallItem.images = newTopic.message.images;
-                console.log("++" + newWallItem.topic.message.content);
                 newWallItem.topic.authorName = getAuthorName();
                 newWallItem.messages = [];
                 newWallItem.commentText = "Ваш ответ";
@@ -1095,15 +1087,73 @@ angular.module('forum.controllers', ['ui.select2'])
             userContatcsMeta = userClient.getUserContacts(),
             userProfileMeta = userClient.getUserProfile(),
             userInfoMeta = userProfileMeta.userInfo,
+            userPrivacyMeta = userProfileMeta.privacy,
             userFamilyMeta = userProfileMeta.family,
             userInterestsMeta = userProfileMeta.interests;
+
+        if(userFamilyMeta === null){
+            userFamilyMeta = new com.vmesteonline.be.UserFamily();
+        }
 
         settings.userContacts = clone(userContatcsMeta);
         settings.userProfile = clone(userProfileMeta);
         settings.userInfo = clone(userInfoMeta);
+        settings.userPrivacy = clone(userPrivacyMeta);
         settings.family = clone(userFamilyMeta);
         settings.interests = clone(userInterestsMeta);
-        //settings.userInfo.canSaveBool = true;
+
+        if (settings.userInfo.gender == 0) {
+            settings.married = "Замужем";
+            settings.notMarried = "Не замужем";
+        }else{
+            settings.married = "Женат";
+            settings.notMarried = "Не женат";
+        }
+
+        settings.years= [];
+        var ind = 0;
+        for(var i = 1940; i < 2015; i++){
+            settings.years[ind++] = i;
+        }
+
+        settings.userInfo.birthday ?
+        settings.userInfo.birthdayMeta = new Date(settings.userInfo.birthday) :
+        settings.userInfo.birthdayMeta = "";
+
+        if(settings.family.childs === null || settings.family.childs.length == 0){
+            settings.family.childs = [];
+            settings.family.childs[0] = new com.vmesteonline.be.Children();
+            settings.family.childs[0].name = "";
+            var nowYear = new Date();
+            nowYear = nowYear.getFullYear();
+            settings.family.childs[0].birthday = Date.parse('01.15.'+nowYear);
+            settings.family.childs[0].isNotRemove = true;
+        }
+        var childsLength = settings.family.childs.length;
+        for(var i = 0; i < childsLength; i++){
+            if(settings.family.childs[i].birthday) {
+
+                var birthDate = new Date(settings.family.childs[i].birthday);
+                //alert(settings.family.childs[i].birthday);
+                    settings.family.childs[i].month = ""+birthDate.getMonth();
+
+                if(settings.family.childs[i].month.length == 1)
+                    settings.family.childs[i].month = "0"+settings.family.childs[i].month;
+
+                    settings.family.childs[i].year = birthDate.getFullYear();
+            }
+
+        }
+
+        if(settings.family.pets === null || settings.family.pets.length == 0){
+            settings.family.pets = [];
+            settings.family.pets[0] = new com.vmesteonline.be.Pet();
+            settings.family.pets[0].name = "";
+            settings.family.pets[0].type = "0";
+            settings.family.pets[0].breed = "";
+            settings.family.pets[0].isNotRemove = true;
+        }
+
         settings.oldPassw = "";
         settings.newPassw = "";
 
@@ -1135,7 +1185,19 @@ angular.module('forum.controllers', ['ui.select2'])
         settings.isProfileResult = false;
         settings.updatePasswordOrUserInfo = function(){
             if (!settings.passwChange){
-                userClient.updateUserInfo(settings.userInfo);
+
+                //settings.userInfo.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000;
+                var temp = new com.vmesteonline.be.UserInfo();
+
+                settings.userInfo.birthdayMeta ?
+                temp.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000 :
+                temp.birthday = 0;
+
+                temp.gender = settings.userInfo.gender;
+                temp.firstName = settings.userInfo.firstName;
+                temp.lastName = settings.userInfo.lastName;
+
+                userClient.updateUserInfo(temp);
                 settings.isProfileResult = true;
                 settings.isProfileError = false;
                 settings.profileInfo = "Сохранено";
@@ -1155,30 +1217,45 @@ angular.module('forum.controllers', ['ui.select2'])
                         settings.profileInfo = "Вы указали не верный старый пароль";
                     }
                 }
-
-
             }
         };
-        function resetResult(){
-
-            settings.isProfileError = false;
-            settings.isProfileResult = false;
-
-            //alert('1 '+settings.isProfileResult);
-        }
 
         settings.updatePrivacy = function(){
-            userClient.updatePrivacy();
+            userClient.updatePrivacy(settings.userPrivacy);
         };
-
         settings.updateContacts = function(){
-            userClient.updateContacts(settings.userContacts);
+            var temp = new com.vmesteonline.be.UserContacts();
+            temp.email = settings.userContacts.email;
+            temp.mobilePhone = settings.userContacts.mobilePhone;
+            userClient.updateContacts(temp);
         };
         settings.updateFamily = function(){
+            /*var temp = new com.vmesteonline.be.UserFamily();
+            temp.relations = settings.family.relations;
+            temp.childs = settings.family.childs;
+            temp.childs = [];
+            temp.childs[0] = settings.firstChild;
+
+            temp.pets = settings.family.pets;*/
+            var childsLength = settings.family.childs.length;
+            for(var i = 0; i < childsLength; i++){
+                //alert(settings.family.childs[i].month+" "+settings.family.childs[i].year);
+                if(settings.family.childs[i].month && settings.family.childs[i].year){
+
+                    //settings.family.childs[i].birthday = Date.parse(settings.family.childs[i].month +".15."+ settings.family.childs[i].year);
+                    var tempMonth = parseInt(settings.family.childs[i].month)+1;
+                    settings.family.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year);
+                    //alert(new Date(settings.family.childs[i].birthday));
+                    //settings.family.childs[i].birthday = settings.family.childs[i].birthday/1000;
+                }
+            }
             userClient.updateFamily(settings.family);
         };
         settings.updateInterests = function(){
-            userClient.updateInterests(settings.interests);
+            var temp = new com.vmesteonline.be.UserInterests();
+            temp.job = settings.interests.job;
+            temp.userInterests = settings.interests.userInterests;
+            userClient.updateInterests(temp);
         };
 
         settings.childAdd = function(event){
@@ -1186,6 +1263,19 @@ angular.module('forum.controllers', ['ui.select2'])
 
             var newChild = new com.vmesteonline.be.Children();
             newChild.name = " ";
+            var nowYear = new Date();
+            nowYear = nowYear.getFullYear();
+            newChild.birthday = Date.parse('01.15.'+nowYear);
+
+            var birthDate = new Date(newChild.birthday);
+            //alert(settings.family.childs[i].birthday);
+            newChild.month = ""+birthDate.getMonth();
+
+            if(newChild.length == 1)
+                newChild.month = "0"+newChild.month;
+
+            newChild.year = birthDate.getFullYear();
+
 
             if(settings.family == null){
                 settings.family = new com.vmesteonline.be.UserFamily();
@@ -1199,11 +1289,21 @@ angular.module('forum.controllers', ['ui.select2'])
             settings.family.childs.push(newChild);
 
         };
+        settings.removeChild = function(childName){
+            var childsLength = settings.family.childs.length;
+            for(var i = 0; i < childsLength; i++){
+                if(settings.family.childs[i].name == childName) {
+                    settings.family.childs.splice(i,1);
+                }
+
+            }
+        };
         settings.petAdd = function(event){
             event.preventDefault();
 
             var newPet = new com.vmesteonline.be.Pet();
             newPet.name = " ";
+            newPet.type = "0";
 
             if(settings.family == null){
                 settings.family = new com.vmesteonline.be.UserFamily();
@@ -1216,17 +1316,26 @@ angular.module('forum.controllers', ['ui.select2'])
                 settings.family.pets[0] = newPet :
                 settings.family.pets.push(newPet);
         };
+        settings.removePet = function(petName){
+            var petsLength = settings.family.pets.length;
+            for(var i = 0; i < petsLength; i++){
+                if(settings.family.pets[i].name == petName) {
+                    settings.family.pets.splice(i,1);
+                }
+
+            }
+        };
 
         settings.passwChange = false;
         settings.changePassw = function(){
             settings.passwChange = true;
         };
 
-        (settings.userInfo.birthday != 0) ?
+        /*(settings.userInfo.birthday != 0) ?
         settings.birthday = settings.userInfo.birthday :
-        settings.birthday = "";
+        settings.birthday = "";*/
 
-        $('#settings-input-3').datepicker({changeMonth:true, changeYear:true,yearRange:'c-100:+c'});
+        $('#settings-input-3').datepicker({changeMonth:true, changeYear:true,dateFormat: "mm.dd.yy",yearRange:'c-100:+c'});
         $.datepicker.setDefaults($.datepicker.regional['ru']);
 
 
@@ -1626,7 +1735,6 @@ function initAttachDoc(selector,attachAreaSelector){
             reader.onload = function(e){
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = base64encode(docName);
-                //alert(docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName);
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = base64encode(reader.result);
                 docsInd[attachAreaSelector]++;
@@ -1643,7 +1751,7 @@ function initAttachDoc(selector,attachAreaSelector){
             $('.new-attached .remove-attach-img').click(function(e){
                 e.preventDefault();
                 var attachItem = $(this).closest('.attach-item');
-                var docsInd = attachItem.index();
+                var ind = attachItem.index();
                 attachItem.hide().detach();
                 docsBase64[attachAreaSelector].splice(ind,1);
             });
@@ -1959,6 +2067,7 @@ function getAttachedDocs(selector){
     selector.find('.attach-item').each(function(){
         docList[ind++] = $(this).attr('data-fakepath');
     });*/
+    //alert(selector+" "+docsBase64[selector]);
 
     return docsBase64[selector];
 }
@@ -1966,6 +2075,7 @@ function cleanAttached(selector){
     selector.html('');
     //docsBase64 = [];
     docsInd[selector] = 0;
+    docsBase64[selector] = [];
 }
 
 function initFancyBox(selector){
