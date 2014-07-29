@@ -129,6 +129,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
         base.pageTitle = "Новости";
 
+        base.user = userClient.getShortUserInfo();
+
         $rootScope.base = base;
         $rootScope.currentPage = 'lenta';
 
@@ -138,8 +140,6 @@ angular.module('forum.controllers', ['ui.select2'])
         this.privateMessagesBtnStatus = "";
         this.neighboursBtnStatus = "";
         $rootScope.navbar = this;
-
-        this.user = userClient.getShortUserInfo();
 
         this.logout = function(event){
             event.preventDefault();
@@ -1059,31 +1059,6 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $rootScope.chageIndex = 0;
 
-        /*$('#test').Jcrop({
-            aspectRatio: 1,
-            onChange: updateCoords,
-            onSelect: updateCoords
-        });
-
-        function updateCoords(c) {
-            $('#x').val(c.x);
-            $('#y').val(c.y);
-            $('#w').val(c.w);
-            $('#h').val(c.h);
-            $('#x2').val(c.x2);
-            $('#y2').val(c.y2);
-            var rx = 200 / c.w; // 200 - размер окна предварительного просмотра
-            var ry = 200 / c.h;
-            $('#preview').css({
-                width: Math.round(rx * 800) + 'px',
-                height: Math.round(ry * 600) + 'px',
-                marginLeft: '-' + Math.round(rx * c.x) + 'px',
-                marginTop: '-' + Math.round(ry * c.y) + 'px'
-            });
-        };*/
-
-
-
 })
     .controller('SettingsController',function($rootScope,$scope) {
         $rootScope.isTopSearchShow = false;
@@ -1138,26 +1113,40 @@ angular.module('forum.controllers', ['ui.select2'])
         };
 
         settings.isProfileError = false;
+        settings.isProfileResult = false;
         settings.updatePasswordOrUserInfo = function(){
             if (!settings.passwChange){
                 userClient.updateUserInfo(settings.userInfo);
+                settings.isProfileResult = true;
+                settings.isProfileError = false;
+                settings.profileInfo = "Сохранено";
             }else{
                 if (settings.newPassw.length < 3){
+                    settings.isProfileResult = true;
                     settings.isProfileError = true;
-                    settings.profileError = "Вы указали слишком короткий пароль";
+                    settings.profileInfo = "Вы указали слишком короткий пароль";
                 }else{
+                    settings.isProfileResult = true;
                     try {
                         userClient.changePassword(settings.oldPassw, settings.newPassw);
                         settings.isProfileError = false;
+                        settings.profileInfo = "Сохранено";
                     }catch(e){
                         settings.isProfileError = true;
-                        settings.profileError = "Вы указали не верный старый пароль";
+                        settings.profileInfo = "Вы указали не верный старый пароль";
                     }
                 }
-                //setTimeout(settings.isProfileError = false,1000);
+
 
             }
         };
+        function resetResult(){
+
+            settings.isProfileError = false;
+            settings.isProfileResult = false;
+
+            //alert('1 '+settings.isProfileResult);
+        }
 
         settings.updatePrivacy = function(){
             userClient.updatePrivacy();
@@ -1378,9 +1367,10 @@ angular.module('forum.controllers', ['ui.select2'])
 
         changeAvatar.save = function(){
 
-            var saveSrc = newSrc+"?w=150&h=150&s="+x1+","+y1+","+x2+","+y2;
+            var saveSrc = newSrc+"?s="+x1+","+y1+","+x2+","+y2;
             userClient.updateUserAvatar(saveSrc);
             $('.logo-container img').attr('src',saveSrc);
+            $rootScope.base.user.avatar = saveSrc;
 
             dialog.dialog('close');
             $state.go('profile');
@@ -1412,20 +1402,14 @@ angular.module('forum.controllers', ['ui.select2'])
 
                      function saveNewAva(){
 
-                     /*var imgBase64 = $('.profile .ace-file-input').find('.file-name img').css('background-image');
-                     var url = fileClient.saveFileContent(imgBase64,false);
-                     userClient.updateUserAvatar(url);*/
-
-                         var bg = $('.load-avatar').find('.file-label img').css({'width':500}).css('background-image'),
+                         var bg = $('.load-avatar').find('.file-label img').css('background-image'),
                              src = $('.load-avatar').find('.file-label img').attr('src');
+                         //alert(bg);
 
-                         //$('#image-for-crop').css('background-image',bg).attr('src',src);
-                         //$('#preview').css('background-image',bg).attr('src',src);
                          newSrc = fileClient.saveFileContent(bg,true);
                          $('#preview').attr('src',newSrc);
                          $('#image-for-crop').attr('src',newSrc);//css({'width': '500px'});
                          $('#image-for-crop').css({width:'500px'});
-                         //alert($('#image-for-crop').width());
 
                          $('#image-for-crop').Jcrop({
                              aspectRatio: 1,
@@ -1619,6 +1603,7 @@ function initAttachDoc(selector,attachAreaSelector){
             reader.onload = function(e){
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = base64encode(docName);
+                //alert(docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName);
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = base64encode(reader.result);
                 docsInd[attachAreaSelector]++;
