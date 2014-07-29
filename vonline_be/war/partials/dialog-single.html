@@ -2,10 +2,10 @@
 <section class="dialog page">
         <div class="clearfix">
             <div class="private-message-single"  ng-repeat="message in dialog.privateMessages">
-                <div class="pull-right">{{message.created*1000 | date:'dd.MM.yy'}}</div>
+                <div class="pull-right">{{message.created*1000 | date:'HH:mm dd.MM.yy'}}</div>
                 <div class="private-message-left pull-left">
                     <div class="private-message-ava pull-left">
-                        <div class="avatar" style="background-image: url({{message.authorProfile.userInfo.avatar}})"></div>
+                        <div class="avatar short" style="background-image: url({{message.authorProfile.userInfo.avatar}})"></div>
                     </div>
                     <div class="private-message-author">
                         <div><a ui-sref="profile({ userId : {{ message.authorProfile.userInfo.userId }} })">{{message.authorProfile.userInfo.firstName + " "+ message.authorProfile.userInfo.lastName}}</a></div> <!--  -->

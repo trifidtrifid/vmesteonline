@@ -1004,7 +1004,7 @@ angular.module('forum.controllers', ['ui.select2'])
     })
     .controller('ServicesController',function() {
     })
-    .controller('neighboursController',function($rootScope) {
+    .controller('neighboursController',function($rootScope,$state) {
         $rootScope.currentPage = "neighbours";
         $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
@@ -1027,6 +1027,25 @@ angular.module('forum.controllers', ['ui.select2'])
         };
 
         neighbours.neighboorsSize = neighbours.neighboors.length;
+
+        neighbours.goToDialog = function(userId){
+            var users = [];
+            users[0] = userId;
+            var dialog = dialogClient.getDialog(users,0);
+
+            $state.go('dialog-single',{ 'dialogId' : dialog.id});
+        };
+
+        /*function usersToInt(users){
+            var usersLength = users.length,
+                usersInt = [];
+            for(var i = 0; i < usersLength; i++){
+                usersInt[i] = parseInt(writeMessage.users[i]);
+            }
+
+            return usersInt;
+        }*/
+
 
     })
     .controller('ProfileController',function($rootScope, $stateParams) {
@@ -1285,17 +1304,23 @@ angular.module('forum.controllers', ['ui.select2'])
 
         dialog.messageText = TEXT_DEFAULT_1;
         dialog.sendMessage = function(){
-            if(dialog.messageText != TEXT_DEFAULT_1 && dialog.messageText != ""){
+            var attach = [];
+            attach = getAttachedImages($('#attach-area-000')).concat(getAttachedDocs($('#attach-doc-area-000')));
+
+            if((dialog.messageText != TEXT_DEFAULT_1 && dialog.messageText != "") || attach.length != 0){
 
                 var newDialogMessage = new com.vmesteonline.be.messageservice.DialogMessage();
-                newDialogMessage.content = dialog.messageText;
+
+                (dialog.messageText == TEXT_DEFAULT_1) ?
+                    newDialogMessage.content = "" :
+                    newDialogMessage.content = dialog.messageText;
+
                 newDialogMessage.author = $rootScope.base.me.id;
 
                 newDialogMessage.created = Date.parse(new Date())/1000;
                 newDialogMessage.authorProfile = userClient.getUserProfile(newDialogMessage.author);
-                var attach = getAttachedImages($('#attachImage-000'),$('#attach-area-000')).concat(getAttachedDocs($('#attachDoc-000'),$('#attach-doc-area-000')));
 
-                var tempMessage = dialogClient.postMessage($stateParams.dialogId, dialog.messageText,attach);
+                var tempMessage = dialogClient.postMessage($stateParams.dialogId, newDialogMessage.content,attach);
                 newDialogMessage.images = tempMessage.images;
                 newDialogMessage.documents = tempMessage.documents;
 
@@ -1325,8 +1350,6 @@ angular.module('forum.controllers', ['ui.select2'])
             for(var i = 0; i < usersLength; i++){
                 usersInt[i] = parseInt(writeMessage.users[i]);
             }
-
-            //alert(usersInt[0] + " "+typeof(usersInt[0]));
 
             return usersInt;
         }
