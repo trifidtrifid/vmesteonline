@@ -37,7 +37,9 @@ struct PostalAddress {
 
 struct UserLocation{
 	1:string address,
-	2:string locationId
+	2:string locationId,
+	3:string mapUrl
+	
 }
 
 

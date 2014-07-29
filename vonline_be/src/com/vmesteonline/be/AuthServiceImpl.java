@@ -122,8 +122,15 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	@Override
 	public UserLocation checkInviteCode(String code) throws InvalidOperation {
-		// TODO Auto-generated method stub
-		return null;
+
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoInviteCode invite = VoInviteCode.getInviteCode(code, pm);
+			// invite.getPostalAddressId();
+		} finally {
+			pm.close();
+		}
+		return new UserLocation("Zanevski 32", "test", "http://maps.yandex.ru");
 	}
 
 	@SuppressWarnings("unchecked")
