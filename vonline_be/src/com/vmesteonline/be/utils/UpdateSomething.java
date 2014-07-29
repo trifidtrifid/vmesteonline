@@ -10,17 +10,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.api.client.http.HttpResponse;
+import com.vmesteonline.be.ServiceImpl;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.shop.VoProduct;
 import com.vmesteonline.be.jdo2.shop.VoShop;
 
+@SuppressWarnings("serial")
 public class UpdateSomething extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			Extent<VoShop> shops = pm.getExtent(VoShop.class);
-			shops.iterator().next().setHostName("www.vomoloko.ru");
+			/*Extent<VoProduct> products = pm.getExtent(VoProduct.class);
+			for( VoProduct prod : products){
+				prod.setScore(1D);
+			}*/
+			ServiceImpl.releaseCache();
+			
 		} finally {
 			pm.close();
 		}

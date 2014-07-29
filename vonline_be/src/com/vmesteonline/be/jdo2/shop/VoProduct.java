@@ -173,6 +173,7 @@ public class VoProduct {
 						}
 
 			vp.price = product.getPrice();
+			vp.setScore(0);
 			vp.setFullDescr(details.getFullDescr());
 
 			vp.pricesMap = convertFromPriceTypeMap(details.getPricesMap(), new HashMap<Integer, Double>());
@@ -226,6 +227,7 @@ public class VoProduct {
 
 	// =====================================================================================================================
 	public VoProduct(long shopId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
+		this.setScore(0);
 		Product product = fpi.getProduct();
 		ProductDetails details = fpi.getDetails();
 
@@ -393,6 +395,9 @@ public class VoProduct {
 	@Persistent
 	@Unindexed
 	private double price;
+	
+	@Persistent
+	private double score;
 
 	@Persistent
 	private List<Long> categories;
@@ -664,4 +669,13 @@ public class VoProduct {
 	public String getUnitName() {
 		return unitName;
 	}
+
+	public double getScore() {
+		return score;
+	}
+
+	public void setScore(double score) {
+		this.score = score;
+	}
+	
 }

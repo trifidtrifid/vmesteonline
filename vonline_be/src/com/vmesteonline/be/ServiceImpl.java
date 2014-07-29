@@ -41,6 +41,10 @@ public class ServiceImpl {
 		}
 	}
 
+	public static void releaseCache(){
+		cache.clear();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <T> T getObjectFromCache(Object key) {
 		T rslt = null;

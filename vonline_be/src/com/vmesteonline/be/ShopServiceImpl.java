@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -82,6 +83,12 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		}
 	}
 
+	private final class ProdcutScoreComparator implements Comparator<VoProduct>, Serializable {
+		@Override
+	public int compare(VoProduct o1, VoProduct o2) {
+		return -Double.compare(o1.getScore(),o2.getScore());
+	}
+}
 	ShopServiceImpl() {
 	}
 
@@ -198,14 +205,17 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	}
 
 	private SortedSet<Product> getProductsFromCategory(Long categoryId, Long shopId, PersistenceManager pm) {
-		SortedSet<Product> rslt = new TreeSet<Product>(new ProdcutNameComparator());
+		SortedSet<Product> rslt = new TreeSet<Product>(/*new ProdcutNameComparator()*/);
 		List<VoProductCategory> vpcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class,
 				"shopId == " + shopId + " && parentId == " + categoryId).execute();
 		for (VoProductCategory cat : vpcl) {
 			rslt.addAll(getProductsFromCategory(cat.getId(), shopId, pm));
 		}
-		List<VoProduct> vpl = (List<VoProduct>) pm.newQuery(VoProduct.class, "categories == " + categoryId).execute();
-
+		Query pQuery = pm.newQuery(VoProduct.class, "categories == " + categoryId);
+		//pQuery.setOrdering("score DESC");
+		List<VoProduct> vpl = (List<VoProduct>) pQuery.execute();
+		Collections.sort(vpl, new ProdcutScoreComparator());
+		
 		for (VoProduct product : vpl) {
 			if(!product.isDeleted())
 				rslt.add(product.getProduct(pm));
@@ -552,6 +562,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 							VoOrderLine currentOL = pm.getObjectById(VoOrderLine.class, currentOdrerLines.get(pid));
 							currentOL.setQuantity(currentOL.getQuantity() + voOrderLine.getQuantity());
 							VoProduct curProduct = pm.getObjectById(VoProduct.class, currentOL.getProductId());
+							curProduct.setScore( curProduct.getScore() + voOrderLine.getQuantity() );
 
 							// merge packets for prepack product
 							if (curProduct.isPrepackRequired()) {
@@ -641,8 +652,10 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 						// would be actual
 						VoOrderLine voOrderLine = new VoOrderLine(currentOrder, oldOrderLineProduct, oldLine.getQuantity(), price, oldLine.getComment(),
 								oldLine.getPackets());
+						oldOrderLineProduct.setScore( oldOrderLineProduct.getScore() + oldLine.getQuantity() );
 						pm.makePersistent(voOrderLine);
 						currentOdrerLines.put(oldLine.getProductId(), voOrderLine.getId().getId());
+						
 						currentOrder.addCost(price * oldLine.getQuantity());
 					}
 				}
@@ -670,8 +683,12 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
+			double oldQ = 0;
+			if(currentOdrerLines.get(productId)!=null){ //decrease score
+				oldQ = pm.getObjectById(VoOrderLine.class,currentOdrerLines.get(productId)).getQuantity();
+			}
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
-	
+			voProduct.setScore( voProduct.getScore() + quantity - oldQ);
 			double price = voProduct.getPrice(currentOrder.getPriceType());
 
 			Map<Double, Integer> packsRounded;
@@ -736,6 +753,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 			VoOrderLine removedLine = pm.getObjectById(VoOrderLine.class, removedLineID);
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
+			voProduct.setScore( voProduct.getScore() - removedLine.getQuantity() );
 			
 			currentOrder.addCost(-removedLine.getPrice() * removedLine.getQuantity());
 			currentOrder.setWeightGramm( currentOrder.getWeightGramm() - (int)(removedLine.getQuantity() * voProduct.getWeight()));
@@ -1179,7 +1197,10 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			try {
 				if( 0 == shopId )
 						shopId = ShopServiceHelper.getCurrentShopId( this, pm );
-				List<VoProduct> products = (List<VoProduct>) pm.newQuery(VoProduct.class, "shopId=="+shopId ).execute();
+				Query prodQuery = pm.newQuery(VoProduct.class, "shopId=="+shopId );
+				//prodQuery.setOrdering("score DESC");
+				List<VoProduct> products = (List<VoProduct>) prodQuery.execute();
+				Collections.sort(products, new ProdcutScoreComparator());
 				for (VoProduct voProduct : products) {
 					for(Long catId : voProduct.getCategories()){
 						if(!cpm.containsKey(catId)){
