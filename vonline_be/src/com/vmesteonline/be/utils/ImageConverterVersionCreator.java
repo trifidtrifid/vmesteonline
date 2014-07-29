@@ -136,9 +136,9 @@ public class ImageConverterVersionCreator implements VersionCreator {
 			float width = img.getWidth();
 			float height = img.getHeight();
 			float leftX = Math.min(((float)Xlt)/width,1.0F);
-			float bottomY = Math.min(((float)Ylt)/height,1.0F);
+			float topY = Math.min(((float)Ylt)/height,1.0F);
 			float rightX = Math.min(((float)Xrb)/width,1.0F);
-			float topY = Math.min(((float)Yrb)/height,1.0F);
+			float bottomY = Math.min(((float)Yrb)/height,1.0F);
 			//leftX must be < rightX
 			if( leftX == rightX ) 
 				if (leftX > 0.01F) leftX -= 0.01F; else rightX += 0.01F;
