@@ -39,13 +39,12 @@ public class TestWorkAround {
 	protected Group group200m;
 	protected Group group2000m;
 
-	protected Rubric topicRubric;
 	protected String topicSubject = "Test topic";
 
 	protected boolean init() {
 		try {
 			helper.setUp();
-			if (!Defaults.initDefaultData())
+			if (!Defaults.initDefaultData(false))
 				return false;
 
 			pm = PMF.get().getPersistenceManager();
@@ -54,10 +53,6 @@ public class TestWorkAround {
 				return false;
 			usi = new UserServiceImpl(sessionId);
 			msi = new MessageServiceImpl(sessionId);
-			List<Rubric> userRubrics = usi.getUserRubrics();
-			Assert.assertTrue(userRubrics.size() > 0);
-			Assert.assertTrue(userRubrics.get(0) != null);
-			topicRubric = userRubrics.get(0);
 
 			List<Group> userGroups = usi.getUserGroups();
 			Assert.assertTrue(userGroups.size() > 0);

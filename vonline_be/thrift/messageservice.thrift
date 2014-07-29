@@ -2,7 +2,7 @@ include "bedata.thrift"
 include "error.thrift"
 namespace * com.vmesteonline.be.messageservice
 
-enum MessageType { BASE=1, DIALOG=2, SHOP=3, NEWS=4, WALL=5, ADVERT=5 }
+enum MessageType { BASE=1, DIALOG=2, SHOP=3, NEWS=4, WALL=5, ADVERT=6 }
 
 struct MessageLink {
 	1: MessageType linkType,

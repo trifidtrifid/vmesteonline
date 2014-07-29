@@ -51,12 +51,11 @@ public class Defaults {
 	public static String user3name = "Cname";
 	public static String user3email = "c";
 	public static String user3pass = "c";
-	
-	public static String[] unames = new String[]{ user1name, user2name, user3name };
-	public static String[] ulastnames = new String[]{ user1lastName,user2lastName,user3lastName};
-	public static String[] uEmails = new String[]{ user1email,user2email,user3email};
-	public static String[] uPasses = new String[]{ user1pass,user2pass,user3pass};
-	
+
+	public static String[] unames = new String[] { user1name, user2name, user3name };
+	public static String[] ulastnames = new String[] { user1lastName, user2lastName, user3lastName };
+	public static String[] uEmails = new String[] { user1email, user2email, user3email };
+	public static String[] uPasses = new String[] { user1pass, user2pass, user3pass };
 
 	public static int radiusStarecase = 0;
 	public static int radiusHome = 20;
@@ -71,13 +70,11 @@ public class Defaults {
 
 	private static long userId = 0;
 
-	public static boolean initDefaultData() {
+	public static boolean initDefaultData(boolean loadInviteCodes) {
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
-			System.out.print("test!!");
-
 			clearUsers(pm);
 			clearRubrics(pm);
 			clearGroups(pm);
@@ -85,13 +82,10 @@ public class Defaults {
 
 			initializeRubrics(pm);
 			initializeGroups(pm);
-			List<String> locCodes = initializeTestLocations();
+			List<String> locCodes = initializeTestLocations(loadInviteCodes);
 			initializeUsers(locCodes);
 			MySQLJDBCConnector con = new MySQLJDBCConnector();
-			System.out.print("test!!");
-
 			con.execute("drop table if exists topic");
-			System.out.print("test!!");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -100,6 +94,11 @@ public class Defaults {
 			pm.close();
 		}
 		return true;
+
+	}
+
+	public static boolean initDefaultData() {
+		return initDefaultData(true);
 	}
 
 	// ======================================================================================================================
@@ -145,7 +144,7 @@ public class Defaults {
 	// ======================================================================================================================
 	private static void clearRubrics(PersistenceManager pm) {
 		deletePersistentAll(pm, VoRubric.class);
-		
+
 	}
 
 	// ======================================================================================================================
@@ -154,10 +153,8 @@ public class Defaults {
 		q.setFilter(" subscribedByDefault == true");
 		List<VoRubric> defRubrics = (List<VoRubric>) q.execute();
 		if (defRubrics.isEmpty()) {
-			for (VoRubric dr : new VoRubric[] { 
-					new VoRubric("rubric1", "rubric first", "rubric about first", true),
-					new VoRubric("rubric2", "rubric second", "rubric about second", true),
-					new VoRubric("rubric3", "rubric third", "rubric about third", true),
+			for (VoRubric dr : new VoRubric[] { new VoRubric("rubric1", "rubric first", "rubric about first", true),
+					new VoRubric("rubric2", "rubric second", "rubric about second", true), new VoRubric("rubric3", "rubric third", "rubric about third", true),
 					new VoRubric("rubric4", "rubric fourth", "rubric about fourth", true) }) {
 
 				pm.makePersistent(dr);
@@ -176,12 +173,8 @@ public class Defaults {
 		List<VoGroup> defGroups = (List<VoGroup>) q.execute();
 		if (defGroups.isEmpty())
 
-			for (VoGroup dg : 
-				new VoGroup[] { 
-					new VoGroup("Мой подъезд", radiusStarecase, true),
-					new VoGroup("Мой дом", radiusHome, true),
-					new VoGroup("Мои соседи", radiusMedium, true),
-					new VoGroup("Мой район", radiusLarge, true) }) {
+			for (VoGroup dg : new VoGroup[] { new VoGroup("Мой подъезд", radiusStarecase, true), new VoGroup("Мой дом", radiusHome, true),
+					new VoGroup("Мои соседи", radiusMedium, true), new VoGroup("Мой район", radiusLarge, true) }) {
 				defaultGroups.add(dg);
 				pm.makePersistent(dg);
 			}
@@ -192,25 +185,22 @@ public class Defaults {
 		AuthServiceImpl asi = new AuthServiceImpl();
 		ArrayList<Long> uids = new ArrayList<Long>();
 		int counter = 0;
-		for( String uname: unames ){ 
+		for (String uname : unames) {
 			try {
-				uids.add( asi.registerNewUser(
-						uname, 
-						ulastnames[counter],
-						uPasses[counter],
-						uEmails[counter], locCodes.get(counter++), 0));
-				
+				uids.add(asi.registerNewUser(uname, ulastnames[counter], uPasses[counter], uEmails[counter], locCodes.get(counter++), 0));
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		if(uids.size() == 0 ) throw new RuntimeException("NO USERS are CREATED> Initialization totally fucked down");
-		userId = uids.get(0); 
-	
+		if (uids.size() == 0)
+			throw new RuntimeException("NO USERS are CREATED> Initialization totally fucked down");
+		userId = uids.get(0);
+
 	}
 
 	// ======================================================================================================================
-	private static List<String> initializeTestLocations() throws InvalidOperation {
+	private static List<String> initializeTestLocations(boolean loadInviteCodes) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 
 		try {
@@ -220,7 +210,7 @@ public class Defaults {
 
 			pm.makePersistent(streetZ);
 			pm.makePersistent(streetR);
-			
+
 			VoPostalAddress[] addresses;
 			addresses = new VoPostalAddress[] {
 
@@ -240,10 +230,11 @@ public class Defaults {
 				pm.makePersistent(icode);
 			}
 
-			InviteCodeUploader.uploadCodes("/data/addresses_len_7_kudrovo.csv");
+			if (loadInviteCodes)
+				InviteCodeUploader.uploadCodes("/data/addresses_len_7_kudrovo.csv");
 
-			return Arrays.asList( invCodes );
-			
+			return Arrays.asList(invCodes);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to initTestLocations. " + e.getMessage());

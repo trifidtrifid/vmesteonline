@@ -186,9 +186,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
 				+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() + " and radius >= " + group.getRadius()
 				+ " order by createTime desc";
+		
 		List<VoTopic> topics = new ArrayList<VoTopic>();
 		try {
 			ResultSet rs = con.executeQuery(req);
+
 			boolean addTopic = 0 == lastLoadedTopicId ? true : false;
 			while (rs.next() && topics.size() < length) {
 				long topicId = rs.getLong(1);
@@ -336,8 +338,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					votopic.setLatitude(ug.getLatitude());
 
 					topic.userInfo = user.getShortUserInfo();
-					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`) values (" + votopic.getId() + ","
-							+ ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + "," + votopic.getCreatedAt() + ");");
+					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`, `messageType`) values ("
+							+ votopic.getId() + "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + ","
+							+ votopic.getCreatedAt() + "," + votopic.getType().getValue() + ");");
 
 				} else {
 					updateTopic(topic);
@@ -486,7 +489,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		con = new MySQLJDBCConnector();
 		try {
 			con.execute("create table if not exists topic (`id` bigint not null, `longitude` decimal(10,7) not null,"
-					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null);");
+					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null, `messageType` integer not null);");
 		} catch (Exception e) {
 			logger.severe("Failed to connect to database." + e.getMessage());
 			e.printStackTrace();
@@ -597,7 +600,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			} catch (Exception e1) {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
 			}
-			
+
 			try {
 				pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
 			} catch (Exception e) {

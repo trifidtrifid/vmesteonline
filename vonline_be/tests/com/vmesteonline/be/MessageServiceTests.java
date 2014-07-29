@@ -36,7 +36,7 @@ public class MessageServiceTests extends TestWorkAround {
 	private Topic createTopic() throws Exception {
 		Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
 				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null);
-		Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
+		Topic topic = new Topic(0, topicSubject, msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
 		return msi.postTopic(topic);
 	}
 
@@ -100,7 +100,7 @@ public class MessageServiceTests extends TestWorkAround {
 					noLinkedMessages, noTags, 0L);
 			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
 					noLinkedMessages, noTags, 0L);
-			TopicListPart tlp = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
+			TopicListPart tlp = msi.getTopics(homeGroup.getId(), 0, 0, 0L, 10);
 			Assert.assertEquals(2, tlp.topics.get(0).getMessageNum());
 
 		} catch (Exception e) {
@@ -144,7 +144,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 		try {
 			Topic tpc = createTopic();
-			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
+			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
@@ -184,7 +184,7 @@ public class MessageServiceTests extends TestWorkAround {
 				tpcs.add(createTopic());
 			}
 
-			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 5);
+			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), 0, 0, 0L, 5);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(5, rTopic.totalSize);
 			Assert.assertEquals(tpcs.get(0).getId(), rTopic.topics.get(0).getId());
@@ -193,7 +193,7 @@ public class MessageServiceTests extends TestWorkAround {
 			Assert.assertEquals(tpcs.get(3).getId(), rTopic.topics.get(3).getId());
 			Assert.assertEquals(tpcs.get(4).getId(), rTopic.topics.get(4).getId());
 
-			rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, rTopic.topics.get(4).getId(), 5);
+			rTopic = msi.getTopics(homeGroup.getId(), 0, 0, rTopic.topics.get(4).getId(), 5);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(2, rTopic.totalSize);
 			Assert.assertEquals(tpcs.get(5).getId(), rTopic.topics.get(0).getId());
@@ -263,7 +263,7 @@ public class MessageServiceTests extends TestWorkAround {
 			Assert.assertEquals(1, msi.likeOrDislikeTopic(topic.getId(), 1).likes);
 			Assert.assertEquals(0, msi.likeOrDislikeTopic(topic.getId(), 1).dislikes);
 
-			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
+			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(topic.getId(), rTopic.topics.get(0).getId());
@@ -277,7 +277,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 			Assert.assertEquals(1, msi.likeOrDislikeTopic(topic.getId(), -1).dislikes);
 			Assert.assertEquals(0, msi.likeOrDislikeTopic(topic.getId(), -1).likes);
-			rTopic = msi.getTopics(homeGroup.getId(), topicRubric.getId(), 0, 0L, 10);
+			rTopic = msi.getTopics(homeGroup.getId(), 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(topic.getId(), rTopic.topics.get(0).getId());
@@ -301,7 +301,7 @@ public class MessageServiceTests extends TestWorkAround {
 		try {
 			createTopic(getUserGroupId(Defaults.user1email, Defaults.radiusMedium));
 			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
+			TopicListPart rTopic = msi.getTopics(grId, 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(0, rTopic.totalSize);
 
@@ -323,7 +323,7 @@ public class MessageServiceTests extends TestWorkAround {
 			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll);
 			msi.postTopic(topic);
 
-			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
+			TopicListPart rTopic = msi.getTopics(grId, 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertNotNull(rTopic.topics.get(0).poll);
@@ -356,7 +356,7 @@ public class MessageServiceTests extends TestWorkAround {
 			msi.doPoll(topic.poll.pollId, 1);
 
 			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
+			TopicListPart rTopic = msi.getTopics(grId, 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertNotNull(rTopic.topics.get(0).poll);
@@ -389,7 +389,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 			asi.login(Defaults.user2email, Defaults.user2pass);
 			long grId = getUserGroupId(Defaults.user2email, Defaults.radiusMedium);
-			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
+			TopicListPart rTopic = msi.getTopics(grId, 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 
@@ -407,7 +407,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 			asi.login(Defaults.user2email, Defaults.user2pass);
 			long grId = getUserGroupId(Defaults.user2email, Defaults.radiusStarecase);
-			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
+			TopicListPart rTopic = msi.getTopics(grId, 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(0, rTopic.totalSize);
 
@@ -423,7 +423,7 @@ public class MessageServiceTests extends TestWorkAround {
 		try {
 			createTopic();
 			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusSmall);
-			TopicListPart rTopic = msi.getTopics(grId, topicRubric.getId(), 0, 0L, 10);
+			TopicListPart rTopic = msi.getTopics(grId, 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(0, rTopic.totalSize);
 
