@@ -41,14 +41,14 @@
                             </div>
                             <div>
                                 <label for="settings-input-3">Дата рождения</label>
-                                <input type="text" id="settings-input-3" ng-model="settings.birthday"/>
+                                <input type="text" id="settings-input-3" ng-model="settings.userInfo.birthdayMeta"/>
                             </div>
                             <div>
                                 <label for="settings-select-1">Пол</label>
 
                                 <select class="form-control" id="settings-select-1" ng-model="settings.userInfo.gender">
-                                    <option value="m" ng-selected="settings.userInfo.gender=='m'">Муж</option>
-                                    <option value="f" ng-selected="settings.userInfo.gender=='f'">Жен</option>
+                                    <option value="1" ng-selected="settings.userInfo.gender == 1 ">Муж</option>
+                                    <option value="0" ng-selected="settings.userInfo.gender == 0 ">Жен</option>
                                 </select>
                             </div>
 
@@ -68,7 +68,7 @@
 
                             <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(1),'btn-primary' : settings.canSave(1)}"
                                     href="#" ng-disabled="!settings.canSave(1)" ng-click="settings.updatePasswordOrUserInfo()">Сохранить</button>
-                                <span ng-class="{'info-good': !isProfileError, 'error-info': isProfileError}" ng-show="settings.isProfileResult">{{ settings.profileInfo }}</span>
+                                <span ng-class="{'info-good': !settings.isProfileError, 'error-info': settings.isProfileError}" ng-show="settings.isProfileResult">{{ settings.profileInfo}}</span>
                             </form>
 
                         </div>
@@ -78,24 +78,28 @@
                             <div>
                                 <label for="settings-select-2" class="long">Показывать мой профайл</label>
 
-                                <select class="form-control" id="settings-select-2">
-                                    <option value="">&nbsp;</option>
-                                    <option value="AL">Никому</option>
-                                    <option value="AK">Васе</option>
+                                <select class="form-control" id="settings-select-2" ng-model="settings.userPrivacy.profile">
+                                    <option value="0" ng-selected="settings.userPrivacy.profile == 0 ">Никому</option>
+                                    <option value="1" ng-selected="settings.userPrivacy.profile == 1 ">Подъезд</option>
+                                    <option value="2" ng-selected="settings.userPrivacy.profile == 2 ">Дом</option>
+                                    <option value="3" ng-selected="settings.userPrivacy.profile == 3 ">Район</option>
+                                    <option value="4" ng-selected="settings.userPrivacy.profile == 4 ">Всем</option>
                                 </select>
                             </div>
                             <div>
                                 <label for="settings-select-3" class="long">Показывать контактную информацию</label>
 
-                                <select class="form-control" id="settings-select-3">
-                                    <option value="">&nbsp;</option>
-                                    <option value="AL">Никому</option>
-                                    <option value="AK">Васе</option>
+                                <select class="form-control" id="settings-select-3" ng-model="settings.userPrivacy.contacts">
+                                    <option value="0" ng-selected="settings.userPrivacy.contacts == 0 ">Никому</option>
+                                    <option value="1" ng-selected="settings.userPrivacy.contacts == 1 ">Подъезд</option>
+                                    <option value="2" ng-selected="settings.userPrivacy.contacts == 2 ">Дом</option>
+                                    <option value="3" ng-selected="settings.userPrivacy.contacts == 3 ">Район</option>
+                                    <option value="4" ng-selected="settings.userPrivacy.contacts == 4 ">Всем</option>
                                 </select>
                             </div>
 
                                 <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(2),'btn-primary' : settings.canSave(2)}"
-                                        href="#" ng-disabled="!settings.canSave(2)" ng-click="settings.updatePasswordOrUserInfo()">Сохранить</button>
+                                        href="#" ng-disabled="!settings.canSave(2)" ng-click="settings.updatePrivacy()">Сохранить</button>
                             </form>
                         </div>
 
@@ -165,64 +169,55 @@
                         <div id="family" class="tab-pane">
                             <form name="formFamily">
                             <div>
-                                <label for="settings-select-5">Семейное положение</label>
+                                <label for="settings-select-5" class="pull-left">Семейное положение</label>
 
                                 <select class="form-control short" id="settings-select-5" ng-model="settings.family.relations">
-                                    <option value="1" ng-selected="settings.family.relations=='1'">Не женат</option>
-                                    <option value="0" ng-selected="settings.family.relations=='0'">Женат</option>
+                                    <option value="1" ng-selected="settings.family.relations=='1'">{{ settings.notMarried }}</option>
+                                    <option value="0" ng-selected="settings.family.relations=='0'">{{ settings.married }}</option>
                                 </select>
                             </div>
-                            <div  ng-switch on="settings.family.childs.length">
-                                <label for="settings-input-9" class="pull-left">Ребенок</label>
+                            <div >
+                                <label for="settings-input-17" class="pull-left">Ребенок</label>
 
-                                <div class="single-child" ng-swith-when="0">
-                                    <input type="text" class="short" id="settings-input-9" ng-model="child.name"/>
+                                <div>
+                                    <div class="settings-child-item" ng-repeat="child in settings.family.childs">
+                                        <input type="text" class="short" id="settings-input-17" ng-model="child.name" placeholder="Имя"/>
 
-                                    <label for="settings-select-6" class="no-width">родился</label>
-                                    <select class="form-control short" id="settings-select-6">
-                                        <option value="">&nbsp;</option>
-                                        <option value="AL">Месяц</option>
-                                        <option value="AK">Январь</option>
-                                    </select>
+                                        <label for="settings-select-9" class="no-width">родился</label>
+                                        <select class="form-control short" id="settings-select-9" ng-model="child.month">
+                                            <option value="00"  ng-selected="child.month == '00'">Январь</option>
+                                            <option value="01"  ng-selected="child.month == '01'">Февраль</option>
+                                            <option value="02"  ng-selected="child.month == '02'">Март</option>
+                                            <option value="03"  ng-selected="child.month == '03'">Апрель</option>
+                                            <option value="04"  ng-selected="child.month == '04'">Май</option>
+                                            <option value="05"  ng-selected="child.month == '05'">Июнь</option>
+                                            <option value="06"  ng-selected="child.month == '06'">Июль</option>
+                                            <option value="07"  ng-selected="child.month == '07'">Август</option>
+                                            <option value="08"  ng-selected="child.month == '08'">Сентябрь</option>
+                                            <option value="09"  ng-selected="child.month == '09'">Октябрь</option>
+                                            <option value="10"  ng-selected="child.month == '10'">Ноябрь</option>
+                                            <option value="11"  ng-selected="child.month == '11'">Декабрь</option>
+                                        </select>
 
-                                    <input type="text" class="short" placeholder="год" id="settings-input-16"/>
-                                </div>
+                                        <select class="form-control short" id="settings-select-10" ng-model="child.year">
+                                            <option value="{{year}}" ng-selected="child.year == year" ng-repeat="year in settings.years">{{year}}</option>
+                                        </select>
 
-                                <div class="settings-child-item" ng-switch-default ng-repeat="child in settings.family.childs">
-                                    <input type="text" class="short" id="settings-input-17" ng-model="child.name"/>
+                                        <a class="remove-child" href="#" ng-hide="child.isNotRemove" title="Удалить" ng-click="settings.removeChild(child.name)">&times;</a>
 
-                                    <label for="settings-select-6" class="no-width">родился</label>
-                                    <select class="form-control short" id="settings-select-9">
-                                        <option value="">&nbsp;</option>
-                                        <option value="AL">Месяц</option>
-                                        <option value="AK">Январь</option>
-                                    </select>
-
-                                    <input type="text" class="short" placeholder="год" id="settings-input-10"/>
+                                        <!--<input type="text" class="short" placeholder="год" id="settings-input-10"/>-->
+                                    </div>
                                 </div>
 
                                 <div class="settings-add-link"><a href="#" ng-click="settings.childAdd($event)">Добавить</a></div>
 
                             </div>
 
-                            <div ng-switch on="settings.family.pets.length">
-                                <label for="settings-input-11" class="pull-left">Питомец</label>
+                            <div>
+                                <label for="settings-input-14" class="pull-left">Питомец</label>
 
-                                <div class="single-pet" ng-swith-when="0">
-                                    <input type="text" class="short" id="settings-input-11"/>
-
-                                    <select class="form-control short" id="settings-select-7" ng-model="pet.type">
-                                        <option  value="0" ng-selected="pet.type=='0'">Кошка</option>
-                                        <option  value="1" ng-selected="pet.type=='1'">Собака</option>
-                                        <option  value="2" ng-selected="pet.type=='2'">Птица</option>
-                                        <option  value="3" ng-selected="pet.type=='3'">Другое</option>
-                                    </select>
-
-                                    <input type="text" class="short" placeholder="порода" id="settings-input-12" ng-model="pet.breed"/>
-                                </div>
-
-                                <div class="settings-pet-item" ng-switch-default ng-repeat="pet in settings.family.pets">
-                                    <input type="text" class="short" id="settings-input-14"/>
+                                <div class="settings-pet-item" ng-repeat="pet in settings.family.pets">
+                                    <input type="text" class="short" id="settings-input-14" ng-model="pet.name" placeholder="Кличка"/>
 
                                     <select class="form-control short" id="settings-select-8" ng-model="pet.type">
                                         <option  value="0" ng-selected="pet.type=='0'">Кошка</option>
@@ -232,6 +227,8 @@
                                     </select>
 
                                     <input type="text" class="short" placeholder="порода" id="settings-input-15" ng-model="pet.breed"/>
+
+                                    <a class="remove-child" href="#" ng-hide="pet.isNotRemove" title="Удалить" ng-click="settings.removePet(pet.name)">&times;</a>
                                 </div>
 
                                 <div class="settings-add-link"><a href="#" ng-click="settings.petAdd($event)">Добавить</a></div>

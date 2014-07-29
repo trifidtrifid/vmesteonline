@@ -58,10 +58,23 @@
   width: 150px;
   height: 29px;
 }
+.settings select,
+.edit-personal select {
+  padding-left: 0;
+}
 .settings .settings-add-link,
 .edit-personal .settings-add-link {
-  padding-left: 170px;
+  padding-left: 162px;
   padding-bottom: 20px;
+}
+.settings .remove-child,
+.edit-personal .remove-child {
+  font-size: 16px;
+  color: #f00;
+}
+.settings .remove-child:hover,
+.edit-personal .remove-child:hover {
+  text-decoration: none;
 }
 .no-width {
   width: auto !important;
