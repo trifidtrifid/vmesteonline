@@ -128,6 +128,7 @@ public class VoDialog {
 				e.printStackTrace();
 			}
 		}
+		dmsg.setAttachs(attchs);
 		lastMessageDate = dmsg.getCreateDate();
 		pm.makePersistent(dmsg);
 		pm.makePersistent(this);
