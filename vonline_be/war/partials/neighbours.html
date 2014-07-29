@@ -21,7 +21,7 @@
                 <span class="nextdoor-name">{{neighboor.firstName+" "+neighboor.lastName}}</span>
             </a>
             <div class="nextdoor-right pull-right">
-                <a href="#" class="btn btn-sm btn-primary no-border">Написать</a>
+                <a href="#" ng-click="neighbours.goToDialog(neighboor.id)" class="btn btn-sm btn-primary no-border">Написать</a>
             </div>
         </div>
 

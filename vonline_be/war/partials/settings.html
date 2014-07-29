@@ -68,7 +68,7 @@
 
                             <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(1),'btn-primary' : settings.canSave(1)}"
                                     href="#" ng-disabled="!settings.canSave(1)" ng-click="settings.updatePasswordOrUserInfo()">Сохранить</button>
-                                <span class="error-info" ng-show="settings.isProfileError">{{ settings.profileError }}</span>
+                                <span ng-class="{'info-good': !isProfileError, 'error-info': isProfileError}" ng-show="settings.isProfileResult">{{ settings.profileInfo }}</span>
                             </form>
 
                         </div>
