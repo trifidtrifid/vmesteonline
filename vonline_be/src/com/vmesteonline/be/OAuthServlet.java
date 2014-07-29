@@ -62,7 +62,7 @@ public class OAuthServlet extends HttpServlet {
 				JSONArray vkResp = jsonObj2.getJSONArray("response");
 				JSONObject o = (JSONObject) vkResp.get(0);
 
-				authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), "123456", email, inviteCode);
+				authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), "123456", email, inviteCode, 0);
 				authServiceImpl.allowUserAccess(email, "", false);
 				EMailHelper.sendSimpleEMail(email, "Регистрация на сайте vmesteonline.ru",
 						"вы зарегистрировались на сайте http://voclub.co. Ваш логин для входа: " + email + ". Ваш пароль: 123456. Рекомендуем изменить.");

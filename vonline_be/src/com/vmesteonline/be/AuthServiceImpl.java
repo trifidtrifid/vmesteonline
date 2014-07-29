@@ -135,7 +135,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public long registerNewUser(String firstname, String lastname, String password, String email, String inviteCode) throws InvalidOperation {
+	public long registerNewUser(String firstname, String lastname, String password, String email, String inviteCode, int gender) throws InvalidOperation {
 
 		if (getUserByEmail(email) != null)
 			throw new InvalidOperation(VoError.RegistrationAlreadyExist, "registration exsist for user with email " + email);
@@ -150,6 +150,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			voInviteCode.registered();
 
 			VoUser user = new VoUser(firstname, lastname, email, password);
+			user.setGender(gender);
 			pm.makePersistent(user);
 			pm.makePersistent(voInviteCode);
 

@@ -198,7 +198,7 @@ public class Defaults {
 						uname, 
 						ulastnames[counter],
 						uPasses[counter],
-						uEmails[counter], locCodes.get(counter++)));
+						uEmails[counter], locCodes.get(counter++), 0));
 				
 			} catch (Exception e) {
 				e.printStackTrace();

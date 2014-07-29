@@ -129,7 +129,7 @@ public class AuthServiceImpTests {
 		}
 		try {
 			PersistenceManager pm = PMF.getPm();
-			long ret = asi.registerNewUser("testName", "testFamily", "testPassword", "test@eml", "1");
+			long ret = asi.registerNewUser("testName", "testFamily", "testPassword", "test@eml", "1", 0);
 			VoUser user = asi.getUserByEmail("test@eml", pm);
 			assertEquals("testName", user.getName());
 			assertEquals("testPassword", user.getPassword());
@@ -172,7 +172,7 @@ public class AuthServiceImpTests {
 		String email = "aaa@bbb.com";
 		assertFalse(asi.checkEmailRegistered(email));
 		try {
-			asi.registerNewUser("testName", "testFamily", "testPassword", email, null);
+			asi.registerNewUser("testName", "testFamily", "testPassword", email, null, 0);
 		} catch (InvalidOperation e) {
 			e.printStackTrace();
 			assertFalse(true);
@@ -185,7 +185,7 @@ public class AuthServiceImpTests {
 		String email = "brozer@pisem.net";
 		assertFalse(asi.checkEmailRegistered(email));
 		try {
-			long uid = asi.registerNewUser("testName", "testFamily", "testPassword", email, null);
+			long uid = asi.registerNewUser("testName", "testFamily", "testPassword", email, null, 0);
 			asi.sendConfirmCode(email, "mailTemplates/changePasswordConfirm.html");
 			PersistenceManager pm = PMF.getPm();
 			try {
