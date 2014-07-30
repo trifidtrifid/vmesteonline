@@ -1497,93 +1497,141 @@ angular.module('forum.controllers', ['ui.select2'])
     })
     .controller('changeAvatarController',function($state,$rootScope){
         var changeAvatar = this, newSrc,
-            x1 =50, y1 = 50,x2 = 200,y2 = 200;
+            x1 = 50, y1 = 50, x2 = 200, y2 = 200,
+            imageWidth = 150, imageHeight = 150;
 
         changeAvatar.save = function(){
 
-            var saveSrc = newSrc+"?s="+x1+","+y1+","+x2+","+y2;
+            var saveSrc = newSrc+"?w="+ imageWidth +"&h="+ imageHeight +"&s="+x1+","+y1+","+x2+","+y2;
             userClient.updateUserAvatar(saveSrc);
             $('.logo-container img').attr('src',saveSrc);
             $rootScope.base.user.avatar = saveSrc;
 
-            dialog.dialog('close');
+            $("#dialog-message").dialog('close');
             $state.go('profile');
+
+            $('.preview-container').addClass('hidden');
+
+            $('.ui-dialog').each(function(){
+                if($(this).attr('aria-describedby') == 'dialog-message'){
+                    $(this).detach();
+                }
+            });
+        };
+
+        changeAvatar.back = function(){
+            $('.load-avatar').find('.file-label').html("").
+                removeClass("hide-placeholder selected").
+                attr("data-title","Загрузить аватар");
+
+            $('.loadAvatar-area').removeClass('hidden');
+            $('.crop-area').addClass('hidden');
+
+            $('.preview-container').addClass('hidden');
+            $('.loading').removeClass('hidden');
+
+            $('#image-for-crop').detach();
+            $('.jcrop-holder').detach();
+
+            $('.btn-save-avatar').before('<img src="#" id="image-for-crop" alt="#" class="hidden" />');
 
         };
 
-        var dialog = $("#dialog-message").removeClass('hide').dialog({
-            modal: true,
-            width: 500,
-            position: ['center',100],
-            title_html: false,
-            closeText: "",
-            create: function(event,ui){
+            initModalAndCrop();
 
-                $('.load-avatar input').ace_file_input({
-                    style:'well',
-                    btn_choose:'Загрузить аватар',
-                    btn_change:null,
-                    no_icon:'',
-                    droppable:true,
-                    thumbnail:'large',
-                    icon_remove:null
-                }).on('change', function(){
+        function initModalAndCrop() {
 
-                    $('.loadAvatar-area').addClass('hidden');
-                    $('.crop-area').removeClass('hidden');
+            $("#dialog-message").removeClass('hide').dialog({
+                modal: true,
+                width: 504,
+                position: ['center', 100],
+                title_html: false,
+                closeText: "",
+                create: function (event, ui) {
 
-                    setTimeout(saveNewAva,1000);
+                    $('.load-avatar input').ace_file_input({
+                        style: 'well',
+                        btn_choose: 'Загрузить аватар',
+                        btn_change: null,
+                        no_icon: '',
+                        droppable: true,
+                        thumbnail: 'large',
+                        icon_remove: null
+                    }).on('change', function () {
+                        var imageForCrop = $('#image-for-crop');
 
-                     function saveNewAva(){
+                        $('.loadAvatar-area').addClass('hidden');
+                        $('.crop-area').removeClass('hidden');
 
-                         var bg = $('.load-avatar').find('.file-label img').css('background-image'),
-                             src = $('.load-avatar').find('.file-label img').attr('src');
-                         //alert(bg);
+                        setTimeout(saveNewAva, 1000);
 
-                         newSrc = fileClient.saveFileContent(bg,true);
-                         $('#preview').attr('src',newSrc);
-                         $('#image-for-crop').attr('src',newSrc);//css({'width': '500px'});
-                         $('#image-for-crop').css({width:'500px'});
+                        function saveNewAva() {
 
-                         $('#image-for-crop').Jcrop({
-                             aspectRatio: 1,
-                             setSelect:   [ 200,200, 50, 50 ],
-                             onChange: updateCoords,
-                             onSelect: updateCoords
-                         });
+                            var bg = $('.load-avatar').find('.file-label img').css('background-image'),
+                                src = $('.load-avatar').find('.file-label img').attr('src');
 
-                     }
+                            newSrc = fileClient.saveFileContent(bg, true);
 
-                    function updateCoords(c) {
-                        x1= c.x;
-                        y1= c.y;
-                        x2= c.x2;
-                        y2= c.y2;
-                        /*$('#x').val(c.x);
-                        $('#y').val(c.y);
-                        $('#w').val(c.w);
-                        $('#h').val(c.h);
+                            $('#preview').attr('src', newSrc);
 
-                        $('#x2').val(c.x2);
-                        $('#y2').val(c.y2);*/
+                            imageForCrop.attr('src', newSrc);
+                            imageForCrop.css({'max-width': '500px', 'max-height': '500px'});
 
-                        var rx = 150 / c.w; // 200 - размер окна предварительного просмотра
-                        var ry = 150 / c.h;
+                            imageForCrop.Jcrop({
+                                aspectRatio: 1,
+                                setSelect: [ 200, 200, 50, 50 ],
+                                onChange: updateCoords,
+                                onSelect: updateCoords
+                            }).removeClass('hidden');
 
-                        $('#preview').css({
-                            width: Math.round(rx * 500) + 'px',
-                            height: Math.round(ry * 370) + 'px',
-                            marginLeft: '-' + Math.round(rx * c.x) + 'px',
-                            marginTop: '-' + Math.round(ry * c.y) + 'px'
-                        });
-                    };
-                });
+                            $('.preview-container').removeClass('hidden');
+                            $('.loading').addClass('hidden');
 
-            },
-            close: function(event, ui){
-                $state.go('profile');
-            }
-        });
+
+                        }
+
+                        function updateCoords(c) {
+                            imageWidth = imageForCrop.width();
+                            imageHeight = imageForCrop.height();
+
+                            x1 = c.x;
+                            y1 = c.y;
+                            x2 = c.x2;
+                            y2 = c.y2;
+                            /*$('#x').val(c.x);
+                             $('#y').val(c.y);
+                             $('#w').val(c.w);
+                             $('#h').val(c.h);
+
+                             $('#x2').val(c.x2);
+                             $('#y2').val(c.y2);*/
+
+                            var rx = 150 / c.w; // 150 - размер окна предварительного просмотра
+                            var ry = 150 / c.h;
+
+                            $('#preview').css({
+                                width: Math.round(rx * imageWidth) + 'px',
+                                height: Math.round(ry * imageHeight) + 'px',
+                                marginLeft: '-' + Math.round(rx * c.x) + 'px',
+                                marginTop: '-' + Math.round(ry * c.y) + 'px'
+                            });
+                        };
+                    });
+
+                },
+                close: function (event, ui) {
+                    $state.go('profile');
+
+                    $('.preview-container').addClass('hidden');
+
+                    $('.ui-dialog').each(function(){
+                        if($(this).attr('aria-describedby') == 'dialog-message'){
+                            $(this).detach();
+                        }
+                    });
+                }
+            });
+        }
     });
 
 /* const */
