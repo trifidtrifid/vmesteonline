@@ -108,6 +108,8 @@ public class DialogServiceImpl extends ServiceImpl implements Iface  {
 			
 			return vdlg.postMessage( currentUserId, content, attachs, pm ).getDialogMessage(pm);
 		
+		} catch (Exception e){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to post message: "+(e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage()));
 		} finally {
 			pm.close();
 		}
