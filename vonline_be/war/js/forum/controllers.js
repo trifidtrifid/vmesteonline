@@ -1388,6 +1388,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
     })
     .controller('dialogController',function($rootScope,$stateParams) {
+
+        initFancyBox($('.dialog'));
         $rootScope.base.mainContentTopIsHide = true;
         var dialog = this;
         var currentDialog = dialogClient.getDialogById($stateParams.dialogId);

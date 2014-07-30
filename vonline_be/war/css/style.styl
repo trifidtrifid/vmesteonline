@@ -753,30 +753,31 @@ transform()
   .private-message-single
     cursor pointer
     padding 10px
+    padding-left 0
     overflow auto
     border-bottom 1px solid #CCCCCC
     &:first-child
       border-top 1px solid #CCCCCC
-    .private-message-left
-      width 300px
-      .private-message-ava
-        img
-          width 70px
-      .private-message-author
-        margin-left 50px
-        .attached
-          padding-bottom 0
-        p
-          margin-bottom 0
-        a
-          &:hover
-            text-decoration none
+    .private-message-ava
+      img
+        width 70px
+    .private-message-author
+      margin-left 50px
+      .attached
+        padding-bottom 0
+      p
+        margin-bottom 0
+      a
+        &:hover
+          text-decoration none
     .private-message-right
       margin-left 320px
 
 .private-messages
   .private-message-single .private-message-left
     line-height 65px
+    .private-message-left
+      width 300px
     .private-message-author
       display inline-block
       vertical-align middle
