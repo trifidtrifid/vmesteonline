@@ -122,12 +122,19 @@ struct UserInterests{
 	2: string job,
 }
 
-struct UserProfile{
+enum NotificationFreq { DAYLY=2, TWICEAWEEK=4, WEEKLY=8, NEVER=128 }
+struct Notifications {
+	1:string email,
+	2:NotificationFreq freq,
+}
+
+struct UserProfile {
 	1: UserInfo userInfo,
 	2: UserContacts contacts,
 	3: UserFamily family,
 	4: UserPrivacy privacy, 
 	5: UserInterests interests,
+	6: Notifications notifications,
 }
 
 
