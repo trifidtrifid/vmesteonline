@@ -204,8 +204,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		}
 	}
 
-	private SortedSet<Product> getProductsFromCategory(Long categoryId, Long shopId, PersistenceManager pm) {
-		SortedSet<Product> rslt = new TreeSet<Product>(/*new ProdcutNameComparator()*/);
+	private List<VoProduct> getProductsFromCategory(Long categoryId, Long shopId, PersistenceManager pm) {
+		List<VoProduct> rslt = new ArrayList<VoProduct>();
 		List<VoProductCategory> vpcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class,
 				"shopId == " + shopId + " && parentId == " + categoryId).execute();
 		for (VoProductCategory cat : vpcl) {
@@ -213,13 +213,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		}
 		Query pQuery = pm.newQuery(VoProduct.class, "categories == " + categoryId);
 		//pQuery.setOrdering("score DESC");
-		List<VoProduct> vpl = (List<VoProduct>) pQuery.execute();
-		Collections.sort(vpl, new ProdcutScoreComparator());
-		
-		for (VoProduct product : vpl) {
-			if(!product.isDeleted())
-				rslt.add(product.getProduct(pm));
-		}
+		rslt.addAll((List<VoProduct>) pQuery.execute());
 		return rslt;
 	}
 
@@ -239,7 +233,13 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			if (null == products) { // no data in cache
 
 				products = new ArrayList<Product>();
-				products.addAll(getProductsFromCategory(categoryId, shopId, pm));
+				List<VoProduct> vpl = getProductsFromCategory(categoryId, shopId, pm);
+				Collections.sort(vpl, new ProdcutScoreComparator());
+				for (VoProduct product : vpl) {
+					if(!product.isDeleted())
+						products.add(product.getProduct(pm));
+				}
+				
 				try {
 					putObjectToCache(key, products);
 				} catch (Exception e) {
@@ -1228,7 +1228,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		return catwithProcuts;
 	}
 
-	static Object createShopProductsByCategoryKey(long shopId) {
+	static public Object createShopProductsByCategoryKey(long shopId) {
 		return "createShopProductsByCategoryKey"+shopId;
 	}
 	
@@ -1253,7 +1253,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			VoStreet voStreet = new VoStreet(voCity, addrInfo.getStreetName(),pm );
 			String no = addrInfo.getBuildingNo();
 			VoBuilding voBuilding = new VoBuilding(voStreet, no, addrInfo.getLongitude(), addrInfo.getLattitude(), pm);
-			VoPostalAddress pa = new VoPostalAddress( voBuilding, staircase, floor, (byte)flatNo, comment );
+			VoPostalAddress pa = new VoPostalAddress( voBuilding, staircase, floor, flatNo, comment );
 			currentUser.addDeliveryAddress( pa, buildingAddressText);
 			return pa.getPostalAddress(pm);
 			

@@ -27,7 +27,6 @@ import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;

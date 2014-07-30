@@ -71,7 +71,7 @@ public class ShopServiceHelper {
 		return shopId;
 	}
 
-	static String getProcutsOfCategoryCacheKey(long categoryId, Long shopId) {
+	public static String getProcutsOfCategoryCacheKey(long categoryId, Long shopId) {
 		return "VoProductsForCategory:" + shopId + ":" + categoryId;
 	}
 	

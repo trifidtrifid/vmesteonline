@@ -16,8 +16,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import org.apache.log4j.Logger;
-
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
@@ -25,7 +23,6 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.shop.FullProductInfo;
 import com.vmesteonline.be.shop.PriceType;
 import com.vmesteonline.be.shop.Product;
@@ -173,7 +170,7 @@ public class VoProduct {
 						}
 
 			vp.price = product.getPrice();
-			vp.setScore(0);
+			vp.setScore(1);
 			vp.setFullDescr(details.getFullDescr());
 
 			vp.pricesMap = convertFromPriceTypeMap(details.getPricesMap(), new HashMap<Integer, Double>());
@@ -227,7 +224,7 @@ public class VoProduct {
 
 	// =====================================================================================================================
 	public VoProduct(long shopId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
-		this.setScore(0);
+		this.setScore(1);
 		Product product = fpi.getProduct();
 		ProductDetails details = fpi.getDetails();
 
@@ -276,11 +273,6 @@ public class VoProduct {
 				this.categories.add(categoryId);
 			}
 
-			this.topicSet = new ArrayList<Long>();
-			for (long topicId : details.getTopicSet()) {
-				pm.getObjectById(VoTopic.class, topicId);
-				this.topicSet.add(topicId);
-			}
 			pm.getObjectById(VoProducer.class, product.getProducerId());
 			this.producerId = product.getProducerId();
 			
@@ -606,7 +598,7 @@ public class VoProduct {
 
 	@Override
 	public String toString() {
-		return "VoProduct [id=" + id + ", name=" + name + ", price=" + price + "]";
+		return "VoProduct [id=" + id + ", name=" + name + ", score=" + score + "]";
 	}
 
 	public String toFullString() {

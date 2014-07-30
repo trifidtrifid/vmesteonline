@@ -1,7 +1,6 @@
 package com.vmesteonline.be.jdo2.shop;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +17,6 @@ import com.google.appengine.api.datastore.Text;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.shop.ProductCategory;
 import com.vmesteonline.be.utils.StorageHelper;
 
@@ -64,11 +62,6 @@ public class VoProductCategory {
 			} else  {
 				this.setParentId(parentId);
 			}
-			if (null != topicSet)
-				for (long tid : topicSet) {
-					pm.getObjectById(VoTopic.class, tid);
-					topics.add(tid);
-				}
 			
 			this.setSocialNetworks( socialNetworks );
 			

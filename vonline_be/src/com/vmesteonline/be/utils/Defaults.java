@@ -22,17 +22,12 @@ import com.vmesteonline.be.ShopServiceImpl;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.access.shop.VoShopAccess;
 import com.vmesteonline.be.access.shop.VoShopAccessManager;
-import com.vmesteonline.be.access.shop.VoShopAccessRoles;
-import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
-import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoRubric;
-import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
-import com.vmesteonline.be.jdo2.VoUserTopic;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoCity;
 import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
@@ -108,8 +103,6 @@ public class Defaults {
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations();
 			initializeUsers(locCodes);
-			MySQLJDBCConnector con = new MySQLJDBCConnector();
-			con.execute("drop table if exists topic");
 			initializeShop();
 			
 		} catch (Exception e) {
@@ -136,10 +129,7 @@ public class Defaults {
 	// ======================================================================================================================
 
 	private static void clearUsers(PersistenceManager pm) {
-		deletePersistentAll(pm, VoUserTopic.class);
 		deletePersistentAll(pm, VoUserGroup.class);
-		deletePersistentAll(pm, VoTopic.class);
-		deletePersistentAll(pm, VoMessage.class);
 		deletePersistentAll(pm, VoUser.class);
 		deletePersistentAll(pm, VoShopAccess.class);
 		deletePersistentAll(pm,VoFileAccessRecord.class);

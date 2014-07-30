@@ -30,14 +30,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/thrift/UserService</url-pattern>
 	</servlet-mapping>
 	<servlet>
-		<servlet-name>MessageServiceServlet</servlet-name>
-		<servlet-class>com.vmesteonline.be.MessageServiceServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>MessageServiceServlet</servlet-name>
-		<url-pattern>/thrift/MessageService</url-pattern>
-	</servlet-mapping>
-	<servlet>
 		<servlet-name>ShopServiceServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.ShopServiceServlet</servlet-class>
 	</servlet>
