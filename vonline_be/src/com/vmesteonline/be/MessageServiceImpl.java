@@ -186,7 +186,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
 				+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() + " and radius >= " + group.getRadius()
 				+ " order by createTime desc";
-		
+
 		List<VoTopic> topics = new ArrayList<VoTopic>();
 		try {
 			ResultSet rs = con.executeQuery(req);
@@ -216,6 +216,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@SuppressWarnings("unchecked")
 	@Override
 	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation {
+		return getTopics(groupId, rubricId, commmunityId, lastLoadedTopicId, length, MessageType.BASE);
+	}
+
+	private TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length, MessageType type) {
 
 		TopicListPart mlp = new TopicListPart();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
