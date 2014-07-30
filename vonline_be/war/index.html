@@ -310,7 +310,7 @@
 
                                 var userLocation = authClient.checkInviteCode(code);
                                 document.location.replace('registration.html#email='+ email +';mapUrl='+userLocation.mapUrl+";address="+
-                                        userLocation.address+";locationId="+userLocation.locationId);
+                                        userLocation.address+";code="+code);
 
                             /*$('body').hide(0).addClass('poll').load('poll.html .masthead',function(){
                                 var marginLeft = 0;

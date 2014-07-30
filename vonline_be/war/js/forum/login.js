@@ -11,7 +11,7 @@ $(document).ready(function(){
         var email = URLArray[0].split('=')[1],
             mapUrl = URLArray[1].split('=')[1],
             address = URLArray[2].split('=')[1],
-            locationId = URLArray[3].split('=')[1];
+            code = URLArray[3].split('=')[1];
 
         $('#email').val(email);
         $('.mapUrl').attr('src', mapUrl);
@@ -24,9 +24,16 @@ $(document).ready(function(){
     });
 
     $('.btn-reg').click(function(){
+        var gender = "";
+        $('input[name="sex"]').each(function(){
+            if($(this).prop("checked")){
+                gender = $(this).index();
+            }
+        });
 
         try{
-            authClient.registerNewUser($('#ufirstname'), $('#ulastname'), $('#password'), $('#email'), locationId);
+            authClient.registerNewUser($('#ufirstname').val(), $('#ulastname').val(), $('#password').val(), $('#email').val(), code, gender);
+            document.location.replace('coming-soon.html');
         }catch(e){
            $('.error-info').text('Ошибка регистрации. Вы указали не все данные').show();
         }

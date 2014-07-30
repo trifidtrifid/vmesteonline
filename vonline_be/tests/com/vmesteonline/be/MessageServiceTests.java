@@ -5,21 +5,13 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
-
-import javax.jdo.PersistenceManager;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.appengine.tools.development.testing.LocalBlobstoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
-import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageListPart;
 import com.vmesteonline.be.messageservice.MessageType;
@@ -33,17 +25,24 @@ import com.vmesteonline.be.utils.Defaults;
 
 public class MessageServiceTests extends TestWorkAround {
 
-	private Topic createTopic() throws Exception {
-		Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
+	private Message createMessage(long tpcId, long msgId) throws Exception {
+		Message msg = new Message(0, msgId, MessageType.BASE, tpcId, homeGroup.getId(), 0, (int) (System.currentTimeMillis() / 1000L), 0, "test content", 0, 0,
 				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null);
-		Topic topic = new Topic(0, topicSubject, msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
-		return msi.postTopic(topic);
+		return msi.postMessage(msg);
+	}
+
+	private Topic createTopic() throws Exception {
+		return createTopic(0, MessageType.BASE);
 	}
 
 	private Topic createTopic(long groupId) throws Exception {
-		Message msg = new Message(groupId, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
+		return createTopic(groupId, MessageType.BASE);
+	}
+
+	private Topic createTopic(long groupId, MessageType type) throws Exception {
+		Message msg = new Message(groupId, 0, type, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
 				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null);
-		Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
+		Topic topic = new Topic(0, topicSubject, msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
 		return msi.postTopic(topic);
 	}
 
@@ -65,9 +64,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
-			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg = createMessage(topic.getId(), 0);
 
 			Assert.assertEquals(msg.getTopicId(), topic.getId());
 			Assert.assertEquals(msg.getParentId(), topic.getMessage().getId());
@@ -76,8 +73,7 @@ public class MessageServiceTests extends TestWorkAround {
 			Assert.assertEquals(msg.likesNum, 0);
 			Assert.assertEquals(msg.unlikesNum, 0);
 
-			Message msg2 = msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg2 = createMessage(topic.getId(), msg.getId());
 			Assert.assertEquals(msg2.getTopicId(), topic.getId());
 			Assert.assertEquals(msg2.getParentId(), msg.getId());
 			Assert.assertEquals(msg2.getAuthorId(), user1.getId());
@@ -95,11 +91,8 @@ public class MessageServiceTests extends TestWorkAround {
 
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
-			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
-			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg = createMessage(topic.getId(), 0);
+			createMessage(topic.getId(), msg.getId());
 			TopicListPart tlp = msi.getTopics(homeGroup.getId(), 0, 0, 0L, 10);
 			Assert.assertEquals(2, tlp.topics.get(0).getMessageNum());
 
@@ -114,15 +107,10 @@ public class MessageServiceTests extends TestWorkAround {
 		try {
 			Topic topic = createTopic();
 			Assert.assertNotNull(topic.getId());
-			long homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			Message msg1 = msi.createMessage(topic.getId(), 0, homeGroupId, MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
-			Message msg = msi.createMessage(topic.getId(), msg1.getId(), homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
-					noLinkedMessages, noTags, 0L);
-			msg = msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the third message in the topic",
-					noLinkedMessages, noTags, 0L);
-			msi.createMessage(topic.getId(), msg.getId(), homeGroupId, MessageType.BASE, "Content of the fourth message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg1 = createMessage(topic.getId(), 0);
+			Message msg = createMessage(topic.getId(), msg1.getId());
+			msg = createMessage(topic.getId(), msg.getId());
+			createMessage(topic.getId(), msg.getId());
 
 			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
 			Assert.assertNotNull(mlp);
@@ -160,12 +148,11 @@ public class MessageServiceTests extends TestWorkAround {
 
 	}
 
-
 	@Test
 	public void testGetAdvert() {
 		try {
-			Topic tpc = createTopic();
-			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), 0, 0, 0L, 10);
+			Topic tpc = createTopic(homeGroup.getId(), MessageType.ADVERT);
+			TopicListPart rTopic = msi.getAdverts(homeGroup.getId(), 0, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.totalSize);
 			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
@@ -185,7 +172,6 @@ public class MessageServiceTests extends TestWorkAround {
 	public void testGetWallItems() {
 
 		try {
-			Topic tpc = createTopic();
 			List<WallItem> rTopic = msi.getWallItems(homeGroup.getId());
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.size());
@@ -237,18 +223,12 @@ public class MessageServiceTests extends TestWorkAround {
 	@Test
 	public void testGetMessages() {
 		try {
-			long user1homeGroupId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
-			long user2homeGroupId = getUserGroupId(Defaults.user2email, Defaults.radiusHome);
 
 			Topic topic = createTopic();
-			Message msg = msi.createMessage(topic.getId(), 0, user1homeGroupId, MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
-			Message msg1 = msi.createMessage(topic.getId(), msg.getId(), user2homeGroupId, MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
-			Message msg2 = msi.createMessage(topic.getId(), msg1.getId(), user2homeGroupId, MessageType.BASE,
-					"Content of the SECOND message in the topic", noLinkedMessages, noTags, 0L);
-			Message msg3 = msi.createMessage(topic.getId(), 0, user2homeGroupId, MessageType.BASE, "Content of the SECOND message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg = createMessage(topic.getId(), 0);
+			Message msg1 = createMessage(topic.getId(), msg.getId());
+			Message msg2 = createMessage(topic.getId(), msg1.getId());
+			Message msg3 = createMessage(topic.getId(), 0);
 
 			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 10);
 			Assert.assertNotNull(mlp);
@@ -459,18 +439,12 @@ public class MessageServiceTests extends TestWorkAround {
 		try {
 
 			Topic topic = createTopic();
-			Message msg = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
-			Message msg1 = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
-			Message msg2 = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
-			Message msg3 = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
-			Message msg4 = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
-			Message msg5 = msi.createMessage(topic.getId(), 0, homeGroup.getId(), MessageType.BASE, "Content of the first message in the topic",
-					noLinkedMessages, noTags, 0L);
+			Message msg = createMessage(topic.getId(), 0);
+			Message msg1 = createMessage(topic.getId(), 0);
+			Message msg2 = createMessage(topic.getId(), 0);
+			Message msg3 = createMessage(topic.getId(), 0);
+			Message msg4 = createMessage(topic.getId(), 0);
+			Message msg5 = createMessage(topic.getId(), 0);
 
 			MessageListPart mlp = msi.getFirstLevelMessages(topic.getId(), homeGroup.getId(), MessageType.BASE, 0, false, 2);
 			Assert.assertNotNull(mlp);
