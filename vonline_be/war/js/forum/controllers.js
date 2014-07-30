@@ -1784,7 +1784,7 @@ function initAttachDoc(selector,attachAreaSelector){
             var dataType = selector[0].files[0].type;
             reader.onload = function(e){
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
-                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = base64encode(docName);
+                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = docName;
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = base64encode(reader.result);
                 docsInd[attachAreaSelector]++;
@@ -2095,7 +2095,7 @@ function getAttachedImages(selector){
         content = bgImg.slice(i+7,bgImg.length-1);
 
         result = new com.vmesteonline.be.messageservice.Attach();
-        result.fileName = base64encode(name);
+        result.fileName = name;
         result.contentType = type;
         result.URL = content;
         //console.log(content);
