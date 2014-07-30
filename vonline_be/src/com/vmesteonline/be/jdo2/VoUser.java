@@ -15,14 +15,18 @@ import javax.jdo.annotations.Persistent;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.NotificationFreq;
+import com.vmesteonline.be.Notifications;
 import com.vmesteonline.be.PrivacyType;
 import com.vmesteonline.be.RelationsType;
 import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.UserContacts;
 import com.vmesteonline.be.UserFamily;
 import com.vmesteonline.be.UserInfo;
+import com.vmesteonline.be.UserInterests;
 import com.vmesteonline.be.UserPrivacy;
 import com.vmesteonline.be.UserProfile;
+import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.UserStatus;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
@@ -53,8 +57,8 @@ public class VoUser extends GeoLocation {
 		this.avatarProfile = Defaults.defaultAvatarProfileUrl;
 		this.avatarProfileShort = Defaults.defaultAvatarShortProfileUrl;
 		this.relations = RelationsType.UNKNOWN;
-
-	}
+		this.notificationsFreq = NotificationFreq.DAYLY.getValue();
+		}
 
 	public UserProfile getUserProfile() {
 		UserProfile up = new UserProfile();
@@ -62,6 +66,7 @@ public class VoUser extends GeoLocation {
 		up.userInfo = getUserInfo();
 		up.family = getUserFamily();
 		up.privacy = getPrivacy();
+		up.interests = new UserInterests( getInterests(), getJob() );;
 		return up;
 	}
 
@@ -381,6 +386,9 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private UserPrivacy privacy;
 	
+	@Persistent
+	private int notificationsFreq;
+	
 	
 	public UserPrivacy getPrivacy() {
 		return null == privacy ? new UserPrivacy(0L, PrivacyType.NONE, PrivacyType.NONE ) : privacy;
@@ -505,6 +513,27 @@ public class VoUser extends GeoLocation {
 	@Override
 	public String toString() {
 		return "VoUser [id=" + getId() + ", name=" + name + ", email=" + email + "]";
+	}
+	
+	public Notifications getNotificationFreq(){
+		return new Notifications( email, NotificationFreq.findByValue(notificationsFreq));
+	}
+	
+	public void setNotifications( Notifications ntf ) throws InvalidOperation{
+		if( null != ntf.email && ntf.email.trim().length() != 0 && !ntf.email.trim().equals( email ) ){ 
+			if( !ntf.email.trim().matches(UserServiceImpl.emailreg))
+				throw new InvalidOperation( VoError.IncorrectParametrs, "Invalid email '"+ntf.email+"'");
+			setEmail( ntf.email.trim() );
+		}
+		if( NotificationFreq.findByValue(notificationsFreq) != ntf.freq ) setNotificationsFreq(ntf.freq.getValue());
+	}
+	
+	public int getNotificationsFreq() {
+		return notificationsFreq;
+	}
+
+	public void setNotificationsFreq(int notificationsFreq) {
+		this.notificationsFreq = notificationsFreq;
 	}
 
 	public String toFullString() {

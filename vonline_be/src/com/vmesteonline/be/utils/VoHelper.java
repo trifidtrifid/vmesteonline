@@ -134,12 +134,24 @@ public class VoHelper {
 				//field is not accessible directly
 			}
 			try {
-				if (null != field && field.isAccessible())
-					field.set(owner, objToCopy);
-				else {
-					Method method = owner.getClass().getMethod("set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1),
-							new Class[] { objToCopy.getClass() });
-					method.invoke(owner, new Object[] { objToCopy });
+				if (null != field && field.isAccessible()){
+					if( !objToCopy.equals( field.get(owner)))
+						field.set(owner, objToCopy);
+					
+				} else {
+					//get an old value
+					Method getMethod = null;
+					try {
+						getMethod = owner.getClass().getMethod("get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1),
+								new Class[] { });
+					} catch (SecurityException | NoSuchMethodException e2) {
+					}
+					//if changed
+					if( null != getMethod && !objToCopy.equals( getMethod.invoke(owner, new Object[] { }))){
+						Method setMethod = owner.getClass().getMethod("set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1),
+								new Class[] { objToCopy.getClass() });
+						setMethod.invoke(owner, new Object[] { objToCopy });
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -160,6 +172,8 @@ public class VoHelper {
 					field = owner.getClass().getField(fieldName);
 					if (field.isAccessible())
 						oldVal = field.get(owner).toString();
+					if(newUrl.equals(field)) return; //is changed
+					
 				} catch (Exception e) {
 
 					Method method = owner.getClass().getMethod("get" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1), new Class[] {});

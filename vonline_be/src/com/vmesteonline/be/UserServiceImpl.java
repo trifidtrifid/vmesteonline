@@ -63,15 +63,18 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoUser user = getCurrentUser(pm);
 			user.setName(userInfo.firstName);
 			user.setLastName(userInfo.lastName);
-			
+			user.setGender(userInfo.gender);
+			user.setBirthday(userInfo.birthday);
+			//userInfo.avatar
+			//VoHelper.replaceURL(user, "avatar", userInfo.avatar, 0, true, pm);		
 			pm.makePersistent(user);
 		} finally {
 			pm.close();
 		}
 	}
 
-	private static String emailreg = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
-	private static String phonereg = "[\\d-.()+ ]{7,21}";
+	public static String emailreg = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+	public static String phonereg = "[\\d-.()+ ]{7,21}";
 
 	// TODO this method is forbidden should be removed. use getShortProfile
 	// instead
@@ -823,4 +826,19 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}	
 		return users;
 	}
+
+	@Override
+	public void updateNotifications(Notifications notifications) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser currentUser = getCurrentUser();
+			currentUser.setNotifications(notifications);
+			
+		} finally {
+			pm.close();
+		}
+		
+	}
+	
+	
 }
