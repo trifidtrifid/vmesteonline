@@ -753,30 +753,31 @@ transform()
   .private-message-single
     cursor pointer
     padding 10px
+    padding-left 0
     overflow auto
     border-bottom 1px solid #CCCCCC
     &:first-child
       border-top 1px solid #CCCCCC
-    .private-message-left
-      width 300px
-      .private-message-ava
-        img
-          width 70px
-      .private-message-author
-        margin-left 50px
-        .attached
-          padding-bottom 0
-        p
-          margin-bottom 0
-        a
-          &:hover
-            text-decoration none
+    .private-message-ava
+      img
+        width 70px
+    .private-message-author
+      margin-left 50px
+      .attached
+        padding-bottom 0
+      p
+        margin-bottom 0
+      a
+        &:hover
+          text-decoration none
     .private-message-right
       margin-left 320px
 
 .private-messages
   .private-message-single .private-message-left
     line-height 65px
+    .private-message-left
+      width 300px
     .private-message-author
       display inline-block
       vertical-align middle
@@ -891,6 +892,14 @@ transform()
 .ui-dialog .ui-dialog-titlebar-close
   float right
 
+.ui-dialog .ui-dialog-content
+  padding 0
+
+.loadAvatar-area
+  h2
+    margin-top 0
+    margin-bottom 30px
+
 .load-avatar
   display block
   margin 0 auto
@@ -916,6 +925,8 @@ transform()
       background-color inherit
       font-weight normal
       border 0
+      margin 0
+      font-size 16px
   img
     max-width 500px
     max-height 500px
@@ -940,10 +951,6 @@ transform()
 
 .jcrop-holder
   background transparent !important
-  img
-    /*background-repeat no-repeat*/
-    /*background-position center center*/
-    /*background-size cover*/
+  overflow hidden
+  margin 0 auto
 
-
-//img.jcrop-preview

@@ -12,7 +12,7 @@
                         <p>{{message.content}}</p>
 
                         <div class="attached">
-                            <a href="{{image.URL}}" class="fancybox" rel="attached-group-dialog-{{message.id}}" ng-repeat="image in message.images">
+                            <a href="{{image.URL}}" class="fancybox" ng-click="$event.preventDefault()" rel="attached-group-dialog-{{message.id}}" ng-repeat="image in message.images">
                                 <img ng-src="{{image.URL}}" alt="картинка"/>
                             </a>
                             <div class="docs">

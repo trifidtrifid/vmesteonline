@@ -875,6 +875,7 @@ h1 {
 .private-messages .private-message-single {
   cursor: pointer;
   padding: 10px;
+  padding-left: 0;
   overflow: auto;
   border-bottom: 1px solid #ccc;
 }
@@ -882,28 +883,24 @@ h1 {
 .private-messages .private-message-single:first-child {
   border-top: 1px solid #ccc;
 }
-.dialog .private-message-single .private-message-left,
-.private-messages .private-message-single .private-message-left {
-  width: 300px;
-}
-.dialog .private-message-single .private-message-left .private-message-ava img,
-.private-messages .private-message-single .private-message-left .private-message-ava img {
+.dialog .private-message-single .private-message-ava img,
+.private-messages .private-message-single .private-message-ava img {
   width: 70px;
 }
-.dialog .private-message-single .private-message-left .private-message-author,
-.private-messages .private-message-single .private-message-left .private-message-author {
+.dialog .private-message-single .private-message-author,
+.private-messages .private-message-single .private-message-author {
   margin-left: 50px;
 }
-.dialog .private-message-single .private-message-left .private-message-author .attached,
-.private-messages .private-message-single .private-message-left .private-message-author .attached {
+.dialog .private-message-single .private-message-author .attached,
+.private-messages .private-message-single .private-message-author .attached {
   padding-bottom: 0;
 }
-.dialog .private-message-single .private-message-left .private-message-author p,
-.private-messages .private-message-single .private-message-left .private-message-author p {
+.dialog .private-message-single .private-message-author p,
+.private-messages .private-message-single .private-message-author p {
   margin-bottom: 0;
 }
-.dialog .private-message-single .private-message-left .private-message-author a:hover,
-.private-messages .private-message-single .private-message-left .private-message-author a:hover {
+.dialog .private-message-single .private-message-author a:hover,
+.private-messages .private-message-single .private-message-author a:hover {
   text-decoration: none;
 }
 .dialog .private-message-single .private-message-right,
@@ -912,6 +909,9 @@ h1 {
 }
 .private-messages .private-message-single .private-message-left {
   line-height: 65px;
+}
+.private-messages .private-message-single .private-message-left .private-message-left {
+  width: 300px;
 }
 .private-messages .private-message-single .private-message-left .private-message-author {
   display: inline-block;
@@ -1041,6 +1041,13 @@ h1 {
 .ui-dialog .ui-dialog-titlebar-close {
   float: right;
 }
+.ui-dialog .ui-dialog-content {
+  padding: 0;
+}
+.loadAvatar-area h2 {
+  margin-top: 0;
+  margin-bottom: 30px;
+}
 .load-avatar {
   display: block;
   margin: 0 auto;
@@ -1069,6 +1076,8 @@ h1 {
   background-color: inherit;
   font-weight: normal;
   border: 0;
+  margin: 0;
+  font-size: 16px;
 }
 .load-avatar img {
   max-width: 500px;
@@ -1092,4 +1101,6 @@ h1 {
 }
 .jcrop-holder {
   background: transparent !important;
+  overflow: hidden;
+  margin: 0 auto;
 }
