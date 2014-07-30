@@ -107,17 +107,18 @@
                             <form name="formAlerts">
                             <div>
                                 <label for="settings-input-13">E-mail для оповещений</label>
-                                <input type="email" id="settings-input-13" value="ttt@sdf.ru"/>
+                                <input type="email" id="settings-input-13" ng-model="settings.userNotifications.email"/>
                             </div>
                             <!--<div>
                                 <label>E-mail для оповещений</label> ttt@sdf.ru <a href="#">изменить</a>
                             </div>-->
                             <div>
                                 <label for="settings-select-4">Частота оповещений</label>
-                                <select class="form-control" id="settings-select-4">
-                                    <option value="">&nbsp;</option>
-                                    <option value="AL">Никогда</option>
-                                    <option value="AK">Васе</option>
+                                <select class="form-control" id="settings-select-4" ng-model="settings.userNotifications.freq">
+                                    <option value="2" ng-selected="settings.userNotifications.freq == 2 ">Ежедневно</option>
+                                    <option value="4" ng-selected="settings.userNotifications.freq == 4 ">Два раза в неделю</option>
+                                    <option value="8" ng-selected="settings.userNotifications.freq == 8 ">Один раз в неделю</option>
+                                    <option value="128" ng-selected="settings.userNotifications.freq == 128 ">Не оповещать</option>
                                 </select>
                             </div>
                             <div class="checkbox">
@@ -146,7 +147,7 @@
                             </div>
 
                                 <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(3),'btn-primary' : settings.canSave(3)}"
-                                        href="#" ng-disabled="!settings.canSave(3)" ng-click="settings.updatePasswordOrUserInfo()">Сохранить</button>
+                                        href="#" ng-disabled="!settings.canSave(3)" ng-click="settings.updateNotifications()">Сохранить</button>
                             </form>
                         </div>
 
