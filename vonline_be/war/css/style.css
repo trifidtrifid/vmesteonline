@@ -1103,4 +1103,15 @@ h1 {
   background: transparent !important;
   overflow: hidden;
   margin: 0 auto;
+/* coming soon */
+}
+.coming-soon {
+  text-align: center;
+  min-height: 0;
+}
+.coming-soon p {
+  font-size: 16px;
+}
+.coming-soon h1 {
+  font-size: 40px;
 }
