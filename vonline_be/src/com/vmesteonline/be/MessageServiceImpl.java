@@ -4,9 +4,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
@@ -38,7 +36,6 @@ import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.messageservice.Poll;
 import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.messageservice.TopicListPart;
-import com.vmesteonline.be.messageservice.UserMessage;
 import com.vmesteonline.be.messageservice.UserOpinion;
 import com.vmesteonline.be.messageservice.WallItem;
 import com.vmesteonline.be.utils.VoHelper;
@@ -150,18 +147,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	}
 
-	// todo remove method
-	public Message createMessage(long topicId, long parentId, long groupId, MessageType type, String content, Map<MessageType, Long> linkedMessages,
-			Map<Long, String> tags, long recipientId) throws InvalidOperation, TException {
-
-		int now = (int) (System.currentTimeMillis() / 1000L);
-		Message newMessage = new Message(0, parentId, type, topicId, groupId, 0, now, 0, content, 0, 0, new HashMap<MessageType, Long>(),
-				new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null);
-		newMessage.recipientId = recipientId;
-		postMessage(newMessage);
-		return null;
-	}
-
 	// ===================================================================================================================================
 	@Override
 	public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedMsgId, boolean archived, int length)
@@ -184,9 +169,28 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		String req = "select `id` from topic where longitude <= " + VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString()
 				+ " and longitude >= " + VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
 				+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
-				+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() + " and radius >= " + group.getRadius()
-				+ " order by createTime desc";
+				+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() + " and radius >= " + group.getRadius();
 
+		switch (type) {
+
+		case BASE:
+			req += " and messageType = " + Integer.toString(MessageType.BASE.getValue());
+			break;
+		case ADVERT:
+			req += " and messageType = " + Integer.toString(MessageType.ADVERT.getValue());
+			break;
+		case WALL:
+			req += " and messageType != " + Integer.toString(MessageType.ADVERT.getValue());
+			break;
+
+		default:
+			break;
+
+		}
+
+		req += " order by createTime desc";
+
+		System.out.print(req);
 		List<VoTopic> topics = new ArrayList<VoTopic>();
 		try {
 			ResultSet rs = con.executeQuery(req);
@@ -196,12 +200,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				long topicId = rs.getLong(1);
 				VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
 				if (addTopic) {
-					if (type == MessageType.WALL || type == topic.getType())
-						topics.add(topic);
-				} else {
-					if (topic.getId() == lastLoadedTopicId) {
-						addTopic = true;
-					}
+					topics.add(topic);
+				} else if (topic.getId() == lastLoadedTopicId) {
+					addTopic = true;
 				}
 			}
 		} catch (Exception e) {
@@ -219,12 +220,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public TopicListPart getAdverts(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation {
-		// TODO Auto-generated method stub
-		return null;
+	public TopicListPart getAdverts(long groupId, long lastLoadedTopicId, int length) throws InvalidOperation {
+		return getTopics(groupId, 0, 0, lastLoadedTopicId, length, MessageType.ADVERT);
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	private TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length, MessageType type) {
 
@@ -237,7 +236,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				VoUser user = getCurrentUser(pm);
 				pm.retrieve(user);
 				VoUserGroup group = user.getGroupById(groupId);
-				List<VoTopic> topics = getTopics(group, MessageType.BASE, lastLoadedTopicId, length, pm);
+				List<VoTopic> topics = getTopics(group, type, lastLoadedTopicId, length, pm);
 
 				if (topics.isEmpty()) {
 					logger.fine("can't find any topics");
@@ -645,6 +644,5 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public long categoryId() {
 		return ServiceCategoryID.MESSAGE_SI.ordinal();
 	}
-
 
 }
