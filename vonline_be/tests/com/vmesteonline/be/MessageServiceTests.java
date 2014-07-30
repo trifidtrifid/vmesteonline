@@ -160,6 +160,27 @@ public class MessageServiceTests extends TestWorkAround {
 
 	}
 
+
+	@Test
+	public void testGetAdvert() {
+		try {
+			Topic tpc = createTopic();
+			TopicListPart rTopic = msi.getTopics(homeGroup.getId(), 0, 0, 0L, 10);
+			Assert.assertNotNull(rTopic);
+			Assert.assertEquals(1, rTopic.totalSize);
+			Assert.assertEquals(tpc.getId(), rTopic.topics.get(0).getId());
+			Assert.assertEquals(topicSubject, rTopic.topics.get(0).getSubject());
+			Assert.assertNotNull(rTopic.topics.get(0).userInfo);
+			Assert.assertEquals(Defaults.user1name, rTopic.topics.get(0).userInfo.firstName);
+			Assert.assertEquals(Defaults.user1lastName, rTopic.topics.get(0).userInfo.lastName);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+
+	}
+
 	@Test
 	public void testGetWallItems() {
 

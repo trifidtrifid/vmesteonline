@@ -213,12 +213,19 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return topics;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation {
 		return getTopics(groupId, rubricId, commmunityId, lastLoadedTopicId, length, MessageType.BASE);
 	}
 
+	@Override
+	public TopicListPart getAdverts(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	@SuppressWarnings("unchecked")
 	private TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length, MessageType type) {
 
 		TopicListPart mlp = new TopicListPart();
@@ -638,5 +645,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public long categoryId() {
 		return ServiceCategoryID.MESSAGE_SI.ordinal();
 	}
+
 
 }
