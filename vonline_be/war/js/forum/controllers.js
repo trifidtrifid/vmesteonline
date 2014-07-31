@@ -229,6 +229,8 @@ angular.module('forum.controllers', ['ui.select2'])
                 $rootScope.wallChangeGroup(group.id);
             }else if($rootScope.currentPage == 'talks'){
                 $rootScope.talksChangeGroup(group.id);
+            }else if($rootScope.currentPage == 'adverts'){
+                $rootScope.advertsChangeGroup(group.id);
             }else if($rootScope.currentPage == 'neighbours'){
                 $rootScope.neighboursChangeGroup(group.id);
             }
@@ -1095,7 +1097,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $rootScope.advertsChangeGroup = function(groupId){
 
-            adverts.topics = messageClient.getTopics(groupId,0,0,0,1000).topics;
+            adverts.topics = messageClient.getAdverts(groupId,0,1000).topics;
 
             initAdverts();
 
