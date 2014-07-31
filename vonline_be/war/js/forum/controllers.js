@@ -1022,19 +1022,18 @@ angular.module('forum.controllers', ['ui.select2'])
             }
         ];
         adverts.isPollAvailable = true;
+        adverts.answerFirstMessage = "Ваш ответ";
 
-        adverts.fullAdvertsTopic = {};
+       /* adverts.fullAdvertsTopic = {};
         adverts.fullAdvertsTopic.answerInputIsShow = false;
         adverts.fullAdvertsMessages = [];
         adverts.fullAdvertsFirstMessages = [];
-        adverts.answerFirstMessage = "Ваш ответ";
         var fullAdvertsFirstMessagesLength,
-            advertsId;
+            advertsId;*/
 
         $rootScope.currentGroup = adverts.selectedGroup = adverts.groups[0];
-        //alert(adverts.selectedGroup.id);
-        //adverts.topics = messageClient.getAdverts(adverts.selectedGroup.id, 0, 0, 0, 1000).topics;
-        adverts.topics = messageClient.getTopics(adverts.selectedGroup.id, 0, 0, 0, 1000).topics;
+        adverts.topics = messageClient.getAdverts(adverts.selectedGroup.id, 0, 1000).topics;
+        //adverts.topics = messageClient.getTopics(adverts.selectedGroup.id, 0, 0, 0, 1000).topics;
 
         initAdverts();
 
@@ -1103,19 +1102,19 @@ angular.module('forum.controllers', ['ui.select2'])
         };
 
     })
-    .controller('AdvertsSingleController',function($stateParams) {
+    .controller('AdvertsSingleController',function($rootScope,$stateParams) {
         var advert = this,
             fullAdvertMessagesLength,
             advertId = $stateParams.advertId;
 
         advert.selectedGroup = $rootScope.currentGroup;
-        advert.topics = messageClient.getTopics(advert.selectedGroup.id, 0, 0, 0, 1000).topics;
+        advert.topics = messageClient.getAdverts(advert.selectedGroup.id, 0, 1000).topics;
         advert.fullAdvertTopic = {};
         advert.fullAdvertMessages = {};
         advert.fullAdvertFirstMessages = [];
         advert.groups = userClientGroups.reverse();
 
-        var showFullAdvert = function(advert,advertOutsideId){
+        var showFullTalk = function(advert,advertOutsideId){
 
             initFancyBox($('.adverts-single'));
             var topicLength;

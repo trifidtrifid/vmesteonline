@@ -29,7 +29,7 @@
                 <div class="message-input-bottom">
 
                     <div class="btn-group pull-left">
-                        <button class="btn btn-sm btn-primary" ng-click="adverts.addSingleTalk()">
+                        <button class="btn btn-sm btn-primary" ng-click="adverts.addSingleAdverts()">
                         Создать
                         </button>
                     </div>
@@ -47,7 +47,7 @@
                             </ul>
                         </div>
                     </div>
-                    <span class="error-info" ng-show="adverts.isCreateTalkError">{{adverts.createTalkErrorText}}</span>
+                    <span class="error-info" ng-show="adverts.isCreateAdvertError">{{adverts.createAdvertErrorText}}</span>
 
 
                     <div class="btn-group attach-dropdown pull-right">
@@ -72,14 +72,14 @@
 
         </section>
 
-        <section class="adverts-title-block">
+        <section class="talks-title-block">
 
-            <div class="adverts-title" ng-repeat="advert in adverts.topics" id="{{advert.id}}">
-                <div class="adverts-title-left load-talk">
+            <div class="talks-title" ng-repeat="advert in adverts.topics" id="{{advert.id}}">
+                <div class="talks-title-left load-talk">
                     <div><a ui-sref="adverts-single({ advertId : {{advert.id}} })">{{advert.subject}}</a></div>
                     <div>{{advert.messageNum}} сообщений</div>
                 </div>
-                <div class="adverts-title-right">
+                <div class="talks-title-right">
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                       ng-class="advert.tagColor">{{advert.label}}</span>
                     <div class="clearfix"></div>
