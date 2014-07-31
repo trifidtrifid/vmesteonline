@@ -29,10 +29,15 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/talks-single.html",
             controller: 'TalksSingleController as talks'
         })
-        .state('services', {
-            url: "/services",
-            templateUrl: "partials/services.html",
-            controller: 'ServicesController as services'
+        .state('adverts', {
+            url: "/adverts",
+            templateUrl: "partials/adverts.html",
+            controller: 'AdvertsController as adverts'
+        })
+        .state('adverts-single', {
+            url: "/adverts-single-:advertId",
+            templateUrl: "partials/adverts-single.html",
+            controller: 'AdvertsSingleController as adverts'
         })
         .state('dialogs', {
             url: "/dialogs",
