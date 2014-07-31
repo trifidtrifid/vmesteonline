@@ -197,7 +197,7 @@ angular.module('forum.controllers', ['ui.select2'])
     .controller('mainContentTopController',function($rootScope) {
         var topCtrl = this;
 
-        topCtrl.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
+        topCtrl.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         var groups = topCtrl.groups,
             groupsLength = groups.length;
         groups[0].selected = true;
@@ -251,7 +251,7 @@ angular.module('forum.controllers', ['ui.select2'])
         initFancyBox($('.forum'));
 
         var lenta = this;
-        lenta.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
+        lenta.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroup = lenta.selectedGroupInTop = $rootScope.currentGroup;
         lenta.isPollShow = false;
         lenta.pollSubject = "";
@@ -506,7 +506,7 @@ angular.module('forum.controllers', ['ui.select2'])
             $rootScope.base.createTopicIsHide = true;
             var talk = this;
             talk.isTalksLoaded = false;
-            talk.groups = userClientGroups.reverse();
+            talk.groups = userClientGroups;
 
             talk.content = TEXT_DEFAULT_3;
             talk.subject = TEXT_DEFAULT_4;
@@ -647,7 +647,7 @@ angular.module('forum.controllers', ['ui.select2'])
         talk.fullTalkTopic = {};
         talk.fullTalkMessages = {};
         talk.fullTalkFirstMessages = [];
-        talk.groups = userClientGroups.reverse();
+        talk.groups = userClientGroups;
 
         var showFullTalk = function(talk,talkOutsideId){
 
@@ -1006,7 +1006,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $rootScope.base.createTopicIsHide = true;
         adverts.isAdvertsLoaded = false;
-        adverts.groups = userClientGroups.reverse();
+        adverts.groups = userClientGroups;
 
         adverts.content = TEXT_DEFAULT_3;
         adverts.subject = TEXT_DEFAULT_4;
@@ -1114,7 +1114,7 @@ angular.module('forum.controllers', ['ui.select2'])
         advert.fullAdvertTopic = {};
         advert.fullAdvertMessages = {};
         advert.fullAdvertFirstMessages = [];
-        advert.groups = userClientGroups.reverse();
+        advert.groups = userClientGroups;
 
         var showFullTalk = function(advert,advertOutsideId){
 
