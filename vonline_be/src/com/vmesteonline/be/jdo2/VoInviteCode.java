@@ -1,6 +1,7 @@
 package com.vmesteonline.be.jdo2;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -8,8 +9,6 @@ import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-
-import org.apache.log4j.Logger;
 
 import com.google.appengine.api.datastore.Key;
 import com.vmesteonline.be.InvalidOperation;
@@ -43,7 +42,7 @@ public class VoInviteCode {
 		if (voInviteCodes.isEmpty())
 			throw new InvalidOperation(VoError.IncorrectParametrs, "unknown invite code " + inviteCode);
 		if (voInviteCodes.size() != 1) {
-			Logger.getLogger(VoInviteCode.class).error("has more than one invite code " + inviteCode);
+			Logger.getLogger(VoInviteCode.class.getName()).severe("has more than one invite code " + inviteCode);
 		}
 		return voInviteCodes.get(0);
 	}

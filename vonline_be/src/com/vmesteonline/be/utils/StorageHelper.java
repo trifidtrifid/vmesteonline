@@ -16,16 +16,7 @@ import java.nio.channels.Channels;
 import java.util.Map;
 
 
-
-
-
-
-
-
-
-
-
-
+import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -34,7 +25,8 @@ import javax.mail.internet.ParseException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+
+
 import org.datanucleus.util.Base64;
 
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
@@ -201,7 +193,7 @@ public class StorageHelper {
 	// ===================================================================================================================
 	public static void sendFileResponse(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String queryString = req.getRequestURI()+(req.getQueryString() == null ? "" : "?"+req.getQueryString());
-		logger.debug("Got request: URL:"+queryString);
+		logger.fine("Got request: URL:"+queryString);
 		
 		byte[] fileData = null;
 		
@@ -213,7 +205,7 @@ public class StorageHelper {
 			
 			if ( response instanceof byte[] ){
 				fileData = (byte[])response;
-				logger.debug("Get '"+queryString+"' from cache.");
+				logger.fine("Get '"+queryString+"' from cache.");
 				
 			} else if(  response instanceof FileObject ){
 				FileObject fo = (FileObject)response;
@@ -299,7 +291,7 @@ public class StorageHelper {
 		try {
 			cType = new ContentType(contentType);
 		} catch (Exception e) {
-			logger.warn("Failed to parse content type string '"+contentType+"'. Default would be used");
+			logger.warning("Failed to parse content type string '"+contentType+"'. Default would be used");
 			try {
 				cType = new ContentType(contentType = "binary/stream");
 			} catch (ParseException e1) {
@@ -311,7 +303,7 @@ public class StorageHelper {
 								"dat" : cType.getSubType())
 								: 
 								fileName.substring(liop + 1));
-		logger.debug( "File '" + vfar.getFileName() + "' stored with GSNAme:" + vfar.getGSFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
+		logger.fine( "File '" + vfar.getFileName() + "' stored with GSNAme:" + vfar.getGSFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
 		return url;
 	}
 
@@ -432,21 +424,21 @@ public class StorageHelper {
 				//obj(name:<base64.name>;data:image/png;content:<base64.content>)
 				String[] avps = contentString.substring(4, contentString.length()-1).split(";");
 				if( avps.length < 3 ){
-					logger.warn("Faild to parse OBJ representation of content '"+contentString+"' ");
+					logger.warning("Faild to parse OBJ representation of content '"+contentString+"' ");
 					
 				} else {
 					if( !avps[0].startsWith("name:"))
-						logger.warn("Faild to parse OBJ representation of content. No name: at first pos of '"+contentString+"' ");
+						logger.warning("Faild to parse OBJ representation of content. No name: at first pos of '"+contentString+"' ");
 					else {
 						fname = new String( Base64.decode(avps[0].split(":")[1]), "UTF-8");
 					}
 					if( !avps[1].startsWith("data:"))
-						logger.warn("Faild to parse OBJ representation of content. No data: at second pos of '"+contentString+"' ");
+						logger.warning("Faild to parse OBJ representation of content. No data: at second pos of '"+contentString+"' ");
 					else {
 						contentType = avps[1].split(":")[1];
 					}
 					if( !avps[1].startsWith("content:"))
-						logger.warn("Faild to parse OBJ representation of content. No content: at third pos of '"+contentString+"' ");
+						logger.warning("Faild to parse OBJ representation of content. No content: at third pos of '"+contentString+"' ");
 					else {
 						is = new ByteArrayInputStream( Base64.decode(avps[2].split(":")[1]) );
 					}

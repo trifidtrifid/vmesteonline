@@ -67,14 +67,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/init</url-pattern>
 	</servlet-mapping>
 	
-	<servlet>
+	<!-- servlet>
 		<servlet-name>Main</servlet-name>
 		<jsp-file>/main.jsp</jsp-file>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Main</servlet-name>
 		<url-pattern>/*</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping -->
 
 	<servlet>
 		<servlet-name>FileService</servlet-name>
