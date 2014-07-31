@@ -153,7 +153,7 @@ service MessageService {
 	 **/
 	i32 checkUpdates( 1:i32 lastResposeTimestamp ) throws (1:error.InvalidOperation exc),
 
-	TopicListPart getAdverts( 1:i64 groupId, 2:i64 rubricId, 3:i32 commmunityId, 4:i64 lastLoadedTopicId, 5:i32 length) throws (1:error.InvalidOperation exc),
+	TopicListPart getAdverts( 1:i64 groupId, 2:i64 lastLoadedTopicId, 3:i32 length) throws (1:error.InvalidOperation exc),
 
 	TopicListPart getTopics( 1:i64 groupId , 2:i64 rubricId, 3:i32 commmunityId, 4:i64 lastLoadedTopicId, 5:i32 length) throws (1:error.InvalidOperation exc),
 	/**

@@ -127,15 +127,17 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		try {
 			VoInviteCode invite = VoInviteCode.getInviteCode(code, pm);
 			// invite.getPostalAddressId();
+			return new UserLocation("Zanevski 32", Long.toString(invite.getPostalAddressId()), "http://maps.yandex.ru");
 		} finally {
 			pm.close();
 		}
-		return new UserLocation("Zanevski 32", "test", "http://maps.yandex.ru");
+
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public long registerNewUser(String firstname, String lastname, String password, String email, String inviteCode, int gender) throws InvalidOperation {
+	public long registerNewUser(String firstname, String lastname, String password, String email, String inviteCode, int gender)
+			throws InvalidOperation {
 
 		if (getUserByEmail(email) != null)
 			throw new InvalidOperation(VoError.RegistrationAlreadyExist, "registration exsist for user with email " + email);
