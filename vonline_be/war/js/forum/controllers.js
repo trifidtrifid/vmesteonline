@@ -1119,11 +1119,11 @@ angular.module('forum.controllers', ['ui.select2'])
         }
 
         settings.userInfo.birthday ?
-        settings.userInfo.birthdayMeta = new Date(settings.userInfo.birthday) :
+        settings.userInfo.birthdayMeta = new Date(settings.userInfo.birthday*1000) :
         settings.userInfo.birthdayMeta = "";
 
         if(settings.userInfo.birthdayMeta){
-            var month = ""+settings.userInfo.birthdayMeta.getMonth();
+            var month = settings.userInfo.birthdayMeta.getMonth()+1+"";
             if(month.length == 1) month = "0"+month;
 
             var day = ""+settings.userInfo.birthdayMeta.getDate();
@@ -1148,7 +1148,7 @@ angular.module('forum.controllers', ['ui.select2'])
         for(var i = 0; i < childsLength; i++){
             if(settings.family.childs[i].birthday) {
 
-                var birthDate = new Date(settings.family.childs[i].birthday);
+                var birthDate = new Date(settings.family.childs[i].birthday*1000);
                 //alert(settings.family.childs[i].birthday);
                     settings.family.childs[i].month = ""+birthDate.getMonth();
 
@@ -1205,7 +1205,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 var temp = new com.vmesteonline.be.UserInfo();
 
                 settings.userInfo.birthdayMeta ?
-                temp.birthday = Date.parse(settings.userInfo.birthdayMeta) :
+                temp.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000 :
                 temp.birthday = 0;
                 //alert(temp.birthday+" "+new Date(temp.birthday));
 
@@ -1269,8 +1269,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
                     //settings.family.childs[i].birthday = Date.parse(settings.family.childs[i].month +".15."+ settings.family.childs[i].year);
                     var tempMonth = parseInt(settings.family.childs[i].month)+1;
-                    settings.family.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year);
-                    //alert(settings.family.childs[i].birthday);
+                    settings.family.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year)/1000;
+                    alert(settings.family.childs[i].birthday);
                     //settings.family.childs[i].birthday = settings.family.childs[i].birthday/1000;
                 }
             }
