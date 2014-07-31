@@ -385,7 +385,7 @@ public class StorageHelper {
 
 	//===================================================================================================================
 	public static FileSource createFileSource( Attach att ) throws IOException {
-		return createFileSource( att.URL.getBytes(), att.contentType, att.fileName); 
+		return createFileSource( att.URL.array(), att.contentType, att.fileName); 
 	}
 	
 	//===================================================================================================================
@@ -400,11 +400,11 @@ public class StorageHelper {
 			String ext = ".bin";
 			InputStream is = null;
 			
-			String contentString = new String(urlOrContent);
+			String contentString = new String( urlOrContent, 0, 256 );
 			
 			if( contentString.startsWith("url(")){
 				
-				String[] split = contentString.split("[():;,]");
+				String[] split = new String( urlOrContent ).split("[():;,]");
 				if( split.length >= 5 && split[0].equalsIgnoreCase("URL") && split[1].equalsIgnoreCase("data")){
 					if( split[3].equals("base64")){
 						is = new ByteArrayInputStream( Base64.decode(split[4]));
@@ -422,7 +422,7 @@ public class StorageHelper {
 						
 			} else if( contentString.startsWith("obj(")){
 				//obj(name:<base64.name>;data:image/png;content:<base64.content>)
-				String[] avps = contentString.substring(4, contentString.length()-1).split(";");
+				String[] avps = new String( urlOrContent, 4, urlOrContent.length - 5).split(";");
 				if( avps.length < 3 ){
 					logger.warning("Faild to parse OBJ representation of content '"+contentString+"' ");
 					
@@ -445,39 +445,42 @@ public class StorageHelper {
 				}
 					
 				
-			} else 
+			} else if( contentString.startsWith("http://") || contentString.startsWith("https://") ){
 			
-			try { // try to create URL from content
-				URL url = new URL(contentString);
-				if (null != url.getProtocol() && url.getProtocol().toLowerCase().startsWith("http")) {
-					HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
-					httpConnection.connect();
-					httpConnection.getHeaderFields();
-					contentType = httpConnection.getContentType();
-					is = httpConnection.getInputStream();
-				} else {
-					is = url.openStream();
-					// file name for the same sources will be the same
-				}
-				fname = url.getFile();
-
-			} catch (MalformedURLException e) {
-				
-				if( contentString.length() % 4 == 0 ){
-					try {
-						is = new ByteArrayInputStream( Base64.decode( contentString ));
-					} catch( Exception ee){
+					try { // try to create URL from content
+						URL url = new URL(new String( urlOrContent));
+						if (null != url.getProtocol() && url.getProtocol().toLowerCase().startsWith("http")) {
+							HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+							httpConnection.connect();
+							httpConnection.getHeaderFields();
+							contentType = httpConnection.getContentType();
+							is = httpConnection.getInputStream();
+						} else {
+							is = url.openStream();
+							// file name for the same sources will be the same
+						}
+						fname = url.getFile();
+		
+					} catch (MalformedURLException e) {
+						
 					}
-				}
-					
-				if( null==is )
-					is = new ByteArrayInputStream( urlOrContent );
-				
-				fname =  null==fname  ? 
-						numberToString((long) (Math.random() * Long.MAX_VALUE)) + ext : 
-							fname ;
-				
 			}
+			
+			if( is == null && contentString.length() % 4 == 0 ){ //try to decode base64 
+					try {
+						is = new ByteArrayInputStream( Base64.decode( new String(urlOrContent) ));
+					} catch( Exception ee){
+						logger.warning("Content is not Base64 ("+ee.getMessage()+") and not an URL, 'obj' nor 'url' would try to read as binary");
+					}
+			}
+							
+			if( null==is )
+				is = new ByteArrayInputStream( urlOrContent );
+			
+			fname =  null==fname  ? 
+					numberToString((long) (Math.random() * Long.MAX_VALUE)) + ext : 
+						fname ;
+			
 			return new FileSource( fname, contentType, is);
 		}
 	}
