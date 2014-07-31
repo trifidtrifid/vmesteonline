@@ -1,14 +1,13 @@
 package com.vmesteonline.be;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import javax.jdo.Extent;
 import javax.jdo.JDOObjectNotFoundException;
@@ -16,19 +15,11 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.images.Image;
-import com.google.appengine.api.images.ImagesService;
-import com.google.appengine.api.images.ImagesServiceFactory;
-import com.google.appengine.api.images.Transform;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.GeoLocation;
-import com.vmesteonline.be.jdo2.VoFileAccessRecord;
-import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
@@ -39,7 +30,6 @@ import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.utils.Defaults;
-import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
@@ -109,7 +99,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			return voUser.getShortUserInfo();
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.warn("request short user info for absent user " + userId);
+			logger.warning("request short user info for absent user " + userId);
 		} finally {
 			pm.close();
 		}
@@ -137,7 +127,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				logger.info("find user email " + user.getEmail() + " name " + user.getName());
 
 				if (user.getGroups() == null) {
-					logger.warn("user with id " + Long.toString(userId) + " has no any groups");
+					logger.warning("user with id " + Long.toString(userId) + " has no any groups");
 					throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");
 				}
 				List<Group> groups = new ArrayList<Group>();
@@ -164,14 +154,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 			VoUser user = pm.getObjectById(VoUser.class, userId);
 			if (user == null) {
-				logger.error("can't find user by id " + Long.toString(userId));
+				logger.severe("can't find user by id " + Long.toString(userId));
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find user bu id");
 			}
 
 			logger.info("find user name " + user.getEmail());
 
 			if (user.getRubrics() == null) {
-				logger.warn("user with id " + Long.toString(userId) + " has no any rubrics");
+				logger.warning("user with id " + Long.toString(userId) + " has no any rubrics");
 				throw new InvalidOperation(VoError.GeneralError, "No Rubrics are initialized for user=" + userId);
 			}
 

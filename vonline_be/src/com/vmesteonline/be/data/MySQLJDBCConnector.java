@@ -12,8 +12,8 @@ public class MySQLJDBCConnector extends JDBCConnector {
 	static String DB_URL;
 
 	// Database credentials
-	static final String USER = "vonline";
-	static final String PASS = "";
+	static String USER;
+	static String PASS;
 
 	static {
 		logger = Logger.getLogger(com.vmesteonline.be.data.MySQLJDBCConnector.class.getName());
@@ -21,16 +21,26 @@ public class MySQLJDBCConnector extends JDBCConnector {
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
 
 			JDBC_DRIVER = "com.mysql.jdbc.GoogleDriver";
-			DB_URL = "jdbc:google:mysql://vmesteonline:sqldb/vonline";
+			DB_URL = "jdbc:google:mysql://algebraic-depot-657:mysql/forum";
+			USER = "forum";
+			PASS = "redhat7.3";
 		} else {
 			// Local MySQL instance to use during development.
 			JDBC_DRIVER = "com.mysql.jdbc.Driver";
 			DB_URL = "jdbc:mysql://localhost:3306/vonline";
+			USER = "root";
+			PASS = "";
 		}
 
 	}
 
 	protected void connect() throws Exception {
-		super.connect(JDBC_DRIVER, DB_URL, USER, PASS);
+		try {
+			super.connect(JDBC_DRIVER, DB_URL, USER, PASS);
+			logger.finer("Connected to database '"+USER+"@"+DB_URL+"'");
+		} catch (Exception e) {
+			logger.severe("Failed to connect to database '"+USER+"@"+DB_URL+"' password '"+PASS+"' driver '"+JDBC_DRIVER+"'");
+			e.printStackTrace();
+		}
 	}
 }

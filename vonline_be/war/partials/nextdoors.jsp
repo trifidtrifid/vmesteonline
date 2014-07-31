@@ -20,7 +20,7 @@
 
         List<Group> Groups = userService.getUserGroups();
 
-        List<ShortUserInfo> neighboors = userService.getNeighbors(Groups.get(0).id);
+        List<ShortUserInfo> neighboors = userService.getNeighboursByGroup(Groups.get(0).id);
 
         pageContext.setAttribute("neighboors",neighboors);
         pageContext.setAttribute("neighboorsSize",neighboors.size());

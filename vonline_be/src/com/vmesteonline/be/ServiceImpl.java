@@ -3,6 +3,7 @@ package com.vmesteonline.be;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.cache.Cache;
 import javax.cache.CacheException;
@@ -12,7 +13,7 @@ import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+
 
 import com.vmesteonline.be.access.VoUserAccessBase;
 import com.vmesteonline.be.data.PMF;
@@ -33,12 +34,12 @@ public class ServiceImpl {
 	public static Logger logger;
 
 	static {
-		logger = Logger.getLogger(ServiceImpl.class);
+		logger = Logger.getLogger(ServiceImpl.class.getName());
 		try {
 			CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
 			cache = cacheFactory.createCache(Collections.emptyMap());
 		} catch (CacheException e) {
-			logger.error("Failed to initialize chache." + e);
+			logger.severe("Failed to initialize chache." + e);
 		}
 	}
 
@@ -49,7 +50,7 @@ public class ServiceImpl {
 			try {
 				rslt = (T) cache.get(key);
 			} catch (ClassCastException cce) {
-				logger.error("CACHE:FAiled to get object by key " + key + ". " + cce);
+				logger.severe("CACHE:FAiled to get object by key " + key + ". " + cce);
 			}
 		}
 		return rslt;
@@ -62,7 +63,7 @@ public class ServiceImpl {
 			try {
 				rslt = (T) cache.remove(key);
 			} catch (ClassCastException cce) {
-				logger.error("CACHE:FAiled to remove object by key " + key + ". " + cce);
+				logger.severe("CACHE:FAiled to remove object by key " + key + ". " + cce);
 			}
 		}
 		return rslt;
@@ -75,7 +76,7 @@ public class ServiceImpl {
 				cache.put(key, value);
 			} catch (Exception e) {
 				e.printStackTrace();
-				logger.error("CACHE:FAiled to PUT Object to cache." + e);
+				logger.severe("CACHE:FAiled to PUT Object to cache." + e);
 			}
 		}
 	}

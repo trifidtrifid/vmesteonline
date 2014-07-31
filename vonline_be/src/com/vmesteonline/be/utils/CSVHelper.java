@@ -15,15 +15,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 
 public class CSVHelper {
 
-	private static Logger logger = Logger.getLogger(CSVHelper.class.getCanonicalName());
+	private static Logger logger = Logger.getLogger(CSVHelper.class.getName());
 
 	public static <T> List<T> loadCSVData(/* InputStream is */byte[] data, Map<Integer, String> fieldPosMap, T otf) throws IOException {
 		return CSVHelper.loadCSVData(data, fieldPosMap, otf, null, null, null);
@@ -156,7 +155,7 @@ public class CSVHelper {
 								t.printStackTrace();
 								String errStr = "Failed to parse data Filed:" + fieldName + " could not be filled with:'" + nextItem + "' content. Line was: '"
 										+ nextLine + "'. Exception:" + t.getMessage();
-								logger.error(errStr);
+								logger.severe(errStr);
 								throw new InvalidOperation(VoError.IncorrectParametrs, errStr);
 							}
 					} else {
