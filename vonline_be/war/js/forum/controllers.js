@@ -1088,6 +1088,7 @@ angular.module('forum.controllers', ['ui.select2'])
             userProfileMeta = userClient.getUserProfile(),
             userInfoMeta = userProfileMeta.userInfo,
             userPrivacyMeta = userProfileMeta.privacy,
+            userNotificationsMeta = userProfileMeta.notifications,
             userFamilyMeta = userProfileMeta.family,
             userInterestsMeta = userProfileMeta.interests;
 
@@ -1099,6 +1100,7 @@ angular.module('forum.controllers', ['ui.select2'])
         settings.userProfile = clone(userProfileMeta);
         settings.userInfo = clone(userInfoMeta);
         settings.userPrivacy = clone(userPrivacyMeta);
+        settings.userNotifications = clone(userNotificationsMeta);
         settings.family = clone(userFamilyMeta);
         settings.interests = clone(userInterestsMeta);
 
@@ -1119,6 +1121,19 @@ angular.module('forum.controllers', ['ui.select2'])
         settings.userInfo.birthday ?
         settings.userInfo.birthdayMeta = new Date(settings.userInfo.birthday) :
         settings.userInfo.birthdayMeta = "";
+
+        if(settings.userInfo.birthdayMeta){
+            var month = ""+settings.userInfo.birthdayMeta.getMonth();
+            if(month.length == 1) month = "0"+month;
+
+            var day = ""+settings.userInfo.birthdayMeta.getDate();
+            if(day.length == 1) day = "0"+day;
+
+            var year = settings.userInfo.birthdayMeta.getFullYear();
+
+            settings.userInfo.birthdayMeta = month+"."+day+"."+year;
+        }
+        //alert(settings.userInfo.birthday+" "+settings.userInfo.birthdayMeta);
 
         if(settings.family.childs === null || settings.family.childs.length == 0){
             settings.family.childs = [];
@@ -1190,8 +1205,9 @@ angular.module('forum.controllers', ['ui.select2'])
                 var temp = new com.vmesteonline.be.UserInfo();
 
                 settings.userInfo.birthdayMeta ?
-                temp.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000 :
+                temp.birthday = Date.parse(settings.userInfo.birthdayMeta) :
                 temp.birthday = 0;
+                //alert(temp.birthday+" "+new Date(temp.birthday));
 
                 temp.gender = settings.userInfo.gender;
                 temp.firstName = settings.userInfo.firstName;
@@ -1229,6 +1245,15 @@ angular.module('forum.controllers', ['ui.select2'])
             temp.mobilePhone = settings.userContacts.mobilePhone;
             userClient.updateContacts(temp);
         };
+        settings.updateNotifications = function(){
+            if(settings.userNotifications && (settings.userNotifications.email || settings.userNotifications.freq) ){
+                var temp = new com.vmesteonline.be.Notifications();
+                temp.email = settings.userNotifications.email;
+                temp.freq = settings.userNotifications.freq;
+
+                userClient.updateNotifications(temp);
+            }
+        };
         settings.updateFamily = function(){
             /*var temp = new com.vmesteonline.be.UserFamily();
             temp.relations = settings.family.relations;
@@ -1245,7 +1270,7 @@ angular.module('forum.controllers', ['ui.select2'])
                     //settings.family.childs[i].birthday = Date.parse(settings.family.childs[i].month +".15."+ settings.family.childs[i].year);
                     var tempMonth = parseInt(settings.family.childs[i].month)+1;
                     settings.family.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year);
-                    //alert(new Date(settings.family.childs[i].birthday));
+                    //alert(settings.family.childs[i].birthday);
                     //settings.family.childs[i].birthday = settings.family.childs[i].birthday/1000;
                 }
             }
