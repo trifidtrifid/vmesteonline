@@ -24,7 +24,7 @@ import com.vmesteonline.be.utils.EMailHelper;
 public class OAuthServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -6391276180341584453L;
-	private static final String domain = "https://3-dot-vmesteonline.appspot.com/";
+	private static final String domain = "https://1-dot-algebraic-depot-657.appspot.com/";
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -65,14 +65,14 @@ public class OAuthServlet extends HttpServlet {
 				authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), "123456", email, inviteCode, 0);
 				authServiceImpl.allowUserAccess(email, "", false);
 				EMailHelper.sendSimpleEMail(email, "Регистрация на сайте vmesteonline.ru",
-						"вы зарегистрировались на сайте http://voclub.co. Ваш логин для входа: " + email + ". Ваш пароль: 123456. Рекомендуем изменить.");
+						"вы зарегистрировались на сайте http://voclub.co. Ваш логин для входа: " + email + ". Ваш пароль: 123456. Рекомендуем изменить. Также вы всегда сможете войти используя аккаунта Вконтакте.");
 			}
 
 			resp.sendRedirect(domain + "main.jsp");
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			resp.sendRedirect(domain + "index.html");
+			resp.sendRedirect(domain + "coming-soon.html");
 		}
 
 	}
