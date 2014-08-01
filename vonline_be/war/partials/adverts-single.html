@@ -1,0 +1,254 @@
+
+<section class="talks-block">
+
+    <section class="forum adverts-single">
+
+        <div class="dd dd-draghandle">
+            <ol class="dd-list">
+
+                <li class="dd-item dd2-item topic-item">
+                    <div class="dd2-content widget-box topic-descr">
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div class="topic-left">
+                                    <a ui-sref="profile({ userId : {{ adverts.fullAdvertTopic.userInfo.id }} })">
+                                        <div class="avatar" style="background-image: url({{adverts.fullAdvertTopic.userInfo.avatar}})"></div>
+                                        <!--<img ng-src="{{adverts.fullAdvertTopic.userInfo.avatar}}" alt="картинка" />-->
+                                    </a>
+                                    <div class="topic-author">
+                                    </div>
+                                </div>
+                                <div class="topic-right" ng-switch on="adverts.fullAdvertTopic.metaType">
+
+
+                                    <span class="label label-lg arrowed lenta-item-hashtag pull-right"
+                                      ng-class="adverts.fullAdvertTopic.tagColor">{{adverts.fullAdvertTopic.label}}</span>
+
+                                        <h2>
+                                            <span>{{adverts.fullAdvertTopic.subject}}</span>
+                                        </h2>
+
+                                    <p ng-switch-when="message">{{adverts.fullAdvertTopic.message.content}}</p>
+
+                                    <div class="attached">
+                                        <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullAdvertTopic.id}}" ng-repeat="image in adverts.fullAdvertTopic.message.images">
+                                            <img ng-src="{{image.URL}}" alt="картинка"/>
+                                        </a>
+                                        <div class="docs">
+                                            <div ng-repeat="document in adverts.fullAdvertTopic.message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="poll" ng-switch-when="poll"  ng-switch on="adverts.fullAdvertTopic.poll.alreadyPoll" ng-cloak>
+                                        <div class="text" ng-cloak>{{adverts.fullAdvertTopic.message.content}}</div>
+
+                                        <h5>{{adverts.fullAdvertTopic.poll.subject}}</h5>
+
+                                        <div class="poll-do" ng-switch-when="false">
+
+                                            <div class="radio" ng-repeat="variant in adverts.fullAdvertTopic.poll.editNames">
+                                                <label>
+                                                    <input name="poll-variant-{{adverts.fullAdvertTopic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
+                                                    <span class="lbl">{{variant.name}}</span>
+                                                </label>
+                                            </div>
+
+                                            <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,adverts.fullAdvertTopic.poll)">Голосовать</button>
+
+                                        </div>
+
+                                        <!-- -->
+
+                                        <div class="poll-results" ng-switch-when="true">
+
+                                            <div class="poll-result-item"  ng-repeat="variant in adverts.fullAdvertTopic.poll.editNames">
+                                                <div class="poll-result-variant">{{variant.name}}</div>
+                                                <div class="poll-row">
+                                                    <div class="poll-row-line">
+                                                        <div class="poll-line-percent" ng-style="{width: variant.votersPercent}"></div>
+                                                        <div class="poll-line-number" style="width: 100%">{{variant.votersNum}}</div>
+                                                    </div>
+                                                    <div class="poll-row-percent">{{variant.votersPercent}}</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="poll-result-amount">Проголосовало <span>{{adverts.fullAdvertTopic.poll.amount}}</span> человек</div>
+
+                                        </div>
+
+                                    </div>
+
+                                        <div class="message-bottom">
+                                            <span class="topic-header-date">{{adverts.fullAdvertTopic.message.createdEdit}}</span>
+                                            <a class="answer-link" href="#" ng-click="adverts.showTopicAnswerInput($event,adverts.fullAdvertTopic)">Ответить</a>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="answer-input" ng-show="adverts.fullAdvertTopic.answerInputIsShow">
+                                <textarea ng-model="adverts.answerFirstMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
+                                          onblur="if(this.value=='') this.value='Ваш ответ';"
+                                          onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
+
+                                <div id="attach-area-{{adverts.fullAdvertTopic.id}}" class="attach-area"></div>
+                                <div id="attach-doc-area-{{adverts.fullAdvertTopic.id}}" class="attach-area attach-area-doc"></div>
+
+                                <div class="answer-input-bottom">
+                                    <div class="btn-group attach-dropdown pull-right">
+                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                            <span class="btn-group-text">Прикрепить</span>
+                                            <span class="icon-caret-down icon-on-right"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-blue">
+                                            <li><input id="attachImage-{{adverts.fullAdvertTopic.id}}" type="file"/></li>
+                                            <li><input id="attachDoc-{{adverts.fullAdvertTopic.id}}" type="file"/></li>
+                                        </ul>
+                                    </div>
+
+                                    <a class="btn btn-sm no-border btn-primary" href="#" ng-click="adverts.addSingleFirstMessage($event,adverts.fullAdvertTopic.id)">Отправить</a>
+                                    <span class="error-info" ng-show="adverts.isCreateFirstMessageError">{{adverts.createFirstMessageErrorText}}</span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <ol class="dd-list">
+
+                        <li class="dd-item dd2-item topic-item" ng-repeat="firstMessage in adverts.fullAdvertFirstMessages" id="{{firstMessage.id}}">
+                            <div class="dd2-content widget-box topic-descr">
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <div class="topic-left">
+                                            <a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">
+                                                <div class="avatar" style="background-image: url({{firstMessage.userInfo.avatar}})"></div>
+                                                <!--<img ng-src="{{firstMessage.userInfo.avatar}}" alt="картинка" /></a>-->
+                                            <div class="topic-author">
+                                                <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !firstMessage.isTreeOpen,'fa-minus' : firstMessage.isTreeOpen}"
+                                                   ng-click="adverts.toggleTreeFirstMessage($event,firstMessage)"></a>
+                                            </div>
+                                        </div>
+                                        <div class="topic-right">
+                                            <h2><a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">{{ firstMessage.userInfo.firstName +" "+ firstMessage.userInfo.lastName}}</a></h2>
+                                            <p>{{firstMessage.content}}</p>
+
+                                            <div class="attached">
+                                                <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullAdvertTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
+                                                    <img ng-src="{{image.URL}}" alt="картинка"/>
+                                                </a>
+                                                <div class="docs">
+                                                    <div ng-repeat="document in firstMessage.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="message-bottom">
+                                                <span class="topic-header-date">{{firstMessage.createdEdit}}</span>
+                                                <a class="answer-link" href="#" ng-click="adverts.showMessageAnswerInput($event,adverts.fullAdvertTopic,firstMessage)">Ответить</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="answer-input" ng-show="firstMessage.answerInputIsShow">
+                                        <textarea ng-model="firstMessage.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
+                                                  onblur="if(this.value=='') this.value='Ваш ответ';"
+                                                  onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
+
+                                        <div id="attach-area-{{adverts.fullAdvertTopic.id+'-'+firstMessage.id}}" class="attach-area"></div>
+                                        <div id="attach-doc-area-{{adverts.fullAdvertTopic.id+'-'+firstMessage.id}}" class="attach-area attach-area-doc"></div>
+
+                                        <div class="answer-input-bottom">
+                                            <div class="btn-group attach-dropdown pull-right">
+                                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                                    <span class="btn-group-text">Прикрепить</span>
+                                                    <span class="icon-caret-down icon-on-right"></span>
+                                                </button>
+
+                                                <ul class="dropdown-menu dropdown-blue">
+                                                    <li><input id="attachImage-{{adverts.fullAdvertTopic.id+'-'+firstMessage.id}}" type="file"/></li>
+                                                    <li><input id="attachDoc-{{adverts.fullAdvertTopic.id+'-'+firstMessage.id}}" type="file"/></li>
+                                                </ul>
+                                            </div>
+
+                                            <a class="btn btn-sm no-border btn-primary" href="#" ng-click="adverts.addSingleMessage($event,adverts.fullAdvertTopic.id,firstMessage)">Отправить</a>
+                                            <span class="error-info" ng-show="adverts.isCreateMessageToFirstError">{{adverts.createMessageToFirstErrorText}}</span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <ol class="dd-list" ng-show="firstMessage.isTreeOpen">
+
+                                <li class="dd-item dd2-item topic-item" ng-repeat="message in adverts.fullAdvertMessages[firstMessage.id]"
+                                    ng-style="{'margin-left': {{message.offset*30-30}}}" ng-show="message.isOpen && message.isParentOpen">
+                                    <div class="dd2-content widget-box topic-descr">
+                                        <div class="widget-body">
+                                            <div class="widget-main">
+                                                <div class="topic-left">
+                                                    <a ui-sref="profile({ userId : {{ message.userInfo.id }} })">
+                                                        <div class="avatar" style="background-image: url({{message.userInfo.avatar}})"></div>
+                                                        <!--<img ng-src="{{message.userInfo.avatar}}" alt="картинка" /></a>-->
+                                                    <div class="topic-author">
+                                                        <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !message.isTreeOpen,'fa-minus' : message.isTreeOpen}"
+                                                           ng-click="adverts.toggleTree($event,message,firstMessage)"></a>
+                                                    </div>
+                                                </div>
+                                                <div class="topic-right">
+                                                    <h2><a ui-sref="profile({ userId : {{ message.userInfo.id }} })">{{message.userInfo.firstName+" "+message.userInfo.lastName}}</a></h2>
+                                                    <p>{{message.content}}</p>
+
+                                                    <div class="attached">
+                                                        <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullAdvertTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
+                                                            <img ng-src="{{image.URL}}" alt="картинка"/>
+                                                        </a>
+                                                        <div class="docs">
+                                                            <div ng-repeat="document in message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="message-bottom">
+                                                        <span class="topic-header-date">{{message.createdEdit}}</span>
+                                                        <a class="answer-link" href="#" ng-click="adverts.showMessageAnswerInput($event,adverts.fullAdvertTopic,firstMessage,message)">Ответить</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="answer-input" ng-show="message.answerInputIsShow">
+                                                <textarea ng-model="message.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
+                                                          onblur="if(this.value=='') this.value='Ваш ответ';"
+                                                          onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
+
+                                                <div id="attach-area-{{adverts.fullAdvertTopic.id+'-'+message.id}}" class="attach-area"></div>
+                                                <div id="attach-doc-area-{{adverts.fullAdvertTopic.id+'-'+message.id}}" class="attach-area attach-area-doc"></div>
+
+
+                                                <div class="answer-input-bottom">
+                                                    <div class="btn-group attach-dropdown pull-right">
+                                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                                            <span class="btn-group-text">Прикрепить</span>
+                                                            <span class="icon-caret-down icon-on-right"></span>
+                                                        </button>
+
+                                                        <ul class="dropdown-menu dropdown-blue">
+                                                            <li><input id="attachImage-{{adverts.fullAdvertTopic.id+'-'+message.id}}" type="file"/></li>
+                                                            <li><input id="attachDoc-{{adverts.fullAdvertTopic.id+'-'+message.id}}" type="file"/></li>
+                                                        </ul>
+                                                    </div>
+
+                                                    <a class="btn btn-sm no-border btn-primary" href="#" ng-click="adverts.addSingleMessage($event,adverts.fullAdvertTopic.id,firstMessage,message)">Отправить</a>
+                                                    <span class="error-info" ng-show="adverts.isCreateMessageError">{{adverts.createMessageErrorText}}</span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ol>
+                        </li>
+
+                    </ol>
+                </li>
+            </ol>
+        </div>
+
+    </section>
+
+</section>

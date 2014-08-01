@@ -121,30 +121,6 @@
                                     <option value="128" ng-selected="settings.userNotifications.freq == 128 ">Не оповещать</option>
                                 </select>
                             </div>
-                            <div class="checkbox">
-                                <label> <input name="settings-checkbox"
-                                    type="checkbox" class="ace"> <span class="lbl">
-                                        Важные сообщения</span>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label> <input name="settings-checkbox"
-                                    type="checkbox" class="ace"> <span class="lbl">
-                                        Новые обсуждения</span>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label> <input name="settings-checkbox"
-                                    type="checkbox" class="ace"> <span class="lbl">
-                                        Новые сообщения</span>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label> <input name="settings-checkbox"
-                                    type="checkbox" class="ace"> <span class="lbl">
-                                        Личные сообщения</span>
-                                </label>
-                            </div>
 
                                 <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(3),'btn-primary' : settings.canSave(3)}"
                                         href="#" ng-disabled="!settings.canSave(3)" ng-click="settings.updateNotifications()">Сохранить</button>
