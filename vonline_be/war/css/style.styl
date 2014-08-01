@@ -116,7 +116,7 @@ transform()
 
 .nav-list > li.active > a
 .nav-list > li.active:hover a
-  font-weight normal
+  font-weight normal !important
   &:before
     display none
 
@@ -271,7 +271,7 @@ transform()
           &:hover
             text-decoration none
       h2
-        margin 0 100px 0 110px
+        margin 0 100px 0 90px
         vertical-align middle
         height 39px
         line-height 39px;
@@ -289,7 +289,7 @@ transform()
         float left
         vertical-align middle
     .topic-right
-      margin-left 115px
+      margin-left 95px
       h2
         margin-top 0
         font-size 20px
@@ -318,7 +318,7 @@ transform()
     .topic-left
       float left
       text-align center
-      width 95px
+      width 55px
       .plus-minus
         font-size 30px
         margin-top 5px
@@ -384,6 +384,12 @@ transform()
       .message-author
         margin-bottom 10px
         font-size 14px
+
+.topic-item .dd-list .topic-right
+  margin-left 60px
+
+.dd-list .dd-list
+  padding-left 37px
 
 .one-message
   .like-item
@@ -482,7 +488,7 @@ transform()
   .topic-body
     textarea
       width 100%
-      height 90px
+      //height 90px
       overflow hidden
   >.btn-group
     float right
@@ -514,11 +520,11 @@ transform()
 
 .message-input
   padding 10px
-  margin-bottom 20px
+  margin-bottom 15px
   background #ddedf6
   textarea
     width 100%
-    height 90px
+    //height 90px
     overflow hidden
   .message-input-bottom
     margin-top 15px
@@ -631,7 +637,7 @@ transform()
         width 15%
 
 .lenta-item
-  margin-bottom 20px
+  //margin-bottom 20px
   .wallitem-message
   .wallitem-topic
     margin 0 10px
@@ -653,7 +659,7 @@ transform()
       img
         width 100px
     .body
-      margin-left 110px
+      margin-left 90px
       .time
         float right
       .tools
@@ -679,9 +685,12 @@ transform()
   .lenta-item-hashtag
     float right
 
+.itemdiv.dialogdiv > .body
+  margin-left 58px
+
 .avatar
-  width 100px
-  height 100px
+  width 80px
+  height 80px
   background-repeat no-repeat
   background-size cover
   background-position 50% 50%
@@ -710,6 +719,9 @@ transform()
   border-top 1px solid rgb(80, 144, 193)
   .talks-title-left
     float left
+    >a
+      font-weight bold
+      font-size 16px
     .talks-title-links
       margin-left 55px
       a
@@ -826,7 +838,7 @@ transform()
         img
           width 70px
       .nextdoor-name
-          margin-left 110px
+          margin-left 58px
   .nextdoors-amount
     margin 15px 0 0 0
 

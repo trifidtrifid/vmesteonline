@@ -38,12 +38,12 @@
                         <span>группа</span>
                         <div class="btn-group hashtag-dropdown">
                             <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                <span class="btn-group-text"># {{adverts.selectedGroup.visibleName}}</span>
+                                <span class="btn-group-text"># {{base.bufferSelectedGroup.visibleName}}</span>
                                 <span class="icon-caret-down icon-on-right"></span>
                             </button>
 
                             <ul class="dropdown-menu dropdown-blue">
-                                <li ng-repeat="group in adverts.groups"><a href="#" ng-click="adverts.selectGroupInDropdown(group.id,adverts)"># {{group.visibleName}}</a></li>
+                                <li ng-repeat="group in adverts.groups"><a href="#" ng-click="selectGroupInDropdown_adverts(group.id)"># {{group.visibleName}}</a></li>
                             </ul>
                         </div>
                     </div>

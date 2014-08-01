@@ -205,14 +205,14 @@
 
                         <nav class="submenu pull-right clearfix">
                             <button class="btn btn-sm btn-info no-border pull-right ng-cloak" ng-repeat="group in mainContentTop.groups"
-                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="mainContentTop.selectGroup(group)">{{group.visibleName}}</button>
+                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="selectGroup(group)">{{group.visibleName}}</button>
 
                         </nav>
 
                         <div class="create-topic-btn pull-right" ng-show="base.talksIsActive || base.advertsIsActive">
                             <a class="btn btn-primary btn-sm no-border clearfix" href="#" ng-click="mainContentTop.showCreateTopic($event)">
                                 <span ng-show="base.talksIsActive">Создать тему</span>
-                                <span ng-hide="base.talksIsActive">Создать объявление</span>                                
+                                <span ng-hide="base.talksIsActive">Создать объявление</span>
                             </a>
                         </div>
                     </div>

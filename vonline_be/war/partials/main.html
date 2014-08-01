@@ -38,12 +38,12 @@
                         <span>группа</span>
                         <div class="btn-group hashtag-dropdown">
                             <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                                <span class="btn-group-text" ng-cloak># {{lenta.selectedGroup.visibleName}}</span>
+                                <span class="btn-group-text" ng-cloak># {{base.bufferSelectedGroup.visibleName}}</span>
                                 <span class="icon-caret-down icon-on-right"></span>
                             </button>
 
                             <ul class="dropdown-menu dropdown-blue">
-                                <li ng-repeat="group in lenta.groups"><a href="#" ng-click="lenta.selectGroupInDropdown(group.id,lenta)" ng-cloak># {{group.visibleName}}</a></li>
+                                <li ng-repeat="group in lenta.groups"><a href="#" ng-click="selectGroupInDropdown_lenta(group.id)" ng-cloak># {{group.visibleName}}</a></li>
                             </ul>
                         </div>
                     </div>
@@ -76,7 +76,7 @@
 
                                 <div class="text" ng-switch-when="message" ng-cloak>{{wallItem.topic.message.content}}</div>
 
-                                <div class="attached">
+                                <div class="attached" ng-show="wallItem.topic.message.images.length || wallItem.topic.message.documents.length">
                                     <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
                                         <img ng-src="{{image.URL}}" alt="картинка"/>
                                     </a>
@@ -136,7 +136,7 @@
                         <div class="dialogs">
                             <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
                                 <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })" class="user">
-                                    <div class="avatar short" style="background-image: url({{wallMessage.userInfo.avatar}})"></div>
+                                    <div class="avatar short2" style="background-image: url({{wallMessage.userInfo.avatar}})"></div>
                                     <!--<img alt="аватар" ng-src="{{wallMessage.userInfo.avatar}}">-->
                                 </a>
 
@@ -147,7 +147,7 @@
                                     </div>
                                     <div class="text" ng-cloak>{{wallMessage.content}}</div>
 
-                                    <div class="attached">
+                                    <div class="attached" ng-show="wallMessage.images.length || wallMessage.documents.length">
                                         <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
                                             <img ng-src="{{image.URL}}" alt="картинка"/>
                                         </a>
@@ -199,7 +199,7 @@
                     <div class="wallitem-topic" ng-switch-when="1">
                         <div class="talks-title">
                             <div class="talks-title-left load-talk">
-                                <div><a ui-sref="talks-single({ talkId : {{wallItem.topic.id}} })">{{wallItem.topic.subject}}</a></div> <!-- ng-click="showFullTalk($event,wallItem.topic.id)" -->
+                                <a ui-sref="talks-single({ talkId : {{wallItem.topic.id}} })">{{wallItem.topic.subject}}</a>
                                 <div>{{wallItem.topic.messageNum}} сообщений</div>
                             </div>
                             <div class="talks-title-right">
