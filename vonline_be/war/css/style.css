@@ -818,12 +818,26 @@ h1 {
 .talks-title .talks-title-left {
   float: left;
 }
-.talks-title .talks-title-left a {
+.talks-title .talks-title-left .talks-title-links {
+  margin-left: 55px;
+}
+.talks-title .talks-title-left .talks-title-links a {
+  display: block;
+}
+.talks-title .talks-title-left .talks-title-links a:first-child {
   font-weight: bold;
   font-size: 16px;
+  margin-bottom: 7px;
 }
 .talks-title .talks-title-right {
   float: right;
+}
+.talks-title .talks-title-right .adverts-comments {
+  padding-top: 5px;
+}
+.talks-title .talks-title-right .adverts-comments span {
+  display: inline-block;
+  margin-right: 20px;
 }
 .talks-block {
   padding: 0 10px;

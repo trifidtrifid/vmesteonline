@@ -210,7 +210,10 @@
                         </nav>
 
                         <div class="create-topic-btn pull-right" ng-show="base.talksIsActive || base.advertsIsActive">
-                            <a class="btn btn-primary btn-sm no-border clearfix" href="#" ng-click="mainContentTop.showCreateTopic($event)">Создать тему</a>
+                            <a class="btn btn-primary btn-sm no-border clearfix" href="#" ng-click="mainContentTop.showCreateTopic($event)">
+                                <span ng-show="base.talksIsActive">Создать тему</span>
+                                <span ng-hide="base.talksIsActive">Создать объявление</span>                                
+                            </a>
                         </div>
                     </div>
 
