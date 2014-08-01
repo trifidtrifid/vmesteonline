@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import com.vmesteonline.be.messageservice.Topic;
 public class VoTopic extends VoBaseMessage {
 	// id, message, messageNum, viewers, usersNum, lastUpdate, likes, unlikes,
 	// rubricId
-	public VoTopic(Topic topic) throws InvalidOperation {
+	public VoTopic(Topic topic) throws InvalidOperation, IOException {
 
 		super(topic.getMessage());
 		subject = topic.getSubject().getBytes();

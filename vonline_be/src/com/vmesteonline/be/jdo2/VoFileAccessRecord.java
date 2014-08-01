@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -140,7 +141,7 @@ public class VoFileAccessRecord {
 	}
 
 	public Attach getAttach() {
-		return new Attach(publicFileName, contentType, getURL());
+		return new Attach(publicFileName, contentType, ByteBuffer.wrap( getURL().getBytes()));
 	}
 	
 	public String getURL() {

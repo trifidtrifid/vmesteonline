@@ -18,7 +18,7 @@ struct UserMessage {
 struct Attach {
 	1:string fileName,
 	2:string contentType,
-	3:string URL
+	3:binary URL
 }
 
 struct Message {
