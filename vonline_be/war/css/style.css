@@ -733,6 +733,7 @@ h1 {
 .lenta-item .wallitem-message .input-group .input-group-btn {
   display: block;
   margin-top: 10px;
+  margin-bottom: 10px;
   width: 100%;
 }
 .lenta-item .first-message {
@@ -748,6 +749,7 @@ h1 {
 }
 .lenta-item .first-message .body {
   margin-left: 90px;
+  padding-bottom: 20px;
 }
 .lenta-item .first-message .body .time {
   float: right;

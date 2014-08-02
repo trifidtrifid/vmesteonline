@@ -70,28 +70,20 @@ angular.module('forum.controllers', ['ui.select2'])
 
         base.oldTextLength = 0;
         base.messageChange = function(event,textareaType){
-            /*for(var p in event.target){
-             console.log(p+" "+event[p]);
-             };*/
-
-            /*console.log(event.target.clientHeight);
-            console.log(event.target.scrollHeight);
-            console.log(event.target.scrollTop);
-            console.log(event.target.value);
-            console.log(event.target.textLength);*/
 
             var clientHeight = event.target.clientHeight,
                 scrollHeight = event.target.scrollHeight,
                 textLength = event.target.textLength,
                 clientWidth = event.target.clientWidth,
                 textLengthPX, newHeight,removeRowCount,
-                defaultHeight;
+                defaultHeight, newRowCount;
 
-            if(textareaType == 1){
+            /*if(textareaType == 1){
                 defaultHeight = 90;
             }else if(textareaType == 2){
                 defaultHeight = 44;
-            }
+            }*/
+            defaultHeight = 44;
 
             /*
             Исходные данные:
@@ -103,25 +95,28 @@ angular.module('forum.controllers', ['ui.select2'])
              * 2) Определяем целое количестов строк, которые удалили
              * 3) Определям новую высоту с учетом высоты удаленного текста
             * */
-            if(scrollHeight > clientHeight){
+
+            console.log("0 "+scrollHeight+" "+clientHeight);
+             if(scrollHeight > clientHeight){
+                 console.log('1');
                 event.target.style.height = scrollHeight+'px';
             }else if(scrollHeight > defaultHeight){
-                //console.log('2 '+base.oldTextLength);
                 textLengthPX = (parseInt(base.oldTextLength) - textLength) * 8; // 1
-                //console.log(textLengthPX);
+                 console.log("2 "+textLengthPX+" "+clientWidth+" "+textLength);
                 if (textLengthPX > clientWidth){
-                    //console.log('3');
+                    console.log("3 "+textLengthPX+" "+clientWidth);
                     removeRowCount = Math.floor(textLengthPX/clientWidth); // 2
-                    //console.log(k);
-                    //console.log(event.target.style.height);
                     newHeight = parseInt(event.target.style.height) - removeRowCount*14; // 3
-                    //console.log(newHeight);
                     newHeight > defaultHeight ? event.target.style.height = newHeight+"px":
                                     event.target.style.height = defaultHeight+'px';
 
-                    //console.log(event.target.style.height);
+                }else{
+                    newRowCount = parseInt(textLength*8/clientWidth);
+                    event.target.style.height = newRowCount*14+'px';
+                    console.log("5 "+textLength+" "+textLength*8/clientWidth);
                 }
             }else{
+                 console.log('4');
                 event.target.style.height = defaultHeight+'px';
             }
             base.oldTextLength = textLength;
