@@ -166,10 +166,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, PersistenceManager pm) {
 
-		String req = "select `id` from topic where longitude <= " + VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString()
+		String req = "select `id` from topic where radius <= "+group.getRadius()+" and longitude <= " + VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString()
 				+ " and longitude >= " + VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
 				+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
-				+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() + " and radius >= " + group.getRadius();
+				+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() ;
 
 		switch (type) {
 
@@ -645,4 +645,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return ServiceCategoryID.MESSAGE_SI.ordinal();
 	}
 
+	// ======================================================================================================================
+
+	@Override
+	public int markMessageImportant(long messageId, boolean isImportant) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 }

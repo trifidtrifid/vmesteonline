@@ -24,6 +24,9 @@
     pageContext.setAttribute("shortProfile",shortProfile);
     UserContacts userContacts = userService.getUserContacts();
     pageContext.setAttribute("userContacts",userContacts);
+    
+    pageContext.setAttribute("userMap",userService.getGroupMap(userService.getUserGroups().get(1).getId(), "8822DDC0"));
+    
 %>
 
     <div class="profile">
@@ -71,7 +74,7 @@
                         <h3>Домашний адрес</h3>
                         <div><c:out value="${shortProfile.address}"/></div>
 
-                        <div class="home-map"><img src="i/map_home.jpg" alt="карта"/></div>
+                        <div class="home-map"><img src="${userMap}" alt="карта"/></div>
                     </div>
                 </div>
             </div>

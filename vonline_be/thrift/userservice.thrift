@@ -30,7 +30,6 @@ service UserService {
 //для отображения контактов пользователя на странице профайла. 
 	bedata.UserContacts getUserContacts() throws (1:error.InvalidOperation exc),
 	bedata.UserContacts getUserContactsExt(1:i64 userId) throws (1:error.InvalidOperation exc),
-
 	
 //для обновления пользовательского аватара в профайле. 
 	void updateUserAvatar(1:string url) throws (1:error.InvalidOperation exc),
@@ -47,8 +46,7 @@ service UserService {
 	void updateFamily(1:bedata.UserFamily family) throws (1:error.InvalidOperation exc),
 	void updateInterests(1:bedata.UserInterests interests) throws (1:error.InvalidOperation exc),
 	void updateNotifications(1:bedata.Notifications notifications) throws (1:error.InvalidOperation exc),
-	
-	
+		
 	
 	list<bedata.Country> getCounties() throws (1:error.InvalidOperation exc),
 	list<bedata.City> getCities(1:i64 countryId) throws (1:error.InvalidOperation exc),
@@ -64,4 +62,6 @@ service UserService {
 	list<bedata.ShortUserInfo> getNeighbours() throws (1:error.InvalidOperation exc),
 	list<bedata.ShortUserInfo> getNeighboursByGroup(1:i64 groupId) throws (1:error.InvalidOperation exc),
 	
+	//возвращает ссылку на карту в зависмотси от выбраной группы
+	string getGroupMap(1:i64 groupId, 2:string color) throws (1:error.InvalidOperation exc),
 }

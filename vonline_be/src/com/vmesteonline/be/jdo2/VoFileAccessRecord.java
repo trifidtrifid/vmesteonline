@@ -12,6 +12,7 @@ import javax.jdo.annotations.PrimaryKey;
 import javax.mail.internet.ContentType;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.utils.SystemProperty;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.vmesteonline.be.data.PMF;
@@ -20,6 +21,7 @@ import com.vmesteonline.be.utils.StorageHelper;
 
 @PersistenceCapable
 public class VoFileAccessRecord {
+	private final String appId = SystemProperty.Environment.applicationId.get();
 
 	private String fileName;
 
@@ -28,7 +30,7 @@ public class VoFileAccessRecord {
 		this.fileName = (this.userId=userId) + "_" + ((this.isPublic=isPublic) ? "public" : "private")+(System.currentTimeMillis() % 10000) +"_"+fileName.replaceAll("[^A-Za-z0-9._]", "");
 		if(this.fileName.length() > 128) this.fileName = this.fileName.substring(1,128);
 		this.publicFileName=fileName;
-		this.bucket = "vmesteonline.appspot.com";
+		this.bucket = appId;
 		this.contentType = contentType;
 		this.createdAt = (int)(System.currentTimeMillis() / 1000L); 
 		if( null != parent ) parent.setVersion(versionKey, this);
@@ -141,7 +143,7 @@ public class VoFileAccessRecord {
 	}
 
 	public Attach getAttach() {
-		return new Attach(publicFileName, contentType, ByteBuffer.wrap( getURL().getBytes()));
+		return new Attach(publicFileName, contentType, getURL());
 	}
 	
 	public String getURL() {

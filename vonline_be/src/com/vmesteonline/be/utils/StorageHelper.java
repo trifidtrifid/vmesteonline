@@ -385,7 +385,7 @@ public class StorageHelper {
 
 	//===================================================================================================================
 	public static FileSource createFileSource( Attach att ) throws IOException {
-		return createFileSource( att.URL.array(), att.contentType, att.fileName); 
+		return createFileSource( att.URL.getBytes(), att.contentType, att.fileName); 
 	}
 	
 	//===================================================================================================================
@@ -466,7 +466,7 @@ public class StorageHelper {
 					}
 			}
 			
-			if( is == null && contentString.length() % 4 == 0 ){ //try to decode base64 
+			if( is == null && urlOrContent.length % 4 == 0 ){ //try to decode base64 
 					try {
 						is = new ByteArrayInputStream( Base64.decode( new String(urlOrContent) ));
 					} catch( Exception ee){

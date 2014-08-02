@@ -1,5 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -54,7 +55,7 @@ public class VoMessage extends VoBaseMessage {
 	}
 
 	// TODO do smthing with this. constructor should not be like this. create factory or smth else
-	public VoMessage(Message msg) throws InvalidOperation {
+	public VoMessage(Message msg) throws InvalidOperation, IOException {
 
 		super(msg);
 		this.topicId = msg.getTopicId();
