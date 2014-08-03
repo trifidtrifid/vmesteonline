@@ -32,6 +32,7 @@ public class ServiceImpl {
 
 	private static Cache cache;
 	public static Logger logger;
+	public static String hostName;
 
 	static {
 		logger = Logger.getLogger(ServiceImpl.class.getName());

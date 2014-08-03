@@ -49,7 +49,8 @@ public class UserServiceImplTest extends TestWorkAround {
 		Assert.assertNotNull(userLocation);
 		Assert.assertTrue(userLocation.size() > 0);
 		userHomeLocation = userLocation.get(0);
-		userId = asi.registerNewUser("fn", "ln", "pswd", "eml", userHomeLocation, 0);
+
+		userId = asi.registerNewUser("fn", "ln", "pswd", "eml", userHomeLocation, Integer.parseInt(userHomeLocation));
 		Assert.assertTrue(userId > 0);
 		asi.login("eml", "pswd");
 
@@ -493,6 +494,26 @@ public class UserServiceImplTest extends TestWorkAround {
 		} catch (InvalidOperation e) {
 			e.printStackTrace();
 			fail("Exception " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testsetUserMap() {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			asi.login(Defaults.user1email, Defaults.user1pass);
+			
+			for( VoUserGroup vug : usi.getCurrentUser(pm).getGroups()) {
+				String map = usi.getGroupMap( vug.getId(), "8822DDC0");
+				System.out.println(map);
+			}
+
+			// Assert.assertTrue(userHomeAddress.equals(newAddress));
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		} finally {
+			pm.close();
 		}
 	}
 }

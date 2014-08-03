@@ -20,6 +20,7 @@ import org.apache.thrift.TException;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
@@ -30,6 +31,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.utils.Defaults;
+import com.vmesteonline.be.utils.InviteCodeUploader;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
@@ -187,7 +189,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			List<String> locations = new ArrayList<String>();
 			for (VoPostalAddress pa : postalAddresses) {
 				pm.retrieve(pa);
-				locations.add("" + pa.getAddressCode());
+				String code = "" + pa.getAddressCode();
+				pm.makePersistent( new VoInviteCode(code,pa.getId()));;
+				locations.add(code);
 			}
 			return locations;
 		} finally {
@@ -829,6 +833,45 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 		
 	}
+
+	@Override
+	public String getGroupMap(long groupId, String color) throws InvalidOperation, TException {
+		String mapKey = "yandex.group.map."+groupId;
+		Object url = ServiceImpl.getObjectFromCache(mapKey);
+		if( null!=url ) 
+			if( url instanceof String){
+				return (String)url;
+			} else {
+				//incorrect type of object in the cache
+				ServiceImpl.removeObjectFromCache(mapKey);
+			}
+		PersistenceManager pm = PMF.getPm();
+		
+		try {
+			VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, groupId);
+			String los = userGroup.getLongitude().toPlainString(); 
+			String las = userGroup.getLatitude().toPlainString();
+			url = "http://static-maps.yandex.ru/1.x/?l=map&pt="+los+","+las+",pm2am"
+					+ "&pl=c:"+color+",f:"+color+",w:1";
+			
+			double lad = userGroup.getLatitude().doubleValue();
+			double lod = userGroup.getLongitude().doubleValue();
+			
+			double laDelta = VoHelper.getLatitudeMax(userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lad;
+			double loDelta = VoHelper.getLatitudeMax(userGroup.getLongitude(), userGroup.getRadius()).doubleValue() - lod;
+			
+			for( double i=0.0D; i<2 * Math.PI; i+=Math.PI/30){
+				url += "," + (lod + Math.sin( i ) * loDelta)+
+						","+(lad + Math.cos( i ) * laDelta);
+			}
+			ServiceImpl.putObjectToCache(mapKey, (String)url);
+			
+		} finally {
+			pm.close();
+		}	
+		return (String) url;
+	}
+	
 	
 	
 }
