@@ -98,7 +98,7 @@ public class Defaults {
 	}
 
 	public static boolean initDefaultData() {
-		return initDefaultData(true);
+		return initDefaultData(false);
 	}
 
 	// ======================================================================================================================
@@ -188,7 +188,7 @@ public class Defaults {
 		for (String uname : unames) {
 			try {
 				uids.add(asi.registerNewUser(uname, ulastnames[counter], uPasses[counter], uEmails[counter], locCodes.get(counter++), 0));
-
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

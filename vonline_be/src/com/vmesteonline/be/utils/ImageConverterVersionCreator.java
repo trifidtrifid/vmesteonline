@@ -4,11 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.mail.internet.ContentType;
-
-import org.apache.log4j.Logger;
 
 import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
@@ -87,7 +86,8 @@ public class ImageConverterVersionCreator implements VersionCreator {
 			return new Crop(
 					Integer.parseInt(cropParams[0]),Integer.parseInt(cropParams[1]),Integer.parseInt(cropParams[2]),Integer.parseInt(cropParams[3]));
 		} catch ( NumberFormatException nfe ){
-			logger.warn("Failed to parse 's' parameter '"+sparams[0]+"' for crop. Would not be cropped");
+			
+			logger.warning("Failed to parse 's' parameter '"+sparams[0]+"' for crop. Would not be cropped");
 			return null;
 		}
 	}
@@ -155,7 +155,7 @@ public class ImageConverterVersionCreator implements VersionCreator {
 	public static Logger logger;
 
 	static {
-		logger = Logger.getLogger(ImageConverterVersionCreator.class);
+		logger = Logger.getLogger(ImageConverterVersionCreator.class.getName());
 	}
 	
 }

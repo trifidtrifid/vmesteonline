@@ -27,7 +27,7 @@ import com.vmesteonline.be.utils.StorageHelper.FileSource;
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
 public abstract class VoBaseMessage extends GeoLocation {
 
-	public VoBaseMessage(Message msg) {
+	public VoBaseMessage(Message msg) throws IOException, InvalidOperation {
 		// super(msg.getLikesNum(), msg.getUnlikesNum());
 		content = msg.getContent().getBytes();
 		links = msg.getLinkedMessages();
@@ -68,8 +68,6 @@ public abstract class VoBaseMessage extends GeoLocation {
 				msg.documents = savedDocs;
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
 		} finally {
 			pm.close();
 		}

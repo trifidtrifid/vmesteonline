@@ -1,14 +1,13 @@
 package com.vmesteonline.be;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import javax.jdo.Extent;
 import javax.jdo.JDOObjectNotFoundException;
@@ -16,19 +15,12 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.images.Image;
-import com.google.appengine.api.images.ImagesService;
-import com.google.appengine.api.images.ImagesServiceFactory;
-import com.google.appengine.api.images.Transform;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.GeoLocation;
-import com.vmesteonline.be.jdo2.VoFileAccessRecord;
-import com.vmesteonline.be.jdo2.VoGroup;
+import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
@@ -39,7 +31,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.utils.Defaults;
-import com.vmesteonline.be.utils.StorageHelper;
+import com.vmesteonline.be.utils.InviteCodeUploader;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
@@ -109,7 +101,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			return voUser.getShortUserInfo();
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.warn("request short user info for absent user " + userId);
+			logger.warning("request short user info for absent user " + userId);
 		} finally {
 			pm.close();
 		}
@@ -137,7 +129,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				logger.info("find user email " + user.getEmail() + " name " + user.getName());
 
 				if (user.getGroups() == null) {
-					logger.warn("user with id " + Long.toString(userId) + " has no any groups");
+					logger.warning("user with id " + Long.toString(userId) + " has no any groups");
 					throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");
 				}
 				List<Group> groups = new ArrayList<Group>();
@@ -164,14 +156,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 			VoUser user = pm.getObjectById(VoUser.class, userId);
 			if (user == null) {
-				logger.error("can't find user by id " + Long.toString(userId));
+				logger.severe("can't find user by id " + Long.toString(userId));
 				throw new InvalidOperation(VoError.NotAuthorized, "can't find user bu id");
 			}
 
 			logger.info("find user name " + user.getEmail());
 
 			if (user.getRubrics() == null) {
-				logger.warn("user with id " + Long.toString(userId) + " has no any rubrics");
+				logger.warning("user with id " + Long.toString(userId) + " has no any rubrics");
 				throw new InvalidOperation(VoError.GeneralError, "No Rubrics are initialized for user=" + userId);
 			}
 
@@ -197,7 +189,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			List<String> locations = new ArrayList<String>();
 			for (VoPostalAddress pa : postalAddresses) {
 				pm.retrieve(pa);
-				locations.add("" + pa.getAddressCode());
+				String code = "" + pa.getAddressCode();
+				pm.makePersistent( new VoInviteCode(code,pa.getId()));;
+				locations.add(code);
 			}
 			return locations;
 		} finally {
@@ -839,6 +833,45 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 		
 	}
+
+	@Override
+	public String getGroupMap(long groupId, String color) throws InvalidOperation, TException {
+		String mapKey = "yandex.group.map."+groupId;
+		Object url = ServiceImpl.getObjectFromCache(mapKey);
+		if( null!=url ) 
+			if( url instanceof String){
+				return (String)url;
+			} else {
+				//incorrect type of object in the cache
+				ServiceImpl.removeObjectFromCache(mapKey);
+			}
+		PersistenceManager pm = PMF.getPm();
+		
+		try {
+			VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, groupId);
+			String los = userGroup.getLongitude().toPlainString(); 
+			String las = userGroup.getLatitude().toPlainString();
+			url = "http://static-maps.yandex.ru/1.x/?l=map&pt="+los+","+las+",pm2am"
+					+ "&pl=c:"+color+",f:"+color+",w:1";
+			
+			double lad = userGroup.getLatitude().doubleValue();
+			double lod = userGroup.getLongitude().doubleValue();
+			
+			double laDelta = VoHelper.getLatitudeMax(userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lad;
+			double loDelta = VoHelper.getLatitudeMax(userGroup.getLongitude(), userGroup.getRadius()).doubleValue() - lod;
+			
+			for( double i=0.0D; i<2 * Math.PI; i+=Math.PI/30){
+				url += "," + (lod + Math.sin( i ) * loDelta)+
+						","+(lad + Math.cos( i ) * laDelta);
+			}
+			ServiceImpl.putObjectToCache(mapKey, (String)url);
+			
+		} finally {
+			pm.close();
+		}	
+		return (String) url;
+	}
+	
 	
 	
 }

@@ -166,10 +166,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, PersistenceManager pm) {
 
-		String req = "select `id` from topic where longitude <= " + VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString()
-				+ " and longitude >= " + VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
-				+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
-				+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() + " and radius >= " + group.getRadius();
+		String req = "select `id` from topic where";
+		if (group != null)
+			req += " radius <= " + group.getRadius() + " and longitude <= "
+					+ VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString() + " and longitude >= "
+					+ VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
+					+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
+					+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString();
 
 		switch (type) {
 
@@ -181,6 +184,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			break;
 		case WALL:
 			req += " and messageType != " + Integer.toString(MessageType.ADVERT.getValue());
+			break;
+		case BLOG:
+			req += " messageType == " + Integer.toString(MessageType.BLOG.getValue());
 			break;
 
 		default:
@@ -212,6 +218,22 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 
 		return topics;
+	}
+
+	@Override
+	public TopicListPart getBlog(long lastLoadedTopicId, int length) throws InvalidOperation {
+
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<VoTopic> topics = getTopics(null, MessageType.BLOG, lastLoadedTopicId, length, pm);
+		TopicListPart mlp = new TopicListPart();
+		mlp.totalSize = topics.size();
+
+		for (VoTopic voTopic : topics) {
+			Topic tpc = voTopic.getTopic(0, pm);
+			mlp.addToTopics(tpc);
+		}
+		return mlp;
+
 	}
 
 	@Override
@@ -643,6 +665,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public long categoryId() {
 		return ServiceCategoryID.MESSAGE_SI.ordinal();
+	}
+
+	// ======================================================================================================================
+
+	@Override
+	public int markMessageImportant(long messageId, boolean isImportant) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

@@ -2,7 +2,7 @@ include "bedata.thrift"
 include "error.thrift"
 namespace * com.vmesteonline.be.messageservice
 
-enum MessageType { BASE=1, DIALOG=2, SHOP=3, NEWS=4, WALL=5, ADVERT=6 }
+enum MessageType { BASE=1, DIALOG=2, SHOP=3, NEWS=4, WALL=5, ADVERT=6, BLOG=7 }
 
 struct MessageLink {
 	1: MessageType linkType,
@@ -153,13 +153,15 @@ service MessageService {
 	 **/
 	i32 checkUpdates( 1:i32 lastResposeTimestamp ) throws (1:error.InvalidOperation exc),
 
+	TopicListPart getBlog(2:i64 lastLoadedTopicId, 3:i32 length) throws (1:error.InvalidOperation exc),
+
 	TopicListPart getAdverts( 1:i64 groupId, 2:i64 lastLoadedTopicId, 3:i32 length) throws (1:error.InvalidOperation exc),
 
 	TopicListPart getTopics( 1:i64 groupId , 2:i64 rubricId, 3:i32 commmunityId, 4:i64 lastLoadedTopicId, 5:i32 length) throws (1:error.InvalidOperation exc),
 	/**
 	* Загрузка части преставления дерева сообщений в виде дерева. parentID указывает на сообщение топика или на сообщение первого уровня
 	**/
-	MessageListPart getMessages( 1:i64 topicId , 2:i64 groupId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
+	MessageListPart getMessages( 1:i64 topicId, 2:i64 groupId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
 
 //получение сообщений первого уровня. если lastLoadedId = 0, то сообщения грузятся начиная с первого. если !=0, то после указанного.
 	MessageListPart getFirstLevelMessages( 1:i64 topicId , 2:i64 groupId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
@@ -177,6 +179,10 @@ service MessageService {
 	i64 restoreTopicFromArchive(1:i64 topicId) throws (1:error.InvalidOperation exc),
 	i64 markTopicUnintrested(1:i64 topicId, 2:bool interested) throws (1:error.InvalidOperation exc),
 	i64 makeMessageLinked(1:i64 message1Id, 2:i64 message2Id ) throws (1:error.InvalidOperation exc),
+	
+	//метсд изменяет и возвращает текущую важность сообщения на значение равное рейтингу пользователя, 
+	//для текущего пользователя сообщение становится важным вне зависимости от его суммарного рейтинга
+	i32 markMessageImportant(1:i64 messageId, 2:bool isImportant ) throws (1:error.InvalidOperation exc),
 	
 	
 }

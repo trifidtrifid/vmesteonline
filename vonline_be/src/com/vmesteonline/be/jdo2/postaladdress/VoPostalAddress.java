@@ -94,7 +94,7 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	}
 
 	public long getAddressCode() {
-		return id;
+		return id % 100000L;
 	}
 
 	public static Key getKeyValue(long code) {

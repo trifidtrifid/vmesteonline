@@ -96,7 +96,7 @@ public class VoServlet extends HttpServlet {
 			OutputStream writerSniffer = new OutputStream() {
 				@Override
 				public void write(int b) throws IOException {
-					writeBaos.write(b);
+					if( writeBaos.size() < 1024 ) writeBaos.write(b);
 					out.write(b);
 				}
 			};
@@ -107,7 +107,7 @@ public class VoServlet extends HttpServlet {
 				@Override
 				public int read() throws IOException {
 					int i = in.read();
-					readBaos.write(i);
+					if( readBaos.size() < 1024 )  readBaos.write(i);
 					return i;
 				}
 			};

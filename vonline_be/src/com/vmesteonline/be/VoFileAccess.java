@@ -2,26 +2,19 @@ package com.vmesteonline.be;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.util.List;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
-import javax.mail.Part;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.log4j.Logger;
 
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
@@ -76,7 +69,7 @@ public class VoFileAccess extends HttpServlet {
 
 		} catch (InvalidOperation e) {
 			resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.why);
-			logger.warn("Failed to process request:" + e.getMessage() + " ");
+			logger.warning("Failed to process request:" + e.getMessage() + " ");
 			e.printStackTrace();
 			
 		} finally {
@@ -151,17 +144,17 @@ public class VoFileAccess extends HttpServlet {
         
     } catch (FileUploadException e) {
     	resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
-			logger.warn("Failed to save file:" + e.getMessage() + " ");
+			logger.warning("Failed to save file:" + e.getMessage() + " ");
 			e.printStackTrace();
     } catch (InvalidOperation e) {
 			resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.why);
-			logger.warn("Failed to save file:" + e.getMessage() + " ");
+			logger.warning("Failed to save file:" + e.getMessage() + " ");
 			e.printStackTrace();
 		} finally {
 			pm.close();
 		}
 	}
 
-	private static Logger logger = Logger.getLogger(VoFileAccess.class);
+	private static Logger logger = Logger.getLogger(VoFileAccess.class.getName());
 
 }

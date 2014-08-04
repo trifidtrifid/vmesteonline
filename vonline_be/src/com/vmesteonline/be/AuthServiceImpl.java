@@ -4,21 +4,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
-import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
-import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
-import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.EMailHelper;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
@@ -89,7 +87,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		} catch (JDOObjectNotFoundException e) {
 			throw new InvalidOperation(VoError.NotAuthorized, "can't find active session for " + sessId);
 		} catch (Exception e) {
-			logger.debug("exception: " + e.toString());
+			logger.fine("exception: " + e.toString());
 		}
 		throw new InvalidOperation(VoError.NotAuthorized, "can't find active session for " + sessId);
 
@@ -98,7 +96,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	@Override
 	public boolean login(final String email, final String password) throws InvalidOperation {
 		if (sessionStorage == null) {
-			logger.error("http session is null");
+			logger.fine("http session is null");
 			throw new InvalidOperation(VoError.IncorrectParametrs, "http session is null");
 		}
 
@@ -172,7 +170,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				EMailHelper.sendSimpleEMail(email, "Вы зарегестрированы на Bo! сайте", body);
 
 			} catch (Exception e) {
-				logger.warn("can't send email to " + email + " " + e.getMessage());
+				logger.fine("can't send email to " + email + " " + e.getMessage());
 				e.printStackTrace();
 			}
 			return user.getId();
@@ -211,7 +209,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		if (users.isEmpty())
 			return null;
 		if (users.size() != 1)
-			logger.error("has more than one user with email " + email);
+			logger.severe("has more than one user with email " + email);
 		return users.get(0);
 	}
 
