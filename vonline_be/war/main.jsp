@@ -105,6 +105,9 @@
 
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
+                <li ng-class="navbar.mapsBtnStatus"><a class="btn btn-info no-border private-messages-link"
+                                                                  ui-sref="maps">Карты</a></li>
+
                 <li ng-class="navbar.privateMessagesBtnStatus"><a class="btn btn-info no-border private-messages-link"
                                                                   ui-sref="dialogs">Личные сообщения </a></li>
 
@@ -204,8 +207,8 @@
                         <div class="page-title pull-left" ng-show="base.pageTitle.length">{{base.pageTitle}}</div>
 
                         <nav class="submenu pull-right clearfix">
-                            <button class="btn btn-sm btn-info no-border pull-right ng-cloak" ng-repeat="group in mainContentTop.groups"
-                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="selectGroup(group)">{{group.visibleName}}</button>
+                            <button class="btn btn-sm btn-info no-border pull-right ng-cloak" ng-repeat="group in groups"
+                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="selectGroup(group)" ng-show="group.isShow">{{group.visibleName}}</button>
 
                         </nav>
 
