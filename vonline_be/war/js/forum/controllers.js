@@ -2419,10 +2419,12 @@ function postTopic(obj,isWall,isAdverts){
         poll.alreadyPoll = false;
         var pollInputsLength = obj.pollInputs.length;
         for(var i = 0; i < pollInputsLength; i++){
-            poll.names[i] = obj.pollInputs[i].name;
-            poll.editNames[i] = {
-                id: i,
-                name: obj.pollInputs[i].name
+            if(obj.pollInputs[i].name != "") {
+                poll.names[i] = obj.pollInputs[i].name;
+                poll.editNames[i] = {
+                    id: i,
+                    name: obj.pollInputs[i].name
+                }
             }
         }
 
