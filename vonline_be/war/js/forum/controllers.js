@@ -2096,7 +2096,7 @@ angular.module('forum.controllers', ['ui.select2'])
         maps.url = userClient.getGroupMap($rootScope.groups[2].id);
 
         $rootScope.mapsChangeGroup = function(groupId){
-            maps.url = userClient.getGroupMap(groupId);
+            maps.url = userClient.getGroupMap(groupId,'FFFF0000');
         };
     });
 
@@ -2200,16 +2200,17 @@ function initAttachImage(selector,attachAreaSelector){
 
         function copyImage() {
             var copyImgSrc = fileLabel.find('.file-name img').css('background-image'),
+                url = fileClient.saveFileContent(copyImgSrc,true),
                 fileName = fileLabel.find('.file-name').attr('data-title');
 
-            //$('.attach-area')
             attachAreaSelector.append("<span class='attach-item new-attached'>" +
                 "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                "<img data-title='"+ fileName +"' data-type='"+ type +"' class='attached-img' style='background-image:"+ copyImgSrc +"'></span>");
+                "<img data-title='"+ fileName +"' data-type='"+ type +"' class='attached-img' style='background-image:url("+ url +")'></span>");
 
             $('.new-attached .remove-attach-img').click(function(e){
                 e.preventDefault();
                $(this).closest('.attach-item').hide().detach();
+                fileClient.deleteFile(url);
             });
 
             $('.new-attached').removeClass('new-attached');
@@ -2255,7 +2256,7 @@ function initAttachDoc(selector,attachAreaSelector){
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = docName;
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
-                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = base64encode(reader.result);
+                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
                 docsInd[attachAreaSelector]++;
 
                    /* "obj(name:"+ base64encode(docName)
@@ -2569,7 +2570,7 @@ function getAttachedImages(selector){
             result,content;
 
         var i = bgImg.indexOf('base64,');
-        content = bgImg.slice(i+7,bgImg.length-1);
+        content = bgImg.slice(4,bgImg.length-1);
 
         result = new com.vmesteonline.be.messageservice.Attach();
         result.fileName = name;
