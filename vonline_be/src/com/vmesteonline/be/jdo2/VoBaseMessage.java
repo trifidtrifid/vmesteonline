@@ -21,6 +21,7 @@ import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.messageservice.Attach;
+import com.vmesteonline.be.messageservice.Mark;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.utils.StorageHelper;
@@ -160,10 +161,19 @@ public abstract class VoBaseMessage extends GeoLocation {
 
 	public int markImportant( VoUser user, VoUser author, boolean isImportant, PersistenceManager pm) {
 		if( null == important ) important = new HashSet<Long>();
-		if( !important.contains(user.getId())) {
+		if( null == unimportant ) unimportant = new HashSet<Long>();
+		
+		long userId = user.getId();
+		
+		if( !important.contains(userId) && !unimportant.contains(userId)) {
 			int ui = user.getImportancy();
-			importantScore += ui * ( isImportant ? 1 : -1);
-			important.add(user.getId());
+			importantScore += ui * ( isImportant ? 1 : -1 ) ;
+			
+			if( isImportant ) 
+				important.add(userId);
+			else 
+				unimportant.add( userId);
+			
 			try{
 				if( null==author && null==authorId )
 					author = pm.getObjectById(VoUser.class,authorId);
@@ -186,8 +196,15 @@ public abstract class VoBaseMessage extends GeoLocation {
 		return popularityScore;
 	}
 
+	public Mark isImportant( long userId ){
+		return important!=null && important.contains( userId ) ? Mark.POSITIVE : unimportant !=null && unimportant.contains( userId ) ? Mark.NEGATIVE : Mark.NOTMARKED;
+	}
 
+	public Mark isLiked( long userId ){
+		return likes != null && likes.contains( userId ) ? Mark.POSITIVE : Mark.NOTMARKED;
+	}
 
+	
 	/*
 	 * @PrimaryKey
 	 * 
@@ -234,6 +251,10 @@ public abstract class VoBaseMessage extends GeoLocation {
 	@Persistent
 	@Unindexed
 	protected Set<Long> important;
+	@Persistent
+	@Unindexed
+	protected Set<Long> unimportant;
+	
 	@Persistent
 	protected Integer importantScore;
 	@Persistent

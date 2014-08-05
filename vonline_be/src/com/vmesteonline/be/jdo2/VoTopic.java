@@ -33,21 +33,24 @@ public class VoTopic extends VoBaseMessage {
 	public Topic getTopic(long userId, PersistenceManager pm) {
 
 		List<Attach> imgs = new ArrayList<Attach>();
-		if( null!=images ) for( Long farId : images ){
-			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
-			imgs.add( att.getAttach() );
-		}
+		if (null != images)
+			for (Long farId : images) {
+				VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
+				imgs.add(att.getAttach());
+			}
 		List<Attach> docs = new ArrayList<Attach>();
-		if(null!=documents) for( Long farId : documents ){
-			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
-			docs.add( att.getAttach() );
-		}
-		
-		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
-				0, links, null, null, 0, null, imgs, docs);
+		if (null != documents)
+			for (Long farId : documents) {
+				VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
+				docs.add(att.getAttach());
+			}
 
-		Topic tpc = new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(),
-				0, null, null, null);
+		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, new String(content), getLikes(), 0,
+				links, null, null, 0, null, imgs, docs, null, isImportant(userId), isLiked(userId));
+
+
+		Topic tpc = new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), 0, null,
+				null, null);
 
 		if (pollId != 0) {
 			VoPoll voPoll = pm.getObjectById(VoPoll.class, pollId);
@@ -149,5 +152,7 @@ public class VoTopic extends VoBaseMessage {
 	@Persistent
 	@Unindexed
 	protected byte[] subject;
+	
+	
 
 }

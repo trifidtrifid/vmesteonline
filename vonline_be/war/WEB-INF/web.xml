@@ -67,14 +67,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/init</url-pattern>
 	</servlet-mapping>
 
-    <servlet>
-        <servlet-name>Blog</servlet-name>
-        <jsp-file>/blog.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Blog</servlet-name>
-        <url-pattern>/blog</url-pattern>
-    </servlet-mapping>
+	<servlet>
+		<servlet-name>Blog</servlet-name>
+		<jsp-file>/blog.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Blog</servlet-name>
+		<url-pattern>/blog</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>Main</servlet-name>
@@ -94,10 +94,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/thrift/fs</url-pattern>
 	</servlet-mapping>
 
-	<!--<welcome-file-list>
-		<welcome-file>main.jsp</welcome-file>
-	</welcome-file-list>-->
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
 </web-app>
