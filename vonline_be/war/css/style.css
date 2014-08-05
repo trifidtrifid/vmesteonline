@@ -1180,3 +1180,19 @@ h1 {
   width: 100%;
   display: block;
 }
+.wrap {
+  width: 990px;
+  margin: 0 auto;
+  text-align: left;
+}
+.wrap.contacts .input {
+  width: 300px;
+  display: block;
+  margin-bottom: 10px;
+}
+.wrap.contacts textarea {
+  width: 500px;
+  height: 100px;
+  display: block;
+  margin-bottom: 10px;
+}

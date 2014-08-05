@@ -82,7 +82,7 @@
                                         <img ng-src="{{image.URL}}" alt="картинка"/>
                                     </a>
                                     <div class="docs">
-                                        <div ng-repeat="document in wallItem.topic.message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                        <div ng-repeat="document in wallItem.topic.message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
                                     </div>
                                 </div>
 
@@ -153,7 +153,7 @@
                                             <img ng-src="{{image.URL}}" alt="картинка"/>
                                         </a>
                                         <div class="docs">
-                                            <div ng-repeat="document in wallMessage.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                            <div ng-repeat="document in wallMessage.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
                                         </div>
                                     </div>
 

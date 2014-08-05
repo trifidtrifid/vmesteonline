@@ -176,9 +176,9 @@
                     <div class="footer-left">
                         (c) Вместе Онлайн 2014
                         <ul>
-                            <li><a href="#">О нас</a></li>
-                            <li><a href="#">Блог</a></li>
-                            <li><a href="#">Контакты</a></li>
+                            <li><a href="about" target="_blank">О нас</a></li>
+                            <li><a href="blog" target="_blank">Блог</a></li>
+                            <li><a href="contacts" target="_blank">Контакты</a></li>
                         </ul>
                     </div>
 				</aside>
