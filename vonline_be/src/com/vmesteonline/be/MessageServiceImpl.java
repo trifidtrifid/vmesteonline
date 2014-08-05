@@ -173,8 +173,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		String req = "select `id` from topic where";
 		if (group != null)
 			req += " radius <= " + group.getRadius() + " and longitude <= "
-					+ VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString() + " and longitude >= "
-					+ VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
+					+ VoHelper.getLongitudeMax(group.getLongitude(), group.getLatitude(),group.getRadius()).toPlainString() + " and longitude >= "
+					+ VoHelper.getLongitudeMin(group.getLongitude(), group.getLatitude(),group.getRadius()).toPlainString() + " and lattitude <= "
 					+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
 					+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString();
 		else if( type != MessageType.BLOG )
