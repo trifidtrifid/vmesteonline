@@ -2220,21 +2220,26 @@ function initAttachImage(selector,attachAreaSelector){
         setTimeout(copyImage,200);
 
         function copyImage() {
-            var copyImgSrc = fileLabel.find('.file-name img').css('background-image'),
-                url = fileClient.saveFileContent(copyImgSrc,true),
-                fileName = fileLabel.find('.file-name').attr('data-title');
+            var copyImgSrc = fileLabel.find('.file-name img').css('background-image');
 
-            attachAreaSelector.append("<span class='attach-item new-attached'>" +
-                "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                "<img data-title='"+ fileName +"' data-type='"+ type +"' class='attached-img' style='background-image:url("+ url +")'></span>");
+            if(copyImgSrc == 'none'){
+                setTimeout(copyImage,200);
+            }else {
+                var url = fileClient.saveFileContent(copyImgSrc, true),
+                    fileName = fileLabel.find('.file-name').attr('data-title');
 
-            $('.new-attached .remove-attach-img').click(function(e){
-                e.preventDefault();
-               $(this).closest('.attach-item').hide().detach();
-                fileClient.deleteFile(url);
-            });
+                attachAreaSelector.append("<span class='attach-item new-attached'>" +
+                    "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
+                    "<img data-title='" + fileName + "' data-type='" + type + "' class='attached-img' style='background-image:url(" + url + ")'></span>");
 
-            $('.new-attached').removeClass('new-attached');
+                $('.new-attached .remove-attach-img').click(function (e) {
+                    e.preventDefault();
+                    $(this).closest('.attach-item').hide().detach();
+                    fileClient.deleteFile(url);
+                });
+
+                $('.new-attached').removeClass('new-attached');
+            }
         }
 
     });
@@ -2273,11 +2278,12 @@ function initAttachDoc(selector,attachAreaSelector){
             var reader = new FileReader();
             reader.readAsBinaryString(selector[0].files[0]);
             var dataType = selector[0].files[0].type;
+
             reader.onload = function(e){
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = docName;
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
-                var url =docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
+                var url = docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
                 docsInd[attachAreaSelector]++;
 
                 attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
