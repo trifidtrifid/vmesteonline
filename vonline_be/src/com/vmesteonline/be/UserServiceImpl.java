@@ -57,8 +57,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			user.setLastName(userInfo.lastName);
 			user.setGender(userInfo.gender);
 			user.setBirthday(userInfo.birthday);
-			//userInfo.avatar
-			//VoHelper.replaceURL(user, "avatar", userInfo.avatar, 0, true, pm);		
+			// userInfo.avatar
+			// VoHelper.replaceURL(user, "avatar", userInfo.avatar, 0, true, pm);
 			pm.makePersistent(user);
 		} finally {
 			pm.close();
@@ -82,7 +82,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoUser voUser = getCurrentUser(pm);
 			ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, voUser.getAvatarMessage(), "", "");
 			VoPostalAddress pa = voUser.getAddress();
-			
+
 			if (pa != null) {
 				VoBuilding building = pm.getObjectById(VoBuilding.class, pa.getBuilding());
 				sp.setAddress(building.getAddressString());
@@ -94,6 +94,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	public static ShortUserInfo getShortUserInfo(long userId) {
+		if (userId == 0)
+			return null;
 
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -190,7 +192,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			for (VoPostalAddress pa : postalAddresses) {
 				pm.retrieve(pa);
 				String code = "" + pa.getAddressCode();
-				pm.makePersistent( new VoInviteCode(code,pa.getId()));;
+				pm.makePersistent(new VoInviteCode(code, pa.getId()));
+				;
 				locations.add(code);
 			}
 			return locations;
@@ -243,7 +246,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-
 	@Override
 	public UserProfile getUserProfile(long userId) throws InvalidOperation {
 
@@ -254,42 +256,41 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			if (userId == 0) {
 				return currentUser.getUserProfile();
 			}
-			
+
 			VoUser user;
 			try {
 				user = pm.getObjectById(VoUser.class, userId);
-				
+
 			} catch (JDOObjectNotFoundException e) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No user found by ID: "+userId);
+				throw new InvalidOperation(VoError.IncorrectParametrs, "No user found by ID: " + userId);
 			}
 			UserProfile uProfile = user.getUserProfile();
 			UserPrivacy uPrivacy = user.getPrivacy();
-			//show everything if no privacy set
-			if( uPrivacy.contacts == PrivacyType.EVERYBODY && uPrivacy.profile == PrivacyType.EVERYBODY ) 
+			// show everything if no privacy set
+			if (uPrivacy.contacts == PrivacyType.EVERYBODY && uPrivacy.profile == PrivacyType.EVERYBODY)
 				return uProfile;
-			//show nothing if full privacy 
-			if( uPrivacy.contacts == PrivacyType.NONE && uPrivacy.profile == PrivacyType.NONE ) {
+			// show nothing if full privacy
+			if (uPrivacy.contacts == PrivacyType.NONE && uPrivacy.profile == PrivacyType.NONE) {
 				uProfile.contacts = new UserContacts();
 				uProfile.interests = new UserInterests();
 				uProfile.family = new UserFamily();
 				uProfile.privacy = new UserPrivacy();
 				return uProfile;
 			}
-			
-			//otherwise lets determine users relations that would be stored as PrivacyType 
+
+			// otherwise lets determine users relations that would be stored as PrivacyType
 			PrivacyType relation = determineProvacyByAddresses(currentUser, user);
-			
-			//filter information according to relations
-			if( uPrivacy.contacts.getValue() < relation.getValue() ) {//remove contacts
+
+			// filter information according to relations
+			if (uPrivacy.contacts.getValue() < relation.getValue()) {// remove contacts
 				uProfile.contacts = new UserContacts();
 			}
-			
-			if( uPrivacy.profile.getValue() < relation.getValue() ) {//remove contacts
+
+			if (uPrivacy.profile.getValue() < relation.getValue()) {// remove contacts
 				uProfile.interests = new UserInterests();
 				uProfile.family = new UserFamily();
 			}
 			return uProfile;
-					
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -301,33 +302,33 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	private PrivacyType determineProvacyByAddresses(VoUser currentUser, VoUser user) {
 		PrivacyType relation = PrivacyType.EVERYBODY;
-		
+
 		VoPostalAddress cuAddr = currentUser.getAddress();
 		VoPostalAddress uAddr;
-		if( null==cuAddr || null==( uAddr = user.getAddress()) ) { 
+		if (null == cuAddr || null == (uAddr = user.getAddress())) {
 			relation = PrivacyType.EVERYBODY;
-		
-		} else if(cuAddr.getBuilding() == uAddr.getBuilding() && 0 == cuAddr.getBuilding() ){ //the same building
-			
-				relation = PrivacyType.HOME;
-				
-				if( cuAddr.getStaircase() == uAddr.getStaircase() && 0 != uAddr.getStaircase())
-					relation = PrivacyType.STAIRCASE;
-				
-				else if( cuAddr.getFloor() == uAddr.getFloor() && 0 != uAddr.getFloor())
-					relation = PrivacyType.STAIRCASE; // TODO could be a Floor privacy
-				
-				else if( cuAddr.getFlatNo() == uAddr.getFlatNo() && 0 != uAddr.getFlatNo())
-					relation = PrivacyType.STAIRCASE; // TODO could be a Flat privacy
-		
-		} else { //lets determine the relation as according to the distance
-			
-			int maxRadius = VoHelper.calculateRadius(user, currentUser);
-			if( maxRadius <= Defaults.radiusStarecase )
+
+		} else if (cuAddr.getBuilding() == uAddr.getBuilding() && 0 == cuAddr.getBuilding()) { // the same building
+
+			relation = PrivacyType.HOME;
+
+			if (cuAddr.getStaircase() == uAddr.getStaircase() && 0 != uAddr.getStaircase())
 				relation = PrivacyType.STAIRCASE;
-			else if( maxRadius <= Defaults.radiusHome )
+
+			else if (cuAddr.getFloor() == uAddr.getFloor() && 0 != uAddr.getFloor())
+				relation = PrivacyType.STAIRCASE; // TODO could be a Floor privacy
+
+			else if (cuAddr.getFlatNo() == uAddr.getFlatNo() && 0 != uAddr.getFlatNo())
+				relation = PrivacyType.STAIRCASE; // TODO could be a Flat privacy
+
+		} else { // lets determine the relation as according to the distance
+
+			int maxRadius = VoHelper.calculateRadius(user, currentUser);
+			if (maxRadius <= Defaults.radiusStarecase)
+				relation = PrivacyType.STAIRCASE;
+			else if (maxRadius <= Defaults.radiusHome)
 				relation = PrivacyType.HOME;
-			else if( maxRadius <= Defaults.radiusSmall )
+			else if (maxRadius <= Defaults.radiusSmall)
 				relation = PrivacyType.DISTRICT;
 		}
 		return relation;
@@ -357,10 +358,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser cu = getCurrentUser(pm);
-			if( !cu.getPassword().equals(oldPwd)) 
-				throw new InvalidOperation(VoError.IncorrectParametrs,"Old password dont match.");
-			if( null==newPwd || newPwd.length() < 3 ){
-				throw new InvalidOperation(VoError.IncorrectPassword,"New password too short.");
+			if (!cu.getPassword().equals(oldPwd))
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Old password dont match.");
+			if (null == newPwd || newPwd.length() < 3) {
+				throw new InvalidOperation(VoError.IncorrectPassword, "New password too short.");
 			}
 			cu.setPassword(newPwd);
 			pm.makePersistent(cu);
@@ -786,8 +787,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser currentUser = getCurrentUser();
-			List<VoUser> users = getUsersByLocation( currentUser, 30, pm );
-			return VoHelper.convertMutableSet( users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
+			List<VoUser> users = getUsersByLocation(currentUser, 30, pm);
+			return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
 		} finally {
 			pm.close();
 		}
@@ -799,25 +800,25 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser();
 			VoUserGroup group = pm.getObjectById(VoUserGroup.class, groupId);
-			List<VoUser> users = getUsersByLocation( currentUser, group.getRadius(), pm );
-			return VoHelper.convertMutableSet( users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
+			List<VoUser> users = getUsersByLocation(currentUser, group.getRadius(), pm);
+			return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
 		} finally {
 			pm.close();
 		}
 	}
-	
-	private List<VoUser> getUsersByLocation(VoUser loc, int radius, PersistenceManager pm ){
-		List<VoUser> users = new ArrayList<VoUser>(); 
-		
-		//BigDecimal latMin = VoHelper.getLatitudeMin(loc.getLatitude(), radius).setScale(6, RoundingMode.HALF_UP);
-		
-		List<VoUser> allUsers = (List<VoUser>)pm.newQuery(VoUser.class, "").execute();
-		for( VoUser user: allUsers ){
-			if( VoHelper.findMinimumGroupRadius( loc, user) <= radius){
-				if(loc.getId() != user.getId()) 
+
+	private List<VoUser> getUsersByLocation(VoUser loc, int radius, PersistenceManager pm) {
+		List<VoUser> users = new ArrayList<VoUser>();
+
+		// BigDecimal latMin = VoHelper.getLatitudeMin(loc.getLatitude(), radius).setScale(6, RoundingMode.HALF_UP);
+
+		List<VoUser> allUsers = (List<VoUser>) pm.newQuery(VoUser.class, "").execute();
+		for (VoUser user : allUsers) {
+			if (VoHelper.findMinimumGroupRadius(loc, user) <= radius) {
+				if (loc.getId() != user.getId())
 					users.add(user);
 			}
-		}	
+		}
 		return users;
 	}
 
@@ -827,54 +828,50 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser();
 			currentUser.setNotifications(notifications);
-			
+
 		} finally {
 			pm.close();
 		}
-		
+
 	}
 
 	@Override
 	public String getGroupMap(long groupId, String color) throws InvalidOperation, TException {
-		if( null == color || 0 == color.length()){
+		if (null == color || 0 == color.length()) {
 			color = "8822DDC0";
 		}
-		String mapKey = "yandex.group.map."+groupId+"."+color;
+		String mapKey = "yandex.group.map." + groupId + "." + color;
 		Object url = ServiceImpl.getObjectFromCache(mapKey);
-		if( null!=url ) 
-			if( url instanceof String){
-				return (String)url;
+		if (null != url)
+			if (url instanceof String) {
+				return (String) url;
 			} else {
-				//incorrect type of object in the cache
+				// incorrect type of object in the cache
 				ServiceImpl.removeObjectFromCache(mapKey);
 			}
 		PersistenceManager pm = PMF.getPm();
-		
+
 		try {
 			VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, groupId);
-			String los = userGroup.getLongitude().toPlainString(); 
+			String los = userGroup.getLongitude().toPlainString();
 			String las = userGroup.getLatitude().toPlainString();
-			url = "http://static-maps.yandex.ru/1.x/?l=map&pt="+los+","+las+",pm2am"
-					+ "&pl=c:"+color+",f:"+color+",w:1";
-			
+			url = "http://static-maps.yandex.ru/1.x/?l=map&pt=" + los + "," + las + ",pm2am" + "&pl=c:" + color + ",f:" + color + ",w:1";
+
 			double lad = userGroup.getLatitude().doubleValue();
 			double lod = userGroup.getLongitude().doubleValue();
-			
+
 			double laDelta = VoHelper.getLatitudeMax(userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lad;
 			double loDelta = VoHelper.getLongitudeMax(userGroup.getLongitude(), userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lod;
-			
-			for( double i=0.0D; i<2 * Math.PI; i+=Math.PI/30){
-				url += "," + (lod + Math.sin( i ) * loDelta)+
-						","+(lad + Math.cos( i ) * laDelta);
+
+			for (double i = 0.0D; i < 2 * Math.PI; i += Math.PI / 30) {
+				url += "," + (lod + Math.sin(i) * loDelta) + "," + (lad + Math.cos(i) * laDelta);
 			}
-			ServiceImpl.putObjectToCache(mapKey, (String)url);
-			
+			ServiceImpl.putObjectToCache(mapKey, (String) url);
+
 		} finally {
 			pm.close();
-		}	
+		}
 		return (String) url;
 	}
-	
-	
-	
+
 }

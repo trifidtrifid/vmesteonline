@@ -9,7 +9,7 @@ public class VoUserTopic extends VoUserObject {
 
 	public VoUserTopic() {
 	}
-
+	
 	public VoUserTopic(VoUser user, VoTopic topic, boolean likes, boolean unlikes, boolean read) {
 		super(user.getId(), topic.getId(), likes, unlikes, read);
 	}
