@@ -1176,3 +1176,7 @@ h1 {
 .coming-soon h1 {
   font-size: 40px;
 }
+.maps img {
+  width: 100%;
+  display: block;
+}

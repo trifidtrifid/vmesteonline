@@ -143,7 +143,7 @@ angular.module('forum.controllers', ['ui.select2'])
             event.preventDefault();
 
             message.important = 3;
-            messageClient.markMessageImportant(message.id);
+            messageClient.markMessageImportant(message.id,true);
         };
 
         base.showAllGroups = function(){
@@ -2131,10 +2131,10 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.groups[1].isShow = false;
         $rootScope.groups[2].selected = true;
 
-        maps.url = userClient.getGroupMap($rootScope.groups[2].id,'8822DDC0');
+        maps.url = userClient.getGroupMap($rootScope.groups[2].id,'6FB3E0C0');
 
         $rootScope.mapsChangeGroup = function(groupId){
-            maps.url = userClient.getGroupMap(groupId,'8822DDC0');
+            maps.url = userClient.getGroupMap(groupId,'6FB3E0C0');
         };
     });
     /*.controller('BlogController',function($state,$rootScope) {
