@@ -38,12 +38,12 @@
                         <span>группа</span>
                         <div class="btn-group hashtag-dropdown">
                             <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                <span class="btn-group-text"># {{adverts.selectedGroup.visibleName}}</span>
+                                <span class="btn-group-text"># {{base.bufferSelectedGroup.visibleName}}</span>
                                 <span class="icon-caret-down icon-on-right"></span>
                             </button>
 
                             <ul class="dropdown-menu dropdown-blue">
-                                <li ng-repeat="group in adverts.groups"><a href="#" ng-click="adverts.selectGroupInDropdown(group.id,adverts)"># {{group.visibleName}}</a></li>
+                                <li ng-repeat="group in adverts.groups"><a href="#" ng-click="selectGroupInDropdown_adverts(group.id)"># {{group.visibleName}}</a></li>
                             </ul>
                         </div>
                     </div>
@@ -76,16 +76,19 @@
 
             <div class="talks-title" ng-repeat="advert in adverts.topics" id="{{advert.id}}">
                 <div class="talks-title-left load-talk">
-                    <div><a ui-sref="adverts-single({ advertId : {{advert.id}} })">{{advert.subject}}</a></div>
-                    <div>{{advert.messageNum}} сообщений</div>
+                    <a ui-sref="profile({ userId : {{advert.userInfo.id}} })" class="avatar short2 pull-left" style="background-image: url('{{ advert.userInfo.avatar }}')"></a>
+                    <div class="talks-title-links">
+                        <a ui-sref="adverts-single({ advertId : {{advert.id}} })">{{advert.subject}}</a>
+                        <a ui-sref="profile({ userId : {{advert.userInfo.id}} })">{{advert.userInfo.firstName + " "+advert.userInfo.lastName}}</a>
+                    </div>
+
                 </div>
                 <div class="talks-title-right">
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                       ng-class="advert.tagColor">{{advert.label}}</span>
                     <div class="clearfix"></div>
 
-                    <div>Последнее обновление:</div>
-                    <div>{{advert.lastUpdateEdit}}</div>
+                    <div class="adverts-comments"><span>{{advert.messageNum}} комментариев</span>  Создано: {{advert.message.created*1000 | date:'dd.MM.yy HH:mm'}}</div>
                 </div>
             </div>
 
