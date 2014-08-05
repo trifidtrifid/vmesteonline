@@ -176,9 +176,12 @@ public class ServiceImpl {
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
 
 		try {
-			return pm.getObjectById(VoSession.class, sessionStorage.getId());
+			VoSession sess = pm.getObjectById(VoSession.class, sessionStorage.getId());
+			sess.setLastActivityTs( (int)(System.currentTimeMillis()/1000L) );
+			return sess;
 		} catch (JDOObjectNotFoundException e) {
 			VoSession vs = new VoSession(sessionStorage.getId(), null);
+			vs.setLastActivityTs( (int)(System.currentTimeMillis()/1000L) );
 			pm.makePersistent(vs);
 			return vs;
 		}

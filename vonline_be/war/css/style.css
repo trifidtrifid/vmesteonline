@@ -25,7 +25,6 @@ h1 {
   padding: 0;
   max-width: 1240px;
   min-width: 753px;
-  min-height: 100%;
 }
 .navbar-container {
   text-align: center;
@@ -34,7 +33,7 @@ h1 {
   width: 170px;
 }
 .navbar .form-search {
-  width: 50%;
+  width: 40%;
   margin: 5px 0 0 200px;
 }
 .navbar .form-search .icon-search:hover {
@@ -187,7 +186,7 @@ h1 {
   padding: 15px 10px 15px 0;
 }
 .submenu .btn {
-  display: block !important;
+  display: block;
   font-size: 14px;
   margin-left: 1px;
   border: 0;
@@ -493,7 +492,7 @@ h1 {
 }
 @media all and (max-width: 1280px) {
   .navbar .form-search {
-    width: 40%;
+    width: 30%;
   }
   .navbar-brand {
     padding-left: 0;
@@ -502,7 +501,7 @@ h1 {
 }
 @media all and (max-width: 1000px) {
   .navbar .form-search {
-    width: 20%;
+    width: 10%;
   }
 }
 @media all and (max-width: 768px), screen and (device-width: 320px) {
@@ -966,6 +965,7 @@ h1 {
 .nextdoors .form-search {
   margin-bottom: 20px;
   width: 100%;
+  clear: both;
 }
 .nextdoors .nextdoor-single {
   padding: 10px;

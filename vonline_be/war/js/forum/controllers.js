@@ -9,6 +9,7 @@ angular.module('forum.controllers', ['ui.select2'])
         base.privateMessagesLoadStatus = "";
         base.profileLoadStatus = "";
         base.settingsLoadStatus = "";
+        base.mapsLoadStatus = "";
 
         base.mainContentTopIsHide = false;
         base.createTopicIsHide = true;
@@ -128,6 +129,16 @@ angular.module('forum.controllers', ['ui.select2'])
 
         base.bufferSelectedGroup = userClientGroups[0];
 
+        base.showAllGroups = function(){
+            var groupsLength = $rootScope.groups.length;
+            for(var i = 0; i < groupsLength; i++){
+                $rootScope.groups[i].isShow = true;
+                $rootScope.groups[i].selected = false;
+            }
+            $rootScope.groups[0].selected = true;
+            $rootScope.base.bufferSelectedGroup = $rootScope.groups[0];
+        };
+
         $rootScope.base = base;
         $rootScope.currentPage = 'lenta';
 
@@ -195,8 +206,13 @@ angular.module('forum.controllers', ['ui.select2'])
         var topCtrl = this;
 
         topCtrl.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
-        var groups = topCtrl.groups,
+        var groups = $rootScope.groups = topCtrl.groups,
             groupsLength = groups.length;
+
+        for(var i = 0; i < groupsLength; i++){
+            groups[i].isShow = true;
+        }
+
         groups[0].selected = true;
         $rootScope.currentGroup = $rootScope.biggestGroup = groups[0];
 
@@ -228,6 +244,8 @@ angular.module('forum.controllers', ['ui.select2'])
                 $rootScope.selectGroupInDropdown_adverts(group.id);
             }else if($rootScope.currentPage == 'neighbours'){
                 $rootScope.neighboursChangeGroup(group.id);
+            }else if($rootScope.currentPage == 'maps'){
+                $rootScope.mapsChangeGroup(group.id);
             }
 
 
@@ -241,9 +259,14 @@ angular.module('forum.controllers', ['ui.select2'])
             $rootScope.base.createTopicIsHide ? $rootScope.base.createTopicIsHide = false : $rootScope.base.createTopicIsHide = true;
 
         };
+
+        $('.ng-cloak').removeClass('ng-cloak');
     })
     .controller('LentaController',function($rootScope) {
+
         $rootScope.setTab(1);
+        $rootScope.base.showAllGroups();
+
         initAttachImage($('#attachImage-0'),$('#attach-area-0')); // для ленты новостей
         initAttachDoc($('#attachDoc-0'),$('#attach-doc-area-0'));
         initFancyBox($('.forum'));
@@ -471,6 +494,8 @@ angular.module('forum.controllers', ['ui.select2'])
             }
         }
 
+        $('.ng-cloak').removeClass('ng-cloak');
+
     })
     .controller('TalksController',function($rootScope) {
         /*
@@ -508,6 +533,7 @@ angular.module('forum.controllers', ['ui.select2'])
             initAttachImage($('#attachImage-00'), $('#attach-area-00')); // для обсуждений
             initAttachDoc($('#attachDoc-00'), $('#attach-doc-area-00')); // для обсуждений
             initFancyBox($('.talks'));
+            $rootScope.base.showAllGroups();
 
             $rootScope.base.createTopicIsHide = true;
             var talk = this;
@@ -1010,6 +1036,7 @@ angular.module('forum.controllers', ['ui.select2'])
         var adverts = this;
 
         $rootScope.setTab(3);
+        $rootScope.base.showAllGroups();
 
         initAttachImage($('#attachImage-00000'), $('#attach-area-00000')); // для обсуждений
         initAttachDoc($('#attachDoc-00000'), $('#attach-doc-area-00000')); // для обсуждений
@@ -1444,6 +1471,7 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.currentPage = "neighbours";
         $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
+        $rootScope.base.showAllGroups();
 
         resetPages($rootScope.base);
         $rootScope.base.mainContentTopIsHide = false;
@@ -1820,8 +1848,6 @@ angular.module('forum.controllers', ['ui.select2'])
         resetAceNavBtns($rootScope.navbar);
         $rootScope.navbar.privateMessagesBtnStatus = "active";
 
-        $rootScope.base.mainContentTopIsHide = true;
-
         $rootScope.base.privateMessagesLoadStatus = "isLoaded";
 
         $rootScope.isNewPrivateMessageAdded = false;
@@ -1909,57 +1935,6 @@ angular.module('forum.controllers', ['ui.select2'])
                 dialog.messageText = TEXT_DEFAULT_1;
                 cleanAttached($('#attach-area-000'));
                 cleanAttached($('#attach-doc-area-000'));
-            }
-        }
-
-    })
-    .controller('writeMessageController',function($rootScope,$state) {
-        $rootScope.base.mainContentTopIsHide = true;
-        var writeMessage = this, dialog;
-
-        writeMessage.newMessage = {};
-        writeMessage.users = [];
-        writeMessage.neighboors = userClient.getNeighbours();
-        writeMessage.newMessage.text = "Сообщение";
-        writeMessage.dialogId = 0;
-        writeMessage.isError = false;
-
-        function usersToInt(users){
-            var usersLength = users.length,
-                usersInt = [];
-            for(var i = 0; i < usersLength; i++){
-                usersInt[i] = parseInt(writeMessage.users[i]);
-            }
-
-            return usersInt;
-        }
-
-        writeMessage.change = function(){
-            dialog = dialogClient.getDialog(usersToInt(writeMessage.users),0);
-            writeMessage.dialogId = dialog.id;
-        };
-
-        initAttachImage($('#attachImage-0000'),$('#attach-area-0000'));
-        initAttachDoc($('#attachDoc-0000'),$('#attach-doc-area-0000'));
-
-        //var dialog = dialogClient.getDialog(userId);
-        //writeMessage.dialogId = dialog.id;
-
-        writeMessage.send = function(){
-            if(writeMessage.newMessage.text == TEXT_DEFAULT_3){
-                writeMessage.isError = true;
-                writeMessage.errorText = "Вы не ввели сообщение";
-            }else if(!dialog || dialog.id == 0){
-                writeMessage.isError = true;
-                writeMessage.errorText = "Вы не указали получателя";
-            }else{
-                var attach = getAttachedImages($('#attachImage-0000'),$('#attach-area-0000')).concat(getAttachedDocs($('#attachDoc-0000'),$('#attach-doc-area-0000')));
-
-                dialogClient.postMessage(dialog.id, writeMessage.newMessage.text,attach);
-
-                cleanAttached($('#attach-area-0000'));
-                cleanAttached($('#attach-doc-area-0000'));
-                $state.go('dialog-single',{ 'dialogId' : dialog.id});
             }
         }
 
@@ -2101,7 +2076,41 @@ angular.module('forum.controllers', ['ui.select2'])
                 }
             });
         }
+    })
+    .controller('MapsController',function($rootScope) {
+        var maps = this;
+
+        $rootScope.currentPage = "maps";
+        $rootScope.isTopSearchShow = false;
+        $rootScope.base.mainContentTopIsHide = false;
+        $rootScope.leftbar.tab = 0;
+        $rootScope.base.pageTitle = "Карты";
+
+        resetPages($rootScope.base);
+        $rootScope.base.mapsIsActive = true;
+
+        resetAceNavBtns($rootScope.navbar);
+        $rootScope.navbar.mapsBtnStatus = "active";
+
+        $rootScope.base.mapsLoadStatus = "isLoaded";
+
+        $rootScope.groups[0].isShow = false;
+        $rootScope.groups[1].isShow = false;
+        $rootScope.groups[2].selected = true;
+
+        maps.url = userClient.getGroupMap($rootScope.groups[2].id,'8822DDC0');
+
+        $rootScope.mapsChangeGroup = function(groupId){
+            maps.url = userClient.getGroupMap(groupId,'8822DDC0');
+        };
     });
+    /*.controller('BlogController',function($state,$rootScope) {
+        var blog = this;
+
+        blog = messageClient.getBlog();
+
+    });*/
+
 
 /* const */
 var TEXT_DEFAULT_1 = "Написать сообщение";
@@ -2137,6 +2146,7 @@ var fileClient = new com.vmesteonline.be.FileServiceClient(protocol);
 function resetPages(base){
     base.neighboursIsActive = false;
     base.privateMessagesIsActive = false;
+    base.mapsIsActive = false;
     base.profileIsActive = false;
     base.settingsIsActive = false;
     base.talksIsActive = false;
@@ -2146,6 +2156,7 @@ function resetPages(base){
 function resetAceNavBtns(navbar){
     navbar.neighboursBtnStatus = "";
     navbar.privateMessagesBtnStatus = "";
+    navbar.mapsBtnStatus = "";
 }
 function initProfileAva(obj){
 
@@ -2200,16 +2211,17 @@ function initAttachImage(selector,attachAreaSelector){
 
         function copyImage() {
             var copyImgSrc = fileLabel.find('.file-name img').css('background-image'),
+                url = fileClient.saveFileContent(copyImgSrc,true),
                 fileName = fileLabel.find('.file-name').attr('data-title');
 
-            //$('.attach-area')
             attachAreaSelector.append("<span class='attach-item new-attached'>" +
                 "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                "<img data-title='"+ fileName +"' data-type='"+ type +"' class='attached-img' style='background-image:"+ copyImgSrc +"'></span>");
+                "<img data-title='"+ fileName +"' data-type='"+ type +"' class='attached-img' style='background-image:url("+ url +")'></span>");
 
             $('.new-attached .remove-attach-img').click(function(e){
                 e.preventDefault();
                $(this).closest('.attach-item').hide().detach();
+                fileClient.deleteFile(url);
             });
 
             $('.new-attached').removeClass('new-attached');
@@ -2255,27 +2267,27 @@ function initAttachDoc(selector,attachAreaSelector){
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = docName;
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
-                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = base64encode(reader.result);
+                var url =docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
                 docsInd[attachAreaSelector]++;
 
-                   /* "obj(name:"+ base64encode(docName)
-                    +";data:"+ dataType +";content:"+base64encode(reader.result)+")";*/
+                attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
+                    "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
+                    docName+
+                    "</span>");
+
+                $('.new-attached .remove-attach-img').click(function(e){
+                    e.preventDefault();
+                    var attachItem = $(this).closest('.attach-item');
+                    var ind = attachItem.index();
+                    attachItem.hide().detach();
+                    docsBase64[attachAreaSelector].splice(ind,1);
+                    fileClient.deleteFile(url);
+                });
+
+                $('.new-attached').removeClass('new-attached');
             };
 
-            attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
-                "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                docName+
-                "</span>");
 
-            $('.new-attached .remove-attach-img').click(function(e){
-                e.preventDefault();
-                var attachItem = $(this).closest('.attach-item');
-                var ind = attachItem.index();
-                attachItem.hide().detach();
-                docsBase64[attachAreaSelector].splice(ind,1);
-            });
-
-            $('.new-attached').removeClass('new-attached');
         }
     });
 }
@@ -2419,10 +2431,12 @@ function postTopic(obj,isWall,isAdverts){
         poll.alreadyPoll = false;
         var pollInputsLength = obj.pollInputs.length;
         for(var i = 0; i < pollInputsLength; i++){
-            poll.names[i] = obj.pollInputs[i].name;
-            poll.editNames[i] = {
-                id: i,
-                name: obj.pollInputs[i].name
+            if(obj.pollInputs[i].name != "") {
+                poll.names[i] = obj.pollInputs[i].name;
+                poll.editNames[i] = {
+                    id: i,
+                    name: obj.pollInputs[i].name
+                }
             }
         }
 
@@ -2567,7 +2581,7 @@ function getAttachedImages(selector){
             result,content;
 
         var i = bgImg.indexOf('base64,');
-        content = bgImg.slice(i+7,bgImg.length-1);
+        content = bgImg.slice(4,bgImg.length-1);
 
         result = new com.vmesteonline.be.messageservice.Attach();
         result.fileName = name;

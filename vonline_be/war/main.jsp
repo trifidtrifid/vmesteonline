@@ -66,6 +66,7 @@
 
 <%--<script src="js/lib/jquery-2.1.1.min.js"></script>--%>
 <script src="js/lib/jquery-2.0.3.js"></script>
+    <script src="js/forum/angular/angular.js"></script>
 <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -75,15 +76,16 @@
         document.createElement('nav');
     </script>
     <![endif]-->
-    <script type="text/javascript">
+   <%-- <script type="text/javascript">
         globalUserAuth = false;
         <c:if test="${auth}">
         globalUserAuth = true;
         </c:if>
-    </script>
+    </script>--%>
+
+
     <script src="js/lib/jquery.Jcrop.min.js"></script>
     <script src="js/forum/bower_components/select2/select2.min.js"></script>
-    <script src="js/forum/angular/angular.js"></script>
     <script src="js/forum/bower_components/angular-ui-select2/src/select2.js"></script>
 
 </head>
@@ -105,6 +107,9 @@
 
         <div class="navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
+                <li ng-class="navbar.mapsBtnStatus"><a class="btn btn-info no-border private-messages-link"
+                                                                  ui-sref="maps">Карты</a></li>
+
                 <li ng-class="navbar.privateMessagesBtnStatus"><a class="btn btn-info no-border private-messages-link"
                                                                   ui-sref="dialogs">Личные сообщения </a></li>
 
@@ -199,13 +204,15 @@
 				<div class="main-content dynamic">
 
                     <div class="main-content-top" ng-hide="base.mainContentTopIsHide" ng-controller="mainContentTopController as mainContentTop"
-                         ng-class="{'overflow-auto' : base.pageTitle.length}">
+                         ng-class="{'overflow-auto' : base.pageTitle.length}" ng-cloak>
 
+                        <div class="ng-cloak">
                         <div class="page-title pull-left" ng-show="base.pageTitle.length">{{base.pageTitle}}</div>
+                        </div>
 
                         <nav class="submenu pull-right clearfix">
-                            <button class="btn btn-sm btn-info no-border pull-right ng-cloak" ng-repeat="group in mainContentTop.groups"
-                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="selectGroup(group)">{{group.visibleName}}</button>
+                            <button class="btn btn-sm btn-info no-border pull-right ng-cloak" ng-repeat="group in groups"
+                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="selectGroup(group)" ng-show="group.isShow">{{group.visibleName}}</button>
 
                         </nav>
 
@@ -217,7 +224,7 @@
                         </div>
                     </div>
 
-						<div class="forum-wrap" ui-view>
+						<div class="forum-wrap" ng-cloak ui-view>
 
 						</div>
 

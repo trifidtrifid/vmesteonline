@@ -76,12 +76,11 @@ public class VoSession {
 	private long userId;
 
 	@Persistent
-	@Unindexed
-	private int lastActivityTs;
+	private int lastActivityTs; //дата последнего действия пользователя
 
 	@Persistent
 	@Unindexed
-	private int lastUpdateTs;
+	private int lastUpdateTs; //дата последнего запроса обновления 
 
 	@Persistent
 	@Unindexed

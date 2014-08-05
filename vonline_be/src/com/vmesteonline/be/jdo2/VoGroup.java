@@ -69,6 +69,19 @@ public class VoGroup implements Comparable<VoGroup> {
 
 	@Persistent
 	private boolean subscribedByDefault;
+	
+	@Persistent
+	@Unindexed
+	private int importantScore;
+
+	
+	public int getImportantScore() {
+		return importantScore;
+	}
+
+	public void setImportantScore(int importantScore) {
+		this.importantScore = importantScore;
+	}
 
 	@Override
 	public String toString() {

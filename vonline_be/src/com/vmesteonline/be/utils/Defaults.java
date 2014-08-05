@@ -2,6 +2,7 @@ package com.vmesteonline.be.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jdo.Extent;
@@ -171,13 +172,18 @@ public class Defaults {
 		q = pm.newQuery(VoGroup.class);
 		q.setFilter("subscribedByDefault == true");
 		List<VoGroup> defGroups = (List<VoGroup>) q.execute();
-		if (defGroups.isEmpty())
-
-			for (VoGroup dg : new VoGroup[] { new VoGroup("Мой подъезд", radiusStarecase, true), new VoGroup("Мой дом", radiusHome, true),
-					new VoGroup("Мои соседи", radiusMedium, true), new VoGroup("Мой район", radiusLarge, true) }) {
+		if (defGroups.isEmpty()){
+			Iterator<Integer> impIterator = Arrays.asList( new Integer[]{ 200, 500, 1000, 5000 }).iterator();
+			for (VoGroup dg : new VoGroup[] { 
+					new VoGroup("Мой подъезд", radiusStarecase, true), 
+					new VoGroup("Мой дом", radiusHome, true),
+					new VoGroup("Мои соседи", radiusMedium, true), 
+					new VoGroup("Мой район", radiusLarge, true) }) {
+				dg.setImportantScore( impIterator.next() );
 				defaultGroups.add(dg);
 				pm.makePersistent(dg);
 			}
+		}
 	}
 
 	// ======================================================================================================================

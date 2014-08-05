@@ -18329,7 +18329,7 @@ var ngClassEvenDirective = classDirective('Even', 1);
 var ngCloakDirective = ngDirective({
   compile: function(element, attr) {
     attr.$set('ngCloak', undefined);
-    element.removeClass('ng-cloak');
+    //element.removeClass('ng-cloak');
   }
 });
 

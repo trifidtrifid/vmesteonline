@@ -68,6 +68,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>Blog</servlet-name>
+		<jsp-file>/blog.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Blog</servlet-name>
+		<url-pattern>/blog</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>Main</servlet-name>
 		<jsp-file>/main.jsp</jsp-file>
 	</servlet>

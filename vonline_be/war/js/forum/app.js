@@ -49,11 +49,6 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/dialog-single.html",
             controller: 'dialogController as dialog'
         })
-        .state('write-message', {
-            url: "/write-message",
-            templateUrl: "partials/write-message.html",
-            controller: 'writeMessageController as writeMessage'
-        })
         .state('neighbours', {
             url: "/neighbours",
             templateUrl: "partials/neighbours.html",
@@ -74,6 +69,16 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/settings.html",
             controller: 'SettingsController as settings'
         })
+        .state('maps', {
+            url: "/maps",
+            templateUrl: "partials/maps.html",
+            controller: 'MapsController as maps'
+        })
+        /*.state('blog', {
+            url: "/blog",
+            templateUrl: "partials/blog.html",
+            controller: 'BlogController as blog'
+        })*/
 
 });
 
