@@ -19,6 +19,11 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/main.html",
             controller: 'LentaController as lenta'
         })
+        .state('wall-single', {
+            url: "/wall-single-:topicId",
+            templateUrl: "partials/wall-single.html",
+            controller: 'WallSingleController as wallSingle'
+        })
         .state('talks', {
             url: "/talks",
             templateUrl: "partials/talks.html",

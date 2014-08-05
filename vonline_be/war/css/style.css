@@ -126,6 +126,24 @@ h1 {
 .sidebar#sidebar .show-left {
   display: none;
 }
+.footer-left {
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+  margin-top: 40px;
+  text-align: left;
+  color: #a6a6a6;
+}
+.footer-left ul {
+  margin: 0;
+}
+.footer-left ul li {
+  list-style: none;
+  display: inline-block;
+  margin: 0 5px;
+}
+.footer-left ul li a {
+  color: #a6a6a6;
+}
 .sidebar-right {
   position: absolute;
   right: 0;
@@ -780,8 +798,15 @@ h1 {
   position: absolute;
   bottom: 3px;
 }
-.lenta-item .lenta-item-hashtag {
-  float: right;
+.lenta-item .fa-star {
+  color: #ccc;
+  font-size: 16px;
+  margin-right: 10px;
+  margin-top: 4px;
+}
+.lenta-item .fa-star:hover,
+.lenta-item .fa-star.important {
+  color: #ffea4a;
 }
 .itemdiv.dialogdiv > .body {
   margin-left: 58px;
@@ -1150,4 +1175,24 @@ h1 {
 }
 .coming-soon h1 {
   font-size: 40px;
+}
+.maps img {
+  width: 100%;
+  display: block;
+}
+.wrap {
+  width: 990px;
+  margin: 0 auto;
+  text-align: left;
+}
+.wrap.contacts .input {
+  width: 300px;
+  display: block;
+  margin-bottom: 10px;
+}
+.wrap.contacts textarea {
+  width: 500px;
+  height: 100px;
+  display: block;
+  margin-bottom: 10px;
 }

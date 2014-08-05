@@ -136,6 +136,21 @@ transform()
   .show-left
     display none
 
+.footer-left
+  border-top 1px solid #CCCCCC
+  padding-top 10px
+  margin-top 40px
+  text-align left
+  color #a6a6a6
+  ul
+    margin 0
+    li
+      list-style none
+      display inline-block
+      margin 0 5px
+      a
+        color #a6a6a6
+
 .sidebar-right
   position absolute
   right 0
@@ -685,8 +700,14 @@ transform()
   .lenta-item-bottom
     position absolute
     bottom 3px
-  .lenta-item-hashtag
-    float right
+  .fa-star
+    color #CCCCCC
+    font-size 16px
+    margin-right 10px
+    margin-top 4px
+    &:hover
+    &.important
+      color #ffea4a
 
 .itemdiv.dialogdiv > .body
   margin-left 58px
@@ -998,5 +1019,24 @@ transform()
   h1
     font-size 40px
 
+.maps
+  img
+    width 100%
+    display block
 
+// контакты, о нас, блог
+.wrap
+  width 990px
+  margin 0 auto
+  text-align left
+  &.contacts
+    .input
+      width 300px
+      display block
+      margin-bottom 10px
+    textarea
+      width 500px
+      height 100px
+      display block
+      margin-bottom 10px
 

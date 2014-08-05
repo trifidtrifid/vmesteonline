@@ -112,8 +112,18 @@ angular.module('forum.controllers', ['ui.select2'])
                                     event.target.style.height = defaultHeight+'px';
 
                 }else{
-                    newRowCount = parseInt(textLength*8/clientWidth);
-                    event.target.style.height = newRowCount*14+'px';
+                    //newRowCount = parseInt(textLength*8/clientWidth);
+
+                    event.target.style.height = scrollHeight-6+'px';
+
+                    /*if(newRowCount*14 < defaultHeight){
+                        console.log("3.5 "+event.target.style.height+" "+scrollHeight/textLength);
+                        //event.target.style.height = parseInt(event.target.style.height) - scrollHeight/textLength+"px";
+                        event.target.style.height = scrollHeight;
+
+                    }else{
+                        event.target.style.height = newRowCount*14+'px';
+                    }*/
                     console.log("5 "+textLength+" "+textLength*8/clientWidth);
                 }
             }else{
@@ -128,6 +138,13 @@ angular.module('forum.controllers', ['ui.select2'])
         base.user = userClient.getShortUserInfo();
 
         base.bufferSelectedGroup = userClientGroups[0];
+
+        base.markImportant = function(event,message){
+            event.preventDefault();
+
+            message.important = 3;
+            messageClient.markMessageImportant(message.id,true);
+        };
 
         base.showAllGroups = function(){
             var groupsLength = $rootScope.groups.length;
@@ -201,6 +218,9 @@ angular.module('forum.controllers', ['ui.select2'])
     };
   })
     .controller('rightBarController',function() {
+        var rightbar = this;
+
+        rightbar.importantTopics = messageClient.getImportantTopics();
     })
     .controller('mainContentTopController',function($rootScope) {
         var topCtrl = this;
@@ -496,6 +516,19 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $('.ng-cloak').removeClass('ng-cloak');
 
+    })
+    .controller('WallSingleController',function($rootScope, $stateParams){
+        var wallSingle = this;
+
+        // временно, нужна функция getWallItem(topicId)
+        var wallItems = messageClient.getWallItems($rootScope.currentGroup.id),
+        wallItemsLength = wallItems.length,
+            wallItem;
+        for(var i = 0; i < wallItemsLength; i++){
+            if(wallItems[i].id == $stateParams.topicId){
+                wallItem = wallItems[i];
+            }
+        }
     })
     .controller('TalksController',function($rootScope) {
         /*
@@ -2098,10 +2131,10 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.groups[1].isShow = false;
         $rootScope.groups[2].selected = true;
 
-        maps.url = userClient.getGroupMap($rootScope.groups[2].id,'8822DDC0');
+        maps.url = userClient.getGroupMap($rootScope.groups[2].id,'6FB3E0C0');
 
         $rootScope.mapsChangeGroup = function(groupId){
-            maps.url = userClient.getGroupMap(groupId,'8822DDC0');
+            maps.url = userClient.getGroupMap(groupId,'6FB3E0C0');
         };
     });
     /*.controller('BlogController',function($state,$rootScope) {
@@ -2210,21 +2243,26 @@ function initAttachImage(selector,attachAreaSelector){
         setTimeout(copyImage,200);
 
         function copyImage() {
-            var copyImgSrc = fileLabel.find('.file-name img').css('background-image'),
-                url = fileClient.saveFileContent(copyImgSrc,true),
-                fileName = fileLabel.find('.file-name').attr('data-title');
+            var copyImgSrc = fileLabel.find('.file-name img').css('background-image');
 
-            attachAreaSelector.append("<span class='attach-item new-attached'>" +
-                "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                "<img data-title='"+ fileName +"' data-type='"+ type +"' class='attached-img' style='background-image:url("+ url +")'></span>");
+            if(copyImgSrc == 'none'){
+                setTimeout(copyImage,200);
+            }else {
+                var url = fileClient.saveFileContent(copyImgSrc, true),
+                    fileName = fileLabel.find('.file-name').attr('data-title');
 
-            $('.new-attached .remove-attach-img').click(function(e){
-                e.preventDefault();
-               $(this).closest('.attach-item').hide().detach();
-                fileClient.deleteFile(url);
-            });
+                attachAreaSelector.append("<span class='attach-item new-attached'>" +
+                    "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
+                    "<img data-title='" + fileName + "' data-type='" + type + "' class='attached-img' style='background-image:url(" + url + ")'></span>");
 
-            $('.new-attached').removeClass('new-attached');
+                $('.new-attached .remove-attach-img').click(function (e) {
+                    e.preventDefault();
+                    $(this).closest('.attach-item').hide().detach();
+                    fileClient.deleteFile(url);
+                });
+
+                $('.new-attached').removeClass('new-attached');
+            }
         }
 
     });
@@ -2263,11 +2301,12 @@ function initAttachDoc(selector,attachAreaSelector){
             var reader = new FileReader();
             reader.readAsBinaryString(selector[0].files[0]);
             var dataType = selector[0].files[0].type;
+
             reader.onload = function(e){
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = docName;
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
-                var url =docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
+                var url = docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
                 docsInd[attachAreaSelector]++;
 
                 attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
