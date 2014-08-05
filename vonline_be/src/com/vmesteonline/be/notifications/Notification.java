@@ -1,11 +1,14 @@
 package com.vmesteonline.be.notifications;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -29,7 +32,31 @@ public abstract class Notification {
 		public String message;
 	}
 
-	public abstract void makeNotification(); 
+	public abstract void makeNotification( Set<VoUser> users ); 
+	private Map< VoUser, List<NotificationMessage>> messagesToSend = new HashMap<VoUser, List<NotificationMessage>>();
+	
+	public void sendNotifications(){
+		Set<VoUser> users = createRecipientsList();
+		new NewTopicsNotification().makeNotification(users); 
+		new NewNeigboursNotification().makeNotification(users);
+		
+		for( Entry<VoUser, List<NotificationMessage>> un :messagesToSend.entrySet()){
+			VoUser user = un.getKey();
+			String body = "Новости ВместеОнлайн.ру\n\n";
+			for( NotificationMessage nm : un.getValue())
+				body += nm.message + "\n\n";
+			
+			body += "Подробности на http://vmesteonline.ru";
+			try {
+				EMailHelper.sendSimpleEMail( 
+						URLEncoder.encode(user.getName() + " " + user.getLastName(), "UTF-8") + " <"+user.getEmail()+">", 
+						"Рядом с вами на ВместеОнлайн.ру", body );
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
 	
 	protected Set<VoUser> createRecipientsList() {
 
@@ -73,7 +100,10 @@ public abstract class Notification {
 	}
 
 	protected void sendMessage(NotificationMessage mn, VoUser u) throws IOException {
-		EMailHelper.sendSimpleEMail("Vmesteonline.ru <info@vmesteonline.ru>", mn.to, mn.subject, mn.message);
+		List<NotificationMessage> uns = messagesToSend.get(u);
+		if( null == uns)  uns = new ArrayList<NotificationMessage>();
+		uns.add(mn);
+		messagesToSend.put(u, uns);
 	}
 	
 	protected Map<VoUserGroup, Set<VoUser>> arrangeUsersInGroups(Set<VoUser> users) {
