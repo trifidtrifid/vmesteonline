@@ -156,8 +156,9 @@ service MessageService {
 	TopicListPart getBlog(2:i64 lastLoadedTopicId, 3:i32 length) throws (1:error.InvalidOperation exc),
 
 	TopicListPart getAdverts( 1:i64 groupId, 2:i64 lastLoadedTopicId, 3:i32 length) throws (1:error.InvalidOperation exc),
-
 	TopicListPart getTopics( 1:i64 groupId , 2:i64 rubricId, 3:i32 commmunityId, 4:i64 lastLoadedTopicId, 5:i32 length) throws (1:error.InvalidOperation exc),
+	TopicListPart getImportantTopics( 1:i64 groupId , 2:i64 rubricId, 3:i32 commmunityId 4:i32 length) throws (1:error.InvalidOperation exc),
+	
 	/**
 	* Загрузка части преставления дерева сообщений в виде дерева. parentID указывает на сообщение топика или на сообщение первого уровня
 	**/
@@ -169,20 +170,9 @@ service MessageService {
 //получение сообщений в виде списка. сообщения отсортированы по дате создания. более позднии появляются первыми. значения параметров теже что и у функции getFirstLevelMessages. 
 	MessageListPart getMessagesAsList( 1:i64 topicId , 2:i64 groupId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
 	
-		
-	UserOpinion likeOrDislikeMessage(1:i64 messageId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
-	UserOpinion likeOrDislikeTopic(1:i64 topicId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
-	
-	i64 markReadMessage(1:i64 messageId ) throws (1:error.InvalidOperation exc),
-	i64 markReadTopic(1:i64 topicId ) throws (1:error.InvalidOperation exc),
-	i64 moveTopicToArchive(1:i64 topicId ) throws (1:error.InvalidOperation exc),
-	i64 restoreTopicFromArchive(1:i64 topicId) throws (1:error.InvalidOperation exc),
-	i64 markTopicUnintrested(1:i64 topicId, 2:bool interested) throws (1:error.InvalidOperation exc),
-	i64 makeMessageLinked(1:i64 message1Id, 2:i64 message2Id ) throws (1:error.InvalidOperation exc),
 	
 	//метсд изменяет и возвращает текущую важность сообщения на значение равное рейтингу пользователя, 
 	//для текущего пользователя сообщение становится важным вне зависимости от его суммарного рейтинга
 	i32 markMessageImportant(1:i64 messageId, 2:bool isImportant ) throws (1:error.InvalidOperation exc),
-	
-	
+	i32 markMessageLike(1:i64 messageId ) throws (1:error.InvalidOperation exc),
 }

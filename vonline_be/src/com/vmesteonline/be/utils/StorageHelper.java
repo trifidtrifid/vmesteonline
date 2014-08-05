@@ -400,7 +400,7 @@ public class StorageHelper {
 			String ext = ".bin";
 			InputStream is = null;
 			
-			String contentString = new String( urlOrContent, 0, 256 );
+			String contentString = new String( urlOrContent, 0, Math.min( 256, urlOrContent.length ));
 			
 			if( contentString.startsWith("url(")){
 				

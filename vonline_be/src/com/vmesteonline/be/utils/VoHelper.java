@@ -35,8 +35,8 @@ public class VoHelper {
 
 	public static boolean isInclude(GeoLocation a, int radius, GeoLocation b) {
 
-		if (VoHelper.getLongitudeMax(a.getLongitude(), radius).compareTo(b.getLongitude()) >= 0)
-			if (VoHelper.getLongitudeMin(a.getLongitude(), radius).compareTo(b.getLongitude()) <= 0)
+		if (VoHelper.getLongitudeMax(a.getLongitude(),a.getLatitude(), radius).compareTo(b.getLongitude()) >= 0)
+			if (VoHelper.getLongitudeMin(a.getLongitude(),a.getLatitude(), radius).compareTo(b.getLongitude()) <= 0)
 				if (VoHelper.getLatitudeMax(a.getLatitude(), radius).compareTo(b.getLatitude()) >= 0)
 					if (VoHelper.getLatitudeMin(a.getLatitude(), radius).compareTo(b.getLatitude()) <= 0)
 						return true;
@@ -87,17 +87,17 @@ public class VoHelper {
 	}
 
 	// (radius/earthRadius) * (180.0 / Math.PI)
-	public static BigDecimal getLongitudeMax(BigDecimal longitude, int radius) {
-		BigDecimal tmp = getLongDelta(radius);
+	public static BigDecimal getLongitudeMax(BigDecimal longitude, BigDecimal lattitude, int radius) {
+		BigDecimal tmp = getLongDelta(lattitude, radius);
 		return longitude.add(tmp).setScale(7, RoundingMode.HALF_UP);
 	}
 
-	public static BigDecimal getLongitudeMin(BigDecimal longitude, int radius) {
-		BigDecimal tmp = getLongDelta(radius);
+	public static BigDecimal getLongitudeMin(BigDecimal longitude, BigDecimal lattitude, int radius) {
+		BigDecimal tmp = getLongDelta(lattitude, radius);
 		return longitude.subtract(tmp).setScale(7, RoundingMode.HALF_UP);
 	}
 
-	private static BigDecimal getLongDelta(int radius) {
+	private static BigDecimal getLatDelta(int radius) {
 		BigDecimal r = new BigDecimal(radius);
 		BigDecimal tmp = r.divide(earthRadius, 10, RoundingMode.HALF_UP);
 		tmp = tmp.multiply(degInRad);
@@ -106,16 +106,17 @@ public class VoHelper {
 
 	// (radius / (earthRadius * Math.cos(Math.PI * latitude/180)) * (180.0 / Math.PI);
 	public static BigDecimal getLatitudeMin(BigDecimal latitude, int radius) {
-		BigDecimal tmp = getLatDelta(latitude, radius);
+		BigDecimal tmp = getLatDelta(radius);
 		return latitude.subtract(tmp).setScale(7, RoundingMode.HALF_UP);
 	}
 
 	public static BigDecimal getLatitudeMax(BigDecimal latitude, int radius) {
-		BigDecimal tmp = getLatDelta(latitude, radius);
+		BigDecimal tmp = getLatDelta(radius);
 		return latitude.add(tmp).setScale(7, RoundingMode.HALF_UP);
 	}
 
-	private static BigDecimal getLatDelta(BigDecimal latitude, int radius) {
+	private static BigDecimal getLongDelta(BigDecimal latitude, int radius) {
+		
 		double cosVal = Math.cos(Math.PI * latitude.doubleValue() / 180D);
 		BigDecimal r = new BigDecimal(radius);
 		BigDecimal tmp = earthRadius.multiply(new BigDecimal(cosVal));

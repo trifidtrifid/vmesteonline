@@ -836,7 +836,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@Override
 	public String getGroupMap(long groupId, String color) throws InvalidOperation, TException {
-		String mapKey = "yandex.group.map."+groupId;
+		if( null == color || 0 == color.length()){
+			color = "8822DDC0";
+		}
+		String mapKey = "yandex.group.map."+groupId+"."+color;
 		Object url = ServiceImpl.getObjectFromCache(mapKey);
 		if( null!=url ) 
 			if( url instanceof String){
@@ -858,7 +861,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			double lod = userGroup.getLongitude().doubleValue();
 			
 			double laDelta = VoHelper.getLatitudeMax(userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lad;
-			double loDelta = VoHelper.getLatitudeMax(userGroup.getLongitude(), userGroup.getRadius()).doubleValue() - lod;
+			double loDelta = VoHelper.getLongitudeMax(userGroup.getLongitude(), userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lod;
 			
 			for( double i=0.0D; i<2 * Math.PI; i+=Math.PI/30){
 				url += "," + (lod + Math.sin( i ) * loDelta)+

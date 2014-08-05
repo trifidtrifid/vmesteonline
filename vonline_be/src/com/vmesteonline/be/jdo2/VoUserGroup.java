@@ -16,6 +16,7 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 		setLatitude(user.getLatitude());
 		radius = grp.getRadius();
 		name = grp.getVisibleName();
+		importantScore = grp.getImportantScore();
 	}
 
 	
@@ -65,6 +66,15 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	@Persistent
 	@Unindexed
 	private int radius;
+	
+	@Persistent
+	@Unindexed
+	private int importantScore;
+
+	
+	public int getImportantScore() {
+		return importantScore;
+	}
 
 	@Override
 	public String toString() {
@@ -77,5 +87,4 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 		return that.getLatitude().compareTo(this.getLatitude()) != 0 ? that.getLatitude().compareTo(this.getLatitude()) : that.getLongitude().compareTo(
 				this.getLongitude()) != 0 ? that.getLongitude().compareTo(this.getLongitude()) : Integer.compare(that.radius, this.radius);
 	}
-
 }

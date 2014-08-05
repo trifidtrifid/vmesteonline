@@ -36,6 +36,8 @@ import com.vmesteonline.be.utils.Defaults;
 
 @PersistenceCapable
 public class VoUser extends GeoLocation {
+	
+	public static int BASE_USER_SCORE = 100;
 
 	private static VoUserGroup defaultGroup = new VoUserGroup("Мой Город", 10000, new BigDecimal("60.0"), new BigDecimal("30.0"));
 
@@ -58,6 +60,9 @@ public class VoUser extends GeoLocation {
 		this.avatarProfileShort = Defaults.defaultAvatarShortProfileUrl;
 		this.relations = RelationsType.UNKNOWN;
 		this.notificationsFreq = NotificationFreq.DAYLY.getValue();
+		this.importancy = BASE_USER_SCORE;
+		this.popularuty = BASE_USER_SCORE;
+		this.lastNotified = this.registered = (int)(System.currentTimeMillis()/1000L);
 		}
 
 	public UserProfile getUserProfile() {
@@ -181,6 +186,14 @@ public class VoUser extends GeoLocation {
 	public VoPostalAddress getDeliveryAddress(String key) {
 		return deliveryAddresses != null ? deliveryAddresses.get(key) : null;
 	}
+	
+	public int getLastNotified() {
+		return lastNotified;
+	}
+
+	public void setLastNotified(int lastNotified) {
+		this.lastNotified = lastNotified;
+	}
 
 	public void setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
 		try {
@@ -303,6 +316,9 @@ public class VoUser extends GeoLocation {
 	private List<VoRubric> rubrics;
 
 	@Persistent
+	private int registered;
+	
+	@Persistent
 	@Unindexed
 	private String name;
 
@@ -389,6 +405,17 @@ public class VoUser extends GeoLocation {
 	@Persistent
 	private int notificationsFreq;
 	
+	@Persistent
+	@Unindexed
+	private int importancy;
+	
+	@Persistent
+	@Unindexed
+	private int popularuty;
+	
+	@Persistent
+	@Unindexed
+	private int lastNotified;
 	
 	public UserPrivacy getPrivacy() {
 		return null == privacy ? new UserPrivacy(0L, PrivacyType.NONE, PrivacyType.NONE ) : privacy;
@@ -541,4 +568,21 @@ public class VoUser extends GeoLocation {
 				+ ", lastName=" + lastName + ", email=" + email + ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum=" + topicsNum
 				+ ", likesNum=" + likesNum + ", unlikesNum=" + unlikesNum + "]";
 	}
+
+	public int getImportancy() {
+		return importancy;
+	}
+
+	public void setImportancy(int importancy) {
+		this.importancy = importancy;
+	}
+
+	public int getPopularuty() {
+		return popularuty;
+	}
+
+	public void setPopularuty(int popularuty) {
+		this.popularuty = popularuty;
+	}
+	
 }
