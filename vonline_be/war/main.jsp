@@ -173,6 +173,14 @@
                         <li ng-class="{active:isSet(3)}"><a ui-sref="adverts"> <span class="menu-text">Услуги и объявления</span> </a></li>
 
 					</ul>
+                    <div class="footer-left">
+                        (c) Вместе Онлайн 2014
+                        <ul>
+                            <li><a href="#">О нас</a></li>
+                            <li><a href="#">Блог</a></li>
+                            <li><a href="#">Контакты</a></li>
+                        </ul>
+                    </div>
 				</aside>
                 <aside class="sidebar-right" ng-controller="rightBarController as rightbar">
                     <div class="importantly-top">
