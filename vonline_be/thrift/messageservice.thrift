@@ -41,7 +41,8 @@ struct Message {
 	17: i32 offset, //смещение сообщения для формирования древовидной структуры
 	18: bedata.ShortUserInfo userInfo,
 	19: list<Attach> images, 
-	20: list<Attach> documents, 
+	20: list<Attach> documents,
+	21: string anonName 
 	
 } // 'сообщение';
 		
@@ -167,9 +168,9 @@ service MessageService {
 	MessageListPart getFirstLevelMessages( 1:i64 topicId , 2:i64 groupId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
 
 //получение сообщений в виде списка. сообщения отсортированы по дате создания. более позднии появляются первыми. значения параметров теже что и у функции getFirstLevelMessages. 
-	MessageListPart getMessagesAsList( 1:i64 topicId , 2:i64 groupId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
+	MessageListPart getMessagesAsList( 1:i64 topicId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
 	
-		
+	void sendToInfo(1:string from, 2:string body), 	
 	UserOpinion likeOrDislikeMessage(1:i64 messageId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
 	UserOpinion likeOrDislikeTopic(1:i64 topicId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
 	

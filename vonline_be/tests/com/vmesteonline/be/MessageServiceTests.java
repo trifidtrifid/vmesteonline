@@ -27,7 +27,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 	private Message createMessage(long tpcId, long msgId) throws Exception {
 		Message msg = new Message(0, msgId, MessageType.BASE, tpcId, homeGroup.getId(), 0, (int) (System.currentTimeMillis() / 1000L), 0, "test content", 0, 0,
-				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null);
+				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null);
 		return msi.postMessage(msg);
 	}
 
@@ -41,7 +41,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 	private Topic createTopic(long groupId, MessageType type) throws Exception {
 		Message msg = new Message(groupId, 0, type, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
-				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null);
+				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null);
 		Topic topic = new Topic(0, topicSubject, msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
 		return msi.postTopic(topic);
 	}
@@ -320,7 +320,7 @@ public class MessageServiceTests extends TestWorkAround {
 			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
 
 			Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
-					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null);
+					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null);
 			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll);
 			msi.postTopic(topic);
 
@@ -348,7 +348,7 @@ public class MessageServiceTests extends TestWorkAround {
 			Poll poll = createPoll();
 
 			Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
-					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null);
+					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null);
 			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll);
 			topic = msi.postTopic(topic);
 

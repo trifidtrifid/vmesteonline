@@ -30,8 +30,8 @@ public class VoHelper {
 	// (Pi * R) / 180
 	private static BigDecimal piR = new BigDecimal("111319.4907932736");
 
-	// (dLat * Math.cos(Math.PI * latitude/180) * PI * R) / (180 ) - в метрах по широте
-	// (dLong * Pi * R) / 180 - в метрах по долготе
+	// (dLong * Math.cos(Math.PI * latitude/180) * PI * R) / (180 ) - в метрах по широте
+	// (dLat * Pi * R) / 180 - в метрах по долготе
 
 	public static boolean isInclude(GeoLocation a, int radius, GeoLocation b) {
 

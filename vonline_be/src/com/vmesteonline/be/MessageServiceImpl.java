@@ -51,6 +51,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		initDb();
 	}
 
+	
+	@Override
+	public void sendToInfo(String from, String body) throws TException {
+		// TODO Auto-generated method stub
+		
+	}
+
 	@Override
 	public List<WallItem> getWallItems(long groupId) throws InvalidOperation {
 		List<WallItem> wallItems = new ArrayList<WallItem>();
@@ -74,7 +81,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
 
-					MessageListPart mlp = getMessagesAsList(tpc.id, 0, MessageType.BASE, 0, false, 10000);
+					MessageListPart mlp = getMessagesAsList(tpc.id, MessageType.BASE, 0, false, 10000);
 					if (mlp.totalSize > 0)
 						logger.info("find msgs " + mlp.messages.size());
 
@@ -94,7 +101,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public MessageListPart getMessagesAsList(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length)
+	public MessageListPart getMessagesAsList(long topicId, MessageType messageType, long lastLoadedId, boolean archived, int length)
 			throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();

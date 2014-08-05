@@ -159,7 +159,7 @@ public class VoMessage extends VoBaseMessage {
 			docs.add( att.getAttach() );
 		}
 		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
-				getUnlikes(), links, null, null, visibleOffset, null, imgs, docs);
+				getUnlikes(), links, null, null, visibleOffset, null, imgs, docs, null);
 	}
 
 	public long getApprovedId() {
