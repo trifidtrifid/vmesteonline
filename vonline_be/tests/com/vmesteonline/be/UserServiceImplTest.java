@@ -212,7 +212,7 @@ public class UserServiceImplTest extends TestWorkAround {
 				 * Assert.assertEquals(voUserGroupsB.get(0).getLongitude(), new
 				 * BigDecimal("59.9331462"));
 				 */System.out.print("max = " + VoHelper.getLongitudeMax(voUserGroupsA.get(0).getLatitude(), voUserGroupsA.get(0).getLongitude(), 200).toPlainString() + " origin = "
-						+ voUserGroupsA.get(0).getLongitude() + "\n");
+				 	+ voUserGroupsA.get(0).getLongitude() + "\n");
 				System.out.print("lat max = " + VoHelper.getLatitudeMax(voUserGroupsA.get(0).getLatitude(), 200).toPlainString() + " origin = "
 						+ voUserGroupsA.get(0).getLatitude() + "\n");
 

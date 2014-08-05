@@ -93,12 +93,11 @@ public class VoMessage extends VoBaseMessage {
 				if (0 != msg.getRecipientId()) {
 					VoDatastoreHelper.exist(VoUser.class, msg.getRecipientId(), pm);
 					recipient = msg.getRecipientId();
-				} 
+				}
 
 				VoUser author = pm.getObjectById(VoUser.class, msg.getAuthorId());
 				if (null == author) {
-					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Author of Message not found by ID="
-							+ msg.getAuthorId());
+					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Author of Message not found by ID=" + msg.getAuthorId());
 				}
 				// TODO сделать проверку на права создания сообщений не зависящей от
 				// наличия домашней группы.
@@ -112,19 +111,16 @@ public class VoMessage extends VoBaseMessage {
 				/*
 				 * Check that all of linked messages exists and has type that is required
 				 */
-/*				this.links = new HashMap<MessageType, Long>();
-
-				for (Entry<MessageType, Long> entry : msg.getLinkedMessages().entrySet()) {
-					VoMessage linkedMsg = pm.getObjectById(VoMessage.class, entry.getValue());
-					if (null == linkedMsg)
-						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Linked message not found by ID:"
-								+ entry.getValue());
-					if (!entry.getKey().equals(linkedMsg.getType()))
-						throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Linked message with ID:" + entry.getValue()
-								+ " type missmatch. Stored type:" + linkedMsg.getType().name() + " but linked as:" + entry.getKey().name());
-					links.put(entry.getKey(), entry.getValue());
-				}
-*/
+				/*
+				 * this.links = new HashMap<MessageType, Long>();
+				 * 
+				 * for (Entry<MessageType, Long> entry : msg.getLinkedMessages().entrySet()) { VoMessage linkedMsg = pm.getObjectById(VoMessage.class,
+				 * entry.getValue()); if (null == linkedMsg) throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs,
+				 * "Linked message not found by ID:" + entry.getValue()); if (!entry.getKey().equals(linkedMsg.getType())) throw new
+				 * InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Linked message with ID:" + entry.getValue() +
+				 * " type missmatch. Stored type:" + linkedMsg.getType().name() + " but linked as:" + entry.getKey().name()); links.put(entry.getKey(),
+				 * entry.getValue()); }
+				 */
 				this.approvedId = msg.getApprovedBy();
 
 				pm.makePersistent(author);
@@ -147,19 +143,21 @@ public class VoMessage extends VoBaseMessage {
 		return getRecipient() == 0 || getRecipient() == userId || getAuthorId().getId() == userId;
 	}
 
+
 	public Message getMessage( long userId, PersistenceManager pm ) {
+
 		List<Attach> imgs = new ArrayList<Attach>();
-		for( Long farId : images ){
+		for (Long farId : images) {
 			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
-			imgs.add( att.getAttach() );
+			imgs.add(att.getAttach());
 		}
 		List<Attach> docs = new ArrayList<Attach>();
-		for( Long farId : documents ){
+		for (Long farId : documents) {
 			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
-			docs.add( att.getAttach() );
+			docs.add(att.getAttach());
 		}
-		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
-				0, links, null, null, visibleOffset, null, imgs, docs, isImportant(userId), isLiked(userId));
+		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(), 0,
+				links, null, null, visibleOffset, null, imgs, docs, null, isImportant(userId), isLiked(userId));
 	}
 
 	public long getApprovedId() {
@@ -197,7 +195,7 @@ public class VoMessage extends VoBaseMessage {
 	@Persistent
 	@Unindexed
 	protected int minimunVisibleRadius;
-	
+
 	@Persistent
 	protected int score;
 
