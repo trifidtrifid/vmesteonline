@@ -74,6 +74,11 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/maps.html",
             controller: 'MapsController as maps'
         })
+        /*.state('blog', {
+            url: "/blog",
+            templateUrl: "partials/blog.html",
+            controller: 'BlogController as blog'
+        })*/
 
 });
 
