@@ -124,7 +124,7 @@ public class VoGeocoder {
 		}
 	}
 
-	public static String createMapImageURL(BigDecimal longitude, BigDecimal latitude, int width, int height, String addressText) {
+	public static String createMapImageURL(BigDecimal longitude, BigDecimal latitude, int width, int height ) {
 		
 		return "http://static-maps.yandex.ru/1.x/?l=map&pt="+longitude+","+latitude+",pm2blm&size="+width+","+height+"&spn="+0.00002*width+","+0.00002*height;
 	}
