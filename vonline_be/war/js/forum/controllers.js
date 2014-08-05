@@ -259,8 +259,11 @@ angular.module('forum.controllers', ['ui.select2'])
             $rootScope.base.createTopicIsHide ? $rootScope.base.createTopicIsHide = false : $rootScope.base.createTopicIsHide = true;
 
         };
+
+        $('.ng-cloak').removeClass('ng-cloak');
     })
     .controller('LentaController',function($rootScope) {
+
         $rootScope.setTab(1);
         $rootScope.base.showAllGroups();
 
@@ -490,6 +493,8 @@ angular.module('forum.controllers', ['ui.select2'])
                 }
             }
         }
+
+        $('.ng-cloak').removeClass('ng-cloak');
 
     })
     .controller('TalksController',function($rootScope) {
@@ -2072,7 +2077,7 @@ angular.module('forum.controllers', ['ui.select2'])
             });
         }
     })
-    .controller('MapsController',function($state,$rootScope) {
+    .controller('MapsController',function($rootScope) {
         var maps = this;
 
         $rootScope.currentPage = "maps";
@@ -2093,12 +2098,18 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.groups[1].isShow = false;
         $rootScope.groups[2].selected = true;
 
-        maps.url = userClient.getGroupMap($rootScope.groups[2].id);
+        maps.url = userClient.getGroupMap($rootScope.groups[2].id,'8822DDC0');
 
         $rootScope.mapsChangeGroup = function(groupId){
-            maps.url = userClient.getGroupMap(groupId,'FFFF0000');
+            maps.url = userClient.getGroupMap(groupId,'8822DDC0');
         };
     });
+    /*.controller('BlogController',function($state,$rootScope) {
+        var blog = this;
+
+        blog = messageClient.getBlog();
+
+    });*/
 
 
 /* const */
@@ -2256,27 +2267,27 @@ function initAttachDoc(selector,attachAreaSelector){
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = docName;
                 docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
-                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
+                var url =docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
                 docsInd[attachAreaSelector]++;
 
-                   /* "obj(name:"+ base64encode(docName)
-                    +";data:"+ dataType +";content:"+base64encode(reader.result)+")";*/
+                attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
+                    "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
+                    docName+
+                    "</span>");
+
+                $('.new-attached .remove-attach-img').click(function(e){
+                    e.preventDefault();
+                    var attachItem = $(this).closest('.attach-item');
+                    var ind = attachItem.index();
+                    attachItem.hide().detach();
+                    docsBase64[attachAreaSelector].splice(ind,1);
+                    fileClient.deleteFile(url);
+                });
+
+                $('.new-attached').removeClass('new-attached');
             };
 
-            attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
-                "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                docName+
-                "</span>");
 
-            $('.new-attached .remove-attach-img').click(function(e){
-                e.preventDefault();
-                var attachItem = $(this).closest('.attach-item');
-                var ind = attachItem.index();
-                attachItem.hide().detach();
-                docsBase64[attachAreaSelector].splice(ind,1);
-            });
-
-            $('.new-attached').removeClass('new-attached');
         }
     });
 }
