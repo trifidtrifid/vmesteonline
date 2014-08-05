@@ -117,7 +117,11 @@
                                 onblur="if(this.value=='') this.value='Ваш ответ';"
                                 onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
 
-                                <div id="attach-area-{{wallItem.topic.id}}" class="attach-area"></div>
+                                <div id="attach-area-{{wallItem.topic.id}}" class="attach-area">
+                                    <div class="loading hidden">
+                                        <img ng-src="i/loading2.gif" alt="картинка"/>
+                                    </div>
+                                </div>
                                 <div id="attach-doc-area-{{wallItem.topic.id}}" class="attach-area attach-area-doc"></div>
 
                                 <span class="input-group-btn" ng-show="wallItem.answerShow">
