@@ -44,7 +44,7 @@ public class VoTopic extends VoBaseMessage {
 		}
 		
 		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
-				0, links, null, null, 0, null, imgs, docs);
+				0, links, null, null, 0, null, imgs, docs, isImportant(userId), isLiked(userId));
 
 		Topic tpc = new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(),
 				0, null, null, null);
@@ -149,5 +149,7 @@ public class VoTopic extends VoBaseMessage {
 	@Persistent
 	@Unindexed
 	protected byte[] subject;
+	
+	
 
 }

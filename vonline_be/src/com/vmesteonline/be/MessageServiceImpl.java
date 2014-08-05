@@ -34,7 +34,6 @@ import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.messageservice.Poll;
 import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.messageservice.TopicListPart;
-import com.vmesteonline.be.messageservice.UserOpinion;
 import com.vmesteonline.be.messageservice.WallItem;
 import com.vmesteonline.be.utils.VoHelper;
 
@@ -417,69 +416,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return msg;
 	}
 
-	/*protected <T extends VoBaseMessage, UserT extends VoUserObject> UserOpinion like(long messageId, Class<T> tclass, Class<UserT> tUserClass,
-			UserT newObject, boolean like) throws InvalidOperation {
-		long userId = getCurrentUserId();
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
-
-			T msg;
-			try {
-				msg = (T) pm.getObjectById(tclass, messageId);
-			} catch (Exception e) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, "can't find object with id " + messageId);
-			}
-
-			UserT um;
-			try {
-				um = (UserT) pm.getObjectById(tUserClass, VoUserObject.<UserT> createKey(tUserClass, userId, messageId));
-			} catch (Exception e) {
-				um = newObject;
-				um.setUserId(userId);
-				um.setId(messageId);
-			}
-
-			if (like)
-				this.<T, UserT> incrementer(msg, um);
-			else
-				this.<T, UserT> decrementer(msg, um);
-
-			pm.makePersistent(um);
-			pm.makePersistent(msg);
-
-			return new UserOpinion(msg.getLikes(), msg.getUnlikes());
-		} finally {
-			pm.close();
-		}
-	}
-
-	protected <T extends VoBaseMessage, UserT extends VoUserObject> void incrementer(T msg, UserT um) {
-		if (!um.isLikes()) {
-			um.setLikes(true);
-			msg.incrementLikes();
-		}
-
-		if (um.isUnlikes()) {
-			um.setUnlikes(false);
-			msg.decrementUnlikes();
-		}
-		um.setRead(true);
-	}
-
-	protected <T extends VoBaseMessage, UserT extends VoUserObject> void decrementer(T msg, UserT um) {
-		if (!um.isUnlikes()) {
-			um.setUnlikes(true);
-			msg.incrementUnlikes();
-		}
-		if (um.isLikes()) {
-			um.setLikes(false);
-			msg.decrementLikes();
-		}
-		um.setRead(true);
-	}*/
-	
-	
-
 	private void initDb() throws InvalidOperation {
 		con = new MySQLJDBCConnector();
 		try {
@@ -525,7 +461,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		mlp.totalSize = lst.size();
 		for (VoMessage voMessage : lst) {
 			VoUserMessage voUserMsg = VoDatastoreHelper.<VoUserMessage> getUserMsg(VoUserMessage.class, userId, voMessage.getId(), pm);
-			Message msg = voMessage.getMessage(pm);
+			Message msg = voMessage.getMessage(userId, pm);
 			msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId());
 			msg.userMessage = null == voUserMsg ? null : voUserMsg.getUserMessage();
 			mlp.addToMessages(msg);
@@ -543,13 +479,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Message not found by ID=" + msg.getId());
 
 			VoTopic topic = pm.getObjectById(VoTopic.class, storedMsg.getTopicId());
-			if (null != topic) {
-				/*topic.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
-				topic.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());*/
-			} else {
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No topic found by id=" + storedMsg.getTopicId()
-						+ " that stored in Message ID=" + msg.getId());
-			}
 
 			/* Check if content changed, then update edit date */
 			if (!Arrays.equals(storedMsg.getContent(), msg.getContent().getBytes())) {
@@ -559,22 +488,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				storedMsg.setContent(msg.getContent().getBytes());
 			}
 
-			VoUser author = pm.getObjectById(VoUser.class, storedMsg.getAuthorId());
-			if (null != author) {
-				/*author.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
-				author.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());*/
-			} else {
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No AUTHOR found by id=" + storedMsg.getAuthorId()
-						+ " that stored in Message ID=" + msg.getId());
-			}
-
 			if (storedMsg.getTopicId() != msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId()
 					|| storedMsg.getRecipient() != msg.getRecipientId() || storedMsg.getCreatedAt() != msg.getCreated() || storedMsg.getType() != msg.getType())
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs,
 						"Parameters: topic, author, recipient, createdAt, type could not be changed!");
 
-			/*storedMsg.setLikes(msg.getLikesNum());
-			storedMsg.setUnlikes(msg.getUnlikesNum());*/
 			pm.makePersistent(storedMsg);
 			pm.makePersistent(topic);
 			pm.makePersistent(storedMsg);

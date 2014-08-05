@@ -21,6 +21,8 @@ struct Attach {
 	3:string URL
 }
 
+enum Mark { POSITIVE=1, NOTMARKED=2, NEGATIVE=3 }
+
 struct Message {
 	1: i64 id,
 	2: i64 parentId, // 'идентификатор родительского сообщения, NULL для корневого со',
@@ -42,6 +44,8 @@ struct Message {
 	18: bedata.ShortUserInfo userInfo,
 	19: list<Attach> images, 
 	20: list<Attach> documents, 
+	21: Mark important,
+	22: Mark like,
 	
 } // 'сообщение';
 		
