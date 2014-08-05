@@ -1,9 +1,12 @@
 package com.vmesteonline.be.jdo2;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.Inheritance;
@@ -26,7 +29,7 @@ import com.vmesteonline.be.utils.StorageHelper.FileSource;
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
 public abstract class VoBaseMessage extends GeoLocation {
-
+	
 	public VoBaseMessage(Message msg) throws IOException, InvalidOperation {
 		// super(msg.getLikesNum(), msg.getUnlikesNum());
 		content = msg.getContent().getBytes();
@@ -34,12 +37,11 @@ public abstract class VoBaseMessage extends GeoLocation {
 		type = msg.getType();
 		authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
 		createdAt = msg.getCreated();
-		likesNum = msg.getLikesNum();
-		unlikesNum = msg.getUnlikesNum();
 		images = new ArrayList<Long>();
 		PersistenceManager pm = PMF.getPm();
 		images = new ArrayList<Long>();
 		documents = new ArrayList<Long>();
+
 		try {
 			if (msg.images != null) {
 				List<Attach> savedImages = new ArrayList<Attach>();
@@ -134,36 +136,57 @@ public abstract class VoBaseMessage extends GeoLocation {
 	 * public VoUserAttitude(int likes, int unlikes) { likesNum = likes; unlikesNum = unlikes; }
 	 */
 	public int getLikes() {
-		return likesNum;
+		return null==likes ? 0 : likes.size();
 	}
 
-	public void setLikes(int likes) {
-		this.likesNum = likes;
+
+	public int markLikes( VoUser user, VoUser author, PersistenceManager pm) {
+		if( null == likes ) likes = new HashSet<Long>();
+		if( !likes.contains(user.getId())) {
+			int up = user.getPopularuty();
+			popularityScore += up;
+			likes.add(user.getId());
+			try{
+				if( null==author && null==authorId )
+					author = pm.getObjectById(VoUser.class,authorId);
+				int ap = author.getPopularuty();
+				int pDelta = (int) (((float)( up * up )) / ((float)ap * 10.0F));
+				author.setPopularuty( ap + pDelta );
+			} catch(Exception e){ 
+			}
+		}
+		return popularityScore;
 	}
 
-	public int decrementLikes() {
-		return --likesNum;
+	public int markImportant( VoUser user, VoUser author, boolean isImportant, PersistenceManager pm) {
+		if( null == important ) important = new HashSet<Long>();
+		if( !important.contains(user.getId())) {
+			int ui = user.getImportancy();
+			importantScore += ui * ( isImportant ? 1 : -1);
+			important.add(user.getId());
+			try{
+				if( null==author && null==authorId )
+					author = pm.getObjectById(VoUser.class,authorId);
+				int ai = author.getImportancy();
+				int importancyDelta = (int) (((float)( ui * ui )) / ((float)ai * 10.0F) * ( isImportant ? 1F : -1F ));
+				author.setImportancy( ai + importancyDelta );
+			} catch(Exception e){ 
+			}
+		}
+		return importantScore;
 	}
 
-	public int incrementLikes() {
-		return ++likesNum;
+
+	
+	public Integer getImportantScore() {
+		return importantScore;
 	}
 
-	public int decrementUnlikes() {
-		return --unlikesNum;
+	public Integer getPopularityScore() {
+		return popularityScore;
 	}
 
-	public int incrementUnlikes() {
-		return ++unlikesNum;
-	}
 
-	public int getUnlikes() {
-		return unlikesNum;
-	}
-
-	public void setUnlikes(int unlikes) {
-		this.unlikesNum = unlikes;
-	}
 
 	/*
 	 * @PrimaryKey
@@ -202,14 +225,17 @@ public abstract class VoBaseMessage extends GeoLocation {
 	@Unindexed
 	protected int editedAt;
 
-	@Persistent
-	@Unindexed
-	protected int likesNum;
-
-	@Persistent
-	@Unindexed
-	protected int unlikesNum;
-
 	protected int childMessageNum;
-
+	
+	@Persistent
+	@Unindexed
+	protected Set<Long> likes;
+	
+	@Persistent
+	@Unindexed
+	protected Set<Long> important;
+	@Persistent
+	protected Integer importantScore;
+	@Persistent
+	protected Integer popularityScore;
 }

@@ -93,7 +93,7 @@ public class VoMessage extends VoBaseMessage {
 				if (0 != msg.getRecipientId()) {
 					VoDatastoreHelper.exist(VoUser.class, msg.getRecipientId(), pm);
 					recipient = msg.getRecipientId();
-				}
+				} 
 
 				VoUser author = pm.getObjectById(VoUser.class, msg.getAuthorId());
 				if (null == author) {
@@ -159,7 +159,7 @@ public class VoMessage extends VoBaseMessage {
 			docs.add( att.getAttach() );
 		}
 		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(),
-				getUnlikes(), links, null, null, visibleOffset, null, imgs, docs);
+				0, links, null, null, visibleOffset, null, imgs, docs);
 	}
 
 	public long getApprovedId() {
@@ -197,6 +197,9 @@ public class VoMessage extends VoBaseMessage {
 	@Persistent
 	@Unindexed
 	protected int minimunVisibleRadius;
+	
+	@Persistent
+	protected int score;
 
 	public int getMinimunVisibleRadius() {
 		return minimunVisibleRadius;

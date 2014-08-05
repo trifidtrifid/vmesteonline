@@ -18,7 +18,6 @@ import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.data.VoDatastoreHelper;
-import com.vmesteonline.be.jdo2.VoBaseMessage;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoPoll;
 import com.vmesteonline.be.jdo2.VoRubric;
@@ -27,7 +26,6 @@ import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.VoUserMessage;
-import com.vmesteonline.be.jdo2.VoUserObject;
 import com.vmesteonline.be.jdo2.VoUserTopic;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageListPart;
@@ -41,7 +39,7 @@ import com.vmesteonline.be.messageservice.WallItem;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
-
+	
 	public MessageServiceImpl() throws InvalidOperation {
 		initDb();
 	}
@@ -63,7 +61,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				pm.retrieve(user);
 				VoUserGroup group = user.getGroupById(groupId);
 				// todo add last loaded and length
-				List<VoTopic> topics = getTopics(group, MessageType.WALL, 0, 10000, pm);
+				List<VoTopic> topics = getTopics(group, MessageType.WALL, 0, 10000, false, pm);
 
 				if (topics.isEmpty()) {
 					logger.fine("can't find any topics");
@@ -164,9 +162,16 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	}
 
-	List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, PersistenceManager pm) {
 
-		String req = "select `id` from topic where radius <= "+group.getRadius()+" and longitude <= " + VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString()
+	public List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly, PersistenceManager pm) {
+		return getTopics(group, type, lastLoadedTopicId, length, importantOnly, con ,pm);
+	}
+	
+	
+	public static List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly, JDBCConnector con, PersistenceManager pm) {
+	
+		String req = "select `id` from topic where radius <= "+group.getRadius()+" and "
+				+ "longitude <= " + VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString()
 				+ " and longitude >= " + VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
 				+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
 				+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() ;
@@ -190,7 +195,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		req += " order by createTime desc";
 
-		System.out.print(req);
 		List<VoTopic> topics = new ArrayList<VoTopic>();
 		try {
 			ResultSet rs = con.executeQuery(req);
@@ -199,8 +203,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			while (rs.next() && topics.size() < length) {
 				long topicId = rs.getLong(1);
 				VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
-				if (addTopic) {
+				if (addTopic && (!importantOnly || group.getImportantScore() <= topic.getImportantScore( ))) {
 					topics.add(topic);
+					long topicAge = (System.currentTimeMillis() / 1000L) - topic.getLastUpdate();
+					if( importantOnly && ( topics.size() > 4 || topicAge  > 86400*7 )) //в запросе важных возвращается не более 5 и не старше недели 
+						break;
 				} else if (topic.getId() == lastLoadedTopicId) {
 					addTopic = true;
 				}
@@ -210,22 +217,26 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		} finally {
 			con.close();
 		}
-
 		return topics;
 	}
 
 	@Override
 	public TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length) throws InvalidOperation {
-		return getTopics(groupId, rubricId, commmunityId, lastLoadedTopicId, length, MessageType.BASE);
+		return getTopics(groupId, rubricId, commmunityId, lastLoadedTopicId, length, MessageType.BASE, false);
+	}
+
+	@Override
+	public TopicListPart getImportantTopics(long groupId, long rubricId, int commmunityId, int length) throws InvalidOperation {
+		return getTopics(groupId, rubricId, commmunityId, 0, length, MessageType.BASE, true);
 	}
 
 	@Override
 	public TopicListPart getAdverts(long groupId, long lastLoadedTopicId, int length) throws InvalidOperation {
-		return getTopics(groupId, 0, 0, lastLoadedTopicId, length, MessageType.ADVERT);
+		return getTopics(groupId, 0, 0, lastLoadedTopicId, length, MessageType.ADVERT, false);
 	}
 
 	@SuppressWarnings("unchecked")
-	private TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length, MessageType type) {
+	private TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length, MessageType type, boolean importantOnly) {
 
 		TopicListPart mlp = new TopicListPart();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -236,7 +247,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				VoUser user = getCurrentUser(pm);
 				pm.retrieve(user);
 				VoUserGroup group = user.getGroupById(groupId);
-				List<VoTopic> topics = getTopics(group, type, lastLoadedTopicId, length, pm);
+				List<VoTopic> topics = getTopics(group, type, lastLoadedTopicId, length, importantOnly, pm);
 
 				if (topics.isEmpty()) {
 					logger.fine("can't find any topics");
@@ -279,42 +290,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 		return mlp;
 
-	}
-
-	@Override
-	public long restoreTopicFromArchive(long topicId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public long makeMessageLinked(long message1Id, long message2Id) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public long markTopicUnintrested(long topicId, boolean interested) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public long markReadMessage(long messageId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public long markReadTopic(long topicId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public long moveTopicToArchive(long topicId) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
@@ -363,21 +338,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		} finally {
 			pm.close();
 		}
-	}
-
-	@Override
-	public UserOpinion likeOrDislikeMessage(long messageId, int opinion) throws InvalidOperation {
-		if (opinion > 0)
-			return this.<VoMessage, VoUserMessage> like(messageId, VoMessage.class, VoUserMessage.class, new VoUserMessage(), true);
-
-		return this.<VoMessage, VoUserMessage> like(messageId, VoMessage.class, VoUserMessage.class, new VoUserMessage(), false);
-	}
-
-	@Override
-	public UserOpinion likeOrDislikeTopic(long topicId, int opinion) throws InvalidOperation {
-		if (opinion > 0)
-			return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic(), true);
-		return this.<VoTopic, VoUserTopic> like(topicId, VoTopic.class, VoUserTopic.class, new VoUserTopic(), false);
 	}
 
 	/**
@@ -434,7 +394,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return msg;
 	}
 
-	protected <T extends VoBaseMessage, UserT extends VoUserObject> UserOpinion like(long messageId, Class<T> tclass, Class<UserT> tUserClass,
+	/*protected <T extends VoBaseMessage, UserT extends VoUserObject> UserOpinion like(long messageId, Class<T> tclass, Class<UserT> tUserClass,
 			UserT newObject, boolean like) throws InvalidOperation {
 		long userId = getCurrentUserId();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -493,7 +453,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			msg.decrementLikes();
 		}
 		um.setRead(true);
-	}
+	}*/
 
 	private void initDb() throws InvalidOperation {
 		con = new MySQLJDBCConnector();
@@ -559,8 +519,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 			VoTopic topic = pm.getObjectById(VoTopic.class, storedMsg.getTopicId());
 			if (null != topic) {
-				topic.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
-				topic.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());
+				/*topic.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
+				topic.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());*/
 			} else {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No topic found by id=" + storedMsg.getTopicId()
 						+ " that stored in Message ID=" + msg.getId());
@@ -576,8 +536,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 			VoUser author = pm.getObjectById(VoUser.class, storedMsg.getAuthorId());
 			if (null != author) {
-				author.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
-				author.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());
+				/*author.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
+				author.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());*/
 			} else {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No AUTHOR found by id=" + storedMsg.getAuthorId()
 						+ " that stored in Message ID=" + msg.getId());
@@ -588,8 +548,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs,
 						"Parameters: topic, author, recipient, createdAt, type could not be changed!");
 
-			storedMsg.setLikes(msg.getLikesNum());
-			storedMsg.setUnlikes(msg.getUnlikesNum());
+			/*storedMsg.setLikes(msg.getLikesNum());
+			storedMsg.setUnlikes(msg.getUnlikesNum());*/
 			pm.makePersistent(storedMsg);
 			pm.makePersistent(topic);
 			pm.makePersistent(storedMsg);
@@ -618,8 +578,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 						+ topic.getRubricId());
 			}
 
-			theTopic.setLikes(topic.likesNum);
-			theTopic.setUnlikes(topic.unlikesNum);
 			theTopic.setUsersNum(topic.usersNum);
 			theTopic.setViewers(topic.viewers);
 			theTopic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
@@ -649,8 +607,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public int markMessageImportant(long messageId, boolean isImportant) throws InvalidOperation, TException {
-		// TODO Auto-generated method stub
-		return 0;
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoTopic msg = pm.getObjectById(VoTopic.class, messageId);
+			VoUser  author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
+			return msg.markImportant(getCurrentUser(), author, isImportant, pm);
+		} finally {
+			pm.close();
+		}
 	}
 	
 }
