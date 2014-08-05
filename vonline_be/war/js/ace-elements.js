@@ -253,9 +253,19 @@ jQuery(function() {
 		
 		var deferred = new $.Deferred
 		var reader = new FileReader();
+
+        /*var fd = new FormData();
+        var input = $('#attachImage-0');
+        fd.append( 'data', input[0].files[0]);*/
+
+
 		reader.onload = function (e) {
 			$span.prepend("<img class='middle' style='display:none;' />");
 			var img = $span.find('img:last').get(0);
+            //alert(reader.result);
+            /*for(var p in reader.result){
+                console.log(p+" "+reader.result[p]);
+            }*/
 
 			$(img).one('load', function() {
 				//if image loaded successfully
@@ -294,6 +304,7 @@ jQuery(function() {
 			deferred.reject({code:Ace_File_Input.error['FILE_LOAD_FAILED']});
 		}
 		reader.readAsDataURL(file);
+		//reader.readAsText(file);
 
 		return deferred.promise();
 	}
