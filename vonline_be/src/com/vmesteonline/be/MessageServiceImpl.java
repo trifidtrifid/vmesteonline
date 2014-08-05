@@ -39,7 +39,7 @@ import com.vmesteonline.be.messageservice.WallItem;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
-	
+
 	public MessageServiceImpl() throws InvalidOperation {
 		initDb();
 	}
@@ -49,11 +49,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		initDb();
 	}
 
-	
 	@Override
 	public void sendToInfo(String from, String body) throws TException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -101,6 +100,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public MessageListPart getMessagesAsList(long topicId, MessageType messageType, long lastLoadedId, boolean archived, int length)
 			throws InvalidOperation {
+		if (messageType != MessageType.BLOG)
+			getCurrentUserId();
 
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -110,8 +111,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
 			Collections.sort(voMsgs, new VoMessage.ComparatorByCreateDate());
 
-			VoUser user = getCurrentUser(pm);
-
 			if (lastLoadedId != 0) {
 				List<VoMessage> subLst = null;
 				for (int i = 0; i < voMsgs.size() - 1; i++) {
@@ -120,7 +119,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				}
 				voMsgs = (subLst == null) ? new ArrayList<VoMessage>() : subLst;
 			}
-			return createMlp(voMsgs, user.getId(), pm, length);
+			return createMlp(voMsgs, pm, length);
 		} finally {
 			pm.close();
 		}
@@ -145,7 +144,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				voMsgs = (subLst == null) ? new ArrayList<VoMessage>() : subLst;
 			}
 
-			return createMlp(voMsgs, user.getId(), pm, length);
+			return createMlp(voMsgs, pm, length);
 		} finally {
 			pm.close();
 		}
@@ -162,31 +161,30 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			VoUser user = getCurrentUser(pm);
 			MessagesTree tree = MessagesTree.createMessageTree(topicId, pm);
 			List<VoMessage> voMsgs = tree.getTreeMessagesAfter(lastLoadedMsgId, new MessagesTree.Filters(user.getId(), user.getGroupById(groupId)));
-			return createMlp(voMsgs, user.getId(), pm, length);
+			return createMlp(voMsgs, pm, length);
 		} finally {
 			pm.close();
 		}
 
 	}
 
-
 	public List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly, PersistenceManager pm) {
-		return getTopics(group, type, lastLoadedTopicId, length, importantOnly, con ,pm);
+		return getTopics(group, type, lastLoadedTopicId, length, importantOnly, con, pm);
 	}
-	
-	
-	public static List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly, JDBCConnector con, PersistenceManager pm) {
-	
+
+	public static List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly,
+			JDBCConnector con, PersistenceManager pm) {
+
 		String req = "select `id` from topic where";
 		if (group != null)
 			req += " radius <= " + group.getRadius() + " and longitude <= "
-					+ VoHelper.getLongitudeMax(group.getLongitude(), group.getLatitude(),group.getRadius()).toPlainString() + " and longitude >= "
-					+ VoHelper.getLongitudeMin(group.getLongitude(), group.getLatitude(),group.getRadius()).toPlainString() + " and lattitude <= "
+					+ VoHelper.getLongitudeMax(group.getLongitude(), group.getLatitude(), group.getRadius()).toPlainString() + " and longitude >= "
+					+ VoHelper.getLongitudeMin(group.getLongitude(), group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude <= "
 					+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
 					+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString();
-		else if( type != MessageType.BLOG )
+		else if (type != MessageType.BLOG)
 			return null;
-		
+
 		switch (type) {
 
 		case BASE:
@@ -199,7 +197,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			req += " and messageType != " + Integer.toString(MessageType.ADVERT.getValue());
 			break;
 		case BLOG:
-			req += " messageType == " + Integer.toString(MessageType.BLOG.getValue());
+			req += " messageType = " + Integer.toString(MessageType.BLOG.getValue());
 			break;
 
 		default:
@@ -217,10 +215,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			while (rs.next() && topics.size() < length) {
 				long topicId = rs.getLong(1);
 				VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
-				if (addTopic && (!importantOnly || group.getImportantScore() <= topic.getImportantScore( ))) {
+				if (addTopic && (!importantOnly || group.getImportantScore() <= topic.getImportantScore())) {
 					topics.add(topic);
 					long topicAge = (System.currentTimeMillis() / 1000L) - topic.getLastUpdate();
-					if( importantOnly && ( topics.size() > 4 || topicAge  > 86400*7 )) //в запросе важных возвращается не более 5 и не старше недели 
+					if (importantOnly && (topics.size() > 4 || topicAge > 86400 * 7)) // в запросе важных возвращается не более 5 и не старше недели
 						break;
 				} else if (topic.getId() == lastLoadedTopicId) {
 					addTopic = true;
@@ -266,7 +264,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@SuppressWarnings("unchecked")
-	private TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length, MessageType type, boolean importantOnly) {
+	private TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length, MessageType type,
+			boolean importantOnly) {
 
 		TopicListPart mlp = new TopicListPart();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -393,21 +392,49 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public Message postMessage(Message msg) throws InvalidOperation, TException {
+	public Message postBlogMessage(Message msg) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			try {
+
+				VoUser voUser = getCurrentUser();
+				msg.anonName += voUser.getName() + " " + voUser.getLastName();
+
+			} catch (InvalidOperation e) {
+				if (msg.getAnonName() == null || msg.getAnonName().isEmpty())
+					throw new InvalidOperation(VoError.IncorrectParametrs, "has no user name");
+			}
+
+			VoMessage vomsg = new VoMessage(msg, MessageType.BLOG);
+			pm.makePersistent(vomsg);
+			msg.setId(vomsg.getId());
+			return msg;
+
+		} finally {
+			pm.close();
+		}
+
+	}
+
+	@Override
+	public Message postMessage(Message msg) throws InvalidOperation {
 		long userId = getCurrentUserId();
 		msg.setAuthorId(userId);
 		VoMessage vomsg;
+
 		if (0 == msg.getId()) {
 			PersistenceManager pm = PMF.getPm();
 			try {
 				try {
+
 					vomsg = new VoMessage(msg);
 					VoTopic topic = pm.getObjectById(VoTopic.class, msg.getTopicId());
 					topic.setMessageNum(topic.getMessageNum() + 1);
 					topic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
 					pm.makePersistent(topic);
-					VoUser user = getCurrentUser(pm);
-					msg.userInfo = user.getShortUserInfo();
+
+					if (msg.type != MessageType.BLOG)
+						msg.userInfo = getCurrentUser(pm).getShortUserInfo();
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -424,68 +451,31 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return msg;
 	}
 
-	/*protected <T extends VoBaseMessage, UserT extends VoUserObject> UserOpinion like(long messageId, Class<T> tclass, Class<UserT> tUserClass,
-			UserT newObject, boolean like) throws InvalidOperation {
-		long userId = getCurrentUserId();
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
-
-			T msg;
-			try {
-				msg = (T) pm.getObjectById(tclass, messageId);
-			} catch (Exception e) {
-				throw new InvalidOperation(VoError.IncorrectParametrs, "can't find object with id " + messageId);
-			}
-
-			UserT um;
-			try {
-				um = (UserT) pm.getObjectById(tUserClass, VoUserObject.<UserT> createKey(tUserClass, userId, messageId));
-			} catch (Exception e) {
-				um = newObject;
-				um.setUserId(userId);
-				um.setId(messageId);
-			}
-
-			if (like)
-				this.<T, UserT> incrementer(msg, um);
-			else
-				this.<T, UserT> decrementer(msg, um);
-
-			pm.makePersistent(um);
-			pm.makePersistent(msg);
-
-			return new UserOpinion(msg.getLikes(), msg.getUnlikes());
-		} finally {
-			pm.close();
-		}
-	}
-
-	protected <T extends VoBaseMessage, UserT extends VoUserObject> void incrementer(T msg, UserT um) {
-		if (!um.isLikes()) {
-			um.setLikes(true);
-			msg.incrementLikes();
-		}
-
-		if (um.isUnlikes()) {
-			um.setUnlikes(false);
-			msg.decrementUnlikes();
-		}
-		um.setRead(true);
-	}
-
-	protected <T extends VoBaseMessage, UserT extends VoUserObject> void decrementer(T msg, UserT um) {
-		if (!um.isUnlikes()) {
-			um.setUnlikes(true);
-			msg.incrementUnlikes();
-		}
-		if (um.isLikes()) {
-			um.setLikes(false);
-			msg.decrementLikes();
-		}
-		um.setRead(true);
-	}*/
-	
-	
+	/*
+	 * protected <T extends VoBaseMessage, UserT extends VoUserObject> UserOpinion like(long messageId, Class<T> tclass, Class<UserT> tUserClass, UserT
+	 * newObject, boolean like) throws InvalidOperation { long userId = getCurrentUserId(); PersistenceManager pm = PMF.get().getPersistenceManager();
+	 * try {
+	 * 
+	 * T msg; try { msg = (T) pm.getObjectById(tclass, messageId); } catch (Exception e) { throw new InvalidOperation(VoError.IncorrectParametrs,
+	 * "can't find object with id " + messageId); }
+	 * 
+	 * UserT um; try { um = (UserT) pm.getObjectById(tUserClass, VoUserObject.<UserT> createKey(tUserClass, userId, messageId)); } catch (Exception e) {
+	 * um = newObject; um.setUserId(userId); um.setId(messageId); }
+	 * 
+	 * if (like) this.<T, UserT> incrementer(msg, um); else this.<T, UserT> decrementer(msg, um);
+	 * 
+	 * pm.makePersistent(um); pm.makePersistent(msg);
+	 * 
+	 * return new UserOpinion(msg.getLikes(), msg.getUnlikes()); } finally { pm.close(); } }
+	 * 
+	 * protected <T extends VoBaseMessage, UserT extends VoUserObject> void incrementer(T msg, UserT um) { if (!um.isLikes()) { um.setLikes(true);
+	 * msg.incrementLikes(); }
+	 * 
+	 * if (um.isUnlikes()) { um.setUnlikes(false); msg.decrementUnlikes(); } um.setRead(true); }
+	 * 
+	 * protected <T extends VoBaseMessage, UserT extends VoUserObject> void decrementer(T msg, UserT um) { if (!um.isUnlikes()) { um.setUnlikes(true);
+	 * msg.incrementUnlikes(); } if (um.isLikes()) { um.setLikes(false); msg.decrementLikes(); } um.setRead(true); }
+	 */
 
 	private void initDb() throws InvalidOperation {
 		con = new MySQLJDBCConnector();
@@ -519,7 +509,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
-	private static MessageListPart createMlp(List<VoMessage> lst, long userId, PersistenceManager pm, int length) throws InvalidOperation {
+	private static MessageListPart createMlp(List<VoMessage> lst, PersistenceManager pm, int length) throws InvalidOperation {
 
 		if (lst.size() > length)
 			lst = lst.subList(0, length);
@@ -531,10 +521,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 		mlp.totalSize = lst.size();
 		for (VoMessage voMessage : lst) {
-			VoUserMessage voUserMsg = VoDatastoreHelper.<VoUserMessage> getUserMsg(VoUserMessage.class, userId, voMessage.getId(), pm);
 			Message msg = voMessage.getMessage(pm);
-			msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId());
-			msg.userMessage = null == voUserMsg ? null : voUserMsg.getUserMessage();
+			if (voMessage.getAuthorId() != null)
+				msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId());
+
 			mlp.addToMessages(msg);
 		}
 		return mlp;
@@ -551,8 +541,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 			VoTopic topic = pm.getObjectById(VoTopic.class, storedMsg.getTopicId());
 			if (null != topic) {
-				/*topic.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
-				topic.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());*/
+				/*
+				 * topic.updateLikes(msg.getLikesNum() - storedMsg.getLikes()); topic.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());
+				 */
 			} else {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No topic found by id=" + storedMsg.getTopicId()
 						+ " that stored in Message ID=" + msg.getId());
@@ -568,8 +559,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 			VoUser author = pm.getObjectById(VoUser.class, storedMsg.getAuthorId());
 			if (null != author) {
-				/*author.updateLikes(msg.getLikesNum() - storedMsg.getLikes());
-				author.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());*/
+				/*
+				 * author.updateLikes(msg.getLikesNum() - storedMsg.getLikes()); author.updateUnlikes(msg.getUnlikesNum() - storedMsg.getUnlikes());
+				 */
 			} else {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "No AUTHOR found by id=" + storedMsg.getAuthorId()
 						+ " that stored in Message ID=" + msg.getId());
@@ -580,8 +572,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs,
 						"Parameters: topic, author, recipient, createdAt, type could not be changed!");
 
-			/*storedMsg.setLikes(msg.getLikesNum());
-			storedMsg.setUnlikes(msg.getUnlikesNum());*/
+			/*
+			 * storedMsg.setLikes(msg.getLikesNum()); storedMsg.setUnlikes(msg.getUnlikesNum());
+			 */
 			pm.makePersistent(storedMsg);
 			pm.makePersistent(topic);
 			pm.makePersistent(storedMsg);
@@ -642,19 +635,19 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoTopic msg = pm.getObjectById(VoTopic.class, messageId);
-			VoUser  author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
+			VoUser author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
 			return msg.markImportant(getCurrentUser(), author, isImportant, pm);
 		} finally {
 			pm.close();
 		}
 	}
-	
+
 	@Override
 	public int markMessageLike(long messageId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoTopic msg = pm.getObjectById(VoTopic.class, messageId);
-			VoUser  author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
+			VoUser author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
 			return msg.markLikes(getCurrentUser(), author, pm);
 		} finally {
 			pm.close();

@@ -54,12 +54,26 @@ public class VoMessage extends VoBaseMessage {
 		this.radius = radius;
 	}
 
+	public VoMessage(Message msg, MessageType type) {
+		this.topicId = msg.getTopicId();
+		// todo shoud be long
+		if (msg.getAuthorId() != 0)
+			this.authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
+
+		this.userNameForBlog = msg.getAnonName();
+		this.content = msg.getContent().getBytes();
+		createdAt = msg.getCreated();
+		images = new ArrayList<Long>();
+		images = new ArrayList<Long>();
+		documents = new ArrayList<Long>();
+
+	}
+
 	// TODO do smthing with this. constructor should not be like this. create factory or smth else
 	public VoMessage(Message msg) throws InvalidOperation, IOException {
 
 		super(msg);
 		this.topicId = msg.getTopicId();
-		this.parentId = msg.getParentId();
 		this.parentId = msg.getParentId();
 		this.recipient = msg.getRecipientId();
 
@@ -154,8 +168,13 @@ public class VoMessage extends VoBaseMessage {
 			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
 			docs.add(att.getAttach());
 		}
-		return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(), 0,
-				links, null, null, visibleOffset, null, imgs, docs, null);
+
+		if (authorId == null)
+			return new Message(id.getId(), getParentId(), type, topicId, 0L, 0, createdAt, editedAt, new String(content), getLikes(), 0, links, null, null,
+					visibleOffset, null, imgs, docs, userNameForBlog);
+		else
+			return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(), 0,
+					links, null, null, visibleOffset, null, imgs, docs, userNameForBlog);
 	}
 
 	public long getApprovedId() {
@@ -207,6 +226,10 @@ public class VoMessage extends VoBaseMessage {
 	@Persistent
 	@Unindexed
 	private long parentId;
+
+	@Persistent
+	@Unindexed
+	private String userNameForBlog;
 
 	protected int visibleOffset;
 
