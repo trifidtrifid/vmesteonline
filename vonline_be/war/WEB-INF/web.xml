@@ -76,6 +76,24 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/blog</url-pattern>
 	</servlet-mapping>
 
+    <servlet>
+        <servlet-name>Contacts</servlet-name>
+        <jsp-file>/contacts.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Contacts</servlet-name>
+        <url-pattern>/contacts</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>About</servlet-name>
+        <jsp-file>/about.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>About</servlet-name>
+        <url-pattern>/about</url-pattern>
+    </servlet-mapping>
+
 	<servlet>
 		<servlet-name>Main</servlet-name>
 		<jsp-file>/main.jsp</jsp-file>

@@ -173,26 +173,34 @@
                         <li ng-class="{active:isSet(3)}"><a ui-sref="adverts"> <span class="menu-text">Услуги и объявления</span> </a></li>
 
 					</ul>
+                    <div class="footer-left">
+                        (c) Вместе Онлайн 2014
+                        <ul>
+                            <li><a href="about" target="_blank">О нас</a></li>
+                            <li><a href="blog" target="_blank">Блог</a></li>
+                            <li><a href="contacts" target="_blank">Контакты</a></li>
+                        </ul>
+                    </div>
 				</aside>
                 <aside class="sidebar-right" ng-controller="rightBarController as rightbar">
                     <div class="importantly-top">
                         Важно
                     </div>
                     <ul>
-                        <li>
-                            <div class="importantly-left"><img src="i/avatars/avatar.png" alt="картинка"/></div>
-                            <div class="importantly-right">
-                                <h3>Ольга Янина</h3>
-                                <p>Уважаемые соседи, 16 мая будет отключена горячая вода на один день</p>
-                                <a href="#">Перейти к записи</a>
+                        <li ng-repeat="importantTopic in rightbar.importantTopics">
+                            <div class="importantly-left">
+                                <div class="avatar short2" style="background-image: url({{importantTopic.userInfo.avatar}})"></div>
                             </div>
-                        </li>
-                        <li>
-                            <div class="importantly-left"><img src="i/avatars/avatar.png" alt="картинка"/></div>
                             <div class="importantly-right">
-                                <h3>Ольга Янина</h3>
-                                <p>Уважаемые соседи, 16 мая будет отключена горячая вода на один день</p>
-                                <a href="#">Перейти к записи</a>
+                                <h3>{{importantTopic.userInfo.firstName +" "+ importantTopic.userInfo.lastName}}</h3>
+                                <p>{{ importantTopic.topic.message.content }}</p>
+
+                                <div ng-switch on="importantTopic.topic.message.type" >
+
+                                    <a ui-sref="wall-single-({ topicId :{{ importantTopic.topic.id }})" ng-switch-when="5">Перейти к записи</a>
+                                    <a ui-sref="talks-single-({ talkId :{{ importantTopic.topic.id }})" ng-switch-when="1">Перейти к записи</a>
+
+                                </div>
                             </div>
                         </li>
                     </ul>
