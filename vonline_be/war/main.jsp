@@ -187,20 +187,20 @@
                         Важно
                     </div>
                     <ul>
-                        <li>
-                            <div class="importantly-left"><img src="i/avatars/avatar.png" alt="картинка"/></div>
-                            <div class="importantly-right">
-                                <h3>Ольга Янина</h3>
-                                <p>Уважаемые соседи, 16 мая будет отключена горячая вода на один день</p>
-                                <a href="#">Перейти к записи</a>
+                        <li ng-repeat="importantTopic in rightbar.importantTopics">
+                            <div class="importantly-left">
+                                <div class="avatar short2" style="background-image: url({{importantTopic.userInfo.avatar}})"></div>
                             </div>
-                        </li>
-                        <li>
-                            <div class="importantly-left"><img src="i/avatars/avatar.png" alt="картинка"/></div>
                             <div class="importantly-right">
-                                <h3>Ольга Янина</h3>
-                                <p>Уважаемые соседи, 16 мая будет отключена горячая вода на один день</p>
-                                <a href="#">Перейти к записи</a>
+                                <h3>{{importantTopic.userInfo.firstName +" "+ importantTopic.userInfo.lastName}}</h3>
+                                <p>{{ importantTopic.topic.message.content }}</p>
+
+                                <div ng-switch on="importantTopic.topic.message.type" >
+
+                                    <a ui-sref="wall-single-({ topicId :{{ importantTopic.topic.id }})" ng-switch-when="5">Перейти к записи</a>
+                                    <a ui-sref="talks-single-({ talkId :{{ importantTopic.topic.id }})" ng-switch-when="1">Перейти к записи</a>
+
+                                </div>
                             </div>
                         </li>
                     </ul>

@@ -798,8 +798,15 @@ h1 {
   position: absolute;
   bottom: 3px;
 }
-.lenta-item .lenta-item-hashtag {
-  float: right;
+.lenta-item .fa-star {
+  color: #ccc;
+  font-size: 16px;
+  margin-right: 10px;
+  margin-top: 4px;
+}
+.lenta-item .fa-star:hover,
+.lenta-item .fa-star.important {
+  color: #ffea4a;
 }
 .itemdiv.dialogdiv > .body {
   margin-left: 58px;

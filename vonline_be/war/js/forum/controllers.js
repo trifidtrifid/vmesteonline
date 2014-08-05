@@ -139,6 +139,13 @@ angular.module('forum.controllers', ['ui.select2'])
 
         base.bufferSelectedGroup = userClientGroups[0];
 
+        base.markImportant = function(event,message){
+            event.preventDefault();
+
+            message.important = 3;
+            messageClient.markMessageImportant(message.id);
+        };
+
         base.showAllGroups = function(){
             var groupsLength = $rootScope.groups.length;
             for(var i = 0; i < groupsLength; i++){
@@ -211,6 +218,9 @@ angular.module('forum.controllers', ['ui.select2'])
     };
   })
     .controller('rightBarController',function() {
+        var rightbar = this;
+
+        rightbar.importantTopics = messageClient.getImportantTopics();
     })
     .controller('mainContentTopController',function($rootScope) {
         var topCtrl = this;
@@ -506,6 +516,19 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $('.ng-cloak').removeClass('ng-cloak');
 
+    })
+    .controller('WallSingleController',function($rootScope, $stateParams){
+        var wallSingle = this;
+
+        // временно, нужна функция getWallItem(topicId)
+        var wallItems = messageClient.getWallItems($rootScope.currentGroup.id),
+        wallItemsLength = wallItems.length,
+            wallItem;
+        for(var i = 0; i < wallItemsLength; i++){
+            if(wallItems[i].id == $stateParams.topicId){
+                wallItem = wallItems[i];
+            }
+        }
     })
     .controller('TalksController',function($rootScope) {
         /*
