@@ -112,8 +112,18 @@ angular.module('forum.controllers', ['ui.select2'])
                                     event.target.style.height = defaultHeight+'px';
 
                 }else{
-                    newRowCount = parseInt(textLength*8/clientWidth);
-                    event.target.style.height = newRowCount*14+'px';
+                    //newRowCount = parseInt(textLength*8/clientWidth);
+
+                    event.target.style.height = scrollHeight-6+'px';
+
+                    /*if(newRowCount*14 < defaultHeight){
+                        console.log("3.5 "+event.target.style.height+" "+scrollHeight/textLength);
+                        //event.target.style.height = parseInt(event.target.style.height) - scrollHeight/textLength+"px";
+                        event.target.style.height = scrollHeight;
+
+                    }else{
+                        event.target.style.height = newRowCount*14+'px';
+                    }*/
                     console.log("5 "+textLength+" "+textLength*8/clientWidth);
                 }
             }else{
