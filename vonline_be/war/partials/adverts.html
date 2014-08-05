@@ -1,0 +1,95 @@
+
+    <section class="adverts page" ng-show="base.advertsIsActive">
+
+        <section class="create-topic" ng-hide="base.createTopicIsHide">
+            <div class="has-info form-group">
+                <input type="text" class="width-100 head" value="Заголовок"
+                       onblur="if(this.value=='') this.value='Заголовок';"
+                       onfocus="if(this.value=='Заголовок') this.value='';" ng-model="adverts.subject" />
+            </div>
+            <div class="topic-body clearfix">
+                <textarea ng-model="adverts.content" class="no-resize" ng-keyup="base.messageChange($event,1)"
+                    onblur="if(this.value=='') this.value='Сообщение';"
+                    onfocus="if(this.value=='Сообщение') this.value='';"></textarea>
+
+                <div class="create-poll" ng-show="adverts.isPollShow">
+                    <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="adverts.isPollShow = false;adverts.isPollAvailable = true;">&times;</a>
+                    <h5>Тема опроса:</h5>
+                    <input type="text" ng-model="adverts.pollSubject"/>
+                    <h5>Варианты ответов:</h5>
+                    <div ng-repeat="input in adverts.pollInputs">
+                        <input ng-model="input.name" type="text"/>
+                    </div>
+                    <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,adverts)"/>
+                </div>
+
+                <div class="attach-area" id="attach-area-00000"></div>
+                <div class="attach-area attach-area-doc" id="attach-doc-area-00000"></div>
+
+                <div class="message-input-bottom">
+
+                    <div class="btn-group pull-left">
+                        <button class="btn btn-sm btn-primary" ng-click="adverts.addSingleAdverts()">
+                        Создать
+                        </button>
+                    </div>
+
+                    <div class="hashtag pull-left">
+                        <span>группа</span>
+                        <div class="btn-group hashtag-dropdown">
+                            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                                <span class="btn-group-text"># {{adverts.selectedGroup.visibleName}}</span>
+                                <span class="icon-caret-down icon-on-right"></span>
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-blue">
+                                <li ng-repeat="group in adverts.groups"><a href="#" ng-click="adverts.selectGroupInDropdown(group.id,adverts)"># {{group.visibleName}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <span class="error-info" ng-show="adverts.isCreateAdvertError">{{adverts.createAdvertErrorText}}</span>
+
+
+                    <div class="btn-group attach-dropdown pull-right">
+                        <button data-toggle="dropdown"
+                        class="btn btn-info btn-sm dropdown-toggle no-border">
+                        <span class="btn-group-text">Прикрепить</span> <span class="icon-caret-down icon-on-right"></span>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-yellow">
+
+                            <li><input id="attachImage-00000" type="file"/></li>
+
+                            <li><input id="attachDoc-00000" type="file"/></li>
+
+                        <li><a href="#" ng-click="base.showPoll($event,adverts)" ng-show="adverts.isPollAvailable">Опрос</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </section>
+
+        <section class="talks-title-block">
+
+            <div class="talks-title" ng-repeat="advert in adverts.topics" id="{{advert.id}}">
+                <div class="talks-title-left load-talk">
+                    <div><a ui-sref="adverts-single({ advertId : {{advert.id}} })">{{advert.subject}}</a></div>
+                    <div>{{advert.messageNum}} сообщений</div>
+                </div>
+                <div class="talks-title-right">
+                                <span class="label label-lg arrowed lenta-item-hashtag pull-right"
+                                      ng-class="advert.tagColor">{{advert.label}}</span>
+                    <div class="clearfix"></div>
+
+                    <div>Последнее обновление:</div>
+                    <div>{{advert.lastUpdateEdit}}</div>
+                </div>
+            </div>
+
+        </section>
+
+    </section>
+

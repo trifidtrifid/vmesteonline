@@ -55,6 +55,9 @@
 <head>
 <meta charset="utf-8" />
 <title>Главная</title>
+    <link rel="icon" href="i/home1.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="i/home1.ico" type="image/x-icon" />
+
     <link rel="stylesheet" href="css/lib/jquery-ui-1.10.3.full.min.css" />
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>
@@ -136,6 +139,9 @@
             </ul>
         </div>
 
+    </div>
+    <div class="container">
+
         <form method="post" action="#" class="form-group has-info form-search" ng-show="isTopSearchShow">
             <span class="block input-icon input-icon-right">
                 <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
@@ -159,17 +165,7 @@
 					<ul class="nav nav-list">
                         <li ng-class="{active:isSet(1)}"><a ui-sref="main"> <span class="menu-text">Новости</span> </a></li> <!--  ng-click="setTab($event,1)" -->
                         <li ng-class="{active:isSet(2)}"><a ui-sref="talks"> <span class="menu-text">Обсуждения</span> </a></li> <!-- ng-click="setTab($event,2)" -->
-                        <li ng-class="{active:isSet(3)}"><a ui-sref="services"> <span class="menu-text">Услуги и объявления</span> </a></li>
-						<%--<c:forEach var="rubric" items="${rubrics}">
-							<li><a href="#" data-rubricid="${rubric.id}"> <span
-									class="menu-text">${rubric.visibleName}</span> <b>(3)</b>
-							</a></li>
-						</c:forEach>--%>
-                        <%--<c:forEach var="group" items="${groups}">
-                            <li><a href="#" data-rubricid="${group.id}"> <span
-                                    class="menu-text">${group.visibleName}</span> <b>(3)</b>
-                            </a></li>
-                        </c:forEach>--%>
+                        <li ng-class="{active:isSet(3)}"><a ui-sref="adverts"> <span class="menu-text">Услуги и объявления</span> </a></li>
 
 					</ul>
 				</aside>
@@ -204,6 +200,7 @@
 
                     <div class="main-content-top" ng-hide="base.mainContentTopIsHide" ng-controller="mainContentTopController as mainContentTop"
                          ng-class="{'overflow-auto' : base.pageTitle.length}">
+
                         <div class="page-title pull-left" ng-show="base.pageTitle.length">{{base.pageTitle}}</div>
 
                         <nav class="submenu pull-right clearfix">
@@ -212,7 +209,7 @@
 
                         </nav>
 
-                        <div class="create-topic-btn pull-right" ng-show="base.talksIsActive">
+                        <div class="create-topic-btn pull-right" ng-show="base.talksIsActive || base.advertsIsActive">
                             <a class="btn btn-primary btn-sm no-border clearfix" href="#" ng-click="mainContentTop.showCreateTopic($event)">Создать тему</a>
                         </div>
                     </div>

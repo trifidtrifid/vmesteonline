@@ -170,12 +170,16 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	
 	public static List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly, JDBCConnector con, PersistenceManager pm) {
 	
-		String req = "select `id` from topic where radius <= "+group.getRadius()+" and "
-				+ "longitude <= " + VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString()
-				+ " and longitude >= " + VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
-				+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
-				+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString() ;
-
+		String req = "select `id` from topic where";
+		if (group != null)
+			req += " radius <= " + group.getRadius() + " and longitude <= "
+					+ VoHelper.getLongitudeMax(group.getLongitude(), group.getRadius()).toPlainString() + " and longitude >= "
+					+ VoHelper.getLongitudeMin(group.getLongitude(), group.getRadius()).toPlainString() + " and lattitude <= "
+					+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
+					+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString();
+		else if( type != MessageType.BLOG )
+			return null;
+		
 		switch (type) {
 
 		case BASE:
@@ -186,6 +190,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			break;
 		case WALL:
 			req += " and messageType != " + Integer.toString(MessageType.ADVERT.getValue());
+			break;
+		case BLOG:
+			req += " messageType == " + Integer.toString(MessageType.BLOG.getValue());
 			break;
 
 		default:
@@ -218,6 +225,22 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			con.close();
 		}
 		return topics;
+	}
+
+	@Override
+	public TopicListPart getBlog(long lastLoadedTopicId, int length) throws InvalidOperation {
+
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<VoTopic> topics = getTopics(null, MessageType.BLOG, lastLoadedTopicId, length, false, pm);
+		TopicListPart mlp = new TopicListPart();
+		mlp.totalSize = topics.size();
+
+		for (VoTopic voTopic : topics) {
+			Topic tpc = voTopic.getTopic(0, pm);
+			mlp.addToTopics(tpc);
+		}
+		return mlp;
+
 	}
 
 	@Override
@@ -454,6 +477,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 		um.setRead(true);
 	}*/
+	
+	
 
 	private void initDb() throws InvalidOperation {
 		con = new MySQLJDBCConnector();
@@ -617,4 +642,16 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 	
+	@Override
+	public int markMessageLike(long messageId) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoTopic msg = pm.getObjectById(VoTopic.class, messageId);
+			VoUser  author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
+			return msg.markLikes(getCurrentUser(), author, pm);
+		} finally {
+			pm.close();
+		}
+	}
+
 }

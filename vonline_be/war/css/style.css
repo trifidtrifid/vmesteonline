@@ -33,13 +33,11 @@ h1 {
 .navbar-container .navbar-brand img {
   width: 170px;
 }
-.form-search {
-  display: inline-block;
-  width: 40%;
-  margin: 0;
-  margin-top: 5px;
+.navbar .form-search {
+  width: 50%;
+  margin: 5px 0 0 200px;
 }
-.form-search .icon-search:hover {
+.navbar .form-search .icon-search:hover {
   text-decoration: none;
 }
 .ace-nav>li a {
@@ -135,7 +133,7 @@ h1 {
   top: 0;
   width: 190px;
   background: #fff;
-  margin-top: 10px;
+  margin-top: 15px;
   border-right: 1px solid #438eb9;
 }
 .sidebar-right h3 {
@@ -169,7 +167,7 @@ h1 {
 .sidebar-right .importantly-bottom {
   font-size: 11px;
   border-bottom: 1px solid #438eb9;
-  padding: 5px;
+  padding: 3px 5px;
   border-top: 1px solid #438eb9;
 }
 .sidebar-right .importantly-top {
@@ -486,6 +484,20 @@ h1 {
 }
 .wysiwyg-editor a {
   cursor: pointer;
+}
+@media all and (max-width: 1280px) {
+  .navbar .form-search {
+    width: 40%;
+  }
+  .navbar-brand {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+@media all and (max-width: 1000px) {
+  .navbar .form-search {
+    width: 20%;
+  }
 }
 @media all and (max-width: 768px), screen and (device-width: 320px) {
   .sidebar#sidebar {

@@ -138,7 +138,6 @@ angular.module('forum.controllers', ['ui.select2'])
     })
   .controller('navbarController', function($rootScope) {
         this.privateMessagesBtnStatus = "";
-        this.neighboursBtnStatus = "";
         $rootScope.navbar = this;
 
         this.logout = function(event){
@@ -169,17 +168,17 @@ angular.module('forum.controllers', ['ui.select2'])
                 break;
             case 2:
                 $rootScope.base.mainContentTopIsHide = false;
-
-                //if(!tempTalksBool)
                 $rootScope.base.isTalkTitles = true;
-
                 $rootScope.base.talksIsActive = true;
                 $rootScope.currentPage = 'talks';
                 $rootScope.base.pageTitle = "Обсуждения";
                 break;
             case 3:
-                $rootScope.base.servicesIsActive = true;
-                $rootScope.currentPage = 'services';
+                $rootScope.base.mainContentTopIsHide = false;
+                $rootScope.base.isAdvertsTitles = true;
+                $rootScope.base.advertsIsActive = true;
+                $rootScope.currentPage = 'adverts';
+                $rootScope.base.pageTitle = "Объявления";
                 break;
             default :
                 break;
@@ -198,7 +197,7 @@ angular.module('forum.controllers', ['ui.select2'])
     .controller('mainContentTopController',function($rootScope) {
         var topCtrl = this;
 
-        topCtrl.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
+        topCtrl.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         var groups = topCtrl.groups,
             groupsLength = groups.length;
         groups[0].selected = true;
@@ -230,6 +229,8 @@ angular.module('forum.controllers', ['ui.select2'])
                 $rootScope.wallChangeGroup(group.id);
             }else if($rootScope.currentPage == 'talks'){
                 $rootScope.talksChangeGroup(group.id);
+            }else if($rootScope.currentPage == 'adverts'){
+                $rootScope.advertsChangeGroup(group.id);
             }else if($rootScope.currentPage == 'neighbours'){
                 $rootScope.neighboursChangeGroup(group.id);
             }
@@ -250,7 +251,7 @@ angular.module('forum.controllers', ['ui.select2'])
         initFancyBox($('.forum'));
 
         var lenta = this;
-        lenta.groups = userClientGroups.reverse();// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
+        lenta.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroup = lenta.selectedGroupInTop = $rootScope.currentGroup;
         lenta.isPollShow = false;
         lenta.pollSubject = "";
@@ -505,7 +506,7 @@ angular.module('forum.controllers', ['ui.select2'])
             $rootScope.base.createTopicIsHide = true;
             var talk = this;
             talk.isTalksLoaded = false;
-            talk.groups = userClientGroups.reverse();
+            talk.groups = userClientGroups;
 
             talk.content = TEXT_DEFAULT_3;
             talk.subject = TEXT_DEFAULT_4;
@@ -646,7 +647,7 @@ angular.module('forum.controllers', ['ui.select2'])
         talk.fullTalkTopic = {};
         talk.fullTalkMessages = {};
         talk.fullTalkFirstMessages = [];
-        talk.groups = userClientGroups.reverse();
+        talk.groups = userClientGroups;
 
         var showFullTalk = function(talk,talkOutsideId){
 
@@ -994,7 +995,434 @@ angular.module('forum.controllers', ['ui.select2'])
 
 
     })
-    .controller('ServicesController',function() {
+    .controller('AdvertsController',function($rootScope) {
+        var adverts = this;
+
+        $rootScope.setTab(3);
+
+        initAttachImage($('#attachImage-00000'), $('#attach-area-00000')); // для обсуждений
+        initAttachDoc($('#attachDoc-00000'), $('#attach-doc-area-00000')); // для обсуждений
+        initFancyBox($('.adverts'));
+
+        $rootScope.base.createTopicIsHide = true;
+        adverts.isAdvertsLoaded = false;
+        adverts.groups = userClientGroups;
+
+        adverts.content = TEXT_DEFAULT_3;
+        adverts.subject = TEXT_DEFAULT_4;
+
+        adverts.isPollShow = false;
+        adverts.pollSubject = "";
+        adverts.pollInputs = [
+            {
+                counter: 0,
+                name: ""
+            },
+            {
+                counter: 1,
+                name: ""
+            }
+        ];
+        adverts.isPollAvailable = true;
+        adverts.answerFirstMessage = "Ваш ответ";
+
+       /* adverts.fullAdvertsTopic = {};
+        adverts.fullAdvertsTopic.answerInputIsShow = false;
+        adverts.fullAdvertsMessages = [];
+        adverts.fullAdvertsFirstMessages = [];
+        var fullAdvertsFirstMessagesLength,
+            advertsId;*/
+
+        $rootScope.currentGroup = adverts.selectedGroup = adverts.groups[0];
+        adverts.topics = messageClient.getAdverts(adverts.selectedGroup.id, 0, 1000).topics;
+        //adverts.topics = messageClient.getTopics(adverts.selectedGroup.id, 0, 0, 0, 1000).topics;
+
+        initAdverts();
+
+        if (!adverts.topics) adverts.topics = [];
+
+        adverts.selectGroupInDropdown = selectGroupInDropdown;
+
+        adverts.addSingleAdverts = function(){
+            adverts.attachedImages = getAttachedImages($('#attach-area-00000'));
+            adverts.attachedDocs = getAttachedDocs($('#attach-doc-area-00000'));
+            if(adverts.subject == TEXT_DEFAULT_4 || adverts.subject == ""){
+
+                adverts.isCreateAdvertsError = true;
+                adverts.createAdvertsErrorText = "Вы не указали заголовок";
+
+            }else if(adverts.attachedImages.length == 0 && (adverts.attachedDocs === undefined || adverts.attachedDocs.length == 0) && !adverts.isPollShow
+                && adverts.content == TEXT_DEFAULT_3){
+
+                adverts.isCreateAdvertsError = true;
+                adverts.createAdvertsErrorText = "Вы не ввели сообщение";
+
+            }else if(adverts.isPollShow && (!adverts.pollSubject || adverts.pollInputs[0].name == "" || adverts.pollInputs[1].name == "")){
+
+                adverts.isCreateAdvertsError = true;
+                adverts.createAdvertsErrorText = "Вы не указали данные для опроса";
+
+            }else {
+
+                if (adverts.content == TEXT_DEFAULT_3 && (adverts.attachedImages || adverts.attachedDocs || adverts.isPollShow)) {
+                    adverts.content = "";
+                }
+                adverts.isCreateAdvertsError = false;
+                var isWall = 0, isAdverts = true,
+                    newTopic = postTopic(adverts, isWall,isAdverts);
+                newTopic.label = getLabel(adverts.groups,newTopic.message.groupId);
+                newTopic.tagColor = getTagColor(newTopic.label);
+
+                $rootScope.base.createTopicIsHide = true;
+
+                adverts.topics.unshift(newTopic);
+            }
+
+            cleanAttached($('#attach-area-00000'));
+            cleanAttached($('#attach-doc-area-00000'));
+            adverts.subject = TEXT_DEFAULT_4;
+
+        };
+
+        function initAdverts(){
+            var topicLength;
+            adverts.topics ? topicLength = adverts.topics.length : topicLength = 0;
+
+            for(var i = 0; i < topicLength;i++){
+                adverts.topics[i].lastUpdateEdit = getTiming(adverts.topics[i].lastUpdate);
+                adverts.topics[i].label = getLabel(adverts.groups,adverts.topics[i].message.groupId);
+                adverts.topics[i].tagColor = getTagColor(adverts.topics[i].label);
+            }
+        }
+
+        $rootScope.advertsChangeGroup = function(groupId){
+
+            adverts.topics = messageClient.getAdverts(groupId,0,1000).topics;
+
+            initAdverts();
+
+        };
+
+    })
+    .controller('AdvertsSingleController',function($rootScope,$stateParams) {
+        var advert = this,
+            fullAdvertMessagesLength,
+            advertId = $stateParams.advertId;
+
+        advert.selectedGroup = $rootScope.currentGroup;
+        advert.topics = messageClient.getAdverts(advert.selectedGroup.id, 0, 1000).topics;
+        advert.fullAdvertTopic = {};
+        advert.fullAdvertMessages = {};
+        advert.fullAdvertFirstMessages = [];
+        advert.groups = userClientGroups;
+
+        var showFullTalk = function(advert,advertOutsideId){
+
+            initFancyBox($('.adverts-single'));
+            var topicLength;
+            advert.topics ? topicLength = advert.topics.length : topicLength = 0;
+
+            var advertId = advertOutsideId,
+                fullAdvertFirstMessagesLength;
+            for(var i = 0; i < topicLength; i++){
+                if(advertId == advert.topics[i].id){
+                    advert.fullAdvertTopic = advert.topics[i];
+                    advert.fullAdvertTopic.message.createdEdit = getTiming(advert.fullAdvertTopic.message.created);
+                    advert.fullAdvertTopic.label = getLabel(advert.groups,advert.fullAdvertTopic.message.groupId);
+                    advert.fullAdvertTopic.tagColor = getTagColor(advert.fullAdvertTopic.label);
+                }
+            }
+            if(advert.fullAdvertTopic.poll != null){
+                setPollEditNames(advert.fullAdvertTopic.poll);
+                advert.fullAdvertTopic.metaType = "poll";
+            }else{
+                advert.fullAdvertTopic.metaType = "message";
+            }
+
+            advert.fullAdvertFirstMessages = messageClient.getFirstLevelMessages(advertId,advert.selectedGroup.id,6,0,0,1000).messages;
+
+            advert.fulladvertFirstMessages ?
+                fullAdvertFirstMessagesLength = advert.fullAdvertFirstMessages.length:
+                fullAdvertFirstMessagesLength = 0;
+            if(advert.fullAdvertFirstMessages === null) advert.fullAdvertFirstMessages = [];
+
+            for(var i = 0; i < fullAdvertFirstMessagesLength; i++){
+                advert.fullAdvertFirstMessages[i].answerInputIsShow = false;
+                advert.fullAdvertFirstMessages[i].isTreeOpen = false;
+                advert.fullAdvertFirstMessages[i].isLoaded = false;
+                advert.fullAdvertFirstMessages[i].answerMessage = "Ваш ответ";
+                advert.fullAdvertFirstMessages[i].createdEdit = getTiming(advert.fullAdvertFirstMessages[i].created);
+            }
+
+            $rootScope.base.isAdvertTitles = false;
+            $rootScope.base.mainContentTopIsHide = true;
+            $rootScope.base.createTopicIsHide = true;
+
+            $rootScope.base.advert = advert;
+
+        };
+
+        showFullTalk(advert,advertId);
+
+        var initFlagsTopic = [];
+        advert.showTopicAnswerInput = function(event,fullAdvertTopic){
+            event.preventDefault();
+
+            if(!initFlagsTopic[fullAdvertTopic.id]) {
+                initAttachImage($('#attachImage-' + fullAdvertTopic.id), $('#attach-area-' + fullAdvertTopic.id));
+                initAttachDoc($('#attachDoc-' + fullAdvertTopic.id), $('#attach-doc-area-' + fullAdvertTopic.id));
+                initFlagsTopic[fullAdvertTopic.id] = true;
+            }
+
+            advert.fullAdvertTopic.answerInputIsShow ?
+                advert.fullAdvertTopic.answerInputIsShow = false :
+                advert.fullAdvertTopic.answerInputIsShow = true ;
+        };
+
+        var initFlagsMessage = [];
+        advert.showMessageAnswerInput = function(event,fullAdvertTopic,firstMessage,message){
+            event.preventDefault();
+            var attachId;
+
+            if(!message){
+                // если это сообщение первого уровня
+                attachId = fullAdvertTopic.id+'-'+firstMessage.id;
+
+                if(!advert.fulladvertFirstMessages) advert.fulladvertFirstMessages = messageClient.getFirstLevelMessages(advertId,advert.selectedGroup.id,6,0,0,1000).messages;
+                var fulladvertFirstMessagesLength = advert.fulladvertFirstMessages.length;
+
+                firstMessage.answerInputIsShow ?
+                    firstMessage.answerInputIsShow = false :
+                    firstMessage.answerInputIsShow = true;
+
+
+            }else{
+                // если простое сообщение
+                attachId = fullAdvertTopic.id+'-'+message.id;
+
+                if(!advert.fullAdvertMessages[firstMessage.id]) advert.fullAdvertMessages[firstMessage.id] = messageClient.getMessages(advertId,advert.selectedGroup.id,6,firstMessage.id,0,1000).messages;
+                var  fullAdvertMessagesLength = advert.fullAdvertMessages[firstMessage.id].length;
+                message.answerInputIsShow ?
+                    message.answerInputIsShow = false :
+                    message.answerInputIsShow = true;
+
+
+            }
+
+            if(!initFlagsMessage[attachId]) {
+                initAttachImage($('#attachImage-' + attachId), $('#attach-area-' + attachId));
+                initAttachDoc($('#attachDoc-' + attachId), $('#attach-doc-area-' + attachId));
+
+                initFlagsMessage[attachId] = true;
+            }
+        };
+
+        advert.addSingleFirstMessage = function(event,topicId){
+            event.preventDefault();
+
+            advert.topicId = topicId;
+
+            var isWall = false,
+                isFirstLevel = true,
+                newMessage = postMessage(advert,isWall,isFirstLevel);
+
+            if(newMessage == 0){
+                advert.isCreateFirstMessageError = true;
+                advert.createFirstMessageErrorText = "Вы не ввели сообщение";
+            }else {
+                advert.fullAdvertTopic.answerInputIsShow = false;
+
+                advert.isCreateFirstMessageError = false;
+                advert.fullAdvertFirstMessages ?
+                    advert.fullAdvertFirstMessages.push(newMessage) :
+                    advert.fullAdvertFirstMessages[0] = newMessage;
+            }
+
+        };
+
+        advert.addSingleMessage = function(event,topicId,firstMessage,message){
+            event.preventDefault();
+
+            if (!advert.fullAdvertMessages[firstMessage.id]) advert.fullAdvertMessages[firstMessage.id] = messageClient.getMessages(advertId,advert.selectedGroup.id,1,firstMessage.id,0,1000).messages;
+            advert.fullAdvertMessages[firstMessage.id] ?
+                fullAdvertMessagesLength = advert.fullAdvertMessages[firstMessage.id].length:
+                fullAdvertMessagesLength = 0;
+
+            var newMessage,answer,parentId;
+
+            if(!message){
+                // если добавляем к сообщению первого уровня
+                advert.messageId = firstMessage.id;
+
+                answer = firstMessage.answerMessage;
+                firstMessage.isTreeOpen = true;
+                firstMessage.answerMessage = "Ваш ответ";
+                parentId = firstMessage.id;
+
+            }else{
+                // если добавляем к простому сообщению
+                advert.messageId = message.id;
+
+                for(var i = 0; i < fullAdvertMessagesLength; i++){
+                    if(advert.fullAdvertMessages[firstMessage.id][i].id == message.id){
+                        //talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
+                        advert.fullAdvertMessages[firstMessage.id][i].isTreeOpen = true;
+                        advert.fullAdvertMessages[firstMessage.id][i].isOpen = true;
+                        advert.fullAdvertMessages[firstMessage.id][i].isParentOpen = true;
+                        advert.fullAdvertMessages[firstMessage.id][i].createdEdit = getTiming(advert.fullAdvertMessages[firstMessage.id][i].created);
+                        answer = advert.fullAdvertMessages[firstMessage.id][i].answerMessage;
+                    }
+                }
+                parentId = message.id;
+
+            }
+            var isWall = false,
+                isFirstLevel = false;
+            advert.topicId = topicId;
+            advert.parentId = parentId;
+            advert.answerMessage = answer;
+
+            newMessage = postMessage(advert,isWall,isFirstLevel);
+
+            if(newMessage == 0){
+                if(!message){
+                    advert.isCreateMessageToFirstError = true;
+                    advert.createMessageToFirstErrorText = "Вы не ввели сообщение";
+                }else{
+                    advert.isCreateMessageError = true;
+                    advert.createMessageErrorText = "Вы не ввели сообщение";
+                }
+            }else {
+                if(!message){
+                    advert.isCreateMessageToFirstError = false;
+                    firstMessage.answerInputIsShow = false;
+
+                }else{
+                    advert.isCreateMessageError = false;
+                    for(var i = 0; i < fullAdvertMessagesLength; i++){
+                        if(advert.fullAdvertMessages[firstMessage.id][i].id == message.id){
+                            advert.fullAdvertMessages[firstMessage.id][i].answerInputIsShow = false;
+                        }
+                    }
+                }
+
+                advert.fullAdvertMessages[firstMessage.id] = messageClient.getMessages(advertId, advert.selectedGroup.id, 1, firstMessage.id, 0, 1000).messages;
+
+                advert.fullAdvertMessages[firstMessage.id] ?
+                    fullAdvertMessagesLength = advert.fullAdvertMessages[firstMessage.id].length :
+                    fullAdvertMessagesLength = 0;
+
+                for (var i = 0; i < fullAdvertMessagesLength; i++) {
+                    advert.fullAdvertMessages[firstMessage.id][i].answerInputIsShow = false;
+                    advert.fullAdvertMessages[firstMessage.id][i].isTreeOpen = true;
+                    advert.fullAdvertMessages[firstMessage.id][i].isOpen = true;
+                    advert.fullAdvertMessages[firstMessage.id][i].isParentOpen = true;
+                    advert.fullAdvertMessages[firstMessage.id][i].createdEdit = getTiming(advert.fullAdvertMessages[firstMessage.id][i].created);
+                    advert.fullAdvertMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
+                }
+            }
+
+        };
+
+        advert.toggleTreeFirstMessage = function($event,firstMessage){
+            event.preventDefault();
+
+            firstMessage.isTreeOpen ?
+                firstMessage.isTreeOpen = false :
+                firstMessage.isTreeOpen = true ;
+
+
+            // --------
+
+            advert.fullAdvertMessages[firstMessage.id] = messageClient.getMessages(advertId,advert.selectedGroup.id,1,firstMessage.id,0,1000).messages;
+            advert.fullAdvertMessages[firstMessage.id] ?
+                fullAdvertMessagesLength = advert.fullAdvertMessages[firstMessage.id].length:
+                fullAdvertMessagesLength = 0;
+            if(advert.fullAdvertMessages[firstMessage.id] === null) advert.fullAdvertMessages[firstMessage.id] = [];
+
+            for(var i = 0; i < fullAdvertMessagesLength; i++){
+                advert.fullAdvertMessages[firstMessage.id][i].answerInputIsShow = false;
+                advert.fullAdvertMessages[firstMessage.id][i].isTreeOpen = true;
+                advert.fullAdvertMessages[firstMessage.id][i].isOpen = true;
+                advert.fullAdvertMessages[firstMessage.id][i].isParentOpen = true;
+                advert.fullAdvertMessages[firstMessage.id][i].createdEdit = getTiming(advert.fullAdvertMessages[firstMessage.id][i].created);
+                advert.fullAdvertMessages[firstMessage.id][i].answerMessage = "Ваш ответ";
+            }
+
+        };
+
+        advert.toggleTree = function($event,message,firstMessage){
+            event.preventDefault();
+
+            if(!advert.fullAdvertMessages[firstMessage.id]) advert.fullAdvertMessages[firstMessage.id] = messageClient.getMessages(advertId,advert.selectedGroup.id,1,firstMessage.id,0,1000).messages;
+            var fullAdvertMessagesLength = advert.fullAdvertMessages[firstMessage.id].length;
+
+            message.isTreeOpen ?
+                message.isTreeOpen = false :
+                message.isTreeOpen = true ;
+
+            var afterCurrentIndex = false,
+                nextMessageOnCurrentLevel = false,
+                loopMessageOffset,
+                parentOpenStatus,
+                areAllMyParentsTreeOpen = [],
+                checkAreAllMyParentsTreeOpen = true,
+                beginOffset = message.offset,
+                parentOpenStatusArray = [];
+
+            for(var i = 0; i < fullAdvertMessagesLength; i++){
+                loopMessageOffset = advert.fullAdvertMessages[firstMessage.id][i].offset;
+
+                if(afterCurrentIndex && !nextMessageOnCurrentLevel
+                    && message.offset < loopMessageOffset){
+
+                    areAllMyParentsTreeOpen[loopMessageOffset] = true;
+
+                    if(loopMessageOffset - message.offset == 1){
+                        //если это непосредственный потомок
+
+                        advert.fullAdvertMessages[firstMessage.id][i].isOpen ?
+                            advert.fullAdvertMessages[firstMessage.id][i].isOpen = false :
+                            advert.fullAdvertMessages[firstMessage.id][i].isOpen = true ;
+
+                        parentOpenStatusArray[loopMessageOffset] = true;
+                        parentOpenStatus = advert.fullAdvertMessages[firstMessage.id][i].isOpen;
+
+                        if (!advert.fullAdvertMessages[firstMessage.id][i].isTreeOpen){
+                            areAllMyParentsTreeOpen[loopMessageOffset] = false;
+                        }
+                    }else{
+                        // если это птомки потомка
+
+                        checkAreAllMyParentsTreeOpen = true;
+                        for(var j = beginOffset; j < loopMessageOffset; j++){
+                            // проверяем нет ли у кого в предках isTreeOpen = false
+                            if(areAllMyParentsTreeOpen[j] == false){
+                                checkAreAllMyParentsTreeOpen = false;
+                            }
+                        }
+                        parentOpenStatus && checkAreAllMyParentsTreeOpen ?
+                            advert.fullAdvertMessages[firstMessage.id][i].isOpen = true :
+                            advert.fullAdvertMessages[firstMessage.id][i].isOpen = false ;
+
+                        if (!advert.fullAdvertMessages[firstMessage.id][i].isTreeOpen){
+                            // если у кого-то из предков не открыто дерево
+                            areAllMyParentsTreeOpen[loopMessageOffset] = false;
+                        }
+
+                        parentOpenStatusArray[loopMessageOffset] = true;
+                    }
+                }
+
+                if (afterCurrentIndex && loopMessageOffset == message.offset){
+                    nextMessageOnCurrentLevel = true;
+                    break;
+                }
+                if(message.id == advert.fullAdvertMessages[firstMessage.id][i].id){
+                    afterCurrentIndex = true;
+                }
+            }
+        };
     })
     .controller('neighboursController',function($rootScope,$state) {
         $rootScope.currentPage = "neighbours";
@@ -1119,11 +1547,11 @@ angular.module('forum.controllers', ['ui.select2'])
         }
 
         settings.userInfo.birthday ?
-        settings.userInfo.birthdayMeta = new Date(settings.userInfo.birthday) :
+        settings.userInfo.birthdayMeta = new Date(settings.userInfo.birthday*1000) :
         settings.userInfo.birthdayMeta = "";
 
         if(settings.userInfo.birthdayMeta){
-            var month = ""+settings.userInfo.birthdayMeta.getMonth();
+            var month = settings.userInfo.birthdayMeta.getMonth()+1+"";
             if(month.length == 1) month = "0"+month;
 
             var day = ""+settings.userInfo.birthdayMeta.getDate();
@@ -1148,7 +1576,7 @@ angular.module('forum.controllers', ['ui.select2'])
         for(var i = 0; i < childsLength; i++){
             if(settings.family.childs[i].birthday) {
 
-                var birthDate = new Date(settings.family.childs[i].birthday);
+                var birthDate = new Date(settings.family.childs[i].birthday*1000);
                 //alert(settings.family.childs[i].birthday);
                     settings.family.childs[i].month = ""+birthDate.getMonth();
 
@@ -1205,7 +1633,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 var temp = new com.vmesteonline.be.UserInfo();
 
                 settings.userInfo.birthdayMeta ?
-                temp.birthday = Date.parse(settings.userInfo.birthdayMeta) :
+                temp.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000 :
                 temp.birthday = 0;
                 //alert(temp.birthday+" "+new Date(temp.birthday));
 
@@ -1269,8 +1697,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
                     //settings.family.childs[i].birthday = Date.parse(settings.family.childs[i].month +".15."+ settings.family.childs[i].year);
                     var tempMonth = parseInt(settings.family.childs[i].month)+1;
-                    settings.family.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year);
-                    //alert(settings.family.childs[i].birthday);
+                    settings.family.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year)/1000;
+                    alert(settings.family.childs[i].birthday);
                     //settings.family.childs[i].birthday = settings.family.childs[i].birthday/1000;
                 }
             }
@@ -1697,7 +2125,7 @@ function resetPages(base){
     base.settingsIsActive = false;
     base.talksIsActive = false;
     base.lentaIsActive = false;
-    base.servicesIsActive = false;
+    base.advertsIsActive = false;
 }
 function resetAceNavBtns(navbar){
     navbar.neighboursBtnStatus = "";
@@ -1927,17 +2355,21 @@ function getTagColor(labelName){
     return color;
 }
 
-function postTopic(obj,isWall){
+function postTopic(obj,isWall,isAdverts){
     var messageType,
         messageContent,
         subject;
     if (isWall){
-        messageType = 5;
+        messageType = 5; // wall
         messageContent = obj.wallMessageContent;
         obj.wallMessageContent = TEXT_DEFAULT_1;
         subject = "";
     }else{
-        messageType = 1;
+        if(!isAdverts){
+            messageType = 1; // talks
+        }else{
+            messageType = 6; // adverts
+        }
         messageContent = obj.content;
         obj.content = TEXT_DEFAULT_3;
         subject = obj.subject;
