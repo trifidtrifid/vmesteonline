@@ -157,7 +157,8 @@ public class VoMessage extends VoBaseMessage {
 		return getRecipient() == 0 || getRecipient() == userId || getAuthorId().getId() == userId;
 	}
 
-	public Message getMessage(PersistenceManager pm) {
+	public Message getMessage(long userId, PersistenceManager pm) {
+
 		List<Attach> imgs = new ArrayList<Attach>();
 		for (Long farId : images) {
 			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
@@ -171,10 +172,10 @@ public class VoMessage extends VoBaseMessage {
 
 		if (authorId == null)
 			return new Message(id.getId(), getParentId(), type, topicId, 0L, 0, createdAt, editedAt, new String(content), getLikes(), 0, links, null, null,
-					visibleOffset, null, imgs, docs, userNameForBlog);
+					visibleOffset, null, imgs, docs, userNameForBlog, isImportant(userId), isLiked(userId));
 		else
 			return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, new String(content), getLikes(), 0,
-					links, null, null, visibleOffset, null, imgs, docs, userNameForBlog);
+					links, null, null, visibleOffset, null, imgs, docs, userNameForBlog, isImportant(userId), isLiked(userId));
 	}
 
 	public long getApprovedId() {

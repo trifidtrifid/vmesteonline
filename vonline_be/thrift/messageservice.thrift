@@ -21,6 +21,8 @@ struct Attach {
 	3:string URL
 }
 
+enum Mark { POSITIVE=1, NOTMARKED=2, NEGATIVE=3 }
+
 struct Message {
 	1: i64 id,
 	2: i64 parentId, // 'идентификатор родительского сообщения, NULL для корневого со',
@@ -43,6 +45,8 @@ struct Message {
 	19: list<Attach> images, 
 	20: list<Attach> documents,
 	21: string anonName 
+	22: Mark important,
+	23: Mark like,
 	
 } // 'сообщение';
 		
@@ -173,8 +177,6 @@ service MessageService {
 	MessageListPart getMessagesAsList( 1:i64 topicId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
 	
 	void sendToInfo(1:string from, 2:string body), 	
-	UserOpinion likeOrDislikeMessage(1:i64 messageId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
-	UserOpinion likeOrDislikeTopic(1:i64 topicId, 2:i32 opinion) throws (1:error.InvalidOperation exc),
 	
 	//метсд изменяет и возвращает текущую важность сообщения на значение равное рейтингу пользователя, 
 	//для текущего пользователя сообщение становится важным вне зависимости от его суммарного рейтинга

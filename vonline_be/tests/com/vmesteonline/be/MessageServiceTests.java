@@ -27,7 +27,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 	private Message createMessage(long tpcId, long msgId, MessageType type, String anonName) throws Exception {
 		Message msg = new Message(0, msgId, type, tpcId, homeGroup.getId(), 0, (int) (System.currentTimeMillis() / 1000L), 0, "test content", 0, 0,
-				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, anonName);
+				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, anonName, null, null);
 		if (type == MessageType.BLOG)
 			return msi.postBlogMessage(msg);
 		else
@@ -36,7 +36,10 @@ public class MessageServiceTests extends TestWorkAround {
 	}
 
 	private Message createMessage(long tpcId, long msgId) throws Exception {
-		return createMessage(tpcId, msgId, MessageType.BASE, null);
+		Message msg = new Message(0, msgId, MessageType.BASE, tpcId, homeGroup.getId(), 0, (int) (System.currentTimeMillis() / 1000L), 0, "test content",
+				0, 0, new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null, null,
+				null);
+		return msi.postMessage(msg);
 	}
 
 	private Topic createTopic() throws Exception {
@@ -49,7 +52,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 	private Topic createTopic(long groupId, MessageType type) throws Exception {
 		Message msg = new Message(groupId, 0, type, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
-				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null);
+				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null, null, null);
 		Topic topic = new Topic(0, topicSubject, msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
 		return msi.postTopic(topic);
 	}
@@ -324,7 +327,7 @@ public class MessageServiceTests extends TestWorkAround {
 			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusHome);
 
 			Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
-					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null);
+					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null, null, null);
 			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll);
 			msi.postTopic(topic);
 
@@ -352,7 +355,7 @@ public class MessageServiceTests extends TestWorkAround {
 			Poll poll = createPoll();
 
 			Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
-					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null);
+					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null, null, null);
 			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll);
 			topic = msi.postTopic(topic);
 
@@ -427,7 +430,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 		try {
 			createTopic();
-			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusSmall);
+			long grId = getUserGroupId(Defaults.user1email, Defaults.radiusMedium);
 			TopicListPart rTopic = msi.getTopics(grId, 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(0, rTopic.totalSize);
@@ -475,8 +478,7 @@ public class MessageServiceTests extends TestWorkAround {
 		try {
 
 			Topic topic = createTopic(0, MessageType.BLOG);
-			
-			
+
 			Message msg = createMessage(topic.getId(), 0, MessageType.BLOG, "");
 			asi.logout();
 			Message msg1 = createMessage(topic.getId(), 0, MessageType.BLOG, "Anonimous");
@@ -485,14 +487,15 @@ public class MessageServiceTests extends TestWorkAround {
 			Assert.assertEquals(2, mlp.totalSize);
 			Assert.assertEquals(msg.getId(), mlp.messages.get(0).getId());
 			Assert.assertEquals("Aname Afamily", mlp.messages.get(0).getAnonName());
+			Assert.assertNotNull(mlp.messages.get(0).getUserInfo());
+			Assert.assertEquals("Aname", mlp.messages.get(0).getUserInfo().getFirstName());
 
 			Assert.assertEquals(msg1.getId(), mlp.messages.get(1).getId());
 			Assert.assertEquals("Anonimous", mlp.messages.get(1).getAnonName());
 
-			
 			TopicListPart tlp = msi.getBlog(0, 5);
 			Assert.assertEquals(1, tlp.totalSize);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());
