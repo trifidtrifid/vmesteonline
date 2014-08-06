@@ -39,10 +39,14 @@ public abstract class VoBaseMessage extends GeoLocation {
 		authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
 		createdAt = msg.getCreated();
 		images = new ArrayList<Long>();
-		PersistenceManager pm = PMF.getPm();
+		
 		images = new ArrayList<Long>();
 		documents = new ArrayList<Long>();
+		importantNotificationSentDate = 0;
+		importantScore = 0;
+		popularityScore = 0;
 
+		PersistenceManager pm = PMF.getPm();
 		try {
 			if (msg.images != null) {
 				List<Attach> savedImages = new ArrayList<Attach>();
@@ -147,7 +151,6 @@ public abstract class VoBaseMessage extends GeoLocation {
 			int up = user.getPopularuty();
 			if( up == 0 ) author.setPopularuty( up = VoUser.BASE_USER_SCORE );
 			
-			if( null == popularityScore ) popularityScore = 0;
 			popularityScore += up;
 			likes.add(user.getId());
 			try{
@@ -155,7 +158,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 					author = pm.getObjectById(VoUser.class,authorId);
 				int ap = author.getPopularuty();
 				if( ap == 0 ) author.setImportancy( ap = VoUser.BASE_USER_SCORE );
-				int pDelta = Math.max(100,Math.min(10,(int) (((float)( up * up )) / ((float)ap * 20.0F))));
+				int pDelta = (int) (Math.min( 100, (Math.max(1, up / 10)))); 
 				author.setPopularuty( ap + pDelta );
 			} catch(Exception e){ 
 			}
@@ -185,7 +188,6 @@ public abstract class VoBaseMessage extends GeoLocation {
 		}
 		
 		if( !important.contains(userId) && !unimportant.contains(userId)) {
-			if( null == importantScore ) importantScore = 0;
 			
 			importantScore += ui * ( isImportant ? 1 : -1 ) ;
 			
@@ -199,9 +201,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 					if( author.getId() != user.getId() ){
 						int ai = author.getImportancy();
 						if( ai == 0 ) author.setImportancy( ai = VoUser.BASE_USER_SCORE );
-						int importancyDelta = (int) (importancyK * 
-								Math.max( 100, (Math.min(10, (int) (((float)( ui * ui )) / ((float)ai * 20.0F)) *
-										( isImportant ? 1F : -1F )))));
+						int importancyDelta = importancyK * Math.min( 100, (Math.max (1, ui / 10 ))) * ( isImportant ? 1 : -1 );
 						author.setImportancy( ai + importancyDelta );
 					}
 			} catch(Exception e){ 
@@ -212,11 +212,11 @@ public abstract class VoBaseMessage extends GeoLocation {
 
 
 	
-	public Integer getImportantScore() {
+	public int getImportantScore() {
 		return importantScore;
 	}
 
-	public Integer getPopularityScore() {
+	public int getPopularityScore() {
 		return popularityScore;
 	}
 
@@ -227,8 +227,17 @@ public abstract class VoBaseMessage extends GeoLocation {
 	public Mark isLiked( long userId ){
 		return likes != null && likes.contains( userId ) ? Mark.POSITIVE : Mark.NOTMARKED;
 	}
-
 	
+	public int getImportantNotificationSentDate() {
+		return importantNotificationSentDate;
+	}
+
+	public void setImportantNotificationSentDate(int importantNotificationSentDate) {
+		this.importantNotificationSentDate = importantNotificationSentDate;
+	}
+
+
+
 	/*
 	 * @PrimaryKey
 	 * 
@@ -280,7 +289,11 @@ public abstract class VoBaseMessage extends GeoLocation {
 	protected Set<Long> unimportant;
 	
 	@Persistent
-	protected Integer importantScore;
+	protected int importantScore;
+	
 	@Persistent
-	protected Integer popularityScore;
+	protected int popularityScore;
+	
+	@Persistent
+	protected int importantNotificationSentDate;
 }

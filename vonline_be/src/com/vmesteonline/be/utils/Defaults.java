@@ -52,11 +52,21 @@ public class Defaults {
 	public static String user3name = "Cname";
 	public static String user3email = "c";
 	public static String user3pass = "c";
+	
+	public static String user4lastName = "Dfamily";
+	public static String user4name = "Dname";
+	public static String user4email = "d";
+	public static String user4pass = "d";
 
-	public static String[] unames = new String[] { user1name, user2name, user3name };
-	public static String[] ulastnames = new String[] { user1lastName, user2lastName, user3lastName };
-	public static String[] uEmails = new String[] { user1email, user2email, user3email };
-	public static String[] uPasses = new String[] { user1pass, user2pass, user3pass };
+	public static String user5lastName = "Efamily";
+	public static String user5name = "Ename";
+	public static String user5email = "e";
+	public static String user5pass = "e";
+
+	public static String[] unames = new String[] { user1name, user2name, user3name, user4name,user5name };
+	public static String[] ulastnames = new String[] { user1lastName, user2lastName, user3lastName, user4lastName, user5lastName };
+	public static String[] uEmails = new String[] { user1email, user2email, user3email, user4email, user5email };
+	public static String[] uPasses = new String[] { user1pass, user2pass, user3pass, user4pass, user5pass };
 
 	public static int radiusStarecase = 0;
 	public static int radiusHome = 20;
@@ -224,10 +234,11 @@ public class Defaults {
 					// хардкодится выше
 					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 1, (byte) 1, (byte) 5, ""),
 					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 50, ""),
+					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 50, ""),
 					new VoPostalAddress(new VoBuilding("195213", streetZ, "35", null, null, pm), (byte) 1, (byte) 11, (byte) 35, ""),
 					new VoPostalAddress(new VoBuilding("195213", streetR, "6", null, null, pm), (byte) 1, (byte) 2, (byte) 25, "") };
 
-			String invCodes[] = { "1", "2", "3", "4" };
+			String invCodes[] = { "1", "2", "3", "4", "5" };
 
 			for (int i = 0; i < addresses.length; i++) {
 
