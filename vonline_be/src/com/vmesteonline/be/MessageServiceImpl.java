@@ -194,7 +194,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			req += " and messageType = " + Integer.toString(MessageType.ADVERT.getValue());
 			break;
 		case WALL:
-			req += " and messageType != " + Integer.toString(MessageType.ADVERT.getValue());
+			req += " and messageType != " + Integer.toString(MessageType.ADVERT.getValue()) + " and messageType != "
+					+ Integer.toString(MessageType.BLOG.getValue());
 			break;
 		case BLOG:
 			req += " messageType = " + Integer.toString(MessageType.BLOG.getValue());
