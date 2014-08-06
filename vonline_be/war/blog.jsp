@@ -29,7 +29,7 @@ UserServiceImpl userService = new UserServiceImpl(request.getSession());
 
         TopicListPart Blog = messageService.getBlog(0,1000);
 
-            //out.print(ShortUserInfo.firstName);
+            //out.print(Blog.topics);
 
             pageContext.setAttribute("blog",Blog.topics);
             pageContext.setAttribute("firstName",ShortUserInfo.firstName);
@@ -92,9 +92,10 @@ UserServiceImpl userService = new UserServiceImpl(request.getSession());
 
 <div class="wallitem-message">
 
+<c:if test="${blog != null}">
     <c:forEach var="topic" items="blog">
 
-        <div class="first-message clearfix" data-link="<c:out value="${topic.content}"/>">
+        <div class="first-message clearfix" data-link="<c:out value="${topic.message.content}"/>">
             <a href="profile-<c:out value="${topic.userInfo.id}"/>" class="user">
                 <div class="avatar" style="background-image: url(<c:out value="${topic.userInfo.avatar}"/>)"></div>
             </a>
@@ -105,7 +106,7 @@ UserServiceImpl userService = new UserServiceImpl(request.getSession());
                     <a href="profile-<c:out value="${topic.userInfo.id}"/>"><c:out value="${topic.userInfo.firstName}"/> <c:out value="${topic.userInfo.lastName}"/></a>
                 </div>
 
-                <div class="text"><c:out value="${topic.content}"/></div>
+                <div class="text"><c:out value="${topic.message.content}"/></div>
 
                 <div class="lenta-item-bottom">
                     <span><c:out value="${topic.lastUpdate}"/></span>
@@ -116,6 +117,7 @@ UserServiceImpl userService = new UserServiceImpl(request.getSession());
         </div>
 
         <div class="dialogs">
+        <c:forEach var="comment" items="messageService.getMessagesAsList(blog.id,7,0,0,1000).messages">
             <div class="itemdiv dialogdiv">
                 <a href="profile-" class="user">
                     <div class="avatar short2" style="background-image: url()"></div>
@@ -134,7 +136,9 @@ UserServiceImpl userService = new UserServiceImpl(request.getSession());
                     </div>
                 </div>
             </div>
+        </c:forEach>
         </div>
+
 
         <div class="input-group">
             <textarea name="answerInput{{blog.topic.id}}" id="name{{blog.topic.id}}" class="message-textarea no-resize"
@@ -153,6 +157,7 @@ UserServiceImpl userService = new UserServiceImpl(request.getSession());
         </div>
 
     </c:forEach>
+</c:if>
 
 </div>
         </div>

@@ -141,9 +141,17 @@ angular.module('forum.controllers', ['ui.select2'])
 
         base.markImportant = function(event,message){
             event.preventDefault();
+            var isImportant;
 
-            message.important = 3;
-            messageClient.markMessageImportant(message.id,true);
+            if (message.important == 3){
+                message.important = 1;
+                isImportant = true;
+            }else{
+                message.important = 3;
+                isImportant = false;
+            }
+
+            messageClient.markMessageImportant(message.id,isImportant);
         };
 
         base.showAllGroups = function(){
@@ -217,10 +225,11 @@ angular.module('forum.controllers', ['ui.select2'])
         return $rootScope.leftbar.tab === number;
     };
   })
-    .controller('rightBarController',function() {
+    .controller('rightBarController',function($rootScope) {
         var rightbar = this;
 
         rightbar.importantTopics = messageClient.getImportantTopics();
+        //alert(rightbar.importantTopics.totalSize);
     })
     .controller('mainContentTopController',function($rootScope) {
         var topCtrl = this;
