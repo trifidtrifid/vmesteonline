@@ -34,8 +34,8 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/talks-single.html",
             controller: 'TalksSingleController as talks'
         })
-        .state('adverts', {
-            url: "/adverts",
+        .state('profit', {
+            url: "/profit",
             templateUrl: "partials/adverts.html",
             controller: 'AdvertsController as adverts'
         })

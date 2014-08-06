@@ -160,6 +160,7 @@ h1 {
 }
 .sidebar-right ul {
   margin-left: 0;
+  margin-bottom: 0;
 }
 .sidebar-right ul li {
   border-top: 1px solid #438eb9;
@@ -185,10 +186,15 @@ h1 {
   font-size: 11px;
   border-bottom: 1px solid #438eb9;
   padding: 3px 5px;
-  border-top: 1px solid #438eb9;
+}
+.sidebar-right .importantly-middle {
+  font-size: 14px;
+  padding: 3px 5px;
+  border-bottom: 1px solid #438eb9;
 }
 .sidebar-right .importantly-top {
   font-size: 18px;
+  border-top: 1px solid #438eb9;
 }
 .btn {
   border-radius: 2px !important;
