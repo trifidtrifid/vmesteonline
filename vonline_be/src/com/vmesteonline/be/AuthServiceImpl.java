@@ -18,6 +18,7 @@ import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.jdo2.postaladdress.AddressInfo;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
@@ -123,16 +124,16 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public String getInviteCode(String address, String email) {
+	public String requestInviteCode(String address, String email) {
 
 		try {
-			EMailHelper.sendSimpleEMail("trifid@gmail.com", "want to register", email + " " + address + " want to join");
+			AddressInfo resolvedAddress = VoGeocoder.resolveAddressString(address);
+			EMailHelper.sendSimpleEMail("trifid@gmail.com", email + "wants to register", email + " "+resolvedAddress.getAddresText()+"(" + address + ") wants to join");
+			return VoGeocoder.createMapImageURL(resolvedAddress.getLongitude(), resolvedAddress.getLattitude(), 450, 450);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.warning("warning when try to send email from join. user " + email + " address " + address);
 		}
-
-		//todo return url to map
 		return "";
 	}
 
@@ -327,7 +328,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	// ======================================================================================================================
-
+	
 	@Override
 	public long categoryId() {
 		return ServiceCategoryID.AUTH_SI.ordinal();
