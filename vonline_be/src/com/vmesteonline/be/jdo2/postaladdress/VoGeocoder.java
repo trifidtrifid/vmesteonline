@@ -20,6 +20,7 @@ import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.utils.VoHelper;
 
 public class VoGeocoder {
 
@@ -125,8 +126,9 @@ public class VoGeocoder {
 	}
 
 	public static String createMapImageURL(BigDecimal longitude, BigDecimal latitude, int width, int height ) {
-		
-		return "http://static-maps.yandex.ru/1.x/?l=map&pt="+longitude+","+latitude+",pm2blm&size="+width+","+height+"&spn="+0.00002*width+","+0.00002*height;
+		double ws = VoHelper.roundDouble(0.00001*width, 5);
+		double hs = VoHelper.roundDouble(0.00001*height, 5);
+		return "http://static-maps.yandex.ru/1.x/?l=map&pt="+longitude+","+latitude+",pm2blm&size="+width+","+height+"&spn="+ws+","+hs;
 	}
 
 	private static class YAMLGecodingHandler extends DefaultHandler implements AddressInfo {
