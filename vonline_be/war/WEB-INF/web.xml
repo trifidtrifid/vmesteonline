@@ -67,6 +67,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/init</url-pattern>
 	</servlet-mapping>
 
+    <servlet>
+        <servlet-name>Backoffice</servlet-name>
+        <jsp-file>/backoffice.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Backoffice</servlet-name>
+        <url-pattern>/backoffice</url-pattern>
+    </servlet-mapping>
+
 	<servlet>
 		<servlet-name>Blog</servlet-name>
 		<jsp-file>/blog.jsp</jsp-file>

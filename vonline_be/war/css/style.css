@@ -1213,3 +1213,29 @@ h1 {
   display: block;
   margin-bottom: 10px;
 }
+.blog {
+  text-align: left;
+}
+.blog .dialogs,
+.blog .input-group {
+  display: none;
+}
+.blog .anonName {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.blog .message-textarea {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.blog .input-group {
+  padding-top: 10px;
+}
+.blog .no-link {
+  cursor: default;
+  color: #000;
+}
+.blog .no-link:hover {
+  color: #000;
+  text-decoration: none;
+}
