@@ -145,7 +145,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 		if( null == likes ) likes = new HashSet<Long>();
 		if( !likes.contains(user.getId())) {
 			int up = user.getPopularuty();
-			if( up == 0 ) author.setImportancy( up = VoUser.BASE_USER_SCORE );
+			if( up == 0 ) author.setPopularuty( up = VoUser.BASE_USER_SCORE );
 			
 			if( null == popularityScore ) popularityScore = 0;
 			popularityScore += up;
@@ -155,7 +155,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 					author = pm.getObjectById(VoUser.class,authorId);
 				int ap = author.getPopularuty();
 				if( ap == 0 ) author.setImportancy( ap = VoUser.BASE_USER_SCORE );
-				int pDelta = Math.min(10,(int) (((float)( up * up )) / ((float)ap * 20.0F)));
+				int pDelta = Math.max(100,Math.min(10,(int) (((float)( up * up )) / ((float)ap * 20.0F))));
 				author.setPopularuty( ap + pDelta );
 			} catch(Exception e){ 
 			}
@@ -168,12 +168,25 @@ public abstract class VoBaseMessage extends GeoLocation {
 		if( null == unimportant ) unimportant = new HashSet<Long>();
 		
 		long userId = user.getId();
+		int ui = user.getImportancy();
+		if( ui == 0 ) user.setImportancy( ui = VoUser.BASE_USER_SCORE );
+		
+		int importancyK = 1;
+		
+		//switch important to unimportant or vice versa
+		if( important.contains( userId) && !isImportant){
+			importantScore -= ui;
+			important.remove(userId);
+			importancyK = 2;
+		} else 	if( unimportant.contains( userId ) && isImportant){
+			importantScore += ui;
+			unimportant.remove(userId);
+			importancyK = 2;
+		}
 		
 		if( !important.contains(userId) && !unimportant.contains(userId)) {
 			if( null == importantScore ) importantScore = 0;
 			
-			int ui = user.getImportancy();
-			if( ui == 0 ) user.setImportancy( ui = VoUser.BASE_USER_SCORE );
 			importantScore += ui * ( isImportant ? 1 : -1 ) ;
 			
 			if( isImportant ) 
@@ -186,7 +199,9 @@ public abstract class VoBaseMessage extends GeoLocation {
 					if( author.getId() != user.getId() ){
 						int ai = author.getImportancy();
 						if( ai == 0 ) author.setImportancy( ai = VoUser.BASE_USER_SCORE );
-						int importancyDelta = Math.min(10, (int) (((float)( ui * ui )) / ((float)ai * 20.0F) * ( isImportant ? 1F : -1F )));
+						int importancyDelta = (int) (importancyK * 
+								Math.max( 100, (Math.min(10, (int) (((float)( ui * ui )) / ((float)ai * 20.0F)) *
+										( isImportant ? 1F : -1F )))));
 						author.setImportancy( ai + importancyDelta );
 					}
 			} catch(Exception e){ 
