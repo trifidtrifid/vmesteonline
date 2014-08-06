@@ -186,26 +186,26 @@
                     <div class="importantly-top">
                         Важно
                     </div>
-                    <div class="importantly-middle" ng-show="rightbar.importantTopics.topics == null || rightbar.importantTopics.topics.length == 0">Пока нет сообщений</div>
+                    <div class="importantly-middle" ng-show="importantTopics.topics == null || importantTopics.topics.length == 0">Пока нет сообщений</div>
                     <ul>
-                        <li ng-repeat="importantTopic in importantTopics.topics">
+                        <li ng-repeat="importantTopic in importantTopics.topics" class="clearfix">
                             <div class="importantly-left">
                                 <div class="avatar short2" style="background-image: url({{importantTopic.userInfo.avatar}})"></div>
                             </div>
                             <div class="importantly-right">
                                 <h3>{{importantTopic.userInfo.firstName +" "+ importantTopic.userInfo.lastName}}</h3>
-                                <p>{{ importantTopic.topic.message.content }}</p>
+                                <p>{{ importantTopic.message.content }}</p>
 
-                                <div ng-switch on="importantTopic.topic.message.type" >
+                                <div ng-switch on="importantTopic.message.type" >
 
-                                    <a ui-sref="wall-single-({ topicId :{{ importantTopic.topic.id }})" ng-switch-when="5">Перейти к записи</a>
-                                    <a ui-sref="talks-single-({ talkId :{{ importantTopic.topic.id }})" ng-switch-when="1">Перейти к записи</a>
+                                    <a ui-sref="wall-single({ topicId :{{ importantTopic.id }} })" ng-switch-when="5">Перейти к записи</a>
+                                    <a ui-sref="talks-single-({ talkId :{{ importantTopic.id }} })" ng-switch-when="1">Перейти к записи</a>
 
                                 </div>
                             </div>
                         </li>
                     </ul>
-                    <div class="importantly-bottom" ng-hide="rightbar.importantTopics.topics == null || rightbar.importantTopics.topics.length == 0">
+                    <div class="importantly-bottom" ng-hide="importantTopics.topics == null || importantTopics.topics.length == 0">
                         Больше важных сообщений нет
                     </div>
 

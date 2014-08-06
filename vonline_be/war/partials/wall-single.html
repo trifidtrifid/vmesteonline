@@ -1,61 +1,58 @@
 
-        <section class="forum page ng-cloak" ng-show="base.lentaIsActive" ng-cloak>
+        <section class="forum page wall-single ng-cloak">
 
             <div class="lenta">
                 <div class="lenta-item">
 
-                    <div class="wallitem-message">
+                    <div class="wallitem-message wall-single">
 
                         <div class="first-message clearfix" >
-                            <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })" class="user">
-                                <div class="avatar" style="background-image: url({{wallItem.topic.userInfo.avatar}})"></div>
-                                <!--<img alt="аватар" ng-src="{{wallItem.topic.userInfo.avatar}}">-->
+                            <a ui-sref="profile({userId: {{ wallSingle.wallItem.topic.userInfo.id }} })" class="user">
+                                <div class="avatar" style="background-image: url({{wallSingle.wallItem.topic.userInfo.avatar}})"></div>
                             </a>
 
-                            <div class="body" ng-switch on="wallItem.topic.metaType">
+                            <div class="body" ng-switch on="wallSingle.wallItem.topic.metaType">
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
-                                        ng-class="wallItem.tagColor">{{wallItem.label}}</span>
-                                <a class="fa fa-star pull-right" ng-class="{'important' : wallItem.topic.message.important == 3}" href="#" ng-click="base.markImportant($event,wallItem.topic.message)"></a>
+                                        ng-class="wallSingle.wallItem.tagColor">{{wallSingle.wallItem.label}}</span>
+                                <a class="fa fa-star pull-right" ng-class="{'important' : wallSingle.wallItem.topic.message.important == 3}" href="#" ng-click="base.markImportant($event,wallSingle.wallItem.topic.message)"></a>
 
                                 <div class="name">
-                                    <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })">{{wallItem.topic.authorName}}</a>
+                                    <a ui-sref="profile({userId: {{ wallSingle.wallItem.topic.userInfo.id }} })">{{wallSingle.wallItem.topic.userInfo.firstName+" "+wallSingle.wallItem.topic.userInfo.lastName}}</a>
                                 </div>
 
-                                <div class="text" ng-switch-when="message" >{{wallItem.topic.message.content}}</div>
+                                <div class="text" ng-switch-when="message" >{{wallSingle.wallItem.topic.message.content}}</div>
 
-                                <div class="attached" ng-show="wallItem.topic.message.images.length || wallItem.topic.message.documents.length">
-                                    <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
+                                <div class="attached" ng-show="wallSingle.wallItem.topic.message.images.length || wallSingle.wallItem.topic.message.documents.length">
+                                    <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallSingle.wallItem.topic.id}}" ng-repeat="image in wallSingle.wallItem.topic.message.images">
                                         <img ng-src="{{image.URL}}" alt="картинка"/>
                                     </a>
                                     <div class="docs">
-                                        <div ng-repeat="document in wallItem.topic.message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
+                                        <div ng-repeat="document in wallSingle.wallItem.topic.message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
                                     </div>
                                 </div>
 
-                                <div class="poll" ng-switch-when="poll" ng-switch on="wallItem.topic.poll.alreadyPoll" >
-                                    <div class="text" >{{wallItem.topic.message.content}}</div>
+                                <div class="poll" ng-switch-when="poll" ng-switch on="wallSingle.wallItem.topic.poll.alreadyPoll" >
+                                    <div class="text" >{{wallSingle.wallItem.topic.message.content}}</div>
 
-                                    <h5>{{wallItem.topic.poll.subject}}</h5>
+                                    <h5>{{wallSingle.wallItem.topic.poll.subject}}</h5>
 
-                                    <!-- -->
 
                                     <div class="poll-do" ng-switch-when="false">
 
-                                        <div class="radio" ng-repeat="variant in wallItem.topic.poll.editNames">
+                                        <div class="radio" ng-repeat="variant in wallSingle.wallItem.topic.poll.editNames">
                                             <label>
-                                                <input name="poll-variant-{{wallItem.topic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
+                                                <input name="poll-variant-{{wallSingle.wallItem.topic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
                                                 <span class="lbl">{{variant.name}}</span>
                                             </label>
                                         </div>
 
-                                        <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,wallItem.topic.poll)">Голосовать</button>
+                                        <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,wallSingle.wallItem.topic.poll)">Голосовать</button>
 
                                     </div>
-                                    <!-- -->
 
                                     <div class="poll-results" ng-switch-when="true">
 
-                                        <div class="poll-result-item"  ng-repeat="variant in wallItem.topic.poll.editNames">
+                                        <div class="poll-result-item"  ng-repeat="variant in wallSingle.wallItem.topic.poll.editNames">
                                             <div class="poll-result-variant">{{variant.name}}</div>
                                             <div class="poll-row">
                                                 <div class="poll-row-line">
@@ -66,36 +63,35 @@
                                             </div>
                                         </div>
 
-                                        <div class="poll-result-amount">Проголосовало <span>{{wallItem.topic.poll.amount}}</span> человек</div>
+                                        <div class="poll-result-amount">Проголосовало <span>{{wallSingle.wallItem.topic.poll.amount}}</span> человек</div>
 
                                     </div>
 
                                 </div>
 
                                 <div class="lenta-item-bottom">
-                                    <span >{{wallItem.topic.message.createdEdit}}</span>
-                                    <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)">Комментировать</a>
+                                    <span >{{wallSingle.wallItem.topic.message.createdEdit}}</span>
+                                    <a href="#" ng-click="wallSingle.showAnswerInput($event,wallSingle.wallItem)">Комментировать</a>
                                 </div>
 
                             </div>
                         </div>
 
                         <div class="dialogs">
-                            <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
+                            <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallSingle.wallItem.messages">
                                 <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })" class="user">
                                     <div class="avatar short2" style="background-image: url({{wallMessage.userInfo.avatar}})"></div>
-                                    <!--<img alt="аватар" ng-src="{{wallMessage.userInfo.avatar}}">-->
                                 </a>
 
                                 <div class="body">
 
                                     <div class="name">
-                                        <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })">{{wallMessage.authorName}}</a>
+                                        <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })">{{wallMessage.userInfo.firstName+" "+wallMessage.userInfo.lastName}}</a>
                                     </div>
                                     <div class="text" >{{wallMessage.content}}</div>
 
                                     <div class="attached" ng-show="wallMessage.images.length || wallMessage.documents.length">
-                                        <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
+                                        <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallSingle.wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
                                             <img ng-src="{{image.URL}}" alt="картинка"/>
                                         </a>
                                         <div class="docs">
@@ -105,31 +101,31 @@
 
                                     <div class="lenta-item-bottom">
                                         <span >{{wallMessage.createdEdit}}</span>
-                                        <a href="#" ng-click="lenta.showAnswerInput($event,wallItem,wallMessage)">Ответить</a>
+                                        <a href="#" ng-click="wallSingle.showAnswerInput($event,wallSingle.wallItem,wallMessage)">Ответить</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="input-group">
-                            <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallItem.commentText"
-                                      ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow" ng-keyup="base.messageChange($event,1)"
+                            <textarea name="answerInput{{wallSingle.wallItem.topic.id}}" id="name{{wallSingle.wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallSingle.wallItem.commentText"
+                                      ng-hasfocus="wallSingle.wallItem.isFocus" ng-show="wallSingle.wallItem.answerShow" ng-keyup="base.messageChange($event,1)"
                                 onblur="if(this.value=='') this.value='Ваш ответ';"
                                 onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
 
-                                <div id="attach-area-{{wallItem.topic.id}}" class="attach-area">
+                                <div id="attach-area-{{wallSingle.wallItem.topic.id}}" class="attach-area">
                                     <div class="loading hidden">
                                         <img ng-src="i/loading2.gif" alt="картинка"/>
                                     </div>
                                 </div>
-                                <div id="attach-doc-area-{{wallItem.topic.id}}" class="attach-area attach-area-doc"></div>
+                                <div id="attach-doc-area-{{wallSingle.wallItem.topic.id}}" class="attach-area attach-area-doc"></div>
 
-                                <span class="input-group-btn" ng-show="wallItem.answerShow">
-                                    <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
+                                <span class="input-group-btn" ng-show="wallSingle.wallItem.answerShow">
+                                    <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="wallSingle.createWallComment($event,wallSingle.wallItem)">
                                         <i class="icon-share-alt"></i>
                                         Отправить
                                     </button>
-                                    <span class="error-info" ng-show="wallItem.isCreateCommentError" ng-click>{{wallItem.createCommentErrorText}}</span>
+                                    <span class="error-info" ng-show="wallSingle.wallItem.isCreateCommentError" ng-click>{{wallSingle.wallItem.createCommentErrorText}}</span>
 
                                     <div class="btn-group attach-dropdown pull-right">
                                         <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
@@ -138,8 +134,8 @@
                                         </button>
 
                                         <ul class="dropdown-menu dropdown-blue">
-                                            <li><input id="attachImage-{{wallItem.topic.id}}" type="file"/></li>
-                                            <li><input id="attachDoc-{{wallItem.topic.id}}" type="file"/></li>
+                                            <li><input id="attachImage-{{wallSingle.wallItem.topic.id}}" type="file"/></li>
+                                            <li><input id="attachDoc-{{wallSingle.wallItem.topic.id}}" type="file"/></li>
                                         </ul>
                                     </div>
                                 </span>

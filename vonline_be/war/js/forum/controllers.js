@@ -279,7 +279,6 @@ angular.module('forum.controllers', ['ui.select2'])
                 $rootScope.mapsChangeGroup(group.id);
             }
 
-
             //$rootScope.currentGroup = $rootScope.base.selectGroupInDropdown(group.id);
 
         };
@@ -531,15 +530,111 @@ angular.module('forum.controllers', ['ui.select2'])
     .controller('WallSingleController',function($rootScope, $stateParams){
         var wallSingle = this;
 
+        $rootScope.base.mainContentTopIsHide = true;
+
         // временно, нужна функция getWallItem(topicId)
         var wallItems = messageClient.getWallItems($rootScope.currentGroup.id),
-        wallItemsLength = wallItems.length,
-            wallItem;
+        wallItemsLength = wallItems.length;
         for(var i = 0; i < wallItemsLength; i++){
-            if(wallItems[i].id == $stateParams.topicId){
-                wallItem = wallItems[i];
+            if(wallItems[i].topic.id == $stateParams.topicId){
+                wallSingle.wallItem = wallItems[i];
             }
         }
+
+        wallSingle.wallItem.commentText = "Ваш ответ";
+        wallSingle.wallItem.answerShow = false;
+        wallSingle.wallItem.isFocus = false;
+        wallSingle.wallItem.isCreateCommentError = false;
+
+        //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
+        wallSingle.wallItem.label = getLabel(userClientGroups,wallSingle.wallItem.topic.message.groupId);
+
+        wallSingle.wallItem.tagColor = getTagColor(wallSingle.wallItem.label);
+
+        if(wallSingle.wallItem.topic.message.type == 1){
+
+            wallSingle.wallItem.topic.lastUpdateEdit = getTiming(wallSingle.wallItem.topic.lastUpdate);
+
+        }else if(wallSingle.wallItem.topic.message.type == 5){
+
+            wallSingle.wallItem.topic.message.createdEdit = getTiming(wallSingle.wallItem.topic.message.created);
+            wallSingle.wallItem.topic.authorName = getAuthorName(wallSingle.wallItem.topic.userInfo);
+            wallSingle.wallItem.topic.metaType = "message";
+
+            var mesLen;
+            wallSingle.wallItem.messages ?
+                mesLen = wallSingle.wallItem.messages.length:
+                mesLen = 0;
+
+            for(var j = 0; j < mesLen; j++){
+                wallSingle.wallItem.messages[j].createdEdit = getTiming(wallSingle.wallItem.messages[j].created);
+                wallSingle.wallItem.messages[j].authorName = getAuthorName(wallSingle.wallItem.messages[j].userInfo);
+            }
+
+
+            if(wallSingle.wallItem.topic.poll != null){
+                //значит это опрос
+                setPollEditNames(wallSingle.wallItem.topic.poll);
+
+                wallSingle.wallItem.topic.metaType = "poll";
+            }
+        }
+
+        var initFlagsArray = [];
+        wallSingle.showAnswerInput = function(event,wallItem,wallMessage){
+            event.preventDefault();
+
+            /*wallItem.answerShow ?
+             wallItem.answerShow = false :*/
+            wallItem.answerShow = true ;
+            wallItem.isFocus = true ;
+
+            if(wallMessage){
+                var authorName;
+                wallMessage.userInfo ?
+                    authorName = wallMessage.userInfo.firstName :
+                    authorName = wallMessage.authorName.split(' ')[0];
+                wallItem.commentText = authorName+", ";
+            }else{
+                wallItem.commentText = "";
+            }
+
+            if(!initFlagsArray[wallItem.topic.id]) {
+                // инифицализацмю AttachImage нужно делать только один раз для каждого сообщения
+                initAttachImage($('#attachImage-' + wallItem.topic.id), $('#attach-area-' + wallItem.topic.id));
+                initAttachDoc($('#attachDoc-' + wallItem.topic.id), $('#attach-doc-area-' + wallItem.topic.id));
+                initFlagsArray[wallItem.topic.id] = true;
+            }
+
+        };
+
+        wallSingle.createWallComment = function(event,wallItem){
+            event.preventDefault();
+
+            wallItem.groupId = $rootScope.currentGroup.id;
+
+            var isWall = true,
+                message = postMessage(wallItem, isWall);
+
+            if(message == 0){
+                wallItem.isCreateCommentError = true;
+                wallItem.createCommentErrorText = "Вы не ввели сообщение";
+            }else {
+                wallItem.isCreateCommentError = false;
+
+                if (wallItem.messages) {
+                    wallItem.messages.push(message);
+                } else {
+                    wallItem.messages = [];
+                    wallItem.messages[0] = message;
+                }
+
+                wallItem.answerShow = false;
+            }
+
+        };
+
+        $('.ng-cloak').removeClass('ng-cloak');
     })
     .controller('TalksController',function($rootScope) {
         /*
