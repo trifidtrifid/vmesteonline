@@ -62,14 +62,49 @@
 
 		<div class="main-container" id="main-container">
 			<div class="main-container-inner">
-                <input type="text"/>
+                <br>
+                <br>
+                <input placeholder="Ссылка на пост" class="post-url" type="text"/>
 
-                <button class="btn no-border btn-sm btn-primary">Отправить</button>
+                <button class="btn no-border btn-sm btn-primary send-post">Отправить</button>
 			</div>
 		</div>
 
 	</div>
 
+
+<!-- файлы thrift -->
+<script src="js/thrift.js" type="text/javascript"></script>
+<script src="gen-js/bedata_types.js" type="text/javascript"></script>
+<script src="gen-js/messageservice_types.js" type="text/javascript"></script>
+<script src="gen-js/MessageService.js" type="text/javascript"></script>
+<!-- -->
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        var transport = new Thrift.Transport("/thrift/MessageService");
+        var protocol = new Thrift.Protocol(transport);
+        var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(protocol);
+
+        $('.send-post').click(function(e){
+            e.preventDefault();
+
+            var newTopic = new com.vmesteonline.be.messageservice.Topic();
+            newTopic.message = new com.vmesteonline.be.messageservice.Message();
+            newTopic.message.groupId = 5277655813324800;
+            newTopic.message.type = 7; // blog
+            newTopic.message.content = $('.post-url').val();
+            newTopic.message.id = 0;
+            newTopic.message.created = Date.parse(new Date())/1000;
+
+            newTopic.subject = "123";
+            newTopic.id = 0;
+
+            messageClient.postTopic(newTopic);
+        });
+
+    });
+</script>
 
 </body>
 

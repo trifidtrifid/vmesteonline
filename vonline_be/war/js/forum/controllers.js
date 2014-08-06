@@ -141,9 +141,17 @@ angular.module('forum.controllers', ['ui.select2'])
 
         base.markImportant = function(event,message){
             event.preventDefault();
+            var isImportant;
 
-            message.important = 3;
-            messageClient.markMessageImportant(message.id,true);
+            if (message.important == 3 || message.important == 2){
+                message.important = 1;
+                isImportant = true;
+            }else{
+                message.important = 3;
+                isImportant = false;
+            }
+
+            messageClient.markMessageImportant(message.id,isImportant);
         };
 
         base.showAllGroups = function(){
@@ -217,10 +225,11 @@ angular.module('forum.controllers', ['ui.select2'])
         return $rootScope.leftbar.tab === number;
     };
   })
-    .controller('rightBarController',function() {
-        var rightbar = this;
+    .controller('rightBarController',function($rootScope) {
+        //var rightbar = this;
 
-        rightbar.importantTopics = messageClient.getImportantTopics();
+        $rootScope.importantTopics = messageClient.getImportantTopics(userClientGroups[0].id);
+        //alert(rightbar.importantTopics.totalSize);
     })
     .controller('mainContentTopController',function($rootScope) {
         var topCtrl = this;
@@ -234,7 +243,7 @@ angular.module('forum.controllers', ['ui.select2'])
         }
 
         groups[0].selected = true;
-        $rootScope.currentGroup = $rootScope.biggestGroup = groups[0];
+        $rootScope.currentGroup = groups[0];
 
         topCtrl.isSet = function(groupId){
             //return groupId ===
@@ -252,6 +261,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
             $rootScope.currentGroup = group;
             $rootScope.base.bufferSelectedGroup = selectGroupInDropdown(group.id);
+
+            $rootScope.importantTopics = messageClient.getImportantTopics(group.id);
 
             if($rootScope.currentPage == 'lenta'){
                 $rootScope.wallChangeGroup(group.id);
@@ -2617,7 +2628,7 @@ function setPollEditNames(poll){
 function getAttachedImages(selector){
     var imgList = [], ind = 0;
 
-    selector.find('img').each(function(){
+    selector.find('.attach-item img').each(function(){
         var bgImg = $(this).css('background-image'),
             name = $(this).attr('data-title'),
             type = $(this).attr('data-type'),
@@ -2654,7 +2665,8 @@ function getAttachedDocs(selector){
     return docsBase64[selector];
 }
 function cleanAttached(selector){
-    selector.html('');
+    //selector.html('').append('<div class="loading hidden"><img src="i/loading2.gif"></div>');
+    selector.find('.attach-item').detach();
     //docsBase64 = [];
     docsInd[selector] = 0;
     docsBase64[selector] = [];

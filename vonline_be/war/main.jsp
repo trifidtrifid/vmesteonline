@@ -168,9 +168,9 @@
 						}
 					</script>
 					<ul class="nav nav-list">
-                        <li ng-class="{active:isSet(1)}"><a ui-sref="main"> <span class="menu-text">Новости</span> </a></li> <!--  ng-click="setTab($event,1)" -->
+                        <li ng-class="{active:isSet(1)}"><a ui-sref="main"> <span class="menu-text">Новости</span> </a></li>
                         <li ng-class="{active:isSet(2)}"><a ui-sref="talks"> <span class="menu-text">Обсуждения</span> </a></li> <!-- ng-click="setTab($event,2)" -->
-                        <li ng-class="{active:isSet(3)}"><a ui-sref="adverts"> <span class="menu-text">Услуги и объявления</span> </a></li>
+                        <li ng-class="{active:isSet(3)}"><a ui-sref="profit"> <span class="menu-text">Услуги и объявления</span> </a></li>
 
 					</ul>
                     <div class="footer-left">
@@ -186,8 +186,9 @@
                     <div class="importantly-top">
                         Важно
                     </div>
+                    <div class="importantly-middle" ng-show="rightbar.importantTopics.topics == null || rightbar.importantTopics.topics.length == 0">Пока нет сообщений</div>
                     <ul>
-                        <li ng-repeat="importantTopic in rightbar.importantTopics">
+                        <li ng-repeat="importantTopic in importantTopics.topics">
                             <div class="importantly-left">
                                 <div class="avatar short2" style="background-image: url({{importantTopic.userInfo.avatar}})"></div>
                             </div>
@@ -204,7 +205,7 @@
                             </div>
                         </li>
                     </ul>
-                    <div class="importantly-bottom">
+                    <div class="importantly-bottom" ng-hide="rightbar.importantTopics.topics == null || rightbar.importantTopics.topics.length == 0">
                         Больше важных сообщений нет
                     </div>
 

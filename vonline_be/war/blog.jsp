@@ -5,41 +5,42 @@
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.Group"%>
 <%@ page import="com.vmesteonline.be.Rubric"%>
+<%@ page import="com.vmesteonline.be.messageservice.Message"%>
 <%@ page import="com.vmesteonline.be.messageservice.TopicListPart"%>
+<%@ page import="com.vmesteonline.be.messageservice.MessageListPart"%>
 <%@ page import="com.vmesteonline.be.messageservice.Topic"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="java.util.ArrayList"%>
+<%@ page import="com.vmesteonline.be.messageservice.MessageType" %>
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <%
 HttpSession sess = request.getSession();
 pageContext.setAttribute("auth",true);
+Boolean isAuth = true;
 
 try {
 AuthServiceImpl.checkIfAuthorised(sess.getId());
-UserServiceImpl userService = new UserServiceImpl(request.getSession());
+} catch (InvalidOperation ioe) {
+    isAuth = false;
+    pageContext.setAttribute("auth",false);
+    //response.sendRedirect("/login.html");
+    //return;
+}
 
-        ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
-        MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
-        //MessageType mesType = MessageType.BASE;
+    MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
+    //MessageType mesType = MessageType.BASE;
 
-        TopicListPart Blog = messageService.getBlog(0,1000);
+    TopicListPart Blog = messageService.getBlog(0,1000);
 
-            //out.print(ShortUserInfo.firstName);
+        //out.print(Blog.topics.get(0).message.content);
 
-            pageContext.setAttribute("blog",Blog.topics);
-            pageContext.setAttribute("firstName",ShortUserInfo.firstName);
-            pageContext.setAttribute("lastName",ShortUserInfo.lastName);
-            pageContext.setAttribute("userAvatar",ShortUserInfo.avatar);
-            } catch (InvalidOperation ioe) {
-                pageContext.setAttribute("auth",false);
-                //response.sendRedirect("/login.html");
-            return;
-            }
+        pageContext.setAttribute("blog",Blog.topics);
+
 
 
 %>
@@ -84,77 +85,106 @@ UserServiceImpl userService = new UserServiceImpl(request.getSession());
 
     <div class="main-container" id="main-container">
         <div class="main-container-inner">
-            <div class="main-content-top">
+            <div class="main-content-top clearfix">
 
                 <div class="page-title pull-left">Новости проекта</div>
 
             </div>
 
-<div class="wallitem-message">
+            <div class="wallitem-message blog" data-auth="<%=isAuth%>">
 
-    <c:forEach var="topic" items="blog">
 
-        <div class="first-message clearfix" data-link="<c:out value="${topic.content}"/>">
-            <a href="profile-<c:out value="${topic.userInfo.id}"/>" class="user">
-                <div class="avatar" style="background-image: url(<c:out value="${topic.userInfo.avatar}"/>)"></div>
-            </a>
+                <% if(Blog.topics != null){
+                    int topicsSize = Blog.topics.size();
+                    for(int i = 0; i < topicsSize; i++){
 
-            <div class="body">
 
-                <div class="name">
-                    <a href="profile-<c:out value="${topic.userInfo.id}"/>"><c:out value="${topic.userInfo.firstName}"/> <c:out value="${topic.userInfo.lastName}"/></a>
-                </div>
-
-                <div class="text"><c:out value="${topic.content}"/></div>
-
-                <div class="lenta-item-bottom">
-                    <span><c:out value="${topic.lastUpdate}"/></span>
-                    <a href="#">Комментировать</a>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="dialogs">
-            <div class="itemdiv dialogdiv">
-                <a href="profile-" class="user">
-                    <div class="avatar short2" style="background-image: url()"></div>
-                </a>
-
-                <div class="body">
-
-                    <div class="name">
-                        <a href="profile-">{{blogMessage.authorName}}</a>
+                %>
+                <div class="post" data-postlink="<%=Blog.topics.get(i).message.content%>" >
+                    <div class="topic"></div>
+                    <div class="topic-stuff">
+                        <a href="#" class="show-comment">Показать комментарии</a>
+                        <a href="#" class="make-comment">Комментировать</a>
                     </div>
-                    <div class="text">{{blogMessage.content}}</div>
 
-                    <div class="lenta-item-bottom">
-                        <span>{{blogMessage.createdEdit}}</span>
-                        <a href="#">Ответить</a>
+                    <div class="dialogs">
+                        <%
+                            Long topicId = Blog.topics.get(i).id;
+                            List<Message> comments = messageService.getMessagesAsList(topicId, MessageType.BLOG , 0,false,1000).messages;
+                            if(comments != null && comments.size() != 0){
+                                
+                                int commentsSize = comments.size();
+                                for(int j = 0; j < commentsSize; j++){
+
+                                    String classNoLink = "";
+                                    String messageAvatar;
+                                    String messageName;
+                                    Long messageUserId;
+
+                                    if(!isAuth){
+                                        messageAvatar = "data/da.gif";
+                                        messageName = comments.get(j).anonName;
+                                        messageUserId = (long)(0);
+                                        classNoLink = "no-link";
+                                    }else{
+                                        messageAvatar = comments.get(j).userInfo.avatar;
+                                        messageName = comments.get(j).userInfo.firstName+" "+comments.get(j).userInfo.lastName;
+                                        messageUserId = comments.get(j).userInfo.id;
+                                    }
+                        %>
+
+                        <div class="itemdiv dialogdiv">
+                            <a href="profile-<%=messageUserId%>" class="user <%=classNoLink%>">
+                                <div class="avatar short2" style="background-image: url(<%=messageAvatar%>)"></div>
+                            </a>
+
+                            <div class="body">
+
+                                <div class="name">
+                                    <a href="profile-<%=messageUserId%>" class="<%=classNoLink%>"><%=messageName%></a>
+                                </div>
+                                <div class="text"><%=comments.get(j).content%></div>
+
+                                <div class="lenta-item-bottom">
+                                    <span><%=comments.get(j).created%></span>
+                                    <a href="#">Ответить</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <%
+                           }}
+                        %>
+
+
                     </div>
+
+                    <div class="input-group">
+
+                        <% if(!isAuth){  %>
+                            <input type="text" class="anonName" placeholder="Имя Фамилия"/>
+                        <% } %>
+
+                        <textarea class="message-textarea"
+                                  onblur="if(this.value=='') this.value='Ваш ответ';"
+                                  onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
+
+
+                        <span class="input-group-btn">
+                            <button class="btn btn-sm btn-info no-radius no-border send-in-blog" type="button">
+                                <i class="icon-share-alt"></i>
+                                Комментировать
+                            </button>
+                            <span class="error-info"></span>
+
+                        </span>
+                    </div>
+
                 </div>
-            </div>
+        <% }} %>
+
         </div>
 
-        <div class="input-group">
-            <textarea name="answerInput{{blog.topic.id}}" id="name{{blog.topic.id}}" class="message-textarea no-resize"
-                      onblur="if(this.value=='') this.value='Ваш ответ';"
-                      onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
-
-
-        <span class="input-group-btn">
-            <button class="btn btn-sm btn-info no-radius no-border send-in-blog" type="button">
-                <i class="icon-share-alt"></i>
-                Отправить
-            </button>
-            <span class="error-info">{{blog.createCommentErrorText}}</span>
-
-        </span>
-        </div>
-
-    </c:forEach>
-
-</div>
         </div>
     </div>
 
@@ -173,10 +203,94 @@ UserServiceImpl userService = new UserServiceImpl(request.getSession());
         var protocol = new Thrift.Protocol(transport);
         var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(protocol);
 
+        $('.post').each(function(){
+            var link = $(this).attr('data-postlink');
+
+            $(this).find('.topic').load(link+' .post', function(){
+            });
+        });
+
+        $('.show-comment').click(function(e){
+            e.preventDefault();
+
+            if($(this).text() == "Показать комментарии"){
+                $(this).text("Скрыть комментарии");
+            }else{
+                $(this).text("Показать комментарии");
+            }
+
+            $(this).closest('.post').find('.dialogs').slideToggle(200);
+        });
+
+        $('.make-comment').click(function(e){
+            e.preventDefault();
+
+            $(this).closest('.post').find('.input-group').slideToggle(200,function(){
+               $(this).find('textarea').focus();
+            });
+        });
+
+        function initNoLink(selector){
+
+            selector.find('.no-link').click(function(e){
+                e.preventDefault();
+
+            });
+
+        }
+        initNoLink($('.blog'));
 
         $('.send-in-blog').click(function(){
-            //userClient.postMessage();
-        })
+            var message = new com.vmesteonline.be.messageservice.Message();
+
+            message.id = 0;
+            message.type = com.vmesteonline.be.messageservice.MessageType.BLOG;//5;
+            message.groupId = 5277655813324800;
+            message.content = $(this).closest('.input-group').find('.message-textarea').val();
+            message.parentId = 0;
+            message.created = Date.parse(new Date)/1000;
+            var isAuth = true;
+
+            if($('.blog').attr('data-auth') == 'false') isAuth = false;
+
+            if(!isAuth){
+                message.anonName = $(this).closest('.input-group').find('.anonName').val();
+            };
+
+            var returnComment = messageClient.postBlogMessage(message),
+                    classNoLink = "";
+
+            if(!isAuth){
+                message.avatar = "data/da.gif";
+                message.name = message.anonName;
+                message.userId = 0;
+                classNoLink = "no-link";
+            }else{
+                message.avatar = returnComment.userInfo.avatar;
+                message.name = returnComment.userInfo.firstName+" "+returnComment.userInfo.lastName;
+                message.userId = returnComment.userInfo.id ;
+            }
+
+            var newCommentHTML = '<div class="itemdiv dialogdiv">'+
+                '<a href="profile-'+ message.userId +'" class="user '+ classNoLink +'">'+
+                        '<div class="avatar short2" style="background-image: url('+ message.avatar +')"></div>'+
+                        '</a>'+
+                        '<div class="body">'+
+                        '<div class="name">'+
+                        '<a href="profile-'+ message.userId +'" class="'+ classNoLink +'" >'+ message.name +'</a>'+
+                        '</div>'+
+                    '<div class="text">'+ message.content +'</div>'+
+            '<div class="lenta-item-bottom">'+
+                    '<span>'+ message.created +'</span>'+
+            '<a href="#">Ответить</a>'+
+            '</div>'+
+            '</div>'+
+            '</div>';
+
+            $(this).closest('.post').find('.dialogs').append(newCommentHTML);
+            initNoLink($(this).closest('.post'));
+        });
+
     });
 </script>
 
