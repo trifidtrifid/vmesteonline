@@ -244,8 +244,9 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
             var message = new com.vmesteonline.be.messageservice.Message();
 
             message.id = 0;
+            message.topicId = 0;
             message.type = com.vmesteonline.be.messageservice.MessageType.BLOG;//5;
-            message.groupId = 5277655813324800;
+            message.groupId = 0;
             message.content = $(this).closest('.input-group').find('.message-textarea').val();
             message.parentId = 0;
             message.created = Date.parse(new Date)/1000;
