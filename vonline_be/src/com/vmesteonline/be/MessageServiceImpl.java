@@ -35,6 +35,7 @@ import com.vmesteonline.be.messageservice.Poll;
 import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.messageservice.TopicListPart;
 import com.vmesteonline.be.messageservice.WallItem;
+import com.vmesteonline.be.utils.EMailHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
@@ -49,8 +50,26 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public void sendToInfo(String from, String body) throws TException {
-		// TODO Auto-generated method stub
+	public void sendInfoEmail(String email, String name, String content) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+
+		try {
+			String subj = "Contacts: ";
+			try {
+				VoUser voUser = getCurrentUser(pm);
+				subj += "registered user " + voUser.getName() + " " + voUser.getLastName() + " " + voUser.getContacts();
+			} catch (Exception e) {
+				if (email == null || name == null || email.length() == 0 || name.length() == 0)
+					throw new InvalidOperation(VoError.IncorrectParametrs, "email and name can't be empty or null");
+				subj += "unregistered user " + name + " " + email;
+			}
+			EMailHelper.sendSimpleEMail("trifid@gmail.com", subj, content);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.warning("warning when try to send email from contacts. user " + name + " email " + email + " content " + content);
+		} finally {
+			pm.close();
+		}
 
 	}
 

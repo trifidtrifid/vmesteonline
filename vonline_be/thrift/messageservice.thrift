@@ -139,7 +139,8 @@ service DialogService {
 }
 
 service MessageService {
-	
+
+	void sendInfoEmail(1:string email, 2:string name, 3:string content) throws (1:error.InvalidOperation exc),
 
 	list<WallItem> getWallItems(1:i64 groupId)	 throws (1:error.InvalidOperation exc)
 
@@ -175,9 +176,7 @@ service MessageService {
 
 //получение сообщений в виде списка. сообщения отсортированы по дате создания. более позднии появляются первыми. значения параметров теже что и у функции getFirstLevelMessages. 
 	MessageListPart getMessagesAsList( 1:i64 topicId, 3:MessageType messageType, 4:i64 lastLoadedId, 5:bool archived, 6:i32 length) throws (1:error.InvalidOperation exc),
-	
-	void sendToInfo(1:string from, 2:string body), 	
-	
+
 	//метсд изменяет и возвращает текущую важность сообщения на значение равное рейтингу пользователя, 
 	//для текущего пользователя сообщение становится важным вне зависимости от его суммарного рейтинга
 	i32 markMessageImportant(1:i64 messageId, 2:bool isImportant ) throws (1:error.InvalidOperation exc),
